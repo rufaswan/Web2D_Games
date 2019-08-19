@@ -1,0 +1,37 @@
+# game engine to use
+# [required]
+# value
+#   alice30 : Alice games with ADISK.DAT ACG.DAT
+#   alice35 : Alice games with *SA.ALD   *GA.ALD
+#   alice39 : alice35 with SYSTEM39.AIN/INI + SACTEFAM.KLD + *BA.BGI/*WA.WAI
+#   php     : custom php engine
+#   dummy   : dummy
+engine = alice35
+
+# character encoding for game text
+# [optional]
+# default = utf-8
+charset = shift-jis
+
+# total number of CD tracks
+# [optional]
+# maximum = 99
+audio_tracks = 37
+
+# prepend when relative filepath is just filename
+# [optional]
+# default = '.'
+basedir = assets
+
+# overwrite game var on each ajax request
+# [optional]
+# cheat[] = varno,value,note
+cheat[] = 29,65535,EXP
+cheat[] = 30,65535,GOLD
+
+
+
+# to add game only vars
+#   value can be (string/int)
+# var   = value
+# var[] = varno,value,note

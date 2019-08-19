@@ -1,0 +1,74 @@
+<?php
+/*
+[license]
+Copyright (C) 2019 by Rufas Wan
+
+This file is part of web2D_game. <https://github.com/rufaswan/web2D_game>
+
+web2D_game is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+web_2D_game is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with web2D_game.  If not, see <http://www.gnu.org/licenses/>.
+[/license]
+ */
+header("Content-Type: text/html; charset=utf-8;");
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Thu, 1 Jan 1970 12:00:00 GMT");
+
+define("CRLF", "<br>");
+define("DEBUG", true);
+define("TRACE", true);
+define("TRACE_OB", false);
+define("ROOT", dirname(__FILE__) );
+require ROOT . "/inc/funcs.php";
+
+$gp_init = array(
+	"engine"  => "dummy",
+	"charset" => "utf-8",
+	"cheat" => array(),
+);
+$gp_pc = array(
+	"pc"     => array(1,0),
+	"jal"    => array(),
+	"select" => array(),
+	"text"   => "",
+	"return" => "",
+);
+$gp_input = array();
+
+// parse $_GET , $_POST , $_COOKIE
+foreach ( $_REQUEST as $key=>$var )
+{
+	switch ( $key )
+	{
+		case "game":
+			$cfg = initcfg_var( ROOT . "/$var/init.cfg" );
+			$gp_init = $cfg + $gp_init;
+			define("GAME", $var );
+			define("SAVE", dechex( crc32($var) ) );
+			define("SAVE_FILE", ROOT ."/sav/". SAVE .".");
+			break;
+		case "input":
+			$gp_input = explode(',', $var);
+			break;
+		case "resume":
+			$gp_pc = pc_load( "pc" );
+			break;
+	}
+}
+//print_r($gp_init);
+
+define("PATH_JQUERY", "/inc/jquery-3.4.0.min.js");
+define("PATH_JPFONT", "/inc/mplus-1mn-063a.ttf");
+define("PATH_OGG_1S", "/inc/mono-1s.ogg");
+
+require ROOT . "/inc/init_{$gp_init["engine"]}.php";
+//print_r($gp_init);

@@ -1,0 +1,24 @@
+=== [alice35] Rance ===
+	cheat[] = 149,1,DEBUG
+	cheat[] = 28,65000,EXP
+	cheat[] = 29,65000,GOLD
+=== [alice35] Rance 2 ===
+	cheat[] = 187,1,DEBUG
+	cheat[] = 94,65000,SHILL GOLD
+	cheat[] = 198,65000,RANCE GOLD
+	cheat[] = 107,65000,RANCE EXP
+	cheat[] = 125,65000,SHILL EXP
+=== [alice35] Rance 3 ===
+=== [alice35] Kichiku Rance ===
+=== [alice35] Toushin Toshi ===
+	cheat[] = 132,4,DEBUG
+	cheat[] = 30,65000,(GOLD > 60000) skip save_checksum_test
+	cheat[] = 40,65000,(FIG_EXP > 60000) skip save_checksum_test
+	cheat[] = 42,65000,(MAG_EXP > 60000) skip save_checksum_test
+	cheat[] = 215,99,v3 bomb
+	cheat[] = 216,99,v5 bomb
+=== [alice35] Toushin Toshi 2 ===
+
+=== [alice35] Dalk ===
+=== [alice35] Dr Stop ===
+=== [alice30] Mugen ===
