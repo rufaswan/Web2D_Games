@@ -12,7 +12,7 @@
 
 * Scripts in tools/ are for command-line. It may need
 
-** ZLIB extension - for QNT/AIN/ZLB decoding
+  * ZLIB extension - for QNT/AIN/ZLB decoding
 
 ## Playable
 
