@@ -1,4 +1,5 @@
 jQuery <https://jquery.org/license/>
+
 	jQuery is provided under the MIT license
 
 	The MIT License (MIT)
@@ -24,6 +25,7 @@ jQuery <https://jquery.org/license/>
 
 
 M+ FONTS <https://mplus-fonts.osdn.jp/about-en.html>
+
 	These fonts are free software.
 
 	Unlimited permission is granted to use, copy, and distribute them,
