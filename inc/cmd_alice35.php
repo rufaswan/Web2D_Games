@@ -3,20 +3,20 @@
 [license]
 Copyright (C) 2019 by Rufas Wan
 
-This file is part of web2D_game. <https://github.com/rufaswan/web2D_game>
+This file is part of Web2D_Games. <https://github.com/rufaswan/Web2D_Games>
 
-web2D_game is free software: you can redistribute it and/or modify
+Web2D_Games is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-web_2D_game is distributed in the hope that it will be useful,
+Web2D_Games is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with web2D_game.  If not, see <http://www.gnu.org/licenses/>.
+along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 // <@  cali:成立中実行コマンド        <@ Ｗｈｉｌｅループ開始
@@ -1731,13 +1731,25 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			return;
 		// ]        選択肢を開く
 		case ']': // 0x5d
-			if ( ! empty( $gp_input ) && $gp_input[0] == "select" )
+			if ( ! empty( $gp_input ) )
 			{
-				$sel = $gp_input[1];
-				if ( isset( $gp_pc["select"][$sel] ) )
+				if ( $gp_input[0] == "select" )
 				{
-					trace("select $sel");
-					$gp_pc["pc"][1] = $gp_pc["select"][$sel][0];
+					$sel = $gp_input[1];
+					if ( isset( $gp_pc["select"][$sel] ) )
+					{
+						trace("select $sel");
+						$gp_pc["pc"][1] = $gp_pc["select"][$sel][0];
+						$gp_pc["select"] = array();
+						$gp_input = array();
+						sco35_text_add( "_NEXT_" );
+						return;
+					}
+				}
+				if ( $gp_input[0] == "key" )
+				{
+					$st++;
+					trace("select back");
 					$gp_pc["select"] = array();
 					$gp_input = array();
 					sco35_text_add( "_NEXT_" );

@@ -3,20 +3,20 @@
 [license]
 Copyright (C) 2019 by Rufas Wan
 
-This file is part of web2D_game. <https://github.com/rufaswan/web2D_game>
+This file is part of Web2D_Games. <https://github.com/rufaswan/Web2D_Games>
 
-web2D_game is free software: you can redistribute it and/or modify
+Web2D_Games is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-web_2D_game is distributed in the hope that it will be useful,
+Web2D_Games is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with web2D_game.  If not, see <http://www.gnu.org/licenses/>.
+along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 //////////////////////////////
@@ -56,6 +56,9 @@ else
 if ( stripos($argv[1], "amus.dat") !== FALSE )
 	$dir = "amus_dat";
 else
+if ( stripos($argv[1], "amap.dat") !== FALSE )
+	$dir = "amap_dat";
+else
 	exit("UNKNOWN {$argv[1]}\n");
 
 if ( ! is_dir($dir) )
@@ -63,10 +66,10 @@ if ( ! is_dir($dir) )
 
 $fp = array();
 for ( $i=1; $i < $argc; $i++ )
-	$fp[] = fopen( $argv[$i], "rb" );
+	$fp[$i] = fopen( $argv[$i], "rb" );
 
-$index = get_index( $fp[0] );
-$disk = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+$index = get_index( $fp[1] );
+$disk = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 $ed = strlen( $index );
 $st = 0;
@@ -82,14 +85,14 @@ while ( $st < $ed )
 	if ( $b1 == 0x1a )
 		break;
 	if ( $b1 == 0 )
-		break;
+		continue;
 
-	$arc = $b1 - 1;
+	$arc = $b1;
 	$aid = $b2;
 
 	if ( ! isset($fp[$arc]) )
 	{
-		printf("FATAL : Missing DAT-%d @ %x\n", $arc+1, $st);
+		printf("FATAL : Missing DAT-%d @ %x\n", $arc, $st);
 		exit();
 	}
 

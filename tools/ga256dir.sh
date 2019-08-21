@@ -1,5 +1,5 @@
-<?php
-/*
+#!/bin/bash
+<<'////'
 [license]
 Copyright (C) 2019 by Rufas Wan
 
@@ -18,5 +18,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
- */
-$gp_init["web_title"] = "DUMMY ENGINE";
+////
+
+for f in *; do
+	[ -f "$f" ] || continue
+
+	tit="${f%.*}"
+	ext="${f##*.}"
+
+	t1=$(echo "$tit" | bc)
+	t2=$(echo "$tit/256" | bc)
+	[[ "$t1" == "$t2" ]] && continue
+
+	dr=$(printf "%03d" $t2)
+	mkdir -p "$dr"
+
+	mv -vf "$f" "$dr/$f"
+done

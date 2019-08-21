@@ -3,20 +3,20 @@
 [license]
 Copyright (C) 2019 by Rufas Wan
 
-This file is part of web2D_game. <https://github.com/rufaswan/web2D_game>
+This file is part of Web2D_Games. <https://github.com/rufaswan/Web2D_Games>
 
-web2D_game is free software: you can redistribute it and/or modify
+Web2D_Games is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-web_2D_game is distributed in the hope that it will be useful,
+Web2D_Games is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with web2D_game.  If not, see <http://www.gnu.org/licenses/>.
+along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 /*
@@ -563,6 +563,28 @@ function sco35_IK_bnez( &$file, &$st )
 	return false;
 }
 
+function sco35_load_data($num , $varno , $len)
+{
+	global $gp_init;
+	$dat = sprintf( $gp_init["path_dat"], ($num >> 8), $num );
+	$file = file_get_contents( ROOT . "/$dat" );
+	if ( empty($file) )  return;
+
+	$data = array();
+	$st = 0;
+	while ( $len > 0 )
+	{
+		$b1 = ord( $file[$st+0] );
+		$b2 = ord( $file[$st+1] );
+		$data[] = ($b2 << 8) + $b1;
+		$len--;
+		$st += 2;
+	}
+
+	global $gp_pc;
+	$gp_pc["var"][$varno] = $data;
+}
+
 function sco35_sjis( &$file, &$st )
 {
 	global $halftbl;
@@ -730,28 +752,6 @@ function sco35_calli( &$file, &$st )
 			}
 		}
 	} // while (1)
-}
-
-function sco35_load_data($num , $varno , $len)
-{
-	global $gp_init;
-	$dat = sprintf( $gp_init["path_dat"], ($num >> 8), $num );
-	$file = file_get_contents( ROOT . "/$dat" );
-	if ( empty($file) )  return;
-
-	$data = array();
-	$st = 0;
-	while ( $len > 0 )
-	{
-		$b1 = ord( $file[$st+0] );
-		$b2 = ord( $file[$st+1] );
-		$data[] = ($b2 << 8) + $b1;
-		$len--;
-		$st += 2;
-	}
-
-	global $gp_pc;
-	$gp_pc["var"][$varno] = $data;
 }
 
 function sco35_load_sco( $id )

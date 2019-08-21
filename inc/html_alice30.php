@@ -51,11 +51,6 @@ echo <<<_HTML
 	<table>
 	<tr>
 		<td>&nbsp;</td>
-		<td><button data="{$gp_key['esc']}">C</button></td>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td><button data="{$gp_key['tab']}">D</button></td>
 		<td>&nbsp;</td>
 		<td><button data="{$gp_key['enter']}">A</button></td>
 	</tr>
