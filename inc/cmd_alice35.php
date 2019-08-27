@@ -372,14 +372,15 @@ function D_cmd35( &$file, &$st, &$run )
 		// DF      data_var,count,data        配列のクリア
 		case 'F':
 			$st += 2;
-			$data_var = sco35_varno($file, $st);
-				if ( $data_var < 0 )
+			$v = sco35_varno($file, $st);
+			$e = 0;
+				if ( 0 > $v )
 					list($v,$e) = sco35_varno_tbl( $file, $st );
 				$st++; // skip 0x7f
 			$count    = sco35_calli($file, $st);
 			$data     = sco35_calli($file, $st);
-			trace("data DF var[]_$data_var , $count , $data");
-			$gp_pc["var"][$data_var] = array_fill(0, $count , $data);
+			trace("data DF var[]_$v+$e , $count , $data");
+			$gp_pc["var"][$v+$e] = array_fill(0, $count , $data);
 			return;
 		// DS      poin_var,data_var,位置,ページ        配列の設定 (DCコマンドを参照のこと)
 		case 'S':
@@ -612,12 +613,13 @@ function L_cmd35( &$file, &$st, &$run )
 						$st++;
 					}
 					$st++;
-					$start_var = sco35_varno($file, $st);
-						if ( $start_var < 0 )
+					$v = sco35_varno($file, $st);
+					$e = 0;
+						if ( 0 > $v )
 							list($v,$e) = sco35_varno_tbl( $file, $st );
 						$st++; // skip 0x7f
 					$read_num  = sco35_calli($file, $st);
-					trace("LE $type , $fn , $start_var , $read_num");
+					trace("LE $type , $fn , $v+$e , $read_num");
 					$gp_pc["var"][0] = 255;
 					return;
 			}
@@ -631,13 +633,13 @@ function L_cmd35( &$file, &$st, &$run )
 				case 0:
 					$st += 3;
 					$link_no   = sco35_calli($file, $st);
-					$start_var = sco35_varno($file, $st);
-						if ( $start_var < 0 )
+					$v = sco35_varno($file, $st);
+						if ( 0 > $v )
 							list($v,$e) = sco35_varno_tbl( $file, $st );
 						$st++; // skip 0x7f
 					$read_num  = sco35_calli($file, $st);
-					trace("data LL $type , $link_no , $start_var , $read_num");
-					sco35_load_data($link_no , $start_var , $read_num);
+					trace("data LL $type , $link_no , $v+$e , $read_num");
+					sco35_load_data($link_no , $v+$e , $read_num);
 					$gp_pc["var"][0] = 0;
 					return;
 			}
@@ -805,39 +807,19 @@ function N_cmd35( &$file, &$st, &$run )
 		// NB var1,var2,count:        var1 から始まるcount個の変数へ
 		case 'B':
 			$st += 2;
-			$var1 = sco35_varno($file, $st);
-				if ( $var1 < 0 )
-					list($v1,$e1) = sco35_varno_tbl( $file, $st );
+			$v1 = sco35_varno($file, $st);
+				if ( 0 > $v1 )
+					$v1 = sco35_varno_tbl( $file, $st );
 				$st++; // skip 0x7f
-			$var2 = sco35_varno($file, $st);
-				if ( $var2 < 0 )
-					list($v2,$e2) = sco35_varno_tbl( $file, $st );
+			$v2 = sco35_varno($file, $st);
+				if ( 0 > $v2 )
+					$v2 = sco35_varno_tbl( $file, $st );
 				$st++; // skip 0x7f
 			$count = sco35_calli($file, $st);
 			trace("NB $var1 , $var2 , $count");
 
-			$copy = array();
-			if ( isset($v1) )
-			{
-				for ( $i=0; $i < $count; $i++ )
-					$copy[$i] = $gp_pc["var"][$v1][$e1+$i];
-			}
-			else
-			{
-				for ( $i=0; $i < $count; $i++ )
-					$copy[$i] = $gp_pc["var"][$var1+$i];
-			}
-
-			if ( isset($v2) )
-			{
-				for ( $i=0; $i < $count; $i++ )
-					$gp_pc["var"][$v2][$e2+$i] = $copy[$i];
-			}
-			else
-			{
-				for ( $i=0; $i < $count; $i++ )
-					$gp_pc["var"][$var2+$i] = $copy[$i];
-			}
+			$copy = var_get($v1, $count);
+			var_put($v2, $copy);
 
 			return;
 		case 'D':

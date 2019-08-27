@@ -227,4 +227,24 @@ function RecurringTimer(callback, delay){
 	this.resume();
 }
 
+var arr = MyDiv.getElementsByTagName('script')
+for (var n = 0; n < arr.length; n++)
+	eval(arr[n].innerHTML) //run script inside div
+
+$.ajax({
+	type: 'GET',
+	url: 'response.php',
+	timeout: 2000,
+	success: function(data) {
+	  $("#content").html(data);
+	  myFunction();
+	},
+	error: function (XMLHttpRequest, textStatus, errorThrown) {
+	  alert("error retrieving content");
+	}
+
+if ( typeof x === "function" )
+	x();
+
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
 */
