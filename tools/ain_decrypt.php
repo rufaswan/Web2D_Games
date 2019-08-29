@@ -24,7 +24,7 @@ define("BIT8" , 0xff);
 define("BIT16", 0xffff);
 define("BIT24", 0xffffff);
 define("BIT32", 0xffffffff);
-
+//////////////////////////////
 // from System 4.0 SDK/Popolytan/DLL/Sys42VM.dll
 // sub_10001260
 class gal_key

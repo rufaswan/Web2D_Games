@@ -66,9 +66,10 @@ foreach ( $_REQUEST as $key=>$var )
 }
 //print_r($gp_init);
 
-define("PATH_JQUERY", "/inc/jquery-3.4.0.min.js");
-define("PATH_JPFONT", "/inc/mplus-1mn-063a.ttf");
-define("PATH_OGG_1S", "/inc/mono-1s.ogg");
+define("PATH_JQUERY", "inc/jquery-3.4.0.min.js");
+define("PATH_JPFONT", "inc/mplus-1mn-063a.ttf");
+define("PATH_OGG_1S", "inc/mono-1s.ogg");
+define("PATH_SJIS",   "inc/sjis.inc");
 
 require ROOT . "/inc/init_{$gp_init["engine"]}.php";
 //print_r($gp_init);

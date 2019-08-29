@@ -185,10 +185,12 @@ function findfile( $sprint , $num , $default )
 			$fn = sprintf($sprint, ($num >> 24), ($num >> 16), ($num >> 8), $num);
 			break;
 	}
-	if ( file_exists( ROOT . "/$fn" ) )
+	if ( empty($default) )
 		return $fn;
-	else
-		return $default;
+
+	if ( ! file_exists( ROOT . "/$fn" ) )
+		$fn = $default;
+	return $fn;
 }
 
 function pc_save( $ext, $pc )
@@ -228,60 +230,6 @@ function bit_and( $val, $flags )
 {
 	$r = $val & $flags;
 	return ( $r == $flags );
-}
-
-function var_put( $var, $num )
-{
-	global $gp_pc;
-	if ( ! is_array($num) )
-	{
-		$gp_pc["var"][$var] = $num;
-		return;
-	}
-
-	$len = count($num);
-	if ( is_array($var) )
-		list($v,$e) = $var;
-	else
-		$v = $var;
-
-	if ( is_array($gp_pc["var"][$v]) )
-	{
-		foreach ( $num as $k => $x )
-			$gp_pc["var"][$v][$e+$k] = $x;
-		return;
-	}
-	else
-	{
-		foreach ( $num as $k => $x )
-			$gp_pc["var"][$v+$e+$k] = $x;
-		return;
-	}
-}
-
-function var_get( $var, $len )
-{
-	global $gp_pc;
-	if ( $len == 1 )
-		return $gp_pc["var"][$var];
-
-	$ret = array();
-	if ( is_array($var) )
-		list($v,$e) = $var;
-	else
-		$v = $var;
-
-	if ( is_array($gp_pc["var"][$v]) )
-	{
-		for ( $i=0; $i < $len; $i++ )
-			$ret[] = $gp_pc["var"][$v][$e+$i];
-	}
-	else
-	{
-		for ( $i=0; $i < $len; $i++ )
-			$ret[] = $gp_pc["var"][$var+$i];
-	}
-	return $ret;
 }
 
 function var_math( $opr, $v1, $v2 )

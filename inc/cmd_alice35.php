@@ -84,13 +84,13 @@ function B_cmd35( &$file, &$st, &$run )
 		// B10 var_x,var_y:        メッセージを次に表示する座標を取得する。
 		case 10:
 			$st += 2;
-			$var_x = sco35_varno($file, $st);
+			list($v1,$e1) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$var_y = sco35_varno($file, $st);
+			list($v2,$e2) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			trace("text B10 $var_x , $var_y");
-			$gp_pc["var"][$var_x] = $gp_pc["T"][0];
-			$gp_pc["var"][$var_y] = $gp_pc["T"][1];
+			trace("text B10 $v1+$e1 , $v2+$e2");
+			sco35_var_put( $v1, $e1, $gp_pc["T"][0] );
+			sco35_var_put( $v2, $e2, $gp_pc["T"][1] );
 			return;
 	}
 	return;
@@ -121,31 +121,33 @@ function F_cmd35( &$file, &$st, &$run )
 		// F2,read_var,skip:        テーブルデータ数値取得(ベース移動,オフセット指定)
 		case 2:
 			$st += 2;
-			$read_var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$skip     = sco35_calli($file, $st);
+			$skip = sco35_calli($file, $st);
 
 			$ind = $gp_pc["F"][0];
 			$pos = $gp_pc["F"][1] + ($skip * 2);
 			sco35_load_sco( $ind );
 			$int = str2int( $sco_file[ $ind ], $pos, 2 );
-			trace("array F2 $read_var , $skip = $int");
-			$gp_pc["var"][$read_var] = $int;
+
+			trace("array F2 $v+$e , $skip = $int");
+			sco35_var_put( $v, $e, $int );
 			$gp_pc["F"][1] += 2;
 			return;
 		// F3,read_var,skip:        テーブルデータ数値取得(ベース固定,オフセット指定)
 		case 3:
 			$st += 2;
-			$read_var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$skip     = sco35_calli($file, $st);
+			$skip = sco35_calli($file, $st);
 
 			$ind = $gp_pc["F"][0];
 			$pos = $gp_pc["F"][1] + ($skip * 2);
 			sco35_load_sco( $ind );
 			$int = str2int( $sco_file[ $ind ], $pos, 2 );
-			trace("array F3 $read_var , $skip = $int");
-			$gp_pc["var"][$read_var] = $int;
+
+			trace("array F3 $v+$e , $skip = $int");
+			sco35_var_put( $v, $e, $int );
 			return;
 		// F4,read_var,count:        テーブルデータ数値取得(ベース移動,個数指定)
 		// F5,read_var,count:        テーブルデータ数値取得(ベース固定,個数指定)
@@ -265,7 +267,7 @@ function C_cmd35( &$file, &$st, &$run )
 			$destin_y = sco35_calli($file, $st);
 			trace("CC $sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y");
 			$src = array($sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y);
-			//sco35_cc_div_add( "_CC_", $src );
+			sco35_div_add( "_BG_", $src );
 			return;
 		// CE sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,effect_number,option,wait_flag:        エフェクト機能付きコピー           (CD)
 		case 'E':
@@ -280,6 +282,8 @@ function C_cmd35( &$file, &$st, &$run )
 			$option = sco35_calli($file, $st);
 			$wait_flag = sco35_calli($file, $st);
 			trace("CE $sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y , $effect_number , $option , $wait_flag");
+			$src = array($sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y);
+			sco35_div_add( "_BG_", $src );
 			return;
 		// CF start_x,start_y,lengs_x,lengs_y,color:        BOX-FILL
 		case 'F':
@@ -291,7 +295,7 @@ function C_cmd35( &$file, &$st, &$run )
 			$color   = sco35_calli($file, $st);
 			trace("CF $start_x , $start_y , $lengs_x , $lengs_y , $color");
 			$src = array($start_x , $start_y , $lengs_x , $lengs_y , $color);
-			sco35_cc_div_add( "_CF_", $src );
+			sco35_div_add( "_CLR_", $src );
 			return;
 		case 'K':
 			$type = ord( $file[$st+2] );
@@ -335,7 +339,7 @@ function C_cmd35( &$file, &$st, &$run )
 			$color = sco35_calli($file, $st);
 			trace("CP $start_x , $start_y , $color");
 			$src = array($start_x , $start_y , $color);
-			sco35_cc_div_add( "_CP_", $src );
+			sco35_div_add( "_CLR2_", $src );
 			return;
 		// CS sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,splite:        画面のスプライトコピー
 		case 'S':
@@ -372,26 +376,23 @@ function D_cmd35( &$file, &$st, &$run )
 		// DF      data_var,count,data        配列のクリア
 		case 'F':
 			$st += 2;
-			$v = sco35_varno($file, $st);
-			$e = 0;
-				if ( 0 > $v )
-					list($v,$e) = sco35_varno_tbl( $file, $st );
+			list($v,$e) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
-			$count    = sco35_calli($file, $st);
-			$data     = sco35_calli($file, $st);
+			$count = sco35_calli($file, $st);
+			$data  = sco35_calli($file, $st);
 			trace("data DF var[]_$v+$e , $count , $data");
-			$gp_pc["var"][$v+$e] = array_fill(0, $count , $data);
+			$gp_pc["page"][$v+$e] = array_fill(0, $count , $data);
 			return;
 		// DS      poin_var,data_var,位置,ページ        配列の設定 (DCコマンドを参照のこと)
 		case 'S':
 			$st += 2;
-			$poin_var = sco35_varno($file, $st);
+			list($v1,$e1) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$data_var = sco35_varno($file, $st);
+			list($v2,$e2) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$pos      = sco35_calli($file, $st);
-			$page     = sco35_calli($file, $st);
-			trace("data DS $poin_var , $data_var , $pos , $page");
+			$pos  = sco35_calli($file, $st);
+			$page = sco35_calli($file, $st);
+			trace("data DS $v1+$e1 , $v2+$e2 , $pos , $page");
 			return;
 	}
 	return;
@@ -437,14 +438,14 @@ function G_cmd35( &$file, &$st, &$run )
 		case 'S':
 			$st += 2;
 			$num = sco35_calli($file, $st);
-			$var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			trace("GS $num , $var + 4");
+			trace("GS $num , $v+$e += 4");
 			list($x,$y,$w,$h) = $gp_img_meta[$num];
-			$gp_pc["var"][$var+0] = $x;
-			$gp_pc["var"][$var+1] = $y;
-			$gp_pc["var"][$var+2] = $w;
-			$gp_pc["var"][$var+3] = $h;
+			sco35_var_put( $v, $e+0, $x );
+			sco35_var_put( $v, $e+1, $y );
+			sco35_var_put( $v, $e+2, $w );
+			sco35_var_put( $v, $e+3, $h );
 			return;
 	}
 
@@ -471,21 +472,37 @@ function G_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-// IC cursol_num,oldcursol        マウスカーソルの形状変更
-// IG var,code,num,reserve:        キー入力状態取得
 // IX var:        「次の選択肢まで進む」の状態取得
 // IY 0:        [次の選択肢まで進む]のフラグ解除
 // IY 2: 　次の選択肢まで進む状態のときに、選択肢もしくはマウスクリックでメッセージ送りを停止する様に指定
 // IY 3: 　次の選択肢まで進む状態のときに、選択肢もしくはマウスクリックでもメッセージ送りを停止しない様に指定
-// IZ start_x,start_y:        マウスカーソルの座標を変更する (マウスカーソルはスムーズに移動する)
 function I_cmd35( &$file, &$st, &$run )
 {
 	global $gp_pc, $gp_input, $gp_key;
 	switch( $file[$st+1] )
 	{
+		// IC cursol_num,oldcursol        マウスカーソルの形状変更
+		case 'C':
+			$st += 2;
+			$num = sco35_calli($file, $st);
+			$old = sco35_calli($file, $st);
+			trace("IC $num , $old");
+			return;
+		// IG var,code,num,reserve:        キー入力状態取得
+		case 'G':
+			$st += 2;
+			list($v,$e) = sco35_varno($file, $st);
+				$st++; // skip 0x7f
+			$code = sco35_calli($file, $st);
+			$num  = sco35_calli($file, $st);
+			$resv = sco35_calli($file, $st);
+			trace("IG $v+$e , $code , $num , $resv");
+			sco35_var_put( $v, $e, 1 );
+			return;
 		// IK num:        キー入力状態取得
 		// return RND = key
 		case 'K':
+			$bak = $st;
 			$num = ord( $file[$st+2] );
 			switch ( $num )
 			{
@@ -495,27 +512,44 @@ function I_cmd35( &$file, &$st, &$run )
 					if ( sco35_IK_bnez( $file, $st ) )
 						return;
 
+					if ( isset( $gp_pc["key"] ) )
+					{
+						$st += 3;
+						$key = $gp_pc["key"];
+						trace("IK $num wait = $key");
+						$gp_pc["var"][0] = $key;
+						unset( $gp_pc["key"] );
+						return;
+					}
+
 					if ( empty($gp_input) )
 					{
 						trace("IK $num wait = 0");
 						$gp_pc["var"][0] = 0;
-					}
-					else
-					{
-						if ( $gp_input[0] == "mouse" )
-						{
-							$gp_pc["mouse"] = array($gp_input[1], $gp_input[2]);
-							$key = $gp_key["enter"];
-						}
-						if ( $gp_input[0] == "key" )
-							$key = $gp_input[1];
-
-						$st += 3;
-						$gp_pc["var"][0] = $key;
-						$gp_input = array();
-						trace("IK $num wait = %d", $key);
 						return;
 					}
+
+					if ( $gp_input[0] == "mouse" )
+					{
+						$st += 3;
+						$key = $gp_key["enter"];
+						trace("IK $num wait = %d", $key);
+						$gp_pc["mouse"] = array($gp_input[1], $gp_input[2]);
+						$gp_pc["var"][0] = $key;
+						$gp_input = array();
+						return;
+					}
+
+					if ( $gp_input[0] == "key" )
+					{
+						$st += 3;
+						$key = $gp_input[1];
+						trace("IK $num wait = %d", $key);
+						$gp_pc["var"][0] = $key;
+						$gp_input = array();
+						return;
+					}
+
 					return;
 				// 0/1 wait for input data (2+3+4+5)
 				// 2 mouse input data
@@ -538,37 +572,56 @@ function I_cmd35( &$file, &$st, &$run )
 		case 'M':
 			$bak = $st;
 			$st += 2;
-			$cursol_x = sco35_varno($file, $st);
+			list($v1,$e1) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$cursol_y = sco35_varno($file, $st);
+			list($v2,$e2) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 
 			if ( isset( $gp_pc["mouse"] ) )
 			{
-				$gp_pc["var"][$cursol_x] = $gp_pc["mouse"][0];
-				$gp_pc["var"][$cursol_y] = $gp_pc["mouse"][1];
+				sco35_var_put( $v1, $e1, $gp_pc["mouse"][0] );
+				sco35_var_put( $v2, $e2, $gp_pc["mouse"][1] );
+				$gp_pc["var"][0] = $gp_key["enter"];
+				trace("IM $v1+$e2 , $v2+$e2 = %d", $gp_pc["var"][0]);
 				unset( $gp_pc["mouse"] );
+				return;
 			}
 
 			if ( empty( $gp_input ) )
 			{
-				trace("IM $cursol_x , $cursol_y = %d", $gp_pc["var"][0]);
+				trace("IM $v1+$e1 , $v2+$e2");
 				//$gp_pc["var"][0] = 0;
 				//$st = $bak;
 				return;
 			}
+
 			if ( $gp_input[0] == "mouse" )
 			{
-				$gp_pc["var"][$cursol_x] = $gp_input[1];
-				$gp_pc["var"][$cursol_y] = $gp_input[2];
-				$key = $gp_key["enter"];
+				sco35_var_put( $v1, $e1, $gp_input[1] );
+				sco35_var_put( $v2, $e2, $gp_input[2] );
+				$gp_pc["var"][0] = $gp_key["enter"];
+				$gp_input = array();
+				trace("IM $v1+$e1 , $v2+$e2");
+				return;
 			}
-			if ( $gp_input[0] == "key" )
-				$key = $gp_input[1];
 
-			$gp_pc["var"][0] = $key;
-			$gp_input = array();
-			trace("IM $cursol_x , $cursol_y = %d", $gp_pc["var"][0]);
+			// let IK handle this
+			if ( $gp_input[0] == "key" )
+			{
+				$gp_pc["key"] = $gp_input[1];
+				$gp_pc["var"][0] = $gp_input[1];
+				$gp_input = array();
+				trace("IM $v1+$e1 , $v2+$e2");
+				return;
+			}
+
+			return;
+		// IZ start_x,start_y:        マウスカーソルの座標を変更する (マウスカーソルはスムーズに移動する)
+		case 'Z':
+			$st += 2;
+			$start_x = sco35_calli($file, $st);
+			$start_y = sco35_calli($file, $st);
+			trace("IZ $start_x , $start_y");
 			return;
 	}
 	return;
@@ -606,17 +659,8 @@ function L_cmd35( &$file, &$st, &$run )
 				case 0: // int
 				case 1: // str
 					$st += 3;
-					$fn = "";
-					while ( $file[$st] != ':' )
-					{
-						$fn .= $file[$st];
-						$st++;
-					}
-					$st++;
-					$v = sco35_varno($file, $st);
-					$e = 0;
-						if ( 0 > $v )
-							list($v,$e) = sco35_varno_tbl( $file, $st );
+					$fn = sco35_ascii( $file, $st, ':' );
+					list($v,$e) = sco35_varno( $file, $st );
 						$st++; // skip 0x7f
 					$read_num  = sco35_calli($file, $st);
 					trace("LE $type , $fn , $v+$e , $read_num");
@@ -633,13 +677,11 @@ function L_cmd35( &$file, &$st, &$run )
 				case 0:
 					$st += 3;
 					$link_no   = sco35_calli($file, $st);
-					$v = sco35_varno($file, $st);
-						if ( 0 > $v )
-							list($v,$e) = sco35_varno_tbl( $file, $st );
+					list($v,$e) = sco35_varno( $file, $st );
 						$st++; // skip 0x7f
 					$read_num  = sco35_calli($file, $st);
 					trace("data LL $type , $link_no , $v+$e , $read_num");
-					sco35_load_data($link_no , $v+$e , $read_num);
+					$gp_pc["page"][$v+$e] = sco35_load_data($link_no , $read_num);
 					$gp_pc["var"][0] = 0;
 					return;
 			}
@@ -649,17 +691,18 @@ function L_cmd35( &$file, &$st, &$run )
 		case 'P':
 			$st += 2;
 			$num   = sco35_calli($file, $st);
-			$point = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			$count = sco35_calli($file, $st);
-			trace("LP $num , $point , $count");
+			trace("LP $num , $v+$e , $count");
+
 			$pc = pc_load( "sav{$num}" );
 			if ( empty($pc) )
 				$gp_pc["var"][0] = 255;
 			else
 			{
 				for ( $i=0; $i < $count; $i++ )
-					$gp_pc["var"][$point+$i] = $pc["var"][$point+$i];
+					$gp_pc["var"][$v+$e+$i] = $pc["var"][$v+$e+$i];
 				$gp_pc["var"][0] = 0;
 			}
 			return;
@@ -668,19 +711,19 @@ function L_cmd35( &$file, &$st, &$run )
 		case 'T':
 			$st += 2;
 			$num = sco35_calli($file, $st);
-			$var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			if ( file_exists( SAVE_FILE . "sav{$num}" ) )
 			{
 				$mod = time2date( filemtime(SAVE_FILE . "sav{$num}") );
-				$gp_pc["var"][$var+0] = $mod[0]; // year 1980-2079
-				$gp_pc["var"][$var+1] = $mod[1]; // month 1-12
-				$gp_pc["var"][$var+2] = $mod[2]; // days 1-31
-				$gp_pc["var"][$var+3] = $mod[3]; // hour 0-23
-				$gp_pc["var"][$var+4] = $mod[4]; // minute 0-59
-				$gp_pc["var"][$var+5] = $mod[5]; // second 0-59
+				sco35_var_put( $v, $e+0, $mod[0] ); // year 1980-2079
+				sco35_var_put( $v, $e+1, $mod[1] ); // month 1-12
+				sco35_var_put( $v, $e+2, $mod[2] ); // days 1-31
+				sco35_var_put( $v, $e+3, $mod[3] ); // hour 0-23
+				sco35_var_put( $v, $e+4, $mod[4] ); // minute 0-59
+				sco35_var_put( $v, $e+5, $mod[5] ); // second 0-59
 				$gp_pc["var"][0] = 0;
-				trace("LT $num , $var (%d-%d-%d %d:%d:%d)", $mod[0], $mod[1], $mod[2], $mod[3], $mod[4], $mod[5]);
+				trace("LT $num , $v+$e (%d-%d-%d %d:%d:%d)", $mod[0], $mod[1], $mod[2], $mod[3], $mod[4], $mod[5]);
 			}
 			else
 			{
@@ -794,8 +837,6 @@ function M_cmd35( &$file, &$st, &$run )
 // N= var1,num,count,var2:        var1から始まるcount個の変数からnumに等しければ1を、等しくなければ0を
 // N¥ var1,count:        var1から始まるcount個の変数の0,1を反転する
 // N‾ var,count:        ﾋﾞｯﾄ反転する
-// NO 0,dst_var,src_var,bit_num:        変数並びをビット列に圧縮する。
-// NO 1,dst_var,src_var,bit_num:        ビット列を変数並びに展開する。
 // NDM str,w64n:        数値w64nを文字列領域strへ文字列として反映
 // NDA str,w64n:        文字列領域strを数値としてw64nへ反映
 // NDH str,w64n:        数値w64nを画面に表示（パラメータの意味はＨコマンドに準拠）
@@ -807,20 +848,14 @@ function N_cmd35( &$file, &$st, &$run )
 		// NB var1,var2,count:        var1 から始まるcount個の変数へ
 		case 'B':
 			$st += 2;
-			$v1 = sco35_varno($file, $st);
-				if ( 0 > $v1 )
-					$v1 = sco35_varno_tbl( $file, $st );
+			list($v1,$e1) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
-			$v2 = sco35_varno($file, $st);
-				if ( 0 > $v2 )
-					$v2 = sco35_varno_tbl( $file, $st );
+			list($v2,$e2) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
 			$count = sco35_calli($file, $st);
-			trace("NB $var1 , $var2 , $count");
-
-			$copy = var_get($v1, $count);
-			var_put($v2, $copy);
-
+			trace("NB $v1+$e1 , $v2+$e2 , $count");
+			$copy = sco35_var_get($v1, $e1, $count);
+			sco35_var_put($v2, $e2, $copy);
 			return;
 		case 'D':
 			switch( $file[$st+2] )
@@ -836,11 +871,11 @@ function N_cmd35( &$file, &$st, &$run )
 				// NDD var,w64n:        verにw64nをコピーする（変数に読み出す）
 				case 'D':
 					$st += 3;
-					$var  = sco35_varno($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
 					$w64n = sco35_calli($file, $st);
-					trace("NDD $var , $w64n");
-					$gp_pc["pc"][$var] = $gp_pc["ND"][$w64n];
+					trace("NDD $v+$e , $w64n");
+					sco35_var_put($v, $e, $gp_pc["ND"][$w64n]);
 					return;
 				// ND+ w64n1,w64n2,w64n3:        w64n2とw64n3を足してw64n1に代入
 				case '+':
@@ -861,6 +896,24 @@ function N_cmd35( &$file, &$st, &$run )
 				case '/':
 					$opr = "div";
 					goto w64_math;
+					return;
+			}
+			return;
+		case 'O':
+			$type = ord( $file[$st+2] );
+			switch ( $type )
+			{
+				// NO 0,dst_var,src_var,bit_num:        変数並びをビット列に圧縮する。
+				// NO 1,dst_var,src_var,bit_num:        ビット列を変数並びに展開する。
+				case 0:
+				case 1:
+					$st += 3;
+					list($v1,$e1) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					list($v2,$e2) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					$bit_num = sco35_calli($file, $st);
+					trace("NO $type , $v1+$e1 , $v2+$e2 , $bit_num");
 					return;
 			}
 			return;
@@ -912,31 +965,29 @@ w64_math:
 	return;
 n_bits:
 	$st += 2;
-	$var1 = sco35_varno($file, $st);
-		if ( $var1 < 0 )
-			list($v,$e) = sco35_varno_tbl( $file, $st );
+	list($v1,$e1) = sco35_varno( $file, $st );
 		$st++; // skip 0x7f
 	$count = sco35_calli($file, $st);
-	$var2  = sco35_calli($file, $st);
-	trace("data N_$opr $var1 , $count , $var2");
-	if ( isset($v) )
-		sco35_n_math( $opr , $v , $var2 , $count , $e );
-	else
-		sco35_n_math( $opr , $var1 , $var2 , $count );
+	list($v2,$e2) = sco35_varno( $file, $st );
+		$st++; // skip 0x7f
+	trace("data N_$opr $v1+$e1 , $count , $v2+$e2");
+
+	$copy1 = sco35_var_get($v1, $e1, $count);
+	$copy2 = sco35_var_get($v2, $e2, $count);
+	sco35_n_math( $opr, $copy1, $copy2 );
+	sco35_var_put($v1, $e1, $copy1);
 	return;
 n_math:
 	$st += 2;
-	$var1 = sco35_varno($file, $st);
-		if ( $var1 < 0 )
-			list($v,$e) = sco35_varno_tbl( $file, $st );
+	list($v,$e) = sco35_varno( $file, $st );
 		$st++; // skip 0x7f
 	$num   = sco35_calli($file, $st);
 	$count = sco35_calli($file, $st);
-	trace("data N_$opr $var1 , $num , $count");
-	if ( isset($v) )
-		sco35_n_math( $opr , $v , $num , $count , $e );
-	else
-		sco35_n_math( $opr , $var1 , $num , $count );
+	trace("data N_$opr $v+$e , $num , $count");
+
+	$copy = sco35_var_get($v, $e, $count);
+	sco35_n_math( $opr, $copy, $num );
+	sco35_var_put($v, $e, $copy);
 	return;
 }
 
@@ -973,31 +1024,27 @@ function P_cmd35( &$file, &$st, &$run )
 		// PG ver,num1,num2:        ◆直接画面には反映されないので使用注意◆ CLUT_READ
 		case 'G':
 			$st += 2;
-			$var  = sco35_varno($file, $st);
-				if ( $var < 0 )
-					list($v,$e) = sco35_varno_tbl( $file, $st );
+			list($v,$e) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
 			$num1 = sco35_calli($file, $st);
 			$num2 = sco35_calli($file, $st);
-			trace("PG $var , $num1 , $num2");
+			trace("PG $v+$e , $num1 , $num2");
 			for ( $i=0; $i < $num2; $i++ )
 			{
-				$p = $var + ($i * 3);
-				$gp_pc["var"][$p+0] = 0;
-				$gp_pc["var"][$p+1] = 0;
-				$gp_pc["var"][$p+2] = 0;
+				$p = $e + ($i * 3);
+				sco35_var_put($v, $p+0, 0);
+				sco35_var_put($v, $p+1, 0);
+				sco35_var_put($v, $p+2, 0);
 			}
 			return;
 		// PP ver,num1,num2:        ◆直接画面には反映されないので使用注意◆ CLUT_WRITE
 		case 'P':
 			$st += 2;
-			$var  = sco35_varno($file, $st);
-				if ( $var < 0 )
-					list($v,$e) = sco35_varno_tbl( $file, $st );
+			list($v,$e) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
 			$num1 = sco35_calli($file, $st);
 			$num2 = sco35_calli($file, $st);
-			trace("PP $var , $num1 , $num2");
+			trace("PP $v+$e , $num1 , $num2");
 			return;
 		// PS Plane,Red,Green,Blue:        ◆直接画面には反映されないので使用注意◆
 		case 'S':
@@ -1007,7 +1054,8 @@ function P_cmd35( &$file, &$st, &$run )
 			$green = sco35_calli($file, $st);
 			$blue  = sco35_calli($file, $st);
 			trace("PS $plane , $red , $green , $blue");
-			$gp_pc["PS"][$plane] = array($red , $green , $blue);
+			$clr = sprintf("#%02x%02x%02x", $red , $green , $blue);
+			$gp_pc["PS"][$plane] = $clr;
 			return;
 		case 'W':
 			$type = ord( $file[$st+2] );
@@ -1063,12 +1111,10 @@ function Q_cmd35( &$file, &$st, &$run )
 						$st++;
 					}
 					$st++;
-					$start_var = sco35_varno($file, $st);
-						if ( $start_var < 0 )
-							list($v,$e) = sco35_varno_tbl( $file, $st );
+					list($v,$e) = sco35_varno( $file, $st );
 						$st++; // skip 0x7f
 					$write_num  = sco35_calli($file, $st);
-					trace("QE $type , $fn , $start_var , $write_num");
+					trace("QE $type , $fn , $v+$e , $write_num");
 					$gp_pc["var"][0] = 255;
 					return;
 			}
@@ -1077,7 +1123,6 @@ function Q_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-// SL num:        次の音楽(ＣＤ)のループ回数を指定する
 // SM no:        ＰＣＭデータをメモリ上に乗せる。
 // SO var:        ＰＣＭデバイスのサポート情報を取得
 // SQ noL, noR, loop:        左右別々のＰＣＭデータを合成して演奏する
@@ -1090,42 +1135,50 @@ function S_cmd35( &$file, &$st, &$run )
 		// SC var:        ＣＤの再生位置を取得する
 		case 'C':
 			$st += 2;
-			$var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			trace("SC $var + 4");
-			$gp_pc["var"][$var+0] = 999; // track
-			$gp_pc["var"][$var+1] = 999; // min
-			$gp_pc["var"][$var+2] = 999; // sec
-			$gp_pc["var"][$var+3] = 999; // frame
+			trace("bgm SC $v+$e += 4");
+			sco35_var_put($v, $e+0, 999); // track
+			sco35_var_put($v, $e+1, 999); // min
+			sco35_var_put($v, $e+2, 999); // sec
+			sco35_var_put($v, $e+3, 999); // frame
 			return;
 		case 'G':
-		$type = ord( $file[$st+2] );
-		switch ( $type )
-		{
-			// SG 0,0:        演奏中のＭＩＤＩを停止する
-			case 0:
-				$st += 3;
-				$num = sco35_calli($file, $st);
-				trace("midi SG 0");
-				$gp_pc["SG"] = array(0,0);
-				return;
-			// SG 1,num:        ＭＩＤＩを演奏する
-			case 1:
-				$st += 3;
-				$num = sco35_calli($file, $st);
-				trace("midi SG 1 , $num");
-				$gp_pc["SG"] = array($num,1);
-				return;
-			// SG 3,0:        演奏中のＭＩＤＩを一時停止する
-			// SG 3,1:        一時停止中のＭＩＤＩの一時停止を解除する
-			case 3:
-				$st += 3;
-				$num = sco35_calli($file, $st);
-				trace("midi SG 3 , $num");
-				$gp_pc["SG"][1] = $num;
-				return;
-			// SG 2,var:        ＭＩＤＩ演奏位置を1/100秒単位で取得する
-		}
+			$type = ord( $file[$st+2] );
+			switch ( $type )
+			{
+				// SG 0,0:        演奏中のＭＩＤＩを停止する
+				case 0:
+					$st += 3;
+					$num = sco35_calli($file, $st);
+					trace("midi SG 0");
+					$gp_pc["SG"] = array(0,0);
+					return;
+				// SG 1,num:        ＭＩＤＩを演奏する
+				case 1:
+					$st += 3;
+					$num = sco35_calli($file, $st);
+					trace("midi SG 1 , $num");
+					$gp_pc["SG"] = array($num,1);
+					return;
+				// SG 3,0:        演奏中のＭＩＤＩを一時停止する
+				// SG 3,1:        一時停止中のＭＩＤＩの一時停止を解除する
+				case 3:
+					$st += 3;
+					$num = sco35_calli($file, $st);
+					trace("midi SG 3 , $num");
+					$gp_pc["SG"][1] = $num;
+					return;
+				// SG 2,var:        ＭＩＤＩ演奏位置を1/100秒単位で取得する
+			}
+			return;
+		// SL num:        次の音楽(ＣＤ)のループ回数を指定する
+		case 'L':
+			$st += 2;
+			$num = sco35_calli($file, $st);
+			trace("bgm SP $num");
+			$gp_pc["SL"] = $num;
+			return;
 		// SP no,loop:        ＰＣＭデータを演奏する
 		case 'P':
 			$st += 2;
@@ -1150,13 +1203,13 @@ function S_cmd35( &$file, &$st, &$run )
 		// SU var1,var2:        ＰＣＭの演奏状態を変数 var1 , var2 に返す
 		case 'U':
 			$st += 2;
-			$var1 = sco35_varno($file, $st);
+			list($v1,$e1) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			$var2 = sco35_varno($file, $st);
+			list($v2,$e2) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
-			trace("wave SU $var1 , $var2");
-			$gp_pc["var"][$var1] = 0;
-			$gp_pc["var"][$var2] = 100;
+			trace("wave SU $v1+$e1 , $v2+$e2");
+			sco35_var_put($v1, $e1, 0);
+			sco35_var_put($v2, $e2, 100);
 			return;
 	}
 	return;
@@ -1175,35 +1228,31 @@ function U_cmd35( &$file, &$st, &$run )
 		// stack pop
 		case 'G':
 			$st += 2;
-			$var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			$cali = sco35_calli($file, $st);
-			trace("UG $var , $cali");
-			foreach ( $gp_pc["US"] as $k => $v )
-				$gp_pc["var"][$k] = $v;
+			trace("UG $v+$e , $cali");
+			foreach ( $gp_pc["US"] as $k => $n )
+				$gp_pc["var"][$k] = $n;
 			unset( $gp_pc["US"] );
 			return;
 		// US 変数,cali:        ◆システム制御コマンドにつき通常は使用しないこと◆
 		// stack push
 		case 'S':
 			$st += 2;
-			$var = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			$cali = sco35_calli($file, $st);
-			trace("US $var , $cali");
+			trace("US $v+$e , $cali");
 			$gp_pc["US"] = array();
 			for ( $i=0; $i < $cali; $i++ )
-				$gp_pc["US"][$var+$i] = $gp_pc["var"][$var+$i];
+				$gp_pc["US"][$v+$e+$i] = $gp_pc["var"][$v+$e+$i];
 			return;
 	}
 	return;
 }
 
 // VF:        ユニットマップの画面への反映
-// VX 0,nPage,x0Unit,y0Unit:        ユニットＣＧ取得位置の変更 (VP x0Unit,y0Unit)
-// VX 1,nPage,nxUnit,nyUnit:        ユニットＣＧ取得並び個数の変更 (VP nxUnit,nyUnit)
-// VX 2,nPage,bSpCol,reserve:        ユニットＣＧスプライト色変更 (VP bSpCol)
-// VX 3,nPage,0,0:        VFのユニットマップ全反映指定
 // VT sp,sa,sx,sy,cx,cy,dp,da,dx,dy:        ユニットマップデータを矩形指定でコピーする
 // VIC x,y,cx,cy:        ユニットマップの画面反映(ユニットマップ座標指定)
 // VIP x,y,cx,cy:        ユニットマップの画面反映(画面座標指定)
@@ -1280,18 +1329,17 @@ function V_cmd35( &$file, &$st, &$run )
 			trace("VP $nPage , $x0Unit , $y0Unit , $nxUnit , $nyUnit , $bSpCol");
 			$src = array( $nPage , $x0Unit , $y0Unit , $nxUnit , $nyUnit , $bSpCol );
 			$gp_pc["VP"][$nPage] = sco35_vp_g0( $src );
+			$gp_pc["VP"][$nPage]["set"] = $src;
 			return;
 		// VR      nPage,nType,var:        変数→MAPデータ転送
 		case 'R':
 			$st += 2;
 			$nPage = sco35_calli($file, $st);
 			$nType = sco35_calli($file, $st);
-			$var = sco35_varno($file, $st);
-				if ( $var < 0 )
-					list($v,$e) = sco35_varno_tbl( $file, $st );
+			list($v,$e) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
-			trace("VR $nPage , $nType , $var");
-			$gp_pc["VR"][$nPage][$nType] = $var;
+			trace("VR $nPage , $nType , $v+$e");
+			$gp_pc["VR"][$nPage][$nType] = $v+$e;
 			return;
 		// VS nPage,nType,x,y,wData:        ユニットマップへの値のセット
 		// return RND previous wData
@@ -1308,8 +1356,8 @@ function V_cmd35( &$file, &$st, &$run )
 			list($n,$x0,$y0,$mx,$my,$ux,$uy) = $gp_pc["VC"];
 			$pos = ($y * $mx) + $x;
 
-			$bak = $gp_pc["var"][$varno][$pos];
-			$gp_pc["var"][$varno][$pos] = $wData;
+			$bak = $gp_pc["page"][$varno][$pos];
+			$gp_pc["page"][$varno][$pos] = $wData;
 			$gp_pc["var"][0] = $bak;
 			return;
 		// VV nPage,fEnable:        ユニットマップの層ごとの表示有効／無効の切り替え
@@ -1325,16 +1373,50 @@ function V_cmd35( &$file, &$st, &$run )
 			$st += 2;
 			$nPage = sco35_calli($file, $st);
 			$nType = sco35_calli($file, $st);
-			$var = sco35_varno($file, $st);
-				if ( $var < 0 )
-					list($v,$e) = sco35_varno_tbl( $file, $st );
+			list($v,$e) = sco35_varno( $file, $st );
 				$st++; // skip 0x7f
-			trace("VW $nPage , $nType , $var");
-			if ( isset($v) )
-				$gp_pc["VR"][$nPage][$nType] = $v+$e;
-			else
-				$gp_pc["VR"][$nPage][$nType] = $var;
+			trace("VW $nPage , $nType , $v+$e");
+			$gp_pc["VR"][$nPage][$nType] = $v+$e;
 			//unset( $gp_pc["VR"][$nPage][$nType] );
+			return;
+		case 'X':
+			$bak = $st;
+			$st += 2;
+			$type = sco35_calli($file, $st);
+			switch ( $type )
+			{
+				// VX 0,nPage,x0Unit,y0Unit:        ユニットＣＧ取得位置の変更 (VP x0Unit,y0Unit)
+				case 0:
+					$nPage  = sco35_calli($file, $st);
+					$x0Unit = sco35_calli($file, $st);
+					$y0Unit = sco35_calli($file, $st);
+					trace("VX 0 , $nPage , $x0Unit , $y0Unit");
+
+					$src = $gp_pc["VP"][$nPage]["set"];
+					$src[1] = $x0Unit;
+					$src[2] = $y0Unit;
+
+					//$gp_pc["VP"][$nPage] = sco35_vp_g0( $src );
+					$gp_pc["VP"][$nPage]["set"] = $src;
+					return;
+				// VX 1,nPage,nxUnit,nyUnit:        ユニットＣＧ取得並び個数の変更 (VP nxUnit,nyUnit)
+				case 1:
+					$nPage  = sco35_calli($file, $st);
+					$nxUnit = sco35_calli($file, $st);
+					$nyUnit = sco35_calli($file, $st);
+					trace("VX 1 , $nPage , $nxUnit , $nyUnit");
+
+					$src = $gp_pc["VP"][$nPage]["set"];
+					$src[3] = $nxUnit;
+					$src[4] = $nyUnit;
+
+					//$gp_pc["VP"][$nPage] = sco35_vp_g0( $src );
+					$gp_pc["VP"][$nPage]["set"] = $src;
+					return;
+				// VX 2,nPage,bSpCol,reserve:        ユニットＣＧスプライト色変更 (VP bSpCol)
+				// VX 3,nPage,0,0:        VFのユニットマップ全反映指定
+			}
+			$st = $bak;
 			return;
 		case 'Z':
 			$type = ord( $file[$st+2] );
@@ -1347,9 +1429,25 @@ function V_cmd35( &$file, &$st, &$run )
 					$unit_no = sco35_calli($file, $st);
 					trace("VZ 1 , $nPage , $unit_no");
 					return;
-				// VZ 0,nPage,reserve:        透明パターン番号指定解除(ﾃﾞﾌｫﾙﾄでは解除されている)
 				// VZ 2,x0Map,y0Map:        ユニットマップ表示位置の変更 (VC x0Map,y0Map)
+				case 2:
+					$st += 3;
+					$x0Map = sco35_calli($file, $st);
+					$y0Map = sco35_calli($file, $st);
+					trace("VZ 2 , $x0Map , $y0Map");
+					$gp_pc["VC"][1] = $x0Map;
+					$gp_pc["VC"][2] = $y0Map;
+					return;
 				// VZ 3,cxUnit,cyUnit:        ユニットサイズの変更 (VC cxUnit,cyUnit)
+				case 3:
+					$st += 3;
+					$cxUnit = sco35_calli($file, $st);
+					$cyUnit = sco35_calli($file, $st);
+					trace("VZ 3 , $cxUnit , $cyUnit");
+					$gp_pc["VC"][5] = $cxUnit;
+					$gp_pc["VC"][6] = $cyUnit;
+					return;
+				// VZ 0,nPage,reserve:        透明パターン番号指定解除(ﾃﾞﾌｫﾙﾄでは解除されている)
 			}
 			return;
 	}
@@ -1500,17 +1598,18 @@ function Z_cmd35( &$file, &$st, &$run )
 				// ZT0,var:        現在の日時を var0〜var6 の変数列に返す。
 				case 0:
 					$st += 3;
-					$var = sco35_calli($file, $st);
-					//$var = sco35_varno($file, $st);
-						//$st++; // skip 0x7f
-					trace("ZT $type , $var + 6");
-					//$gp_pc["var"][$var+0] = 2079; // year 1980-2079
-					//$gp_pc["var"][$var+1] = 12; // month 1-12
-					//$gp_pc["var"][$var+2] = 31; // days 1-31
-					//$gp_pc["var"][$var+3] = 23; // hour 0-23
-					//$gp_pc["var"][$var+4] = 59; // minute 0-59
-					//$gp_pc["var"][$var+5] = 59; // second 0-59
-					//$gp_pc["var"][$var+6] = 7; // day 1-7:Sun-Sat
+					//$var = sco35_calli($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("ZT $type , $v+$e += 6");
+					$time = time2date( time() );
+					sco35_var_put( $v, $e+0, $time[0] ); // year 1980-2079
+					sco35_var_put( $v, $e+1, $time[1] ); // month 1-12
+					sco35_var_put( $v, $e+2, $time[2] ); // days 1-31
+					sco35_var_put( $v, $e+3, $time[3] ); // hour 0-23
+					sco35_var_put( $v, $e+4, $time[4] ); // minute 0-59
+					sco35_var_put( $v, $e+5, $time[5] ); // second 0-59
+					sco35_var_put( $v, $e+6, 1 ); // day 1-7:Sun-Sat
 					return;
 				// ZT1,n:        タイマーを n の数値でクリアする
 				case 1:
@@ -1527,10 +1626,10 @@ function Z_cmd35( &$file, &$st, &$run )
 				case 4:
 				case 5:
 					$st += 3;
-					$var = sco35_varno($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
 					trace("ZT $type , $var");
-					$gp_pc["var"][$var] = 999;
+					sco35_var_put( $v, $e, 999 );
 					return;
 			}
 		// ZW sw:        CAPS 状態の内部的制御を変更する。
@@ -1560,10 +1659,10 @@ function Z_cmd35( &$file, &$st, &$run )
 				// ZZ1,var:        現在の動作機種コードを var に返す
 				case 1:
 					$st += 3;
-					$var = sco35_varno($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
-					trace("ZZ 1 , $var");
-					$gp_pc["var"][$var] = 1; // windows
+					trace("ZZ 1 , $v+$e");
+					sco35_var_put( $v, $e, 1 ); // windows
 					return;
 				// ZZ2,num:     (新規)        機種文字列を文字列領域 num に返す（ＭＡＸ１２文字）
 				case 2:
@@ -1574,9 +1673,9 @@ function Z_cmd35( &$file, &$st, &$run )
 				// ZZ3,var:        WINDOWSの全画面サイズや表示色数を変数列に返す
 				case 3:
 					$st += 3;
-					$var = sco35_varno($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
-					trace("ZZ 3 , $var");
+					trace("ZZ 3 , $v+$e");
 					return;
 				// ZZ4,var:        ＤＩＢ の全画面 サイズや色数を変数列に返す
 				// ZZ5,var:        ＳＹＳＴＥＭ３．５用表示画面 の サイズや色数を変数列に返す
@@ -1593,7 +1692,7 @@ function Z_cmd35( &$file, &$st, &$run )
 function sco35_cmd( &$id, &$st, &$run, &$select )
 {
 	$func = __FUNCTION__;
-	global $sco_file, $gp_pc, $gp_input;
+	global $sco_file, $gp_pc, $gp_input, $gp_key;
 	$file = &$sco_file[$id];
 	switch( $file[$st] )
 	{
@@ -1659,23 +1758,10 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 
 		case '!': // 0x21
 			$st++;
-			$varno = sco35_varno($file, $st);
-			if ( $varno < 0 )
-			{
-				list($v,$e) = sco35_varno_tbl( $file, $st );
-				$exp = sco35_calli($file, $st);
-				trace("var_%d[ %d ] = $exp", $v, $e);
-				if ( is_array( $gp_pc["var"][$v] ) )
-					$gp_pc["var"][$v][$e] = $exp;
-				else
-					$gp_pc["var"][$v+$e] = $exp;
-			}
-			else
-			{
-				$exp = sco35_calli($file, $st);
-				trace("var_$varno = $exp");
-				$gp_pc["var"][$varno] = $exp;
-			}
+			list($v,$e) = sco35_varno($file, $st);
+			$exp = sco35_calli($file, $st);
+			trace("var_$v+$e = $exp");
+			sco35_var_put( $v, $e, $exp );
 			return;
 		case ' ': // 0x20
 			$jp = sco35_sjis($file, $st);
@@ -1713,6 +1799,14 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			return;
 		// ]        選択肢を開く
 		case ']': // 0x5d
+			if ( isset( $gp_pc["select"]['B'] ) )
+				unset( $gp_pc["select"]['B'] );
+
+			$gp_pc["select"]['B'] = array(
+				$st + 1,
+				base64_encode("BACK"),
+			);
+
 			if ( ! empty( $gp_input ) )
 			{
 				if ( $gp_input[0] == "select" )
@@ -1727,15 +1821,6 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 						sco35_text_add( "_NEXT_" );
 						return;
 					}
-				}
-				if ( $gp_input[0] == "key" )
-				{
-					$st++;
-					trace("select back");
-					$gp_pc["select"] = array();
-					$gp_input = array();
-					sco35_text_add( "_NEXT_" );
-					return;
 				}
 			}
 			trace("select menu");
@@ -1758,7 +1843,7 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			if ( $type == 0 )
 				$st += 2;
 			$done  = str2int( $file, $st, 4 );
-			$start = sco35_varno($file, $st);
+			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			$end   = sco35_calli($file, $st);
 			$sign  = sco35_calli($file, $st);
@@ -1767,9 +1852,9 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			if ( $sign ) // i++
 			{
 				if ( $type )
-					$gp_pc["var"][$start] += $step;
+					$gp_pc["var"][$v+$e] += $step;
 
-				$var = $gp_pc["var"][$start];
+				$var = $gp_pc["var"][$v+$e];
 				if ( $var <= $end )
 					trace("for ($var += $step) < $end");
 				else
@@ -1782,9 +1867,9 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			else // i--
 			{
 				if ( $type )
-					$gp_pc["var"][$start] -= $step;
+					$gp_pc["var"][$v+$e] -= $step;
 
-				$var = $gp_pc["var"][$start];
+				$var = $gp_pc["var"][$v+$e];
 				if ( $var >= $end )
 					trace("for ($var -= $step) > $end");
 				else
@@ -1830,10 +1915,10 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 					$gp_pc["pc"] = $jal;
 					return;
 				case 0xffff:
-					$var = sco35_varno($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
-					trace("return $var = var");
-					$gp_pc["var"][$var] = $gp_pc["return"];
+					trace("return $v+$e = var");
+					sco35_var_put($v, $e, $gp_pc["return"]);
 					return;
 				default:
 					$label = str2int( $file, $st, 4 );

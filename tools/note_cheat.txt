@@ -9,6 +9,7 @@
 	cheat[] = 107,65000,RANCE EXP
 	cheat[] = 125,65000,SHILL EXP
 === [alice35] Rance 3 ===
+=== [alice35] Rance 4 ===
 === [alice35] Kichiku Rance ===
 === [alice35] Toushin Toshi ===
 	cheat[] = 132,4,DEBUG
