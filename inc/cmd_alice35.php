@@ -176,6 +176,12 @@ function J_cmd35( &$file, &$st, &$run )
 		// J2 x,y:        ＧコマンドでのＣＧ表示開始座標を指定する (絶対座標指定)
 		// J3 x,y:        ＧコマンドでのＣＧ表示開始座標を指定する (相対指定)
 		// J4:        J2ｺﾏﾝﾄﾞ･J3ｺﾏﾝﾄﾞによる座標指定を解除する
+/*
+			if ( isset( $gp_pc["J"][2] ) )
+				unset( $gp_pc["J"][2] );
+			if ( isset( $gp_pc["J"][3] ) )
+				unset( $gp_pc["J"][3] );
+*/
 	}
 	return;
 }
@@ -211,7 +217,7 @@ function Y_cmd35( &$file, &$st, &$run )
 			}
 			return;
 		// Y3,n:   −−−今後なるべく使用しない様にしてください−−− sleep
-		//   return RND key
+		//   Y3 return RND key
 		//   => ZT20 , ZT21
 		case 3:
 			$n = sco35_calli($file, $st);
@@ -219,7 +225,7 @@ function Y_cmd35( &$file, &$st, &$run )
 			$gp_pc["var"][0] = 0;
 			return;
 		// Y4,n:   −−−代替えコマンド策定中−−−
-		//   return RND rand() [1-n]
+		//   Y4 return RND rand() [1-n]
 		//   SYS 3.6+ => ZR
 		case 4:
 			$n = sco35_calli($file, $st);
@@ -472,10 +478,6 @@ function G_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-// IX var:        「次の選択肢まで進む」の状態取得
-// IY 0:        [次の選択肢まで進む]のフラグ解除
-// IY 2: 　次の選択肢まで進む状態のときに、選択肢もしくはマウスクリックでメッセージ送りを停止する様に指定
-// IY 3: 　次の選択肢まで進む状態のときに、選択肢もしくはマウスクリックでもメッセージ送りを停止しない様に指定
 function I_cmd35( &$file, &$st, &$run )
 {
 	global $gp_pc, $gp_input, $gp_key;
@@ -500,7 +502,7 @@ function I_cmd35( &$file, &$st, &$run )
 			sco35_var_put( $v, $e, 1 );
 			return;
 		// IK num:        キー入力状態取得
-		// return RND = key
+		//   IK return RND = key
 		case 'K':
 			$bak = $st;
 			$num = ord( $file[$st+2] );
@@ -568,7 +570,7 @@ function I_cmd35( &$file, &$st, &$run )
 			}
 			return;
 		// IM cursol_x,cursol_y        マウスカーソルの座標取得
-		//   return RND = left/right click
+		//   IM return RND = left/right click
 		case 'M':
 			$bak = $st;
 			$st += 2;
@@ -616,6 +618,22 @@ function I_cmd35( &$file, &$st, &$run )
 			}
 
 			return;
+		// IX var:        「次の選択肢まで進む」の状態取得
+		case 'X':
+			$st += 2;
+			list($v,$e) = sco35_varno( $file, $st );
+				$st++; // skip 0x7f
+			trace("IX $v+$e");
+			sco35_var_put( $v, $e, 0 );
+			return;
+		// IY 0:        [次の選択肢まで進む]のフラグ解除
+		// IY 2: 　次の選択肢まで進む状態のときに、選択肢もしくはマウスクリックでメッセージ送りを停止する様に指定
+		// IY 3: 　次の選択肢まで進む状態のときに、選択肢もしくはマウスクリックでもメッセージ送りを停止しない様に指定
+		case 'Y':
+			$st += 2;
+			$type = sco35_calli($file, $st);
+			trace("IY $type");
+			return;
 		// IZ start_x,start_y:        マウスカーソルの座標を変更する (マウスカーソルはスムーズに移動する)
 		case 'Z':
 			$st += 2;
@@ -636,7 +654,7 @@ function L_cmd35( &$file, &$st, &$run )
 	switch( $file[$st+1] )
 	{
 		// LD num:        セーブデータをロードする。（全ロード）
-		//   return RND 0 = OK , 200 > ERROR
+		//   LD return RND 0 = OK , 200 > ERROR
 		case 'D':
 			$st += 2;
 			$num = sco35_calli($file, $st);
@@ -669,7 +687,7 @@ function L_cmd35( &$file, &$st, &$run )
 			}
 			return;
 		// LL 0,link_no,start_var,read_num:        変数の値をリンクファイルから読み込む
-		//   return RND 0 = OK , 200 > ERROR
+		//   LL return RND 0 = OK , 200 > ERROR
 		case 'L':
 			$type = ord( $file[$st+2] );
 			switch ( $type )
@@ -687,7 +705,7 @@ function L_cmd35( &$file, &$st, &$run )
 			}
 			return;
 		// LP num,point,count:        セーブデータの一部分をロードする。(数値変数部)
-		//   return RND 0 = OK , 200 > ERROR
+		//   LP return RND 0 = OK , 200 > ERROR
 		case 'P':
 			$st += 2;
 			$num   = sco35_calli($file, $st);
@@ -707,7 +725,7 @@ function L_cmd35( &$file, &$st, &$run )
 			}
 			return;
 		// LT num,var:        タイムスタンプの読み込み
-		//   return RND 0 = OK , 200 > ERROR
+		//   LT return RND 0 = OK , 200 > ERROR
 		case 'T':
 			$st += 2;
 			$num = sco35_calli($file, $st);
@@ -769,7 +787,7 @@ function M_cmd35( &$file, &$st, &$run )
 				$gp_pc["var"][0] = 0;
 			return;
 		// MI dst_no,max_len,title:        ユーザーによる文字列の入力
-		// return RND strlen
+		//   MI return RND strlen
 		case 'I':
 			$st += 2;
 			$dst_no  = sco35_calli($file, $st);
@@ -1029,13 +1047,6 @@ function P_cmd35( &$file, &$st, &$run )
 			$num1 = sco35_calli($file, $st);
 			$num2 = sco35_calli($file, $st);
 			trace("PG $v+$e , $num1 , $num2");
-			for ( $i=0; $i < $num2; $i++ )
-			{
-				$p = $e + ($i * 3);
-				sco35_var_put($v, $p+0, 0);
-				sco35_var_put($v, $p+1, 0);
-				sco35_var_put($v, $p+2, 0);
-			}
 			return;
 		// PP ver,num1,num2:        ◆直接画面には反映されないので使用注意◆ CLUT_WRITE
 		case 'P':
@@ -1087,7 +1098,7 @@ function Q_cmd35( &$file, &$st, &$run )
 	switch( $file[$st+1] )
 	{
 		// QD num:        変数領域などのデータをセーブする。（全セーブ）
-		// return RND 1 = OK , 200 > ERROR
+		//   QD return RND 1 = OK , 200 > ERROR
 		case 'D':
 			$st += 2;
 			$num = sco35_calli($file, $st);
@@ -1104,13 +1115,7 @@ function Q_cmd35( &$file, &$st, &$run )
 				case 0: // int
 				case 1: // str
 					$st += 3;
-					$fn = "";
-					while ( $file[$st] != ':' )
-					{
-						$fn .= $file[$st];
-						$st++;
-					}
-					$st++;
+					$fn = sco35_ascii( $file, $st, ':' );
 					list($v,$e) = sco35_varno( $file, $st );
 						$st++; // skip 0x7f
 					$write_num  = sco35_calli($file, $st);
@@ -1148,18 +1153,21 @@ function S_cmd35( &$file, &$st, &$run )
 			switch ( $type )
 			{
 				// SG 0,0:        演奏中のＭＩＤＩを停止する
-				case 0:
-					$st += 3;
-					$num = sco35_calli($file, $st);
-					trace("midi SG 0");
-					$gp_pc["SG"] = array(0,0);
-					return;
 				// SG 1,num:        ＭＩＤＩを演奏する
+				case 0:
 				case 1:
 					$st += 3;
 					$num = sco35_calli($file, $st);
 					trace("midi SG 1 , $num");
-					$gp_pc["SG"] = array($num,1);
+					$gp_pc["SG"] = $num;
+					return;
+				// SG 2,var:        ＭＩＤＩ演奏位置を1/100秒単位で取得する
+				case 2:
+					$st += 3;
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("midi SG 2 , $v+$e");
+					sco35_var_put($v, $e, 999);
 					return;
 				// SG 3,0:        演奏中のＭＩＤＩを一時停止する
 				// SG 3,1:        一時停止中のＭＩＤＩの一時停止を解除する
@@ -1167,9 +1175,7 @@ function S_cmd35( &$file, &$st, &$run )
 					$st += 3;
 					$num = sco35_calli($file, $st);
 					trace("midi SG 3 , $num");
-					$gp_pc["SG"][1] = $num;
 					return;
-				// SG 2,var:        ＭＩＤＩ演奏位置を1/100秒単位で取得する
 			}
 			return;
 		// SL num:        次の音楽(ＣＤ)のループ回数を指定する
@@ -1177,7 +1183,6 @@ function S_cmd35( &$file, &$st, &$run )
 			$st += 2;
 			$num = sco35_calli($file, $st);
 			trace("bgm SP $num");
-			$gp_pc["SL"] = $num;
 			return;
 		// SP no,loop:        ＰＣＭデータを演奏する
 		case 'P':
@@ -1208,8 +1213,8 @@ function S_cmd35( &$file, &$st, &$run )
 			list($v2,$e2) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			trace("wave SU $v1+$e1 , $v2+$e2");
-			sco35_var_put($v1, $e1, 0);
-			sco35_var_put($v2, $e2, 100);
+			sco35_var_put($v1, $e1, 0); // 0=stop , 1=play
+			sco35_var_put($v2, $e2, 100); // timer 1/100
 			return;
 	}
 	return;
@@ -1262,7 +1267,7 @@ function V_cmd35( &$file, &$st, &$run )
 	switch( $file[$st+1] )
 	{
 		// VC nPageNum,x0Map,y0Map,cxMap,cyMap,cxUnit,cyUnit:        ユニットマップディスプレイ表示領域の設定 （転送先設定）
-		// return RND 0 = ERROR , 1 = OK
+		//   VC return RND 0 = ERROR , 1 = OK
 		case 'C':
 			$st += 2;
 			$nPageNum = sco35_calli($file, $st);
@@ -1290,7 +1295,7 @@ function V_cmd35( &$file, &$st, &$run )
 			sco35_vp_div_add( $src );
 			return;
 		// VG nPage,nType,x,y:        ユニットマップの値の取得
-		// return RND Data
+		//   VG return RND Data
 		case 'G':
 			$st += 2;
 			$nPage = sco35_calli($file, $st);
@@ -1342,7 +1347,7 @@ function V_cmd35( &$file, &$st, &$run )
 			$gp_pc["VR"][$nPage][$nType] = $v+$e;
 			return;
 		// VS nPage,nType,x,y,wData:        ユニットマップへの値のセット
-		// return RND previous wData
+		//   VS return RND previous wData
 		case 'S':
 			$st += 2;
 			$nPage = sco35_calli($file, $st);
@@ -1644,7 +1649,7 @@ function Z_cmd35( &$file, &$st, &$run )
 			switch ( $type )
 			{
 				// ZZ0,sw:        ＳＹＳＴＥＭ３．５を終了する
-				//   return RND 1/2 = OK , 254/255 = ERROR
+				//   ZZ0 return RND 1/2 = OK , 254/255 = ERROR
 				case 0:
 					$bak = $st;
 					$st += 3;
@@ -1782,14 +1787,16 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 				trace("select loc_%x , TEXT", $sel_jmp);
 
 				$bak = $gp_pc["text"];
-				$gp_pc["text"] = "";
+				$gp_pc["text"] = array();
 				$loop = true;
 				while ( $loop )
 				{
 					trace("= select_%x : ", $gp_pc["pc"][1]);
 					$func($gp_pc["pc"][0], $gp_pc["pc"][1], $run, $loop);
 				}
-				$sel_txt = strip_tags( $gp_pc["text"] );
+				$sel_txt = "";
+				foreach ( $gp_pc["text"] as $text )
+					$sel_txt .= base64_decode($text['jp']);
 				$gp_pc["text"] = $bak;
 					$gp_pc["pc"][1]++; // skip '$'
 

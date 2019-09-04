@@ -28,6 +28,9 @@ define("DEBUG", true);
 define("TRACE", true);
 define("TRACE_OB", false);
 define("ROOT", dirname(__FILE__) );
+
+define("ZERO", chr(  0));
+define("BYTE", chr(255));
 require ROOT . "/inc/funcs.php";
 
 $gp_init = array(
@@ -39,7 +42,8 @@ $gp_pc = array(
 	"pc"     => array(1,0),
 	"jal"    => array(),
 	"select" => array(),
-	"text"   => "",
+	"text"   => array(), // p=box,LANG=text,[opt]
+	"div"    => array(), // t=type,p=box,[opt]
 	"return" => "",
 );
 $gp_input = array();
@@ -69,7 +73,8 @@ foreach ( $_REQUEST as $key=>$var )
 define("PATH_JQUERY", "inc/jquery-3.4.0.min.js");
 define("PATH_JPFONT", "inc/mplus-1mn-063a.ttf");
 define("PATH_OGG_1S", "inc/mono-1s.ogg");
-define("PATH_SJIS",   "inc/sjis.inc");
+define("SJIS_HALF", ROOT . "/inc/sjis_half.inc");
+define("SJIS_ASC",  ROOT . "/inc/sjis_ascii.inc");
 
 require ROOT . "/inc/init_{$gp_init["engine"]}.php";
 //print_r($gp_init);

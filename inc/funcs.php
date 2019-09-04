@@ -75,10 +75,10 @@ function box_inter( $box1 , $box2 )
 {
 	list($x1a,$y1a,$w1,$h1) = $box1;
 	list($x2a,$y2a,$w2,$h2) = $box2;
-	$x1b = $x1a + $w1;
-	$y1b = $y1a + $h1;
-	$x2b = $x2a + $w2;
-	$y2b = $y2a + $h2;
+	$x1b = $x1a + $w1 - 1;
+	$y1b = $y1a + $h1 - 1;
+	$x2b = $x2a + $w2 - 1;
+	$y2b = $y2a + $h2 - 1;
 	if ( $x2b < $x1a )  return false;
 	if ( $x1b < $x2a )  return false;
 	if ( $y2b < $y1a )  return false;

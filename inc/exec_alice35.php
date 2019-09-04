@@ -44,6 +44,7 @@ function sco35_html( &$run )
 	$run = false;
 	global $gp_init, $gp_pc, $ajax_html;
 	$ajax_html = "";
+	sco35_div_cleanup();
 	ob_start();
 
 /// CSS ///
@@ -80,23 +81,20 @@ function sco35_html( &$run )
 
 /// WINDOW ///
 
-	if ( ! isset( $gp_pc["div"] ) )
-		$gp_pc["div"] = array();
-
 	///////////
+	$cg = array();
 	foreach ( $gp_pc["div"] as $div )
 	{
 		list($px,$py,$pw,$ph) = $div['p'];
 		$mouse = "$px,$py";
 		$box = "$pw,$ph";
-		$cg = array();
 		switch ( $div['t'] )
 		{
 			case "img":
 				list($img,$spr) = $div["img"];
+				$png = sco35_g0_path( $img, $spr );
 				if ( ! isset($cg[$img]) )
 				{
-					$png = sco35_g0_path( $img, $spr );
 					echo "<style>.cg_$img {background-image:url('$png');}</style>";
 					$cg[$img] = 1;
 				}
@@ -107,11 +105,11 @@ function sco35_html( &$run )
 				if ( ! isset($cg[$bg]) )
 				{
 					$png = sco35_g0_path( $bg, -1 );
-					echo "<style>.cg_$bg {background-image:url('$png');}</style>";
+					echo "<style>.bg_$bg {background-image:url('$png');}</style>";
 					$cg[$bg] = 1;
 				}
 				$box .= ",$bgx,$bgy";
-				echo "<div class='sprites bg cg_$bg' mouse='$mouse' box='$box'></div>";
+				echo "<div class='sprites bg_$bg' mouse='$mouse' box='$box'></div>";
 				break;
 			case "clr":
 				$box .= ",{$div['clr']}";
@@ -121,14 +119,24 @@ function sco35_html( &$run )
 	}
 	///////////
 	if ( ! empty( $gp_pc["text"] ) )
-		echo $gp_pc["text"];
+	{
+		foreach ( $gp_pc["text"] as $text )
+		{
+			$mouse = "{$text['p'][0]},{$text['p'][1]}";
+			$style = "color:{$text['clr']};";
+
+			$jp = base64_decode( $text["jp"] );
+			echo "<p class='sprites text' mouse='$mouse' style='$style'>$jp</p>";
+		}
+	}
 	///////////
 	if ( ! empty( $gp_pc["select"] ) )
 	{
 		$num = $gp_pc["B2"][0];
 		$select_pos = $gp_pc["B1"][$num];
+		$mouse = "{$select_pos[0]},{$select_pos[1]}";
 
-		echo "<ul id='select' class='sprites' mouse='{$select_pos[0]},{$select_pos[1]}'>";
+		echo "<ul id='select' class='sprites' mouse='$mouse'>";
 		foreach ( $gp_pc["select"] as $k => $v )
 		{
 			echo "<li data='$k'>" .base64_decode( $v[1] ). "</li>";
@@ -155,29 +163,42 @@ function sco35_html( &$run )
 
 
 	$midi = PATH_OGG_1S;
-	if ( isset( $gp_pc["SG"] ) && $gp_pc["SG"][1] )
-		$midi = findfile( $gp_init["path_mid"], $gp_pc["SG"][0], PATH_OGG_1S );
+	if ( isset( $gp_pc["SG"] ) )
+		$midi = findfile( $gp_init["path_mid"], $gp_pc["SG"], PATH_OGG_1S );
 	echo "<input id='midi' type='hidden' value='$midi'>";
 /// AUDIO ///
 
 	$ajax_html = ob_get_clean();
 }
 
-function sco35_box_clear( $box )
+function sco35_div_cleanup()
 {
 	global $gp_pc;
-	if ( ! isset( $gp_pc["div"] ) )
-		$gp_pc["div"] = array();
-
-	foreach ( $gp_pc["div"] as $k => $v )
+	$keys = array_keys( $gp_pc["div"] );
+	$len = count($keys);
+	for ( $i=0; $i < $len; $i++ )
 	{
-		if ( $v['p'][0] < 0 || $v['p'][1] < 0 )
-			unset( $gp_pc["div"][$k] );
-		else
-		if ( box_within($box, $v['p']) )
-			unset( $gp_pc["div"][$k] );
-	}
-	return;
+		$k1 = $keys[$i];
+		for ( $j = $len-1; $j > $i; $j-- )
+		{
+			$k2 = $keys[$j];
+
+			if ( ! isset( $gp_pc["div"][$k1] ) )
+				continue;
+			if ( ! isset( $gp_pc["div"][$k2] ) )
+				continue;
+
+			// skip sprites
+			if ( $gp_pc["div"][$k2]['t'] == "img" )
+				continue;
+
+			if ( box_within( $gp_pc["div"][$k2]['p'] , $gp_pc["div"][$k1]['p'] ) )
+				unset( $gp_pc["div"][$k1] );
+
+		} // for ( $j=$i+1; $j < $len; $j++ )
+	} // for ( $i=0; $i < $l; $i++ )
+
+	//array_splice( $gp_pc["div"] , 0 , 0);
 }
 
 function sco35_ec_clear( $num )
@@ -191,7 +212,10 @@ function sco35_ec_clear( $num )
 		array_shift($es);
 		$box = $es;
 	}
-	sco35_box_clear( $box );
+	$gp_pc["div"][] = array(
+		't' => "clear",
+		'p' => $box,
+	);
 }
 
 function sco35_text_add( $jp )
@@ -205,7 +229,7 @@ function sco35_text_add( $jp )
 	if ( $jp == "_NEXT_" )
 	{
 		$gp_pc["T"] = array($text_pos[0], $text_pos[1]);
-		$gp_pc["text"] = "";
+		$gp_pc["text"] = array();
 		return;
 	}
 
@@ -216,21 +240,23 @@ function sco35_text_add( $jp )
 		return;
 	}
 
-	// skip hardcoded padding zeroes
-	$zero = chr(0x82) . chr(0x4f);
-	if ( $jp == $zero )
-		return;
-
 	$b1 = ord( $jp[0] );
 	if ( $b1 & 0x80 )
 		$len = (strlen($jp) / 2) * $font;
 	else
 		$len = strlen($jp) * ($font/2);
 
-	$mouse = "{$gp_pc['T'][0]},{$gp_pc['T'][1]}";
-	$style = "color:" .sco35_zc2ps(1, "#fff"). ";";
-
-	$gp_pc["text"] .= "<span class='sprites text' mouse='$mouse' style='$style'>$jp</span>";
+	$text = array(
+		'p'  => array(
+			$gp_pc['T'][0],
+			$gp_pc['T'][1],
+			$len,
+			$font,
+		),
+		"jp"  => base64_encode($jp),
+		"clr" => sco35_zc2ps(1, "#fff"),
+	);
+	$gp_pc["text"][] = $text;
 	$gp_pc["T"][0] += (int)$len;
 }
 
@@ -241,7 +267,10 @@ function sco35_vp_div_add( $src )
 	list($n,$x0,$y0,$mx,$my,$ux,$uy) = $gp_pc["VC"];
 
 	$box = array($x0,$y0,$sx*$ux,$sy*$uy);
-	sco35_box_clear( $box );
+	$gp_pc["div"][] = array(
+		't' => "clear",
+		'p' => $box,
+	);
 
 	for ( $page=0; $page < $n; $page++ )
 	{
@@ -296,17 +325,10 @@ function sco35_vp_bg_find( $src )
 	$des = array(0,0,0);
 	foreach ( $gp_pc["div"] as $div )
 	{
-		if ( $div['t'] == "img" && box_within($div['p'],$src) )
-		{
-			$des = array(
-				$div["img"][0],
-				$div['p'][0] - $src[0],
-				$div['p'][1] - $src[1],
-			);
-			//return $des;
-		}
-		else
-		if ( $div['t'] == "bg" && box_within($div['p'],$src) )
+		if ( ! box_within($div['p'],$src) )
+			continue;
+
+		if ( $div['t'] == "bg" )
 		{
 			$des = array(
 				$div["bg"][0],
@@ -348,7 +370,6 @@ function sco35_div_add( $type, $src )
 		case "_CLR2_":
 			list($x,$y,$c) = $src;
 			$p = array($x-8,$y-8,16,16);
-			sco35_box_clear( $p );
 
 			$clr = "#000";
 			if ( isset( $gp_pc["PS"][$c] ) )
@@ -363,7 +384,6 @@ function sco35_div_add( $type, $src )
 		case "_CLR_":
 			list($x,$y,$w,$h,$c) = $src;
 			$p = array($x,$y,$w,$h);
-			sco35_box_clear( $p );
 
 			$clr = "#000";
 			if ( isset( $gp_pc["PS"][$c] ) )
@@ -378,15 +398,12 @@ function sco35_div_add( $type, $src )
 		case "_BG_":
 			list($sx,$sy,$w,$h,$dx,$dy) = $src;
 			$p = array($dx,$dy,$w,$h);
-			sco35_box_clear( $p );
 			$adx = $dx - $sx;
 			$ady = $dy - $sy;
 
 			foreach ( $gp_pc["div"] as $div )
 			{
-				if ( $div['t'] == "clr" )
-					continue;
-				if ( $div['t'] == "img" )
+				if ( $div['t'] != "bg" )
 					continue;
 
 				if ( ! box_inter($src, $div['p']) )
@@ -404,14 +421,24 @@ function sco35_div_add( $type, $src )
 							($div['p'][1] - $sy) + $div["bg"][2],
 						),
 					);
+					trace("copy tile {$cc['bg'][0]} , {$cc['p'][0]} , {$cc['p'][1]}");
 					$gp_pc["div"][] = $cc;
 				}
 				// make copy of the whole thing
 				else
 				{
 					$cc = $div;
-					$cc['p'][0] += $adx;
-					$cc['p'][1] += $ady;
+					$cc = array(
+						't' => "bg",
+						'p' => array(
+							$div['p'][0] + $adx,
+							$div['p'][1] + $ady,
+							$div['p'][2],
+							$div['p'][3],
+						),
+						"bg" => $div["bg"],
+					);
+					trace("copy bg {$cc['bg'][0]} , {$cc['p'][0]} , {$cc['p'][1]}");
 					$gp_pc["div"][] = $cc;
 				}
 			}
@@ -520,7 +547,6 @@ function sco35_g0_add( $num , $alpha )
 		// keep bg with sprites
 		if ( $alpha < 0 )
 		{
-			sco35_box_clear( $img_pos );
 			$gp_pc["div"][] = array(
 				't' => "bg",
 				'p' => $img_pos,
@@ -671,7 +697,8 @@ function sco35_ascii( &$file, &$st, $sep )
 
 function sco35_sjis( &$file, &$st )
 {
-	$sjis = file_get_contents( ROOT .'/'. PATH_SJIS );
+	$sjis_half = file_get_contents( SJIS_HALF );
+	$sjis_asc  = file_get_contents( SJIS_ASC  );
 	$str = "";
 	while(1)
 	{
@@ -686,23 +713,35 @@ function sco35_sjis( &$file, &$st )
 		if ( $b1 >= 0xa0 )
 		{
 			$p = $b1 * 2;
-			$str .= $sjis[$p+0];
-			$str .= $sjis[$p+1];
+			$str .= $sjis_half[$p+0];
+			$str .= $sjis_half[$p+1];
 			$st++;
 		}
 		else
 		if ( $b1 >= 0x80 )
 		{
-			$str .= $file[$st+0];
-			$str .= $file[$st+1];
+			$b2 = ord( $file[$st+1] );
+			if ( $b1 == 0x82 )
+			{
+				if ( $sjis_asc[$b2] == ZERO )
+				{
+					$str .= $file[$st+0];
+					$str .= $file[$st+1];
+				}
+				else
+					$str .= $sjis_asc[$b2];
+			}
+			else
+			{
+				$str .= $file[$st+0];
+				$str .= $file[$st+1];
+			}
 			$st += 2;
 		}
 		else
 		if ( $b1 == 0x20 ) // space
 		{
-			$p = $b1 * 2;
-			$str .= $sjis[$p+0];
-			$str .= $sjis[$p+1];
+			$str .= $file[$st];
 			$st++;
 		}
 		else
@@ -752,23 +791,12 @@ function sco35_var_get( $v, $e, $len )
 	}
 }
 
-function sco35_varno_tbl( &$file, &$st )
-{
-	$b1 = ord( $file[$st+0] );
-	$b2 = ord( $file[$st+1] );
-	$st += 2;
-
-	$v = ($b1 << 8) + $b2;
-	$e = sco35_calli( $file, $st );
-	return array($v,$e);
-}
-
 function sco35_varno( &$file, &$st )
 {
 	$b1 = ord( $file[$st] );
 	$st++;
 
-	// = &var , return as array()
+	// same as &var , return array()
 	if ( $b1 & 0x80 )
 	{
 		// 80    - bf    =  00 -   3f
@@ -786,7 +814,14 @@ function sco35_varno( &$file, &$st )
 					return array($b2,0);
 
 				if ( $b2 == 1 )
-					return sco35_varno_tbl( $file, $st );
+				{
+					$b3 = ord( $file[$st+0] );
+					$b4 = ord( $file[$st+1] );
+						$st += 2;
+					$v = ($b3 << 8) + $b4;
+					$e = sco35_calli( $file, $st );
+					return array($v,$e);
+				}
 				else
 					return array($b2 * -1,0);
 			}
@@ -796,7 +831,7 @@ function sco35_varno( &$file, &$st )
 		else
 			return array($n1,0);
 	}
-	// = var , return int
+	// same as var , return int
 	else
 	{
 		// 40    - 7f    = 00 -   3f

@@ -9,12 +9,12 @@
   rance1.inf     Rance1 (アリスの館456収録)
   rance2.inf     Rance2 (アリスの館456収録)
   rance3.inf     Rance3 (アリスの館456収録)
-  rance4.inf     ランス４ for WIN
+  rance4.inf     ランス4 for WIN
   rance5d.inf
   toushin.inf    闘神都市 (アリスの館456収録)
   toushin2.inf   闘神都市II for WIN
   tsuma.inf      妻みぐい
-  tsuma2.inf     妻みぐい２
+  tsuma2.inf     妻みぐい2
 
   ambi.inf       AmbivalenZ for WIN95
   chairs.inf     シェル・クレイル
@@ -108,3 +108,30 @@ esuka   SA BA GA-GB WA-WB BGI WAI AIN INI     S=A-Z | ALICELOGO.ALK | NIGHTDEMON
 nd      SA BA GA    WA    BGI WAI AIN INI KLD S=A-Z
 rance5d SA BA GA    WA    BGI     AIN INI KLD S=A-Z
 tsuma2  SA BA GA    WA-WB BGI WAI AIN INI KLD S=A-Z
+
+=== system 4.0 ===
+ain VERS
+5 GALZOO
+5 闘神都市3
+5 ばにしゅ！体験版
+
+6+ no DLL dir , HOME save dir , FONT.fnl , MOVIE alm->apeg(ajp) , ARC ald->afa
+6 bureburaTrial
+6 DrapekoTrial
+6 EscalayerRebootTrialVer1
+6 EscalayerRebootTrialVer2
+6 EvenicleTrial
+6 OyakorankanTrial
+6 Pascha3Trial
+6 Rance01Trial
+6 Rance03Trial
+
+7 Tsuma3Trial
+
+8 MamanTrial
+
+11 IxsealTrial
+
+14+ afa no AlicARCH
+14 Evenicle2Trial
+14 haharanman_trial
