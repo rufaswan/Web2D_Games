@@ -1,48 +1,3 @@
-  456atlach.inf  ATLACH-NACHA (アリスの館456収録)
-  atlach_new.inf ATLACH-NACHA (廉価版)
-  456zero.inf    零式 (アリスの館456収録)
-  zero_new.inf   零式 (廉価版)
-  diabo.inf      ディアボリカ
-  diabo_new.inf  ディアボリカ (廉価版)
-  panyo.inf      かえるにょぱにょ〜ん
-  panyo_new.inf  かえるにょぱにょ〜ん(廉価版)
-  rance1.inf     Rance1 (アリスの館456収録)
-  rance2.inf     Rance2 (アリスの館456収録)
-  rance3.inf     Rance3 (アリスの館456収録)
-  rance4.inf     ランス4 for WIN
-  rance5d.inf
-  toushin.inf    闘神都市 (アリスの館456収録)
-  toushin2.inf   闘神都市II for WIN
-  tsuma.inf      妻みぐい
-  tsuma2.inf     妻みぐい2
-
-  ambi.inf       AmbivalenZ for WIN95
-  chairs.inf     シェル・クレイル
-  daiakuji.inf   大悪司
-  dalk.inf       DALK (アリスの館456収録)
-  darcrows.inf   DARCROWS
-  20cDPS.inf     これDPS？ (20世紀アリス)
-  drstop.inf     Dr.Stop! (アリスの館456収録)
-  esuka.inf      エスカレイヤー
-  hushaby.inf    HushaBy Baby
-  20cKaeru.inf   かえるにょ国にょアリス(20世紀アリス)
-  kakurezuki.inf 隠れ月
-  katsumi.inf    いけないかつみ先生
-  kichiku.inf    鬼畜王ランス
-  mamatoto.inf   ママトト
-  mamori.inf     守り神様
-  miko.inf       戦巫女
-  mugen.inf      夢幻泡影 for WIN95
-  nd.inf         Night Demon
-  456ningen.inf  人間狩り (アリスの館456収録)
-  onlyyou_r.inf  Only You リクルス
-  oudou.inf      王道勇者
-  pascha.inf     ぱすてるチャイム
-  persiom.inf    PERSIOM
-  progood.inf    ぷろすちゅーでんとGOOD
-  seeinao.inf    SeeIn青
-
-
 === system 3.5 ===
 Scenario  *SA.ald
 Graphics  *GA.ald
@@ -50,44 +5,44 @@ Midi      *MA.ald
 Wave      *WA.ald
 Data      *DA.ald
 Saves     *SA.asd
-
-atlach_456 SA       GA-GB WA S=A-H
-atlach_new SA       GA    WA S=A-Y
-diabo      SA       GA-GB WA S=A-J
-diabo_new  SA       GA    WA S=A-Y
-rance1     SA MA    GA    WA S=A-N
-rance2     SA MA    GA    WA S=A-N
-rance3     SA MA DA GA    WA S=A-H
-rance4     SA       GA    WA S=A-J
-toushin    SA MA DA GA    WA S=A-H
-toushin2   SA    DA GA    WA S=A-J
-
-456ningen  SA       GA    WA S=A
-ambi       SA       GA       S=A-N
-dalk       SA MA DA GA    WA S=A-J
-drstop     SA MA    GA       S=A-E
-hushaby    SA MA    GA    WA S=A
-kakurezuki SA       GA    WA S=A-K
-kichiku    SA       GA-GB WA S=A-J
-mamatoto   SA MA DA GA-GB WA S=A-Z
-mamori     SA MA    GA-GB WA S=A-J
-miko       SA       GA    WA S=A-J
-mugen      SA       GA       S=A-C
-oudou      SA       GA-GB WA S=A-J
-pascha     SA MA DA GA    WA S=A-Z
-persiom    SA MA DA GA-GB WA S=A-L
-progood    SA    DA GA    WA S=A-K
-seeinao    SA MA    GA    WA S=A-Y
-
-=== system 3.5+ ===
 Resource  *RA.ald
 
-darcrows  SA MA RA GA-GB WA-WB S=A-Z
-katsumi   SA       GA-GB WA    S=A-J | GAIJI.DAT
-panyo     SA       GA    WA    S=A-O | FLOOR_[1-16].MAP
-panyo_new SA       GA    WA    S=A-Y | FLOOR_[1-33].MAP
-zero_456  SA       GA    WA    S=A-E | MAP_DATA.DAT | UR_DATA.DAT
-zero_new  SA       GA    WA    S=A-Y | MAP_DATA.DAT | UR_DATA.DAT
+S350  SA       GA-GB WA    S=A-J  鬼畜王ランス
+S350  SA       GA    WA    S=A-J  ランス4
+S350  SA    DA GA    WA    S=A-J  鬪神都市2
+S350  SA       GA-GB WA    S=A-J | GAIJI.DAT  いけないかつみ先生
+S350  SA       GA    WA    S=A-O | FLOOR_[1-16].MAP  かえるにょぱにょ〜ん
+S350  SA       GA    WA    S=A-J  戦巫女
+
+S351  SA       GA    WA    S=A-E | MAP_DATA.DAT | UR_DATA.DAT  零式 (アリスの館456)
+S351  SA       GA-GB WA    S=A-H  アトラク＝ナクア (アリスの館456)
+S351  SA       GA    WA    S=A    人間狩り (アリスの館456)
+S351  SA MA    GA    WA    S=A-N  ランス1 (アリスの館456)
+S351  SA MA    GA    WA    S=A-N  ランス2 (アリスの館456)
+S351  SA MA DA GA    WA    S=A-H  ランス3 (アリスの館456)
+S351  SA MA DA GA    WA    S=A-H  鬪神都市 (アリスの館456)
+S351  SA MA    GA          S=A-E  Dr.STOP (アリスの館456)
+S351  SA MA DA GA    WA    S=A-J  DALK (アリスの館456)
+S351  SA       GA-GB WA    S=A-J  王道勇者
+S351  SA       GA-GB WA    S=A-J  デアボリカ
+S351  SA       GA          S=A-N  アンビバレンツ
+S351  SA       GA          S=A-C  夢幻泡影
+
+S360  SA MA DA GA    WA    S=A-Z  ぱすてるチャイム
+S360  SA    DA GA    WA    S=A-K  プロスチューデントGood
+S360  SA MA    GA-GB WA    S=A-J  守り神様
+S360  SA MA DA GA-GB WA    S=A-Z  ママトト
+S360  SA MA    GA-GB WA-WB S=A-Z | RA  ダークロウズ
+S360  SA MA    GA    WA    S=A    HUSHABY BABY
+
+S380  SA       GA    WA    S=A-K  隠れ月
+S380  SA MA DA GA-GB WA    S=A-L  PERSIOM
+S380  SA MA    GA    WA    S=A-Y  SeeIn青
+S380  SA       GA    WA    S=A-Y  デアボリカ (廉価版)
+S380  SA       GA    WA    S=A-Y  アトラク＝ナクア (廉価版)
+S380  SA       GA    WA    S=A-Y | FLOOR_[1-33].MAP  かえるにょぱにょ〜ん (廉価版)
+S380  SA       GA    WA    S=A-Y | MAP_DATA.DAT | UR_DATA.DAT  零式 (廉価版)
+
 
 === system 3.9 ===
 Ain   system39.ain
@@ -97,41 +52,61 @@ BGI   *BA.bgi
 WAI   *WA.wai
 KLD   sactefam.kld
 
-daiakuji  SA    DA GA WA AIN S=A-L
-DPS_20c   SA MA    GA    AIN S=A
-Kaeru_20c SA MA DA GA WA AIN S=A-Z
-onlyyou_r SA       GA WA AIN S=A-Z
-tsuma     SA       GA WA AIN S=A-Z
-
-chairs  SA BA GA    WA    BGI WAI AIN INI KLD S=A-Z
-esuka   SA BA GA-GB WA-WB BGI WAI AIN INI     S=A-Z | ALICELOGO.ALK | NIGHTDEMONDEMO[1-3].ALK
-nd      SA BA GA    WA    BGI WAI AIN INI KLD S=A-Z
-rance5d SA BA GA    WA    BGI     AIN INI KLD S=A-Z
-tsuma2  SA BA GA    WA-WB BGI WAI AIN INI KLD S=A-Z
+S390  SA       GA          AIN     S=A   | MA  これDPS? (20世紀アリス)
+S390  SA    DA GA    WA    AIN     S=A-Z | MA  かえるにょ国にょアリス (20世紀アリス)
+S390  夜が来る!
+S390  王子さまLv1
+S390  SA       GA    WA    AIN     S=A-Z  オンリーユー・リクルス
+S390  SA    DA GA    WA    AIN     S=A-L  大悪司
+S390  SA       GA    WA    AIN     S=A-Z  妻みぐい
+S390  王子さまLv1.5
+S390  SA BA    GA-GB WA-WB AIN     S=A-Z | ALICELOGO.ALK | NIGHTDEMONDEMO[1-3].ALK  超昂天使エスカレイヤー
+S390  SA BA    GA    WA    AIN KLD S=A-Z  ランス5D
+S390  Nor
+S390  俺の下であがけ
+S390  楽園行
+S390  SA BA    GA    WA-WB AIN KLD S=A-Z  妻みぐい2
+S390  SA BA    GA    WA    AIN KLD S=A-Z  シェル・クレイル
+S390  SA BA    GA    WA    AIN KLD S=A-Z  ナイトデーモン
 
 === system 4.0 ===
-ain VERS
-5 GALZOO
-5 闘神都市3
-5 ばにしゅ！体験版
+Ain   *.ain
+Init  system40.ini
 
-6+ no DLL dir , HOME save dir , FONT.fnl , MOVIE alm->apeg(ajp) , ARC ald->afa
-6 bureburaTrial
-6 DrapekoTrial
-6 EscalayerRebootTrialVer1
-6 EscalayerRebootTrialVer2
-6 EvenicleTrial
-6 OyakorankanTrial
-6 Pascha3Trial
-6 Rance01Trial
-6 Rance03Trial
+AIN4  BA GA           Popolytan (System 4.2 SDK)
 
-7 Tsuma3Trial
+AIN5  BA GA-GC WA-WB  GALZOOアイランド
+AIN5  BA GA    WA    | RA | RED 闘神都市3
+AIN5  BA GA    WA     ばにしゅ！体験版
 
-8 MamanTrial
+=== system 4.2 ===
+Ain    *.ain
+Init   *.ini
+BA     *BA.afa/ald
+WA     *WA.afa/ald
+CG     *CG.afa
+3D     *3D.afa
+Aff    *AFF.afa (AJP grouped)
+Flat   *Flat.afa
+Pact   *Pact.afa
+Sound  *Sound.afa
+Voice  *Voice.afa
+Font   *Font.fnl
 
-11 IxsealTrial
+AIN6  BA WA CG  母娘乱館Trial
+AIN6  BA WA CG  ランス01 + Trial
+AIN6  BA WA CG | AFF  どらぺこTrial
+AIN6  BA WA CG | AFF  パステルチャイム3Trial
+AIN6  BA WA CG | Flat  超昂天使エスカレイヤー・リブートTrialVer1 + Ver2
+AIN6  BA WA CG | Flat | RED  武想少女隊ぶれいど☆ブライダーズTrial
+AIN6  CG Sound Voice Flat Pact  ランス03Trial
+AIN6  CG Sound Voice Flat Pact | RED  イブニクルTrial
 
-14+ afa no AlicARCH
-14 Evenicle2Trial
-14 haharanman_trial
+AIN7  CG Sound Voice Flat Pact  妻みぐい3Trial
+
+AIN8  CG Sound Voice Flat Pact  は～とふるママンTrial
+
+AIN11  CG Sound Voice Flat Pact  超昂神騎エクシールTrial
+
+AIN14  CG Sound Voice Flat Pact  母爛漫Trial
+AIN14  CG Sound Voice Flat Pact | 3D  イブニクル2Trial

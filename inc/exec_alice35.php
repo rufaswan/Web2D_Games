@@ -150,13 +150,13 @@ function sco35_html( &$run )
 /// AUDIO ///
 	$ogg = PATH_OGG_1S;
 	if ( isset( $gp_pc["SS"] ) )
-		$ogg = findfile( $gp_init["path_ogg"], $gp_pc["SS"], PATH_OGG_1S );
+		$ogg = findfile( $gp_init["path_ogg"], $gp_pc["SS"], PATH_OGG_1S, 8 );
 	echo "<input id='ogg' type='hidden' value='$ogg'>";
 
 	$wave = PATH_OGG_1S;
 	if ( isset( $gp_pc["SP"] ) )
 	{
-		$wave = findfile( $gp_init["path_wav"], $gp_pc["SP"], PATH_OGG_1S );
+		$wave = findfile( $gp_init["path_wav"], $gp_pc["SP"], PATH_OGG_1S, 8 );
 		unset( $gp_pc["SP"] );
 	}
 	echo "<input id='wave' type='hidden' value='$wave'>";
@@ -164,7 +164,7 @@ function sco35_html( &$run )
 
 	$midi = PATH_OGG_1S;
 	if ( isset( $gp_pc["SG"] ) )
-		$midi = findfile( $gp_init["path_mid"], $gp_pc["SG"], PATH_OGG_1S );
+		$midi = findfile( $gp_init["path_mid"], $gp_pc["SG"], PATH_OGG_1S, 8 );
 	echo "<input id='midi' type='hidden' value='$midi'>";
 /// AUDIO ///
 
@@ -476,7 +476,7 @@ function sco35_g0_clut( $num )
 {
 	global $gp_pc, $gp_init;
 	$clut = str_replace(".png", ".clut", $gp_init["path_img"] );
-	$clut = findfile( $clut, $num, "" );
+	$clut = findfile( $clut, $num, "", 8 );
 
 	$file = file_get_contents( ROOT."/$clut" );
 	if ( empty($file) )  return;
@@ -666,7 +666,7 @@ function sco35_IK_bnez( &$file, &$st )
 function sco35_load_data($num , $len)
 {
 	global $gp_init;
-	$dat = findfile( $gp_init["path_dat"], $num, "" );
+	$dat = findfile( $gp_init["path_dat"], $num, "", 8 );
 	$file = file_get_contents( ROOT . "/$dat" );
 	if ( empty($file) )  return;
 
@@ -913,7 +913,7 @@ function sco35_load_sco( $id )
 	global $sco_file, $gp_init;
 	if ( ! isset( $sco_file[$id] ) )
 	{
-		$sco = findfile( $gp_init["path_sco"], $id, "" );
+		$sco = findfile( $gp_init["path_sco"], $id, "", 8 );
 		$sco_file[$id] = file_get_contents( ROOT . "/$sco" );
 		trace("load $sco");
 	}

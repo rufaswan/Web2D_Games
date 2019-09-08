@@ -40,6 +40,7 @@ $gp_init = array(
 );
 $gp_pc = array(
 	"pc"     => array(1,0),
+	"var"    => array(),
 	"jal"    => array(),
 	"select" => array(),
 	"text"   => array(), // p=box,LANG=text,[opt]

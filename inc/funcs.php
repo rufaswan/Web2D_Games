@@ -103,18 +103,82 @@ function box_within( $big , $small )
 	return true;
 }
 
+function cheat_exp( $exp )
+{
+	if ( empty($exp) )
+		return false;
+
+	$m = array();
+	preg_match_all("@[0-9a-zA-Z]+|[^0-9a-zA-Z]@", $exp, $m);
+	$m = $m[0];
+	$len = count($m);
+	if ( $len < 3 )
+		return true;
+
+	global $gp_pc;
+	$opr = "";
+	$v1 = 0;
+	$v2 = 0;
+
+	$st = 0;
+	print_r($m);
+	if ( $m[$st] == '&' )
+	{
+		$v1 = &$gp_pc["var"][ $m[$st+1] ];
+		$st += 2;
+	}
+	else
+	{
+		$v1 = $m[$st];
+		$st++;
+	}
+
+	if ( $m[$st+1] == '=' )
+	{
+		$opr = $m[$st+0] . $m[$st+1];
+		$st += 2;
+	}
+	else
+	{
+		$opr = $m[$st];
+		$st++;
+	}
+
+	if ( $m[$st] == '&' )
+	{
+		$v2 = &$gp_pc["var"][ $m[$st+1] ];
+		$st += 2;
+	}
+	else
+	{
+		$v2 = $m[$st];
+		$st++;
+	}
+
+	//trace("cheat $opr , $v1 , $v2");
+	switch ( $opr )
+	{
+		case '=':  $v1  = $v2; return false;
+		case '+=': $v1 += $v2; return false;
+		case '-=': $v1 -= $v2; return false;
+		case '*=': $v1 *= $v2; return false;
+		case '/=': $v1 /= $v2; return false;
+	}
+	return var_math($opr,$v1,$v2);
+}
+
 function init_cheat()
 {
-	global $gp_init, $gp_pc;
+	global $gp_init;
 	if ( empty( $gp_init["cheat"] ) )
 		return;
 
 	foreach ( $gp_init["cheat"] as $cht )
 	{
+		//trace("cheat $cht");
 		$t1  = explode(',', $cht);
-		$num = trim( $t1[0] );
-		$var = trim( $t1[1] );
-		$gp_pc["var"][$num] = $var;
+		if ( cheat_exp( $t1[1] ) )
+			cheat_exp( $t1[0] );
 	}
 }
 
@@ -132,9 +196,11 @@ function initcfg_var( $fname )
 		if ( $line[0] == '#' )
 			continue;
 
-		list($k,$v) = explode('=', $line);
-		$k = strtolower( trim($k) );
-		$v = strtolower( trim($v) );
+		$line = str_replace(' ', '', $line);
+		$line = strtolower($line);
+		$sep = strpos($line, '=');
+		$k = substr($line, 0, $sep);
+		$v = substr($line, $sep+1);
 		if ( strpos($k, '[]') )
 		{
 			$k = str_replace('[]', '', $k);
@@ -164,7 +230,7 @@ function img_meta( $fname )
 	return $ret;
 }
 
-function findfile( $sprint , $num , $default )
+function findfile( $sprint , $num , $default , $b )
 {
 	if ( $num < 0 )
 		return $default;
@@ -172,18 +238,10 @@ function findfile( $sprint , $num , $default )
 	$s  = count_chars($sprint, 1);
 	switch ( $s[0x25] ) // %
 	{
-		case 1:
-			$fn = sprintf($sprint,  $num);
-			break;
-		case 2:
-			$fn = sprintf($sprint, ($num >>  8),  $num);
-			break;
-		case 3:
-			$fn = sprintf($sprint, ($num >> 16), ($num >>  8), $num);
-			break;
-		case 4:
-			$fn = sprintf($sprint, ($num >> 24), ($num >> 16), ($num >> 8), $num);
-			break;
+		case 1: $fn = sprintf($sprint,  $num);  break;
+		case 2: $fn = sprintf($sprint, ($num >> $b),      $num);  break;
+		case 3: $fn = sprintf($sprint, ($num >> (2*$b)), ($num >> $b),      $num);  break;
+		case 4: $fn = sprintf($sprint, ($num >> (3*$b)), ($num >> (2*$b)), ($num >> $b), $num);  break;
 	}
 	if ( empty($default) )
 		return $fn;
@@ -237,14 +295,20 @@ function var_math( $opr, $v1, $v2 )
 	$n = 0;
 	switch ( $opr )
 	{
-		case '+':  case "add":  $n = $v1 + $v2; break;
-		case '-':  case "sub":  $n = $v1 - $v2; break;
-		case '*':  case "mul":  $n = $v1 * $v2; break;
-		case '/':  case "div":  $n = $v1 / $v2; break;
-		case '%':  case "rem":  $n = $v1 % $v2; break;
-		case '&':  case "and":  $n = $v1 & $v2; break;
-		case '|':  case "or":   $n = $v1 | $v2; break;
-		case '^':  case "xor":  $n = $v1 ^ $v2; break;
+		case '+':   case "add":  $n = $v1 + $v2; break;
+		case '-':   case "sub":  $n = $v1 - $v2; break;
+		case '*':   case "mul":  $n = $v1 * $v2; break;
+		case '/':   case "div":  $n = $v1 / $v2; break;
+		case '%':   case "rem":  $n = $v1 % $v2; break;
+		case '&':   case "and":  $n = $v1 & $v2; break;
+		case '|':   case "or":   $n = $v1 | $v2; break;
+		case '^':   case "xor":  $n = $v1 ^ $v2; break;
+		case '<':   case "gt":   $n = ($v1 <  $v2); break;
+		case '>':   case "lt":   $n = ($v1 >  $v2); break;
+		case '<=':  case "gte":  $n = ($v1 <= $v2); break;
+		case '>=':  case "lte":  $n = ($v1 >= $v2); break;
+		case '==':  case "eq":   $n = ($v1 == $v2); break;
+		case '!=':  case "neq":  $n = ($v1 != $v2); break;
 	}
 	return (int)$n;
 }

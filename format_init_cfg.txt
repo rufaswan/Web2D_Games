@@ -25,11 +25,20 @@ basedir = assets
 
 # overwrite game var on each ajax request
 # [optional]
-# cheat[] = varno,value,note
-cheat[] = 29,65535,EXP
-cheat[] = 30,65535,GOLD
+# cheat[] = expression,condition,note
+#   &var is same as $gp_pc["var"][var]
+cheat[] = &29  =65535,&28<  50,if LV < 50 then EXP = 65535
+cheat[] = &EXP =65535,&LV<  50,if LV < 50 then EXP = 65535
 
+cheat[] = &30 += 5000,&30<5000,if GOLD < 5000 then GOLD += 5000
 
+cheat[] = &51 =1,&50 ==13,if MON == KNIGHT then MON_HP = 1
+cheat[] = &mhp=1,&mon==13,if MON == KNIGHT then MON_HP = 1
+
+cheat[] = &mhp=1,,not activated
+cheat[] = &mhp=1, ,not activated
+cheat[] = &mhp=1,1,always activated
+cheat[] = &mhp=1,9,always activated
 
 # to add game only vars
 #   value can be (string/int)

@@ -76,32 +76,44 @@ function afarip( $fname )
 
 	$tbl = afatbl($fp, $fname, $tbl_sz);
 	$dir = str_replace('.', '_', $fname);
-	@mkdir($dir, 0755, true);
 
 	$st = 0;
 	$ed = strlen($tbl);
 	$txt = "";
 	while( $st < $ed )
 	{
-		$len = str2int($tbl, $st+4, 4);
+		// 0     4  filename length
+		// 4     4  ^ + NULL aligned to 4-bytes
+		// 8     v  filename [=p]
+		// (ver.1)  p+0  4  ???
+		// p+0   8  ???
+		// p+4   4  data start offset
+		// p+8   4  data size
+		$len = str2int($tbl, $st+0, 4);
+		$pad = str2int($tbl, $st+4, 4);
 		$fn = substr($tbl, $st+8, $len);
-		$fn = str_replace('/', '\\', rtrim ($fn, ZERO));
+		//$fn = str_replace('/', '\\', $fn);
 		//$fn = exec("printf \"{$fn}\" | iconv -f sjis -t utf-8");
+		$ext = substr($fn, strrpos($fn, '.')+1);
 
 		$s = 0;
 		if ( $ver == 1 )
 			$s = 4;
 
-		$ps = str2int($tbl, $st+$len+$s+0x10, 4);
-		$sz = str2int($tbl, $st+$len+$s+0x14, 4);
+		$ps = str2int($tbl, $st+$pad+$s+0x10, 4);
+		$sz = str2int($tbl, $st+$pad+$s+0x14, 4);
+
+		$idd = sprintf("%03d"  , $ps >> 24);
+		$idf = sprintf("%010d" , $ps);
+		@mkdir("$dir/$idd", 0755, true);
 
 		fseek($fp, $dat+$ps, SEEK_SET);
-		file_put_contents("$dir/$fn", fread($fp,$sz));
-		$log  = sprintf("%8x , %8x , $dir/$fn\n", $ps, $sz);
+		file_put_contents("$dir/$idd/$idf.$ext", fread($fp,$sz));
+		$log  = sprintf("%8x , %8x , $fn\n", $ps, $sz);
 		$txt .= $log;
 		echo $log;
 
-		$st += (0x18 + $len + $s);
+		$st += (0x18 + $pad + $s);
 	}
 
 	file_put_contents("$fname.txt", $txt);
