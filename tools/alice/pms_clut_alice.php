@@ -20,6 +20,8 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 //////////////////////////////
+define("ZERO" , chr(  0));
+define("BYTE" , chr(255));
 define("BIT8" , 0xff);
 
 function str2int( &$str, $pos, $byte )
@@ -43,6 +45,148 @@ function int2str( $int, $byte )
 		$byte--;
 	} // while ( $byte > 0 )
 	return $str;
+}
+//////////////////////////////
+function data_pms16( &$file, &$pms )
+{
+	$data = array();
+	$st = $pms['dat'];
+	for ( $y=0; $y < $pms['h']; $y++ )
+	{
+		$x = 0;
+		while ( $x < $pms['w'] )
+		{
+			$loc = $y * $pms['w'] + $x;
+			$c0  = ord( $file[$st] );
+			$st++;
+
+			switch ( $c0 )
+			{
+				case 0xff:
+					$len = ord( $file[$st] ) + 2;
+					$st++;
+
+					for ( $i=0; $i < $len; $i++ )
+					{
+						$t0 = $loc + $i;
+						$t1 = $loc + $i - $pms['w'];
+						$data[ $t0 ] = $data[ $t1 ];
+						$x++;
+					}
+					break;
+
+				case 0xfe:
+					$len = ord( $file[$st] ) + 2;
+					$st++;
+
+					for ( $i=0; $i < $len; $i++ )
+					{
+						$t0 = $loc + $i;
+						$t1 = $loc + $i - ($pms['w'] * 2);
+						$data[ $t0 ] = $data[ $t1 ];
+						$x++;
+					}
+					break;
+
+				case 0xfd:
+					$len = ord( $file[$st+0] ) + 3;
+					$b0  = str2int( $file, $st+1, 2 );
+					$st += 3;
+
+					for ( $i=0; $i < $len; $i++ )
+					{
+						$data[ $loc+$i ] = $b0;
+						$x++;
+					}
+					break;
+
+				case 0xfc:
+					$len = (ord( $file[$st] ) + 2) * 2;
+					$b0  =  str2int( $file, $st+1, 2 );
+					$b1  =  str2int( $file, $st+3, 2 );
+					$st += 5;
+
+					for ( $i=0; $i < $len; $i += 2 )
+					{
+						$data[ $loc+$i+0 ] = $b0;
+						$data[ $loc+$i+1 ] = $b1;
+						$x += 2;
+					}
+					break;
+
+				case 0xfb:
+					$data[ $loc ] = $data[ $loc-$pms['w']-1 ];
+					$x++;
+					break;
+
+				case 0xfa:
+					$data[ $loc ] = $data[ $loc-$pms['w']+1 ];
+					$x++;
+					break;
+
+				case 0xf9:
+					$len = ord( $file[$st+0] ) + 1;
+					$b0  = ord( $file[$st+1] );
+					$st += 2;
+
+					// ff = 111- ---- ---- ----
+					//        -- -11- ---- ----
+					//             -- ---1 11--
+					//    = e    6    1    c
+					$tb0 = ( ($b0 & 0xe0) << 8 ) + ( ($b0 & 0x18) << 6 ) + ( ($b0 & 0x07) << 2 );
+
+					for ( $i=0; $i < $len; $i++ )
+					{
+						$b1 = ord( $file[$st] );
+						$st++;
+						// ff =    1 1--- ---- ----
+						//            --1 111- ----
+						//                ---- --11
+						//    = 1    9    e    3
+						$tb1 = ( ($b1 & 0xc0) << 5 ) + ( ($b1 & 0x3c) << 3 ) + ($b1 & 0x03);
+						$data[ $loc+$i ] = $tb0 + $tb1;
+						$x++;
+					}
+
+					break;
+
+				case 0xf8:
+					$b0 = str2int( $file, $st, 2 );
+					$st += 2;
+					$data[$loc] = $b0;
+					$x++;
+					break;
+
+				default: // c0 <= 0xf7
+					$b0 = ord( $file[$st] );
+					$st++;
+					$data[$loc] = ($b0 << 8) + $c0;
+					$x++;
+					break;
+			} // switch ( $c0 )
+
+		} // while ( $x < $pms['w'] )
+	} // for ( $y=0; $y < $pms['h']; $y++ )
+	//////////////////////////
+	$len = $pms['w'] * $pms['h'];
+	$alp = "";
+	if ( $pms['shdw'] )
+	{
+		$pms['dat'] = $pms['pal'];
+		$alp = data_pms8( $file, $pms );
+	}
+	$img = "";
+	for ( $i=0; $i < $len; $i++ )
+	{
+		// r=5 g=6 b=5 = 16 bit/pixel
+		// rrrr rggg gggb bbbb
+		$r = ($data[$i] & 0xf800) >> 8;
+		$g = ($data[$i] & 0x07e0) >> 3;
+		$b = ($data[$i] & 0x001f) << 3;
+		$a = ( isset( $alp[$i] ) ) ? $alp[$i] : BYTE;
+		$img .= chr($r).chr($g).chr($b).$a;
+	}
+	return $img;
 }
 //////////////////////////////
 function data_pms8( &$file, &$pms )
@@ -124,7 +268,7 @@ function data_pms8( &$file, &$pms )
 					$x++;
 					break;
 
-				default:
+				default: // c0 <= 0xf7
 					$data[$loc] = $c0;
 					$x++;
 					break;
@@ -162,12 +306,12 @@ function pms2clut( $fname )
 		if ( "PM" != $mgc )  return;
 
 	$pms = array(
-		'ver'  => str2int( $file,    2, 2 ),
-		'head' => str2int( $file,    4, 2 ),
-		'bpp'  => str2int( $file,    6, 1 ),
-		'shdw' => str2int( $file,    7, 1 ),
-		'flag' => str2int( $file,    8, 1 ),
-		'bank' => str2int( $file,  0xa, 2 ),
+		'ver'  => str2int( $file, 0x02, 2 ),
+		'head' => str2int( $file, 0x04, 2 ),
+		'bpp'  => str2int( $file, 0x06, 1 ),
+		'shdw' => str2int( $file, 0x07, 1 ),
+		'flag' => str2int( $file, 0x08, 1 ),
+		'bank' => str2int( $file, 0x0a, 2 ),
 		'x'    => str2int( $file, 0x10, 4 ),
 		'y'    => str2int( $file, 0x14, 4 ),
 		'w'    => str2int( $file, 0x18, 4 ),
@@ -194,6 +338,20 @@ function pms2clut( $fname )
 
 			$file = $head . $clut . $data;
 			file_put_contents("{$fname}.clut", $file);
+			break;
+		case 16:
+			printf("PMS-16 , %3d , %3d , %3d , %3d , $fname\n",
+				$pms['x'], $pms['y'], $pms['w'], $pms['h']
+			);
+
+			$head  = "RGBA";
+			$head .= int2str($pms['w'] , 4);
+			$head .= int2str($pms['h'] , 4);
+
+			$data  = data_pms16($file , $pms);
+
+			$file = $head . $data;
+			file_put_contents("{$fname}.rgba", $file);
 			break;
 		default:
 			printf("UNK $fname : %d bpp\n", $pms['bpp']);

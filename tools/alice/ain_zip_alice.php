@@ -19,27 +19,52 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function ain_dec( $fname )
+//////////////////////////////
+define("ZERO", chr(0));
+define("BIT8", 0xff);
+
+function int2str( $int, $byte )
+{
+	$str = "";
+	while ( $byte > 0 )
+	{
+		$b = $int & BIT8;
+		$str .= chr($b);
+		$int >>= 8;
+		$byte--;
+	} // while ( $byte > 0 )
+	return $str;
+}
+//////////////////////////////
+function ain_zip( $fname )
 {
 	$file = file_get_contents( $fname );
 		if ( empty($file) )   return;
 
-	$mgc = substr($file, 0, 3);
-	switch ( $mgc )
-	{
-		case "AI2":
-		case "ZLB":
-			break;
-		default:
-			return;
-	}
+	$mgc = substr($file, 0, 4);
+	if ( $mgc == "VERS" )
+		$nmgc = "AI2";
+	else
+		$nmgc = "ZLB";
 
-	printf("$mgc , $fname\n");
+	printf("$nmgc , $fname\n");
+	// ZLIB_ENCODING_RAW
+	// ZLIB_ENCODING_DEFLATE
+	// ZLIB_ENCODING_GZIP
+	$zip = zlib_encode($file , ZLIB_ENCODING_DEFLATE );
 
-	$dec = zlib_decode( substr($file, 0x10) );
-	file_put_contents("$fname.dec", $dec);
+	$len_d = strlen($file);
+	$len_z = strlen($zip);
+
+	$ain  = $nmgc . ZERO;
+	$ain .= int2str(0,4);
+	$ain .= int2str($len_z,4);
+	$ain .= int2str($len_d,4);
+	$ain .= $zip;
+
+	file_put_contents("$fname.$ngmc", $ain);
 }
 
 if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	ain_dec( $argv[$i] );
+	ain_zip( $argv[$i] );

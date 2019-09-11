@@ -758,14 +758,6 @@ function L_cmd35( &$file, &$st, &$run )
 // ME dst_str_no,dst_pos,src_str_no,src_pos,len:        位置指定つきの文字列コピー
 // MF var,dst_no,key_no,start_pos:        文字列中から指定文字列の位置を探す
 //   MF return RND 0 = OK , 255 = ERROR
-// MG0, sw:        表示文字列を文字列変数に取得する／しない切替
-// MG1, str_no:        表示文字列取得開始文字列番号の指定
-// MG2, sw:        表示文字列取得の文字列番号更新の設定
-// MG3, sw:        表示文字列取得の改頁時の動作の指定
-// MG4, no:        表示文字列取得番号設定
-// MG5, var:        表示文字列取得番号取得
-// MG6, sw:        表示文字列取得の番号を強制更新／更新解除
-// MG7, var:        表示文字列取得、現在番号の取得済み文字数の取得
 // MH num1,fig,num2:        数値を文字列に変換する (参考;Hｺﾏﾝﾄﾞ)
 // ML var,str_no:        文字列の長さを取得する
 // MP num1,num2:        指定の文字列を指定文字数だけ表示する（Ｘコマンドの桁数指定）
@@ -785,6 +777,31 @@ function M_cmd35( &$file, &$st, &$run )
 				$gp_pc["var"][0] = 1;
 			else
 				$gp_pc["var"][0] = 0;
+			return;
+		case 'G':
+			$type = ord( $file[$st+2] );
+			switch ( $type )
+			{
+				// MG4, no:        表示文字列取得番号設定
+				case 4:
+					$st += 3;
+					$no = sco35_calli($file, $st);
+					trace("MG 4 , $no");
+					return;
+				// MG100,switch:    文字列表示オン／オフ
+				case 100:
+					$st += 3;
+					$switch = sco35_calli($file, $st);
+					trace("MG 100 , $switch");
+					return;
+				// MG0, sw:        表示文字列を文字列変数に取得する／しない切替
+				// MG1, str_no:        表示文字列取得開始文字列番号の指定
+				// MG2, sw:        表示文字列取得の文字列番号更新の設定
+				// MG3, sw:        表示文字列取得の改頁時の動作の指定
+				// MG5, var:        表示文字列取得番号取得
+				// MG6, sw:        表示文字列取得の番号を強制更新／更新解除
+				// MG7, var:        表示文字列取得、現在番号の取得済み文字数の取得
+			}
 			return;
 		// MI dst_no,max_len,title:        ユーザーによる文字列の入力
 		//   MI return RND strlen
@@ -846,7 +863,6 @@ function M_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-// NC var1,count:        var1から始まるcount個の変数を0でクリアする
 // NI var,default,min,max:        数値入力
 // NT ﾀｲﾄﾙ:        NIコマンドで表示するタイトルを設定する。
 // NR var1,var2:        var1にvar2のルートを求める
@@ -874,6 +890,16 @@ function N_cmd35( &$file, &$st, &$run )
 			trace("NB $v1+$e1 , $v2+$e2 , $count");
 			$copy = sco35_var_get($v1, $e1, $count);
 			sco35_var_put($v2, $e2, $copy);
+			return;
+		// NC var1,count:        var1から始まるcount個の変数を0でクリアする
+		case 'C':
+			$st += 2;
+			list($v,$e) = sco35_varno( $file, $st );
+				$st++; // skip 0x7f
+			$count = sco35_calli($file, $st);
+			trace("NC $v+$e , $count");
+			$copy = array_fill(0, $count , 0);
+			sco35_var_put($v, $e, $copy);
 			return;
 		case 'D':
 			switch( $file[$st+2] )
@@ -1682,12 +1708,27 @@ function Z_cmd35( &$file, &$st, &$run )
 						$st++; // skip 0x7f
 					trace("ZZ 3 , $v+$e");
 					return;
+				// ZZ9,var:        起動時のｽｸﾘｰﾝｻｲｽﾞを取得する
+				case 9:
+					$st += 3;
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("ZZ 9 , $v+$e");
+					list($w,$h,$c) = $gp_pc["WW"];
+					sco35_var_put( $v, $e+0, $w ); // width
+					sco35_var_put( $v, $e+1, $h ); // height
+					sco35_var_put( $v, $e+2, $c ); // bit
+					return;
+				// ZZ13,num:        表示ﾌｫﾝﾄを設定する
+				case 13: // 0xd
+					$st += 3;
+					$num = sco35_calli($file, $st);
+					trace("ZZ 13 , $num");
+					return;
 				// ZZ4,var:        ＤＩＢ の全画面 サイズや色数を変数列に返す
 				// ZZ5,var:        ＳＹＳＴＥＭ３．５用表示画面 の サイズや色数を変数列に返す
 				// ZZ7,var:        セーブドライブの残りディスク容量を得る
 				// ZZ8,var:        メモリオンバッファの残り容量を得る
-				// ZZ9,var:        起動時のｽｸﾘｰﾝｻｲｽﾞを取得する
-				// ZZ13,num:        表示ﾌｫﾝﾄを設定する
 			}
 			return;
 	}

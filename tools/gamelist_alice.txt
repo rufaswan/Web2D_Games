@@ -81,32 +81,32 @@ AIN5  BA GA    WA     ばにしゅ！体験版
 
 === system 4.2 ===
 Ain    *.ain
-Init   *.ini
+Init   AliceStart.ini
 BA     *BA.afa/ald
 WA     *WA.afa/ald
 CG     *CG.afa
 3D     *3D.afa
-Aff    *AFF.afa (AJP grouped)
+AFF    *AFF.afa
 Flat   *Flat.afa
 Pact   *Pact.afa
 Sound  *Sound.afa
 Voice  *Voice.afa
 Font   *Font.fnl
 
-AIN6  BA WA CG  母娘乱館Trial
-AIN6  BA WA CG  ランス01 + Trial
-AIN6  BA WA CG | AFF  どらぺこTrial
-AIN6  BA WA CG | AFF  パステルチャイム3Trial
-AIN6  BA WA CG | Flat  超昂天使エスカレイヤー・リブートTrialVer1 + Ver2
-AIN6  BA WA CG | Flat | RED  武想少女隊ぶれいど☆ブライダーズTrial
-AIN6  CG Sound Voice Flat Pact  ランス03Trial
-AIN6  CG Sound Voice Flat Pact | RED  イブニクルTrial
+AIN6  BA WA CG  母娘乱館 体験版
+AIN6  BA WA CG  ランス01 + 体験版
+AIN6  BA WA CG | AFF  どらぺこ 体験版
+AIN6  BA WA CG | AFF  パステルチャイム3 体験版
+AIN6  BA WA CG | Flat  超昂天使エスカレイヤー・リブート 体験版Ver1 + Ver2
+AIN6  BA WA CG | Flat | RED  武想少女隊ぶれいど☆ブライダーズ 体験版
+AIN6  CG Sound Voice Flat Pact  ランス03 体験版
+AIN6  CG Sound Voice Flat Pact | RED  イブニクル 体験版
 
-AIN7  CG Sound Voice Flat Pact  妻みぐい3Trial
+AIN7  CG Sound Voice Flat Pact  妻みぐい3 体験版
 
-AIN8  CG Sound Voice Flat Pact  は～とふるママンTrial
+AIN8  CG Sound Voice Flat Pact  は～とふるママン 体験版
 
-AIN11  CG Sound Voice Flat Pact  超昂神騎エクシールTrial
+AIN11  CG Sound Voice Flat Pact  超昂神騎エクシール 体験版
 
-AIN14  CG Sound Voice Flat Pact  母爛漫Trial
-AIN14  CG Sound Voice Flat Pact | 3D  イブニクル2Trial
+AIN14  CG Sound Voice Flat Pact  母爛漫 体験版
+AIN14  CG Sound Voice Flat Pact | 3D  イブニクル2 体験版

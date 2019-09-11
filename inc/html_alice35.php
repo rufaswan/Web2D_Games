@@ -68,6 +68,7 @@ echo <<<_HTML
 </td>
 
 </tr></table>
+<p>JOYPAD</p>
 </div>
 _HTML;
 /*
@@ -95,6 +96,11 @@ _HTML;
 	#key_input table {
 		margin:0 auto 0 auto;
 		text-align:center;
+		display:none;
+	}
+	#key_input p {
+		text-align:center;
+		cursor:pointer;
 	}
 </style>
 
@@ -102,5 +108,8 @@ _HTML;
 	$("#key_input").on("click", "button", function(){
 		var data = $(this).attr("data");
 		window_update( "&resume&input=key,"+data );
+	});
+	$("#key_input").on("click", "p", function(){
+		$("#key_input table").toggle();
 	});
 </script>
