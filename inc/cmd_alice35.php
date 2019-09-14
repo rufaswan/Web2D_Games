@@ -274,6 +274,7 @@ function C_cmd35( &$file, &$st, &$run )
 			trace("CC $sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y");
 			$src = array($sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y);
 			sco35_div_add( "_BG_", $src );
+			//$run = false;
 			return;
 		// CE sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,effect_number,option,wait_flag:        エフェクト機能付きコピー           (CD)
 		case 'E':
@@ -302,6 +303,7 @@ function C_cmd35( &$file, &$st, &$run )
 			trace("CF $start_x , $start_y , $lengs_x , $lengs_y , $color");
 			$src = array($start_x , $start_y , $lengs_x , $lengs_y , $color);
 			sco35_div_add( "_CLR_", $src );
+			//$run = false;
 			return;
 		case 'K':
 			$type = ord( $file[$st+2] );
@@ -464,6 +466,7 @@ function G_cmd35( &$file, &$st, &$run )
 			$num = sco35_calli($file, $st);
 			trace("cg G0 $num");
 			sco35_g0_add( $num , -1 );
+			$run = false;
 			return;
 		// G num,c: (２５６色モードのみ／６万色モードでは不要)        num 番にリンクされてるＣＧを c 番の色だけ抜いて表示する
 		case 1:
@@ -511,8 +514,11 @@ function I_cmd35( &$file, &$st, &$run )
 				// 6 input data (2+3+4+5)
 				case 5:
 				case 6:
-					if ( sco35_IK_bnez( $file, $st ) )
+					if ( sco35_IK0_loop( $file, $st+3 ) )
+					{
+						$st += (3 + 17);
 						return;
+					}
 
 					if ( isset( $gp_pc["key"] ) )
 					{
@@ -1659,7 +1665,7 @@ function Z_cmd35( &$file, &$st, &$run )
 					$st += 3;
 					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
-					trace("ZT $type , $var");
+					trace("ZT $type , $v+$e");
 					sco35_var_put( $v, $e, 999 );
 					return;
 			}
@@ -1830,10 +1836,11 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 				$bak = $gp_pc["text"];
 				$gp_pc["text"] = array();
 				$loop = true;
-				while ( $loop )
+				$select = true;
+				while ( $select )
 				{
 					trace("= select_%x : ", $gp_pc["pc"][1]);
-					$func($gp_pc["pc"][0], $gp_pc["pc"][1], $run, $loop);
+					$func($gp_pc["pc"][0], $gp_pc["pc"][1], $loop, $select);
 				}
 				$sel_txt = "";
 				foreach ( $gp_pc["text"] as $text )
@@ -1876,6 +1883,11 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 		case '{': // 0x7b
 			if ( sco35_loop_inf( $file, $st ) )
 				return;
+			if ( sco35_IK0_loop( $file, $st ) )
+			{
+				$st += 17;
+				return;
+			}
 
 			$st++;
 			$exp = sco35_calli($file, $st);

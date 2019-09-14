@@ -39,7 +39,7 @@ $gp_init = array(
 	"cheat" => array(),
 );
 $gp_pc = array(
-	"pc"     => array(1,0),
+	"pc"     => array(0,0),
 	"var"    => array(),
 	"jal"    => array(),
 	"select" => array(),

@@ -41,6 +41,7 @@ require "funcs-bmp.php";
 
 function sco35_html( &$run )
 {
+	$auto_ajax = ( $run ) ? "" : "ajax='1'";
 	$run = false;
 	global $gp_init, $gp_pc, $ajax_html;
 	$ajax_html = "";
@@ -49,19 +50,18 @@ function sco35_html( &$run )
 
 /// CSS ///
 
+	echo "<input id='win_data' type='hidden' $auto_ajax>";
+
+	echo "<style>";
+
 	list($win_x,$win_y,$win_w,$win_h) = $gp_pc["WV"];
 
-	$style  = "";
 	//$style .= "margin-left:-{$win_x}px;";
 	//$style .= "margin-top:-{$win_y}px;";
-	$style .= "width:{$win_w}px;";
-	$style .= "height:{$win_h}px;";
-	echo "<input id='window_css' type='hidden' value='$style'>";
-	///////////
+	echo "div#window {width:{$win_w}px;height:{$win_h}px;}";
 
 	// border-width:1px;
 	// border-style:dotted/solid;
-	echo "<style>";
 	$zs = $gp_pc["ZS"] - 2;
 	echo "#select {";
 		echo "background-color:" .sco35_zc2ps(4, "#000"). ";";
@@ -93,11 +93,13 @@ function sco35_html( &$run )
 			case "img":
 				list($img,$spr) = $div["img"];
 				$png = sco35_g0_path( $img, $spr );
+/*
 				if ( ! isset($cg[$img]) )
 				{
 					echo "<style>.cg_$img {background-image:url('$png');}</style>";
 					$cg[$img] = 1;
 				}
+*/
 				echo "<img src='$png' class='sprites img' mouse='$mouse' box='$box'>";
 				break;
 			case "bg":
@@ -198,7 +200,7 @@ function sco35_div_cleanup()
 		} // for ( $j=$i+1; $j < $len; $j++ )
 	} // for ( $i=0; $i < $l; $i++ )
 
-	//array_splice( $gp_pc["div"] , 0 , 0);
+	array_splice( $gp_pc["div"] , 0 , 0);
 }
 
 function sco35_ec_clear( $num )
@@ -240,12 +242,9 @@ function sco35_text_add( $jp )
 		return;
 	}
 
-	$b1 = ord( $jp[0] );
-	if ( $b1 & 0x80 )
-		$len = (strlen($jp) / 2) * $font;
-	else
-		$len = strlen($jp) * ($font/2);
-
+	// SJIS  is 2-byte per char , so SJIS/2*font
+	// ASCII is half-width      , so ASCII *font/2
+	$len = (int)(strlen($jp) * $font / 2);
 	$text = array(
 		'p'  => array(
 			$gp_pc['T'][0],
@@ -257,7 +256,7 @@ function sco35_text_add( $jp )
 		"clr" => sco35_zc2ps(1, "#fff"),
 	);
 	$gp_pc["text"][] = $text;
-	$gp_pc["T"][0] += (int)$len;
+	$gp_pc["T"][0] += $len;
 }
 
 function sco35_vp_div_add( $src )
@@ -271,6 +270,7 @@ function sco35_vp_div_add( $src )
 		't' => "clear",
 		'p' => $box,
 	);
+	sco35_div_cleanup();
 
 	for ( $page=0; $page < $n; $page++ )
 	{
@@ -427,14 +427,16 @@ function sco35_div_add( $type, $src )
 				// make copy of the whole thing
 				else
 				{
+					$ccw = var_max( $div['p'][2], $w );
+					$cch = var_max( $div['p'][3], $h );
 					$cc = $div;
 					$cc = array(
 						't' => "bg",
 						'p' => array(
 							$div['p'][0] + $adx,
 							$div['p'][1] + $ady,
-							$div['p'][2],
-							$div['p'][3],
+							$ccw,
+							$cch,
 						),
 						"bg" => $div["bg"],
 					);
@@ -646,21 +648,23 @@ function sco35_loop_inf( &$file, &$st )
 	return false;
 }
 
-function sco35_IK_bnez( &$file, &$st )
+function sco35_IK0_loop( &$file, $st )
 {
-	if (
-		$file[$st+3] == '{'
-		&& $file[$st+12] == 'I'
-		&& $file[$st+13] == 'K'
-		&& $file[$st+15] == '>'
-	){
-		$bak = $st + 8;
-		$end = str2int( $file, $bak, 4 );
-		trace("skip IK <@RND!=0 IK>");
-		$st = $end;
-		return true;
-	}
-	return false;
+	// 7b 80 40 7e 7f   - {if &0 != 0
+	// addr
+	// 49 4b xx 3e addr - IK6 >goto if
+	// total skip = 1+4 +4+ 3 +1+4 = 17 bytes
+	if ( $file[$st+0]  != '{' )  return false;
+	if ( $file[$st+9]  != 'I' )  return false;
+	if ( $file[$st+10] != 'K' )  return false;
+	if ( $file[$st+12] != '>' )  return false;
+
+	$b = $st + 1;
+	$calli = str2int( $file, $b, 4 );
+	if ( $calli != 0x7f7e4080 )  return false;
+
+	trace("skip <@RND!=0 IK>");
+	return true;
 }
 
 function sco35_load_data($num , $len)
@@ -919,7 +923,7 @@ function sco35_load_sco( $id )
 	}
 }
 
-function exec_alice35( $id, &$st, &$run )
+function exec_alice35( &$id, &$st, &$run )
 {
 	global $sco_file;
 	if ( $id == 0 )  $id = 1;
@@ -930,6 +934,6 @@ function exec_alice35( $id, &$st, &$run )
 	$now = $st;
 	$select = false;
 	sco35_cmd( $id, $st, $run, $select);
-	if ( $st == $now )
+	if ( $st == $now || ! $run )
 		sco35_html( $run );
 }

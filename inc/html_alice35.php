@@ -68,16 +68,9 @@ echo <<<_HTML
 </td>
 
 </tr></table>
-<p>JOYPAD</p>
+<p>GAMEPAD</p>
 </div>
 _HTML;
-/*
-		ajax_arg = ajax_arg + "&input=key," + data;
-		padding:1em;
-		if ( data == 0 )
-			window_update( "&resume" );
-		else
-*/
 ?>
 
 <style>
@@ -105,11 +98,32 @@ _HTML;
 </style>
 
 <script>
-	$("#key_input").on("click", "button", function(){
-		var data = $(this).attr("data");
+var auto_skip = false;
+
+function listener()
+{
+	if ( auto_skip )
+		window_update( "&resume&input=key,0" );
+
+	setTimeout(listener, ajax_ms);
+}
+
+$("#key_input").on("click", "button", function(){
+	var data = $(this).attr("data");
+	if ( data == 0 )
+	{
+		auto_skip = ! auto_skip;
+		if ( auto_skip )
+			$(this).empty().append("AUTO");
+		else
+			$(this).empty().append("SKIP");
+		listener();
+	}
+	else
 		window_update( "&resume&input=key,"+data );
-	});
-	$("#key_input").on("click", "p", function(){
-		$("#key_input table").toggle();
-	});
+});
+
+$("#key_input").on("click", "p", function(){
+	$("#key_input table").toggle();
+});
 </script>

@@ -64,12 +64,14 @@ unlink(SAVE_FILE . "log");
 <script>
 var ajax_url  = "ajax.php?game=<?php echo GAME; ?>";
 var ajax_done = true;
+var ajax_auto = false;
+var ajax_ms = 250;
 var win_w = 320;
 var win_h = 240;
 </script>
 </head><body>
 <div id="canvas">
-	<div id="window" style="background:url('<?php echo GAME; ?>/thumb.png') center center;">
+	<div id="window" style="background-image:url('<?php echo GAME; ?>/thumb.png') center center;">
 		<span class="sprites" style="left:320px; top:240px;">320,240</span>
 		<ul id="select" class="sprites" style="left:480px; top:120px;">
 			<li data="0">SELECT 1</li>
@@ -108,45 +110,54 @@ function window_update( input ){
 		return;
 	ajax_done = false;
 
-	$.get( ajax_url + input, function(data){
-		$("#window").empty().append(data);
+	$.ajax({
+		method : 'GET',
+		url : ajax_url + input,
+		success : function(data,textStatus,jqXHR){
+			$("#window").empty().append(data);
 
-		update_audio();
+			update_audio();
 
-		$(".sprites").each(function(){
-			var style = $(this).attr("style");
-			if ( ! style )
-				style = "";
+			$(".sprites").each(function(){
+				var style = $(this).attr("style");
+				if ( ! style )
+					style = "";
 
-			var mouse = $(this).attr("mouse");
-			if ( mouse )
-			{
-				var css = mouse.split(',');
-				style += "left:" +css[0]+ "px;";
-				style += "top:"  +css[1]+ "px;";
+				var mouse = $(this).attr("mouse");
+				if ( mouse )
+				{
+					var css = mouse.split(',');
+					style += "left:" +css[0]+ "px;";
+					style += "top:"  +css[1]+ "px;";
+				}
+
+				var box = $(this).attr("box");
+				if ( box )
+				{
+					var css = box.split(',');
+					style += "width:"  +css[0]+ "px;";
+					style += "height:" +css[1]+ "px;";
+					if ( css.length == 3 )
+						style += "background-color:" +css[2]+ ";";
+					if ( css.length == 4 )
+						style += "background-position:" +css[2]+ "px " +css[3]+ "px;";
+				}
+
+				$(this).attr("style", style);
+			});
+
+			win_w = $("#window").width();
+			win_h = $("#window").height();
+			ajax_auto = $("#win_data").attr("ajax");
+			ajax_done = true;
+			if ( ajax_auto ){
+				setTimeout(function(){
+					window_update( "&resume" );
+				}, ajax_ms);
 			}
-
-			var box = $(this).attr("box");
-			if ( box )
-			{
-				var css = box.split(',');
-				style += "width:"  +css[0]+ "px;";
-				style += "height:" +css[1]+ "px;";
-				if ( css.length == 3 )
-					style += "background-color:" +css[2]+ ";";
-				if ( css.length == 4 )
-					style += "background-position:" +css[2]+ "px " +css[3]+ "px;";
-			}
-
-			$(this).attr("style", style);
-		});
-
-		var win_css = $("#window_css").val();
-			$("#window").attr("style", win_css );
-		win_w = $("#window").width();
-		win_h = $("#window").height();
-		ajax_done = true;
+		}
 	});
+
 }
 </script><?php
 
@@ -171,61 +182,12 @@ window_update("");
 </html>
 <?php
 /*
+			$("#window").attr("style", win_css );
 				if ( css[0] >= win_w || css[1] >= win_h )
 				{
 					$(this).attr("style", "display:none;");
 					return;
 				}
-
-
-		ajax_arg = ajax_arg + "&input=select," + data;
-		ajax_arg = ajax_arg + "&input=mouse," + data;
-	ajax_ok = true;
-	ajax_arg = "&resume";
-var fps = 1000/14;
-setInterval( function(){
-	if ( ajax_ok ){
-		ajax_ok = false;
-		window_update( ajax_arg );
-	}
-}, fps );
-function loop(){
-	setTimeout(function(){
-		window_update( ajax_arg );
-		ajax_arg = "&resume";
-	}
-	, fps);
-	loop();
-}
-loop();
-		console.log([src,wave]);
-		$("#console").html(data);
-var fps = 1000/14;
-var interval = setInterval( function(){}, fps );
-clearInterval(interval);
-var ajax_arg = "";
-var ajax_ok  = true;
-
-function RecurringTimer(callback, delay){
-	var timerId, start, remaining = delay;
-
-	this.pause = function(){
-		window.clearTimeout(timerId);
-		remaining -= new Date() - start;
-	};
-
-	var resume = function(){
-		start = new Date();
-		timerId = window.setTimeout(function(){
-			remaining = delay;
-			resume();
-			callback();
-		}, remaining);
-	};
-
-	this.resume = resume;
-	this.resume();
-}
 
 var arr = MyDiv.getElementsByTagName('script')
 for (var n = 0; n < arr.length; n++)

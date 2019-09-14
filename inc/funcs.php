@@ -92,10 +92,10 @@ function box_within( $big , $small )
 	list($x2a,$y2a,$w2,$h2) = $small;
 	if ( $w2 > $w1 )  return false;
 	if ( $h2 > $h1 )  return false;
-	$x1b = $x1a + $w1;
-	$y1b = $y1a + $h1;
-	$x2b = $x2a + $w2;
-	$y2b = $y2a + $h2;
+	$x1b = $x1a + $w1 - 1;
+	$y1b = $y1a + $h1 - 1;
+	$x2b = $x2a + $w2 - 1;
+	$y2b = $y2a + $h2 - 1;
 	if ( $x1a > $x2a )  return false;
 	if ( $x1b < $x2b )  return false;
 	if ( $y1a > $y2a )  return false;
@@ -121,7 +121,7 @@ function cheat_exp( $exp )
 	$v2 = 0;
 
 	$st = 0;
-	print_r($m);
+	//print_r($m);
 	if ( $m[$st] == '&' )
 	{
 		$v1 = &$gp_pc["var"][ $m[$st+1] ];
@@ -253,7 +253,6 @@ function findfile( $sprint , $num , $default , $b )
 
 function pc_save( $ext, $pc )
 {
-	$pc["text"] = base64_encode( $pc["text"] );
 	file_put_contents(SAVE_FILE . $ext, json_encode($pc) );
 
 	//$pc = "<?php\n\$pc=". var_export($pc,true) .";";
@@ -268,7 +267,6 @@ function pc_load( $ext )
 		return $pc;
 
 	$pc = json_decode( file_get_contents($save), true);
-	$pc["text"] = base64_decode( $pc["text"] );
 
 	//$pc = file_get_contents(SAVE_FILE . $ext);
 	//eval("\$pc={$pc};");
@@ -303,17 +301,17 @@ function var_math( $opr, $v1, $v2 )
 		case '&':   case "and":  $n = $v1 & $v2; break;
 		case '|':   case "or":   $n = $v1 | $v2; break;
 		case '^':   case "xor":  $n = $v1 ^ $v2; break;
-		case '<':   case "gt":   $n = ($v1 <  $v2); break;
-		case '>':   case "lt":   $n = ($v1 >  $v2); break;
-		case '<=':  case "gte":  $n = ($v1 <= $v2); break;
-		case '>=':  case "lte":  $n = ($v1 >= $v2); break;
+		case '<':   case "lt":   $n = ($v1 <  $v2); break;
+		case '>':   case "gt":   $n = ($v1 >  $v2); break;
+		case '<=':  case "lte":  $n = ($v1 <= $v2); break;
+		case '>=':  case "gte":  $n = ($v1 >= $v2); break;
 		case '==':  case "eq":   $n = ($v1 == $v2); break;
 		case '!=':  case "neq":  $n = ($v1 != $v2); break;
 	}
 	return (int)$n;
 }
 
-// for width/height , always positive
+// var always positive , for width/height
 function var_size( $n )
 {
 	if ( $n < 0 )
@@ -321,10 +319,18 @@ function var_size( $n )
 	else
 		return $n;
 }
+// var no lower than min
+function var_min( $var, $min )
+{
+	return ( $var < $min ) ? $min : $var;
+}
+// var no higher than max
+function var_max( $var, $max )
+{
+	return ( $var > $max ) ? $max : $var;
+}
 
 /*
-function var_min( $var, $min )  { return ( $var < $min ) ? $min : $var; }
-function var_max( $var, $max )  { return ( $var > $max ) ? $max : $var; }
 function var_swap( &$var1 , &$var2 )
 {
 	$tmp  = $var1;
