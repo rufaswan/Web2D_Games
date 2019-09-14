@@ -2,7 +2,7 @@
 ### 2D Games playable on the web!
 * Play your favorite RPG, adventure games, Visual Novels on web browsers.
 
-* Optimized to work smart phones, tablets, and other touch screen devices.
+* Optimized to work on smart phones, tablets, and other touch screen devices.
 
 ## Demo Gameplay
 [![Toushin Toshi 1 Demo](http://img.youtube.com/vi/Jumikw3BS7o/0.jpg)](http://www.youtube.com/watch?v=Jumikw3BS7o)
@@ -23,31 +23,31 @@
 
 ## Game Status
 ### Playable
-1 [alice35] Rance 1
+1. [alice35] Rance 1
 
-1 [alice35] Rance 2
+1. [alice35] Rance 2
 
-1 [alice35] Toushin Toshi 1
+1. [alice35] Toushin Toshi 1
 
 ### Working on it
-1 [alice35] Rance 3
+1. [alice35] Rance 3
 
-1 [alice35] DALK
+1. [alice35] DALK
 
-1 [alice35] Dr STOP
+1. [alice35] Dr STOP
 
 ### Upcoming
-1 [alice35] Rance 4
+1. [alice35] Rance 4
 
-1 [alice35] Toushin Toshi 2
+1. [alice35] Toushin Toshi 2
 
-1 [alice35] Kichiku Rance
+1. [alice35] Kichiku Rance
 
-1 [alice35] AmbivalenZ
+1. [alice35] AmbivalenZ
 
-1 [alice35] Atlach Nacha
+1. [alice35] Atlach Nacha
 
-1 [alice35] Type Zero
+1. [alice35] Type Zero
 
-1 [alice35] Ningengari
+1. [alice35] Ningengari
 
