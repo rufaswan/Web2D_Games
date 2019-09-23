@@ -33,6 +33,61 @@ function str2int( &$str, $pos, $byte )
 	return $int;
 }
 ////////////////////////////////////////
+function sjisstr( &$file, &$st )
+{
+	$sjis_half = file_get_contents("sjis_half.inc" );
+	$sjis_asc  = file_get_contents("sjis_ascii.inc");
+	$str = "";
+	while(1)
+	{
+		$b1 = ord( $file[$st] );
+		if ( $b1 == 0 )
+			return $str;
+
+		if ( $b1 >= 0xe0 )
+		{
+			$str .= $file[$st+0];
+			$str .= $file[$st+1];
+			$st += 2;
+		}
+		else
+		if ( $b1 >= 0xa0 )
+		{
+			$p = $b1 * 2;
+			$str .= $sjis_half[$p+0];
+			$str .= $sjis_half[$p+1];
+			$st++;
+		}
+		else
+		if ( $b1 >= 0x80 )
+		{
+			if ( $b1 == 0x81 || $b1 == 0x82 )
+			{
+				$b2 = ord( $file[$st+1] );
+				$p = ($b1 - 0x81) * 0x100 + $b2;
+				if ( $sjis_asc[$p] == ZERO )
+				{
+					$str .= $file[$st+0];
+					$str .= $file[$st+1];
+				}
+				else
+					$str .= $sjis_asc[$p];
+			}
+			else
+			{
+				$str .= $file[$st+0];
+				$str .= $file[$st+1];
+			}
+			$st += 2;
+		}
+		else
+		{
+			$str .= $file[$st];
+			$st++;
+		}
+	} // while(1)
+}
+
 function afatbl( $fp, $fname, $tbl_sz )
 {
 	// to fix invalid SJIS chars

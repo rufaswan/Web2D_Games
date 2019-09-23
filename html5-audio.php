@@ -70,8 +70,8 @@ foreach ( $path as $p => $x )
 		$i = 1;
 		while(1)
 		{
-			$ogg = findfile( $gp_init[$p], $i, "" );
-			if ( $ogg == "" )
+			$ogg = findfile( $gp_init[$p], $i, "dummy", 8 );
+			if ( $ogg == "dummy" )
 				break;
 			printf("<button data='$ogg'>$x %02d</button>\n", $i);
 			$i++;

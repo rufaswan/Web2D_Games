@@ -251,6 +251,22 @@ function findfile( $sprint , $num , $default , $b )
 	return $fn;
 }
 
+function textline( $textfile , $line )
+{
+	if ( $line < 1 )
+		return "";
+	$txt = fopen($textfile, "r");
+	$l = 1;
+	while ( ! feof($txt) ) {
+		$str = fgets($txt);
+		if ( $l == $line )
+			return $str;
+		$l++;
+	} // while (1)
+	fclose($txt);
+	return "";
+}
+
 function pc_save( $ext, $pc )
 {
 	file_put_contents(SAVE_FILE . $ext, json_encode($pc) );
@@ -330,61 +346,21 @@ function var_max( $var, $max )
 	return ( $var > $max ) ? $max : $var;
 }
 
+// str meant to be boolean
+function var_bool( $str )
+{
+	$s = strtolower($str);
+	$ok = array("true" , "on" , "yes", "enable" , "show");
+	$no = array("false", "off", "no" , "disable", "hide");
+	if ( in_array($s, $ok) )  return true;
+	if ( in_array($s, $no) )  return false;
+	return $str;
+}
+
 /*
-function var_swap( &$var1 , &$var2 )
-{
-	$tmp  = $var1;
-	$var1 = $var2;
-	$var2 = $tmp;
-}
-
-function unset_pc( $var, $init = false )
-{
-	global $gp_pc;
-	if ( isset( $gp_pc[$var] ) )
-		unset( $gp_pc[$var] );
-
-	if ( $init )
-		$gp_pc[$var] = 0;
-}
-
 function debug()
 {
 	if ( ! DEBUG )  return;
-	$args = func_get_args();
-	foreach( $args as $var )
-	{
-		if ( is_array($var) )
-			print_r($var);
-		else
-			echo "{$var}\n";
-	}
-
-	//$var  = array_shift($args);
-	//return vprintf($var, $args);
 	return;
 }
-
-// find "/mapchip/map_0001"
-// ret  "/MapChip/Map_0001.png"
-function findfile( $fn_mix )
-{
-	$sep = strrpos($fn_mix, '/');
-	if ( $sep != FALSE )
-		$dir = substr($fn_mix, 0, $sep);
-	else
-		$dir = ".";
-
-	$list = scandir(ROOT . "/$dir");
-	foreach( $list as $l )
-	{
-		if ( $l[0] == '.' )
-			continue;
-		if ( stripos("$dir/$l", $fn_mix) === FALSE )
-			continue;
-		return "$dir/$l";
-	}
-	return "";
-}
-
 */

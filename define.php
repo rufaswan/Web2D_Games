@@ -31,6 +31,9 @@ define("ROOT", dirname(__FILE__) );
 
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
+define("BIT8",  0xff);
+define("BIT16", 0xffff);
+define("BIT24", 0xffffff);
 require ROOT . "/inc/funcs.php";
 
 $gp_init = array(
@@ -42,7 +45,9 @@ $gp_pc = array(
 	"pc"     => array(0,0),
 	"var"    => array(),
 	"jal"    => array(),
+	"bgm"    => array(),
 	"select" => array(),
+	"stack"  => array(),
 	"text"   => array(), // p=box,LANG=text,[opt]
 	"div"    => array(), // t=type,p=box,[opt]
 	"return" => "",
@@ -58,7 +63,10 @@ foreach ( $_REQUEST as $key=>$var )
 			$cfg = initcfg_var( ROOT . "/$var/init.cfg" );
 			$gp_init = $cfg + $gp_init;
 			define("GAME", $var );
-			define("SAVE", dechex( crc32($var) ) );
+			//define("SAVE", dechex( crc32($var) ) );
+			//define("SAVE",  md5($var) );
+			//define("SAVE", sha1($var) );
+			define("SAVE", preg_replace("|[^0-9a-zA-Z]|", '_', $var) );
 			define("SAVE_FILE", ROOT ."/sav/". SAVE .".");
 			break;
 		case "input":

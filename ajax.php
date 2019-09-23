@@ -23,7 +23,7 @@ require "define.php";
 if ( ! defined("GAME") )  exit();
 
 header("Content-Type:text/html; charset={$gp_init['charset']};");
-$ajax_html ="";
+$ajax_html = "";
 $engine = "exec_{$gp_init['engine']}";
 $exec_run = true;
 require ROOT . "/inc/$engine.php";

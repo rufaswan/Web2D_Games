@@ -68,7 +68,10 @@ echo <<<_HTML
 </td>
 
 </tr></table>
-<p>GAMEPAD</p>
+<p>
+<span id="clickgpad">GAMEPAD</span> -
+<span id="clickmouse">MOUSE</span>
+</p>
 </div>
 _HTML;
 ?>
@@ -123,7 +126,10 @@ $("#key_input").on("click", "button", function(){
 		window_update( "&resume&input=key,"+data );
 });
 
-$("#key_input").on("click", "p", function(){
+$("#clickgpad").click(function(){
 	$("#key_input table").toggle();
+});
+$("#clickmouse").click(function(){
+	add_grid();
 });
 </script>

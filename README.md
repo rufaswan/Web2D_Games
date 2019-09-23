@@ -29,6 +29,8 @@
 
 1. [alice35] Toushin Toshi 1
 
+1. [alice35] AmbivalenZ
+
 ### Working on it
 1. [alice35] Rance 3
 
@@ -42,8 +44,6 @@
 1. [alice35] Toushin Toshi 2
 
 1. [alice35] Kichiku Rance
-
-1. [alice35] AmbivalenZ
 
 1. [alice35] Atlach Nacha
 

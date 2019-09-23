@@ -40,15 +40,7 @@ unlink(SAVE_FILE . "log");
 	ul { list-style:none; }
 	.sprites { position:absolute; }
 	.hidden { display:none; }
-	.pixel {
-		width: 1px;
-		height:1px;
-	}
-	.tiled {
-		width: 8px;
-		height:8px;
-		cursor:pointer;
-	}
+	.grid { border:1px #fff solid; }
 	#select { cursor:pointer; }
 	div#canvas { display:block; }
 	div#window {
@@ -65,35 +57,52 @@ unlink(SAVE_FILE . "log");
 var ajax_url  = "ajax.php?game=<?php echo GAME; ?>";
 var ajax_done = true;
 var ajax_auto = false;
-var ajax_ms = 250;
+var ajax_ms = 200;
 var win_w = 320;
 var win_h = 240;
+var grid_sz = 16;
 </script>
 </head><body>
 <div id="canvas">
 	<div id="window" style="background-image:url('<?php echo GAME; ?>/thumb.png') center center;">
-		<span class="sprites" style="left:320px; top:240px;">320,240</span>
-		<ul id="select" class="sprites" style="left:480px; top:120px;">
+		<span class="sprites" mouse="160,120">160,120</span>
+		<ul id="select" class="sprites" mouse="320,0">
 			<li data="0">SELECT 1</li>
 			<li data="1">SELECT 2</li>
 			<li data="2">SELECT 3</li>
 			<li data="3">SELECT 4</li>
 		</ul>
 	</div> <!-- #window -->
-	<input id="ogg"  type="hidden" value="">
-	<input id="midi" type="hidden" value="">
+	<input id="bgm"  type="hidden" value="">
 	<input id="wave" type="hidden" value="">
 </div> <!-- #canvas -->
 
 <div id="dataset" style="display:none;">
-	<audio id="playogg"  src="" type="audio/ogg" autoplay loop></audio>
-	<audio id="playmidi" src="" type="audio/ogg" autoplay loop></audio>
+	<audio id="playbgm"  src="" type="audio/ogg" autoplay loop></audio>
 	<audio id="playwave" src="" type="audio/ogg" autoplay></audio>
 </div> <!-- #dataset -->
 
 <script>
+function add_grid(){
+	var x = 0;
+	while ( x < win_w ){
+		var y = 0;
+		while ( y < win_h ){
+			var grid = "<div class='sprites grid'";
+			grid += " mouse='" +x+ "," +y+ "'";
+			grid += " box='" +grid_sz+ "," +grid_sz+ "'";
+			grid += " style='left:" +x+ "px;top:" +y+ "px;width:" +grid_sz+ "px;height:" +grid_sz+ "px;'";
+			grid += "></div>";
+			$("#window").append(grid);
+			y += grid_sz;
+		}
+		x += grid_sz;
+	}
+	return;
+}
+
 function update_audio(){
-	["ogg","midi","wave"].forEach(function(v){
+	["bgm","wave"].forEach(function(v){
 		var src  = $("#play"+v).attr("src");
 		var wave = $("#"+v).val();
 		if ( wave != src )
@@ -103,6 +112,7 @@ function update_audio(){
 			play.play();
 		}
 	});
+	return;
 }
 
 function window_update( input ){
@@ -157,7 +167,7 @@ function window_update( input ){
 			}
 		}
 	});
-
+	return;
 }
 </script><?php
 
@@ -172,8 +182,8 @@ window_update("");
 	});
 
 	$("body").on("click", ".sprites", function(){
-		var data = $(this).attr("mouse");
-		window_update( "&resume&input=mouse," + data );
+		var mouse = $(this).attr("mouse");
+		window_update( "&resume&input=mouse," + mouse );
 	});
 
 </script>
@@ -182,7 +192,6 @@ window_update("");
 </html>
 <?php
 /*
-			$("#window").attr("style", win_css );
 				if ( css[0] >= win_w || css[1] >= win_h )
 				{
 					$(this).attr("style", "display:none;");
@@ -192,18 +201,6 @@ window_update("");
 var arr = MyDiv.getElementsByTagName('script')
 for (var n = 0; n < arr.length; n++)
 	eval(arr[n].innerHTML) //run script inside div
-
-$.ajax({
-	type: 'GET',
-	url: 'response.php',
-	timeout: 2000,
-	success: function(data) {
-	  $("#content").html(data);
-	  myFunction();
-	},
-	error: function (XMLHttpRequest, textStatus, errorThrown) {
-	  alert("error retrieving content");
-	}
 
 	if ( typeof auto_ajax === "function" )
 		auto_ajax();
