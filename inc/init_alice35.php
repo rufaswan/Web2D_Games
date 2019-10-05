@@ -20,16 +20,18 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 $gp_init["web_title"] = "Alice SYSTEM 3.5 WEB";
-$gp_init["sco_head"] = 0x20;
-$gp_init["path_ogg"] = GAME . "/audio/%02d.ogg";
-$gp_init["path_sco"] = GAME . "/sa_ald/%03d/%05d.sco";
-$gp_init["path_img"] = GAME . "/ga_ald/%03d/%05d.png";
-$gp_init["path_spr"] = GAME . "/ga_ald/%03d/%05d-%d.png";
-//$gp_init["path_wav"] = GAME . "/wa_ald/%03d/%05d.wav";
-$gp_init["path_wav"] = GAME . "/wa_ald/%03d/%05d.ogg";
-//$gp_init["path_mid"] = GAME . "/ma_ald/%03d/%05d.mid";
-$gp_init["path_mid"] = GAME . "/ma_ald/%03d/%05d.ogg";
-$gp_init["path_dat"] = GAME . "/da_ald/%03d/%05d.dat";
+
+// single SA DA RA MA BA
+$gp_init["path_ba"] = GAME . "/ba/%03d.ogg";
+$gp_init["path_sa"] = GAME . "/sa/%03d.sco";
+//$gp_init["path_ma"] = GAME . "/ma/%03d.mid";
+$gp_init["path_ma"] = GAME . "/ma/%03d.ogg";
+$gp_init["path_da"] = GAME . "/da/%03d.dat";
+
+// sets   GA-GB-GC  WA-WB
+$gp_init["path_ga0"] = GAME . "/ga/%03d/%05d.png";
+$gp_init["path_ga1"] = GAME . "/ga/%03d/%05d-%d.png";
+$gp_init["path_wa"]  = GAME . "/wa/%03d/%05d.ogg";
 
 $gp_key = array(
 	'up'    => (1 << 0),
@@ -42,4 +44,4 @@ $gp_key = array(
 	'tab'   => (1 << 7), // joy = D
 );
 
-$gp_img_meta = img_meta( ROOT ."/". GAME ."/ga_ald/meta.txt" );
+$gp_img_meta = img_meta( ROOT ."/". GAME ."/ga/meta.txt" );

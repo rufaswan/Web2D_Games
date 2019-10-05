@@ -22,7 +22,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////
 define("ZERO", chr(  0));
 
-function fgetstr0( $fp, $pos, $in_hex = FALSE )
+function fgetstr0( $fp, $pos )
 {
 	fseek( $fp, $pos, SEEK_SET );
 	$r = "";
@@ -31,11 +31,7 @@ function fgetstr0( $fp, $pos, $in_hex = FALSE )
 		$b = fread($fp, 1);
 		if ( $b == ZERO )
 			return $r;
-
-		if ( $in_hex )
-			$r .= '\\x'.dechex( ord($b) );
-		else
-			$r .= $b;
+		$r .= $b;
 	}
 }
 function fgetint( $fp, $pos, $bytes )
@@ -62,27 +58,27 @@ function get_index( $fp )
 	return $dat;
 }
 
-if ( $argc == 1 )   exit();
+if ( $argc == 1 )   exit("{$argv[0]}  GA.ald  GB.ald  GC.ald...\n");
 if ( stripos($argv[1], "sa.ald") !== FALSE )
-	$dir = "sa_ald";
+	$dir = "sa";
 else
 if ( stripos($argv[1], "ga.ald") !== FALSE )
-	$dir = "ga_ald";
+	$dir = "ga";
 else
 if ( stripos($argv[1], "wa.ald") !== FALSE )
-	$dir = "wa_ald";
+	$dir = "wa";
 else
 if ( stripos($argv[1], "ma.ald") !== FALSE )
-	$dir = "ma_ald";
+	$dir = "ma";
 else
 if ( stripos($argv[1], "da.ald") !== FALSE )
-	$dir = "da_ald";
+	$dir = "da";
 else
 if ( stripos($argv[1], "ba.ald") !== FALSE )
-	$dir = "ba_ald";
+	$dir = "ba";
 else
 if ( stripos($argv[1], "ra.ald") !== FALSE )
-	$dir = "ra_ald";
+	$dir = "ra";
 else
 	exit("UNKNOWN {$argv[1]}\n");
 
@@ -125,9 +121,18 @@ while ( $st < $ed )
 	$hsz = fgetint( $fp[$arc], ($pos*0x100)+0, 4 );
 	$fsz = (($nxt - $pos) * 0x100) - $hsz;
 
-	$dn = sprintf("$dir/%03d", ($id >> 8));
-	$fn = sprintf("%05d.dat", $id);
-	@mkdir( $dn, 0755, true );
+	if ( $dir == "ga" || $dir == "wa" )
+	{
+		$dn = sprintf("$dir/%03d", ($id >> 8));
+		$fn = sprintf("%05d.dat", $id);
+		@mkdir( $dn, 0755, true );
+	}
+	else
+	{
+		$dn = $dir;
+		$fn = sprintf("%03d.dat", $id);
+		@mkdir( $dn, 0755, true );
+	}
 
 	fseek( $fp[$arc], ($pos*0x100)+$hsz, SEEK_SET );
 	$cg = fread( $fp[$arc], $fsz );
@@ -139,4 +144,4 @@ while ( $st < $ed )
 	echo $ent;
 	$hed .= $ent;
 }
-file_put_contents("{$dir}.hed", $hed);
+file_put_contents("{$dir}_ald.hed", $hed);

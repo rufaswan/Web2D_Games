@@ -50,8 +50,8 @@ getinit( ROOT );
 	<title>GAMES INDEX</title>
 	<style>
 		body { background-color:#000; text-align:center; }
+		img { display:block; }
 		a { color:#fff; }
-		img { width:200px; height:300px; }
 		div.games {
 			border:1px #fff solid;
 			margin:0.1em;
@@ -72,7 +72,7 @@ foreach ( $inits as $d )
 echo <<<_HTML
 <div class="games">
 	<a href="game_run.php?game=$path">
-	<img src="$thumb" title="$thumb">
+	<img src="$thumb" alt="$path" title="$thumb" width="200" height="300">
 	</a>
 	<p><a href="html5-audio.php?game=$path">BGM</a></p>
 </div>

@@ -22,10 +22,9 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "define.php";
 if ( ! defined("GAME") )  exit();
 
-header("Content-Type:text/html; charset={$gp_init['charset']};");
+header("Content-Type:text/html; charset=utf-8;");
 $ajax_html = "";
 $engine = "exec_{$gp_init['engine']}";
-$exec_run = true;
 require ROOT . "/inc/$engine.php";
 init_cheat();
 //srand(0);
@@ -34,16 +33,14 @@ srand( time() );
 if ( TRACE_OB )
 {
 	ob_start();
-	while ( $exec_run )
-		$engine( $gp_pc["pc"][0], $gp_pc["pc"][1], $exec_run );
+	$engine();
 	trace("html %d bytes", strlen($ajax_html) );
 	$log = ob_get_clean();
 	file_put_contents(SAVE_FILE . "log", $log, FILE_APPEND);
 }
 else
 {
-	while ( $exec_run )
-		$engine( $gp_pc["pc"][0], $gp_pc["pc"][1], $exec_run );
+	$engine();
 	trace("html %d bytes", strlen($ajax_html) );
 }
 

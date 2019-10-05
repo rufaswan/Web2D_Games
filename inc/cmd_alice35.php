@@ -22,7 +22,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 // <@  cali:成立中実行コマンド  <@ Whileループ開始
 // >  Whileループ終了
 
-function B_cmd35( &$file, &$st, &$run )
+function B_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	$type = ord( $file[$st+1] );
@@ -34,11 +34,9 @@ function B_cmd35( &$file, &$st, &$run )
 			$num = sco35_calli($file, $st);
 			$x1 = sco35_calli($file, $st);
 			$y1 = sco35_calli($file, $st);
-			$x2 = sco35_calli($file, $st);
-			$y2 = sco35_calli($file, $st);
+			$w = sco35_calli($file, $st); // x2
+			$h = sco35_calli($file, $st); // y2
 			$v = sco35_calli($file, $st);
-			$w = var_size( $x2-$x1 );
-			$h = var_size( $y2-$y1 );
 			trace("select B1 $num , $x1 , $y1 , $w , $h , $v");
 			$gp_pc["B1"][$num] = array($x1 , $y1 , $w , $h , $v);
 			return;
@@ -60,11 +58,9 @@ function B_cmd35( &$file, &$st, &$run )
 			$num = sco35_calli($file, $st);
 			$x1 = sco35_calli($file, $st);
 			$y1 = sco35_calli($file, $st);
-			$x2 = sco35_calli($file, $st);
-			$y2 = sco35_calli($file, $st);
+			$w = sco35_calli($file, $st); // x2
+			$h = sco35_calli($file, $st); // y2
 			$v = sco35_calli($file, $st);
-			$w = var_size( $x2-$x1 );
-			$h = var_size( $y2-$y1 );
 			trace("text B3 $num , $x1 , $y1 , $w , $h , $v");
 			$gp_pc["B3"][$num] = array($x1 , $y1 , $w , $h , $v);
 			return;
@@ -96,7 +92,7 @@ function B_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-function F_cmd35( &$file, &$st, &$run )
+function F_cmd35( &$file, &$st, &$ajax )
 {
 	global $sco_file, $gp_pc;
 	$type = ord( $file[$st+1] );
@@ -116,7 +112,7 @@ function F_cmd35( &$file, &$st, &$run )
 				$pos++; // skip 0
 			trace("array F1 $str_number , $skip = $jp");
 			$gp_pc["F"][1] += ($pos - $old);
-			$gp_pc["X"][$str_number] = base64_encode($jp);
+			$gp_pc["X"][$str_number] = $jp;
 			return;
 		// F2,read_var,skip:  テーブルデータ数値取得(ベース移動,オフセット指定)
 		case 2:
@@ -157,7 +153,7 @@ function F_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-function J_cmd35( &$file, &$st, &$run )
+function J_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	$type = ord( $file[$st+1] );
@@ -187,7 +183,7 @@ function J_cmd35( &$file, &$st, &$run )
 }
 
 // 拡張コマンド一覧
-function Y_cmd35( &$file, &$st, &$run )
+function Y_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	$bak = $st;
@@ -242,12 +238,12 @@ function Y_cmd35( &$file, &$st, &$run )
 
 // CL start_x,start_y,end_x,end_y,color:  LINE (このコマンドのみ指定パラメータが違うので注意)
 // CX mode,src_x,src_y,len_x,len_y,dst_x,dst_y,col:  16bit以上専用のDIBのスプライトコピー（半透明処理が可能）
-function C_cmd35( &$file, &$st, &$run )
+function C_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
 	{
-		// CB start_x,start_y,lengs_x,lengs_y,color:  BOX
+		// CB start_x,start_y,lengs_x,lengs_y,color:  BOX-line
 		case 'B':
 			$st += 2;
 			$start_x = sco35_calli($file, $st);
@@ -257,7 +253,7 @@ function C_cmd35( &$file, &$st, &$run )
 			$color   = sco35_calli($file, $st);
 			trace("CB $start_x , $start_y , $lengs_x , $lengs_y , $color");
 			$src = array($start_x , $start_y , $lengs_x , $lengs_y , $color);
-			sco35_div_add( "_COLOR_", $src );
+			sco35_div_add( "_BORDER_", $src );
 			return;
 		// CC sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y:  画面のコピー
 		case 'C':
@@ -271,7 +267,6 @@ function C_cmd35( &$file, &$st, &$run )
 			trace("CC $sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y");
 			$src = array($sorce_x , $sorce_y , $sorce_lengs_x , $sorce_lengs_y , $destin_x , $destin_y);
 			sco35_div_add( "_BG_", $src );
-			//$run = false;
 			return;
 		// CE sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,effect_number,option,wait_flag:  エフェクト機能付きコピー (CD)
 		case 'E':
@@ -300,12 +295,24 @@ function C_cmd35( &$file, &$st, &$run )
 			trace("CF $start_x , $start_y , $lengs_x , $lengs_y , $color");
 			$src = array($start_x , $start_y , $lengs_x , $lengs_y , $color);
 			sco35_div_add( "_COLOR_", $src );
-			//$run = false;
 			return;
 		case 'K':
 			$type = ord( $file[$st+2] );
 			switch ( $type )
 			{
+				// CK 1,x0,y0,cx,cy,col,rate,0,0:  (ﾌﾙｶﾗｰ専用) 指定範囲に色を重ねる
+				case 1:
+					$st += 3;
+					$x0  = sco35_calli($file, $st);
+					$y0  = sco35_calli($file, $st);
+					$cx  = sco35_calli($file, $st);
+					$cy  = sco35_calli($file, $st);
+					$col = sco35_calli($file, $st);
+					$rate = sco35_calli($file, $st);
+					$z1 = sco35_calli($file, $st);
+					$z2 = sco35_calli($file, $st);
+					trace("CK 1 , $x0 , $y0 , $cx , $cy , $col , $rate");
+					return;
 				// CK 3,x0,y0,cx,cy,dst,src,count,0:  (256色専用) 指定範囲の色を変更する
 				case 3:
 					$st += 3;
@@ -317,11 +324,11 @@ function C_cmd35( &$file, &$st, &$run )
 					$src = sco35_calli($file, $st);
 					$cnt = sco35_calli($file, $st);
 					$z1  = sco35_calli($file, $st);
-					trace("CK 3 , $x0 , $y0 , $cx , $cy , $dst , $src , $cnt , $z1");
+					trace("CK 3 , $x0 , $y0 , $cx , $cy , $dst , $src , $cnt");
 					return;
-				// CK 1,x0,y0,cx,cy,col,rate,0,0:  (ﾌﾙｶﾗｰ専用) 指定範囲に色を重ねる
 				// CK 2,x0,y0,cx,cy,col,dx,dy,0:  指定範囲に網掛けする
 			}
+			return;
 		// CM sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,destin_lengs_x,destin_lengs_y,mirror_switch:  拡大・縮小・反転コピー（個々の機能はスイッチで指定可能）
 		case 'M':
 			$st += 2;
@@ -365,7 +372,7 @@ function C_cmd35( &$file, &$st, &$run )
 
 // DI page_no,use_flag,size:  配列領域の設定情報を取得
 // DR data_var  配列の解除
-function D_cmd35( &$file, &$st, &$run )
+function D_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -403,7 +410,7 @@ function D_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-function E_cmd35( &$file, &$st, &$run )
+function E_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -422,10 +429,8 @@ function E_cmd35( &$file, &$st, &$run )
 			$c  = sco35_calli($file, $st);
 			$x1 = sco35_calli($file, $st);
 			$y1 = sco35_calli($file, $st);
-			$x2 = sco35_calli($file, $st);
-			$y2 = sco35_calli($file, $st);
-			$w = var_size( $x2-$x1 );
-			$h = var_size( $y2-$y1 );
+			$w  = sco35_calli($file, $st); // x2
+			$h  = sco35_calli($file, $st); // y2
 			trace("ES $num , $c , $x1 , $y1 , $w , $h");
 			$gp_pc["ES"][$num] = array($c , $x1 , $y1 , $w , $h);
 			return;
@@ -434,7 +439,7 @@ function E_cmd35( &$file, &$st, &$run )
 }
 
 // GX cg_no,shadow_no:(24bitDIB only)  影データを指定してCGをロードする
-function G_cmd35( &$file, &$st, &$run )
+function G_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc, $gp_img_meta;
 	switch ( $file[$st+1] )
@@ -486,7 +491,6 @@ cg_add:
 	{
 		trace("G PC 1 add_cg");
 		sco35_g0_add( $num , $c );
-		$run = false;
 	}
 
 	// program -> screen(clut)[fade-in/out]
@@ -501,7 +505,7 @@ cg_add:
 	return;
 }
 
-function I_cmd35( &$file, &$st, &$run )
+function I_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc, $gp_input, $gp_key;
 	switch( $file[$st+1] )
@@ -648,7 +652,7 @@ function I_cmd35( &$file, &$st, &$run )
 // LC x,y,ﾌｧｲﾙ名:  CGを表示する
 // LH? 1,no:  CDのデータをHDDへ登録する
 // LH? 2,no:  CDのデータをHDDへ削除する
-function L_cmd35( &$file, &$st, &$run )
+function L_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -761,7 +765,7 @@ function L_cmd35( &$file, &$st, &$run )
 // MF return RND 0 = OK , 255 = ERROR
 // MH num1,fig,num2:  数値を文字列に変換する (参考;Hｺﾏﾝﾄﾞ)
 // MP num1,num2:  指定の文字列を指定文字数だけ表示する(Xコマンドの桁数指定)
-function M_cmd35( &$file, &$st, &$run )
+function M_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -820,7 +824,7 @@ function M_cmd35( &$file, &$st, &$run )
 				$st++; // skip 0x7f
 			$str_no = sco35_calli($file, $st);
 			trace("ML $v+$e , $str_no");
-			$str = base64_decode( $gp_pc["X"][$str_no] );
+			$str = $gp_pc["X"][$str_no];
 			$len = strlen($str) / 2;
 			sco35_var_put($w, $e, (int)$len);
 			return;
@@ -839,7 +843,7 @@ function M_cmd35( &$file, &$st, &$run )
 			$string = sco35_sjis($file, $st);
 				$st++; // skip ':'
 			trace("MS $num , %s", $string);
-			$gp_pc["X"][$num] = base64_encode($string);
+			$gp_pc["X"][$num] = $string;
 			return;
 		// MT title:  ウインドウのタイトル文字列を設定する
 		case 'T':
@@ -847,7 +851,7 @@ function M_cmd35( &$file, &$st, &$run )
 			$title = sco35_sjis($file, $st);
 				$st++; // skip ':'
 			trace("MT %s", $title);
-			$gp_pc["MT"] = base64_encode($title);
+			$gp_pc["MT"] = $title;
 			return;
 		// MV version:  シナリオバージョンをシステムへ通知する
 		case 'V':
@@ -885,7 +889,7 @@ function M_cmd35( &$file, &$st, &$run )
 // NDM str,w64n:  数値w64nを文字列領域strへ文字列として反映
 // NDA str,w64n:  文字列領域strを数値としてw64nへ反映
 // NDH str,w64n:  数値w64nを画面に表示（パラメータの意味はHコマンドに準拠）
-function N_cmd35( &$file, &$st, &$run )
+function N_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1049,7 +1053,7 @@ n_math:
 // PD num:  CG展開の明度を指定する
 // PT 0,var,x,y:  (256色用) 指定座標の色番号を取得する
 // PT 1,r_var,g_var,b_var,x,y:  (ﾌﾙｶﾗｰ専用) 指定座標の色を取得する
-function P_cmd35( &$file, &$st, &$run )
+function P_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1102,8 +1106,8 @@ function P_cmd35( &$file, &$st, &$run )
 			$green = sco35_calli($file, $st);
 			$blue  = sco35_calli($file, $st);
 			trace("PS $plane , $red , $green , $blue");
-			$clr = sprintf("#%02x%02x%02x", $red , $green , $blue);
-			$gp_pc["PS"][$plane] = $clr;
+			$color = sprintf("#%02x%02x%02x", $red , $green , $blue);
+			$gp_pc["PS"][$plane] = $color;
 			return;
 		case 'W':
 			$type = ord( $file[$st+2] );
@@ -1129,7 +1133,7 @@ function P_cmd35( &$file, &$st, &$run )
 // QP return RND 1 = OK , 200 > ERROR
 // QC num1,num2:  セーブファイルをnum2の領域からnum1の領域へコピー
 // QC return RND 1 = OK , 200 > ERROR
-function Q_cmd35( &$file, &$st, &$run )
+function Q_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1169,7 +1173,7 @@ function Q_cmd35( &$file, &$st, &$run )
 // SO var:  PCMデバイスのサポート情報を取得
 // SQ noL, noR, loop:  左右別々のPCMデータを合成して演奏する
 // SW var,channel,S-rate,bit:  指定データ形式が演奏出来るかチェックする．
-function S_cmd35( &$file, &$st, &$run )
+function S_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1212,6 +1216,24 @@ function S_cmd35( &$file, &$st, &$run )
 					$st += 3;
 					$num = sco35_calli($file, $st);
 					trace("midi SG 3 , $num");
+					return;
+			}
+			return;
+		case 'I':
+			$type = ord( $file[$st+2] );
+			switch ( $type )
+			{
+				// SI 0,var:  MIDIが使用可能かどうか調べる
+				// SI 1,var:  WAVEが使用可能かどうか調べる
+				// SI 2,var:  CDが使用可能かどうか調べる
+				case 0:
+				case 1:
+				case 2:
+					$st += 3;
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("SI $type , $v+$e");
+					sco35_var_put($v, $e, 1); // 0=error , 1=ok
 					return;
 			}
 			return;
@@ -1261,7 +1283,7 @@ function S_cmd35( &$file, &$st, &$run )
 // UD mode:  (cali) mode = モード
 // UR var:  ｽﾀｯｸ情報取得
 // UP 3,work_dir,file_name:  外部ﾌﾟﾛｸﾞﾗﾑ起動後SYSTEM3.5終了
-function U_cmd35( &$file, &$st, &$run )
+function U_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1303,7 +1325,7 @@ function U_cmd35( &$file, &$st, &$run )
 // VT sp,sa,sx,sy,cx,cy,dp,da,dx,dy:  ユニットマップデータを矩形指定でコピーする
 // VIC x,y,cx,cy:  ユニットマップの画面反映(ユニットマップ座標指定)
 // VIP x,y,cx,cy:  ユニットマップの画面反映(画面座標指定)
-function V_cmd35( &$file, &$st, &$run )
+function V_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1501,7 +1523,7 @@ function V_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-function W_cmd35( &$file, &$st, &$run )
+function W_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc;
 	switch( $file[$st+1] )
@@ -1546,8 +1568,7 @@ function W_cmd35( &$file, &$st, &$run )
 }
 
 // ZB 太さ:  メッセージ文字を太さを設定
-// ZL line:  メッセージ領域の文字の縦方向行間ドット数を指定する
-function Z_cmd35( &$file, &$st, &$run )
+function Z_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc, $gp_input, $gp_key;
 	switch( $file[$st+1] )
@@ -1624,6 +1645,12 @@ function Z_cmd35( &$file, &$st, &$run )
 			$mode = sco35_calli($file, $st);
 			trace("ZI $key , $mode");
 			return;
+		// ZL line:  メッセージ領域の文字の縦方向行間ドット数を指定する
+		case 'L':
+			$st += 2;
+			$line = sco35_calli($file, $st);
+			trace("ZL $size");
+			return;
 		// ZM size:  シナリオメッセージのフォントサイズを指定する
 		case 'M':
 			$st += 2;
@@ -1664,6 +1691,8 @@ function Z_cmd35( &$file, &$st, &$run )
 					$var = sco35_calli($file, $st);
 					trace("ZT $type , $var");
 					$gp_pc["ZT"] = 0;
+					$ajax = true;
+					$gp_input = array("key",-1);
 					return;
 				// ZT2,var:  タイマーを var に取得する 1/10
 				// ZT3,var:  タイマーを var に取得する 1/30
@@ -1679,8 +1708,6 @@ function Z_cmd35( &$file, &$st, &$run )
 					trace("ZT $type , $v+$e");
 					$gp_pc["ZT"] += 1;
 					sco35_var_put( $v, $e, $gp_pc["ZT"] );
-					if ( $gp_pc["ZT"] > 0 )
-						$gp_input = array("key",-1);
 					return;
 			}
 		// ZW sw:  CAPS 状態の内部的制御を変更する
@@ -1755,32 +1782,32 @@ function Z_cmd35( &$file, &$st, &$run )
 	return;
 }
 
-function sco35_cmd( &$id, &$st, &$run, &$select )
+function sco35_cmd( &$id, &$st, &$run, &$ajax )
 {
 	$func = __FUNCTION__;
 	global $sco_file, $gp_pc, $gp_input, $gp_key;
 	$file = &$sco_file[$id];
 	switch( $file[$st] )
 	{
-		case 'B':  return B_cmd35( $file, $st, $run );
-		case 'C':  return C_cmd35( $file, $st, $run );
-		case 'D':  return D_cmd35( $file, $st, $run );
-		case 'E':  return E_cmd35( $file, $st, $run );
-		case 'F':  return F_cmd35( $file, $st, $run );
-		case 'G':  return G_cmd35( $file, $st, $run );
-		case 'I':  return I_cmd35( $file, $st, $run );
-		case 'J':  return J_cmd35( $file, $st, $run );
-		case 'L':  return L_cmd35( $file, $st, $run );
-		case 'M':  return M_cmd35( $file, $st, $run );
-		case 'N':  return N_cmd35( $file, $st, $run );
-		case 'P':  return P_cmd35( $file, $st, $run );
-		case 'Q':  return Q_cmd35( $file, $st, $run );
-		case 'S':  return S_cmd35( $file, $st, $run );
-		case 'U':  return U_cmd35( $file, $st, $run );
-		case 'V':  return V_cmd35( $file, $st, $run );
-		case 'W':  return W_cmd35( $file, $st, $run );
-		case 'Y':  return Y_cmd35( $file, $st, $run );
-		case 'Z':  return Z_cmd35( $file, $st, $run );
+		case 'B':  return B_cmd35( $file, $st, $ajax );
+		case 'C':  return C_cmd35( $file, $st, $ajax );
+		case 'D':  return D_cmd35( $file, $st, $ajax );
+		case 'E':  return E_cmd35( $file, $st, $ajax );
+		case 'F':  return F_cmd35( $file, $st, $ajax );
+		case 'G':  return G_cmd35( $file, $st, $ajax );
+		case 'I':  return I_cmd35( $file, $st, $ajax );
+		case 'J':  return J_cmd35( $file, $st, $ajax );
+		case 'L':  return L_cmd35( $file, $st, $ajax );
+		case 'M':  return M_cmd35( $file, $st, $ajax );
+		case 'N':  return N_cmd35( $file, $st, $ajax );
+		case 'P':  return P_cmd35( $file, $st, $ajax );
+		case 'Q':  return Q_cmd35( $file, $st, $ajax );
+		case 'S':  return S_cmd35( $file, $st, $ajax );
+		case 'U':  return U_cmd35( $file, $st, $ajax );
+		case 'V':  return V_cmd35( $file, $st, $ajax );
+		case 'W':  return W_cmd35( $file, $st, $ajax );
+		case 'Y':  return Y_cmd35( $file, $st, $ajax );
+		case 'Z':  return Z_cmd35( $file, $st, $ajax );
 		// A  キー入力待ちをして、入力があればメッセージ領域の初期化と
 		case 'A':
 			trace("text NEXT");
@@ -1821,7 +1848,7 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			$st++;
 			$num = sco35_calli($file, $st);
 			trace("text X  $num");
-			sco35_text_add( base64_decode( $gp_pc["X"][$num] ) );
+			sco35_text_add( $gp_pc["X"][$num] );
 			return;
 
 		case ':': // 0x3a
@@ -1842,9 +1869,11 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 			return;
 		// $label$文字列$  選択肢を登録する
 		case '$': // 0x24
-			if ( $select ) // within select loop
+			// if $run , select menu stop here
+			// reuse $ajax as no animation will occur on select loop
+			if ( $ajax ) // within select loop
 			{
-				$select = false;
+				$ajax = false;
 				return;
 			}
 			else
@@ -1853,8 +1882,8 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 				$sel_jmp = str2int( $file, $st, 4 );
 				trace("select loc_%x , TEXT", $sel_jmp);
 
-				$bak = $gp_pc["text"];
-				$gp_pc["text"] = array();
+				$bak = $gp_pc["div"];
+				$gp_pc["div"] = array();
 				$loop = true;
 				$select = true;
 				while ( $select )
@@ -1863,13 +1892,16 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 					$func($gp_pc["pc"][0], $gp_pc["pc"][1], $loop, $select);
 				}
 				$sel_txt = "";
-				foreach ( $gp_pc["text"] as $text )
-					$sel_txt .= base64_decode($text['jp']);
-				$gp_pc["text"] = $bak;
+				foreach ( $gp_pc["div"] as $text )
+				{
+					if ( $text['t'] == "text" )
+						$sel_txt .= $text['jp'];
+				}
+				$gp_pc["div"] = $bak;
 					$gp_pc["pc"][1]++; // skip '$'
 
 				trace("select TEXT = $sel_txt");
-				$gp_pc["select"][] = array( $sel_jmp , base64_encode($sel_txt) );
+				$gp_pc["select"][] = array( $sel_jmp , $sel_txt );
 			}
 			return;
 		// ]  選択肢を開く
@@ -1879,7 +1911,7 @@ function sco35_cmd( &$id, &$st, &$run, &$select )
 
 			$gp_pc["select"]['B'] = array(
 				$st + 1,
-				base64_encode("&lt;&lt;&lt;"),
+				"&lt;&lt;&lt;",
 			);
 
 			if ( ! empty( $gp_input ) )

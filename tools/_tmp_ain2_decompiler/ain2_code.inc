@@ -74,10 +74,29 @@ _CODE;
 $gp_code = preg_split("|[\s]+|", trim($code42));
 //print_r( $gp_code );
 //exit();
+//////////////////////////////
+$sys42 = <<<_SYS
 
+Exit
+
+GlobalSave  GlobalLoad  LockPeek  UnlockPeek
+Reset  Output  MsgBox  ResumeSave
+
+ResumeLoad  ExistFile  OpenWeb  GetSaveFolderName
+GetTime  GetGameName  Error  ExistSaveFile
+
+IsDebugMode  MsgBoxOkCancel  GetFuncStackName  Peek
+Sleep  ResumeWriteComment
+
+_SYS;
+$gp_sysfunc = preg_split("|[\s]+|", trim($sys42));
+//print_r( $gp_sysfunc );
+//exit();
+//////////////////////////////
 function code2inst( &$file, &$st )
 {
 	global $gp_code;
+	$bak = $st;
 	$code = str2int($file, $st, 2);
 	if ( ! isset( $gp_code[$code] ) )
 		return "";
@@ -85,6 +104,13 @@ function code2inst( &$file, &$st )
 	$c = $gp_code[$code];
 	switch ( $c )
 	{
+		case "CALLHLL":
+		case "SH_LOCALCREATE":
+		case "SH_LOCALASSIGN":
+			$n1 = sint32($file, $st);
+			$n2 = sint32($file, $st);
+			//return sprintf("$c %x %x", $n1, $n2);
+			return array($c, $bak, $n1, $n2);
 		case "PUSH":  case "S_PUSH":  case "F_PUSH":
 		case "JUMP":
 		case "IFZ":  case "IFNZ":
@@ -98,15 +124,11 @@ function code2inst( &$file, &$st )
 		case "MSG":
 		case "EOF":
 			$n1 = sint32($file, $st);
-			return sprintf("$c %x", $n1);
-		case "CALLHLL":
-		case "SH_LOCALCREATE":
-		case "SH_LOCALASSIGN":
-			$n1 = sint32($file, $st);
-			$n2 = sint32($file, $st);
-			return sprintf("$c %x %x", $n1, $n2);
+			//return sprintf("$c %x", $n1);
+			return array($c, $bak, $n1);
 		default:
-			return sprintf("$c");
+			//return sprintf("$c");
+			return array($c, $bak);
 	}
 	return "";
 }

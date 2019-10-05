@@ -24,7 +24,7 @@ if ( ! defined("GAME") )  exit("NO GAME\n");
 unlink(SAVE_FILE . "log");
 ?><!DOCTYPE html>
 <html><head>
-<meta charset="<?php echo $gp_init["charset"]; ?>">
+<meta charset="utf-8">
 <title><?php echo $gp_init["web_title"]; ?></title>
 <style>
 	* { margin:0; padding:0; }
@@ -40,7 +40,7 @@ unlink(SAVE_FILE . "log");
 	ul { list-style:none; }
 	.sprites { position:absolute; }
 	.hidden { display:none; }
-	.grid { border:1px #fff solid; }
+	.grid { border:1px #0f0 solid; }
 	#select { cursor:pointer; }
 	div#canvas { display:block; }
 	div#window {

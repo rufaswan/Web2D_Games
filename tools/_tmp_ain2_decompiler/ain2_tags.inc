@@ -50,7 +50,7 @@ function ain2tags( &$file , &$st, $dir )
 			$buf = "";
 			for ( $i=0; $i < $cnt; $i++ )
 			{
-				$str = substr0($file, $st);
+				$str = get_text($file, $st);
 				$gp_pc[$tag][$i] = $str;
 				$buf .= "$str\n";
 			}
@@ -76,10 +76,10 @@ function ain2tags( &$file , &$st, $dir )
 
 			for ( $i=0; $i < $cnt; $i++ )
 			{
-				$data = array(
+				$data1 = array(
 					"st"     => $st,
 					"addr"   => str2int($file, $st, 4) - 6,
-					"name"   => substr0($file, $st),
+					"name"   => get_text($file, $st),
 					"label"  => sint32($file, $st),
 					"dtype"  => get_datatype($file, $st),
 					"struct" => sint32($file, $st),
@@ -87,17 +87,19 @@ function ain2tags( &$file , &$st, $dir )
 					"var_c"  => sint32($file, $st),
 					"crc"    => str2int($file, $st, 4),
 				);
-				for ( $p=0; $p < $data["var_c"]; $p++ )
+				$data2 = array();
+				for ( $p=0; $p < $data1["var_c"]; $p++ )
 				{
-					$data["para"][$p] = array(
-						'n' => substr0($file, $st),
+					$data2[$p] = array(
+						'n' => get_text($file, $st),
 						'd' => get_datatype($file, $st),
 						't' => sint32($file, $st),
 						'a' => sint32($file, $st),
 					);
 				}
+				$data1["para"] = $data2;
 
-				$gp_pc["FUNC"][$i] = $data;
+				$gp_pc["FUNC"][$i] = $data1;
 			} // for ( $i=0; $i < $cnt; $i++ )
 
 			//print_r( $gp_pc["FUNC"] );
@@ -126,7 +128,7 @@ function ain2tags( &$file , &$st, $dir )
 			for ( $i=0; $i < $cnt; $i++ )
 			{
 				$data = array(
-					'n' => substr0($file, $st),
+					'n' => get_text($file, $st),
 					'd' => get_datatype($file, $st),
 					't' => sint32($file, $st),
 					'a' => sint32($file, $st),
@@ -136,14 +138,18 @@ function ain2tags( &$file , &$st, $dir )
 
 			//print_r( $gp_pc["GLOB"] );
 			$buf = "";
-			foreach( $gp_pc["GLOB"] as $g )
+			foreach( $gp_pc["GLOB"] as $k => $g )
 			{
 				$dim = ( $g['a'] > 1 ) ? "@{$g['a']}": "";
 
+				$buf .= sprintf("%4x , ", $k);
+
 				if ( $g['t'] < 0 )
-					$buf .= sprintf("%s%s  %s\n", $g['d'], $dim, $g['n']);
+					$buf .= sprintf("%s%s", $g['d'], $dim);
 				else
-					$buf .= sprintf("%s_%s%s  %s\n", $g['d'], $g['t'], $dim, $g['n']);
+					$buf .= sprintf("%s_%s%s", $g['d'], $g['t'], $dim);
+
+				$buf .= "  {$g['n']}\n";
 			}
 			file_put_contents("$dir/$tag", $buf);
 			return;
@@ -161,7 +167,7 @@ function ain2tags( &$file , &$st, $dir )
 				$data["dtype"] = get_datatype($file, $st);
 
 				if ( $data["dtype"] == "string" )
-					$data["data"] = substr0($file, $st);
+					$data["data"] = get_text($file, $st);
 				else
 					$data["data"] = sint32($file, $st, 4);
 
@@ -183,7 +189,7 @@ function ain2tags( &$file , &$st, $dir )
 			for ( $i=0; $i < $cnt; $i++ )
 			{
 				$data1 = array(
-					'n' => substr0($file, $st),
+					'n' => get_text($file, $st),
 					'd' => sint32($file, $st),
 					't' => sint32($file, $st),
 					'a' => sint32($file, $st),
@@ -191,8 +197,8 @@ function ain2tags( &$file , &$st, $dir )
 				$data2 = array();
 				for ( $j=0; $j < $data1['a']; $j++ )
 				{
-					$data2[] = array(
-						'n' => substr0($file, $st),
+					$data2[$j] = array(
+						'n' => get_text($file, $st),
 						'd' => get_datatype($file, $st),
 						't' => sint32($file, $st),
 						'a' => sint32($file, $st),
@@ -230,12 +236,14 @@ function ain2tags( &$file , &$st, $dir )
 
 			for ( $h=0; $h < $hll; $h++ )
 			{
-				$dll = substr0($file, $st);
+				$dll = get_text($file, $st);
 				$cnt = str2int($file, $st, 4);
+				$gp_pc["HLL0"][$h]["hll"] = $dll;
+
 				for ( $i=0; $i < $cnt; $i++ )
 				{
 					$data1 = array(
-						'n' => substr0($file, $st),
+						'n' => get_text($file, $st),
 						'd' => get_datatype($file, $st, 4),
 						'a' => str2int($file, $st, 4),
 					);
@@ -243,12 +251,12 @@ function ain2tags( &$file , &$st, $dir )
 					for ( $a=0; $a < $data1['a']; $a++ )
 					{
 						$data2[] = array(
-							'n' => substr0($file, $st),
+							'n' => get_text($file, $st),
 							'd' => get_datatype($file, $st, 4),
 						);
 					}
 					$data1['p'] = $data2;
-					$gp_pc["HLL0"][$dll][$i] = $data1;
+					$gp_pc["HLL0"][$h][$i] = $data1;
 				}
 			}
 
@@ -258,15 +266,16 @@ function ain2tags( &$file , &$st, $dir )
 			{
 				foreach( $v1 as $k2 => $v2 )
 				{
-					$buf .= sprintf("$k1  %s %s(", $v2['d'], $v2['n']);
-					$t2 = "";
+					if ( $k2 === "hll" )
+						continue;
+
+					$buf .= sprintf("%4x , %4x , ", $k1, $k2);
+					$buf .= sprintf("%s %s@@%s , %d", $v2['d'], $v1["hll"], $v2['n'], $v2['a']);
 					foreach ( $v2['p'] as $p )
 					{
-						if ( $t2 != "" )
-							$t2 .= ',';
-						$t2 .= " {$p['d']} {$p['n']} ";
+						$buf .= " , {$p['d']} {$p['n']}";
 					}
-					$buf .= "$t2)\n";;
+					$buf .= "\n";
 				}
 			}
 			file_put_contents("$dir/$tag", $buf);
@@ -325,7 +334,7 @@ function ain2tags( &$file , &$st, $dir )
 			for ( $f=0; $f < $cnt; $f++ )
 			{
 				$data = array(
-					"name"   => substr0($file, $st),
+					"name"   => get_text($file, $st),
 					"dtype"  => get_datatype($file, $st),
 					"struct" => sint32($file, $st),
 					"arg_c"  => sint32($file, $st),
@@ -335,7 +344,7 @@ function ain2tags( &$file , &$st, $dir )
 				for ( $c=0; $c < $data["var_c"]; $c++ )
 				{
 					$data["para"][$c] = array(
-						'n' => substr0($file, $st),
+						'n' => get_text($file, $st),
 						'd' => get_datatype($file, $st),
 						't' => sint32($file, $st),
 						'a' => sint32($file, $st),
@@ -369,6 +378,26 @@ function ain2tags( &$file , &$st, $dir )
 
 		// Sys42IDE.exe , System 4.0 SDK
 		case "JDBG":
+			return;
+		// changes:
+		// KEYC  v6+ == 0 , v14+ removed
+		// MSG0  v6+ removed
+		// FNCT  v6+ removed
+		// OJMP  v7+ removed
+		// FNAM  v14+ removed
+		// GSET  v14+ removed
+		// MSGF  v14+ removed
+		// OBJG  v5+
+		// MSG1  v6+
+		// DELG  v6+
+		// ENUM  v14+
+		case "OBJG":
+			return;
+		case "MSG1":
+			return;
+		case "DELG":
+			return;
+		case "ENUM":
 			return;
 	}
 	return;

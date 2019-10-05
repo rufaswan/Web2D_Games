@@ -46,18 +46,18 @@ function get_index( $fp )
 	return $dat;
 }
 
-if ( $argc == 1 )   exit();
+if ( $argc == 1 )   exit("{$argv[0]}  acg.dat  bcg.dat  ccg.dat...\n");
 if ( stripos($argv[1], "adisk.dat") !== FALSE )
-	$dir = "adisk_dat";
+	$dir = "adisk";
 else
 if ( stripos($argv[1], "acg.dat") !== FALSE )
-	$dir = "acg_dat";
+	$dir = "acg";
 else
 if ( stripos($argv[1], "amus.dat") !== FALSE )
-	$dir = "amus_dat";
+	$dir = "amus";
 else
 if ( stripos($argv[1], "amap.dat") !== FALSE )
-	$dir = "amap_dat";
+	$dir = "amap";
 else
 	exit("UNKNOWN {$argv[1]}\n");
 
@@ -74,7 +74,7 @@ $disk = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 $ed = strlen( $index );
 $st = 0;
 $id = 0;
-$d2h = "dechex";
+$hed = "";
 while ( $st < $ed )
 {
 	$b1 = ord( $index[$st+0] );
@@ -96,7 +96,7 @@ while ( $st < $ed )
 		exit();
 	}
 
-	// adisk has filesize but acg/amus dont
+	// adisk has filesize but others dont
 	$pos = fgetint( $fp[$arc], ($aid+0)*2, 2 );
 	$nxt = fgetint( $fp[$arc], ($aid+1)*2, 2 );
 	$fs  = ($nxt - $pos) * 0x100;
@@ -104,8 +104,10 @@ while ( $st < $ed )
 
 	fseek( $fp[$arc], ($pos-1)*0x100, SEEK_SET );
 	$cg = fread( $fp[$arc], $fs );
-	file_put_contents( "{$dir}/{$fn}", $cg );
+	file_put_contents( "$dir/$fn", $cg );
 
-	printf("%4x , %s-%3d , %8x , {$fn}\n", $id , $disk[$arc], $aid, $fs);
-
+	$ent = sprintf("%4x , %s-%3d , %8x , %s\n", $id , $disk[$arc], $aid, $fs, $fn);
+	echo $ent;
+	$hed .= $ent;
 }
+file_put_contents("{$dir}_dat.hed", $hed);

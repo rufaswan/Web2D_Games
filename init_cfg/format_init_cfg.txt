@@ -1,0 +1,35 @@
+# game engine to use
+# [required]
+#
+# value
+#   dummy : dummy
+#   php   : custom php engine
+#
+#   alice30  : Alice games with ADISK.DAT ACG.DAT
+#   alice35  : Alice games with *SA.ALD   *GA.ALD
+#   alice39  : alice35 with SYSTEM39.AIN/INI
+#   alice4v4 : Alice games with SYSTEM40.INI
+#   alice4v6 : Alice games with ALICESTART.INI
+#
+engine = alice35
+
+# character encoding for game text
+# [optional]
+#
+# default = utf-8
+#
+#charset = shift-jis
+charset = ms932
+
+# overwrite game var on each ajax request
+# [optional]
+#
+# cheat[] = expression,condition,note
+#   &var is same as $gp_pc["var"][var]
+#
+cheat[] = &29  = 65535 , &28  <  50 , if LV < 50 then EXP = 65535
+cheat[] = &EXP = 65535 , &LV  <  50 , if LV < 50 then EXP = 65535
+cheat[] = &mhp = 1     , &mon == 13 , if MON == GIRLMON_ID then MON_HP = 1
+
+cheat[] = &gold += 10 , 1 , GOLD += 10 on every step
+cheat[] = &debug =  1 ,   , debug is turned off

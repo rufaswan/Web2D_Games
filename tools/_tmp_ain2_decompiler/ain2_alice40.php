@@ -19,8 +19,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require("ain2_tags.inc");
-require("ain2_code.inc");
+require "ain2_tags.inc";
+require "ain2_code.inc";
+require "funcs-sjis.php";
+
+define("SJIS_HALF", "sjis_half.inc");
+define("SJIS_ASC",  "sjis_ascii.inc");
 //////////////////////////////
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
@@ -86,8 +90,81 @@ function get_datatype( &$file, &$st )
 		return $d;
 }
 
-function savetags( $dir )
+function get_text( &$file, &$st )
 {
+	$sjis = substr0( $file, $st );
+	$sjis = sjistxt($sjis);
+	$utf8 = iconv("MS932", "UTF-8", $sjis);
+	return $utf8;
+}
+
+function codefunc( &$code , $dir )
+{
+	global $gp_pc, $gp_sysfunc;
+	foreach( $gp_pc["FUNC"] as $f )
+	{
+		$buf = "";
+		$st = $f["addr"];
+		while (1)
+		{
+			//printf("%x code\n", $st);
+			$r = code2inst($code, $st);
+			switch ( count($r) )
+			{
+				case 4:
+					switch ( $r[0] )
+					{
+						case "CALLHLL":
+							$s1 = $gp_pc["HLL0"][ $r[2] ]["hll"];
+							$s2 = $gp_pc["HLL0"][ $r[2] ][ $r[3] ]['n'];
+							$buf .= sprintf("%8x , %s , %s , %s\n", $r[1], $r[0], $s1, $s2);
+							break;
+						default:
+							$buf .= sprintf("%8x , %s , %x , %x\n", $r[1], $r[0], $r[2], $r[3]);
+							break;
+					}
+					break;
+				case 3:
+					switch ( $r[0] )
+					{
+						case "FUNC":
+						case "ENDFUNC":
+						case "CALLFUNC":
+						case "CALLMETHOD":
+							$s1 = $gp_pc["FUNC"][ $r[2] ]["name"];
+							$buf .= sprintf("%8x , %s , %s\n", $r[1], $r[0], $s1);
+							break;
+						case "CALLSYS":
+							$s1 = $gp_sysfunc[ $r[2] ];
+							$buf .= sprintf("%8x , %s , %s\n", $r[1], $r[0], $s1);
+							break;
+						case "EOF":
+							$s1 = $gp_pc["FNAM"][ $r[2] ];
+							$buf .= sprintf("%8x , %s , %s\n", $r[1], $r[0], $s1);
+							break;
+						case "S_PUSH":
+							$s1 = $gp_pc["STR0"][ $r[2] ];
+							$buf .= sprintf("%8x , %s , %s\n", $r[1], $r[0], $s1);
+							break;
+						case "SH_GLOBALREF":
+							$s1 = $gp_pc["GLOB"][ $r[2] ]['n'];
+							$buf .= sprintf("%8x , %s , %s\n", $r[1], $r[0], $s1);
+							break;
+						default:
+							$buf .= sprintf("%8x , %s , %x\n", $r[1], $r[0], $r[2]);
+							break;
+					}
+					break;
+				case 2:
+					$buf .= sprintf("%8x , %s\n", $r[1], $r[0]);
+					break;
+			}
+
+			if ( $r[0] == "ENDFUNC" || $r[0] == "EOF" )
+				break;
+		} // while (1)
+		file_put_contents("$dir/{$f["name"]}.txt", $buf);
+	}
 }
 
 function ain2( $rem, $fname )
@@ -97,7 +174,7 @@ function ain2( $rem, $fname )
 		printf("[$rem] $fname\n");
 
 	$dir = str_replace('.', '_', $fname);
-	@mkdir($dir, 0755, true);
+	@mkdir("$dir/ain", 0755, true);
 
 	$ed = strlen($file);
 	$st = 0;
@@ -109,7 +186,10 @@ function ain2( $rem, $fname )
 			return;
 	} // while ( $st < $ed )
 
-	savetags( $dir );
+	if ( ! file_exists("$dir/CODE") )
+		return;
+	$file = file_get_contents("$dir/CODE");
+	codefunc( $file, "$dir/ain" );
 }
 
 if ( $argc == 1 )   exit();

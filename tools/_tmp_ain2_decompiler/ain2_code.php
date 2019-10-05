@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require("ain2_code.inc");
+require "ain2_code.inc";
 //////////////////////////////
 define("BIT32", 0xffffffff);
 
@@ -63,9 +63,20 @@ function ain2code( $fname )
 	{
 		$bak = $st;
 		$r = code2inst($file, $st);
-		printf("%8x , %s\n", $bak, $r);
+		switch ( count($r) )
+		{
+			case 4:
+				$buf .= sprintf("%8x , %s , %x , %x\n", $r[1], $r[0], $r[2], $r[3]);
+				break;
+			case 3:
+				$buf .= sprintf("%8x , %s , %x\n", $r[1], $r[0], $r[2]);
+				break;
+			case 2:
+				$buf .= sprintf("%8x , %s\n", $r[1], $r[0]);
+				break;
+		}
 
-		if ( $r == "" )
+		if ( empty($r) )
 			return;
 	} // while ( $st < $ed )
 }

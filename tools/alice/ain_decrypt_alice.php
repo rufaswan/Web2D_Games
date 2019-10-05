@@ -89,8 +89,7 @@ class gal_key
 			$i++;
 			$nn = ($nn + 1) % $this->len;
 			$ah = ($ah + 1) % $this->len;
-		}
-
+		} // while ( $i < $this->len )
 	}
 
 	// loc_100092a1
@@ -118,6 +117,7 @@ function ain42( $rem, $fn )
 	//$fn  = "Galzoo.ain";
 	//$fn  = "Popolytan.ain";
 	$ain = file_get_contents($fn);
+		if ( empty($ain) )  return;
 	echo "[$rem] $fn\n";
 
 	$gal = new gal_key();
@@ -138,7 +138,7 @@ function ain42( $rem, $fn )
 		$c = ord( $ain[$i] );
 		$c = ($c ^ $gal->xorkey($k)) & BIT8;;
 		$ain[$i] = chr($c);
-	}
+	} // for ( $i=0; $i < $ed; $i++ )
 
 	file_put_contents("$fn.dec", $ain);
 }

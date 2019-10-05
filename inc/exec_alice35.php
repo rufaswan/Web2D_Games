@@ -33,23 +33,21 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
  * LL       - DA.ald
  * SG       - MA.ald
  * SM SP SQ - WA.ald
- * SS       - audio
+ * SS       - audio/BA
  */
 $sco_file = array();
 require "cmd_alice35.php";
 require "funcs-bmp.php";
+require "funcs-sjis.php";
 
-function sco35_html( &$run )
+function sco35_html( &$ajax )
 {
-	if ( $run )
-		$auto_ajax = "";
-	else
+	$auto_ajax = "";
+	if ( $ajax )
 	{
 		$auto_ajax = "ajax='1'";
 		trace("auto_ajax");
 	}
-	$auto_ajax = ( $run ) ? "" : "ajax='1'";
-	$run = false;
 	global $gp_init, $gp_pc, $ajax_html;
 	$ajax_html = "";
 	sco35_div_cleanup();
@@ -78,7 +76,7 @@ function sco35_html( &$run )
 	echo "}";
 	$zm = $gp_pc["ZM"] - 2;
 	echo ".text {";
-		echo "background-color:" .sco35_zc2ps(6, "#000"). ";";
+		//echo "background-color:" .sco35_zc2ps(6, "#000"). ";";
 		//echo "border:1px " .sco35_zc2ps(5, "#fff"). " solid;";
 		echo "font-size:{$zm}px;";
 	echo "}";
@@ -100,13 +98,6 @@ function sco35_html( &$run )
 			case "img":
 				list($img,$spr) = $div["img"];
 				$png = sco35_g0_path( $img, $spr );
-/*
-				if ( ! isset($cg[$img]) )
-				{
-					echo "<style>.cg_$img {background-image:url('$png');}</style>";
-					$cg[$img] = 1;
-				}
-*/
 				echo "<img src='$png' class='sprites img' mouse='$mouse' box='$box'>";
 				break;
 			case "bg":
@@ -120,24 +111,19 @@ function sco35_html( &$run )
 				$box .= ",$bgx,$bgy";
 				echo "<div class='sprites bg_$bg' mouse='$mouse' box='$box'></div>";
 				break;
-			case "clr":
-				$box .= ",{$div['clr']}";
-				echo "<div class='sprites clr' mouse='$mouse' box='$box'></div>";
+			case "border":
+				$style = $div["border"];
+				echo "<div class='sprites border' mouse='$mouse' box='$box' style='$style'></div>";
 				break;
-		}
-	}
-	///////////
-	if ( ! empty( $gp_pc["text"] ) )
-	{
-		foreach ( $gp_pc["text"] as $text )
-		{
-			list($px,$py,$pw,$ph) = $text['p'];
-			$mouse = "$px,$py";
-			$box = "$pw,$ph";
-			$style = "color:{$text['clr']};";
-
-			$jp = base64_decode( $text["jp"] );
-			echo "<p class='sprites text' mouse='$mouse' box='$box' style='$style'>$jp</p>";
+			case "color":
+				$box .= ",{$div['color']}";
+				echo "<div class='sprites color' mouse='$mouse' box='$box'></div>";
+				break;
+			case "text":
+				$style = "color:{$div['color']};";
+				$jp = $div["jp"];
+				echo "<p class='sprites text' mouse='$mouse' box='$box' style='$style'>$jp</p>";
+				break;
 		}
 	}
 	///////////
@@ -150,7 +136,7 @@ function sco35_html( &$run )
 		echo "<ul id='select' class='sprites' mouse='$mouse'>";
 		foreach ( $gp_pc["select"] as $k => $v )
 		{
-			echo "<li data='$k'>" .base64_decode( $v[1] ). "</li>";
+			echo "<li data='$k'>" .$v[1]. "</li>";
 		}
 		echo "</ul>";
 	}
@@ -164,20 +150,17 @@ function sco35_html( &$run )
 		$ogg = PATH_OGG_1S;
 	else
 	if ( $gp_pc["bgm"][0] == "audio" )
-		$ogg = findfile( $gp_init["path_ogg"], $gp_pc["bgm"][1], PATH_OGG_1S, 8 );
+		$ogg = findfile( $gp_init["path_ba"], $gp_pc["bgm"][1], PATH_OGG_1S, 8 );
 	else
 	if ( $gp_pc["bgm"][0] == "midi" )
-		$ogg = findfile( $gp_init["path_mid"], $gp_pc["bgm"][1], PATH_OGG_1S, 8 );
+		$ogg = findfile( $gp_init["path_ma"], $gp_pc["bgm"][1], PATH_OGG_1S, 8 );
 
 	echo "<input id='bgm' type='hidden' value='$ogg'>";
 
 
 	$wave = PATH_OGG_1S;
 	if ( isset( $gp_pc["SP"] ) )
-	{
-		$wave = findfile( $gp_init["path_wav"], $gp_pc["SP"], PATH_OGG_1S, 8 );
-		unset( $gp_pc["SP"] );
-	}
+		$wave = findfile( $gp_init["path_wa"], $gp_pc["SP"], PATH_OGG_1S, 8 );
 	echo "<input id='wave' type='hidden' value='$wave'>";
 
 /// AUDIO ///
@@ -198,7 +181,7 @@ function sco35_div_cleanup()
 			$k2 = $keys[$j];
 
 			if ( ! isset( $gp_pc["div"][$k1] ) )
-				continue;
+				break;
 			if ( ! isset( $gp_pc["div"][$k2] ) )
 				continue;
 
@@ -209,7 +192,7 @@ function sco35_div_cleanup()
 			if ( box_within( $gp_pc["div"][$k2]['p'] , $gp_pc["div"][$k1]['p'] ) )
 				unset( $gp_pc["div"][$k1] );
 
-		} // for ( $j=$i+1; $j < $len; $j++ )
+		} // for ( $j = $len-1; $j > $i; $j-- )
 	} // for ( $i=0; $i < $l; $i++ )
 
 	array_splice( $gp_pc["div"] , 0 , 0);
@@ -243,7 +226,11 @@ function sco35_text_add( $jp )
 	if ( $jp == "_NEXT_" )
 	{
 		$gp_pc["T"] = array($text_pos[0], $text_pos[1]);
-		$gp_pc["text"] = array();
+		foreach ( $gp_pc["div"] as $k => $div )
+		{
+			if ( $div['t'] == "text" )
+				unset( $gp_pc["div"][$k] );
+		}
 		return;
 	}
 
@@ -254,20 +241,34 @@ function sco35_text_add( $jp )
 		return;
 	}
 
-	// SJIS  is 2-byte per char , so SJIS/2*font
-	// ASCII is half-width      , so ASCII *font/2
-	$len = (int)(strlen($jp) * $font / 2);
+	$st = 0;
+	$ed = strlen($jp);
+	$asclen = 0;
+	while ( $st < $ed )
+	{
+		$b1 = ord( $jp[$st] );
+		if ( ($b1 & 0x80) == 0 )
+			$asclen++;
+		$st++;
+	}
+
+	$len = iconv_strlen($jp, "utf-8");
+	$jplen   = ($len - $asclen) * $font;
+	$asclen *= ($font/2);
+	$len = $jplen + $asclen;
+
 	$text = array(
+		't' => "text",
 		'p' => array(
 			$gp_pc['T'][0],
 			$gp_pc['T'][1],
-			$len,
+			$len + $font,
 			$font,
 		),
-		"jp"  => base64_encode($jp),
-		"clr" => sco35_zc2ps(1, "#fff"),
+		"jp"  => $jp,
+		"color" => sco35_zc2ps(1, "#fff"),
 	);
-	$gp_pc["text"][] = $text;
+	$gp_pc["div"][] = $text;
 	$gp_pc["T"][0] += $len;
 }
 
@@ -282,7 +283,7 @@ function sco35_vp_div_add( $src )
 		't' => "clear",
 		'p' => $box,
 	);
-	sco35_div_cleanup();
+	//sco35_div_cleanup();
 
 	for ( $page=0; $page < $n; $page++ )
 	{
@@ -379,17 +380,33 @@ function sco35_div_add( $type, $src )
 	global $gp_pc;
 	switch ( $type )
 	{
+		case "_BORDER_":
+			list($x,$y,$w,$h,$c) = $src;
+			$p = array($x,$y,$w,$h);
+
+			$color = "#000";
+			if ( isset( $gp_pc["PS"][$c] ) )
+				$color = $gp_pc["PS"][$c];
+			$border = "border:1px $color solid;";
+
+			$des = array(
+				't' => "border",
+				'p' => $p,
+				"border" => $border,
+			);
+			$gp_pc["div"][] = $des;
+			return;
 		case "_PAINT_":
 			list($x,$y,$c) = $src;
 			$p = array($x-8,$y-8,16,16);
 
-			$clr = "#000";
+			$color = "#000";
 			if ( isset( $gp_pc["PS"][$c] ) )
-				$clr = $gp_pc["PS"][$c];
+				$color = $gp_pc["PS"][$c];
 			$des = array(
-				't' => "clr",
+				't' => "color",
 				'p' => $p,
-				"clr" => $clr,
+				"color" => $color,
 			);
 			$gp_pc["div"]["paint"] = $des;
 			return;
@@ -397,13 +414,13 @@ function sco35_div_add( $type, $src )
 			list($x,$y,$w,$h,$c) = $src;
 			$p = array($x,$y,$w,$h);
 
-			$clr = "#000";
+			$color = "#000";
 			if ( isset( $gp_pc["PS"][$c] ) )
-				$clr = $gp_pc["PS"][$c];
+				$color = $gp_pc["PS"][$c];
 			$des = array(
-				't' => "clr",
+				't' => "color",
 				'p' => $p,
-				"clr" => $clr,
+				"color" => $color,
 			);
 			$gp_pc["div"][] = $des;
 			return;
@@ -468,7 +485,7 @@ function sco35_div_add( $type, $src )
 function sco35_g0_path( $num, $alpha )
 {
 	global $gp_init;
-	$png = sprintf( $gp_init["path_img"], ($num >> 8), $num );
+	$png = sprintf( $gp_init["path_ga0"], ($num >> 8), $num );
 	if ( 0 > $alpha ) // -1 , image with solid bg
 	{
 		if ( file_exists( ROOT."/$png" ) )
@@ -477,7 +494,7 @@ function sco35_g0_path( $num, $alpha )
 	}
 	else // 0-255 , sprites with transparent bg
 	{
-		$spr = sprintf( $gp_init["path_spr"], ($num >> 8), $num , $alpha );
+		$spr = sprintf( $gp_init["path_ga1"], ($num >> 8), $num , $alpha );
 		if ( file_exists( ROOT."/$spr" ) )
 			return $spr;
 		$img = $spr;
@@ -493,7 +510,7 @@ function sco35_g0_path( $num, $alpha )
 function sco35_g0_clut( $num )
 {
 	global $gp_pc, $gp_init;
-	$clut = str_replace(".png", ".clut", $gp_init["path_img"] );
+	$clut = str_replace(".png", ".clut", $gp_init["path_ga0"] );
 	$clut = findfile( $clut, $num, "", 8 );
 
 	$file = file_get_contents( ROOT."/$clut" );
@@ -510,8 +527,8 @@ function sco35_g0_clut( $num )
 				$r = ord( $file[$ps+0] );
 				$g = ord( $file[$ps+1] );
 				$b = ord( $file[$ps+2] );
-				$clr = sprintf("#%02x%02x%02x", $r, $g, $b);
-				$gp_pc["PS"][0x10+$i] = $clr;
+				$color = sprintf("#%02x%02x%02x", $r, $g, $b);
+				$gp_pc["PS"][0x10+$i] = $color;
 			}
 			break;
 		case 256:
@@ -524,8 +541,8 @@ function sco35_g0_clut( $num )
 				$r = ord( $file[$ps+0] );
 				$g = ord( $file[$ps+1] );
 				$b = ord( $file[$ps+2] );
-				$clr = sprintf("#%02x%02x%02x", $r, $g, $b);
-				$gp_pc["PS"][$i] = $clr;
+				$color = sprintf("#%02x%02x%02x", $r, $g, $b);
+				$gp_pc["PS"][$i] = $color;
 			}
 			break;
 	}
@@ -596,10 +613,10 @@ function sco35_g0_j0( &$img_pos , $j0 , $rel , $rm )
 	}
 }
 
-function sco35_zc2ps( $num, $clr )
+function sco35_zc2ps( $num, $color )
 {
 	global $gp_pc;
-	$ps = $clr;
+	$ps = $color;
 	if ( isset( $gp_pc["ZC"][$num] ) )
 	{
 		$zc = $gp_pc["ZC"][$num];
@@ -672,7 +689,7 @@ function sco35_loop_IK0( &$file, $st )
 function sco35_load_data($num , $len)
 {
 	global $gp_init;
-	$dat = findfile( $gp_init["path_dat"], $num, "", 8 );
+	$dat = findfile( $gp_init["path_da"], $num, "", 8 );
 	$file = file_get_contents( ROOT . "/$dat" );
 	if ( empty($file) )  return;
 
@@ -691,69 +708,42 @@ function sco35_load_data($num , $len)
 
 function sco35_ascii( &$file, &$st, $sep )
 {
-	$str = "";
-	while ( $file[$st] != $sep )
-	{
-		$str .= $file[$st];
-		$st++;
-	}
-	$st++;
+	$len = 0;
+	while ( $file[$st+$len] != $sep )
+		$len++;
+	$str = substr($file, $st, $len);
+	$st += $len;
+	$st++; // skip $sep
 	return $str;
 }
 
 function sco35_sjis( &$file, &$st )
 {
-	$sjis_half = file_get_contents( SJIS_HALF );
-	$sjis_asc  = file_get_contents( SJIS_ASC  );
-	$str = "";
+	$len = 0;
 	while(1)
 	{
-		$b1 = ord( $file[$st] );
+		$b1 = ord( $file[$st+$len] );
 		if ( $b1 >= 0xe0 )
-		{
-			$str .= $file[$st+0];
-			$str .= $file[$st+1];
-			$st += 2;
-		}
+			$len += 2;
 		else
 		if ( $b1 >= 0xa0 )
-		{
-			$p = $b1 * 2;
-			$str .= $sjis_half[$p+0];
-			$str .= $sjis_half[$p+1];
-			$st++;
-		}
+			$len++;
 		else
 		if ( $b1 >= 0x80 )
-		{
-			if ( $b1 == 0x81 || $b1 == 0x82 )
-			{
-				$b2 = ord( $file[$st+1] );
-				$p = ($b1 - 0x81) * 0x100 + $b2;
-				if ( $sjis_asc[$p] == ZERO )
-				{
-					$str .= $file[$st+0];
-					$str .= $file[$st+1];
-				}
-				else
-					$str .= $sjis_asc[$p];
-			}
-			else
-			{
-				$str .= $file[$st+0];
-				$str .= $file[$st+1];
-			}
-			$st += 2;
-		}
+			$len += 2;
 		else
-		if ( $b1 == 0x20 ) // space
-		{
-			$str .= $file[$st];
-			$st++;
-		}
+		if ( $b1 == 0x20 )
+			$len++;
 		else
-			return $str;
-	} // while(1)
+			break;
+	}
+	$str = substr($file, $st, $len);
+	$st += $len;
+
+	global $gp_init;
+	$str = sjistxt( $str );
+	$str = iconv( $gp_init["charset"], "utf-8", $str );
+	return $str;
 }
 
 function sco35_var_put( $v, $e, $num )
@@ -920,23 +910,32 @@ function sco35_load_sco( $id )
 	global $sco_file, $gp_init;
 	if ( ! isset( $sco_file[$id] ) )
 	{
-		$sco = findfile( $gp_init["path_sco"], $id, "", 8 );
+		$sco = findfile( $gp_init["path_sa"], $id, "", 8 );
 		$sco_file[$id] = file_get_contents( ROOT . "/$sco" );
 		trace("load $sco");
 	}
 }
 
-function exec_alice35( &$id, &$st, &$run )
+function exec_alice35()
 {
-	global $sco_file;
-	if ( $id == 0 )  $id = 1;
-	if ( $st == 0 )  $st = 0x20;
-	sco35_load_sco( $id );
-	trace("= sco_%d_%x : ", $id, $st);
+	global $gp_pc;
+	if ( empty($gp_pc["pc"]) )
+		$gp_pc["pc"] = array(1, 0x20);
 
-	$now = $st;
-	$select = false;
-	sco35_cmd( $id, $st, $run, $select);
-	if ( $st == $now || ! $run )
-		sco35_html( $run );
+	$ajax = false;
+	$run  = true;
+	while ( $run )
+	{
+		if ( $gp_pc["pc"][0] <    1 )  $gp_pc["pc"][0] = 1;
+		if ( $gp_pc["pc"][1] < 0x20 )  $gp_pc["pc"][1] = 0x20;
+
+		sco35_load_sco( $gp_pc["pc"][0] );
+		$now = $gp_pc["pc"][1];
+
+		trace("= sco_%d_%x : ", $gp_pc["pc"][0], $gp_pc["pc"][1]);
+		sco35_cmd( $gp_pc["pc"][0], $gp_pc["pc"][1], $run, $ajax);
+		if ( $now == $gp_pc["pc"][1] || $ajax )
+			$run = false;
+	}
+	sco35_html( $ajax );
 }

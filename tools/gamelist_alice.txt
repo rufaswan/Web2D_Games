@@ -1,89 +1,92 @@
 === system 3.5 ===
+EXE       system35/36/38.exe
 Scenario  *SA.ald
-Graphics  *GA.ald
+Graphic   *GA.ald
 Midi      *MA.ald
 Wave      *WA.ald
 Data      *DA.ald
-Saves     *SA.asd
 Resource  *RA.ald
 
-S350  SA       GA-GB WA    S=A-J  鬼畜王ランス
-S350  SA       GA    WA    S=A-J  ランス4
-S350  SA    DA GA    WA    S=A-J  鬪神都市2
-S350  SA       GA-GB WA    S=A-J | GAIJI.DAT  いけないかつみ先生
-S350  SA       GA    WA    S=A-O | FLOOR_[1-16].MAP  かえるにょぱにょ〜ん
-S350  SA       GA    WA    S=A-J  戦巫女
+S350  SA       GA-GB WA  鬼畜王ランス
+S350  SA       GA    WA  ランス4
+S350  SA    DA GA    WA  鬪神都市2
+S350  SA       GA-GB WA | GAIJI.DAT  いけないかつみ先生
+S350  SA       GA    WA | FLOOR_*.MAP  かえるにょぱにょ〜ん
+S350  SA       GA    WA  戦巫女
 
-S351  SA       GA    WA    S=A-E | MAP_DATA.DAT | UR_DATA.DAT  零式 (アリスの館456)
-S351  SA       GA-GB WA    S=A-H  アトラク＝ナクア (アリスの館456)
-S351  SA       GA    WA    S=A    人間狩り (アリスの館456)
-S351  SA MA    GA    WA    S=A-N  ランス1 (アリスの館456)
-S351  SA MA    GA    WA    S=A-N  ランス2 (アリスの館456)
-S351  SA MA DA GA    WA    S=A-H  ランス3 (アリスの館456)
-S351  SA MA DA GA    WA    S=A-H  鬪神都市 (アリスの館456)
-S351  SA MA    GA          S=A-E  Dr.STOP (アリスの館456)
-S351  SA MA DA GA    WA    S=A-J  DALK (アリスの館456)
-S351  SA       GA-GB WA    S=A-J  王道勇者
-S351  SA       GA-GB WA    S=A-J  デアボリカ
-S351  SA       GA          S=A-N  アンビバレンツ
-S351  SA       GA          S=A-C  夢幻泡影
+S351  SA       GA    WA | *_DATA.DAT  零式 (アリスの館456)
+S351  SA       GA-GB WA  アトラク＝ナクア (アリスの館456)
+S351  SA       GA    WA  人間狩り (アリスの館456)
+S351  SA MA    GA    WA  ランス1 (アリスの館456)
+S351  SA MA    GA    WA  ランス2 (アリスの館456)
+S351  SA MA DA GA    WA  ランス3 (アリスの館456)
+S351  SA MA DA GA    WA  鬪神都市 (アリスの館456)
+S351  SA MA    GA        Dr.STOP (アリスの館456)
+S351  SA MA DA GA    WA  DALK (アリスの館456)
+S351  SA       GA-GB WA  王道勇者
+S351  SA       GA-GB WA  デアボリカ
+S351  SA       GA        アンビバレンツ
+S351  SA       GA        夢幻泡影
 
-S360  SA MA DA GA    WA    S=A-Z  ぱすてるチャイム
-S360  SA    DA GA    WA    S=A-K  プロスチューデントGood
-S360  SA MA    GA-GB WA    S=A-J  守り神様
-S360  SA MA DA GA-GB WA    S=A-Z  ママトト
-S360  SA MA    GA-GB WA-WB S=A-Z | RA  ダークロウズ
-S360  SA MA    GA    WA    S=A    HUSHABY BABY
+S360  SA MA DA GA    WA  ぱすてるチャイム
+S360  SA    DA GA    WA  プロスチューデントGood
+S360  SA MA    GA-GB WA  守り神様
+S360  SA MA DA GA-GB WA  ママトト
+S360  SA MA    GA-GB WA-WB | RA  ダークロウズ
+S360  SA MA    GA    WA  HUSHABY BABY
 
-S380  SA       GA    WA    S=A-K  隠れ月
-S380  SA MA DA GA-GB WA    S=A-L  PERSIOM
-S380  SA MA    GA    WA    S=A-Y  SeeIn青
-S380  SA       GA    WA    S=A-Y  デアボリカ (廉価版)
-S380  SA       GA    WA    S=A-Y  アトラク＝ナクア (廉価版)
-S380  SA       GA    WA    S=A-Y | FLOOR_[1-33].MAP  かえるにょぱにょ〜ん (廉価版)
-S380  SA       GA    WA    S=A-Y | MAP_DATA.DAT | UR_DATA.DAT  零式 (廉価版)
+S380  SA       GA    WA  隠れ月
+S380  SA MA DA GA-GB WA  PERSIOM
+S380  SA MA    GA    WA  SeeIn青
+S380  SA       GA    WA  デアボリカ (廉価版)
+S380  SA       GA    WA  アトラク＝ナクア (廉価版)
+S380  SA       GA    WA | FLOOR*.MAP  かえるにょぱにょ〜ん (廉価版)
+S380  SA       GA    WA | *_DATA.DAT  零式 (廉価版)
 
 
 === system 3.9 ===
-Ain   system39.ain
-Init  system39.ini
-BGM   *BA.ald
-BGI   *BA.bgi
-WAI   *WA.wai
+EXE   system39.exe
+AIN   system39.ain
+INI   system39.ini
+Bgm   *BA.ald + *BA.bgi
+Wave  *WA.ald + *WA.wai
 KLD   sactefam.kld
 
-S390  SA       GA          AIN     S=A   | MA  これDPS? (20世紀アリス)
-S390  SA    DA GA    WA    AIN     S=A-Z | MA  かえるにょ国にょアリス (20世紀アリス)
+S390  SA    GA          AIN | MA  これDPS? (20世紀アリス)
+S390  SA    GA    WA    AIN | DA | MA  かえるにょ国にょアリス (20世紀アリス)
 S390  夜が来る!
 S390  王子さまLv1
-S390  SA       GA    WA    AIN     S=A-Z  オンリーユー・リクルス
-S390  SA    DA GA    WA    AIN     S=A-L  大悪司
-S390  SA       GA    WA    AIN     S=A-Z  妻みぐい
+S390  SA    GA    WA    AIN  オンリーユー・リクルス
+S390  SA    GA    WA    AIN | DA  大悪司
+S390  SA    GA    WA    AIN  妻みぐい
 S390  王子さまLv1.5
-S390  SA BA    GA-GB WA-WB AIN     S=A-Z | ALICELOGO.ALK | NIGHTDEMONDEMO[1-3].ALK  超昂天使エスカレイヤー
-S390  SA BA    GA    WA    AIN KLD S=A-Z  ランス5D
+S390  SA BA GA-GB WA-WB AIN | *.ALK  超昂天使エスカレイヤー
+S390  SA BA GA    WA    AIN KLD  ランス5D
 S390  Nor
 S390  俺の下であがけ
 S390  楽園行
-S390  SA BA    GA    WA-WB AIN KLD S=A-Z  妻みぐい2
-S390  SA BA    GA    WA    AIN KLD S=A-Z  シェル・クレイル
-S390  SA BA    GA    WA    AIN KLD S=A-Z  ナイトデーモン
+S390  SA BA GA    WA-WB AIN KLD  妻みぐい2
+S390  SA BA GA    WA    AIN KLD  シェル・クレイル
+S390  SA BA GA    WA    AIN KLD  ナイトデーモン
 
-=== system 4.0 ===
-Ain   *.ain
-Init  system40.ini
+=== system 4.0 VERS 4+ ===
+EXE     system40.exe
+INI     system40.ini
+AIN2    *.ain
+Shader  Shader.slk
 
-AIN4  BA GA           Popolytan (System 4.2 SDK)
+AIN4  BA GA     ポポリタン (System 4.2 SDK)
+AIN4  BA GA WA | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムContinue 体験版
 
-AIN5  BA GA-GC WA-WB  GALZOOアイランド
-AIN5  BA GA    WA    | RA | RED 闘神都市3
 AIN5  BA GA    WA     ばにしゅ！体験版
+AIN5  BA GA-GC WA-WB | MAP*.DGN/DTX/TES  GALZOOアイランド + 動作確認版
+AIN5  BA GA    WA    | RA | Shader | ReignData.RED | Toushin3Map.DAT  闘神都市3
 
-=== system 4.2 ===
-Ain    *.ain
-Init   AliceStart.ini
-BA     *BA.afa/ald
-WA     *WA.afa/ald
+=== system 4.0 VERS 6+ ===
+INI    AliceStart.ini
+EXE    *.exe
+BGM    *BA.afa/ald + *BA.bgi
+WAVE   *WA.afa/ald + *WA.wai
 CG     *CG.afa
 3D     *3D.afa
 AFF    *AFF.afa
@@ -93,20 +96,31 @@ Sound  *Sound.afa
 Voice  *Voice.afa
 Font   *Font.fnl
 
+AIN6  BA GA WA  ランス02 (アリスの館2010)
+AIN6  BA GA WA  レイチェルの桜貝 (アリスの館2010)
+AIN6  BA GA WA  ばにしゅ!番外 (アリスの館2010)
+AIN6  BA GA WA  眼鏡のメイ (アリスの館2010)
+AIN6  BA GA WA  神武 (アリスの館2010)
+AIN6  BA GA WA | Enemy.ACX  | Effect.DAT  疾風忍者大作戦 (アリスの館2010)
+AIN6  BA GA WA | CgList.ACX | Effect.DAT  ハルカVSエスカレイヤー (アリスの館2010)
+AIN6  BA GA WA | *.ACX  はるうられ (アリスの館2010)
+AIN6  BA GA WA | *.ACX  砂漠のニッカ (アリスの館2010)
+AIN6  BA GA WA | *.CHR | *.MAP  わいどにょ (アリスの館2010)
 AIN6  BA WA CG  母娘乱館 体験版
 AIN6  BA WA CG  ランス01 + 体験版
 AIN6  BA WA CG | AFF  どらぺこ 体験版
-AIN6  BA WA CG | AFF  パステルチャイム3 体験版
-AIN6  BA WA CG | Flat  超昂天使エスカレイヤー・リブート 体験版Ver1 + Ver2
-AIN6  BA WA CG | Flat | RED  武想少女隊ぶれいど☆ブライダーズ 体験版
-AIN6  CG Sound Voice Flat Pact  ランス03 体験版
-AIN6  CG Sound Voice Flat Pact | RED  イブニクル 体験版
+AIN6  BA WA CG | AFF | *.MAD | *.VSF | *.DAT  パステルチャイム3 体験版
+AIN6-MSG1  BA WA CG | Flat  超昂天使エスカレイヤー・リブート 体験版Ver1 + Ver2
+AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED  ランス9 体験版
+AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED | *.MAP  武想少女隊ぶれいど☆ブライダーズ 体験版
+AIN6-MSG1  CG Sound Voice Flat Pact Shader  ランス03 体験版
+AIN6-MSG1  CG Sound Voice Flat Pact Shader | 3DData.RED | *.VS  イブニクル 体験版
 
-AIN7  CG Sound Voice Flat Pact  妻みぐい3 体験版
+AIN7  CG Sound Voice Flat Pact Shader  妻みぐい3 体験版
 
-AIN8  CG Sound Voice Flat Pact  は～とふるママン 体験版
+AIN8  CG Sound Voice Flat Pact Shader  は～とふるママン 体験版
 
-AIN11  CG Sound Voice Flat Pact  超昂神騎エクシール 体験版
+AIN11  CG Sound Voice Flat Pact Shader  超昂神騎エクシール 体験版
 
-AIN14  CG Sound Voice Flat Pact  母爛漫 体験版
-AIN14  CG Sound Voice Flat Pact | 3D  イブニクル2 体験版
+AIN14  CG Sound Voice Flat Pact Shader  母爛漫 体験版
+AIN14  CG Sound Voice Flat Pact Shader | 3D  イブニクル2 体験版

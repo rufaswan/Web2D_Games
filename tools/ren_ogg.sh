@@ -22,7 +22,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 
 i=1
 for f in *.ogg; do
-	new=$(printf "%02d.ogg" $i)
+	new=$(printf "%03d.ogg" $i)
 	mv -v "$f" "$new"
 	let i++
 done

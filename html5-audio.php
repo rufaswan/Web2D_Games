@@ -30,6 +30,7 @@ if ( ! defined("GAME") )  exit("NO GAME\n");
 	<script src="<?php echo PATH_JQUERY; ?>"></script>
 	<style>
 		body { background-color:#000; color:#fff; }
+		img { background-color:#fff; }
 		#ogglist {
 			margin-right:200px;
 		}
@@ -58,10 +59,9 @@ if ( ! defined("GAME") )  exit("NO GAME\n");
 <div id="ogglist">
 <?php
 $path = array(
-	"path_ogg" => "CD",
-	"path_mid" => "MIDI",
-	"path_bgm" => "BGM",
-	//"path_wav" => "WAVE",
+	"path_ba" => "BGM",
+	"path_ma" => "MID",
+	//"path_wa" => "WAV",
 );
 foreach ( $path as $p => $x )
 {
