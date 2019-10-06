@@ -66,7 +66,7 @@ foreach ( $_REQUEST as $key=>$var )
 			//define("SAVE", dechex( crc32($var) ) );
 			//define("SAVE",  md5($var) );
 			//define("SAVE", sha1($var) );
-			define("SAVE", preg_replace("|[^0-9a-zA-Z]|", '_', $var) );
+			define("SAVE", preg_replace("|[^0-9a-zA-Z\x80-\xff]|", '_', $var) );
 			define("SAVE_FILE", ROOT ."/sav/". SAVE .".");
 			break;
 		case "input":

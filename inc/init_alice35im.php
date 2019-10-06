@@ -19,18 +19,6 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-if ( $argc < 4 )  exit();
-$pc = json_decode( file_get_contents($argv[1]), true );
-	if ( empty($pc) )  exit();
+require "init_alice35.php";
 
-$map = $pc["var"][ $argv[2] ];
-$len = count($map);
-$brk = $argv[3];
-
-for ( $i=0; $i < $len; $i++ )
-{
-	if ( $i > 1 && ($i%$brk) == 0 )
-		echo "\n";
-
-	printf("%3d ", $map[$i]);
-}
+$sco_input = "sco35_mouse";

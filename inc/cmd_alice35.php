@@ -19,8 +19,6 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-// <@  cali:成立中実行コマンド  <@ Whileループ開始
-// >  Whileループ終了
 
 function B_cmd35( &$file, &$st, &$ajax )
 {
@@ -441,7 +439,7 @@ function E_cmd35( &$file, &$st, &$ajax )
 // GX cg_no,shadow_no:(24bitDIB only)  影データを指定してCGをロードする
 function G_cmd35( &$file, &$st, &$ajax )
 {
-	global $gp_pc, $gp_img_meta;
+	global $gp_pc;
 	switch ( $file[$st+1] )
 	{
 		// GS num,var:  num 番にリンクされているCGの座標とサイズを取得する
@@ -451,7 +449,7 @@ function G_cmd35( &$file, &$st, &$ajax )
 			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			trace("GS $num , $v+$e += 4");
-			list($x,$y,$w,$h) = $gp_img_meta[$num];
+			list($x,$y,$w,$h) = sco35_img_meta( PATH_META, $num );
 			sco35_var_put( $v, $e+0, $x );
 			sco35_var_put( $v, $e+1, $y );
 			sco35_var_put( $v, $e+2, $w );
@@ -507,7 +505,7 @@ cg_add:
 
 function I_cmd35( &$file, &$st, &$ajax )
 {
-	global $gp_pc, $gp_input, $gp_key;
+	global $sco_input;
 	switch( $file[$st+1] )
 	{
 		// IC cursol_num,oldcursol  マウスカーソルの形状変更
@@ -533,61 +531,10 @@ function I_cmd35( &$file, &$st, &$ajax )
 		case 'K':
 			$bak = $st;
 			$num = ord( $file[$st+2] );
-			switch ( $num )
-			{
-				// 6 input data (2+3+4+5)
-				case 5:
-				case 6:
-					$st += 3;
-					if ( sco35_loop_IK0( $file, $st ) )
-					{
-						$st += 17;
-						return;
-					}
+			$st += 3;
 
-					if ( empty($gp_input) )
-					{
-						trace("IK $num wait = 0");
-						$gp_pc["var"][0] = 0;
-						$st = $bak;
-						return;
-					}
-
-					$in = array_shift($gp_input);
-					$gp_pc[ $in ] = $gp_input;
-					$gp_input = array();
-
-					if ( isset( $gp_pc["key"] ) )
-					{
-						$key = $gp_pc["key"][0];
-						trace("IK $num key = %d", $key);
-						$gp_pc["var"][0] = $key;
-						unset( $gp_pc["key"] );
-						return;
-					}
-					else
-					{
-						trace("IK $num $in");
-						$gp_pc["var"][0] = $gp_key["enter"];
-						return;
-					}
-
-					return;
-				// 0/1 wait for input data (2+3+4+5)
-				// 2 mouse input data
-				// 3 keyboard input data
-				// 4 joypad input data
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-					$st += 3;
-					trace("IK $num = %d", $gp_pc["var"][0]);
-					//trace("IK $num = 0");
-					//$gp_pc["var"][0] = 0;
-					return;
-			}
+			if ( ! $sco_input( "IK{$num}", "", $file, $st ) )
+				$st = $bak;
 			return;
 		// IM cursol_x,cursol_y  マウスカーソルの座標取得
 		// IM return RND = left/right click
@@ -599,28 +546,9 @@ function I_cmd35( &$file, &$st, &$ajax )
 			list($v2,$e2) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 
-			if ( isset( $gp_pc["mouse"] ) )
-			{
-				list($x,$y) = $gp_pc["mouse"];
-				sco35_var_put( $v1, $e1, $x );
-				sco35_var_put( $v2, $e2, $y );
-				$gp_pc["var"][0] = $gp_key["enter"];
-				unset( $gp_pc["mouse"] );
-				trace("IM mouse = $x , $y");
-				return;
-			}
-			else
-			{
-				trace("IM $v1+$e1 , $v2+$e2 skip");
-				$gp_pc["var"][0] = 0;
-				return;
-			}
-/*
-			if ( empty( $gp_input ) )
-				//$st = $bak;
-				trace("IM $v1+$e1 , $v2+$e2 {$gp_input[0]}");
-				return;
-*/
+			$src = array($v1,$e1,$v2,$e2);
+			if ( ! $sco_input( "IM", $src, $file, $st ) )
+				$st = $bak;
 			return;
 		// IX var:  「次の選択肢まで進む」の状態取得
 		case 'X':
@@ -1080,6 +1008,7 @@ function P_cmd35( &$file, &$st, &$ajax )
 				// PF2,num,wait_flag:  グラフィック画面をフェードインする（黒画面→通常画面）
 				// PF3,num,wait_flag:  グラフィック画面をフェードアウトする（通常画面→黒画面）
 			}
+			return;
 		// PG ver,num1,num2:  直接画面には反映されないので使用注意 CLUT_READ
 		case 'G':
 			$st += 2;
@@ -1710,6 +1639,7 @@ function Z_cmd35( &$file, &$st, &$ajax )
 					sco35_var_put( $v, $e, $gp_pc["ZT"] );
 					return;
 			}
+			return;
 		// ZW sw:  CAPS 状態の内部的制御を変更する
 		case 'W':
 			$st += 2;
@@ -1813,8 +1743,11 @@ function sco35_cmd( &$id, &$st, &$run, &$ajax )
 			trace("text NEXT");
 			if ( ! empty( $gp_input ) )
 			{
-				if ( $gp_input[0] == "key" && $gp_input[1] < 0 )
+				if ( $gp_input[0] == "key" && $gp_input[1] == -1 )
+				{
+					$gp_input = array();
 					return;
+				}
 				$st++;
 				sco35_text_add( "_NEXT_" );
 				$gp_input = array();
@@ -1948,7 +1881,8 @@ function sco35_cmd( &$id, &$st, &$run, &$ajax )
 			if ( ! $exp )
 				$gp_pc["pc"][1] = $end;
 			return;
-		// < var,start,end,sign,step:  FORループ開始
+		// <  var,start,end,sign,step:  FORループ開始
+		// <@ cali:成立中実行コマンド  <@ Whileループ開始
 		case '<': // 0x3c
 			$type = ord( $file[$st+1] );
 			$st += 2;
@@ -1993,6 +1927,7 @@ function sco35_cmd( &$id, &$st, &$run, &$ajax )
 			}
 			return;
 		// >  FORループ終了
+		// >  Whileループ終了
 		case '>': // 0x3e
 			$st++;
 			$forloop = str2int( $file, $st, 4 );

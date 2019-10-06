@@ -60,7 +60,7 @@ var ajax_auto = false;
 var ajax_ms = 200;
 var win_w = 320;
 var win_h = 240;
-var grid_sz = 16;
+var grid_sz = 256;
 </script>
 </head><body>
 <div id="canvas">
@@ -73,13 +73,13 @@ var grid_sz = 16;
 			<li data="3">SELECT 4</li>
 		</ul>
 	</div> <!-- #window -->
-	<input id="bgm"  type="hidden" value="">
-	<input id="wave" type="hidden" value="">
+	<input id="filebgm" type="hidden" value="">
+	<input id="filewav" type="hidden" value="">
 </div> <!-- #canvas -->
 
 <div id="dataset" style="display:none;">
-	<audio id="playbgm"  src="" type="audio/ogg" autoplay loop></audio>
-	<audio id="playwave" src="" type="audio/ogg" autoplay></audio>
+	<audio id="playbgm" src="" type="audio/ogg" autoplay loop></audio>
+	<audio id="playwav" src="" type="audio/ogg" autoplay></audio>
 </div> <!-- #dataset -->
 
 <script>
@@ -102,9 +102,9 @@ function add_grid(){
 }
 
 function update_audio(){
-	["bgm","wave"].forEach(function(v){
+	["bgm","wav"].forEach(function(v){
 		var src  = $("#play"+v).attr("src");
-		var wave = $("#"+v).val();
+		var wave = $("#file"+v).val();
 		if ( wave != src )
 		{
 			var play = document.getElementById("play"+v);

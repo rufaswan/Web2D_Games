@@ -19,25 +19,30 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function ain_dec( $fname )
-{
-	$file = file_get_contents( $fname );
-		if ( empty($file) )   return;
+if ( $argc == 1 )  exit();
 
-	$mgc = substr($file, 0, 3);
-	$ms = array(
-		"AI2", // *.ain
-		"ZLB", // *
-		"ACX", // Data/*.acx
-	);
-	if ( ! in_array($mgx, $ms) )
-		return;
-	printf("$mgc , $fname\n");
-
-	$dec = zlib_decode( substr($file, 0x10) );
-	file_put_contents("$fname.dec", $dec);
-}
-
-if ( $argc == 1 )   exit();
+$buf = "";
 for ( $i=1; $i < $argc; $i++ )
-	ain_dec( $argv[$i] );
+{
+	$fn = $argv[$i];
+	if ( stripos($fn, "-meta.txt") === false )
+		continue;
+
+	$file = file($fn);
+	foreach ( $file as $line )
+	{
+		list($t1,$x,$y,$w,$h,$id) = explode(',', trim($line));
+		//if ( $x == 0 && $y == 0 )
+			//continue;
+
+		$t1 = strpos($id, '/');
+		if ( $t1 )  $id = substr($id, $t1+1);
+		$t1 = strpos($id, '.');
+		if ( $t1 )  $id = substr($id, 0, $t1);
+
+		$log = sprintf("%d,%d,%d,%d,%d\n", $id, $x, $y, $w, $h);
+		echo $log;
+		$buf .= $log;
+	}
+}
+file_put_contents("meta.txt", $buf);

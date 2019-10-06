@@ -82,7 +82,7 @@ function clut2bmp( $clut_fn , $bmp_fn , $num )
 	{
 		$pos = 0x10 + ($i * 4);
 		if ( $i == $num )
-			$pal[] = substr($clut, $pos, 3) . chr(0);
+			$pal[] = substr($clut, $pos, 3) . ZERO;
 		else
 			$pal[] = substr($clut, $pos, 4);
 	}
@@ -104,29 +104,6 @@ function clut2bmp( $clut_fn , $bmp_fn , $num )
 	file_put_contents( $bmp_fn, $bmp );
 }
 //////////////////////////////
-function rgba2bmp( $rgba_fn , $bmp_fn )
-{
-	$rgba = file_get_contents( $rgba_fn );
-		if ( empty($rgba) )  return;
-	$mgc = substr($rgba, 0, 4);
-		if ( $mgc != "RGBA" )  return;
-
-	$st = 4;
-	$cw = str2int($rgba, $st, 4);
-	$ch = str2int($rgba, $st, 4);
-
-	$head = bmp_header( $cw , $ch );
-
-	$data = "";
-	while ( $ch > 0 )
-	{
-		$ch--;
-		$pos = 12 + ($cw * $ch * 4);
-		$pix = substr($rgba, $pos, $cw*4);
-		$data .= $pix;
-	}
-
-	$bmp = $head . $data;
-	file_put_contents( $bmp_fn, $bmp );
-}
+// as RGBA has no palette, it is already converted to PNG
+//function rgba2bmp( $rgba_fn , $bmp_fn ) {}
 //////////////////////////////

@@ -52,7 +52,7 @@ function ain2tags( &$file , &$st, $dir )
 			{
 				$str = get_text($file, $st);
 				$gp_pc[$tag][$i] = $str;
-				$buf .= "$str\n";
+				$buf .= "$i,$str\n";
 			}
 
 			//print_r( $gp_pc[$tag] );
@@ -177,7 +177,7 @@ function ain2tags( &$file , &$st, $dir )
 			//print_r( $gp_pc["GSET"] );
 			$buf = "";
 			foreach( $gp_pc["GSET"] as $id => $g )
-				$buf .= sprintf("%4x , %s\n", $id, $g['data']);
+				$buf .= sprintf("%d,%s\n", $id, $g['data']);
 			file_put_contents("$dir/$tag", $buf);
 			return;
 

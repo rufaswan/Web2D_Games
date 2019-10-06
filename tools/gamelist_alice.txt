@@ -43,31 +43,30 @@ S380  SA       GA    WA  アトラク＝ナクア (廉価版)
 S380  SA       GA    WA | FLOOR*.MAP  かえるにょぱにょ〜ん (廉価版)
 S380  SA       GA    WA | *_DATA.DAT  零式 (廉価版)
 
-
 === system 3.9 ===
 EXE   system39.exe
-AIN   system39.ain
+AINI  system39.ain
 INI   system39.ini
 Bgm   *BA.ald + *BA.bgi
 Wave  *WA.ald + *WA.wai
 KLD   sactefam.kld
 
-S390  SA    GA          AIN | MA  これDPS? (20世紀アリス)
-S390  SA    GA    WA    AIN | DA | MA  かえるにょ国にょアリス (20世紀アリス)
-S390  夜が来る!
-S390  王子さまLv1
-S390  SA    GA    WA    AIN  オンリーユー・リクルス
-S390  SA    GA    WA    AIN | DA  大悪司
-S390  SA    GA    WA    AIN  妻みぐい
-S390  王子さまLv1.5
-S390  SA BA GA-GB WA-WB AIN | *.ALK  超昂天使エスカレイヤー
-S390  SA BA GA    WA    AIN KLD  ランス5D
-S390  Nor
-S390  俺の下であがけ
-S390  楽園行
-S390  SA BA GA    WA-WB AIN KLD  妻みぐい2
-S390  SA BA GA    WA    AIN KLD  シェル・クレイル
-S390  SA BA GA    WA    AIN KLD  ナイトデーモン
+S380-AIN  SA    GA          | MA  これDPS? (20世紀アリス)
+S380-AIN  SA    GA    WA    | DA | MA  かえるにょ国にょアリス (20世紀アリス)
+S380-AIN  夜が来る!
+S380-AIN  王子さまLv1
+S380-AIN  SA    GA    WA     オンリーユー・リクルス
+S380-AIN  SA    GA    WA    | DA  大悪司
+S380-AIN  SA    GA    WA     妻みぐい
+S380-AIN  王子さまLv1.5
+S380-AIN  SA BA GA-GB WA-WB | *.ALK  超昂天使エスカレイヤー
+S380-AIN  SA BA GA    WA    KLD  ランス5D
+S380-AIN  Nor
+S380-AIN  俺の下であがけ
+S380-AIN  楽園行
+S380-AIN  SA BA GA    WA-WB KLD  妻みぐい2
+S380-AIN  SA BA GA    WA    KLD  シェル・クレイル
+S380-AIN  SA BA GA    WA    KLD  ナイトデーモン
 
 === system 4.0 VERS 4+ ===
 EXE     system40.exe
@@ -78,7 +77,7 @@ Shader  Shader.slk
 AIN4  BA GA     ポポリタン (System 4.2 SDK)
 AIN4  BA GA WA | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムContinue 体験版
 
-AIN5  BA GA    WA     ばにしゅ！体験版
+AIN5  BA GA    WA     ばにしゅ! 体験版
 AIN5  BA GA-GC WA-WB | MAP*.DGN/DTX/TES  GALZOOアイランド + 動作確認版
 AIN5  BA GA    WA    | RA | Shader | ReignData.RED | Toushin3Map.DAT  闘神都市3
 
@@ -124,3 +123,12 @@ AIN11  CG Sound Voice Flat Pact Shader  超昂神騎エクシール 体験版
 
 AIN14  CG Sound Voice Flat Pact Shader  母爛漫 体験版
 AIN14  CG Sound Voice Flat Pact Shader | 3D  イブニクル2 体験版
+
+=== MOVIE ===
+AJP = frame JPG + QNT alpha bitmask
+ALK = video frames AJP/QNT
+MAD = video frames AJP/QNT w/alpha , for special effects
+ALM = video MPEG-1  30fps  ~8mb/s
+AFF = encrypted *.SWF flash file
+ELNA-FLAT-MTLC-LIBL =
+APEG-TMNL-SOND-IPIC = zlib compressed (IPICs) + ogg (SOND)

@@ -32,6 +32,17 @@ function trace()
 		echo $log;
 	else
 		file_put_contents(SAVE_FILE . "log", $log, FILE_APPEND);
+	return;
+}
+
+function debug()
+{
+	$args = func_get_args();
+	$var  = array_shift($args);
+
+	$log = vsprintf("ERROR {$var}\n", $args);
+	file_put_contents(SAVE_FILE . "log", $log, FILE_APPEND);
+	return;
 }
 
 function str2int( &$str, &$pos, $byte )
@@ -212,28 +223,39 @@ function initcfg_var( $fname )
 	return $var;
 }
 
-function img_meta( $fname )
+function fileline( $txtfile, $id )
 {
-	$ret = array();
-	$file = file( $fname );
-		if ( empty($file) )  return $ret;
+	$fp = fopen($txtfile, "r");
+	if ( ! $fp )
+		debug("fileline fopen $txtfile");
 
-	foreach ( $file as $line )
+	$src = "$id,";
+	$len = strlen($src);
+	$no  = 0;
+	while ( ! feof($fp) )
 	{
-		$line = trim($line);
-		if ( empty($line) )
-			continue;
-		list($x,$y,$w,$h,$n) = explode(',', $line);
-		$ret[ $n ] = array($x , $y , $w , $h);
+		$line = fgets($fp);
+		if ( strpos($line,$src) === 0 )
+		{
+			$line = rtrim($line);
+			$r = array($k, substr($line, $len));
+			return $r;
+		}
+		$no++;
 	}
+	return array(-1, "");
+}
 
-	return $ret;
+function fileline2( $txtfile, $id1, $id2 )
+{
+	return fileline( $txtfile, "$id1,$id2" );
 }
 
 function findfile( $sprint , $num , $default , $b )
 {
 	if ( $num < 0 )
 		return $default;
+
 	$fn = $sprint;
 	$s  = count_chars($sprint, 1);
 	switch ( $s[0x25] ) // %
@@ -249,22 +271,6 @@ function findfile( $sprint , $num , $default , $b )
 	if ( ! file_exists( ROOT . "/$fn" ) )
 		$fn = $default;
 	return $fn;
-}
-
-function textline( $textfile , $line )
-{
-	if ( $line < 1 )
-		return "";
-	$txt = fopen($textfile, "r");
-	$l = 1;
-	while ( ! feof($txt) ) {
-		$str = fgets($txt);
-		if ( $l == $line )
-			return $str;
-		$l++;
-	} // while (1)
-	fclose($txt);
-	return "";
 }
 
 function pc_save( $ext, $pc )
@@ -356,11 +362,3 @@ function var_bool( $str )
 	if ( in_array($s, $no) )  return false;
 	return $str;
 }
-
-/*
-function debug()
-{
-	if ( ! DEBUG )  return;
-	return;
-}
-*/

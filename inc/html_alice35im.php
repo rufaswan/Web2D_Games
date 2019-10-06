@@ -19,25 +19,31 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function ain_dec( $fname )
-{
-	$file = file_get_contents( $fname );
-		if ( empty($file) )   return;
+echo <<<_HTML
+<div id="key_input">
+<p><span id="clickmouse">MOUSE</span></p>
+</div>
+_HTML;
+?>
 
-	$mgc = substr($file, 0, 3);
-	$ms = array(
-		"AI2", // *.ain
-		"ZLB", // *
-		"ACX", // Data/*.acx
-	);
-	if ( ! in_array($mgx, $ms) )
-		return;
-	printf("$mgc , $fname\n");
+<style>
+	.grid { border:none; }
+	#key_input {
+		position:fixed;
+		bottom:0;
+		left:50%;
+		width:40em;
+		margin-left:-20em;
+	}
+	#key_input p {
+		text-align:center;
+		cursor:pointer;
+	}
+</style>
 
-	$dec = zlib_decode( substr($file, 0x10) );
-	file_put_contents("$fname.dec", $dec);
-}
-
-if ( $argc == 1 )   exit();
-for ( $i=1; $i < $argc; $i++ )
-	ain_dec( $argv[$i] );
+<script>
+$("#clickmouse").click(function(){
+	grid_sz = 16;
+	add_grid();
+});
+</script>

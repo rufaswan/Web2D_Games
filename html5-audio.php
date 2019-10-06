@@ -59,9 +59,9 @@ if ( ! defined("GAME") )  exit("NO GAME\n");
 <div id="ogglist">
 <?php
 $path = array(
-	"path_ba" => "BGM",
-	"path_ma" => "MID",
-	//"path_wa" => "WAV",
+	"path_bgm" => "BGM",
+	"path_mid" => "MID",
+	//"path_wav" => "WAV",
 );
 foreach ( $path as $p => $x )
 {
