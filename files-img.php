@@ -19,25 +19,51 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function ain_dec( $fname )
+require "define.php";
+if ( ! defined("GAME") )  exit("NO GAME\n");
+?><!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>IMG list</title>
+	<script src="<?php echo PATH_JQUERY; ?>"></script>
+	<style>
+		body { background-color:#000; color:#fff; }
+		div.thumb {
+			width: 150px;
+			height:100px;
+			float:left;
+			display:block;
+			text-align:center;
+		}
+		div.thumb img {
+			max-width: 100%;
+			max-height:100%;
+		}
+	</style>
+</head>
+<body>
+
+<?php
+foreach( file(LIST_FILE) as $line )
 {
-	$file = file_get_contents( $fname );
-		if ( empty($file) )   return;
+	if ( stripos($line, ".png") == false )
+		continue;
+	$img = trim($line);
 
-	$mgc = substr($file, 0, 3);
-	$ms = array(
-		"AI2", // *.ain
-		"ZLB", // *
-		"ACX", // Data/*.acx
-	);
-	if ( ! in_array($mgx, $ms) )
-		return;
-	printf("$mgc , $fname\n");
+echo <<<_HTML
+<div class="thumb">
+	<a href="$img" target="_blank">
+		<img src="$img" alt="$img" title="$img">
+	</a>
+</div>
 
-	$dec = zlib_decode( substr($file, 0x10) );
-	file_put_contents("$fname.dec", $dec);
+_HTML;
+
 }
+?>
 
-if ( $argc == 1 )   exit();
-for ( $i=1; $i < $argc; $i++ )
-	ain_dec( $argv[$i] );
+
+</body>
+</html>
+

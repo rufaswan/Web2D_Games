@@ -1,0 +1,239 @@
+; File Name   : /tmp/new/Sys42IDE.exe
+; Input MD5   : 70037780B976317B1574D4FC02A98A2F
+; Format      : Portable executable for 80386 (PE)
+; =============== S U B R O U T I N E =======================================
+vartype1        proc near               ; CODE XREF: sub_47BB40+28^p
+										; sub_47BBF0+20^p
+				mov     ebx, ecx
+				mov     eax, [ebx]
+				add     eax, -10
+				cmp     eax, 42         ; switch 43 cases
+				push    esi
+				mov     dword ptr [esp+40], 0
+				ja      loc_479F9E      ; default
+										; jumptable 00479D1C cases 18,19,23,25-36,38,39
+				movzx   eax, ds:byte_47A02C[eax]
+				jmp     ds:off_479FC4[eax*4] ; switch jump
+loc_479D23:                             ; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aInt ; jumptable 00479D1C case 0+10
+; ---------------------------------------------------------------------------
+loc_479D2D:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aFloat ; jumptable 00479D1C case 1+10
+; ---------------------------------------------------------------------------
+loc_479D37:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aString ; jumptable 00479D1C case 2+10
+; ---------------------------------------------------------------------------
+loc_479D41:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     ecx, [esp+8]    ; jumptable 00479D1C case 4+10
+				mov     esi, offset aArray@int ; "array@int"
+; ---------------------------------------------------------------------------
+loc_479D85:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     edx, [esp+8]    ; jumptable 00479D1C case 5+10
+				mov     esi, offset aArray@float ; "array@float"
+; ---------------------------------------------------------------------------
+loc_479DCE:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     eax, [esp+8]    ; jumptable 00479D1C case 6+10
+				mov     esi, offset aArray@string ; "array@string"
+; ---------------------------------------------------------------------------
+loc_479E17:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     ecx, [esp+8]    ; jumptable 00479D1C case 7+10
+				mov     esi, offset aArray@ ; "array@"
+; ---------------------------------------------------------------------------
+loc_479E44:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefInt_0 ; jumptable 00479D1C case 8+10
+; ---------------------------------------------------------------------------
+loc_479E4E:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefFloat_0 ; jumptable 00479D1C case 9+10
+; ---------------------------------------------------------------------------
+loc_479E58:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefString_0 ; jumptable 00479D1C case 10+10
+; ---------------------------------------------------------------------------
+loc_479E62:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     eax, [esp+8]    ; jumptable 00479D1C case 11+10
+				mov     esi, offset aRef_0 ; "ref "
+; ---------------------------------------------------------------------------
+loc_479E81:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefArray@int ; jumptable 00479D1C case 12+10
+; ---------------------------------------------------------------------------
+loc_479E8B:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefArray@float ; jumptable 00479D1C case 13+10
+; ---------------------------------------------------------------------------
+loc_479E95:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefArray@strin ; jumptable 00479D1C case 14+10
+; ---------------------------------------------------------------------------
+loc_479E9F:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     edx, [esp+8]    ; jumptable 00479D1C case 15+10
+				mov     esi, offset aRefArray@ ; "ref array@"
+; ---------------------------------------------------------------------------
+loc_479EC4:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aImainsystem ; jumptable 00479D1C case 16+10
+; ---------------------------------------------------------------------------
+loc_479ECE:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     ecx, [ebx+8]    ; jumptable 00479D1C cases 3+10,17+10
+; ---------------------------------------------------------------------------
+loc_479EDC:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     ecx, [esp+8]    ; jumptable 00479D1C case 20+10
+				mov     esi, offset aArray@ ; "array@"
+; ---------------------------------------------------------------------------
+loc_479F01:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     eax, [esp+8]    ; jumptable 00479D1C case 21+10
+				mov     esi, offset aRef_0 ; "ref "
+; ---------------------------------------------------------------------------
+loc_479F3E:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				lea     edx, [esp+24]   ; jumptable 00479D1C case 22+10
+				mov     esi, offset aRefArray@ ; "ref array@"
+; ---------------------------------------------------------------------------
+loc_479F7B:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aThis ; jumptable 00479D1C case 24+10
+; ---------------------------------------------------------------------------
+loc_479F82:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aBool ; jumptable 00479D1C case 37+10
+; ---------------------------------------------------------------------------
+loc_479F89:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aArray@bool ; jumptable 00479D1C case 40+10
+; ---------------------------------------------------------------------------
+loc_479F90:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefBool_0 ; jumptable 00479D1C case 41+10
+; ---------------------------------------------------------------------------
+loc_479F97:                             ; CODE XREF: vartype1+3C^j
+										; DATA XREF: .text:off_479FC4^o
+				mov     esi, offset aRefArray@bool ; jumptable 00479D1C case 42+10
+; ---------------------------------------------------------------------------
+loc_479F9E:                             ; CODE XREF: vartype1+2F^j vartype1+3C^j
+										; DATA XREF: ...
+				mov     esi, offset a??? ; default
+										; jumptable 00479D1C cases 18,19,23,25-36,38,39
+end:                                    ; CODE XREF: vartype1+1F7^j
+										; vartype1+25C^j ...
+				retn
+vartype1        endp
+; ---------------------------------------------------------------------------
+				align 4
+off_479FC4      dd offset loc_479D23    ; c0 ; DATA XREF: vartype1+3C^r
+				dd offset loc_479D2D    ; c1 ; jump table for switch    statement
+				dd offset loc_479D37    ; c2
+				dd offset loc_479ECE    ; c3
+				dd offset loc_479D41    ; c4
+				dd offset loc_479D85    ; c5
+				dd offset loc_479DCE    ; c6
+				dd offset loc_479E17    ; c7
+				dd offset loc_479E44    ; c8
+				dd offset loc_479E4E    ; c9
+				dd offset loc_479E58    ; c10
+				dd offset loc_479E62    ; c11
+				dd offset loc_479E81    ; c12
+				dd offset loc_479E8B    ; c13
+				dd offset loc_479E95    ; c14
+				dd offset loc_479E9F    ; c15
+				dd offset loc_479EC4    ; c16
+				dd offset loc_479EDC    ; c17
+				dd offset loc_479F01    ; c18
+				dd offset loc_479F3E    ; c19
+				dd offset loc_479F7B    ; c20
+				dd offset loc_479F82    ; c21
+				dd offset loc_479F89    ; c22
+				dd offset loc_479F90    ; c23
+				dd offset loc_479F97    ; c24
+				dd offset loc_479F9E    ; c25 ; default
+byte_47A02C     db      0               ; c0+10 ; DATA XREF: vartype1+35^r
+										; indirect table for switch statement
+				db      1       ; c1+10
+				db      2       ; c2+10
+				db      3       ; c3+10
+				db      4       ; c4+10
+				db      5       ; c5+10
+				db      6       ; c6+10
+				db      7       ; c7+10
+				db      8       ; c8+10
+				db      9       ; c9+10
+				db     10       ; c10+10
+				db     11       ; c11+10
+				db     12       ; c12+10
+				db     13       ; c13+10
+				db     14       ; c14+10
+				db     15       ; c15+10
+				db     16       ; c16+10
+				db      3       ; c17+10
+				db     25       ; c18+10 def
+				db     25       ; c19+10 def
+				db     17       ; c20+10
+				db     18       ; c21+10
+				db     19       ; c22+10
+				db     25       ; c23+10 def
+				db     20       ; c24+10
+				db     25       ; c25+10 def
+				db     25       ; c26+10 def
+				db     25       ; c27+10 def
+				db     25       ; c28+10 def
+				db     25       ; c29+10 def
+				db     25       ; c30+10 def
+				db     25       ; c31+10 def
+				db     25       ; c32+10 def
+				db     25       ; c33+10 def
+				db     25       ; c34+10 def
+				db     25       ; c35+10 def
+				db     25       ; c36+10 def
+				db     21       ; c37+10
+				db     25       ; c38+10 def
+				db     25       ; c39+10 def
+				db     22       ; c40+10
+				db     23       ; c41+10
+				db     24       ; c42+10
+; ---------------------------------------------------------------------------
+aImainsystem    db 'IMainSystem',0      ; DATA XREF: sub_450810+7F^o
+										; vartype1:loc_479EC4^o
+a???            db '???',0              ; DATA XREF: vartype1:loc_479F9E^o
+										; vartype2:loc_47AEF5^o
+aRefArray@bool  db 'ref array@bool',0   ; DATA XREF: vartype1:loc_479F97^o
+										; vartype2:loc_47AE9D^o
+aRefBool_0      db 'ref bool',0         ; DATA XREF: vartype1:loc_479F90^o
+										; vartype2:loc_47AE56^o
+aArray@bool     db 'array@bool',0       ; DATA XREF: vartype1:loc_479F89^o
+										; vartype2:loc_47AE1F^o
+aRefArray@      db 'ref array@',0       ; DATA XREF: vartype1+1C4^o
+										; vartype1+263^o ...
+aRefArray@strin db 'ref array@string',0 ; DATA XREF: vartype1:loc_479E95^o
+										; vartype2:loc_47AE7B^o
+aRefArray@float db 'ref array@float',0  ; DATA XREF: vartype1:loc_479E8B^o
+										; vartype2:loc_47AE74^o
+aRefArray@int   db 'ref array@int',0    ; DATA XREF: vartype1:loc_479E81^o
+										; vartype2:loc_47AE65^o
+aRef_0          db 'ref ',0             ; DATA XREF: vartype1+187^o
+										; vartype1+226^o ...
+aRefString_0    db 'ref string',0       ; DATA XREF: vartype1:loc_479E58^o
+										; vartype2:loc_47AE47^o
+aRefFloat_0     db 'ref float',0        ; DATA XREF: vartype1:loc_479E4E^o
+										; vartype2:loc_47AE3D^o
+aRefInt_0       db 'ref int',0          ; DATA XREF: vartype1:loc_479E44^o
+										; vartype2:loc_47AE2E^o
+aArray@         db 'array@',0           ; DATA XREF: vartype1+13C^o
+										; vartype1+201^o ...
+aArray@string   db 'array@string',0     ; DATA XREF: vartype1+F3^o
+										; vartype2:loc_47ADF7^o
+aArray@float    db 'array@float',0      ; DATA XREF: vartype1+AA^o
+										; vartype2:loc_47ADED^o
+aArray@int      db 'array@int',0        ; DATA XREF: vartype1+66^o
+										; vartype2:loc_47ADDE^o

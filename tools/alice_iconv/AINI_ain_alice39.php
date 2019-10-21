@@ -19,36 +19,51 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+require "common.inc";
+require "aini_tags.inc";
+
+$gp_pc = array();
 ////////////////////////////////////////
-function str2int( &$str, $pos, $byte )
+function aini_dec( &$file, $fname )
 {
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
+	$ed = strlen($file);
+	$st = 4;
+	while ( $st < $ed )
 	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
+		$b1 = ord( $file[$st] );
+		$p1 = $b1 >> 6;
+		$p2 = $b1 << 2;
+		$b1 = ($p1 | $p2) & BIT8;
+		$file[$st] = chr($b1);
+		$st++;
 	}
-	return $int;
+	file_put_contents("$fname.dec", $file);
 }
-////////////////////////////////////////
-function madrip( $rem, $fname )
+
+function aini( $fname )
 {
 	$file = file_get_contents( $fname );
 		if ( empty($file) )   return;
-		printf("[$rem] $fname\n");
 
-	$ed = strlen($file);
-	$st = 0x30;
-	$i  = 1;
+	$mgc = substr($file, 0, 4);
+	if ( $mgc != "AINI" )
+		return;
+
+	$dir = str_replace('.', '_', $fname);
+	@mkdir("$dir", 0755, true);
+
+	aini_dec( $file, $dir );
+
+	$st = 8;
 	while ( $st < $ed )
 	{
-		$len = str2int( $file, $st+0, 4 );
-		file_put_contents( "$fname.$i.dat", substr($file, $st+4, $len) );
-		$i++;
-		$st += ($len + 4);
+		$bak = $st;
+		ainitags( $file, $st, $dir );
+		if ( $bak == $st )
+			return;
 	} // while ( $st < $ed )
 }
 
 if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	madrip( $argc-$i, $argv[$i] );
+	aini( $argv[$i] );

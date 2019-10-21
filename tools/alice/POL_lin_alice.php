@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
+////////////////////////////////////////
 function str2int( &$str, $pos, $byte )
 {
 	$int = 0;
@@ -30,41 +30,34 @@ function str2int( &$str, $pos, $byte )
 	}
 	return $int;
 }
-//////////////////////////////
-function dcf2qnt( $fname )
+////////////////////////////////////////
+// Galzoo Data/PolyObj.lin
+function polyobj( $fname )
 {
-	$file = file_get_contents($fname);
-		if ( empty($file) )  return;
+	$file = file_get_contents( $fname );
+		if ( empty($file) )   return;
 
-	$ed = strlen($file);
-	$st = 0;
-	while( $st < $ed )
+	$mgc = substr($file, 0, 3);
+	if ( $mgc != "POL" )
+		return;
+
+	$dir = str_replace('.', '_', $fname);
+	@mkdir($dir, 0755, true);
+
+	$polno = str2int( $file, 8, 4 );
+	for ( $pn=0; $pn < $polno; $pn++ )
 	{
-		$tag = substr($file, $st, 4);
-		switch ( $tag )
-		{
-			case "dcf ":
-			case "dfdl":
-				printf("%8x , $tag\n", $st);
-				$len = str2int($file, $st+4, 4);
-				$st += 8;
-				$st += $len;
-				break;
-			case "dcgd":
-				printf("%8x , $tag\n", $st);
-				$len = str2int($file, $st+4, 4);
-				$st += 8;
+		$pos = 12 + ($pn * 8);
+		$no = str2int( $file, $pos+0, 4 );
+		$sz = str2int( $file, $pos+4, 4 );
 
-				$qnt = substr($file, $st, $len);
-				file_put_contents("$fname.QNT", $qnt);
-				$st += $len;
-				break;
-			default:
-				return;
-		}
+		$fn = sprintf("$dir/%03d.dat", $pn);
+		printf("%8x , %8x , %s\n", $no, $sz, $fn);
+
+		file_put_contents( $fn, substr($file, $no, $sz) );
 	}
 }
 
 if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	dcf2qnt( $argv[$i] );
+	polyobj( $argv[$i] );

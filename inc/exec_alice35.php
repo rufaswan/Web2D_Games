@@ -157,17 +157,17 @@ function sco35_html( &$ajax )
 		$ogg = PATH_OGG_1S;
 	else
 	if ( $gp_pc["bgm"][0] == "audio" )
-		$ogg = findfile( $gp_init["path_bgm"], $gp_pc["bgm"][1], PATH_OGG_1S, 8 );
+		$ogg = findfile( $gp_init["path_bgm"], $gp_pc["bgm"][1], PATH_OGG_1S );
 	else
 	if ( $gp_pc["bgm"][0] == "midi" )
-		$ogg = findfile( $gp_init["path_mid"], $gp_pc["bgm"][1], PATH_OGG_1S, 8 );
+		$ogg = findfile( $gp_init["path_mid"], $gp_pc["bgm"][1], PATH_OGG_1S );
 
 	echo "<input id='filebgm' type='hidden' value='$ogg'>";
 
 
 	$wave = PATH_OGG_1S;
 	if ( isset( $gp_pc["SP"] ) )
-		$wave = findfile( $gp_init["path_wav"], $gp_pc["SP"], PATH_OGG_1S, 8 );
+		$wave = findfile( $gp_init["path_wav"], $gp_pc["SP"], PATH_OGG_1S );
 	echo "<input id='filewav' type='hidden' value='$wave'>";
 
 /// AUDIO ///
@@ -248,20 +248,10 @@ function sco35_text_add( $jp )
 		return;
 	}
 
-	$st = 0;
-	$ed = strlen($jp);
-	$asclen = 0;
-	while ( $st < $ed )
-	{
-		$b1 = ord( $jp[$st] );
-		if ( ($b1 & 0x80) == 0 )
-			$asclen++;
-		$st++;
-	}
+	$len = utf8len($jp);
 
-	$len = iconv_strlen($jp, "utf-8");
-	$jplen   = ($len - $asclen) * $font;
-	$asclen *= ($font/2);
+	$jplen  = $len["utf8" ] *  $font;
+	$asclen = $len["ascii"] * ($font/2);
 	$len = $jplen + $asclen;
 
 	$text = array(
@@ -492,22 +482,23 @@ function sco35_div_add( $type, $src )
 function sco35_g0_path( $num, $alpha )
 {
 	global $gp_init;
-	$png = findfile( $gp_init["path_ga"], $num, "", 8 );
-	if ( file_exists( ROOT."/$png" ) )
+	$png = findfile( "{$gp_init['path_ga']}.png", $num, "none" );
+	if ( $png != "none" )
 		return $png;
 
-	$clut = str_replace(".png", ".clut", $png);
+	$clut = findfile( "{$gp_init['path_ga']}.clut", $num );
+	$png  = str_replace(".clut", ".png", $clut);
 	clut2bmp( ROOT."/$clut" , ROOT."/$png" , $alpha );
-	//unlink( ROOT."/$clut" );
 
+	unlink( LIST_FILE );
+	init_filelist();
 	return $png;
 }
 
 function sco35_g0_clut( $num )
 {
 	global $gp_pc, $gp_init;
-	$clut = str_replace(".png", ".clut", $gp_init["path_ga"] );
-	$clut = findfile( $clut, $num, "", 8 );
+	$clut = findfile( "{$gp_init['path_ga']}.clut", $num );
 
 	$file = file_get_contents( ROOT."/$clut" );
 		if ( empty($file) )  return;
@@ -687,11 +678,15 @@ function sco35_loop_IK0( &$file, $st )
 function sco35_load_data($num , $len)
 {
 	global $gp_init;
-	$dat = findfile( $gp_init["path_da"], $num, "", 8 );
-	$file = file_get_contents( ROOT . "/$dat" );
-	if ( empty($file) )  return;
+	if ( is_numeric($num) )
+		$dat = findfile( $gp_init["path_da"], $num );
+	else
+		$dat = findfile( $gp_init["path_data"], $num );
 
 	$data = array();
+	$file = file_get_contents( ROOT . "/$dat" );
+	if ( empty($file) )  return $data;
+
 	$st = 0;
 	while ( $len > 0 )
 	{
@@ -712,6 +707,10 @@ function sco35_ascii( &$file, &$st, $sep )
 	$str = substr($file, $st, $len);
 	$st += $len;
 	$st++; // skip $sep
+
+	global $gp_init;
+	$str = sjistxt( $str );
+	$str = iconv( $gp_init["charset"], "utf-8", $str );
 	return $str;
 }
 
@@ -954,12 +953,24 @@ function sco35_keyboard( $type, $args, &$file, &$st )
 	return false;
 }
 
+function sco35_skip_func()
+{
+	global $gp_pc, $gp_init;
+	$skip = sprintf("%x,%x,", $gp_pc["pc"][0], $gp_pc["pc"][1]);
+	foreach ( $gp_init["skip_func"] as $sk )
+	{
+		if ( strpos($sk, $skip) === 0 )
+			return true;
+	}
+	return false;
+}
+
 function sco35_load_sco( $id )
 {
 	global $sco_file, $gp_init;
 	if ( ! isset( $sco_file[$id] ) )
 	{
-		$sco = findfile( $gp_init["path_sa"], $id, "", 8 );
+		$sco = findfile( $gp_init["path_sa"], $id );
 		$sco_file[$id] = file_get_contents( ROOT . "/$sco" );
 		trace("load $sco");
 	}

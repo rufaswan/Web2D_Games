@@ -26,20 +26,24 @@ if ( ! defined("GAME") )  exit("NO GAME\n");
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>HTML 5 audio</title>
+	<title>BGM list</title>
 	<script src="<?php echo PATH_JQUERY; ?>"></script>
 	<style>
 		body { background-color:#000; color:#fff; }
 		img { background-color:#fff; }
 		#ogglist {
-			margin-right:200px;
+			margin-right:210px;
 		}
 		#thumb {
-			text-align:right;
 			position:fixed;
+			bottom:0;
 			right:0;
 			margin:1em;
-			z-index:-1;
+			width:200px;
+		}
+		#thumb * {
+			margin: 0;
+			padding:0;
 		}
 		button {
 			font-size:1em;
@@ -51,42 +55,28 @@ if ( ! defined("GAME") )  exit("NO GAME\n");
 <body>
 
 <div id="thumb">
-	<img src="<?php echo GAME; ?>/thumb.png" width="200" height="300">
-	<br>
+	<p>NOW : <span id="bgmnow"></span></p>
+	<p><img src="<?php echo GAME; ?>/thumb.png" width="200" height="300"></p>
 	<audio id="bgm" src="" type="audio/ogg" controls autoplay loop>AUDIO</audio>
 </div>
 
 <div id="ogglist">
+<ol>
 <?php
-$path = array(
-	"path_bgm" => "BGM",
-	"path_mid" => "MID",
-	//"path_wav" => "WAV",
-);
-foreach ( $path as $p => $x )
+foreach( file(LIST_FILE) as $line )
 {
-	if ( isset( $gp_init[$p] ) )
-	{
-		$i = 1;
-		while(1)
-		{
-			$ogg = findfile( $gp_init[$p], $i, "dummy", 8 );
-			if ( $ogg == "dummy" )
-				break;
-			printf("<button data='$ogg'>$x %02d</button>\n", $i);
-			$i++;
-		} // while(1)
-	}
-} // foreach ( $path as $p => $x )
+	if ( stripos($line, ".ogg") != false )
+		echo "<li><button>". trim($line) ."</button></li>\n";
+}
 ?>
-<p>NOW : <span id="bgmnow"></span></p>
+</ol>
 </div>
 
 <script>
 var audio = document.getElementById("bgm");
 
 	$("button").click( function(){
-		var ogg = $(this).attr("data");
+		var ogg = $(this).html();
 		var now = $("#bgm").attr("src");
 		if ( ogg != now )
 		{

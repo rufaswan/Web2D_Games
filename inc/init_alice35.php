@@ -22,15 +22,18 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 $gp_init["web_title"] = "Alice SYSTEM 3.5 WEB";
 
 // single SA DA RA MA BA
-$gp_init["path_bgm"] = GAME . "/ba/%03d.ogg";
-//$gp_init["path_mid"] = GAME . "/ma/%03d.mid";
-$gp_init["path_mid"] = GAME . "/ma/%03d.ogg";
-$gp_init["path_sa"] = GAME . "/sa/%03d.sco";
-$gp_init["path_da"] = GAME . "/da/%03d.dat";
+$gp_init["path_bgm"] = GAME . "/ba/%03d";
+//$gp_init["path_mid"] = GAME . "/ma/%03d";
+$gp_init["path_mid"] = GAME . "/ma/%03d";
+$gp_init["path_sa"] = GAME . "/sa/%03d";
+$gp_init["path_da"] = GAME . "/da/%03d";
 
 // sets   GA-GB-GC  WA-WB
-$gp_init["path_wav"] = GAME . "/wa/%03d/%05d.ogg";
-$gp_init["path_ga"] = GAME . "/ga/%03d/%05d.png";
+$gp_init["path_wav"] = GAME . "/wa/%03d/%05d";
+$gp_init["path_ga"] = GAME . "/ga/%03d/%05d";
+
+
+$gp_init["path_data"] = GAME . "/data/%s";
 
 $gp_key = array(
 	'up'    => (1 << 0),

@@ -19,11 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "ain2_code.inc";
-//////////////////////////////
-define("BIT32", 0xffffffff);
-
-function str2int( &$str, &$pos, $byte )
+////////////////////////////////////////
+function str2int( &$str, $pos, $byte )
 {
 	$int = 0;
 	for ( $i=0; $i < $byte; $i++ )
@@ -31,54 +28,38 @@ function str2int( &$str, &$pos, $byte )
 		$c = ord( $str[$pos+$i] );
 		$int += ($c << ($i*8));
 	}
-	$pos += $byte;
 	return $int;
 }
-function sint32( &$file, &$st )
+////////////////////////////////////////
+// Pastel Charm 3 Data/*.mad
+function madrip( $fname )
 {
-	$n = str2int($file, $st, 4);
-	if ( $n >> 31 )
-		return ($n - BIT32 - 1);
-	else
-		return $n;
-}
-//////////////////////////////
-function trace()
-{
-	$args = func_get_args();
-	$var  = array_shift($args);
-		$var .= "\n";
-	vprintf($var, $args);
-}
+	$file = file_get_contents( $fname );
+		if ( empty($file) )   return;
 
-//////////////////////////////
-function ain2code( $fname )
-{
-	$file = file_get_contents($fname);
-		if ( empty($file) )  return;
+	$mgc = substr($file, 0, 3);
+	if ( $mgc != "MAD" )
+		return;
 
-	$st = 0;
+	$dir = str_replace('.', '_', $fname);
+	@mkdir($dir, 0755, true);
+
 	$ed = strlen($file);
+	$st = 0x30;
+	$i  = 1;
 	while ( $st < $ed )
 	{
-		$bak = $st;
-		$r = code2inst($file, $st);
-		switch ( count($r) )
-		{
-			case 4:
-				$buf .= sprintf("%8x , %s , %x , %x\n", $r[1], $r[0], $r[2], $r[3]);
-				break;
-			case 3:
-				$buf .= sprintf("%8x , %s , %x\n", $r[1], $r[0], $r[2]);
-				break;
-			case 2:
-				$buf .= sprintf("%8x , %s\n", $r[1], $r[0]);
-				break;
-		}
+		$len = str2int( $file, $st, 4 );
+		$fn  = sprintf("$dir/%03d.dat", $i);
+		printf("%8x , %8x , %s\n", $st, $len, $fn);
 
-		if ( empty($r) )
-			return;
+		file_put_contents( $fn, substr($file, $st, $len) );
+		$st += $len;
+
+		$i++;
 	} // while ( $st < $ed )
 }
 
-ain2code("CODE");
+if ( $argc == 1 )   exit();
+for ( $i=1; $i < $argc; $i++ )
+	madrip( $argv[$i] );

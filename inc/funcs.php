@@ -57,27 +57,15 @@ function str2int( &$str, &$pos, $byte )
 	return $int;
 }
 
-function int2str( $int, $byte, $big = false )
+function int2str( $int, $byte )
 {
 	$str = "";
-	if ( $big )
+	while ( $byte > 0 )
 	{
-		while ( $byte > 0 )
-		{
-			$byte--;
-			$n = ($int >> ($byte*8)) & 0xff;
-			$str .= chr($n);
-		}
-	}
-	else
-	{
-		while ( $byte > 0 )
-		{
-			$byte--;
-			$n = $int & 0xff;
-			$str .= chr($n);
-			$int >>= 8;
-		}
+		$byte--;
+		$n = $int & 0xff;
+		$str .= chr($n);
+		$int >>= 8;
 	}
 	return $str;
 }
@@ -223,6 +211,70 @@ function initcfg_var( $fname )
 	return $var;
 }
 
+function findfile( $sprint , $num , $default = "" )
+{
+	if ( is_numeric($num) )
+	{
+		if ( $num < 0 )
+			return $default;
+
+		$s  = count_chars($sprint, 1);
+		switch ( $s[0x25] ) // %
+		{
+			case 1: $fn = sprintf($sprint,  $num);  break;
+			case 2: $fn = sprintf($sprint, ($num >>  8),  $num);  break;
+			case 3: $fn = sprintf($sprint, ($num >> 16), ($num >> 8),   $num);  break;
+			case 4: $fn = sprintf($sprint, ($num >> 24), ($num >> 16), ($num >> 8), $num);  break;
+		}
+	}
+	else
+		$fn = sprintf($sprint,  $num);
+
+	if ( ! file_exists( LIST_FILE ) )
+		return $default;
+
+	$fp = fopen(LIST_FILE, "r");
+	while ( ! feof($fp) )
+	{
+		$line = fgets($fp);
+		if ( stripos($line,$fn) === 0 )
+			return rtrim($line);
+	}
+
+	if ( empty($default) )
+		return $fn;
+	return $default;
+}
+
+function scanfiles( $dir, &$result )
+{
+	$func = __FUNCTION__;
+	foreach ( scandir($dir) as $d )
+	{
+		if ( $d[0] == '.' )  continue;
+		if ( is_dir("$dir/$d") )
+			$func( "$dir/$d", $result );
+		else
+			$result[] = "$dir/$d";
+	}
+}
+
+function init_filelist()
+{
+	if ( file_exists( LIST_FILE ) )
+		return;
+	$res = array();
+	$dir = ROOT ."/". GAME;
+	scanfiles( $dir, $res );
+
+	$len = strlen(ROOT);
+	$buf = "";
+	foreach ( $res as $r )
+		$buf .= substr($r, $len+1) . "\n";
+
+	file_put_contents( LIST_FILE, $buf );
+}
+
 function fileline( $txtfile, $id )
 {
 	$fp = fopen($txtfile, "r");
@@ -249,28 +301,6 @@ function fileline( $txtfile, $id )
 function fileline2( $txtfile, $id1, $id2 )
 {
 	return fileline( $txtfile, "$id1,$id2" );
-}
-
-function findfile( $sprint , $num , $default , $b )
-{
-	if ( $num < 0 )
-		return $default;
-
-	$fn = $sprint;
-	$s  = count_chars($sprint, 1);
-	switch ( $s[0x25] ) // %
-	{
-		case 1: $fn = sprintf($sprint,  $num);  break;
-		case 2: $fn = sprintf($sprint, ($num >> $b),      $num);  break;
-		case 3: $fn = sprintf($sprint, ($num >> (2*$b)), ($num >> $b),      $num);  break;
-		case 4: $fn = sprintf($sprint, ($num >> (3*$b)), ($num >> (2*$b)), ($num >> $b), $num);  break;
-	}
-	if ( empty($default) )
-		return $fn;
-
-	if ( ! file_exists( ROOT . "/$fn" ) )
-		$fn = $default;
-	return $fn;
 }
 
 function pc_save( $ext, $pc )

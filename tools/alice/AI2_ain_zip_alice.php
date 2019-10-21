@@ -62,7 +62,7 @@ function ain_zip( $fname )
 	$ain .= int2str($len_d,4);
 	$ain .= $zip;
 
-	file_put_contents("$fname.$ngmc", $ain);
+	file_put_contents("$fname.$nmgc", $ain);
 }
 
 if ( $argc == 1 )   exit();

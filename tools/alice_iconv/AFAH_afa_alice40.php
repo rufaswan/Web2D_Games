@@ -19,34 +19,17 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+require "common.inc";
 ////////////////////////////////////////
-define("ZERO", chr(0));
-
-function str2int( &$str, $pos, $byte )
+function afa_untbl( $fp, $fname, $tbl_sz )
 {
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-////////////////////////////////////////
-function afatbl( $fp, $fname, $tbl_sz )
-{
-	// to fix invalid SJIS chars
-	// Rance01CG.afa = 87 55
 	$tbl = "$fname.tbl";
-	if ( file_exists($tbl) )
-		$zip = file_get_contents($tbl);
-	else
-	{
-		fseek($fp, 0x2c, SEEK_SET);
-		$zip = fread($fp, $tbl_sz);
-		$zip = zlib_decode($zip);
-		file_put_contents($tbl, $zip);
-	}
+
+	fseek($fp, 0x2c, SEEK_SET);
+	$zip = fread($fp, $tbl_sz);
+	$zip = zlib_decode($zip);
+	file_put_contents($tbl, $zip);
+
 	return $zip;
 }
 
@@ -68,20 +51,27 @@ function afarip( $fname )
 	if ( $mgc != "INFO" )
 		return;
 
-	$ver = str2int($head, 0x10, 4);
-	$dat = str2int($head, 0x18, 4);
-	$tbl_zp = str2int($head, 0x20, 4);
-	$tbl_sz = str2int($head, 0x24, 4);
-	$cnt = str2int($head, 0x28, 4);
+	$st  = 0x10;
+	$ver = sint32($head, $st);
 
-	$tbl = afatbl($fp, $fname, $tbl_sz);
+	$st  = 0x18;
+	$dat = sint32($head, $st);
+
+	$st  = 0x20;
+	$tbl_zp = sint32($head, $st);
+	$tbl_sz = sint32($head, $st);
+	$cnt = sint32($head, $st);
+
 	$dir = str_replace('.', '_', $fname);
+	$tbl = afa_untbl($fp, $dir, $tbl_sz);
+	@mkdir("$dir", 0755, true);
 
-	$st = 0;
 	$ed = strlen($tbl);
+	$st = 0;
 	$txt = "";
 	while( $st < $ed )
 	{
+		$bak = $st;
 		// 0     4  filename length
 		// 4     4  ^ + NULL aligned to 4-bytes
 		// 8     v  filename [=p]
@@ -89,34 +79,33 @@ function afarip( $fname )
 		// p+0   8  ???
 		// p+4   4  data start offset
 		// p+8   4  data size
-		$len = str2int($tbl, $st+0, 4);
-		$pad = str2int($tbl, $st+4, 4);
-		$fn = substr($tbl, $st+8, $len);
-		//$fn = str_replace('/', '\\', $fn);
-		//$fn = exec("printf \"{$fn}\" | iconv -f sjis -t utf-8");
-		$ext = substr($fn, strrpos($fn, '.')+1);
+		$len = sint32($tbl, $st);
+		$pad = sint32($tbl, $st);
+		$fn  = utf8fnam($tbl, $st, $len);
 
-		$s = 0;
+		$st = ($bak + 8 + $pad + 8);
 		if ( $ver == 1 )
-			$s = 4;
+			$st += 4;
 
-		$ps = str2int($tbl, $st+$pad+$s+0x10, 4);
-		$sz = str2int($tbl, $st+$pad+$s+0x14, 4);
+		$ps = sint32($tbl, $st);
+		$sz = sint32($tbl, $st);
 
-		$idd = sprintf("%03d"  , $ps >> 24);
-		$idf = sprintf("%010d" , $ps);
-		@mkdir("$dir/$idd", 0755, true);
+		$sep = strrpos($fn, '/');
+		if ( $sep )
+		{
+			$dn = substr($fn, 0, $sep);
+			@mkdir("$dir/$dn", 0755, true);
+		}
 
 		fseek($fp, $dat+$ps, SEEK_SET);
-		file_put_contents("$dir/$idd/$idf.$ext", fread($fp,$sz));
-		$log  = sprintf("%8x , %8x , $fn\n", $ps, $sz);
+		file_put_contents("$dir/$fn", fread($fp,$sz));
+
+		$log  = sprintf("%8x , %8x , %s\n", $ps, $sz, $fn);
 		$txt .= $log;
 		echo $log;
-
-		$st += (0x18 + $pad + $s);
 	}
 
-	file_put_contents("$fname.txt", $txt);
+	file_put_contents("$dir.txt", $txt);
 	fclose($fp);
 }
 

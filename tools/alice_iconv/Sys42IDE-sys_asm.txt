@@ -1,0 +1,145 @@
+; File Name   : /tmp/new/Sys42IDE.exe
+; Input MD5   : 70037780B976317B1574D4FC02A98A2F
+; Format      : Portable executable for 80386 (PE)
+; =============== S U B R O U T I N E =======================================
+sub_41BD90      proc near               ; CODE XREF: sub_452C10+32^p
+
+				push    offset aExit    ; "Exit"
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aGlobalsave ; "GlobalSave"
+				call    sub_41A230      ; Call Procedure
+				push    1
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aGlobalload ; "GlobalLoad"
+				call    sub_41A230      ; Call Procedure
+				push    2
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aLockpeek ; "LockPeek"
+				call    sub_41A230      ; Call Procedure
+				push    3
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aUnlockpeek ; "UnlockPeek"
+				call    sub_41A230      ; Call Procedure
+				push    4
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aReset   ; "Reset"
+				call    sub_41A230      ; Call Procedure
+				push    5
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aOutput  ; "Output"
+				call    sub_41A230      ; Call Procedure
+				push    6
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aMsgbox  ; "MsgBox"
+				call    sub_41A230      ; Call Procedure
+				push    7
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aResumesave ; "ResumeSave"
+				call    sub_41A230      ; Call Procedure
+				push    8
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aResumeload ; "ResumeLoad"
+				call    sub_41A230      ; Call Procedure
+				push    9
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aExistfile ; "ExistFile"
+				call    sub_41A230      ; Call Procedure
+				push    10
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aOpenweb ; "OpenWeb"
+				call    sub_41A230      ; Call Procedure
+				push    11
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aGetsavefoldern ; "GetSaveFolderName"
+				call    sub_41A230      ; Call Procedure
+				push    12
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aGettime ; "GetTime"
+				call    sub_41A230      ; Call Procedure
+				push    13
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aGetgamename ; "GetGameName"
+				call    sub_41A230      ; Call Procedure
+				push    14
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aError   ; "Error"
+				call    sub_41A230      ; Call Procedure
+				push    15
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aExistsavefile ; "ExistSaveFile"
+				call    sub_41A230      ; Call Procedure
+				push    16
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aIsdebugmode ; "IsDebugMode"
+				call    sub_41A230      ; Call Procedure
+				push    17
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aMsgboxokcancel ; "MsgBoxOkCancel"
+				call    sub_41A230      ; Call Procedure
+				push    18
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aGetfuncstackna ; "GetFuncStackName"
+				call    sub_41A230      ; Call Procedure
+				push    19
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aPeek    ; "Peek"
+				call    sub_41A230      ; Call Procedure
+				push    20
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aSleep   ; "Sleep"
+				call    sub_41A230      ; Call Procedure
+				push    21
+
+				call    sub_41A230      ; Call Procedure
+				push    offset aResumewritecom ; "ResumeWriteComment"
+				call    sub_41A230      ; Call Procedure
+				push    22
+
+				retn    4               ; Return Near from Procedure
+sub_41BD90      endp
+; ---------------------------------------------------------------------------
+aResumereadcomm db 'ResumeReadComment',0 ; DATA XREF: sub_41BD90+10F4^o
+aResumewritecom db 'ResumeWriteComment',0 ; DATA XREF: sub_41BD90+1064^o
+aSleep          db 'Sleep',0            ; DATA XREF: sub_41BD90+FD5^o
+aPeek           db 'Peek',0             ; DATA XREF: sub_41BD90+F46^o
+aGetfuncstackna db 'GetFuncStackName',0 ; DATA XREF: sub_41BD90+EB6^o
+aMsgboxokcancel db 'MsgBoxOkCancel',0   ; DATA XREF: sub_41BD90+E26^o
+aIsdebugmode    db 'IsDebugMode',0      ; DATA XREF: sub_41BD90+D96^o
+aExistsavefile  db 'ExistSaveFile',0    ; DATA XREF: sub_41BD90+D06^o
+aError          db 'Error',0            ; DATA XREF: sub_41BD90+C76^o
+aGetgamename    db 'GetGameName',0      ; DATA XREF: sub_41BD90+BE6^o
+aGettime        db 'GetTime',0          ; DATA XREF: sub_41BD90+B56^o
+aGetsavefoldern db 'GetSaveFolderName',0 ; DATA XREF: sub_41BD90+ACE^o
+aOpenweb        db 'OpenWeb',0          ; DATA XREF: sub_41BD90+A37^o
+aExistfile      db 'ExistFile',0        ; DATA XREF: sub_41BD90+9AF^o
+aResumeload     db 'ResumeLoad',0       ; DATA XREF: sub_41BD90+918^o
+aResumesave     db 'ResumeSave',0       ; DATA XREF: sub_41BD90+888^o
+aMsgbox         db 'MsgBox',0           ; DATA XREF: sub_41BD90+7F8^o
+aOutput         db 'Output',0           ; DATA XREF: sub_41BD90+768^o
+aReset          db 'Reset',0            ; DATA XREF: sub_41BD90+6D9^o
+aUnlockpeek     db 'UnlockPeek',0       ; DATA XREF: sub_41BD90+649^o
+aLockpeek       db 'LockPeek',0         ; DATA XREF: sub_41BD90+5B9^o
+aGlobalload     db 'GlobalLoad',0       ; DATA XREF: sub_41BD90+529^o
+aGlobalsave     db 'GlobalSave',0       ; DATA XREF: sub_41BD90+493^o
+aExit           db 'Exit',0             ; DATA XREF: sub_41BD90+2EB^o

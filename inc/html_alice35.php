@@ -89,7 +89,6 @@ _HTML;
 	#key_input table {
 		margin:0 auto 0 auto;
 		text-align:center;
-		display:none;
 	}
 	#key_input p {
 		text-align:center;

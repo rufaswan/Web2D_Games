@@ -1,0 +1,26 @@
+# Sys42IDE.exe v1.02 , System 4.0 SDK , AIN 4
+0,Exit
+1,GlobalSave
+2,GlobalLoad
+3,LockPeek
+4,UnlockPeek
+5,Reset
+6,Output
+7,MsgBox
+8,ResumeSave
+9,ResumeLoad
+10,ExistFile
+11,OpenWeb
+12,GetSaveFolderName
+13,GetTime
+14,GetGameName
+15,Error
+16,ExistSaveFile
+17,IsDebugMode
+18,MsgBoxOkCancel
+19,GetFuncStackName
+20,Peek
+21,Sleep
+22,ResumeWriteComment
+
+# HaharanmanTrial.exe , AIN 14

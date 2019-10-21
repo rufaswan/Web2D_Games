@@ -35,10 +35,14 @@ for ( $i=1; $i < $argc; $i++ )
 		//if ( $x == 0 && $y == 0 )
 			//continue;
 
-		$t1 = strpos($id, '/');
-		if ( $t1 )  $id = substr($id, $t1+1);
-		$t1 = strpos($id, '.');
-		if ( $t1 )  $id = substr($id, 0, $t1);
+		$id = trim($id);
+
+		// if 001/00256.png , or ./Background/Park/Night.png
+		if ( $id[0] != '.' )
+			$id = substr($id, strrpos($id, '/')+1);
+
+		// remove extension
+		$id = substr($id, 0, strrpos($id, '.'));
 
 		$log = sprintf("%d,%d,%d,%d,%d\n", $id, $x, $y, $w, $h);
 		echo $log;

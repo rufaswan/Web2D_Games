@@ -1,5 +1,5 @@
-#!/bin/bash
-<<'////'
+<?php
+/*
 [license]
 Copyright (C) 2019 by Rufas Wan
 
@@ -18,21 +18,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
-////
+ */
+function ain_dec( $fname )
+{
+	$file = file_get_contents( $fname );
+		if ( empty($file) )   return;
 
-for f in *; do
-	[ -f "$f" ] || continue
+	$mgc = substr($file, 0, 3);
+	$valid = array(
+		"AI2", // *.ain
+		"ZLB", // *
+		"ACX", // Data/*.acx
+	);
+	if ( ! in_array($mgc, $valid) )
+		return;
+	printf("$mgc , $fname\n");
 
-	tit="${f%.*}"
-	ext="${f##*.}"
+	$dec = zlib_decode( substr($file, 0x10) );
+	file_put_contents("$fname.dec", $dec);
+}
 
-	t1=$(echo "$tit" | bc)
-	t2=$(echo "$tit/256" | bc)
-	[[ "$t1" == "$t2" ]] && continue
-
-	dn=$(printf "%03d" $t2)
-	fn=$(printf "%03d/%05d" $t2  $t1)
-	mkdir -p "$dn"
-
-	mv -vf "$f" "$fn.$ext"
-done
+if ( $argc == 1 )   exit();
+for ( $i=1; $i < $argc; $i++ )
+	ain_dec( $argv[$i] );

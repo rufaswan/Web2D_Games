@@ -118,15 +118,8 @@ function F_cmd35( &$file, &$st, &$ajax )
 			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			$skip = sco35_calli($file, $st);
-
-			$ind = $gp_pc["F"][0];
-			$pos = $gp_pc["F"][1] + ($skip * 2);
-			sco35_load_sco( $ind );
-			$int = str2int( $sco_file[ $ind ], $pos, 2 );
-
-			trace("array F2 $v+$e , $skip = $int");
-			sco35_var_put( $v, $e, $int );
-			$gp_pc["F"][1] += 2;
+			$move = true;
+			goto array_int1;
 			return;
 		// F3,read_var,skip:  テーブルデータ数値取得(ベース固定,オフセット指定)
 		case 3:
@@ -134,21 +127,62 @@ function F_cmd35( &$file, &$st, &$ajax )
 			list($v,$e) = sco35_varno($file, $st);
 				$st++; // skip 0x7f
 			$skip = sco35_calli($file, $st);
-
-			$ind = $gp_pc["F"][0];
-			$pos = $gp_pc["F"][1] + ($skip * 2);
-			sco35_load_sco( $ind );
-			$int = str2int( $sco_file[ $ind ], $pos, 2 );
-
-			trace("array F3 $v+$e , $skip = $int");
-			sco35_var_put( $v, $e, $int );
+			$move = false;
+			goto array_int1;
 			return;
 		// F4,read_var,count:  テーブルデータ数値取得(ベース移動,個数指定)
+		case 4:
+			$st += 2;
+			list($v,$e) = sco35_varno($file, $st);
+				$st++; // skip 0x7f
+			$count = sco35_calli($file, $st);
+			$move = true;
+			goto array_intm;
+			return;
 		// F5,read_var,count:  テーブルデータ数値取得(ベース固定,個数指定)
+		case 5:
+			$st += 2;
+			list($v,$e) = sco35_varno($file, $st);
+				$st++; // skip 0x7f
+			$count = sco35_calli($file, $st);
+			$move = false;
+			goto array_intm;
+			return;
 		// F6,var,index:  F7コマンドで読み込む変数の指定
 		// F7,data_width,count:  F6で指定されたデータの読み込み
 	}
 	return;
+
+array_int1:
+	$ind = $gp_pc["F"][0];
+	$pos = $gp_pc["F"][1] + ($skip * 2);
+	sco35_load_sco( $ind );
+	$int = str2int( $sco_file[ $ind ], $pos, 2 );
+
+	trace("array F $type $v+$e , $skip = $int");
+	sco35_var_put( $v, $e, $int );
+
+	if ( $move )
+		$gp_pc["F"][1] += 2;
+	return;
+array_intm:
+	$ind = $gp_pc["F"][0];
+	$pos = $gp_pc["F"][1];
+	sco35_load_sco( $ind );
+	trace("array F $type $v+$e , $count");
+
+	$data = array();
+	for ( $i=0; $i < $count; $i++ )
+	{
+		$p = $pos + ($i * 2);
+		$data[$i] = str2int( $sco_file[ $ind ], $p, 2 );
+	}
+	$gp_pc["page"][$v+$e] = $data;
+
+	if ( $move )
+		$gp_pc["F"][1] += ($count * 2);
+	return;
+
 }
 
 function J_cmd35( &$file, &$st, &$ajax )
@@ -515,6 +549,13 @@ function I_cmd35( &$file, &$st, &$ajax )
 			$old = sco35_calli($file, $st);
 			trace("IC $num , $old");
 			return;
+		// IE exp1,exp2:  RA.ALDにリンクされた.CUR/.ANIファイルをカーソルとして読み込む
+		case 'E':
+			$st += 2;
+			$exp1 = sco35_calli($file, $st);
+			$exp2 = sco35_calli($file, $st);
+			trace("IE $exp1 , $exp2");
+			return;
 		// IG var,code,num,reserve:  キー入力状態取得
 		case 'G':
 			$st += 2;
@@ -615,7 +656,15 @@ function L_cmd35( &$file, &$st, &$ajax )
 						$st++; // skip 0x7f
 					$read_num  = sco35_calli($file, $st);
 					trace("LE $type , $fn , $v+$e , $read_num");
-					$gp_pc["var"][0] = 255;
+
+					$ret = sco35_load_data($fn , $read_num);
+					if ( empty($ret) )
+						$gp_pc["var"][0] = 255;
+					else
+					{
+						$gp_pc["page"][$v+$e] = $ret;
+						$gp_pc["var"][0] = 0;
+					}
 					return;
 			}
 			return;
@@ -632,8 +681,15 @@ function L_cmd35( &$file, &$st, &$ajax )
 						$st++; // skip 0x7f
 					$read_num = sco35_calli($file, $st);
 					trace("data LL $type , $link_no , $v+$e , $read_num");
-					$gp_pc["page"][$v+$e] = sco35_load_data($link_no , $read_num);
-					$gp_pc["var"][0] = 0;
+
+					$ret = sco35_load_data($link_no , $read_num);
+					if ( empty($ret) )
+						$gp_pc["var"][0] = 255;
+					else
+					{
+						$gp_pc["page"][$v+$e] = $ret;
+						$gp_pc["var"][0] = 0;
+					}
 					return;
 			}
 			return;
@@ -714,25 +770,28 @@ function M_cmd35( &$file, &$st, &$ajax )
 			$type = ord( $file[$st+2] );
 			switch ( $type )
 			{
-				// MG4, no:  表示文字列取得番号設定
-				case 4:
-					$st += 3;
-					$no = sco35_calli($file, $st);
-					trace("MG 4 , $no");
-					return;
-				// MG100,switch:  文字列表示オン/オフ
-				case 100:
-					$st += 3;
-					$switch = sco35_calli($file, $st);
-					trace("MG 100 , $switch");
-					return;
 				// MG0, sw:  表示文字列を文字列変数に取得する/しない切替
 				// MG1, str_no:  表示文字列取得開始文字列番号の指定
 				// MG2, sw:  表示文字列取得の文字列番号更新の設定
 				// MG3, sw:  表示文字列取得の改頁時の動作の指定
+				// MG4, no:  表示文字列取得番号設定
 				// MG5, var:  表示文字列取得番号取得
 				// MG6, sw:  表示文字列取得の番号を強制更新/更新解除
 				// MG7, var:  表示文字列取得、現在番号の取得済み文字数の取得
+				// MG100,switch:  文字列表示オン/オフ
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7:
+				case 100:
+					$st += 3;
+					$no = sco35_calli($file, $st);
+					trace("MG $type , $no");
+					return;
 			}
 			return;
 		// MI dst_no,max_len,title:  ユーザーによる文字列の入力
@@ -1146,6 +1205,22 @@ function S_cmd35( &$file, &$st, &$ajax )
 					$num = sco35_calli($file, $st);
 					trace("midi SG 3 , $num");
 					return;
+				// SG 4,count:  次のSG1ｺﾏﾝﾄﾞでのMIDI演奏の繰り返し回数指定
+				case 4:
+					$st += 3;
+					$count = sco35_calli($file, $st);
+					trace("midi SG 4 , $count");
+					return;
+				// SG 5,fnum,num:  MIDIフラグの設定
+				// SG 6,vnum,num:  MIDI変数の設定
+				// SG 7,fnum,var:  MIDIフラグの取得
+				// SG 8,vnum,var:  MIDI変数の取得
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+					return;
+
 			}
 			return;
 		case 'I':
@@ -1203,6 +1278,41 @@ function S_cmd35( &$file, &$st, &$ajax )
 			trace("wave SU $v1+$e1 , $v2+$e2");
 			sco35_var_put($v1, $e1, 0); // 0=stop , 1=play
 			sco35_var_put($v2, $e2, 100); // timer 1/100
+			return;
+		case 'X':
+			$bak = $st;
+			$device = ord( $file[$st+2] );
+			$type   = ord( $file[$st+3] );
+			$st += 4;
+			switch ( $type )
+			{
+				// SX device,1,time,stop,volume:  フェード
+				case 1:
+					$time   = sco35_calli($file, $st);
+					$stop   = sco35_calli($file, $st);
+					$volume = sco35_calli($file, $st);
+					trace("SX 1 $time , $volume , $stop");
+					return;
+				// SX device,2,var:  フェード終了確認  cont/end
+				case 2:
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("SX 2 $v+$e");
+					sco35_var_put($v, $e, 1); // 0=play , 1=stop
+					return;
+				// SX device,3:  フェード強制終了
+				case 3:
+					trace("SX 3");
+					return;
+				// SX device,4,var:  ボリューム取得  0-100%
+				case 4:
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("SX 4 $v+$e");
+					sco35_var_put($v, $e, 100);
+					return;
+			}
+			$st = $bak;
 			return;
 	}
 	return;
@@ -1496,7 +1606,6 @@ function W_cmd35( &$file, &$st, &$ajax )
 	return;
 }
 
-// ZB 太さ:  メッセージ文字を太さを設定
 function Z_cmd35( &$file, &$st, &$ajax )
 {
 	global $gp_pc, $gp_input, $gp_key;
@@ -1511,6 +1620,13 @@ function Z_cmd35( &$file, &$st, &$ajax )
 			$b2 = sco35_calli($file, $st);
 			trace("ZA $b1 , $b2");
 			$gp_pc["ZA"] = array($b1 , $b2);
+			return;
+		// ZB 太さ:  メッセージ文字を太さを設定
+		case 'B':
+			$st += 2;
+			$bold = sco35_calli($file, $st);
+			trace("ZB $bol");
+			$gp_pc["ZB"] = $bold;
 			return;
 		// ZC m,n:  システムの使用環境を変更する
 		case 'C':
@@ -1638,6 +1754,23 @@ function Z_cmd35( &$file, &$st, &$ajax )
 					$gp_pc["ZT"] += 1;
 					sco35_var_put( $v, $e, $gp_pc["ZT"] );
 					return;
+				// ZT 10,num,base,count:  高精度タイマー設定
+				case 10:
+					$st += 3;
+					$num   = sco35_calli($file, $st);
+					$base  = sco35_calli($file, $st);
+					$count = sco35_calli($file, $st);
+					trace("ZT $type , $num , $base , $count");
+					return;
+				// ZT 11,num,var:  高精度タイマー取得
+				case 11:
+					$st += 3;
+					$num   = sco35_calli($file, $st);
+					list($v,$e) = sco35_varno($file, $st);
+						$st++; // skip 0x7f
+					trace("ZT $type , $num , $v+$e");
+					sco35_var_put( $v, $e, 9999 );
+					return;
 			}
 			return;
 		// ZW sw:  CAPS 状態の内部的制御を変更する
@@ -1672,7 +1805,7 @@ function Z_cmd35( &$file, &$st, &$ajax )
 					trace("ZZ 1 , $v+$e");
 					sco35_var_put( $v, $e, 1 ); // windows
 					return;
-				// ZZ2,num:  (新規) 機種文字列を文字列領域 num に返す(MAX12文字)
+				// ZZ2,num:  機種文字列を文字列領域 num に返す(MAX12文字)
 				case 2:
 					$st += 3;
 					$num = sco35_calli($file, $st);
@@ -1683,7 +1816,10 @@ function Z_cmd35( &$file, &$st, &$ajax )
 					$st += 3;
 					list($v,$e) = sco35_varno($file, $st);
 						$st++; // skip 0x7f
-					trace("ZZ 3 , $v+$e");
+					trace("ZZ 9 , $v+$e");
+					sco35_var_put( $v, $e+0, 4096 ); // width
+					sco35_var_put( $v, $e+1, 4096 ); // height
+					sco35_var_put( $v, $e+2, 256 ); // bit
 					return;
 				// ZZ9,var:  起動時のｽｸﾘｰﾝｻｲｽﾞを取得する
 				case 9:
@@ -1950,6 +2086,13 @@ function sco35_cmd( &$id, &$st, &$run, &$ajax )
 			$gp_pc["F"] = array($gp_pc["pc"][0], $label);
 			return;
 		case '~': // 0x7e , function call
+			if ( sco35_skip_func() )
+			{
+				trace("skip callfunc");
+				$st += 7;
+				return;
+			}
+
 			$st++;
 			$page = str2int( $file, $st, 2 );
 			switch ( $page )

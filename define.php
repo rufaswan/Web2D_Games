@@ -60,14 +60,16 @@ foreach ( $_REQUEST as $key=>$var )
 	switch ( $key )
 	{
 		case "game":
-			$cfg = initcfg_var( ROOT . "/$var/init.cfg" );
-			$gp_init = $cfg + $gp_init;
 			define("GAME", $var );
+			$cfg = initcfg_var( ROOT ."/". GAME ."/init.cfg" );
+			$gp_init = $cfg + $gp_init;
 			//define("SAVE", dechex( crc32($var) ) );
 			//define("SAVE",  md5($var) );
 			//define("SAVE", sha1($var) );
-			define("SAVE", preg_replace("|[^0-9a-zA-Z\x80-\xff]|", '_', $var) );
+			define("SAVE", preg_replace( "|[^0-9a-zA-Z\x80-\xff]|" , '_' , GAME ));
 			define("SAVE_FILE", ROOT ."/sav/". SAVE .".");
+			define("LIST_FILE", SAVE_FILE . "files");
+				init_filelist();
 			break;
 		case "input":
 			$gp_input = explode(',', $var);

@@ -19,35 +19,35 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-////////////////////////////////////////
-$gp_key = array(
-	0xc8,0xbb,0x8f,0xb7,
-	0xed,0x43,0x99,0x4a,
-	0xa2,0x7e,0x5b,0xb0,
-	0x68,0x18,0xf8,0x88,
-);
+require "ain2_tags.inc";
+require "common.inc";
+//////////////////////////////
+$gp_vers = 0;
 
-function affrip( $rem, $fname )
+function ain2( $fname )
 {
 	$file = file_get_contents( $fname );
 		if ( empty($file) )   return;
-		printf("[$rem] $fname\n");
 
-	$file = substr($file, 0x10);
-	while ( strlen($file) < 0x10 )
-		$file .= ' ';
+	$mgc = substr($file, 0, 4);
+	if ( $mgc != "VERS" )
+		return;
 
-	global $gp_key;
-	for ( $i=0; $i < 0x10; $i++ )
+	$dir = str_replace('.', '_', $fname);
+	@mkdir($dir, 0755, true);
+
+	$ed = strlen($file);
+	$st = 0;
+	while ( $st < $ed )
 	{
-		$c = ord( $file[$i] );
-		$c ^= $gp_key[$i];
-		$file[$i] = chr($c);
-	}
-	$ext = substr($file, 0, 3);
-	file_put_contents("$fname.$ext", $file);
+		$bak = $st;
+		ain2tags( $file, $st, $dir );
+		if ( $bak == $st )
+			return;
+	} // while ( $st < $ed )
+
 }
 
 if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	affrip( $argc-$i, $argv[$i] );
+	ain2( $argv[$i] );

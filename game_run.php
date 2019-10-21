@@ -21,6 +21,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "define.php";
 if ( ! defined("GAME") )  exit("NO GAME\n");
+
 unlink(SAVE_FILE . "log");
 ?><!DOCTYPE html>
 <html><head>
@@ -205,5 +206,6 @@ for (var n = 0; n < arr.length; n++)
 	if ( typeof auto_ajax === "function" )
 		auto_ajax();
 
+data:text/html, <html contenteditable>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
 */

@@ -55,7 +55,7 @@ S380-AIN  SA    GA          | MA  これDPS? (20世紀アリス)
 S380-AIN  SA    GA    WA    | DA | MA  かえるにょ国にょアリス (20世紀アリス)
 S380-AIN  夜が来る!
 S380-AIN  王子さまLv1
-S380-AIN  SA    GA    WA     オンリーユー・リクルス
+S380-AIN  SA    GA    WA     Only you-リ・クルス-
 S380-AIN  SA    GA    WA    | DA  大悪司
 S380-AIN  SA    GA    WA     妻みぐい
 S380-AIN  王子さまLv1.5
@@ -67,6 +67,22 @@ S380-AIN  楽園行
 S380-AIN  SA BA GA    WA-WB KLD  妻みぐい2
 S380-AIN  SA BA GA    WA    KLD  シェル・クレイル
 S380-AIN  SA BA GA    WA    KLD  ナイトデーモン
+
+=== アリスCD ===
+「アリスCD」とは、「ぱすてるチャイム」以降「Only you-リ・クルス-」の間に
+発売されたアリス作品に付属しているCDです。
+web.archive.org/web/20081217092119/http://www.alicesoft.com/alicecd/index.html
+
+アリスの館456 (SYSTEM 3.5 SDK)
+
+v1.00  ぱすてるチャイム , ぷろすちゅーでんとGood (SYSTEM 3.6 SDK)
+v1.01  守り神様
+v1.02  ママトト
+v1.03  ダークロウズ
+v2.00  PERSIOM (SYSTEM 3.8 SDK)
+v2.01  SeeIn 青
+v2.02  夜が来る! (SYSTEM 3.9 SDK)
+v2.50  Only you-リ・クルス-
 
 === system 4.0 VERS 4+ ===
 EXE     system40.exe
@@ -125,10 +141,11 @@ AIN14  CG Sound Voice Flat Pact Shader  母爛漫 体験版
 AIN14  CG Sound Voice Flat Pact Shader | 3D  イブニクル2 体験版
 
 === MOVIE ===
-AJP = frame JPG + QNT alpha bitmask
-ALK = video frames AJP/QNT
+AJP = image JPG + QNT alpha bitmask
+ALK = video frames QNT
 MAD = video frames AJP/QNT w/alpha , for special effects
 ALM = video MPEG-1  30fps  ~8mb/s
 AFF = encrypted *.SWF flash file
+FLAT-MTLC-LIBL =
 ELNA-FLAT-MTLC-LIBL =
 APEG-TMNL-SOND-IPIC = zlib compressed (IPICs) + ogg (SOND)

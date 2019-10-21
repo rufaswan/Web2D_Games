@@ -19,7 +19,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
+////////////////////////////////////////
+define("ZERO", chr(0));
+
 function str2int( &$str, $pos, $byte )
 {
 	$int = 0;
@@ -30,41 +32,42 @@ function str2int( &$str, $pos, $byte )
 	}
 	return $int;
 }
-//////////////////////////////
-function dcf2qnt( $fname )
+////////////////////////////////////////
+// Galzoo Data/map*.dtx
+function dtex( $fname )
 {
-	$file = file_get_contents($fname);
-		if ( empty($file) )  return;
+	$file = file_get_contents( $fname );
+		if ( empty($file) )   return;
+
+	$mgc = substr($file, 0, 4);
+	if ( $mgc != "DTEX" )
+		return;
+
+	$dir = str_replace('.', '_', $fname);
+	@mkdir($dir, 0755, true);
+
+	$pad = str2int( $file, 12, 4 );
 
 	$ed = strlen($file);
-	$st = 0;
-	while( $st < $ed )
+	$st = 0x14;
+	$i  = 1;
+	while ( $st < $ed )
 	{
-		$tag = substr($file, $st, 4);
-		switch ( $tag )
-		{
-			case "dcf ":
-			case "dfdl":
-				printf("%8x , $tag\n", $st);
-				$len = str2int($file, $st+4, 4);
-				$st += 8;
-				$st += $len;
-				break;
-			case "dcgd":
-				printf("%8x , $tag\n", $st);
-				$len = str2int($file, $st+4, 4);
-				$st += 8;
+		$len = str2int( $file, $st, 4 );
+			$st += 4;
+		if ( $len == 0 || $len == $pad )
+			continue;
 
-				$qnt = substr($file, $st, $len);
-				file_put_contents("$fname.QNT", $qnt);
-				$st += $len;
-				break;
-			default:
-				return;
-		}
-	}
+		$fn  = sprintf("$dir/%03d.dat", $i);
+		printf("%8x , %8x , %s\n", $st, $len, $fn);
+
+		file_put_contents( $fn, substr($file, $st, $len) );
+			$st += $len;
+
+		$i++;
+	} // while ( $st < $ed )
 }
 
 if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	dcf2qnt( $argv[$i] );
+	dtex( $argv[$i] );

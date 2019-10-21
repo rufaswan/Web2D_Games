@@ -2,6 +2,7 @@
 [ $# = 0 ] && exit
 # Default Windows MIDI Soundfont by Roland / Microsoft Corporation
 # musical-artifacts.com/artifacts/713
+# C:\Windows\System32\Drivers\GM.DLS
 sf2="/tmp/win98_gm.sf2"
 
 while [ "$1" ]; do
@@ -10,7 +11,8 @@ while [ "$1" ]; do
 	ext="${t1##*.}"
 	shift
 
-	[ -f "$t1" ] || continue
+	[ -e "$sf2" ] || continue
+	[ -f "$t1"  ] || continue
 	fluidsynth \
 		-nli \
 		-F "$tit".wav \

@@ -30,19 +30,15 @@ function fpath( $rem, $fname )
 
 	foreach ( $sep as $s )
 	{
-		if ( strpos($fname, $s) == false )
+		$ps = strrpos($fname, $s);
+		if ( $ps == false )
 			continue;
 
-		$p = explode($s, $fname);
-		$dir = ".";
-		$len = count($p) - 1;
-		for ( $i=0; $i < $len; $i++ )
-		{
-			$dir .= "/$p[$i]";
-			@mkdir($dir, 0755, true);
-		}
+		$new = str_replace($s, '/', $fname);
+		$ps  = strrpos($new, '/');
+		$dir = substr ($new, 0, $ps);
+		@mkdir($dir, 0755, true);
 
-		$new = "$dir/{$p[$len]}";
 		printf("[$rem] $fname -> $new\n");
 		rename($fname , $new);
 		return;

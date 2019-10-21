@@ -1,0 +1,1190 @@
+; File Name   : /tmp/new/Sys42IDE.exe
+; Input MD5   : 70037780B976317B1574D4FC02A98A2F
+; Format      : Portable executable for 80386 (PE)
+; =============== S U B R O U T I N E =======================================
+code_inst       proc near               ; CODE XREF: sub_41E020+358^p
+loop_8E0:                               ; CODE XREF: code_inst+1D4C^j
+				cmp     eax, 1024       ; Compare Two Operands
+				jg      case_7          ; Jump if Greater (ZF=0 & SF=OF)
+				jz      loc_40D1B3      ; Jump if Zero (ZF=1)
+				cmp     eax, 155        ; switch 156 cases
+				ja      loc_40D375      ; default
+										; jumptable 0040B909 case 43
+				jmp     ds:off_40D644[eax*4] ; switch jump
+loc_40B910:                             ; DATA XREF: .text:off_40D644^o
+				push    offset aPushD   ; "PUSH %d"
+; ---------------------------------------------------------------------------
+loc_40B940:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D648^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 1
+				push    offset aPop     ; "POP"
+; ---------------------------------------------------------------------------
+loc_40B966:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D64C^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 2
+				push    offset aRef_1   ; "REF"
+; ---------------------------------------------------------------------------
+loc_40B98C:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D650^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 3
+				push    offset aRefref  ; "REFREF"
+; ---------------------------------------------------------------------------
+loc_40B9B2:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D654^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 4
+				push    offset aPushglobalpage ; "PUSHGLOBALPAGE"
+; ---------------------------------------------------------------------------
+loc_40B9D8:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D658^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 5
+				push    offset aPushlocalpage ; "PUSHLOCALPAGE"
+; ---------------------------------------------------------------------------
+loc_40B9FE:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D65C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 6
+				push    offset aInv     ; "INV"
+; ---------------------------------------------------------------------------
+loc_40BA24:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D660^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 7
+				push    offset aNot     ; "NOT"
+; ---------------------------------------------------------------------------
+loc_40BA4A:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D664^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 8
+				push    offset aCompl   ; "COMPL"
+; ---------------------------------------------------------------------------
+loc_40BA70:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D668^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 9
+				push    offset aAdd     ; "ADD"
+; ---------------------------------------------------------------------------
+loc_40BA96:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D66C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 10
+				push    offset aSub     ; "SUB"
+; ---------------------------------------------------------------------------
+loc_40BABC:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D670^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 11
+				push    offset aMul     ; "MUL"
+; ---------------------------------------------------------------------------
+loc_40BAE2:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D674^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 12
+				push    offset aDiv     ; "DIV"
+; ---------------------------------------------------------------------------
+loc_40BB08:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D678^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 13
+				push    offset aMod     ; "MOD"
+; ---------------------------------------------------------------------------
+loc_40BB2E:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D67C^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 14
+				push    offset aAnd     ; "AND"
+; ---------------------------------------------------------------------------
+loc_40BB54:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D680^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 15
+				push    offset aOr      ; "OR"
+; ---------------------------------------------------------------------------
+loc_40BB7A:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D684^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 16
+				push    offset aXor     ; "XOR"
+; ---------------------------------------------------------------------------
+loc_40BBA0:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D688^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 17
+				push    offset aLshift  ; "LSHIFT"
+; ---------------------------------------------------------------------------
+loc_40BBC6:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D68C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 18
+				push    offset aRshift  ; "RSHIFT"
+; ---------------------------------------------------------------------------
+loc_40BBEC:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D690^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 19
+				push    offset aLt      ; "LT"
+; ---------------------------------------------------------------------------
+loc_40BC12:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D694^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 20
+				push    offset aGt      ; "GT"
+; ---------------------------------------------------------------------------
+loc_40BC38:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D698^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 21
+				push    offset aLte     ; "LTE"
+; ---------------------------------------------------------------------------
+loc_40BC5E:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D69C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 22
+				push    offset aGte     ; "GTE"
+; ---------------------------------------------------------------------------
+loc_40BC84:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6A0^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 23
+				push    offset aNote    ; "NOTE"
+; ---------------------------------------------------------------------------
+loc_40BCAA:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6A4^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 24
+				push    offset aEquale  ; "EQUALE"
+; ---------------------------------------------------------------------------
+loc_40BCD0:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6A8^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 25
+				push    offset aAssign  ; "ASSIGN"
+; ---------------------------------------------------------------------------
+loc_40BCF6:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6AC^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 26
+				push    offset aPlusa   ; "PLUSA"
+; ---------------------------------------------------------------------------
+loc_40BD1C:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6B0^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 27
+				push    offset aMinusa  ; "MINUSA"
+; ---------------------------------------------------------------------------
+loc_40BD42:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6B4^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 28
+				push    offset aMula    ; "MULA"
+; ---------------------------------------------------------------------------
+loc_40BD68:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6B8^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 29
+				push    offset aDiva    ; "DIVA"
+; ---------------------------------------------------------------------------
+loc_40BD8E:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6BC^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 30
+				push    offset aModa    ; "MODA"
+; ---------------------------------------------------------------------------
+loc_40BDB4:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6C0^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 31
+				push    offset aAnda    ; "ANDA"
+; ---------------------------------------------------------------------------
+loc_40BDDA:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6C4^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 32
+				push    offset aOra     ; "ORA"
+; ---------------------------------------------------------------------------
+loc_40BE00:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6C8^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 33
+				push    offset aXora    ; "XORA"
+; ---------------------------------------------------------------------------
+loc_40BE26:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6CC^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 34
+				push    offset aLshifta ; "LSHIFTA"
+; ---------------------------------------------------------------------------
+loc_40BE4C:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6D0^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 35
+				push    offset aRshifta ; "RSHIFTA"
+; ---------------------------------------------------------------------------
+loc_40BE72:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6D4^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 36
+				push    offset aF_assign ; "F_ASSIGN"
+; ---------------------------------------------------------------------------
+loc_40BE98:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6D8^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 37
+				push    offset aF_plusa ; "F_PLUSA"
+; ---------------------------------------------------------------------------
+loc_40BEBE:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6DC^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 38
+				push    offset aF_minusa ; "F_MINUSA"
+; ---------------------------------------------------------------------------
+loc_40BEE4:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6E0^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 39
+				push    offset aF_mula  ; "F_MULA"
+; ---------------------------------------------------------------------------
+loc_40BF0A:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6E4^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 40
+				push    offset aF_diva  ; "F_DIVA"
+; ---------------------------------------------------------------------------
+loc_40BF30:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6E8^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 41
+				push    offset aDup2    ; "DUP2"
+; ---------------------------------------------------------------------------
+loc_40BF56:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6EC^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 42
+				push    offset aDup_x2  ; "DUP_X2"
+; ---------------------------------------------------------------------------
+loc_40BF7C:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6F4^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 44
+				push    offset aJumpD   ; "JUMP <%d>"
+; ---------------------------------------------------------------------------
+loc_40BFAC:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6F8^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 45
+				push    offset aIfzD    ; "IFZ  <%d>"
+; ---------------------------------------------------------------------------
+loc_40BFDC:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D6FC^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 46
+				push    offset aIfnzD   ; "IFNZ <%d>"
+; ---------------------------------------------------------------------------
+loc_40C00C:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D700^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 47
+				push    offset aReturn_0 ; "RETURN"
+; ---------------------------------------------------------------------------
+loc_40C032:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D704^o
+				mov     esi, [ebx]      ; jumptable 0040B909 case 48
+				push    offset aCallfuncSD ; "CALLFUNC <\"%s\" %d>"
+; ---------------------------------------------------------------------------
+loc_40C079:                             ; CODE XREF: code_inst+7ED^j
+				push    offset aCallfuncD ; "CALLFUNC <%d>"
+; ---------------------------------------------------------------------------
+loc_40C09F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D708^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 49
+				push    offset aInc_0   ; "INC"
+; ---------------------------------------------------------------------------
+loc_40C0C5:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D70C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 50
+				push    offset aDec     ; "DEC"
+; ---------------------------------------------------------------------------
+loc_40C0EB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D710^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 51
+				push    offset aFtoi    ; "FTOI"
+; ---------------------------------------------------------------------------
+loc_40C111:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D714^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 52
+				push    offset aItof    ; "ITOF"
+; ---------------------------------------------------------------------------
+loc_40C137:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D718^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 53
+				push    offset aF_inv   ; "F_INV"
+; ---------------------------------------------------------------------------
+loc_40C15D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D71C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 54
+				push    offset aF_add   ; "F_ADD"
+; ---------------------------------------------------------------------------
+loc_40C183:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D720^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 55
+				push    offset aF_sub   ; "F_SUB"
+; ---------------------------------------------------------------------------
+loc_40C1A9:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D724^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 56
+				push    offset aF_mul   ; "F_MUL"
+; ---------------------------------------------------------------------------
+loc_40C1CF:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D728^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 57
+				push    offset aF_div   ; "F_DIV"
+; ---------------------------------------------------------------------------
+loc_40C1F5:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D72C^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 58
+				push    offset aF_lt    ; "F_LT"
+; ---------------------------------------------------------------------------
+loc_40C21B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D730^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 59
+				push    offset aF_gt    ; "F_GT"
+; ---------------------------------------------------------------------------
+loc_40C241:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D734^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 60
+				push    offset aF_lte   ; "F_LTE"
+; ---------------------------------------------------------------------------
+loc_40C267:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D738^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 61
+				push    offset aF_gte   ; "F_GTE"
+; ---------------------------------------------------------------------------
+loc_40C28D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D73C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 62
+				push    offset aF_note  ; "F_NOTE"
+; ---------------------------------------------------------------------------
+loc_40C2B3:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D740^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 63
+				push    offset aF_equale ; "F_EQUALE"
+; ---------------------------------------------------------------------------
+loc_40C2D9:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D748^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 65
+				push    offset aS_pushD ; "S_PUSH %d"
+; ---------------------------------------------------------------------------
+loc_40C309:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D74C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 66
+				push    offset aS_pop   ; "S_POP"
+; ---------------------------------------------------------------------------
+loc_40C32F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D750^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 67
+				push    offset aS_add   ; "S_ADD"
+; ---------------------------------------------------------------------------
+loc_40C355:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D754^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 68
+				push    offset aS_assign ; "S_ASSIGN"
+; ---------------------------------------------------------------------------
+loc_40C37B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D758^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 69
+				push    offset aS_plusa ; "S_PLUSA"
+; ---------------------------------------------------------------------------
+loc_40C3A1:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D75C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 70
+				push    offset aS_ref   ; "S_REF"
+; ---------------------------------------------------------------------------
+loc_40C3C7:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D760^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 71
+				push    offset aS_refref ; "S_REFREF"
+; ---------------------------------------------------------------------------
+loc_40C3ED:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D764^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 72
+				push    offset aS_note  ; "S_NOTE"
+; ---------------------------------------------------------------------------
+loc_40C413:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D768^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 73
+				push    offset aS_equale ; "S_EQUALE"
+; ---------------------------------------------------------------------------
+loc_40C439:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D898^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 149
+				push    offset aS_plusa2 ; "S_PLUSA2"
+; ---------------------------------------------------------------------------
+loc_40C45F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D778^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 77
+				push    offset aSr_pop  ; "SR_POP"
+; ---------------------------------------------------------------------------
+loc_40C485:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D77C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 78
+				push    offset aSr_assign ; "SR_ASSIGN"
+; ---------------------------------------------------------------------------
+loc_40C4AB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D780^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 79
+				push    offset aSr_refD ; "SR_REF %d"
+; ---------------------------------------------------------------------------
+loc_40C4DB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D784^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 80
+				push    offset aSr_refref ; "SR_REFREF"
+; ---------------------------------------------------------------------------
+loc_40C501:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D788^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 81
+				push    offset aA_alloc ; "A_ALLOC"
+; ---------------------------------------------------------------------------
+loc_40C527:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D78C^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 82
+				push    offset aA_realloc ; "A_REALLOC"
+; ---------------------------------------------------------------------------
+loc_40C54D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D790^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 83
+				push    offset aA_free  ; "A_FREE"
+; ---------------------------------------------------------------------------
+loc_40C573:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D794^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 84
+				push    offset aA_numof ; "A_NUMOF"
+; ---------------------------------------------------------------------------
+loc_40C599:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D798^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 85
+				push    offset aA_copy  ; "A_COPY"
+; ---------------------------------------------------------------------------
+loc_40C5BF:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D79C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 86
+				push    offset aA_fill  ; "A_FILL"
+; ---------------------------------------------------------------------------
+loc_40C5E5:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7A0^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 87
+				push    offset aC_ref   ; "C_REF"
+; ---------------------------------------------------------------------------
+loc_40C60B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7A4^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 88
+				push    offset aC_assign ; "C_ASSIGN"
+; ---------------------------------------------------------------------------
+loc_40C631:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7A8^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 89
+				push    offset aMsgD    ; "MSG %d"
+; ---------------------------------------------------------------------------
+loc_40C661:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7AC^o
+				mov     edx, [ebx+4]    ; jumptable 0040B909 case 90
+				push    offset aCallhllDD ; "CALLHLL %d %d"
+; ---------------------------------------------------------------------------
+loc_40C695:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D76C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 74
+				push    offset aSf_create ; "SF_CREATE"
+; ---------------------------------------------------------------------------
+loc_40C6BB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D770^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 75
+				push    offset aSf_createpixel ; "SF_CREATEPIXEL"
+; ---------------------------------------------------------------------------
+loc_40C6E1:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D774^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 76
+				push    offset aSf_createalpha ; "SF_CREATEALPHA"
+; ---------------------------------------------------------------------------
+loc_40C707:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7B0^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 91
+				push    offset aPushstructpage ; "PUSHSTRUCTPAGE"
+; ---------------------------------------------------------------------------
+loc_40C72D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7B4^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 92
+				push    offset aCallmethodD ; "CALLMETHOD <%d>"
+; ---------------------------------------------------------------------------
+loc_40C75D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7B8^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 93
+				push    offset aSh_globalrefD ; "SH_GLOBALREF %d"
+; ---------------------------------------------------------------------------
+loc_40C78D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7BC^o
+				mov     eax, [ebx]      ; jumptable 40b909 case 94
+				push    offset aSh_localrefD ; "SH_LOCALREF %d"
+; ---------------------------------------------------------------------------
+loc_40C7BD:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7C0^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 95
+				push    offset aSwitchD ; "SWITCH %d"
+; ---------------------------------------------------------------------------
+loc_40C7ED:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7C4^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 96
+				push    offset aStrswitchD ; "STRSWITCH %d"
+; ---------------------------------------------------------------------------
+loc_40C81D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7C8^o
+				mov     esi, [ebx]      ; jumptable 0040B909 case 97
+				push    offset aFunc5dS ; "<FUNC : %5d> // %s()"
+; ---------------------------------------------------------------------------
+loc_40C864:                             ; CODE XREF: code_inst+FD7^j
+				push    offset aFunc5d  ; "<FUNC : %5d>"
+; ---------------------------------------------------------------------------
+loc_40C88B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7CC^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 98
+				push    offset aEofD    ; "<EOF : %d>"
+; ---------------------------------------------------------------------------
+loc_40C8BB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D83C^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 126
+				push    offset aEndfuncD ; "<ENDFUNC : %d>"
+; ---------------------------------------------------------------------------
+loc_40C8EB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7D0^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 99
+				push    offset aCallsysD ; "CALLSYS %d"
+; ---------------------------------------------------------------------------
+loc_40C91B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7D4^o
+				lea     edx, [esp+336]  ; jumptable 40b909 case 100
+				push    offset aSjump   ; "SJUMP"
+; ---------------------------------------------------------------------------
+loc_40C941:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7D8^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 101
+				push    offset aCallonjump ; "CALLONJUMP"
+; ---------------------------------------------------------------------------
+loc_40C967:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7DC^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 102
+				push    offset aSwap    ; "SWAP"
+; ---------------------------------------------------------------------------
+loc_40C98D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7E0^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 103
+				push    offset aSh_structrefD ; "SH_STRUCTREF %d"
+; ---------------------------------------------------------------------------
+loc_40C9BD:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7E4^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 104
+				push    offset aS_length ; "S_LENGTH"
+; ---------------------------------------------------------------------------
+loc_40C9E3:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7E8^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 105
+				push    offset aS_lengthbyte ; "S_LENGTHBYTE"
+; ---------------------------------------------------------------------------
+loc_40CA09:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7EC^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 106
+				push    offset aI_string ; "I_STRING"
+; ---------------------------------------------------------------------------
+loc_40CA2F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7F0^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 107
+				push    offset aCallfunc2 ; "CALLFUNC2"
+; ---------------------------------------------------------------------------
+loc_40CA55:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7F4^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 108
+				push    offset aCmd_dup2_x1 ; "CMD_DUP2_X1"
+; ---------------------------------------------------------------------------
+loc_40CA7B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7F8^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 109
+				push    offset aR_assign ; "R_ASSIGN"
+; ---------------------------------------------------------------------------
+loc_40CAA1:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D7FC^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 110
+				push    offset aFt_assigns ; "FT_ASSIGNS"
+; ---------------------------------------------------------------------------
+loc_40CAC7:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D800^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 111
+				push    offset aAssert_0 ; "ASSERT"
+; ---------------------------------------------------------------------------
+loc_40CAED:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D804^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 112
+				push    offset aS_lt    ; "S_LT"
+; ---------------------------------------------------------------------------
+loc_40CB13:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D808^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 113
+				push    offset aS_gt    ; "S_GT"
+; ---------------------------------------------------------------------------
+loc_40CB39:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D80C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 114
+				push    offset aS_lte   ; "S_LTE"
+; ---------------------------------------------------------------------------
+loc_40CB5F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D810^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 115
+				push    offset aS_gte   ; "S_GTE"
+; ---------------------------------------------------------------------------
+loc_40CB85:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D814^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 116
+				push    offset aS_length2 ; "S_LENGTH2"
+; ---------------------------------------------------------------------------
+loc_40CBAB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D818^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 117
+				push    offset aS_lengthbyte2 ; "S_LENGTHBYTE2"
+; ---------------------------------------------------------------------------
+loc_40CBD1:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D81C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 118
+				push    offset aNew     ; "NEW"
+; ---------------------------------------------------------------------------
+loc_40CBF7:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D820^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 119
+				push    offset aDelete_0 ; "DELETE"
+; ---------------------------------------------------------------------------
+loc_40CC1D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D824^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 120
+				push    offset aCheckudo ; "CHECKUDO"
+; ---------------------------------------------------------------------------
+loc_40CC43:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D828^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 121
+				push    offset aA_ref   ; "A_REF"
+; ---------------------------------------------------------------------------
+loc_40CC69:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D82C^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 122
+; ---------------------------------------------------------------------------
+loc_40CC8F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D830^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 123
+				push    offset aDup_u2  ; "DUP_U2"
+; ---------------------------------------------------------------------------
+loc_40CCB5:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D834^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 124
+				push    offset aSp_inc  ; "SP_INC"
+; ---------------------------------------------------------------------------
+loc_40CCDB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D838^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 125
+				push    offset aSp_dec  ; "SP_DEC"
+; ---------------------------------------------------------------------------
+loc_40CD01:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D840^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 127
+				push    offset aR_equale ; "R_EQUALE"
+; ---------------------------------------------------------------------------
+loc_40CD27:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D844^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 128
+				push    offset aR_note  ; "R_NOTE"
+; ---------------------------------------------------------------------------
+loc_40CD4D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D848^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 129
+				push    offset aSh_localcreate ; "SH_LOCALCREATE %d %d"
+; ---------------------------------------------------------------------------
+loc_40CD84:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D84C^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 130
+				push    offset aSh_localdelete ; "SH_LOCALDELETE %d"
+; ---------------------------------------------------------------------------
+loc_40CDB4:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D850^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 131
+				push    offset aStoi    ; "STOI"
+; ---------------------------------------------------------------------------
+loc_40CDDA:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D854^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 132
+				push    offset aA_pushback ; "A_PUSHBACK"
+; ---------------------------------------------------------------------------
+loc_40CE00:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D858^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 133
+				push    offset aA_popback ; "A_POPBACK"
+; ---------------------------------------------------------------------------
+loc_40CE26:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D85C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 134
+				push    offset aS_empty ; "S_EMPTY"
+; ---------------------------------------------------------------------------
+loc_40CE4C:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D860^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 135
+				push    offset aA_empty ; "A_EMPTY"
+; ---------------------------------------------------------------------------
+loc_40CE72:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D864^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 136
+				push    offset aA_erase ; "A_ERASE"
+; ---------------------------------------------------------------------------
+loc_40CE98:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D868^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 137
+				push    offset aA_insert ; "A_INSERT"
+; ---------------------------------------------------------------------------
+loc_40CEBE:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D86C^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 138
+				push    offset aSh_localincD ; "SH_LOCALINC %d"
+; ---------------------------------------------------------------------------
+loc_40CEEE:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D870^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 139
+				push    offset aSh_localdecD ; "SH_LOCALDEC %d"
+; ---------------------------------------------------------------------------
+loc_40CF1E:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D874^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 140
+				push    offset aSh_localassign ; "SH_LOCALASSIGN %d %d"
+; ---------------------------------------------------------------------------
+loc_40CF55:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D878^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 141
+				push    offset aItob    ; "ITOB"
+; ---------------------------------------------------------------------------
+loc_40CF7B:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D87C^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 142
+				push    offset aS_find  ; "S_FIND"
+; ---------------------------------------------------------------------------
+loc_40CFA1:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D880^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 143
+				push    offset aS_getpart ; "S_GETPART"
+; ---------------------------------------------------------------------------
+loc_40CFC7:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D884^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 144
+				push    offset aA_sort  ; "A_SORT"
+; ---------------------------------------------------------------------------
+loc_40CFED:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D888^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 145
+				push    offset aS_pushback ; "S_PUSHBACK"
+; ---------------------------------------------------------------------------
+loc_40D013:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D88C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 146
+				push    offset aS_popback ; "S_POPBACK"
+; ---------------------------------------------------------------------------
+loc_40D039:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D890^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 147
+				push    offset aFtos    ; "FTOS"
+; ---------------------------------------------------------------------------
+loc_40D05F:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D894^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 148
+				push    offset aS_mod   ; "S_MOD"
+; ---------------------------------------------------------------------------
+loc_40D085:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D89C^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 150
+				push    offset aObjswap ; "OBJSWAP"
+; ---------------------------------------------------------------------------
+loc_40D0AB:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D8A0^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 151
+				push    offset aS_erase ; "S_ERASE"
+; ---------------------------------------------------------------------------
+loc_40D0D1:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D8A4^o
+				mov     eax, [ebx]      ; jumptable 0040B909 case 152
+				push    offset aSr_ref2D ; "SR_REF2 %d"
+; ---------------------------------------------------------------------------
+loc_40D101:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D8A8^o
+				lea     edx, [esp+336]  ; jumptable 0040B909 case 153
+				push    offset aS_erase2 ; "S_ERASE2"
+; ---------------------------------------------------------------------------
+loc_40D127:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D8AC^o
+				lea     eax, [esp+336]  ; jumptable 0040B909 case 154
+				push    offset aS_pushback2 ; "S_PUSHBACK2"
+; ---------------------------------------------------------------------------
+loc_40D14D:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D8B0^o
+				lea     ecx, [esp+336]  ; jumptable 0040B909 case 155
+				push    offset aS_popback2 ; "S_POPBACK2"
+; ---------------------------------------------------------------------------
+loc_40D173:                             ; CODE XREF: code_inst+A9^j
+										; DATA XREF: .text:0040D744^o
+				mov     edx, [ebx]      ; jumptable 0040B909 case 64
+				push    offset aF_pushF ; "F_PUSH %f"
+; ---------------------------------------------------------------------------
+loc_40D1B3:                             ; CODE XREF: code_inst+98^j
+				push    offset aLabel5d ; "<LABEL : %5d>"
+; ---------------------------------------------------------------------------
+case_7:                                 ; CODE XREF: code_inst+92^j
+				lea     ecx, [eax-1025] ; switch 7 cases
+				cmp     ecx, 6          ; Compare Two Operands
+				ja      loc_40D375      ; default
+										; jumptable 0040B909 case 43
+				jmp     ds:off_40D8B4[ecx*4] ; switch jump
+loc_40D1F9:                             ; DATA XREF: .text:off_40D8B4^o
+				mov     eax, [ebx]      ; jumptable 0040D1F2 case 1025
+				push    offset aSlabel5d ; "<SLABEL : %5d>"
+; ---------------------------------------------------------------------------
+loc_40D229:                             ; CODE XREF: code_inst+1992^j
+										; DATA XREF: .text:off_40D8B4^o
+				lea     eax, [esp+336]  ; jumptable 0040D1F2 case 1026
+; ---------------------------------------------------------------------------
+loc_40D24F:                             ; CODE XREF: code_inst+1992^j
+										; DATA XREF: .text:off_40D8B4^o
+				lea     ecx, [esp+336]  ; jumptable 0040D1F2 case 1027
+				push    offset aNop     ; "NOP"
+; ---------------------------------------------------------------------------
+loc_40D275:                             ; CODE XREF: code_inst+1992^j
+										; DATA XREF: .text:off_40D8B4^o
+				mov     eax, [ebx+4]    ; jumptable 0040D1F2 case 1028
+; ---------------------------------------------------------------------------
+loc_40D29F:                             ; CODE XREF: code_inst+1992^j
+										; DATA XREF: .text:off_40D8B4^o
+				mov     eax, [ebx]      ; jumptable 0040D1F2 case 1029
+; ---------------------------------------------------------------------------
+loc_40D2BB:                             ; CODE XREF: code_inst+1A55^j
+loc_40D2C3:                             ; CODE XREF: code_inst+1A59^j
+				push    offset aS       ; "// %s"
+; ---------------------------------------------------------------------------
+loc_40D2FD:                             ; CODE XREF: code_inst+1992^j
+										; DATA XREF: .text:off_40D8B4^o
+				push    ebx             ; jumptable 0040D1F2 case 1030
+				push    offset aGotolabelS ; "<GOTOLABEL : %s>"
+; ---------------------------------------------------------------------------
+loc_40D339:                             ; CODE XREF: code_inst+1992^j
+										; DATA XREF: .text:off_40D8B4^o
+				push    ebx             ; jumptable 0040D1F2 case 1031
+				push    offset aGotoS   ; "GOTO %s"
+; ---------------------------------------------------------------------------
+loc_40D375:                             ; CODE XREF: code_inst+A3^j
+										; code_inst+A9^j ...
+				push    eax             ; default
+										; jumptable 0040B909 case 43
+				push    offset undef_d  ; "[未定義 : %d]"
+; ---------------------------------------------------------------------------
+loc_40D58A:                             ; CODE XREF: code_inst+1C0F^j
+				jmp     loop_8E0        ; Jump
+; ---------------------------------------------------------------------------
+end:                                    ; CODE XREF: code_inst+34^j
+				retn    8               ; Return Near from Procedure
+; ---------------------------------------------------------------------------
+off_40D644      dd offset loc_40B910    ; DATA XREF: code_inst+A9^r
+										; jump table for switch statement
+				dd offset loc_40B940    ; jumptable 0040B909 case 1
+				dd offset loc_40B966    ; jumptable 0040B909 case 2
+				dd offset loc_40B98C    ; jumptable 0040B909 case 3
+				dd offset loc_40B9B2    ; jumptable 0040B909 case 4
+				dd offset loc_40B9D8    ; jumptable 0040B909 case 5
+				dd offset loc_40B9FE    ; jumptable 0040B909 case 6
+				dd offset loc_40BA24    ; jumptable 0040B909 case 7
+				dd offset loc_40BA4A    ; jumptable 0040B909 case 8
+				dd offset loc_40BA70    ; jumptable 0040B909 case 9
+				dd offset loc_40BA96    ; jumptable 0040B909 case 10
+				dd offset loc_40BABC    ; jumptable 0040B909 case 11
+				dd offset loc_40BAE2    ; jumptable 0040B909 case 12
+				dd offset loc_40BB08    ; jumptable 0040B909 case 13
+				dd offset loc_40BB2E    ; jumptable 0040B909 case 14
+				dd offset loc_40BB54    ; jumptable 0040B909 case 15
+				dd offset loc_40BB7A    ; jumptable 0040B909 case 16
+				dd offset loc_40BBA0    ; jumptable 0040B909 case 17
+				dd offset loc_40BBC6    ; jumptable 0040B909 case 18
+				dd offset loc_40BBEC    ; jumptable 0040B909 case 19
+				dd offset loc_40BC12    ; jumptable 0040B909 case 20
+				dd offset loc_40BC38    ; jumptable 0040B909 case 21
+				dd offset loc_40BC5E    ; jumptable 0040B909 case 22
+				dd offset loc_40BC84    ; jumptable 0040B909 case 23
+				dd offset loc_40BCAA    ; jumptable 0040B909 case 24
+				dd offset loc_40BCD0    ; jumptable 0040B909 case 25
+				dd offset loc_40BCF6    ; jumptable 0040B909 case 26
+				dd offset loc_40BD1C    ; jumptable 0040B909 case 27
+				dd offset loc_40BD42    ; jumptable 0040B909 case 28
+				dd offset loc_40BD68    ; jumptable 0040B909 case 29
+				dd offset loc_40BD8E    ; jumptable 0040B909 case 30
+				dd offset loc_40BDB4    ; jumptable 0040B909 case 31
+				dd offset loc_40BDDA    ; jumptable 0040B909 case 32
+				dd offset loc_40BE00    ; jumptable 0040B909 case 33
+				dd offset loc_40BE26    ; jumptable 0040B909 case 34
+				dd offset loc_40BE4C    ; jumptable 0040B909 case 35
+				dd offset loc_40BE72    ; jumptable 0040B909 case 36
+				dd offset loc_40BE98    ; jumptable 0040B909 case 37
+				dd offset loc_40BEBE    ; jumptable 0040B909 case 38
+				dd offset loc_40BEE4    ; jumptable 0040B909 case 39
+				dd offset loc_40BF0A    ; jumptable 0040B909 case 40
+				dd offset loc_40BF30    ; jumptable 0040B909 case 41
+				dd offset loc_40BF56    ; jumptable 0040B909 case 42
+				dd offset loc_40D375    ; default
+										; jumptable 0040B909 case 43
+				dd offset loc_40BF7C    ; jumptable 0040B909 case 44
+				dd offset loc_40BFAC    ; jumptable 0040B909 case 45
+				dd offset loc_40BFDC    ; jumptable 0040B909 case 46
+				dd offset loc_40C00C    ; jumptable 0040B909 case 47
+				dd offset loc_40C032    ; jumptable 0040B909 case 48
+				dd offset loc_40C09F    ; jumptable 0040B909 case 49
+				dd offset loc_40C0C5    ; jumptable 0040B909 case 50
+				dd offset loc_40C0EB    ; jumptable 0040B909 case 51
+				dd offset loc_40C111    ; jumptable 0040B909 case 52
+				dd offset loc_40C137    ; jumptable 0040B909 case 53
+				dd offset loc_40C15D    ; jumptable 0040B909 case 54
+				dd offset loc_40C183    ; jumptable 0040B909 case 55
+				dd offset loc_40C1A9    ; jumptable 0040B909 case 56
+				dd offset loc_40C1CF    ; jumptable 0040B909 case 57
+				dd offset loc_40C1F5    ; jumptable 0040B909 case 58
+				dd offset loc_40C21B    ; jumptable 0040B909 case 59
+				dd offset loc_40C241    ; jumptable 0040B909 case 60
+				dd offset loc_40C267    ; jumptable 0040B909 case 61
+				dd offset loc_40C28D    ; jumptable 0040B909 case 62
+				dd offset loc_40C2B3    ; jumptable 0040B909 case 63
+				dd offset loc_40D173    ; jumptable 0040B909 case 64
+				dd offset loc_40C2D9    ; jumptable 0040B909 case 65
+				dd offset loc_40C309    ; jumptable 0040B909 case 66
+				dd offset loc_40C32F    ; jumptable 0040B909 case 67
+				dd offset loc_40C355    ; jumptable 0040B909 case 68
+				dd offset loc_40C37B    ; jumptable 0040B909 case 69
+				dd offset loc_40C3A1    ; jumptable 0040B909 case 70
+				dd offset loc_40C3C7    ; jumptable 0040B909 case 71
+				dd offset loc_40C3ED    ; jumptable 0040B909 case 72
+				dd offset loc_40C413    ; jumptable 0040B909 case 73
+				dd offset loc_40C695    ; jumptable 0040B909 case 74
+				dd offset loc_40C6BB    ; jumptable 0040B909 case 75
+				dd offset loc_40C6E1    ; jumptable 0040B909 case 76
+				dd offset loc_40C45F    ; jumptable 0040B909 case 77
+				dd offset loc_40C485    ; jumptable 0040B909 case 78
+				dd offset loc_40C4AB    ; jumptable 0040B909 case 79
+				dd offset loc_40C4DB    ; jumptable 0040B909 case 80
+				dd offset loc_40C501    ; jumptable 0040B909 case 81
+				dd offset loc_40C527    ; jumptable 0040B909 case 82
+				dd offset loc_40C54D    ; jumptable 0040B909 case 83
+				dd offset loc_40C573    ; jumptable 0040B909 case 84
+				dd offset loc_40C599    ; jumptable 0040B909 case 85
+				dd offset loc_40C5BF    ; jumptable 0040B909 case 86
+				dd offset loc_40C5E5    ; jumptable 0040B909 case 87
+				dd offset loc_40C60B    ; jumptable 0040B909 case 88
+				dd offset loc_40C631    ; jumptable 0040B909 case 89
+				dd offset loc_40C661    ; jumptable 0040B909 case 90
+				dd offset loc_40C707    ; jumptable 0040B909 case 91
+				dd offset loc_40C72D    ; jumptable 0040B909 case 92
+				dd offset loc_40C75D    ; jumptable 0040B909 case 93
+				dd offset loc_40C78D    ; jumptable 0040B909 case 94
+				dd offset loc_40C7BD    ; jumptable 0040B909 case 95
+				dd offset loc_40C7ED    ; jumptable 0040B909 case 96
+				dd offset loc_40C81D    ; jumptable 0040B909 case 97
+				dd offset loc_40C88B    ; jumptable 0040B909 case 98
+				dd offset loc_40C8EB    ; jumptable 0040B909 case 99
+				dd offset loc_40C91B    ; jumptable 0040B909 case 100
+				dd offset loc_40C941    ; jumptable 0040B909 case 101
+				dd offset loc_40C967    ; jumptable 0040B909 case 102
+				dd offset loc_40C98D    ; jumptable 0040B909 case 103
+				dd offset loc_40C9BD    ; jumptable 0040B909 case 104
+				dd offset loc_40C9E3    ; jumptable 0040B909 case 105
+				dd offset loc_40CA09    ; jumptable 0040B909 case 106
+				dd offset loc_40CA2F    ; jumptable 0040B909 case 107
+				dd offset loc_40CA55    ; jumptable 0040B909 case 108
+				dd offset loc_40CA7B    ; jumptable 0040B909 case 109
+				dd offset loc_40CAA1    ; jumptable 0040B909 case 110
+				dd offset loc_40CAC7    ; jumptable 0040B909 case 111
+				dd offset loc_40CAED    ; jumptable 0040B909 case 112
+				dd offset loc_40CB13    ; jumptable 0040B909 case 113
+				dd offset loc_40CB39    ; jumptable 0040B909 case 114
+				dd offset loc_40CB5F    ; jumptable 0040B909 case 115
+				dd offset loc_40CB85    ; jumptable 0040B909 case 116
+				dd offset loc_40CBAB    ; jumptable 0040B909 case 117
+				dd offset loc_40CBD1    ; jumptable 0040B909 case 118
+				dd offset loc_40CBF7    ; jumptable 0040B909 case 119
+				dd offset loc_40CC1D    ; jumptable 0040B909 case 120
+				dd offset loc_40CC43    ; jumptable 0040B909 case 121
+				dd offset loc_40CC69    ; jumptable 0040B909 case 122
+				dd offset loc_40CC8F    ; jumptable 0040B909 case 123
+				dd offset loc_40CCB5    ; jumptable 0040B909 case 124
+				dd offset loc_40CCDB    ; jumptable 0040B909 case 125
+				dd offset loc_40C8BB    ; jumptable 0040B909 case 126
+				dd offset loc_40CD01    ; jumptable 0040B909 case 127
+				dd offset loc_40CD27    ; jumptable 0040B909 case 128
+				dd offset loc_40CD4D    ; jumptable 0040B909 case 129
+				dd offset loc_40CD84    ; jumptable 0040B909 case 130
+				dd offset loc_40CDB4    ; jumptable 0040B909 case 131
+				dd offset loc_40CDDA    ; jumptable 0040B909 case 132
+				dd offset loc_40CE00    ; jumptable 0040B909 case 133
+				dd offset loc_40CE26    ; jumptable 0040B909 case 134
+				dd offset loc_40CE4C    ; jumptable 0040B909 case 135
+				dd offset loc_40CE72    ; jumptable 0040B909 case 136
+				dd offset loc_40CE98    ; jumptable 0040B909 case 137
+				dd offset loc_40CEBE    ; jumptable 0040B909 case 138
+				dd offset loc_40CEEE    ; jumptable 0040B909 case 139
+				dd offset loc_40CF1E    ; jumptable 0040B909 case 140
+				dd offset loc_40CF55    ; jumptable 0040B909 case 141
+				dd offset loc_40CF7B    ; jumptable 0040B909 case 142
+				dd offset loc_40CFA1    ; jumptable 0040B909 case 143
+				dd offset loc_40CFC7    ; jumptable 0040B909 case 144
+				dd offset loc_40CFED    ; jumptable 0040B909 case 145
+				dd offset loc_40D013    ; jumptable 0040B909 case 146
+				dd offset loc_40D039    ; jumptable 0040B909 case 147
+				dd offset loc_40D05F    ; jumptable 0040B909 case 148
+				dd offset loc_40C439    ; jumptable 0040B909 case 149
+				dd offset loc_40D085    ; jumptable 0040B909 case 150
+				dd offset loc_40D0AB    ; jumptable 0040B909 case 151
+				dd offset loc_40D0D1    ; jumptable 0040B909 case 152
+				dd offset loc_40D101    ; jumptable 0040B909 case 153
+				dd offset loc_40D127    ; jumptable 0040B909 case 154
+				dd offset loc_40D14D    ; jumptable 0040B909 case 155
+off_40D8B4      dd offset loc_40D1F9    ; DATA XREF: code_inst+1992^r
+				dd offset loc_40D229    ; jump table for switch statement
+				dd offset loc_40D24F
+				dd offset loc_40D275
+				dd offset loc_40D29F
+				dd offset loc_40D2FD
+				dd offset loc_40D339
+; ---------------------------------------------------------------------------
+dword_497354    dd 9                    ; DATA XREF: code_inst+1C56^o
+crlf            db 0Dh,0Ah,0            ; DATA XREF: code_inst+1D2E^r
+										; sub_458E50+D2^o ...
+a6d             db '%6d : ',0           ; DATA XREF: code_inst+1B3E^o
+asc_497364      db '       : ',0        ; DATA XREF: code_inst+C9^o
+										; code_inst+F6^o ...
+undef_d         db '[未定義 : %d]',0    ; DATA XREF: code_inst+1B1D^o
+aGotoS          db 'GOTO %s',0          ; DATA XREF: code_inst+1AE1^o
+aGotolabelS     db '<GOTOLABEL : %s>',0 ; DATA XREF: code_inst+1AA5^o
+aS              db '// %s',0            ; DATA XREF: code_inst+1A7E^o
+aNop            db 'NOP',0              ; DATA XREF: code_inst+19F6^o
+; BYTE Data
+Data            dd 0                    ; DATA XREF: sub_402B10+6A^o
+										; code_inst+19D0^o ...
+aF_pushF        db 'F_PUSH %f',0        ; DATA XREF: code_inst+192A^o
+aSlabel5d       db '<SLABEL : %5d>',0   ; DATA XREF: code_inst+19A3^o
+aLabel5d        db '<LABEL : %5d>',0    ; DATA XREF: code_inst+195D^o
+aS_popback2     db 'S_POPBACK2',0       ; DATA XREF: code_inst+18F4^o
+aS_pushback2    db 'S_PUSHBACK2',0      ; DATA XREF: code_inst+18CE^o
+aS_erase2       db 'S_ERASE2',0         ; DATA XREF: code_inst+18A8^o
+aSr_ref2D       db 'SR_REF2 %d',0       ; DATA XREF: code_inst+187B^o
+aS_erase        db 'S_ERASE',0          ; DATA XREF: code_inst+1852^o
+aObjswap        db 'OBJSWAP',0          ; DATA XREF: code_inst+182C^o
+aS_mod          db 'S_MOD',0            ; DATA XREF: code_inst+1806^o
+aFtos           db 'FTOS',0             ; DATA XREF: code_inst+17E0^o
+aS_popback      db 'S_POPBACK',0        ; DATA XREF: code_inst+17BA^o
+aS_pushback     db 'S_PUSHBACK',0       ; DATA XREF: code_inst+1794^o
+aA_sort         db 'A_SORT',0           ; DATA XREF: code_inst+176E^o
+aS_getpart      db 'S_GETPART',0        ; DATA XREF: code_inst+1748^o
+aS_find         db 'S_FIND',0           ; DATA XREF: code_inst+1722^o
+aItob           db 'ITOB',0             ; DATA XREF: code_inst+16FC^o
+aSh_localassign db 'SH_LOCALASSIGN %d %d',0 ; DATA XREF: code_inst+16CF^o
+aSh_localdecD   db 'SH_LOCALDEC %d',0   ; DATA XREF: code_inst+1698^o
+aSh_localincD   db 'SH_LOCALINC %d',0   ; DATA XREF: code_inst+1668^o
+aA_insert       db 'A_INSERT',0         ; DATA XREF: code_inst+163F^o
+aA_erase        db 'A_ERASE',0          ; DATA XREF: code_inst+1619^o
+aA_empty        db 'A_EMPTY',0          ; DATA XREF: code_inst+15F3^o
+aS_empty        db 'S_EMPTY',0          ; DATA XREF: code_inst+15CD^o
+aA_popback      db 'A_POPBACK',0        ; DATA XREF: code_inst+15A7^o
+aA_pushback     db 'A_PUSHBACK',0       ; DATA XREF: code_inst+1581^o
+aStoi           db 'STOI',0             ; DATA XREF: code_inst+155B^o
+aSh_localdelete db 'SH_LOCALDELETE %d',0 ; DATA XREF: code_inst+152E^o
+aSh_localcreate db 'SH_LOCALCREATE %d %d',0 ; DATA XREF: code_inst+14FE^o
+aR_note         db 'R_NOTE',0           ; DATA XREF: code_inst+14CE^o
+aR_equale       db 'R_EQUALE',0         ; DATA XREF: code_inst+14A8^o
+aSp_dec         db 'SP_DEC',0           ; DATA XREF: code_inst+1482^o
+aSp_inc         db 'SP_INC',0           ; DATA XREF: code_inst+145C^o
+aDup_u2         db 'DUP_U2',0           ; DATA XREF: code_inst+1436^o
+aDup            db 'DUP',0              ; DATA XREF: code_inst+1410^o
+aA_ref          db 'A_REF',0            ; DATA XREF: code_inst+13EA^o
+aCheckudo       db 'CHECKUDO',0         ; DATA XREF: code_inst+13C4^o
+aDelete_0       db 'DELETE',0           ; DATA XREF: code_inst+139E^o
+aNew            db 'NEW',0              ; DATA XREF: code_inst+1378^o
+										; sub_431E60+3CF^o ...
+aS_lengthbyte2  db 'S_LENGTHBYTE2',0    ; DATA XREF: code_inst+1352^o
+aS_length2      db 'S_LENGTH2',0        ; DATA XREF: code_inst+132C^o
+aS_gte          db 'S_GTE',0            ; DATA XREF: code_inst+1306^o
+aS_lte          db 'S_LTE',0            ; DATA XREF: code_inst+12E0^o
+aS_gt           db 'S_GT',0             ; DATA XREF: code_inst+12BA^o
+aS_lt           db 'S_LT',0             ; DATA XREF: code_inst+1294^o
+aAssert_0       db 'ASSERT',0           ; DATA XREF: code_inst+126E^o
+										; sub_41F6B0+4DE^o ...
+aFt_assigns     db 'FT_ASSIGNS',0       ; DATA XREF: code_inst+1248^o
+aR_assign       db 'R_ASSIGN',0         ; DATA XREF: code_inst+1222^o
+aCmd_dup2_x1    db 'CMD_DUP2_X1',0      ; DATA XREF: code_inst+11FC^o
+aCallfunc2      db 'CALLFUNC2',0        ; DATA XREF: code_inst+11D6^o
+aI_string       db 'I_STRING',0         ; DATA XREF: code_inst+11B0^o
+aS_lengthbyte   db 'S_LENGTHBYTE',0     ; DATA XREF: code_inst+118A^o
+aS_length       db 'S_LENGTH',0         ; DATA XREF: code_inst+1164^o
+aSh_structrefD  db 'SH_STRUCTREF %d',0  ; DATA XREF: code_inst+1137^o
+aSwap           db 'SWAP',0             ; DATA XREF: code_inst+110E^o
+aCallonjump     db 'CALLONJUMP',0       ; DATA XREF: code_inst+10E8^o
+aSjump          db 'SJUMP',0            ; DATA XREF: code_inst+10C2^o
+aCallsysD       db 'CALLSYS %d',0       ; DATA XREF: code_inst+1095^o
+aEndfuncD       db '<ENDFUNC : %d>',0   ; DATA XREF: code_inst+1065^o
+aEofD           db '<EOF : %d>',0       ; DATA XREF: code_inst+1035^o
+aFunc5d         db '<FUNC : %5d>',0     ; DATA XREF: code_inst+100C^o
+aFunc5dS        db '<FUNC : %5d> // %s()',0 ; DATA XREF: code_inst+FE5^o
+aStrswitchD     db 'STRSWITCH %d',0     ; DATA XREF: code_inst+F97^o
+aSwitchD        db 'SWITCH %d',0        ; DATA XREF: code_inst+F67^o
+aSh_localrefD   db 'SH_LOCALREF %d',0   ; DATA XREF: code_inst+F37^o
+aSh_globalrefD  db 'SH_GLOBALREF %d',0  ; DATA XREF: code_inst+F07^o
+aCallmethodD    db 'CALLMETHOD <%d>',0  ; DATA XREF: code_inst+ED7^o
+aPushstructpage db 'PUSHSTRUCTPAGE',0   ; DATA XREF: code_inst+EAE^o
+aSf_createalpha db 'SF_CREATEALPHA',0   ; DATA XREF: code_inst+E88^o
+aSf_createpixel db 'SF_CREATEPIXEL',0   ; DATA XREF: code_inst+E62^o
+aSf_create      db 'SF_CREATE',0        ; DATA XREF: code_inst+E3C^o
+aCallhllDD      db 'CALLHLL %d %d',0    ; DATA XREF: code_inst+E0F^o
+aMsgD           db 'MSG %d',0           ; DATA XREF: code_inst+DDB^o
+aC_assign       db 'C_ASSIGN',0         ; DATA XREF: code_inst+DB2^o
+aC_ref          db 'C_REF',0            ; DATA XREF: code_inst+D8C^o
+aA_fill         db 'A_FILL',0           ; DATA XREF: code_inst+D66^o
+aA_copy         db 'A_COPY',0           ; DATA XREF: code_inst+D40^o
+aA_numof        db 'A_NUMOF',0          ; DATA XREF: code_inst+D1A^o
+aA_free         db 'A_FREE',0           ; DATA XREF: code_inst+CF4^o
+aA_realloc      db 'A_REALLOC',0        ; DATA XREF: code_inst+CCE^o
+aA_alloc        db 'A_ALLOC',0          ; DATA XREF: code_inst+CA8^o
+aSr_refref      db 'SR_REFREF',0        ; DATA XREF: code_inst+C82^o
+aSr_refD        db 'SR_REF %d',0        ; DATA XREF: code_inst+C55^o
+aSr_assign      db 'SR_ASSIGN',0        ; DATA XREF: code_inst+C2C^o
+aSr_pop         db 'SR_POP',0           ; DATA XREF: code_inst+C06^o
+aS_plusa2       db 'S_PLUSA2',0         ; DATA XREF: code_inst+BE0^o
+aS_equale       db 'S_EQUALE',0         ; DATA XREF: code_inst+BBA^o
+aS_note         db 'S_NOTE',0           ; DATA XREF: code_inst+B94^o
+aS_refref       db 'S_REFREF',0         ; DATA XREF: code_inst+B6E^o
+aS_ref          db 'S_REF',0            ; DATA XREF: code_inst+B48^o
+aS_plusa        db 'S_PLUSA',0          ; DATA XREF: code_inst+B22^o
+aS_assign       db 'S_ASSIGN',0         ; DATA XREF: code_inst+AFC^o
+aS_add          db 'S_ADD',0            ; DATA XREF: code_inst+AD6^o
+aS_pop          db 'S_POP',0            ; DATA XREF: code_inst+AB0^o
+aS_pushD        db 'S_PUSH %d',0        ; DATA XREF: code_inst+A83^o
+aF_equale       db 'F_EQUALE',0         ; DATA XREF: code_inst+A5A^o
+aF_note         db 'F_NOTE',0           ; DATA XREF: code_inst+A34^o
+aF_gte          db 'F_GTE',0            ; DATA XREF: code_inst+A0E^o
+aF_lte          db 'F_LTE',0            ; DATA XREF: code_inst+9E8^o
+aF_gt           db 'F_GT',0             ; DATA XREF: code_inst+9C2^o
+aF_lt           db 'F_LT',0             ; DATA XREF: code_inst+99C^o
+aF_div          db 'F_DIV',0            ; DATA XREF: code_inst+976^o
+aF_mul          db 'F_MUL',0            ; DATA XREF: code_inst+950^o
+aF_sub          db 'F_SUB',0            ; DATA XREF: code_inst+92A^o
+aF_add          db 'F_ADD',0            ; DATA XREF: code_inst+904^o
+aF_inv          db 'F_INV',0            ; DATA XREF: code_inst+8DE^o
+aItof           db 'ITOF',0             ; DATA XREF: code_inst+8B8^o
+aFtoi           db 'FTOI',0             ; DATA XREF: code_inst+892^o
+aDec            db 'DEC',0              ; DATA XREF: code_inst+86C^o
+aInc_0          db 'INC',0              ; DATA XREF: code_inst+846^o
+aCallfuncD      db 'CALLFUNC <%d>',0    ; DATA XREF: code_inst+820^o
+aCallfuncSD     db 'CALLFUNC <"%s" %d>',0 ; DATA XREF: code_inst+7FA^o
+aReturn_0       db 'RETURN',0           ; DATA XREF: code_inst+7B3^o
+										; sub_41F6B0+36E^o ...
+aIfnzD          db 'IFNZ <%d>',0        ; DATA XREF: code_inst+786^o
+aIfzD           db 'IFZ  <%d>',0        ; DATA XREF: code_inst+756^o
+aJumpD          db 'JUMP <%d>',0        ; DATA XREF: code_inst+726^o
+aDup_x2         db 'DUP_X2',0           ; DATA XREF: code_inst+6FD^o
+aDup2           db 'DUP2',0             ; DATA XREF: code_inst+6D7^o
+aF_diva         db 'F_DIVA',0           ; DATA XREF: code_inst+6B1^o
+aF_mula         db 'F_MULA',0           ; DATA XREF: code_inst+68B^o
+aF_minusa       db 'F_MINUSA',0         ; DATA XREF: code_inst+665^o
+aF_plusa        db 'F_PLUSA',0          ; DATA XREF: code_inst+63F^o
+aF_assign       db 'F_ASSIGN',0         ; DATA XREF: code_inst+619^o
+aRshifta        db 'RSHIFTA',0          ; DATA XREF: code_inst+5F3^o
+aLshifta        db 'LSHIFTA',0          ; DATA XREF: code_inst+5CD^o
+aXora           db 'XORA',0             ; DATA XREF: code_inst+5A7^o
+aOra            db 'ORA',0              ; DATA XREF: code_inst+581^o
+aAnda           db 'ANDA',0             ; DATA XREF: code_inst+55B^o
+aModa           db 'MODA',0             ; DATA XREF: code_inst+535^o
+aDiva           db 'DIVA',0             ; DATA XREF: code_inst+50F^o
+aMula           db 'MULA',0             ; DATA XREF: code_inst+4E9^o
+aMinusa         db 'MINUSA',0           ; DATA XREF: code_inst+4C3^o
+aPlusa          db 'PLUSA',0            ; DATA XREF: code_inst+49D^o
+aAssign         db 'ASSIGN',0           ; DATA XREF: code_inst+477^o
+aEquale         db 'EQUALE',0           ; DATA XREF: code_inst+451^o
+aNote           db 'NOTE',0             ; DATA XREF: code_inst+42B^o
+aGte            db 'GTE',0              ; DATA XREF: code_inst+405^o
+aLte            db 'LTE',0              ; DATA XREF: code_inst+3DF^o
+aGt             db 'GT',0               ; DATA XREF: code_inst+3B9^o
+aLt             db 'LT',0               ; DATA XREF: code_inst+393^o
+aRshift         db 'RSHIFT',0           ; DATA XREF: code_inst+36D^o
+aLshift         db 'LSHIFT',0           ; DATA XREF: code_inst+347^o
+aXor            db 'XOR',0              ; DATA XREF: code_inst+321^o
+aOr             db 'OR',0               ; DATA XREF: code_inst+2FB^o
+aAnd            db 'AND',0              ; DATA XREF: code_inst+2D5^o
+aMod            db 'MOD',0              ; DATA XREF: code_inst+2AF^o
+aDiv            db 'DIV',0              ; DATA XREF: code_inst+289^o
+aMul            db 'MUL',0              ; DATA XREF: code_inst+263^o
+aSub            db 'SUB',0              ; DATA XREF: code_inst+23D^o
+aAdd            db 'ADD',0              ; DATA XREF: code_inst+217^o
+aCompl          db 'COMPL',0            ; DATA XREF: code_inst+1F1^o
+aNot            db 'NOT',0              ; DATA XREF: code_inst+1CB^o
+aInv            db 'INV',0              ; DATA XREF: code_inst+1A5^o
+aPushlocalpage  db 'PUSHLOCALPAGE',0    ; DATA XREF: code_inst+17F^o
+aPushglobalpage db 'PUSHGLOBALPAGE',0   ; DATA XREF: code_inst+159^o
+aRefref         db 'REFREF',0           ; DATA XREF: code_inst+133^o
+aRef_1          db 'REF',0              ; DATA XREF: code_inst+10D^o
+										; sub_41EC30+25A^o ...
+aPop            db 'POP',0              ; DATA XREF: code_inst+E7^o
+aPushD          db 'PUSH %d',0          ; DATA XREF: code_inst+BA^o
