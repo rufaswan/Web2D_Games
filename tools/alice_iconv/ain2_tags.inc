@@ -19,88 +19,6 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function code2inst( &$file, &$st )
-{
-	$bak = $st;
-	$code = sint16($file, $st);
-
-	//global $gp_code;
-	//$c = $gp_code[$code];
-	$c = $code;
-	$r = sprintf("%x,%d", $bak, $c);
-	switch ( $c )
-	{
-		case 184:
-		case 185:
-		case 192:
-		case 201:
-		case 202:
-		case 204:
-		case 205:
-			$n1 = sint32($file, $st);
-			$n2 = sint32($file, $st);
-			$n3 = sint32($file, $st);
-			return "$r,$n1,$n2,$n3\n";
-		case  90: // CALLHLL
-		case 129: // SH_LOCALCREATE
-		case 140: // SH_LOCALASSIGN
-		case 178:
-		case 181:
-		case 188:
-		case 189:
-		case 191:
-		case 199:
-		case 206:
-		case 208:
-		case 225:
-		case 230:
-			$n1 = sint32($file, $st);
-			$n2 = sint32($file, $st);
-			return "$r,$n1,$n2\n";
-		case   0: // PUSH
-		case  44: // JUMP
-		case  45: // IFZ
-		case  46: // IFNZ
-		case  48: // CALLFUNC
-		case  64: // F_PUSH
-		case  65: // S_PUSH
-		case  79: // SR_REF
-		case  89: // MSG
-		case  92: // CALLMETHOD
-		case  93: // SH_GLOBALREF
-		case  94: // SH_LOCALREF
-		case  95: // SWITCH
-		case  96: // STRSWITCH
-		case  97: // FUNC
-		case  98: // EOF
-		case  99: // CALLSYS
-		case 103: // SH_STRUCTREF
-		case 126: // ENDFUNC
-		case 130: // SH_LOCALDELETE
-		case 138: // SH_LOCALINC
-		case 139: // SH_LOCALDEC
-		case 152: // SR_REF2
-		case 179:
-		case 180:
-		case 182:
-		case 220:
-		case 223:
-		case 224:
-		case 228:
-		case 229:
-		case 231:
-		case 234:
-			$n1 = sint32($file, $st);
-			return "$r,$n1\n";
-		default:
-			if ( $code < 0 || $code > 156 )
-				return "$r,NEW\n";
-			else
-				return "$r\n";
-	}
-	return "$r,ERROR\n";
-}
-//////////////////////////////
 require "ain2_tags_get.inc";
 
 function ain2tags( &$file , &$st, $dir )
@@ -164,14 +82,8 @@ function ain2tags( &$file , &$st, $dir )
 
 			$bak = $st;
 			$code = substr($file, $st, $len);
-			file_put_contents("$dir/code.tmp", $code);
+			file_put_contents("$dir/$tag", $code);
 
-			$buf = "";
-			$cst = 0;
-			while ( $cst < $len )
-				$buf .= code2inst($code, $cst);
-
-			file_put_contents("$dir/$tag", $buf);
 			$st = $bak + $len;
 			return;
 

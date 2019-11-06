@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function exec_php( &$id, &$st, &$run )
+function exec_php()
 {
 	require ROOT ."/". GAME ."/exec.php";
-	$run = false;
+	return;
 }

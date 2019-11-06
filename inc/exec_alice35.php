@@ -41,7 +41,7 @@ require "cmd_alice35.php";
 require "funcs-bmp.php";
 require "funcs-sjis.php";
 
-function sco35_html( &$ajax )
+function sco_html( &$ajax )
 {
 	$auto_ajax = "";
 	if ( $ajax )
@@ -51,7 +51,7 @@ function sco35_html( &$ajax )
 	}
 	global $gp_init, $gp_pc, $ajax_html;
 	$ajax_html = "";
-	sco35_div_cleanup();
+	sco_div_cleanup();
 	ob_start();
 
 /// CSS ///
@@ -70,15 +70,15 @@ function sco35_html( &$ajax )
 	// border-style:dotted/solid;
 	$zs = $gp_pc["ZS"] - 2;
 	echo "#select {";
-		echo "background-color:" .sco35_zc2ps(4, "#000"). ";";
-		echo "border:1px " .sco35_zc2ps(3, "#fff"). " solid;";
-		echo "color:" .sco35_zc2ps(2, "#fff"). ";";
+		echo "background-color:" .sco_zc2ps(4, "#000"). ";";
+		echo "border:1px " .sco_zc2ps(3, "#fff"). " solid;";
+		echo "color:" .sco_zc2ps(2, "#fff"). ";";
 		echo "font-size:{$zs}px;";
 	echo "}";
 	$zm = $gp_pc["ZM"] - 2;
 	echo ".text {";
-		//echo "background-color:" .sco35_zc2ps(6, "#000"). ";";
-		//echo "border:1px " .sco35_zc2ps(5, "#fff"). " solid;";
+		//echo "background-color:" .sco_zc2ps(6, "#000"). ";";
+		//echo "border:1px " .sco_zc2ps(5, "#fff"). " solid;";
 		echo "font-size:{$zm}px;";
 	echo "}";
 	echo "</style>";
@@ -98,14 +98,14 @@ function sco35_html( &$ajax )
 		{
 			case "img":
 				list($img,$spr) = $div["img"];
-				$png = sco35_g0_path( $img, $spr );
+				$png = sco_g0_path( $img, $spr );
 				echo "<img src='$png' class='sprites img' mouse='$mouse'>";
 				break;
 			case "bg":
 				list($bg,$bgx,$bgy) = $div["bg"];
 				if ( ! isset($cg[$bg]) )
 				{
-					$png = sco35_g0_path( $bg, -1 );
+					$png = sco_g0_path( $bg, -1 );
 					echo "<style>.bg_$bg {background-image:url('$png');}</style>";
 					$cg[$bg] = 1;
 				}
@@ -175,7 +175,7 @@ function sco35_html( &$ajax )
 	$ajax_html = ob_get_clean();
 }
 
-function sco35_div_cleanup()
+function sco_div_cleanup()
 {
 	global $gp_pc;
 	$keys = array_keys( $gp_pc["div"] );
@@ -205,7 +205,7 @@ function sco35_div_cleanup()
 	array_splice( $gp_pc["div"] , 0 , 0);
 }
 
-function sco35_ec_clear( $num )
+function sco_ec_clear( $num )
 {
 	global $gp_pc;
 	if ( $num == 0 )
@@ -222,7 +222,7 @@ function sco35_ec_clear( $num )
 	);
 }
 
-function sco35_text_add( $jp )
+function sco_text_add( $jp )
 {
 	global $gp_pc;
 
@@ -263,13 +263,13 @@ function sco35_text_add( $jp )
 			$font,
 		),
 		"jp"  => $jp,
-		"color" => sco35_zc2ps(1, "#fff"),
+		"color" => sco_zc2ps(1, "#fff"),
 	);
 	$gp_pc["div"][] = $text;
 	$gp_pc["T"][0] += $len;
 }
 
-function sco35_vp_div_add( $src )
+function sco_vp_div_add( $src )
 {
 	global $gp_pc;
 	list($px,$py,$sx,$sy,$ot,$fl) = $src;
@@ -280,7 +280,7 @@ function sco35_vp_div_add( $src )
 		't' => "clear",
 		'p' => $box,
 	);
-	//sco35_div_cleanup();
+	//sco_div_cleanup();
 
 	for ( $page=0; $page < $n; $page++ )
 	{
@@ -329,7 +329,7 @@ function sco35_vp_div_add( $src )
 	} // for ( $page=0; $page < $n; $page++ )
 }
 
-function sco35_vp_bg_find( $src )
+function sco_vp_bg_find( $src )
 {
 	global $gp_pc;
 	$des = array(0,0,0);
@@ -351,7 +351,7 @@ function sco35_vp_bg_find( $src )
 	return $des;
 }
 
-function sco35_vp_g0( $src )
+function sco_vp_g0( $src )
 {
 	global $gp_pc;
 	list($pg,$px,$py,$nx,$ny,$s) = $src;
@@ -365,14 +365,14 @@ function sco35_vp_g0( $src )
 			$x0 = $px + ($x * $ux);
 			$y0 = $py + ($y * $uy);
 			$box = array($x0,$y0,$ux,$uy);
-			$g0 = sco35_vp_bg_find( $box );
+			$g0 = sco_vp_bg_find( $box );
 			$vp[] = $g0;
 		} // for ( $x=0; $x < $nx; $x++ )
 	} // for ( $y=0; $y < $ny; $y++ )
 	return $vp;
 }
 
-function sco35_div_add( $type, $src )
+function sco_div_add( $type, $src )
 {
 	global $gp_pc;
 	switch ( $type )
@@ -479,7 +479,7 @@ function sco35_div_add( $type, $src )
 	return;
 }
 
-function sco35_g0_path( $num, $alpha )
+function sco_g0_path( $num, $alpha )
 {
 	global $gp_init;
 	$png = findfile( "{$gp_init['path_ga']}.png", $num, "none" );
@@ -495,7 +495,7 @@ function sco35_g0_path( $num, $alpha )
 	return $png;
 }
 
-function sco35_g0_clut( $num )
+function sco_g0_clut( $num )
 {
 	global $gp_pc, $gp_init;
 	$clut = findfile( "{$gp_init['path_ga']}.clut", $num );
@@ -536,20 +536,20 @@ function sco35_g0_clut( $num )
 	return;
 }
 
-function sco35_g0_add( $num , $alpha )
+function sco_g0_add( $num , $alpha )
 {
 	global $gp_pc;
 	if ( $num < 1 )
 		return;
 
 	// use meta data from image file itself
-	$img_pos = sco35_img_meta( PATH_META, $num );
+	$img_pos = sco_img_meta( PATH_META, $num );
 
 	// affected by J command beforehand
-	sco35_g0_j0( $img_pos , 0 , false , true  ); // abs once
-	sco35_g0_j0( $img_pos , 1 , true  , true  ); // rel once
-	sco35_g0_j0( $img_pos , 2 , false , false ); // abs
-	sco35_g0_j0( $img_pos , 3 , true  , false ); // rel
+	sco_g0_j0( $img_pos , 0 , false , true  ); // abs once
+	sco_g0_j0( $img_pos , 1 , true  , true  ); // rel once
+	sco_g0_j0( $img_pos , 2 , false , false ); // abs
+	sco_g0_j0( $img_pos , 3 , true  , false ); // rel
 
 	// keep bg with sprites
 	if ( $alpha < 0 )
@@ -571,7 +571,7 @@ function sco35_g0_add( $num , $alpha )
 	return;
 }
 
-function sco35_g0_j0( &$img_pos , $j0 , $rel , $rm )
+function sco_g0_j0( &$img_pos , $j0 , $rel , $rm )
 {
 	global $gp_pc;
 	if ( isset( $gp_pc["J"][$j0] ) )
@@ -592,7 +592,7 @@ function sco35_g0_j0( &$img_pos , $j0 , $rel , $rm )
 	}
 }
 
-function sco35_img_meta( $metatxt, $num )
+function sco_img_meta( $metatxt, $num )
 {
 	$line = fileline( $metatxt, $num );
 	if ( $line[0] == -1 )
@@ -602,7 +602,7 @@ function sco35_img_meta( $metatxt, $num )
 	return explode(',', $line[1]);
 }
 
-function sco35_zc2ps( $num, $color )
+function sco_zc2ps( $num, $color )
 {
 	global $gp_pc;
 	$ps = $color;
@@ -615,7 +615,7 @@ function sco35_zc2ps( $num, $color )
 	return $ps;
 }
 
-function sco35_n_math( $opr , &$vars , $num )
+function sco_n_math( $opr , &$vars , $num )
 {
 	if ( is_array($num) )
 	{
@@ -637,7 +637,7 @@ function sco35_n_math( $opr , &$vars , $num )
 	return;
 }
 
-function sco35_loop_inf( &$file, &$st )
+function sco_loop_inf( &$file, &$st )
 {
 	$bak = $st;
 	if ( $file[$st+7] == '>' )
@@ -647,8 +647,8 @@ function sco35_loop_inf( &$file, &$st )
 		if ( $loc == $st )
 		{
 			trace("infinite loop");
-			sco35_text_add( "_NEXT_" );
-			sco35_text_add( "INFINITE LOOP" );
+			sco_text_add( "_NEXT_" );
+			sco_text_add( "INFINITE LOOP" );
 			return true;
 		}
 		return false;
@@ -656,7 +656,7 @@ function sco35_loop_inf( &$file, &$st )
 	return false;
 }
 
-function sco35_loop_IK0( &$file, $st )
+function sco_loop_IK0( &$file, $st )
 {
 	// 7b 80 40 7e 7f   - {if &0 != 0
 	// addr
@@ -675,7 +675,7 @@ function sco35_loop_IK0( &$file, $st )
 	return true;
 }
 
-function sco35_load_data($num , $len)
+function sco_load_data($num , $len)
 {
 	global $gp_init;
 	if ( is_numeric($num) )
@@ -699,10 +699,10 @@ function sco35_load_data($num , $len)
 	return $data;
 }
 
-function sco35_ascii( &$file, &$st, $sep )
+function sco_ascii( &$file, &$st, $sep )
 {
 	$len = 0;
-	while ( $file[$st+$len] != $sep )
+	while ( $file[$st+$len] != $sep && $file[$st+$len] != ZERO )
 		$len++;
 	$str = substr($file, $st, $len);
 	$st += $len;
@@ -714,7 +714,7 @@ function sco35_ascii( &$file, &$st, $sep )
 	return $str;
 }
 
-function sco35_sjis( &$file, &$st )
+function sco_sjis( &$file, &$st )
 {
 	$len = 0;
 	while(1)
@@ -743,12 +743,15 @@ function sco35_sjis( &$file, &$st )
 	return $str;
 }
 
-function sco35_var_put( $v, $e, $num )
+function sco_var_put( $v, $e, $num )
 {
+	$func = __FUNCTION__;
+	if ( is_array($v) )
+		return $func($v[0], $v[1]+$e, $num);
+
 	global $gp_pc;
 	if ( is_array($num) )
 	{
-		$func = __FUNCTION__;
 		foreach( $num as $k => $n )
 			$func( $v, $e+$k, $n );
 		return;
@@ -760,7 +763,7 @@ function sco35_var_put( $v, $e, $num )
 		$gp_pc["var"][$v+$e] = $num;
 }
 
-function sco35_var_get( $v, $e, $len )
+function sco_var_get( $v, $e, $len )
 {
 	global $gp_pc;
 	if ( isset( $gp_pc["page"][$v] ) )
@@ -785,7 +788,33 @@ function sco35_var_get( $v, $e, $len )
 	}
 }
 
-function sco35_varno( &$file, &$st )
+function sco_var( $var )
+{
+	global $gp_pc;
+	if ( is_array($var) )
+	{
+		list($v,$e) = $var;
+		if ( isset( $gp_pc["page"][$v] ) )
+			return $gp_pc["page"][$v][$e];
+		else
+			return $gp_pc["var"][$v+$e];
+	}
+	else
+		return $var;
+}
+
+function sco_var_args( $cnt, &$file, &$st )
+{
+	$arg = array();
+	while ( $cnt > 0 )
+	{
+		$arg[] = sco_calli($file, $st);
+		$cnt--;
+	}
+	return $arg;
+}
+
+function sco_varno( &$file, &$st )
 {
 	$b1 = ord( $file[$st] );
 	$st++;
@@ -813,7 +842,7 @@ function sco35_varno( &$file, &$st )
 					$b4 = ord( $file[$st+1] );
 						$st += 2;
 					$v = ($b3 << 8) + $b4;
-					$e = sco35_calli( $file, $st );
+					$e = sco_calli( $file, $st );
 					return array($v,$e);
 				}
 				else
@@ -843,10 +872,16 @@ function sco35_varno( &$file, &$st )
 
 }
 
-function sco35_calli_opr( $opr, &$ret )
+function sco_calli_opr( $opr, &$ret )
 {
 	$t1 = array_shift($ret);
+	if ( is_array($t1) )
+		$t1 = sco_var_get($t1[0], $t1[1], 1);
+
 	$t2 = array_shift($ret);
+	if ( is_array($t2) )
+		$t2 = sco_var_get($t2[0], $t2[1], 1);
+
 	$r  = 0;
 	switch( $opr )
 	{
@@ -865,7 +900,7 @@ function sco35_calli_opr( $opr, &$ret )
 	array_unshift($ret, (int)$r);
 }
 
-function sco35_calli( &$file, &$st )
+function sco_calli( &$file, &$st )
 {
 	global $gp_pc;
 	$ret = array();
@@ -875,8 +910,7 @@ function sco35_calli( &$file, &$st )
 
 		if ( $b1 & 0x80 )
 		{
-			list($v,$e) = sco35_varno( $file, $st );
-			$var = sco35_var_get($v, $e, 1);
+			$var = sco_varno( $file, $st );
 			array_unshift($ret, $var);
 			continue;
 		}
@@ -890,22 +924,22 @@ function sco35_calli( &$file, &$st )
 		if ( $b1 >= 0x74 )
 		{
 			$st++;
-			sco35_calli_opr($b1, $ret);
+			sco_calli_opr($b1, $ret);
 			continue;
 		}
 		else
 		{
-			$var = sco35_varno( $file, $st );
+			$var = sco_varno( $file, $st );
 			array_unshift($ret, $var);
 			continue;
 		}
 	} // while (1)
 }
 
-function sco35_keyboard( $type, $args, &$file, &$st )
+function sco_keyboard( $type, $args, &$file, &$st )
 {
 	// keyboard only , skip mouse input
-	global $gp_pc, $gp_input, $gp_key, $sco_input;
+	global $gp_pc, $gp_input, $gp_key;
 	switch ( $type )
 	{
 		// IK 0/1 wait for input data (2+3+4+5)
@@ -923,7 +957,7 @@ function sco35_keyboard( $type, $args, &$file, &$st )
 		// IK 6 input data (2+3+4+5)
 		case "IK3":
 		case "IK6":
-			if ( sco35_loop_IK0( $file, $st ) )
+			if ( sco_loop_IK0( $file, $st ) )
 			{
 				$st += 17;
 				return true;
@@ -946,14 +980,14 @@ function sco35_keyboard( $type, $args, &$file, &$st )
 			trace("IM skip");
 
 			$gp_pc["var"][0] = 0;
-			sco35_var_put( $v1, $e1, -1 );
-			sco35_var_put( $v2, $e2, -1 );
+			sco_var_put( $v1, $e1, -1 );
+			sco_var_put( $v2, $e2, -1 );
 			return true;
 	}
 	return false;
 }
 
-function sco35_skip_func()
+function sco_skip_func()
 {
 	global $gp_pc, $gp_init;
 	$skip = sprintf("%x,%x,", $gp_pc["pc"][0], $gp_pc["pc"][1]);
@@ -965,7 +999,7 @@ function sco35_skip_func()
 	return false;
 }
 
-function sco35_load_sco( $id )
+function sco_load_sco( $id )
 {
 	global $sco_file, $gp_init;
 	if ( ! isset( $sco_file[$id] ) )
@@ -980,7 +1014,7 @@ function sco35_load_sco( $id )
 
 function exec_alice35()
 {
-	global $gp_pc, $sco_input;
+	global $gp_pc;
 	if ( empty($gp_pc["pc"]) )
 		$gp_pc["pc"] = array(0,0);
 
@@ -991,17 +1025,17 @@ function exec_alice35()
 		if ( $gp_pc["pc"][0] < 1 )
 			$gp_pc["pc"][0] = 1;
 
-		$head = sco35_load_sco( $gp_pc["pc"][0] );
+		$head = sco_load_sco( $gp_pc["pc"][0] );
 		if ( $gp_pc["pc"][1] < $head )
 			$gp_pc["pc"][1] = $head;
 
 		$now = $gp_pc["pc"][1];
 
 		trace("= sco_%d_%x : ", $gp_pc["pc"][0], $gp_pc["pc"][1]);
-		sco35_cmd( $gp_pc["pc"][0], $gp_pc["pc"][1], $run, $ajax);
+		sco_cmd( $gp_pc["pc"][0], $gp_pc["pc"][1], $run, $ajax);
 
 		if ( $now == $gp_pc["pc"][1] || $ajax )
 			$run = false;
 	}
-	sco35_html( $ajax );
+	sco_html( $ajax );
 }

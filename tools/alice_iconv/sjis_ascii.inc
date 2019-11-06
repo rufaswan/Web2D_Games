@@ -1,1 +1,1 @@
-../../inc/sjis_ascii.inc
+../../files/sjis_ascii.inc

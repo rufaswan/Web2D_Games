@@ -1,0 +1,7001 @@
+; File Name   : /tmp/new/Sys39c.exe
+; Input MD5   : 20F80A1979C44CE5F33E19573684C7F9
+; Format      : Portable executable for 80386 (PE)
+; =============== S U B R O U T I N E =======================================
+cmd_list        proc near               ; CODE XREF: sub_408260+51^p
+				push    ecx
+				push    offset aA       ; "A"
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				mov     byte ptr [esp+184], 4
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    ebx
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    2
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				mov     byte ptr [esp+196], 10
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    3
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    4
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    10
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				mov     byte ptr [esp+208], 16
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    11
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    12
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    13
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				mov     byte ptr [esp+220], 22
+				push    406h
+				push    404h
+				push    402h
+				push    14
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    21
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    22
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				mov     byte ptr [esp+232], 28
+				push    23
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    24
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    31
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    32
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    33
+				push    -1
+
+				push    ecx
+				push    offset aB       ; "B"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    34
+				push    -1
+
+				push    ecx
+				push    offset aCb      ; "CB"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCc      ; "CC"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCd      ; "CD"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCe      ; "CE"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCf      ; "CF"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCk      ; "CK"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    ebx
+				push    -1
+
+				push    ecx
+				push    offset aCk      ; "CK"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    2
+				push    -1
+
+				push    ecx
+				push    offset aCk      ; "CK"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    3
+				push    -1
+
+				push    ecx
+				push    offset aCl      ; "CL"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				mov     byte ptr [esp+184], 56
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCm      ; "CM"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCp      ; "CP"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCs      ; "CS"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				mov     byte ptr [esp+192], 62
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCt      ; "CT"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    -1
+
+				push    ecx
+				push    offset aCu      ; "CU"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCv      ; "CV"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				mov     byte ptr [esp+204], 44h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCx      ; "CX"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCy      ; "CY"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aCz      ; "CZ"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				mov     byte ptr [esp+216], 74
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aDc      ; "DC"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aDf      ; "DF"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aDi      ; "DI"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				mov     byte ptr [esp+228], 80
+				push    402h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aDr      ; "DR"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    -1
+
+				push    ecx
+				push    offset aDs      ; "DS"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    402h
+				push    -1
+
+				push    ecx
+				push    offset aEc      ; "EC"
+				lea     ecx, [esp+28]
+				call    sub_403FC0
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				mov     byte ptr [esp+236], 86
+				push    -1
+
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    402h
+				push    402h
+				push    401h
+				push    offset aEg      ; "EG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    401h
+				push    offset aEm      ; "EM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aEn      ; "EN"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aEs      ; "ES"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    ebx
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    2
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    3
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    4
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    5
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    6
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    7
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    8
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    9
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    10
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    401h
+				push    11
+				push    offset aF       ; "F"
+				push    44
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aGs      ; "GS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aGx      ; "GX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset asc_436168 ; "H"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aHh      ; "HH"
+				push    34
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aIc      ; "IC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aIe      ; "IE"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aIg      ; "IG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    400h
+				push    offset aIk      ; "IK"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    offset aIm      ; "IM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aIx      ; "IX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aIy      ; "IY"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aIz      ; "IZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    0
+				push    offset aJ       ; "J"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    ebx
+				push    offset aJ       ; "J"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    2
+				push    offset aJ       ; "J"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    3
+				push    offset aJ       ; "J"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    4
+				push    offset aJ       ; "J"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aKi      ; "KI"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aKk      ; "KK"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aKn      ; "KN"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aKp      ; "KP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aKq      ; "KQ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aKr      ; "KR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aKw      ; "KW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    401h
+				push    401h
+				push    offset aLc      ; "LC"
+				push    35
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aLd      ; "LD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    403h
+				push    400h
+				push    offset aLe      ; "LE"
+				push    36
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aLhd     ; "LHD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aLhg     ; "LHG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aLhm     ; "LHM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aLhs     ; "LHS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aLhw     ; "LHW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    400h
+				push    offset aLl      ; "LL"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    401h
+				push    offset aLp      ; "LP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aLt      ; "LT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    403h
+				push    401h
+				push    offset aLxf     ; "LXF"
+				push    86
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    403h
+				push    401h
+				push    offset aLxg     ; "LXG"
+				push    37
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aLxo     ; "LXO"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aLxc     ; "LXC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aLxl     ; "LXL"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    401h
+				push    offset aLxs     ; "LXS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aLxp     ; "LXP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    401h
+				push    offset aLxr     ; "LXR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    401h
+				push    offset aLxw     ; "LXW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aLxwe    ; "LXWE"
+				push    79
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    401h
+				push    offset aLxwh    ; "LXWH"
+				push    80
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    401h
+				push    offset aLxwhh   ; "LXWHH"
+				push    81
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aLxws    ; "LXWS"
+				push    78
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    401h
+				push    offset aLxwt    ; "LXWT"
+				push    77
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    offset aLxx     ; "LXX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMa      ; "MA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMc      ; "MC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aMd      ; "MD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aMe      ; "ME"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aMf      ; "MF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aMg      ; "MG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aMh      ; "MH"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aMhh     ; "MHH"
+				push    68
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    401h
+				push    401h
+				push    offset aMi      ; "MI"
+				push    38
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aMj      ; "MJ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aMl      ; "ML"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMm      ; "MM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    400h
+				push    offset aMn      ; "MN"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMp      ; "MP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    401h
+				push    offset aMs      ; "MS"
+				push    39
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    offset aMt      ; "MT"
+				push    40
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aMv      ; "MV"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    400h
+				push    offset aMz      ; "MZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_10    ; "N+"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_9     ; "N-"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_8     ; "N*"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_7     ; "N/"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_6     ; "N>"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_5     ; "N<"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aN_4     ; "N="
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aN_3     ; "N\\"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    402h
+				push    offset aN_2     ; "N&"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    402h
+				push    offset aN_1     ; "N|"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    402h
+				push    offset aN_0     ; "N^"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aN       ; "N~"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    402h
+				push    offset aNb      ; "NB"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aNc      ; "NC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aNi      ; "NI"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    402h
+				push    402h
+				push    offset aNp      ; "NP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aNr      ; "NR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    402h
+				push    400h
+				push    offset aNo      ; "NO"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    offset aNt      ; "NT"
+				push    41
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aNd_2    ; "ND+"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aNd_1    ; "ND-"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aNd_0    ; "ND*"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aNd      ; "ND/"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aNda     ; "NDA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aNdc     ; "NDC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aNdd     ; "NDD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aNdh     ; "NDH"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aNdm     ; "NDM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aPc      ; "PC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aPd      ; "PD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    offset aPf      ; "PF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    ebx
+				push    offset aPf      ; "PF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    2
+				push    offset aPf      ; "PF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    3
+				push    offset aPf      ; "PF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aPg      ; "PG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aPn      ; "PN"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aPp      ; "PP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aPs      ; "PS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    0
+				push    offset aPt      ; "PT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    402h
+				push    402h
+				push    ebx
+				push    offset aPt      ; "PT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    402h
+				push    402h
+				push    2
+				push    offset aPt      ; "PT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    offset aPw      ; "PW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    ebx
+				push    offset aPw      ; "PW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    2
+				push    offset aPw      ; "PW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    3
+				push    offset aPw      ; "PW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aQc      ; "QC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aQd      ; "QD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    403h
+				push    400h
+				push    offset aQe      ; "QE"
+				push    42
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    401h
+				push    offset aQp      ; "QP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    offset aR       ; "R"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aSc      ; "SC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    ebx
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    2
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    3
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    4
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    5
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    6
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    7
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    8
+				push    offset aSg      ; "SG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aSl      ; "SL"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aSm      ; "SM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aSo      ; "SO"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aSp      ; "SP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aSq      ; "SQ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    400h
+				push    offset aSi      ; "SI"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    0
+				push    offset aSr      ; "SR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    ebx
+				push    offset aSr      ; "SR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aSs      ; "SS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aSt      ; "ST"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    offset aSu      ; "SU"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aSw      ; "SW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    ebx
+				push    400h
+				push    offset aSx      ; "SX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    2
+				push    400h
+				push    offset aSx      ; "SX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    3
+				push    400h
+				push    offset aSx      ; "SX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    4
+				push    400h
+				push    offset aSx      ; "SX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aT       ; "T"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aTaa     ; "TAA"
+				push    8
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aTab     ; "TAB"
+				push    9
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aToc     ; "TOC"
+				push    0
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aTop     ; "TOP"
+				push    4
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aTos     ; "TOS"
+				push    ebx
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aTpc     ; "TPC"
+				push    2
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aTpp     ; "TPP"
+				push    5
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aTps     ; "TPS"
+				push    3
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aUc      ; "UC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aUd      ; "UD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aUg      ; "UG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    403h
+				push    2
+				push    offset aUp      ; "UP"
+				push    43
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aUr      ; "UR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    402h
+				push    offset aUs      ; "US"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    0
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    ebx
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    2
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    3
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    4
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    5
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    6
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    7
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    8
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    401h
+				push    10
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    401h
+				push    11
+				push    offset aVa      ; "VA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVb      ; "VB"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVc      ; "VC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVe      ; "VE"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aVf      ; "VF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVg      ; "VG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVh      ; "VH"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVic     ; "VIC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVip     ; "VIP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVj      ; "VJ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVp      ; "VP"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVr      ; "VR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVs      ; "VS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVt      ; "VT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aVv      ; "VV"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVw      ; "VW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aVx      ; "VX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    400h
+				push    offset aVz      ; "VZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWv      ; "WV"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWw      ; "WW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWx      ; "WX"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    offset aWz      ; "WZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    ebx
+				push    offset aWz      ; "WZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset asc_435EE8 ; "X"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aY       ; "Y"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aZa      ; "ZA"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZb      ; "ZB"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aZc      ; "ZC"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    400h
+				push    offset aZd      ; "ZD"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZe      ; "ZE"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZf      ; "ZF"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aZg      ; "ZG"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZh      ; "ZH"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aZi      ; "ZI"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZl      ; "ZL"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZm      ; "ZM"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aZr      ; "ZR"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZs      ; "ZS"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    ebx
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    2
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    3
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    4
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    5
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    10
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    11
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    20
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    21
+				push    offset aZt      ; "ZT"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aZw      ; "ZW"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    0
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    ebx
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    2
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    3
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    4
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    5
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    6
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    7
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    8
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    9
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    10
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    13
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    14
+				push    offset aZz      ; "ZZ"
+				push    -1
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aArycmpcount ; "aryCmpCount"
+				push    64
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    402h
+				push    offset aArycmptrans ; "aryCmpTrans"
+				push    65
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aCdgetmaxtrack ; "cdGetMaxTrack"
+				push    115
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aCgsetcachesize ; "cgSetCacheSize"
+				push    95
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aDec     ; "dec"
+				push    7
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    403h
+				push    offset aDlgerrorokcanc ; "dlgErrorOkCancel"
+				push    116
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    405h
+				push    401h
+				push    offset aFncsettable ; "fncSetTable"
+				push    102
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    offset aFncsettablefro ; "fncSetTableFromStr"
+				push    103
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aFnccleartable ; "fncClearTable"
+				push    104
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aFnccall ; "fncCall"
+				push    105
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aFncsetreturnco ; "fncSetReturnCode"
+				push    106
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aFncgetreturnco ; "fncGetReturnCode"
+				push    107
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aInc     ; "inc"
+				push    6
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aIptclearwheelc ; "iptClearWheelCount"
+				push    56
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    offset aIptgetwheelcou ; "iptGetWheelCount"
+				push    57
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aIptsetmovecurs ; "iptSetMoveCursorTime"
+				push    74
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aIptgetmovecurs ; "iptGetMoveCursorTime"
+				push    75
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    offset aLnkislink ; "lnkIsLink"
+				push    100
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    offset aLnkisdata ; "lnkIsData"
+				push    101
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aGaijiset ; "gaijiSet"
+				push    97
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aGaijiclearall ; "gaijiClearAll"
+				push    98
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGrcopystretch ; "grCopyStretch"
+				push    54
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGrfilterrect ; "grFilterRect"
+				push    55
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGrblendcolorre ; "grBlendColorRect"
+				push    66
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGrdrawfillcirc ; "grDrawFillCircle"
+				push    67
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGrblt   ; "grBlt"
+				push    76
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGrcopyuseamapu ; "grCopyUseAMapUseA"
+				push    92
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aGrsetceparam ; "grSetCEParam"
+				push    93
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aGreffectmovevi ; "grEffectMoveView"
+				push    94
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aMathsetclipwin ; "mathSetClipWindow"
+				push    84
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    402h
+				push    402h
+				push    402h
+				push    402h
+				push    offset aMathclip ; "mathClip"
+				push    85
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    405h
+				push    offset aMenusetcbksele ; "menuSetCbkSelect"
+				push    49
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    405h
+				push    offset aMenusetcbkcanc ; "menuSetCbkCancel"
+				push    50
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    405h
+				push    offset aMenusetcbkinit ; "menuSetCbkInit"
+				push    69
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aMenuclearcbkse ; "menuClearCbkSelect"
+				push    51
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aMenuclearcbkca ; "menuClearCbkCancel"
+				push    52
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aMenuclearcbkin ; "menuClearCbkInit"
+				push    70
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aMenugetfontsiz ; "menuGetFontSize"
+				push    58
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aMenugetlatests ; "menuGetLatestSelect"
+				push    99
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aMenureduce ; "menuReduce"
+				push    117
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aMenugetnumof ; "menuGetNumof"
+				push    118
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMenugettext ; "menuGetText"
+				push    119
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMenugoto ; "menuGoto"
+				push    120
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aMenureturngoto ; "menuReturnGoto"
+				push    121
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aMenufreeshelte ; "menuFreeShelterDIB"
+				push    122
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    offset aMsg     ; "msg"
+				push    33
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aMsggetfontsize ; "msgGetFontSize"
+				push    59
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aMsgsetoutputfl ; "msgSetOutputFlag"
+				push    108
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aMsgfreeshelter ; "msgFreeShelterDIB"
+				push    123
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aPatchec ; "patchEC"
+				push    83
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aPatchemen ; "patchEMEN"
+				push    112
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aSavedeletefile ; "saveDeleteFile"
+				push    109
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    offset aStrgetchartype ; "strGetCharType"
+				push    60
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aStrgetlengthas ; "strGetLengthASCII"
+				push    61
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    401h
+				push    403h
+				push    offset aStrinputdlg ; "strInputDlg"
+				push    87
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aStrcheckascii ; "strCheckASCII"
+				push    88
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aStrchecksjis ; "strCheckSJIS"
+				push    89
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    offset aStrmessagebox ; "strMessageBox"
+				push    90
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aStrmessageboxs ; "strMessageBoxStr"
+				push    91
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aSyswinmsglock ; "sysWinMsgLock"
+				push    62
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aSyswinmsgunloc ; "sysWinMsgUnlock"
+				push    63
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    offset aSysopenshell ; "sysOpenShell"
+				push    72
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    403h
+				push    offset aSysaddwebmenu ; "sysAddWebMenu"
+				push    73
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aSysgetosname ; "sysGetOSName"
+				push    82
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    403h
+				push    offset aTrace   ; "trace"
+				push    18
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aWavload ; "wavLoad"
+				push    10
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aWavplay ; "wavPlay"
+				push    11
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWavstop ; "wavStop"
+				push    12
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWavunload ; "wavUnload"
+				push    13
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aWavisplay ; "wavIsPlay"
+				push    14
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWavfade ; "wavFade"
+				push    15
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWavfadevolume ; "wavFadeVolume"
+				push    111
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aWavisfade ; "wavIsFade"
+				push    16
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWavstopfade ; "wavStopFade"
+				push    17
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWav3dsetpos ; "wav3DSetPos"
+				push    19
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    402h
+				push    401h
+				push    offset aWav3dgetpos ; "wav3DGetPos"
+				push    21
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aWav3dcommit ; "wav3DCommit"
+				push    20
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWav3dsetposl ; "wav3DSetPosL"
+				push    22
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    402h
+				push    402h
+				push    offset aWav3dgetposl ; "wav3DGetPosL"
+				push    23
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWav3dfadepos ; "wav3DFadePos"
+				push    24
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aWav3disfadepos ; "wav3DIsFadePos"
+				push    25
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWav3dstopfadep ; "wav3DStopFadePos"
+				push    26
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    401h
+				push    401h
+				push    offset aWav3dfadeposl ; "wav3DFadePosL"
+				push    27
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aWav3disfadep_0 ; "wav3DIsFadePosL"
+				push    28
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aWav3dstopfad_0 ; "wav3DStopFadePosL"
+				push    29
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aWav3dsetmode ; "wav3DSetMode"
+				push    53
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWav3dsetusefla ; "wav3DSetUseFlag"
+				push    110
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aSndplay ; "sndPlay"
+				push    30
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    offset aSndstop ; "sndStop"
+				push    31
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aSndisplay ; "sndIsPlay"
+				push    32
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    401h
+				push    offset aWavwaittime ; "wavWaitTime"
+				push    45
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aWavgetplaypos ; "wavGetPlayPos"
+				push    46
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWavwaitend ; "wavWaitEnd"
+				push    47
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    401h
+				push    offset aWavgetwavetime ; "wavGetWaveTime"
+				push    48
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    402h
+				push    offset aWingetflipflag ; "winGetFlipFlag"
+				push    114
+				mov     ecx, esi
+				call    run_cmd
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    406h
+				push    404h
+				push    401h
+				push    offset aWmenuenablemsg ; "wmenuEnableMsgSkip"
+				push    113
+				mov     ecx, esi
+				call    run_cmd
+				mov     ecx, [esp+0BCh+var_C]
+				mov     eax, esi
+				pop     edi
+				pop     esi
+				pop     ebp
+				pop     ebx
+				mov     large fs:0, ecx
+				add     esp, 172
+				retn    4
+cmd_list        endp
+; ---------------------------------------------------------------------------
+aWmenuenablemsg db 'wmenuEnableMsgSkip',0 ; DATA XREF: cmd_list+8B84^o
+aWingetflipflag db 'winGetFlipFlag',0   ; DATA XREF: cmd_list+8B35^o
+aWavgetwavetime db 'wavGetWaveTime',0   ; DATA XREF: cmd_list+8AE6^o
+aWavwaitend     db 'wavWaitEnd',0       ; DATA XREF: cmd_list+8A97^o
+aWavgetplaypos  db 'wavGetPlayPos',0    ; DATA XREF: cmd_list+8A48^o
+aWavwaittime    db 'wavWaitTime',0      ; DATA XREF: cmd_list+89F9^o
+aSndisplay      db 'sndIsPlay',0        ; DATA XREF: cmd_list+89AA^o
+aSndstop        db 'sndStop',0          ; DATA XREF: cmd_list+895B^o
+aSndplay        db 'sndPlay',0          ; DATA XREF: cmd_list+890C^o
+aWav3dsetusefla db 'wav3DSetUseFlag',0  ; DATA XREF: cmd_list+88BD^o
+aWav3dsetmode   db 'wav3DSetMode',0     ; DATA XREF: cmd_list+886E^o
+aWav3dstopfad_0 db 'wav3DStopFadePosL',0 ; DATA XREF: cmd_list+881F^o
+aWav3disfadep_0 db 'wav3DIsFadePosL',0  ; DATA XREF: cmd_list+87D0^o
+aWav3dfadeposl  db 'wav3DFadePosL',0    ; DATA XREF: cmd_list+8781^o
+aWav3dstopfadep db 'wav3DStopFadePos',0 ; DATA XREF: cmd_list+8732^o
+aWav3disfadepos db 'wav3DIsFadePos',0   ; DATA XREF: cmd_list+86E3^o
+aWav3dfadepos   db 'wav3DFadePos',0     ; DATA XREF: cmd_list+8694^o
+aWav3dgetposl   db 'wav3DGetPosL',0     ; DATA XREF: cmd_list+8645^o
+aWav3dsetposl   db 'wav3DSetPosL',0     ; DATA XREF: cmd_list+85F6^o
+aWav3dcommit    db 'wav3DCommit',0      ; DATA XREF: cmd_list+85A7^o
+aWav3dgetpos    db 'wav3DGetPos',0      ; DATA XREF: cmd_list+8558^o
+aWav3dsetpos    db 'wav3DSetPos',0      ; DATA XREF: cmd_list+8509^o
+aWavstopfade    db 'wavStopFade',0      ; DATA XREF: cmd_list+84BA^o
+aWavisfade      db 'wavIsFade',0        ; DATA XREF: cmd_list+846B^o
+aWavfadevolume  db 'wavFadeVolume',0    ; DATA XREF: cmd_list+841C^o
+aWavfade        db 'wavFade',0          ; DATA XREF: cmd_list+83CD^o
+aWavisplay      db 'wavIsPlay',0        ; DATA XREF: cmd_list+837E^o
+aWavunload      db 'wavUnload',0        ; DATA XREF: cmd_list+832F^o
+aWavstop        db 'wavStop',0          ; DATA XREF: cmd_list+82E0^o
+aWavplay        db 'wavPlay',0          ; DATA XREF: cmd_list+8291^o
+aWavload        db 'wavLoad',0          ; DATA XREF: cmd_list+8242^o
+aTrace          db 'trace',0            ; DATA XREF: cmd_list+81F3^o
+aSysgetosname   db 'sysGetOSName',0     ; DATA XREF: cmd_list+81A4^o
+aSysaddwebmenu  db 'sysAddWebMenu',0    ; DATA XREF: cmd_list+8155^o
+aSysopenshell   db 'sysOpenShell',0     ; DATA XREF: cmd_list+8106^o
+aSyswinmsgunloc db 'sysWinMsgUnlock',0  ; DATA XREF: cmd_list+80B7^o
+aSyswinmsglock  db 'sysWinMsgLock',0    ; DATA XREF: cmd_list+8068^o
+aStrmessageboxs db 'strMessageBoxStr',0 ; DATA XREF: cmd_list+8019^o
+aStrmessagebox  db 'strMessageBox',0    ; DATA XREF: cmd_list+7FCA^o
+aStrchecksjis   db 'strCheckSJIS',0     ; DATA XREF: cmd_list+7F7B^o
+aStrcheckascii  db 'strCheckASCII',0    ; DATA XREF: cmd_list+7F2C^o
+aStrinputdlg    db 'strInputDlg',0      ; DATA XREF: cmd_list+7EDD^o
+aStrgetlengthas db 'strGetLengthASCII',0 ; DATA XREF: cmd_list+7E8E^o
+aStrgetchartype db 'strGetCharType',0   ; DATA XREF: cmd_list+7E3F^o
+aSavedeletefile db 'saveDeleteFile',0   ; DATA XREF: cmd_list+7DF0^o
+aPatchemen      db 'patchEMEN',0        ; DATA XREF: cmd_list+7DA1^o
+aPatchec        db 'patchEC',0          ; DATA XREF: cmd_list+7D52^o
+aMsgfreeshelter db 'msgFreeShelterDIB',0 ; DATA XREF: cmd_list+7D03^o
+aMsgsetoutputfl db 'msgSetOutputFlag',0 ; DATA XREF: cmd_list+7CB4^o
+aMsggetfontsize db 'msgGetFontSize',0   ; DATA XREF: cmd_list+7C65^o
+aMsg            db 'msg',0              ; DATA XREF: cmd_list+7C16^o
+aMenufreeshelte db 'menuFreeShelterDIB',0 ; DATA XREF: cmd_list+7BC7^o
+aMenureturngoto db 'menuReturnGoto',0   ; DATA XREF: cmd_list+7B78^o
+aMenugoto       db 'menuGoto',0         ; DATA XREF: cmd_list+7B29^o
+aMenugettext    db 'menuGetText',0      ; DATA XREF: cmd_list+7ADA^o
+aMenugetnumof   db 'menuGetNumof',0     ; DATA XREF: cmd_list+7A8B^o
+aMenureduce     db 'menuReduce',0       ; DATA XREF: cmd_list+7A3C^o
+aMenugetlatests db 'menuGetLatestSelect',0 ; DATA XREF: cmd_list+79ED^o
+aMenugetfontsiz db 'menuGetFontSize',0  ; DATA XREF: cmd_list+799E^o
+aMenuclearcbkin db 'menuClearCbkInit',0 ; DATA XREF: cmd_list+794F^o
+aMenuclearcbkca db 'menuClearCbkCancel',0 ; DATA XREF: cmd_list+7900^o
+aMenuclearcbkse db 'menuClearCbkSelect',0 ; DATA XREF: cmd_list+78B1^o
+aMenusetcbkinit db 'menuSetCbkInit',0   ; DATA XREF: cmd_list+7862^o
+aMenusetcbkcanc db 'menuSetCbkCancel',0 ; DATA XREF: cmd_list+7813^o
+aMenusetcbksele db 'menuSetCbkSelect',0 ; DATA XREF: cmd_list+77C4^o
+aMathclip       db 'mathClip',0         ; DATA XREF: cmd_list+7775^o
+aMathsetclipwin db 'mathSetClipWindow',0 ; DATA XREF: cmd_list+7726^o
+aGreffectmovevi db 'grEffectMoveView',0 ; DATA XREF: cmd_list+76D7^o
+aGrsetceparam   db 'grSetCEParam',0     ; DATA XREF: cmd_list+7688^o
+aGrcopyuseamapu db 'grCopyUseAMapUseA',0 ; DATA XREF: cmd_list+7639^o
+aGrblt          db 'grBlt',0            ; DATA XREF: cmd_list+75EA^o
+aGrdrawfillcirc db 'grDrawFillCircle',0 ; DATA XREF: cmd_list+759B^o
+aGrblendcolorre db 'grBlendColorRect',0 ; DATA XREF: cmd_list+754C^o
+aGrfilterrect   db 'grFilterRect',0     ; DATA XREF: cmd_list+74FD^o
+aGrcopystretch  db 'grCopyStretch',0    ; DATA XREF: cmd_list+74AE^o
+aGaijiclearall  db 'gaijiClearAll',0    ; DATA XREF: cmd_list+745F^o
+aGaijiset       db 'gaijiSet',0         ; DATA XREF: cmd_list+7410^o
+aLnkisdata      db 'lnkIsData',0        ; DATA XREF: cmd_list+73C1^o
+aLnkislink      db 'lnkIsLink',0        ; DATA XREF: cmd_list+7372^o
+aIptgetmovecurs db 'iptGetMoveCursorTime',0 ; DATA XREF: cmd_list+7323^o
+aIptsetmovecurs db 'iptSetMoveCursorTime',0 ; DATA XREF: cmd_list+72D4^o
+aIptgetwheelcou db 'iptGetWheelCount',0 ; DATA XREF: cmd_list+7285^o
+aIptclearwheelc db 'iptClearWheelCount',0 ; DATA XREF: cmd_list+7236^o
+aInc            db 'inc',0              ; DATA XREF: cmd_list+71E7^o
+aFncgetreturnco db 'fncGetReturnCode',0 ; DATA XREF: cmd_list+7198^o
+aFncsetreturnco db 'fncSetReturnCode',0 ; DATA XREF: cmd_list+7149^o
+aFnccall        db 'fncCall',0          ; DATA XREF: cmd_list+70FA^o
+aFnccleartable  db 'fncClearTable',0    ; DATA XREF: cmd_list+70AB^o
+aFncsettablefro db 'fncSetTableFromStr',0 ; DATA XREF: cmd_list+705C^o
+aFncsettable    db 'fncSetTable',0      ; DATA XREF: cmd_list+700D^o
+aDlgerrorokcanc db 'dlgErrorOkCancel',0 ; DATA XREF: cmd_list+6FBE^o
+aDec            db 'dec',0              ; DATA XREF: cmd_list+6F6F^o
+aCgsetcachesize db 'cgSetCacheSize',0   ; DATA XREF: cmd_list+6F20^o
+aCdgetmaxtrack  db 'cdGetMaxTrack',0    ; DATA XREF: cmd_list+6ED1^o
+aArycmptrans    db 'aryCmpTrans',0      ; DATA XREF: cmd_list+6E82^o
+aArycmpcount    db 'aryCmpCount',0      ; DATA XREF: cmd_list+6E33^o
+aZz             db 'ZZ',0               ; DATA XREF: cmd_list+6A55^o
+										; cmd_list+6AA0^o ...
+aZw             db 'ZW',0               ; DATA XREF: cmd_list+6A09^o
+aZt             db 'ZT',0               ; DATA XREF: cmd_list+670F^o
+										; cmd_list+675A^o ...
+aZs             db 'ZS',0               ; DATA XREF: cmd_list+66C3^o
+aZr             db 'ZR',0               ; DATA XREF: cmd_list+6674^o
+aZm             db 'ZM',0               ; DATA XREF: cmd_list+6625^o
+aZl             db 'ZL',0               ; DATA XREF: cmd_list+65D6^o
+aZi             db 'ZI',0               ; DATA XREF: cmd_list+6587^o
+aZh             db 'ZH',0               ; DATA XREF: cmd_list+6538^o
+aZg             db 'ZG',0               ; DATA XREF: cmd_list+64E9^o
+aZf             db 'ZF',0               ; DATA XREF: cmd_list+649A^o
+aZe             db 'ZE',0               ; DATA XREF: cmd_list+644B^o
+aZd             db 'ZD',0               ; DATA XREF: cmd_list+63FC^o
+aZc             db 'ZC',0               ; DATA XREF: cmd_list+63AD^o
+aZb             db 'ZB',0               ; DATA XREF: cmd_list+635E^o
+aZa             db 'ZA',0               ; DATA XREF: cmd_list+630F^o
+aY              db 'Y',0                ; DATA XREF: cmd_list+62C0^o
+asc_435EE8      db 'X',0                ; DATA XREF: cmd_list+6271^o
+										; sub_41CB60:loc_41CDD6^o ...
+aWz             db 'WZ',0               ; DATA XREF: cmd_list+61D7^o
+										; cmd_list+6222^o
+aWx             db 'WX',0               ; DATA XREF: cmd_list+618B^o
+aWw             db 'WW',0               ; DATA XREF: cmd_list+613C^o
+aWv             db 'WV',0               ; DATA XREF: cmd_list+60ED^o
+aVz             db 'VZ',0               ; DATA XREF: cmd_list+609E^o
+aVx             db 'VX',0               ; DATA XREF: cmd_list+604F^o
+aVw             db 'VW',0               ; DATA XREF: cmd_list+6000^o
+aVv             db 'VV',0               ; DATA XREF: cmd_list+5FB1^o
+aVt             db 'VT',0               ; DATA XREF: cmd_list+5F62^o
+aVs             db 'VS',0               ; DATA XREF: cmd_list+5F13^o
+aVr             db 'VR',0               ; DATA XREF: cmd_list+5EC4^o
+aVp             db 'VP',0               ; DATA XREF: cmd_list+5E75^o
+aVj             db 'VJ',0               ; DATA XREF: cmd_list+5E26^o
+aVip            db 'VIP',0              ; DATA XREF: cmd_list+5DD7^o
+aVic            db 'VIC',0              ; DATA XREF: cmd_list+5D88^o
+aVh             db 'VH',0               ; DATA XREF: cmd_list+5D39^o
+aVg             db 'VG',0               ; DATA XREF: cmd_list+5CEA^o
+aVf             db 'VF',0               ; DATA XREF: cmd_list+5C9B^o
+aVe             db 'VE',0               ; DATA XREF: cmd_list+5C4C^o
+aVc             db 'VC',0               ; DATA XREF: cmd_list+5BFD^o
+aVb             db 'VB',0               ; DATA XREF: cmd_list+5BAE^o
+aVa             db 'VA',0               ; DATA XREF: cmd_list+5868^o
+										; cmd_list+58B3^o ...
+aUs             db 'US',0               ; DATA XREF: cmd_list+581C^o
+aUr             db 'UR',0               ; DATA XREF: cmd_list+57CD^o
+aUp             db 'UP',0               ; DATA XREF: cmd_list+577E^o
+aUg             db 'UG',0               ; DATA XREF: cmd_list+5732^o
+aUd             db 'UD',0               ; DATA XREF: cmd_list+56E3^o
+aUc             db 'UC',0               ; DATA XREF: cmd_list+5694^o
+aTps            db 'TPS',0              ; DATA XREF: cmd_list+5645^o
+aTpp            db 'TPP',0              ; DATA XREF: cmd_list+55F6^o
+aTpc            db 'TPC',0              ; DATA XREF: cmd_list+55A7^o
+aTos            db 'TOS',0              ; DATA XREF: cmd_list+5559^o
+aTop            db 'TOP',0              ; DATA XREF: cmd_list+550A^o
+aToc            db 'TOC',0              ; DATA XREF: cmd_list+54BB^o
+aTab            db 'TAB',0              ; DATA XREF: cmd_list+546C^o
+aTaa            db 'TAA',0              ; DATA XREF: cmd_list+541D^o
+aT              db 'T',0                ; DATA XREF: cmd_list+53CE^o
+aSx             db 'SX',0               ; DATA XREF: cmd_list+529B^o
+										; cmd_list+52E7^o ...
+aSw             db 'SW',0               ; DATA XREF: cmd_list+5250^o
+										; sub_41CF00+25B^o
+aSu             db 'SU',0               ; DATA XREF: cmd_list+5201^o
+										; sub_41CF00+249^o
+aSt             db 'ST',0               ; DATA XREF: cmd_list+51B2^o
+										; sub_41CF00+237^o
+aSs             db 'SS',0               ; DATA XREF: cmd_list+5163^o
+aSr             db 'SR',0               ; DATA XREF: cmd_list+50C9^o
+										; cmd_list+5114^o
+aSi             db 'SI',0               ; DATA XREF: cmd_list+507D^o
+aSq             db 'SQ',0               ; DATA XREF: cmd_list+502E^o
+										; sub_41CF00+225^o
+aSp             db 'SP',0               ; DATA XREF: cmd_list+4FDF^o
+										; sub_41CF00+213^o
+aSo             db 'SO',0               ; DATA XREF: cmd_list+4F90^o
+										; sub_41CF00+201^o
+aSm             db 'SM',0               ; DATA XREF: cmd_list+4F41^o
+										; sub_41CF00+1EF^o
+aSl             db 'SL',0               ; DATA XREF: cmd_list+4EF2^o
+aSg             db 'SG',0               ; DATA XREF: cmd_list+4C44^o
+										; cmd_list+4C8F^o ...
+aSc             db 'SC',0               ; DATA XREF: cmd_list+4BF8^o
+aR              db 'R',0                ; DATA XREF: cmd_list+4BA9^o
+aQp             db 'QP',0               ; DATA XREF: cmd_list+4B5A^o
+aQe             db 'QE',0               ; DATA XREF: cmd_list+4B0B^o
+aQd             db 'QD',0               ; DATA XREF: cmd_list+4ABC^o
+aQc             db 'QC',0               ; DATA XREF: cmd_list+4A6D^o
+aPw             db 'PW',0               ; DATA XREF: cmd_list+493B^o
+										; cmd_list+4986^o ...
+aPt             db 'PT',0               ; DATA XREF: cmd_list+4858^o
+										; cmd_list+48A3^o ...
+aPs             db 'PS',0               ; DATA XREF: cmd_list+480C^o
+aPp             db 'PP',0               ; DATA XREF: cmd_list+47BD^o
+aPn             db 'PN',0               ; DATA XREF: cmd_list+476E^o
+aPg             db 'PG',0               ; DATA XREF: cmd_list+471F^o
+aPf             db 'PF',0               ; DATA XREF: cmd_list+45ED^o
+										; cmd_list+4638^o ...
+aPd             db 'PD',0               ; DATA XREF: cmd_list+45A1^o
+aPc             db 'PC',0               ; DATA XREF: cmd_list+4552^o
+aNdm            db 'NDM',0              ; DATA XREF: cmd_list+4503^o
+aNdh            db 'NDH',0              ; DATA XREF: cmd_list+44B4^o
+aNdd            db 'NDD',0              ; DATA XREF: cmd_list+4465^o
+aNdc            db 'NDC',0              ; DATA XREF: cmd_list+4416^o
+aNda            db 'NDA',0              ; DATA XREF: cmd_list+43C7^o
+aNd             db 'ND/',0              ; DATA XREF: cmd_list+4378^o
+aNd_0           db 'ND*',0              ; DATA XREF: cmd_list+4329^o
+aNd_1           db 'ND-',0              ; DATA XREF: cmd_list+42DA^o
+aNd_2           db 'ND+',0              ; DATA XREF: cmd_list+428B^o
+aNt             db 'NT',0               ; DATA XREF: cmd_list+423C^o
+aNo             db 'NO',0               ; DATA XREF: cmd_list+41ED^o
+aNr             db 'NR',0               ; DATA XREF: cmd_list+419E^o
+aNp             db 'NP',0               ; DATA XREF: cmd_list+414F^o
+aNi             db 'NI',0               ; DATA XREF: cmd_list+4100^o
+aNc             db 'NC',0               ; DATA XREF: cmd_list+40B1^o
+aNb             db 'NB',0               ; DATA XREF: cmd_list+4062^o
+aN              db 'N~',0               ; DATA XREF: cmd_list+4013^o
+aN_0            db 'N^',0               ; DATA XREF: cmd_list+3FC4^o
+aN_1            db 'N|',0               ; DATA XREF: cmd_list+3F75^o
+aN_2            db 'N&',0               ; DATA XREF: cmd_list+3F26^o
+aN_3            db 'N\',0               ; DATA XREF: cmd_list+3ED7^o
+aN_4            db 'N=',0               ; DATA XREF: cmd_list+3E88^o
+aN_5            db 'N<',0               ; DATA XREF: cmd_list+3E39^o
+aN_6            db 'N>',0               ; DATA XREF: cmd_list+3DEA^o
+aN_7            db 'N/',0               ; DATA XREF: cmd_list+3D9B^o
+aN_8            db 'N*',0               ; DATA XREF: cmd_list+3D4C^o
+aN_9            db 'N-',0               ; DATA XREF: cmd_list+3CFD^o
+aN_10           db 'N+',0               ; DATA XREF: cmd_list+3CAE^o
+aMz             db 'MZ',0               ; DATA XREF: cmd_list+3C5F^o
+aMv             db 'MV',0               ; DATA XREF: cmd_list+3C10^o
+aMt             db 'MT',0               ; DATA XREF: cmd_list+3BC1^o
+aMs             db 'MS',0               ; DATA XREF: cmd_list+3B72^o
+aMp             db 'MP',0               ; DATA XREF: cmd_list+3B23^o
+aMn             db 'MN',0               ; DATA XREF: cmd_list+3AD4^o
+aMm             db 'MM',0               ; DATA XREF: cmd_list+3A85^o
+aMl             db 'ML',0               ; DATA XREF: cmd_list+3A36^o
+aMj             db 'MJ',0               ; DATA XREF: cmd_list+39E7^o
+aMi             db 'MI',0               ; DATA XREF: cmd_list+3998^o
+aMhh            db 'MHH',0              ; DATA XREF: cmd_list+3949^o
+aMh             db 'MH',0               ; DATA XREF: cmd_list+38FA^o
+aMg             db 'MG',0               ; DATA XREF: cmd_list+38AB^o
+aMf             db 'MF',0               ; DATA XREF: cmd_list+385C^o
+aMe             db 'ME',0               ; DATA XREF: cmd_list+380D^o
+aMd             db 'MD',0               ; DATA XREF: cmd_list+37BE^o
+aMc             db 'MC',0               ; DATA XREF: cmd_list+376F^o
+aMa             db 'MA',0               ; DATA XREF: cmd_list+3720^o
+aLxx            db 'LXX',0              ; DATA XREF: cmd_list+36D1^o
+aLxwt           db 'LXWT',0             ; DATA XREF: cmd_list+3682^o
+aLxws           db 'LXWS',0             ; DATA XREF: cmd_list+3633^o
+aLxwhh          db 'LXWHH',0            ; DATA XREF: cmd_list+35E4^o
+aLxwh           db 'LXWH',0             ; DATA XREF: cmd_list+3595^o
+aLxwe           db 'LXWE',0             ; DATA XREF: cmd_list+3546^o
+aLxw            db 'LXW',0              ; DATA XREF: cmd_list+34F7^o
+aLxr            db 'LXR',0              ; DATA XREF: cmd_list+34A8^o
+aLxp            db 'LXP',0              ; DATA XREF: cmd_list+3459^o
+aLxs            db 'LXS',0              ; DATA XREF: cmd_list+340A^o
+aLxl            db 'LXL',0              ; DATA XREF: cmd_list+33BB^o
+aLxc            db 'LXC',0              ; DATA XREF: cmd_list+336C^o
+aLxo            db 'LXO',0              ; DATA XREF: cmd_list+331D^o
+aLxg            db 'LXG',0              ; DATA XREF: cmd_list+32CE^o
+aLxf            db 'LXF',0              ; DATA XREF: cmd_list+327F^o
+aLt             db 'LT',0               ; DATA XREF: cmd_list+3230^o
+aLp             db 'LP',0               ; DATA XREF: cmd_list+31E1^o
+aLl             db 'LL',0               ; DATA XREF: cmd_list+3192^o
+aLhw            db 'LHW',0              ; DATA XREF: cmd_list+3143^o
+aLhs            db 'LHS',0              ; DATA XREF: cmd_list+30F4^o
+aLhm            db 'LHM',0              ; DATA XREF: cmd_list+30A5^o
+aLhg            db 'LHG',0              ; DATA XREF: cmd_list+3056^o
+aLhd            db 'LHD',0              ; DATA XREF: cmd_list+3007^o
+aLe             db 'LE',0               ; DATA XREF: cmd_list+2FB8^o
+aLd             db 'LD',0               ; DATA XREF: cmd_list+2F69^o
+aLc             db 'LC',0               ; DATA XREF: cmd_list+2F1A^o
+aKw             db 'KW',0               ; DATA XREF: cmd_list+2ECB^o
+aKr             db 'KR',0               ; DATA XREF: cmd_list+2E7C^o
+aKq             db 'KQ',0               ; DATA XREF: cmd_list+2E2D^o
+aKp             db 'KP',0               ; DATA XREF: cmd_list+2DDE^o
+aKn             db 'KN',0               ; DATA XREF: cmd_list+2D8F^o
+aKk             db 'KK',0               ; DATA XREF: cmd_list+2D40^o
+aKi             db 'KI',0               ; DATA XREF: cmd_list+2CF1^o
+aJ              db 'J',0                ; DATA XREF: cmd_list+2B73^o
+										; cmd_list+2BBE^o ...
+aIz             db 'IZ',0               ; DATA XREF: cmd_list+2B27^o
+aIy             db 'IY',0               ; DATA XREF: cmd_list+2AD8^o
+aIx             db 'IX',0               ; DATA XREF: cmd_list+2A89^o
+aIm             db 'IM',0               ; DATA XREF: cmd_list+2A3A^o
+aIk             db 'IK',0               ; DATA XREF: cmd_list+29EB^o
+aIg             db 'IG',0               ; DATA XREF: cmd_list+299C^o
+aIe             db 'IE',0               ; DATA XREF: cmd_list+294D^o
+aIc             db 'IC',0               ; DATA XREF: cmd_list+28FE^o
+aHh             db 'HH',0               ; DATA XREF: cmd_list+28AF^o
+										; sub_41CB60:loc_41CC94^o ...
+asc_436168      db 'H',0                ; DATA XREF: cmd_list+2860^o
+										; sub_41CB60+9^o ...
+aGx             db 'GX',0               ; DATA XREF: cmd_list+2811^o
+aGs             db 'GS',0               ; DATA XREF: cmd_list+27C2^o
+aF              db 'F',0                ; DATA XREF: cmd_list+247B^o
+										; cmd_list+24C7^o ...
+aEs             db 'ES',0               ; DATA XREF: cmd_list+2430^o
+aEn             db 'EN',0               ; DATA XREF: cmd_list+23E1^o
+aEm             db 'EM',0               ; DATA XREF: cmd_list+2392^o
+aEg             db 'EG',0               ; DATA XREF: cmd_list+2343^o
+aEc             db 'EC',0               ; DATA XREF: cmd_list+2246^o
+										; cmd_list+2256^o
+aDs             db 'DS',0               ; DATA XREF: cmd_list+2177^o
+										; cmd_list+2187^o
+aDr             db 'DR',0               ; DATA XREF: cmd_list+20A8^o
+										; cmd_list+20B8^o
+aDi             db 'DI',0               ; DATA XREF: cmd_list+1FD9^o
+										; cmd_list+1FE9^o
+aDf             db 'DF',0               ; DATA XREF: cmd_list+1F0A^o
+										; cmd_list+1F1A^o
+aDc             db 'DC',0               ; DATA XREF: cmd_list+1E3B^o
+										; cmd_list+1E4B^o
+aCz             db 'CZ',0               ; DATA XREF: cmd_list+1D6C^o
+										; cmd_list+1D7C^o
+aCy             db 'CY',0               ; DATA XREF: cmd_list+1C9D^o
+										; cmd_list+1CAD^o
+aCx             db 'CX',0               ; DATA XREF: cmd_list+1BCE^o
+										; cmd_list+1BDE^o
+aCv             db 'CV',0               ; DATA XREF: cmd_list+1AFF^o
+										; cmd_list+1B0F^o
+aCu             db 'CU',0               ; DATA XREF: cmd_list+1A30^o
+										; cmd_list+1A40^o
+aCt             db 'CT',0               ; DATA XREF: cmd_list+1961^o
+										; cmd_list+1971^o
+aCs             db 'CS',0               ; DATA XREF: cmd_list+1892^o
+										; cmd_list+18A2^o
+aCp             db 'CP',0               ; DATA XREF: cmd_list+17C3^o
+										; cmd_list+17D3^o
+aCm             db 'CM',0               ; DATA XREF: cmd_list+16F4^o
+										; cmd_list+1704^o
+aCl             db 'CL',0               ; DATA XREF: cmd_list+1625^o
+										; cmd_list+1635^o
+aCk             db 'CK',0               ; DATA XREF: cmd_list+13C2^o
+										; cmd_list+13D2^o ...
+aCf             db 'CF',0               ; DATA XREF: cmd_list+12F3^o
+										; cmd_list+1303^o
+aCe             db 'CE',0               ; DATA XREF: cmd_list+1224^o
+										; cmd_list+1234^o
+aCd             db 'CD',0               ; DATA XREF: cmd_list+1155^o
+										; cmd_list+1165^o
+aCc             db 'CC',0               ; DATA XREF: cmd_list+1086^o
+										; cmd_list+1096^o
+aCb             db 'CB',0               ; DATA XREF: cmd_list+FB7^o
+										; cmd_list+FC7^o
+aB              db 'B',0                ; DATA XREF: cmd_list+160^o
+										; cmd_list+170^o ...
+aA              db 'A',0                ; DATA XREF: cmd_list+91^o cmd_list+A1^o

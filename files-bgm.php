@@ -22,6 +22,8 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "define.php";
 if ( ! defined("GAME") )  exit("NO GAME\n");
 
+unlink( LIST_FILE );
+init_filelist();
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -88,5 +90,6 @@ var audio = document.getElementById("bgm");
 
 </script>
 
+<p><a href="/">MAIN</a></p>
 </body>
 </html>

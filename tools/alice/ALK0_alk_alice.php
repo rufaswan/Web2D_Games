@@ -28,11 +28,12 @@ function fgetstr( $fp, $pos, $bytes )
 function fgetint( $fp, $pos, $bytes )
 {
 	fseek( $fp, $pos, SEEK_SET );
+	$data = fread($fp, $bytes);
 	$res = 0;
 	for ( $i=0; $i < $bytes; $i++ )
 	{
-		$b = fread( $fp, 1 );
-		$res += ord($b) << ($i*8);
+		$b = ord( $data[$i] );
+		$res += ($b << ($i*8));
 	}
 	return $res;
 }

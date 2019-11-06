@@ -44,16 +44,17 @@ function fgetstr( &$fp, $pos, $byte )
 	return $str;
 }
 
-function fgetint( &$fp, $pos, $byte )
+function fgetint( $fp, $pos, $bytes )
 {
-	fseek($fp, $pos, SEEK_SET);
-	$no = 0;
-	for ( $i=0; $i < $byte; $i++ )
+	fseek( $fp, $pos, SEEK_SET );
+	$data = fread($fp, $bytes);
+	$res = 0;
+	for ( $i=0; $i < $bytes; $i++ )
 	{
-		$b1 = ord( fread($fp,1) );
-		$no += ($b1 << ($i*8));
+		$b = ord( $data[$i] );
+		$res += ($b << ($i*8));
 	}
-	return $no;
+	return $res;
 }
 //////////////////////////////
 function fnstr( &$fp, $pos, $sub )

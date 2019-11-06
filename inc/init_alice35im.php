@@ -21,4 +21,4 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "init_alice35.php";
 
-$sco_input = "sco35_mouse";
+$sco_input = "sco_mouse";

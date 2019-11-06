@@ -24,7 +24,7 @@ require "exec_alice35.php";
 function sco35_mouse( $type, $args, &$file, &$st )
 {
 	// mouse only , skip keyboard input
-	global $gp_pc, $gp_input, $gp_key, $sco_input;
+	global $gp_pc, $gp_input, $gp_key;
 	switch ( $type )
 	{
 		case "IK0":

@@ -179,23 +179,20 @@ function init_cheat()
 		if ( cheat_exp( $t1[1] ) )
 			cheat_exp( $t1[0] );
 	}
+	return;
 }
 
 function initcfg_var( $fname )
 {
 	$var = array();
-	$file = file( $fname );
-		if ( empty($file) )  return $var;
-
-	foreach( $file as $line )
+	foreach( file($fname) as $line )
 	{
-		$line = trim($line);
+		$line = preg_replace("|[\s]+|", '', $line);
 		if ( empty($line) )
 			continue;
 		if ( $line[0] == '#' )
 			continue;
 
-		$line = str_replace(' ', '', $line);
 		$line = strtolower($line);
 		$sep = strpos($line, '=');
 		$k = substr($line, 0, $sep);
@@ -257,6 +254,7 @@ function scanfiles( $dir, &$result )
 		else
 			$result[] = "$dir/$d";
 	}
+	return;
 }
 
 function init_filelist()
@@ -273,6 +271,7 @@ function init_filelist()
 		$buf .= substr($r, $len+1) . "\n";
 
 	file_put_contents( LIST_FILE, $buf );
+	return;
 }
 
 function fileline( $txtfile, $id )
@@ -309,6 +308,7 @@ function pc_save( $ext, $pc )
 
 	//$pc = "<?php\n\$pc=". var_export($pc,true) .";";
 	//file_put_contents(SAVE_FILE . $ext, $pc );
+	return;
 }
 
 function pc_load( $ext )

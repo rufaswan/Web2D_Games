@@ -1,0 +1,41 @@
+# Sys42IDE.exe v1.02 , System 4.0 SDK , AIN 4
+# +10 to the value below , real zero is void , no negatives
+0,int
+1,float
+2,string
+3,STRT
+4,array@int
+5,array@float
+6,array@string
+7,array@unk17
+8,ref int
+9,ref float
+10,ref string
+11,ref STRT
+12,ref array@int
+13,ref array@float
+14,ref array@string
+15,ref array@unk25
+16,IMainSystem
+17,unk27
+20,array@unk30
+21,ref unk31
+22,ref array@unk32
+24,this
+37,bool
+40,array@bool
+41,ref bool
+42,ref array@bool
+
+# HaharanmanTrial.exe , AIN 14
+53,delegate
+57,ref delegate
+69,array<T>
+70,ref array<T>
+72,T &
+76,T ?
+77,ref T ?
+79,ref STRT
+82,enum
+83,ref enum
+90,STRT

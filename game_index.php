@@ -72,12 +72,12 @@ foreach ( $inits as $d )
 
 echo <<<_HTML
 <div class="games">
-	<a href="game_run.php?game=$path" target="_blank" title="GAME">
+	<a href="game_run.php?game=$path" title="GAME">
 	<img src="$thumb" alt="$path" title="$thumb" width="200" height="300">
 	</a>
 	<p>
-		<a href="files-bgm.php?game=$path" target="_blank" title="BGM">BGM</a>
-		<a href="files-img.php?game=$path" target="_blank" title="IMG">IMG</a>
+		<a href="files-bgm.php?game=$path" title="BGM">BGM</a>
+		<a href="files-img.php?game=$path" title="IMG">IMG</a>
 	</p>
 </div>
 _HTML;

@@ -45,16 +45,15 @@ function bmp_header( $cw , $ch )
 	$head .= int2str(    0 , 4 ); // palette num
 	$head .= int2str(    0 , 4 ); // palette num - important
 
-	$c00 = chr(0);
-	$cff = chr(0xff);
-	$head .= "{$cff}{$c00}{$c00}{$c00}"; // bitmask red
-	$head .= "{$c00}{$cff}{$c00}{$c00}"; // bitmask green
-	$head .= "{$c00}{$c00}{$cff}{$c00}"; // bitmask blue
-	$head .= "{$c00}{$c00}{$c00}{$cff}"; // bitmask alpha
-	$head .= "RGBs";
+	// BGRA order
+	$head .= ZERO . ZERO . BYTE . ZERO; // bitmask red
+	$head .= ZERO . BYTE . ZERO . ZERO; // bitmask green
+	$head .= BYTE . ZERO . ZERO . ZERO; // bitmask blue
+	$head .= ZERO . ZERO . ZERO . BYTE; // bitmask alpha
 
+	$head .= "BGRs";
 	for ($i=0; $i < 0x24; $i++)
-		$head .= $c00; // colorspace - unused
+		$head .= ZERO; // colorspace - unused
 
 	$head .= int2str( 0 , 4 ); // gamma red
 	$head .= int2str( 0 , 4 ); // gamma green
@@ -81,10 +80,15 @@ function clut2bmp( $clut_fn , $bmp_fn , $num )
 	for ($i=0; $i < $cn; $i++)
 	{
 		$pos = 0x10 + ($i * 4);
-		if ( $i == $num )
-			$pal[] = substr($clut, $pos, 3) . ZERO;
+		$data = "";
+		$data .= $clut[$pos+2]; // blue
+		$data .= $clut[$pos+1]; // green
+		$data .= $clut[$pos+0]; // red
+		if ( $i == $num ) // alpha
+			$data .= ZERO;
 		else
-			$pal[] = substr($clut, $pos, 4);
+			$data .= $clut[$pos+3];
+		$pal[] = $data;
 	}
 
 	$data = "";
@@ -104,6 +108,11 @@ function clut2bmp( $clut_fn , $bmp_fn , $num )
 	file_put_contents( $bmp_fn, $bmp );
 }
 //////////////////////////////
-// as RGBA has no palette, it is already converted to PNG
-//function rgba2bmp( $rgba_fn , $bmp_fn ) {}
+/*
+As RGBA already has alpha, there is no need to convert a color to alpha
+by script.
+So, the image is already converted to PNG and the func is unused.
+
+function rgba2bmp( $rgba_fn , $bmp_fn ) {}
+ */
 //////////////////////////////

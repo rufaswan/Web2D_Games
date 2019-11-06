@@ -33,115 +33,124 @@ function fgetstr0( $fp, $pos )
 			return $r;
 		$r .= $b;
 	}
+	return $r;
 }
 function fgetint( $fp, $pos, $bytes )
 {
 	fseek( $fp, $pos, SEEK_SET );
+	$data = fread($fp, $bytes);
 	$res = 0;
 	for ( $i=0; $i < $bytes; $i++ )
 	{
-		$b = fread( $fp, 1 );
-		$res += ord($b) << ($i*8);
+		$b = ord( $data[$i] );
+		$res += ($b << ($i*8));
 	}
 	return $res;
 }
 //////////////////////////////
-function get_index( $fp )
+$gp_ald = array(
+	"sa.ald"    => array("sa", 1, false),
+	"adisk.ald" => array("sa", 1, false),
+	"ma.ald"    => array("ma", 1, false),
+	"amidi.ald" => array("ma", 1, false),
+	"da.ald"    => array("da", 1, false),
+	"adata.ald" => array("da", 1, false),
+	"ra.ald"    => array("ra", 1, false),
+	"ares.ald"  => array("ra", 1, false),
+	"ba.ald"    => array("ba", 1, false),
+	"abgm.ald"  => array("ba", 1, false),
+
+	"ga.ald"    => array("ga", 1, true),
+	"gb.ald"    => array("ga", 2, true),
+	"gc.ald"    => array("ga", 3, true),
+	"acg.ald"   => array("ga", 1, true),
+	"bcg.ald"   => array("ga", 2, true),
+	"ccg.ald"   => array("ga", 3, true),
+	"wa.ald"    => array("wa", 1, true),
+	"wb.ald"    => array("wa", 2, true),
+	"wc.ald"    => array("wa", 3, true),
+	"awave.ald" => array("wa", 1, true),
+	"bwave.ald" => array("wa", 2, true),
+	"cwave.ald" => array("wa", 3, true),
+);
+function aldmeta( $fname )
 {
-	$st = fgetint( $fp, 0, 3 );
-	$ed = fgetint( $fp, 3, 3 );
-	fseek( $fp, $st*0x100, SEEK_SET );
-	$dat = fread( $fp, ($ed-$st)*0x100 );
-	$dat = rtrim( $dat, ZERO );
-	while ( (strlen($dat)%3) != 0 )
-		$dat .= ZERO;
-	return $dat;
+	global $gp_ald;
+	foreach ( $gp_ald as $ald => $meta )
+	{
+		if ( stripos($fname, $ald) !== FALSE )
+			return $meta;
+	}
+	return array(0,0,0);
 }
 
-if ( $argc == 1 )   exit("{$argv[0]}  GA.ald  GB.ald  GC.ald...\n");
-if ( stripos($argv[1], "sa.ald") !== FALSE )
-	$dir = "sa";
-else
-if ( stripos($argv[1], "ga.ald") !== FALSE )
-	$dir = "ga";
-else
-if ( stripos($argv[1], "wa.ald") !== FALSE )
-	$dir = "wa";
-else
-if ( stripos($argv[1], "ma.ald") !== FALSE )
-	$dir = "ma";
-else
-if ( stripos($argv[1], "da.ald") !== FALSE )
-	$dir = "da";
-else
-if ( stripos($argv[1], "ba.ald") !== FALSE )
-	$dir = "ba";
-else
-if ( stripos($argv[1], "ra.ald") !== FALSE )
-	$dir = "ra";
-else
-	exit("UNKNOWN {$argv[1]}\n");
+function aldfile( $fname )
+{
+	list($dir,$ind,$mul) = aldmeta($fname);
+	if ( $ind == 0 )  return;
 
-if ( ! is_dir($dir) )
-	mkdir( $dir, 0755 );
+	$fp = fopen($fname, "rb");
+	if ( ! $fp )  return;
 
-$fp = array();
+	@mkdir( $dir, 0755, true );
+
+	$st = fgetint($fp, 0, 3) * 0x100;
+	$ed = fgetint($fp, 3, 3) * 0x100;
+	while ( ($ed%3) != 0 )
+		$ed--;
+
+	$id = 0;
+	$hed = "";
+	while ( $st < $ed )
+	{
+		$arc = fgetint($fp, $st+0, 1);
+		$aid = fgetint($fp, $st+1, 2);
+			$id++;
+			$st += 3;
+
+		if ( $arc != $ind )
+			continue;
+
+		// ald header
+		$cur = fgetint( $fp, ($aid+0)*3, 3 ) * 0x100;
+		$nxt = fgetint( $fp, ($aid+1)*3, 3 ) * 0x100;
+		$fsz = $nxt - $cur;
+
+		// file header
+		$hsz = fgetint ( $fp, $cur+0, 4 );
+			$fsz -= $hsz;
+		$hfs = fgetint ( $fp, $cur+4, 4 );
+		$hfn = fgetstr0( $fp, $cur+16 );
+
+		// extract file
+		$ext = substr($hfn, strrpos($hfn, '.')+1);
+		$ext = strtolower($ext);
+		if ( $mul )
+		{
+			$dn = sprintf("$dir/%03d", ($id >> 8));
+			$fn = sprintf("%05d.%s", $id, $ext);
+		}
+		else
+		{
+			$dn = $dir;
+			$fn = sprintf("%03d.%s", $id, $ext);
+		}
+		@mkdir( $dn, 0755, true );
+
+		fseek( $fp, $cur+$hsz, SEEK_SET );
+		file_put_contents( "$dn/$fn", fread($fp, $fsz) );
+
+		// logging
+		$ent = sprintf("%4x , %8x , %s\n", $id , $hfs, $hfn);
+		echo $ent;
+		$hed .= $ent;
+	}
+
+	file_put_contents("$fname.txt", $hed);
+	fclose($fp);
+	return;
+}
+
+if ( $argc == 1 )  exit();
 for ( $i=1; $i < $argc; $i++ )
-	$fp[$i] = fopen( $argv[$i], "rb" );
-
-$index = get_index( $fp[1] );
-
-$ed = strlen( $index );
-$st = 0;
-$id = 0;
-$hed = "";
-while ( $st < $ed )
-{
-	$b1 = ord( $index[$st+0] );
-	$b2 = ord( $index[$st+1] );
-	$b3 = ord( $index[$st+2] );
-		$id++;
-		$st += 3;
-
-	if ( ($b1|$b2|$b3) == 0 )
-		continue;
-
-	$arc = $b1;
-	$aid = $b2 + ( $b3 << 8 );
-
-	if ( ! isset($fp[$arc]) )
-	{
-		printf("FATAL : Missing ALD-%d @ %x\n", $arc, $st);
-		exit();
-	}
-
-	// filesize from header
-	$pos = fgetint( $fp[$arc], ($aid+0)*3, 3 );
-	$nxt = fgetint( $fp[$arc], ($aid+1)*3, 3 );
-	$hsz = fgetint( $fp[$arc], ($pos*0x100)+0, 4 );
-	$fsz = (($nxt - $pos) * 0x100) - $hsz;
-
-	if ( $dir == "ga" || $dir == "wa" )
-	{
-		$dn = sprintf("$dir/%03d", ($id >> 8));
-		$fn = sprintf("%05d.dat", $id);
-		@mkdir( $dn, 0755, true );
-	}
-	else
-	{
-		$dn = $dir;
-		$fn = sprintf("%03d.dat", $id);
-		@mkdir( $dn, 0755, true );
-	}
-
-	fseek( $fp[$arc], ($pos*0x100)+$hsz, SEEK_SET );
-	$cg = fread( $fp[$arc], $fsz );
-	file_put_contents( "$dn/$fn", $cg );
-
-	$fs = fgetint ( $fp[$arc], ($pos*0x100)+4, 4 );
-	$fn = fgetstr0( $fp[$arc], ($pos*0x100)+16 );
-	$ent = sprintf("%4x , %8x , %s\n", $id , $fs, $fn);
-	echo $ent;
-	$hed .= $ent;
-}
-file_put_contents("{$dir}_ald.hed", $hed);
+	aldfile( $argv[$i] );

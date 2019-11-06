@@ -25,89 +25,99 @@ define("ZERO", chr(  0));
 function fgetint( $fp, $pos, $bytes )
 {
 	fseek( $fp, $pos, SEEK_SET );
+	$data = fread($fp, $bytes);
 	$res = 0;
 	for ( $i=0; $i < $bytes; $i++ )
 	{
-		$b = fread( $fp, 1 );
-		$res += ord($b) << ($i*8);
+		$b = ord( $data[$i] );
+		$res += ($b << ($i*8));
 	}
 	return $res;
 }
 //////////////////////////////
-function get_index( $fp )
+$gp_dat = array(
+	"adisk.dat" => array("disk", 1),
+	"amus.dat"  => array("mus",  1),
+	"amse.dat"  => array("mse",  1),
+	"awav.dat"  => array("wav",  1),
+
+	"amap.dat"  => array("map",  1),
+	"agame.dat" => array("game", 1),
+	"asnd.dat"  => array("snd",  1),
+
+	"acg.dat"   => array("cg",   1),
+	"bcg.dat"   => array("cg",   2),
+	"ccg.dat"   => array("cg",   3),
+	"dcg.dat"   => array("cg",   4),
+	"ecg.dat"   => array("cg",   5),
+	"fcg.dat"   => array("cg",   6),
+	"gcg.dat"   => array("cg",   7),
+	"hcg.dat"   => array("cg",   8),
+
+	// gaiji.dat
+	// ag00.dat
+	// amus_[al3|all|amb|aym|bee|mgn|otm|oy|psg|r41|r42|rg2].dat
+);
+function datmeta( $fname )
 {
-	$st = fgetint( $fp, 0, 2 );
-	$ed = fgetint( $fp, 2, 2 );
-	fseek( $fp, ($st-1)*0x100, SEEK_SET );
-	$dat = fread( $fp, ($ed-$st)*0x100 );
-	$dat = rtrim( $dat, ZERO );
-	while ( (strlen($dat)%2) != 0 )
-		$dat .= ZERO;
-	return $dat;
+	global $gp_dat;
+	foreach ( $gp_dat as $dat => $meta )
+	{
+		if ( stripos($fname, $dat) !== FALSE )
+			return $meta;
+	}
+	return array(0,0,0);
 }
 
-if ( $argc == 1 )   exit("{$argv[0]}  acg.dat  bcg.dat  ccg.dat...\n");
-if ( stripos($argv[1], "adisk.dat") !== FALSE )
-	$dir = "adisk";
-else
-if ( stripos($argv[1], "acg.dat") !== FALSE )
-	$dir = "acg";
-else
-if ( stripos($argv[1], "amus.dat") !== FALSE )
-	$dir = "amus";
-else
-if ( stripos($argv[1], "amap.dat") !== FALSE )
-	$dir = "amap";
-else
-	exit("UNKNOWN {$argv[1]}\n");
-
-if ( ! is_dir($dir) )
-	mkdir( $dir, 0755 );
-
-$fp = array();
-for ( $i=1; $i < $argc; $i++ )
-	$fp[$i] = fopen( $argv[$i], "rb" );
-
-$index = get_index( $fp[1] );
-$disk = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-$ed = strlen( $index );
-$st = 0;
-$id = 0;
-$hed = "";
-while ( $st < $ed )
+function datfile( $fname )
 {
-	$b1 = ord( $index[$st+0] );
-	$b2 = ord( $index[$st+1] );
-		$id++;
-		$st += 2;
+	list($dir,$ind) = datmeta($fname);
+	if ( $ind == 0 )  return;
 
-	if ( $b1 == 0x1a )
-		break;
-	if ( $b1 == 0 )
-		continue;
+	$fp = fopen($fname, "rb");
+	if ( ! $fp )  return;
 
-	$arc = $b1;
-	$aid = $b2;
+	@mkdir( $dir, 0755, true );
 
-	if ( ! isset($fp[$arc]) )
+	$st = fgetint($fp, 0, 2) * 0x100 - 0x100;
+	$ed = fgetint($fp, 2, 2) * 0x100 - 0x100;
+
+	$id = 0;
+	$hed = "";
+	while ( $st < $ed )
 	{
-		printf("FATAL : Missing DAT-%d @ %x\n", $arc, $st);
-		exit();
+		$arc = fgetint($fp, $st+0, 1);
+		$aid = fgetint($fp, $st+1, 1);
+			$id++;
+			$st += 2;
+
+		if ( $arc != $ind )
+			continue;
+
+		// dat header
+		$cur = fgetint( $fp, ($aid+0)*2, 2 ) * 0x100 - 0x100;
+		$nxt = fgetint( $fp, ($aid+1)*2, 2 ) * 0x100 - 0x100;
+		$fsz = $nxt - $cur;
+
+		// extract file
+		$dn = $dir;
+		$fn = sprintf("%03d.dat", $id);
+		@mkdir( $dn, 0755, true );
+
+		fseek( $fp, $cur, SEEK_SET );
+		file_put_contents( "$dn/$fn", fread($fp, $fsz) );
+
+		// logging
+		$ent = sprintf("%8x , %8x , %8x , %s\n", $st , $cur , $fsz , $fn);
+		echo $ent;
+		$hed .= $ent;
 	}
 
-	// adisk has filesize but others dont
-	$pos = fgetint( $fp[$arc], ($aid+0)*2, 2 );
-	$nxt = fgetint( $fp[$arc], ($aid+1)*2, 2 );
-	$fs  = ($nxt - $pos) * 0x100;
-	$fn  = sprintf("%03d.dat", $id);
-
-	fseek( $fp[$arc], ($pos-1)*0x100, SEEK_SET );
-	$cg = fread( $fp[$arc], $fs );
-	file_put_contents( "$dir/$fn", $cg );
-
-	$ent = sprintf("%4x , %s-%3d , %8x , %s\n", $id , $disk[$arc], $aid, $fs, $fn);
-	echo $ent;
-	$hed .= $ent;
+	file_put_contents("{$dir}_dat.txt", $hed, FILE_APPEND);
+	fclose($fp);
+	return;
 }
-file_put_contents("{$dir}_dat.hed", $hed);
+
+if ( $argc == 1 )  exit();
+for ( $i=1; $i < $argc; $i++ )
+	datfile( $argv[$i] );

@@ -1,11 +1,12 @@
-=== system 3.5 ===
-EXE       system35/36/38.exe
-Scenario  *SA.ald
-Graphic   *GA.ald
-Midi      *MA.ald
-Wave      *WA.ald
-Data      *DA.ald
-Resource  *RA.ald
+=== system 3.5+ ===
+EXE       system35/36.exe
+Scenario  *SA.ald/ADISK.ald
+Graphic   *GA.ald/ACG.ald
+Midi      *MA.ald/AMIDI.ald
+Wave      *WA.ald/AWAVE.ald
+Data      *DA.ald/ADATA.ald
+Resource  *RA.ald/ARES.ald
+Saves     *SA.asd/ASLEEP.asd
 
 S350  SA       GA-GB WA  鬼畜王ランス
 S350  SA       GA    WA  ランス4
@@ -35,6 +36,14 @@ S360  SA MA DA GA-GB WA  ママトト
 S360  SA MA    GA-GB WA-WB | RA  ダークロウズ
 S360  SA MA    GA    WA  HUSHABY BABY
 
+=== system 3.8+ ===
+EXE   system38/39.exe
+INI   system38/39.ini
+AINI  system39.ain
+Bgm   *BA.ald/ABGM.ald  + *BA.bgi/BGM.bgi
+Wave  *WA.ald/AWAVE.ald + *WA.wai/AWAVE.wai
+KLD   sactefam.kld
+
 S380  SA       GA    WA  隠れ月
 S380  SA MA DA GA-GB WA  PERSIOM
 S380  SA MA    GA    WA  SeeIn青
@@ -43,30 +52,22 @@ S380  SA       GA    WA  アトラク＝ナクア (廉価版)
 S380  SA       GA    WA | FLOOR*.MAP  かえるにょぱにょ〜ん (廉価版)
 S380  SA       GA    WA | *_DATA.DAT  零式 (廉価版)
 
-=== system 3.9 ===
-EXE   system39.exe
-AINI  system39.ain
-INI   system39.ini
-Bgm   *BA.ald + *BA.bgi
-Wave  *WA.ald + *WA.wai
-KLD   sactefam.kld
-
-S380-AIN  SA    GA          | MA  これDPS? (20世紀アリス)
-S380-AIN  SA    GA    WA    | DA | MA  かえるにょ国にょアリス (20世紀アリス)
-S380-AIN  夜が来る!
-S380-AIN  王子さまLv1
-S380-AIN  SA    GA    WA     Only you-リ・クルス-
-S380-AIN  SA    GA    WA    | DA  大悪司
-S380-AIN  SA    GA    WA     妻みぐい
-S380-AIN  王子さまLv1.5
-S380-AIN  SA BA GA-GB WA-WB | *.ALK  超昂天使エスカレイヤー
-S380-AIN  SA BA GA    WA    KLD  ランス5D
-S380-AIN  Nor
-S380-AIN  俺の下であがけ
-S380-AIN  楽園行
-S380-AIN  SA BA GA    WA-WB KLD  妻みぐい2
-S380-AIN  SA BA GA    WA    KLD  シェル・クレイル
-S380-AIN  SA BA GA    WA    KLD  ナイトデーモン
+S380  AIN SA    GA          | MA  これDPS? (20世紀アリス)
+S380  AIN SA    GA    WA    | DA | MA  かえるにょ国にょアリス (20世紀アリス)
+S380  AIN SA    GB    WA-WB | DA | *.ALK | *.MOZ  夜が来る!
+S380  AIN 王子さまLv1
+S380  AIN SA    GA    WA     Only you-リ・クルス-
+S380  AIN SA    GA    WA    | DA  大悪司
+S380  AIN SA    GA    WA     妻みぐい
+S380  AIN 王子さまLv1.5
+S380  AIN SA BA GA-GB WA-WB | *.ALK  超昂天使エスカレイヤー
+S380  AIN SA BA GA    WA    KLD  ランス5D
+S380  AIN Nor
+S380  AIN 俺の下であがけ
+S380  AIN 楽園行
+S380  AIN SA BA GA    WA-WB KLD  妻みぐい2
+S380  AIN SA BA GA    WA    KLD  シェル・クレイル
+S380  AIN SA BA GA    WA    KLD  ナイトデーモン
 
 === アリスCD ===
 「アリスCD」とは、「ぱすてるチャイム」以降「Only you-リ・クルス-」の間に
@@ -90,11 +91,12 @@ INI     system40.ini
 AIN2    *.ain
 Shader  Shader.slk
 
-AIN4  BA GA     ポポリタン (System 4.2 SDK)
-AIN4  BA GA WA | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムContinue 体験版
+AIN4  BA GA  ポポリタン (System 4.2 SDK)
+AIN4  BA GA    WA    | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムContinue + 体験版
 
-AIN5  BA GA    WA     ばにしゅ! 体験版
-AIN5  BA GA-GC WA-WB | MAP*.DGN/DTX/TES  GALZOOアイランド + 動作確認版
+AIN5  BA GA    WA  ばにしゅ! 体験版
+AIN4  BA GA    WA-WB | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムC++
+AIN5  BA GA-GC WA-WB | MAP*.DGN/DTX/TES | PolyObj.lin  GALZOOアイランド + 動作確認版
 AIN5  BA GA    WA    | RA | Shader | ReignData.RED | Toushin3Map.DAT  闘神都市3
 
 === system 4.0 VERS 6+ ===
@@ -128,7 +130,7 @@ AIN6  BA WA CG | AFF | *.MAD | *.VSF | *.DAT  パステルチャイム3 体験�
 AIN6-MSG1  BA WA CG | Flat  超昂天使エスカレイヤー・リブート 体験版Ver1 + Ver2
 AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED  ランス9 体験版
 AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED | *.MAP  武想少女隊ぶれいど☆ブライダーズ 体験版
-AIN6-MSG1  CG Sound Voice Flat Pact Shader  ランス03 体験版
+AIN6-MSG1  CG Sound Voice Flat Pact Shader  ランス03 + 体験版
 AIN6-MSG1  CG Sound Voice Flat Pact Shader | 3DData.RED | *.VS  イブニクル 体験版
 
 AIN7  CG Sound Voice Flat Pact Shader  妻みぐい3 体験版
@@ -142,10 +144,18 @@ AIN14  CG Sound Voice Flat Pact Shader | 3D  イブニクル2 体験版
 
 === MOVIE ===
 AJP = image JPG + QNT alpha bitmask
+MOZ = video frames zlib compressed 256-colors CLUT and pixels
 ALK = video frames QNT
 MAD = video frames AJP/QNT w/alpha , for special effects
 ALM = video MPEG-1  30fps  ~8mb/s
 AFF = encrypted *.SWF flash file
-FLAT-MTLC-LIBL =
-ELNA-FLAT-MTLC-LIBL =
-APEG-TMNL-SOND-IPIC = zlib compressed (IPICs) + ogg (SOND)
+
+FLAT-MTLC-LIBL
+ELNA-FLAT-MTLC-LIBL
+ELNA-FLAT-TMNL-MTLC-LIBL
+APEG-TMNL-SOND-IPIC
+	TMNL = zlib compressed BMP pixel
+	MTLC = zlib compressed
+	LIBL = QNT + zlib compressed data
+	SOND = Ogg vorbis audio
+	IPIC = zlib compressed

@@ -24,6 +24,7 @@ define("ROOT", dirname(__FILE__) );
 
 define("SJIS_HALF", ROOT . "/sjis_half.inc");
 define("SJIS_ASC",  ROOT . "/sjis_ascii.inc");
+define("CHARSET", "MS932");
 ////////////////////////////////////////
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
@@ -83,7 +84,7 @@ function utf8txt( &$file, &$st )
 {
 	$sjis = substr0( $file, $st );
 	$sjis = sjistxt($sjis);
-	$utf8 = iconv("MS932", "UTF-8", $sjis);
+	$utf8 = @iconv(CHARSET, "UTF-8", $sjis);
 	return $utf8;
 }
 function utf8fnam( &$file, &$st )
@@ -91,5 +92,34 @@ function utf8fnam( &$file, &$st )
 	$utf8 = utf8txt( $file, $st );
 	$utf8 = str_replace('\\', '/', $utf8);
 	return $utf8;
+}
+////////////////////////////////////////
+function float32( $int )
+{
+	// IEEE 754
+	$sig = ($int >> 31) & 1;
+	$exp = ($int >> 23) & 0xff;
+	$man = ($int >>  0) & 0x7fffff;
+
+	$neg = ( $sig ) ? -1 : 1;
+	$norm = 1;
+	if ( $exp == 0 )
+	{
+		if ( $man != 0 ) // denormalized
+			$norm = 0;
+		if ( $man == 0 ) // exact zero
+			return 0;
+	}
+	if ( $exp == 255 )
+	{
+		//if ( $man != 0 ) // nan/not-a-number
+		//if ( $man == 0 ) // infinity
+			return 0;
+	}
+
+	$exp -= 0x7f;
+	$man = $norm + ($man / 0x800000);
+	$man = $man * (2 ** $exp);
+	return $man * $neg;
 }
 ////////////////////////////////////////

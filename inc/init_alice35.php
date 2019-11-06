@@ -47,4 +47,4 @@ $gp_key = array(
 );
 
 define("PATH_META", ROOT ."/". GAME ."/ga/meta.txt");
-$sco_input = "sco35_keyboard";
+$sco_input = "sco_keyboard";

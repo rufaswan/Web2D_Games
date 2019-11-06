@@ -13,11 +13,15 @@
 
 * A self-hosted web server with PHP-CGI
   such as [XAMPP](https://sourceforge.net/projects/xampp/files/)
-* PHP must have the following extensions compiled/enabled
+* PHP MUST have the following extensions compiled/enabled
   * JSON extension - to transfer game state between AJAX requests
   * ICONV extension - to convert non-unicode charset to utf-8 (both text and filenames)
-* Scripts in tools/ are for command-line only. It may need
-  * ZLIB extension - for QNT/AI2/ZLB/ACX file decompression
+* Scripts in tools/ are for PHP-CLI (PHP command-line):
+  * NOT required to upload to web server.
+  * Each *.php is indepandant of each other.
+  * Shared PHP script has *.inc file extension.
+  * For some PHP script, it requires
+    * ZLIB extension - for QNT/AI2/ZLB/ACX file decompression
 
 ## Game Status
 

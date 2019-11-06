@@ -22,7 +22,9 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "define.php";
 if ( ! defined("GAME") )  exit("NO GAME\n");
 
-unlink(SAVE_FILE . "log");
+unlink( SAVE_FILE . "log" );
+unlink( LIST_FILE );
+init_filelist();
 ?><!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">

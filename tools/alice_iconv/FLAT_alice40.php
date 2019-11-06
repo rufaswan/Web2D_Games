@@ -21,17 +21,32 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 //////////////////////////////
+function xorstr( &$str, $key )
+{
+	$ed = strlen($str);
+	while ( $ed > 0 )
+	{
+		$ed--;
+		$b = ord( $str[$ed] );
+		$b ^= $key;
+		$str[$ed] = chr($b);
+	}
+	return;
+}
+//////////////////////////////
 function flat( $fname )
 {
 	$file = file_get_contents($fname);
 		if ( empty($file) )  return;
 
-	$mgc = substr($file, 0, 4);
-	if ( $mgc != "FLAT" )  return;
+	//$mgc = substr($file, 0, 4);
+	//if ( $mgc != "FLAT" )  return;
+	echo "=== FLAT : $fname ===\n";
 
 	$dir = str_replace('.', '_', $fname);
 	@mkdir($dir, 0755, true);
 
+	$elna = false;
 	$ed = strlen($file);
 	$st = 0;
 	while ( $st < $ed )
@@ -39,27 +54,52 @@ function flat( $fname )
 		$tag = substr($file, $st, 4);
 		switch ( $tag )
 		{
+			case "ELNA":
+				printf("$tag , %8x\n", $st);
+				$st += 8;
+				$elna = true;
+				break;
 			case "FLAT":
-			case "MTLC":
-				printf("%8x : $tag\n", $st);
+				$bak = $st;
 				$st += 4;
 				$len = sint32($file, $st);
+				printf("$tag , %8x , %8x\n", $bak, $len);
 				$st += $len;
 				break;
-			case "LIBL":
-				printf("%8x : $tag\n", $st);
+			case "TMNL":
+			case "MTLC":
+				$bak = $st;
 				$st += 4;
 				$len = sint32($file, $st);
+				printf("$tag , %8x , %8x\n", $bak, $len);
+
+				$bak = $st;
+
+				$data = substr($file, $st+4, $len-4);
+				$data = zlib_decode($data);
+				file_put_contents("$dir/$tag", $data);
+
+				$st = $bak + $len;
+				break;
+			case "LIBL":
+				$bak = $st;
+				$st += 4;
+				$len = sint32($file, $st);
+				printf("$tag , %8x , %8x\n", $bak, $len);
 
 				$bak = $st;
 				$liblno = sint32($file, $st);
 
 				for ( $ln=0; $ln < $liblno; $ln++ )
 				{
-					$bak = $st;
+					$bak1 = $st;
 					$fnl = sint32($file, $st);
 					$fnm = substr($file, $st, $fnl);
 						$st += $fnl;
+
+					if ( $elna )
+						xorstr($fnm, 0x55);
+
 					while ( ($st%4) != 0 )
 						$st++;
 
@@ -75,15 +115,25 @@ function flat( $fname )
 
 					$fflag = sint32($file, $st);
 					$fdlen = sint32($file, $st);
-					printf("%8x , %2x , %8x , %s\n", $bak, $fflag, $fdlen, $fnm);
+					printf("%8x , %2x , %8x , %s\n", $bak1, $fflag, $fdlen, $fnm);
 
 					if ( $fflag == 2 )
 					{
 						$st += 4;
 						$fdlen -= 4;
+						$data = substr($file, $st, $fdlen);
 					}
+					else
+					if ( $fflag == 5 )
+					{
+						$st += 4;
+						$fdlen -= 4;
+						$data = substr($file, $st, $fdlen);
+						$data = zlib_decode($data);
+					}
+					else
+						$data = substr($file, $st, $fdlen);
 
-					$data = substr($file, $st, $fdlen);
 					file_put_contents("$dir/$fnm", $data);
 
 					$st += $fdlen;
@@ -93,9 +143,11 @@ function flat( $fname )
 
 				$st = $bak + $len;
 				break;
+			default:
+				return;
 		}
 	}
-
+	return;
 }
 
 if ( $argc == 1 )   exit();

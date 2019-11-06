@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function exec_dummy( &$id, &$st, &$run )
+function exec_dummy()
 {
-	$run = false;
+	return;
 }

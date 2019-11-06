@@ -1,1 +1,1 @@
-../../inc/sjis_half.inc
+../../files/sjis_half.inc

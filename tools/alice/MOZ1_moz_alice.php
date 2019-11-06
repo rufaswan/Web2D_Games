@@ -38,17 +38,34 @@ function fgetint( $fp, $pos, $bytes )
 	return $res;
 }
 //////////////////////////////
-function fnldec( $fname )
+function moz1( $fname )
 {
 	$fp = fopen($fname, "rb");
 		if ( ! $fp )  return;
 
-	$mgc = fgetstr($fp, 0, 3);
-	if ( $mgc != "FNA" )
+	$mgc = fgetstr($fp, 0, 4);
+	if ( $mgc != "MOZ1" )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
+	@mkdir($dir, 0755, true);
 
+	$cnt = fgetint($fp, 4, 4);
+	for ( $i=0; $i < $cnt; $i++ )
+	{
+		$p = 0x14 + ($i * 8);
+		$off = fgetint($fp, $p+0, 4);
+		$len = fgetint($fp, $p+4, 4);
+		printf("%8x , %8x , %8x , %05d.bin\n", $p, $off, $len, $i+1);
+
+		$fn = sprintf("$dir/%05d.bin", $i+1);
+
+		$zip = fgetstr($fp, $off, $len);
+		$zip = zlib_decode($zip);
+		file_put_contents($fn, $zip);
+	}
+
+/*
 	$ed = fgetint($fp, 12, 4);
 	$st = 0x18;
 	$dn = "";
@@ -80,10 +97,11 @@ function fnldec( $fname )
 			$st += 10;
 		}
 	} // while ( $st < $ed )
+*/
 
 	fclose($fp);
 }
 
 if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	fnldec( $argv[$i] );
+	moz1( $argv[$i] );

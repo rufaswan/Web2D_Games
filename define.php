@@ -60,19 +60,27 @@ foreach ( $_REQUEST as $key=>$var )
 	switch ( $key )
 	{
 		case "game":
+			if ( ! file_exists( ROOT ."/$var/init.cfg" ) )
+				break;
 			define("GAME", $var );
-			$cfg = initcfg_var( ROOT ."/". GAME ."/init.cfg" );
+			$cfg = initcfg_var( ROOT ."/$var/init.cfg" );
 			$gp_init = $cfg + $gp_init;
 			//define("SAVE", dechex( crc32($var) ) );
 			//define("SAVE",  md5($var) );
 			//define("SAVE", sha1($var) );
-			define("SAVE", preg_replace( "|[^0-9a-zA-Z\x80-\xff]|" , '_' , GAME ));
+			define("SAVE", preg_replace( "|[^0-9a-zA-Z\x80-\xff]|" , '_' , $var ));
 			define("SAVE_FILE", ROOT ."/sav/". SAVE .".");
 			define("LIST_FILE", SAVE_FILE . "files");
 				init_filelist();
 			break;
 		case "input":
 			$gp_input = explode(',', $var);
+			$ed = count($gp_input);
+			while ( $ed > 1 )
+			{
+				$ed--;
+				$gp_input[$ed] = (int)$gp_input[$ed];
+			}
 			break;
 		case "resume":
 			$gp_pc = pc_load( "pc" );
@@ -81,11 +89,11 @@ foreach ( $_REQUEST as $key=>$var )
 }
 //print_r($gp_init);
 
-define("PATH_JQUERY", "inc/jquery-3.4.0.min.js");
-define("PATH_JPFONT", "inc/mplus-1mn-063a.ttf");
-define("PATH_OGG_1S", "inc/mono-1s.ogg");
-define("SJIS_HALF", ROOT . "/inc/sjis_half.inc");
-define("SJIS_ASC",  ROOT . "/inc/sjis_ascii.inc");
+define("PATH_JQUERY", "files/jquery-3.4.0.min.js");
+define("PATH_JPFONT", "files/mplus-1mn-063a.ttf");
+define("PATH_OGG_1S", "files/mono-1s.ogg");
+define("SJIS_HALF", ROOT . "/files/sjis_half.inc");
+define("SJIS_ASC",  ROOT . "/files/sjis_ascii.inc");
 
 require ROOT . "/inc/init_{$gp_init["engine"]}.php";
 //print_r($gp_init);

@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+define("DEBUG", false);
 //////////////////////////////
 define("BIT8" , 0xff);
 define("BYTE", chr(255));
@@ -46,10 +47,8 @@ function int2str( $int, $byte )
 	return $str;
 }
 //////////////////////////////
-function qnt_pixel( &$file, &$qnt )
+function qnt_pixel( &$dec, &$qnt )
 {
-	$dec = zlib_decode( substr($file, $qnt["hdr"]) );
-
 	$pix = array();
 	$w = $qnt["pw"];
 	$h = $qnt["ph"];
@@ -134,10 +133,8 @@ function qnt_pixel( &$file, &$qnt )
 	return $pix;
 }
 
-function qnt_alpha( &$file, &$qnt )
+function qnt_alpha( &$dec, &$qnt )
 {
-	$dec = zlib_decode( substr($file, $qnt["hdr"] + $qnt["pix"]) );
-
 	$data = array();
 	$w = $qnt["pw"];
 	$h = $qnt["ph"];
@@ -184,7 +181,7 @@ function qnt_alpha( &$file, &$qnt )
 	return $alp;
 }
 
-function data_qnt( &$file, &$qnt )
+function data_qnt( &$file, &$qnt, $fname )
 {
 	$w = $qnt["pw"];
 	$h = $qnt["ph"];
@@ -194,7 +191,11 @@ function data_qnt( &$file, &$qnt )
 		case 0:
 		case 1:
 		case 2:
-			$pix = qnt_pixel($file, $qnt);
+			$dec = substr($file, $qnt["hdr"]);
+			$dec = zlib_decode($dec);
+			if ( DEBUG )
+				file_put_contents("$fname.1", $dec);
+			$pix = qnt_pixel($dec, $qnt);
 			break;
 		default:
 			return "";
@@ -202,7 +203,13 @@ function data_qnt( &$file, &$qnt )
 
 	$alp = "";
 	if ( $qnt["alp"] != 0 )
-		$alp = qnt_alpha($file, $qnt);
+	{
+		$dec = substr($file, $qnt["hdr"] + $qnt["pix"]);
+		$dec = zlib_decode($dec);
+		if ( DEBUG )
+			file_put_contents("$fname.2", $dec);
+		$alp = qnt_alpha($dec, $qnt);
+	}
 
 	//file_put_contents("pix1", $pix[0]); // Blue
 	//file_put_contents("pix2", $pix[1]); // Green
@@ -279,7 +286,7 @@ function qnt2rgba( $fname )
 	$head .= int2str($qnt["pw"], 4);
 	$head .= int2str($qnt["ph"], 4);
 
-	$data  = data_qnt($file, $qnt);
+	$data  = data_qnt($file, $qnt, $fname);
 
 	$file  = $head . $data;
 	file_put_contents("{$fname}.rgba", $file);

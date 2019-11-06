@@ -53,7 +53,9 @@ function vsp2pms( $fname )
 	$x = str2int( $file, 0, 2 );
 	$y = str2int( $file, 2, 2 );
 	$w = str2int( $file, 4, 2 ) - $x;
+		if ( $w % 2 )  $w++;
 	$h = str2int( $file, 6, 2 ) - $y;
+		if ( $h % 2 )  $h++;
 
 	$res = ord( $file[8] );
 	if ( ! $res )  return;
