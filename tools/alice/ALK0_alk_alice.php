@@ -19,43 +19,26 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-function fgetstr( $fp, $pos, $bytes )
-{
-	fseek( $fp, $pos, SEEK_SET );
-	return fread($fp, $bytes);
-}
-function fgetint( $fp, $pos, $bytes )
-{
-	fseek( $fp, $pos, SEEK_SET );
-	$data = fread($fp, $bytes);
-	$res = 0;
-	for ( $i=0; $i < $bytes; $i++ )
-	{
-		$b = ord( $data[$i] );
-		$res += ($b << ($i*8));
-	}
-	return $res;
-}
+require "common.inc";
 //////////////////////////////
 function rip_alk( $fname )
 {
 	$fp = fopen($fname, "rb");
 		if ( ! $fp )  return;
 
-	$mgc = fgetstr($fp, 0, 4);
+	$mgc = fp2str($fp, 0, 4);
 	if ( $mgc != "ALK0" )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
 	mkdir($dir, 0755);
 
-	$cnt = fgetint($fp, 4, 4);
+	$cnt = fp2int($fp, 4, 4);
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$pos = 8 + ($i * 8);
-		$off = fgetint($fp, $pos+0, 4);
-		$siz = fgetint($fp, $pos+4, 4);
+		$off = fp2int($fp, $pos+0, 4);
+		$siz = fp2int($fp, $pos+4, 4);
 
 		if ( $siz == 0 )
 			continue;

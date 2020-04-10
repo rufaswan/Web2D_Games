@@ -43,7 +43,7 @@ echo <<<_HTML
 	</table>
 </td>
 
-<td>
+<td style="width:100%;">
 	<button data="0">SKIP</button>
 </td>
 
@@ -77,9 +77,7 @@ _HTML;
 	#key_input {
 		position:fixed;
 		bottom:0;
-		left:50%;
-		width:40em;
-		margin-left:-20em;
+		width:100%;
 	}
 	#key_input button {
 		font-size:1em;
@@ -94,6 +92,11 @@ _HTML;
 		text-align:center;
 		cursor:pointer;
 	}
+	#clickgpad {
+		position:fixed;
+		bottom:0;
+		text-align:center;
+	}
 </style>
 
 <script>
@@ -102,27 +105,28 @@ var auto_skip = false;
 function listener()
 {
 	if ( auto_skip )
+	{
 		window_update( "&resume&input=key,0" );
-
-	setTimeout(listener, ajax_ms);
+		setTimeout(listener, 100);
+	}
 }
 
-$("#key_input").on("click", "button", function(){
-	var data = $(this).attr("data");
+jq("#key_input").on("click", "button", function(){
+	var data = jq(this).attr("data");
 	if ( data == 0 )
 	{
 		auto_skip = ! auto_skip;
 		if ( auto_skip )
-			$(this).empty().append("AUTO");
+			jq(this).empty().append("AUTO");
 		else
-			$(this).empty().append("SKIP");
+			jq(this).empty().append("SKIP");
 		listener();
 	}
 	else
 		window_update( "&resume&input=key,"+data );
 });
 
-$("#clickgpad").click(function(){
-	$("#key_input table").toggle();
+jq("#clickgpad").click(function(){
+	jq("#key_input table").toggle();
 });
 </script>

@@ -1,0 +1,42 @@
+########################################
+# general
+########################################
+
+# game engine to use
+# value
+#   dummy = dummy [default]
+#   php   = custom php engine
+#   alice30 = Alice-soft games with ADISK.DAT ACG.DAT
+#   alice35 = Alice-soft games with *SA.ALD   *GA.ALD
+engine = dummy
+
+# charset used in game script, will iconv() to utf-8 on ajax
+# value
+#   utf-8 [default]
+#   shift-jis
+#   cp932
+charset = cp932
+
+# canvas size in px
+# default
+#   width  = 300
+#   height = 150
+width  = 640
+height = 480
+
+# seed for srand()
+# default
+#   srand = time()
+srand = 0
+
+# simple cheat engine
+# format
+#   cheat[] = expression,condition,note
+#
+# $var == &$gp_var["var"]
+#
+# $var[29]    = 65535 , $var[28]   < 50 , if LV < 50 then EXP = 65535
+# $var["EXP"] = 65535 , $var["LV"] < 50 , if LV < 50 then EXP = 65535
+#
+# $var["debug"] = 1 , 1 , cheat ON
+# $var["debug"] = 1 , 0 , cheat OFF

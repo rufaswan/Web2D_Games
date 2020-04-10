@@ -55,7 +55,7 @@ function loadfile( $fname , $callback )
 	$ret = array();
 	if ( ! file_exists($fname) )
 		return $ret;
-	foreach ( file($fname) as $line )
+	foreach ( file($fname, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line )
 	{
 		$line = preg_replace("|[\s]+|", '', $line);
 		if ( empty($line) )

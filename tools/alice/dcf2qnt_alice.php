@@ -19,17 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
+require "common.inc";
 //////////////////////////////
 function dcf2qnt( $fname )
 {
@@ -56,7 +46,11 @@ function dcf2qnt( $fname )
 				$st += 8;
 
 				$qnt = substr($file, $st, $len);
-				file_put_contents("$fname.QNT", $qnt);
+				$mgc = substr($qnt, 0, 3);
+				if ( $mgc == "QNT" )
+					file_put_contents("$fname.qnt", $qnt);
+				else
+					file_put_contents("$fname.dat", $qnt);
 				$st += $len;
 				break;
 			default:

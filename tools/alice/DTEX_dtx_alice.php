@@ -19,21 +19,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+require "common.inc";
 ////////////////////////////////////////
-define("ZERO", chr(0));
-
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-////////////////////////////////////////
-// Galzoo Data/map*.dtx
+// Rance6  Data/DungeonData_dlf/*.dtex
+// Pascha2/PaschaC++  Dungeon/field*.dtx
+// Galzoo  Data/map*.dtx
 function dtex( $fname )
 {
 	$file = file_get_contents( $fname );

@@ -22,14 +22,12 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "define.php";
 if ( ! defined("GAME") )  exit("NO GAME\n");
 
-unlink( LIST_FILE );
-init_filelist();
+init_listfile( true );
 ?><!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<title>IMG list</title>
-	<script src="<?php echo PATH_JQUERY; ?>"></script>
 	<style>
 		body { background-color:#000; color:#fff; }
 		div.thumb {
@@ -48,11 +46,10 @@ init_filelist();
 <body>
 
 <?php
-foreach( file(LIST_FILE) as $line )
+foreach( file(LIST_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $img )
 {
-	if ( stripos($line, ".png") == false )
+	if ( stripos($img, ".png") == false )
 		continue;
-	$img = trim($line);
 
 echo <<<_HTML
 <div class="thumb">
@@ -66,7 +63,8 @@ _HTML;
 }
 ?>
 
-<p><a href="/">MAIN</a></p>
+<br style="clear:both;"/>
+<p style="text-decoration:underline;"><a href="..">&gt;&gt; MAIN</a></p>
 </body>
 </html>
 

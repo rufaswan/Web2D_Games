@@ -19,9 +19,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-header("Content-Type: text/html; charset=utf-8;");
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Thu, 1 Jan 1970 12:00:00 GMT");
+header("Content-Type: text/html; charset=UTF-8;");
+header("Pragma: no-cache");
+header("Cache-Control: max-age=0, no-cache, no-store, must-revalidate");
+header("Expires: 0");
 
 define("CRLF", "<br>");
 define("DEBUG", true);
@@ -34,56 +35,56 @@ define("BYTE", chr(255));
 define("BIT8",  0xff);
 define("BIT16", 0xffff);
 define("BIT24", 0xffffff);
+define("BIT32", 0xffffffff);
 require ROOT . "/inc/funcs.php";
 
 $gp_init = array(
 	"engine"  => "dummy",
 	"charset" => "utf-8",
-	"cheat" => array(),
+	"width"   => 300,
+	"height"  => 150,
+	"cheat"   => array(),
+	"srand"   => time(),
 );
 $gp_pc = array(
 	"pc"     => array(),
 	"var"    => array(),
 	"jal"    => array(),
+	"div"    => array(),
 	"bgm"    => array(),
 	"select" => array(),
+
 	"stack"  => array(),
-	"text"   => array(), // p=box,LANG=text,[opt]
-	"div"    => array(), // t=type,p=box,[opt]
 	"return" => "",
 );
 $gp_input = array();
 
-// parse $_GET , $_POST , $_COOKIE
+// $_REQUEST = $_GET , $_POST , $_COOKIE
 foreach ( $_REQUEST as $key=>$var )
 {
 	switch ( $key )
 	{
 		case "game":
-			if ( ! file_exists( ROOT ."/$var/init.cfg" ) )
+			$t1 = ROOT ."/$var/init.cfg";
+			if ( ! file_exists($t1) )
 				break;
-			define("GAME", $var );
-			$cfg = initcfg_var( ROOT ."/$var/init.cfg" );
-			$gp_init = $cfg + $gp_init;
-			//define("SAVE", dechex( crc32($var) ) );
-			//define("SAVE",  md5($var) );
-			//define("SAVE", sha1($var) );
-			define("SAVE", preg_replace( "|[^0-9a-zA-Z\x80-\xff]|" , '_' , $var ));
+			gp_init_cfg($t1);
+
+			define("GAME", $var);
+			//$t1 = dechex( crc32(GAME) );
+			//$t1 = md5(GAME);
+			//$t1 = sha1(GAME);
+			$t1 = preg_replace("|[^0-9a-zA-Z\x80-\xff]|" , '_' , GAME);
+			define("SAVE", $t1);
 			define("SAVE_FILE", ROOT ."/sav/". SAVE .".");
 			define("LIST_FILE", SAVE_FILE . "files");
-				init_filelist();
+				init_listfile( false );
 			break;
 		case "input":
-			$gp_input = explode(',', $var);
-			$ed = count($gp_input);
-			while ( $ed > 1 )
-			{
-				$ed--;
-				$gp_input[$ed] = (int)$gp_input[$ed];
-			}
+			init_input( explode(',', $var) );
 			break;
 		case "resume":
-			$gp_pc = pc_load( "pc" );
+			$gp_pc = load_savefile( "pc" );
 			break;
 	}
 }
@@ -92,8 +93,9 @@ foreach ( $_REQUEST as $key=>$var )
 define("PATH_JQUERY", "files/jquery-3.4.0.min.js");
 define("PATH_JPFONT", "files/mplus-1mn-063a.ttf");
 define("PATH_OGG_1S", "files/mono-1s.ogg");
-define("SJIS_HALF", ROOT . "/files/sjis_half.inc");
-define("SJIS_ASC",  ROOT . "/files/sjis_ascii.inc");
+define("SJIS_HALF" , ROOT . "/files/sjis_half.inc");
+define("SJIS_ASC"  , ROOT . "/files/sjis_ascii.inc");
+define("FUNC_ICONV", "iconv");
 
 require ROOT . "/inc/init_{$gp_init["engine"]}.php";
 //print_r($gp_init);

@@ -19,11 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-define("BIT8" , 0xff);
-define("BIT16", 0xffff);
-define("BIT24", 0xffffff);
-define("BIT32", 0xffffffff);
+require "common.inc";
 //////////////////////////////
 // from System 4.0 SDK/Popolytan/DLL/Sys42VM.dll
 // sub_10001260

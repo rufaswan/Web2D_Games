@@ -103,8 +103,7 @@ function flat( $fname )
 					while ( ($st%4) != 0 )
 						$st++;
 
-					$fnm = sjistxt($fnm);
-					$fnm = iconv("MS932", "UTF-8", $fnm);
+					$fnm = utf8_conv( CHARSET, sjistxt($fnm) );
 
 					$sep = strrpos($fnm, '/');
 					if ( $sep != false )

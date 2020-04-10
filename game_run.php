@@ -22,9 +22,8 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "define.php";
 if ( ! defined("GAME") )  exit("NO GAME\n");
 
-unlink( SAVE_FILE . "log" );
-unlink( LIST_FILE );
-init_filelist();
+file_put_contents( SAVE_FILE . "log", "" );
+init_listfile( true );
 ?><!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">
@@ -50,31 +49,34 @@ init_filelist();
 		margin:0 auto 0 auto;
 		position:relative;
 		color: #fff;
-		width: 320px;
-		height:240px;
+		width: <?php echo $gp_init["width"]; ?>px;
+		height:<?php echo $gp_init["height"]; ?>px;
 		border:1px #fff solid;
 	}
 </style>
 <script src="<?php echo PATH_JQUERY; ?>"></script>
 <script>
+var jq = jQuery.noConflict();
 var ajax_url  = "ajax.php?game=<?php echo GAME; ?>";
-var ajax_done = true;
-var ajax_auto = false;
-var ajax_ms = 200;
-var win_w = 320;
-var win_h = 240;
+var ajax_timer = [];
+var win_w = <?php echo $gp_init["width"]; ?>;
+var win_h = <?php echo $gp_init["height"]; ?>;
 var grid_sz = 256;
+var dummy_ogg = "<?php echo PATH_OGG_1S; ?>";
 </script>
 </head><body>
 <div id="canvas">
 	<div id="window" style="background-image:url('<?php echo GAME; ?>/thumb.png') center center;">
-		<span class="sprites" mouse="160,120">160,120</span>
-		<ul id="select" class="sprites" mouse="320,0">
+		<span class="sprites" mouse="160,120,0,0">160,120</span>
+		<ul id="select" class="sprites" mouse="320,0,0,0">
 			<li data="0">SELECT 1</li>
 			<li data="1">SELECT 2</li>
 			<li data="2">SELECT 3</li>
 			<li data="3">SELECT 4</li>
 		</ul>
+		<script>
+			function ajax_auto(){ return true; }
+		</script>
 	</div> <!-- #window -->
 	<input id="filebgm" type="hidden" value="">
 	<input id="filewav" type="hidden" value="">
@@ -86,28 +88,31 @@ var grid_sz = 256;
 </div> <!-- #dataset -->
 
 <script>
-function add_grid(){
-	var x = 0;
-	while ( x < win_w ){
-		var y = 0;
-		while ( y < win_h ){
-			var grid = "<div class='sprites grid'";
-			grid += " mouse='" +x+ "," +y+ "'";
-			grid += " box='" +grid_sz+ "," +grid_sz+ "'";
-			grid += " style='left:" +x+ "px;top:" +y+ "px;width:" +grid_sz+ "px;height:" +grid_sz+ "px;'";
-			grid += "></div>";
-			$("#window").append(grid);
-			y += grid_sz;
-		}
-		x += grid_sz;
+function clear_ajax(){
+	while ( ajax_timer.length > 0 )
+	{
+		clearTimeout( ajax_timer[0] );
+		ajax_timer.shift();
 	}
 	return;
 }
 
 function update_audio(){
 	["bgm","wav"].forEach(function(v){
-		var src  = $("#play"+v).attr("src");
-		var wave = $("#file"+v).val();
+		var src  = jq("#play"+v).attr("src");
+		if ( ! src )
+		{
+			jq("#play"+v).attr("src", dummy_ogg);
+			src = dummy_ogg;
+		}
+
+		var wave = jq("#file"+v).val();
+		if ( ! wave )
+		{
+			jq("#file"+v).val(dummy_ogg);
+			wave = dummy_ogg;
+		}
+
 		if ( wave != src )
 		{
 			var play = document.getElementById("play"+v);
@@ -118,57 +123,46 @@ function update_audio(){
 	return;
 }
 
-function window_update( input ){
-	if ( ! ajax_done )
-		return;
-	ajax_done = false;
+function update_sprites(){
+	jq(".sprites").each(function(){
+		var style = jq(this).attr("style");
+		if ( ! style )
+			style = "";
 
-	$.ajax({
+		var mouse = jq(this).attr("data-mouse");
+		var css = mouse.split(',');
+		style += "left:" +css[0]+ "px;";
+		style += "top:"  +css[1]+ "px;";
+		if ( css[2] > 0 )
+			style += "width:"  +css[2]+ "px;";
+		if ( css[3] > 0 )
+			style += "height:" +css[3]+ "px;";
+
+		var sxy = jq(this).attr("data-sxy");
+		if ( sxy )
+		{
+			var xy = sxy.split(',');
+			style += "background-position:" +xy[0]+ "px " +xy[1]+ "px;";
+		}
+
+		jq(this).attr("style", style);
+	}); // jq(".sprites").each()
+	return;
+}
+
+function window_update( input ){
+	jq.ajax({
 		method : 'GET',
 		url : ajax_url + input,
-		success : function(data,textStatus,jqXHR){
-			$("#window").empty().append(data);
+	}).done(function(data){
+		// ajax().done()
+		jq("#window").empty().append(data);
 
-			update_audio();
+		update_audio();
+		update_sprites();
 
-			$(".sprites").each(function(){
-				var style = $(this).attr("style");
-				if ( ! style )
-					style = "";
-
-				var mouse = $(this).attr("mouse");
-				if ( mouse )
-				{
-					var css = mouse.split(',');
-					style += "left:" +css[0]+ "px;";
-					style += "top:"  +css[1]+ "px;";
-				}
-
-				var box = $(this).attr("box");
-				if ( box )
-				{
-					var css = box.split(',');
-					style += "width:"  +css[0]+ "px;";
-					style += "height:" +css[1]+ "px;";
-					if ( css.length == 3 )
-						style += "background-color:" +css[2]+ ";";
-					if ( css.length == 4 )
-						style += "background-position:" +css[2]+ "px " +css[3]+ "px;";
-				}
-
-				$(this).attr("style", style);
-			});
-
-			win_w = $("#window").width();
-			win_h = $("#window").height();
-			ajax_auto = $("#win_data").attr("ajax");
-			ajax_done = true;
-			if ( ajax_auto ){
-				setTimeout(function(){
-					window_update( "&resume" );
-				}, ajax_ms);
-			}
-		}
+		ajax_auto();
+		// ajax().done()
 	});
 	return;
 }
@@ -179,14 +173,19 @@ require ROOT . "/inc/html_{$gp_init["engine"]}.php";
 ?><script>
 window_update("");
 
-	$("body").on("click", "li", function(){
-		var data = $(this).attr("data");
+	jq("#window").on("click", "li", function(){
+		clear_ajax();
+		var data = jq(this).attr("data-select");
 		window_update( "&resume&input=select," + data );
 	});
 
-	$("body").on("click", ".sprites", function(){
-		var mouse = $(this).attr("mouse");
-		window_update( "&resume&input=mouse," + mouse );
+	jq("#window").on("click", "div.sprites , img.sprites", function(){
+		clear_ajax();
+		var mouse = jq(this).attr("data-mouse");
+		var mpos = mouse.split(',');
+		var x = mpos[0] + Math.round(mpos[2] / 2);
+		var y = mpos[1] + Math.round(mpos[3] / 2);
+		window_update( "&resume&input=mouse," +x+ "," +y );
 	});
 
 </script>
@@ -195,9 +194,28 @@ window_update("");
 </html>
 <?php
 /*
+function add_grid(){
+	var x = 0;
+	while ( x < win_w ){
+		var y = 0;
+		while ( y < win_h ){
+			var grid = "<div class='sprites grid'";
+			grid += " data-mouse='" +x+ "," +y+ "," +grid_sz+ "," +grid_sz+ "'";
+			grid += " style='left:" +x+ "px;top:" +y+ "px;width:" +grid_sz+ "px;height:" +grid_sz+ "px;'";
+			grid += "></div>";
+			jq("#window").append(grid);
+			y += grid_sz;
+		}
+		x += grid_sz;
+	}
+	return;
+}
+				ajax_timer = setTimeout(function(){
+					window_update( "&resume" );
+				}, ajax_ms);
 				if ( css[0] >= win_w || css[1] >= win_h )
 				{
-					$(this).attr("style", "display:none;");
+					jq(this).attr("style", "display:none;");
 					return;
 				}
 
@@ -210,4 +228,18 @@ for (var n = 0; n < arr.length; n++)
 
 data:text/html, <html contenteditable>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
+
+var d = $.Deferred();
+d.then(function(){
+  var d1 = $.Deferred();
+   console.log("in done 1");
+   window.setTimeout(function(){ d1.resolve(); },1000)
+   return d1.promise(); }
+  ).
+  then(function(){
+    var d1 = $.Deferred();
+    console.log("in done 1");
+    window.setTimeout(function(){ d1.resolve(); },1000)
+    return d1.promise(); }
+  ).
 */

@@ -19,33 +19,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-define("DEBUG", false);
-//////////////////////////////
-define("BIT8" , 0xff);
-define("BYTE", chr(255));
+require "common.inc";
 
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-function int2str( $int, $byte )
-{
-	$str = "";
-	while ( $byte > 0 )
-	{
-		$b = $int & BIT8;
-		$str .= chr($b);
-		$int >>= 8;
-		$byte--;
-	} // while ( $byte > 0 )
-	return $str;
-}
+define("DEBUG", false);
 //////////////////////////////
 function qnt_pixel( &$dec, &$qnt )
 {
@@ -183,22 +159,20 @@ function qnt_alpha( &$dec, &$qnt )
 
 function data_qnt( &$file, &$qnt, $fname )
 {
+	if ( $qnt['t'] > 2 )  return "";
+
 	$w = $qnt["pw"];
 	$h = $qnt["ph"];
 	$siz = $w * $h;
-	switch ( $qnt['t'] )
+
+	$pix = "";
+	if ( $qnt["pix"] != 0 )
 	{
-		case 0:
-		case 1:
-		case 2:
-			$dec = substr($file, $qnt["hdr"]);
-			$dec = zlib_decode($dec);
-			if ( DEBUG )
-				file_put_contents("$fname.1", $dec);
-			$pix = qnt_pixel($dec, $qnt);
-			break;
-		default:
-			return "";
+		$dec = substr($file, $qnt["hdr"]);
+		$dec = zlib_decode($dec);
+		if ( DEBUG )
+			file_put_contents("$fname.1", $dec);
+		$pix = qnt_pixel($dec, $qnt);
 	}
 
 	$alp = "";
@@ -211,17 +185,20 @@ function data_qnt( &$file, &$qnt, $fname )
 		$alp = qnt_alpha($dec, $qnt);
 	}
 
-	//file_put_contents("pix1", $pix[0]); // Blue
-	//file_put_contents("pix2", $pix[1]); // Green
-	//file_put_contents("pix3", $pix[2]); // Red
+	//file_put_contents("pix0", $pix[0]); // Blue
+	//file_put_contents("pix1", $pix[1]); // Green
+	//file_put_contents("pix2", $pix[2]); // Red
 	//file_put_contents("alp",  $alp); // Alpha
 
 	$data = "";
 	for ( $n=0; $n < $siz; $n++ )
 	{
-			$data .= $pix[2][$n]; // R
-			$data .= $pix[1][$n]; // G
-			$data .= $pix[0][$n]; // B
+			$r = ( empty($pix) ) ? ZERO : $pix[2][$n];
+			$g = ( empty($pix) ) ? ZERO : $pix[1][$n];
+			$b = ( empty($pix) ) ? ZERO : $pix[0][$n];
+			$data .= $r;
+			$data .= $g;
+			$data .= $b;
 			if ( empty($alp) )
 				$data .= BYTE; // A
 			else
@@ -278,13 +255,15 @@ function qnt2rgba( $fname )
 	$qnt = qnt_header($file, $type);
 		if ( empty($qnt) )  return;
 
-	printf("QNT-$type , %3d , %3d , %3d , %3d , $fname\n",
+	if ( $qnt["pix"] != 0 )  $type .= 'p';
+	if ( $qnt["alp"] != 0 )  $type .= 'a';
+	printf("QNT-$type , %4d , %4d , %4d , %4d , $fname\n",
 		$qnt["px"], $qnt["py"], $qnt["pw"], $qnt["ph"]
 	);
 
 	$head  = "RGBA";
-	$head .= int2str($qnt["pw"], 4);
-	$head .= int2str($qnt["ph"], 4);
+	$head .= chrint($qnt["pw"], 4);
+	$head .= chrint($qnt["ph"], 4);
 
 	$data  = data_qnt($file, $qnt, $fname);
 

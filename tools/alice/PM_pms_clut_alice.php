@@ -19,38 +19,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+require "common.inc";
 //////////////////////////////
-define("ZERO" , chr(  0));
-define("BYTE" , chr(255));
-define("BIT8" , 0xff);
-
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-function int2str( $int, $byte )
-{
-	$str = "";
-	while ( $byte > 0 )
-	{
-		$b = $int & BIT8;
-		$str .= chr($b);
-		$int >>= 8;
-		$byte--;
-	} // while ( $byte > 0 )
-	return $str;
-}
-//////////////////////////////
-function data_pms16( &$file, &$pms )
+function data_pms16( &$file, &$pms, $st )
 {
 	$data = array();
-	$st = $pms['dat'];
 	for ( $y=0; $y < $pms['h']; $y++ )
 	{
 		$x = 0;
@@ -168,31 +141,19 @@ function data_pms16( &$file, &$pms )
 		} // while ( $x < $pms['w'] )
 	} // for ( $y=0; $y < $pms['h']; $y++ )
 	//////////////////////////
-	$len = $pms['w'] * $pms['h'];
-	$alp = "";
-	if ( $pms['shdw'] )
+	foreach ( $data as $k => $v )
 	{
-		$pms['dat'] = $pms['pal'];
-		$alp = data_pms8( $file, $pms );
+		$r = ($v & 0xf800) >> 8;
+		$g = ($v & 0x07e0) >> 3;
+		$b = ($v & 0x001f) << 3;
+		$data[$k] = array( chr($r) , chr($g) , chr($b) );
 	}
-	$img = "";
-	for ( $i=0; $i < $len; $i++ )
-	{
-		// r=5 g=6 b=5 = 16 bit/pixel
-		// rrrr rggg gggb bbbb
-		$r = ($data[$i] & 0xf800) >> 8;
-		$g = ($data[$i] & 0x07e0) >> 3;
-		$b = ($data[$i] & 0x001f) << 3;
-		$a = ( isset( $alp[$i] ) ) ? $alp[$i] : BYTE;
-		$img .= chr($r).chr($g).chr($b).$a;
-	}
-	return $img;
+	return $data;
 }
 //////////////////////////////
-function data_pms8( &$file, &$pms )
+function data_pms8( &$file, &$pms, $st )
 {
 	$data = array();
-	$st = $pms['dat'];
 	for ( $y=0; $y < $pms['h']; $y++ )
 	{
 		$x = 0;
@@ -284,14 +245,13 @@ function data_pms8( &$file, &$pms )
 	return $img;
 }
 
-function clut_pms8( &$file, &$pms )
+function clut_pms8( &$file, &$pms, $st )
 {
 	$clut = "";
-	$st = $pms['pal'];
 	for ( $i=0; $i < 0x100; $i++ )
 	{
 		$clut .= substr($file, $st, 3);
-		$clut .= chr(BIT8); // alpha , 0 = trans , 255 = solid
+		$clut .= BYTE; // alpha
 		$st += 3;
 	}
 	return $clut;
@@ -316,8 +276,8 @@ function pms2clut( $fname )
 		'y'    => str2int( $file, 0x14, 4 ),
 		'w'    => str2int( $file, 0x18, 4 ),
 		'h'    => str2int( $file, 0x1c, 4 ),
-		'dat'  => str2int( $file, 0x20, 4 ),
-		'pal'  => str2int( $file, 0x24, 4 ),
+		'dat'  => str2int( $file, 0x20, 4 ), // pixel data
+		'pal'  => str2int( $file, 0x24, 4 ), // 8=palette , 16=alpha
 		'meta' => str2int( $file, 0x28, 4 ),
 	);
 
@@ -328,35 +288,51 @@ function pms2clut( $fname )
 				$pms['x'], $pms['y'], $pms['w'], $pms['h']
 			);
 
-			$head  = "CLUT";
-			$head .= int2str(256 , 4);
-			$head .= int2str($pms['w'] , 4);
-			$head .= int2str($pms['h'] , 4);
+			$data = "CLUT";
+			$data .= chrint(256 , 4);
+			$data .= chrint($pms['w'] , 4);
+			$data .= chrint($pms['h'] , 4);
 
-			$clut  = clut_pms8($file , $pms);
-			$data  = data_pms8($file , $pms);
+			$data .= clut_pms8($file , $pms, $pms['pal']);
+			$data .= data_pms8($file , $pms, $pms['dat']);
 
-			$file = $head . $clut . $data;
-			file_put_contents("{$fname}.clut", $file);
-			break;
+			file_put_contents("{$fname}.clut", $data);
+			return;
+
 		case 16:
-			printf("PMS-16 , %3d , %3d , %3d , %3d , $fname\n",
+			$t = "PMS-16";
+			if ( $pms["dat"] )  $t .= "p";
+			if ( $pms["pal"] )  $t .= "a";
+
+			printf("$t , %3d , %3d , %3d , %3d , $fname\n",
 				$pms['x'], $pms['y'], $pms['w'], $pms['h']
 			);
 
-			$head  = "RGBA";
-			$head .= int2str($pms['w'] , 4);
-			$head .= int2str($pms['h'] , 4);
+			$data = "RGBA";
+			$data .= chrint($pms['w'] , 4);
+			$data .= chrint($pms['h'] , 4);
 
-			$data  = data_pms16($file , $pms);
+			$pix = ( $pms['dat'] ) ? data_pms16($file , $pms, $pms['dat']) : "";
+			$alp = ( $pms['pal'] ) ? data_pms8 ($file , $pms, $pms['pal']) : "";
 
-			$file = $head . $data;
-			file_put_contents("{$fname}.rgba", $file);
-			break;
+			$len = $pms['w'] * $pms['h'];
+			for ( $i=0; $i < $len; $i++ )
+			{
+				$r = ( empty($pix) ) ? ZERO : $pix[$i][0];
+				$g = ( empty($pix) ) ? ZERO : $pix[$i][1];
+				$b = ( empty($pix) ) ? ZERO : $pix[$i][2];
+				$a = ( empty($alp) ) ? BYTE : $alp[$i];
+				$data .= $r . $g . $b . $a;
+			}
+
+			file_put_contents("{$fname}.rgba", $data);
+			return;
+
 		default:
 			printf("UNK $fname : %d bpp\n", $pms['bpp']);
-			break;
+			return;
 	}
+	return;
 }
 
 if ( $argc == 1 )   exit();

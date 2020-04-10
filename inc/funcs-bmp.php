@@ -25,25 +25,25 @@ function bmp_header( $cw , $ch )
 	$data_sz = $cw * $ch * 4;
 
 	$head  = "BM"; // magic
-	$head .= int2str( $data_of + $data_sz , 4 ); // filesize
-	$head .= int2str( 0 , 2 ); // unused
-	$head .= int2str( 0 , 2 ); // unused
-	$head .= int2str( $data_of , 4 ); // data offset
+	$head .= chrint( $data_of + $data_sz , 4 ); // filesize
+	$head .= chrint( 0 , 2 ); // unused
+	$head .= chrint( 0 , 2 ); // unused
+	$head .= chrint( $data_of , 4 ); // data offset
 
 	// 38 = v3 undocumented , add alpha channel
 	// 6c = v4 win 95+ , add colorspace + gamma
 	// 7c = v5 win 98+ , add icc profile
-	$head .= int2str( 0x6c , 4 ); // dib head size
-	$head .= int2str(  $cw , 4 ); // width
-	$head .= int2str(  $ch , 4 ); // height
-	$head .= int2str(    1 , 2 ); // plane
-	$head .= int2str(   32 , 2 ); // bit-per-pixel
-	$head .= int2str(    3 , 4 ); // compression
-	$head .= int2str( $data_sz , 4 ); // data size
-	$head .= int2str(   72 , 4 ); // density x
-	$head .= int2str(   72 , 4 ); // density y
-	$head .= int2str(    0 , 4 ); // palette num
-	$head .= int2str(    0 , 4 ); // palette num - important
+	$head .= chrint( 0x6c , 4 ); // dib head size
+	$head .= chrint(  $cw , 4 ); // width
+	$head .= chrint(  $ch , 4 ); // height
+	$head .= chrint(    1 , 2 ); // plane
+	$head .= chrint(   32 , 2 ); // bit-per-pixel
+	$head .= chrint(    3 , 4 ); // compression
+	$head .= chrint( $data_sz , 4 ); // data size
+	$head .= chrint(   72 , 4 ); // density x
+	$head .= chrint(   72 , 4 ); // density y
+	$head .= chrint(    0 , 4 ); // palette num
+	$head .= chrint(    0 , 4 ); // palette num - important
 
 	// BGRA order
 	$head .= ZERO . ZERO . BYTE . ZERO; // bitmask red
@@ -55,9 +55,9 @@ function bmp_header( $cw , $ch )
 	for ($i=0; $i < 0x24; $i++)
 		$head .= ZERO; // colorspace - unused
 
-	$head .= int2str( 0 , 4 ); // gamma red
-	$head .= int2str( 0 , 4 ); // gamma green
-	$head .= int2str( 0 , 4 ); // gamma blue
+	$head .= chrint( 0 , 4 ); // gamma red
+	$head .= chrint( 0 , 4 ); // gamma green
+	$head .= chrint( 0 , 4 ); // gamma blue
 
 	return $head;
 }
@@ -69,10 +69,9 @@ function clut2bmp( $clut_fn , $bmp_fn , $num )
 	$mgc = substr($clut, 0, 4);
 		if ( $mgc != "CLUT" )  return;
 
-	$st = 4;
-	$cn = str2int($clut, $st, 4);
-	$cw = str2int($clut, $st, 4);
-	$ch = str2int($clut, $st, 4);
+	$cn = str2int($clut,  4, 4);
+	$cw = str2int($clut,  8, 4);
+	$ch = str2int($clut, 12, 4);
 
 	$bmp = bmp_header( $cw , $ch );
 
@@ -109,9 +108,9 @@ function clut2bmp( $clut_fn , $bmp_fn , $num )
 }
 //////////////////////////////
 /*
-As RGBA already has alpha, there is no need to convert a color to alpha
-by script.
-So, the image is already converted to PNG and the func is unused.
+As RGBA already has alpha, there is no need to convert
+a color to alpha on-the-fly by script.
+The image is already PNG and the func is unused.
 
 function rgba2bmp( $rgba_fn , $bmp_fn ) {}
  */

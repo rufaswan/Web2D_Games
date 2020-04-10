@@ -45,7 +45,7 @@ function debug()
 	return;
 }
 
-function str2int( &$str, &$pos, $byte )
+function str2int( &$str, $pos, $byte )
 {
 	$int = 0;
 	for ( $i=0; $i < $byte; $i++ )
@@ -53,20 +53,32 @@ function str2int( &$str, &$pos, $byte )
 		$c = ord( $str[$pos+$i] );
 		$int += ($c << ($i*8));
 	}
-	$pos += $byte;
 	return $int;
 }
 
-function int2str( $int, $byte )
+function ordint( $str )
+{
+	$len = strlen($str);
+	$int = 0;
+	for ( $i=0; $i < $len; $i++ )
+	{
+		$b = ord( $str[$i] );
+		$int += ($b << ($i*8));
+	}
+	return $int;
+}
+
+function chrint( $int, $byte = 0 )
 {
 	$str = "";
-	while ( $byte > 0 )
+	for ( $i=0; $i < $byte; $i++ )
 	{
-		$byte--;
-		$n = $int & 0xff;
-		$str .= chr($n);
+		$b = $int & BIT8;
+		$str .= chr($b);
 		$int >>= 8;
 	}
+	while ( strlen($str) < $byte )
+		$str .= ZERO;
 	return $str;
 }
 
@@ -102,68 +114,24 @@ function box_within( $big , $small )
 	return true;
 }
 
-function cheat_exp( $exp )
+function init_input( $get )
 {
-	if ( empty($exp) )
-		return false;
+	global $gp_input;
+	$gp_input = array();
 
-	$m = array();
-	preg_match_all("@[0-9a-zA-Z]+|[^0-9a-zA-Z]@", $exp, $m);
-	$m = $m[0];
-	$len = count($m);
-	if ( $len < 3 )
-		return true;
-
-	global $gp_pc;
-	$opr = "";
-	$v1 = 0;
-	$v2 = 0;
-
-	$st = 0;
-	//print_r($m);
-	if ( $m[$st] == '&' )
+	$type = array_shift($get);
+	$type = strtolower($type);
+	switch ( $type )
 	{
-		$v1 = &$gp_pc["var"][ $m[$st+1] ];
-		$st += 2;
+		case "mouse":
+			$gp_input[$type] = array(0+$get[0] , 0+$get[1]);
+			return;
+		case "key":
+		case "select":
+			$gp_input[$type] = 0 + $get[0];
+			return;
 	}
-	else
-	{
-		$v1 = $m[$st];
-		$st++;
-	}
-
-	if ( $m[$st+1] == '=' )
-	{
-		$opr = $m[$st+0] . $m[$st+1];
-		$st += 2;
-	}
-	else
-	{
-		$opr = $m[$st];
-		$st++;
-	}
-
-	if ( $m[$st] == '&' )
-	{
-		$v2 = &$gp_pc["var"][ $m[$st+1] ];
-		$st += 2;
-	}
-	else
-	{
-		$v2 = $m[$st];
-		$st++;
-	}
-
-	//trace("cheat $opr , $v1 , $v2");
-	switch ( $opr )
-	{
-		case '=':  $v1  = $v2; return false;
-		case '+=': $v1 += $v2; return false;
-		case '-=': $v1 -= $v2; return false;
-		case '*=': $v1 *= $v2; return false;
-		case '/=': $v1 /= $v2; return false;
-	}
-	return var_math($opr,$v1,$v2);
+	return;
 }
 
 function init_cheat()
@@ -172,20 +140,23 @@ function init_cheat()
 	if ( empty( $gp_init["cheat"] ) )
 		return;
 
+	global $gp_pc;
+	$var = &$gp_pc["var"];
 	foreach ( $gp_init["cheat"] as $cht )
 	{
 		//trace("cheat $cht");
 		$t1  = explode(',', $cht);
-		if ( cheat_exp( $t1[1] ) )
-			cheat_exp( $t1[0] );
+		if ( empty($t1[1]) )
+			$t1[1] = '0';
+		eval( "if ( {$t1[1]} )  {$t1[0]};" );
 	}
 	return;
 }
 
-function initcfg_var( $fname )
+function gp_init_cfg( $fname )
 {
-	$var = array();
-	foreach( file($fname) as $line )
+	global $gp_init;
+	foreach( file($fname, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line )
 	{
 		$line = preg_replace("|[\s]+|", '', $line);
 		if ( empty($line) )
@@ -200,47 +171,12 @@ function initcfg_var( $fname )
 		if ( strpos($k, '[]') )
 		{
 			$k = str_replace('[]', '', $k);
-			$var[$k][] = $v;
+			$gp_init[$k][] = $v;
 		}
 		else
-			$var[$k] = $v;
+			$gp_init[$k] = $v;
 	}
-	return $var;
-}
-
-function findfile( $sprint , $num , $default = "" )
-{
-	if ( is_numeric($num) )
-	{
-		if ( $num < 0 )
-			return $default;
-
-		$s  = count_chars($sprint, 1);
-		switch ( $s[0x25] ) // %
-		{
-			case 1: $fn = sprintf($sprint,  $num);  break;
-			case 2: $fn = sprintf($sprint, ($num >>  8),  $num);  break;
-			case 3: $fn = sprintf($sprint, ($num >> 16), ($num >> 8),   $num);  break;
-			case 4: $fn = sprintf($sprint, ($num >> 24), ($num >> 16), ($num >> 8), $num);  break;
-		}
-	}
-	else
-		$fn = sprintf($sprint,  $num);
-
-	if ( ! file_exists( LIST_FILE ) )
-		return $default;
-
-	$fp = fopen(LIST_FILE, "r");
-	while ( ! feof($fp) )
-	{
-		$line = fgets($fp);
-		if ( stripos($line,$fn) === 0 )
-			return rtrim($line);
-	}
-
-	if ( empty($default) )
-		return $fn;
-	return $default;
+	return;
 }
 
 function scanfiles( $dir, &$result )
@@ -257,9 +193,9 @@ function scanfiles( $dir, &$result )
 	return;
 }
 
-function init_filelist()
+function init_listfile( $forced )
 {
-	if ( file_exists( LIST_FILE ) )
+	if ( ! $forced && file_exists( LIST_FILE ) )
 		return;
 	$res = array();
 	$dir = ROOT ."/". GAME;
@@ -274,35 +210,28 @@ function init_filelist()
 	return;
 }
 
-function fileline( $txtfile, $id )
+function fgetline( $txtfile, $line )
 {
-	$fp = fopen($txtfile, "r");
-	if ( ! $fp )
-		debug("fileline fopen $txtfile");
+	//$file = file($txtfile, FILE_IGNORE_NEW_LINES);
+	//if ( ! isset($file[$line]) )
+		//return "";
+	//return $file[$line];
 
-	$src = "$id,";
-	$len = strlen($src);
-	$no  = 0;
+	// simpler
+	$fp = fopen($txtfile, "r");
+	if ( ! $fp )  return "";
+	$cur = 0;
 	while ( ! feof($fp) )
 	{
-		$line = fgets($fp);
-		if ( strpos($line,$src) === 0 )
-		{
-			$line = rtrim($line);
-			$r = array($k, substr($line, $len));
-			return $r;
-		}
-		$no++;
+		$str = fgets($fp);
+		if ( $cur == $line )
+			return rtrim($str, "\r\n");
+		$cur++;
 	}
-	return array(-1, "");
+	return "";
 }
 
-function fileline2( $txtfile, $id1, $id2 )
-{
-	return fileline( $txtfile, "$id1,$id2" );
-}
-
-function pc_save( $ext, $pc )
+function save_savefile( $ext, &$pc )
 {
 	file_put_contents(SAVE_FILE . $ext, json_encode($pc) );
 
@@ -311,10 +240,10 @@ function pc_save( $ext, $pc )
 	return;
 }
 
-function pc_load( $ext )
+function load_savefile( $ext )
 {
-	$save = SAVE_FILE . $ext;
 	$pc = array();
+	$save = SAVE_FILE . $ext;
 	if ( ! file_exists($save) )
 		return $pc;
 
@@ -334,6 +263,7 @@ function time2date( $time )
 	return explode(',', $date);
 }
 
+// multi-bits AND , as in ($var & 0xc0)
 function bit_and( $val, $flags )
 {
 	$r = $val & $flags;
@@ -351,13 +281,13 @@ function var_math( $opr, $v1, $v2 )
 		case '/':   case "div":  $n = $v1 / $v2; break;
 		case '%':   case "rem":  $n = $v1 % $v2; break;
 		case '&':   case "and":  $n = $v1 & $v2; break;
-		case '|':   case "or":   $n = $v1 | $v2; break;
+		case '|':   case "or" :  $n = $v1 | $v2; break;
 		case '^':   case "xor":  $n = $v1 ^ $v2; break;
-		case '<':   case "lt":   $n = ($v1 <  $v2); break;
-		case '>':   case "gt":   $n = ($v1 >  $v2); break;
+		case '<':   case "lt" :  $n = ($v1 <  $v2); break;
+		case '>':   case "gt" :  $n = ($v1 >  $v2); break;
 		case '<=':  case "lte":  $n = ($v1 <= $v2); break;
 		case '>=':  case "gte":  $n = ($v1 >= $v2); break;
-		case '==':  case "eq":   $n = ($v1 == $v2); break;
+		case '==':  case "eq" :  $n = ($v1 == $v2); break;
 		case '!=':  case "neq":  $n = ($v1 != $v2); break;
 	}
 	return (int)$n;
@@ -367,19 +297,31 @@ function var_math( $opr, $v1, $v2 )
 function var_size( $n )
 {
 	if ( $n < 0 )
-		return $n * -1;
-	else
-		return $n;
+		$n *= -1;
+	return $n;
 }
 // var no lower than min
 function var_min( $var, $min )
 {
-	return ( $var < $min ) ? $min : $var;
+	if ( $var < $min )
+		return $min;
+	return $var;
 }
 // var no higher than max
 function var_max( $var, $max )
 {
-	return ( $var > $max ) ? $max : $var;
+	if ( $var > $max )
+		return $max;
+	return $var;
+}
+
+function var_box( $x, $y, $w, $h, $bw, $bh )
+{
+	$x1 = var_min($x, 0);
+	$y1 = var_min($y, 0);
+	$x2 = var_max($x + $w, $bw);
+	$y2 = var_max($y + $h, $bh);
+	return array($x1, $y1, $x2-$x1, $y2-$y1);
 }
 
 // str meant to be boolean
@@ -391,4 +333,18 @@ function var_bool( $str )
 	if ( in_array($s, $ok) )  return true;
 	if ( in_array($s, $no) )  return false;
 	return $str;
+}
+
+function str_html( $str )
+{
+	$rs = array('&'    ,'<'   ,'>'   ,'"'     ,"'"     );
+	$rp = array("&amp;","&lt;","&gt;","&quot;","&apos;");
+	return str_replace($rs, $rp, $str);
+}
+
+function unstr_html( $str )
+{
+	$rs = array("&amp;","&lt;","&gt;","&quot;","&apos;");
+	$rp = array('&'    ,'<'   ,'>'   ,'"'     ,"'"     );
+	return str_replace($rs, $rp, $str);
 }

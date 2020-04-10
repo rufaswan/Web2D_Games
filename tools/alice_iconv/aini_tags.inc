@@ -30,6 +30,9 @@ function ainitags( &$file, &$st, $dir )
 			echo "HEL0\n";
 			$st += 8;
 
+			// Sact.dll = 10
+			// Log( $arg ) = 5
+			// 10,5,Sact,Log,argc
 			$buf = "";
 			$dllno = sint32($file, $st);
 			for ( $dn=0; $dn < $dllno; $dn++ )
@@ -43,10 +46,11 @@ function ainitags( &$file, &$st, $dir )
 					$buf .= "$dn,$fn,$dll,$func";
 
 					$parno = sint32($file, $st);
+					$buf .= ",$parno";
 					for ( $pn=0; $pn < $parno; $pn++ )
 					{
 						$par = sint32($file, $st);
-						$buf .= ",$par";
+						//$buf .= ",$par";
 					}
 					$buf .= "\n";
 				}
@@ -57,14 +61,26 @@ function ainitags( &$file, &$st, $dir )
 			echo "FUNC\n";
 			$st += 8;
 
-			$buf = "";
 			$funcno = sint32($file, $st);
-			for ( $fn=0; $fn < $funcno; $fn++ )
+			$data = array();
+			while ( $funcno )
 			{
+				$funcno--;
 				$func = utf8txt($file, $st);
 				$scon = sint16($file, $st);
 				$addr = sint32($file, $st);
-				$buf .= "$fn,$func,$scon,$addr\n";
+				$data[$scon][$addr] = $func;
+			}
+
+			// game_sub.com = 182.sco
+			// 182,32,func_name
+			$buf = "";
+			ksort($data);
+			foreach ( $data as $k1 => $v1 )
+			{
+				ksort($v1);
+				foreach( $v1 as $k2 => $v2 )
+					$buf .= "$k1,$k2,$v2\n";
 			}
 			file_put_contents("$dir/FUNC", $buf);
 			return;
@@ -73,12 +89,13 @@ function ainitags( &$file, &$st, $dir )
 			echo "$tag\n";
 			$st += 8;
 
+			// zero(0) is not NULL !
 			$buf = "";
 			$varno = sint32($file, $st);
 			for ( $vn=0; $vn < $varno; $vn++ )
 			{
 				$var = utf8txt($file, $st);
-				$buf .= "$vn,$var\n";
+				$buf .= "$var\n";
 			}
 			file_put_contents("$dir/$tag", $buf);
 			return;

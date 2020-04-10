@@ -1,5 +1,29 @@
-=== system 3.5+ ===
-EXE       system35/36.exe
+=== system 3.0 (640*480) ===
+EXE       system3.exe
+Scenario  ADISK.dat
+Graphic   ACG.dat
+Midi      AMIDI.dat/AMUS.dat/ASND.dat
+Wave      AWAVE.dat/AWAV.dat/AMSE.dat
+Data      ADATA.dat/AGAME.dat/AMAP.dat
+Resource  ARES.dat
+Saves     ASLEEP.dat
+
+	AmbivalenZ
+	DPS全部
+	Only You + デモ版
+	prostudent G (CD-ROM版のみ)
+	あゆみちゃん物語 (CD-ROM版のみ)
+	あゆみちゃん物語 実写版 (256色版のみ)
+	アリスの館3
+	ファニーBee
+	ランス 4.1
+	ランス 4.2
+	走り女2
+	闘神都市II そして、それから...
+	夢幻泡影
+
+=== system 3.5/3.6/3.8 (640*480) ===
+EXE       system35/36/38/39.exe
 Scenario  *SA.ald/ADISK.ald
 Graphic   *GA.ald/ACG.ald
 Midi      *MA.ald/AMIDI.ald
@@ -36,14 +60,6 @@ S360  SA MA DA GA-GB WA  ママトト
 S360  SA MA    GA-GB WA-WB | RA  ダークロウズ
 S360  SA MA    GA    WA  HUSHABY BABY
 
-=== system 3.8+ ===
-EXE   system38/39.exe
-INI   system38/39.ini
-AINI  system39.ain
-Bgm   *BA.ald/ABGM.ald  + *BA.bgi/BGM.bgi
-Wave  *WA.ald/AWAVE.ald + *WA.wai/AWAVE.wai
-KLD   sactefam.kld
-
 S380  SA       GA    WA  隠れ月
 S380  SA MA DA GA-GB WA  PERSIOM
 S380  SA MA    GA    WA  SeeIn青
@@ -52,54 +68,151 @@ S380  SA       GA    WA  アトラク＝ナクア (廉価版)
 S380  SA       GA    WA | FLOOR*.MAP  かえるにょぱにょ〜ん (廉価版)
 S380  SA       GA    WA | *_DATA.DAT  零式 (廉価版)
 
-S380  AIN SA    GA          | MA  これDPS? (20世紀アリス)
-S380  AIN SA    GA    WA    | DA | MA  かえるにょ国にょアリス (20世紀アリス)
-S380  AIN SA    GB    WA-WB | DA | *.ALK | *.MOZ  夜が来る!
-S380  AIN 王子さまLv1
-S380  AIN SA    GA    WA     Only you-リ・クルス-
-S380  AIN SA    GA    WA    | DA  大悪司
-S380  AIN SA    GA    WA     妻みぐい
-S380  AIN 王子さまLv1.5
-S380  AIN SA BA GA-GB WA-WB | *.ALK  超昂天使エスカレイヤー
-S380  AIN SA BA GA    WA    KLD  ランス5D
-S380  AIN Nor
-S380  AIN 俺の下であがけ
-S380  AIN 楽園行
-S380  AIN SA BA GA    WA-WB KLD  妻みぐい2
-S380  AIN SA BA GA    WA    KLD  シェル・クレイル
-S380  AIN SA BA GA    WA    KLD  ナイトデーモン
+=== system 3.8/3.9 (640*480) ===
+EXE   system38/39.exe
+INI   system38/39.ini
+AINI  system39.ain
+Bgm   *BA.ald/ABGM.ald  + *BA.bgi/BGM.bgi
+Wave  *WA.ald/AWAVE.ald + *WA.wai/AWAVE.wai
+
+S380A  SA    GA          | MA  これDPS? (20世紀アリス)
+S380A  SA    GA    WA    | DA | MA  かえるにょ国にょアリス (20世紀アリス)
+S380A  SA    GB    WA-WB | DA | *.ALK | *.MOZ  夜が来る!
+S380A  王子さまLv1
+S380A  SA    GA    WA     Only you-リ・クルス-
+S380A  SA    GA    WA    | DA  大悪司
+S380A  SA    GA    WA     妻みぐい
+S380A  王子さまLv1.5
+S380A  SA BA GA-GB WA-WB  超昂天使エスカレイヤー
+S380A  SA BA GA    WA  ランス5D
+S380A  Nor
+S380A  俺の下であがけ
+S380A  楽園行
+S380A  SA BA GA    WA-WB 妻みぐい2
+S380A  SA BA GA    WA  シェル・クレイル
+S380A  SA BA GA    WA  ナイトデーモン
+
+	DALK外伝
+	ままにょにょ
 
 === アリスCD ===
 「アリスCD」とは、「ぱすてるチャイム」以降「Only you-リ・クルス-」の間に
 発売されたアリス作品に付属しているCDです。
 web.archive.org/web/20081217092119/http://www.alicesoft.com/alicecd/index.html
 
-アリスの館456 (SYSTEM 3.5 SDK)
+	S351  アリスの館456 (SYSTEM 3.5 SDK)
 
-v1.00  ぱすてるチャイム , ぷろすちゅーでんとGood (SYSTEM 3.6 SDK)
-v1.01  守り神様
-v1.02  ママトト
-v1.03  ダークロウズ
-v2.00  PERSIOM (SYSTEM 3.8 SDK)
-v2.01  SeeIn 青
-v2.02  夜が来る! (SYSTEM 3.9 SDK)
-v2.50  Only you-リ・クルス-
+	153S  v1.00  ぱすてるチャイム , ぷろすちゅーでんとGood (SYSTEM 3.6 SDK)
 
-=== system 4.0 VERS 4+ ===
+	S360  v1.01  守り神様 (^)
+	S360  v1.02  ママトト (^)
+	S360  v1.03  ダークロウズ (^)
+
+	S380  v2.00  PERSIOM (SYSTEM 3.8 SDK)
+	S380  v2.01  SeeIn 青 (^)
+	S380  v2.02  夜が来る! (SYSTEM 3.9 SDK)
+
+	S380A  v2.50  Only you-リ・クルス- (^)
+
+DEMO & 体験版
+	153S  v100 v101 v102 v103 v200  夢幻泡影 デモ
+	153S  v100 v101 v102 v103 v200  デアボリカ 体験版
+	153S  v100 v101 v102 v103 v200  王道勇者 体験版
+	153S  v102 v103 v200  ぷろすちゅーでんとGood 体験版
+	153S  v102 v103 v200 v201  守り神様 体験版
+
+	S360  v103 v200 v201 v202  ママトト デモ
+	S360  v200 v201 v202 v250  ダークロウズ デモ
+
+	S380  v201 v202 v250  PERSIOM デモ
+
+	S380A  v250  Only you -リ・クルス- キャラフェスデモ
+	S380A  v250  王子さまLv1 体験版
+
+ゲーム & ユーザー作品
+	S351  v100 v101 v102 v103  ばるーんぽっぷ
+	S351  v100 v101 v102 v103  たたき殺し太郎
+	S351  v100 v101 v102 v103  高速ひよこ2
+
+	153S  v100 v101 v102  学園KING
+	153S  v100 v101 v102  蒼海に堕ちて...
+	153S  v100 v101 v102 v103 v200  学園KING番外編
+	153S  v101 v102  ぶろぶろ(仮)
+	153S  v102 v103  学園漂流戦記
+	153S  v102 v103  self
+	153S  v103 v200 v201  おせろっと
+
+	S360  v102 v103 v200 v201 v202 v250  メイドのススメ
+	S360  v103 v200  蒼海に堕ちて...
+	S360  v103 v200 v201 v202 v250  ぶろぶろ(仮)
+	S360  v103 v200 v201 v202 v250  馬鹿産物/同じ顔!
+
+	S380  v200 v201 v202 v250  学園漂流戦記2
+	S380  v201 v202 v250  当たって!!KUDAKERO
+	S380  v201 v202 v250  人間狩り
+	S380  v201 v202 v250  妖精
+	S380  v202 v250  キャロル
+	S380  v202 v250  マスカレイド
+	S380  v202 v250  できるかなー!
+	S380  v250  CA
+	S380  v250  Klavier
+	S380  v250  妄想
+	S380  v250  弱肉狂食
+	S380  v250  眼鏡大戦2
+
+	S380A  v202 v250  扉
+
+	mpg  v250  夜が来る!
+	txt  v100 v101 v102 v103  かなみ
+	txt  v102 v103  にえ
+	txt  v103 v200 v201 v202  裏人間狩り
+	?v102 ?v103  アトラクナクア外伝
+	?v201  学園KING番外編
+
+=== system 4.0 VERS 4/5/6 (800*600) ===
 EXE     system40.exe
 INI     system40.ini
 AIN2    *.ain
 Shader  Shader.slk
 
 AIN4  BA GA  ポポリタン (System 4.2 SDK)
-AIN4  BA GA    WA    | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムContinue + 体験版
+AIN4  BA GA WA-WB | *.ACX  しまいま (ALICEの館7)
+AIN4  BA GA WA-WB | *.ACX  鈴宮刑務娼館 (ALICEの館7)
+AIN4  BA GA WA | *.ACX | MAP.DTX | TEXTURE.DTL  D&D (ALICEの館7)
+AIN4  BA GA WA | *.ACX | DungeonData.dlf  ランス6 ゼス崩壊
+AIN4  BA GA WA | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムContinue + 体験版
+AIN4  BA GA WA-WB | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムC++
 
 AIN5  BA GA    WA  ばにしゅ! 体験版
-AIN4  BA GA    WA-WB | *.ACX | FIELD*.DGN/DTX/TES  ぱすてるチャイムC++
+AIN5  BA GA-GB WA  戦国ランス
+AIN5  BA GA    WA | *.ACX  よくばりサボテン
+AIN5  BA GA-GB WA | *.ACX  超昂閃忍ハルカ
 AIN5  BA GA-GC WA-WB | MAP*.DGN/DTX/TES | PolyObj.lin  GALZOOアイランド + 動作確認版
-AIN5  BA GA    WA    | RA | Shader | ReignData.RED | Toushin3Map.DAT  闘神都市3
+AIN5  BA GA    WA | RA | Shader | ReignData.RED | Toushin3Map.DAT  闘神都市3
 
-=== system 4.0 VERS 6+ ===
+AIN6  BA GA WA  ランス02 (アリスの館2010)
+AIN6  BA GA WA  レイチェルの桜貝 (アリスの館2010)
+AIN6  BA GA WA  ばにしゅ!番外 (アリスの館2010)
+AIN6  BA GA WA  眼鏡のメイ (アリスの館2010)
+AIN6  BA GA WA  神武 (アリスの館2010)
+AIN6  BA GA WA | Enemy.ACX  | Effect.DAT  疾風忍者大作戦 (アリスの館2010)
+AIN6  BA GA WA | CgList.ACX | Effect.DAT  ハルカVSエスカレイヤー (アリスの館2010)
+AIN6  BA GA WA | *.ACX  はるうられ (アリスの館2010)
+AIN6  BA GA WA | *.ACX  砂漠のニッカ (アリスの館2010)
+AIN6  BA GA WA | *.CHR | *.MAP  わいどにょ (アリスの館2010)
+
+大番長
+大帝国
+妻しぼり
+しゃーまんず さんくちゅあり 巫女の聖域
+ももいろガーディアン
+僕だけの保健室
+AliveZ
+お嬢様をいいなりにするゲーム
+だぶる先生らいふっ
+魔女の贖罪
+
+=== system 4.0 VERS 6+ (1024+*768+) ===
 INI    AliceStart.ini
 EXE    *.exe
 BGM    *BA.afa/ald + *BA.bgi
@@ -113,39 +226,36 @@ Sound  *Sound.afa
 Voice  *Voice.afa
 Font   *Font.fnl
 
-AIN6  BA GA WA  ランス02 (アリスの館2010)
-AIN6  BA GA WA  レイチェルの桜貝 (アリスの館2010)
-AIN6  BA GA WA  ばにしゅ!番外 (アリスの館2010)
-AIN6  BA GA WA  眼鏡のメイ (アリスの館2010)
-AIN6  BA GA WA  神武 (アリスの館2010)
-AIN6  BA GA WA | Enemy.ACX  | Effect.DAT  疾風忍者大作戦 (アリスの館2010)
-AIN6  BA GA WA | CgList.ACX | Effect.DAT  ハルカVSエスカレイヤー (アリスの館2010)
-AIN6  BA GA WA | *.ACX  はるうられ (アリスの館2010)
-AIN6  BA GA WA | *.ACX  砂漠のニッカ (アリスの館2010)
-AIN6  BA GA WA | *.CHR | *.MAP  わいどにょ (アリスの館2010)
-AIN6  BA WA CG  母娘乱館 体験版
-AIN6  BA WA CG  ランス01 + 体験版
-AIN6  BA WA CG | AFF  どらぺこ 体験版
-AIN6  BA WA CG | AFF | *.MAD | *.VSF | *.DAT  パステルチャイム3 体験版
-AIN6-MSG1  BA WA CG | Flat  超昂天使エスカレイヤー・リブート 体験版Ver1 + Ver2
-AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED  ランス9 体験版
-AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED | *.MAP  武想少女隊ぶれいど☆ブライダーズ 体験版
-AIN6-MSG1  CG Sound Voice Flat Pact Shader  ランス03 + 体験版
-AIN6-MSG1  CG Sound Voice Flat Pact Shader | 3DData.RED | *.VS  イブニクル 体験版
+1024*768
+	AIN6  BA WA CG  ランス01 + 体験版
+	AIN6  BA WA CG  母娘乱館 体験版
+	AIN6  BA WA CG | AFF  どらぺこ 体験版
+	AIN6-MSG1  BA WA CG | Flat  超昂天使エスカレイヤー・リブート 体験版Ver1 + Ver2
+	AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED | *.MAP  武想少女隊ぶれいど☆ブライダーズ 体験版
+	AIN6-MSG1  CG Sound Voice Flat Pact Shader  ランス03 + 体験版
+	AIN7  CG Sound Voice Flat Pact Shader  妻みぐい3 体験版
+	ランス クエスト
+	ランス クエスト マグナム 統合版
 
-AIN7  CG Sound Voice Flat Pact Shader  妻みぐい3 体験版
+1280*720
+	AIN6  BA WA CG | AFF | *.MAD | *.VSF | *.DAT  パステルチャイム3 体験版
+	AIN6-MSG1  BA WA CG | Flat | Shader | 3DData.RED  ランス9 体験版
+	AIN6-MSG1  CG Sound Voice Flat Pact Shader | 3DData.RED | *.VS  イブニクル 体験版
+	AIN8  CG Sound Voice Flat Pact Shader  は～とふるママン 体験版
+	AIN11  CG Sound Voice Flat Pact Shader  超昂神騎エクシール 体験版
+	AIN14  CG Sound Voice Flat Pact Shader  母爛漫 体験版
+	AIN14  CG Sound Voice Flat Pact Shader | 3D  イブニクル2 体験版
 
-AIN8  CG Sound Voice Flat Pact Shader  は～とふるママン 体験版
+1920*1080
+	ランス10
 
-AIN11  CG Sound Voice Flat Pact Shader  超昂神騎エクシール 体験版
-
-AIN14  CG Sound Voice Flat Pact Shader  母爛漫 体験版
-AIN14  CG Sound Voice Flat Pact Shader | 3D  イブニクル2 体験版
+?*?
 
 === MOVIE ===
 AJP = image JPG + QNT alpha bitmask
 MOZ = video frames zlib compressed 256-colors CLUT and pixels
 ALK = video frames QNT
+KLD = video frames PMS (klink.dll)
 MAD = video frames AJP/QNT w/alpha , for special effects
 ALM = video MPEG-1  30fps  ~8mb/s
 AFF = encrypted *.SWF flash file
@@ -159,3 +269,39 @@ APEG-TMNL-SOND-IPIC
 	LIBL = QNT + zlib compressed data
 	SOND = Ogg vorbis audio
 	IPIC = zlib compressed
+
+=== HISTORY ===
+1989 autoexec.bat , ALICEの館
+1990
+1991
+1992 ALICEの館2
+1993
+1994 system3.exe
+1995 ALICEの館3
+1996 S350
+1997 ALICEの館4-5-6
+1998 S360
+1999
+2000 S380 , 20世紀Alice
+2001
+2002 S380A
+2003
+2004 AIN 4 , ALICEの館7
+2005 AIN 5
+2006
+2007
+2008
+2009 AIN 6 , ALICE 2010
+2010
+2011
+2012 GA->CG , +Font
+2013 +Flat
+2014 +dcf
+2015 BA->Sound , WA->Voice , +Pact , AIN 7
+2016 AIN 8
+2017 AIN 11
+2018
+2019 AIN 14
+2020
+
+alicesoft.com/about/#free

@@ -19,19 +19,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+require "common.inc";
 ////////////////////////////////////////
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-////////////////////////////////////////
-// Galzoo Data/PolyObj.lin
+// Galzoo  Data/PolyObj.lin
 function polyobj( $fname )
 {
 	$file = file_get_contents( $fname );

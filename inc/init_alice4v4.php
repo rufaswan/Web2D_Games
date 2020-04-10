@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-$gp_init["web_title"] = "Alice SYSTEM 4.0 WEB";
+$gp_init["web_title"] = "Alice-soft SYSTEM 4.0 WEB";
 
 // BA.ald -> Sound.afa
 switch ( $gp_init["sound"] )
@@ -50,3 +50,6 @@ $gp_init["path_wav"] = GAME . "/$t1/$t2.ogg";
 
 
 $gp_init["path_code"] = GAME ."/". $gp_init["ain"] . "/codefunc/%s.txt";
+define("PATH_CG"   , ROOT ."/". GAME ."/cg_ga.txt");
+define("PATH_SOUND", ROOT ."/". GAME ."/sound_ba.txt");
+define("PATH_VOICE", ROOT ."/". GAME ."/voice_wa.txt");

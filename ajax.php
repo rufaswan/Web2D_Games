@@ -27,8 +27,7 @@ $ajax_html = "";
 $engine = "exec_{$gp_init['engine']}";
 require ROOT . "/inc/$engine.php";
 init_cheat();
-//srand(0);
-srand( time() );
+srand( $gp_init["srand"] );
 
 if ( TRACE_OB )
 {
@@ -44,5 +43,5 @@ else
 	trace("html %d bytes", strlen($ajax_html) );
 }
 
-pc_save( "pc", $gp_pc );
+save_savefile( "pc", $gp_pc );
 echo $ajax_html;

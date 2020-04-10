@@ -19,34 +19,37 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-if ( $argc == 1 )  exit();
-
-$buf = "";
-for ( $i=1; $i < $argc; $i++ )
+function add_meta( $fname , &$gp_meta )
 {
-	$fn = $argv[$i];
-	if ( stripos($fn, "-meta.txt") === false )
-		continue;
+	if ( stripos($fname, "-meta.txt") == false )
+		return;
 
-	$file = file($fn);
-	foreach ( $file as $line )
+	foreach ( file($fname, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line )
 	{
-		list($t1,$x,$y,$w,$h,$id) = explode(',', trim($line));
-		//if ( $x == 0 && $y == 0 )
-			//continue;
-
-		$id = trim($id);
-
-		// if 001/00256.png , or ./Background/Park/Night.png
-		if ( $id[0] != '.' )
-			$id = substr($id, strrpos($id, '/')+1);
+		$line = preg_replace("|[\s]+|", "", $line);
+		list($t1,$x,$y,$w,$h,$id) = explode(',', $line);
 
 		// remove extension
 		$id = substr($id, 0, strrpos($id, '.'));
 
-		$log = sprintf("%d,%d,%d,%d,%d\n", $id, $x, $y, $w, $h);
-		echo $log;
-		$buf .= $log;
+		// num = 123.png
+		// num = 001/00333.png
+		// str = ./thumb.png
+		// str = ./Background/Park/Night.png
+		if ( $id[0] == '.' )
+			$id = substr($id, 2);
+		else
+			$id = 0 + substr($id, strrpos($id, '/')+1);
+
+		$data = array($x+0,$y+0,$w+0,$h+0);
+		$gp_meta[$id] = $data;
 	}
 }
-file_put_contents("meta.txt", $buf);
+
+if ( $argc == 1 )  exit();
+
+$gp_meta = array();
+for ( $i=1; $i < $argc; $i++ )
+	add_meta( $argv[$i] , $gp_meta );
+
+file_put_contents("meta.json", json_encode($gp_meta));

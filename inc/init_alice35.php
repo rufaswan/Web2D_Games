@@ -19,21 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-$gp_init["web_title"] = "Alice SYSTEM 3.5 WEB";
-
-// single SA DA RA MA BA
-$gp_init["path_bgm"] = GAME . "/ba/%03d";
-//$gp_init["path_mid"] = GAME . "/ma/%03d";
-$gp_init["path_mid"] = GAME . "/ma/%03d";
-$gp_init["path_sa"] = GAME . "/sa/%03d";
-$gp_init["path_da"] = GAME . "/da/%03d";
-
-// sets   GA-GB-GC  WA-WB
-$gp_init["path_wav"] = GAME . "/wa/%03d/%05d";
-$gp_init["path_ga"] = GAME . "/ga/%03d/%05d";
-
-
-$gp_init["path_data"] = GAME . "/data/%s";
+$gp_init["web_title"] = "Alice-soft SYSTEM 3.5 WEB";
 
 $gp_key = array(
 	'up'    => (1 << 0),
@@ -46,5 +32,7 @@ $gp_key = array(
 	'tab'   => (1 << 7), // joy = D
 );
 
-define("PATH_META", ROOT ."/". GAME ."/ga/meta.txt");
-$sco_input = "sco_keyboard";
+define("PATH_META"  , ROOT ."/". GAME ."/ga/meta.json");
+define("PATH_PHPASM", ROOT ."/". GAME ."/sa/phpasm.php");
+define("PATH_PATCH" , ROOT ."/". GAME ."/sa/patch.php");
+define("PATH_SCOMSG", ROOT ."/". GAME ."/sa/sco_msg.txt");

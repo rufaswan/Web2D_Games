@@ -26,6 +26,9 @@ $gp_pc = array();
 ////////////////////////////////////////
 function aini_dec( &$file, $fname )
 {
+	if ( ord($file[4]) == 4 )
+		return;
+
 	$ed = strlen($file);
 	$st = 4;
 	while ( $st < $ed )
@@ -54,6 +57,7 @@ function aini( $fname )
 
 	aini_dec( $file, $dir );
 
+	$ed = strlen($file);
 	$st = 8;
 	while ( $st < $ed )
 	{

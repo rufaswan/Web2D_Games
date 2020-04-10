@@ -19,31 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-define("BIT8" , 0xff);
-
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-function int2str( $int, $byte )
-{
-	$str = "";
-	while ( $byte > 0 )
-	{
-		$b = $int & BIT8;
-		$str .= chr($b);
-		$int >>= 8;
-		$byte--;
-	} // while ( $byte > 0 )
-	return $str;
-}
+require "common.inc";
 //////////////////////////////
 function vsp2pms( $fname )
 {
@@ -65,21 +41,21 @@ function vsp2pms( $fname )
 	printf("VSP-1 $fname\n");
 
 	$head  = "PM";
-	$head .= int2str(1 , 2); // ver
-	$head .= int2str(0x2c , 2); // head
-	$head .= int2str(8 , 1); // bpp
-	$head .= int2str(0 , 1); // shdw
-	$head .= int2str(0 , 1); // flag
-	$head .= int2str(0 , 1);
-	$head .= int2str(0x100 , 2); // bank
-	$head .= int2str(0 , 4);
-	$head .= int2str($x , 4); // x
-	$head .= int2str($y , 4); // y
-	$head .= int2str($w , 4); // w
-	$head .= int2str($h , 4); // h
-	$head .= int2str(0x32c , 4); // dat
-	$head .= int2str(0x2c  , 4); // pal
-	$head .= int2str(0 , 4); // meta
+	$head .= chrint(1 , 2); // ver
+	$head .= chrint(0x2c , 2); // head
+	$head .= chrint(8 , 1); // bpp
+	$head .= chrint(0 , 1); // shdw
+	$head .= chrint(0 , 1); // flag
+	$head .= chrint(0 , 1);
+	$head .= chrint(0x100 , 2); // bank
+	$head .= chrint(0 , 4);
+	$head .= chrint($x , 4); // x
+	$head .= chrint($y , 4); // y
+	$head .= chrint($w , 4); // w
+	$head .= chrint($h , 4); // h
+	$head .= chrint(0x32c , 4); // dat
+	$head .= chrint(0x2c  , 4); // pal
+	$head .= chrint(0 , 4); // meta
 
 	$data  = substr($file, 0x20);
 	$pms   = $head . $data;

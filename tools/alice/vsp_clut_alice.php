@@ -19,32 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-define("BIT8" , 0xff);
+require "common.inc";
 
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
-function int2str( $int, $byte )
-{
-	$str = "";
-	while ( $byte > 0 )
-	{
-		$b = $int & BIT8;
-		$str .= chr($b);
-		$int >>= 8;
-		$byte--;
-	} // while ( $byte > 0 )
-	return $str;
-}
-//////////////////////////////
 function swapval( &$n1, &$n2 )
 {
 	$t1 = $n1;
@@ -204,7 +180,7 @@ function clut_vsp0( &$file , $st )
 		$clut .= chr( $cr << 4 );
 		$clut .= chr( $cg << 4 );
 		$clut .= chr( $cb << 4 );
-		$clut .= chr(BIT8); // alpha , 0 = trans , 255 = solid
+		$clut .= BYTE; // alpha , 0 = trans , 255 = solid
 	}
 	return $clut;
 }
@@ -233,9 +209,9 @@ function vsp2clut( $fname )
 		);
 
 		$head  = "CLUT";
-		$head .= int2str(16 , 4);
-		$head .= int2str($vsp["pw"]*8 , 4);
-		$head .= int2str($vsp["ph"]   , 4);
+		$head .= chrint(16 , 4);
+		$head .= chrint($vsp["pw"]*8 , 4);
+		$head .= chrint($vsp["ph"]   , 4);
 
 		$clut  = clut_vsp0( $file , 0xa );
 		$data  = data_vsp0( $file , $vsp , 0x3a );

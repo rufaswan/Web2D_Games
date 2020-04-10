@@ -19,22 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-define("ZERO", chr(  0));
+require "common.inc";
 
-function fgetint( $fp, $pos, $bytes )
-{
-	fseek( $fp, $pos, SEEK_SET );
-	$data = fread($fp, $bytes);
-	$res = 0;
-	for ( $i=0; $i < $bytes; $i++ )
-	{
-		$b = ord( $data[$i] );
-		$res += ($b << ($i*8));
-	}
-	return $res;
-}
-//////////////////////////////
 $gp_dat = array(
 	"adisk.dat" => array("disk", 1),
 	"amus.dat"  => array("mus",  1),
@@ -58,6 +44,7 @@ $gp_dat = array(
 	// ag00.dat
 	// amus_[al3|all|amb|aym|bee|mgn|otm|oy|psg|r41|r42|rg2].dat
 );
+//////////////////////////////
 function datmeta( $fname )
 {
 	global $gp_dat;
@@ -68,7 +55,7 @@ function datmeta( $fname )
 	}
 	return array(0,0,0);
 }
-
+//////////////////////////////
 function datfile( $fname )
 {
 	list($dir,$ind) = datmeta($fname);
@@ -79,15 +66,15 @@ function datfile( $fname )
 
 	@mkdir( $dir, 0755, true );
 
-	$st = fgetint($fp, 0, 2) * 0x100 - 0x100;
-	$ed = fgetint($fp, 2, 2) * 0x100 - 0x100;
+	$st = fp2int($fp, 0, 2) * 0x100 - 0x100;
+	$ed = fp2int($fp, 2, 2) * 0x100 - 0x100;
 
 	$id = 0;
 	$hed = "";
 	while ( $st < $ed )
 	{
-		$arc = fgetint($fp, $st+0, 1);
-		$aid = fgetint($fp, $st+1, 1);
+		$arc = fp2int($fp, $st+0, 1);
+		$aid = fp2int($fp, $st+1, 1);
 			$id++;
 			$st += 2;
 
@@ -95,8 +82,8 @@ function datfile( $fname )
 			continue;
 
 		// dat header
-		$cur = fgetint( $fp, ($aid+0)*2, 2 ) * 0x100 - 0x100;
-		$nxt = fgetint( $fp, ($aid+1)*2, 2 ) * 0x100 - 0x100;
+		$cur = fp2int( $fp, ($aid+0)*2, 2 ) * 0x100 - 0x100;
+		$nxt = fp2int( $fp, ($aid+1)*2, 2 ) * 0x100 - 0x100;
 		$fsz = $nxt - $cur;
 
 		// extract file

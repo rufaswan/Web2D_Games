@@ -19,61 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-
-function sco_ascii( &$file, &$st, $sep )
-{
-	$len = 0;
-	while ( $file[$st+$len] != $sep && $file[$st+$len] != ZERO )
-		$len++;
-	$str = substr($file, $st, $len);
-	$st += $len;
-	$st++; // skip $sep
-
-	$str = sjistxt( $str );
-	$str = @iconv( CHARSET, "utf-8", $str );
-	return $str;
-}
-
-function sco_sjis( &$file, &$st )
-{
-	$len = 0;
-	while(1)
-	{
-		$b1 = ord( $file[$st+$len] );
-		if ( $b1 >= 0xe0 )
-			$len += 2;
-		else
-		if ( $b1 >= 0xa0 )
-			$len++;
-		else
-		if ( $b1 >= 0x80 )
-			$len += 2;
-		else
-		if ( $b1 == 0x20 )
-			$len++;
-		else
-			break;
-	}
-	$str = substr($file, $st, $len);
-	$st += $len;
-
-	$str = sjistxt( $str );
-	$str = @iconv( CHARSET, "utf-8", $str );
-	return $str;
-}
-
-function sco_var_args( $cnt, &$file, &$st )
-{
-	$arg = array();
-	while ( $cnt > 0 )
-	{
-		$arg[] = sco_calli($file, $st);
-		$cnt--;
-	}
-	$arg = implode(',', $arg);
-	return $arg;
-}
-
+////////////////////////////////////////
 function sco_varno( &$file, &$st )
 {
 	$b1 = ord( $file[$st] );
@@ -94,7 +40,7 @@ function sco_varno( &$file, &$st )
 			if ( $b1 == 0xc0 )
 			{
 				if ( $b2 > 0x3f )
-					return "[$b2,0]";
+					return "|$b2|0|";
 
 				if ( $b2 == 1 )
 				{
@@ -103,22 +49,22 @@ function sco_varno( &$file, &$st )
 						$st += 2;
 					$v = ($b3 << 8) + $b4;
 					$e = sco_calli( $file, $st );
-					return "[$v,$e]";
+					return "|$v|$e|";
 				}
 				else
 				{
 					$b2 *= -1;
-					return "[$b2,0]";
+					return "|$b2|0|";
 				}
 			}
 			else
 			{
 				$b2 = ($n1 << 8) + $b2;
-				return "[$b2,0]";
+				return "|$b2|0|";
 			}
 		}
 		else
-			return "[$n1,0]";
+			return "|$n1|0|";
 	}
 	// same as var , return int
 	else
@@ -135,7 +81,7 @@ function sco_varno( &$file, &$st )
 			return ($n1 * 0x100) + $b2;
 		}
 	}
-
+	return 0;
 }
 
 function sco_calli_opr( $opr, &$ret )
@@ -182,22 +128,78 @@ function sco_calli( &$file, &$st )
 			continue;
 		}
 	} // while (1)
+	return 0;
+}
+
+function sco_var_arg( $cnt, &$file, &$st )
+{
+	$arg = array();
+	while ( $cnt > 0 )
+	{
+		$arg[] = sco_calli($file, $st);
+		$cnt--;
+	}
+	return $arg;
 }
 ////////////////////////////////////////
+function sco_ascii( &$file, &$st, $sep )
+{
+	$len = 0;
+	while ( $file[$st+$len] != $sep && $file[$st+$len] != ZERO )
+		$len++;
+	$str = substr($file, $st, $len);
+	$st += $len;
+	$st++; // skip $sep
+
+	$str = utf8_conv( CHARSET, sjistxt($str) );
+	return $str;
+}
+
+function sco_sjis( &$file, &$st )
+{
+	$str = sco_getsjis( $file, $st );
+	$str = utf8_conv( CHARSET, sjistxt($str) );
+	return $str;
+}
+
+function sco_getsjis( &$file, &$st, $end = BIT24 )
+{
+	$len = 0;
+	while( ($st+$len) < $end )
+	{
+		$b1 = ord( $file[$st+$len] );
+		if ( $b1 >= 0xe0 )
+			$len += 2;
+		else
+		if ( $b1 >= 0xa0 )
+			$len++;
+		else
+		if ( $b1 >= 0x80 )
+			$len += 2;
+		else
+		if ( $b1 == 0x20 )
+			$len++;
+		else
+			break;
+	}
+	$str = substr($file, $st, $len);
+	$st += $len;
+	return $str;
+}
+
 function add_str( $str )
 {
-	global $gp_msg, $gp_mid;
+	global $gp_msg;
+	$id = count($gp_msg);
 	foreach ( $gp_msg as $k => $v )
 	{
 		if ( $str == $v )
 			return $k;
 	}
-	$k = $gp_mid;
-	$gp_msg[$k] = $str;
-	$gp_mid++;
-	return $k;
+	$gp_msg[$id] = $str;
+	return $id;
 }
-
+////////////////////////////////////////
 function sco_cmd_arg( &$file, &$st, $ret )
 {
 	$arg = array();
@@ -205,33 +207,36 @@ function sco_cmd_arg( &$file, &$st, $ret )
 	{
 		switch ($r)
 		{
-			case 400:
+			case "400":
 				$arg[] = ord( $file[$st] );
 				$st++;
 				continue;
-			case 401:
+			case "401":
 				$arg[] = sco_calli($file, $st);
 				continue;
-			case 402:
+			case "402":
 				$arg[] = sco_calli($file, $st);
 				continue;
-			case 403:
+			case "403":
 				$v = sco_ascii( $file, $st, ':' );
 				$k = add_str($v);
-				$arg[] = $k;
+				$arg[] = "@MSG=$k";
 				continue;
-			case 404:  continue;
-			case 405:  continue;
-			case 406:  continue;
+			case "404":  continue;
+			case "405":  continue;
+			case "406":  continue;
+			case "int16":
+				$arg[] = sint16($file, $st);
+				continue;
+			case "int32":
+				$arg[] = sint32($file, $st);
+				continue;
 			default:
 				$arg[] = ord( $file[$st] );
 				$st++;
 				continue;
 		}
 	}
-	if ( empty($arg) )
-		return "";
-	else
-		return implode(',', $arg);
+	return $arg;
 }
 

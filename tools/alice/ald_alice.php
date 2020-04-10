@@ -19,35 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-//////////////////////////////
-define("ZERO", chr(  0));
+require "common.inc";
 
-function fgetstr0( $fp, $pos )
-{
-	fseek( $fp, $pos, SEEK_SET );
-	$r = "";
-	while(1)
-	{
-		$b = fread($fp, 1);
-		if ( $b == ZERO )
-			return $r;
-		$r .= $b;
-	}
-	return $r;
-}
-function fgetint( $fp, $pos, $bytes )
-{
-	fseek( $fp, $pos, SEEK_SET );
-	$data = fread($fp, $bytes);
-	$res = 0;
-	for ( $i=0; $i < $bytes; $i++ )
-	{
-		$b = ord( $data[$i] );
-		$res += ($b << ($i*8));
-	}
-	return $res;
-}
-//////////////////////////////
 $gp_ald = array(
 	"sa.ald"    => array("sa", 1, false),
 	"adisk.ald" => array("sa", 1, false),
@@ -73,6 +46,7 @@ $gp_ald = array(
 	"bwave.ald" => array("wa", 2, true),
 	"cwave.ald" => array("wa", 3, true),
 );
+//////////////////////////////
 function aldmeta( $fname )
 {
 	global $gp_ald;
@@ -83,7 +57,7 @@ function aldmeta( $fname )
 	}
 	return array(0,0,0);
 }
-
+//////////////////////////////
 function aldfile( $fname )
 {
 	list($dir,$ind,$mul) = aldmeta($fname);
@@ -94,8 +68,8 @@ function aldfile( $fname )
 
 	@mkdir( $dir, 0755, true );
 
-	$st = fgetint($fp, 0, 3) * 0x100;
-	$ed = fgetint($fp, 3, 3) * 0x100;
+	$st = fp2int($fp, 0, 3) * 0x100;
+	$ed = fp2int($fp, 3, 3) * 0x100;
 	while ( ($ed%3) != 0 )
 		$ed--;
 
@@ -103,8 +77,8 @@ function aldfile( $fname )
 	$hed = "";
 	while ( $st < $ed )
 	{
-		$arc = fgetint($fp, $st+0, 1);
-		$aid = fgetint($fp, $st+1, 2);
+		$arc = fp2int($fp, $st+0, 1);
+		$aid = fp2int($fp, $st+1, 2);
 			$id++;
 			$st += 3;
 
@@ -112,15 +86,15 @@ function aldfile( $fname )
 			continue;
 
 		// ald header
-		$cur = fgetint( $fp, ($aid+0)*3, 3 ) * 0x100;
-		$nxt = fgetint( $fp, ($aid+1)*3, 3 ) * 0x100;
+		$cur = fp2int( $fp, ($aid+0)*3, 3 ) * 0x100;
+		$nxt = fp2int( $fp, ($aid+1)*3, 3 ) * 0x100;
 		$fsz = $nxt - $cur;
 
 		// file header
-		$hsz = fgetint ( $fp, $cur+0, 4 );
+		$hsz = fp2int ( $fp, $cur+0, 4 );
 			$fsz -= $hsz;
-		$hfs = fgetint ( $fp, $cur+4, 4 );
-		$hfn = fgetstr0( $fp, $cur+16 );
+		$hfs = fp2int ( $fp, $cur+4, 4 );
+		$hfn = fp2str0( $fp, $cur+16 );
 
 		// extract file
 		$ext = substr($hfn, strrpos($hfn, '.')+1);

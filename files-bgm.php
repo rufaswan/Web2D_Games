@@ -22,8 +22,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "define.php";
 if ( ! defined("GAME") )  exit("NO GAME\n");
 
-unlink( LIST_FILE );
-init_filelist();
+init_listfile( true );
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -34,18 +33,20 @@ init_filelist();
 		body { background-color:#000; color:#fff; }
 		img { background-color:#fff; }
 		#ogglist {
-			margin-right:210px;
+			margin-right:220px;
 		}
 		#thumb {
 			position:fixed;
-			bottom:0;
 			right:0;
 			margin:1em;
 			width:200px;
 		}
+		#thumb audio {
+			width:200px;
+		}
 		#thumb * {
-			margin: 0;
-			padding:0;
+			margin: 0 auto;
+			padding:0 auto;
 		}
 		button {
 			font-size:1em;
@@ -57,39 +58,43 @@ init_filelist();
 <body>
 
 <div id="thumb">
-	<p>NOW : <span id="bgmnow"></span></p>
 	<p><img src="<?php echo GAME; ?>/thumb.png" width="200" height="300"></p>
-	<audio id="bgm" src="" type="audio/ogg" controls autoplay loop>AUDIO</audio>
+	<audio id="bgm" src="<?php echo PATH_OGG_1S; ?>" type="audio/ogg" controls autoplay loop>AUDIO</audio>
+	<p>&nbsp;</p>
+	<p>NOW : <span id="bgmnow"></span></p>
 </div>
 
 <div id="ogglist">
 <ol>
 <?php
-foreach( file(LIST_FILE) as $line )
+foreach( file(LIST_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $bgm )
 {
-	if ( stripos($line, ".ogg") != false )
-		echo "<li><button>". trim($line) ."</button></li>\n";
+	if ( stripos($bgm, ".ogg") != false )
+		echo "<li><button>". $bgm ."</button></li>\n";
 }
 ?>
 </ol>
 </div>
 
 <script>
+var jq = jQuery.noConflict();
 var audio = document.getElementById("bgm");
 
-	$("button").click( function(){
-		var ogg = $(this).html();
-		var now = $("#bgm").attr("src");
+	jq("body").on("click", "button", function(){
+		var ogg = jq(this).html();
+		var now = jq("#bgm").attr("src");
 		if ( ogg != now )
 		{
-			$("#bgmnow").empty().append(ogg);
+			jq("#bgmnow").empty().append(ogg);
 			audio.src = ogg;
 			audio.play();
 		}
 	});
-
 </script>
 
-<p><a href="/">MAIN</a></p>
+<p style="text-decoration:underline;"><a href="..">&gt;&gt; MAIN</a></p>
 </body>
 </html>
+<?php
+/*
+*/

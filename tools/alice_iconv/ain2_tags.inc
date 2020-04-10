@@ -52,11 +52,12 @@ function ain2tags( &$file , &$st, $dir )
 			$st += 4;
 			$cnt = sint32($file, $st);
 
+			// zero(0) is not NULL !
 			$buf = "";
 			for ( $i=0; $i < $cnt; $i++ )
 			{
 				$str = utf8txt($file, $st);
-				$buf .= "$i,$str\n";
+				$buf .= "$str\n";
 			}
 			file_put_contents("$dir/$tag", $buf);
 			return;
@@ -66,11 +67,12 @@ function ain2tags( &$file , &$st, $dir )
 			$st += 4;
 			$cnt = sint32($file, $st);
 
+			// zero(0) is not NULL !
 			$buf = "";
 			for ( $i=0; $i < $cnt; $i++ )
 			{
 				$str = utf8fnam($file, $st);
-				$buf .= "$i,$str\n";
+				$buf .= "$str\n";
 			}
 			file_put_contents("$dir/$tag", $buf);
 			return;
@@ -195,6 +197,9 @@ function ain2tags( &$file , &$st, $dir )
 			$st += 4;
 			$hllno = sint32($file, $st);
 
+			// SACT2.dll = 10
+			// Log( $arg ) = 5
+			// 10,5,SACT2,Log,argc
 			$buf = "";
 			for ( $hn=0; $hn < $hllno; $hn++ )
 			{
@@ -208,11 +213,12 @@ function ain2tags( &$file , &$st, $dir )
 					$buf .= "$hn,$fn,$hll,$func,$type";
 
 					$parno = sint32($file, $st);
+					$buf .= "$parno";
 					for ( $pn=0; $pn < $parno; $pn++ )
 					{
 						$par = utf8txt($file, $st);
 						$pty = sint32($file, $st);
-						$buf .= ",$par,$pty";
+						//$buf .= ",$par,$pty";
 					}
 					$buf .= "\n";
 				}
@@ -303,7 +309,8 @@ function ain2tags( &$file , &$st, $dir )
 			if ( $gp_vers >= 7 ) // added 7+
 				$st += 4;
 
-			$buf = "";
+			// NULL(0)
+			$buf = "\n";
 			for ( $mn=1; $mn < $msgno; $mn++ )
 			{
 				$len = sint32($file, $st);
@@ -320,10 +327,9 @@ function ain2tags( &$file , &$st, $dir )
 					$key = ($key + 1) & BIT8;
 				}
 
-				$msg = sjistxt($msg);
-				$msg = iconv("MS932", "UTF-8", $msg);
-
-				$buf .= "$mn,$msg\n";
+				$msg = utf8_conv( CHARSET, sjistxt($msg) );
+				$msg = str_esc($msg);
+				$buf .= "$msg\n";
 			}
 			file_put_contents("$dir/$tag", $buf);
 			return;

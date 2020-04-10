@@ -25,6 +25,7 @@ REQUIRED defines
 define("ZERO", chr(0));
 define("SJIS_HALF", "sjis_half.inc" );
 define("SJIS_ASC",  "sjis_ascii.inc");
+define("FUNC_ICONV",  "iconv");
  */
 ////////////////////////////////////////
 function sjistxt( $sjis )
@@ -100,26 +101,64 @@ function sjistxt( $sjis )
 
 	symbols
 		   20  8140
-		/  2f  815e
-	(RANCE 1 SA/001.S351)
-		.  2e  8144
+		"  22  8168
+		,  2c  8143 # 5,000
+		.  2e  8144 # Dr.
 		:  3a  8146
 		?  3f  8148
 		!  21  8149
+		_  5f  8151 # Miyabi_1Talk
+		/  2f  815e
+		~  7e  8160 # 20Hz~60Hz
 		(  28  8169  )  29  816a
 		[  5b  816d  ]  5d  816e
-		-  2d  817c
+		+  2b  817b
+		-  2d  817c # -title- , No-Name
+		x  78  817e # xx and xx
 		=  3d  8181
+		>  3e  8184
+		%  25  8193
+		&  26  8195
+		*  2a  8196 # [***] talk
+
+	not symbols
+		dot  8145
+		---  815b # laser
+		...  8163
+		yen  818f
+		sqr  81a1
+		->   81a8
+		bgm  81f4 # bell ring *bgm*
+
  */
 ////////////////////////////////////////
-function utf8len( $utf8 )
+function utf8_conv( $charset, $str )
+{
+	// bug : //IGNORE may not work (glibc implementation)
+	// bug : //TRANSLIT may not work (no intl paks , php-intl , icu)
+	// freebsd : "iconv()" is defined as "libiconv()"
+	// iconv : add BOM (byte-order-marker) chars on UTF-16
+	$iconv = FUNC_ICONV;
+
+	//setlocale(LC_ALL, 'en_US.UTF-8');
+	setlocale(LC_CTYPE, 'en_US.UTF-8');
+	$str = $iconv( $charset, "UTF-8//TRANSLIT", $str );
+
+	//ini_set('mbstring.substitute_character', "none");
+	//ini_set('mbstring.substitute_character', 0x20); // space
+	//$str = mb_convert_encoding($str, 'UTF-8');
+	//$str = mb_convert_encoding($str, 'UTF-8', $charset);
+	return $str;
+}
+
+function utf8_strlen( $utf8 )
 {
 	// 00-7f = as is
 	// 80-   = multi-byte
 	// length = c0-fd
 	// if ( preg_match('|[\xc0-\xfd][\x80-\xbf][\x80-\xbf]|', $utf8) )
 
-	// get $len of half-width chars
+	// get $len of ascii chars
 	$len = strlen($utf8);
 	$asclen = 0;
 	for ( $i=0; $i < $len; $i++ )
@@ -129,8 +168,9 @@ function utf8len( $utf8 )
 			$asclen++;
 	}
 
-	// get $len of full-width chars
-	$len = iconv_strlen($utf8, "utf-8");
+	// get $len of non-ascii/unicode chars
+	$strlen = FUNC_ICONV . "_strlen";
+	$len = $strlen($utf8, "utf-8");
 	$utflen = $len - $asclen;
 
 	$len = array(

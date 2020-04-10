@@ -1,0 +1,124 @@
+info.sonicretro.org/SPG:Solid_Tiles
+
+	The Mega Drive games use angles in hex,
+	$00 through $FF,
+	meaning that there are only 256 divisions of a circle,
+	not 360 like we're used to.
+	Worse, the direction is anti-clockwise compared to other languages like GML,
+	so $20 isn't 45° like it should be - it's 315°.
+
+	In order to convert the original hex angles into angles you can use in GML,
+	use this calculation (rendered here in pseudo-code):
+
+	return (256-hex_angle)*1.40625;
+
+gamedev.stackexchange.com/questions/86755/how-to-calculate-corner-positions-marks-of-a-rotated-tilted-rectangle
+
+	// cx, cy - center of square coordinates
+	// x, y - coordinates of a corner point of the square
+	// theta is the angle of rotation
+	// translate point to origin
+	float tempX = x - cx;
+	float tempY = y - cy;
+
+	// now apply rotation
+	float rotatedX = tempX*cos(theta) - tempY*sin(theta);
+	float rotatedY = tempX*sin(theta) + tempY*cos(theta);
+
+	// translate back
+	x = rotatedX + cx;
+	y = rotatedY + cy;
+
+stackoverflow.com/questions/20530949/2d-rotation-is-leaving-holes
+
+	The way to avoid having gaps in between valid pixels is to work backwards.
+	Rather than taking each pixel in the source image and moving it
+	to its place in the destination image by rotating the pixel to a new position,
+	you should iterate through each pixel in the destination image
+	and figure out which pixel in the source image it corresponds to.
+
+	To do this you just need to go through each pixel (xdraw,ydraw)
+	in the destination image and apply the inverse rotation
+	to get the corresponding pixel (xorig,yorig) in the source image.
+
+forum.yoyogames.com/index.php?threads/sprites-got-jagged-when-rotating.5258/
+
+	The program is trying to rotate the pixels,
+	it doesn't know that the circle is a circle,
+	all it knows is to rotate the pixels,
+	so it becomes jagged.
+	this also happens when rotating most sprites in an image editor,
+	not much can be fixed about it.
+
+	You other option is to use effects to blur the edges like anti-aliasing and interpolation
+	but those effects will also look bad the more low res they are.
+
+docs.gimp.org/en/gimp-concepts-layer-modes.html
+	For each pixel in the upper (Mask) and lower (Image) layer,
+	to form the E resulting pixel's color.
+
+	layer mode "Normal"
+		E = M
+	layer mode "Multiply"
+		E = (M * I) / 255
+	layer mode "Divide"
+		E = (256 * I) / (M + 1)
+	layer mode "Screen"
+		E = (255 - M) * (255 - I)
+		E = 255 - (E / 255)
+	layer mode "Overlay"
+		E = (2 * M) / 255
+		E = I + E * (255 - I)
+		E = (I / 255) * E
+	layer mode "Dodge"
+		E = (256 * I) / (255 - M + 1)
+	layer mode "Burn"
+		E = (255 - I) / (M + 1)
+		E = 255 - (256 * E)
+	layer mode "Hard Light" M > 128
+		E = 255 - 2 * (M - 128)
+		E = E * (255 - I)
+		E = 255 - (E / 256)
+	layer mode "Hard Light" M <= 128
+		E = (2 * M * I) / 256
+	layer mode "Soft Light"
+		RS = (Screen)E
+		E = (255 - I) * M + RS
+		E = (E / 255) * I
+	layer mode "Grain extract"
+		E = I - M + 128
+	layer mode "Grain merge"
+		E = I + M + 128
+	layer mode "Difference"
+		E = |I - M|
+	layer mode "Addition"
+		E = min(M + I , 255)
+	layer mode "Subtraction"
+		E = max(I - M , 0)
+	layer mode "Darken only"
+		E = min(M , I)
+	layer mode "Lighten only"
+		E = max(M , I)
+
+stackoverflow.com/questions/12011081/alpha-blending-2-rgba-colors-in-c
+
+	int blend(unsigned char result[4], unsigned char fg[4], unsigned char bg[4])
+	{
+		unsigned int alpha = fg[3] + 1;
+		unsigned int inv_alpha = 256 - fg[3];
+		result[0] = (unsigned char)((alpha * fg[0] + inv_alpha * bg[0]) >> 8);
+		result[1] = (unsigned char)((alpha * fg[1] + inv_alpha * bg[1]) >> 8);
+		result[2] = (unsigned char)((alpha * fg[2] + inv_alpha * bg[2]) >> 8);
+		result[3] = 0xff;
+	}
+
+stackoverflow.com/questions/9014729/manually-alpha-blending-an-rgba-pixel-with-an-rgb-pixel
+
+	A typical "Over" blend is done in the following way:
+
+		outputRed = (foregroundRed * foregroundAlpha) + (backgroundRed * (1.0 - foregroundAlpha));
+
+	And then repeating for the blue and green channels.
+	Do this for every pixel.
+
+

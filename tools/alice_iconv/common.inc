@@ -22,9 +22,10 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "funcs-sjis.php";
 define("ROOT", dirname(__FILE__) );
 
-define("SJIS_HALF", ROOT . "/sjis_half.inc");
-define("SJIS_ASC",  ROOT . "/sjis_ascii.inc");
-define("CHARSET", "MS932");
+define("SJIS_HALF" , ROOT . "/sjis_half.inc");
+define("SJIS_ASC"  , ROOT . "/sjis_ascii.inc");
+define("FUNC_ICONV", "iconv");
+define("CHARSET", "CP932");
 ////////////////////////////////////////
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
@@ -35,25 +36,14 @@ define("BIT32", 0xffffffff);
 
 function substr0( &$str, &$pos )
 {
-	$s = "";
-	while ( $str[$pos] != ZERO )
-	{
-		if ( $str[$pos] == "\n" )
-			$s .= '\n';
-		else
-		if ( $str[$pos] == "\r" )
-			$s .= '\r';
-		else
-		if ( $str[$pos] == "\t" )
-			$s .= '\t';
-		else
-			$s .= $str[$pos];
-		$pos++;
-	}
-	$pos++; // skip zero terminator
-	return $s;
+	$len = 0;
+	while ( $str[$pos+$len] != ZERO )
+		$len++;
+	$s = substr($str, $pos, $len);
+	$pos += ($len + 1); // skip zero terminator
+	return str_esc($s);
 }
-function str2int( &$str, &$pos, $byte )
+function str2int( &$str, $pos, $byte )
 {
 	$int = 0;
 	for ( $i=0; $i < $byte; $i++ )
@@ -67,6 +57,7 @@ function str2int( &$str, &$pos, $byte )
 function sint16( &$file, &$st ) // max +- 32,000
 {
 	$n = str2int($file, $st, 2);
+	$st += 2;
 	if ( $n >> 15 )
 		return ($n - BIT16 - 1);
 	else
@@ -75,17 +66,29 @@ function sint16( &$file, &$st ) // max +- 32,000
 function sint32( &$file, &$st ) // max +- 2,000,000,000
 {
 	$n = str2int($file, $st, 4);
+	$st += 4;
 	if ( $n >> 31 )
 		return ($n - BIT32 - 1);
 	else
 		return $n;
 }
+function str_esc( $str )
+{
+	$rs = array("\n","\r","\t","\v","\e","\f");
+	$rp = array('\n','\r','\t','\v','\e','\f');
+	return str_replace($rs, $rp, $str);
+}
+function unstr_esc( $str )
+{
+	$rs = array('\n','\r','\t','\v','\e','\f');
+	$rp = array("\n","\r","\t","\v","\e","\f");
+	return str_replace($rs, $rp, $str);
+}
 function utf8txt( &$file, &$st )
 {
 	$sjis = substr0( $file, $st );
-	$sjis = sjistxt($sjis);
-	$utf8 = @iconv(CHARSET, "UTF-8", $sjis);
-	return $utf8;
+	$utf8 = utf8_conv( CHARSET, sjistxt($sjis) );
+	return str_esc($utf8);
 }
 function utf8fnam( &$file, &$st )
 {
@@ -97,29 +100,23 @@ function utf8fnam( &$file, &$st )
 function float32( $int )
 {
 	// IEEE 754
-	$sig = ($int >> 31) & 1;
-	$exp = ($int >> 23) & 0xff;
-	$man = ($int >>  0) & 0x7fffff;
+	$NAN = BIT8;
+	$val = $int & 0x7fffff;
+		$int >>= 23;
+	$exp = $int & $NAN;
+		$int >>= 8;
+	$sig = ( $int ) ? -1 : 1;
 
-	$neg = ( $sig ) ? -1 : 1;
-	$norm = 1;
-	if ( $exp == 0 )
-	{
-		if ( $man != 0 ) // denormalized
-			$norm = 0;
-		if ( $man == 0 ) // exact zero
-			return 0;
-	}
-	if ( $exp == 255 )
-	{
-		//if ( $man != 0 ) // nan/not-a-number
-		//if ( $man == 0 ) // infinity
-			return 0;
-	}
+	if ( $exp == $NAN )
+		return 0; // infinite or not-a-number
+	if ( $exp == 0 && $val == 0 )
+		return 0; // exact zero
+
+	$norm = ( $exp == 0 ) ? 0 : 1 << 23;
+	$val += $norm;
 
 	$exp -= 0x7f;
-	$man = $norm + ($man / 0x800000);
-	$man = $man * (2 ** $exp);
-	return $man * $neg;
+	$val *= (2 ** ($exp - 23));
+	return $val * $sig;
 }
 ////////////////////////////////////////

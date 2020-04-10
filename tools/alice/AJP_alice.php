@@ -19,7 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-////////////////////////////////////////
+require "common.inc";
+
 // ANIMATED JPEG
 //   PLAYED LIKE MOVIE , BUT WITH ALPHA
 //   FOR SPELL EFFECTS
@@ -29,17 +30,6 @@ $gp_key = array(
 	0x83,0xec,0x4c,0x92,
 	0xb5,0xcb,0x16,0x34,
 );
-////////////////////////////////////////
-function str2int( &$str, $pos, $byte )
-{
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
-}
 ////////////////////////////////////////
 function ajp2jpg( $rem, $fname )
 {
