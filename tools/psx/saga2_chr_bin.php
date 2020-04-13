@@ -73,8 +73,8 @@ function sectpart( &$file, $nid, $st, $ed )
 		$pix['dx'] = ord( $v[6] );
 		$pix['dy'] = ord( $v[7] );
 
-		printf("%d , %d , $sx , $sy , $w , $h\n",
-			$pix['dx'], $pix['dy']);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d\n",
+			$pix['dx'], $pix['dy'], $sx, $sy, $w, $h);
 		copypix($pix);
 	} // foreach ( $data as $k => $v )
 

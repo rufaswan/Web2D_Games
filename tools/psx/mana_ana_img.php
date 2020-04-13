@@ -5,7 +5,8 @@ $gp_pix  = array();
 $gp_clut = array();
 
 define("CANVAS_S", 0x100);
-define("CANVAS_B", 0x280);
+define("CANVAS_B", 0x300);
+//define("DRY_RUN", true);
 
 function loadtim( &$file, $base )
 {
@@ -87,7 +88,7 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 	printf("=== sectparts( %x , $fn , $big ) = %d\n", $off, $num);
 
 	$data = array();
-	while ( $num )
+	while ( $num > 0 )
 	{
 		$num--;
 		$p7 = ord( $meta[$off+7] );
@@ -109,7 +110,7 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 			array_unshift($data, $s);
 			$off += $n;
 		}
-	} // while ( $num )
+	} // while ( $num > 0 )
 	if ( empty($data) )
 		return;
 	$sz = ( $big ) ? CANVAS_B : CANVAS_S;
@@ -153,6 +154,7 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		$pix['vflip'] = $p7 & 0x80;
 		$pix['hflip'] = $p7 & 0x40;
 		$pix['alpha'] = "";
+		//if ( $tid == 2 && $cid == 1 )
 		if ( $cid == 11 ) // mask + image
 			$pix['alpha'] = "ana_alp";
 
@@ -163,12 +165,12 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 
 		$pix['rotate'] = 0x100 - ord($v[8]);
 
-		printf("$dx , $dy , $sx , $sy , $w , $h , $cid , %02x , %d\n",
-			$p7, $pix['rotate']);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cid , %02x , %d\n",
+			$dx, $dy, $sx, $sy, $w, $h, $p7, $pix['rotate']);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix);
+	savpix($fn, $pix, true);
 	return;
 }
 
@@ -313,8 +315,10 @@ function infoimg( &$file, $dir )
 			$p++;
 		}
 		if ( empty($ids) )
+		{
+			printf("ERROR empty ids for {$dir}_{$i}\n");
 			continue;
-		//print_r($ids);
+		}
 
 		sectmeta($meta[$i], "{$dir}_{$i}", $ids);
 		//save_file("{$dir}_{$i}/meta", $meta[$i]);

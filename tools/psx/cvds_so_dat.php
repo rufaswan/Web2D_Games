@@ -77,8 +77,8 @@ function sectpart( &$meta, $pfx, $id, $num, $off )
 		$pix['vflip'] = $p13 & 1;
 		$pix['hflip'] = $p13 & 2;
 
-		printf("$dx , $dy , $sx , $sy , $w , $h , $tid , %02x\n",
-			$p13);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d , $tid , %02x\n",
+			$dx, $dy, $sx, $sy, $w, $h, $p13);
 		copypix($pix);
 	} // for ( $i=0; $i < $num; $i++ )
 

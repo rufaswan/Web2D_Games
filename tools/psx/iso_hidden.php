@@ -89,12 +89,12 @@ function valkyrie_toc( $fp, $dir, &$toc )
 			$sz = ftell($fp) - $lba;
 		}
 
-		file_put_contents($fn, fp2str($fp, $lba, $sz));
+		save_file($fn, fp2str($fp, $lba, $sz));
 		$st++;
 	}
 
-	file_put_contents("$dir/toc.bin", $toc);
-	file_put_contents("$dir/toc.txt", $txt);
+	save_file("$dir/toc.bin", $toc);
+	save_file("$dir/toc.txt", $txt);
 	return;
 }
 //////////////////////////////
@@ -153,11 +153,11 @@ function iso_xenogears($fp, $dir)
 		$txt .= sprintf("%4x , %8x , %8x\n", $no, $lba*0x800, $siz);
 
 		$fn = sprintf("$dir/%06d.bin", $no);
-		file_put_contents($fn, fp2str($fp, $lba*0x800, $siz));
+		save_file($fn, fp2str($fp, $lba*0x800, $siz));
 	}
 
-	file_put_contents("$dir/toc.bin", $str);
-	file_put_contents("$dir/toc.txt", $txt);
+	save_file("$dir/toc.bin", $str);
+	save_file("$dir/toc.txt", $txt);
 	return;
 }
 
@@ -180,11 +180,11 @@ function iso_dewprism($fp, $dir)
 		$sz = $lba2 - $lba1;
 		$fn = sprintf("$dir/%06d.bin", $no);
 
-		file_put_contents($fn, fp2str($fp, $lba1*0x800, $sz*0x800));
+		save_file($fn, fp2str($fp, $lba1*0x800, $sz*0x800));
 	}
 
-	file_put_contents("$dir/toc.bin", $str);
-	file_put_contents("$dir/toc.txt", $txt);
+	save_file("$dir/toc.bin", $str);
+	save_file("$dir/toc.txt", $txt);
 	return;
 }
 //////////////////////////////
@@ -198,7 +198,6 @@ function isofile( $fname )
 		return printf("%s is not an ISO 2048/secter file\n", $fname);
 
 	$dir = str_replace('.', '_', $fname);
-	@mkdir($dir, 0755, true);
 
 	$mgc = fp2str($fp, 0x8028, 0x20);
 	$mgc = strtolower( trim($mgc, " ".ZERO) );

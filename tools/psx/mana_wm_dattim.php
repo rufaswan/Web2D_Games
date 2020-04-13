@@ -1,9 +1,16 @@
 <?php
 require "common.inc";
 
-define("CANV_S", 0x180);
+define("CANV_S", 0x200);
 $gp_tim = array();
 
+function sint8( $s )
+{
+	$int = ordint($s);
+	if ( $int >> 7 )
+		return $int - BIT8 - 1;
+	return $int;
+}
 function sint16( $s )
 {
 	$int = ordint($s);
@@ -59,15 +66,14 @@ function wm_alp1( $fg, $bg )
 //////////////////////////////
 function sect1( &$file, $off, $fn )
 {
-	printf("=== sect1( %x , %s )\n", $off, $fn);
 	$num = ord( $file[$off] );
 		$off++;
-	echo "num $num\n";
+	printf("=== sect1( %x , %s ) = $num\n", $off, $fn);
 	if ( $num == 0 || $num & 0x80 )
 		return;
 
 	$data = array();
-	while ( $num )
+	while ( $num > 0 )
 	{
 		$num--;
 		if ( $file[$off+0] != BYTE || $file[$off+1] != BYTE )
@@ -91,17 +97,27 @@ function sect1( &$file, $off, $fn )
 
 		// 0   1   2  3  4 5 6  7 8 9 a   b
 		// dx1 dy1 sx sy w h cn - r - dx2 dy2
-		$dx = sint16( $v[0] . $v[10] );
-		$pix['dx'] = $dx + (CANV_S / 2);
+		if ( $v[10] == BYTE )
+			$dx = sint16( $v[0] . $v[10] );
+		else
+			$dx = sint8 ( $v[0] );
 
-		$dy = sint16( $v[1] . $v[11] );
+		if ( $v[11] == BYTE )
+			$dy = sint16( $v[1] . $v[11] );
+		else
+			$dy = sint8 ( $v[1] );
+
+		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
 
 		$sx = ord($v[2]);
 		$sy = ord($v[3]);
 		$w  = ord($v[4]);
 		$h  = ord($v[5]);
-		$cn = ord($v[6]);
+
+		$p6 = ord($v[6]);
+		// /wm/weff/roah1.dat = 0xc0
+		$cn = $p6 & 0x0f;
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
@@ -117,12 +133,12 @@ function sect1( &$file, $off, $fn )
 		if ( $p9 == 3 ) // mask / 5 + image
 			$pix['alpha'] = "wm_alp3";
 
-		printf("%d , %d , $sx , $sy , $w , $h , $cn , %d , $p9\n",
-			$pix['dx'], $pix['dy'], $pix['rotate']);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cn , %d , $p9\n",
+			$dx, $dy, $sx, $sy, $w, $h, $pix['rotate']);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix);
+	savpix($fn, $pix, true);
 	return;
 }
 

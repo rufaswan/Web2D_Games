@@ -6,30 +6,44 @@ function psxtimfile( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$mgc = str2int($file, 0, 4);
-	if ( $mgc != 0x10 )  return;
-
-	$dir = str_replace('.', '_', $fname);
+	// can also be 00
+	//$mgc = str2int($file, 0, 4);
+	//if ( $mgc != 0x10 )  return;
 
 	$type = str2int($file, 4, 1);
-	if ( $type & 8 )
-	{
-		$tim = psxtim($file);
-		foreach ( $tim['clut'] as $ck => $cv )
-		{
-			if ( trim($cv, ZERO.BYTE) == "" )
-				continue;
-			$clut = "CLUT";
-			$clut .= chrint($tim['cc'], 4); // no clut
-			$clut .= chrint($tim['w'] , 4); // width
-			$clut .= chrint($tim['h'] , 4); // height
-			$clut .= $cv;
-			$clut .= $tim['pix'];
-
-			$fn = sprintf("$dir/%04d.clut", $ck);
-			save_file($fn, $clut);
-		}
+	if ( ($type & 8) == 0 )
 		return;
+	$tim = psxtim($file);
+
+	// no need folder if only 1 palette
+	if ( $tim['cn'] == 1 )
+	{
+		$clut = "CLUT";
+		$clut .= chrint($tim['cc'], 4); // no clut
+		$clut .= chrint($tim['w'] , 4); // width
+		$clut .= chrint($tim['h'] , 4); // height
+		$clut .= $tim['clut'][0];
+		$clut .= $tim['pix'];
+
+		save_file("$fname.clut", $clut);
+		return;
+	}
+
+	// organized into folder
+	$dir = str_replace('.', '_', $fname);
+	foreach ( $tim['clut'] as $ck => $cv )
+	{
+		if ( trim($cv, ZERO.BYTE) == "" )
+			continue;
+		$clut = "CLUT";
+		$clut .= chrint($tim['cc'], 4); // no clut
+		$clut .= chrint($tim['w'] , 4); // width
+		$clut .= chrint($tim['h'] , 4); // height
+		$clut .= $cv;
+		$clut .= $tim['pix'];
+
+		$fn = sprintf("$dir/%04d.clut", $ck);
+		save_file($fn, $clut);
 	}
 	return;
 

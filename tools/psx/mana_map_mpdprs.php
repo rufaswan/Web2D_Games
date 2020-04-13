@@ -3,8 +3,8 @@
  * prefixes
  *  bon  Bone Fortress (Dragons arc)
  *  cv1  Mekiv Caverns
- *  dst  Duma Desert
  *  drl  The Flames <- Underworld (Dragons arc)
+ *  dst  Duma Desert
  *  esl  Lucemia (Fairy arc)
  *  grb  Junkyard
  *  hel  Underworld

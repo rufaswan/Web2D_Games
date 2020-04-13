@@ -43,7 +43,7 @@ function sect1( &$file, $base, $fn )
 		return;
 
 	$data = array();
-	while ( $num )
+	while ( $num > 0 )
 	{
 		if ( $base[7] != BYTE )
 			array_unshift($data, substr($file, $base, 12));
@@ -95,11 +95,12 @@ function sect1( &$file, $base, $fn )
 		if ( $p9 == 3 ) // mask / 5 + image
 			$pix['alpha'] = "wm_alp3";
 
-		printf("$dx , $dy , $sx , $sy , $w , $h , $cn , $p9\n");
+		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cn , $p9\n",
+			$dx, $dy, $sx, $sy, $w, $h);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix);
+	savpix($fn, $pix, true);
 	return;
 }
 //////////////////////////////

@@ -97,23 +97,23 @@ function save_file( $fname, $str )
 function zero_watch( $name, $chr )
 {
 	if ( $chr != ZERO )
-		printf("$name not zero [%2x]\n", ord($chr));
+		printf("ERROR $name not zero [%2x]\n", ord($chr));
 }
 function byte_watch( $name, $chr )
 {
 	if ( $chr != BYTE )
-		printf("$name not 0xFF [%2x]\n", ord($chr));
+		printf("ERROR $name not 0xFF [%2x]\n", ord($chr));
 }
 
 function neg_warn( $name, $int )
 {
 	if ( $int < 0 )
-		printf("$name is negative [%d]\n", $int);
+		printf("ERROR $name is negative [%d]\n", $int);
 }
 function flag_warn( $name, $int )
 {
 	if ( $int != 0 )
-		printf("$name some flags is set [%d]\n", $int);
+		printf("ERROR $name some flags is set [%d]\n", $int);
 }
 //////////////////////////////
 define("PIX_BLACK", ZERO . ZERO . ZERO . BYTE);
@@ -226,8 +226,7 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 			$p1 = $p & 0x0f;
 			$p2 = $p >> 4;
 
-			$rip .= chr($p1);
-			$rip .= chr($p2);
+			$rip .= chr($p1) . chr($p2);
 		} // for ( $x=0; $x < ($w/2); $x++ )
 	} // for ( $y=0; $y < $h; $y++ )
 	return $rip;
@@ -241,12 +240,8 @@ function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	$rip = "";
 	for ( $y=0; $y < $h; $y++ )
 	{
-		$syy = ($sy + $y) * $sw;
-		for ( $x=0; $x < $w; $x++ )
-		{
-			$sxx = $syy + $sx + $x;
-			$rip .= $pix[$sxx];
-		} // for ( $x=0; $x < $w; $x++ )
+		$sxx = ($sy + $y) * $sw + $sx;
+		$rip .= substr($pix, $sxx, $w);
 	} // for ( $y=0; $y < $h; $y++ )
 	return $rip;
 }
@@ -319,27 +314,85 @@ function copypix( &$pix )
 			$dxx = ($x * 4) + $dyy;
 			$c2 = substr($pix['rgba']['pix'], $dxx, 4);
 
-			// implementation difference
-			// Legend of Mana /wm/wmland/*.dat @ 1=M+I , 3=(M/5)+I
+			// using callbacks due to implementation difference
+			// Legend of Mana @ E=M+I
+			// Legend of Mana /wm/wmland/* @ 1,E=M+I @ 3,E=(M/5)+I
 			$alpha = $pix['alpha'];
 			if ( function_exists($alpha) )
 				$c1 = $alpha($c1, $c2);
 
 			strupd($pix['rgba']['pix'], $dxx, $c1);
-
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
 
 	return;
 }
 
-function savpix( $fn, &$pix )
+function trimpix( &$pix )
+{
+	$x1 = 0;
+	$x2 = $pix['rgba']['w'];
+	$y1 = 0;
+	$y2 = $pix['rgba']['h'];
+
+	// keep it square
+	while(1)
+	{
+		$row = $pix['rgba']['w'] * 4;
+		$b = "";
+
+		// trim height
+		$p = $y1 * $row;
+		$b .= substr($pix['rgba']['pix'], $p, $row*16);
+
+		$p = ($y2 - 16) * $row;
+		$b .= substr($pix['rgba']['pix'], $p, $row*16);
+
+		// trim width
+		for ( $y=$y1; $y < $y2; $y++ )
+		{
+			$p = ($y * $row) + ($x1 * 4);
+			$b .= substr($pix['rgba']['pix'], $p, 4*16);
+		}
+		for ( $y=$y1; $y < $y2; $y++ )
+		{
+			$p = ($y * $row) + (($x2-16) * 4);
+			$b .= substr($pix['rgba']['pix'], $p, 4*16);
+		}
+
+		if ( trim($b, ZERO) != "" )
+			break;
+
+		$y1 += 16;
+		$y2 -= 16;
+		$x1 += 16;
+		$x2 -= 16;
+	}
+	printf("TRIM %4d , %4d , %4d , %4d\n", $x1, $y1, $x2, $y2);
+
+	$w = $x2 - $x1;
+	$h = $y2 - $y1;
+	$canv = "";
+	for ( $y=$y1; $y < $y2; $y++ )
+	{
+		$p = ($y * $pix['rgba']['w'] + $x1) * 4;
+		$canv .= substr($pix['rgba']['pix'], $p, $w*4);
+	}
+	$pix['rgba']['w'] = $w;
+	$pix['rgba']['h'] = $h;
+	$pix['rgba']['pix'] = $canv;
+	return;
+}
+
+function savpix( $fn, &$pix, $trim = false )
 {
 	if ( defined("DRY_RUN") && DRY_RUN )
 		return;
 
-	if ( trim($pix['rgba']['pix'], ZERO.BYTE) == "" )
+	if ( trim($pix['rgba']['pix'], ZERO) == "" )
 		return printf("ERROR $fn [pix] blank\n");
+	if ( $trim )
+		trimpix($pix);
 
 	$rgba = "RGBA";
 	$rgba .= chrint( $pix['rgba']['w'], 4 );
@@ -350,8 +403,29 @@ function savpix( $fn, &$pix )
 
 function alpha_add( $fg, $bg )
 {
-	// blend w/transparent pixels
-	if ( $bg == PIX_ALPHA )
+	// FG is RGB from palette
+	// if BG is blank , FG RGB -> RGBA
+	// if BG is solid , BG += FG
+	// if BG is RGBA  , BG RGBA -> RGB, FG += BG, FG RGB -> RGBA
+
+	// blend w/normal pixels
+	if ( $bg[3] == BYTE )
+	{
+		$pix = "";
+		for ( $i=0; $i < 4; $i++ )
+		{
+			$p1 = ord( $fg[$i] );
+			$p2 = ord( $bg[$i] );
+			$p = int_max($p1 + $p2, BIT8);
+			$pix .= chr($p);
+		}
+		return $pix;
+	}
+
+	// blend w/transparent pixel
+	// #202020 + #00000000 = #ffffff20
+	// #204080 + #00000000 = #4080ff80
+	if ( $bg[3] == ZERO )
 	{
 		$r = ord($fg[0]);
 		$g = ord($fg[1]);
@@ -366,54 +440,79 @@ function alpha_add( $fg, $bg )
 		return chr($r) . chr($g) . chr($b) . chr($a);
 	}
 
-	// blend w/normal pixels
-	$ret = "";
-	for ( $i=0; $i < 4; $i++ )
-	{
-		$p1 = ord( $fg[$i] );
-		$p2 = ord( $bg[$i] );
-		$p = int_max($p1 + $p2, BIT8);
-		$ret .= chr($p);
-	}
-	return $ret;
+	// blend w/semi-transparent pixel
+	// #202020   + #204080   = #4060a0
+	// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0)
+	// #202020   + #4080ff80 = #6699ffa0
+	$a2 = ord($bg[3]);
+	$r2 = ord($bg[0]) / BIT8 * $a2;
+	$g2 = ord($bg[1]) / BIT8 * $a2;
+	$b2 = ord($bg[2]) / BIT8 * $a2;
+
+	$r = int_max(ord($fg[0]) + $r2, BIT8);
+	$g = int_max(ord($fg[1]) + $g2, BIT8);
+	$b = int_max(ord($fg[2]) + $b2, BIT8);
+	$nfg = chr($r) . chr($g) . chr($b) . BYTE;
+
+	$func = __FUNCTION__;
+	return $func($nfg, PIX_ALPHA);
 }
 //////////////////////////////
 function psxtim( &$file )
 {
 	$tim = array();
-	$hdz  = str2int($file, 0x08, 4);
+	$pos = 0;
 
-	$tim['t']  = ord( $file[4] );
-	$tim['cc'] = str2int($file, 0x10, 2);
-	$tim['cn'] = str2int($file, 0x12, 2);
-	$tim['w'] = str2int($file, 8 + $hdz +  8, 2);
-	$tim['h'] = str2int($file, 8 + $hdz + 10, 2);
-	$sz = $tim['w'] * 2 * $tim['h'];
+	// TIM header
+	$tim['t'] = str2int( $file, $pos+4, 1 );
+	$tim['cc'] = 0;
+	if ( $tim['t'] == 9 )  $tim['cc'] = 0x100;
+	if ( $tim['t'] == 8 )  $tim['cc'] = 0x10;
+	if ( $tim['cc'] == 0 )
+		return $tim;
+	$pos += 8;
 
-	$tim['clut'] = mclut2str($file, 0x14, $tim['cc'], $tim['cn']);
+	// CLUT + header
+	$siz = str2int( $file, $pos+0, 4 ) - 12;
+	$tim['cn'] = (int)($siz / ($tim['cc'] * 2));
+	$tim['clut'] = mclut2str($file, $pos+12, $tim['cc'], $tim['cn']);
+	$pos += $siz + 12;
 
-	$off = 8 + $hdz + 12;
-	if ( $tim['cc'] > 0x10 )
+	// PIX + header
+	$siz = str2int( $file, $pos+0, 4 ) - 12;
+	$tim['w'] = str2int($file, $pos+ 8, 2);
+	$tim['h'] = str2int($file, $pos+10, 2);
+	$pos += 12;
+
+	if ( $tim['t'] == 9 )
 	{
 		$tim['w'] *= 2;
-		$tim['pix'] = substr($file, $off, $sz);
+		$tim['pix'] = substr($file, $pos, $siz);
+
+		printf("psxtim() = %d , %d x %d , %d x %d\n",
+			$tim['t'], $tim['w'], $tim['h'], $tim['cc'], $tim['cn']
+		);
 		return $tim;
 	}
-	else
+	if ( $tim['t'] == 8 )
 	{
 		$tim['w'] *= 4;
 		$tim['pix'] = "";
 
-		while ( $sz )
+		while ( $siz > 0 )
 		{
-			$b = ord( $file[$off] );
-			$b1 = $b & 0xf;
+			$b = ord( $file[$pos] );
+			$b1 = $b & 0x0f;
 			$b2 = $b >> 4;
 			$tim['pix'] .= chr($b1) . chr($b2);
 
-			$sz--;
-			$off++;
+			$siz--;
+			$pos++;
 		}
+
+		printf("psxtim() = %d , %d x %d , %d x %d\n",
+			$tim['t'], $tim['w'], $tim['h'], $tim['cc'], $tim['cn']
+		);
 		return $tim;
 	}
 	return $tim;

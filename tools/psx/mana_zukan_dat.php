@@ -46,8 +46,8 @@ function mana( $fname )
 		$pix['src']['pix'] = rippix8($tim['pix'], $sx, $sy, $w, $h, $tim['w'], $tim['h']);
 		$pix['src']['pal'] = $tim['clut'][0];
 
-		printf("%d , %d , $sx , $sy , $w , $h\n",
-			$pix['dx'], $pix['dy']);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d\n",
+			$pix['dx'], $pix['dy'], $sx, $sy, $w, $h);
 		copypix($pix);
 
 		$cnt--;
@@ -60,3 +60,8 @@ function mana( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	mana( $argv[$i] );
+
+/*
+rect over
+  0429.dat
+ */

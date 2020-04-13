@@ -2,29 +2,10 @@
 require "common.inc";
 
 define("CANV_S", 0x100);
+//define("DRY_RUN", true);
 
-$gp_clut = array();
-$gp_pix  = "";
+$gp_tim = array();
 
-function loadtim( &$file, $pos )
-{
-	// LYING header claiming 256 colors 1 palette TIM
-	// but ACTUALLY 16 colors 16 palette TIM
-	global $gp_pix, $gp_clut;
-	$gp_clut = mclut2str($file, $pos+0x14, 16, 16);
-
-	$p = $pos + 8 + 12 + 0x200 + 12;
-	$gp_pix = "";
-	for ( $i=0; $i < 0x8000; $i++ )
-	{
-		$b = ord( $file[$p] );
-		$b1 = $b & 0xf;
-		$b2 = $b >> 4;
-		$gp_pix .= chr($b1) . chr($b2);
-		$p++;
-	}
-	return;
-}
 function sint8( $s )
 {
 	$int = ordint($s);
@@ -74,17 +55,17 @@ function sectparts( &$meta, $pos, $fn )
 		return;
 
 	$data = array();
-	while ( $num )
+	while ( $num > 0 )
 	{
 		$num--;
 		$p7 = ord( $meta[$pos+7] );
-		if ( ($p7 & 0x20) == 0 )
+		if ( ($p7 & 0x21) == 0 )
 		{
 			$s = substr($meta, $pos, 9);
 			array_unshift($data, $s);
 		}
 		$pos += 9;
-	} // // while ( $num )
+	}
 	if ( empty($data) )
 		return;
 
@@ -93,7 +74,8 @@ function sectparts( &$meta, $pos, $fn )
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
-	global $gp_pix, $gp_clut;
+	//global $gp_pix, $gp_clut;
+	global $gp_tim;
 	foreach ( $data as $v )
 	{
 		zero_watch('v8', $v[8]);
@@ -113,22 +95,23 @@ function sectparts( &$meta, $pos, $fn )
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
-		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, 0x100, 0x100);
-		$pix['src']['pal'] = $gp_clut[$cn];
+		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
+		$pix['src']['pal'] = $gp_tim['clut'][$cn];
 
 		$p7 = ord( $v[7] );
 		$pix['vflip'] = $p7 & 0x80;
 		$pix['hflip'] = $p7 & 0x40;
-		//$pix['alpha'] = "";
-		//if ( $p7 & 2 ) // mask
-			//$pix['alpha'] = "stv_alp";
-		flag_warn('v7', $p7 & 0x3d);
+		$pix['alpha'] = "";
+		if ( $p7 & 2 ) // mask
+			$pix['alpha'] = "stv_alp";
+		flag_warn('v7', $p7 & 0x3c);
 
-		printf("$dx , $dy , $sx , $sy , $w , $h , $cn\n");
+		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cn\n",
+			$dx, $dy, $sx, $sy, $w, $h);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix);
+	savpix($fn, $pix, true);
 	return;
 }
 
@@ -143,9 +126,11 @@ function mana( $fname )
 
 	$dir = str_replace('.', '_', $fname);
 
-	// force load as 16 color 16 pal TIM , 256x256 pix
+	global $gp_tim;
 	$off1 = str2int($file, 0, 2);
-	loadtim($file, $off1);
+	$off2 = str2int($file, 4, 2);
+	$tim = substr($file, $off1, $off2-$off1);
+	$gp_tim = psxtim($tim);
 
 	$off1 = str2int($file, 4, 2);
 	$off2 = str2int($file, 6, 2);
@@ -187,25 +172,6 @@ for ( $i=1; $i < $argc; $i++ )
 	mana( $argv[$i] );
 
 /*
-256 color 1 palette (TIM header - LYING)
-  kanib1.stv
-  si.stv
-  ysaru2.stv
-  megar3.stv
-  vv677.stv - vv699.stv
-  s2rlv1.stv
-  s2ulv1.stv
-  s4r.stv
-  s4u.stv
-  vv132.stv - vv133.stv
-  vv58.stv
-  ken4h.stv
-  hammer10.stv
-  yari2.stv
-  yari5.stv
-  sude12.stv
-  yumi2.stv
-  yumi5.stv
 more than 1 parts
   antz2.stv
   govz2.stv
