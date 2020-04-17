@@ -69,14 +69,14 @@ function int_min( $int, $min )
 {
 	if ( $int < $min )
 		return $min;
-	return (int)$int;
+	return (int)round($int);
 }
 
 function int_max( $int, $max )
 {
 	if ( $int > $max )
 		return $max;
-	return (int)$int;
+	return (int)round($int);
 }
 
 function save_file( $fname, $str )

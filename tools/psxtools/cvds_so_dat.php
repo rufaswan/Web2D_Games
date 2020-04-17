@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-define("CANV_S", 0x180);
+define("CANV_S", 0x200);
 
 function sint16( $s )
 {
@@ -50,8 +50,7 @@ function sectpart( &$meta, $pfx, $id, $num, $off )
 		$num--;
 		$p = $off + ($num * 0x10);
 
-		zero_watch("v13", $meta[$p+13]);
-		//zero_watch("v14", $meta[$p+14]); //parent
+		zero_watch("v14", $meta[$p+14]);
 		zero_watch("v15", $meta[$p+15]);
 
 		$dx = sint16( $meta[$p+0] . $meta[$p+1] );
@@ -76,6 +75,7 @@ function sectpart( &$meta, $pfx, $id, $num, $off )
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;
 		$pix['hflip'] = $p13 & 2;
+		flag_warn("p13", $p13 & 0xfc);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d , $tid , %02x\n",
 			$dx, $dy, $sx, $sy, $w, $h, $p13);
@@ -83,7 +83,7 @@ function sectpart( &$meta, $pfx, $id, $num, $off )
 	} // for ( $i=0; $i < $num; $i++ )
 
 	$fn = sprintf("%04d", $id);
-	savpix($fn, $pix);
+	savpix($fn, $pix, true);
 	return;
 }
 

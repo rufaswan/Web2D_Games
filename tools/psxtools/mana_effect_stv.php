@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-define("CANV_S", 0x100);
+define("CANV_S", 0x200);
 //define("DRY_RUN", true);
 
 $gp_tim = array();

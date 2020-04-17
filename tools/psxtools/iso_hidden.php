@@ -3,6 +3,8 @@ require "common.inc";
 
 function fp2str( $fp, $pos, $byte )
 {
+	if ( $byte == 0 )
+		return "";
 	fseek($fp, $pos, SEEK_SET);
 	return fread($fp, $byte);
 }
