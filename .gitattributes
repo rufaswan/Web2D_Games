@@ -12,8 +12,6 @@
 *.cpp    text diff=cpp
 *.hpp    text diff=cpp
 *.php    text diff=php
-*.py2    text diff=python
-*.py3    text diff=python
 *.css    text diff=css
 *.html   text diff=html
 *.xml    text diff=html

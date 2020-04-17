@@ -13,8 +13,6 @@
 !*.cpp
 !*.hpp
 !*.php
-!*.py2
-!*.py3
 !*.css
 !*.html
 !*.xml
@@ -37,3 +35,4 @@
 !*.ttf
 !*.png
 !*.ogg
+!*.key
