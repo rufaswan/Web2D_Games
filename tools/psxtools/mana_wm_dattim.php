@@ -29,22 +29,6 @@ function loadtim( $tim_fn )
 	return;
 }
 
-function bg_alp( $pix, $div )
-{
-	$r = ord($pix[0]) / $div;
-	$g = ord($pix[1]) / $div;
-	$b = ord($pix[2]) / $div;
-
-	$a = ( $r > $g ) ? $r : $g;
-	$a = ( $b > $a ) ? $b : $a;
-	$alp = $a / BIT8;
-
-	$r = int_max($r / $alp, BIT8);
-	$g = int_max($g / $alp, BIT8);
-	$b = int_max($b / $alp, BIT8);
-	return chr($r) . chr($g) . chr($b) . chr($a);
-}
-
 // callback for copypix()
 function wm_alp3( $fg, $bg )
 {

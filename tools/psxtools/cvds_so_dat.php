@@ -11,10 +11,29 @@ function sint16( $s )
 	return $int;
 }
 
-function loadtex( $pfx, $id )
+function loadclut( &$clut, $dir, $id )
 {
-	$fn = sprintf("%s_%04d.f", $pfx, $id);
-	$file = file_get_contents($fn);
+	if ( isset( $clut[$id] ) )
+		return;
+	$id1 = $id & 0x0f;
+	$id2 = $id >> 4;
+	$file = file_get_contents("$dir/$id2.3");
+	if ( empty($file) )  return;
+
+	$cn = strlen($file) / 0x20;
+	$pal = mclut2str($file, 0, 16, $cn);
+
+	foreach ( $pal as $k => $v )
+		$clut[$id+$k] = $v;
+	return;
+}
+
+function loadtexx( &$texx, $dir, $id )
+{
+	if ( isset( $texx[$id] ) )
+		return;
+	$file = file_get_contents("$dir/$id.1");
+	if ( empty($file) )  return;
 
 	$pix = "";
 	$ed = strlen($file);
@@ -28,29 +47,29 @@ function loadtex( $pfx, $id )
 		$pix .= chr($p1) . chr($p2);
 		$st++;
 	} // while ( $st < $ed )
-	return $pix;
+	$texx[$id] = $pix;
+	return;
 }
 //////////////////////////////
-function sectpart( &$meta, $pfx, $id, $num, $off )
+function sectpart( &$meta, $dir, $id, $num, $off )
 {
-	printf("=== sectpart( $pfx , $id , $num , %x )\n", $off);
+	printf("=== sectpart( $dir , $id , $num , %x )\n", $off);
 
 	$pix = COPYPIX_DEF;
 	$pix['rgba']['w'] = CANV_S;
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
-	$clut = grayclut(16);
+	$clut = array();
 	$texx = array();
 
 	while ( $num > 0 )
 	{
 		// 0 1  2 3  4 5  6 7  8 9  10 11  12 13 14 15
-		// dx-  dy-  sx-  sy-  w--  h----  t  f  p  -
+		// dx-  dy-  sx-  sy-  w--  h----  t  f  c  -
 		$num--;
 		$p = $off + ($num * 0x10);
 
-		zero_watch("v14", $meta[$p+14]);
 		zero_watch("v15", $meta[$p+15]);
 
 		$dx = sint16( $meta[$p+0] . $meta[$p+1] );
@@ -63,14 +82,19 @@ function sectpart( &$meta, $pfx, $id, $num, $off )
 		$w  = str2int($meta, $p+ 8, 2);
 		$h  = str2int($meta, $p+10, 2);
 		$tid = ord( $meta[$p+12] );
+		$cid = ord( $meta[$p+14] );
 
+		loadtexx($texx, $dir, $tid);
+		loadclut($clut, $dir, $cid);
 		if ( ! isset( $texx[$tid] ) )
-			$texx[$tid] = loadtex($pfx, $tid);
+			continue;
+		if ( ! isset( $clut[$cid] ) )
+			continue;
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($texx[$tid], $sx, $sy, $w, $h, 0x80, 0x100);
-		$pix['src']['pal'] = $clut;
+		$pix['src']['pal'] = $clut[$cid];
 
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;
@@ -82,7 +106,7 @@ function sectpart( &$meta, $pfx, $id, $num, $off )
 		copypix($pix);
 	} // for ( $i=0; $i < $num; $i++ )
 
-	$fn = sprintf("%04d", $id);
+	$fn = sprintf("$dir/%04d", $id);
 	savpix($fn, $pix, true);
 	return;
 }
@@ -106,9 +130,9 @@ function sectanim( &$meta, $id, $num, $off )
 	return "$buf\n";
 }
 //////////////////////////////
-function cvds( $pfx )
+function cvds( $dir )
 {
-	$file = file_get_contents( "$pfx.p" );
+	$file = file_get_contents( "$dir/0.2" );
 	if ( empty($file) )  return;
 
 	$o1 = str2int($file, 0x04, 4);
@@ -131,7 +155,7 @@ function cvds( $pfx )
 	{
 		$num = ord( $grps[$st+3] );
 		$off = str2int($grps, $st+8, 2);
-		sectpart($meta, $pfx, $id, $num, $off);
+		sectpart($meta, $dir, $id, $num, $off);
 
 		$id++;
 		$st += 12;
@@ -154,7 +178,7 @@ function cvds( $pfx )
 		$id++;
 		$st += 8;
 	} // while ( $st < $ed )
-	file_put_contents("anim.txt", $buf);
+	save_file("$dir/anim.txt", $buf);
 	return;
 }
 

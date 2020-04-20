@@ -85,6 +85,8 @@ function save_file( $fname, $str )
 		return;
 	if ( empty($str) )
 		return;
+	if ( strpos($fname, '\\') )
+		$fname = str_replace('\\', '/', $fname);
 
 	if ( strpos($fname, '/') )
 	{
@@ -202,7 +204,7 @@ define("COPYPIX_DEF", array(
 	),
 	'dx' => 0,
 	'dy' => 0,
-	'black'  => false,
+	'bgzero' => false,
 	'vflip'  => false,
 	'hflip'  => false,
 	'rotate' => 0,
@@ -307,9 +309,9 @@ function copypix( &$pix )
 
 			$sxx = ($ry * $pix['src']['w']) + $rx;
 			$p1 = $flip[$sxx];
-			$c1 = substr($pix['src']['pal'], ord($p1)*4, 4);
-			if ( $c1 == PIX_BLACK && ! $pix['black'] )
+			if ( $p1 == ZERO && ! $pix['bgzero'] )
 				continue;
+			$c1 = substr($pix['src']['pal'], ord($p1)*4, 4);
 
 			$dxx = ($x * 4) + $dyy;
 			$c2 = substr($pix['rgba']['pix'], $dxx, 4);

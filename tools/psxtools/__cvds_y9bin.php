@@ -175,6 +175,25 @@ for ( $i=1; $i < $argc; $i++ )
 // DS RAM = 4 MB ( 0x2000000-0x2400000 )
 
 /*
+	//   0      1cdf60-21f420
+	//   1-2    21f680-22c840  STR
+	//   3-4    22c840-29d040
+	//   5      2b2a80-2b2ae0
+	//   6      2b2ae0-2b7660
+	//   7      2b7660-2d0f40  SPR CLUT
+	//   8      2d0f40-2d7500  CLUT
+	//   9-24   2d7500-2d7900
+	//  25      2d7900-2e00a0
+	//  40-77   2d7900-2e8820
+	//  26-39   2e01a0-2e4f60
+	// 118      2e04a0-2e3ac0
+	//  78-117  2e8820-3076a0  MAP
+	overlay($ram, $dir, 0);
+	overlay($ram, $dir, 5);
+	overlay($ram, $dir, 6);
+	overlay($ram, $dir, 7);
+	overlay($ram, $dir, 8);
+
 POR
   1182-1189  49e-4a5  f_imo1-8.dat
   1972       7b4      p_imo.dat

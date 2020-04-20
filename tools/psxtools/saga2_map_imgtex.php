@@ -53,7 +53,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
 	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
-	$pix['black'] = true;
+	$pix['bgzero'] = true;
 
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;

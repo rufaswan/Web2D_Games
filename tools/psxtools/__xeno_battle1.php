@@ -42,6 +42,7 @@ function sect1( &$meta, &$file, $dir )
 	// 2 - 3d (?? , ??)
 	// 3 - 2d (?? , ?? , clut)
 	// 4 - 2d (?? , ?? , clut , seds) [2312.bin]
+	// 5 - 2d (?? , ?? , clut , seds , wds)
 	$num = str2int($meta, 0, 2);
 	printf("=== sect1( $dir ) = $num\n");
 
@@ -56,26 +57,16 @@ function sect1( &$meta, &$file, $dir )
 			save_file("$dir/1.meta", substr($meta, $p2, $p3-$p2));
 			return;
 		case 3:
-			$p1 = str2int($meta,  4, 4);
-			$p2 = str2int($meta,  8, 4);
-			$p3 = str2int($meta, 12, 4);
-			$p4 = str2int($meta, 16, 4); // end
-
-			save_file("$dir/0.meta", substr($meta, $p1, $p2-$p1));
-			save_file("$dir/1.meta", substr($meta, $p2, $p3-$p2));
-			save_file("$dir/2.meta", substr($meta, $p3, $p4-$p3));
-			return;
 		case 4:
+		case 5:
 			$p1 = str2int($meta,  4, 4);
 			$p2 = str2int($meta,  8, 4);
-			$p3 = str2int($meta, 12, 4);
-			$p4 = str2int($meta, 16, 4);
-			$p5 = str2int($meta, 20, 4); // end
+			$p3 = str2int($meta, 12, 4); // palette
+			$p4 = str2int($meta, 16, 4); // end  4+,extra
 
 			save_file("$dir/0.meta", substr($meta, $p1, $p2-$p1));
 			save_file("$dir/1.meta", substr($meta, $p2, $p3-$p2));
 			save_file("$dir/2.meta", substr($meta, $p3, $p4-$p3));
-			save_file("$dir/3.meta", substr($meta, $p4, $p5-$p4));
 			return;
 	}
 	return;
@@ -109,6 +100,10 @@ for ( $i=1; $i < $argc; $i++ )
 	xeno( $argv[$i] );
 
 /*
-sprites models bosses
-  2619-2770  xeno jp1 / slps 011.60
+xeno jp1 / slps 011.60
+  2619-2770  spr1 monsters bosses
+  2989-3018  spr2 party
+xeno jp2 / slps 011.61
+  2610-2761  spr1 monsters bosses
+  2980-3009  spr2 party
 */
