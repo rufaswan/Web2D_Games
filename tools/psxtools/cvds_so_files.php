@@ -64,7 +64,7 @@ function ramspr( &$ram, $dir, $oset, $ofns, $blk)
 					save_file("$todir/$svk.$sk", $svv);
 					continue;
 				}
-				$txt .= "$svv\n";
+				$txt .= "$svk.$sk = $svv\n";
 				copy("$dir/data/$svv", "$todir/$svk.$sk");
 			}
 		} // foreach ( $set as $sk => $sv )

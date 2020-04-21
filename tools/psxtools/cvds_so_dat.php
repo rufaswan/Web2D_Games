@@ -51,7 +51,7 @@ function loadtexx( &$texx, $dir, $id )
 	return;
 }
 //////////////////////////////
-function sectpart( &$meta, $dir, $id, $num, $off )
+function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 {
 	printf("=== sectpart( $dir , $id , $num , %x )\n", $off);
 
@@ -101,9 +101,17 @@ function sectpart( &$meta, $dir, $id, $num, $off )
 		$pix['hflip'] = $p13 & 2;
 		flag_warn("p13", $p13 & 0xfc);
 
+		$src['dx'] = $sx;
+		$src['dy'] = $sy + ($tid * 0x100);
+		$src['src']['w'] = $w;
+		$src['src']['h'] = $h;
+		$src['src']['pix'] = rippix8($texx[$tid], $sx, $sy, $w, $h, 0x80, 0x100);
+		$src['src']['pal'] = $clut[$cid];
+
 		printf("%4d , %4d , %4d , %4d , %4d , %4d , $tid , %02x\n",
 			$dx, $dy, $sx, $sy, $w, $h, $p13);
 		copypix($pix);
+		copypix($src);
 	} // for ( $i=0; $i < $num; $i++ )
 
 	$fn = sprintf("$dir/%04d", $id);
@@ -148,6 +156,12 @@ function cvds( $dir )
 	$meta = substr($file, $o1, $o2-$o1);
 	$grps = substr($file, $o3, $o4-$o3);
 
+	$src = COPYPIX_DEF;
+	$src['rgba']['w'] = 0x100;
+	$src['rgba']['h'] = 0x1000;
+	$src['rgba']['pix'] = canvpix(0x100,0x1000);
+	$src['bgzero'] = true;
+
 	$ed = strlen($grps);
 	$st = 0;
 	$id = 0;
@@ -155,11 +169,13 @@ function cvds( $dir )
 	{
 		$num = ord( $grps[$st+3] );
 		$off = str2int($grps, $st+8, 2);
-		sectpart($meta, $dir, $id, $num, $off);
+		sectpart($meta, $src, $dir, $id, $num, $off);
 
 		$id++;
 		$st += 12;
 	} // while ( $st < $ed )
+
+	savpix("$dir/src", $src);
 
 	// sprite animation sequence
 	$meta = substr($file, $o4, $o5-$o4);

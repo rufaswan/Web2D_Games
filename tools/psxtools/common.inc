@@ -121,9 +121,8 @@ function flag_warn( $name, $int )
 define("PIX_BLACK", ZERO . ZERO . ZERO . BYTE);
 define("PIX_ALPHA", ZERO . ZERO . ZERO . ZERO);
 
-function canvpix( $w, $h )
+function canvpix( $w, $h, $c = PIX_ALPHA )
 {
-	$c = PIX_ALPHA;
 	$s = $w * $h;
 	$p = "";
 	for ( $i=0; $i < $s; $i++ )
