@@ -25,10 +25,14 @@ require "common_sco.inc";
 define("SCO_CMD", ROOT . "/sco_cmd.inc");
 define("SEP", chr(254));
 
-$sco_file = array();
-$sco_code = array();
+$gp_code = array("# <?php exit();\n");
+$gp_data = array("");
+$gp_msg  = array("", "iconv() error");
+$gp_func = array();
+
 $sco_cmd = array();
-//////////////////////////////
+$ain_hel0 = array();
+////////////////////////////////////////
 function ain_str8b( &$file, &$st )
 {
 	$str = "";
@@ -226,47 +230,95 @@ function sco_get_cmd( &$file, &$st, &$select, &$jump )
 	}
 	return array(0,0);
 }
-//////////////////////////////
-function sco_run( $id, $pos, $fname )
+////////////////////////////////////////
+function save_sco( $fname, $var )
 {
-	global $sco_file;
-	if ( ! isset( $sco_file[$id] ); )
-	{
-		$file = file_get_contents($fname);
-		if ( empty($file) )
-			return;
-		$sco_file[$id] = array(
-			'f' => $file,
-			's' => strlen($file),
-		);
-	}
+	$fp = fopen($fname, "w");
+	foreach( $var as $v )
+		fwrite($fp, "$v\n");
+	fclose($fp);
+}
 
+function sco_run( $id, $fname )
+{
+	$file = file_get_contents($fname);
+	if ( empty($file) )
+		return;
+
+	$valid = array("S350", "S351", "153S", "S360", "S380");
+	$mgc = substr($file, 0, 4);
+	if ( ! in_array($mgc, $valid) )
+		return;
+	printf("[%s] %s\n", $mgc, $fname);
+
+	global $gp_func;
 	$select = false;
 	$jump = array();
 
-	global $sco_code;
-	$len = strlen( $sco_file[$id]['f'] );
-	while ( $pos < $len )
+	$ed = strlen($file);
+	$st = 0;
+	$buf = "# $id,0\n";
+	while ( $st < $ed )
 	{
-		$sid = "$id,$pos";
-		if ( isset( $sco_code[$sid] ) )
-			return;
-
-		$bak = $pos;
-		list($cmd,$arg) = sco_get_cmd( $sco_file[$id]['f'], $pos, $select, $jump );
+		$bak = $st;
+		list($cmd,$arg) = sco_get_cmd( $file, $st, $select, $jump );
 		if ( ! $cmd )
 			break;
-		$sco_file[$id]['s'] -= ($pos - $bak);
 
 		if ( $cmd == "MSG" )
 			$arg = sco_msg($arg);
 		if ( $cmd == '#' ) // data
-			$arg = sco_table($sco_file[$id]['f'], $id, $bak, $cmd, $arg);
+			$arg = sco_table($file, $id, $bak, $cmd, $arg);
 
 		array_unshift($arg, $cmd);
-		$sco_code[$sid] = implode(',', $arg). "\n";
+		$buf .= "$id,$bak," .implode(',', $arg). "\n";
 
-	}
+		switch ( $cmd )
+		{
+			case "S350":
+			case "S351":
+			case "153S":
+			case "S360":
+			case "S380":
+				$st = $arg[0];
+				break;
+
+			case '@': // label jump
+				$jump[] = $arg[0];
+				break;
+			case '<': // for
+			case '{': // if
+				$jump[] = $arg[1];
+				break;
+			case "sel_st":
+				$jump[] = $arg[0];
+				break;
+
+			case '~': // function call
+				$jal = "{$arg[0]},{$arg[1]}";
+				if ( $arg[0] != 0 )
+					$gp_func[$jal] = 1;
+				break;
+			case '%': // page call
+				$jal = "{$arg[0]},0";
+				if ( $arg[0] != 0 )
+					$gp_func[$jal] = 1;
+				break;
+			case '\\': // label call
+				$jal = "$id,{$arg[0]}";
+				if ( $arg[0] != 0 )
+					$gp_func[$jal] = 1;
+				break;
+			default:
+				break;
+		} // switch ( $cmd )
+
+	} // while ( $st < $ed )
+	if ( $file[$st] != ZERO )
+		printf("ERROR $fname + %x unknown command\n", $st);
+
+	global $gp_code;
+	$gp_code[$id] = $buf;
 	return;
 }
 
@@ -283,27 +335,32 @@ function sco_init_cmd()
 	//print_r($sco_cmd);
 	return;
 }
-//////////////////////////////
+////////////////////////////////////////
 sco_init_cmd();
 
 // S380 Escalayer
-//   DATA (should be in DA/*.dat) are compiled into SA/*.sco
+//   Data (should be in *DA.ald) compiled as SCO
 // S360_153S_Umini_Ochite
 //   1,647,&,|39|0| (page jump by $var[39])
-for ( $i=1; $i < $argc; $i++ )
+foreach ( scandir('.') as $f )
 {
-	$id = $argv[$i];
-	if ( (int)$id != $id )
+	if ( $f[0] == '.' )
 		continue;
-	$sco = sprintf("%03d.sco", $id);
-	sco_run($id, 0, $sco);
-}
+	if ( is_dir($f) || $f == 'log' )
+		continue;
+	if ( stripos($f, '.txt') || stripos($f, '.php') )
+		continue;
 
-ksort($sco_code);
-$fp = fopen("CODE", "w");
-fwrite($fp, "# <?php exit();\n");
-foreach( $sco_code as $ck => $cv )
-	fwrite($fp, "$ck,$cv\n");
-foreach( $sco_file as $ck => $cv )
-	fwrite($fp, "# $ck.sco has {$cv['s']} left\n");
-fclose($fp);
+	// should support *.sco *.dat *.s350 *.s351 *.153s *.s360 *.380
+	$id = substr($f, 0, strrpos($f, '.')) + 0;
+	sco_run($id, $f);
+}
+//sco_run(1, "001.sco");
+
+$gp_func = array_keys($gp_func);
+sort($gp_func);
+
+save_sco("sco_code.txt", $gp_code);
+save_sco("sco_data.txt", $gp_data);
+save_sco("sco_msg.txt",  $gp_msg);
+save_sco("sco_func.txt", $gp_func);

@@ -55,7 +55,7 @@ function ainitags( &$file, &$st, $dir )
 					$buf .= "\n";
 				}
 			}
-			file_put_contents("$dir/HEL0", $buf);
+			file_put_contents("$dir/AINI_HEL0", $buf);
 			return;
 		case "FUNC":
 			echo "FUNC\n";
@@ -82,7 +82,7 @@ function ainitags( &$file, &$st, $dir )
 				foreach( $v1 as $k2 => $v2 )
 					$buf .= "$k1,$k2,$v2\n";
 			}
-			file_put_contents("$dir/FUNC", $buf);
+			file_put_contents("$dir/AINI_FUNC", $buf);
 			return;
 		case "VARI":
 		case "MSGI":
@@ -97,7 +97,7 @@ function ainitags( &$file, &$st, $dir )
 				$var = utf8txt($file, $st);
 				$buf .= "$var\n";
 			}
-			file_put_contents("$dir/$tag", $buf);
+			file_put_contents("$dir/AINI_{$tag}", $buf);
 			return;
 	}
 	return;
