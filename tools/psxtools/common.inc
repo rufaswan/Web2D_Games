@@ -50,6 +50,22 @@ function chrint( $int, $byte = 0 )
 	return $str;
 }
 
+function sint8( $s )
+{
+	$int = ordint($s);
+	if ( $int >> 7 )
+		return $int - BIT8 - 1;
+	return $int;
+}
+
+function sint16( $s )
+{
+	$int = ordint($s);
+	if ( $int >> 15 )
+		return $int - BIT16 - 1;
+	return $int;
+}
+
 function strpad( $len, $c = ZERO )
 {
 	$str = "";

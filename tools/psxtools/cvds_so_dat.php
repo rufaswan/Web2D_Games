@@ -3,14 +3,6 @@ require "common.inc";
 
 define("CANV_S", 0x200);
 
-function sint16( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 15 )
-		return $int - BIT16 - 1;
-	return $int;
-}
-
 function loadclut( &$clut, $dir, $id )
 {
 	if ( isset( $clut[$id] ) )

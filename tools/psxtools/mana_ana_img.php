@@ -1,12 +1,12 @@
 <?php
 require "common.inc";
 
-$gp_pix  = array();
-$gp_clut = array();
-
 define("CANVAS_S", 0x100);
 define("CANVAS_B", 0x300);
 //define("DRY_RUN", true);
+
+$gp_pix  = array();
+$gp_clut = array();
 
 function loadtim( &$file, $base )
 {
@@ -19,20 +19,6 @@ function loadtim( &$file, $base )
 	$gp_pix[]  = $tim['pix'];
 	return;
 }
-function sint8( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 7 )
-		return $int - BIT8 - 1;
-	return $int;
-}
-function sint16( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 15 )
-		return $int - BIT16 - 1;
-	return $int;
-}
 
 // callback for copypix()
 function ana_alp( $fg, $bg )
@@ -40,7 +26,7 @@ function ana_alp( $fg, $bg )
 	return alpha_add( $fg, $bg );
 }
 //////////////////////////////
-function secttalk ( &$file, $talk, $dir )
+function secttalk( &$file, $talk, $dir )
 {
 	if ( defined("DRY_RUN") && DRY_RUN )
 		return;
@@ -83,9 +69,9 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 {
 	$num = ord( $meta[$off] );
 		$off++;
+	printf("=== sectparts( %x , $fn , $big ) = $num\n", $off);
 	if ( $num == 0 )
 		return;
-	printf("=== sectparts( %x , $fn , $big ) = %d\n", $off, $num);
 
 	$data = array();
 	while ( $num > 0 )

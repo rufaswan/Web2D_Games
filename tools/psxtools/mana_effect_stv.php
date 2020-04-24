@@ -6,14 +6,6 @@ define("CANV_S", 0x200);
 
 $gp_tim = array();
 
-function sint8( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 7 )
-		return $int - BIT8 - 1;
-	return $int;
-}
-
 // callback for copypix()
 function stv_alp( $fg, $bg )
 {

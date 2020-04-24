@@ -6,14 +6,6 @@ define("CANV_S", 0x100);
 $gp_pix  = "";
 $gp_clut = array();
 
-function sint8( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 7 )
-		return $int - BIT8 - 1;
-	return $int;
-}
-
 // callback for copypix()
 function wm_alp3( $fg, $bg )
 {
@@ -35,10 +27,9 @@ function wm_alp1( $fg, $bg )
 //////////////////////////////
 function sect1( &$file, $base, $fn )
 {
-	printf("=== sect1( %x, $fn )\n", $base);
 	$num = ord( $file[$base] );
 		$base++;
-	echo "num $num\n";
+	printf("=== sect1( %x, $fn ) = $num\n", $base);
 	if ( $num == 0 )
 		return;
 

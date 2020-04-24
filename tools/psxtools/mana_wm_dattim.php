@@ -4,21 +4,6 @@ require "common.inc";
 define("CANV_S", 0x200);
 $gp_tim = array();
 
-function sint8( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 7 )
-		return $int - BIT8 - 1;
-	return $int;
-}
-function sint16( $s )
-{
-	$int = ordint($s);
-	if ( $int >> 15 )
-		return $int - BIT16 - 1;
-	return $int;
-}
-
 function loadtim( $tim_fn )
 {
 	$file = file_get_contents($tim_fn);

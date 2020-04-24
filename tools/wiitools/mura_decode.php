@@ -1,15 +1,8 @@
 <?php
 define("ZERO", chr(  0));
-//////////////////////////////
-function mura( $fname )
+
+function mura_decode( &$file, $st )
 {
-	$file = file_get_contents( $fname );
-		if ( empty($file) )   return;
-
-	$mgc = substr($file, 0, 4);
-	if ( $mgc != "FCMP" )
-		return;
-
 	$dict = "";
 	$dicp = 0xfee;
 	for ( $i=0; $i < 0x1000; $i++ )
@@ -17,7 +10,6 @@ function mura( $fname )
 	$dec = "";
 
 	$ed = strlen($file);
-	$st = 12;
 	$bylen = 0;
 	$bycod = 0;
 	while ( $st < $ed )
@@ -50,14 +42,13 @@ function mura( $fname )
 			$b1 = ord( $file[$st+0] );
 			$b2 = ord( $file[$st+1] );
 				$st += 2;
-			$len = ($b2 & 0x0f) + 3;
-			$pos = ($b2 & 0xf0) << 4;
-				$pos += $b1;
+			$len =  ($b2 & 0x0f) + 3;
+			$pos = (($b2 & 0xf0) << 4) | $b1;
 			printf("%6x DICT %3x LEN %2x\n", $st-2, $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{
-				$p = ($dicp + $i) & 0xfff;
+				$p = ($pos + $i) & 0xfff;
 				$b1 = $dict[$p];
 
 				$dec .= $b1;
@@ -66,9 +57,21 @@ function mura( $fname )
 				$dicp = ($dicp + 1) & 0xfff;
 			}
 		}
-
 	} // while ( $st < $ed )
 
+	return $dec;
+}
+//////////////////////////////
+function mura( $fname )
+{
+	$file = file_get_contents( $fname );
+		if ( empty($file) )   return;
+
+	$mgc = substr($file, 0, 4);
+	if ( $mgc != "FCMP" )
+		return;
+
+	$dec = mura_decode( $file, 12 );
 	file_put_contents("$fname.dec", $dec);
 	return;
 }
