@@ -47,13 +47,8 @@ function debug()
 
 function str2int( &$str, $pos, $byte )
 {
-	$int = 0;
-	for ( $i=0; $i < $byte; $i++ )
-	{
-		$c = ord( $str[$pos+$i] );
-		$int += ($c << ($i*8));
-	}
-	return $int;
+	$s = substr($str, $pos, $byte);
+	return ordint($s);
 }
 
 function ordint( $str )

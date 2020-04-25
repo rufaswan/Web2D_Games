@@ -39,6 +39,14 @@ function loadtim( &$file, $pos )
 	}
 	return;
 }
+
+// callback for copypix()
+function xeno_alp( $fg, $bg )
+{
+	if ( $fg == $bg )
+		return $fg;
+	return alpha_add( $fg, $bg );
+}
 //////////////////////////////
 function sectparts( &$meta, $off, $fn )
 {
@@ -52,96 +60,97 @@ function sectparts( &$meta, $off, $fn )
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
-	global $gp_pix, $gp_clut;
-	$p1 = $off + 4;
-	$p2 = $off + 4 + ($num * 2);
-	for ( $i=0; $i < $num; $i++ )
+	$data = array();
+	$id = 0;
+	$pos = $off + 4 + ($num * 2);
+	//debug( substr($meta, $pos, 0x10) );
+	while ( $id < $num )
 	{
-		$v1 = $p1;
-		$p1 += 2;
-		$v3 = str2int($meta, $v1, 2);
-
-
-/*
-		$b1 = ord( $meta[$p2] );
-		if ( $b1 & 0x80 )
+		while(1)
 		{
-			while ( $meta[$p2] != chr(0xc4) )
-				$p2++;
-			$p2++; // skip c4
-		}
-		while( $meta[$p2] != ZERO )
-		{
-			if ( $b1 >= 0xe0 )
-				$p2 += 3;
+			$b1 = ord( $meta[$pos] ) >> 4;
+			if ( $b1 == 0xf )  $pos += 4;
 			else
-			if ( $b1 >= 0xc0 )
-				$p2++;
-		}
-		while (1)
-		{
-			if ( $b1 & 0x80 )
-			{
-				$p2 += 2;
-				continue;
-			}
-			if ( $b1 == 0 )
+			if ( $b1 == 0xe )  $pos += 3;
+			else
+			if ( $b1 == 0xd )  $pos += 2;
+			else
+			if ( $b1 == 0xc )  $pos += 1;
+			else
+			if ( $b1 == 0x8 )  $pos += 1;
+			else
 				break;
-			$p2++;
 		}
-*/
 
-		$v2 = $p2;
-		$p2 += 3;
-		//printf("%x,%x,%x,%x,%x\n", $p1, $p2, $v1, $v2, $v3);
+		$m1 = substr($meta, $pos, 3);
+		$pos += 3;
 
-		$dx = sint8( $meta[$v2+1] );
-		$dy = sint8( $meta[$v2+2] );
+		$p1 = $off + 4 + ($id * 2);
+		$p2 = str2int($meta, $p1, 2);
+		$m2 = substr($meta, $p2, 5);
+			$id++;
+		printf("pos %x , part %x %x , id %x\n", $pos-3, $p1, $p2, $id-1);
+		array_unshift($data, array($m1,$m2));
+	}
+
+	global $gp_pix, $gp_clut;
+	foreach ( $data as $v )
+	{
+		list($m1,$m2) = $v;
+
+		$dx = sint8( $m1[1] );
+		$dy = sint8( $m1[2] );
 		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
 
-		$v20 = ord( $meta[$v2+0] );
+		$m10 = ord( $m1[0] );
+		$pix['hflip'] = $m10 & 0x40;
+		$pix['vflip'] = $m10 & 0x20;
+		$cid = $m10 & 0x0f;
+		//alpha parts has both sprite + effect
+		//$pix['alpha'] = ( $m10 & 0x10 ) ? "xeno_alp": "";
 
-		$sx = ord( $meta[$v3+1] );
-		$sy = ord( $meta[$v3+2] );
-		$w  = ord( $meta[$v3+3] );
-		$h  = ord( $meta[$v3+4] );
+		$sx = ord( $m2[1] );
+		$sy = ord( $m2[2] );
+		$w  = ord( $m2[3] );
+		$h  = ord( $m2[4] );
 
-		$v30 = ord( $meta[$v3+0] );
-		$tid = $v30 >> 1;
+		$m20 = ord( $m2[0] );
+		$tid = $m20 >> 1;
+		flag_warn("m20", $m20 & 1);
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_pix[$tid], $sx, $sy, $w, $h, 0x100, 0x100);
-		$pix['src']['pal'] = $gp_clut[0];
+		$pix['src']['pal'] = $gp_clut[$cid];
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d , %02x , %02x\n",
-			$dx, $dy, $sx, $sy, $w, $h, $v20, $v30);
+			$dx, $dy, $sx, $sy, $w, $h, $m10, $m20);
 		copypix($pix);
-	} // for ( $i=0; $i < $num; $i++ )
+	} // foreach ( $data as $v )
 
 	savpix($fn, $pix, true);
 	return;
 }
 
-function sect1( &$meta, &$file, $dir )
+function sect1( &$meta, &$file, $dir, $pp )
 {
 	// 2 - 3d (?? , ??)
-	// 3 - 2d (?? , ?? , clut)
-	// 4 - 2d (?? , ?? , clut , seds) [2312.bin]
-	// 5 - 2d (?? , ?? , clut , seds , wds)
+	// 3 - 2d (anim , parts , clut)
+	// 4 - 2d (anim , parts , clut , seds) [2312.bin]
+	// 5 - 2d (anim , parts , clut , seds , wds)
 	$num = str2int($meta, 0, 2);
 	printf("=== sect1( $dir ) = $num\n");
 
 	switch ( $num )
 	{
 		case 2:
+			echo "SKIP $dir is 3D model\n";
+			return;
+
 			$p1 = str2int($meta,  4, 4);
 			$p2 = str2int($meta,  8, 4);
 			$p3 = str2int($meta, 12, 4); // end
-
-			echo "SKIP $dir is 3D model\n";
-			return;
 
 			$s1 = substr($meta, $p1, $p2-$p1);
 			$s2 = substr($meta, $p2, $p3-$p2);
@@ -162,8 +171,9 @@ function sect1( &$meta, &$file, $dir )
 			$s3 = substr($meta, $p3, $p4-$p3);
 
 			//save_file("$dir/0.meta", $s1);
-			save_file("$dir/1.meta", $s2);
+			//save_file("$dir/1.meta", $s2);
 			save_file("$dir/pal.dat", substr($s3,4));
+			loadtim($file, $pp);
 
 			global $gp_clut;
 			$cn = (strlen($s3) - 4) / 0x20;
@@ -188,6 +198,8 @@ function xeno( $fname )
 	if ( empty($file) )  return;
 
 	$dir = str_replace('.', '_', $fname);
+	if ( str2int($file, 4, 4) != str2int($file, 12, 4) )
+		return;
 
 	$num = str2int($file, 0, 2);
 	$off = str2int($file, 4, 4);
@@ -200,8 +212,7 @@ function xeno( $fname )
 			continue;
 
 		$meta = substr($file, $mp, $off-$mp);
-		loadtim($file, $pp);
-		sect1($meta, $file, "{$dir}_{$i}");
+		sect1($meta, $file, "{$dir}_{$i}", $pp);
 	}
 	return;
 }

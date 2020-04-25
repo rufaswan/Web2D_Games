@@ -20,6 +20,122 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 ////////////////////////////////////////
+function subsjis0( &$file, $pos )
+{
+	$len = 0;
+	while(1)
+	{
+		$b1 = ord( $file[$pos+$len] );
+		if ( $b1 >= 0xe0 )
+			$len += 2;
+		else
+		if ( $b1 >= 0xa0 )
+			$len++;
+		else
+		if ( $b1 >= 0x80 )
+			$len += 2;
+		else
+		if ( $b1 == 0x20 )
+			$len++;
+		else
+			break;
+	}
+	return substr($file, $pos, $len);
+}
+
+function sjis2utf8( $sjis )
+{
+	if ( ! defined("FUNC_ICONV") )
+		exit("ERROR FUNC_ICONV not defined!\n");
+	if ( ! defined("SJIS_HALF") )
+		exit("ERROR SJIS_HALF not defined!\n");
+	$sjis_half = file_get_contents(SJIS_HALF);
+	$iconv = FUNC_ICONV;
+	$charset = "CP932";
+
+	$utf = "";
+	$ed = strlen($sjis);
+	$st = 0;
+	while ( $st < $ed )
+	{
+		$b1 = ord( $file[$st] );
+		if ( $b1 >= 0xe0 ) // IBM/NEC extension
+		{
+			$s = $file[$st+0] . $file[$st+1];
+				$st += 2;
+			$r = "";
+			if ( empty($r) )  $r = $iconv( $charset, "UTF-8//TRANSLIT", $s );
+			if ( empty($r) )  $r = "??";
+			$utf .= $r;
+		}
+		else
+		if ( $b1 >= 0xa0 ) // half-width
+		{
+			$p = $b1 * 2;
+			$s = $sjis_half[$p+0] . $sjis_half[$p+1];
+				$st++;
+			$r = "";
+			if ( empty($r) )  $r = $iconv( $charset, "UTF-8//TRANSLIT", $s );
+			if ( empty($r) )  $r = "?";
+			$utf .= $r;
+		}
+		else
+		if ( $b1 >= 0x80 )
+		{
+			$s = $file[$st+0] . $file[$st+1];
+				$st += 2;
+			$r = "";
+			if ( empty($r) )  $r = $iconv( $charset, "ASCII//TRANSLIT", $s );
+			if ( empty($r) )  $r = $iconv( $charset, "UTF-8//TRANSLIT", $s );
+			if ( empty($r) )  $r = "??";
+			$utf .= $r;
+		}
+		else
+		{
+			$utf .= $file[$st];
+			$st++;
+		}
+	}
+	return $utf;
+}
+
+function utf8len( $utf8 )
+{
+	if ( ! defined("FUNC_ICONV") )
+		exit("ERROR FUNC_ICONV not defined!\n");
+	$iconv = FUNC_ICONV;
+	$len = array(
+		"asc" => 0,
+		"utf" => 0,
+	);
+
+	$len = strlen($utf8);
+	$pos = 0;
+	while ( $pos < $len )
+	{
+		$b1 = ord( $utf8[$pos] );
+		if ( $b1 & 0x80 )
+		{
+			$len['utf']++;
+			if ( $b1 >= 0xf1 )
+				$pos += 4;
+			else
+			if ( $b1 >= 0xe0 )
+				$pos += 3;
+			else
+			if ( $b1 >= 0xc0 )
+				$pos += 2;
+		}
+		else
+		{
+			$len['asc']++;
+			$pos++;
+		}
+	}
+
+	return $len;
+}
+////////////////////////////////////////
 /*
 REQUIRED defines
 define("ZERO", chr(0));
@@ -151,32 +267,4 @@ function utf8_conv( $charset, $str )
 	return $str;
 }
 
-function utf8_strlen( $utf8 )
-{
-	// 00-7f = as is
-	// 80-   = multi-byte
-	// length = c0-fd
-	// if ( preg_match('|[\xc0-\xfd][\x80-\xbf][\x80-\xbf]|', $utf8) )
-
-	// get $len of ascii chars
-	$len = strlen($utf8);
-	$asclen = 0;
-	for ( $i=0; $i < $len; $i++ )
-	{
-		$b1 = ord( $utf8[$i] );
-		if ( $b1 < 0x80 )
-			$asclen++;
-	}
-
-	// get $len of non-ascii/unicode chars
-	$strlen = FUNC_ICONV . "_strlen";
-	$len = $strlen($utf8, "utf-8");
-	$utflen = $len - $asclen;
-
-	$len = array(
-		"ascii" => $asclen,
-		"utf8"  => $utflen,
-	);
-	return $len;
-}
 ////////////////////////////////////////

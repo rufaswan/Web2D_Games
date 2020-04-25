@@ -27,6 +27,14 @@ function loadsrc( &$meta, $off, &$pix )
 	$pix['src']['pix'] = $src;
 	return;
 }
+
+// callback for copypix()
+function xeno_alp( $fg, $bg )
+{
+	if ( $fg == $bg )
+		return $fg;
+	return alpha_add( $fg, $bg );
+}
 //////////////////////////////
 function sectparts( &$meta, $off, $fn )
 {
@@ -40,41 +48,70 @@ function sectparts( &$meta, $off, $fn )
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
-	// block size = $off + 6 + ($num * 4) + ($num * 3)
+	$data = array();
+	$id = 0;
+	$pos = $off + 6 + ($num * 4);
+	//debug( substr($meta, $pos, 0x10) );
+	while ( $id < $num )
+	{
+		while(1)
+		{
+			$b1 = ord( $meta[$pos] ) >> 4;
+			if ( $b1 == 0xf )  $pos += 4;
+			else
+			if ( $b1 == 0xe )  $pos += 3;
+			else
+			if ( $b1 == 0xd )  $pos += 2;
+			else
+			if ( $b1 == 0xc )  $pos += 1;
+			else
+			if ( $b1 == 0x8 )  $pos += 1;
+			else
+				break;
+		}
+
+		$m1 = substr($meta, $pos, 3);
+		$pos += 3;
+
+		$p1 = $off + 6 + ($id * 4);
+		$m2 = substr($meta, $p1, 4);
+		$p2 = str2int($m2, 0, 2) * 4;
+			$id++;
+		printf("pos %x , part %x %x , id %x\n", $pos-3, $p1, $p2, $id-1);
+		array_unshift($data, array($m1,$m2));
+	}
+
 	global $gp_clut;
 	$sx = 0;
 	$sy = 0;
-	$p1 = $off + 6;
-	$p2 = $off + 6 + ($num * 4);
-	for ( $i=0; $i < $num; $i++ )
+	foreach ( $data as $v )
 	{
-		$v1 = str2int($meta, $p1+0, 2);
-		$v2 = str2int($meta, $p1+2, 2);
-			$p1 += 4;
+		list($m1,$m2) = $v;
 
-		$v3 = ord( $meta[$p2] );
-		if ( $v3 >= 0xc2 )
-			$p2++;
-		$v3 = $p2;
-		$p2 += 3;
-		//printf("%x,%x,%x,%x\n", $p1, $p2, $v1, $v2);
-
-		$dx = sint8( $meta[$v3+1] );
-		$dy = sint8( $meta[$v3+2] );
+		$dx = sint8( $m1[1] );
+		$dy = sint8( $m1[2] );
 		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
 
-		$v30 = ord( $meta[$v3+0] );
+		$m10 = ord( $m1[0] );
+		$pix['hflip'] = $m10 & 0x40;
+		$pix['vflip'] = $m10 & 0x20;
+		$cid = $m10 & 0x0f;
+		//alpha parts has both sprite + effect
+		//$pix['alpha'] = ( $m10 & 0x10 ) ? "xeno_alp": "";
+
+		$v1 = str2int($m2, 0, 2);
+		$v2 = str2int($m2, 2, 2);
 
 		loadsrc($meta, $v1*4, $pix);
 		$w = $pix['src']['w'];
 		$h = $pix['src']['h'];
-		$pix['src']['pal'] = $gp_clut[0];
+		$pix['src']['pal'] = $gp_clut[$cid];
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d , %02x\n",
-			$dx, $dy, $sx, $sy, $w, $h, $v30);
+			$dx, $dy, $sx, $sy, $w, $h, $m10);
 		copypix($pix);
-	} // for ( $i=0; $i < $num; $i++ )
+	} // foreach ( $data as $v )
 
 	savpix($fn, $pix, true);
 	return;

@@ -85,14 +85,14 @@ function int_min( $int, $min )
 {
 	if ( $int < $min )
 		return $min;
-	return (int)round($int);
+	return (int)$int;
 }
 
 function int_max( $int, $max )
 {
 	if ( $int > $max )
 		return $max;
-	return (int)round($int);
+	return (int)$int;
 }
 
 function save_file( $fname, $str )
@@ -110,6 +110,15 @@ function save_file( $fname, $str )
 		@mkdir( $dir, 0755, true );
 	}
 	file_put_contents($fname, $str);
+}
+
+function debug( $str )
+{
+	echo "DEBUG : ";
+	$len = strlen($str);
+	for ( $i=0; $i < $len; $i++ )
+		printf("%2x ", ord( $str[$i] ));
+	echo "\n";
 }
 
 function zero_watch( $name, $chr )

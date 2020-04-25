@@ -7,7 +7,7 @@ function clut2png
 {
 	[ -f "$1" ] || continue
 	php.sh $php "$1"
-	mogrify -format png -strip "$1".bmp
+	mogrify -format png -strip "$1".bmp &> /dev/null
 	rm "$1"
 	rm "$1".bmp
 }
