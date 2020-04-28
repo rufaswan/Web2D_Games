@@ -70,11 +70,13 @@ function sectpart( &$file, $nid, $st, $ed )
 		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, 0x100, 0x100);
 		$pix['src']['pal'] = $gp_clut;
 
-		$pix['dx'] = ord( $v[6] );
-		$pix['dy'] = ord( $v[7] );
+		$dx = ord( $v[6] );
+		$dy = ord( $v[7] );
+		$pix['dx'] = $dx;
+		$pix['dy'] = $dy;
 
-		printf("%4d , %4d , %4d , %4d , %4d , %4d\n",
-			$pix['dx'], $pix['dy'], $sx, $sy, $w, $h);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
+		printf("\n");
 		copypix($pix);
 	} // foreach ( $data as $k => $v )
 
@@ -147,3 +149,9 @@ function saga2( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	saga2( $argv[$i] );
+
+/*
+	/mout/battle.out is loaded to 801a0000
+	data is loaded to 800ac000
+		then append to 80102000
+ */

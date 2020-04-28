@@ -76,14 +76,16 @@ function sectparts( &$meta, $pos, $fn )
 		// dx dy sx sy w h c f -
 		$dx = sint8( $v[0] );
 		$dy = sint8( $v[1] );
+		$pix['dx'] = $dx + (CANV_S / 2);
+		$pix['dy'] = $dy + (CANV_S / 2);
+		neg_warn("pix dx", $pix['dx']);
+		neg_warn("pix dy", $pix['dy']);
+
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );
 		$w  = ord( $v[4] );
 		$h  = ord( $v[5] );
 		$cn = ord( $v[6] );
-
-		$pix['dx'] = $dx + (CANV_S / 2);
-		$pix['dy'] = $dy + (CANV_S / 2);
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
@@ -98,8 +100,8 @@ function sectparts( &$meta, $pos, $fn )
 			$pix['alpha'] = "stv_alp";
 		flag_warn('v7', $p7 & 0x3c);
 
-		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cn\n",
-			$dx, $dy, $sx, $sy, $w, $h);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
+		printf(" , $cn\n");
 		copypix($pix);
 	} // foreach ( $data as $v )
 

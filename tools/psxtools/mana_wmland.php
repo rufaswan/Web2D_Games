@@ -63,10 +63,11 @@ function sect1( &$file, $base, $fn )
 		// 0  1  2  3  4 5 6  7 8 9 a b
 		// dx dy sx sy w h cn - - - - -
 		$dx = sint8( $v[0] );
-		$pix['dx'] = $dx + (CANV_S / 2);
-
 		$dy = sint8( $v[1] );
+		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
+		neg_warn("pix dx", $pix['dx']);
+		neg_warn("pix dy", $pix['dy']);
 
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );
@@ -86,8 +87,8 @@ function sect1( &$file, $base, $fn )
 		if ( $p9 == 3 ) // mask / 5 + image
 			$pix['alpha'] = "wm_alp3";
 
-		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cn , $p9\n",
-			$dx, $dy, $sx, $sy, $w, $h);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
+		printf(" , $cn , $p9\n");
 		copypix($pix);
 	} // foreach ( $data as $v )
 

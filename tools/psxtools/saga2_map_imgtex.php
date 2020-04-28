@@ -162,3 +162,8 @@ function saga2( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	saga2( $argv[$i] );
+
+/*
+	/mout/map.out is loaded to 800ac000
+	data is loaded to 801a0000
+ */

@@ -33,8 +33,10 @@ function mana( $fname )
 	$st = 0x18;
 	while ( $cnt )
 	{
-		$pix['dx'] = str2int($file, $st+ 0, 2);
-		$pix['dy'] = str2int($file, $st+ 2, 2);
+		$dx = str2int($file, $st+ 0, 2);
+		$dy = str2int($file, $st+ 2, 2);
+		$pix['dx'] = $dx;
+		$pix['dy'] = $dy;
 
 		$sx = str2int($file, $st+ 4, 2);
 		$sy = str2int($file, $st+ 6, 2);
@@ -46,8 +48,8 @@ function mana( $fname )
 		$pix['src']['pix'] = rippix8($tim['pix'], $sx, $sy, $w, $h, $tim['w'], $tim['h']);
 		$pix['src']['pal'] = $tim['clut'][0];
 
-		printf("%4d , %4d , %4d , %4d , %4d , %4d\n",
-			$pix['dx'], $pix['dy'], $sx, $sy, $w, $h);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
+		printf("\n");
 		copypix($pix);
 
 		$cnt--;

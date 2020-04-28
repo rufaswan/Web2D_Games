@@ -93,7 +93,8 @@ function yuna( $fname )
 	// playstation little endian
 	if ( str2int($file, 0, 4) == 0x10 )
 		psx_yuna( $file, $fname );
-	else // saturn big endian
+	// saturn big endian
+	else
 		saturn_yuna( $file, $fname );
 
 	return;

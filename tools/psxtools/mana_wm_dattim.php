@@ -78,6 +78,8 @@ function sect1( &$file, $off, $fn )
 
 		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
+		neg_warn("pix dx", $pix['dx']);
+		neg_warn("pix dy", $pix['dy']);
 
 		$sx = ord($v[2]);
 		$sy = ord($v[3]);
@@ -102,8 +104,8 @@ function sect1( &$file, $off, $fn )
 		if ( $p9 == 3 ) // mask / 5 + image
 			$pix['alpha'] = "wm_alp3";
 
-		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cn , %d , $p9\n",
-			$dx, $dy, $sx, $sy, $w, $h, $pix['rotate']);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
+		printf(" , $cn , %d , $p9\n", $pix['rotate']);
 		copypix($pix);
 	} // foreach ( $data as $v )
 

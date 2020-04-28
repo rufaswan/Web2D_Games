@@ -4,6 +4,7 @@ require "common.inc";
 function mana_decode( &$file , $st )
 {
 	// sub_80014448-80014888 , SLPS_021.70
+	// data loaded to 8001dc003 , decode to 8004fdd8
 	echo "=== begin sub_80014448 ===\n";
 	$dec = "";
 	$ed = strlen($file);
@@ -250,7 +251,7 @@ function mana_decode( &$file , $st )
 	return $dec;
 }
 
-function manadec( $fname )
+function mana( $fname )
 {
 	// for /bin/*.bin
 	// for /ana/etc_etc/*.prs
@@ -270,4 +271,4 @@ function manadec( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	manadec( $argv[$i] );
+	mana( $argv[$i] );

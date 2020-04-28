@@ -39,7 +39,7 @@ function secttalk( &$file, $talk, $dir )
 	$st = $talk + 4;
 	for ( $i=0; $i < $num; $i++ )
 	{
-		printf("= {$dir}_talk/{$i}.clut , %x\n", $st);
+		printf("= $dir/talk/$i.clut , %x\n", $st);
 		$clut = "CLUT";
 		$clut .= chrint(16,4); // no clut
 		$clut .= chrint(48,4); // width
@@ -60,7 +60,7 @@ function secttalk( &$file, $talk, $dir )
 			$sz--;
 			$st++;
 		}
-		save_file("{$dir}_talk/{$i}.clut", $clut);
+		save_file("$dir/talk/$i.clut", $clut);
 	}
 	return;
 }
@@ -114,19 +114,17 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		if ( $big )
 		{
 			$dx = sint16( $v[0] . $v[ 9] );
-			$pix['dx'] = $dx + (CANVAS_B / 2);
-
 			$dy = sint16( $v[1] . $v[10] );
-			$pix['dy'] = $dy + (CANVAS_B / 2);
 		}
 		else
 		{
 			$dx = sint8( $v[0] );
-			$pix['dx'] = $dx + (CANVAS_S / 2);
-
 			$dy = sint8( $v[1] );
-			$pix['dy'] = $dy + (CANVAS_S / 2);
 		}
+		$pix['dx'] = $dx + ($sz / 2);
+		$pix['dy'] = $dy + ($sz / 2);
+		neg_warn("pix dx", $pix['dx']);
+		neg_warn("pix dy", $pix['dy']);
 
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );
@@ -151,8 +149,8 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 
 		$pix['rotate'] = 0x100 - ord($v[8]);
 
-		printf("%4d , %4d , %4d , %4d , %4d , %4d , $cid , %02x , %d\n",
-			$dx, $dy, $sx, $sy, $w, $h, $p7, $pix['rotate']);
+		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
+		printf(" , $cid , %02x , %d\n", $p7, $pix['rotate']);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
@@ -302,12 +300,12 @@ function infoimg( &$file, $dir )
 		}
 		if ( empty($ids) )
 		{
-			printf("ERROR empty ids for {$dir}_{$i}\n");
+			printf("ERROR empty ids for $dir/$i\n");
 			continue;
 		}
 
-		sectmeta($meta[$i], "{$dir}_{$i}", $ids);
-		//save_file("{$dir}_{$i}/meta", $meta[$i]);
+		sectmeta($meta[$i], "$dir/$i", $ids);
+		//save_file("$dir/$i/meta", $meta[$i]);
 	}
 	return;
 }
