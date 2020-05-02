@@ -147,24 +147,68 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	$data = array();
 	$id = 0;
 	$pos = $off + $phdz + ($num * $pofz);
-	//debug( substr($meta, $pos, 0x10) );
+	$rx = 0;
+	$ry = 0;
+	$rot = 0;
 	while ( $id < $num )
 	{
 		while(1)
 		{
-			$b1 = ord( $meta[$pos] ) >> 4;
-			if ( $b1 == 0xf )  $pos += 4;  else
-			if ( $b1 == 0xe )  $pos += 3;  else
-			if ( $b1 == 0xd )  $pos += 2;  else
-			if ( $b1 == 0xc )  $pos += 1;  else
-			if ( $b1 == 0x8 )  $pos += 1;  else
-				break;
-		}
+			$b1 = ord( $meta[$pos] );
+			switch ( $b1 >> 4 )
+			{
+				case 0xf:
+					$rx = sint8( $meta[$pos+1] );
+					$ry = sint8( $meta[$pos+2] );
+					$rot = ord( $meta[$pos+3] );
+					//debug( substr($meta, $pos, 4) );;
+					printf("%02x rx %d ry %d rot %d\n", $b1, $rx, $ry, $rot);
+					$pos += 4;
+					break;
+				case 0xe:
+					$rx = sint8( $meta[$pos+1] );
+					$ry = sint8( $meta[$pos+2] );
+					$rot = 0;
+					//debug( substr($meta, $pos, 3) );;
+					printf("%02x rx %d ry %d\n", $b1, $rx, $ry);
+					$pos += 3;
+					break;
+				case 0xc:
+					$rx = 0;
+					$ry = 0;
+					$rot = 0;
+					//debug( substr($meta, $pos, 1) );;
+					printf("%02x\n", $b1);
+					$pos += 1;
+					break;
+				case 0x8:
+					debug( substr($meta, $pos, 1) );;
+					//printf("%02x\n", $b1);
+					$pos += 1;
+					break;
+				default:
+					if ( ($b1 & 0x80) == 0 )
+						break 2;
+					debug( substr($meta, $pos, 1) );;
+					$pos += 1;
+					break;
+			}
+		} // while(1)
 
 		$bak = $pos;
-		$b1 = ( $big ) ? 5 : 3;
-		$m1 = substr($meta, $pos, $b1);
-		$pos += $b1;
+		if ( $big )
+		{
+			$dx = sint16( $meta[$bak+1].$meta[$bak+2] );
+			$dy = sint16( $meta[$bak+3].$meta[$bak+4] );
+			$pos += 5;
+		}
+		else
+		{
+			$dx = sint8( $meta[$bak+1] );
+			$dy = sint8( $meta[$bak+2] );
+			$pos += 3;
+		}
+		$m1 = array($meta[$bak+0], $dx, $dy, $rot, $rx, $ry);
 
 		$p1 = $off + $phdz + ($id * $pofz);
 		if ( $p256 )
@@ -177,29 +221,36 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 		printf("pos %x , part %x , id %x\n", $bak, $p1, $id);
 		array_unshift($data, array($m1,$m2));
 		$id++;
-	}
+	} // while ( $id < $num )
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
 	{
-		list($m1,$m2) = $v;
+		list($b1,$dx,$dy,$rot,$rx,$ry) = $v[0];
+		$m2 = $v[1];
 
-		if ( $big )
+		if ( $rot == 0 )
 		{
-			$dx = sint16( $m1[1].$m1[2] );
-			$dy = sint16( $m1[3].$m1[4] );
+			$pix['dx'] = $dx + $rx + (CANV_S / 2);
+			$pix['dy'] = $dy + $ry + (CANV_S / 2);
+			$pix['rotate'] = array(0,0,0);
 		}
 		else
 		{
-			$dx = sint8( $m1[1] );
-			$dy = sint8( $m1[2] );
+			$pix['dx'] = $rx + (CANV_S / 2);
+			$pix['dy'] = $ry + (CANV_S / 2);
+			$pix['rotate'] = array($rot, $dx, $dy);
 		}
+
+/*
 		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
+		$pix['rotate'] = array($rot, $rx, $ry);
+*/
 		neg_warn("pix dx", $pix['dx']);
 		neg_warn("pix dy", $pix['dy']);
 
-		$m10 = ord( $m1[0] );
+		$m10 = ord( $b1 );
 		$pix['hflip'] = $m10 & 0x40;
 		$pix['vflip'] = $m10 & 0x20;
 		$cid = $m10 & 0x0f;
@@ -381,11 +432,22 @@ for ( $i=1; $i < $argc; $i++ )
 	xeno jp1 / slps 011.60
 		2619-2770  spr1 monsters bosses
 		2989-3018  spr2 party
+			2989 3006  fei
+			2990 3007  elly
+			2991 3008  bart
+			2992 3009  citan    , 2998 3015 (sword)
+			2993 3010  billy
+			2994 3011  rico
+			2995 3012  emeralda , 2999 3016 (adult)
+			2996 3013  chuchu
+			2997 3014  maria
 	xeno jp2 / slps 011.61
 		2610-2761  spr1 monsters bosses
 		2980-3009  spr2 party
 
 	mixed spr1 + spr2
-		2710  ramsus fight
+		2710  ramsus fight (+fei)
 
+	DEBUG 2998 - 1ac - 0111.png , 2528
+	  ( 898 + 2528 + 6 + (a*4) = 2dee )
 */

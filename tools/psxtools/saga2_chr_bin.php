@@ -80,7 +80,7 @@ function sectpart( &$file, $nid, $st, $ed )
 		copypix($pix);
 	} // foreach ( $data as $k => $v )
 
-	savpix($nid, $pix);
+	savpix($nid, $pix, true);
 	return;
 }
 
@@ -110,7 +110,7 @@ function sect1( &$file, $dir )
 		$st += 4;
 		$nid++;
 	}
-	$fn = sprintf("$dir-%04d", $nid);
+	$fn = sprintf("$dir/%04d", $nid);
 	$off1 = str2int($file, $st+0, 4);
 
 	sectpart($file, $fn, $off1, $pix_st);

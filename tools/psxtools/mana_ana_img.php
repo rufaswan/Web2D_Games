@@ -147,10 +147,10 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		$pix['src']['pix'] = rippix8($gp_pix[$tid], $sx, $sy, $w, $h, 0x100, 0x100);
 		$pix['src']['pal'] = $gp_clut[$tid][$cid];
 
-		$pix['rotate'] = 0x100 - ord($v[8]);
+		$pix['rotate'] = array(ord($v[8]), 0, 0);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf(" , $cid , %02x , %d\n", $p7, $pix['rotate']);
+		printf(" , $cid , %02x , %d\n", $p7, $pix['rotate'][0]);
 		copypix($pix);
 	} // foreach ( $data as $v )
 

@@ -95,6 +95,11 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$pix['hflip'] = $p13 & 2;
 		flag_warn("p13", $p13 & 0xfc);
 
+		while ( ! isset( $src['rgba']['pix'][$tid*0x100*0x100*4] ) )
+		{
+			$src['rgba']['pix'] .= canvpix(0x100,0x100);
+			$src['rgba']['h'] += 0x100;
+		}
 		$src['dx'] = $sx;
 		$src['dy'] = $sy + ($tid * 0x100);
 		$src['src']['w'] = $w;
@@ -152,8 +157,8 @@ function cvds( $dir )
 
 	$src = COPYPIX_DEF;
 	$src['rgba']['w'] = 0x100;
-	$src['rgba']['h'] = 0x1000;
-	$src['rgba']['pix'] = canvpix(0x100,0x1000);
+	$src['rgba']['h'] = 0x100;
+	$src['rgba']['pix'] = canvpix(0x100,0x100);
 	$src['bgzero'] = true;
 
 	$ed = strlen($grps);

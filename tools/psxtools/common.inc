@@ -79,20 +79,29 @@ function strupd( &$file, $pos, $str )
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
 		$file[$pos+$i] = $str[$i];
+	return;
+}
+
+function var_swap( &$var1, &$var2 )
+{
+	$bak = $var1;
+	$var1 = $var2;
+	$var2 = $bak;
+	return;
 }
 
 function int_min( $int, $min )
 {
 	if ( $int < $min )
 		return $min;
-	return (int)$int;
+	return (int)round($int);
 }
 
 function int_max( $int, $max )
 {
 	if ( $int > $max )
 		return $max;
-	return (int)$int;
+	return (int)round($int);
 }
 
 function save_file( $fname, $str )
@@ -110,6 +119,7 @@ function save_file( $fname, $str )
 		@mkdir( $dir, 0755, true );
 	}
 	file_put_contents($fname, $str);
+	return;
 }
 
 function debug( $str )
@@ -119,28 +129,35 @@ function debug( $str )
 	for ( $i=0; $i < $len; $i++ )
 		printf("%2x ", ord( $str[$i] ));
 	echo "\n";
+	return;
 }
 
 function zero_watch( $name, $chr )
 {
 	if ( $chr != ZERO )
 		printf("ERROR $name not zero [%2x]\n", ord($chr));
+	return;
 }
+
 function byte_watch( $name, $chr )
 {
 	if ( $chr != BYTE )
 		printf("ERROR $name not 0xFF [%2x]\n", ord($chr));
+	return;
 }
 
 function neg_warn( $name, $int )
 {
 	if ( $int < 0 )
 		printf("ERROR $name is negative [%d]\n", $int);
+	return;
 }
+
 function flag_warn( $name, $int )
 {
 	if ( $int != 0 )
 		printf("ERROR $name some flags is set [%d]\n", $int);
+	return;
 }
 //////////////////////////////
 define("PIX_BLACK", ZERO . ZERO . ZERO . BYTE);
@@ -231,7 +248,7 @@ define("COPYPIX_DEF", array(
 	'bgzero' => false,
 	'vflip'  => false,
 	'hflip'  => false,
-	'rotate' => 0,
+	'rotate' => array(0,0,0),
 	'alpha'  => "",
 ));
 //////////////////////////////
@@ -300,16 +317,79 @@ function copypix( &$pix )
 		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
 	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
 
-	// rotation + alpha blend + copy
-		// rotation
-		//   0x100 == 360 degree == 2 * pi() radian
-		//   0x80  == 180 degree == pi() radian
-		//   0x01  == 180/128 degree == pi()/128 radian
-		//         == 1.40625 degree == 0.02454369260617... radian
-	$rot = ($pix['rotate'] & BIT8) * pi() / 0x80;
+	// src rotation
+	//   0x100 == 360 degree == 2 * pi() radian
+	//   0x80  == 180 degree == pi() radian
+	//   0x01  == 180/128 degree == pi()/128 radian
+	//         == 1.40625 degree == 0.02454369260617... radian
+	// Legend of Mana
+	//   rotation based on dx,dy , parts at +0,+0
+	// Xenogears
+	//   rotation based on dx,dy , parts at +rx,+ry
+	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
 	$sin = sin($rot);
 	$cos = cos($rot);
+	$tx = $pix['rotate'][1];
+	$ty = $pix['rotate'][2];
+		$x1 = $tx * $cos - $ty * $sin;
+		$y1 = $tx * $sin + $ty * $cos;
+	$tx = $pix['rotate'][1] + $pix['src']['w'];
+	$ty = $pix['rotate'][2] + $pix['src']['h'];
+		$x2 = $tx * $cos - $ty * $sin;
+		$y2 = $tx * $sin + $ty * $cos;
+	if ( $x1 > $x2 )  var_swap($x1, $x2);
+	if ( $y1 > $y2 )  var_swap($y1, $y2);
+		$x1 = (int)floor($x1);
+		$y1 = (int)floor($y1);
+		$x2 = (int)ceil($x2);
+		$y2 = (int)ceil($y2);
+	//printf("x1 %d y1 %d x2 %d y2 %d\n", $x1, $y1, $x2, $y2);
 
+	// dest rotation + alpha blend + copy
+	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
+	$sin = sin($rot);
+	$cos = cos($rot);
+	for ( $y=$y1; $y <= $y2; $y++ )
+	{
+		$dy = $y + $pix['dy'];
+		if ( $dy < 0 || $dy >= $pix['rgba']['h'] )
+			continue;
+
+		for ( $x=$x1; $x <= $x2; $x++ )
+		{
+			$dx = $x + $pix['dx'];
+			if ( $dx < 0 || $dx >= $pix['rgba']['w'] )
+				continue;
+
+			$rx = (int)round($x * $cos - $y * $sin) - $pix['rotate'][1];
+			$ry = (int)round($x * $sin + $y * $cos) - $pix['rotate'][2];
+			if ( $rx < 0 || $rx >= $pix['src']['w'] )
+				continue;
+			if ( $ry < 0 || $ry >= $pix['src']['h'] )
+				continue;
+
+			$sxx = ($ry * $pix['src']['w']) + $rx;
+			if ( ! isset( $flip[$sxx] ) )
+				continue;
+			if ( $flip[$sxx] == ZERO && ! $pix['bgzero'] )
+				continue;
+			$c1 = substr($pix['src']['pal'], ord( $flip[$sxx] )*4, 4);
+
+			$dxx = ($dy * $pix['rgba']['w'] + $dx) * 4;
+			$c2 = substr($pix['rgba']['pix'], $dxx, 4);
+
+			// using callbacks due to implementation difference
+			// Legend of Mana @ E=M+I
+			// Legend of Mana /wm/wmland/* @ 1,E=M+I @ 3,E=(M/5)+I
+			$alpha = $pix['alpha'];
+			if ( function_exists($alpha) )
+				$c1 = $alpha($c1, $c2);
+
+			strupd($pix['rgba']['pix'], $dxx, $c1);
+		} // for ( $x=$x1; $x < $x2; $x++ )
+	} // for ( $y=$y1; $y < $y2; $y++ )
+
+/*
 	$hyp = (int)hypot($pix['src']['w'], $pix['src']['h']);
 	$x1 = int_min($pix['dx'] - $hyp, 0);
 	$y1 = int_min($pix['dy'] - $hyp, 0);
@@ -350,6 +430,7 @@ function copypix( &$pix )
 			strupd($pix['rgba']['pix'], $dxx, $c1);
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
+*/
 
 	return;
 }

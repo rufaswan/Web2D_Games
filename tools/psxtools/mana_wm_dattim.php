@@ -95,7 +95,7 @@ function sect1( &$file, $off, $fn )
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
 		$pix['src']['pal'] = $gp_tim['clut'][$cn];
 
-		$pix['rotate'] = 0x100 - ord($v[8]);
+		$pix['rotate'] = array(ord($v[8]), 0, 0);
 
 		$p9 = ord($v[9]);
 		$pix['alpha'] = "";
@@ -105,7 +105,7 @@ function sect1( &$file, $off, $fn )
 			$pix['alpha'] = "wm_alp3";
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf(" , $cn , %d , $p9\n", $pix['rotate']);
+		printf(" , $cn , %d , $p9\n", $pix['rotate'][0]);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
