@@ -7,62 +7,6 @@ define("CANV_S", 0x300);
 $gp_pix  = array();
 $gp_clut = array();
 
-// for 3D textures
-function loadtex( &$file, $pos )
-{
-	global $gp_clut, $gp_pix;
-	$gp_clut = array();
-	$gp_pix  = array();
-	$p1 = str2int($file, $pos+4, 4);
-	$p2 = str2int($file, $pos+8, 4);
-	$tex = substr($file, $pos+$p1, $p2-$p1);
-
-	$num = str2int($tex, 0, 2);
-	printf("= loadtex( %x ) = $num, %x-%x\n", $pos, $p1, $p2);
-	for ( $i=0; $i < $num; $i++ )
-	{
-		$p = 4 + ($i * 4);
-		$p1 = str2int($tex, $p+0, 4);
-		$ty = str2int($tex, $p1, 4);
-		printf("p %x p1 %x\n", $p, $p1);
-		switch ( $ty )
-		{
-			case 0x1101:
-				$p2 = str2int($tex, $p+4, 4);
-				$cn = ($p2 - $p1 - 0x10) / 0x20;
-				$gp_clut = mclut2str($tex, $p1+0x10, 16, $cn);
-				printf("CLUT , %d , %d [%x]\n", $i, $cn, $p+$pos);
-				break;
-			case 0x1100:
-				$w = str2int($tex, $p1+12, 2) * 2;
-				$h = str2int($tex, $p1+14, 2);
-				$sz = $w * $h;
-				printf("PIX  , %d , %d x %d [%x]\n", $i, $w, $h, $p+$pos);
-
-				$p = $p1 + 16;
-				$pix = "";
-				while ( $sz > 0 )
-				{
-					$b = ord( $tex[$p] );
-					$b1 = $b & 0x0f;
-					$b2 = $b >> 4;
-					$pix .= chr($b1) . chr($b2);
-
-					$p++;
-					$sz--;
-				}
-				$gp_pix[$i]['p'] = $pix;
-				$gp_pix[$i]['w'] = $w * 2;
-				$gp_pix[$i]['h'] = $h;
-				break;
-			default:
-				printf("UNK  , %d [%x]\n", $i, $p+$pos);
-				break;
-		}
-	}
-	return;
-}
-
 // for 2D pixels - 256 width
 function loadpix( &$file, $pos )
 {
@@ -152,6 +96,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	$rot = 0;
 	while ( $id < $num )
 	{
+		$vflip = false;
 		while(1)
 		{
 			$b1 = ord( $meta[$pos] );
@@ -162,7 +107,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 					$ry = sint8( $meta[$pos+2] );
 					$rot = ord( $meta[$pos+3] );
 					//debug( substr($meta, $pos, 4) );;
-					printf("%02x rx %d ry %d rot %d\n", $b1, $rx, $ry, $rot);
+					printf("%2x , %4d , %4d , %4d\n", $b1, $rx, $ry, $rot);
 					$pos += 4;
 					break;
 				case 0xe:
@@ -170,7 +115,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 					$ry = sint8( $meta[$pos+2] );
 					$rot = 0;
 					//debug( substr($meta, $pos, 3) );;
-					printf("%02x rx %d ry %d\n", $b1, $rx, $ry);
+					printf("%2x , %4d , %4d\n", $b1, $rx, $ry);
 					$pos += 3;
 					break;
 				case 0xc:
@@ -178,12 +123,13 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 					$ry = 0;
 					$rot = 0;
 					//debug( substr($meta, $pos, 1) );;
-					printf("%02x\n", $b1);
+					printf("%2x\n", $b1);
 					$pos += 1;
 					break;
 				case 0x8:
-					debug( substr($meta, $pos, 1) );;
-					//printf("%02x\n", $b1);
+					$vflip = true;
+					//debug( substr($meta, $pos, 1) );;
+					printf("%2x\n", $b1);
 					$pos += 1;
 					break;
 				default:
@@ -208,7 +154,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$dy = sint8( $meta[$bak+2] );
 			$pos += 3;
 		}
-		$m1 = array($meta[$bak+0], $dx, $dy, $rot, $rx, $ry);
+		$m1 = array($meta[$bak+0], $dx, $dy, $rot, $rx, $ry, $vflip);
 
 		$p1 = $off + $phdz + ($id * $pofz);
 		if ( $p256 )
@@ -226,7 +172,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
 	{
-		list($b1,$dx,$dy,$rot,$rx,$ry) = $v[0];
+		list($b1,$dx,$dy,$rot,$rx,$ry,$vflip) = $v[0];
 		$m2 = $v[1];
 
 		if ( $rot == 0 )
@@ -241,21 +187,15 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$pix['dy'] = $ry + (CANV_S / 2);
 			$pix['rotate'] = array($rot, $dx, $dy);
 		}
-
-/*
-		$pix['dx'] = $dx + (CANV_S / 2);
-		$pix['dy'] = $dy + (CANV_S / 2);
-		$pix['rotate'] = array($rot, $rx, $ry);
-*/
 		neg_warn("pix dx", $pix['dx']);
 		neg_warn("pix dy", $pix['dy']);
 
-		$m10 = ord( $b1 );
+		$m10 = ord( $b1[0] );
 		$pix['hflip'] = $m10 & 0x40;
-		$pix['vflip'] = $m10 & 0x20;
+		$pix['vflip'] = $vflip;
 		$cid = $m10 & 0x0f;
 		//alpha parts has both sprite + effect
-		//$pix['alpha'] = ( $m10 & 0x10 ) ? "xeno_alp": "";
+		//$pix['alpha'] = ( $m10 & 0x20 ) ? "xeno_alp": "";
 
 		if ( $p256 )
 		{
@@ -309,33 +249,6 @@ function sect1( &$file, $dir, $mp, $pp )
 	{
 		case 2:
 			echo "SKIP $dir is 3D model\n";
-			//return;
-
-			$p1 = str2int($file, $mp+ 4, 4);
-			$p2 = str2int($file, $mp+ 8, 4);
-			$p3 = str2int($file, $mp+12, 4); // end
-
-			$s1 = substr($file, $mp+$p1, $p2-$p1);
-			$s2 = substr($file, $mp+$p2, $p3-$p2);
-
-			save_file("$dir/0.meta", $s1);
-			save_file("$dir/1.meta", $s2);
-			loadtex($file, $pp);
-
-			global $gp_clut, $gp_pix;
-			foreach ( $gp_pix as $pk => $pv )
-			{
-				foreach ( $gp_clut as $ck => $cv )
-				{
-					$clut = "CLUT";
-					$clut .= chrint(0x10, 4);
-					$clut .= chrint($pv['w'], 4);
-					$clut .= chrint($pv['h'], 4);
-					$clut .= $cv;
-					$clut .= $pv['p'];
-					save_file("$dir/$pk-$ck.clut", $clut);
-				}
-			}
 			return;
 		case 3:
 		case 4:
@@ -349,8 +262,8 @@ function sect1( &$file, $dir, $mp, $pp )
 			$s2 = substr($file, $mp+$p2, $p3-$p2);
 			$s3 = substr($file, $mp+$p3, $p4-$p3);
 
-			save_file("$dir/0.meta", $s1);
-			save_file("$dir/1.meta", $s2);
+			//save_file("$dir/0.meta", $s1);
+			//save_file("$dir/1.meta", $s2);
 			save_file("$dir/pal", substr($s3,4));
 
 			global $gp_clut;
@@ -426,7 +339,7 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 	spr1 data loaded to 801a52e0
-		then append to 8010791c
+		then appended to 8010791c
 	spr2 data loaded + appended to 80109db4
 
 	xeno jp1 / slps 011.60
@@ -448,6 +361,6 @@ for ( $i=1; $i < $argc; $i++ )
 	mixed spr1 + spr2
 		2710  ramsus fight (+fei)
 
-	DEBUG 2998 - 1ac - 0111.png , 2528
+	DEBUG 2998,0111.png , 1-1ac , 2-2528
 	  ( 898 + 2528 + 6 + (a*4) = 2dee )
 */

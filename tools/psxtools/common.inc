@@ -1,4 +1,10 @@
 <?php
+// for PS One
+// - little-endian byte order
+// - 32-bit negative int
+// - RGB555 color format
+// - Sprites are PsuedoColor
+// - Backgrounds are PsuedoColor, very rarely DirectColor
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
 define("BIT8",  0xff);
@@ -329,21 +335,16 @@ function copypix( &$pix )
 	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
 	$sin = sin($rot);
 	$cos = cos($rot);
-	$tx = $pix['rotate'][1];
-	$ty = $pix['rotate'][2];
-		$x1 = $tx * $cos - $ty * $sin;
-		$y1 = $tx * $sin + $ty * $cos;
-	$tx = $pix['rotate'][1] + $pix['src']['w'];
-	$ty = $pix['rotate'][2] + $pix['src']['h'];
-		$x2 = $tx * $cos - $ty * $sin;
-		$y2 = $tx * $sin + $ty * $cos;
-	if ( $x1 > $x2 )  var_swap($x1, $x2);
-	if ( $y1 > $y2 )  var_swap($y1, $y2);
-		$x1 = (int)floor($x1);
-		$y1 = (int)floor($y1);
-		$x2 = (int)ceil($x2);
-		$y2 = (int)ceil($y2);
-	//printf("x1 %d y1 %d x2 %d y2 %d\n", $x1, $y1, $x2, $y2);
+	$hyp = (int)hypot($pix['src']['w'], $pix['src']['h']);
+	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
+	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
+		$cx = $tx * $cos - $ty * $sin;
+		$cy = $tx * $sin + $ty * $cos;
+	$x1 = (int)$cx - $hyp;
+	$y1 = (int)$cy - $hyp;
+	$x2 = (int)$cx + $hyp;
+	$y2 = (int)$cy + $hyp;
+	//printf("x1 %d y1 %d x2 %d y2 %d hyp %d\n", $x1, $y1, $x2, $y2, $hyp);
 
 	// dest rotation + alpha blend + copy
 	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
@@ -369,8 +370,6 @@ function copypix( &$pix )
 				continue;
 
 			$sxx = ($ry * $pix['src']['w']) + $rx;
-			if ( ! isset( $flip[$sxx] ) )
-				continue;
 			if ( $flip[$sxx] == ZERO && ! $pix['bgzero'] )
 				continue;
 			$c1 = substr($pix['src']['pal'], ord( $flip[$sxx] )*4, 4);
@@ -378,59 +377,18 @@ function copypix( &$pix )
 			$dxx = ($dy * $pix['rgba']['w'] + $dx) * 4;
 			$c2 = substr($pix['rgba']['pix'], $dxx, 4);
 
+			// ALPHA BLENDING
 			// using callbacks due to implementation difference
 			// Legend of Mana @ E=M+I
-			// Legend of Mana /wm/wmland/* @ 1,E=M+I @ 3,E=(M/5)+I
+			// Legend of Mana /wm/wmland/* @ 1 is E=M+I @ 3 is E=(M/5)+I
 			$alpha = $pix['alpha'];
 			if ( function_exists($alpha) )
 				$c1 = $alpha($c1, $c2);
 
+			// COPY / UPDATE PIXEL
 			strupd($pix['rgba']['pix'], $dxx, $c1);
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
-
-/*
-	$hyp = (int)hypot($pix['src']['w'], $pix['src']['h']);
-	$x1 = int_min($pix['dx'] - $hyp, 0);
-	$y1 = int_min($pix['dy'] - $hyp, 0);
-	$x2 = int_max($pix['dx'] + $hyp, $pix['rgba']['w']);
-	$y2 = int_max($pix['dy'] + $hyp, $pix['rgba']['h']);
-
-	for ( $y=$y1; $y < $y2; $y++ )
-	{
-		$dyy = $y * $pix['rgba']['w'] * 4;
-		for ( $x=$x1; $x < $x2; $x++ )
-		{
-			$tx = $x - $pix['dx'];
-			$ty = $y - $pix['dy'];
-
-			$rx = (int)round($tx * $cos - $ty * $sin);
-			$ry = (int)round($tx * $sin + $ty * $cos);
-			if ( $rx < 0 )  continue;
-			if ( $ry < 0 )  continue;
-			if ( $rx >= $pix['src']['w'] )  continue;
-			if ( $ry >= $pix['src']['h'] )  continue;
-
-			$sxx = ($ry * $pix['src']['w']) + $rx;
-			$p1 = $flip[$sxx];
-			if ( $p1 == ZERO && ! $pix['bgzero'] )
-				continue;
-			$c1 = substr($pix['src']['pal'], ord($p1)*4, 4);
-
-			$dxx = ($x * 4) + $dyy;
-			$c2 = substr($pix['rgba']['pix'], $dxx, 4);
-
-			// using callbacks due to implementation difference
-			// Legend of Mana @ E=M+I
-			// Legend of Mana /wm/wmland/* @ 1,E=M+I @ 3,E=(M/5)+I
-			$alpha = $pix['alpha'];
-			if ( function_exists($alpha) )
-				$c1 = $alpha($c1, $c2);
-
-			strupd($pix['rgba']['pix'], $dxx, $c1);
-		} // for ( $x=$x1; $x < $x2; $x++ )
-	} // for ( $y=$y1; $y < $y2; $y++ )
-*/
 
 	return;
 }
@@ -512,7 +470,7 @@ function alpha_add( $fg, $bg )
 {
 	// FG is RGB from palette
 	// if BG is blank , FG RGB -> RGBA
-	// if BG is solid , BG += FG
+	// if BG is solid , FG += BG
 	// if BG is RGBA  , BG RGBA -> RGB, FG += BG, FG RGB -> RGBA
 
 	// blend w/normal pixels

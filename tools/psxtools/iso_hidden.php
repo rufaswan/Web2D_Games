@@ -38,7 +38,7 @@ function cdpos2int( $min , $sec , $frame )
 }
 
 //////////////////////////////
-function valkyrie_decode( &$str, &$dic, $key )
+function valkyrie_decrypt( &$str, &$dic, $key )
 {
 	printf("valkyrie TOC key : %8x\n", $key);
 	$toc = "";
@@ -109,7 +109,7 @@ function iso_valkyrie($fp, $dir)
 	$dic = fp2str($fp, 0x50000, 0x1400);
 	$key = 0x64283921;
 
-	$toc = valkyrie_decode( $str, $dic, $key );
+	$toc = valkyrie_decrypt( $str, $dic, $key );
 	valkyrie_toc($fp, $dir, $toc);
 	return;
 }
@@ -123,7 +123,7 @@ function iso_starocean2nd1($fp, $dir)
 	$dic = fp2str($fp, 0x9a800, 0x1200);
 	$key = 0x13578642;
 
-	$toc = valkyrie_decode( $str, $dic, $key );
+	$toc = valkyrie_decrypt( $str, $dic, $key );
 	valkyrie_toc($fp, $dir, $toc);
 	return;
 }
