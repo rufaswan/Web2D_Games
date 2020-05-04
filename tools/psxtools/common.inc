@@ -138,31 +138,39 @@ function debug( $str )
 	return;
 }
 
+// E_USER_ERROR
+// E_USER_WARNING
+// E_USER_NOTICE
+// E_USER_DEPRECATED
 function zero_watch( $name, $chr )
 {
+	$err = sprintf("ERROR $name not zero [%2x]\n", ord($chr));
 	if ( $chr != ZERO )
-		printf("ERROR $name not zero [%2x]\n", ord($chr));
+		trigger_error($err, E_USER_WARNING);
 	return;
 }
 
 function byte_watch( $name, $chr )
 {
+	$err = sprintf("ERROR $name not 0xFF [%2x]\n", ord($chr));
 	if ( $chr != BYTE )
-		printf("ERROR $name not 0xFF [%2x]\n", ord($chr));
+		trigger_error($err, E_USER_WARNING);
 	return;
 }
 
 function neg_warn( $name, $int )
 {
+	$err = sprintf("ERROR $name is negative [%d]\n", $int);
 	if ( $int < 0 )
-		printf("ERROR $name is negative [%d]\n", $int);
+		trigger_error($err, E_USER_WARNING);
 	return;
 }
 
 function flag_warn( $name, $int )
 {
+	$err = sprintf("ERROR $name some flags is set [%x]\n", $int);
 	if ( $int != 0 )
-		printf("ERROR $name some flags is set [%d]\n", $int);
+		trigger_error($err, E_USER_WARNING);
 	return;
 }
 //////////////////////////////
@@ -295,8 +303,30 @@ function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	return $rip;
 }
 
+function copypix_errs( &$pix )
+{
+	$err = "";
+	if ( $pix['dx'] < 0 )
+		$err .= sprintf("copypix() dx = %d\n", $pix['dx']);
+	if ( $pix['dy'] < 0 )
+		$err .= sprintf("copypix() dy = %d\n", $pix['dy']);
+	if ( ($pix['dx'] + $pix['src']['w']) > $pix['rgba']['w'] )
+		$err .= sprintf("copypix() dx + sw = %d + %d\n", $pix['dx'], $pix['src']['w']);
+	if ( ($pix['dy'] + $pix['src']['h']) > $pix['rgba']['h'] )
+		$err .= sprintf("copypix() dy + sh = %d + %d\n", $pix['dy'], $pix['src']['h']);
+
+	if ( ! empty($err) )
+	{
+		trigger_error($err, E_USER_ERROR);
+		return true;
+	}
+	return false;
+}
+
 function copypix( &$pix )
 {
+	if ( copypix_errs($pix) )
+		return;
 	if ( defined("DRY_RUN") && DRY_RUN )
 		return;
 
@@ -335,16 +365,20 @@ function copypix( &$pix )
 	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
 	$sin = sin($rot);
 	$cos = cos($rot);
-	$hyp = (int)hypot($pix['src']['w'], $pix['src']['h']);
+	$hyp = hypot($pix['src']['w'], $pix['src']['h']);
+
+	// 10x10 square (-5,-5,5,5) rotate 45 degree = (  0, -7, 0, 7) or ~14x14 square
+	// hypotenuse 10x10 square = 14.1421        += (-14,-21,14,21)
+	//   center-based with hypot                 = (-14,-14,14,14)
 	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
 	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
 		$cx = $tx * $cos - $ty * $sin;
 		$cy = $tx * $sin + $ty * $cos;
-	$x1 = (int)$cx - $hyp;
-	$y1 = (int)$cy - $hyp;
-	$x2 = (int)$cx + $hyp;
-	$y2 = (int)$cy + $hyp;
-	//printf("x1 %d y1 %d x2 %d y2 %d hyp %d\n", $x1, $y1, $x2, $y2, $hyp);
+	$x1 = (int)($cx - $hyp);
+	$y1 = (int)($cy - $hyp);
+	$x2 = (int)($cx + $hyp);
+	$y2 = (int)($cy + $hyp);
+	//printf("x %d y %d w %d h %d hyp %d\n", $x1, $y1, $x2-$x1, $y2-$y1, $hyp);
 
 	// dest rotation + alpha blend + copy
 	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
@@ -387,6 +421,7 @@ function copypix( &$pix )
 
 			// COPY / UPDATE PIXEL
 			strupd($pix['rgba']['pix'], $dxx, $c1);
+
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
 
@@ -399,6 +434,7 @@ function trimpix( &$pix )
 	$x2 = $pix['rgba']['w'];
 	$y1 = 0;
 	$y2 = $pix['rgba']['h'];
+	$TRIM_SZ = 16;
 
 	// keep it square
 	while(1)
@@ -408,30 +444,30 @@ function trimpix( &$pix )
 
 		// trim height
 		$p = $y1 * $row;
-		$b .= substr($pix['rgba']['pix'], $p, $row*16);
+		$b .= substr($pix['rgba']['pix'], $p, $row*$TRIM_SZ);
 
-		$p = ($y2 - 16) * $row;
-		$b .= substr($pix['rgba']['pix'], $p, $row*16);
+		$p = ($y2 - $TRIM_SZ) * $row;
+		$b .= substr($pix['rgba']['pix'], $p, $row*$TRIM_SZ);
 
 		// trim width
 		for ( $y=$y1; $y < $y2; $y++ )
 		{
 			$p = ($y * $row) + ($x1 * 4);
-			$b .= substr($pix['rgba']['pix'], $p, 4*16);
+			$b .= substr($pix['rgba']['pix'], $p, 4*$TRIM_SZ);
 		}
 		for ( $y=$y1; $y < $y2; $y++ )
 		{
-			$p = ($y * $row) + (($x2-16) * 4);
-			$b .= substr($pix['rgba']['pix'], $p, 4*16);
+			$p = ($y * $row) + (($x2-$TRIM_SZ) * 4);
+			$b .= substr($pix['rgba']['pix'], $p, 4*$TRIM_SZ);
 		}
 
 		if ( trim($b, ZERO) != "" )
 			break;
 
-		$y1 += 16;
-		$y2 -= 16;
-		$x1 += 16;
-		$x2 -= 16;
+		$y1 += $TRIM_SZ;
+		$y2 -= $TRIM_SZ;
+		$x1 += $TRIM_SZ;
+		$x2 -= $TRIM_SZ;
 	}
 	printf("TRIM %4d , %4d , %4d , %4d\n", $x1, $y1, $x2, $y2);
 
@@ -455,7 +491,7 @@ function savpix( $fn, &$pix, $trim = false )
 		return;
 
 	if ( trim($pix['rgba']['pix'], ZERO) == "" )
-		return printf("ERROR $fn [pix] blank\n");
+		return trigger_error("ERROR $fn [pix] blank\n", E_USER_WARNING);
 	if ( $trim )
 		trimpix($pix);
 

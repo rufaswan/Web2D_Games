@@ -123,8 +123,6 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		}
 		$pix['dx'] = $dx + ($sz / 2);
 		$pix['dy'] = $dy + ($sz / 2);
-		neg_warn("pix dx", $pix['dx']);
-		neg_warn("pix dy", $pix['dy']);
 
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );

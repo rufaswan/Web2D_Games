@@ -68,8 +68,6 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$dy = sint16( $meta[$p+2] . $meta[$p+3] );
 		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
-		neg_warn("pix dx", $pix['dx']);
-		neg_warn("pix dy", $pix['dy']);
 
 		$sx = str2int($meta, $p+ 4, 2);
 		$sy = str2int($meta, $p+ 6, 2);

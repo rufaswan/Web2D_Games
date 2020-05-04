@@ -40,7 +40,7 @@ function palette( $fname )
 		} // for ( $i=0; $i < $gp_cc; $i++ )
 	} // foreach ( $clut as $ck => $cv )
 
-	savpix("$fname.pal", $pix);
+	savpix($fname, $pix);
 	return;
 }
 

@@ -78,8 +78,6 @@ function sect1( &$file, $off, $fn )
 
 		$pix['dx'] = $dx + (CANV_S / 2);
 		$pix['dy'] = $dy + (CANV_S / 2);
-		neg_warn("pix dx", $pix['dx']);
-		neg_warn("pix dy", $pix['dy']);
 
 		$sx = ord($v[2]);
 		$sy = ord($v[3]);

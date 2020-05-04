@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-define("CANV_S", 0x300);
+define("CANV_S", 0x200);
 //define("DRY_RUN", true);
 
 $gp_pix  = array();
@@ -187,8 +187,6 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$pix['dy'] = $ry + (CANV_S / 2);
 			$pix['rotate'] = array($rot, $dx, $dy);
 		}
-		neg_warn("pix dx", $pix['dx']);
-		neg_warn("pix dy", $pix['dy']);
 
 		$m10 = ord( $b1[0] );
 		$pix['hflip'] = $m10 & 0x40;
@@ -358,8 +356,9 @@ for ( $i=1; $i < $argc; $i++ )
 		2610-2761  spr1 monsters bosses
 		2980-3009  spr2 party
 
-	mixed spr1 + spr2
-		2710  ramsus fight (+fei)
+	2626 2702  > 256x256 canvas
+	2710  mixed spr1 + spr2 / ramsus fight (+fei)
+
 
 	DEBUG 2998,0111.png , 1-1ac , 2-2528
 	  ( 898 + 2528 + 6 + (a*4) = 2dee )
