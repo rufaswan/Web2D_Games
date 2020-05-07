@@ -112,7 +112,7 @@ function landdata( &$file, $dir )
 
 	$id = 0;
 	$st = 0x2044;
-	while(1)
+	while (1)
 	{
 		$p1 = str2int($file, $st, 2);
 		if ( $p1 == 0 )

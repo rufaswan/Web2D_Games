@@ -31,7 +31,7 @@ function mana( $fname )
 
 	$cnt = ord( $file[0x14] );
 	$st = 0x18;
-	while ( $cnt )
+	while ( $cnt > 0 )
 	{
 		$dx = str2int($file, $st+ 0, 2);
 		$dy = str2int($file, $st+ 2, 2);
@@ -54,7 +54,7 @@ function mana( $fname )
 
 		$cnt--;
 		$st += 0x10;
-	} // while ( $cnt )
+	} // while ( $cnt > 0 )
 
 	savpix($fname, $pix);
 	return;

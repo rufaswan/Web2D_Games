@@ -63,7 +63,7 @@ function psxtimfile( $fname )
 			$data .= chrint($h, 4); // height
 
 			$st = 0x14;
-			while ( $siz )
+			while ( $siz > 0 )
 			{
 				$siz--;
 				$p = $file[$st];
@@ -85,7 +85,7 @@ function psxtimfile( $fname )
 			$data .= chrint($h  , 4); // height
 
 			$st = 0x14;
-			while ( $siz )
+			while ( $siz > 0 )
 			{
 				$siz--;
 				$data .= clutpix( $file, $st );
@@ -106,7 +106,7 @@ function psxtimfile( $fname )
 			$data .= chrint($h, 4); // height
 
 			$st = 0x14;
-			while ( $siz )
+			while ( $siz > 0 )
 			{
 				$siz--;
 				$r = $file[$st+0];

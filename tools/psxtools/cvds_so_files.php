@@ -6,7 +6,7 @@ function ramspr( &$ram, $dir, $oset, $ofns, $blk)
 {
 	printf("=== ramspr( $dir , %x , %x , %x )\n", $oset, $ofns, $blk);
 	$sid = 0;
-	while(1)
+	while (1)
 	{
 		$bak = $oset;
 		$off = str2int($ram, $oset, 3);
@@ -16,7 +16,7 @@ function ramspr( &$ram, $dir, $oset, $ofns, $blk)
 
 		printf("set_%d @ %x = %x\n", $sid, $bak, $off);
 		$set = array();
-		while(1)
+		while (1)
 		{
 			// 1 = f_*.dat  t_*.dat
 			// 2 = p_*.dat  *.nsbmd  *.nsbtx

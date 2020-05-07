@@ -38,7 +38,7 @@ foreach ( $clut as $k => $v )
 /*
 // start for ov7 /////////////
 $id = 0;
-while(1)
+while (1)
 {
 	if ( ! file_exists("ov7.bin.$id") )
 		break;

@@ -97,5 +97,5 @@ define("SJIS_HALF" , ROOT . "/files/sjis_half.inc");
 define("SJIS_ASC"  , ROOT . "/files/sjis_ascii.inc");
 define("FUNC_ICONV", "iconv");
 
-require ROOT . "/inc/init_{$gp_init["engine"]}.php";
+require ROOT . "/inc/" . $gp_init['engine'] . "/init.php";
 //print_r($gp_init);

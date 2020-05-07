@@ -25,6 +25,7 @@ require "common_sco.inc";
 define("SCO_CMD", ROOT . "/sco_cmd.inc");
 define("SEP", chr(254));
 
+$sco_str = array("");
 $sco_func = array();
 $sco_code = array();
 
@@ -44,10 +45,9 @@ function ain_str8b( &$file, &$st )
 	}
 	$st++; // skip 0
 
-	$str = utf8_conv( CHARSET, sjistxt($str) );
-	if ( $str == "" )
-		$str = "iconv() error";
-	$id = add_str($str);
+	global $sco_str;
+	$str = sjis2utf8($str);
+	$id = add_str($sco_str, $str);
 	return "@MSG=$id";
 }
 
@@ -98,7 +98,8 @@ function sco_table( &$file, $id, $pos, $cmd, $arg )
 
 function sco_msg( $msg )
 {
-	$id = add_str($msg);
+	global $sco_str;
+	$id = add_str($sco_str, $msg);
 	return array("@MSG=$id");
 }
 
@@ -132,9 +133,7 @@ function sco_cmd_msg( &$file, &$st, &$jump )
 	$st += $len;
 	if ( $file[$st] == ZERO || $file[$st] == ':' )
 		$st++;
-	$str = utf8_conv( CHARSET, sjistxt($str) );
-	if ( $str == "" )
-		$str = "iconv() error";
+	$str = sjis2utf8($str);
 	return array("MSG", $str);
 }
 
@@ -144,7 +143,7 @@ function sco_get_cmd( &$file, &$st, &$select, &$jump )
 	if ( $cmd & 0x80 || $cmd == 0x20 )
 		return sco_cmd_msg( $file, $st, $jump );
 
-	global $sco_cmd;
+	global $sco_cmd, $sco_str;
 	$len = 5;
 	while ( $len )
 	{
@@ -154,7 +153,7 @@ function sco_get_cmd( &$file, &$st, &$select, &$jump )
 			if ( $c[1] == $cmd )
 			{
 				$st += $len;
-				$arg = sco_cmd_arg($file, $st, array_slice($c, 2));
+				$arg = sco_cmd_arg($file, $st, array_slice($c, 2), $sco_str);
 				return array( $c[0], $arg );
 			}
 		}
@@ -233,27 +232,29 @@ function sco_run( $id, $pos )
 {
 	$func = __FUNCTION__;
 	global $sco_file;
-	if ( ! isset( $sco_file[$id] ); )
+	if ( ! isset( $sco_file[$id] ) )
 	{
 		$fname = sprintf("%03d.sco", $id);
 		$file  = file_get_contents($fname);
 		if ( empty($file) )
 			return;
+		//$file = rtrim($file, ZERO);
 		$sco_file[$id] = array(
 			'f' => $file,
 			's' => strlen($file),
 		);
 	}
 
+	global $sco_code, $sco_func;
+	$sid = sprintf("%03d,%05d", $id, $pos);
+	$sco_func[$sid] = 1;
 	$select = false;
 	$jump = array();
 
-	global $sco_code, $sco_func;
-	$sco_func["$id,$pos"] = 1;
 	$len = strlen( $sco_file[$id]['f'] );
 	while ( $pos < $len )
 	{
-		$sid = "$id,$pos";
+		$sid = sprintf("%03d,%05d", $id, $pos);
 		if ( isset( $sco_code[$sid] ) )
 			return;
 
@@ -268,11 +269,22 @@ function sco_run( $id, $pos )
 		if ( $cmd == '#' ) // data
 			$arg = sco_table($sco_file[$id]['f'], $id, $bak, $cmd, $arg);
 
-		array_unshift($arg, $cmd);
-		$sco_code[$sid] = implode(',', $arg). "\n";
+		$sco_code[$sid] = $cmd;
+		if ( ! empty($arg) )
+			$sco_code[$sid] .= ',' . implode(',', $arg);
+		echo "$sid\n";
 
 		switch ( $cmd )
 		{
+			case "S350":
+			case "S351":
+			case "153S":
+			case "S360":
+			case "S380":
+				$sco_file[$id]['s'] -= ($pos + $bak - $arg[0]);
+				$pos = $arg[0];
+				break;
+
 			case '@': // label jump
 				$j1 = $arg[0];
 				if ( (int)$j1 === $j1 )
@@ -284,7 +296,7 @@ function sco_run( $id, $pos )
 			case '&': // page jump
 				$j1 = $arg[0];
 				if ( (int)$j1 === $j1 )
-					$func($j1, 0);
+					$func($j1+1, 0);
 				break;
 			case '\\': // label call
 				$j1 = $arg[0];
@@ -297,7 +309,7 @@ function sco_run( $id, $pos )
 			case '%': // page call
 				$j1 = $arg[0];
 				if ( (int)$j1 === $j1 && $j1 > 0 )
-					$func($j1, 0);
+					$func($j1+1, 0);
 				break;
 
 			case '~': // function call
@@ -346,7 +358,7 @@ sco_init_cmd();
 for ( $i=1; $i < $argc; $i++ )
 {
 	$id = $argv[$i];
-	if ( (int)$id === $id )
+	if ( (int)$id == $id )
 		sco_run($id, 0);
 }
 
@@ -359,6 +371,13 @@ foreach( $sco_code as $ck => $cv )
 		fwrite($fp, "\n# $ck\n");
 	fwrite($fp, "$ck,$cv\n");
 }
+fwrite($fp, "\n");
 foreach( $sco_file as $ck => $cv )
-	fwrite($fp, "# $ck.sco has {$cv['s']} left\n");
+	fwrite($fp, sprintf("# $ck.sco has 0x%x bytes left\n", $cv['s']));
 fclose($fp);
+
+file_put_contents("STR0", implode("\n", $sco_str));
+
+$sco_func = array_keys($sco_func);
+sort($sco_func);
+file_put_contents("FUNC", implode("\n", $sco_func));

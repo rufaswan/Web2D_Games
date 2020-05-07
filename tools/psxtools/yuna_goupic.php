@@ -12,7 +12,7 @@ function yuna( $fname )
 	$dir = str_replace('.', '_', $fname);
 
 	$cnt = str2int($file, 12, 4);
-	while ( $cnt )
+	while ( $cnt > 0 )
 	{
 		$cnt--;
 		$p = 0x20 + ($cnt * 0x20);

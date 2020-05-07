@@ -93,7 +93,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$pix['hflip'] = $p13 & 2;
 		flag_warn("p13", $p13 & 0xfc);
 
-		while ( ! isset( $src['rgba']['pix'][$tid*0x100*0x100*4] ) )
+		while ( ($tid+1)*0x100 > $src['rgba']['h'] )
 		{
 			$src['rgba']['pix'] .= canvpix(0x100,0x100);
 			$src['rgba']['h'] += 0x100;

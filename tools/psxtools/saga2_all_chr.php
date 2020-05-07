@@ -39,7 +39,7 @@ require "common.inc";
 function spr_wh( &$file, $st )
 {
 	$ret = array();
-	while(1)
+	while (1)
 	{
 		$b1 = ord( $file[$st+0] );
 		$b2 = ord( $file[$st+1] );

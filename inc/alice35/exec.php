@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "funcs-bmp.php";
-require "funcs-sjis.php";
+//require ROOT . "/inc/funcs-bmp.php";
+require ROOT . "/inc/funcs-sjis.php";
 require "exec_alice35.inc";
 
 $sco_asm = array();

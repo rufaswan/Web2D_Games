@@ -24,11 +24,11 @@ if ( ! defined("GAME") )  exit();
 
 header("Content-Type:text/html; charset=utf-8;");
 $ajax_html = "";
-$engine = "exec_{$gp_init['engine']}";
-require ROOT . "/inc/$engine.php";
+require ROOT . "/inc/" . $gp_init['engine'] . "/exec.php";
 init_cheat();
 srand( $gp_init["srand"] );
 
+$engine = "exec_" . $gp_init['engine'];
 if ( TRACE_OB )
 {
 	ob_start();

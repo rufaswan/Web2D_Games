@@ -67,12 +67,12 @@ var dummy_ogg = "<?php echo PATH_OGG_1S; ?>";
 </head><body>
 <div id="canvas">
 	<div id="window" style="background-image:url('<?php echo GAME; ?>/thumb.png') center center;">
-		<span class="sprites" mouse="160,120,0,0">160,120</span>
-		<ul id="select" class="sprites" mouse="320,0,0,0">
-			<li data="0">SELECT 1</li>
-			<li data="1">SELECT 2</li>
-			<li data="2">SELECT 3</li>
-			<li data="3">SELECT 4</li>
+		<span class="sprites" data-mouse="160,120,0,0">160,120</span>
+		<ul id="select" class="sprites" data-mouse="320,0,0,0">
+			<li data-select="0">SELECT 1</li>
+			<li data-select="1">SELECT 2</li>
+			<li data-select="2">SELECT 3</li>
+			<li data-select="3">SELECT 4</li>
 		</ul>
 		<script>
 			function ajax_auto(){ return true; }
@@ -168,7 +168,7 @@ function window_update( input ){
 }
 </script><?php
 
-require ROOT . "/inc/html_{$gp_init["engine"]}.php";
+require ROOT . "/inc/" . $gp_init['engine'] . "/html.php";
 
 ?><script>
 window_update("");

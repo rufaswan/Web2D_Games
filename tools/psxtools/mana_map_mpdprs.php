@@ -175,7 +175,7 @@ function sect2( &$file, $nid, $base )
 	// mhm_bdrm.prs = bb8
 	$st = $off1;
 	$id = 1;
-	while(1)
+	while (1)
 	{
 		$off = ramint($file, $st);
 		if ( $off == 0 )
@@ -219,7 +219,7 @@ function sect1( &$file, $nid, $base )
 
 	$st = $data_off;
 	$id = 1;
-	while(1)
+	while (1)
 	{
 		$off = ramint($file, $st);
 		if ( $off == 0 )
@@ -251,7 +251,7 @@ function mana( $fname )
 
 	$st = ramint($file, 0x20);
 	$id = 1;
-	while(1)
+	while (1)
 	{
 		$off = ramint($file, $st);
 		if ( $off == 0 )

@@ -703,7 +703,7 @@ function sco_ascii( &$file, &$st, $sep )
 	$st++; // skip $sep
 
 	global $gp_init;
-	$str = utf8_conv( $gp_init["charset"], sjistxt($str) );
+	$str = sjis2utf8($str);
 	return $str;
 }
 
@@ -731,7 +731,7 @@ function sco_sjis( &$file, &$st )
 	$st += $len;
 
 	global $gp_init;
-	$str = utf8_conv( $gp_init["charset"], sjistxt($str) );
+	$str = sjis2utf8($str);
 	return $str;
 }
 

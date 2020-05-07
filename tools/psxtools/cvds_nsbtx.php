@@ -9,7 +9,7 @@ function cvds( $fname )
 	$dir = str_replace('.', '_', $fname);
 	$ed = strlen($file);
 	$st = 0;
-	while( $st < $ed )
+	while ( $st < $ed )
 	{
 		$mgc = substr($file, $st, 4);
 		switch ( $mgc )

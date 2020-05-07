@@ -20,7 +20,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 echo <<<_HTML
-<textarea id="console" cols="80" rows="10" placeholder="console" mouse="0,0" readonly>
+<textarea id="console" cols="80" rows="10" placeholder="console" readonly>
 </textarea>
 _HTML;
 ?>
@@ -34,8 +34,18 @@ _HTML;
 </style>
 
 <script>
-	$("body").on("click", "textarea", function(){
-		var data = $(this).attr("mouse");
-		window_update( "&resume&input=mouse,0,0" );
+	jq("#window").on("click", function(e){
+		var txt = "";
+		txt += "e.page     = " + e.pageX + "," + e.pageY + "\n";
+
+		var x = jq(this).offset().left;
+		var y = jq(this).offset().top;
+		txt += "offset()   = " + x + "," + y + "\n";
+
+		var x = jq(this).position().left;
+		var y = jq(this).position().top;
+		txt += "position() = " + x + "," + y + "\n";
+
+		jq("#console").html(txt);
 	});
 </script>

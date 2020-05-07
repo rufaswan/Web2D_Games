@@ -49,7 +49,7 @@ function fnstr( &$head, &$pos, $sub )
 		$fn[$st] = chr($b1);
 		$st++;
 	}
-	$fn = utf8_conv( CHARSET, sjistxt($fn) );
+	$fn = sjis2utf8($fn);
 	return $fn;
 }
 //////////////////////////////

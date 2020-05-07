@@ -27,7 +27,7 @@ function saturn_yuna( &$file, $fname )
 			$cnt = $b;
 			$b = $file[$st+2] . $file[$st+1];
 			$t = clutpix($b, 0);
-			while ( $cnt )
+			while ( $cnt > 0 )
 			{
 				$rgba .= $t;
 				$cnt--;
@@ -73,7 +73,7 @@ function psx_yuna( &$file, $fname )
 			$b = substr($file, $st+1, 2);
 			$t = $b;
 			//$t = clutpix($b, 0);
-			while ( $cnt )
+			while ( $cnt > 0 )
 			{
 				$rgba .= $t;
 				$cnt--;

@@ -1,5 +1,6 @@
 <?php
 require "common.inc";
+//define("DRY_RUN", true);
 
 function fp2str( $fp, $pos, $byte )
 {
@@ -95,6 +96,7 @@ function valkyrie_toc( $fp, $dir, &$toc )
 		$st++;
 	}
 
+	echo "$txt\n";
 	save_file("$dir/toc.bin", $toc);
 	save_file("$dir/toc.txt", $txt);
 	return;
@@ -136,7 +138,7 @@ function iso_xenogears($fp, $dir)
 
 	$list = array();
 	$st = 0;
-	while(1)
+	while (1)
 	{
 		$lba = str2int($str, $st+0, 3);
 		$siz = str2int($str, $st+3, 4);
@@ -158,6 +160,7 @@ function iso_xenogears($fp, $dir)
 		save_file($fn, fp2str($fp, $lba*0x800, $siz));
 	}
 
+	echo "$txt\n";
 	save_file("$dir/toc.bin", $str);
 	save_file("$dir/toc.txt", $txt);
 	return;
@@ -185,6 +188,7 @@ function iso_dewprism($fp, $dir)
 		save_file($fn, fp2str($fp, $lba1*0x800, $sz*0x800));
 	}
 
+	echo "$txt\n";
 	save_file("$dir/toc.bin", $str);
 	save_file("$dir/toc.txt", $txt);
 	return;

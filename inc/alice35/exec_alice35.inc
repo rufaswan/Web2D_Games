@@ -253,7 +253,7 @@ function sco_cmd( $cmd, $arg )
 			while ( $gp_data[0][$st+$len] != ZERO )
 				$len++;
 			$str = substr($gp_data, $st, $len);
-			$str = utf8_conv( CHARSET, sjistxt($str) );
+			$str = sjis2utf8($str);
 			$gp_pc['X'][$num] = $str;
 			$gp_data[1] += ($len + 1); // skip 0
 			return;

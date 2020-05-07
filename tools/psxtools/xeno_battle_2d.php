@@ -83,11 +83,6 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	if ( $num == 0 )
 		return;
 
-	$pix = COPYPIX_DEF;
-	$pix['rgba']['w'] = CANV_S;
-	$pix['rgba']['h'] = CANV_S;
-	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
-
 	$data = array();
 	$id = 0;
 	$pos = $off + $phdz + ($num * $pofz);
@@ -97,7 +92,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	while ( $id < $num )
 	{
 		$vflip = false;
-		while(1)
+		while (1)
 		{
 			$b1 = ord( $meta[$pos] );
 			switch ( $b1 >> 4 )
@@ -139,7 +134,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 					$pos += 1;
 					break;
 			}
-		} // while(1)
+		} // while (1)
 
 		$bak = $pos;
 		if ( $big )
@@ -168,6 +163,11 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 		array_unshift($data, array($m1,$m2));
 		$id++;
 	} // while ( $id < $num )
+
+	$pix = COPYPIX_DEF;
+	$pix['rgba']['w'] = CANV_S;
+	$pix['rgba']['h'] = CANV_S;
+	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )

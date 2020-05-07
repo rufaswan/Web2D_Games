@@ -1,5 +1,10 @@
 <?php
+// Derived from Source:
+//   https://github.com/EasyRPG/Tools/blob/master/xyz2png/src/xyz2png.cpp
+// Original License:
+//   GNU GPL v3
 require "common.inc";
+req_ext( "zlib_decode", "zlib" );
 
 function rpg2k( $fname )
 {

@@ -151,14 +151,14 @@ function sco_ascii( &$file, &$st, $sep )
 	$st += $len;
 	$st++; // skip $sep
 
-	$str = utf8_conv( CHARSET, sjistxt($str) );
+	$str = sjis2utf8($str);
 	return $str;
 }
 
 function sco_sjis( &$file, &$st )
 {
 	$str = sco_getsjis( $file, $st );
-	$str = utf8_conv( CHARSET, sjistxt($str) );
+	$str = sjis2utf8($str);
 	return $str;
 }
 
@@ -187,20 +187,19 @@ function sco_getsjis( &$file, &$st, $end = BIT24 )
 	return $str;
 }
 
-function add_str( $str )
+function add_str( &$sco_str, $str )
 {
-	global $gp_msg;
-	$id = count($gp_msg);
-	foreach ( $gp_msg as $k => $v )
+	$id = count($sco_str);
+	foreach ( $sco_str as $k => $v )
 	{
 		if ( $str == $v )
 			return $k;
 	}
-	$gp_msg[$id] = $str;
+	$sco_str[$id] = $str;
 	return $id;
 }
 ////////////////////////////////////////
-function sco_cmd_arg( &$file, &$st, $ret )
+function sco_cmd_arg( &$file, &$st, $ret, &$sco_msg )
 {
 	$arg = array();
 	foreach ( $ret as $r )
@@ -219,7 +218,7 @@ function sco_cmd_arg( &$file, &$st, $ret )
 				continue;
 			case "403":
 				$v = sco_ascii( $file, $st, ':' );
-				$k = add_str($v);
+				$k = add_str($sco_msg, $v);
 				$arg[] = "@MSG=$k";
 				continue;
 			case "404":  continue;

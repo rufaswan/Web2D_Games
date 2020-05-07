@@ -327,7 +327,7 @@ function ain2tags( &$file , &$st, $dir )
 					$key = ($key + 1) & BIT8;
 				}
 
-				$msg = utf8_conv( CHARSET, sjistxt($msg) );
+				$msg = sjis2utf8($msg);
 				$msg = str_esc($msg);
 				$buf .= "$msg\n";
 			}

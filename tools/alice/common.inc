@@ -85,3 +85,9 @@ function chrint( $int, $byte )
 	} // while ( $byte > 0 )
 	return $str;
 }
+
+function req_ext( $func, $ext )
+{
+	if ( ! function_exists($func) )
+		exit("REQ $ext extension not found!\n");
+}

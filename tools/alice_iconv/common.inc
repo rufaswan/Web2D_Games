@@ -72,6 +72,16 @@ function sint32( &$file, &$st ) // max +- 2,000,000,000
 	else
 		return $n;
 }
+function req_define( $define )
+{
+	if ( ! defined($define) )
+		exit("REQ $define not defined!\n");
+}
+function req_ext( $func, $ext )
+{
+	if ( ! function_exists($func) )
+		exit("REQ $ext extension not found!\n");
+}
 function str_esc( $str )
 {
 	$rs = array("\n","\r","\t","\v","\e","\f");
@@ -87,7 +97,7 @@ function unstr_esc( $str )
 function utf8txt( &$file, &$st )
 {
 	$sjis = substr0( $file, $st );
-	$utf8 = utf8_conv( CHARSET, sjistxt($sjis) );
+	$utf8 = sjis2utf8($sjis);
 	return str_esc($utf8);
 }
 function utf8fnam( &$file, &$st )

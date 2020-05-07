@@ -19,7 +19,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+// Derived from Source:
+//   xsystem35/src/qnt.c
+// Original License:
+//   GNU GPL v2 or later
 require "common.inc";
+req_ext( "zlib_decode", "zlib" );
 
 define("DEBUG", false);
 //////////////////////////////

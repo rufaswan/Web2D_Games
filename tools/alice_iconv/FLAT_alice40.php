@@ -20,6 +20,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+req_ext( "zlib_decode", "zlib" );
 //////////////////////////////
 function xorstr( &$str, $key )
 {
@@ -103,7 +104,7 @@ function flat( $fname )
 					while ( ($st%4) != 0 )
 						$st++;
 
-					$fnm = utf8_conv( CHARSET, sjistxt($fnm) );
+					$fnm = sjis2utf8($fnm);
 
 					$sep = strrpos($fnm, '/');
 					if ( $sep != false )

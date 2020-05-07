@@ -45,6 +45,12 @@ function debug()
 	return;
 }
 
+function req_define( $define )
+{
+	if ( ! defined($define) )
+		exit("ERROR $define not defined!\n");
+}
+
 function str2int( &$str, $pos, $byte )
 {
 	$s = substr($str, $pos, $byte);

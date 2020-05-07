@@ -1,8 +1,7 @@
 <?php
 require "common.inc";
 
-define("CANVAS_S", 0x100);
-define("CANVAS_B", 0x300);
+define("CANV_S", 0x300);
 //define("DRY_RUN", true);
 
 $gp_pix  = array();
@@ -48,7 +47,7 @@ function secttalk( &$file, $talk, $dir )
 			$st += 0x20;
 
 		$sz = 0x18 * 0x30;
-		while ( $sz )
+		while ( $sz > 0 )
 		{
 			$b = ord( $file[$st] );
 
@@ -99,12 +98,11 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 	} // while ( $num > 0 )
 	if ( empty($data) )
 		return;
-	$sz = ( $big ) ? CANVAS_B : CANVAS_S;
 
 	$pix = COPYPIX_DEF;
-	$pix['rgba']['w'] = $sz;
-	$pix['rgba']['h'] = $sz;
-	$pix['rgba']['pix'] = canvpix($sz,$sz);
+	$pix['rgba']['w'] = CANV_S;
+	$pix['rgba']['h'] = CANV_S;
+	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
@@ -121,8 +119,8 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 			$dx = sint8( $v[0] );
 			$dy = sint8( $v[1] );
 		}
-		$pix['dx'] = $dx + ($sz / 2);
-		$pix['dy'] = $dy + ($sz / 2);
+		$pix['dx'] = $dx + (CANV_S / 2);
+		$pix['dy'] = $dy + (CANV_S / 2);
 
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );

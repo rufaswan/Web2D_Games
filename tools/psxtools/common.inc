@@ -437,7 +437,7 @@ function trimpix( &$pix )
 	$TRIM_SZ = 16;
 
 	// keep it square
-	while(1)
+	while (1)
 	{
 		$row = $pix['rgba']['w'] * 4;
 		$b = "";
