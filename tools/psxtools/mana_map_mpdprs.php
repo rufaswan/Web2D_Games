@@ -124,7 +124,7 @@ function sectmap( &$file, $nid, $base )
 	$bit8 = $b8 & 0x10;
 	echo ( $bit8 ) ? "8-bit pix\n" : "4-bit pix\n";
 
-	$pix = COPYPIX_DEF;
+	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
 	$pix['rgba']['pix'] = canvpix($map_w,$map_h);

@@ -49,7 +49,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 
 	$fn = sprintf("$dir/%04d", $id);
 
-	$pix = COPYPIX_DEF;
+	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
 	$pix['rgba']['pix'] = canvpix($map_w,$map_h);

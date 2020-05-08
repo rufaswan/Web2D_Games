@@ -47,7 +47,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 {
 	printf("=== sectpart( $dir , $id , $num , %x )\n", $off);
 
-	$pix = COPYPIX_DEF;
+	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = CANV_S;
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
@@ -153,7 +153,7 @@ function cvds( $dir )
 	$meta = substr($file, $o1, $o2-$o1);
 	$grps = substr($file, $o3, $o4-$o3);
 
-	$src = COPYPIX_DEF;
+	$src = COPYPIX_DEF();
 	$src['rgba']['w'] = 0x100;
 	$src['rgba']['h'] = 0x100;
 	$src['rgba']['pix'] = canvpix(0x100,0x100);

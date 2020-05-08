@@ -18,7 +18,7 @@ function palette( $fname )
 	$cn = $siz / ($gp_cc*2);
 	$clut = mclut2str($file, 0, $gp_cc, $cn);
 
-	$pix = COPYPIX_DEF;
+	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $gp_cc * 16;
 	$pix['rgba']['h'] = $cn    * 16;
 	$pix['rgba']['pix'] = canvpix($gp_cc*16,$cn*16);

@@ -164,7 +164,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 		$id++;
 	} // while ( $id < $num )
 
-	$pix = COPYPIX_DEF;
+	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = CANV_S;
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);

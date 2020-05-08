@@ -1,8 +1,17 @@
 <?php
-// for PS One
+// toolset for PS One games
 // - little-endian byte order
 // - 32-bit negative int
 // - RGB555 color format
+// - 0x200000 RAM
+//   - 80000000-8000ffff BIOS
+//   - 80010000-801fffef WRAM
+//   - 801ffff0-801fffff stack
+// - fileseek in sectors
+//   - n * sector_size
+//     - absolute position within the CD
+//     - relative position within the file
+//   - minute:second:frame (absolute position)
 // - Sprites are PsuedoColor
 // - Backgrounds are PsuedoColor, very rarely DirectColor
 define("ZERO", chr(  0));
@@ -245,26 +254,32 @@ function grayclut( $no )
 	return $clut;
 }
 //////////////////////////////
-define("COPYPIX_DEF", array(
-	'rgba' => array(
-		'w' => 0,
-		'h' => 0,
-		'pix' => "",
-	),
-	'src' => array(
-		'w' => 0,
-		'h' => 0,
-		'pix' => "",
-		'pal' => "",
-	),
-	'dx' => 0,
-	'dy' => 0,
-	'bgzero' => false,
-	'vflip'  => false,
-	'hflip'  => false,
-	'rotate' => array(0,0,0),
-	'alpha'  => "",
-));
+function COPYPIX_DEF()
+{
+	// PHP 5.6 fix
+	// Warning: Constants may only evalute to scalar values
+	$php56 = array(
+		'rgba' => array(
+			'w' => 0,
+			'h' => 0,
+			'pix' => "",
+		),
+		'src' => array(
+			'w' => 0,
+			'h' => 0,
+			'pix' => "",
+			'pal' => "",
+		),
+		'dx' => 0,
+		'dy' => 0,
+		'bgzero' => false,
+		'vflip'  => false,
+		'hflip'  => false,
+		'rotate' => array(0,0,0),
+		'alpha'  => "",
+	);
+	return $php56;
+}
 //////////////////////////////
 function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
