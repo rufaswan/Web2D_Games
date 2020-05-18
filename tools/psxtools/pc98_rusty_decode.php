@@ -1,12 +1,10 @@
 <?php
-define("ZERO", chr(  0));
+require "common.inc";
 
-function mura_decode( &$file, $st )
+function rusty_decode( &$file, $st )
 {
-	$dict = "";
+	$dict = str_pad("", 0x1000, ZERO);
 	$dicp = 0xfee;
-	for ( $i=0; $i < 0x1000; $i++ )
-		$dict .= ZERO;
 	$dec = "";
 
 	$ed = strlen($file);
@@ -62,19 +60,19 @@ function mura_decode( &$file, $st )
 	return $dec;
 }
 //////////////////////////////
-function mura( $fname )
+function rusty( $fname )
 {
 	$file = file_get_contents( $fname );
 		if ( empty($file) )   return;
 
-	$mgc = substr($file, 0, 4);
-	if ( $mgc != "FCMP" )
+	$mgc = substr($file, 0, 2);
+	if ( $mgc != "LZ" )
 		return;
 
-	$dec = mura_decode( $file, 12 );
+	$dec = rusty_decode( $file, 7 );
 	file_put_contents("$fname.dec", $dec);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	mura( $argv[$i] );
+	rusty( $argv[$i] );

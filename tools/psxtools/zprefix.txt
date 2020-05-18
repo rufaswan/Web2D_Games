@@ -1,0 +1,24 @@
+= Prefixes and Supported PS One Games =
+xeno   SLPS 011.60  Xenogears / Disc 1
+xeno   SLPS 011.61  Xenogears / Disc 2
+yuna   SLPS 014.51  Galaxy Fraulein Yuna Final Edition
+saga2  SLPS 019.90  SaGa Frontier 2
+mana   SLPS 021.70  Legend of Mana
+
+star2  SLPM_861.05  Star Ocean 2 / Disc 1
+star2  SLPM_861.06  Star Ocean 2 / Disc 2
+valky  SLPM_863.79  Valkyrie Profile / Disc 1
+valky  SLPM_863.80  Valkyrie Profile / Disc 2
+
+xeno   SLUS 006.64  Xenogears / Disc 1
+xeno   SLUS 006.69  Xenogears / Disc 2
+mana   SLUS 010.13  Legend of Mana
+valky  SLUS_011.56  Valkyrie Profile / Disc 1
+valky  SLUS_011.79  Valkyrie Profile / Disc 2
+
+star2  SCUS_944.21  Star Ocean 2 / Disc 1
+star2  SCUS_944.22  Star Ocean 2 / Disc 2
+
+= Foreign Games =
+nds_cvds    NDS   Castlevania DoS + PoR + OoE
+pc98_rusty  PC98  Rusty

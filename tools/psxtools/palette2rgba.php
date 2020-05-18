@@ -33,7 +33,7 @@ function palette( $fname )
 
 			$pix['src']['w'] = 16;
 			$pix['src']['h'] = 16;
-			$pix['src']['pix'] = strpad(16*16, chr($i));
+			$pix['src']['pix'] = str_pad("", 16*16, chr($i));
 			$pix['src']['pal'] = $cv;
 
 			copypix($pix);

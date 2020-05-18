@@ -2,6 +2,7 @@
 // toolset for PS One games
 // - little-endian byte order
 // - 32-bit negative int
+// - load/store registers
 // - RGB555 color format
 // - 0x200000 RAM
 //   - 80000000-8000ffff BIOS
@@ -23,8 +24,8 @@ define("BIT32", 0xffffffff);
 
 function str2int( &$str, $pos, $byte )
 {
-	$int = substr($str, $pos, $byte);
-	return ordint($int);
+	$sub = substr($str, $pos, $byte);
+	return ordint($sub);
 }
 
 function substr0( &$str, $pos )
@@ -79,14 +80,6 @@ function sint16( $s )
 	if ( $int >> 15 )
 		return $int - BIT16 - 1;
 	return $int;
-}
-
-function strpad( $len, $c = ZERO )
-{
-	$str = "";
-	for ( $i=0; $i < $len; $i++ )
-		$str .= $c;
-	return $str;
 }
 
 function strupd( &$file, $pos, $str )
@@ -346,7 +339,7 @@ function copypix( &$pix )
 		return;
 
 	// horizontal flip + vertical flip
-	$flip = strpad( $pix['src']['w'] * $pix['src']['h'] );
+	$flip = str_pad( "", $pix['src']['w'] * $pix['src']['h'], ZERO );
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
 	{
 		$syy = $y * $pix['src']['w'];

@@ -85,6 +85,15 @@ function cvds_yr9e( &$ram, $dir ) // order of ecclesia
 	ramspr($ram, $dir, 0xf343c, $ofn, $blk);
 	return;
 }
+function cvds_yr9j( &$ram, $dir )
+{
+	echo "DETECT : CV Order of Ecclesia\n";
+	$ofn = 0xda694;
+	$blk = 0x20;
+	ramspr($ram, $dir, 0xf31c8, $ofn, $blk);
+	ramspr($ram, $dir, 0xf3df0, $ofn, $blk);
+	return;
+}
 
 function cvds_acbe( &$ram, $dir ) // portrait of ruins
 {
@@ -124,7 +133,7 @@ function overlay( &$ram, $dir, $oid )
 
 function ndsram( $dir )
 {
-	$ram = strpad( 0x400000 );
+	$ram = str_pad( "", 0x400000, ZERO );
 	$head = file_get_contents("$dir/header.bin");
 
 	$off = str2int($head, 0x28, 3);

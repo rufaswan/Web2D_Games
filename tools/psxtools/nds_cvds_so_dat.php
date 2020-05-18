@@ -7,6 +7,12 @@ function loadclut( &$clut, $dir, $id )
 {
 	if ( isset( $clut[$id] ) )
 		return;
+	$file = file_get_contents("$dir/0.3");
+	if ( empty($file) )  return;
+
+	$cn = strlen($file) / 0x20;
+	$clut = mclut2str($file, 0, 16, $cn);
+/*
 	$id1 = $id & 0x0f;
 	$id2 = $id >> 4;
 	$file = file_get_contents("$dir/$id2.3");
@@ -17,6 +23,7 @@ function loadclut( &$clut, $dir, $id )
 
 	foreach ( $pal as $k => $v )
 		$clut[$id+$k] = $v;
+*/
 	return;
 }
 
@@ -74,7 +81,9 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$w  = str2int($meta, $p+ 8, 2);
 		$h  = str2int($meta, $p+10, 2);
 		$tid = ord( $meta[$p+12] );
-		$cid = ord( $meta[$p+14] );
+
+		$p14 = ord( $meta[$p+14] );
+		$cid = $p14 >> 4;
 
 		loadtexx($texx, $dir, $tid);
 		loadclut($clut, $dir, $cid);
@@ -106,7 +115,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$src['src']['pal'] = $clut[$cid];
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf(" , $tid , %02x\n", $p13);
+		printf(" , $tid , %02x , %02x [$cid]\n", $p13, $p14);
 		copypix($pix);
 		copypix($src);
 	} // for ( $i=0; $i < $num; $i++ )
