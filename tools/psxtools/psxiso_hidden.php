@@ -201,7 +201,7 @@ function isofile( $fname )
 
 	$mgc = fp2str($fp, 0x8001, 5);
 	if ( $mgc != "CD001" )
-		return printf("%s is not an ISO 2048/secter file\n", $fname);
+		return printf("%s is not an ISO 2048/sector file\n", $fname);
 
 	$dir = str_replace('.', '_', $fname);
 

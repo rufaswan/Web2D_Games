@@ -62,4 +62,21 @@ overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
 		223b60 = 21 , 21 <- ALL SAME
 		2b6f60 = 38 , 38 <- ALL SAME
 		2c1ba0 = 78 , 78 <- ALL SAME
+
+	incomplete monster data
+		needle , no tex     ,  17/needles   , kalidus channel
+		kyon   , no pal     , 104/jiang shi , large cavern
+		armag  , no tex+pal , 109/arthroverta
+		kani   , no pal     , 110/brachyura
+		man    , no tex+pal , 111/man-eater
+		mael   , no tex+pal , 112/rusalka
+		fran   , no pal     , 113/goliath
+		grav   , no pal     , 114/gravedorcus
+		albus  , no tex     , 115/albus
+		bar    , no tex+pal , 116/barlowe
+		wallm  , no tex+pal , 117/wallman
+		alessi , no tex+pal , 118/blackmore
+		cent   , no pal     , 119/eligor
+		sgami  , no tex+pal , 120/death
+		dra    , no tex+pal , 121/dracula
  */

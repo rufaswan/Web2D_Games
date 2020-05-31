@@ -119,4 +119,11 @@ same pix diff palette
 	be788  18  wight
 	befe8  85  ghoul
 	bf428  119 ghoul king
+
+loading overlay
+	load y9.bin
+	load the overlay to target ram address
+	start from start init address
+	ww hh 00 00 (ww *= (0x10*2) , hh *= 0xc , in 16x16 tiles)
+	00 01 40 00 = CLUT
 */

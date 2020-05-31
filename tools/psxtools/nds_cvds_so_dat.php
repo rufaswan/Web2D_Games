@@ -5,49 +5,61 @@ define("CANV_S", 0x200);
 
 function loadclut( &$clut, $dir, $id )
 {
-	if ( isset( $clut[$id] ) )
-		return;
-	$file = file_get_contents("$dir/0.3");
-	if ( empty($file) )  return;
+	if ( ! isset( $clut[$id] ) )
+	{
+		$file = file_get_contents("$dir/0.3");
+		if ( empty($file) )  return "";
 
-	$cn = strlen($file) / 0x20;
-	$clut = mclut2str($file, 0, 16, $cn);
-/*
-	$id1 = $id & 0x0f;
-	$id2 = $id >> 4;
-	$file = file_get_contents("$dir/$id2.3");
-	if ( empty($file) )  return;
+		while ( strlen($file) % 0x20 )
+			$file .= ZERO;
 
-	$cn = strlen($file) / 0x20;
-	$pal = mclut2str($file, 0, 16, $cn);
-
-	foreach ( $pal as $k => $v )
-		$clut[$id+$k] = $v;
-*/
-	return;
+		$cn = strlen($file) / 0x20;
+		$clut = mclut2str($file, 0, 16, $cn);
+		echo "ADDED clut $id = $cn\n";
+	}
+	return $clut[$id];
 }
 
-function loadtexx( &$texx, $dir, $id )
+function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 {
-	if ( isset( $texx[$id] ) )
-		return;
-	$file = file_get_contents("$dir/$id.1");
-	if ( empty($file) )  return;
-
-	$pix = "";
-	$ed = strlen($file);
-	$st = 0;
-	while ( $st < $ed )
+	if ( ! isset( $texx[$id] ) )
 	{
-		$p = ord( $file[$st] );
-		$p1 = $p & 0x0f;
-		$p2 = $p >> 4;
+		$file = file_get_contents("$dir/$id.1");
+		if ( empty($file) )  return "";
 
-		$pix .= chr($p1) . chr($p2);
-		$st++;
-	} // while ( $st < $ed )
-	$texx[$id] = $pix;
-	return;
+		$len = strlen($file);
+		switch ( $len )
+		{
+			case 0x2000: // 128x128 , 4-bit
+			case 0x8000: // 256x256 , 4-bit
+				$texx[$id] = "";
+				for ( $i=0; $i < $len; $i++ )
+				{
+					$b = ord($file[$i]);
+					$b1 = $b & 0x0f;
+					$b2 = $b >> 4;
+					$texx[$id] .= chr($b1) . chr($b2);
+				}
+				break;
+			case 0x4000: // 128x128 , 8-bit
+				$texx[$id] = $file;
+				break;
+			default:
+				trigger_error("$texx $id = $len\n", E_USER_WARNING);
+				break;
+		} // switch ( $len )
+		echo "ADDED texx $id\n";
+	}
+
+	$len = strlen( $texx[$id] );
+	switch ( $len )
+	{
+		case 0x4000: // 128x128
+			return rippix8($texx[$id], $sx, $sy, $w, $h, 0x80, 0x80);
+		case 0x10000: // 256x256
+			return rippix8($texx[$id], $sx, $sy, $w, $h, 0x100, 0x100);
+	}
+	return "";
 }
 //////////////////////////////
 function sectpart( &$meta, &$src, $dir, $id, $num, $off )
@@ -83,19 +95,12 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$tid = ord( $meta[$p+12] );
 
 		$p14 = ord( $meta[$p+14] );
-		$cid = $p14 >> 4;
-
-		loadtexx($texx, $dir, $tid);
-		loadclut($clut, $dir, $cid);
-		if ( ! isset( $texx[$tid] ) )
-			continue;
-		if ( ! isset( $clut[$cid] ) )
-			continue;
+		$cid = $p14;
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
-		$pix['src']['pix'] = rippix8($texx[$tid], $sx, $sy, $w, $h, 0x80, 0x100);
-		$pix['src']['pal'] = $clut[$cid];
+		$pix['src']['pix'] = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
+		$pix['src']['pal'] = loadclut($clut, $dir, $cid);
 
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;
@@ -111,8 +116,8 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$src['dy'] = $sy + ($tid * 0x100);
 		$src['src']['w'] = $w;
 		$src['src']['h'] = $h;
-		$src['src']['pix'] = rippix8($texx[$tid], $sx, $sy, $w, $h, 0x80, 0x100);
-		$src['src']['pal'] = $clut[$cid];
+		$src['src']['pix'] = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
+		$src['src']['pal'] = loadclut($clut, $dir, $cid);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $tid , %02x , %02x [$cid]\n", $p13, $p14);
@@ -146,9 +151,11 @@ function sectanim( &$meta, $id, $num, $off )
 //////////////////////////////
 function cvds( $dir )
 {
-	$file = file_get_contents( "$dir/0.2" );
-	if ( empty($file) )  return;
+	if ( ! file_exists("$dir/0.1") )  return; // texture
+	if ( ! file_exists("$dir/0.2") )  return; // metadata
+	if ( ! file_exists("$dir/0.3") )  return; // palette
 
+	$file = file_get_contents( "$dir/0.2" );
 	$o1 = str2int($file, 0x04, 4);
 	$o2 = str2int($file, 0x08, 4);
 	$o3 = str2int($file, 0x0c, 4);
