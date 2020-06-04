@@ -1,9 +1,11 @@
 <?php
 require "common.inc";
 
+//define("DRY_RUN", true);
+
 function sotn( $fname )
 {
-	// for /BIN/MONSTER.BIN
+	// for /bin/monster.bin
 	if ( stripos($fname, "monster.bin") === false )
 		return;
 

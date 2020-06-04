@@ -130,12 +130,18 @@ function save_file( $fname, $str )
 	return;
 }
 
-function debug( $str )
+function debug( $str, $sep = 4 )
 {
 	echo "DEBUG : ";
 	$len = strlen($str);
-	for ( $i=0; $i < $len; $i++ )
+	$i = 0;
+	while ( $i < $len )
+	{
 		printf("%2x ", ord( $str[$i] ));
+			$i++;
+		if ( $i != 0 && ($i % $sep) == 0 )
+			echo "  ";
+	}
 	echo "\n";
 	return;
 }
@@ -285,7 +291,7 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 		$syy = ($sy + $y) * $sw;
 		for ( $x=0; $x < ($w/2); $x++ )
 		{
-			$sxx = $syy + $sx + $x;
+			$sxx = $syy + ($sx/2) + $x;
 			$p = ord( $pix[$sxx] );
 
 			$p1 = $p & 0x0f;
