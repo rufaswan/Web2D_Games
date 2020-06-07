@@ -156,6 +156,8 @@ function cvds( $dir )
 	if ( ! file_exists("$dir/0.3") )  return; // palette
 
 	$file = file_get_contents( "$dir/0.2" );
+	if ( ( ord($file[3]) & 0x80 ) == 0 )
+		$file = file_get_contents( "$dir/1.2" );
 	$o1 = str2int($file, 0x04, 4);
 	$o2 = str2int($file, 0x08, 4);
 	$o3 = str2int($file, 0x0c, 4);

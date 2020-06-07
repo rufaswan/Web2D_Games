@@ -1,0 +1,10 @@
+# castlevania sougetsu no juujika jp
+# offsets are for nds.ram
+
+[arm9.bin]
+files = 8cc6c , 99fd4 , 28
+monster = 8ca90 , 8cc68
+objects = 9b79c , 9b974 , ov-0
+bgset = 9a3d4 , 9a418
+
+[monster]

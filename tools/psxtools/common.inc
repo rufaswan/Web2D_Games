@@ -130,6 +130,42 @@ function save_file( $fname, $str )
 	return;
 }
 
+function req_file( $fname )
+{
+	if ( ! file_exists($fname) )
+		trigger_error("req_file( $fname ) : not found\n", E_USER_ERROR);
+	return file_get_contents($fname);
+}
+
+function patchfile( $fname )
+{
+	$fn = __DIR__ . "/patch/$fname";
+	if ( ! file_exists($fn) )
+		return "";
+
+	$data = array();
+	$sect = "";
+	foreach ( file($fn) as $v )
+	{
+		$v = preg_replace("|[\s]+|", '', $v);
+		if ( empty($v) )
+			continue;
+		if ( $v[0] == '#' )
+			continue;
+
+		if ( $v[0] == '[' )
+		{
+			$sect = trim($v, "] [\n");
+			continue;
+		}
+
+		list($vk,$vv) = explode('=', $v);
+		$vv = explode(',', $vv);
+		$data[$sect][$vk] = $vv;
+	}
+	return $data;
+}
+
 function debug( $str, $sep = 4 )
 {
 	echo "DEBUG : ";
@@ -631,5 +667,18 @@ function psxtim( &$file )
 		return $tim;
 	}
 	return $tim;
+}
+//////////////////////////////
+function nds_overlay( &$ndsram, &$y9bin, $dir, $id )
+{
+	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
+	$bin  = file_get_contents($over);
+	if ( empty($bin) )
+		return 0;
+	$off   = str2int($y9bin, ($id * 0x20) + 0x04, 3);
+	$start = str2int($y9bin, ($id * 0x20) + 0x10, 3);
+	printf("LOADED overlay %x @ %x => %x\n", $id, $off, $start);
+		strupd($ndsram, $off, $bin);
+	return $start;
 }
 //////////////////////////////

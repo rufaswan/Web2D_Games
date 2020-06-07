@@ -1,0 +1,10 @@
+# castlevania portrait of ruin us
+# offsets are for nds.ram
+
+[arm9.bin]
+files = cdafc , df15c , 20
+monster = cd88c , cdaf8
+objects = e19dc , e1ce8 , ov-0
+bgset = dfa50 , dfa88
+
+[monster]

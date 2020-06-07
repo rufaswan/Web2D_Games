@@ -1,0 +1,13 @@
+for baked/hardcoded pointers into assembly instructions.
+only useful for specific region of a game.
+or, for specific version/re-release of a game.
+
+example
+	18 80 01 3c  lui  $at, 0x8018
+	40 07 25 8c  lw   $a1, 0x740($at)
+	// same as 80180000[740] or 80180740[0]
+
+	18 80 12 3c  lui   $s2, 0x8018
+	80 0e 52 26  addiu $s2, 0xe80
+	00 00 42 8e  lw    $v0, 0($s2)
+	// same as 80180e80[0]

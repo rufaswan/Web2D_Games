@@ -1,0 +1,11 @@
+# castlevania order of ecclesia us
+# offsets are for nds.ram
+
+[arm9.bin]
+files = d8cec , eca0c , 20
+monster = f2814 , f29f8
+objects = f343c , f3670
+# 148ea8
+bgset = ecbb8 , ecc08
+
+[monster]

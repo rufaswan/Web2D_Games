@@ -64,19 +64,35 @@ overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
 		2c1ba0 = 78 , 78 <- ALL SAME
 
 	incomplete monster data
-		needle , no tex     ,  17/needles   , kalidus channel
-		kyon   , no pal     , 104/jiang shi , large cavern
-		armag  , no tex+pal , 109/arthroverta
-		kani   , no pal     , 110/brachyura
-		man    , no tex+pal , 111/man-eater
-		mael   , no tex+pal , 112/rusalka
-		fran   , no pal     , 113/goliath
-		grav   , no pal     , 114/gravedorcus
-		albus  , no tex     , 115/albus
-		bar    , no tex+pal , 116/barlowe
-		wallm  , no tex+pal , 117/wallman
-		alessi , no tex+pal , 118/blackmore
-		cent   , no pal     , 119/eligor
-		sgami  , no tex+pal , 120/death
-		dra    , no tex+pal , 121/dracula
+		needle , no tex     ,  17/needles     , ov/?20?
+		kyon   , no pal     , 104/jiang shi   ,
+		armag  , no tex+pal , 109/arthroverta , ov/23
+		kani   , no pal     , 110/brachyura   ,
+		man    , no tex+pal , 111/man-eater   , ov/25
+		mael   , no tex+pal , 112/rusalka     , ov/26
+		fran   , no pal     , 113/goliath     ,
+		grav   , no pal     , 114/gravedorcus ,
+		albus  , no tex     , 115/albus       , ov/35/boss , ov/21/play
+		bar    , no tex+pal , 116/barlowe     , ov/36
+		wallm  , no tex+pal , 117/wallman     , ov/27
+		alessi , no tex+pal , 118/blackmore   , ov/34
+		cent   , no pal     , 119/eligor      ,
+		sgami  , no tex+pal , 120/death       , ov/24
+		dra    , no tex+pal , 121/dracula     , ov/33
+
+	prefix ?
+		eac = minera prison island
+		haa = misty forest road
+		jaa = skeleton cave
+		laa = large cavern
+		maa = dracula castle/library
+		mba = dracula castle/kitchen
+		oaa = dracula castle/clock tower
+		qaa = dracula castle/armory
+		saa = monastery
+
+saa = (files) 2df-2f6
+	= (arm9.bin) eefbc/data , d8cf4/pointer -> d8c98/begin
+	= (arm9.bin) d8de8/pointer -> d8da0/begin -> 46380/func
+	= d8cf4[0] , d8da0[12][0]
  */

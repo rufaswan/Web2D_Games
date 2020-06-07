@@ -110,28 +110,6 @@ function savemap( &$img, $dir )
 	return;
 }
 
-function savechr( &$img, $dir )
-{
-	$st = str2int($img, 0x0c, 4) + 4;
-	$ed = str2int($img, 0x10, 4);
-	$no = 1;
-	while ( $st < $ed )
-	{
-		$fn = sprintf("$dir/chr%03d.chr", $no);
-		$sz = str2int($img, $st, 4);
-		if ( $sz == 0 )
-			return;
-
-		printf("=== savechr() , %x , %x , $fn\n", $st, $sz);
-		$chr = substr($img, $st, $sz);
-		save_file($fn, $chr);
-
-		$st += $sz;
-		$no++;
-	}
-	return;
-}
-
 function saga2( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -145,7 +123,6 @@ function saga2( $fname )
 	if ( empty($tex) )  return;
 
 	$dir = "{$pfx}_imgtex";
-	savechr($img, $dir);
 
 	global $gp_pix, $gp_clut;
 	$off = str2int($tex, 4, 4);

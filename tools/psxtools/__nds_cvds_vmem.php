@@ -85,6 +85,12 @@ arlau close
   228
   325
 
+arlau por clut = ov_7 , 2b5198
+	arm9 = d90b0/ptr -> d8fb4/begin  d911c/end
+	= d8fe8
+arlau dos clut = ov_4 , 2bd5c0
+	ov_1 = 245ca4/asm
+
   62
 stor close
   63 = 2ba57c

@@ -1,0 +1,15 @@
+# castlevania gallery of labyrinth jp
+# offsets are for nds.ram
+
+[arm9.bin]
+files = c237c , d399c , 20
+monster = c210c , c2378
+objects = d6218 , d6524 , ov-0
+bgset = d424c , d4284
+
+[monster]
+play_1 = ov-0 , ov-7 , 0-217f2c , 2-843 , 1-685-69b , 3-2ba704
+play_2 = ov-0 , ov-7 , 0-217f84 , 2-842 , 1-676-684 , 3-2ba748
+play_3 = ov-0 , ov-7 , 0-21808c , 2-70f , 1-6ea-700 , 3-2ba78c
+play_4 = ov-0 , ov-7 , 0-2180e4 , 2-710 , 1-64b-64f , 3-2ba810
+play_5 = ov-0 , ov-7 , 0-21813c , 2-724 , 1-650 , 3-2ba894

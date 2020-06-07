@@ -61,14 +61,5 @@ $head = file_get_contents("header.bin");
 
 // load overlay files to $ram
 for ( $i=1; $i < $argc; $i++ )
-{
-	$id = (int)$argv[$i];
-	$over = sprintf("overlay/overlay_%04d.bin", $id);
-	$bin  = file_get_contents($over);
-
-	$off   = str2int($y9, ($id * 0x20) + 0x04, 3);
-	$start = str2int($y9, ($id * 0x20) + 0x10, 3);
-	strupd($ram, $off, $bin);
-	printf("LOADED overlay %x @ %x => %x\n", $id, $off, $start);
-}
+	nds_overlay( $ram, $y9, '.', (int)$argv[$i] );
 save_file("nds.ram", $ram);
