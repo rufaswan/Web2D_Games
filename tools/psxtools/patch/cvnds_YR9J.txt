@@ -1,0 +1,44 @@
+# castlevania ubawareta kokuin jp
+# offsets are for nds.ram
+
+[arm9.bin]
+	stage = b60fc , b614c
+	files = da694 , ee3b4 , 20
+	mon_data = b63d4 , b74d8 , 24
+
+	monster = f31c8 , f33ac
+	objects = f3df0 , f4024
+	bgset = d8da0 , d8df0
+
+	#overlay = d8bbc , d8bd4
+	weapons = d9c34 , da1c4
+	# 14fcc8
+
+[monster]
+	mon_108 = ov-23 , 2-898 , 2-349 , 3-2ba0a0 , 1-37f-38e
+	mon_110 = ov-25 , 3-2bab58 , 2-923 , 1-55f-562
+	mon_111 = ov-26 , 3-2bb418 , 2-922 , 1-54e-55e
+	mon_114 = ov-35 , 3-d6d64  , 2-894 , 1-702-70c
+	mon_115 = ov-36 , 3-2bf398 , 2-8a0 , 1-3a6-3b6
+	mon_116 = ov-27 , 3-2ba2b8 , 2-9d5 , 1-697-69c
+	mon_117 = ov-34 , 3-2b983c , 2-895 , 2-347 , 1-372-37b
+	mon_119 = ov-24 , 3-2bc14c , 2-9b7 , 1-63c-64a
+	mon_120 = ov-33 , 3-2ce604 , 2-351 , 2-8ce , 1-77f-7a3
+	play_1 = 0-d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
+	play_2 = 0-d951c , 3-d6d64 , 2-893 , 1-6f7-701
+
+[map]
+	map_43 = ov-43 , clut-2c1ba0
+	#map_44 = ov-44 , clut-2c1ba0
+	#map_49 = ov-49 , clut-2c1ba0
+	#map_53 = ov-53 , clut-2c1ba0
+	#map_55 = ov-55 , clut-2c1ba0
+	#map_60 = ov-60 , clut-2c1ba0
+	#map_72 = ov-72 , clut-2c1ba0
+	#map_73 = ov-73 , clut-2c1ba0
+	map_78 = ov-78 , clut-2c1ba0
+	#map_80 = ov-80 , clut-2c1ba0
+	#map_81 = ov-81 , clut-2c1ba0
+	#map_82 = ov-82 , clut-2c1ba0
+	#map_84 = ov-84 , clut-2c1ba0
+	map_52 = ov-52 , clut-2c4498

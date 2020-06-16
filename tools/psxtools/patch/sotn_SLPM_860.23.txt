@@ -1,3 +1,145 @@
 # castlevania gekka no yasoukyoku jp
 
-[st/top/top.bin]
+[dra.bin]
+	ramint = a0000
+	# 00  4  ram ptr to name string
+	# 04  2  hp
+	# 16  2  level
+	# 18  2  exp
+	# 1a  2  drop
+	# 1c  2  drop
+	# 1e  2  rate
+	# 20  2  rate
+	monster = 8908 , c788 , 28
+	map = 3cac , 4a6c , 2c
+	servant = 170000 , 7, ccac , ccc8 , cd00
+	weapon  = 17a000 , 4000 , 3000
+
+	#load[] = f_map.bin , 1e0000
+	#load[] = map       , 180000
+
+[/boss/bo0/bo0.bin]
+	mon_list = 320 , 3f4
+[/boss/bo1/bo1.bin]
+	mon_list = 850 , 924
+[/boss/bo2/bo2.bin]
+	mon_list = 26c , 340
+[/boss/bo3/bo3.bin]
+	mon_list = 280 , 354
+[/boss/bo4/bo4.bin]
+	mon_list = 188 , 25c
+[/boss/bo5/bo5.bin]
+	mon_list = 1f4 , 2c8
+[/boss/bo6/bo6.bin]
+	mon_list = 180 , 254
+[/boss/bo7/bo7.bin]
+	mon_list = 1bc , 290
+
+[/boss/rbo0/rbo0.bin]
+	mon_list = 1d0 , 2a4
+[/boss/rbo1/rbo1.bin]
+	mon_list = 200 , 2d4
+[/boss/rbo2/rbo2.bin]
+	mon_list = 1f0 , 2c4
+[/boss/rbo3/rbo3.bin]
+	mon_list = 1ec , 2c0
+[/boss/rbo4/rbo4.bin]
+	mon_list = 248 , 31c
+[/boss/rbo5/rbo5.bin]
+	mon_list = 198 , 26c
+[/boss/rbo6/rbo6.bin]
+	mon_list = 258 , 32c
+[/boss/rbo7/rbo7.bin]
+	mon_list = 194 , 268
+[/boss/rbo8/rbo8.bin]
+	mon_list = 7c8 , 89c
+
+[/boss/mar/mar.bin]
+	mon_list = 168 , 23c
+
+[/st/no0/no0.bin]
+	mon_list = 778 , 84c
+[/st/no1/no1.bin]
+	mon_list = 618 , 6ec
+[/st/no2/no2.bin]
+	mon_list = 574 , 648
+[/st/no3/no3.bin]
+	mon_list = 77c , 850
+[/st/no4/no4.bin]
+	mon_list = 864 , 938
+
+[/st/rno0/rno0.bin]
+	mon_list = 754 , 828
+[/st/rno1/rno1.bin]
+	mon_list = 400 , 4d4
+[/st/rno2/rno2.bin]
+	mon_list = 5ac , 680
+[/st/rno3/rno3.bin]
+	mon_list = 5ec , 6c0
+[/st/rno4/rno4.bin]
+	mon_list = 7b8 , 88c
+
+[/st/nz0/nz0.bin]
+	mon_list = 8ec , 9c0
+[/st/nz1/nz1.bin]
+	mon_list = 820 , 8f4
+
+[/st/rnz0/rnz0.bin]
+	mon_list = 6f0 , 7c4
+[/st/rnz1/rnz1.bin]
+	mon_list = 840 , 914
+
+[/st/are/are.bin]
+	mon_list = 7b0 , 884
+[/st/cat/cat.bin]
+	mon_list = e24 , ef8
+[/st/cen/cen.bin]
+	mon_list = 1ec , 2c0
+[/st/chi/chi.bin]
+	mon_list = 3b4 , 488
+[/st/dai/dai.bin]
+	mon_list = 670 , 744
+[/st/lib/lib.bin]
+	mon_list = 520 , 5f4
+[/st/top/top.bin]
+	mon_list = 740 , 814
+[/st/wrp/wrp.bin]
+	mon_list = 23c , 310
+
+[/st/rare/rare.bin]
+	mon_list = 4bc , 590
+[/st/rcat/rcat.bin]
+	mon_list = d2c , e00
+[/st/rcen/rcen.bin]
+	mon_list = 2b0 , 384
+[/st/rchi/rchi.bin]
+	mon_list = 34c , 420
+[/st/rdai/rdai.bin]
+	mon_list = 570 , 644
+[/st/rlib/rlib.bin]
+	mon_list = 388 , 45c
+[/st/rtop/rtop.bin]
+	mon_list = 2fc , 3d0
+[/st/rwrp/rwrp.bin]
+	mon_list = 23c , 310
+
+[/st/np3/np3.bin]
+	mon_list = 728 , 7fc
+[/st/st0/st0.bin]
+	mon_list = 314 , 3e8
+[/st/te1/te1.bin]
+	mon_list = 630 , 704
+[/st/te2/te2.bin]
+	mon_list = 618 , 6ec
+[/st/te3/te3.bin]
+	mon_list = 570 , 644
+[/st/te4/te4.bin]
+	mon_list = 5b0 , 684
+[/st/te5/te5.bin]
+	mon_list = 4b4 , 588
+[/st/dre/dre.bin]
+	mon_list = 220 , 2f4
+[/st/mad/mad.bin]
+	mon_list = 2f4 , 3c8
+
+# mon_list_size = 53 * 4 = 0xd4

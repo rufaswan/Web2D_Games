@@ -45,16 +45,7 @@ function ovtbl( $fname )
 }
 //////////////////////////////
 // load main() files to $ram
-$ram = str_pad('', 0x400000, ZERO);
-
-$head = file_get_contents("header.bin");
-	$bin = file_get_contents("arm9.bin");
-	$off = str2int($head, 0x28, 3);
-	strupd($ram, $off, $bin);
-
-	$bin = file_get_contents("arm7.bin");
-	$off = str2int($head, 0x38, 3);
-	strupd($ram, $off, $bin);
+$ram  = nds_ram('.');
 
 	$y9 = ovtbl("y9.bin");
 	$y7 = ovtbl("y7.bin");

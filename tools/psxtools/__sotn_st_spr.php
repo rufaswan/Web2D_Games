@@ -1,22 +1,5 @@
 <?php
 /*
- * prefixes
- *  no0 rno0  Marble Gallery
- *  no1 rno1  Outer Wall
- *  no2 rno2  Olrox Quarters
- *  no3 rno3  Castle Entrance
- *  no4 rno4  Underground Caverns
- *  nz0 rnz0  Alchemy Laboratory
- *  nz1 rnz1  Clock Tower
- *  are rare  Colosseum
- *  cat rcat  Catacombs
- *  cen rcen  Castle Center
- *  chi rchi  Abandoned Mine
- *  dai rdai  Royal Chapel
- *  lib rlib  Long Library
- *  top rtop  Castle Keep
- *  wrp rwrp  warp room
- *
  * Special Thanks to:
  *   Zone File Technical Documentation by Nyxojaele (Dec 26, 2010)
  *   romhacking.net/documents/528/
@@ -124,17 +107,14 @@ function sotn_decode( &$meta, $dir, $off )
 	return $dec;
 }
 //////////////////////////////
-function sotn( $pfx )
+function sotn( $dir )
 {
-	if ( ! is_dir($pfx) )
+	if ( ! is_dir($dir) )
+		return;
+	if ( ! file_exists("$dir/setup.txt") )
 		return;
 
-	// DO WE NEED f_xxx.bin ???
-	$fn1 = "$pfx/$pfx.bin";
-	if ( ! file_exists($fn1) )  return;
-
-	$meta = file_get_contents($fn1);
-	$dir  = $pfx;
+	$meta = file_get_contents("$dir/st.2");
 
 	//$off1  = ramint($meta, 0x00); // func() entity attack?
 	//$off2  = ramint($meta, 0x04); // func() respawn entity
@@ -161,6 +141,7 @@ function sotn( $pfx )
 		$st += 4;
 	} // while ( $st < $ed )
 
+	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )

@@ -18,13 +18,12 @@ while [ "$1" ]; do
 	esac
 
 	[ -d "$t1" ] || continue
-	for f in $(find "$t1" -type f -iname "0*.png" | sort); do
-		fn=$(printf  "%s/%06d.png"  "$dest"  $id)
-		if [ "$move" ]; then
-			mv -vf "$f"  "$fn"
-		else
-			cp -vf "$f"  "$fn"
-		fi
-		let id++
-	done
+	[ -f "$t1/0000.png" ] || continue
+	dn=$(printf  "%s/anim_%d"  "$dest"  $id)
+	if [ "$move" ]; then
+		mv -vfr "$t1"  "$dn"
+	else
+		cp -vfr "$t1"  "$dn"
+	fi
+	let id++
 done

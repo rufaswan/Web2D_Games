@@ -1,22 +1,5 @@
 <?php
 /*
- * prefixes
- *  no0 rno0  Marble Gallery
- *  no1 rno1  Outer Wall
- *  no2 rno2  Olrox Quarters
- *  no3 rno3  Castle Entrance
- *  no4 rno4  Underground Caverns
- *  nz0 rnz0  Alchemy Laboratory
- *  nz1 rnz1  Clock Tower
- *  are rare  Colosseum
- *  cat rcat  Catacombs
- *  cen rcen  Castle Center
- *  chi rchi  Abandoned Mine
- *  dai rdai  Royal Chapel
- *  lib rlib  Long Library
- *  top rtop  Castle Keep
- *  wrp rwrp  warp room
- *
  * Special Thanks to:
  *   Zone File Technical Documentation by Nyxojaele (Dec 26, 2010)
  *   romhacking.net/documents/528/
@@ -49,7 +32,7 @@ function loadclut( &$file )
 	//  2  3   6  7  10 11  14 15  18 19  22 23  26 27  30 31
 	//
 	// clut is on 2 3 6 7 10 11 14 15
-	// and in this order
+	// and in left-to-right , then top-to-bottom order
 	// 2,0  2,1  3,0  3,1  6,0  6,1  7,0  7,1 ... 14,14  14,15  15,14  15,15
 	for ( $c=0; $c < 16; $c++ )
 	{
@@ -155,25 +138,28 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 	$done[$off] = 'x';
 	return;
 }
-//////////////////////////////
-function sotn( $pfx )
+
+function map_sel( &$meta, &$file, $dir )
 {
-	if ( ! is_dir($pfx) )
+	if ( strlen($file) != 0x30000 )
+		return;
+	echo "=== map_sel( $dir )\n";
+
+	return;
+}
+//////////////////////////////
+function sotn( $dir )
+{
+	if ( ! is_dir($dir) )
+		return;
+	if ( ! file_exists("$dir/setup.txt") )
 		return;
 
-	// for /st/xxx/xxx.bin   and /st/xxx/f_xxx.bin   pair
-	// for /boss/xxx/xxx.bin and /boss/xxx/f_xxx.bin pair
-	$fn1 = "$pfx/$pfx.bin";
-	$fn2 = "$pfx/f_$pfx.bin";
-	if ( ! file_exists($fn1) )  return;
-	if ( ! file_exists($fn2) )  return;
-
-	$meta = file_get_contents($fn1);
-	$file = file_get_contents($fn2);
-	$dir  = $pfx;
+	$meta = file_get_contents("$dir/st.2");
+	$file = file_get_contents("$dir/st.1");
 
 	if ( strlen($file) != 0x40000 )
-		return printf("ERROR $fn2 is not 0x40000\n");
+		return map_sel($meta, $file, $dir);
 
 	//$off1  = ramint($meta, 0x00); // func() entity attack?
 	//$off2  = ramint($meta, 0x04); // func() respawn entity

@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-function cvds( $dir )
+function cvnds( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
@@ -10,7 +10,7 @@ function cvds( $dir )
 	if ( empty($head) )  return;
 
 	$mgc = substr($head, 12, 4);
-	$func = "cvds_" . strtolower($mgc);
+	$func = "cvnds_" . strtolower($mgc);
 
 	if ( ! function_exists($func) )
 		return;
@@ -21,7 +21,7 @@ function cvds( $dir )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
+	cvnds( $argv[$i] );
 
 /*
 overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
@@ -32,28 +32,57 @@ overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
 		223b60 = 21 , 21 <- ALL SAME
 		2b6f60 = 38 , 38 <- ALL SAME
 		2c1ba0 = 41 , 43 <- DIFF
-	2c1ba0
-		41 = ecclesia / exit
-		42 = training hall / exit
-		43 = ruvas forest / exit 1+2
-		44 = argile swamp / exit 1+2
-		45 = kalidus channel / exit 1+2 (above ground)
-		46 = kalidus channel / exit 3+4 (under ground)
-		47 = somnus reef / exit 1+2
-		49 = minera prison island / exit 1 (west)
-		51 = minera prison island / exit 2 (east)
-		52 = lighthouse / exit 1+2
-		53 = tymeo mountain / exit 1+2+3
-		55 = tristis pass / exit 1+2
-		57 = large cavern / exit
-		58 = giant dwelling / exit 1+2
-		59 = mystery manor / exit
-		60 = misty forest road / exit 1+2
-		62 = oblivion ridge / exit
-		63 = skeleton cave / exit
-		66 = dracula castle / exit 1
-		67 = dracula castle / exit 2 (secret)
-		78 = monastery / exit
+	d8a3c       = stage        = 27-54
+	d8c90,d8c88 = map (id,sub) = 00-13,??
+
+	total stages = 46
+		13,2,1,1
+		 1,1,2,2
+		 3,1,2,2
+		 1,1,1,1
+		 2,1,2,6
+
+	map id -> overlay (world map selected)
+		00  40-4c  dracula castle
+		01  27-28  wygol village
+		02  29     ecclesia
+		03  2a     training hall
+		04  2b     ruvas forest
+		05  2c     argile swamp
+		06  2d-2e  kalidus channel
+		07  2f     somnus reef
+		08  31-33  minera prison island
+		09  34     lighthouse
+		0a  35-36  tymeo mountain
+		0b  37-38  tristis pass
+		0c  39     large cavern
+		0d  3a     giant dwelling
+		0e  3b     mystery manor
+		0f  3c     misty forest road
+		10  3d-3e  oblivion ridge
+		11  3f     skeleton cave
+		12  4d-4e  monastery
+		13  4f-54
+
+
+ov-4d = 2d7160 -> 2af3b8 , 2d76a0 -> 2af3e8
+	0  ptr layout
+	1  ptr flags
+	2  ptr clut
+	3  ?position?
+	4  ?back?
+-> 2218b4-22190c
+
+clut-2c1ba0
+	map = 43 44 49 53 55 60 72 73 78 80 81 82 84
+	ptr = f414c f426c f4270 f427c f4284 f4290 f42d4
+
+2c1ba0/ruvas - f690
+2c1ba0/monastery - f984
+	2d5114  2d5918  2d611c  2d6920
+
+
+
 
 	monastery / shanoa , albus
 		1dcea0 = 0  , 0  <- ALL SAME
@@ -79,20 +108,4 @@ overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
 		cent   , no pal     , 119/eligor      ,
 		sgami  , no tex+pal , 120/death       , ov/24
 		dra    , no tex+pal , 121/dracula     , ov/33
-
-	prefix ?
-		eac = minera prison island
-		haa = misty forest road
-		jaa = skeleton cave
-		laa = large cavern
-		maa = dracula castle/library
-		mba = dracula castle/kitchen
-		oaa = dracula castle/clock tower
-		qaa = dracula castle/armory
-		saa = monastery
-
-saa = (files) 2df-2f6
-	= (arm9.bin) eefbc/data , d8cf4/pointer -> d8c98/begin
-	= (arm9.bin) d8de8/pointer -> d8da0/begin -> 46380/func
-	= d8cf4[0] , d8da0[12][0]
  */

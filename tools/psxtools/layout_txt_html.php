@@ -1,10 +1,11 @@
 <?php
+require "common.inc";
 
 function htmlhead( $dir )
 {
 	$html = <<<_HTML
 <!DOCTYPE html><html><head>
-<title>$dir</title>
+<title>$dir/layout.txt</title>
 <style>
 * {
 	margin:  0;
@@ -14,6 +15,7 @@ function htmlhead( $dir )
 	top:  0;
 }
 body { background-color:#000; }
+img:hover { background-color:#fff; }
 </style>
 </head><body>
 
@@ -24,6 +26,9 @@ _HTML;
 
 function htmlfoot()
 {
+	// <element onload="sampleScript">
+	// object.onload = () => sampleScript();
+	// object.addEventListener("load", sampleScript);
 	$html = <<<_HTML
 <script>
 window.onload = function() {
@@ -40,73 +45,65 @@ window.onload = function() {
 </script>
 </body></html>
 _HTML;
-	// <element onload="sampleScript">
-	// object.onload = () => sampleScript();
-	// object.addEventListener("load", sampleScript);
+/*
+		var x1 = parseInt( tags[i].parentNode.style.left ) - ( tags[i].width  / 2 );
+		var y1 = parseInt( tags[i].parentNode.style.top  ) - ( tags[i].height / 2 );
+		tags[i].parentNode.style.left = x1 + "px";
+		tags[i].parentNode.style.top  = y1 + "px";
+
+		var x1 = 0 - ( tags[i].width  / 2 );
+		var y1 = 0 - ( tags[i].height / 2 );
+		tags[i].style.left = x1 + "px";
+		tags[i].style.top  = y1 + "px";
+ */
 	echo $html;
 	return;
 }
 
-function htmldiv( &$layout, $dir, $zone )
+function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 {
+	$tab = str_pad('', $tab_no*2, ' ');
 	$func = __FUNCTION__;
 	if ( isset( $layout[$zone] ) )
 	{
 		foreach ( $layout[$zone] as $v )
 		{
-			list($z,$x,$y) = explode(',', $v);
+			list($z,$x,$y) = explode('+', $v);
 			$zz = substr($z, 0, strpos($z, '_'));
-			echo "<div class='$z $zz' style='left:{$x}px;top:{$y}px;'>\n";
-			$func($layout, $dir, $z);
-			echo "</div>\n";
+			echo "$tab<div class='$z $zz' style='left:{$x}px;top:{$y}px;'>\n";
+			$func($layout, $dir, $z, $tab_no+1);
+			echo "$tab</div>\n";
 		}
 		return;
 	}
 
-	if ( is_dir("$dir/$zone") )
-	{
-		$png = "$zone/0000.png";
-		echo "<img class='sprite' src='$png' title='$png'>\n";
-		return;
-	}
+	$png = "$zone/0000.png";
+	if ( is_file("$dir/$png") )
+		echo "$tab<img class='sprite' src='$png' title='$png'>\n";
 
-	if ( is_file("$dir/$zone.png") )
-	{
-		$png = "$zone.png";
-		echo "<img src='$png' title='$png'>\n";
-		return;
-	}
-
-	trigger_error("ERROR unknown $zone\n", E_USER_WARNING);
+	$png = "$zone.png";
+	if ( is_file("$dir/$png") )
+		echo "$tab<img src='$png' title='$png'>\n";
 	return;
 }
 //////////////////////////////
-/*
-		var d1 = tags[i].getAttribute("data-map");
-		var d2 = d1.split(',');
-		var style = "";
-		style += "left:" + d2[0] + "px;";
-		style += "top:"  + d2[1] + "px;";
-		tags[i].setAttribute("style", style);
-*/
-
 function layouttxt( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
 
-	$layout = "$dir/layout.txt";
-	if ( ! file_exists($layout) )
+	$fname = "$dir/layout.txt";
+	if ( ! file_exists($fname) )
 		return;
 
 	$layout = array();
-	foreach ( file($layout) as $line )
+	foreach ( file($fname) as $line )
 	{
 		$line = preg_replace("|[\s]+|", '', $line);
 		if ( empty($line) )
 			continue;
 		list($id,$data) = explode('=', $line);
-		$data = explode('|', $data);
+		$data = explode(',', $data);
 		$layout[$id] = $data;
 	}
 

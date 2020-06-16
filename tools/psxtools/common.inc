@@ -141,7 +141,7 @@ function patchfile( $fname )
 {
 	$fn = __DIR__ . "/patch/$fname";
 	if ( ! file_exists($fn) )
-		return "";
+		return array();
 
 	$data = array();
 	$sect = "";
@@ -150,9 +150,11 @@ function patchfile( $fname )
 		$v = preg_replace("|[\s]+|", '', $v);
 		if ( empty($v) )
 			continue;
+
+		// comments
 		if ( $v[0] == '#' )
 			continue;
-
+		// section header
 		if ( $v[0] == '[' )
 		{
 			$sect = trim($v, "] [\n");
@@ -161,7 +163,18 @@ function patchfile( $fname )
 
 		list($vk,$vv) = explode('=', $v);
 		$vv = explode(',', $vv);
-		$data[$sect][$vk] = $vv;
+
+		// vk   = vv
+		// vk[] = vv
+		if ( strpos($vk, '[]') !== false )
+		{
+			$vk = rtrim($vk, '[]');
+			if ( ! isset( $data[$sect][$vk] ) )
+				$data[$sect][$vk] = array();
+			$data[$sect][$vk][] = $vv;
+		}
+		else
+			$data[$sect][$vk] = $vv;
 	}
 	return $data;
 }
@@ -609,6 +622,39 @@ function alpha_add( $fg, $bg )
 	return $func($nfg, PIX_ALPHA);
 }
 //////////////////////////////
+function psx_patch( $dir, $pfx )
+{
+	foreach( file("system.cnf") as $sys )
+	{
+		if ( stripos($sys, 'boot') === false )
+			continue;
+		preg_match('|[a-z]{4}_[0-9]{3}\.[0-9]{2}|i', $sys, $m);
+		if ( $m[0] == '' )
+			return array();
+		return patchfile("{$pfx}_{$m[0]}.txt");
+	}
+	return array();
+}
+
+function psx_exe( &$psxram, $psxexe )
+{
+	if ( empty($psxram) )
+		return '';
+
+	$bin = file_get_contents($psxexe);
+	if ( empty($bin) || substr($bin, 0, 8) != 'PS-X EXE' )
+		return;
+	$off1 = str2int($bin, 0x10, 3); // init pc
+	$off2 = str2int($bin, 0x18, 3); // mips start()
+	$off3 = str2int($bin, 0x1c, 3); // mips size
+	$off4 = str2int($bin, 0x30, 3); // init stack
+
+	// Tokimemo 2 EVS series has garbage data at the end
+	$bin = substr($bin, 0x800, $off3);
+	strupd($psxram, $off2, $bin);
+	return;
+}
+
 function psxtim( &$file )
 {
 	$tim = array();
@@ -669,6 +715,32 @@ function psxtim( &$file )
 	return $tim;
 }
 //////////////////////////////
+function nds_ram( $dir )
+{
+	$head = file_get_contents("$dir/header.bin");
+	if ( empty($head) )
+		return '';
+	$ram = str_pad('', 0x400000, ZERO);
+
+	$bin = file_get_contents("$dir/arm9.bin");
+	$off = str2int($head, 0x28, 3);
+		strupd($ram, $off, $bin);
+	$bin = file_get_contents("$dir/arm7.bin");
+	$off = str2int($head, 0x38, 3);
+		strupd($ram, $off, $bin);
+	return $ram;
+}
+
+function nds_patch( $dir, $pfx )
+{
+	$head = file_get_contents("$dir/header.bin");
+	if ( empty($head) )
+		return array();
+	$NTR = substr($head, 12, 4);
+
+	return patchfile("{$pfx}_{$NTR}.txt");
+}
+
 function nds_overlay( &$ndsram, &$y9bin, $dir, $id )
 {
 	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);

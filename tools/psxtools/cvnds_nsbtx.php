@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-function cvds( $fname )
+function cvnds( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -84,10 +84,10 @@ function cvds( $fname )
 			default:
 				printf("%8x , %s , UNKNOWN\n", $st, $fname);
 				return;
-		}
-	}
+		} // switch ( $mgc )
+	} // while ( $st < $ed )
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
+	cvnds( $argv[$i] );

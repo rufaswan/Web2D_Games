@@ -62,6 +62,24 @@ function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 	return "";
 }
 //////////////////////////////
+function loadsodat( $dir )
+{
+	// loading so/p_xxxx.dat
+	// avoid [OOE] jnt/j_xxx.jnt
+	// avoid [DOS/POR] sm/xxx.nsbmd
+	// avoid [POR] sm/xxx.nsbtx
+	$id = 0;
+	while (1)
+	{
+		$file = file_get_contents( "$dir/$id.2" );
+		$b = ord( $file[3] );
+		if ( $b & 0x80 )
+			return $file;
+		$id++;
+	}
+	return '';
+}
+
 function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 {
 	printf("=== sectpart( $dir , $id , $num , %x )\n", $off);
@@ -149,15 +167,13 @@ function sectanim( &$meta, $id, $num, $off )
 	return "$buf\n";
 }
 //////////////////////////////
-function cvds( $dir )
+function cvnds( $dir )
 {
 	if ( ! file_exists("$dir/0.1") )  return; // texture
 	if ( ! file_exists("$dir/0.2") )  return; // metadata
 	if ( ! file_exists("$dir/0.3") )  return; // palette
 
-	$file = file_get_contents( "$dir/0.2" );
-	if ( ( ord($file[3]) & 0x80 ) == 0 )
-		$file = file_get_contents( "$dir/1.2" );
+	$file = loadsodat( $dir );
 	$o1 = str2int($file, 0x04, 4);
 	$o2 = str2int($file, 0x08, 4);
 	$o3 = str2int($file, 0x0c, 4);
@@ -214,14 +230,4 @@ function cvds( $dir )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
-
-/*
-tpm_p.dat
- 155409c = /OVERLAY/OVERLAY_0008.BIN + 609c
-  171c80 = /ARM9.BIN + be480
- 153def8 = /OVERLAY/OVERLAY_0007.BIN + 9ef8
-  173130 = /ARM9.BIN + bf930
- 1554058 = /OVERLAY/OVERLAY_0008.BIN + 6058
- 153de34 = /OVERLAY/OVERLAY_0007.BIN + 9e34
- */
+	cvnds( $argv[$i] );

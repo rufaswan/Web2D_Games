@@ -15,28 +15,26 @@ function listfile( &$file, $dir, $st, $ed, $blk )
 		$st += $blk;
 		$id++;
 	}
-	save_file("{$dir}_files.txt", $txt);
+	save_file("$dir/files.txt", $txt);
 	return;
 }
 
-function cvds( $dir )
+function cvnds( $dir )
 {
-	if ( ! is_dir($dir) )  return;
-
-	$file = file_get_contents("$dir/header.bin");
-	$NTR = substr($file, 12, 4);
-
-	$pat = patchfile("cvds_$NTR.txt");
-	if ( empty($pat) )
+	if ( ! is_dir($dir) )
 		return;
 
-	$file = file_get_contents("$dir/arm9.bin");
+	$pat = nds_patch($dir, 'cvnds');
+	if ( empty($pat) )
+		return;
+	$ram = nds_ram($dir);
+
 	$st = hexdec( $pat['arm9.bin']['files'][0] );
 	$ed = hexdec( $pat['arm9.bin']['files'][1] );
 	$bk = hexdec( $pat['arm9.bin']['files'][2] );
-	listfile($file, "$dir/$NTR", $st, $ed, $bk);
+	listfile($ram, $dir, $st, $ed, $bk);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
+	cvnds( $argv[$i] );

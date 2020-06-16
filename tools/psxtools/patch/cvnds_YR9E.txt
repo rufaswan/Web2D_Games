@@ -1,0 +1,17 @@
+# castlevania order of ecclesia us
+# offsets are for nds.ram
+
+[arm9.bin]
+	stage = b6148 , b6198
+	files = d8cec , eca0c , 20
+	mon_data = b6364 , b7468 , 24
+
+	monster = f2814 , f29f8
+	objects = f343c , f3670
+	bgset = ecbb8 , ecc08
+
+	#overlay = d8cb4 , d8ccc
+	weapons = f3bc0 , f4150
+	# 148ea8
+
+[monster]

@@ -1,0 +1,13 @@
+# castlevania dawn of sorrow us
+# offsets are for nds.ram
+
+[arm9.bin]
+	stage = 25480 , 25484
+	files = 8cc6c , 9a0c4 , 28
+	mon_data = 78cac , 79d44 , 24
+
+	monster = 8ca90 , 8cc68
+	objects = 9b88c , 9ba64 , ov-0
+	bgset = 9a4c4 , 9a508
+
+[monster]

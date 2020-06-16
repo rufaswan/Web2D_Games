@@ -1,10 +1,33 @@
 <?php
+/*
+ * stages
+ *  00  *rondo of blood*
+ *  0X  *entrance*
+ *  01,R01  *entrance*
+ *  02,R02  Alchemy Laboratory
+ *  03,R03  Marble Gallery
+ *  04,R04  Outer Wall
+ *  05,R05  Long Library
+ *  06AB,R06AB  Royal Chapel
+ *  07AB,R07AB  Castle Keep
+ *  08,R08  Clock Tower
+ *  09ABC,R09ABC  Ground Water Veil
+ *  10,R10  Olrox Room
+ *  11,R11  Colosseum
+ *  12,R12  Abandoned Pit to the Catacomb
+ *  13AB,R13  Catacomb
+ *  14,R14  *center*
+ *  15,R15  Underground Garden
+ *  16,R16  Cursed Prison
+ *  EX  Nightmare
+ *  MA  *maria*
+ */
 require "common.inc";
 
-function mura_decode( &$file, $st )
+function sotn_decode( &$file, $st )
 {
-	$dicz = 0xfff;
-	$dicp = 0xfee;
+	$dicz = 0x3ff;
+	$dicp = 0x3de;
 	$dict = str_pad("", $dicz+1, ZERO);
 	$dec = "";
 
@@ -41,14 +64,15 @@ function mura_decode( &$file, $st )
 			$b1 = ord( $file[$st+0] );
 			$b2 = ord( $file[$st+1] );
 				$st += 2;
-			$len =  ($b2 & 0x0f) + 3;
-			$pos = (($b2 & 0xf0) << 4) | $b1;
+			$len =  ($b2 & 0x1f) + 3;
+			$pos = (($b2 & 0xe0) << 3) | $b1;
 			printf("%6x DICT %3x LEN %2x\n", $st-2, $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{
 				$p = ($pos + $i) & $dicz;
 				$b1 = $dict[$p];
+				//$b1 = ZERO;
 
 				$dec .= $b1;
 				$dict[$dicp] = $b1;
@@ -60,20 +84,20 @@ function mura_decode( &$file, $st )
 
 	return $dec;
 }
-//////////////////////////////
-function mura( $fname )
-{
-	$file = file_get_contents( $fname );
-		if ( empty($file) )   return;
 
-	$mgc = substr($file, 0, 4);
-	if ( $mgc != "FCMP" )
+// for sega saturn symphony of the night
+function sotn( $fname )
+{
+	$file = file_get_contents($fname);
+	if ( empty($file) )
+		return;
+	if ( $file[0] == ZERO || $file[1] != ZERO ) // decompressed
 		return;
 
-	$dec = mura_decode( $file, 12 );
+	$dec = sotn_decode($file, 0);
 	file_put_contents("$fname.dec", $dec);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	mura( $argv[$i] );
+	sotn( $argv[$i] );

@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-function cvds( $dir )
+function cvnds( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
@@ -10,7 +10,7 @@ function cvds( $dir )
 	if ( empty($head) )  return;
 
 	$mgc = substr($head, 12, 4);
-	$func = "cvds_" . strtolower($mgc);
+	$func = "cvnds_" . strtolower($mgc);
 
 	if ( ! function_exists($func) )
 		return;
@@ -21,7 +21,7 @@ function cvds( $dir )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
+	cvnds( $argv[$i] );
 
 /*
 overlays - 1caec0 219040 225a60 2a5880 2a58e0 2aa460 2c3ce0 2ca2a0 2ca6a0 2d2840 2d2d00 2da780

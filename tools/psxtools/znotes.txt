@@ -1,3 +1,51 @@
+PlayStation ONE EXE header
+	00  8  "PS-X EXE"
+	10  4  mips start
+	18  4  mips ram
+	1c  4  mips size
+	30  4  init stack
+	# RAM 80000000-80200000 (2 MB , first 10000 = bios)
+
+Saturn ISO boot header
+	00   16  "SEGA SEGASATURN"
+	10   16  "SEGA TP T-" + version
+	20   10  Game ID
+	2a    6  Game Version
+	30    8  yyyymmdd
+	38    8  "CD-1/1"
+	40   16  "J"
+	50   16  "J"
+	60  128  Game Title
+	e0    4  init pc
+	e8    4  init stack master
+	ec    4  init stack slave
+	f0    4  sh-4 ram
+	f4    4  sh-4 size
+	# RAM 6002000-6100000 (~1 MB)
+
+Nintendo DS ROM header
+	00  12  Game Title
+	0c   4  Game ID (NTR-xxxx)
+	20   4  arm9.bin offset
+	24   4  arm9 start()
+	28   4  arm9 ram
+	2c   4  arm9.bin size
+	30   4  arm7.bin offset
+	34   4  arm7 start()
+	38   4  arm7 ram
+	3c   4  arm7.bin size
+	40   4  file name table offset
+	44   4  file name table size
+	48   4  file allocation table offset
+	4c   4  file allocation table size
+	50   4  y9.bin offset
+	54   4  y9.bin size
+	58   4  y7.bin offset
+	5c   4  y7.bin size
+	80   4  ROM size
+	84   4  header.bin size
+	# RAM 2000000-24000000 (4 MB)
+
 info.sonicretro.org/SPG:Solid_Tiles
 
 	The Mega Drive games use angles in hex,

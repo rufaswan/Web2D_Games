@@ -119,7 +119,7 @@ function overlaystr( $dir, $id, $base, $padd = false )
 	return;
 }
 //////////////////////////////
-function cvds_ooee( $dir ) // us order of ecclesia
+function cvnds_ooee( $dir ) // us order of ecclesia
 {
 	echo "DETECT : CV Order of Ecclesia US\n";
 	y9bin($dir);
@@ -130,7 +130,7 @@ function cvds_ooee( $dir ) // us order of ecclesia
 	return;
 }
 
-function cvds_pore( $dir ) // portrait of ruins
+function cvnds_pore( $dir ) // portrait of ruins
 {
 	echo "DETECT : CV Portrait of Ruins US\n";
 	y9bin($dir);
@@ -141,7 +141,7 @@ function cvds_pore( $dir ) // portrait of ruins
 	return;
 }
 
-function cvds_dose( $dir ) // dawn of sorrow
+function cvnds_dose( $dir ) // dawn of sorrow
 {
 	echo "DETECT : CV Dawn of Sorrow US\n";
 	y9bin($dir);
@@ -150,7 +150,7 @@ function cvds_dose( $dir ) // dawn of sorrow
 	return;
 }
 
-function cvds( $dir )
+function cvnds( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
@@ -160,17 +160,17 @@ function cvds( $dir )
 
 	$mgc = substr($head, 0, 0x10);
 	if ( $mgc == "CASTLEVANIA1ACVE" )
-		return cvds_dose( $dir );
+		return cvnds_dose( $dir );
 	if ( $mgc == "CASTLEVANIA2ACBE" )
-		return cvds_pore( $dir );
+		return cvnds_pore( $dir );
 	if ( $mgc == "CASTLEVANIA3YR9E" )
-		return cvds_ooee( $dir );
+		return cvnds_ooee( $dir );
 
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
+	cvnds( $argv[$i] );
 
 // DS RAM = 4 MB ( 0x2000000-0x2400000 )
 

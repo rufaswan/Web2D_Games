@@ -18,16 +18,16 @@ function ramint( &$file, $pos, $ram )
 	return $int;
 }
 //////////////////////////////
-function sectparts( &$file, &$src, &$clut, $pos, $dir )
+function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 {
-	$num = ord( $file[$pos+0] );
+	$num = ord( $meta[$pos+0] );
 		$pos += 4;
 	printf("=== sectparts( %x, $dir ) = $num\n", $pos);
 
 	$data = array();
 	for ( $i=0; $i < $num; $i++ )
 	{
-		$bin = substr($file, $pos, 0x16);
+		$bin = substr($meta, $pos, 0x16);
 		array_unshift($data, $bin);
 		$pos += 0x16;
 	}
@@ -74,24 +74,11 @@ function sectparts( &$file, &$src, &$clut, $pos, $dir )
 	return;
 }
 
-function sectmeta( $tfn, $ffn, $ram )
+function sectmeta( &$meta, &$src, $dir, $ram )
 {
-	printf("=== sectmeta( $tfn , $ffn , %x )\n", $ram);
+	printf("=== sectmeta( $dir , %x )\n", $ram);
 
-	$file = file_get_contents($ffn);
-	$src = array();
-	$src[] = rippix4($file,   0, 0, 128, 128, 128, 128);
-	$src[] = rippix4($file, 128, 0, 128, 128, 128, 128);
-	if ( isset( $file[0x4000] ) )
-	{
-		$file = substr($file, 0x4000);
-		$src[] = rippix4($file, 0, 0, 128, 128, 64, 128);
-	}
-
-	$file = file_get_contents($tfn);
-	$dir = str_replace('.', '_', $tfn);
-
-	$pos = ramint($file, 0x40, $ram);
+	$pos = ramint($meta, 0x40, $ram);
 	if ( $pos != 0 )
 		return printf("ERROR 0x40 is not ZERO\n");
 
@@ -100,52 +87,60 @@ function sectmeta( $tfn, $ffn, $ram )
 	$clut_pos = 0;
 	while (1)
 	{
-		if ( $file[$st+3] != chr(0x80) )
+		if ( $meta[$st+3] != chr(0x80) )
 			break;
-		$pos = ramint($file, $st, $ram);
+		$pos = ramint($meta, $st, $ram);
 		$addr[] = $pos;
 		$clut_pos = $pos;
 
 		$st += 4;
 	}
 
-	$num = ord( $file[$clut_pos] );
+	$num = ord( $meta[$clut_pos] );
 	$clut_pos += (4 + $num * 0x16);
 	while ( $clut_pos % 4 )
 		$clut_pos++;
 	printf("ADD CLUT @ %x\n", $clut_pos);
-	$clut = mclut2str($file, $clut_pos, 16, 0x100);
+	$clut = mclut2str($meta, $clut_pos, 16, 0x100);
 
 	foreach ( $addr as $ak => $av )
 	{
 		$fn = sprintf("$dir/%04d", $ak);
-		sectparts( $file, $src, $clut, $av, $fn );
+		sectparts( $meta, $src, $clut, $av, $fn );
 	}
 	return;
 }
 //////////////////////////////
-function sotn( $fname )
+function sotn( $dir )
 {
-	// for /servant/tt_000.bin and /servant/ft_000.bin pair
-	if ( stripos($fname, "tt_") !== false || stripos($fname, "ft_") !== false )
+	if ( ! is_dir($dir) )
+		return;
+	if ( ! file_exists("$dir/setup.txt") )
+		return;
+
+	$setup = array();
+	foreach ( file("$dir/setup.txt") as $v )
 	{
-		$tfn = str_replace("ft_", "tt_", $fname);
-		$ffn = str_replace("tt_", "ft_", $fname);
-		if ( ! file_exists($tfn) )  return;
-		if ( ! file_exists($ffn) )  return;
-		return sectmeta($tfn, $ffn, 0x170000);
+		$v = preg_replace('|[\s]+|', '', $v);
+		if ( empty($v) )
+			continue;
+		list($k,$v) = explode('=', $v);
+		$setup[$k] = $v;
 	}
 
-	// for /bin/tw_000.bin and /bin/tw_000.bin pair
-	if ( stripos($fname, "tw_") !== false || stripos($fname, "fw_") !== false )
+	$file = file_get_contents("$dir/serv.1");
+	$src = array();
+	$src[] = rippix4($file,   0, 0, 128, 128, 128, 128);
+	$src[] = rippix4($file, 128, 0, 128, 128, 128, 128);
+	if ( isset( $file[0x4000] ) )
 	{
-		$tfn = str_replace("fw_", "tw_", $fname);
-		$ffn = str_replace("tw_", "fw_", $fname);
-		if ( ! file_exists($tfn) )  return;
-		if ( ! file_exists($ffn) )  return;
-		return sectmeta($tfn, $ffn, 0x17a000);
+		$file = substr($file, 0x4000);
+		$src[] = rippix4($file, 0, 0, 128, 128, 64, 128);
 	}
+	$meta = file_get_contents("$dir/serv.2");
 
+	$ram = hexdec( $setup['ramint'] );
+	sectmeta($meta, $src, $dir, $ram);
 	return;
 }
 

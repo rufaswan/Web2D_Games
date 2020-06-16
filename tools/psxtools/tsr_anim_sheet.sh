@@ -10,12 +10,29 @@ function thumbnail()
 	convert -verbose -scale 200% -strip  $3  thumb.png
 }
 
-png=$(printf "%06d.png"  $1)
+png=$(printf "%04d.png"  $1)
 [ -f "$png" ] || exit
-
-mogrify -verbose -trim +repage -strip  0*.png
-montage -verbose -geometry '1x1<' -background none -strip  0*.png  sheet.png
 thumbnail $(identify -format "%w %h %i"  "$png")
+
+for d in anim*; do
+	[ -d "$d" ] || continue
+	#mogrify -verbose -strip -trim +repage  $d/0*.png
+	montage -verbose -strip \
+		-geometry '1x1+3+3<' \
+		-background none \
+		-bordercolor none \
+		-frame 2 \
+		-gravity center  \
+		-tile x1 \
+		"$d"/0*.png  "$d"/anim.png
+done
+
+montage -verbose -strip \
+	-geometry '1x1<' \
+	-background none \
+	-gravity center  \
+	-tile 1x \
+	anim*/anim.png  sheet.png
 
 <<'////'
 # imagemagick.org/script/command-line-processing.php

@@ -1,0 +1,13 @@
+# castlevania sougetsu no juujika jp
+# offsets are for nds.ram
+
+[arm9.bin]
+	stage = 254b8 , 254bc
+	files = 8cc6c , 99fd4 , 28
+	mon_data = 78ca8 , 79d40 , 24
+
+	monster = 8ca90 , 8cc68
+	objects = 9b79c , 9b974 , ov-0
+	bgset = 9a3d4 , 9a418
+
+[monster]

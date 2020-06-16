@@ -13,7 +13,7 @@
  */
 require "common.inc";
 
-define("CANV_S", 0x100);
+define("CANV_S", 0x200);
 $gp_pix = "";
 $gp_clut = "";
 $gp_dir  = "";
@@ -72,8 +72,8 @@ function sectpart( &$file, $nid, $st, $ed )
 
 		$dx = ord( $v[6] );
 		$dy = ord( $v[7] );
-		$pix['dx'] = $dx;
-		$pix['dy'] = $dy;
+		$pix['dx'] = $dx + (CANV_S / 4);
+		$pix['dy'] = $dy + (CANV_S / 4);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf("\n");
@@ -100,7 +100,7 @@ function sect1( &$file, $dir )
 	$nid = 1;
 	while ( $st < $ed )
 	{
-		$fn = sprintf("$dir-%04d", $nid);
+		$fn = sprintf("$dir/%04d", $nid);
 
 		$off1 = str2int($file, $st+0, 4);
 		$off2 = str2int($file, $st+4, 4);
@@ -139,9 +139,8 @@ function saga2( $fname )
 		$p2 = str2int($file, $pos+4, 4);
 		$bin = substr($file, $p1, $p2-$p1);
 
-		$fn = sprintf("$dir/%04d", $i);
 		printf("=== sect1() , %x - %x\n", $p1, $p2);
-		sect1($bin, $fn);
+		sect1($bin, "$dir/anim_{$i}");
 		$pos += 4;
 	}
 	return;

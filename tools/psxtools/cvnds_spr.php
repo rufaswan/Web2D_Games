@@ -5,7 +5,7 @@ function monster_ent( &$ram, &$y9, $ent, $dir, $fst, $fbk )
 {
 	$ent = preg_replace("|[\s]+|", '', $ent);
 	list($d,$l) = explode('=', $ent);
-	@mkdir("$dir/cvds/$d", 0755, true);
+	@mkdir("$dir/cvnds/$d", 0755, true);
 
 	$cnt = array(0,0,0,0);
 	$txt = "";
@@ -34,7 +34,7 @@ function monster_ent( &$ram, &$y9, $ent, $dir, $fst, $fbk )
 				$fn1 = substr0($ram, $pos + 6);
 				$fn2 = sprintf("%d.%d", $cnt[$v0], $v0);
 
-				copy("$dir/data/$fn1", "$dir/cvds/$d/$fn2");
+				copy("$dir/data/$fn1", "$dir/cvnds/$d/$fn2");
 				$txt .= "$fn2  $fn1\n";
 				$cnt[$v0]++;
 			}
@@ -48,13 +48,13 @@ function monster_ent( &$ram, &$y9, $ent, $dir, $fst, $fbk )
 			$pal = substr($ram, $v1, $cn*0x20);
 			$fn2 = sprintf("%d.%d", $cnt[$v0], $v0);
 
-			save_file("$dir/cvds/$d/$fn2", $pal);
+			save_file("$dir/cvnds/$d/$fn2", $pal);
 			$txt .= sprintf("$fn2  palette  %x  %x\n", $v1, $cn);
 			$cnt[$v0]++;
 			continue;
 		}
 	}
-	save_file("$dir/cvds/$d/files.txt", $txt);
+	save_file("$dir/cvnds/$d/files.txt", $txt);
 	return;
 }
 
@@ -74,26 +74,19 @@ function file_ent( &$ram, $pos, $pfx, $id)
 	return $txt;
 }
 //////////////////////////////
-function cvds( $dir )
+function cvnds( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
-	$ram = str_pad('', 0x400000, ZERO);
 
-	$file = file_get_contents("$dir/header.bin");
-	$NTR = substr($file, 12, 4);
-	$off = str2int($file, 0x28, 3);
-
-	$pat = patchfile("cvds_$NTR.txt");
+	$pat = nds_patch($dir, 'cvnds');
 	if ( empty($pat) )
 		return;
+	$ram = nds_ram($dir);
+	$y9  = file_get_contents("$dir/y9.bin");
 
-	$y9   = file_get_contents("$dir/y9.bin");
-	$file = file_get_contents("$dir/arm9.bin");
-		strupd($ram, $off, $file);
-
-	$mon_st = hexdec( $pat['arm9.bin']['monster'][0] );
-	$mon_ed = hexdec( $pat['arm9.bin']['monster'][1] );
+	$mon_st  = hexdec( $pat['arm9.bin']['monster'][0] );
+	$mon_ed  = hexdec( $pat['arm9.bin']['monster'][1] );
 	$file_st = hexdec( $pat['arm9.bin']['files'][0] );
 	$file_bk = hexdec( $pat['arm9.bin']['files'][2] );
 
@@ -122,6 +115,4 @@ function cvds( $dir )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvds( $argv[$i] );
-
-// DS RAM = 4 MB ( 0x2000000-0x2400000 )
+	cvnds( $argv[$i] );
