@@ -2,6 +2,7 @@
 require "common.inc";
 
 define("CANV_S", 0x200);
+//define("DRY_RUN", true);
 
 function loadclut( &$clut, $dir, $id )
 {

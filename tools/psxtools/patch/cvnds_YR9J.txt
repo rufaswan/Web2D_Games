@@ -2,14 +2,29 @@
 # offsets are for nds.ram
 
 [arm9.bin]
-	stage = b60fc , b614c
+	# overlay = 1dcea0  1ffbc0  1ffde0  223b60  2b6f60  2c1ba0
+	#  1dcea0  [ 0]     = 0
+	#  1ffbc0  [ 1-17]  = -
+	#  1ffde0  [18-19]  = 18
+	#  223b60  [20-22]  = 21
+	#  2b6f60  [23-38]  = 38
+	#  2c1ba0  [39-84]  = 41 STAGES
+	game  = ooe , ov-0 , ov-18 , ov-21 , ov-38 , ov-41
 	files = da694 , ee3b4 , 20
+
+	stg_ovid = b60fc , b614c
+	stg_bc   = d8da0 , d8df0
+	stg_data = d8fc4 , d9014
+
+	mon_sc   = f31c8 , f33ac
 	mon_data = b63d4 , b74d8 , 24
 
-	monster = f31c8 , f33ac
-	objects = f3df0 , f4024
-	bgset = d8da0 , d8df0
 
+
+	obj_sc = f3df0 , f4024
+	npc = 2b55e0 , 2b5620
+	portrait = 2b56dc , 2b574c
+	loading  = 2b6b7c , 2b6c4c
 	#overlay = d8bbc , d8bd4
 	weapons = d9c34 , da1c4
 	# 14fcc8
@@ -24,21 +39,6 @@
 	mon_117 = ov-34 , 3-2b983c , 2-895 , 2-347 , 1-372-37b
 	mon_119 = ov-24 , 3-2bc14c , 2-9b7 , 1-63c-64a
 	mon_120 = ov-33 , 3-2ce604 , 2-351 , 2-8ce , 1-77f-7a3
-	play_1 = 0-d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
-	play_2 = 0-d951c , 3-d6d64 , 2-893 , 1-6f7-701
-
-[map]
-	map_43 = ov-43 , clut-2c1ba0
-	#map_44 = ov-44 , clut-2c1ba0
-	#map_49 = ov-49 , clut-2c1ba0
-	#map_53 = ov-53 , clut-2c1ba0
-	#map_55 = ov-55 , clut-2c1ba0
-	#map_60 = ov-60 , clut-2c1ba0
-	#map_72 = ov-72 , clut-2c1ba0
-	#map_73 = ov-73 , clut-2c1ba0
-	map_78 = ov-78 , clut-2c1ba0
-	#map_80 = ov-80 , clut-2c1ba0
-	#map_81 = ov-81 , clut-2c1ba0
-	#map_82 = ov-82 , clut-2c1ba0
-	#map_84 = ov-84 , clut-2c1ba0
-	map_52 = ov-52 , clut-2c4498
+	play_1 = d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
+	play_2 = d951c , 3-d6d64 , 2-893 , 1-6f7-701
+	reset = ov-38

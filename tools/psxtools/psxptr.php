@@ -21,10 +21,10 @@ function ptr( $fname )
 	$preg = 0;
 	$pimm = 0;
 	$mips = array(
-		0x08 => "addi ", 0x09 => "addiu",
-		0x0f => "lui  ",
-		0x20 => "lb   ", 0x21 => "lh   ", 0x23 => "lw   ",
-		0x24 => "lbu  ", 0x25 => "lhu  ",
+		0x08 => "addi", 0x09 => "addiu",
+		0x0f => "lui",
+		0x20 => "lb" , 0x21 => "lh" , 0x23 => "lw",
+		0x24 => "lbu", 0x25 => "lhu",
 	);
 	while ( $st < $ed )
 	{
@@ -61,7 +61,7 @@ function ptr( $fname )
 						prevnl( $prev, $bak );
 						$pimm = $b1 << 16;
 						$preg = $rt;
-						printf("$fname , %8x , lui   %6x\n", $bak, $pimm);
+						printf("$fname , %8x , %-6s %6x\n", $bak, $mips[$op], $pimm);
 					}
 				}
 				break;
@@ -75,7 +75,7 @@ function ptr( $fname )
 					prevnl( $prev, $bak );
 					$b1 = sint16( $file[$bak+0] . $file[$bak+1] );
 					$b2 = $pimm + $b1;
-					printf("$fname , %8x , %s %6x\n", $bak, $mips[$op], $b2);
+					printf("$fname , %8x , %-6s %6x\n", $bak, $mips[$op], $b2);
 				}
 				break;
 			case 0x08: // addi
@@ -85,7 +85,7 @@ function ptr( $fname )
 					prevnl( $prev, $bak );
 					$b1 = sint16( $file[$bak+0] . $file[$bak+1] );
 					$b2 = $pimm + $b1;
-					printf("$fname , %8x , %s %6x\n", $bak, $mips[$op], $b2);
+					printf("$fname , %8x , %-6s %6x\n", $bak, $mips[$op], $b2);
 					if ( $rs == $rt )
 						$pimm = $b2;
 				}

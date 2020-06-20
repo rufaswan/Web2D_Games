@@ -16,6 +16,7 @@ function htmlhead( $dir )
 }
 body { background-color:#000; }
 img:hover { background-color:#fff; }
+.none { display:none; }
 </style>
 </head><body>
 
@@ -64,6 +65,8 @@ function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 {
 	$tab = str_pad('', $tab_no*2, ' ');
 	$func = __FUNCTION__;
+
+	// recursive divs
 	if ( isset( $layout[$zone] ) )
 	{
 		foreach ( $layout[$zone] as $v )
@@ -77,13 +80,36 @@ function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 		return;
 	}
 
+	// for monsters
 	$png = "$zone/0000.png";
 	if ( is_file("$dir/$png") )
+	{
 		echo "$tab<img class='sprite' src='$png' title='$png'>\n";
+		return;
+	}
 
+	// for maps
 	$png = "$zone.png";
 	if ( is_file("$dir/$png") )
+	{
 		echo "$tab<img src='$png' title='$png'>\n";
+		return;
+	}
+
+	// for items
+	if ( strpos($zone, '_') !== false )
+	{
+		$b1 = explode('_', $zone);
+		$png = sprintf("%s/%04d.png", $b1[0], $b1[1]);
+		if ( is_file("$dir/$png") )
+		{
+			echo "$tab<img src='$png' title='$png'>\n";
+			return;
+		}
+	}
+
+	// nothing matched
+	echo "$tab<div class='$zone none'></div>\n";
 	return;
 }
 //////////////////////////////

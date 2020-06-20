@@ -53,6 +53,18 @@ function secttile( $dat, $bit8, &$pix )
 	$col = ($dat >> 16) & 0xf;
 	$row = ($dat >> 20) & 0xf;
 
+	// texture data is mixed 4-bit and 8-bit
+	// arranged like this
+	//  4-bit           |  8-bit
+	//   0  10  20  30  |   0  10
+	//   1  11  21  31  |   1  11
+	//   2  12  22  32  |   2  12
+	//   3  13  23  33  |   3  13
+	//  ...             |  ...
+	//   f  1f  2f  3f  |   f  1f
+	//  40  50  60  70  |  20  30
+	//  41  51  61  71  |  21  31
+	//  ...             |  ...
 	global $gp_pixd, $gp_clut;
 	if ( $bit8 ) // 8-bit , 256 colors , 1 pixel/byte
 	{

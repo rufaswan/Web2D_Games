@@ -1,59 +1,64 @@
 <?php
 require "common.inc";
 
-function monster_ent( &$ram, &$y9, $ent, $dir, $fst, $fbk )
+function monster_ent( &$ram, $ent, $dir, $fst, $fbk )
 {
 	$ent = preg_replace("|[\s]+|", '', $ent);
 	list($d,$l) = explode('=', $ent);
+	if ( $d == 'reset' )
+		return nds_overlay( $ram, $dir, $l );
+
 	@mkdir("$dir/cvnds/$d", 0755, true);
 
 	$cnt = array(0,0,0,0);
 	$txt = "";
 	foreach ( explode(',', $l) as $lv)
 	{
-		$lv = explode('-', $lv);
-		if ( $lv[0] === 'ov' )
-		{
-			$v1 = (int)$lv[1];
-			nds_overlay( $ram, $y9, $dir, $v1 );
-			$txt .= "overlay  $v1\n";
+		if ( strpos($lv, '-') === false )
 			continue;
-		}
+		$lv = explode('-', $lv);
 
-		$v0 = hexdec( $lv[0] );
-		$v1 = hexdec( $lv[1] );
-		if ( $v0 == 1 || $v0 == 2 )
+		switch ( $lv[0] )
 		{
-			$v2 = $v1;
-			if ( isset( $lv[2] ) )
-				$v2 = hexdec( $lv[2] );
+			case 'ov':
+				$v1 = (int)$lv[1];
+				nds_overlay( $ram, $dir, $v1 );
+				$txt .= "overlay  $v1\n";
+				break;
+			case '1':
+			case '2':
+				$v0 = hexdec( $lv[0] );
+				$v1 = hexdec( $lv[1] );
+				$v2 = $v1;
+				if ( isset( $lv[2] ) )
+					$v2 = hexdec( $lv[2] );
 
-			for ( $i=$v1; $i <= $v2; $i++ )
-			{
-				$pos = $fst + ($i * $fbk);
-				$fn1 = substr0($ram, $pos + 6);
+				for ( $i=$v1; $i <= $v2; $i++ )
+				{
+					$pos = $fst + ($i * $fbk);
+					$fn1 = substr0($ram, $pos + 6);
+					$fn2 = sprintf("%d.%d", $cnt[$v0], $v0);
+
+					copy("$dir/data/$fn1", "$dir/cvnds/$d/$fn2");
+					$txt .= "$fn2  $fn1\n";
+					$cnt[$v0]++;
+				}
+				break;
+			case '3':
+				$v0 = hexdec( $lv[0] );
+				$v1 = hexdec( $lv[1] );
+				$cn = ord( $ram[$v1+2] );
+					$v1 += 4;
+				$pal = substr($ram, $v1, $cn*0x20);
 				$fn2 = sprintf("%d.%d", $cnt[$v0], $v0);
 
-				copy("$dir/data/$fn1", "$dir/cvnds/$d/$fn2");
-				$txt .= "$fn2  $fn1\n";
+				save_file("$dir/cvnds/$d/$fn2", $pal);
+				$txt .= sprintf("$fn2  palette  %x  %x\n", $v1, $cn);
 				$cnt[$v0]++;
-			}
-			continue;
-		}
+				break;
+		} // switch ( $lv[0] )
+	} // foreach ( explode(',', $l) as $lv)
 
-		if ( $v0 == 3 )
-		{
-			$cn = ord( $ram[$v1+2] );
-			$v1 += 4;
-			$pal = substr($ram, $v1, $cn*0x20);
-			$fn2 = sprintf("%d.%d", $cnt[$v0], $v0);
-
-			save_file("$dir/cvnds/$d/$fn2", $pal);
-			$txt .= sprintf("$fn2  palette  %x  %x\n", $v1, $cn);
-			$cnt[$v0]++;
-			continue;
-		}
-	}
 	save_file("$dir/cvnds/$d/files.txt", $txt);
 	return;
 }
@@ -83,12 +88,14 @@ function cvnds( $dir )
 	if ( empty($pat) )
 		return;
 	$ram = nds_ram($dir);
-	$y9  = file_get_contents("$dir/y9.bin");
 
-	$mon_st  = hexdec( $pat['arm9.bin']['monster'][0] );
-	$mon_ed  = hexdec( $pat['arm9.bin']['monster'][1] );
-	$file_st = hexdec( $pat['arm9.bin']['files'][0] );
-	$file_bk = hexdec( $pat['arm9.bin']['files'][2] );
+	arrayhex( $pat['arm9.bin']['files'] );
+	arrayhex( $pat['arm9.bin']['mon_sc'] );
+
+	$mon_st  = $pat['arm9.bin']['mon_sc'][0];
+	$mon_ed  = $pat['arm9.bin']['mon_sc'][1];
+	$file_st = $pat['arm9.bin']['files'][0];
+	$file_bk = $pat['arm9.bin']['files'][2];
 
 	$id = 0;
 	while ( $mon_st < $mon_ed )
@@ -96,7 +103,7 @@ function cvnds( $dir )
 		$pos = str2int ($ram, $mon_st, 3);
 		$ent = file_ent($ram, $pos, "mon", $id);
 
-		monster_ent( $ram, $y9, $ent, $dir, $file_st, $file_bk );
+		monster_ent( $ram, $ent, $dir, $file_st, $file_bk );
 		echo "$ent\n";
 		$mon_st += 4;
 		$id++;
@@ -107,7 +114,7 @@ function cvnds( $dir )
 		foreach ( $pat['monster'] as $mk => $mv )
 		{
 			$ent = sprintf("%s = %s", $mk, implode(' , ', $mv));
-			monster_ent( $ram, $y9, $ent, $dir, $file_st, $file_bk );
+			monster_ent( $ram, $ent, $dir, $file_st, $file_bk );
 			echo "$ent\n";
 		}
 	}

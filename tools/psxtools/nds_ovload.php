@@ -36,11 +36,14 @@ function ovtbl( $fname )
 	}
 
 	ksort($addr);
+	$over = "";
 	foreach ( $addr as $ak => $av )
 	{
 		$aav = implode(' , ', $av);
 		printf("[%2d] %6x  %s\n", count($av), $ak, $aav);
+		$over .= sprintf("%x  ", $ak);
 	}
+	echo "overlay = $over\n";
 	return $file;
 }
 //////////////////////////////
@@ -52,5 +55,5 @@ $ram  = nds_ram('.');
 
 // load overlay files to $ram
 for ( $i=1; $i < $argc; $i++ )
-	nds_overlay( $ram, $y9, '.', (int)$argv[$i] );
+	nds_overlay( $ram, '.', (int)$argv[$i] );
 save_file("nds.ram", $ram);

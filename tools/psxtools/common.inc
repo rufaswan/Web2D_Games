@@ -112,6 +112,20 @@ function int_max( $int, $max )
 	return (int)round($int);
 }
 
+function arrayint( &$array )
+{
+	foreach ( $tmp as $k => $v )
+		$array[$k] = (int)$v;
+	return;
+}
+
+function arrayhex( &$array )
+{
+	foreach ( $array as $k => $v )
+		$array[$k] = hexdec($v);
+	return;
+}
+
 function save_file( $fname, $str )
 {
 	if ( defined("DRY_RUN") && DRY_RUN )
@@ -150,31 +164,18 @@ function patchfile( $fname )
 		$v = preg_replace("|[\s]+|", '', $v);
 		if ( empty($v) )
 			continue;
-
-		// comments
-		if ( $v[0] == '#' )
+		if ( $v[0] == '#' ) // comments
 			continue;
-		// section header
-		if ( $v[0] == '[' )
+		if ( $v[0] == '[' ) // section header
 		{
-			$sect = trim($v, "] [\n");
+			$sect = trim($v, '[]');
 			continue;
 		}
 
 		list($vk,$vv) = explode('=', $v);
-		$vv = explode(',', $vv);
-
-		// vk   = vv
-		// vk[] = vv
-		if ( strpos($vk, '[]') !== false )
-		{
-			$vk = rtrim($vk, '[]');
-			if ( ! isset( $data[$sect][$vk] ) )
-				$data[$sect][$vk] = array();
-			$data[$sect][$vk][] = $vv;
-		}
-		else
-			$data[$sect][$vk] = $vv;
+		if ( strpos($vv, ',') !== false )
+			$vv = explode(',', $vv);
+		$data[$sect][$vk] = $vv;
 	}
 	return $data;
 }
@@ -259,17 +260,16 @@ function clutpix( &$file, $pos )
 	$b = ($pal >> 7) & 0xf8; // <<  1 >> 8 == >> 7
 	$g = ($pal >> 2) & 0xf8; // <<  6 >> 8 == >> 2
 	$r = ($pal << 3) & 0xf8; // << 11 >> 8 == << 3
-	//$a = ( $pal >> 15 ) ? ZERO : BYTE;
 	$a = BYTE;
 
 	$str = chr($r) . chr($g) . chr($b) . $a;
 	return $str;
 }
 
-function clut2str( &$file, $pos, $no )
+function clut2str( &$file, $pos, $cc )
 {
 	$str = "";
-	for ( $i=0; $i < $no; $i++ )
+	for ( $i=0; $i < $cc; $i++ )
 	{
 		$str .= clutpix( $file, $pos );
 		$pos += 2;
@@ -277,19 +277,19 @@ function clut2str( &$file, $pos, $no )
 	return $str;
 }
 
-function mclut2str( &$file, $pos, $no, $m )
+function mclut2str( &$file, $pos, $cc, $cn )
 {
 	$ret = array();
-	while ( $m > 0 )
+	while ( $cn > 0 )
 	{
-		$ret[] = clut2str($file, $pos, $no);
-		$pos += ($no*2);
-		$m--;
+		$ret[] = clut2str($file, $pos, $cc);
+		$pos += ($cc*2);
+		$cn--;
 	}
 	return $ret;
 }
 
-function grayclut( $no )
+function grayclut( $cc )
 {
 	$add = (int)(255 / ($no-1));
 	$clut = "";
@@ -305,7 +305,7 @@ function grayclut( $no )
 function COPYPIX_DEF()
 {
 	// PHP 5.6 fix
-	// Warning: Constants may only evalute to scalar values
+	// Warning: Constants may only evaluate to scalar values
 	$php56 = array(
 		'rgba' => array(
 			'w' => 0,
@@ -571,60 +571,60 @@ function alpha_add( $fg, $bg )
 	// if BG is blank , FG RGB -> RGBA
 	// if BG is solid , FG += BG
 	// if BG is RGBA  , BG RGBA -> RGB, FG += BG, FG RGB -> RGBA
-
-	// blend w/normal pixels
-	if ( $bg[3] == BYTE )
+	switch ( $bg[3] )
 	{
-		$pix = "";
-		for ( $i=0; $i < 4; $i++ )
-		{
-			$p1 = ord( $fg[$i] );
-			$p2 = ord( $bg[$i] );
-			$p = int_max($p1 + $p2, BIT8);
-			$pix .= chr($p);
-		}
-		return $pix;
+		// blend w/normal pixels
+		case BYTE:
+			$pix = "";
+			for ( $i=0; $i < 4; $i++ )
+			{
+				$p1 = ord( $fg[$i] );
+				$p2 = ord( $bg[$i] );
+				$p = int_max($p1 + $p2, BIT8);
+				$pix .= chr($p);
+			}
+			return $pix;
+
+		// blend w/transparent pixel
+		// #202020 + #00000000 = #ffffff20
+		// #204080 + #00000000 = #4080ff80
+		case ZERO:
+			$r = ord($fg[0]);
+			$g = ord($fg[1]);
+			$b = ord($fg[2]);
+
+			$a = ( $r > $g ) ? $r : $g;
+			$a = ( $b > $a ) ? $b : $a;
+
+			$r = int_max($r / $a * BIT8, BIT8);
+			$g = int_max($g / $a * BIT8, BIT8);
+			$b = int_max($b / $a * BIT8, BIT8);
+			return chr($r) . chr($g) . chr($b) . chr($a);
+
+		// blend w/semi-transparent pixel
+		// #202020   + #204080   = #4060a0
+		// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0)
+		// #202020   + #4080ff80 = #6699ffa0
+		default:
+			$a2 = ord($bg[3]);
+			$r2 = ord($bg[0]) / BIT8 * $a2;
+			$g2 = ord($bg[1]) / BIT8 * $a2;
+			$b2 = ord($bg[2]) / BIT8 * $a2;
+
+			$r = int_max(ord($fg[0]) + $r2, BIT8);
+			$g = int_max(ord($fg[1]) + $g2, BIT8);
+			$b = int_max(ord($fg[2]) + $b2, BIT8);
+			$nfg = chr($r) . chr($g) . chr($b) . BYTE;
+
+			$func = __FUNCTION__;
+			return $func($nfg, PIX_ALPHA);
 	}
-
-	// blend w/transparent pixel
-	// #202020 + #00000000 = #ffffff20
-	// #204080 + #00000000 = #4080ff80
-	if ( $bg[3] == ZERO )
-	{
-		$r = ord($fg[0]);
-		$g = ord($fg[1]);
-		$b = ord($fg[2]);
-
-		$a = ( $r > $g ) ? $r : $g;
-		$a = ( $b > $a ) ? $b : $a;
-
-		$r = int_max($r / $a * BIT8, BIT8);
-		$g = int_max($g / $a * BIT8, BIT8);
-		$b = int_max($b / $a * BIT8, BIT8);
-		return chr($r) . chr($g) . chr($b) . chr($a);
-	}
-
-	// blend w/semi-transparent pixel
-	// #202020   + #204080   = #4060a0
-	// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0)
-	// #202020   + #4080ff80 = #6699ffa0
-	$a2 = ord($bg[3]);
-	$r2 = ord($bg[0]) / BIT8 * $a2;
-	$g2 = ord($bg[1]) / BIT8 * $a2;
-	$b2 = ord($bg[2]) / BIT8 * $a2;
-
-	$r = int_max(ord($fg[0]) + $r2, BIT8);
-	$g = int_max(ord($fg[1]) + $g2, BIT8);
-	$b = int_max(ord($fg[2]) + $b2, BIT8);
-	$nfg = chr($r) . chr($g) . chr($b) . BYTE;
-
-	$func = __FUNCTION__;
-	return $func($nfg, PIX_ALPHA);
+	return $fg;
 }
 //////////////////////////////
 function psx_patch( $dir, $pfx )
 {
-	foreach( file("system.cnf") as $sys )
+	foreach( file("$dir/system.cnf") as $sys )
 	{
 		if ( stripos($sys, 'boot') === false )
 			continue;
@@ -644,8 +644,8 @@ function psx_exe( &$psxram, $psxexe )
 	$bin = file_get_contents($psxexe);
 	if ( empty($bin) || substr($bin, 0, 8) != 'PS-X EXE' )
 		return;
-	$off1 = str2int($bin, 0x10, 3); // init pc
-	$off2 = str2int($bin, 0x18, 3); // mips start()
+	$off1 = str2int($bin, 0x10, 3); // mips start()
+	$off2 = str2int($bin, 0x18, 3); // mips ram
 	$off3 = str2int($bin, 0x1c, 3); // mips size
 	$off4 = str2int($bin, 0x30, 3); // init stack
 
@@ -741,14 +741,19 @@ function nds_patch( $dir, $pfx )
 	return patchfile("{$pfx}_{$NTR}.txt");
 }
 
-function nds_overlay( &$ndsram, &$y9bin, $dir, $id )
+function nds_overlay( &$ndsram, $dir, $id )
 {
+	if ( strpos($id, 'ov-') !== false )
+		$id = (int)substr($id, 3);
+
+	$y9   = file_get_contents("$dir/y9.bin");
+	if ( ! isset( $y9[$id*0x20] ) )
+		return 0;
+	$off   = str2int($y9, ($id * 0x20) + 0x04, 3);
+	$start = str2int($y9, ($id * 0x20) + 0x10, 3);
+
 	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
 	$bin  = file_get_contents($over);
-	if ( empty($bin) )
-		return 0;
-	$off   = str2int($y9bin, ($id * 0x20) + 0x04, 3);
-	$start = str2int($y9bin, ($id * 0x20) + 0x10, 3);
 	printf("LOADED overlay %x @ %x => %x\n", $id, $off, $start);
 		strupd($ndsram, $off, $bin);
 	return $start;

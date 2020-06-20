@@ -1,6 +1,6 @@
 PlayStation ONE EXE header
 	00  8  "PS-X EXE"
-	10  4  mips start
+	10  4  mips start()
 	18  4  mips ram
 	1c  4  mips size
 	30  4  init stack
@@ -16,7 +16,7 @@ Saturn ISO boot header
 	40   16  "J"
 	50   16  "J"
 	60  128  Game Title
-	e0    4  init pc
+	e0    4  sh-4 start()
 	e8    4  init stack master
 	ec    4  init stack slave
 	f0    4  sh-4 ram

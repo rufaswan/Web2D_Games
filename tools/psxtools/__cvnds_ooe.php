@@ -65,6 +65,20 @@ overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
 		13  4f-54
 
 
+clut = ov-4d
+	2d5114 -> 2aeda8  2b64a8(+5*10)
+	2d5918 -> 2aedb0
+	2d611c -> 2aedb8
+	2d6920 ->         2b65ac(+5*10)
+layout
+	2d7160 -> 2af3b8 -> 2af3b0 + 8 -> 221904 -> 2218b4[14]
+	2d71a0 -> 2af098
+	2d71e0 -> 2af348
+	...
+	2d76a0 -> 2af3e8
+
+	2218b4 -> 22208c -> d900c -> d8fc4[12]
+
 ov-4d = 2d7160 -> 2af3b8 , 2d76a0 -> 2af3e8
 	0  ptr layout
 	1  ptr flags
@@ -73,13 +87,20 @@ ov-4d = 2d7160 -> 2af3b8 , 2d76a0 -> 2af3e8
 	4  ?back?
 -> 2218b4-22190c
 
-clut-2c1ba0
-	map = 43 44 49 53 55 60 72 73 78 80 81 82 84
-	ptr = f414c f426c f4270 f427c f4284 f4290 f42d4
-
-2c1ba0/ruvas - f690
-2c1ba0/monastery - f984
-	2d5114  2d5918  2d611c  2d6920
+	dracula castle
+		0  entrance/inside , west of portrait room
+		1  entrance/inside , east of portrait room
+		2  underground
+		3  library
+		4  kitchen
+		5  campus
+		6  machine tower
+		7
+		8  armory
+		9  cerberus room
+		a  top floor
+		b
+		c  entrance/outside
 
 
 
@@ -108,4 +129,14 @@ clut-2c1ba0
 		cent   , no pal     , 119/eligor      ,
 		sgami  , no tex+pal , 120/death       , ov/24
 		dra    , no tex+pal , 121/dracula     , ov/33
+
+map 0-0 pos (ram 2106a74)
+12    ##-###########-xx
+13    ##
+14    ##-#####-#####
+15             #####-##-#####-xx
+16                   ##
+17             #####-##
+18 xx-########-#####-ss
+-- 08 09 0a 0b 0c 0d 0e 0f 10 11
  */

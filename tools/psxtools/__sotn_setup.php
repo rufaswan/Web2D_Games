@@ -20,9 +20,7 @@ function isofile( $fname )
 
 function cp_map( &$iso, $dir, &$pat, $off )
 {
-	$ed = hexdec( $off[1] );
-	$st = hexdec( $off[0] );
-	$bk = hexdec( $off[2] );
+	list($st,$ed,$bk) = $off;
 	$id = 0;
 	$dra = file_get_contents("$dir/dra.bin");
 	while ( $st < $ed )
@@ -59,11 +57,10 @@ function cp_map( &$iso, $dir, &$pat, $off )
 
 function cp_servant( &$iso, $dir, &$pat, $off )
 {
-	$ram = hexdec( $off[0] );
-	$num = hexdec( $off[1] );
-	$off1 = hexdec( $off[2] ); // ft_xxx.bin
-	$off2 = hexdec( $off[3] ); // sd_xxx.vh
-	$off3 = hexdec( $off[4] ); // sd_xxx.vb
+	// off1  ft_xxx.bin
+	// off2  sd_xxx.vh
+	// off3  sd_xxx.vb
+	list($ram,$num,$off1,$off2,$off3) = $off;
 	$dra = file_get_contents("$dir/dra.bin");
 	for ( $i=0; $i < $num; $i++ )
 	{
@@ -87,9 +84,7 @@ function cp_servant( &$iso, $dir, &$pat, $off )
 
 function cp_weapon( $dir, $off )
 {
-	$ram = hexdec( $off[0] );
-	$sz1 = hexdec( $off[1] );
-	$sz2 = hexdec( $off[2] );
+	list($ram,$sz1,$sz2) = $off[0];
 	$sz3 = $sz1 + $sz2;
 	$id = 0;
 	for ( $i=0; $i < 2; $i++ )
@@ -122,6 +117,10 @@ function sotn( $dir )
 	if ( empty($pat) )
 		return;
 	$iso = isofile("$dir/iso.txt");
+
+	arrayhex( $pat['dra.bin']['map'] );
+	arrayhex( $pat['dra.bin']['servant'] );
+	arrayhex( $pat['dra.bin']['weapon'] );
 
 	cp_map    ( $iso, $dir, $pat, $pat['dra.bin']['map']     );
 	cp_servant( $iso, $dir, $pat, $pat['dra.bin']['servant'] );

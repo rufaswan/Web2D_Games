@@ -2,14 +2,28 @@
 # offsets are for nds.ram
 
 [arm9.bin]
-	stage = b6148 , b6198
+	# overlay = 1dd280  1ffda0  1fffc0  223e00  2b73a0  2c1fe0
+	#  1dd280  [ 0- 1]  = 0
+	#  1ffda0  [ 2-18]  = -
+	#  1fffc0  [19-20]  = 19
+	#  223e00  [21-23]  = 22
+	#  2b73a0  [24-39]  = 39
+	#  2c1fe0  [40-85]  = 42 STAGES
+	game  = ooe , ov-0 , ov-19 , ov-22 , ov-39 , ov-42
 	files = d8cec , eca0c , 20
+
+	stg_ovid = b6148 , b6198
+	stg_bc   = ecbb8 , ecc08
+	stg_data = ecddc , ece2c
+
+	mon_sc   = f2814 , f29f8
 	mon_data = b6364 , b7468 , 24
 
-	monster = f2814 , f29f8
-	objects = f343c , f3670
-	bgset = ecbb8 , ecc08
 
+
+	obj_sc = f343c , f3670
+	portrait =
+	loading =
 	#overlay = d8cb4 , d8ccc
 	weapons = f3bc0 , f4150
 	# 148ea8

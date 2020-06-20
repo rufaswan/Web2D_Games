@@ -2,17 +2,39 @@
 # offsets are for nds.ram
 
 [arm9.bin]
-	stage = b3c80 , b3cb8
+	# overlay = 1caec0  219040  225a60  2a5880  2a58e0  2aa460  2c3ce0  2ca2a0  2ca6a0  2d2840  2d2d00  2da780
+	#  1caec0  [ 0]        = 0
+	#  219040  [ 1- 2]     = 1
+	#  225a60  [ 3- 4]     = 4
+	#  2a5880  [ 5]        = 5
+	#  2a58e0  [ 6]        = 6
+	#  2aa460  [ 7]        = 7
+	#  2c3ce0  [ 8]        = 8
+	#  2ca2a0  [ 9-24]     = 9
+	#  2ca6a0  [25,40-77]  = 25
+	#  2d2840  [26-39]     = 30
+	#  2d2d00  [118]       = -
+	#  2da780  [78-117]    = 78 STAGES
+	game  = por , ov-0 , ov-1 , ov-4 , ov-5 , ov-6 , ov-7 , ov-8 , ov-9 , ov-25 , ov-30 , ov-78
 	files = c237c , d399c , 20
+
+	stg_ovid = b3c80 , b3cb8
+	stg_bc   = d424c , d4284
+	stg_data = d3b78 , d3bb0
+
+	mon_sc   = c210c , c2378
 	mon_data = b27ac , b3b0c , 20
 
-	monster = c210c , c2378
-	objects = d6218 , d6524 , ov-0
-	bgset = d424c , d4284
+
+
+	obj_sc = d6218 , d6524
+	portrait =
+	loading =
+	items = d3aa0 , d3ab8
 
 [monster]
-	play_1 = ov-0 , ov-7 , 0-217f2c , 2-843 , 1-685-69b , 3-2ba704
-	play_2 = ov-0 , ov-7 , 0-217f84 , 2-842 , 1-676-684 , 3-2ba748
-	play_3 = ov-0 , ov-7 , 0-21808c , 2-70f , 1-6ea-700 , 3-2ba78c
-	play_4 = ov-0 , ov-7 , 0-2180e4 , 2-710 , 1-64b-64f , 3-2ba810
-	play_5 = ov-0 , ov-7 , 0-21813c , 2-724 , 1-650 , 3-2ba894
+	play_1 = 217f2c , 2-843 , 1-685-69b , 3-2ba704
+	play_2 = 217f84 , 2-842 , 1-676-684 , 3-2ba748
+	play_3 = 21808c , 2-70f , 1-6ea-700 , 3-2ba78c
+	play_4 = 2180e4 , 2-710 , 1-64b-64f , 3-2ba810
+	play_5 = 21813c , 2-724 , 1-650 , 3-2ba894
