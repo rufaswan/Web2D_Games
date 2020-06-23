@@ -41,7 +41,7 @@ function loadclut( &$file )
 			$pos = ($s * 0x8000) + ($c * 0x40);
 			$p1 = $pos + 0x5c00;
 			$p2 = $pos + 0x7c00;
-			printf("ADD CLUT @ %x , %x\n", $p1, $p2);
+			printf("add CLUT @ %x , %x\n", $p1, $p2);
 
 			$gp_clut[] = clut2str($file, $p1+ 0, 16);
 			$gp_clut[] = clut2str($file, $p1+32, 16);

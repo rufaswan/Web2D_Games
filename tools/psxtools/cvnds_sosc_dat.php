@@ -1,24 +1,26 @@
 <?php
 require "common.inc";
 
-define("CANV_S", 0x200);
+define("CANV_S", 0x300);
 //define("DRY_RUN", true);
 
 function loadclut( &$clut, $dir, $id )
 {
-	if ( ! isset( $clut[$id] ) )
+	$c1 = $id >> 4;
+	$c2 = $id & 0x0f;
+	if ( ! isset( $clut[$c1] ) )
 	{
-		$file = file_get_contents("$dir/0.3");
+		$file = file_get_contents("$dir/$c1.3");
 		if ( empty($file) )  return "";
 
 		while ( strlen($file) % 0x20 )
 			$file .= ZERO;
 
 		$cn = strlen($file) / 0x20;
-		$clut = mclut2str($file, 0, 16, $cn);
-		echo "ADDED clut $id = $cn\n";
+		$clut[$c1] = mclut2str($file, 0, 16, $cn);
+		printf("add CLUT %d @ %x \n", $cn, $id);
 	}
-	return $clut[$id];
+	return $clut[$c1][$c2];
 }
 
 function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
@@ -49,7 +51,7 @@ function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 				trigger_error("$texx $id = $len\n", E_USER_WARNING);
 				break;
 		} // switch ( $len )
-		echo "ADDED texx $id\n";
+		echo "add TEXX $id\n";
 	}
 
 	$len = strlen( $texx[$id] );

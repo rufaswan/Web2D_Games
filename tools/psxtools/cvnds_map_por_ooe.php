@@ -4,15 +4,16 @@ require "common.inc";
 
 $gp_pix  = array();
 $gp_clut = array();
-$gp_game = "";
 
 function sectmap( &$ram, $dir, $mid, $zid, $off, $pid )
 {
 	printf("=== sectmap( $dir , $mid , $zid , %x , $pid )\n", $off);
 	$map_w = ord( $ram[$off+0] ) * 0x100;
 	$map_h = ord( $ram[$off+1] ) * 0xc0;
-	$off1 = str2int($ram, $off+ 4, 3); //
-	$off2 = str2int($ram, $off+ 8, 3); //
+		zero_watch("ram2", $ram[$off+2]);
+		zero_watch("ram3", $ram[$off+3]);
+	$off1 = str2int($ram, $off+ 4, 3); // tile def
+	$off2 = str2int($ram, $off+ 8, 3); // collusion
 	$off3 = str2int($ram, $off+12, 3); // tile layout
 		$off += 16;
 	echo "map : $map_w x $map_h\n";
@@ -51,8 +52,14 @@ function sectmap( &$ram, $dir, $mid, $zid, $off, $pid )
 			if ( $b1 < 0 )
 				continue;
 
-			$pix['hflip'] = ($dat & 0x4000 || $b2 & 0x20000);
-			$pix['vflip'] = ($dat & 0x8000 || $b2 & 0x40000);
+			// flag can be set on both $dat and $b2
+			// if both set , cancel out
+			$f1 = ($dat & 0x4000 ) ? 1 : 0;
+			$f2 = ($b2  & 0x20000) ? 1 : 0;
+				$pix['hflip'] = $f1 ^ $f2;
+			$f1 = ($dat & 0x8000 ) ? 1 : 0;
+			$f2 = ($b2  & 0x40000) ? 1 : 0;
+				$pix['vflip'] = $f1 ^ $f2;
 			flag_warn("dat", $dat & 0x3c00);
 
 			$sx = (($b2 >> 0) & 0x07) * 0x10;
@@ -88,37 +95,19 @@ function sectmap( &$ram, $dir, $mid, $zid, $off, $pid )
 //////////////////////////////
 function mappos( $dat )
 {
-	global $gp_game;
-	if ( $gp_game == 'dos' )
-	{
-		// DOS = 2 x 2-bytes (0x1c + 0x1e)
-		// DOS-1e 2026210 (r2 << 9) >> 9 == (r2 >> 0) & 0x7f
-		// DOS-1e 2026224 (r2 << 2) >> 9 == (r2 >> 7) & 0x7f
-		// DOS-1e 202737c (r3 << 2) >> 9 == (r3 >> 7) & 0x7f
-		//                (r3 << 2 )
-		//        2027398 (r4 << 9) >> 7 == (r4 << 2) & 0x1ff
-		$b1 = 0; //
-		$b2 = ($dat >> 0x10) & 0x7f; // map left
-		$b3 = ($dat >> 0x17) & 0x7f; // map top
-		$b4 = 0; //
-		$b5 = 0; //
-	}
-	else // 'por' and 'ooe'
-	{
-		// fedc ba98  7654 3210  fedc ba98  7654 3210
-		// -555 4444  4--3 3333  3322 2222  2111 1111
-		// POR 202e14c (r3 << 0x12) >> 0x19 == (r3 >>  7) & 0x7f
-		// POR 202e15c (r3 << 0xb ) >> 0x19 == (r3 >> 14) & 0x7f
-		// POR 202e620 (r0 << 0x4 ) >> 0x1b == (r0 >> 23) & 0x1f
-		//             r1 + (r0 << 3)
-		// POR 202e6d0 (r0 << 0x1 ) >> 0x1d == (r0 >> 28) & 0x7
-		// POR 20309dc (r0 << 0x19) >> 0x19 == (r0 >>  0) & 0x7f
-		$b1 = ($dat >>  0) & 0x7f; // ?counter?
-		$b2 = ($dat >>  7) & 0x7f; // map left
-		$b3 = ($dat >> 14) & 0x7f; // map top
-		$b4 = ($dat >> 23) & 0x1f; // palette set
-		$b5 = ($dat >> 28) & 0x7;  //
-	}
+	// fedc ba98  7654 3210  fedc ba98  7654 3210
+	// -555 4444  4--3 3333  3322 2222  2111 1111
+	// POR 202e14c (r3 << 0x12) >> 0x19 == (r3 >>  7) & 0x7f
+	// POR 202e15c (r3 << 0xb ) >> 0x19 == (r3 >> 14) & 0x7f
+	// POR 202e620 (r0 << 0x4 ) >> 0x1b == (r0 >> 23) & 0x1f
+	//             r1 + (r0 << 3)
+	// POR 202e6d0 (r0 << 0x1 ) >> 0x1d == (r0 >> 28) & 0x7
+	// POR 20309dc (r0 << 0x19) >> 0x19 == (r0 >>  0) & 0x7f
+	$b1 = ($dat >>  0) & 0x7f; // ?counter?
+	$b2 = ($dat >>  7) & 0x7f; // map left
+	$b3 = ($dat >> 14) & 0x7f; // map top
+	$b4 = ($dat >> 23) & 0x1f; // palette set
+	$b5 = ($dat >> 28) & 0x7;  //
 
 	$b2 = $b2 * 0x100;
 	$b3 = $b3 * 0xc0;
@@ -138,24 +127,33 @@ function monloop( &$ram, &$zone, $off)
 		if ( $x == 0x7fff || $y == 0x7fff )
 			return;
 
-		//$zone[] = sprintf("mon_0+%d+%d", $x, $y);
-		//continue;
-
+		debug( substr($ram, $bak, 12) );
 		$ty = ord( $ram[$bak+5] );
-		$id = str2int($ram, $off+6, 2);
+		$id = str2int($ram, $bak+6, 2);
 		switch ( $ty )
 		{
-			case 1:
+			// common in all dos + por + ooe
+			case 1: // enemies , boss
 				$zone[] = sprintf("mon_%d+%d+%d", $id, $x, $y);
 				break;
-			case 2:
+			case 2: // candles , barrels
 				$zone[] = sprintf("obj_%d+%d+%d", $id, $x, $y);
 				break;
-			case 4:
+			case 4: // weapons , armor , relic
 				$zone[] = sprintf("item_%d+%d+%d", $id, $x, $y);
 				break;
+
+			// different on each
+			//case 3: // dos candles
+			//case 5:
+			//case 6: // dos event , always +0+0
+			//case 7: // ooe breakable wall
+			//case 8: // por event , always +0+0
+			//case 9: // por event , always +0+0
 			default:
-				$zone[] = sprintf("ty%d_%d+%d+%d", $ty, $id, $x, $y);
+				$err = sprintf("ty%d_%d+%d+%d", $ty, $id, $x, $y);
+				$zone[] = $err;
+				trigger_error($err, E_USER_WARNING);
 				break;
 		}
 	}
@@ -180,9 +178,9 @@ function zoneloop( &$ram, $dir, $mid, $off )
 			break;
 		$zone = array();
 
-		$off1 = str2int($ram, $sps+ 8, 3); // 4 * ptr layout
+		$off1 = str2int($ram, $sps+ 8, 3); // ptr layout (fg + bg1 + bg2 + bg3)
 		$off2 = str2int($ram, $sps+12, 3); // ptr flags
-		$off3 = str2int($ram, $sps+16, 3); // ptr clut
+		$off3 = str2int($ram, $sps+16, 3); // ptr palettes
 		$off4 = str2int($ram, $sps+20, 3); // meta
 		$off5 = str2int($ram, $sps+24, 3); // prev/next
 
@@ -203,7 +201,7 @@ function zoneloop( &$ram, $dir, $mid, $off )
 			$off3 += 8;
 		}
 
-		// room set = fg , bg ...
+		// room set = fg , bg1 , bg2 , bg3
 		$i = 4;
 		while ( $i > 0 )
 		{
@@ -212,7 +210,7 @@ function zoneloop( &$ram, $dir, $mid, $off )
 			$cps = str2int($ram, $p, 3);
 			if ( $cps == 0 || $ram[$p+3] != chr(2) )
 				continue;
-			$nid = ($mid * 1000) + ($bak * 10) + $i;
+			$nid = ($bak * 10) + $i;
 			$zone[] = "map_{$nid}+0+0";
 			sectmap($ram, $dir, $mid, $nid, $cps, $mappos[3]);
 		}
@@ -324,14 +322,70 @@ function cvnds( $dir )
 	$fst = $pat['arm9.bin']['files'][0];
 	$fbk = $pat['arm9.bin']['files'][2];
 
-	global $gp_game;
-	$gp_game = $pat['arm9.bin']['game'][0];
-	if ( $gp_game == 'por' || $gp_game == 'ooe' )
+	$game = $pat['arm9.bin']['game'][0];
+	if ( $game == 'por' || $game == 'ooe' )
 		maploop( $ram, $dir, $ovid, $bc, $data, $fst, $fbk );
-	if ( $gp_game == 'dos' )
-		arealoop( $ram, $dir, 0, $ovid, $bc, $data, $fst, $fbk );
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	cvnds( $argv[$i] );
+
+/*
+	POR map 0-0 pos (ram 2106320)
+	1b          #####
+	1c ########-#####-#####-xx
+	1d          #####
+	1e             ##
+	1f             ##
+	20             ##
+	21             ##
+	22             ##-tt
+	23          aa-##-ss
+	-- 01 02 03 04 05 06 07 08
+
+	OOE map 0-0 pos (ram 2106a74)
+	12    ##-###########-xx
+	13    ##
+	14    ##-#####-#####
+	15             #####-##-#####-xx
+	16                   ##
+	17             #####-##
+	18 xx-########-#####-ss
+	-- 08 09 0a 0b 0c 0d 0e 0f 10 11
+
+
+
+	DOS map_0 (ram 20f6e90)
+	13             ########-xx
+	14             ########
+	15    ##-##### ########    ########### ##### #####
+	16 #####-#####-########-##-###########-#####-#####-xx
+	17    tt-#####-##-#####-##-ss          #####
+	18    ##-#####-## #####-#####-#####-##-#####-xx
+	19 ss-##-##### ##-##### #####
+	1a    ##-#####-## #####-#####-#####
+	1b       ##       ##
+	1c       ##       ##
+	1d       ##-#####-##
+	1e                ##
+	1f                ##
+	20                ##-xx
+	21                ##
+	22                ##
+	23                ##
+	24                ##-xx
+	-- 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11
+
+	// DOS = 2 x 2-bytes (0x1c + 0x1e)
+	// DOS-1e 2026210 (r2 << 9) >> 9 == (r2 >> 0) & 0x7f
+	// DOS-1e 2026224 (r2 << 2) >> 9 == (r2 >> 7) & 0x7f
+	// DOS-1e 202737c (r3 << 2) >> 9 == (r3 >> 7) & 0x7f
+	//                (r3 << 2 )
+	//        2027398 (r4 << 9) >> 7 == (r4 << 2) & 0x1ff
+	$b1 = 0; //
+	$b2 = ($dat >> 0x10) & 0x7f; // map left
+	$b3 = ($dat >> 0x17) & 0x7f; // map top
+	$b4 = 0; //
+	$b5 = 0; //
+*/

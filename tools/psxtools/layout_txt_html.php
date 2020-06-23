@@ -1,8 +1,10 @@
 <?php
 require "common.inc";
+define("NONE_PNG", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXElEQVQ4y62SSxaAMAgDJ9z/znWjLrAfeJFlYAKlaMAAEIhGPFxkoQPfjT+CGrC0SlTgd4KKySqnSped8XHUVKyJdl7Wbi+BGf8/wVqi9Y3WIVmn3IFnJtGFc+0FVYAyEC56pV4AAAAASUVORK5CYII=");
 
 function htmlhead( $dir )
 {
+	$none = NONE_PNG;
 	$html = <<<_HTML
 <!DOCTYPE html><html><head>
 <title>$dir/layout.txt</title>
@@ -16,7 +18,13 @@ function htmlhead( $dir )
 }
 body { background-color:#000; }
 img:hover { background-color:#fff; }
-.none { display:none; }
+.none {
+	width:  16px;
+	height: 16px;
+	margin-top:  -8px;
+	margin-left: -8px;
+	background: url('$none') no-repeat center center;
+}
 </style>
 </head><body>
 
@@ -109,7 +117,8 @@ function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 	}
 
 	// nothing matched
-	echo "$tab<div class='$zone none'></div>\n";
+	//printf("%s<img class='sprite none' src='%s' title='$zone'>\n", $tab, XFILE_PNG);
+	echo "$tab<div class='sprite none' title='$zone'></div>";
 	return;
 }
 //////////////////////////////
@@ -147,8 +156,8 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 === sample layout.txt
-main = map_1,0,0 | zone_1,0,0
-zone_1 = mon_5,75,75 | mon_5,50,75 | mon_2,30,30
+main = map_1+0+0 , zone_1+0+0
+zone_1 = mon_5+75+75 , mon_5+50+75 , mon_2+30+30
 
 === sample html
 <div class='map_1 map' style='left:0px;top:0px'>

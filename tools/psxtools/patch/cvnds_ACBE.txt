@@ -8,7 +8,7 @@
 	#  22c840  [ 3- 4]     = 4
 	#  2b2a80  [ 5]        = 5
 	#  2b2ae0  [ 6]        = 6
-	#  2b7660  [ 7]        = 7
+	#  2b7660  [ 7]        = 7 PALETTES
 	#  2d0f40  [ 8]        = 8
 	#  2d7500  [ 9-24]     = 9
 	#  2d7900  [25,40-77]  = 25
@@ -24,11 +24,17 @@
 
 	mon_sc   = cd88c , cdaf8
 	mon_data = be568 , bf8c8 , 20
-
-
+	mon_clut = 0 , 0
 
 	obj_sc = e19dc , e1ce8
+	item_sc = 0 , 0
+
+
+
 	portrait =
 	loading =
 
-[monster]
+[sc_dat]
+	# playable char
+	# monster
+	# boss

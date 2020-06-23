@@ -7,7 +7,7 @@
 	#  230a00  [ 1]     = 1
 	#  29a920  [ 2]     = 2
 	#  29e600  [ 3]     = 3
-	#  2b9900  [ 4]     = 4
+	#  2b9900  [ 4]     = 4 PALETTES
 	#  2d6e80  [ 5]     = 5
 	#  2da4a0  [ 6-22]  = 14 STAGES
 	#  2ff9c0  [23-40]  = 28
@@ -20,11 +20,17 @@
 
 	mon_sc   = 8ca90 , 8cc68
 	mon_data = 78cac , 79d44 , 24
-
-
+	mon_clut = 0 , 0
 
 	obj_sc = 9b88c , 9ba64
+	item_sc = 0 , 0
+
+
+
 	portrait =
 	loading =
 
-[monster]
+[sc_dat]
+	# playable char
+	# monster
+	# boss

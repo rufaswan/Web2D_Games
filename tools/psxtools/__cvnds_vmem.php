@@ -91,6 +91,27 @@ arlau por clut = ov_7 , 2b5198
 arlau dos clut = ov_4 , 2bd5c0
 	ov_1 = 245ca4/asm
 
+arlau por jp (00 01 64 00)
+	overlay 110
+	map 22e43d6
+		21d8e80
+			r3 = 22e43d0[6]
+			r2 = 22e43d0[5]
+			r7 = (r2 << 16) | r3
+		21d8b00
+			r3 = 22e43d0[6]
+				r5 = 20b27ac  / mon_data
+				r12 = r5 + (r3 << 5)
+		-> 20f60a0 + 132 = 20f61d2
+		-> 20fd160 + 132 = 20fd292
+		-> 20fd2c0 + 132 = 20fd3f2
+	20b27ac[0] -> 22271b0
+		22271b4  e59f11f0  r1 = 2132a30
+		22271b8  e59f21f0  r2 = 22ba95c  <- state flags
+		22271c0  e59f31ec  r3 = 22aad4c  <- palette
+		= pc + 8 + 1f0 = 22273ac[0,4,8]
+
+
   62
 stor close
   63 = 2ba57c

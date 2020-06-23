@@ -25,8 +25,9 @@ function cvnds_dos_mon( $fp, $pos )
 	$mon = fp2str($fp, $pos, $siz);
 
 	$sr = chr(0x40); // in-game max = 0x40 , boss = 0
-	for ( $i=0; $i < $siz; $i += 0x24 )
+	for ( $i=0; $i < 118; $i++ )
 	{
+		$p = $i * 0x24;
 		// 0 1 2 3  4 5 6 7  8 9   a b   c d  e f
 		// func     func     drop  drop  - -  hp
 		// 10 11  12 13  14      15 16 17 18 19 1a 1b 1c 1d 1e 1f
@@ -34,9 +35,9 @@ function cvnds_dos_mon( $fp, $pos )
 		// 20 21 22 23
 		// -  -  -  -
 		//// soul rarity (get++) , zero = boss/100%
-		$mon[$i+0x0e] = chr(1);
-		$mon[$i+0x0f] = ZERO;
-		$mon[$i+0x14] = ZERO;
+		$mon[$p+0x0e] = ($i >= 101) ? chr(10) : chr(1);
+		$mon[$p+0x0f] = ZERO;
+		$mon[$p+0x14] = ZERO;
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);
@@ -50,8 +51,9 @@ function cvnds_ooe_mon( $fp, $pos )
 
 	$gr = chr(0x64); // in-game max = 0x64
 	$dr = chr(0x5f); // in-game max = 0x0f
-	for ( $i=0; $i < $siz; $i += 0x24 )
+	for ( $i=0; $i < 121; $i++ )
 	{
+		$p = $i * 0x24;
 		// 0 1 2 3  4 5 6 7  8 9   a b   c d  e f
 		// func     func     drop  drop  - -  hp
 		// 10 11  12 13  14 15  16      17 18 19  1a    1b    1c 1d 1e 1f
@@ -60,11 +62,11 @@ function cvnds_ooe_mon( $fp, $pos )
 		// -  -  -  -
 		//// glyph rarity (get++) , stars (rare--)
 		//// drop  rate   (get++) , stars (rare--)
-		$mon[$i+0x0e] = chr(1);
-		$mon[$i+0x0f] = ZERO;
-		$mon[$i+0x16] = $gr;
-		$mon[$i+0x1a] = $dr;
-		$mon[$i+0x1b] = $dr;
+		$mon[$p+0x0e] = ($i >= 108) ? chr(10) : chr(1);
+		$mon[$p+0x0f] = ZERO;
+		$mon[$p+0x16] = $gr;
+		$mon[$p+0x1a] = $dr;
+		$mon[$p+0x1b] = $dr;
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);
@@ -78,19 +80,20 @@ function cvnds_por_mon( $fp, $pos )
 
 	$sp = chr(0x63); // in-game max = 0x63
 	$dr = chr(0x32); // in-game max = 0x32
-	for ( $i=0; $i < $siz; $i += 0x20 )
+	for ( $i=0; $i < 155; $i++ )
 	{
+		$p = $i * 0x20;
 		// 0 1 2 3  4 5 6 7  8 9   a b   c  d   e f
 		// func     func     drop  drop  -  sp  hp
 		// 10 11 12  13   14   15   16    17    18 19  1a 1b  1c 1d  1e 1f
 		// exp       atk  def  int  rate  rate  weak   -  -   half   -  -
 		//// drop rate (get++) , stars (rare--)
 		//// weak/half (all=FF 07)
-		$mon[$i+0x0d] = $sp;
-		$mon[$i+0x0e] = chr(1);
-		$mon[$i+0x0f] = ZERO;
-		$mon[$i+0x16] = $dr;
-		$mon[$i+0x17] = $dr;
+		$mon[$p+0x0d] = $sp;
+		$mon[$p+0x0e] = ($i >= 129) ? chr(10) : chr(1);
+		$mon[$p+0x0f] = ZERO;
+		$mon[$p+0x16] = $dr;
+		$mon[$p+0x17] = $dr;
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);

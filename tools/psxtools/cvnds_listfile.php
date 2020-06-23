@@ -2,7 +2,7 @@
 require "common.inc";
 
 //////////////////////////////
-function sclist( &$list, &$ram, $st )
+function sclist( &$list, &$ram, $st, $pfx )
 {
 	while (1)
 	{
@@ -16,16 +16,16 @@ function sclist( &$list, &$ram, $st )
 
 		if ( isset( $list[$b1] ) )
 		{
-			printf("%4x , %s\n", $b1, $list[$b1]);
+			printf("%4x , %s , %s\n", $b1, $pfx, $list[$b1]);
 			unset( $list[$b1] );
 		}
 		else
-			printf("%4x , *not found*\n", $b1);
+			printf("%4x , ***\n", $b1);
 	} // while (1)
 	return;
 }
 
-function sclist1( &$list, &$ram, $st )
+function sclist1( &$list, &$ram, $st, $pfx )
 {
 	while (1)
 	{
@@ -33,12 +33,12 @@ function sclist1( &$list, &$ram, $st )
 			$st += 4;
 		if ( $b1 == 0 || $b1 == BIT24 )
 			return;
-		sclist( $list, $ram, $b1 );
+		sclist( $list, $ram, $b1, $pfx );
 	} // while (1)
 	return;
 }
 
-function sclist2( &$list, &$ram, $st )
+function sclist2( &$list, &$ram, $st, $pfx )
 {
 	while (1)
 	{
@@ -46,7 +46,7 @@ function sclist2( &$list, &$ram, $st )
 			$st += 4;
 		if ( $b1 == 0 || $b1 == BIT24 )
 			return;
-		sclist1( $list, $ram, $b1 );
+		sclist1( $list, $ram, $b1, $pfx );
 	} // while (1)
 	return;
 }
@@ -102,25 +102,25 @@ function cvnds( $dir )
 	if ( ! empty($pat['arm9.bin']['stg_bc']) )
 	{
 		$st = $pat['arm9.bin']['stg_bc'][0];
-		echo "\n=== STG_BC ===\n";
 		if ( $pat['arm9.bin']['game'][0] == 'dos' )
-			sclist1($list, $ram, $st);
+			sclist1($list, $ram, $st, 'stg_bc');
 		else
-			sclist2($list, $ram, $st);
+			sclist2($list, $ram, $st, 'stg_bc');
+		echo "\n";
 	}
 
 	if ( ! empty($pat['arm9.bin']['mon_sc']) )
 	{
 		$st = $pat['arm9.bin']['mon_sc'][0];
-		echo "\n=== MON_BC ===\n";
-		sclist1($list, $ram, $st);
+		sclist1($list, $ram, $st, 'mon_sc');
+		echo "\n";
 	}
 
 	if ( ! empty($pat['arm9.bin']['obj_sc']) )
 	{
 		$st = $pat['arm9.bin']['obj_sc'][0];
-		echo "\n=== OBJ_BC ===\n";
-		sclist1($list, $ram, $st);
+		sclist1($list, $ram, $st, 'obj_sc');
+		echo "\n";
 	}
 
 	printf("\n=== UNUSED [%d] ===\n", count($list));

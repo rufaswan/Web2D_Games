@@ -18,14 +18,20 @@
 
 	mon_sc   = f2814 , f29f8
 	mon_data = b6364 , b7468 , 24
-
-
+	mon_clut = 0 , 0
 
 	obj_sc = f343c , f3670
+	item_sc = 0 , 0
+
+
+
 	portrait =
 	loading =
 	#overlay = d8cb4 , d8ccc
 	weapons = f3bc0 , f4150
 	# 148ea8
 
-[monster]
+[sc_dat]
+	# playable char
+	# monster
+	# boss
