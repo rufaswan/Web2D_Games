@@ -6,21 +6,16 @@ define("CANV_S", 0x300);
 
 function loadclut( &$clut, $dir, $id )
 {
-	$c1 = $id >> 4;
-	$c2 = $id & 0x0f;
-	if ( ! isset( $clut[$c1] ) )
+	if ( ! isset( $clut[$id] ) )
 	{
-		$file = file_get_contents("$dir/$c1.3");
-		if ( empty($file) )  return "";
-
+		$file = file_get_contents("$dir/0.3");
 		while ( strlen($file) % 0x20 )
 			$file .= ZERO;
-
 		$cn = strlen($file) / 0x20;
-		$clut[$c1] = mclut2str($file, 0, 16, $cn);
+		$clut = mclut2str($file, 0, 16, $cn);
 		printf("add CLUT %d @ %x \n", $cn, $id);
 	}
-	return $clut[$c1][$c2];
+	return $clut[$id];
 }
 
 function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )

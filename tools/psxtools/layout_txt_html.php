@@ -89,16 +89,16 @@ function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 	}
 
 	// for monsters
-	$png = "$zone/0000.png";
-	if ( is_file("$dir/$png") )
+	$png = "$dir/$zone/0000.png";
+	if ( is_file($png) )
 	{
 		echo "$tab<img class='sprite' src='$png' title='$png'>\n";
 		return;
 	}
 
 	// for maps
-	$png = "$zone.png";
-	if ( is_file("$dir/$png") )
+	$png = "$dir/$zone.png";
+	if ( is_file($png) )
 	{
 		echo "$tab<img src='$png' title='$png'>\n";
 		return;
@@ -108,8 +108,8 @@ function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 	if ( strpos($zone, '_') !== false )
 	{
 		$b1 = explode('_', $zone);
-		$png = sprintf("%s/%04d.png", $b1[0], $b1[1]);
-		if ( is_file("$dir/$png") )
+		$png = sprintf("$dir/%s/%04d.png", $b1[0], $b1[1]);
+		if ( is_file($png) )
 		{
 			echo "$tab<img src='$png' title='$png'>\n";
 			return;
@@ -142,36 +142,14 @@ function layouttxt( $dir )
 		$layout[$id] = $data;
 	}
 
-	ob_start();
-		htmlhead($dir);
-		htmldiv($layout, $dir, 'main');
-		htmlfoot();
-	$html = ob_get_clean();
-	save_file("$dir/layout.html", $html);
+	htmldiv($layout, $dir, 'main');
 	return;
 }
 
+//ob_start();
+htmlhead($dir);
 for ( $i=1; $i < $argc; $i++ )
 	layouttxt( $argv[$i] );
-
-/*
-=== sample layout.txt
-main = map_1+0+0 , zone_1+0+0
-zone_1 = mon_5+75+75 , mon_5+50+75 , mon_2+30+30
-
-=== sample html
-<div class='map_1 map' style='left:0px;top:0px'>
-	<img src='map_1.png' title='map_1.png'>
-</div>
-<div class='zone_1 zone' style='left:0px;top:0px'>
-	<div class='mon_5 mon' style='left:75px;top:75px'>
-		<img class='sprite' src='mon_5/0000.png' title='mon_5/0000.png'>
-	</div>
-	<div class='mon_5 mon' style='left:50px;top:75px'>
-		<img class='sprite' src='mon_5/0000.png' title='mon_5/0000.png'>
-	</div>
-	<div class='mon_2 mon' style='left:30px;top:30px'>
-		<img class='sprite' src='mon_2/0000.png' title='mon_2/0000.png'>
-	</div>
-</div>
- */
+htmlfoot();
+//$html = ob_get_clean();
+//save_file("layout.html", $html);

@@ -18,7 +18,7 @@
 
 	mon_sc   = f2814 , f29f8
 	mon_data = b6364 , b7468 , 24
-	mon_clut = 0 , 0
+	mon_ov   = 0 , 0
 
 	obj_sc = f343c , f3670
 	item_sc = 0 , 0

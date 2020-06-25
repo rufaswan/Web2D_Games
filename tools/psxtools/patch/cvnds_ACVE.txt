@@ -20,7 +20,7 @@
 
 	mon_sc   = 8ca90 , 8cc68
 	mon_data = 78cac , 79d44 , 24
-	mon_clut = 0 , 0
+	mon_ov   = 0 , 0
 
 	obj_sc = 9b88c , 9ba64
 	item_sc = 0 , 0

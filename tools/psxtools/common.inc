@@ -82,6 +82,14 @@ function sint16( $s )
 	return $int;
 }
 
+function sint24( $s )
+{
+	$int = ordint($s);
+	if ( $int >> 23 )
+		return $int - BIT24 - 1;
+	return $int;
+}
+
 function strupd( &$file, $pos, $str )
 {
 	$len = strlen($str);
@@ -707,7 +715,7 @@ function psxtim( &$file )
 			$pos++;
 		}
 
-		printf("psxtim() = %d , %d x %d , %d x %d\n",
+		printf("load PSXTIM @ %d , size %d x %d , clut %d x %d\n",
 			$tim['t'], $tim['w'], $tim['h'], $tim['cc'], $tim['cn']
 		);
 		return $tim;
@@ -754,7 +762,7 @@ function nds_overlay( &$ndsram, $dir, $id )
 
 	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
 	$bin  = file_get_contents($over);
-	printf("LOADED overlay %x @ %x => %x\n", $id, $off, $start);
+	printf("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
 		strupd($ndsram, $off, $bin);
 	return $start;
 }

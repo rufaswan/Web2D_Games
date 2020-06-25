@@ -65,6 +65,13 @@ overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
 		13  4f-54
 
 
+map 0-0 room 0 mon_data
+	= 2cfdc0
+ov-23 = d8abc -> d8a38
+	-> 203fce0 (-1) -> 203fc38 (23) (bl 2006f8c)
+	-> 203fb8c r5 = r0
+	-> 2071ef0 r0 = [r0/20d9b4c,r4 << 3]
+
 clut = ov-4d
 	2d5114 -> 2aeda8  2b64a8(+5*10)
 	2d5918 -> 2aedb0
@@ -131,6 +138,6 @@ ov-4d = 2d7160 -> 2af3b8 , 2d76a0 -> 2af3e8
 		dra    , no tex+pal , 121/dracula     , ov/33
 
 	boss overlay
-		mon_108-120 = 23 29 25 26 31 32 35 36 27 34 30 24 33
+		mon_108-120 = 17 1d 19 1a 1f 20 23 24 1b 22 1e 18 21
 		d8bbc[4]    =  0  6  2  3  8  9  c  d  4  b  7  1  a
  */

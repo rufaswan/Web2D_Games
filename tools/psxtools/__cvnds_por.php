@@ -63,4 +63,30 @@ overlays - 1caec0 219040 225a60 2a5880 2a58e0 2aa460 2c3ce0 2ca2a0 2ca6a0 2d2840
 		2d2d00 = [^ + 0x4c0]
 		2da780 = 78 , 78 , 78 <- ALL SAME
 
+same pix diff palette
+	be568  1   zombie
+	be788  18  wight
+	befe8  85  ghoul
+	bf428  119 ghoul king
+
+map 0-0 room 0 mon_data
+	= 2eaf00
+
+arlau por jp (00 01 64 00)
+	overlay 110/map , 73/arlau
+	map 22e43d6
+		21d8e80
+			r3 = 22e43d0[6]
+			r2 = 22e43d0[5]
+			r7 = (r2 << 16) | r3
+		21d8b00
+			r3 = 22e43d0[6]
+				r5 = 20b27ac  / mon_data
+				r12 = r5 + (r3 << 5)
+		-> 20f60a0 + 132 = 20f61d2
+		-> 20fd160 + 132 = 20fd292
+		-> 20fd2c0 + 132 = 20fd3f2
+
+overlay loading
+map 4e -> 20b3c44 -> 202fb04  ldr r0,[r0,r1, lsl 2]
  */
