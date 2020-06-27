@@ -20,6 +20,9 @@
 	mon_data = b6364 , b7468 , 24
 	mon_ov   = 0 , 0
 
+	dest_data = 0 , 0
+	load_data = 0 , 0
+
 	obj_sc = f343c , f3670
 	item_sc = 0 , 0
 

@@ -10,9 +10,10 @@
 	#  2b89a0  [ 4]     = 4 PALETTES
 	#  2d5ec0  [ 5]     = 5
 	#  2d94e0  [ 6-22]  = 14 STAGES
-	#  2fea00  [23-40]  = 28 MONSTER
+	#  2fea00  [23-40]  = 28 MONSTER,BOSS
 	game  = dos , ov-0 , ov-1 , ov-2 , ov-3 , ov-4 , ov-5 , ov-14 , ov-28
 	files = 8cc6c , 99fd4 , 28
+	dummy = 0 , 0
 
 	stg_ovid = 9a41c , 9a460
 	stg_bc   = 9a3d4 , 9a418
@@ -21,6 +22,9 @@
 	mon_sc   = 8ca90 , 8cc68
 	mon_data = 78ca8 , 79d40 , 24
 	mon_ov   = 22b6e4 , 22b7ac
+
+	dest_data = 0 , 0
+	load_data = 0 , 0
 
 	obj_sc = 9b79c , 9b974
 	item_sc = 9a08c , 9a098
@@ -143,7 +147,7 @@
 	mon_102 = ov-23 , 3-2bb124 , 2-4b0 , 1-18d-193
 	mon_103 = ov-29 , 3-2bd298 , 2-4fd , 1-2c8-2cb
 	mon_104 = ov-40 , 3-2bb510 , 2-4cc , 1-1f8-1fc
-	mon_106 = ov-25 , 2-521 , 1-32c-330
+	mon_106 = ov-25 , 3-2bdd54 , 2-521 , 1-32c-330
 	mon_107 = ov-26 , 3-2be778 , 2-501 , 1-2d1-2d7
 	mon_108 = ov-36 , 3-2bc704 , 2-4d7 , 1-21e-226
 	mon_109 = ov-33 , 3-2beff0 , 2-4cf , 1-20a-210

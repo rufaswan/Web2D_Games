@@ -26,6 +26,9 @@
 	mon_data = be568 , bf8c8 , 20
 	mon_ov   = 0 , 0
 
+	dest_data = 0 , 0
+	load_data = 0 , 0
+
 	obj_sc = e19dc , e1ce8
 	item_sc = 0 , 0
 

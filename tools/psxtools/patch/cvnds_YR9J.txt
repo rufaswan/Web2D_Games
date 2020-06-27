@@ -11,6 +11,7 @@
 	#  2c1ba0  [39-84]  = 41 STAGES
 	game  = ooe , ov-0 , ov-18 , ov-21 , ov-38 , ov-41
 	files = da694 , ee3b4 , 20
+	dummy = /bc/f_kaa04.dat , 0
 
 	stg_ovid = b60fc , b614c
 	stg_bc   = d8da0 , d8df0
@@ -19,6 +20,9 @@
 	mon_sc   = f31c8 , f33ac
 	mon_data = b63d4 , b74d8 , 24
 	mon_ov   = d9b48 , d9be0
+
+	dest_data = 2b6968 , 2b6a80
+	load_data = 2b6b7c , 2b6c4c
 
 	obj_sc = f3df0 , f4024
 	item_sc = f4908 , f4920

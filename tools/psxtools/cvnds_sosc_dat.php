@@ -4,19 +4,7 @@ require "common.inc";
 define("CANV_S", 0x300);
 //define("DRY_RUN", true);
 
-function loadclut( &$clut, $dir, $id )
-{
-	if ( ! isset( $clut[$id] ) )
-	{
-		$file = file_get_contents("$dir/0.3");
-		while ( strlen($file) % 0x20 )
-			$file .= ZERO;
-		$cn = strlen($file) / 0x20;
-		$clut = mclut2str($file, 0, 16, $cn);
-		printf("add CLUT %d @ %x \n", $cn, $id);
-	}
-	return $clut[$id];
-}
+$gp_clut = array();
 
 function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 {
@@ -60,24 +48,6 @@ function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 	return "";
 }
 //////////////////////////////
-function loadsodat( $dir )
-{
-	// loading so/p_xxxx.dat
-	// avoid [OOE] jnt/j_xxx.jnt
-	// avoid [DOS/POR] sm/xxx.nsbmd
-	// avoid [POR] sm/xxx.nsbtx
-	$id = 0;
-	while (1)
-	{
-		$file = file_get_contents( "$dir/$id.2" );
-		$b = ord( $file[3] );
-		if ( $b & 0x80 )
-			return $file;
-		$id++;
-	}
-	return '';
-}
-
 function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 {
 	printf("=== sectpart( $dir , $id , $num , %x )\n", $off);
@@ -87,7 +57,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 
-	$clut = array();
+	global $gp_clut;
 	$texx = array();
 
 	while ( $num > 0 )
@@ -116,7 +86,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
-		$pix['src']['pal'] = loadclut($clut, $dir, $cid);
+		$pix['src']['pal'] = $gp_clut[$cid];
 
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;
@@ -133,7 +103,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$src['src']['w'] = $w;
 		$src['src']['h'] = $h;
 		$src['src']['pix'] = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
-		$src['src']['pal'] = loadclut($clut, $dir, $cid);
+		$src['src']['pal'] = $gp_clut[$cid];
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $tid , %02x , %02x [$cid]\n", $p13, $p14);
@@ -171,7 +141,12 @@ function cvnds( $dir )
 	if ( ! file_exists("$dir/0.2") )  return; // metadata
 	if ( ! file_exists("$dir/0.3") )  return; // palette
 
-	$file = loadsodat( $dir );
+	global $gp_clut;
+	$file = file_get_contents("$dir/0.3");
+	$num = strlen($file) / 0x20;
+	$gp_clut = mclut2str($file, 0, 16, (int)$num);
+
+	$file = file_get_contents("$dir/0.2");
 	$o1 = str2int($file, 0x04, 4);
 	$o2 = str2int($file, 0x08, 4);
 	$o3 = str2int($file, 0x0c, 4);

@@ -1,10 +1,21 @@
 <?php
 require "common.inc";
-define("NONE_PNG", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXElEQVQ4y62SSxaAMAgDJ9z/znWjLrAfeJFlYAKlaMAAEIhGPFxkoQPfjT+CGrC0SlTgd4KKySqnSped8XHUVKyJdl7Wbi+BGf8/wVqi9Y3WIVmn3IFnJtGFc+0FVYAyEC56pV4AAAAASUVORK5CYII=");
+define("NONE_PNG", "data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURQAAAP8AAP///2cZZB4AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+QGGgEMCSVOLPAAAAA4SURBVAjXYwhgYGBlCGFgEAVCIM3qwBjAwBjA6gDkAAUYRIFSDKwBMALMBUmAlYAVg7WBDQAZBQAWAQb1CwbkAwAAAABJRU5ErkJggg==");
 
-function htmlhead( $dir )
+function htmlhead( $dir, $g )
 {
 	$none = NONE_PNG;
+	$grid = "";
+
+	$png = __DIR__ . "/patch/$g.png";
+	if ( is_file($png) )
+	{
+		$f = file_get_contents($png);
+		$grid = "background:";
+		$grid .= sprintf(" url('data:image/png;charset=utf-8;base64,%s')", base64_encode($f));
+		$grid .= " top left;";
+	}
+
 	$html = <<<_HTML
 <!DOCTYPE html><html><head>
 <title>$dir/layout.txt</title>
@@ -16,7 +27,7 @@ function htmlhead( $dir )
 	left: 0;
 	top:  0;
 }
-body { background-color:#000; }
+body { $grid background-color:#000; }
 img:hover { background-color:#fff; }
 .none {
 	width:  16px;
@@ -69,6 +80,17 @@ _HTML;
 	return;
 }
 
+function imghtml( &$img, $png, $tab, $class = false )
+{
+	if ( ! empty($img) )  return;
+	if ( ! is_file($png) )  return;
+	if ( $class )
+		$img = "$tab<img class='sprite' src='$png' title='$png'>";
+	else
+		$img = "$tab<img src='$png' title='$png'>";
+	return;
+}
+
 function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 {
 	$tab = str_pad('', $tab_no*2, ' ');
@@ -77,48 +99,45 @@ function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 	// recursive divs
 	if ( isset( $layout[$zone] ) )
 	{
+		if ( empty( $layout[$zone] ) )
+			return;
 		foreach ( $layout[$zone] as $v )
 		{
+			if ( strpos($v, '+') === false ) // map_1+256+192
+				continue;
 			list($z,$x,$y) = explode('+', $v);
+
 			$zz = substr($z, 0, strpos($z, '_'));
 			echo "$tab<div class='$z $zz' style='left:{$x}px;top:{$y}px;'>\n";
+
 			$func($layout, $dir, $z, $tab_no+1);
 			echo "$tab</div>\n";
 		}
 		return;
 	}
 
-	// for monsters
-	$png = "$dir/$zone/0000.png";
-	if ( is_file($png) )
-	{
-		echo "$tab<img class='sprite' src='$png' title='$png'>\n";
-		return;
-	}
+	# monsters , objects , items ...
+	$img = "";
+	imghtml($img, "$dir/$zone/center.png", $tab, true);
+	imghtml($img, "$dir/$zone/0000.png"  , $tab, true);
+	imghtml($img, "$dir/$zone.png"       , $tab, false);
+	imghtml($img, "$zone/center.png", $tab, true);
+	imghtml($img, "$zone/0000.png"  , $tab, true);
+	imghtml($img, "$zone.png"       , $tab, false);
+	if ( ! empty($img) )
+		return printf("$img\n");
 
-	// for maps
-	$png = "$dir/$zone.png";
-	if ( is_file($png) )
+	$z = str_replace('_', '/', $zone);
+	if ( $z != $zone )
 	{
-		echo "$tab<img src='$png' title='$png'>\n";
-		return;
-	}
-
-	// for items
-	if ( strpos($zone, '_') !== false )
-	{
-		$b1 = explode('_', $zone);
-		$png = sprintf("$dir/%s/%04d.png", $b1[0], $b1[1]);
-		if ( is_file($png) )
-		{
-			echo "$tab<img src='$png' title='$png'>\n";
-			return;
-		}
+		imghtml($img, "$dir/$z.png", $tab, false);
+		imghtml($img, "$z.png"     , $tab, false);
+		if ( ! empty($img) )
+			return printf("$img\n");
 	}
 
 	// nothing matched
-	//printf("%s<img class='sprite none' src='%s' title='$zone'>\n", $tab, XFILE_PNG);
-	echo "$tab<div class='sprite none' title='$zone'></div>";
+	echo "$tab<div class='sprite none' title='$zone'></div>\n";
 	return;
 }
 //////////////////////////////
@@ -146,10 +165,20 @@ function layouttxt( $dir )
 	return;
 }
 
-//ob_start();
-htmlhead($dir);
+$gp_grid = "";
+ob_start();
 for ( $i=1; $i < $argc; $i++ )
-	layouttxt( $argv[$i] );
+{
+	if ( $argv[$i][0] == '-' )
+		$gp_grid = substr($argv[$i], 1);
+	else
+		layouttxt( $argv[$i] );
+}
+$html = ob_get_clean();
+if ( empty($html) )
+	exit();
+
+htmlhead(__DIR__ , $gp_grid);
+echo $html;
 htmlfoot();
-//$html = ob_get_clean();
 //save_file("layout.html", $html);

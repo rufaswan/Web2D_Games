@@ -71,6 +71,35 @@ ov-23 = d8abc -> d8a38
 	-> 203fce0 (-1) -> 203fc38 (23) (bl 2006f8c)
 	-> 203fb8c r5 = r0
 	-> 2071ef0 r0 = [r0/20d9b4c,r4 << 3]
+22cfdc6 (obj 02 43)
+	-> 71654 ldrbeq r0[43], (r1[22cfdc0],6)
+		streq r0, (r13[27e3a18])
+	-> 71674 ldrb r3[43], (r1[22cfdc0],6)
+		ldrb r2[2], (r1[22cfdc0],5)
+		orr  r7[20043], r3,r2,lsl 0x10
+	-> 716b4 ldrb r3[43], (r1[22cfdc0],6)
+		ldrb r2[2], (r1[22cfdc0],5)
+		orr  r2[20043], r3,r2,lsl 0x10
+		str  r2, (r12[27e3a18],r0[1],lsl 2)
+	-> 71148 ldrb r3[43], (r6[22cfdc0],6)
+		ldr  r2 = 20f42f4
+		ldr  r1 = 20f40c0
+		ldr  r2[22c2204], (r2,r3[43],lsl 2)
+		str  r2, (r4[2113fa0])
+		ldrb r2[43], (r6[22cfdc0],6)
+		ldr  r1[22c22c4], (r1,r2,lsl 2)
+		blx  r1
+
+bcfunc = 48358 -> 48278 -> 3ba58
+	obj 67-0 curtain
+	obj 2-13 statue
+	obj 2-a cendlier
+	obj 16 chest
+
+spikes   aflo00.dat  891  36e
+candles  cand00.dat  8ad  3c4  3c5
+chest    coffer00.dat  8b4  3e2
+lamp     dest00-12.dat  8bf-8cb  401-40d
 
 clut = ov-4d
 	2d5114 -> 2aeda8  2b64a8(+5*10)

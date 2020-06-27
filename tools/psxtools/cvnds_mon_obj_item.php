@@ -13,7 +13,7 @@ function rm_ent( $dir )
 	}
 	return;
 }
-
+//////////////////////////////
 function scdat_ent( &$ram, $ent, $base, $fst, $fbk )
 {
 	$ent = preg_replace("|[\s]+|", '', $ent);
@@ -96,6 +96,20 @@ function file_ent( &$ram, $pos, $pfx, $id)
 	$txt = sprintf("%s_%s = %s", $pfx, $id, implode(' , ', $ent));
 	return $txt;
 }
+
+function loop4p( &$ram, $pos, $pfx )
+{
+	$ent = array();
+	while (1)
+	{
+		$b1 = str2int($ram, $pos, 3);
+			$pos += 4;
+		if ( $b1 == BIT24 || $b1 == 0 )
+			break;
+		$ent[] = sprintf("%s%x", $pfx, $b1);
+	}
+	return $ent;
+}
 //////////////////////////////
 function listfile( &$ram, $files )
 {
@@ -132,24 +146,25 @@ function cvnds( $dir )
 	$ram = nds_ram($dir);
 	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
 
+	# list internal file id
 	arrayhex( $pat['arm9.bin']['files'] );
-	arrayhex( $pat['arm9.bin']['mon_sc'] );
-
-	$mon_st  = $pat['arm9.bin']['mon_sc'][0];
-	$mon_ed  = $pat['arm9.bin']['mon_sc'][1];
 	$file_st = $pat['arm9.bin']['files'][0];
 	$file_bk = $pat['arm9.bin']['files'][2];
 	listfile( $ram, $pat['arm9.bin']['files'] );
 
+	# copy monster/boss/player sc so
+	arrayhex( $pat['arm9.bin']['mon_sc'] );
+	list($st,$ed) = $pat['arm9.bin']['mon_sc'];
+
 	$id = 0;
-	while ( $mon_st < $mon_ed )
+	while ( $st < $ed )
 	{
-		$pos = str2int ($ram, $mon_st, 3);
+		$pos = str2int ($ram, $st, 3);
 		$ent = file_ent($ram, $pos, "mon", $id);
 
 		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
 		echo "$ent\n";
-		$mon_st += 4;
+		$st += 4;
 		$id++;
 	}
 
@@ -161,6 +176,39 @@ function cvnds( $dir )
 			scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
 			echo "$ent\n";
 		}
+	}
+
+	# copy dest files (por + ooe only)
+	arrayhex( $pat['arm9.bin']['dest_data'] );
+	list($st,$ed) = $pat['arm9.bin']['dest_data'];
+	$id = 0;
+	while ( $st < $ed )
+	{
+		$b2 = str2int($ram, $st+ 0, 2);
+		$b1 = str2int($ram, $st+ 4, 2);
+		$b3 = str2int($ram, $st+16, 3);
+		$ent = sprintf("dest_%d = 2-%x , 1-%x , 3-%x", $id, $b2, $b1, $b3);
+		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+		echo "$ent\n";
+		$id++;
+		$st += 0x14;
+	}
+
+	# copy loading room files (ooe only)
+	arrayhex( $pat['arm9.bin']['load_data'] );
+	list($st,$ed) = $pat['arm9.bin']['load_data'];
+	$id = 0;
+	while ( $st < $ed )
+	{
+		$b1 = str2int($ram, $st+0, 3);
+			$b1 = loop4p($ram, $b1, '1-');
+		$b2 = str2int($ram, $st+4, 2);
+		$b3 = str2int($ram, $st+8, 3);
+		$ent = sprintf("load_%d = 2-%x , 3-%x , %s", $id, $b2, $b3, implode(' , ', $b1));
+		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+		echo "$ent\n";
+		$id++;
+		$st += 0x10;
 	}
 	return;
 }

@@ -1,13 +1,16 @@
 <?php
 require "common.inc";
+
 //define("DRY_RUN", true);
 
 $gp_pix  = array();
 $gp_clut = array();
+$gp_game = "";
+// MARL = Map Area Room Layer
 
-function sectmap( &$ram, $dir, $mid, $zid, $off, $pid )
+function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 {
-	printf("=== sectmap( $dir , $mid , $zid , %x , $pid )\n", $off);
+	printf("=== layerloop( $dir , $MA , $RL , %x , $mp3 )\n", $off);
 	$map_w = ord( $ram[$off+0] ) * 0x100;
 	$map_h = ord( $ram[$off+1] ) * 0xc0;
 		zero_watch("ram2", $ram[$off+2]);
@@ -66,14 +69,14 @@ function sectmap( &$ram, $dir, $mid, $zid, $off, $pid )
 			$sy = (($b2 >> 4) & 0x0f) * 0x20;
 			if ( $b2 & 0x08 )
 				$sy += 0x10;
-			$tid = (($b2 >> 12) & 0x1f) + $pid;
+			$tid = (($b2 >> 12) & 0x1f);
 
 			$cid = ($b2 >> 24) & BIT8;
 			//$flg3 = $b2 & 0x80000;
 			flag_warn("b2", $b2 & 0x80f00);
 
 			$pix['src']['pix'] = rippix4($gp_pix[$tid], $sx, $sy, 16, 16, 0x40, 0x80);
-			$pix['src']['pal'] = $gp_clut[$pid][$cid];
+			$pix['src']['pal'] = $gp_clut[$mp3][$cid];
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 
@@ -88,26 +91,44 @@ function sectmap( &$ram, $dir, $mid, $zid, $off, $pid )
 	echo "$map4 \n";
 	echo "$map8a\n";
 	//echo "$map8b\n";
-	$fn = sprintf("$dir/cvnds_map/%d/map_%d", $mid, $zid);
+	$fn = sprintf("$dir/cvnds_map/%d/map_%d", $MA, $RL);
 	savpix($fn, $pix);
 	return;
 }
 //////////////////////////////
 function mappos( $dat )
 {
-	// fedc ba98  7654 3210  fedc ba98  7654 3210
-	// -555 4444  4--3 3333  3322 2222  2111 1111
-	// POR 202e14c (r3 << 0x12) >> 0x19 == (r3 >>  7) & 0x7f
-	// POR 202e15c (r3 << 0xb ) >> 0x19 == (r3 >> 14) & 0x7f
-	// POR 202e620 (r0 << 0x4 ) >> 0x1b == (r0 >> 23) & 0x1f
-	//             r1 + (r0 << 3)
-	// POR 202e6d0 (r0 << 0x1 ) >> 0x1d == (r0 >> 28) & 0x7
-	// POR 20309dc (r0 << 0x19) >> 0x19 == (r0 >>  0) & 0x7f
-	$b1 = ($dat >>  0) & 0x7f; // ?counter?
-	$b2 = ($dat >>  7) & 0x7f; // map left
-	$b3 = ($dat >> 14) & 0x7f; // map top
-	$b4 = ($dat >> 23) & 0x1f; // palette set
-	$b5 = ($dat >> 28) & 0x7;  //
+	global $gp_game;
+	if ( $gp_game == 'por' || $gp_game == 'ooe' )
+	{
+		// fedc ba98  7654 3210  fedc ba98  7654 3210
+		// -555 4444  4--3 3333  3322 2222  2111 1111
+		// POR 202e14c (r3 << 0x12) >> 0x19 == (r3 >>  7) & 0x7f
+		// POR 202e15c (r3 << 0xb ) >> 0x19 == (r3 >> 14) & 0x7f
+		// POR 202e620 (r0 << 0x4 ) >> 0x1b == (r0 >> 23) & 0x1f
+		//             r1 + (r0 << 3)
+		// POR 202e6d0 (r0 << 0x1 ) >> 0x1d == (r0 >> 28) & 0x7
+		// POR 20309dc (r0 << 0x19) >> 0x19 == (r0 >>  0) & 0x7f
+		$b1 = ($dat >>  0) & 0x7f; // ?counter?
+		$b2 = ($dat >>  7) & 0x7f; // map left
+		$b3 = ($dat >> 14) & 0x7f; // map top
+		$b4 = ($dat >> 23) & 0x1f; // palette set
+		$b5 = ($dat >> 28) & 0x7;  //
+	}
+	if ( $gp_game == 'dos' )
+	{
+		// DOS = 2 x 2-bytes (0x1c + 0x1e)
+		// DOS-1e 2026210 (r2 << 9) >> 9 == (r2 >> 0) & 0x7f
+		// DOS-1e 2026224 (r2 << 2) >> 9 == (r2 >> 7) & 0x7f
+		// DOS-1e 202737c (r3 << 2) >> 9 == (r3 >> 7) & 0x7f
+		//                (r3 << 2 )
+		//        2027398 (r4 << 9) >> 7 == (r4 << 2) & 0x1ff
+		$b1 = 0; //
+		$b2 = ($dat >> 0x10) & 0x7f; // map left
+		$b3 = ($dat >> 0x17) & 0x7f; // map top
+		$b4 = 0; //
+		$b5 = 0; //
+	}
 
 	$b2 = $b2 * 0x100;
 	$b3 = $b3 * 0xc0;
@@ -116,13 +137,13 @@ function mappos( $dat )
 	return $map;
 }
 
-function monloop( &$ram, &$zone, $off)
+function monobj( &$ram, &$room, $off)
 {
 	while (1)
 	{
 		$bak = $off;
-		$x = str2int($ram, $off+0, 2);
-		$y = str2int($ram, $off+2, 2);
+		$x = sint16( substr($ram, $off+0, 2) );
+		$y = sint16( substr($ram, $off+2, 2) );
 			$off += 12;
 		if ( $x == 0x7fff || $y == 0x7fff )
 			return;
@@ -134,13 +155,13 @@ function monloop( &$ram, &$zone, $off)
 		{
 			// common in all dos + por + ooe
 			case 1: // enemies , boss
-				$zone[] = sprintf("mon_%d+%d+%d", $id, $x, $y);
+				$room[] = sprintf("mon_%d+%d+%d", $id, $x, $y);
 				break;
 			case 2: // candles , barrels
-				$zone[] = sprintf("obj_%d+%d+%d", $id, $x, $y);
+				$room[] = sprintf("obj_%d+%d+%d", $id, $x, $y);
 				break;
 			case 4: // weapons , armor , relic
-				$zone[] = sprintf("item_%d+%d+%d", $id, $x, $y);
+				$room[] = sprintf("item_%d+%d+%d", $id, $x, $y);
 				break;
 
 			// different on each
@@ -152,7 +173,7 @@ function monloop( &$ram, &$zone, $off)
 			//case 9: // por event , always +0+0
 			default:
 				$err = sprintf("ty%d_%d+%d+%d", $ty, $id, $x, $y);
-				$zone[] = $err;
+				$room[] = $err;
 				trigger_error($err, E_USER_WARNING);
 				break;
 		}
@@ -160,23 +181,23 @@ function monloop( &$ram, &$zone, $off)
 	return;
 }
 
-function zoneloop( &$ram, $dir, $mid, $off )
+function roomloop( &$ram, $dir, $MA, $off )
 {
 	global $gp_clut;
 	$id = 0;
 	$layout = "";
-	$zlst = array();
+	$rlst = array();
 	// rooms , hallways ...
 	while (1)
 	{
-		$bak = $id;
-		$p = $id * 4;
-		printf("=== zoneloop( $dir , $mid , %x )\n", $off+$p);
-		$sps = str2int($ram, $off + $p, 3); // 2ab630
+		$R = $id;
 			$id++;
+		$p = $R * 4;
+		printf("=== roomloop( $dir , $MA , %x )\n", $off+$p);
+		$sps = str2int($ram, $off + $p, 3); // 2ab630
 		if ( $sps == 0 )
 			break;
-		$zone = array();
+		$room = array();
 
 		$off1 = str2int($ram, $sps+ 8, 3); // ptr layout (fg + bg1 + bg2 + bg3)
 		$off2 = str2int($ram, $sps+12, 3); // ptr flags
@@ -202,45 +223,45 @@ function zoneloop( &$ram, $dir, $mid, $off )
 		}
 
 		// room set = fg , bg1 , bg2 , bg3
-		$i = 4;
-		while ( $i > 0 )
+		$L = 4;
+		while ( $L > 0 )
 		{
-			$i--;
-			$p = $off1 + ($i * 0x10) + 12;
+			$L--;
+			$p = $off1 + ($L * 0x10) + 12;
 			$cps = str2int($ram, $p, 3);
 			if ( $cps == 0 || $ram[$p+3] != chr(2) )
 				continue;
-			$nid = ($bak * 10) + $i;
-			$zone[] = "map_{$nid}+0+0";
-			sectmap($ram, $dir, $mid, $nid, $cps, $mappos[3]);
+			$RL = ($R * 10) + $L;
+			$room[] = "map_{$RL}+0+0";
+			layerloop($ram, $dir, $MA, $RL, $cps, $mappos[3]);
 		}
 		// layer on top of bg + fg
-		monloop($ram, $zone, $off4);
+		monobj($ram, $room, $off4);
 
-		$zlst[] = sprintf("zone_%s+%d+%d", $bak, $mappos[1], $mappos[2]);
-		$layout .= sprintf("zone_%d = %s\n", $bak, implode(' , ', $zone));
+		$rlst[] = sprintf("room_%s+%d+%d", $R, $mappos[1], $mappos[2]);
+		$layout .= sprintf("room_%d = %s\n", $R, implode(' , ', $room));
 		//return;
 	}
-	$layout .= sprintf("main = %s\n", implode(' , ', $zlst));
-	$fn = sprintf("$dir/cvnds_map/%d/layout.txt", $mid);
+	$layout .= sprintf("main = %s\n", implode(' , ', $rlst));
+	$fn = sprintf("$dir/cvnds_map/%d/layout.txt", $MA);
 	save_file($fn, $layout);
 	return;
 }
 //////////////////////////////
-function arealoop( &$ram, $dir, $mid, $ovid, $bc, $data, $fst, $fbk )
+function arealoop( &$ram, $dir, $M, $ovid, $bc, $data, $fst, $fbk )
 {
 	global $gp_pix;
 	$id = 0;
 	// entrance , underground , library ...
 	while (1)
 	{
-		$bak = $id;
-		$p = $id * 4;
-		printf("=== arealoop( $dir , $mid , %x , %x , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p, $fst, $fbk);
+		$A = $id;
+			$id++;
+		$p = $A * 4;
+		printf("=== arealoop( $dir , $M , %x , %x , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p, $fst, $fbk);
 		$off1 = str2int($ram, $ovid + $p, 3); // 40
 		$off2 = str2int($ram, $bc   + $p, 3); // ef5fc
 		$off3 = str2int($ram, $data + $p, 3); // 21f664
-			$id++;
 		if ( $off1 == BIT24 || $off2 == 0 || $off3 == 3 )
 			break;
 		nds_overlay($ram, $dir, $off1);
@@ -256,12 +277,13 @@ function arealoop( &$ram, $dir, $mid, $ovid, $bc, $data, $fst, $fbk )
 			$fn = substr0($ram, $fps+6);
 
 			echo "add PIX @ $fn\n";
-			$gp_pix[] = file_get_contents("$dir/data/$fn");
+			if ( is_file("$dir/data/$fn") )
+				$gp_pix[] = file_get_contents("$dir/data/$fn");
 			$off2 += 8;
 		}
 
-		$nid = ($mid * 100) + $bak;
-		zoneloop( $ram, $dir, $nid, $off3 );
+		$MA = ($M * 100) + $A;
+		roomloop( $ram, $dir, $MA, $off3 );
 		return;
 	}
 	return;
@@ -273,16 +295,16 @@ function maploop( &$ram, $dir, $ovid, $bc, $data, $fst, $fbk )
 	$id = 0;
 	while (1)
 	{
-		$bak = $id;
-		$p = $id * 4;
+		$M = $id;
+			$id++;
+		$p = $M * 4;
 		printf("=== maploop( $dir , %x , %x , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p, $fst, $fbk);
 		$off1 = str2int($ram, $ovid + $p, 3); // b60c4
 		$off2 = str2int($ram, $bc   + $p, 3); // d8d68
 		$off3 = str2int($ram, $data + $p, 3); // 221ee0
-			$id++;
-		if ( $off1 == 0 || $off2 == 0 || $off3 == 3 )
+		if ( $off1 == 0 || $off2 == 0 || $off3 == 0 )
 			break;
-		arealoop( $ram, $dir, $bak, $off1, $off2, $off3, $fst, $fbk );
+		arealoop( $ram, $dir, $M, $off1, $off2, $off3, $fst, $fbk );
 		return;
 	}
 	return;
@@ -310,6 +332,14 @@ function cvnds( $dir )
 	$ram = nds_ram($dir);
 	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
 
+	foreach ( $pat['arm9.bin']['dummy'] as $f )
+	{
+		echo "rename DUMMY $f\n";
+		$f = "$dir/data/$f";
+		if ( is_file($f) )
+			rename($f, "$f.dummy");
+	}
+
 	arrayhex( $pat['arm9.bin']['files'] );
 	arrayhex( $pat['arm9.bin']['stg_ovid'] );
 	arrayhex( $pat['arm9.bin']['stg_bc'] );
@@ -322,9 +352,12 @@ function cvnds( $dir )
 	$fst = $pat['arm9.bin']['files'][0];
 	$fbk = $pat['arm9.bin']['files'][2];
 
-	$game = $pat['arm9.bin']['game'][0];
-	if ( $game == 'por' || $game == 'ooe' )
+	global $gp_game;
+	$gp_game = $pat['arm9.bin']['game'][0];
+	if ( $gp_game == 'por' || $gp_game == 'ooe' )
 		maploop( $ram, $dir, $ovid, $bc, $data, $fst, $fbk );
+	if ( $gp_game == 'dos' )
+		arealoop( $ram, $dir, 0, $ovid, $bc, $data, $fst, $fbk );
 	return;
 }
 
@@ -344,6 +377,7 @@ for ( $i=1; $i < $argc; $i++ )
 	23          aa-##-ss
 	-- 01 02 03 04 05 06 07 08
 
+
 	OOE map 0-0 pos (ram 2106a74)
 	12    ##-###########-xx
 	13    ##
@@ -353,7 +387,6 @@ for ( $i=1; $i < $argc; $i++ )
 	17             #####-##
 	18 xx-########-#####-ss
 	-- 08 09 0a 0b 0c 0d 0e 0f 10 11
-
 
 
 	DOS map_0 (ram 20f6e90)
@@ -376,16 +409,4 @@ for ( $i=1; $i < $argc; $i++ )
 	23                ##
 	24                ##-xx
 	-- 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11
-
-	// DOS = 2 x 2-bytes (0x1c + 0x1e)
-	// DOS-1e 2026210 (r2 << 9) >> 9 == (r2 >> 0) & 0x7f
-	// DOS-1e 2026224 (r2 << 2) >> 9 == (r2 >> 7) & 0x7f
-	// DOS-1e 202737c (r3 << 2) >> 9 == (r3 >> 7) & 0x7f
-	//                (r3 << 2 )
-	//        2027398 (r4 << 9) >> 7 == (r4 << 2) & 0x1ff
-	$b1 = 0; //
-	$b2 = ($dat >> 0x10) & 0x7f; // map left
-	$b3 = ($dat >> 0x17) & 0x7f; // map top
-	$b4 = 0; //
-	$b5 = 0; //
-*/
+ */
