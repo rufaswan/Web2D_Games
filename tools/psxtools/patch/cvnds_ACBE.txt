@@ -11,12 +11,13 @@
 	#  2b7660  [ 7]        = 7 PALETTES
 	#  2d0f40  [ 8]        = 8
 	#  2d7500  [ 9-24]     = 9
-	#  2d7900  [25,40-77]  = 25
+	#  2d7900  [25,40-77]  = 25 MONSTER,BOSS
 	#  2e01a0  [26-39]     = 30
 	#  2e04a0  [118]       = -
 	#  2e8820  [78-117]    = 78 STAGES
 	game  = por , ov-0 , ov-1 , ov-4 , ov-5 , ov-6 , ov-7 , ov-8 , ov-9 , ov-25 , ov-30 , ov-78
 	files = cdafc , df15c , 20
+	#dummy = /bc/f_fba09.dat , /bm , /sm
 
 	stg_ovid = bf9fc , bfa34
 	stg_bc   = dfa50 , dfa88
@@ -24,10 +25,8 @@
 
 	mon_sc   = cd88c , cdaf8
 	mon_data = be568 , bf8c8 , 20
-	mon_ov   = 0 , 0
-
-	dest_data = 0 , 0
-	load_data = 0 , 0
+	mon_ov   = 21d7a0 , 21d900
+	mon_func = 217c8 , 216b0
 
 	obj_sc = e19dc , e1ce8
 	item_sc = 0 , 0
@@ -41,3 +40,9 @@
 	# playable char
 	# monster
 	# boss
+
+##############################
+# GAME SPECIFIC DATASET
+##############################
+[por]
+	dest_data = 0 , 0

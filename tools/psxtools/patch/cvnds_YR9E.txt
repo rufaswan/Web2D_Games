@@ -7,10 +7,11 @@
 	#  1ffda0  [ 2-18]  = -
 	#  1fffc0  [19-20]  = 19
 	#  223e00  [21-23]  = 22
-	#  2b73a0  [24-39]  = 39
+	#  2b73a0  [24-39]  = 39 BOSS
 	#  2c1fe0  [40-85]  = 42 STAGES
 	game  = ooe , ov-0 , ov-19 , ov-22 , ov-39 , ov-42
 	files = d8cec , eca0c , 20
+	#dummy = /bc/f_kaa04.dat , /bm , /jnt
 
 	stg_ovid = b6148 , b6198
 	stg_bc   = ecbb8 , ecc08
@@ -18,10 +19,8 @@
 
 	mon_sc   = f2814 , f29f8
 	mon_data = b6364 , b7468 , 24
-	mon_ov   = 0 , 0
-
-	dest_data = 0 , 0
-	load_data = 0 , 0
+	mon_ov   = f1164 , f11fc
+	mon_func = 3b5d0 , 3b6d0
 
 	obj_sc = f343c , f3670
 	item_sc = 0 , 0
@@ -38,3 +37,10 @@
 	# playable char
 	# monster
 	# boss
+
+##############################
+# GAME SPECIFIC DATASET
+##############################
+[ooe]
+	dest_data = 0 , 0
+	load_data = 0 , 0

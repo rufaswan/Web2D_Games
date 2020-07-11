@@ -24,20 +24,24 @@ function cvnds_dos_mon( $fp, $pos )
 	$siz = 118 * 0x24; // 0x1098 = 116+2 mon * 36 bytes
 	$mon = fp2str($fp, $pos, $siz);
 
-	$sr = chr(0x40); // in-game max = 0x40 , boss = 0
+	$sr = ZERO; // in-game max = 0x40 , boss = 0
+	$dr = BYTE; // in-game max = 0x08
 	for ( $i=0; $i < 118; $i++ )
 	{
 		$p = $i * 0x24;
 		// 0 1 2 3  4 5 6 7  8 9   a b   c d  e f
 		// func     func     drop  drop  - -  hp
-		// 10 11  12 13  14      15 16 17 18 19 1a 1b 1c 1d 1e 1f
-		// mp     exp    rarity  -  -  -  -  -  -  -  -  -  -  -
+		// 10 11  12 13  14      15   16   17    18 19  1a    1b    1c 1d 1e 1f
+		// mp     exp    rarity  atk  def  rate  -  -   soul  cost  weak
 		// 20 21 22 23
-		// -  -  -  -
-		//// soul rarity (get++) , zero = boss/100%
+		// half
+		//// soul rarity (get++) , stars (rare--) , zero = boss/100%
+		//// drop 1 = (rate * 3) / (1024 - LUCK)
+		//// drop 2 = 256 / (1024 - LUCK)
 		$mon[$p+0x0e] = ($i >= 101) ? chr(10) : chr(1);
 		$mon[$p+0x0f] = ZERO;
-		$mon[$p+0x14] = ZERO;
+		$mon[$p+0x14] = $sr;
+		$mon[$p+0x17] = $dr;
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);
@@ -50,16 +54,16 @@ function cvnds_ooe_mon( $fp, $pos )
 	$mon = fp2str($fp, $pos, $siz);
 
 	$gr = chr(0x64); // in-game max = 0x64
-	$dr = chr(0x5f); // in-game max = 0x0f
+	$dr = chr(0xff); // in-game max = 0x0f
 	for ( $i=0; $i < 121; $i++ )
 	{
 		$p = $i * 0x24;
-		// 0 1 2 3  4 5 6 7  8 9   a b   c d  e f
-		// func     func     drop  drop  - -  hp
-		// 10 11  12 13  14 15  16      17 18 19  1a    1b    1c 1d 1e 1f
-		// exp    -  -   glyph  rarity  -  -  -   rate  rate  -  -  -  -
+		// 0 1 2 3  4 5 6 7  8 9   a b   c  d   e f
+		// func     func     drop  drop  -  ap  hp
+		// 10 11  12 13  14 15  16      17   18   19   1a    1b    1c 1d 1e 1f
+		// exp    -  -   glyph  rarity  atk  def  int  rate  rate  weak
 		// 20 21 22 23
-		// -  -  -  -
+		// half
 		//// glyph rarity (get++) , stars (rare--)
 		//// drop  rate   (get++) , stars (rare--)
 		$mon[$p+0x0e] = ($i >= 108) ? chr(10) : chr(1);
@@ -79,14 +83,14 @@ function cvnds_por_mon( $fp, $pos )
 	$mon = fp2str($fp, $pos, $siz);
 
 	$sp = chr(0x63); // in-game max = 0x63
-	$dr = chr(0x32); // in-game max = 0x32
+	$dr = chr(0x80); // in-game max = 0x32
 	for ( $i=0; $i < 155; $i++ )
 	{
 		$p = $i * 0x20;
 		// 0 1 2 3  4 5 6 7  8 9   a b   c  d   e f
 		// func     func     drop  drop  -  sp  hp
-		// 10 11 12  13   14   15   16    17    18 19  1a 1b  1c 1d  1e 1f
-		// exp       atk  def  int  rate  rate  weak   -  -   half   -  -
+		// 10 11 12  13   14   15   16    17    18 19 1a 1b  1c 1d 1e 1f
+		// exp       atk  def  int  rate  rate  weak         half
 		//// drop rate (get++) , stars (rare--)
 		//// weak/half (all=FF 07)
 		$mon[$p+0x0d] = $sp;

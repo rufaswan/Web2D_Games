@@ -38,7 +38,7 @@ function arm9_ldr( &$ram, $pc, $dep )
 	// cond                                    = always
 	//      101L                               = 101 , link
 	//           offset                        = fff84b = -7b5 -> -1ed4
-	// arm9 == bl  (pc-1ed4)
+	// arm9 == bl  (pc+-1ed4)
 	//=========================================
 	$func = __FUNCTION__;
 	$stack = false;
@@ -57,8 +57,8 @@ function arm9_ldr( &$ram, $pc, $dep )
 				$b1 = str2int($ram, $bak+0, 2);
 				$reg = $b1 >> 12;
 				$off = $b1 & 0xfff;
-				$b1 = str2int($ram, $bak+8+$off, 4);
-				printf("%sloc_%6x  r%d , Lxx_%x\n", $tab, $bak, $reg, $b1);
+				$b1 = str2int($ram, $bak+8+$off, 3);
+				printf("%sloc_%6x  ldr  r%d , [%x]\n", $tab, $bak, $reg, $b1);
 				break;
 			case 0xe92d: // stmfd
 				$stack = true;
@@ -73,13 +73,20 @@ function arm9_ldr( &$ram, $pc, $dep )
 		} // switch ( $arm )
 
 		$arm = ord( $ram[$bak+3] ) & 0x0f;
-		if ( $arm == 0x0a )
+		switch ( $arm )
 		{
-			$b1 = substr($ram, $bak, 3);
-			$b1 = $bak + 8 + sint24($b1);
-			if ( $b1 > $goto )
-				$goto = $b1;
-		}
+			case 0x0a: // branch
+				$b1 = substr($ram, $bak, 3);
+				$b1 = $bak + 8 + (sint24($b1) << 2);
+				if ( $b1 > $goto )
+					$goto = $b1;
+				break;
+			case 0x0b: // branch and link
+				$b1 = substr($ram, $bak, 3);
+				$b1 = $bak + 8 + (sint24($b1) << 2);
+				printf("%sloc_%6x  bl   sub_%x\n", $tab, $bak, $b1);
+				break;
+		} // switch ( $arm )
 	}
 	return;
 }
@@ -141,8 +148,8 @@ function cvnds( $dir )
 
 		$func = str2int($ram, $st+0, 3);
 			arm9_ldr( $ram, $func, 1 );
-		$func = str2int($ram, $st+4, 3);
-			arm9_ldr( $ram, $func, 1 );
+		//$func = str2int($ram, $st+4, 3);
+			//arm9_ldr( $ram, $func, 1 );
 
 		$id++;
 		$st += $bk;

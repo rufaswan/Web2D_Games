@@ -11,7 +11,7 @@
 	#  2c1ba0  [39-84]  = 41 STAGES
 	game  = ooe , ov-0 , ov-18 , ov-21 , ov-38 , ov-41
 	files = da694 , ee3b4 , 20
-	dummy = /bc/f_kaa04.dat , 0
+	#dummy = /bc/f_kaa04.dat , /bm , /jnt
 
 	stg_ovid = b60fc , b614c
 	stg_bc   = d8da0 , d8df0
@@ -20,9 +20,7 @@
 	mon_sc   = f31c8 , f33ac
 	mon_data = b63d4 , b74d8 , 24
 	mon_ov   = d9b48 , d9be0
-
-	dest_data = 2b6968 , 2b6a80
-	load_data = 2b6b7c , 2b6c4c
+	mon_func = 48358 , 48458
 
 	obj_sc = f3df0 , f4024
 	item_sc = f4908 , f4920
@@ -38,10 +36,23 @@
 
 [sc_dat]
 	# playable char
-	play_1 = d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
-	play_2 = d951c , 3-d6d64 , 2-893 , 1-6f7-701
+	play_1a = d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
+	play_1b = d9408 , 3-d6bb4 , 2-943 , 1-7c6-7c9
+	play_1c = d9464 , 3-d6c18 , 2-944 , 1-7ca-7d2
+	play_1d = d94c0 , 3-d6cbc , 2-945 , 1-7d3
+	play_2  = d951c , 3-d6d64 , 2-893 , 1-6f7-701
 
 	##########################
+
+	# monster (no overlay)
+	mon_1a = 3-cb59c , 2-9e6 , 1-6ce-6cf
+	mon_1b = 3-cb664 , 2-9e6 , 1-6ce-6cf
+	mon_68a = 3-cbc2c , 2-993 , 1-5d9-5db
+	mon_68b = 3-cbb68 , 2-993 , 1-5d9-5db
+	mon_69a = 3-cb6a8 , 2-89e , 1-3a0-3a2
+	mon_69b = 3-cb70c , 2-89e , 1-3a0-3a2
+
+	# monster (own overlay/22bxxxx)
 
 	# monster w/jnt
 	reset = ov-38 , boss
@@ -92,3 +103,10 @@
 	reset = ov-41 , map
 
 	##########################
+
+##############################
+# GAME SPECIFIC DATASET
+##############################
+[ooe]
+	dest_data = 2b6968 , 2b6a80
+	load_data = 2b6b7c , 2b6c4c

@@ -3,7 +3,8 @@ require "common.inc";
 
 //define("DRY_RUN", true);
 
-$gp_pix  = array();
+$gp_pix_a = array();
+$gp_pix_r = array();
 $gp_clut = array();
 $gp_game = "";
 // MARL = Map Area Room Layer
@@ -31,7 +32,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 
-	global $gp_pix, $gp_clut;
+	global $gp_pix_r, $gp_clut;
 	$pos = $off3;
 	$map4  = "";
 	$map8a = "";
@@ -75,10 +76,20 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 			//$flg3 = $b2 & 0x80000;
 			flag_warn("b2", $b2 & 0x80f00);
 
-			$pix['src']['pix'] = rippix4($gp_pix[$tid], $sx, $sy, 16, 16, 0x40, 0x80);
-			$pix['src']['pal'] = $gp_clut[$mp3][$cid];
+			$pix['src']['pix'] = "";
+			$pix['src']['pal'] = "";
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
+			if ( $gp_pix_r[$tid][1] == 4 )
+			{
+				$pix['src']['pix'] = rippix4($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x40, 0x80);
+				$pix['src']['pal'] = clut2str($gp_clut[$mp3], $cid*0x20, 0x10);
+			}
+			if ( $gp_pix_r[$tid][1] == 8 )
+			{
+				$pix['src']['pix'] = rippix8($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x80, 0x80);
+				$pix['src']['pal'] = clut2str($gp_clut[$mp3], $cid*0x20, 0x100);
+			}
 
 			copypix($pix);
 		} // for ( $x=0; $x < $map_w; $x += 0x10 )
@@ -91,7 +102,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	echo "$map4 \n";
 	echo "$map8a\n";
 	//echo "$map8b\n";
-	$fn = sprintf("$dir/cvnds_map/%d/map_%d", $MA, $RL);
+	$fn = sprintf("$dir/cvnds_map/ma_%04d/l_%04d", $MA, $RL);
 	savpix($fn, $pix);
 	return;
 }
@@ -109,7 +120,7 @@ function mappos( $dat )
 		//             r1 + (r0 << 3)
 		// POR 202e6d0 (r0 << 0x1 ) >> 0x1d == (r0 >> 28) & 0x7
 		// POR 20309dc (r0 << 0x19) >> 0x19 == (r0 >>  0) & 0x7f
-		$b1 = ($dat >>  0) & 0x7f; // ?counter?
+		$b1 = ($dat >>  0) & 0x7f; //
 		$b2 = ($dat >>  7) & 0x7f; // map left
 		$b3 = ($dat >> 14) & 0x7f; // map top
 		$b4 = ($dat >> 23) & 0x1f; // palette set
@@ -121,7 +132,7 @@ function mappos( $dat )
 		// DOS-1e 2026210 (r2 << 9) >> 9 == (r2 >> 0) & 0x7f
 		// DOS-1e 2026224 (r2 << 2) >> 9 == (r2 >> 7) & 0x7f
 		// DOS-1e 202737c (r3 << 2) >> 9 == (r3 >> 7) & 0x7f
-		//                (r3 << 2 )
+		//                (r3 << 2)
 		//        2027398 (r4 << 9) >> 7 == (r4 << 2) & 0x1ff
 		$b1 = 0; //
 		$b2 = ($dat >> 0x10) & 0x7f; // map left
@@ -150,40 +161,28 @@ function monobj( &$ram, &$room, $off)
 
 		debug( substr($ram, $bak, 12) );
 		$ty = ord( $ram[$bak+5] );
-		$id = str2int($ram, $bak+6, 2);
-		switch ( $ty )
-		{
-			// common in all dos + por + ooe
-			case 1: // enemies , boss
-				$room[] = sprintf("mon_%d+%d+%d", $id, $x, $y);
-				break;
-			case 2: // candles , barrels
-				$room[] = sprintf("obj_%d+%d+%d", $id, $x, $y);
-				break;
-			case 4: // weapons , armor , relic
-				$room[] = sprintf("item_%d+%d+%d", $id, $x, $y);
-				break;
+		$id = str2int($ram, $bak+ 6, 2);
+		$v1 = str2int($ram, $bak+ 8, 2);
+		$v2 = str2int($ram, $bak+10, 2);
 
-			// different on each
-			//case 3: // dos candles
-			//case 5:
-			//case 6: // dos event , always +0+0
-			//case 7: // ooe breakable wall
-			//case 8: // por event , always +0+0
-			//case 9: // por event , always +0+0
-			default:
-				$err = sprintf("ty%d_%d+%d+%d", $ty, $id, $x, $y);
-				$room[] = $err;
-				trigger_error($err, E_USER_WARNING);
-				break;
-		}
+		// type
+		// 1  (common) monster , boss
+		// 2  (common) candles
+		// 3  candles/dos
+		// 4  (common) items , weapons , glyphs
+		// 5
+		// 6  events/dos , always +0+0
+		// 7  secret/ooe
+		// 8  events/por , always +0+0
+		// 9  events/por , always +0+0
+		$room[] = sprintf("en%d/%d_%d_%d+%d+%d", $ty, $id, $v1, $v2, $x, $y);
 	}
 	return;
 }
 
 function roomloop( &$ram, $dir, $MA, $off )
 {
-	global $gp_clut;
+	global $gp_clut, $gp_pix_a, $gp_pix_r;
 	$id = 0;
 	$layout = "";
 	$rlst = array();
@@ -200,7 +199,7 @@ function roomloop( &$ram, $dir, $MA, $off )
 		$room = array();
 
 		$off1 = str2int($ram, $sps+ 8, 3); // ptr layout (fg + bg1 + bg2 + bg3)
-		$off2 = str2int($ram, $sps+12, 3); // ptr flags
+		$off2 = str2int($ram, $sps+12, 3); // ptr bc/f_xxx.dat
 		$off3 = str2int($ram, $sps+16, 3); // ptr palettes
 		$off4 = str2int($ram, $sps+20, 3); // meta
 		$off5 = str2int($ram, $sps+24, 3); // prev/next
@@ -208,6 +207,35 @@ function roomloop( &$ram, $dir, $MA, $off )
 		$mappos = str2int($ram, $sps+28, 4);
 		$mappos = mappos( $mappos );
 
+		// pix data for a room
+		$gp_pix_r = array();
+		while (1)
+		{
+			$b1 = str2int($ram, $off2, 3);
+			if ( $b1 == 0 )
+				break;
+			$b1 = file_get_contents( $gp_pix_a[$b1] );
+			$psz = strlen($b1);
+			if ( $psz == 0x4000 )
+				$gp_pix_r[] = array($b1, 8);
+			else
+			if ( $psz == 0x2000 )
+				$gp_pix_r[] = array($b1, 4);
+
+/*
+			$pix = file_get_contents("$dir/data/$fn");
+			$psz = strlen($pix);
+			if ( $psz == 0x4000 )
+				$gp_pix_a[$fp] = array($pix, 8);
+			else
+			if ( $psz == 0x2000 )
+				$gp_pix_a[$fp] = array($pix, 4);
+			$gp_pix_r[] = $gp_pix_a[$b1];
+*/
+			$off2 += 8;
+		}
+
+		// clut data for a room
 		$gp_clut = array();
 		while (1)
 		{
@@ -218,7 +246,7 @@ function roomloop( &$ram, $dir, $MA, $off )
 			$b2 = str2int($ram, $cps+2, 2);
 			printf("add CLUT %d @ %x\n", $b2, $cps+4);
 
-			$gp_clut[] = mclut2str($ram, $cps+4, 16, $b2);
+			$gp_clut[] = substr($ram, $cps+4, $b2*0x20);
 			$off3 += 8;
 		}
 
@@ -232,27 +260,27 @@ function roomloop( &$ram, $dir, $MA, $off )
 			if ( $cps == 0 || $ram[$p+3] != chr(2) )
 				continue;
 			$RL = ($R * 10) + $L;
-			$room[] = "map_{$RL}+0+0";
+			$room[] = sprintf("l_%04d+0+0", $RL);
 			layerloop($ram, $dir, $MA, $RL, $cps, $mappos[3]);
 		}
 		// layer on top of bg + fg
 		monobj($ram, $room, $off4);
 
-		$rlst[] = sprintf("room_%s+%d+%d", $R, $mappos[1], $mappos[2]);
-		$layout .= sprintf("room_%d = %s\n", $R, implode(' , ', $room));
+		$rlst[] = sprintf("r_%04d+%d+%d", $R, $mappos[1], $mappos[2]);
+		$layout .= sprintf("r_%04d = %s\n", $R, implode(' , ', $room));
 		//return;
 	}
 	$layout .= sprintf("main = %s\n", implode(' , ', $rlst));
-	$fn = sprintf("$dir/cvnds_map/%d/layout.txt", $MA);
+	$fn = sprintf("$dir/cvnds_map/ma_%04d/layout.txt", $MA);
 	save_file($fn, $layout);
 	return;
 }
 //////////////////////////////
 function arealoop( &$ram, $dir, $M, $ovid, $bc, $data, $fst, $fbk )
 {
-	global $gp_pix;
+	global $gp_pix_a;
 	$id = 0;
-	// entrance , underground , library ...
+	// entrance , library , clock tower ...
 	while (1)
 	{
 		$A = $id;
@@ -266,32 +294,32 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data, $fst, $fbk )
 			break;
 		nds_overlay($ram, $dir, $off1);
 
-		$gp_pix = array();
+		// pix data for an area
+		$gp_pix_a = array();
 		while (1)
 		{
 			$fid = str2int($ram, $off2+0, 3); // 1ca...
 			$fty = str2int($ram, $off2+4, 3); // 2...
+				$off2 += 8;
 			if ( $fty == 0 )
 				break;
 			$fps = $fst + ($fid * $fbk);
+			$fp = str2int($ram, $fps+0, 3);
 			$fn = substr0($ram, $fps+6);
-
 			echo "add PIX @ $fn\n";
-			if ( is_file("$dir/data/$fn") )
-				$gp_pix[] = file_get_contents("$dir/data/$fn");
-			$off2 += 8;
+			$gp_pix_a[$fp] = "$dir/data/$fn";
 		}
 
 		$MA = ($M * 100) + $A;
 		roomloop( $ram, $dir, $MA, $off3 );
-		return;
+		//return;
 	}
 	return;
 }
 
 function maploop( &$ram, $dir, $ovid, $bc, $data, $fst, $fbk )
 {
-	// dracula castle , village , ecclesia ...
+	// dracula castle , 13th street , monastery ...
 	$id = 0;
 	while (1)
 	{
@@ -305,7 +333,7 @@ function maploop( &$ram, $dir, $ovid, $bc, $data, $fst, $fbk )
 		if ( $off1 == 0 || $off2 == 0 || $off3 == 0 )
 			break;
 		arealoop( $ram, $dir, $M, $off1, $off2, $off3, $fst, $fbk );
-		return;
+		//return;
 	}
 	return;
 }
@@ -332,14 +360,6 @@ function cvnds( $dir )
 	$ram = nds_ram($dir);
 	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
 
-	foreach ( $pat['arm9.bin']['dummy'] as $f )
-	{
-		echo "rename DUMMY $f\n";
-		$f = "$dir/data/$f";
-		if ( is_file($f) )
-			rename($f, "$f.dummy");
-	}
-
 	arrayhex( $pat['arm9.bin']['files'] );
 	arrayhex( $pat['arm9.bin']['stg_ovid'] );
 	arrayhex( $pat['arm9.bin']['stg_bc'] );
@@ -365,7 +385,7 @@ for ( $i=1; $i < $argc; $i++ )
 	cvnds( $argv[$i] );
 
 /*
-	POR map 0-0 pos (ram 2106320)
+	POR map 0-0 pos (ram 2106320 , overlay 78 , dracula castle entrance)
 	1b          #####
 	1c ########-#####-#####-xx
 	1d          #####
@@ -378,7 +398,7 @@ for ( $i=1; $i < $argc; $i++ )
 	-- 01 02 03 04 05 06 07 08
 
 
-	OOE map 0-0 pos (ram 2106a74)
+	OOE map 0-0 pos (ram 2106a74 , overlay 64 , dracula castle entrance)
 	12    ##-###########-xx
 	13    ##
 	14    ##-#####-#####
@@ -389,7 +409,7 @@ for ( $i=1; $i < $argc; $i++ )
 	-- 08 09 0a 0b 0c 0d 0e 0f 10 11
 
 
-	DOS map_0 (ram 20f6e90)
+	DOS map_0 pos (ram 20f6e90 , overlay 14 , lost village)
 	13             ########-xx
 	14             ########
 	15    ##-##### ########    ########### ##### #####

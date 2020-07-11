@@ -756,7 +756,7 @@ function nds_overlay( &$ndsram, $dir, $id )
 
 	$y9   = file_get_contents("$dir/y9.bin");
 	if ( ! isset( $y9[$id*0x20] ) )
-		return 0;
+		return array();
 	$off   = str2int($y9, ($id * 0x20) + 0x04, 3);
 	$start = str2int($y9, ($id * 0x20) + 0x10, 3);
 
@@ -764,6 +764,6 @@ function nds_overlay( &$ndsram, $dir, $id )
 	$bin  = file_get_contents($over);
 	printf("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
 		strupd($ndsram, $off, $bin);
-	return $start;
+	return array($off, $start);
 }
 //////////////////////////////

@@ -1,31 +1,54 @@
-= Prefixes and Supported PS One Games =
+= Prefixes for PS One Games =
 xeno   SLPS 011.60  Xenogears / Disc 1
 xeno   SLPS 011.61  Xenogears / Disc 2
 yuna   SLPS 014.51  Galaxy Fraulein Yuna Final Edition
 saga2  SLPS 019.90  SaGa Frontier 2
-mana   SLPS 021.70  Legend of Mana
+mana   SLPS 021.70  Seiken Densetsu
 
-sotn   SLPM_860.23  Castlevania Symphony of the Night
-star2  SLPM_861.05  Star Ocean 2 / Disc 1
-star2  SLPM_861.06  Star Ocean 2 / Disc 2
-mkr    SLPM_861.34  Mitsumete Knight R
-valky  SLPM_863.79  Valkyrie Profile / Disc 1
-valky  SLPM_863.80  Valkyrie Profile / Disc 2
+sotn   SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
+star2  SLPM 861.05  Star Ocean 2 / Disc 1
+star2  SLPM 861.06  Star Ocean 2 / Disc 2
+mkr    SLPM 861.34  Mitsumete Knight R
+valky  SLPM 863.79  Valkyrie Profile / Disc 1
+valky  SLPM 863.80  Valkyrie Profile / Disc 2
 
-sotn   SLUS_000.67  Castlevania Symphony of the Night
+sotn   SLUS 000.67  Castlevania Symphony of the Night
 xeno   SLUS 006.64  Xenogears / Disc 1
 xeno   SLUS 006.69  Xenogears / Disc 2
 mana   SLUS 010.13  Legend of Mana
-valky  SLUS_011.56  Valkyrie Profile / Disc 1
-valky  SLUS_011.79  Valkyrie Profile / Disc 2
+valky  SLUS 011.56  Valkyrie Profile / Disc 1
+valky  SLUS 011.79  Valkyrie Profile / Disc 2
 
-star2  SCUS_944.21  Star Ocean 2 / Disc 1
-star2  SCUS_944.22  Star Ocean 2 / Disc 2
+star2  SCUS 944.21  Star Ocean 2 / Disc 1
+star2  SCUS 944.22  Star Ocean 2 / Disc 2
+
+	progress
+		mana   ALL DONE
+		saga2  ALL DONE , SLUS not supported
+		yuna   .ss1 (saturn version) only
+		xeno   2D battle sprites only
+		sotn   all maps
+		mkr    *upcoming*
+		valky  *upcoming*
+		star2  *upcoming*
+
+= Prefixes for NDS Games =
+cvnds  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
+cvnds  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
+cvnds  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
+
+cvnds  NDS  ACVE  Castlevania Dawn of Sorrow
+cvnds  NDS  ACBE  Castlevania Portrait of Ruin
+cvnds  NDS  YR9E  Castlevania Order of Ecclesia
+
+	progress
+		cvnds  all maps
 
 = Foreign Games =
-sotn   SATURN  T-9527G   Castlevania Symphony of the Night
-yuna   SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
-yuna   SATURN  T-14311G  Galaxy Fraulein Yuna 3
+yuna  SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
+yuna  SATURN  T-14311G  Galaxy Fraulein Yuna 3
 
-nds_cvds    NDS   Castlevania DoS + PoR + OoE
-pc98_rusty  PC98  Rusty
+??? to be moved out ???
+	sotn_sat  SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+	rusty_pc98  PC98  Rusty
+	mura  WII  muramasa

@@ -155,6 +155,11 @@ function cvnds( $dir )
 	$o6 = str2int($file, 0x20, 4);
 	// 0x24 = total sprite
 	// 0x28 = total animation
+	if ( $o5 == 0 )  $o5 = $o6;
+	if ( $o4 == 0 )  $o4 = $o5;
+	if ( $o3 == 0 )  $o3 = $o4;
+	if ( $o2 == 0 )  $o2 = $o3;
+	if ( $o1 == 0 )  $o1 = $o2;
 
 	// sprite parts data
 	$meta = substr($file, $o1, $o2-$o1);

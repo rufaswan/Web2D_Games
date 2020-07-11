@@ -24,71 +24,8 @@ for ( $i=1; $i < $argc; $i++ )
 	cvnds( $argv[$i] );
 
 /*
-overlays - 1dcea0 1ffbc0 1ffde0 223b60 2b6f60 2c1ba0
-	ecclesia , ruvas forest
-		1dcea0 = 0  , 0  <- ALL SAME
-		1ffbc0 = -  , -  <- ALL SAME
-		1ffde0 = 18 , 18 <- ALL SAME
-		223b60 = 21 , 21 <- ALL SAME
-		2b6f60 = 38 , 38 <- ALL SAME
-		2c1ba0 = 41 , 43 <- DIFF
-	d8a3c       = stage        = 27-54
-	d8c90,d8c88 = map (id,sub) = 00-13,??
-
-	total stages = 46
-		13,2,1,1
-		 1,1,2,2
-		 3,1,2,2
-		 1,1,1,1
-		 2,1,2,6
-
-	map id -> overlay (world map selected)
-		00  40-4c  dracula castle
-		01  27-28  wygol village
-		02  29     ecclesia
-		03  2a     training hall
-		04  2b     ruvas forest
-		05  2c     argile swamp
-		06  2d-2e  kalidus channel
-		07  2f     somnus reef
-		08  31-33  minera prison island
-		09  34     lighthouse
-		0a  35-36  tymeo mountain
-		0b  37-38  tristis pass
-		0c  39     large cavern
-		0d  3a     giant dwelling
-		0e  3b     mystery manor
-		0f  3c     misty forest road
-		10  3d-3e  oblivion ridge
-		11  3f     skeleton cave
-		12  4d-4e  monastery
-		13  4f-54
-
-
 map 0-0 room 0 mon_data
 	= 2cfdc0
-ov-23 = d8abc -> d8a38
-	-> 203fce0 (-1) -> 203fc38 (23) (bl 2006f8c)
-	-> 203fb8c r5 = r0
-	-> 2071ef0 r0 = [r0/20d9b4c,r4 << 3]
-22cfdc6 (obj 02 43)
-	-> 71654 ldrbeq r0[43], (r1[22cfdc0],6)
-		streq r0, (r13[27e3a18])
-	-> 71674 ldrb r3[43], (r1[22cfdc0],6)
-		ldrb r2[2], (r1[22cfdc0],5)
-		orr  r7[20043], r3,r2,lsl 0x10
-	-> 716b4 ldrb r3[43], (r1[22cfdc0],6)
-		ldrb r2[2], (r1[22cfdc0],5)
-		orr  r2[20043], r3,r2,lsl 0x10
-		str  r2, (r12[27e3a18],r0[1],lsl 2)
-	-> 71148 ldrb r3[43], (r6[22cfdc0],6)
-		ldr  r2 = 20f42f4
-		ldr  r1 = 20f40c0
-		ldr  r2[22c2204], (r2,r3[43],lsl 2)
-		str  r2, (r4[2113fa0])
-		ldrb r2[43], (r6[22cfdc0],6)
-		ldr  r1[22c22c4], (r1,r2,lsl 2)
-		blx  r1
 
 bcfunc = 48358 -> 48278 -> 3ba58
 	obj 67-0 curtain
@@ -100,54 +37,6 @@ spikes   aflo00.dat  891  36e
 candles  cand00.dat  8ad  3c4  3c5
 chest    coffer00.dat  8b4  3e2
 lamp     dest00-12.dat  8bf-8cb  401-40d
-
-clut = ov-4d
-	2d5114 -> 2aeda8  2b64a8(+5*10)
-	2d5918 -> 2aedb0
-	2d611c -> 2aedb8
-	2d6920 ->         2b65ac(+5*10)
-layout
-	2d7160 -> 2af3b8 -> 2af3b0 + 8 -> 221904 -> 2218b4[14]
-	2d71a0 -> 2af098
-	2d71e0 -> 2af348
-	...
-	2d76a0 -> 2af3e8
-
-	2218b4 -> 22208c -> d900c -> d8fc4[12]
-
-ov-4d = 2d7160 -> 2af3b8 , 2d76a0 -> 2af3e8
-	0  ptr layout
-	1  ptr flags
-	2  ptr clut
-	3  ?position?
-	4  ?back?
--> 2218b4-22190c
-
-	dracula castle
-		0  entrance/inside , west of portrait room
-		1  entrance/inside , east of portrait room
-		2  underground
-		3  library
-		4  kitchen
-		5  campus
-		6  machine tower
-		7
-		8  armory
-		9  cerberus room
-		a  top floor
-		b
-		c  entrance/outside
-
-
-
-
-	monastery / shanoa , albus
-		1dcea0 = 0  , 0  <- ALL SAME
-		1ffbc0 = 4  , -  <- DIFF
-		1ffde0 = 18 , 18 <- ALL SAME
-		223b60 = 21 , 21 <- ALL SAME
-		2b6f60 = 38 , 38 <- ALL SAME
-		2c1ba0 = 78 , 78 <- ALL SAME
 
 	incomplete monster data
 		needle , no tex     ,  17/needles     , ov/?20?
@@ -166,7 +55,4 @@ ov-4d = 2d7160 -> 2af3b8 , 2d76a0 -> 2af3e8
 		sgami  , no tex+pal , 120/death       , ov/24
 		dra    , no tex+pal , 121/dracula     , ov/33
 
-	boss overlay
-		mon_108-120 = 17 1d 19 1a 1f 20 23 24 1b 22 1e 18 21
-		d8bbc[4]    =  0  6  2  3  8  9  c  d  4  b  7  1  a
  */

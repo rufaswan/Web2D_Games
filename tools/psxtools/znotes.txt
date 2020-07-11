@@ -53,7 +53,7 @@ info.sonicretro.org/SPG:Solid_Tiles
 	meaning that there are only 256 divisions of a circle,
 	not 360 like we're used to.
 	Worse, the direction is anti-clockwise compared to other languages like GML,
-	so $20 isn't 45° like it should be - it's 315°.
+	so $20 isn't 45? like it should be - it's 315?.
 
 	In order to convert the original hex angles into angles you can use in GML,
 	use this calculation (rendered here in pseudo-code):

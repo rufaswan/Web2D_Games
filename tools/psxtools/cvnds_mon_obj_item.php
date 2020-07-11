@@ -57,6 +57,10 @@ function scdat_ent( &$ram, $ent, $base, $fst, $fbk )
 					$fn1 = substr0($ram, $pos + 6);
 					$fn2 = sprintf("%d.%d", $cnt[$v0], $v0);
 
+					if ( stripos($fn1, '.jnt') || stripos($fn1, '.nsb') )
+						continue;
+					if ( ! is_file("$base/data/$fn1") )
+						continue;
 					copy("$base/data/$fn1", "$dir/$fn2");
 					$txt .= "$fn2  $fn1\n";
 					$cnt[$v0]++;
@@ -145,6 +149,7 @@ function cvnds( $dir )
 		return;
 	$ram = nds_ram($dir);
 	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
+	$game = $pat['arm9.bin']['game'][0];
 
 	# list internal file id
 	arrayhex( $pat['arm9.bin']['files'] );
@@ -168,48 +173,53 @@ function cvnds( $dir )
 		$id++;
 	}
 
-	if ( isset( $pat['sc_dat'] ) )
+	foreach ( $pat['sc_dat'] as $mk => $mv )
 	{
-		foreach ( $pat['sc_dat'] as $mk => $mv )
+		$ent = sprintf("%s = %s", $mk, implode(' , ', $mv));
+		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+		echo "$ent\n";
+	}
+
+	// game specific files
+	foreach ( $pat[$game] as $gk => $gv )
+	{
+		switch ( $gk )
 		{
-			$ent = sprintf("%s = %s", $mk, implode(' , ', $mv));
-			scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
-			echo "$ent\n";
-		}
-	}
-
-	# copy dest files (por + ooe only)
-	arrayhex( $pat['arm9.bin']['dest_data'] );
-	list($st,$ed) = $pat['arm9.bin']['dest_data'];
-	$id = 0;
-	while ( $st < $ed )
-	{
-		$b2 = str2int($ram, $st+ 0, 2);
-		$b1 = str2int($ram, $st+ 4, 2);
-		$b3 = str2int($ram, $st+16, 3);
-		$ent = sprintf("dest_%d = 2-%x , 1-%x , 3-%x", $id, $b2, $b1, $b3);
-		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
-		echo "$ent\n";
-		$id++;
-		$st += 0x14;
-	}
-
-	# copy loading room files (ooe only)
-	arrayhex( $pat['arm9.bin']['load_data'] );
-	list($st,$ed) = $pat['arm9.bin']['load_data'];
-	$id = 0;
-	while ( $st < $ed )
-	{
-		$b1 = str2int($ram, $st+0, 3);
-			$b1 = loop4p($ram, $b1, '1-');
-		$b2 = str2int($ram, $st+4, 2);
-		$b3 = str2int($ram, $st+8, 3);
-		$ent = sprintf("load_%d = 2-%x , 3-%x , %s", $id, $b2, $b3, implode(' , ', $b1));
-		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
-		echo "$ent\n";
-		$id++;
-		$st += 0x10;
-	}
+			case 'dest_data': // candles
+				arrayhex( $gv );
+				list($st,$ed) = $gv;
+				$id = 0;
+				while ( $st < $ed )
+				{
+					$b2 = str2int($ram, $st+ 0, 2);
+					$b1 = str2int($ram, $st+ 4, 2);
+					$b3 = str2int($ram, $st+16, 3);
+					$ent = sprintf("dest_%d = 2-%x , 1-%x , 3-%x", $id, $b2, $b1, $b3);
+					scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+					echo "$ent\n";
+					$id++;
+					$st += 0x14;
+				}
+				break;
+			case 'load_data': // loading rooms
+				arrayhex( $gv );
+				list($st,$ed) = $gv;
+				$id = 0;
+				while ( $st < $ed )
+				{
+					$b1 = str2int($ram, $st+0, 3);
+						$b1 = loop4p($ram, $b1, '1-');
+					$b2 = str2int($ram, $st+4, 2);
+					$b3 = str2int($ram, $st+8, 3);
+					$ent = sprintf("load_%d = 2-%x , 3-%x , %s", $id, $b2, $b3, implode(' , ', $b1));
+					scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+					echo "$ent\n";
+					$id++;
+					$st += 0x10;
+				}
+				break;
+		} // switch ( $gk )
+	} // foreach ( $pat[$game] as $gk => $gv )
 	return;
 }
 

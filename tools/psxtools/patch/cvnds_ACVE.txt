@@ -10,9 +10,10 @@
 	#  2b9900  [ 4]     = 4 PALETTES
 	#  2d6e80  [ 5]     = 5
 	#  2da4a0  [ 6-22]  = 14 STAGES
-	#  2ff9c0  [23-40]  = 28
+	#  2ff9c0  [23-40]  = 28 MONSTER,BOSS
 	game = dos , ov-0 , ov-1 , ov-2 , ov-3 , ov-4 , ov-5 , ov-14 , ov-28
 	files = 8cc6c , 9a0c4 , 28
+	#dummy = /bm , /sm
 
 	stg_ovid = 9a50c , 9a550
 	stg_bc   = 9a4c4 , 9a508
@@ -20,10 +21,8 @@
 
 	mon_sc   = 8ca90 , 8cc68
 	mon_data = 78cac , 79d44 , 24
-	mon_ov   = 0 , 0
-
-	dest_data = 0 , 0
-	load_data = 0 , 0
+	mon_ov   = 22c644 , 22c70c
+	mon_func = 1c2b8 , 1c1b8
 
 	obj_sc = 9b88c , 9ba64
 	item_sc = 0 , 0
@@ -37,3 +36,9 @@
 	# playable char
 	# monster
 	# boss
+
+##############################
+# GAME SPECIFIC DATASET
+##############################
+[dos]
+	mon_seal = 0 , 0
