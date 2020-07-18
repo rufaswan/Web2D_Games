@@ -1,6 +1,8 @@
 <?php
 require "common.inc";
 
+$gp_patch = array();
+
 function rm_ent( $dir )
 {
 	if ( empty($dir) || ! is_dir($dir) || is_link($dir) )
@@ -13,7 +15,7 @@ function rm_ent( $dir )
 	}
 	return;
 }
-//////////////////////////////
+
 function scdat_ent( &$ram, $ent, $base, $fst, $fbk )
 {
 	$ent = preg_replace("|[\s]+|", '', $ent);
@@ -84,7 +86,21 @@ function scdat_ent( &$ram, $ent, $base, $fst, $fbk )
 	save_file("$dir/files.txt", $txt);
 	return;
 }
-
+//////////////////////////////
+function loop4p( &$ram, $pos, $pfx )
+{
+	$ent = array();
+	while (1)
+	{
+		$b1 = str2int($ram, $pos, 3);
+			$pos += 4;
+		if ( $b1 == BIT24 || $b1 == 0 )
+			break;
+		$ent[] = sprintf("%s%x", $pfx, $b1);
+	}
+	return $ent;
+}
+//////////////////////////////
 function file_ent( &$ram, $pos, $pfx, $id)
 {
 	$ent = array();
@@ -101,18 +117,33 @@ function file_ent( &$ram, $pos, $pfx, $id)
 	return $txt;
 }
 
-function loop4p( &$ram, $pos, $pfx )
+function mon_obj_sc( &$ram, $dir, $type, $pfx )
 {
-	$ent = array();
-	while (1)
+	global $gp_patch;
+	nds_game( $ram, $dir, $gp_patch['ndsram']['game'] );
+	list($st,$ed) = $gp_patch['ndsram'][$type];
+	$file_st = $gp_patch['ndsram']['files'][0];
+	$file_bk = $gp_patch['ndsram']['files'][2];
+
+	$id = 0;
+	while ( $st < $ed )
 	{
-		$b1 = str2int($ram, $pos, 3);
-			$pos += 4;
-		if ( $b1 == BIT24 || $b1 == 0 )
-			break;
-		$ent[] = sprintf("%s%x", $pfx, $b1);
+		$pos = str2int ($ram, $st, 3);
+		$ent = file_ent($ram, $pos, $pfx, $id);
+
+		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+		echo "$ent\n";
+		$st += 4;
+		$id++;
 	}
-	return $ent;
+
+	foreach ( $gp_patch[$type] as $mk => $mv )
+	{
+		$ent = sprintf("%s = %s", $mk, implode(' , ', $mv));
+		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
+		echo "$ent\n";
+	}
+	return;
 }
 //////////////////////////////
 function listfile( &$ram, $files )
@@ -144,44 +175,27 @@ function cvnds( $dir )
 	if ( ! is_dir($dir) )
 		return;
 
-	$pat = nds_patch($dir, 'cvnds');
-	if ( empty($pat) )
+	global $gp_patch;
+	$gp_patch = nds_patch($dir, 'cvnds');
+	if ( empty($gp_patch) )
 		return;
 	$ram = nds_ram($dir);
-	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
-	$game = $pat['arm9.bin']['game'][0];
+	nds_game( $ram, $dir, $gp_patch['ndsram']['game'] );
+	$game = $gp_patch['ndsram']['game'][0];
 
 	# list internal file id
-	arrayhex( $pat['arm9.bin']['files'] );
-	$file_st = $pat['arm9.bin']['files'][0];
-	$file_bk = $pat['arm9.bin']['files'][2];
-	listfile( $ram, $pat['arm9.bin']['files'] );
+	arrayhex( $gp_patch['ndsram']['files'] );
+	listfile( $ram, $gp_patch['ndsram']['files'] );
 
-	# copy monster/boss/player sc so
-	arrayhex( $pat['arm9.bin']['mon_sc'] );
-	list($st,$ed) = $pat['arm9.bin']['mon_sc'];
-
-	$id = 0;
-	while ( $st < $ed )
-	{
-		$pos = str2int ($ram, $st, 3);
-		$ent = file_ent($ram, $pos, "mon", $id);
-
-		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
-		echo "$ent\n";
-		$st += 4;
-		$id++;
-	}
-
-	foreach ( $pat['sc_dat'] as $mk => $mv )
-	{
-		$ent = sprintf("%s = %s", $mk, implode(' , ', $mv));
-		scdat_ent( $ram, $ent, $dir, $file_st, $file_bk );
-		echo "$ent\n";
-	}
+	arrayhex( $gp_patch['ndsram']['mon_sc'] );
+	arrayhex( $gp_patch['ndsram']['obj_sc'] );
+	mon_obj_sc($ram, $dir, 'mon_sc', 'mon');
+	mon_obj_sc($ram, $dir, 'obj_sc', 'obj');
 
 	// game specific files
-	foreach ( $pat[$game] as $gk => $gv )
+	$file_st = $gp_patch['ndsram']['files'][0];
+	$file_bk = $gp_patch['ndsram']['files'][2];
+	foreach ( $gp_patch[$game] as $gk => $gv )
 	{
 		switch ( $gk )
 		{
@@ -219,7 +233,7 @@ function cvnds( $dir )
 				}
 				break;
 		} // switch ( $gk )
-	} // foreach ( $pat[$game] as $gk => $gv )
+	} // foreach ( $gp_patch[$game] as $gk => $gv )
 	return;
 }
 

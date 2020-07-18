@@ -2,6 +2,7 @@
 require "common.inc";
 
 define("CANV_S", 0x200);
+define("SCALE", 1);
 //define("DRY_RUN", true);
 
 $gp_pix  = array();
@@ -165,9 +166,9 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	} // while ( $id < $num )
 
 	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S;
-	$pix['rgba']['h'] = CANV_S;
-	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+	$pix['rgba']['w'] = CANV_S * SCALE;
+	$pix['rgba']['h'] = CANV_S * SCALE;
+	$pix['rgba']['pix'] = canvpix(CANV_S * SCALE , CANV_S * SCALE);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
@@ -177,15 +178,15 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 
 		if ( $rot == 0 )
 		{
-			$pix['dx'] = $dx + $rx + (CANV_S / 2);
-			$pix['dy'] = $dy + $ry + (CANV_S / 2);
+			$pix['dx'] = ($dx + $rx + (CANV_S / 2)) * SCALE;
+			$pix['dy'] = ($dy + $ry + (CANV_S / 2)) * SCALE;
 			$pix['rotate'] = array(0,0,0);
 		}
 		else
 		{
-			$pix['dx'] = $rx + (CANV_S / 2);
-			$pix['dy'] = $ry + (CANV_S / 2);
-			$pix['rotate'] = array($rot, $dx, $dy);
+			$pix['dx'] = ($rx + (CANV_S / 2)) * SCALE;
+			$pix['dy'] = ($ry + (CANV_S / 2)) * SCALE;
+			$pix['rotate'] = array($rot, $dx * SCALE, $dy * SCALE);
 		}
 
 		$m10 = ord( $b1[0] );
@@ -210,6 +211,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$pix['src']['h'] = $h;
 			$pix['src']['pix'] = rippix8($gp_pix[$tid]['p'], $sx, $sy, $w, $h, $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
 			$pix['src']['pal'] = $gp_clut[$cid];
+			scalepix($pix, SCALE);
 		}
 		else
 		{
@@ -222,10 +224,11 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$w = $pix['src']['w'];
 			$h = $pix['src']['h'];
 			$pix['src']['pal'] = $gp_clut[$cid];
+			scalepix($pix, SCALE);
 		}
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf(" , %02x , %02x\n", $m10, $m20);
+		printf(" , %08b , %02x\n", $m10, $m20);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
@@ -262,11 +265,11 @@ function sect1( &$file, $dir, $mp, $pp )
 
 			//save_file("$dir/0.meta", $s1);
 			//save_file("$dir/1.meta", $s2);
-			save_file("$dir/pal", substr($s3,4));
+			save_file("$dir/2.meta", substr($s3,4));
 
 			global $gp_clut;
 			$cn = (strlen($s3) - 4) / 0x20;
-			$gp_clut = mclut2str($s3, 4, 16, $cn);
+			$gp_clut = mstrpal555($s3, 4, 16, $cn);
 
 			$p256 = ord( $s2[1] ) >> 7;
 			if ( $p256 )

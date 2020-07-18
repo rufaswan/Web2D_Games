@@ -18,18 +18,16 @@ function saturn_yuna( &$file, $fname )
 		$b = ord( $file[$st] );
 		if ( $b == 0 || $b & 0x80 )
 		{
-			$b = $file[$st+1] . $file[$st+0];
-			$rgba .= clutpix($b, 0);
+			$rgba .= rgb555( $file[$st+1] . $file[$st+0] );
 			$st += 2;
 		}
 		else
 		{
 			$cnt = $b;
-			$b = $file[$st+2] . $file[$st+1];
-			$t = clutpix($b, 0);
+			$b = rgb555( $file[$st+2] . $file[$st+1] );
 			while ( $cnt > 0 )
 			{
-				$rgba .= $t;
+				$rgba .= $b;
 				$cnt--;
 			}
 			$st += 3;
@@ -48,38 +46,19 @@ function psx_yuna( &$file, $fname )
 	$w = str2int($file, 0x10, 2);
 	$h = str2int($file, 0x12, 2);
 	printf("PSX , %4d , %4d , $fname\n", $w, $h);
-	return;
 
 	$ed = strlen($file);
 	$st = 0x14;
 
-	$rgba = "";
-	//$rgba = "RGBA";
-	//$rgba .= chrint($w, 4);
-	//$rgba .= chrint($h, 4);
+	$rgba = "RGBA";
+	$rgba .= chrint($w, 4);
+	$rgba .= chrint($h, 4);
 	while ( $st < $ed )
 	{
-		$b = ord( $file[$st] );
-		if ( $b == 0 || $b & 0x80 )
-		{
-			$b = substr($file, $st+0, 2);
-			$rgba .= $b;
-			//$rgba .= clutpix($b, 0);
-			$st += 2;
-		}
-		else
-		{
-			$cnt = $b;
-			$b = substr($file, $st+1, 2);
-			$t = $b;
-			//$t = clutpix($b, 0);
-			while ( $cnt > 0 )
-			{
-				$rgba .= $t;
-				$cnt--;
-			}
-			$st += 3;
-		}
+		$b = substr($file, $st+0, 2);
+		//$rgba .= $b;
+		$rgba .= rgb555($b);
+		$st += 2;
 	}
 	file_put_contents("$fname.rgba", $rgba);
 	return;

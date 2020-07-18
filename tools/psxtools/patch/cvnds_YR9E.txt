@@ -1,7 +1,7 @@
 # castlevania order of ecclesia us
 # offsets are for nds.ram
 
-[arm9.bin]
+[ndsram]
 	# overlay = 1dd280  1ffda0  1fffc0  223e00  2b73a0  2c1fe0
 	#  1dd280  [ 0- 1]  = 0
 	#  1ffda0  [ 2-18]  = -
@@ -11,7 +11,6 @@
 	#  2c1fe0  [40-85]  = 42 STAGES
 	game  = ooe , ov-0 , ov-19 , ov-22 , ov-39 , ov-42
 	files = d8cec , eca0c , 20
-	#dummy = /bc/f_kaa04.dat , /bm , /jnt
 
 	stg_ovid = b6148 , b6198
 	stg_bc   = ecbb8 , ecc08
@@ -33,10 +32,12 @@
 	weapons = f3bc0 , f4150
 	# 148ea8
 
-[sc_dat]
+[mon_sc]
 	# playable char
 	# monster
 	# boss
+
+[obj_sc]
 
 ##############################
 # GAME SPECIFIC DATASET

@@ -129,7 +129,7 @@ function saga2( $fname )
 
 	global $gp_clut;
 	$clut_off = str2int($file, 0x1c, 4);
-	$gp_clut = clut2str($file, $clut_off, 0x100);
+	$gp_clut = strpal555($file, $clut_off, 0x100);
 
 	$cnt = str2int($file, 0x08, 4);
 	$pos = str2int($file, 0x18, 4);

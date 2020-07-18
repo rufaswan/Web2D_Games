@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 
-define("CANV_S", 0x300);
+define("CANV_S", 0x600);
 //define("DRY_RUN", true);
 
 $gp_clut = array();
@@ -82,10 +82,11 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 
 		$p14 = ord( $meta[$p+14] );
 		$cid = $p14;
+		$loadtexx = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
-		$pix['src']['pix'] = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
+		$pix['src']['pix'] = $loadtexx;
 		$pix['src']['pal'] = $gp_clut[$cid];
 
 		$p13 = ord( $meta[$p+13] );
@@ -93,22 +94,26 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$pix['hflip'] = $p13 & 2;
 		flag_warn("p13", $p13 & 0xfc);
 
-		while ( ($tid+1)*0x100 > $src['rgba']['h'] )
-		{
-			$src['rgba']['pix'] .= canvpix(0x100,0x100);
-			$src['rgba']['h'] += 0x100;
-		}
-		$src['dx'] = $sx;
-		$src['dy'] = $sy + ($tid * 0x100);
-		$src['src']['w'] = $w;
-		$src['src']['h'] = $h;
-		$src['src']['pix'] = loadtexx($texx, $dir, $tid, $sx, $sy, $w, $h);
-		$src['src']['pal'] = $gp_clut[$cid];
+		/////////////////////////////////
+		//// original sheet in parts ////
+			while ( ($tid+1)*0x100 > $src['rgba']['h'] )
+			{
+				$src['rgba']['pix'] .= canvpix(0x100,0x100);
+				$src['rgba']['h'] += 0x100;
+			}
+			$src['dx'] = $sx;
+			$src['dy'] = $sy + ($tid * 0x100);
+			$src['src']['w'] = $w;
+			$src['src']['h'] = $h;
+			$src['src']['pix'] = $loadtexx;
+			$src['src']['pal'] = $gp_clut[$cid];
+			copypix($src);
+		//// original sheet in parts ////
+		/////////////////////////////////
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf(" , $tid , %02x , %02x [$cid]\n", $p13, $p14);
+		printf(" , $tid , %08b , $cid\n", $p13);
 		copypix($pix);
-		copypix($src);
 	} // for ( $i=0; $i < $num; $i++ )
 
 	$fn = sprintf("$dir/%04d", $id);
@@ -144,7 +149,7 @@ function cvnds( $dir )
 	global $gp_clut;
 	$file = file_get_contents("$dir/0.3");
 	$num = strlen($file) / 0x20;
-	$gp_clut = mclut2str($file, 0, 16, (int)$num);
+	$gp_clut = mstrpal555($file, 0, 16, (int)$num);
 
 	$file = file_get_contents("$dir/0.2");
 	$o1 = str2int($file, 0x04, 4);
@@ -170,20 +175,18 @@ function cvnds( $dir )
 	$src['rgba']['h'] = 0x100;
 	$src['rgba']['pix'] = canvpix(0x100,0x100);
 	$src['bgzero'] = true;
+		$ed = strlen($grps);
+		$st = 0;
+		$id = 0;
+		while ( $st < $ed )
+		{
+			$num = ord( $grps[$st+3] );
+			$off = str2int($grps, $st+8, 2);
+			sectpart($meta, $src, $dir, $id, $num, $off);
 
-	$ed = strlen($grps);
-	$st = 0;
-	$id = 0;
-	while ( $st < $ed )
-	{
-		$num = ord( $grps[$st+3] );
-		$off = str2int($grps, $st+8, 2);
-		sectpart($meta, $src, $dir, $id, $num, $off);
-
-		$id++;
-		$st += 12;
-	} // while ( $st < $ed )
-
+			$id++;
+			$st += 12;
+		} // while ( $st < $ed )
 	savpix("$dir/src", $src);
 
 	// sprite animation sequence

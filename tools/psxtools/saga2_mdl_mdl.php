@@ -15,7 +15,7 @@ function tim2clut( &$file, $pos, $out )
 	$data .= chrint(0x100, 4); // no clut
 	$data .= chrint($w*2, 4); // width
 	$data .= chrint($h  , 4); // height
-	$data .= clut2str($file, $pos + 0x14, 0x100);
+	$data .= strpal555($file, $pos + 0x14, 0x100);
 	$data .= substr($file, $pos + 8 + $timh_sz + 12, $sz - 12);
 	save_file($out, $data);
 	return (8 + $timh_sz + $sz);

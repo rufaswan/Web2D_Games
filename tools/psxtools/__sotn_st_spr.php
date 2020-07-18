@@ -48,7 +48,7 @@ function sotn_decode( &$meta, $dir, $off )
 				$b1 = array_shift($v0);
 				$b2 = array_shift($v0);
 				$b = ($b1 << 4) + $b2 + 19;
-				$dec .= str_pad('', $b, ZERO);
+				$dec .= str_repeat(ZERO, $b);
 				break;
 			case 2:
 				$b1 = array_shift($v0);
@@ -69,11 +69,11 @@ function sotn_decode( &$meta, $dir, $off )
 			case 5:
 				$b1 = array_shift($v0);
 				$b2 = array_shift($v0);
-				$dec .= str_pad('', $b2+3, chr($b1));
+				$dec .= str_repeat(chr($b1), $b2+3);
 				break;
 			case 6:
 				$b1 = array_shift($v0);
-				$dec .= str_pad('', $b1+3, ZERO);
+				$dec .= str_repeat(ZERO, $b1+3);
 				break;
 
 			case 7:
@@ -94,7 +94,7 @@ function sotn_decode( &$meta, $dir, $off )
 					$dec .= chr($b2);
 				else
 				if ( $b1 == 6 )
-					$dec .= str_pad('', $b2+3, ZERO);
+					$dec .= str_repeat(ZERO, $b2+3);
 				break;
 
 			case 15:

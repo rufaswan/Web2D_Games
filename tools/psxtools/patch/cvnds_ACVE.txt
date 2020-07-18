@@ -1,7 +1,7 @@
 # castlevania dawn of sorrow us
 # offsets are for nds.ram
 
-[arm9.bin]
+[ndsram]
 	# overlay = 19e3e0  230a00  29a920  29e600  2b9900  2d6e80  2da4a0  2ff9c0
 	#  19e3e0  [ 0]     = 0
 	#  230a00  [ 1]     = 1
@@ -13,7 +13,6 @@
 	#  2ff9c0  [23-40]  = 28 MONSTER,BOSS
 	game = dos , ov-0 , ov-1 , ov-2 , ov-3 , ov-4 , ov-5 , ov-14 , ov-28
 	files = 8cc6c , 9a0c4 , 28
-	#dummy = /bm , /sm
 
 	stg_ovid = 9a50c , 9a550
 	stg_bc   = 9a4c4 , 9a508
@@ -32,10 +31,12 @@
 	portrait =
 	loading =
 
-[sc_dat]
+[mon_sc]
 	# playable char
 	# monster
 	# boss
+
+[obj_sc]
 
 ##############################
 # GAME SPECIFIC DATASET

@@ -1,9 +1,11 @@
 <?php
 require "common.inc";
 
+$gp_patch = array();
+
 function arm9_ldr( &$ram, $pc, $dep )
 {
-	$tab = str_pad('', $dep*4, ' ');
+	$tab = str_repeat(' ', $dep*4);
 	printf("%s== bl  %x ==\n", $tab, $pc);
 	//=========================================
 	// e    5    9    f     0    1    0    8
@@ -58,16 +60,16 @@ function arm9_ldr( &$ram, $pc, $dep )
 				$reg = $b1 >> 12;
 				$off = $b1 & 0xfff;
 				$b1 = str2int($ram, $bak+8+$off, 3);
-				printf("%sloc_%6x  ldr  r%d , [%x]\n", $tab, $bak, $reg, $b1);
+				printf("%sloc_%6s  ldr  r%d , [%6x]\n", $tab, dechex($bak), $reg, $b1);
 				break;
-			case 0xe92d: // stmfd
-				$stack = true;
-				break;
+			//case 0xe92d: // stmfd
+				//$stack = true;
+				//break;
 			case 0xe8bd: // ldmfd
 				if ( $goto != 0 && $goto > $bak )
 					continue;
 				$sp = ord( $ram[$bak+1] ) >> 3;
-				if ( $stack && $sp )
+				if ( $sp )
 					return;
 				break;
 		} // switch ( $arm )
@@ -84,38 +86,96 @@ function arm9_ldr( &$ram, $pc, $dep )
 			case 0x0b: // branch and link
 				$b1 = substr($ram, $bak, 3);
 				$b1 = $bak + 8 + (sint24($b1) << 2);
-				printf("%sloc_%6x  bl   sub_%x\n", $tab, $bak, $b1);
+				printf("%sloc_%6s  bl   sub_%x\n", $tab, dechex($bak), $b1);
 				break;
 		} // switch ( $arm )
 	}
 	return;
 }
-//////////////////////////////
-function nds_game( &$ram, $dir, $game )
+
+function asm_mon_clut( &$ram, &$mon_ov, $dir )
 {
-	foreach ( $game as $g )
+	global $gp_patch;
+	list($st,$ed,$bk) = $gp_patch['ndsram']['mon_data'];
+	$id = 0;
+	while ( $st < $ed )
 	{
-		if ( strpos($g, 'ov-') === false )
-			continue;
-		nds_overlay( $ram, $dir, $g );
+		echo "== mon $id ==\n";
+		if ( isset( $mon_ov[$id] ) )
+			nds_overlay( $ram, $dir, $mon_ov[$id] );
+
+		$func = str2int($ram, $st+0, 3);
+			arm9_ldr( $ram, $func, 1 );
+		//$func = str2int($ram, $st+4, 3);
+			//arm9_ldr( $ram, $func, 1 );
+
+		$id++;
+		$st += $bk;
+	} // while ( $st < $ed )
+	return;
+}
+//////////////////////////////
+function find_sc_clut( &$ram, $ldr )
+{
+	if ( $ldr == 0 )
+		return;
+	$TWO = chr(2);
+	$siz = strlen($ram) - 8;
+	$ldr = chrint($ldr, 3);
+	for ( $i=0; $i < $siz; $i += 4 )
+	{
+		if ( $ram[$i+ 3] != $TWO )  continue;
+		if ( $ram[$i+ 7] != $TWO )  continue;
+		if ( $ram[$i+11] != $TWO )  continue;
+
+		if ( $ram[$i+0] != $ldr[0] )  continue;
+		if ( $ram[$i+1] != $ldr[1] )  continue;
+		if ( $ram[$i+2] != $ldr[2] )  continue;
+
+		$b1 = str2int($ram, $i+8, 3);
+		printf("%4sclut , %6x , %6x\n", ' ', $i, $b1);
 	}
 	return;
 }
-
-function cvnds( $dir )
+//////////////////////////////
+function list_mon_obj_sc( &$ram , $mon_ov, $dir, $type )
 {
-	if ( ! is_dir($dir) )
-		return;
+	global $gp_patch;
+	list($st,$ed) = $gp_patch['ndsram'][$type];
+	$files = $gp_patch['ndsram']['files'];
+	$id = 0;
+	while ( $st < $ed )
+	{
+		if ( isset( $mon_ov[$id] ) )
+			nds_overlay( $ram, $dir, $mon_ov[$id] );
+		echo "== $type $id ==\n";
+			$id++;
+		$pos = str2int($ram, $st, 3);
+			$st += 4;
+		while (1)
+		{
+			$b1 = str2int($ram, $pos, 3);
+			$b2 = $ram[$pos+3];
+				$pos += 8;
+			if ( $b1 == BIT24 )
+				break;
+			if ( $b2 == chr(2) )
+				continue;
+			$ps = $files[0] + ($b1 * $files[2]);
+			$b2 = str2int($ram, $ps+0, 3);
+			$fn = substr0($ram, $ps+6);
+			printf("%4s%4x , %6x , %s\n", ' ', $b1, $b2, $fn);
+			if ( ord( $ram[$pos-4] ) == 2 )
+				find_sc_clut( $ram, $b2 );
+		}
+	} // while ( $st < $ed )
+	return;
+}
 
-	$pat = nds_patch($dir, 'cvnds');
-	if ( empty($pat) )
-		return;
-	$ram = nds_ram($dir);
-	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
-	save_file("$dir/nds.ram", $ram);
-
-	arrayhex( $pat['arm9.bin']['mon_ov'] );
-	list($st,$ed) = $pat['arm9.bin']['mon_ov'];
+function list_mon_ov( &$ram, &$mon )
+{
+	global $gp_patch;
+	list($st,$ed) = $gp_patch['ndsram']['mon_ov'];
 	$mon = array();
 	$ovs = array();
 	while ( $st < $ed )
@@ -136,24 +196,45 @@ function cvnds( $dir )
 	echo "== overlay @ monster ==\n";
 	foreach ( $ovs as $k => $v )
 		printf("overlay $k = %s\n", implode('  ', $v));
-
-	arrayhex( $pat['arm9.bin']['mon_data'] );
-	list($st,$ed,$bk) = $pat['arm9.bin']['mon_data'];
-	$id = 0;
-	while ( $st < $ed )
+	return;
+}
+//////////////////////////////
+function nds_game( &$ram, $dir, $game )
+{
+	foreach ( $game as $g )
 	{
-		echo "== mon $id ==\n";
-		if ( isset( $mon[$id] ) )
-			nds_overlay( $ram, $dir, $mon[$id] );
-
-		$func = str2int($ram, $st+0, 3);
-			arm9_ldr( $ram, $func, 1 );
-		//$func = str2int($ram, $st+4, 3);
-			//arm9_ldr( $ram, $func, 1 );
-
-		$id++;
-		$st += $bk;
+		if ( strpos($g, 'ov-') === false )
+			continue;
+		nds_overlay( $ram, $dir, $g );
 	}
+	return;
+}
+
+function cvnds( $dir )
+{
+	if ( ! is_dir($dir) )
+		return;
+
+	global $gp_patch;
+	$gp_patch = nds_patch($dir, 'cvnds');
+	if ( empty($gp_patch) )
+		return;
+	$ram = nds_ram($dir);
+	nds_game( $ram, $dir, $gp_patch['ndsram']['game'] );
+	save_file("$dir/nds.ram", $ram);
+
+	$mon_ov = array();
+	arrayhex( $gp_patch['ndsram']['mon_ov'] );
+	list_mon_ov( $ram, $mon_ov );
+
+	arrayhex( $gp_patch['ndsram']['mon_data'] );
+	asm_mon_clut( $ram, $mon_ov, $dir );
+
+	arrayhex( $gp_patch['ndsram']['files'] );
+	arrayhex( $gp_patch['ndsram']['mon_sc'] );
+	arrayhex( $gp_patch['ndsram']['obj_sc'] );
+	list_mon_obj_sc( $ram, $mon_ov, $dir, 'mon_sc' );
+	list_mon_obj_sc( $ram, array(), $dir, 'obj_sc' );
 	return;
 }
 

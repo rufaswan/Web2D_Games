@@ -130,7 +130,7 @@ function saga2( $fname )
 
 	$cc = str2int($tex, $off+0, 2);
 	$cn = str2int($tex, $off+2, 2);
-	$gp_clut = mclut2str($tex, $off+4, $cc, $cn);
+	$gp_clut = mstrpal555($tex, $off+4, $cc, $cn);
 
 	$tex = "";
 	savemap($img, $dir);

@@ -2,6 +2,7 @@
 require "common.inc";
 
 define("CANV_S", 0x200);
+define("SCALE", 1);
 $gp_tim = array();
 
 function loadtim( $tim_fn )
@@ -55,9 +56,9 @@ function sect1( &$file, $off, $fn )
 	if ( empty($data) )  return;
 
 	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S;
-	$pix['rgba']['h'] = CANV_S;
-	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+	$pix['rgba']['w'] = CANV_S * SCALE;
+	$pix['rgba']['h'] = CANV_S * SCALE;
+	$pix['rgba']['pix'] = canvpix(CANV_S * SCALE , CANV_S * SCALE);
 
 	global $gp_tim;
 	foreach ( $data as $v )
@@ -76,8 +77,8 @@ function sect1( &$file, $off, $fn )
 		else
 			$dy = sint8 ( $v[1] );
 
-		$pix['dx'] = $dx + (CANV_S / 2);
-		$pix['dy'] = $dy + (CANV_S / 2);
+		$pix['dx'] = ($dx + (CANV_S / 2)) * SCALE;
+		$pix['dy'] = ($dy + (CANV_S / 2)) * SCALE;
 
 		$sx = ord($v[2]);
 		$sy = ord($v[3]);
@@ -92,6 +93,7 @@ function sect1( &$file, $off, $fn )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
 		$pix['src']['pal'] = $gp_tim['clut'][$cn];
+		scalepix($pix, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
 

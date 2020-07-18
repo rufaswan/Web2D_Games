@@ -25,9 +25,9 @@ star2  SCUS 944.22  Star Ocean 2 / Disc 2
 	progress
 		mana   ALL DONE
 		saga2  ALL DONE , SLUS not supported
-		yuna   .ss1 (saturn version) only
+		yuna   .ss1 (saturn + psx version) only
 		xeno   2D battle sprites only
-		sotn   all maps
+		sotn   all maps only
 		mkr    *upcoming*
 		valky  *upcoming*
 		star2  *upcoming*
@@ -42,11 +42,13 @@ cvnds  NDS  ACBE  Castlevania Portrait of Ruin
 cvnds  NDS  YR9E  Castlevania Order of Ecclesia
 
 	progress
-		cvnds  all maps
+		cvnds  all maps only
 
 = Foreign Games =
-yuna  SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
-yuna  SATURN  T-14311G  Galaxy Fraulein Yuna 3
+yuna   SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
+yuna   SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
+yuna   SATURN  T-14311G  Galaxy Fraulein Yuna 3
+crown  SATURN  T-14418G  Princess Crown
 
 ??? to be moved out ???
 	sotn_sat  SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku

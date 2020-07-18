@@ -71,9 +71,9 @@ function secttile( $dat, $bit8, &$pix )
 		$blk = ($blk * 0x8000);
 		$col1 = (int)($col / 2) * 0x2000;
 
-		$cls = 2 * 16;
+		$cls = 0x20;
 		if ( ! isset( $gp_pixd[ $blk+$col1+0x1000 ] ) )
-			$cls = 1 * 16;
+			$cls = 0x10;
 
 		$col2 = ($col % 2) * 16;
 
@@ -89,17 +89,17 @@ function secttile( $dat, $bit8, &$pix )
 		$blk = ($blk * 0x8000);
 		$col1 = (int)($col / 4) * 0x2000;
 
-		$cls = 4 * 8;
+		$cls = 0x40;
 		if ( ! isset( $gp_pixd[ $blk+$col1+0x1800 ] ) )
-			$cls = 3 * 8;
+			$cls = 0x30;
 		if ( ! isset( $gp_pixd[ $blk+$col1+0x1000 ] ) )
-			$cls = 2 * 8;
+			$cls = 0x20;
 		if ( ! isset( $gp_pixd[ $blk+$col1+0x800 ] ) )
-			$cls = 1 * 8;
+			$cls = 0x10;
 
 		$col2 = ($col % 4) * 8;
 
-		$row *= ($cls * 0x10);
+		$row *= ($cls/2 * 0x10);
 		$row += ($col2 + $blk + $col1);
 
 		$ripd = substr($gp_pixd, $row, 0x200);
@@ -217,15 +217,15 @@ function sect1( &$file, $nid, $base )
 		while ( $siz >= 0x200 )
 		{
 			printf("add CLUT 0x200 @ %x\n", $clut_off);
-			$gp_clut[] = clut2str($file, $clut_off, 0x100);
+			$gp_clut[] = strpal555($file, $clut_off, 0x100);
 			$clut_off += 0x200;
 			$siz -= 0x200;
 		} // while ( $siz >= 0x200 )
 
-		if ( $siz )
+		if ( $siz > 0 )
 		{
 			printf("add CLUT 0x%x @ %x\n", $siz, $clut_off);
-			$gp_clut[] = clut2str($file, $clut_off, $siz/2);
+			$gp_clut[] = strpal555($file, $clut_off, $siz/2);
 		}
 	}
 
@@ -258,6 +258,7 @@ function mana( $fname )
 	$pixp = ramint($file, 0x14);
 	$gp_pixd = substr($file, $pixp, str2int($file, 12, 4));
 	$gp_clut = array();
+	//save_file("$dir/pix", $gp_pixd);
 
 	$file = substr($file, 0, $pixp);
 

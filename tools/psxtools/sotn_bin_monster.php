@@ -19,7 +19,7 @@ function sotn( $fname )
 	$id = 0;
 	while ( $st < $ed )
 	{
-		$pix = clut2str($file, $st, 96*112);
+		$pix = strpal555($file, $st, 96*112);
 		$rgba = "RGBA";
 		$rgba .= chrint( 96, 4);
 		$rgba .= chrint(112, 4);

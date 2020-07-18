@@ -5,7 +5,7 @@ function mura_decode( &$file, $st )
 {
 	$dicz = 0xfff;
 	$dicp = 0xfee;
-	$dict = str_pad("", $dicz+1, ZERO);
+	$dict = str_repeat(ZERO, $dicz+1);
 	$dec = "";
 
 	$ed = strlen($file);

@@ -88,7 +88,7 @@ function psxtimfile( $fname )
 			while ( $siz > 0 )
 			{
 				$siz--;
-				$data .= clutpix( $file, $st );
+				$data .= rgb555( $file[$st+0] . $file[$st+1] );
 				$st += 2;
 			}
 			file_put_contents("$fname.rgba", $data);

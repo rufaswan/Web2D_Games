@@ -1,6 +1,8 @@
 <?php
 require "common.inc";
 
+$gp_patch = array();
+
 //////////////////////////////
 function sclist( &$list, &$ram, $st, $pfx )
 {
@@ -83,42 +85,41 @@ function cvnds( $dir )
 	if ( ! is_dir($dir) )
 		return;
 
-	$pat = nds_patch($dir, 'cvnds');
-	if ( empty($pat) )
+	global $gp_patch;
+	$gp_patch = nds_patch($dir, 'cvnds');
+	if ( empty($gp_patch) )
 		return;
 	$ram = nds_ram($dir);
-	nds_game($ram, $dir, $pat['arm9.bin']['game']);
+	nds_game($ram, $dir, $gp_patch['ndsram']['game']);
 
-	arrayhex( $pat['arm9.bin']['files'] );
-	arrayhex( $pat['arm9.bin']['stg_bc'] );
-	arrayhex( $pat['arm9.bin']['mon_sc'] );
-	arrayhex( $pat['arm9.bin']['obj_sc'] );
+	arrayhex( $gp_patch['ndsram']['files'] );
+	arrayhex( $gp_patch['ndsram']['stg_bc'] );
+	arrayhex( $gp_patch['ndsram']['mon_sc'] );
+	arrayhex( $gp_patch['ndsram']['obj_sc'] );
 
-	$st = $pat['arm9.bin']['files'][0];
-	$ed = $pat['arm9.bin']['files'][1];
-	$bk = $pat['arm9.bin']['files'][2];
+	list($st,$ed,$bk) = $gp_patch['ndsram']['files'];
 	$list = listfile($ram, $dir, $st, $ed, $bk);
 
-	if ( ! empty($pat['arm9.bin']['stg_bc']) )
+	if ( ! empty($gp_patch['ndsram']['stg_bc']) )
 	{
-		$st = $pat['arm9.bin']['stg_bc'][0];
-		if ( $pat['arm9.bin']['game'][0] == 'dos' )
+		$st = $gp_patch['ndsram']['stg_bc'][0];
+		if ( $gp_patch['ndsram']['game'][0] == 'dos' )
 			sclist1($list, $ram, $st, 'stg_bc');
 		else
 			sclist2($list, $ram, $st, 'stg_bc');
 		echo "\n";
 	}
 
-	if ( ! empty($pat['arm9.bin']['mon_sc']) )
+	if ( ! empty($gp_patch['ndsram']['mon_sc']) )
 	{
-		$st = $pat['arm9.bin']['mon_sc'][0];
+		$st = $gp_patch['ndsram']['mon_sc'][0];
 		sclist1($list, $ram, $st, 'mon_sc');
 		echo "\n";
 	}
 
-	if ( ! empty($pat['arm9.bin']['obj_sc']) )
+	if ( ! empty($gp_patch['ndsram']['obj_sc']) )
 	{
-		$st = $pat['arm9.bin']['obj_sc'][0];
+		$st = $gp_patch['ndsram']['obj_sc'][0];
 		sclist1($list, $ram, $st, 'obj_sc');
 		echo "\n";
 	}

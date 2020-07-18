@@ -1,7 +1,7 @@
 # castlevania ubawareta kokuin jp
 # offsets are for nds.ram
 
-[arm9.bin]
+[ndsram]
 	# overlay = 1dcea0  1ffbc0  1ffde0  223b60  2b6f60  2c1ba0
 	#  1dcea0  [ 0]     = 0
 	#  1ffbc0  [ 1-17]  = -
@@ -11,7 +11,6 @@
 	#  2c1ba0  [39-84]  = 41 STAGES
 	game  = ooe , ov-0 , ov-18 , ov-21 , ov-38 , ov-41
 	files = da694 , ee3b4 , 20
-	#dummy = /bc/f_kaa04.dat , /bm , /jnt
 
 	stg_ovid = b60fc , b614c
 	stg_bc   = d8da0 , d8df0
@@ -34,7 +33,7 @@
 	weapons = d9c34 , da1c4
 	# 14fcc8
 
-[sc_dat]
+[mon_sc]
 	# playable char
 	play_1a = d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
 	play_1b = d9408 , 3-d6bb4 , 2-943 , 1-7c6-7c9
@@ -101,6 +100,81 @@
 
 	reset = ov-38 , boss
 	reset = ov-41 , map
+
+	##########################
+
+[obj_sc]
+	obj_4 = 3-cd1ec , 2-8d3 , 1-413
+	obj_5 = 3-cdd70 , 1-3bc , 2-8a5
+	obj_7 = 3-d0cb0 , 2-9d4 , 1-696
+	obj_8 = 3-cd520 , 1-5c8 , 1-5cf , 1-5d6 , 2-94a
+	obj_12 = 3-d0d98 , 1-534-536 , 2-91b
+	obj_13 = 3-d1678 , 1-6d2 , 2-9e8
+	obj_14 = 3-d1634 , 1-654 , 2-9ba
+	obj_17 = 3-cd210 , 2-8a4 , 1-3bb
+	obj_18 = 3-cd624 , 1-56a , 2-927
+	obj_19 = 3-cd294 , 2-908 , 1-4fc
+	obj_20 = 3-cd104 , 1-659 , 2-9be
+	obj_21 = 3-cd060 , 1-3e2 , 2-8b4
+	obj_22 = 3-cd060 , 1-3e2 , 2-8b4
+	obj_23 = 3-cd060 , 1-3e2 , 2-8b4
+	obj_29 = 3-cd2f8 , 1-52f-531 , 2-919
+	obj_30 = 3-cd4fc , 1-521 , 2-914
+	obj_31 = 1-3c4-3c5 , 2-8ad
+	obj_32 = 3-cdca0 , 1-4fd , 2-909
+	obj_33 = 3-cdcc4 , 1-4f5 , 2-906
+	obj_37 = 1-565 , 2-926
+	obj_38 = 3-cdce8 , 1-5a2 , 2-92e
+	obj_39 = 1-50e-50f , 2-910
+	obj_40 = 1-457-459 , 2-8e2
+	obj_41 = 3-cd1a8 , 1-57e , 2-92b
+	obj_44 = 1-367 , 2-88e
+	obj_47 = 1-456 , 1-45a , 2-8e1
+	obj_48 = 3-cdd94 , 1-3b7 , 2-8a1
+	obj_49 = 3-cddb8 , 1-36e , 2-891
+	obj_50 = 3-cdddc , 1-619 , 2-9a9
+	obj_51 = 3-cdddc , 1-619 , 2-9a9
+	obj_52 = 3-cde20 , 1-69d-69f , 2-9d6
+	obj_55 = 3-d0ae8 , 1-3df-3e1 , 2-8b3
+	obj_56 = 1-3f9 , 2-8bb
+	obj_57 = 3-d0c2c , 1-3f8 , 2-8ba
+	obj_59 = 1-6b6 , 2-9db
+	obj_60 = 3-d0d74 , 1-5b1 , 2-93c
+	obj_61 = 1-564 , 2-925
+	obj_63 = 3-d0d98 , 1-534-536 , 2-91b
+	obj_64 = 1-633 , 2-9b0
+	obj_65 = 3-d0e3c , 1-412 , 2-8d2
+	obj_66 = 3-d0e80 , 1-4b4 , 2-900
+	obj_67 = 1-527 , 2-916
+	obj_68 = 1-39d , 2-89c
+	obj_69 = 1-65a , 2-9bf
+	obj_70 = 3-d09e4 , 1-634 , 2-9b1
+	obj_71 = 1-3e3-3e4 , 2-8b5
+	obj_72 = 1-3e5-3e7 , 2-8b6
+	obj_73 = 1-450-451 , 2-8df
+	obj_74 = 1-452-454 , 2-8e0
+	obj_76 = 2-8d7 , 1-41b
+	obj_78 = 3-2d28b8 , 2-89d , 1-39e-39f
+	obj_79 = 1-506-507 , 2-90d
+	obj_80 = 1-5c3 , 2-949
+	obj_81 = 2-8b1 , 1-3da-3dc
+	obj_82 = 3-221e9c , 1-465 , 2-8e4
+	obj_83 = 1-653 , 2-9b9
+	obj_85 = 2-897
+	obj_86 = 3-2a5ed4 , 1-4a5 , 2-8fb
+	obj_87 = 2-9a8 , 1-615-618
+	obj_88 = 1-36a-36c , 2-88f
+	obj_89 = 2-916 , 1-527
+	obj_90 = 2-91a , 1-532-533
+	obj_91 = 3-d0c2c , 2-8ba , 1-3f8
+	obj_93 = 2-8d6 , 1-418-41a
+	obj_94 = 3-d1760 , 2-9c0 , 1-662
+	obj_95 = 3-d17a4 , 2-890 , 1-36d
+	obj_96 = 3-2d28b8 , 2-89d , 1-39e-39f
+	obj_97 = 3-d17c8 , 2-9d9 , 1-6ac
+	obj_102 = 2-896 , 1-37c
+	obj_123 = 2-89b , 1-394-39c
+	obj_135 = 3-d4da8 , 2-8f0 , 1-48d-48f
 
 	##########################
 

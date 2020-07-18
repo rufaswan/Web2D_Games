@@ -36,6 +36,7 @@ function substr0( &$str, $pos )
 	return substr($str, $pos, $len);
 }
 
+// use strrev() for big endian
 function ordint( $str )
 {
 	if ( (int)$str === $str ) // already $int
@@ -106,17 +107,10 @@ function var_swap( &$var1, &$var2 )
 	return;
 }
 
-function int_min( $int, $min )
+function int_clamp( $int, $min, $max )
 {
-	if ( $int < $min )
-		return $min;
-	return (int)round($int);
-}
-
-function int_max( $int, $max )
-{
-	if ( $int > $max )
-		return $max;
+	if ( $int < $min )  $int = $min;
+	if ( $int > $max )  $int = $max;
 	return (int)round($int);
 }
 
@@ -134,6 +128,25 @@ function arrayhex( &$array )
 	return;
 }
 
+function load_file( $fname )
+{
+	if ( strpos($fname, '\\') )
+		$fname = str_replace('\\', '/', $fname);
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+
+	// case-insensitive file load
+	$fname = strtoupper($fname);
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+
+	$fname = strtolower($fname);
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+
+	return "";
+}
+
 function save_file( $fname, $str )
 {
 	if ( defined("DRY_RUN") && DRY_RUN )
@@ -144,10 +157,7 @@ function save_file( $fname, $str )
 		$fname = str_replace('\\', '/', $fname);
 
 	if ( strpos($fname, '/') )
-	{
-		$dir = substr($fname, 0, strrpos($fname, '/'));
-		@mkdir( $dir, 0755, true );
-	}
+		@mkdir( dirname($fname), 0755, true );
 	file_put_contents($fname, $str);
 	return;
 }
@@ -246,13 +256,10 @@ define("PIX_ALPHA", ZERO . ZERO . ZERO . ZERO);
 function canvpix( $w, $h, $c = PIX_ALPHA )
 {
 	$s = $w * $h;
-	$p = "";
-	for ( $i=0; $i < $s; $i++ )
-		$p .= $c;
-	return $p;
+	return str_repeat($c, $s);
 }
 
-function clutpix( &$file, $pos )
+function rgb555( $str )
 {
 	// 15-bit ABGR
 	// RGB = c6         52         52
@@ -261,8 +268,8 @@ function clutpix( &$file, $pos )
 	// 15-bit = 0(A) 01010(B) 01010(G) 11000(R)
 	//        = 0010 1001 0101 1000 = 2958
 	//        = 58 29
-	$b1 = ord( $file[$pos+0] );
-	$b2 = ord( $file[$pos+1] );
+	$b1 = ord( $str[0] );
+	$b2 = ord( $str[1] );
 	$pal = $b1 + ($b2 << 8);
 
 	$b = ($pal >> 7) & 0xf8; // <<  1 >> 8 == >> 7
@@ -274,23 +281,27 @@ function clutpix( &$file, $pos )
 	return $str;
 }
 
-function clut2str( &$file, $pos, $cc )
+function pal555( $str )
 {
-	$str = "";
-	for ( $i=0; $i < $cc; $i++ )
-	{
-		$str .= clutpix( $file, $pos );
-		$pos += 2;
-	}
-	return $str;
+	$clut = "";
+	$siz = strlen($str);
+	for ( $i=0; $i < $siz; $i += 2 )
+		$clut .= rgb555( $str[$i+0] . $str[$i+1] );
+	return $clut;
 }
 
-function mclut2str( &$file, $pos, $cc, $cn )
+function strpal555( &$file, $pos, $cc )
+{
+	$str = substr($file, $pos, $cc*2);
+	return pal555($str);
+}
+
+function mstrpal555( &$file, $pos, $cc, $cn )
 {
 	$ret = array();
 	while ( $cn > 0 )
 	{
-		$ret[] = clut2str($file, $pos, $cc);
+		$ret[] = strpal555($file, $pos, $cc);
 		$pos += ($cc*2);
 		$cn--;
 	}
@@ -299,13 +310,13 @@ function mclut2str( &$file, $pos, $cc, $cn )
 
 function grayclut( $cc )
 {
-	$add = (int)(255 / ($no-1));
+	$add = (int)(255 / ($cc-1));
 	$clut = "";
 	$c = 0;
-	for ( $i=0; $i < $no; $i++ )
+	for ( $i=0; $i < $cc; $i++ )
 	{
 		$clut .= chr($c) . chr($c) . chr($c) . BYTE;
-		$c = int_max($c + $add, BIT8);
+		$c = int_clamp($c + $add, 0, BIT8);
 	}
 	return $clut;
 }
@@ -341,14 +352,17 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") && DRY_RUN )
 		return;
+	$sx /= 2;
+	$w  /= 2;
+	$sw /= 2;
 
 	$rip = "";
 	for ( $y=0; $y < $h; $y++ )
 	{
 		$syy = ($sy + $y) * $sw;
-		for ( $x=0; $x < ($w/2); $x++ )
+		for ( $x=0; $x < $w; $x++ )
 		{
-			$sxx = $syy + ($sx/2) + $x;
+			$sxx = $syy + $sx + $x;
 			$p = ord( $pix[$sxx] );
 
 			$p1 = $p & 0x0f;
@@ -402,7 +416,7 @@ function copypix( &$pix )
 		return;
 
 	// horizontal flip + vertical flip
-	$flip = str_pad( "", $pix['src']['w'] * $pix['src']['h'], ZERO );
+	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h']);
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
 	{
 		$syy = $y * $pix['src']['w'];
@@ -436,11 +450,11 @@ function copypix( &$pix )
 	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
 	$sin = sin($rot);
 	$cos = cos($rot);
-	$hyp = hypot($pix['src']['w'], $pix['src']['h']);
+	$hyp = hypot($pix['src']['w'], $pix['src']['h']) * 0.6;
 
 	// 10x10 square (-5,-5,5,5) rotate 45 degree = (  0, -7, 0, 7) or ~14x14 square
 	// hypotenuse 10x10 square = 14.1421        += (-14,-21,14,21)
-	//   center-based with hypot                 = (-14,-14,14,14)
+	//   center-based with hypot                 = (-14,-14,14,14) or ~28x28 square
 	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
 	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
 		$cx = $tx * $cos - $ty * $sin;
@@ -532,7 +546,7 @@ function trimpix( &$pix )
 			$b .= substr($pix['rgba']['pix'], $p, 4*$TRIM_SZ);
 		}
 
-		if ( trim($b, ZERO) != "" )
+		if ( trim($b, ZERO) != '' )
 			break;
 
 		$y1 += $TRIM_SZ;
@@ -547,8 +561,8 @@ function trimpix( &$pix )
 	$canv = "";
 	for ( $y=$y1; $y < $y2; $y++ )
 	{
-		$p = ($y * $pix['rgba']['w'] + $x1) * 4;
-		$canv .= substr($pix['rgba']['pix'], $p, $w*4);
+		$p = $y * $pix['rgba']['w'] + $x1;
+		$canv .= substr($pix['rgba']['pix'], $p*4, $w*4);
 	}
 	$pix['rgba']['w'] = $w;
 	$pix['rgba']['h'] = $h;
@@ -561,7 +575,7 @@ function savpix( $fn, &$pix, $trim = false )
 	if ( defined("DRY_RUN") && DRY_RUN )
 		return;
 
-	if ( trim($pix['rgba']['pix'], ZERO) == "" )
+	if ( trim($pix['rgba']['pix'], ZERO) == '' )
 		return trigger_error("ERROR $fn [pix] blank\n", E_USER_WARNING);
 	if ( $trim )
 		trimpix($pix);
@@ -588,7 +602,7 @@ function alpha_add( $fg, $bg )
 			{
 				$p1 = ord( $fg[$i] );
 				$p2 = ord( $bg[$i] );
-				$p = int_max($p1 + $p2, BIT8);
+				$p = int_clamp($p1 + $p2, 0, BIT8);
 				$pix .= chr($p);
 			}
 			return $pix;
@@ -604,9 +618,9 @@ function alpha_add( $fg, $bg )
 			$a = ( $r > $g ) ? $r : $g;
 			$a = ( $b > $a ) ? $b : $a;
 
-			$r = int_max($r / $a * BIT8, BIT8);
-			$g = int_max($g / $a * BIT8, BIT8);
-			$b = int_max($b / $a * BIT8, BIT8);
+			$r = int_clamp($r / $a * BIT8, 0, BIT8);
+			$g = int_clamp($g / $a * BIT8, 0, BIT8);
+			$b = int_clamp($b / $a * BIT8, 0, BIT8);
 			return chr($r) . chr($g) . chr($b) . chr($a);
 
 		// blend w/semi-transparent pixel
@@ -619,15 +633,198 @@ function alpha_add( $fg, $bg )
 			$g2 = ord($bg[1]) / BIT8 * $a2;
 			$b2 = ord($bg[2]) / BIT8 * $a2;
 
-			$r = int_max(ord($fg[0]) + $r2, BIT8);
-			$g = int_max(ord($fg[1]) + $g2, BIT8);
-			$b = int_max(ord($fg[2]) + $b2, BIT8);
+			$r = int_clamp(ord($fg[0]) + $r2, 0, BIT8);
+			$g = int_clamp(ord($fg[1]) + $g2, 0, BIT8);
+			$b = int_clamp(ord($fg[2]) + $b2, 0, BIT8);
 			$nfg = chr($r) . chr($g) . chr($b) . BYTE;
 
 			$func = __FUNCTION__;
 			return $func($nfg, PIX_ALPHA);
 	}
 	return $fg;
+}
+
+function scalepix( &$pix, $factor = 1 )
+{
+	if ( defined("DRY_RUN") && DRY_RUN )
+		return;
+	$res = "";
+	for ( $y=0; $y < $pix['src']['h']; $y++ )
+	{
+		$line = "";
+		$syy = $y * $pix['src']['w'];
+		for ( $x=0; $x < $pix['src']['w']; $x++ )
+		{
+			$sxx = $syy + $x;
+			$b = $pix['src']['pix'][$sxx];
+			$line .= str_repeat($b, $factor);
+		}
+		$res .= str_repeat($line, $factor);
+	}
+	$pix['src']['w'] *= $factor;
+	$pix['src']['h'] *= $factor;
+	$pix['src']['pix'] = $res;
+	return;
+}
+//////////////////////////////
+function clut2rgba( $pal, $pix, $bgzero = true )
+{
+	$rgba = "";
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i++ )
+	{
+		if ( $pix[$i] == ZERO )
+			$rgba .= ( $bgzero ) ? substr($pal, 0, 4) : PIX_ALPHA;
+		else
+			$rgba .= substr($pal, ord($pix[$i])*4, 4);
+	}
+	return $rgba;
+}
+
+function rgba2clut( $rgba, $bg = PIX_BLACK )
+{
+	$clut = array();
+	if ( ! empty($bg) )
+		$clut[] = $bg;
+	$pix  = "";
+	$siz  = strlen($rgba);
+	for ( $i=0; $i < $siz; $i += 4 )
+	{
+		$c = substr($rgba, $i, 4);
+		if ( array_search($c, $clut) === false )
+			$clut[] = $c;
+		$p = array_search($c, $clut);
+		$pix .= chr($p);
+	}
+	if ( count($clut) > 0x100 )
+		trigger_error("rgba2clut() clut over 256 colors\n", E_USER_ERROR);
+	$clut = implode('', $clut);
+	return array($clut, $pix);
+}
+
+function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
+{
+	if ( defined("DRY_RUN") && DRY_RUN )
+		return;
+
+	$rip = "";
+	for ( $y=0; $y < $h; $y++ )
+	{
+		$sxx = ($sy + $y) * $sw + $sx;
+		$rip .= substr($rgba, $sxx*4, $w*4);
+	} // for ( $y=0; $y < $h; $y++ )
+	return $rip;
+}
+
+function copyrgba( &$pix )
+{
+	if ( copypix_errs($pix) )
+		return;
+	if ( defined("DRY_RUN") && DRY_RUN )
+		return;
+
+	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * 4);
+	for ( $y=0; $y < $pix['src']['h']; $y++ )
+	{
+		$syy = $y * $pix['src']['w'];
+		$dyy = $y;
+		if ( $pix['vflip'] )
+			$dyy = $pix['src']['h'] - 1 - $y;
+		$dyy *= $pix['src']['w'];
+
+		for ( $x=0; $x < $pix['src']['w']; $x++ )
+		{
+			$sxx = $syy + $x;
+			$dxx = $x;
+			if ( $pix['hflip'] )
+				$dxx = $pix['src']['w'] - 1 - $x;
+			$dxx += $dyy;
+
+			$c1 = substr($pix['src']['pix'], $sxx*4, 4);
+			strupd($flip, $dxx*4, $c1);
+
+		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
+	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
+
+	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
+	$sin = sin($rot);
+	$cos = cos($rot);
+	$hyp = hypot($pix['src']['w'], $pix['src']['h']) * 0.6;
+
+	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
+	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
+		$cx = $tx * $cos - $ty * $sin;
+		$cy = $tx * $sin + $ty * $cos;
+	$x1 = (int)($cx - $hyp);
+	$y1 = (int)($cy - $hyp);
+	$x2 = (int)($cx + $hyp);
+	$y2 = (int)($cy + $hyp);
+
+	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
+	$sin = sin($rot);
+	$cos = cos($rot);
+	for ( $y=$y1; $y <= $y2; $y++ )
+	{
+		$dy = $y + $pix['dy'];
+		if ( $dy < 0 || $dy >= $pix['rgba']['h'] )
+			continue;
+
+		for ( $x=$x1; $x <= $x2; $x++ )
+		{
+			$dx = $x + $pix['dx'];
+			if ( $dx < 0 || $dx >= $pix['rgba']['w'] )
+				continue;
+
+			$rx = (int)round($x * $cos - $y * $sin) - $pix['rotate'][1];
+			$ry = (int)round($x * $sin + $y * $cos) - $pix['rotate'][2];
+			if ( $rx < 0 || $rx >= $pix['src']['w'] )
+				continue;
+			if ( $ry < 0 || $ry >= $pix['src']['h'] )
+				continue;
+
+			$sxx = ($ry * $pix['src']['w']) + $rx;
+			$c1 = substr($flip, $sxx*4, 4);
+
+			$dxx = ($dy * $pix['rgba']['w']) + $dx;
+			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
+
+			// RGBA are all normla OVER blending
+			$c1 = alpha_over( $c1, $c2 );
+			strupd($pix['rgba']['pix'], $dxx*4, $c1);
+
+		} // for ( $x=$x1; $x < $x2; $x++ )
+	} // for ( $y=$y1; $y < $y2; $y++ )
+
+	return;
+}
+
+function alpha_over( $src, $dst )
+{
+	if ( $src[3] == BYTE )  return $src;
+	if ( $src[3] == ZERO )  return $dst;
+	if ( $dst[3] == ZERO )  return $src;
+	// en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending
+	// a is [0.0-1.0]
+	//   out_a = src_a + dst_a (1-src_a)
+	//   out_rgb = ( src_rgb*src_a + dst_rgb*dst_a (1-src_a) ) / out_a
+	// if dst_a = 1
+	//   out_a = 1
+	//   out_rgb = src_rgb*src_a + dst_rgb (1-src_a)
+	// if rgb is premultiplied
+	//   out_a = src_a + dst_a (1-src_a)
+	//   out_rgb = src_rgb + dst_rgb (1-src_a)
+	$src_a = ord($src[3]) / BIT8;
+	$dst_a = ord($dst[3]) / BIT8;
+	$r = ord($src[0]) * $src_a + ord($dst[0]) * $dst_a * (1-$src_a);
+	$g = ord($src[1]) * $src_a + ord($dst[1]) * $dst_a * (1-$src_a);
+	$b = ord($src[2]) * $src_a + ord($dst[2]) * $dst_a * (1-$src_a);
+	$a = $src_a + $dst_a * (1-$src_a);
+
+	$r = int_clamp($r / $a, 0, BIT8);
+	$g = int_clamp($g / $a, 0, BIT8);
+	$b = int_clamp($b / $a, 0, BIT8);
+	$a = int_clamp($a * BIT8, 0, BIT8);
+	return chr($r) . chr($g) . chr($b) . chr($a);
 }
 //////////////////////////////
 function psx_patch( $dir, $pfx )
@@ -647,7 +844,7 @@ function psx_patch( $dir, $pfx )
 function psx_exe( &$psxram, $psxexe )
 {
 	if ( empty($psxram) )
-		return '';
+		return "";
 
 	$bin = file_get_contents($psxexe);
 	if ( empty($bin) || substr($bin, 0, 8) != 'PS-X EXE' )
@@ -680,7 +877,7 @@ function psxtim( &$file )
 	// CLUT + header
 	$siz = str2int( $file, $pos+0, 4 ) - 12;
 	$tim['cn'] = (int)($siz / ($tim['cc'] * 2));
-	$tim['clut'] = mclut2str($file, $pos+12, $tim['cc'], $tim['cn']);
+	$tim['clut'] = mstrpal555($file, $pos+12, $tim['cc'], $tim['cn']);
 	$pos += $siz + 12;
 
 	// PIX + header
@@ -727,8 +924,8 @@ function nds_ram( $dir )
 {
 	$head = file_get_contents("$dir/header.bin");
 	if ( empty($head) )
-		return '';
-	$ram = str_pad('', 0x400000, ZERO);
+		return "";
+	$ram = str_repeat(ZERO, 0x400000);
 
 	$bin = file_get_contents("$dir/arm9.bin");
 	$off = str2int($head, 0x28, 3);

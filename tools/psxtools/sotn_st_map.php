@@ -43,10 +43,10 @@ function loadclut( &$file )
 			$p2 = $pos + 0x7c00;
 			printf("add CLUT @ %x , %x\n", $p1, $p2);
 
-			$gp_clut[] = clut2str($file, $p1+ 0, 16);
-			$gp_clut[] = clut2str($file, $p1+32, 16);
-			$gp_clut[] = clut2str($file, $p2+ 0, 16);
-			$gp_clut[] = clut2str($file, $p2+32, 16);
+			$gp_clut[] = strpal555($file, $p1+ 0, 16);
+			$gp_clut[] = strpal555($file, $p1+32, 16);
+			$gp_clut[] = strpal555($file, $p2+ 0, 16);
+			$gp_clut[] = strpal555($file, $p2+32, 16);
 		}
 	}
 	var_dump( count($gp_clut) );
@@ -124,7 +124,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 			$ty = (($c2 >> 4) & 7) * 16;
 
 			$bin = substr($file, $tp, 0x2000);
-			$pix['src']['pix'] = rippix4($bin, $tx, $ty, 16, 16, 0x40, 0x40);
+			$pix['src']['pix'] = rippix4($bin, $tx, $ty, 16, 16, 0x80, 0x80);
 			$pix['src']['pal'] = $gp_clut[$c3];
 
 			copypix($pix);

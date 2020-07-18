@@ -100,8 +100,8 @@ function sectmeta( &$meta, &$src, $dir, $ram )
 	$clut_pos += (4 + $num * 0x16);
 	while ( $clut_pos % 4 )
 		$clut_pos++;
-	printf("ADD CLUT @ %x\n", $clut_pos);
-	$clut = mclut2str($meta, $clut_pos, 16, 0x100);
+	printf("add CLUT @ %x\n", $clut_pos);
+	$clut = mstrpal555($meta, $clut_pos, 16, 0x100);
 
 	foreach ( $addr as $ak => $av )
 	{
@@ -130,12 +130,12 @@ function sotn( $dir )
 
 	$file = file_get_contents("$dir/serv.1");
 	$src = array();
-	$src[] = rippix4($file,   0, 0, 128, 128, 128, 128);
-	$src[] = rippix4($file, 128, 0, 128, 128, 128, 128);
+	$src[] = rippix4($file,    0, 0, 0x80, 0x80, 0x100, 0x80);
+	$src[] = rippix4($file, 0x80, 0, 0x80, 0x80, 0x100, 0x80);
 	if ( isset( $file[0x4000] ) )
 	{
 		$file = substr($file, 0x4000);
-		$src[] = rippix4($file, 0, 0, 128, 128, 64, 128);
+		$src[] = rippix4($file, 0, 0, 0x80, 0x80, 0x80, 0x80);
 	}
 	$meta = file_get_contents("$dir/serv.2");
 

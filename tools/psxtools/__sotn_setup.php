@@ -1,6 +1,8 @@
 <?php
 require "common.inc";
 
+$gp_patch = array();
+
 function isofile( $fname )
 {
 	$iso = array();
@@ -18,7 +20,7 @@ function isofile( $fname )
 	return $iso;
 }
 
-function cp_map( &$iso, $dir, &$pat, $off )
+function cp_map( &$iso, $dir, $off )
 {
 	list($st,$ed,$bk) = $off;
 	$id = 0;
@@ -55,7 +57,7 @@ function cp_map( &$iso, $dir, &$pat, $off )
 	return;
 }
 
-function cp_servant( &$iso, $dir, &$pat, $off )
+function cp_servant( &$iso, $dir, $off )
 {
 	// off1  ft_xxx.bin
 	// off2  sd_xxx.vh
@@ -113,18 +115,19 @@ function sotn( $dir )
 	if ( ! is_dir($dir) )
 		return;
 
-	$pat = psx_patch($dir, 'sotn');
-	if ( empty($pat) )
+	global $gp_patch;
+	$gp_patch = psx_patch($dir, 'sotn');
+	if ( empty($gp_patch) )
 		return;
 	$iso = isofile("$dir/iso.txt");
 
-	arrayhex( $pat['dra.bin']['map'] );
-	arrayhex( $pat['dra.bin']['servant'] );
-	arrayhex( $pat['dra.bin']['weapon'] );
+	arrayhex( $gp_patch['dra.bin']['map'] );
+	arrayhex( $gp_patch['dra.bin']['servant'] );
+	arrayhex( $gp_patch['dra.bin']['weapon'] );
 
-	cp_map    ( $iso, $dir, $pat, $pat['dra.bin']['map']     );
-	cp_servant( $iso, $dir, $pat, $pat['dra.bin']['servant'] );
-	cp_weapon ( $dir, $pat['dra.bin']['weapon'] );
+	cp_map    ( $iso, $dir, $pat, $gp_patch['dra.bin']['map']     );
+	cp_servant( $iso, $dir, $pat, $gp_patch['dra.bin']['servant'] );
+	cp_weapon ( $dir, $gp_patch['dra.bin']['weapon'] );
 	return;
 }
 

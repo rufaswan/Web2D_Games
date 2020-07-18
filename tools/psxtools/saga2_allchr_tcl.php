@@ -18,7 +18,7 @@ function saga2( $fname )
 		$pix .= chr( $b >> 4 );
 	}
 
-	$clut = mclut2str($file, 0xb000, 0x10, 64);
+	$clut = mstrpal555($file, 0xb000, 0x10, 64);
 	$dir = str_replace('.', '_', $fname);
 
 	foreach ( $clut as $k => $c )

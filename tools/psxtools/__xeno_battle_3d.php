@@ -29,7 +29,7 @@ function loadtex( &$file, $pos, $dir )
 			case 0x1101:
 				$p2 = str2int($tex, $p+4, 4);
 				$cn = ($p2 - $p1 - 0x10) / 0x20;
-				$gp_clut = mclut2str($tex, $p1+0x10, 16, $cn);
+				$gp_clut = mstrpal555($tex, $p1+0x10, 16, $cn);
 				printf("CLUT , %d , %d [%x]\n", $i, $cn, $p+$pos);
 				save_file("$dir/pal", substr($tex, $p1+0x10, $cn*0x20));
 				break;

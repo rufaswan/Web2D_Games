@@ -93,7 +93,7 @@ function imghtml( &$img, $png, $tab, $class = false )
 
 function htmldiv( &$layout, $dir, $zone, $tab_no = 0 )
 {
-	$tab = str_pad('', $tab_no*2, ' ');
+	$tab = str_repeat(' ', $tab_no*2);
 	$func = __FUNCTION__;
 
 	// recursive divs

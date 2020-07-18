@@ -3,7 +3,7 @@ require "common.inc";
 
 function rusty_decode( &$file, $st )
 {
-	$dict = str_pad("", 0x1000, ZERO);
+	$dict = str_repeat(ZERO, 0x1000);
 	$dicp = 0xfee;
 	$dec = "";
 

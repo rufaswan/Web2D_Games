@@ -2,6 +2,7 @@
 require "common.inc";
 
 define("CANV_S", 0x300);
+define("SCALE", 1);
 //define("DRY_RUN", true);
 
 $gp_pix  = array();
@@ -43,7 +44,7 @@ function secttalk( &$file, $talk, $dir )
 		$clut .= chrint(16,4); // no clut
 		$clut .= chrint(48,4); // width
 		$clut .= chrint(48,4); // height
-		$clut .= clut2str($file, $st, 0x10);
+		$clut .= strpal555($file, $st, 0x10);
 			$st += 0x20;
 
 		$sz = 0x18 * 0x30;
@@ -64,7 +65,7 @@ function secttalk( &$file, $talk, $dir )
 	return;
 }
 
-function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
+function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 {
 	$num = ord( $meta[$off] );
 		$off++;
@@ -100,9 +101,9 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		return;
 
 	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S;
-	$pix['rgba']['h'] = CANV_S;
-	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+	$pix['rgba']['w'] = CANV_S * SCALE;
+	$pix['rgba']['h'] = CANV_S * SCALE;
+	$pix['rgba']['pix'] = canvpix(CANV_S * SCALE , CANV_S * SCALE);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
@@ -119,8 +120,8 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 			$dx = sint8( $v[0] );
 			$dy = sint8( $v[1] );
 		}
-		$pix['dx'] = $dx + (CANV_S / 2);
-		$pix['dy'] = $dy + (CANV_S / 2);
+		$pix['dx'] = ($dx + (CANV_S / 2)) * SCALE;
+		$pix['dy'] = ($dy + (CANV_S / 2)) * SCALE;
 
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );
@@ -138,15 +139,35 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		if ( $cid == 11 ) // mask + image
 			$pix['alpha'] = "ana_alp";
 
+		$rippix8 = rippix8($gp_pix[$tid], $sx, $sy, $w, $h, 0x100, 0x100);
+
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
-		$pix['src']['pix'] = rippix8($gp_pix[$tid], $sx, $sy, $w, $h, 0x100, 0x100);
+		$pix['src']['pix'] = $rippix8;
 		$pix['src']['pal'] = $gp_clut[$tid][$cid];
+		scalepix($pix, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
 
+		/////////////////////////////////
+		//// original sheet in parts ////
+			while ( ($tid+1)*0x100 > $src['rgba']['h'] )
+			{
+				$src['rgba']['pix'] .= canvpix(0x100,0x100);
+				$src['rgba']['h'] += 0x100;
+			}
+			$src['dx'] = $sx;
+			$src['dy'] = $sy + ($tid * 0x100);
+			$src['src']['w'] = $w;
+			$src['src']['h'] = $h;
+			$src['src']['pix'] = $rippix8;
+			$src['src']['pal'] = $gp_clut[$tid][$cid];
+			copypix($src);
+		//// original sheet in parts ////
+		/////////////////////////////////
+
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf(" , $cid , %02x , %d\n", $p7, $pix['rotate'][0]);
+		printf(" , $cid , %08b , %d\n", $p7, $pix['rotate'][0]);
 		copypix($pix);
 	} // foreach ( $data as $v )
 
@@ -189,13 +210,19 @@ function sectmeta( &$meta, $dir, $ids )
 	$cnt = str2int($meta, $off, 2);
 	$big = "";
 
-	for ( $m=0; $m < $cnt; $m++ )
-	{
-		$pos = $off + 2 + ($m * 2);
-		$pos = str2int($meta, $pos, 2);
-		$fn  = sprintf("$dir/%04d", $m);
-		sectparts($meta, $pos, $fn, $ids, $m, $big);
-	}
+	$src = COPYPIX_DEF();
+	$src['rgba']['w'] = 0x100;
+	$src['rgba']['h'] = 0x100;
+	$src['rgba']['pix'] = canvpix(0x100,0x100);
+	$src['bgzero'] = true;
+		for ( $m=0; $m < $cnt; $m++ )
+		{
+			$pos = $off + 2 + ($m * 2);
+			$pos = str2int($meta, $pos, 2);
+			$fn  = sprintf("$dir/%04d", $m);
+			sectparts($meta, $src, $pos, $fn, $ids, $m, $big);
+		}
+	savpix("$dir/src", $src);
 
 	// sprite animation sequence
 	$ed = $off;
@@ -280,6 +307,7 @@ function infoimg( &$file, $dir )
 	if ( $num != $b1 )
 		printf("ERROR p14 num %d != meta[] %d\n", $num, $b1);
 
+	$bak = array();
 	for ( $i=0; $i < $num; $i++ )
 	{
 		$p = 8 + ($i * 4);
@@ -295,13 +323,11 @@ function infoimg( &$file, $dir )
 			$p++;
 		}
 		if ( empty($ids) )
-		{
-			printf("ERROR empty ids for $dir/$i\n");
-			continue;
-		}
+			$ids = $bak;
 
 		sectmeta($meta[$i], "$dir/$i", $ids);
 		//save_file("$dir/$i/meta", $meta[$i]);
+		$bak = $ids;
 	}
 	return;
 }

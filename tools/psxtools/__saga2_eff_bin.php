@@ -14,7 +14,7 @@ function saga2( $fname )
 		if ( empty($file) )  return;
 
 	$dir = str_replace('.', '_', $fname);
-	$clut = mclut2str($file, 0x54, 0x10, 0x10);
+	$clut = mstrpal555($file, 0x54, 0x10, 0x10);
 
 	$st = str2int($file, 0x04, 4);
 	$ed = strlen ($file) - 8;

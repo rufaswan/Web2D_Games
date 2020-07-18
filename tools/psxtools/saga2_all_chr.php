@@ -68,7 +68,7 @@ function saga2( $fname )
 	$spr_wh = spr_wh($file, 0x10);
 
 	$clut = str2int ($file, 0x0c,  4);
-	$clut = clut2str($file, $clut, 0x10);
+	$clut = strpal555($file, $clut, 0x10);
 
 	$st = 0x10 + count($spr_wh) * 4;
 	foreach ( $spr_wh as $k => $wh )

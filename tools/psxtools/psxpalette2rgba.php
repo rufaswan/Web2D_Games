@@ -16,7 +16,7 @@ function palette( $fname )
 		return printf("ERROR %s not enough data\n", $fname);
 
 	$cn = $siz / ($gp_cc*2);
-	$clut = mclut2str($file, 0, $gp_cc, $cn);
+	$clut = mstrpal555($file, 0, $gp_cc, $cn);
 
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $gp_cc * 16;
@@ -33,7 +33,7 @@ function palette( $fname )
 
 			$pix['src']['w'] = 16;
 			$pix['src']['h'] = 16;
-			$pix['src']['pix'] = str_pad("", 16*16, chr($i));
+			$pix['src']['pix'] = str_repeat(chr($i), 16*16);
 			$pix['src']['pal'] = $cv;
 
 			copypix($pix);

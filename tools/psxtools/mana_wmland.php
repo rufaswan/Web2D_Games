@@ -108,7 +108,7 @@ function landdata( &$file, $dir )
 		$gp_pix .= chr($b1);
 		$gp_pix .= chr($b2);
 	}
-	$gp_clut = mclut2str($file, 0x1f00, 16, 8);
+	$gp_clut = mstrpal555($file, 0x1f00, 16, 8);
 
 	$id = 0;
 	$st = 0x2044;

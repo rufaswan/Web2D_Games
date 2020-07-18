@@ -53,7 +53,7 @@ info.sonicretro.org/SPG:Solid_Tiles
 	meaning that there are only 256 divisions of a circle,
 	not 360 like we're used to.
 	Worse, the direction is anti-clockwise compared to other languages like GML,
-	so $20 isn't 45? like it should be - it's 315?.
+	so $20 isn't 45 degree like it should be - it's 315 degree.
 
 	In order to convert the original hex angles into angles you can use in GML,
 	use this calculation (rendered here in pseudo-code):
@@ -169,4 +169,14 @@ stackoverflow.com/questions/9014729/manually-alpha-blending-an-rgba-pixel-with-a
 	And then repeating for the blue and green channels.
 	Do this for every pixel.
 
+stackoverflow.com/questions/6672374/convert-rgb-to-rgba-over-white
 
+	Take the lowest color component,
+	and convert that to an alpha value.
+	Then scale the color components by subtracting the lowest,
+	and dividing by the alpha value.
+
+stackoverflow.com/questions/2049230/convert-rgba-color-to-rgb
+
+	You might want to read the famous paper "Compositing digital images" (by Porter and Duff) for full details on alpha-composition:
+	keithp.com/~keithp/porterduff

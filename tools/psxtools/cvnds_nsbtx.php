@@ -39,7 +39,7 @@ function cvnds( $fname )
 				if ( $cns < 0x200 ) // 4-bit
 				{
 					$cn = $cns / 0x20;
-					$clut = mclut2str($file, $off3, 0x10, $cn);
+					$clut = mstrpal555($file, $off3, 0x10, $cn);
 
 					$pix = "";
 					for ( $i=$off2; $i < $off3; $i++ )
@@ -65,7 +65,7 @@ function cvnds( $fname )
 				else // 8-bit
 				{
 					$cn = $cns / 0x200;
-					$clut = mclut2str($file, $off3, 0x100, $cn);
+					$clut = mstrpal555($file, $off3, 0x100, $cn);
 					$pix  = substr($file, $off2, $off3-$off2);
 
 					$h = strlen($pix) / 0x80;

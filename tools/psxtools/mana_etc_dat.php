@@ -20,7 +20,7 @@ function mana( $fname )
 			$clut .= chrint(16,4); // no clut
 			$clut .= chrint(48,4); // width
 			$clut .= chrint(48,4); // height
-			$clut .= clut2str($file, $ps, 16);
+			$clut .= strpal555($file, $ps, 16);
 				$ps += 0x20;
 
 			$sz = 0x18 * 0x30;
@@ -77,9 +77,9 @@ function mana( $fname )
 		$rgba .= chrint($h, 4); // height
 
 		$sz = $w * $h;
-		while ( $sz )
+		while ( $sz > 0 )
 		{
-			$rgba .= clutpix($file, $ps);
+			$rgba .= rgb555( $file[$ps+0] . $file[$ps+1] );
 			$ps += 2;
 			$sz--;
 		}

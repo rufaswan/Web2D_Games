@@ -1,7 +1,7 @@
 # castlevania portrait of ruin us
 # offsets are for nds.ram
 
-[arm9.bin]
+[ndsram]
 	# overlay = 1cdf60  21f680  22c840  2b2a80  2b2ae0  2b7660  2d0f40  2d7500  2d7900  2e01a0  2e04a0  2e8820
 	#  1cdf60  [ 0]        = 0
 	#  21f680  [ 1- 2]     = 1
@@ -17,7 +17,6 @@
 	#  2e8820  [78-117]    = 78 STAGES
 	game  = por , ov-0 , ov-1 , ov-4 , ov-5 , ov-6 , ov-7 , ov-8 , ov-9 , ov-25 , ov-30 , ov-78
 	files = cdafc , df15c , 20
-	#dummy = /bc/f_fba09.dat , /bm , /sm
 
 	stg_ovid = bf9fc , bfa34
 	stg_bc   = dfa50 , dfa88
@@ -36,10 +35,12 @@
 	portrait =
 	loading =
 
-[sc_dat]
+[mon_sc]
 	# playable char
 	# monster
 	# boss
+
+[obj_sc]
 
 ##############################
 # GAME SPECIFIC DATASET

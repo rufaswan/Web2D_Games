@@ -3,6 +3,7 @@ require "common.inc";
 
 //define("DRY_RUN", true);
 
+$gp_patch = array();
 $gp_pix_a = array();
 $gp_pix_r = array();
 $gp_clut = array();
@@ -82,13 +83,13 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 			$pix['dy'] = $y;
 			if ( $gp_pix_r[$tid][1] == 4 )
 			{
-				$pix['src']['pix'] = rippix4($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x40, 0x80);
-				$pix['src']['pal'] = clut2str($gp_clut[$mp3], $cid*0x20, 0x10);
+				$pix['src']['pix'] = rippix4($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x80, 0x80);
+				$pix['src']['pal'] = strpal555($gp_clut[$mp3], $cid*0x20, 0x10);
 			}
 			if ( $gp_pix_r[$tid][1] == 8 )
 			{
 				$pix['src']['pix'] = rippix8($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x80, 0x80);
-				$pix['src']['pal'] = clut2str($gp_clut[$mp3], $cid*0x20, 0x100);
+				$pix['src']['pal'] = strpal555($gp_clut[$mp3], $cid*0x20, 0x100);
 			}
 
 			copypix($pix);
@@ -214,6 +215,7 @@ function roomloop( &$ram, $dir, $MA, $off )
 			$b1 = str2int($ram, $off2, 3);
 			if ( $b1 == 0 )
 				break;
+
 			$b1 = file_get_contents( $gp_pix_a[$b1] );
 			$psz = strlen($b1);
 			if ( $psz == 0x4000 )
@@ -222,16 +224,6 @@ function roomloop( &$ram, $dir, $MA, $off )
 			if ( $psz == 0x2000 )
 				$gp_pix_r[] = array($b1, 4);
 
-/*
-			$pix = file_get_contents("$dir/data/$fn");
-			$psz = strlen($pix);
-			if ( $psz == 0x4000 )
-				$gp_pix_a[$fp] = array($pix, 8);
-			else
-			if ( $psz == 0x2000 )
-				$gp_pix_a[$fp] = array($pix, 4);
-			$gp_pix_r[] = $gp_pix_a[$b1];
-*/
 			$off2 += 8;
 		}
 
@@ -276,21 +268,23 @@ function roomloop( &$ram, $dir, $MA, $off )
 	return;
 }
 //////////////////////////////
-function arealoop( &$ram, $dir, $M, $ovid, $bc, $data, $fst, $fbk )
+function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 {
-	global $gp_pix_a;
+	global $gp_pix_a, $gp_patch;
 	$id = 0;
+	$fst = $gp_patch['ndsram']['files'][0];
+	$fbk = $gp_patch['ndsram']['files'][2];
 	// entrance , library , clock tower ...
 	while (1)
 	{
 		$A = $id;
 			$id++;
 		$p = $A * 4;
-		printf("=== arealoop( $dir , $M , %x , %x , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p, $fst, $fbk);
+		printf("=== arealoop( $dir , $M , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p);
 		$off1 = str2int($ram, $ovid + $p, 3); // 40
 		$off2 = str2int($ram, $bc   + $p, 3); // ef5fc
 		$off3 = str2int($ram, $data + $p, 3); // 21f664
-		if ( $off1 == BIT24 || $off2 == 0 || $off3 == 3 )
+		if ( $off1 == BIT24 || $off2 == 0 || $off3 == 0 )
 			break;
 		nds_overlay($ram, $dir, $off1);
 
@@ -317,7 +311,7 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data, $fst, $fbk )
 	return;
 }
 
-function maploop( &$ram, $dir, $ovid, $bc, $data, $fst, $fbk )
+function maploop( &$ram, $dir, $ovid, $bc, $data )
 {
 	// dracula castle , 13th street , monastery ...
 	$id = 0;
@@ -326,13 +320,13 @@ function maploop( &$ram, $dir, $ovid, $bc, $data, $fst, $fbk )
 		$M = $id;
 			$id++;
 		$p = $M * 4;
-		printf("=== maploop( $dir , %x , %x , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p, $fst, $fbk);
+		printf("=== maploop( $dir , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p);
 		$off1 = str2int($ram, $ovid + $p, 3); // b60c4
 		$off2 = str2int($ram, $bc   + $p, 3); // d8d68
 		$off3 = str2int($ram, $data + $p, 3); // 221ee0
 		if ( $off1 == 0 || $off2 == 0 || $off3 == 0 )
 			break;
-		arealoop( $ram, $dir, $M, $off1, $off2, $off3, $fst, $fbk );
+		arealoop( $ram, $dir, $M, $off1, $off2, $off3 );
 		//return;
 	}
 	return;
@@ -354,30 +348,28 @@ function cvnds( $dir )
 	if ( ! is_dir($dir) )
 		return;
 
-	$pat = nds_patch($dir, 'cvnds');
-	if ( empty($pat) )
+	global $gp_patch;
+	$gp_patch = nds_patch($dir, 'cvnds');
+	if ( empty($gp_patch) )
 		return;
 	$ram = nds_ram($dir);
-	nds_game( $ram, $dir, $pat['arm9.bin']['game'] );
+	nds_game( $ram, $dir, $gp_patch['ndsram']['game'] );
 
-	arrayhex( $pat['arm9.bin']['files'] );
-	arrayhex( $pat['arm9.bin']['stg_ovid'] );
-	arrayhex( $pat['arm9.bin']['stg_bc'] );
-	arrayhex( $pat['arm9.bin']['stg_data'] );
+	arrayhex( $gp_patch['ndsram']['files'] );
+	arrayhex( $gp_patch['ndsram']['stg_ovid'] );
+	arrayhex( $gp_patch['ndsram']['stg_bc'] );
+	arrayhex( $gp_patch['ndsram']['stg_data'] );
 
-	$ovid = $pat['arm9.bin']['stg_ovid'][0]; // b60fc
-	$bc   = $pat['arm9.bin']['stg_bc'][0];   // d8da0
-	$data = $pat['arm9.bin']['stg_data'][0]; // d8fc4
-
-	$fst = $pat['arm9.bin']['files'][0];
-	$fbk = $pat['arm9.bin']['files'][2];
+	$ovid = $gp_patch['ndsram']['stg_ovid'][0]; // b60fc
+	$bc   = $gp_patch['ndsram']['stg_bc'][0];   // d8da0
+	$data = $gp_patch['ndsram']['stg_data'][0]; // d8fc4
 
 	global $gp_game;
-	$gp_game = $pat['arm9.bin']['game'][0];
+	$gp_game = $gp_patch['ndsram']['game'][0];
 	if ( $gp_game == 'por' || $gp_game == 'ooe' )
-		maploop( $ram, $dir, $ovid, $bc, $data, $fst, $fbk );
+		maploop( $ram, $dir, $ovid, $bc, $data );
 	if ( $gp_game == 'dos' )
-		arealoop( $ram, $dir, 0, $ovid, $bc, $data, $fst, $fbk );
+		arealoop( $ram, $dir, 0, $ovid, $bc, $data );
 	return;
 }
 

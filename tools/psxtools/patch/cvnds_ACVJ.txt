@@ -1,7 +1,7 @@
 # castlevania sougetsu no juujika jp
 # offsets are for nds.ram
 
-[arm9.bin]
+[ndsram]
 	# overlay = 19e460  22faa0  2999c0  29d6a0  2b89a0  2d5ec0  2d94e0  2fea00
 	#  19e460  [ 0]     = 0
 	#  22faa0  [ 1]     = 1
@@ -13,7 +13,6 @@
 	#  2fea00  [23-40]  = 28 MONSTER,BOSS
 	game  = dos , ov-0 , ov-1 , ov-2 , ov-3 , ov-4 , ov-5 , ov-14 , ov-28
 	files = 8cc6c , 99fd4 , 28
-	#dummy = /bm , /sm
 
 	stg_ovid = 9a41c , 9a460
 	stg_bc   = 9a3d4 , 9a418
@@ -32,7 +31,7 @@
 	portrait =
 	loading =
 
-[sc_dat]
+[mon_sc]
 	# playable char
 	play_1 = p , 3-2bac6c , 2-52c , 1-376-3a9
 	play_2 = p , 3-2bacf0 , 2-4fc , 1-2b5-2bf
@@ -182,6 +181,120 @@
 	mon_115 = ov-38 , 3-2be2a8 , 2-503 , 1-2d9 , 1-2e0-2e7 , 1-2da-2df
 	# ov-25 = 3-2bdd54  3-2c15dc
 	reset = ov-28 , boss
+
+	##########################
+
+[obj_sc]
+	obj_1 = 1-1dd-1e4
+	obj_4 = 1-3d8
+	obj_6 = 1-17e-183
+	obj_7 = 1-335
+	obj_8 = 1-335
+	obj_9 = 1-1b4-1b7
+	obj_10 = 1-1c2
+	obj_12 = 3-2bfff0 , 1-331-333 , 2-522
+	obj_13 = 3-2bfff0 , 1-331-333 , 2-522
+	obj_15 = 3-2c00d4 , 1-1b2 , 2-4ba
+	obj_16 = 3-2c015c , 1-327 , 2-51e
+	obj_18 = 1-274
+	obj_20 = 1-30f-311
+	obj_21 = 3-2c0c64 , 1-1c3-1c4 , 2-4bd
+	obj_22 = 3-2c0c88 , 1-2ce-2d0 , 2-500
+	obj_23 = 1-316
+	obj_24 = 3-2c0d18 , 1-194-195 , 2-4b1
+	obj_25 = 1-35e
+	obj_26 = 1-35e
+	obj_27 = 1-26b
+	obj_28 = 1-3af
+	obj_30 = 1-1b1
+	obj_31 = 1-17d
+	obj_32 = 3-2c0118 , 1-243 , 2-4dc
+	obj_33 = 3-2c102c , 1-1ae , 2-4b8
+	obj_35 = 1-196
+	obj_36 = 3-2c1178 , 1-3ae , 2-52f
+	obj_38 = 3-2c0d7c , 1-448 , 2-548
+	obj_39 = 3-2c1114 , 1-31a , 2-517
+	obj_40 = 1-1fd
+	obj_41 = 1-1fd
+	obj_42 = 3-2c1178 , 1-3ae , 2-52f
+	obj_43 = 3-2c1240 , 1-3b1 , 2-531
+	obj_44 = 1-1b8
+	obj_45 = 1-2a1
+	obj_46 = 1-2b1 , 2-4fb
+	obj_48 = 3-2c1bb8 , 1-19c-1a3 , 2-4b3
+	obj_49 = 3-2c1620 , 1-1a4-1ab , 2-4b4
+	obj_50 = 3-2c0354 , 1-2a9-2ab , 2-4f5
+	obj_55 = 1-1fe
+	obj_57 = 3-2c0180 , 1-324 , 2-51c
+	obj_58 = 3-2c01a4 , 1-360-361 , 2-526
+	obj_59 = 3-2c1474 , 1-18b-18c , 2-4af
+	obj_60 = 3-2bad14 , 2-4ce , 1-202-205
+	obj_61 = 3-2c14b8 , 1-216-219 , 2-4d2
+	obj_62 = 3-2c0268 , 1-35f , 2-525
+	obj_63 = 3-2c02ac , 1-3d7 , 2-538
+	obj_64 = 1-1c5
+	obj_65 = 1-2fe
+	obj_66 = 1-2fe
+	obj_67 = 1-3d6
+	obj_68 = 1-27d
+	obj_69 = 3-2c1a8c , 1-3b0 , 2-530
+	obj_70 = 1-30c
+	obj_71 = 3-2bad5c , 2-4c8 , 1-1e8
+	obj_72 = 3-2bad14 , 2-4ce , 1-202-205
+	obj_73 = 1-1b0
+	obj_75 = 3-2c0458 , 1-2e8-2e9 , 2-504
+	obj_77 = 1-334
+	obj_78 = 1-301
+	obj_79 = 3-2bad38 , 2-4cb , 1-1f6-1f7
+	obj_80 = 3-2bad5c , 2-4c8 , 1-1e8
+	obj_81 = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_82 = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_83 = 3-2bada4 , 2-4cd , 1-1ff-201
+	obj_84 = 3-2bf8e0 , 2-4c3 , 1-1ce-1d1
+	obj_85 = 3-2bb510 , 2-4c4 , 1-1d2-1d7
+	obj_86 = 3-2c1fe0 , 1-2a4 , 2-4f2
+	obj_87 = 1-17c
+	obj_88 = 3-2c2048 , 1-317-318 , 2-514
+	obj_89 = 3-2c208c , 2-506 , 1-2f1
+	obj_90 = 1-19a-19b
+	obj_91 = 3-2ba9a0 , 2-4c2 , 1-48a-48e
+	obj_92 = 1-2c0 , 1-2c1-2c7
+	obj_93a = 3-2bada4 , 2-4cd , 1-1ff-201
+	obj_93b = 3-2bad38 , 2-4cb , 1-1f6-1f7
+	obj_93c = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_94 = 3-2bad5c , 2-4c8 , 1-1e8
+	obj_95a = 3-2bad14 , 2-4ce , 1-202-205
+	obj_95b = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_97 = 3-2bad14 , 2-4ce , 1-202-205
+	obj_98a = 3-2bb510 , 2-4c4 , 1-1d2-1d7
+	obj_98b = 3-2bf8e0 , 2-4c3 , 1-1ce-1d1
+	obj_98c = 3-2bada4 , 2-4cd , 1-1ff-201
+	obj_100 = 3-2bada4 , 2-4cd , 1-1ff-201
+	obj_101 = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_102 = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_103a = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_103b = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_103c = 3-2bada4 , 2-4cd , 1-1ff-201
+	obj_104a = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_104b = 3-2bf8e0 , 2-4c3 , 1-1ce-1d1
+	obj_106a = 3-2bad38 , 2-4cb , 1-1f6-1f7
+	obj_106b = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_106c = 3-2bb510 , 2-4c4 , 1-1d2-1d7
+	obj_106d = 3-2bada4 , 2-4cd , 1-1ff-201 , 1-1db
+	obj_107a = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_107b = 3-2bad80 , 2-4c1 , 1-1cc-1cd , 1-3d1 , 1-1dc
+	obj_108a = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_108b = 3-2bb510 , 2-4c4 , 1-1d2-1d7
+	obj_110 = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_111 = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_112a = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_112b = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_113a = 3-2bad14 , 2-4ce , 1-202-205
+	obj_113b = 3-2bacf0 , 2-4ca , 1-1eb-1ee
+	obj_113c = 3-2bad80 , 2-4c1 , 1-1cc-1cd
+	obj_113d = 3-2bad38 , 2-4cb , 1-1f6-1f7
+	obj_113e = 3-2bad5c , 2-4c8 , 1-1e8
+	obj_116 = 3-2ba9a0 , 2-4c2 , 1-48a-48e
 
 	##########################
 
