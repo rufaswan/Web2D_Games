@@ -14,7 +14,6 @@
 * A self-hosted web server with PHP-CGI
   such as [XAMPP](https://sourceforge.net/projects/xampp/files/)
 * PHP MUST have the following extensions compiled/enabled
-  * JSON extension - to transfer game state between AJAX requests
   * ICONV extension - to convert non-unicode charset to utf-8 (both text and filenames)
 * Scripts in tools/ are for PHP-CLI (PHP command-line):
   * NOT required to upload to web server.

@@ -313,7 +313,7 @@ function sco_img_meta( $id )
 {
 	// get image X , Y , width , height
 	$meta = file_get_contents( PATH_META );
-	$meta = json_decode( $meta, true );
+	$meta = unserialize($meta);
 	if ( ! isset( $meta[$id] ) )
 		return array();
 	return $meta[$id];

@@ -1,7 +1,7 @@
 <?php
-// Derived from Source:
+// modified by Rufas Wan
+// written by EasyRPG Authors:
 //   https://github.com/EasyRPG/liblcf/blob/master/src/generated/ldb_chunks.h
-// Original License:
 //   MIT License
 require "common.inc";
 

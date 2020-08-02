@@ -113,12 +113,8 @@ function savemap( &$img, $dir )
 function saga2( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
-
-	if ( ! file_exists("$pfx.img") )  return;
-	if ( ! file_exists("$pfx.tex") )  return;
-
-	$img = file_get_contents("$pfx.img");
-	$tex = file_get_contents("$pfx.tex");
+	$img = load_file("$pfx.img");
+	$tex = load_file("$pfx.tex");
 	if ( empty($img) )  return;
 	if ( empty($tex) )  return;
 

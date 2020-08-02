@@ -24,7 +24,7 @@ function sco_cmd( $cmd, $arg )
 {
 	global $gp_pc, $gp_input, $gp_key;
 	global $gp_run, $gp_sel, $gp_data;
-	trace("%s , $cmd , %s", $gp_pc["pc"][1]+1, json_encode($arg));
+	trace("%s , $cmd , %s", $gp_pc["pc"][1]+1, serialize($arg));
 
 	switch ( $cmd )
 	{

@@ -1,3 +1,25 @@
+=== pc9801 ===
+adv.com
+	ADV-system [NACT4] for 98 (MS-DOS) Ver 0.68 90/06/21 15:51
+	ADV-system [NACT4] for 98 (MS-DOS) Ver 0.71 90/06/21 15:51
+	ADV-system [NACT4] for 98 (MS-DOS) Ver 0.71a 90/06/21 15:51
+	Scenario decode system for PC98/286 (MS-DOS) Ver 1.00 (C) 1990-1993 ALICE-SOFT
+	Scenario decode system for PC98/286 (MS-DOS) Ver 1.50 (C) 1990-1994 ALICE-SOFT
+	Scenario decode system for PC98/286 (MS-DOS) Ver 1.51 (C) 1990-1994 ALICE-SOFT
+	Scenario decode system for PC98/286 (MS-DOS) Ver 1.52 (C) 1990-1995 ALICE-SOFT
+	Scenario decode system for PC98/286 (MS-DOS) Ver 1.64 (C) 1990-1995 ALICE-SOFT
+	Scenario decode system for PC98/286 (MS-DOS) Ver 1.65 (C) 1990-1995 ALICE-SOFT
+
+v0.68  TT
+v0.71  RANC3 LP2
+v0.71a STOP
+v1.00  AYUMI DALK  RANC4
+v1.50  AMBI  FUNNY TT2
+v1.51  YAK3
+v1.52  MUGEN
+v1.64  R4.1
+v1.65  R4.2
+
 === system 3.0 (640*480) ===
 EXE       system3.exe
 Scenario  ADISK.dat

@@ -14,7 +14,7 @@ function stv_alp( $fg, $bg )
 //////////////////////////////
 function sectanim( &$meta, $id, $pos, $flg )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	$num = ord($meta[$pos]);

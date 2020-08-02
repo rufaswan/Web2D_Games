@@ -63,7 +63,7 @@ function mura_decode( &$file, $st )
 //////////////////////////////
 function mura( $fname )
 {
-	$file = file_get_contents( $fname );
+	$file = file_get_contents($fname);
 		if ( empty($file) )   return;
 
 	$mgc = substr($file, 0, 4);

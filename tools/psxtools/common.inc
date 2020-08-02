@@ -21,6 +21,8 @@ define("BIT8",  0xff);
 define("BIT16", 0xffff);
 define("BIT24", 0xffffff);
 define("BIT32", 0xffffffff);
+//if ( defined("DRY_RUN") ) // per script
+//if ( defined("BIG_END") ) // per script
 
 function str2int( &$str, $pos, $byte )
 {
@@ -36,11 +38,20 @@ function substr0( &$str, $pos )
 	return substr($str, $pos, $len);
 }
 
-// use strrev() for big endian
+function str_endian( &$str, $pos, $byte )
+{
+	$s = substr($str, $pos, $byte);
+	$s = strrev($s);
+	strupd($str, $pos, $s);
+	return;
+}
+
 function ordint( $str )
 {
 	if ( (int)$str === $str ) // already $int
 		return $str;
+	if ( defined("BIG_END") )
+		$str = strrev($str);
 	$len = strlen($str);
 	$int = 0;
 	for ( $i=0; $i < $len; $i++ )
@@ -53,6 +64,8 @@ function ordint( $str )
 
 function chrint( $int, $byte = 0 )
 {
+	if ( (float)$int === $int ) // in case return from round() ceil() floor()
+		$int = (int)$int;
 	if ( (int)$int !== $int ) // already $str
 		return $int;
 	$str = "";
@@ -114,6 +127,20 @@ function int_clamp( $int, $min, $max )
 	return (int)round($int);
 }
 
+function int_ceil( $int, $ceil )
+{
+	while ( ($int % $ceil) != 0 )
+		$int++;
+	return (int)$int;
+}
+
+function int_floor( $int, $floor )
+{
+	while ( ($int % $floor) != 0 )
+		$int--;
+	return (int)$int;
+}
+
 function arrayint( &$array )
 {
 	foreach ( $tmp as $k => $v )
@@ -130,8 +157,6 @@ function arrayhex( &$array )
 
 function load_file( $fname )
 {
-	if ( strpos($fname, '\\') )
-		$fname = str_replace('\\', '/', $fname);
 	if ( is_file($fname) )
 		return file_get_contents($fname);
 
@@ -147,9 +172,19 @@ function load_file( $fname )
 	return "";
 }
 
+function load_text( $fname )
+{
+	$txt = load_file($fname);
+	if ( empty($txt) )  return "";
+
+	$txt = str_replace("\r\n", "\n", $txt);
+	$txt = str_replace("\r", "\n", $txt);
+	return explode("\n", $txt);
+}
+
 function save_file( $fname, $str )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 	if ( empty($str) )
 		return;
@@ -251,6 +286,7 @@ function flag_warn( $name, $int )
 }
 //////////////////////////////
 define("PIX_BLACK", ZERO . ZERO . ZERO . BYTE);
+define("PIX_WHITE", BYTE . BYTE . BYTE . BYTE);
 define("PIX_ALPHA", ZERO . ZERO . ZERO . ZERO);
 
 function canvpix( $w, $h, $c = PIX_ALPHA )
@@ -270,7 +306,10 @@ function rgb555( $str )
 	//        = 58 29
 	$b1 = ord( $str[0] );
 	$b2 = ord( $str[1] );
-	$pal = $b1 + ($b2 << 8);
+	if ( defined("BIG_END") )
+		$pal = ($b1 << 8) + $b2;
+	else
+		$pal = $b1 + ($b2 << 8);
 
 	$b = ($pal >> 7) & 0xf8; // <<  1 >> 8 == >> 7
 	$g = ($pal >> 2) & 0xf8; // <<  6 >> 8 == >> 2
@@ -310,13 +349,34 @@ function mstrpal555( &$file, $pos, $cc, $cn )
 
 function grayclut( $cc )
 {
-	$add = (int)(255 / ($cc-1));
-	$clut = "";
-	$c = 0;
+	$grad = gradient($cc, PIX_BLACK, PIX_WHITE);
+	return implode('', $grad);
+}
+
+function gradient( $cc, $src, $dst )
+{
+	$r1 = ord( $src[0] );
+	$g1 = ord( $src[1] );
+	$b1 = ord( $src[2] );
+	$a1 = ord( $src[3] );
+	$r2 = ord( $dst[0] );
+	$g2 = ord( $dst[1] );
+	$b2 = ord( $dst[2] );
+	$a2 = ord( $dst[3] );
+
+	$sr = ($r2 - $r1) / ($cc - 1);
+	$sg = ($g2 - $g1) / ($cc - 1);
+	$sb = ($b2 - $b1) / ($cc - 1);
+	$sa = ($a2 - $a1) / ($cc - 1);
+
+	$clut = array();
 	for ( $i=0; $i < $cc; $i++ )
 	{
-		$clut .= chr($c) . chr($c) . chr($c) . BYTE;
-		$c = int_clamp($c + $add, 0, BIT8);
+		$clut[] = chr($r1) . chr($g1) . chr($b1) . chr($a1);
+		$r1 = int_clamp($r1 + $sr, 0, BIT8);
+		$g1 = int_clamp($g1 + $sg, 0, BIT8);
+		$b1 = int_clamp($b1 + $sb, 0, BIT8);
+		$a1 = int_clamp($a1 + $sa, 0, BIT8);
 	}
 	return $clut;
 }
@@ -348,9 +408,41 @@ function COPYPIX_DEF()
 	return $php56;
 }
 //////////////////////////////
+function rippix2( &$pix, $sx, $sy, $w, $h, $sw, $sh )
+{
+	if ( defined("DRY_RUN") )
+		return;
+	$sx /= 4;
+	$w  /= 4;
+	$sw /= 4;
+
+	$rip = "";
+	for ( $y=0; $y < $h; $y++ )
+	{
+		$syy = ($sy + $y) * $sw;
+		for ( $x=0; $x < $w; $x++ )
+		{
+			$sxx = $syy + $sx + $x;
+			$p = ord( $pix[$sxx] );
+
+			$buf = "";
+			$buf .= chr( ($p >> 0) & 0x03 );
+			$buf .= chr( ($p >> 2) & 0x03 );
+			$buf .= chr( ($p >> 4) & 0x03 );
+			$buf .= chr( ($p >> 6) & 0x03 );
+
+			if ( defined("BIG_END") )
+				$buf = strrev($buf);
+
+			$rip .= $buf;
+		} // for ( $x=0; $x < ($w/2); $x++ )
+	} // for ( $y=0; $y < $h; $y++ )
+	return $rip;
+}
+
 function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 	$sx /= 2;
 	$w  /= 2;
@@ -365,10 +457,14 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 			$sxx = $syy + $sx + $x;
 			$p = ord( $pix[$sxx] );
 
-			$p1 = $p & 0x0f;
-			$p2 = $p >> 4;
+			$buf = "";
+			$buf .= chr( ($p >> 0) & 0x0f );
+			$buf .= chr( ($p >> 4) & 0x0f );
 
-			$rip .= chr($p1) . chr($p2);
+			if ( defined("BIG_END") )
+				$buf = strrev($buf);
+
+			$rip .= $buf;
 		} // for ( $x=0; $x < ($w/2); $x++ )
 	} // for ( $y=0; $y < $h; $y++ )
 	return $rip;
@@ -376,7 +472,7 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 
 function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	$rip = "";
@@ -412,7 +508,7 @@ function copypix( &$pix )
 {
 	if ( copypix_errs($pix) )
 		return;
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	// horizontal flip + vertical flip
@@ -572,7 +668,7 @@ function trimpix( &$pix )
 
 function savpix( $fn, &$pix, $trim = false )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	if ( trim($pix['rgba']['pix'], ZERO) == '' )
@@ -646,7 +742,7 @@ function alpha_add( $fg, $bg )
 
 function scalepix( &$pix, $factor = 1 )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 	$res = "";
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
@@ -704,7 +800,7 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 
 function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	$rip = "";
@@ -720,7 +816,7 @@ function copyrgba( &$pix )
 {
 	if ( copypix_errs($pix) )
 		return;
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * 4);
@@ -846,7 +942,7 @@ function psx_exe( &$psxram, $psxexe )
 	if ( empty($psxram) )
 		return "";
 
-	$bin = file_get_contents($psxexe);
+	$bin = load_file($psxexe);
 	if ( empty($bin) || substr($bin, 0, 8) != 'PS-X EXE' )
 		return;
 	$off1 = str2int($bin, 0x10, 3); // mips start()
@@ -922,15 +1018,15 @@ function psxtim( &$file )
 //////////////////////////////
 function nds_ram( $dir )
 {
-	$head = file_get_contents("$dir/header.bin");
+	$head = load_file("$dir/header.bin");
 	if ( empty($head) )
 		return "";
 	$ram = str_repeat(ZERO, 0x400000);
 
-	$bin = file_get_contents("$dir/arm9.bin");
+	$bin = load_file("$dir/arm9.bin");
 	$off = str2int($head, 0x28, 3);
 		strupd($ram, $off, $bin);
-	$bin = file_get_contents("$dir/arm7.bin");
+	$bin = load_file("$dir/arm7.bin");
 	$off = str2int($head, 0x38, 3);
 		strupd($ram, $off, $bin);
 	return $ram;
@@ -938,7 +1034,7 @@ function nds_ram( $dir )
 
 function nds_patch( $dir, $pfx )
 {
-	$head = file_get_contents("$dir/header.bin");
+	$head = load_file("$dir/header.bin");
 	if ( empty($head) )
 		return array();
 	$NTR = substr($head, 12, 4);
@@ -951,14 +1047,14 @@ function nds_overlay( &$ndsram, $dir, $id )
 	if ( strpos($id, 'ov-') !== false )
 		$id = (int)substr($id, 3);
 
-	$y9   = file_get_contents("$dir/y9.bin");
+	$y9   = load_file("$dir/y9.bin");
 	if ( ! isset( $y9[$id*0x20] ) )
 		return array();
 	$off   = str2int($y9, ($id * 0x20) + 0x04, 3);
 	$start = str2int($y9, ($id * 0x20) + 0x10, 3);
 
 	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
-	$bin  = file_get_contents($over);
+	$bin  = load_file($over);
 	printf("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
 		strupd($ndsram, $off, $bin);
 	return array($off, $start);

@@ -37,14 +37,14 @@ function B_cmd35( &$file, &$st, &$ajax )
 			$st += 2;
 			$arg = sco_var_args( 6, $file, $st );
 			$num = array_shift($arg);
-			trace("select B $type , %s", json_encode($arg));
+			trace("select B $type , %s", serialize($arg));
 			$gp_pc["B1"][$num] = $arg;
 			return;
 		// B2,num,W,C1,C2,C3,dot:  選択肢ウィンドウを切り替える
 		case 2:
 			$st += 2;
 			$arg = sco_var_args( 6, $file, $st );
-			trace("select B $type , %s", json_encode($arg));
+			trace("select B $type , %s", serialize($arg));
 			$gp_pc["B2"] = $arg;
 			return;
 		// B3,num,X1,Y1,X2,Y2,V:  メッセージウィンドウの座標を設定する
@@ -52,14 +52,14 @@ function B_cmd35( &$file, &$st, &$ajax )
 			$st += 2;
 			$arg = sco_var_args( 6, $file, $st );
 			$num = array_shift($arg);
-			trace("text B $type , %s", json_encode($arg));
+			trace("text B $type , %s", serialize($arg));
 			$gp_pc["B3"][$num] = $arg;
 			return;
 		// B4,num,W,C1,C2,N(C3),M(dot):  メッセージウィンドウを切り替える
 		case 4:
 			$st += 2;
 			$arg = sco_var_args( 6, $file, $st );
-			trace("text B $type , %s", json_encode($arg));
+			trace("text B $type , %s", serialize($arg));
 			$gp_pc["B4"] = $arg;
 
 			$t = $gp_pc["B3"][ $arg[0] ];
@@ -69,7 +69,7 @@ function B_cmd35( &$file, &$st, &$ajax )
 		case 10:
 			$st += 2;
 			$arg = sco_var_args( 2, $file, $st );
-			trace("text B $type , %s", json_encode($arg));
+			trace("text B $type , %s", serialize($arg));
 			sco_var_put( $arg[0], 0, $gp_pc["T"][0] );
 			sco_var_put( $arg[1], 0, $gp_pc["T"][1] );
 			return;
@@ -262,19 +262,19 @@ function CK_cmd35( &$file, &$st, &$ajax )
 		case 1:
 			$st += 3;
 			$arg = sco_var_args( 5, $file, $st );
-			trace("CK $type , %s", json_encode($arg));
+			trace("CK $type , %s", serialize($arg));
 			return;
 		// CK 2,x0,y0,cx,cy,col,dx,dy,0:  指定範囲に網掛けする
 		case 2:
 			$st += 3;
 			$arg = sco_var_args( 5, $file, $st );
-			trace("CK $type , %s", json_encode($arg));
+			trace("CK $type , %s", serialize($arg));
 			return;
 		// CK 3,x0,y0,cx,cy,dst,src,count,0:  (256色専用) 指定範囲の色を変更する
 		case 3:
 			$st += 3;
 			$arg = sco_var_args( 5, $file, $st );
-			trace("CK $type , %s", json_encode($arg));
+			trace("CK $type , %s", serialize($arg));
 			return;
 	}
 	return;
@@ -353,7 +353,7 @@ function SG_cmd35( &$file, &$st, &$ajax )
 		case 2:
 			$st += 3;
 			$var = sco_calli($file, $st);
-			trace("midi SG 2 , %s", json_encode($var));
+			trace("midi SG 2 , %s", serialize($var));
 			sco_var_put($var, 0, 999);
 			return;
 		// SG 3,0:  演奏中のMIDIを一時停止する
@@ -401,7 +401,7 @@ function SX_cmd35( &$file, &$st, &$ajax )
 		// SX device,1,time,stop,volume:  フェード
 		case 1:
 			$arg = sco_var_args( 3, $file, $st );
-			trace("SX $device , $type , %s", json_encode($arg));
+			trace("SX $device , $type , %s", serialize($arg));
 			return;
 		// SX device,2,var:  フェード終了確認  cont/end
 		case 2:
@@ -493,7 +493,7 @@ function ZT_cmd35( &$file, &$st, &$ajax )
 		case 10:
 			$st += 3;
 			$arg = sco_var_args( 3, $file, $st );
-			trace("ZT $type , %s", json_encode($arg));
+			trace("ZT $type , %s", serialize($arg));
 			return;
 		// ZT 11,num,var:  高精度タイマー取得
 		case 11:
@@ -582,7 +582,7 @@ function Y_cmd35( &$file, &$st, &$ajax )
 	global $gp_pc;
 	$st++;
 	$arg = sco_var_args( 2, $file, $st );
-	trace("Y %s", json_encode($arg));
+	trace("Y %s", serialize($arg));
 
 	switch( $arg[0] )
 	{
@@ -633,14 +633,14 @@ function C_cmd35( &$file, &$st, &$ajax )
 		case 'B':
 			$st += 2;
 			$arg = sco_var_args( 5, $file, $st );
-			trace("CB %s", json_encode($arg));
+			trace("CB %s", serialize($arg));
 			sco_div_add( "_BORDER_", $arg );
 			return;
 		// CC sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y:  画面のコピー
 		case 'C':
 			$st += 2;
 			$arg = sco_var_args( 6, $file, $st );
-			trace("CC %s", json_encode($arg));
+			trace("CC %s", serialize($arg));
 			sco_div_add( "_BG_", $arg );
 			return;
 		// CD sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,effect_number,option,wait_flag,color:  エフェクト機能付きスプライトコピー
@@ -650,14 +650,14 @@ function C_cmd35( &$file, &$st, &$ajax )
 		case 'E':
 			$st += 2;
 			$arg = sco_var_args( 9, $file, $st );
-			trace("CE %s", json_encode($arg));
+			trace("CE %s", serialize($arg));
 			sco_div_add( "_BG_", $arg );
 			return;
 		// CF start_x,start_y,lengs_x,lengs_y,color:  BOX-FILL
 		case 'F':
 			$st += 2;
 			$arg = sco_var_args( 5, $file, $st );
-			trace("CF %s", json_encode($arg));
+			trace("CF %s", serialize($arg));
 			sco_div_add( "_COLOR_", $arg );
 			return;
 		case 'K':
@@ -669,20 +669,20 @@ function C_cmd35( &$file, &$st, &$ajax )
 		case 'M':
 			$st += 2;
 			$arg = sco_var_args( 9, $file, $st );
-			trace("CM %s", json_encode($arg));
+			trace("CM %s", serialize($arg));
 			return;
 		// CP start_x,start_y,color:  ペイント
 		case 'P':
 			$st += 2;
 			$arg = sco_var_args( 3, $file, $st );
-			trace("CP %s", json_encode($arg));
+			trace("CP %s", serialize($arg));
 			sco_div_add( "_PAINT_", $arg );
 			return;
 		// CS sorce_x,sorce_y,sorce_lengs_x,sorce_lengs_y,destin_x,destin_y,splite:  画面のスプライトコピー
 		case 'S':
 			$st += 2;
 			$arg = sco_var_args( 7, $file, $st );
-			trace("CS %s", json_encode($arg));
+			trace("CS %s", serialize($arg));
 			$gp_pc["CS"] = $arg;
 			return;
 		// CT var,x,y:  影データを取得する (16/24bitのみ)
@@ -716,13 +716,13 @@ function D_cmd35( &$file, &$st, &$ajax )
 		case 'C':
 			$st += 2;
 			$arg = sco_var_args( 3, $file, $st );
-			trace("data DC %s", json_encode($arg));
+			trace("data DC %s", serialize($arg));
 			return;
 		// DF data_var,count,data  配列のクリア
 		case 'F':
 			$st += 2;
 			$arg = sco_var_args( 3, $file, $st );
-			trace("data DF %s", json_encode($arg));
+			trace("data DF %s", serialize($arg));
 			list($v,$c,$d) = $arg;
 			$gp_pc["page"][$v[0]+$v[1]] = array_fill(0, $c, $d);
 			return;
@@ -772,7 +772,7 @@ function E_cmd35( &$file, &$st, &$ajax )
 		case 'S':
 			$st += 2;
 			$arg = sco_var_args( 6, $file, $st );
-			trace("ES %s", json_encode($arg));
+			trace("ES %s", serialize($arg));
 			$num = array_shift($arg);
 			$gp_pc["ES"][$num] = $arg;
 			return;
@@ -1714,7 +1714,7 @@ function V_cmd35( &$file, &$st, &$ajax )
 		case 'V':
 			$st += 2;
 			$arg = sco_var_args( 2, $file, $st );
-			trace("VV %s", json_encode($arg));
+			trace("VV %s", serialize($arg));
 
 			list($p,$s) = $arg;
 			$gp_pc["VV"][$p] = $s;
@@ -1723,7 +1723,7 @@ function V_cmd35( &$file, &$st, &$ajax )
 		case 'W':
 			$st += 2;
 			$arg = sco_var_args( 3, $file, $st );
-			trace("VW %s", json_encode($arg));
+			trace("VW %s", serialize($arg));
 
 			list($p,$t,$v) = $arg;
 			$gp_pc["VR"][$p][$t] = $v;
@@ -1732,7 +1732,7 @@ function V_cmd35( &$file, &$st, &$ajax )
 		case 'X':
 			$st += 2;
 			$arg = sco_var_args( 4, $file, $st );
-			trace("VX %s", json_encode($arg));
+			trace("VX %s", serialize($arg));
 
 			list($t,$p,$x,$y) = $arg;
 			switch ( $t )
@@ -1763,7 +1763,7 @@ function V_cmd35( &$file, &$st, &$ajax )
 			$type = ord( $file[$st+2] );
 			$st += 3;
 			$arg = sco_var_args( 2, $file, $st );
-			trace("VZ $type , %s", json_encode($arg));
+			trace("VZ $type , %s", serialize($arg));
 			switch ( $type )
 			{
 				// VZ 0,nPage,reserve:  透明パターン番号指定解除(ﾃﾞﾌｫﾙﾄでは解除されている)
@@ -1797,21 +1797,21 @@ function W_cmd35( &$file, &$st, &$ajax )
 		case 'V':
 			$st += 2;
 			$arg = sco_var_args( 4, $file, $st );
-			trace("WV %s", json_encode($arg));
+			trace("WV %s", serialize($arg));
 			$gp_pc["WV"] = $arg;
 			return;
 		// WW x_size,y_size,color:  全画面領域を設定する
 		case 'W':
 			$st += 2;
 			$arg = sco_var_args( 3, $file, $st );
-			trace("WW %s", json_encode($arg));
+			trace("WW %s", serialize($arg));
 			$gp_pc["WW"] = $arg;
 			return;
 		// WX x0,y0,cx,cy:  画面反映 on (指定範囲のみ再描画)
 		case 'X':
 			$st += 2;
 			$arg = sco_var_args( 4, $file, $st );
-			trace("WX %s", json_encode($arg));
+			trace("WX %s", serialize($arg));
 			return;
 		case 'Z':
 			return WZ_cmd35( $file, $st, $ajax );
@@ -1845,7 +1845,7 @@ function Z_cmd35( &$file, &$st, &$ajax )
 		case 'C':
 			$st += 2;
 			$arg = sco_var_args( 2, $file, $st );
-			trace("ZC %s", json_encode($arg));
+			trace("ZC %s", serialize($arg));
 			$gp_pc["ZC"][ $arg[0] ] = $arg[1];
 			return;
 		case 'D':
@@ -1895,7 +1895,7 @@ function Z_cmd35( &$file, &$st, &$ajax )
 		case 'I':
 			$st += 2;
 			$arg = sco_var_args( 2, $file, $st );
-			trace("ZI %s", json_encode($arg));
+			trace("ZI %s", serialize($arg));
 			return;
 		// ZL line:  メッセージ領域の文字の縦方向行間ドット数を指定する
 		case 'L':
@@ -1995,7 +1995,7 @@ function sco_cmd( &$id, &$st, &$run, &$ajax )
 		case 'T':
 			$st++;
 			$arg = sco_var_args(2, $file, $st);
-			trace("text T %s", json_encode($arg));
+			trace("text T %s", serialize($arg));
 			$gp_pc["T"] = array( sco_var($arg[0]) , sco_var($arg[1]) );
 			return;
 		// X num:  指定の文字列を表示する

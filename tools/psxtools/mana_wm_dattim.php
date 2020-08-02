@@ -7,7 +7,7 @@ $gp_tim = array();
 
 function loadtim( $tim_fn )
 {
-	$file = file_get_contents($tim_fn);
+	$file = load_file($tim_fn);
 	if ( empty($file) )  return;
 
 	global $gp_tim;
@@ -117,10 +117,8 @@ function mana( $fname )
 {
 	// for /wm/wm*/*.dat and /wm/wm*/*.tim pair
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	if ( ! file_exists("$pfx.dat") )  return;
-	if ( ! file_exists("$pfx.tim") )  return;
 
-	$file = file_get_contents("$pfx.dat");
+	$file = load_file("$pfx.dat");
 	if ( empty($file) )  return;
 	echo "\n=== $pfx.dat/tim pair ===\n";
 

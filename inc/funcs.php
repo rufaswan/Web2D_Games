@@ -234,7 +234,7 @@ function fgetline( $txtfile, $line )
 
 function save_savefile( $ext, &$pc )
 {
-	file_put_contents(SAVE_FILE . $ext, json_encode($pc) );
+	file_put_contents(SAVE_FILE . $ext, serialize($pc) );
 
 	//$pc = "<?php\n\$pc=". var_export($pc,true) .";";
 	//file_put_contents(SAVE_FILE . $ext, $pc );
@@ -248,7 +248,7 @@ function load_savefile( $ext )
 	if ( ! file_exists($save) )
 		return $pc;
 
-	$pc = json_decode( file_get_contents($save), true);
+	$pc = unserialize( file_get_contents($save) );
 
 	//$pc = file_get_contents(SAVE_FILE . $ext);
 	//eval("\$pc={$pc};");

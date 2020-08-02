@@ -249,8 +249,8 @@ function mana( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$mgc = substr($file, 0, 8);
-	if ( $mgc != "SKmapDat" )  return;
+	if ( substr($file, 0, 8) != "SKmapDat" )
+		return;
 
 	$dir = str_replace('.', '_', $fname);
 

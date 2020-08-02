@@ -27,8 +27,6 @@ function php_check( $func )
 		echo "check for $func() ... not found\n";
 }
 
-php_check("json_encode");
-php_check("json_decode");
 php_check("zlib_encode");
 php_check("zlib_decode");
 

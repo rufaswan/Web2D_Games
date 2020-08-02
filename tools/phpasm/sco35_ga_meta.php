@@ -52,4 +52,4 @@ $gp_meta = array();
 for ( $i=1; $i < $argc; $i++ )
 	add_meta( $argv[$i] , $gp_meta );
 
-file_put_contents("meta.json", json_encode($gp_meta));
+file_put_contents("meta.phpstr", serialize($gp_meta));

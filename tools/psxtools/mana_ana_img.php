@@ -28,7 +28,7 @@ function ana_alp( $fg, $bg )
 //////////////////////////////
 function secttalk( &$file, $talk, $dir )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	$num = str2int($file, $talk, 4);
@@ -177,7 +177,7 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 
 function sectanim( &$meta, $id, $pos, $flg )
 {
-	if ( defined("DRY_RUN") && DRY_RUN )
+	if ( defined("DRY_RUN") )
 		return;
 
 	$num = ord($meta[$pos]);

@@ -4,14 +4,14 @@ require "common.inc";
 // extract RAM section from uncompressed save states
 function subram( &$file )
 {
-	// ePSXe Windows + Linux
-	if ( substr($file, 0, 5) == "ePSXe" )
+	// ePSXe PlayStation emulator (Windows + Linux)
+	if ( substr($file, 0, 5) == 'ePSXe' )
 	{
 		echo "DETECT emulator = ePSXe\n";
 		return substr($file, 0x1ba, 0x200000);
 	}
 
-	// pSXfin Windows + Linux
+	// pSXfin PlayStation emulator (Windows + Linux)
 	if ( substr($file, 0, 7) == "ARS2CPU" || substr($file, 0, 6) == "ARSCPU" )
 	{
 		echo "DETECT emulator = pSXfin\n";
@@ -26,7 +26,7 @@ function subram( &$file )
 		return "";
 	}
 
-	// no$psx Windows
+	// no$psx PlayStation emulator (Windows)
 	if ( substr($file, 0, 15) == 'NO$PSX SNAPSHOT' )
 	{
 		echo "DETECT emulator = nocash PSX\n";
@@ -55,7 +55,7 @@ function subram( &$file )
 		return "";
 	}
 
-	// no$gba Windows
+	// no$gba Gameboy Advance + Nintendo DS emulator (Windows)
 	if ( substr($file, 0, 15) == 'NO$GBA SNAPSHOT' )
 	{
 		echo "DETECT emulator = nocash GBA\n";
@@ -90,6 +90,47 @@ function subram( &$file )
 		return "";
 	}
 
+	// Yabause Saturn emulator (Linux)
+	if ( substr($file, 0, 3) == 'YSS' )
+	{
+		echo "DETECT emulator = Yabause\n";
+		$ed = strlen($file);
+		$st = 0x14;
+		while ( $st < $ed )
+		{
+			$mgc = substr($file, $st+0, 4);
+			switch ( $mgc )
+			{
+				case "CART":
+				case "CS2 ":
+				case "MSH2":
+				case "SSH2":
+				case "SCSP":
+				case "SCU ":
+				case "VDP1":
+				case "SMPC":
+				case "VDP2":
+					$len = str2int($file, $st+8, 4);
+					printf("%8x , %8x , $mgc\n", $st, $len);
+					save_file("ram/$mgc", substr($file, $st+12, $len));
+					$st += ($len + 12);
+					break;
+				case "OTHR":
+					$len = str2int($file, $st+8, 4);
+					printf("%8x , %8x , $mgc\n", $st, $len);
+					$st += (12 + 0x10000);
+					$ram = "";
+					for ( $i=0; $i < 0x100000; $i += 2 )
+						$ram .= $file[$st+$i+1] . $file[$st+$i+0];
+					return $ram;
+				default:
+					printf("%8x , $mgc\n", $st);
+					return "";
+			} // switch ( $mgc )
+		} // while ( $st < $ed )
+		return "";
+	}
+
 	return "";
 }
 
@@ -101,7 +142,7 @@ function psxram( $fname )
 	$ram = subram($file);
 	if ( empty($ram) )  return;
 
-	$base = str_replace('.', '_', $fname);
+	$base = preg_replace("|[^a-zA-Z0-9]|", '_', $fname);
 	save_file("$base.ram", $ram);
 	return;
 }

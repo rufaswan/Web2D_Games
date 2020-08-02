@@ -24,7 +24,7 @@ function cp_map( &$iso, $dir, $off )
 {
 	list($st,$ed,$bk) = $off;
 	$id = 0;
-	$dra = file_get_contents("$dir/dra.bin");
+	$dra = load_file("$dir/dra.bin");
 	while ( $st < $ed )
 	{
 		$b1 = str2int($dra, $st+ 0, 3); // f_xxx.bin
@@ -63,7 +63,7 @@ function cp_servant( &$iso, $dir, $off )
 	// off2  sd_xxx.vh
 	// off3  sd_xxx.vb
 	list($ram,$num,$off1,$off2,$off3) = $off;
-	$dra = file_get_contents("$dir/dra.bin");
+	$dra = load_file("$dir/dra.bin");
 	for ( $i=0; $i < $num; $i++ )
 	{
 		$b1 = str2int($dra, $off1+$i*4, 3);
@@ -91,7 +91,7 @@ function cp_weapon( $dir, $off )
 	$id = 0;
 	for ( $i=0; $i < 2; $i++ )
 	{
-		$wpn = file_get_contents("$dir/bin/weapon{$i}.bin");
+		$wpn = load_file("$dir/bin/weapon{$i}.bin");
 		$ed = strlen($wpn);
 		for ( $st=0; $st < $ed; $st += $sz3 )
 		{
