@@ -24,6 +24,8 @@ function mana( $fname )
 	$b1 = ramint($file, 0x14);
 	$b2 = str2int($file, 0x0c, 4);
 	$pix = substr($file, $b1, $b2);
+	save_file("$fname.pix", $pix);
+
 	$w = 0x20;
 	$h = $b2 / $w;
 

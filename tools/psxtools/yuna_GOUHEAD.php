@@ -6,9 +6,8 @@ function yuna( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$mgc = substr($file, 0, 7);
-	if ( $mgc != "GOUHEAD" )  return;
-
+	if ( substr($file, 0, 7) != "GOUHEAD" )
+		return;
 	$dir = str_replace('.', '_', $fname);
 
 	$cnt = str2int($file, 12, 4);

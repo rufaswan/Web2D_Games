@@ -2,7 +2,7 @@
 require "common.inc";
 
 // extract RAM section from uncompressed save states
-function subram( &$file )
+function subram( &$file, $base )
 {
 	// ePSXe PlayStation emulator (Windows + Linux)
 	if ( substr($file, 0, 5) == 'ePSXe' )
@@ -20,7 +20,7 @@ function subram( &$file )
 		while ( $st < $ed )
 		{
 			if ( substr($file, $st, 3) == "RAM" )
-				return substr($file, $st + 0xc, 0x200000);
+				return substr($file, $st + 12, 0x200000);
 			$st += 4;
 		}
 		return "";
@@ -39,14 +39,12 @@ function subram( &$file )
 			{
 				case "CORE":
 				case "BIOS":
-					$len = str2int($file, $st+8, 4);
-					printf("%8x , %8x , $mgc\n", $st, $len);
-					$st += ($len + 12);
-					break;
 				case "MRAM":
 					$len = str2int($file, $st+8, 4);
 					printf("%8x , %8x , $mgc\n", $st, $len);
-					return substr($file, $st + 12, $len);
+					save_file("$base/$mgc", substr($file, $st+12, $len));
+					$st += ($len + 12);
+					break;
 				default:
 					printf("%8x , $mgc\n", $st);
 					return "";
@@ -74,14 +72,12 @@ function subram( &$file )
 				case "RAM7":
 				case "WIFI":
 				case "VALS":
-					$len = str2int($file, $st+8, 4);
-					printf("%8x , %8x , $mgc\n", $st, $len);
-					$st += ($len + 12);
-					break;
 				case "RAM2":
 					$len = str2int($file, $st+8, 4);
 					printf("%8x , %8x , $mgc\n", $st, $len);
-					return substr($file, $st + 12, $len);
+					save_file("$base/$mgc", substr($file, $st+12, $len));
+					$st += ($len + 12);
+					break;
 				default:
 					printf("%8x , $mgc\n", $st);
 					return "";
@@ -112,15 +108,16 @@ function subram( &$file )
 				case "VDP2":
 					$len = str2int($file, $st+8, 4);
 					printf("%8x , %8x , $mgc\n", $st, $len);
-					save_file("ram/$mgc", substr($file, $st+12, $len));
+					save_file("$base/$mgc", substr($file, $st+12, $len));
 					$st += ($len + 12);
 					break;
 				case "OTHR":
 					$len = str2int($file, $st+8, 4);
 					printf("%8x , %8x , $mgc\n", $st, $len);
 					$st += (12 + 0x10000);
+					$sz = $len - 0x10000;
 					$ram = "";
-					for ( $i=0; $i < 0x100000; $i += 2 )
+					for ( $i=0; $i < $sz; $i += 2 )
 						$ram .= $file[$st+$i+1] . $file[$st+$i+0];
 					return $ram;
 				default:
@@ -139,11 +136,11 @@ function psxram( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$ram = subram($file);
-	if ( empty($ram) )  return;
-
 	$base = preg_replace("|[^a-zA-Z0-9]|", '_', $fname);
-	save_file("$base.ram", $ram);
+	$ram = subram($file, $base);
+
+	if ( ! empty($ram) )
+		save_file("$base.ram", $ram);
 	return;
 }
 

@@ -45,8 +45,8 @@ function cvnds( $fname )
 					for ( $i=$off2; $i < $off3; $i++ )
 					{
 						$p = ord( $file[$i] );
-						$p1 = $p & 0x0f;
-						$p2 = $p >> 4;
+						$p1 = ($p >> 0) & BIT4;
+						$p2 = ($p >> 4) & BIT4;
 						$pix .= chr($p1) . chr($p2);
 					}
 

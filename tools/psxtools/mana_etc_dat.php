@@ -28,10 +28,9 @@ function mana( $fname )
 			{
 				$b = ord( $file[$ps] );
 
-				$b1 = $b & 0xf;
-				$b2 = $b >> 4;
-				$clut .= chr($b1);
-				$clut .= chr($b2);
+				$b1 = ($b >> 0) & BIT4;
+				$b2 = ($b >> 4) & BIT4;
+				$clut .= chr($b1) . chr($b2);
 
 				$ps++;
 				$sz--;

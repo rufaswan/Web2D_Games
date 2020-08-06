@@ -49,9 +49,9 @@ function secttile( $dat, $bit8, &$pix )
 {
 	$cn = $dat & 0x7f;
 
-	$blk = ($dat >>  8) & 0xf;
-	$col = ($dat >> 16) & 0xf;
-	$row = ($dat >> 20) & 0xf;
+	$blk = ($dat >>  8) & 0x0f;
+	$col = ($dat >> 16) & 0x0f;
+	$row = ($dat >> 20) & 0x0f;
 
 	// texture data is mixed 4-bit and 8-bit
 	// arranged like this
@@ -105,8 +105,8 @@ function secttile( $dat, $bit8, &$pix )
 		$ripd = substr($gp_pixd, $row, 0x200);
 		$pix['src']['pix'] = rippix4($ripd, 0, 0, 16, 16, $cls, 0x100);
 
-		$cn1 = $cn & 0x0f;
-		$cn2 = $cn >> 4;
+		$cn1 = ($cn >> 0) & BIT4;
+		$cn2 = ($cn >> 4) & BIT4;
 		$pix['src']['pal'] = substr($gp_clut[$cn2], $cn1*0x40, 0x40);
 	}
 	return;

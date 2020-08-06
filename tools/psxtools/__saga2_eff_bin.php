@@ -29,8 +29,9 @@ function saga2( $fname )
 		for ( $i=0; $i < $siz; $i++ )
 		{
 			$b = ord( $file[$st+8+$i] );
-			$pix .= chr( $b & 0xf );
-			$pix .= chr( $b >> 4 );
+			$b1 = ($b >> 0) & BIT4;
+			$b2 = ($b >> 4) & BIT4;
+			$pix .= chr($b1) . chr($b2);
 		}
 
 		foreach ( $clut as $k => $c )

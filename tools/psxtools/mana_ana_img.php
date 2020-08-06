@@ -52,8 +52,8 @@ function secttalk( &$file, $talk, $dir )
 		{
 			$b = ord( $file[$st] );
 
-			$b1 = $b & 0xf;
-			$b2 = $b >> 4;
+			$b1 = ($b >> 0) & BIT4;
+			$b2 = ($b >> 4) & BIT4;
 			$clut .= chr($b1);
 			$clut .= chr($b2);
 
@@ -87,7 +87,7 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 		}
 		else
 		{
-			if ( ! isset( $ids[ $p7 & 0xf ] ) )
+			if ( ! isset( $ids[ $p7 & 0x0f ] ) )
 				return;
 			if ( $m == 0 && $meta[$off+9] == BYTE && $meta[$off+10] == BYTE )
 				$big = "BIG";

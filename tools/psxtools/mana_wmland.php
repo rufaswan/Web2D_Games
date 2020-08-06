@@ -103,10 +103,9 @@ function landdata( &$file, $dir )
 	for ( $i=0; $i < 0x1f00; $i++ )
 	{
 		$b = ord( $file[$i] );
-		$b1 = $b & 0xf;
-		$b2 = $b >> 4;
-		$gp_pix .= chr($b1);
-		$gp_pix .= chr($b2);
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
+		$gp_pix .= chr($b1) . chr($b2);
 	}
 	$gp_clut = mstrpal555($file, 0x1f00, 16, 8);
 

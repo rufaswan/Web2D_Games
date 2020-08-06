@@ -3,19 +3,6 @@ require "common.inc";
 
 $gp_patch = array();
 
-function rm_ent( $dir )
-{
-	if ( empty($dir) || ! is_dir($dir) || is_link($dir) )
-		return;
-	foreach ( scandir($dir) as $f )
-	{
-		if ( $f[0] == '.' )
-			continue;
-		unlink("$dir/$f");
-	}
-	return;
-}
-
 function scdat_ent( &$ram, $ent, $base, $fst, $fbk )
 {
 	$ent = preg_replace("|[\s]+|", '', $ent);
@@ -25,7 +12,7 @@ function scdat_ent( &$ram, $ent, $base, $fst, $fbk )
 		return nds_overlay( $ram, $base, substr($l,0,strpos($l,',')) );
 
 	$dir = "$base/cvnds/$d";
-	rm_ent($dir);
+	rmfile_r($dir);
 	@mkdir($dir, 0755, true);
 
 	$cnt = array(0,0,0,0,0);

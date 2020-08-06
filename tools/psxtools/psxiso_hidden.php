@@ -19,8 +19,8 @@ function fp2int( $fp, $pos, $byte )
 function chrbase10( $chr )
 {
 	$b = ord( $chr );
-	$b1 = $b & 0xf;
-	$b2 = $b >> 4;
+	$b1 = ($b >> 0) & BIT4;
+	$b2 = ($b >> 4) & BIT4;
 	return ($b2 * 10) + $b1;
 }
 

@@ -17,12 +17,12 @@
 // - Backgrounds are PsuedoColor, very rarely DirectColor
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
+define("BIT4",  0x0f);
 define("BIT8",  0xff);
 define("BIT16", 0xffff);
 define("BIT24", 0xffffff);
 define("BIT32", 0xffffffff);
 //if ( defined("DRY_RUN") ) // per script
-//if ( defined("BIG_END") ) // per script
 
 function str2int( &$str, $pos, $byte )
 {
@@ -50,8 +50,6 @@ function ordint( $str )
 {
 	if ( (int)$str === $str ) // already $int
 		return $str;
-	if ( defined("BIG_END") )
-		$str = strrev($str);
 	$len = strlen($str);
 	$int = 0;
 	for ( $i=0; $i < $len; $i++ )
@@ -139,6 +137,22 @@ function int_floor( $int, $floor )
 	while ( ($int % $floor) != 0 )
 		$int--;
 	return (int)$int;
+}
+
+function int_range()
+{
+	$var = func_get_args();
+	$v = array_shift($var);
+	$min = $v;
+	$max = $v;
+	foreach ( $var as $v )
+	{
+		if ( $min > $v )
+			$min = $v;
+		if ( $max < $v )
+			$max = $v;
+	}
+	return array( (int)$min, (int)$max);
 }
 
 function arrayint( &$array )
@@ -233,17 +247,42 @@ function patchfile( $fname )
 	return $data;
 }
 
+function rmfile_r( $dir )
+{
+	if ( empty($dir) || is_link($dir) )
+		return;
+	if ( $dir == '.' || $dir == '..' )
+		return;
+
+	$func = __FUNCTION__;
+	if ( is_dir($dir) )
+	{
+		foreach ( scandir($dir) as $f )
+		{
+			if ( $f[0] == '.' )
+				continue;
+			$func("$dir/$f");
+		}
+	}
+	else
+		unlink($dir);
+	return;
+}
+
 function debug( $str, $sep = 4 )
 {
 	echo "DEBUG : ";
 	$len = strlen($str);
-	$i = 0;
-	while ( $i < $len )
+	for ( $i=0; $i < $len; $i++ )
 	{
-		printf("%2x ", ord( $str[$i] ));
-			$i++;
-		if ( $i != 0 && ($i % $sep) == 0 )
+		if ( $i > 0 && ($i % $sep) == 0 )
 			echo "  ";
+
+		$b = ord( $str[$i] );
+		if ( $b == 0 )
+			echo "-- ";
+		else
+			printf("%02x ", $b);
 	}
 	echo "\n";
 	return;
@@ -304,12 +343,7 @@ function rgb555( $str )
 	// 15-bit = 0(A) 01010(B) 01010(G) 11000(R)
 	//        = 0010 1001 0101 1000 = 2958
 	//        = 58 29
-	$b1 = ord( $str[0] );
-	$b2 = ord( $str[1] );
-	if ( defined("BIG_END") )
-		$pal = ($b1 << 8) + $b2;
-	else
-		$pal = $b1 + ($b2 << 8);
+	$pal = ordint($str);
 
 	$b = ($pal >> 7) & 0xf8; // <<  1 >> 8 == >> 7
 	$g = ($pal >> 2) & 0xf8; // <<  6 >> 8 == >> 2
@@ -431,9 +465,6 @@ function rippix2( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 			$buf .= chr( ($p >> 4) & 0x03 );
 			$buf .= chr( ($p >> 6) & 0x03 );
 
-			if ( defined("BIG_END") )
-				$buf = strrev($buf);
-
 			$rip .= $buf;
 		} // for ( $x=0; $x < ($w/2); $x++ )
 	} // for ( $y=0; $y < $h; $y++ )
@@ -458,11 +489,8 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 			$p = ord( $pix[$sxx] );
 
 			$buf = "";
-			$buf .= chr( ($p >> 0) & 0x0f );
-			$buf .= chr( ($p >> 4) & 0x0f );
-
-			if ( defined("BIG_END") )
-				$buf = strrev($buf);
+			$buf .= chr( ($p >> 0) & BIT4 );
+			$buf .= chr( ($p >> 4) & BIT4 );
 
 			$rip .= $buf;
 		} // for ( $x=0; $x < ($w/2); $x++ )
@@ -1000,8 +1028,8 @@ function psxtim( &$file )
 		while ( $siz > 0 )
 		{
 			$b = ord( $file[$pos] );
-			$b1 = $b & 0x0f;
-			$b2 = $b >> 4;
+			$b1 = ($b >> 0) & BIT4;
+			$b2 = ($b >> 4) & BIT4;
 			$tim['pix'] .= chr($b1) . chr($b2);
 
 			$siz--;

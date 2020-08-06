@@ -37,8 +37,8 @@ function sotn_decode( &$meta, $dir, $off )
 		{
 			$b = ord( $meta[$off] );
 				$off++;
-			$v0[] = $b >> 4;
-			$v0[] = $b & 0x0f;
+			$v0[] = ($b >> 4) & BIT4;
+			$v0[] = ($b >> 0) & BIT4;
 		}
 
 		$flg = array_shift($v0);
@@ -85,8 +85,8 @@ function sotn_decode( &$meta, $dir, $off )
 			case 13:
 			case 14:
 				$b = ord( $a0[$flg-7] );
-				$b1 = $b >> 4;
-				$b2 = $b & 0x0f;
+				$b1 = ($b >> 4) & BIT4;
+				$b2 = ($b >> 0) & BIT4;
 				if ( $b1 == 2 )
 					$dec .= chr($b2) . chr($b2);
 				else

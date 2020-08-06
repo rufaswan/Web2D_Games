@@ -18,7 +18,7 @@ function mana_decode( &$file , $st )
 			case 0:
 				$b1 = ord( $file[$st+1] );
 					$st += 2;
-				$len = ($b1 & 0xf) + 3;
+				$len = ($b1 & 0x0f) + 3;
 				$s0 = chr($b1 >> 4);
 				printf("F0 DUPL %2x [%3d]\n", $b1>>4, $len);
 				for ( $i=0; $i < $len; $i++ )
@@ -39,7 +39,7 @@ function mana_decode( &$file , $st )
 				$b2 = ord( $file[$st+2] );
 					$st += 3;
 				$len = $b1 + 2;
-				$s0 = chr($b2 & 0xf);
+				$s0 = chr($b2 & 0x0f);
 				$s1 = chr($b2 >> 4);
 				printf("F2 DUPL %2x %2x [%3d]\n", $b2&0xf, $b2>>4, $len);
 				for ( $i=0; $i < $len; $i++ )
@@ -198,7 +198,7 @@ function mana_decode( &$file , $st )
 				$b2 = ord( $file[$st+2] );
 					$st += 3;
 				$len =  ($b2 >> 4) + 4;
-				$pos = (($b2 & 0xf) << 8 ) | $b1;
+				$pos = (($b2 & 0x0f) << 8 ) | $b1;
 				printf("FC POS  %3d [%3d]\n", $pos+1, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{

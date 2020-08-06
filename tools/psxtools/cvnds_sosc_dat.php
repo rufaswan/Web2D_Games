@@ -22,8 +22,8 @@ function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$b = ord($file[$i]);
-					$b1 = $b & 0x0f;
-					$b2 = $b >> 4;
+					$b1 = ($b >> 0) & BIT4;
+					$b2 = ($b >> 4) & BIT4;
 					$texx[$id] .= chr($b1) . chr($b2);
 				}
 				break;

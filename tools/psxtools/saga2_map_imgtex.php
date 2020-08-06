@@ -59,7 +59,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 	$pix['src']['h'] = 16;
 
 	global $gp_pix, $gp_clut;
-	$cn = ord( $meta[0x2b] ) & 0xf;
+	$cn = ord( $meta[0x2b] ) & 0x0f;
 	$pix['src']['pal'] = $gp_clut[$cn];
 
 	$pos = $base + ($id * 4);

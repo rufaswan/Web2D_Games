@@ -44,8 +44,8 @@ function loadtex( &$file, $pos, $dir )
 				while ( $sz > 0 )
 				{
 					$b = ord( $tex[$p] );
-					$b1 = $b & 0x0f;
-					$b2 = $b >> 4;
+					$b1 = ($b >> 0) & BIT4;
+					$b2 = ($b >> 4) & BIT4;
 					$pix .= chr($b1) . chr($b2);
 
 					$p++;

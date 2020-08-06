@@ -14,8 +14,9 @@ function saga2( $fname )
 	for ( $i=0; $i < 0xb000; $i++ )
 	{
 		$b = ord( $file[$i] );
-		$pix .= chr( $b & 0xf );
-		$pix .= chr( $b >> 4 );
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
+		$pix .= chr($b1) . chr($b2);
 	}
 
 	$clut = mstrpal555($file, 0xb000, 0x10, 64);

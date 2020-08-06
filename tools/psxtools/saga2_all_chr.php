@@ -87,11 +87,9 @@ function saga2( $fname )
 		for ( $i=0; $i < $len; $i++ )
 		{
 			$b = ord( $pix[$i] );
-			$b1 =  $b & 0xf;
-			$b2 = ($b & 0xf0) >> 4;
-
-			$data .= chr($b1);
-			$data .= chr($b2);
+			$b1 = ($b >> 0) & BIT4;
+			$b2 = ($b >> 4) & BIT4;
+			$data .= chr($b1) . chr($b2);
 		}
 		save_file($out, $data);
 		$st += $len;

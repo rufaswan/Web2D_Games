@@ -30,8 +30,8 @@ function loadpix( &$file, $pos )
 		while ( $siz > 0 )
 		{
 			$b = ord($pix[$p]);
-			$b1 = $b & 0x0f;
-			$b2 = $b >> 4;
+			$b1 = ($b >> 0) & BIT4;
+			$b2 = ($b >> 4) & BIT4;
 			$rip .= chr($b1) . chr($b2);
 
 			$siz--;
@@ -56,8 +56,8 @@ function loadsrc( &$meta, $off, &$pix )
 	for ( $i=0; $i < $siz; $i++ )
 	{
 		$b = ord( $meta[$off+$i] );
-		$b1 = $b & 0x0f;
-		$b2 = $b >> 4;
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
 		$src .= chr($b1) . chr($b2);
 	}
 
