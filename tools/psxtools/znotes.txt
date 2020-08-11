@@ -169,14 +169,16 @@ stackoverflow.com/questions/9014729/manually-alpha-blending-an-rgba-pixel-with-a
 	And then repeating for the blue and green channels.
 	Do this for every pixel.
 
-stackoverflow.com/questions/6672374/convert-rgb-to-rgba-over-white
+stackoverflow.com/questions/13002979/how-to-calculate-rotation-angle-from-rectangle-points
 
-	Take the lowest color component,
-	and convert that to an alpha value.
-	Then scale the color components by subtracting the lowest,
-	and dividing by the alpha value.
+	If the shape is not rotated more than 90 degree,
+	you can use the tanget ratio of a right angle triangle:
 
-stackoverflow.com/questions/2049230/convert-rgba-color-to-rgb
+		var rotationRadians = Math.atan((x1 - x4) / (y1 - y4));
+		var RAD2DEG = 180 / Math.PI;
+		var rotationDegrees = rotationRadians * RAD2DEG;
 
-	You might want to read the famous paper "Compositing digital images" (by Porter and Duff) for full details on alpha-composition:
-	keithp.com/~keithp/porterduff
+	If the rotation is greater than 90 degree but less than 180 degree,
+	you will need to add 180 degree:
+
+		rotationDegrees += 180;

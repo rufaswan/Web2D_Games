@@ -1,5 +1,6 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
 
 function yuna_decode( &$file, $fname )
 {
@@ -93,14 +94,12 @@ function yuna( $fname )
 		{
 			$b = substr($rgba, $pos, 0x100); // 8*8*4
 				$pos += 0x100;
-			list($c,$p) = rgba2clut($b, '');
 
-			$pix['src']['pix'] = $p;
-			$pix['src']['pal'] = $c;
+			$pix['src']['pix'] = $b;
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 
-			copypix($pix);
+			copyrgba($pix);
 		} // for ( $x=0; $x < $w; $x += 8 )
 	} // for ( $y=0; $y < $h; $y += 8 )
 

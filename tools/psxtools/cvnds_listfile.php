@@ -1,5 +1,6 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
 
 $gp_patch = array();
 

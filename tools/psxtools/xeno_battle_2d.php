@@ -66,14 +66,6 @@ function loadsrc( &$meta, $off, &$pix )
 	$pix['src']['pix'] = $src;
 	return;
 }
-
-// callback for copypix()
-function xeno_alp( $fg, $bg )
-{
-	if ( $fg == $bg )
-		return $fg;
-	return alpha_add( $fg, $bg );
-}
 //////////////////////////////
 function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 {
@@ -193,8 +185,6 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 		$pix['hflip'] = $m10 & 0x40;
 		$pix['vflip'] = $vflip;
 		$cid = $m10 & 0x0f;
-		//alpha parts has both sprite + effect
-		//$pix['alpha'] = ( $m10 & 0x20 ) ? "xeno_alp": "";
 
 		if ( $p256 )
 		{

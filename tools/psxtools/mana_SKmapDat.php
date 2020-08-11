@@ -53,7 +53,7 @@ function secttile( $dat, $bit8, &$pix )
 	$col = ($dat >> 16) & 0x0f;
 	$row = ($dat >> 20) & 0x0f;
 
-	// texture data is mixed 4-bit and 8-bit
+	// texture data is mixed 4-bit (4 columns) and 8-bit (2 columns)
 	// arranged like this
 	//  4-bit           |  8-bit
 	//   0  10  20  30  |   0  10

@@ -1,5 +1,5 @@
 <?php
-// toolset for PS One games
+// toolset for PlayStation One games
 // - little-endian byte order
 // - 32-bit negative int
 // - load/store registers
@@ -36,14 +36,6 @@ function substr0( &$str, $pos )
 	while ( $str[$pos+$len] != ZERO )
 		$len++;
 	return substr($str, $pos, $len);
-}
-
-function str_endian( &$str, $pos, $byte )
-{
-	$s = substr($str, $pos, $byte);
-	$s = strrev($s);
-	strupd($str, $pos, $s);
-	return;
 }
 
 function ordint( $str )
@@ -442,35 +434,6 @@ function COPYPIX_DEF()
 	return $php56;
 }
 //////////////////////////////
-function rippix2( &$pix, $sx, $sy, $w, $h, $sw, $sh )
-{
-	if ( defined("DRY_RUN") )
-		return;
-	$sx /= 4;
-	$w  /= 4;
-	$sw /= 4;
-
-	$rip = "";
-	for ( $y=0; $y < $h; $y++ )
-	{
-		$syy = ($sy + $y) * $sw;
-		for ( $x=0; $x < $w; $x++ )
-		{
-			$sxx = $syy + $sx + $x;
-			$p = ord( $pix[$sxx] );
-
-			$buf = "";
-			$buf .= chr( ($p >> 0) & 0x03 );
-			$buf .= chr( ($p >> 2) & 0x03 );
-			$buf .= chr( ($p >> 4) & 0x03 );
-			$buf .= chr( ($p >> 6) & 0x03 );
-
-			$rip .= $buf;
-		} // for ( $x=0; $x < ($w/2); $x++ )
-	} // for ( $y=0; $y < $h; $y++ )
-	return $rip;
-}
-
 function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
@@ -709,6 +672,7 @@ function savpix( $fn, &$pix, $trim = false )
 	$rgba .= chrint( $pix['rgba']['h'], 4 );
 	$rgba .= $pix['rgba']['pix'];
 	save_file("$fn.rgba", $rgba);
+	return;
 }
 
 function alpha_add( $fg, $bg )
@@ -772,6 +736,9 @@ function scalepix( &$pix, $factor = 1 )
 {
 	if ( defined("DRY_RUN") )
 		return;
+	if ( $factor == 1 )
+		return;
+
 	$res = "";
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
 	{
@@ -789,166 +756,6 @@ function scalepix( &$pix, $factor = 1 )
 	$pix['src']['h'] *= $factor;
 	$pix['src']['pix'] = $res;
 	return;
-}
-//////////////////////////////
-function clut2rgba( $pal, $pix, $bgzero = true )
-{
-	$rgba = "";
-	$len = strlen($pix);
-	for ( $i=0; $i < $len; $i++ )
-	{
-		if ( $pix[$i] == ZERO )
-			$rgba .= ( $bgzero ) ? substr($pal, 0, 4) : PIX_ALPHA;
-		else
-			$rgba .= substr($pal, ord($pix[$i])*4, 4);
-	}
-	return $rgba;
-}
-
-function rgba2clut( $rgba, $bg = PIX_BLACK )
-{
-	$clut = array();
-	if ( ! empty($bg) )
-		$clut[] = $bg;
-	$pix  = "";
-	$siz  = strlen($rgba);
-	for ( $i=0; $i < $siz; $i += 4 )
-	{
-		$c = substr($rgba, $i, 4);
-		if ( array_search($c, $clut) === false )
-			$clut[] = $c;
-		$p = array_search($c, $clut);
-		$pix .= chr($p);
-	}
-	if ( count($clut) > 0x100 )
-		trigger_error("rgba2clut() clut over 256 colors\n", E_USER_ERROR);
-	$clut = implode('', $clut);
-	return array($clut, $pix);
-}
-
-function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
-{
-	if ( defined("DRY_RUN") )
-		return;
-
-	$rip = "";
-	for ( $y=0; $y < $h; $y++ )
-	{
-		$sxx = ($sy + $y) * $sw + $sx;
-		$rip .= substr($rgba, $sxx*4, $w*4);
-	} // for ( $y=0; $y < $h; $y++ )
-	return $rip;
-}
-
-function copyrgba( &$pix )
-{
-	if ( copypix_errs($pix) )
-		return;
-	if ( defined("DRY_RUN") )
-		return;
-
-	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * 4);
-	for ( $y=0; $y < $pix['src']['h']; $y++ )
-	{
-		$syy = $y * $pix['src']['w'];
-		$dyy = $y;
-		if ( $pix['vflip'] )
-			$dyy = $pix['src']['h'] - 1 - $y;
-		$dyy *= $pix['src']['w'];
-
-		for ( $x=0; $x < $pix['src']['w']; $x++ )
-		{
-			$sxx = $syy + $x;
-			$dxx = $x;
-			if ( $pix['hflip'] )
-				$dxx = $pix['src']['w'] - 1 - $x;
-			$dxx += $dyy;
-
-			$c1 = substr($pix['src']['pix'], $sxx*4, 4);
-			strupd($flip, $dxx*4, $c1);
-
-		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
-	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
-
-	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
-	$sin = sin($rot);
-	$cos = cos($rot);
-	$hyp = hypot($pix['src']['w'], $pix['src']['h']) * 0.6;
-
-	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
-	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
-		$cx = $tx * $cos - $ty * $sin;
-		$cy = $tx * $sin + $ty * $cos;
-	$x1 = (int)($cx - $hyp);
-	$y1 = (int)($cy - $hyp);
-	$x2 = (int)($cx + $hyp);
-	$y2 = (int)($cy + $hyp);
-
-	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
-	$sin = sin($rot);
-	$cos = cos($rot);
-	for ( $y=$y1; $y <= $y2; $y++ )
-	{
-		$dy = $y + $pix['dy'];
-		if ( $dy < 0 || $dy >= $pix['rgba']['h'] )
-			continue;
-
-		for ( $x=$x1; $x <= $x2; $x++ )
-		{
-			$dx = $x + $pix['dx'];
-			if ( $dx < 0 || $dx >= $pix['rgba']['w'] )
-				continue;
-
-			$rx = (int)round($x * $cos - $y * $sin) - $pix['rotate'][1];
-			$ry = (int)round($x * $sin + $y * $cos) - $pix['rotate'][2];
-			if ( $rx < 0 || $rx >= $pix['src']['w'] )
-				continue;
-			if ( $ry < 0 || $ry >= $pix['src']['h'] )
-				continue;
-
-			$sxx = ($ry * $pix['src']['w']) + $rx;
-			$c1 = substr($flip, $sxx*4, 4);
-
-			$dxx = ($dy * $pix['rgba']['w']) + $dx;
-			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
-
-			// RGBA are all normla OVER blending
-			$c1 = alpha_over( $c1, $c2 );
-			strupd($pix['rgba']['pix'], $dxx*4, $c1);
-
-		} // for ( $x=$x1; $x < $x2; $x++ )
-	} // for ( $y=$y1; $y < $y2; $y++ )
-
-	return;
-}
-
-function alpha_over( $src, $dst )
-{
-	if ( $src[3] == BYTE )  return $src;
-	if ( $src[3] == ZERO )  return $dst;
-	if ( $dst[3] == ZERO )  return $src;
-	// en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending
-	// a is [0.0-1.0]
-	//   out_a = src_a + dst_a (1-src_a)
-	//   out_rgb = ( src_rgb*src_a + dst_rgb*dst_a (1-src_a) ) / out_a
-	// if dst_a = 1
-	//   out_a = 1
-	//   out_rgb = src_rgb*src_a + dst_rgb (1-src_a)
-	// if rgb is premultiplied
-	//   out_a = src_a + dst_a (1-src_a)
-	//   out_rgb = src_rgb + dst_rgb (1-src_a)
-	$src_a = ord($src[3]) / BIT8;
-	$dst_a = ord($dst[3]) / BIT8;
-	$r = ord($src[0]) * $src_a + ord($dst[0]) * $dst_a * (1-$src_a);
-	$g = ord($src[1]) * $src_a + ord($dst[1]) * $dst_a * (1-$src_a);
-	$b = ord($src[2]) * $src_a + ord($dst[2]) * $dst_a * (1-$src_a);
-	$a = $src_a + $dst_a * (1-$src_a);
-
-	$r = int_clamp($r / $a, 0, BIT8);
-	$g = int_clamp($g / $a, 0, BIT8);
-	$b = int_clamp($b / $a, 0, BIT8);
-	$a = int_clamp($a * BIT8, 0, BIT8);
-	return chr($r) . chr($g) . chr($b) . chr($a);
 }
 //////////////////////////////
 function psx_patch( $dir, $pfx )
@@ -1042,49 +849,5 @@ function psxtim( &$file )
 		return $tim;
 	}
 	return $tim;
-}
-//////////////////////////////
-function nds_ram( $dir )
-{
-	$head = load_file("$dir/header.bin");
-	if ( empty($head) )
-		return "";
-	$ram = str_repeat(ZERO, 0x400000);
-
-	$bin = load_file("$dir/arm9.bin");
-	$off = str2int($head, 0x28, 3);
-		strupd($ram, $off, $bin);
-	$bin = load_file("$dir/arm7.bin");
-	$off = str2int($head, 0x38, 3);
-		strupd($ram, $off, $bin);
-	return $ram;
-}
-
-function nds_patch( $dir, $pfx )
-{
-	$head = load_file("$dir/header.bin");
-	if ( empty($head) )
-		return array();
-	$NTR = substr($head, 12, 4);
-
-	return patchfile("{$pfx}_{$NTR}.txt");
-}
-
-function nds_overlay( &$ndsram, $dir, $id )
-{
-	if ( strpos($id, 'ov-') !== false )
-		$id = (int)substr($id, 3);
-
-	$y9   = load_file("$dir/y9.bin");
-	if ( ! isset( $y9[$id*0x20] ) )
-		return array();
-	$off   = str2int($y9, ($id * 0x20) + 0x04, 3);
-	$start = str2int($y9, ($id * 0x20) + 0x10, 3);
-
-	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
-	$bin  = load_file($over);
-	printf("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
-		strupd($ndsram, $off, $bin);
-	return array($off, $start);
 }
 //////////////////////////////

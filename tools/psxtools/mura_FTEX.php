@@ -346,7 +346,7 @@ function wiitpl( &$file, $base, $pfx, $id )
 			$bin .= $gp_clut;
 			$bin .= $gp_pix;
 			$n = $id * 10 + $i;
-			save_file("$pfx.$n.clut", $bin);
+			save_file("$pfx.$n.tpl", $bin);
 		}
 		if ( $byte == 4 )
 		{
@@ -355,7 +355,7 @@ function wiitpl( &$file, $base, $pfx, $id )
 			$bin .= chrint( $ih, 4 );
 			$bin .= $gp_pix;
 			$n = $id * 10 + $i;
-			save_file("$pfx.$n.rgba", $bin);
+			save_file("$pfx.$n.tpl", $bin);
 		}
 	}
 	return;

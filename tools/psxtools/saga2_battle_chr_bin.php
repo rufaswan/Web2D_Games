@@ -20,7 +20,7 @@ $gp_dir  = "";
 
 function sectpart( &$file, $nid, $st, $ed )
 {
-	printf("=== sectpart( $nid, %x, %x )\n", $st, $ed);
+	printf("== sectpart( $nid, %x, %x )\n", $st, $ed);
 
 	$cnt = str2int($file, $st, 4);
 	$pos = $st + 0x14;
@@ -28,15 +28,13 @@ function sectpart( &$file, $nid, $st, $ed )
 	$data = array();
 	for ( $i=0; $i < $cnt; $i++ )
 	{
-		$p0 = ord( $file[$pos] );
-		if ( $p0 & 0x80 )
+		$b1 = ord( $file[$pos] );
+		if ( $b1 & 0x80 )
 			$n = 12;
 		else
-		if ( $p0 & 0x60 ) // 40 vflip , 20 hflip
-			$n = 8;
-		else
 		{
-			$data[] = substr($file, $pos, 8);
+			$b2 = substr($file, $pos, 8);
+			array_unshift($data, $b2);
 			$n = 8;
 		}
 		$pos += $n;
@@ -45,10 +43,12 @@ function sectpart( &$file, $nid, $st, $ed )
 		return;
 	if ( $pos < $ed )
 	{
+		printf("adj_h  %x - %x\n", $pos, $ed);
+		debug( substr($file, $pos, $ed-$pos) );
 		foreach ( $data as $k => $v )
 		{
-			$p3 = ord( $v[3] );
-			$data[$k][3] = $file[$pos+$p3];
+			$b1 = ord( $v[3] );
+			$data[$k][3] = $file[$pos+$b1];
 		} // foreach ( $data as $k => $v )
 	}
 
@@ -60,6 +60,8 @@ function sectpart( &$file, $nid, $st, $ed )
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $k => $v )
 	{
+		// 0  1  2   3   4  5  6   7
+		// -  -  sx  sy  w  h  dx  dy
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] ) * 0x10;
 		$w  = ord( $v[4] );
@@ -75,8 +77,12 @@ function sectpart( &$file, $nid, $st, $ed )
 		$pix['dx'] = $dx + (CANV_S / 4);
 		$pix['dy'] = $dy + (CANV_S / 4);
 
+		$p0 = ord( $v[0] );
+		$pix['vflip'] = $p0 & 0x40;
+		$pix['hflip'] = $p0 & 0x20;
+
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
-		printf("\n");
+		printf(" , %08b\n", $p0);
 		copypix($pix);
 	} // foreach ( $data as $k => $v )
 
@@ -84,36 +90,44 @@ function sectpart( &$file, $nid, $st, $ed )
 	return;
 }
 
-function sect1( &$file, $dir )
+function sect1( &$meta, $dir )
 {
+	if ( empty($meta) )
+		return;
+	printf("== sect1( $dir )\n");
+
 	global $gp_pix;
-	$pix_st = str2int($file, 0, 4);
+	$pix_st = str2int($meta, 0, 4);
+	$gp_pix = substr($meta, $pix_st);
 
-	$gp_pix = substr($file, $pix_st);
-	$file = substr($file, 0, $pix_st);
-
-	$pos1 = str2int($file, 0x34 , 4);
-	$pos2 = str2int($file, $pos1, 4);
+	$pos1 = str2int($meta, 0x34 , 4);
+	$pos2 = str2int($meta, $pos1, 4);
 
 	$ed = $pos2 - 4;
 	$st = $pos1;
 	$nid = 1;
+	$done = array();
+	printf("while ( %x < %x )\n", $st, $ed);
 	while ( $st < $ed )
 	{
 		$fn = sprintf("$dir/%04d", $nid);
 
-		$off1 = str2int($file, $st+0, 4);
-		$off2 = str2int($file, $st+4, 4);
+		$off1 = str2int($meta, $st+0, 3);
+		$off2 = str2int($meta, $st+4, 3);
+		if ( ! isset( $done[$off1] ) )
+			sectpart($meta, $fn, $off1, $off2);
 
-		sectpart($file, $fn, $off1, $off2);
-
+		$done[$off1] = 1;
 		$st += 4;
 		$nid++;
 	}
-	$fn = sprintf("$dir/%04d", $nid);
-	$off1 = str2int($file, $st+0, 4);
 
-	sectpart($file, $fn, $off1, $pix_st);
+	// final entry without $off2
+	$fn = sprintf("$dir/%04d", $nid);
+	$off2 = str2int($meta, $st+0, 3);
+	if ( ! isset( $done[$off2] ) )
+		sectpart($meta, $fn, $off2, $pix_st);
+	return;
 }
 
 function saga2( $fname )
@@ -135,13 +149,14 @@ function saga2( $fname )
 	$pos = str2int($file, 0x18, 4);
 	for ( $i=0; $i < $cnt; $i++ )
 	{
-		$p1 = str2int($file, $pos+0, 4);
-		$p2 = str2int($file, $pos+4, 4);
-		$bin = substr($file, $p1, $p2-$p1);
+		$p = $pos + ($i * 4);
+		$p1 = str2int($file, $p+0, 4);
+		$p2 = str2int($file, $p+4, 4);
+		printf("$i , %x , %x , %x\n", $p, $p1, $p2);
 
-		printf("=== sect1() , %x - %x\n", $p1, $p2);
-		sect1($bin, "$dir/anim_{$i}");
-		$pos += 4;
+		$meta = substr($file, $p1, $p2-$p1);
+		sect1($meta, "$dir/anim_{$i}");
+		//save_file("$dir/anim_{$i}/meta", $meta);
 	}
 	return;
 }

@@ -1,40 +1,38 @@
 #!/bin/bash
+echo "${0##*/}  THUMB_ID";
 [ $# = 0 ] && exit
 
 function thumbnail()
 {
 	# 148x125 = 74x62 * 200%
-	cp -vf  $3  thumb.png
-	(( $1 > 74 )) && return
-	(( $2 > 62 )) && return
-	convert -verbose -scale 200% -strip  $3  thumb.png
+	sc='-scale 200%'
+	(( $1 > 74 )) && sc=''
+	(( $2 > 62 )) && sc=''
+	mogrify -verbose -strip \
+		$sc \
+		-background transparent \
+		-gravity center \
+		-extent 148x125 \
+		thumb.png
 }
 
-png=$(printf "%04d.png"  $1)
+png=$(printf "%04d.rgba.bmp"  $1)
 [ -f "$png" ] || exit
-thumbnail $(identify -format "%w %h %i"  "$png")
-
-for d in anim*; do
-	[ -d "$d" ] || continue
-	#mogrify -verbose -strip -trim +repage  $d/0*.png
-	montage -verbose -strip \
-		-geometry '1x1+3+3<' \
-		-background none \
-		-bordercolor none \
-		-frame 2 \
-		-gravity center  \
-		-tile x1 \
-		"$d"/0*.png  "$d"/anim.png
-done
+convert -verbose  "$png"  -trim -strip  thumb.png
+thumbnail $(identify -format "%w %h %i"  thumb.png)
 
 montage -verbose -strip \
+	-tile 10x \
 	-geometry '1x1<' \
-	-background none \
-	-gravity center  \
-	-tile 1x \
-	anim*/anim.png  sheet.png
+	-background  none \
+	-bordercolor none \
+	-gravity center \
+	0*.rgba.bmp  sheet.png
 
 <<'////'
+#mogrify -verbose -strip -trim +repage  0*.png
+	-geometry '1x1+3+3<' \
+	-frame 2 \
 # imagemagick.org/script/command-line-processing.php
 s%       scale wxh by s percent
 sw%xsh%  scale w by sw percent and h by sh percent

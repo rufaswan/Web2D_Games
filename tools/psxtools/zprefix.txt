@@ -25,32 +25,33 @@ star2  SCUS 944.22  Star Ocean 2 / Disc 2
 	progress
 		mana   ALL DONE
 		saga2  ALL DONE , SLUS not supported
-		yuna   .ss1 (saturn + psx version) only
+		yuna   .ss1 only
 		xeno   2D battle sprites only
 		sotn   all maps only
 		mkr    *upcoming*
 		valky  *upcoming*
 		star2  *upcoming*
 
-= Prefixes for NDS Games =
-cvnds  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
-cvnds  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
-cvnds  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
-
-cvnds  NDS  ACVE  Castlevania Dawn of Sorrow
-cvnds  NDS  ACBE  Castlevania Portrait of Ruin
-cvnds  NDS  YR9E  Castlevania Order of Ecclesia
+= Guest Games =
+cvnds      NDS     ACVJ      Akumajou Dracula Sougetsu no Juujika
+cvnds      NDS     ACBJ      Akumajou Dracula Gallery of Labyrinth
+cvnds      NDS     YR9J      Akumajou Dracula Ubawareta Kokuin
+cvnds      NDS     ACVE      Castlevania Dawn of Sorrow
+cvnds      NDS     ACBE      Castlevania Portrait of Ruin
+cvnds      NDS     YR9E      Castlevania Order of Ecclesia
+yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
+yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
+yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3
+pcrown     SATURN  T-14418G  Princess Crown
+sotn_sat   SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+mura       WII     Oboro Muramasa
+rusty      PC98    Rusty
 
 	progress
-		cvnds  all maps only
-
-= Foreign Games =
-yuna   SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
-yuna   SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
-yuna   SATURN  T-14311G  Galaxy Fraulein Yuna 3
-crown  SATURN  T-14418G  Princess Crown
-
-??? to be moved out ???
-	sotn_sat  SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
-	rusty_pc98  PC98  Rusty
-	mura  WII  muramasa
+		yuna_mika  ALL DONE
+		cvnds      all maps only
+		yuna       .ss1 only
+		pcrown     .chb/.mcb only (+PSP .tmx)
+		sotn_sat   *upcoming*
+		mura       *upcoming*
+		rusty      *upcoming*

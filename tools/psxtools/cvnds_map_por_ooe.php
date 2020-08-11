@@ -1,5 +1,6 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
 
 //define("DRY_RUN", true);
 

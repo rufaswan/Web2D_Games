@@ -1,5 +1,7 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
+require "common-3d.inc";
 
 define("CANV_S", 0x200);
 define("SCALE", 1);
@@ -29,8 +31,8 @@ function vertdata( $x1, $y1, $x2, $y2, $mx, $my, $hf, $vf )
 
 function verttype( &$pix, $dat )
 {
-	//    -| 12  43  |- 21  34  -- 14  41  || 23  32
-	//    -| 43  12  |- 34  21  || 23  32  -- 14  41
+	//    -| 12  43  |- 21  34  || 14  41  -- 23  32
+	//    -| 43  12  |- 34  21  -- 23  32  || 14  41
 	// flip  -   y      x   xy     xr  l      r   xl
 	// flag  7    6  5    4   3  2   1  0
 	//       45l  -  45r  mx  -  cut -  -
@@ -52,44 +54,32 @@ function verttype( &$pix, $dat )
 
 	// 0 1  2  3   4  5   6  7   8  9   a  b
 	// pid  x1 y1  x2 y2  x3 y3  x4 y4  -  flag
-	if ( ($xy[3] == $xy[5]) && ($xy[7] == $xy[9]) ) // (x1 == x2) && (x3 == x4)
+	$vert = vertex_type( $xy[2], $xy[3], $xy[4], $xy[5], $xy[6], $xy[7], $xy[8], $xy[9] );
+	if ( ! empty($vert) )
 	{
-		//= 1243  4312  2134  3421
-		if ( $xy[2] < $xy[4] ) // x1 < x2
+		echo "DETECT verttype {$vert[0]}\n";
+		switch ( $vert[0] )
 		{
-			//= 1243  4312
-			if ( $xy[5] < $xy[7] ) // y2 < y3
-			{
-				echo "DETECT verttype 1243\n";
-				list($dx,$dy,$hf,$vf) = vertdata( $xy[2], $xy[3], $xy[6], $xy[7], $mx, $my, $hf, $vf );
-			}
-			else
-			{
-				echo "DETECT verttype 4312\n";
-				list($dx,$dy,$hf,$vf) = vertdata( $xy[8], $xy[9], $xy[4], $xy[5], $mx, $my, $hf, $vf );
+			case "1243":
+				list($dx,$dy,$hf,$vf) = vertdata( $vert[1], $vert[2], $vert[3], $vert[4], $mx, $my, $hf, $vf );
+				break;
+			case "4312":
+				list($dx,$dy,$hf,$vf) = vertdata( $vert[1], $vert[2], $vert[3], $vert[4], $mx, $my, $hf, $vf );
 				$vf = !$vf;
-			}
-		}
-		else
-		{
-			//= 2134  3421
-			if ( $xy[5] < $xy[7] ) // y2 < y3
-			{
-				echo "DETECT verttype 2134\n";
-				list($dx,$dy,$hf,$vf) = vertdata( $xy[4], $xy[5], $xy[8], $xy[9], $mx, $my, $hf, $vf );
+				break;
+			case "2134":
+				list($dx,$dy,$hf,$vf) = vertdata( $vert[1], $vert[2], $vert[3], $vert[4], $mx, $my, $hf, $vf );
 				$hf = !$hf;
-			}
-			else
-			{
-				echo "DETECT verttype 3421\n";
-				list($dx,$dy,$hf,$vf) = vertdata( $xy[6], $xy[7], $xy[2], $xy[3], $mx, $my, $hf, $vf );
+				break;
+			case "3421":
+				list($dx,$dy,$hf,$vf) = vertdata( $vert[1], $vert[2], $vert[3], $vert[4], $mx, $my, $hf, $vf );
 				$hf = !$hf;
 				$vf = !$vf;
-			}
-		}
+				break;
+			default:
+				break;
+		} // switch ( $vert[0] )
 	}
-	else
-		debug($dat);
 
 	$pix['dx'] = $dx;
 	$pix['dy'] = $dy;
@@ -254,32 +244,31 @@ function pcrown( $fname )
 	$dir = "{$pfx}_chrpak";
 	load_clut("pcrown.pal");
 
+	str_endian($pak, 0x20, 2); // no1 *  8
+	str_endian($pak, 0x22, 2); // no2 * 12
+	str_endian($pak, 0x24, 2); // no4 *  8
+	str_endian($pak, 0x26, 2); // no5 * 12
+
+	$num1 = str2int($pak, 0x20, 2); // no parts
+	$num2 = str2int($pak, 0x22, 2); // no distort set def
+	$num3 = str2int($pak, 0x24, 2); // no anim
+	$num4 = str2int($pak, 0x26, 2); // no anim set def
+
 	str_endian($pak, 0x08, 4);
 	str_endian($pak, 0x0c, 4);
 	str_endian($pak, 0x10, 4);
 	str_endian($pak, 0x14, 4);
 	str_endian($pak, 0x18, 4);
-	str_endian($pak, 0x20, 2);
-	str_endian($pak, 0x22, 2);
-	str_endian($pak, 0x24, 2);
-	str_endian($pak, 0x26, 2);
 	str_endian($pak, 0x2c, 4);
 	str_endian($pak, 0x30, 4);
 
-	$off1 = str2int($pak, 0x08, 3); // parts def
-	$off2 = str2int($pak, 0x0c, 3); // distort def
+	$off1 = str2int($pak, 0x08, 3); // parts def * 8
+	$off2 = str2int($pak, 0x0c, 3); // distort def * 12
 	$off3 = str2int($pak, 0x10, 3); // distort set def
-	$off4 = str2int($pak, 0x14, 3); // anim def
-	$off5 = str2int($pak, 0x18, 3); // anim sets def
+	$off4 = str2int($pak, 0x14, 3); // anim def * 8
+	$off5 = str2int($pak, 0x18, 3); // anim set def * 12
 	$off6 = str2int($pak, 0x2c, 3);
 	$off7 = str2int($pak, 0x30, 3);
-	if ( $off6 > $off7 )
-		var_swap($off6, $off7);
-
-	$num1 = str2int($pak, 0x20, 2); // no parts * 8
-	$num2 = str2int($pak, 0x22, 2); // no distort set * 12
-	$num3 = str2int($pak, 0x24, 2); // no anim * 8
-	$num4 = str2int($pak, 0x26, 2); // no anim set * 12
 
 	load_texx($pak, $pfx, $off1, $num1);
 
