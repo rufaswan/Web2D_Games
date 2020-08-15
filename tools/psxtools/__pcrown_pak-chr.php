@@ -1,7 +1,7 @@
 <?php
 require "common.inc";
 require "common-guest.inc";
-require "common-3d.inc";
+require "common-quad.inc";
 
 define("CANV_S", 0x200);
 define("SCALE", 1);

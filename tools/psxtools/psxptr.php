@@ -1,6 +1,19 @@
 <?php
 require "common.inc";
 
+// mips reg
+//  0  1  2  3  4  5  6  7  8  9
+//  0  1 v0 v1 a0 a1 a2 a3 t0 t1
+//
+// 10 11 12 13 14 15 16 17 18 19
+// t2 t3 t4 t5 t6 t7 s0 s1 s2 s3
+//
+// 20 21 22 23 24 25 26 27 28 29
+// s4 s5 s6 s7 t8 t9 k0 k1 gp sp
+//
+// 30 31
+// fp ra
+
 function prevnl( &$prev, $bak )
 {
 	if ( ($bak - 4) != $prev )

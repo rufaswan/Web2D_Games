@@ -17,7 +17,11 @@ function pcrown( $fname )
 	$pal = substr($file, 0x40, $cc*4);
 	$len = strlen($pal);
 	for ( $i=0; $i < $len; $i += 4 )
-		$pal[$i+3] = BYTE;
+	{
+		$b = ord( $pal[$i+3] );
+		$b = int_clamp($b*2, 0, BIT8);
+		$pal[$i+3] = chr($b);
+	}
 
 	$clut = "CLUT";
 	$clut .= chrint($cc, 4);

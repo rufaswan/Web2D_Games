@@ -264,7 +264,7 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$gp_clut )
 			break;
 		//case 14: // im_cmpr
 		default:
-			printf("UNKNOWN tpl im_fmt %d\n", $ih1);
+			printf("UNKNOWN tpl im_fmt %d\n", $fmt);
 			return array();
 	}
 	return array($iwb,$ihb,$byte,$bw,$bh,$pix);
@@ -334,7 +334,11 @@ function wiitpl( &$file, $base, $pfx, $id )
 		$ih3 = ord( $file[$p+0x23] );
 
 		$p = $base + $ih2;
-		list($iw,$ih,$byte,$bw,$bh,$gp_pix) = tplformat($file, $p, $ih1, $iw, $ih, $gp_clut);
+		$b = tplformat($file, $p, $ih1, $iw, $ih, $gp_clut);
+		if ( empty($b) )
+			continue;
+
+		list($iw,$ih,$byte,$bw,$bh,$gp_pix) = $b;
 		tplimage( $gp_pix, $iw, $ih, $byte, $bw, $bh );
 
 		if ( $byte == 1 )

@@ -49,6 +49,10 @@ function mura( $fname )
 	if ( str2int($mbs, 8, 3) != 0xa0 )
 		return printf("DIFF not 0xa0  %s\n", $fname);
 
+	// $siz = str2int($mbs, 4, 3);
+	// $hdz = str2int($mbs, 8, 3);
+	// $len = 0x10 + $hdz + $siz;
+
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 
 	global $gp_pix, $gp_clut;
@@ -83,15 +87,15 @@ function mura( $fname )
 
 	str_endian($mbs, 0x54, 4);
 	str_endian($mbs, 0x58, 4);
-	str_endian($mbs, 0x5c, 4);
+	str_endian($mbs, 0x5c, 4); // data all 0 for dummy_npc
 	str_endian($mbs, 0x60, 4); // 0 for bg
-	str_endian($mbs, 0x64, 4);
+	str_endian($mbs, 0x64, 4); // -> num 40
 	str_endian($mbs, 0x68, 4); // 0 for bg
 	str_endian($mbs, 0x6c, 4);
 	str_endian($mbs, 0x70, 4);
-	str_endian($mbs, 0x74, 4);
-	str_endian($mbs, 0x78, 4);
-	str_endian($mbs, 0x7c, 4);
+	str_endian($mbs, 0x74, 4); // -> num 4c
+	str_endian($mbs, 0x78, 4); // -> num 50
+	str_endian($mbs, 0x7c, 4); // -> num 4a
 
 	//$off1 = str2int($mbs, 0x54, 3); // def * 0x18
 	//$off2 = str2int($mbs, 0x58, 3); // def * 0x30

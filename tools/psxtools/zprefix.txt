@@ -52,6 +52,6 @@ rusty      PC98    Rusty
 		cvnds      all maps only
 		yuna       .ss1 only
 		pcrown     .chb/.mcb only (+PSP .tmx)
+		rusty      .map/.dat only
 		sotn_sat   *upcoming*
 		mura       *upcoming*
-		rusty      *upcoming*

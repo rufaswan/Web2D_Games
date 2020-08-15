@@ -24,6 +24,9 @@ define("BIT24", 0xffffff);
 define("BIT32", 0xffffffff);
 //if ( defined("DRY_RUN") ) // per script
 
+if ( ! defined("PHP_VERSION_ID") || PHP_VERSION_ID < 050600 )
+	trigger_error("requires PHP 5.6 and above", E_USER_ERROR);
+//////////////////////////////
 function str2int( &$str, $pos, $byte )
 {
 	$sub = substr($str, $pos, $byte);

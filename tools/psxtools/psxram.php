@@ -40,6 +40,12 @@ function subram( &$file, $base )
 				case "CORE":
 				case "BIOS":
 				case "MRAM":
+				case "VRAM":
+				case "SRAM":
+				case "HC05":
+				case "SECT":
+				case "CDDA":
+				case "STOP":
 					$len = str2int($file, $st+8, 4);
 					printf("%8x , %8x , $mgc\n", $st, $len);
 					save_file("$base/$mgc", substr($file, $st+12, $len));

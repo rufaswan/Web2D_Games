@@ -11,11 +11,10 @@ function palette( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$siz = strlen($file);
-	if ( $siz % ($gp_cc*2) )
-		return printf("ERROR %s not enough data\n", $fname);
+	while ( strlen($file) % ($gp_cc*2) )
+		$file .= ZERO;
 
-	$cn = $siz / ($gp_cc*2);
+	$cn = strlen($file) / ($gp_cc*2);
 	$clut = mstrpal555($file, 0, $gp_cc, $cn);
 
 	$pix = COPYPIX_DEF();
@@ -44,6 +43,7 @@ function palette( $fname )
 	return;
 }
 
+echo "{$argv[0]}  [-16/-256]  PALETTE_FILE...\n";
 for ( $i=1; $i < $argc; $i++ )
 {
 	$opt = $argv[$i];

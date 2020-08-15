@@ -182,3 +182,13 @@ stackoverflow.com/questions/13002979/how-to-calculate-rotation-angle-from-rectan
 	you will need to add 180 degree:
 
 		rotationDegrees += 180;
+
+stackoverflow.com/questions/2992264/extracting-a-quadrilateral-image-to-a-rectangle
+
+	Look up "quad to quad" transform, e.g. threeblindmiceandamonkey.
+	A 3x3 transform on 2d homogeneous coordinates can transform
+	any 4 points (a quad) to any other quad;
+	conversely, any fromquad and toquad,
+	such as the corners of your truck and a target rectangle,
+	give a 3 x 3 transform.
+
