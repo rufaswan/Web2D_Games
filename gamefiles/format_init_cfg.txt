@@ -6,8 +6,11 @@
 # value
 #   dummy = dummy [default]
 #   php   = custom php engine
-#   alice30 = Alice-soft games with ADISK.DAT ACG.DAT
-#   alice35 = Alice-soft games with *SA.ALD   *GA.ALD
+#   alice_adv   = Alicesoft (adv.com) ADV-system [NACT4]
+#   alice_sys   = Alicesoft (system3.exe) Scenario decode system
+#   alice_sys35 = Alicesoft (system3x.exe) Scenario decoder System 3.x
+#   alice_ain39 = Alicesoft (system39.ain) System 3.x
+#   alice_ain   = Alicesoft (xxx.ain)
 engine = dummy
 
 # charset used in game script, will iconv() to utf-8 on ajax

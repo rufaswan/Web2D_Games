@@ -20,7 +20,9 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "define.php";
-if ( ! defined("GAME") )  exit("NO GAME\n");
+header("Content-Type:text/html; charset=UTF-8;");
+if ( ! defined("GAME") )
+	exit("NO GAME\n");
 
 init_listfile( true );
 ?><!DOCTYPE html>
@@ -60,7 +62,7 @@ echo <<<_HTML
 
 _HTML;
 
-}
+} // foreach( file(LIST_FILE) as $img )
 ?>
 
 <br style="clear:both;"/>

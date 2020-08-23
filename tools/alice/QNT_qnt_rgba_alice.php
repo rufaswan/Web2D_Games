@@ -190,26 +190,15 @@ function data_qnt( &$file, &$qnt, $fname )
 		$alp = qnt_alpha($dec, $qnt);
 	}
 
-	//file_put_contents("pix0", $pix[0]); // Blue
-	//file_put_contents("pix1", $pix[1]); // Green
-	//file_put_contents("pix2", $pix[2]); // Red
-	//file_put_contents("alp",  $alp); // Alpha
-
 	$data = "";
 	for ( $n=0; $n < $siz; $n++ )
 	{
 			$r = ( empty($pix) ) ? ZERO : $pix[2][$n];
 			$g = ( empty($pix) ) ? ZERO : $pix[1][$n];
 			$b = ( empty($pix) ) ? ZERO : $pix[0][$n];
-			$data .= $r;
-			$data .= $g;
-			$data .= $b;
-			if ( empty($alp) )
-				$data .= BYTE; // A
-			else
-				$data .= $alp[$n]; // A
+			$a = ( empty($alp) ) ? BYTE : $alp[$n];
+			$data .= $r . $g . $b . $a;
 	}
-
 	return $data;
 }
 //////////////////////////////////////////////////
@@ -266,14 +255,13 @@ function qnt2rgba( $fname )
 		$qnt["px"], $qnt["py"], $qnt["pw"], $qnt["ph"]
 	);
 
-	$head  = "RGBA";
-	$head .= chrint($qnt["pw"], 4);
-	$head .= chrint($qnt["ph"], 4);
+	$rgba = "RGBA";
+	$rgba .= chrint($qnt["pw"], 4);
+	$rgba .= chrint($qnt["ph"], 4);
 
-	$data  = data_qnt($file, $qnt, $fname);
+	$rgba .= data_qnt($file, $qnt, $fname);
 
-	$file  = $head . $data;
-	file_put_contents("{$fname}.rgba", $file);
+	file_put_contents("{$fname}.rgba", $rgba);
 }
 
 if ( $argc == 1 )   exit();

@@ -192,3 +192,16 @@ stackoverflow.com/questions/2992264/extracting-a-quadrilateral-image-to-a-rectan
 	such as the corners of your truck and a target rectangle,
 	give a 3 x 3 transform.
 
+stackoverflow.com/questions/299267/image-scaling-and-rotating-in-c-c
+
+	The simplest way to scale is:
+		dest[dx,dy] = src[ dx*src_width/dest_width , dy*src_height/dest_height ]
+	For rotating, the src pixel location can be calculated using a rotation matrix:
+		sx,sy = M(dx,dy)
+
+	Mapping for a resize is easy:
+		x' = x * (width' / width)
+		y' = y * (height' / height)
+	Mapping for rotation is only a little bit harder.
+		x' = x * cos(a) + y * sin(a)
+		y' = y * cos(a) - x * sin(a)

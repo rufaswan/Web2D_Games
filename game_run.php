@@ -20,13 +20,15 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "define.php";
+header("Content-Type:text/html; charset=" .$gp_init['charset']. ";");
+
 if ( ! defined("GAME") )  exit("NO GAME\n");
 
 file_put_contents( SAVE_FILE . "log", "" );
 init_listfile( true );
 ?><!DOCTYPE html>
 <html><head>
-<meta charset="utf-8">
+<meta charset="<?php echo $gp_init['charset']; ?>">
 <title><?php echo $gp_init["web_title"]; ?></title>
 <style>
 	* { margin:0; padding:0; }

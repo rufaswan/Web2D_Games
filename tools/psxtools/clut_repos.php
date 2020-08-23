@@ -2,7 +2,7 @@
 require "common.inc";
 require "common-guest.inc";
 
-define("CANV_S", 0x400);
+define("TRIM_SZ", 8);
 $gp_adj = array(0,0);
 //////////////////////////////
 function trimrgba_rect( &$pix )
@@ -11,7 +11,6 @@ function trimrgba_rect( &$pix )
 	$x2 = $pix['rgba']['w'];
 	$y1 = 0;
 	$y2 = $pix['rgba']['h'];
-	$TRIM_SZ = 8;
 
 	// trim height
 	while (1)
@@ -20,16 +19,16 @@ function trimrgba_rect( &$pix )
 		$b = "";
 
 		$p = $y1 * $row;
-		$b .= substr($pix['rgba']['pix'], $p, $row*$TRIM_SZ);
+		$b .= substr($pix['rgba']['pix'], $p, $row*TRIM_SZ);
 
-		$p = ($y2 - $TRIM_SZ) * $row;
-		$b .= substr($pix['rgba']['pix'], $p, $row*$TRIM_SZ);
+		$p = ($y2 - TRIM_SZ) * $row;
+		$b .= substr($pix['rgba']['pix'], $p, $row*TRIM_SZ);
 
 		if ( trim($b, ZERO) != '' )
 			break;
 
-		$y1 += $TRIM_SZ;
-		$y2 -= $TRIM_SZ;
+		$y1 += TRIM_SZ;
+		$y2 -= TRIM_SZ;
 	}
 	// trim width
 	while (1)
@@ -40,19 +39,19 @@ function trimrgba_rect( &$pix )
 		for ( $y=$y1; $y < $y2; $y++ )
 		{
 			$p = ($y * $row) + ($x1 * 4);
-			$b .= substr($pix['rgba']['pix'], $p, 4*$TRIM_SZ);
+			$b .= substr($pix['rgba']['pix'], $p, 4*TRIM_SZ);
 		}
 		for ( $y=$y1; $y < $y2; $y++ )
 		{
-			$p = ($y * $row) + (($x2-$TRIM_SZ) * 4);
-			$b .= substr($pix['rgba']['pix'], $p, 4*$TRIM_SZ);
+			$p = ($y * $row) + (($x2-TRIM_SZ) * 4);
+			$b .= substr($pix['rgba']['pix'], $p, 4*TRIM_SZ);
 		}
 
 		if ( trim($b, ZERO) != '' )
 			break;
 
-		$x1 += $TRIM_SZ;
-		$x2 -= $TRIM_SZ;
+		$x1 += TRIM_SZ;
+		$x2 -= TRIM_SZ;
 	}
 	printf("TRIM rect %4d , %4d , %4d , %4d\n", $x1, $y1, $x2, $y2);
 
@@ -102,13 +101,16 @@ function repos( $fname )
 		$pal = substr($file, 16,  $cc*4);
 		$dat = substr($file, 16 + $cc*4, $w*$h);
 
-		$pix = COPYPIX_DEF();
-		$pix['rgba']['w'] = CANV_S;
-		$pix['rgba']['h'] = CANV_S;
-		$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+		$canv_s = ( $w > $h ) ? $w : $h;
+		$canv_s = int_ceil( $canv_s * 2, TRIM_SZ * 2 );
 
-		$pix['dx'] = ($w/-2) + (CANV_S/2) + $gp_adj[0];
-		$pix['dy'] = ($h/-2) + (CANV_S/2) + $gp_adj[1];
+		$pix = COPYPIX_DEF();
+		$pix['rgba']['w'] = $canv_s;
+		$pix['rgba']['h'] = $canv_s;
+		$pix['rgba']['pix'] = canvpix($canv_s,$canv_s);
+
+		$pix['dx'] = ($w/-2) + ($canv_s/2) + $gp_adj[0];
+		$pix['dy'] = ($h/-2) + ($canv_s/2) + $gp_adj[1];
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $dat;
@@ -123,13 +125,16 @@ function repos( $fname )
 		$h  = str2int($file,  8, 4);
 		$dat = substr($file, 12, $w*$h*4);
 
-		$pix = COPYPIX_DEF();
-		$pix['rgba']['w'] = CANV_S;
-		$pix['rgba']['h'] = CANV_S;
-		$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+		$canv_s = ( $w > $h ) ? $w : $h;
+		$canv_s = int_ceil( $canv_s * 2, 0x100 );
 
-		$pix['dx'] = ($w/-2) + (CANV_S/2) + $gp_adj[0];
-		$pix['dy'] = ($h/-2) + (CANV_S/2) + $gp_adj[1];
+		$pix = COPYPIX_DEF();
+		$pix['rgba']['w'] = $canv_s;
+		$pix['rgba']['h'] = $canv_s;
+		$pix['rgba']['pix'] = canvpix($canv_s,$canv_s);
+
+		$pix['dx'] = ($w/-2) + ($canv_s/2) + $gp_adj[0];
+		$pix['dy'] = ($h/-2) + ($canv_s/2) + $gp_adj[1];
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $dat;

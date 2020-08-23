@@ -19,30 +19,33 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "define.php";
-header("Content-Type:text/html; charset=" .$gp_init['charset']. ";");
-if ( ! defined("GAME") )
-	exit();
+echo <<<_HTML
+<textarea id="console" cols="80" rows="10" placeholder="console" readonly>
+</textarea>
+_HTML;
+?>
+<style>
+	textarea {
+		resize:none;
+		position:fixed;
+		bottom:0;
+		right :0;
+	}
+</style>
 
-$ajax_html = "";
-require ROOT . "/inc/" . $gp_init['engine'] . "/exec.php";
-init_cheat();
-srand( $gp_init["srand"] );
+<script>
+	jq("#window").on("click", function(e){
+		var txt = "";
+		txt += "e.page     = " + e.pageX + "," + e.pageY + "\n";
 
-$engine = "exec_" . $gp_init['engine'];
-if ( TRACE_OB )
-{
-	ob_start();
-	$engine();
-	trace("html %d bytes", strlen($ajax_html) );
-	$log = ob_get_clean();
-	file_put_contents(SAVE_FILE . "log", $log, FILE_APPEND);
-}
-else
-{
-	$engine();
-	trace("html %d bytes", strlen($ajax_html) );
-}
+		var x = jq(this).offset().left;
+		var y = jq(this).offset().top;
+		txt += "offset()   = " + x + "," + y + "\n";
 
-save_savefile( "pc", $gp_pc );
-echo $ajax_html;
+		var x = jq(this).position().left;
+		var y = jq(this).position().top;
+		txt += "position() = " + x + "," + y + "\n";
+
+		jq("#console").html(txt);
+	});
+</script>

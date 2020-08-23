@@ -20,6 +20,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "define.php";
+header("Content-Type:text/html; charset=UTF-8;");
 
 function getinit( $dir, &$inits )
 {
@@ -82,7 +83,7 @@ echo <<<_HTML
 </div>
 _HTML;
 
-}
+} // foreach ( $inits as $d )
 ?>
 
 </canvas> <!-- #canvas -->

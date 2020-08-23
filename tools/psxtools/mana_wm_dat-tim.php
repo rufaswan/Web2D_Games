@@ -55,10 +55,11 @@ function sect1( &$file, $off, $fn )
 	}
 	if ( empty($data) )  return;
 
+	$ceil = int_ceil( CANV_S * SCALE, 2 );
 	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S * SCALE;
-	$pix['rgba']['h'] = CANV_S * SCALE;
-	$pix['rgba']['pix'] = canvpix(CANV_S * SCALE , CANV_S * SCALE);
+	$pix['rgba']['w'] = $ceil;
+	$pix['rgba']['h'] = $ceil;
+	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
 
 	global $gp_tim;
 	foreach ( $data as $v )
@@ -77,8 +78,8 @@ function sect1( &$file, $off, $fn )
 		else
 			$dy = sint8 ( $v[1] );
 
-		$pix['dx'] = ($dx + (CANV_S / 2)) * SCALE;
-		$pix['dy'] = ($dy + (CANV_S / 2)) * SCALE;
+		$pix['dx'] = (int)($dx * SCALE) + $ceil/2;
+		$pix['dy'] = (int)($dy * SCALE) + $ceil/2;
 
 		$sx = ord($v[2]);
 		$sy = ord($v[3]);
@@ -93,7 +94,7 @@ function sect1( &$file, $off, $fn )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
 		$pix['src']['pal'] = $gp_tim['clut'][$cn];
-		scalepix($pix, SCALE);
+		scalepix($pix, SCALE, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
 

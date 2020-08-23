@@ -50,8 +50,9 @@ function data_vsp0( &$file, &$vsp , $st )
 				switch ( $c0 )
 				{
 					case 0:
-						$len = ord( $file[$st] ) + 1;
-						$st++;
+						$b0 = ord( $file[$st] );
+							$st++;
+						$len = $b0 + 1;
 
 						for ( $i=0; $i < $len; $i++ )
 						{
@@ -60,34 +61,35 @@ function data_vsp0( &$file, &$vsp , $st )
 						}
 						break;
 					case 1:
-						$by  = str2int( $file, $st, 2 );
-						$st += 2;
-						$len = (($by>>0) & BIT8) + 1;
-						$b0  =  ($by>>8) & BIT8;
+						$b0 = ord( $file[$st+0] );
+						$b1 = ord( $file[$st+1] );
+							$st += 2;
+						$len = $b0 + 1;
 
 						for ( $i=0; $i < $len; $i++ )
 						{
-							$bc[$pl][$y] = $b0;
+							$bc[$pl][$y] = $b1;
 							$y++;
 						}
 						break;
 					case 2:
-						$by  = str2int( $file, $st, 3 );
-						$st += 3;
-						$len = (($by>> 0) & BIT8) + 1;
-						$b0  =  ($by>> 8) & BIT8;
-						$b1  =  ($by>>16) & BIT8;
+						$b0 = ord( $file[$st+0] );
+						$b1 = ord( $file[$st+1] );
+						$b2 = ord( $file[$st+2] );
+							$st += 3;
+						$len = $b0 + 1;
 
 						for ( $i=0; $i < $len; $i++ )
 						{
-							$bc[$pl][$y+0] = $b0;
-							$bc[$pl][$y+1] = $b1;
+							$bc[$pl][$y+0] = $b1;
+							$bc[$pl][$y+1] = $b2;
 							$y += 2;
 						}
 						break;
 					case 3:
-						$len = ord( $file[$st] ) + 1;
-						$st++;
+						$b0 = ord( $file[$st] );
+							$st++;
+						$len = $b0 + 1;
 
 						for ( $i=0; $i < $len; $i++ )
 						{
@@ -97,8 +99,9 @@ function data_vsp0( &$file, &$vsp , $st )
 						$mask = 0;
 						break;
 					case 4:
-						$len = ord( $file[$st] ) + 1;
-						$st++;
+						$b0 = ord( $file[$st] );
+							$st++;
+						$len = $b0 + 1;
 
 						for ( $i=0; $i < $len; $i++ )
 						{
@@ -108,8 +111,9 @@ function data_vsp0( &$file, &$vsp , $st )
 						$mask = 0;
 						break;
 					case 5:
-						$len = ord( $file[$st] ) + 1;
-						$st++;
+						$b0 = ord( $file[$st] );
+							$st++;
+						$len = $b0 + 1;
 
 						for ( $i=0; $i < $len; $i++ )
 						{
@@ -123,8 +127,8 @@ function data_vsp0( &$file, &$vsp , $st )
 						break;
 					case 7:
 						$b0 = ord( $file[$st] );
+							$st++;
 						$bc[$pl][$y] = $b0;
-						$st++;
 						$y++;
 						break;
 					default:
@@ -174,16 +178,15 @@ function data_vsp0( &$file, &$vsp , $st )
 function clut_vsp0( &$file , $st )
 {
 	$clut = "";
-	for ( $i=0; $i < 16; $i++ )
+	for ( $i=0; $i < 0x30; $i += 3 )
 	{
-		$c = str2int( $file, ($i*3)+$st, 3 );
-		$cb = ($c >> 0)  & BIT8;
-		$cr = ($c >> 8)  & BIT8;
-		$cg = ($c >> 16) & BIT8;
+		$cb = ord( $file[$st+$i+0] );
+		$cr = ord( $file[$st+$i+1] );
+		$cg = ord( $file[$st+$i+2] );
 
-		$clut .= chr( $cr << 4 );
-		$clut .= chr( $cg << 4 );
-		$clut .= chr( $cb << 4 );
+		$clut .= int_range($cr * 0x11, 0, BIT8);
+		$clut .= int_range($cg * 0x11, 0, BIT8);
+		$clut .= int_range($cb * 0x11, 0, BIT8);
 		$clut .= BYTE; // alpha , 0 = trans , 255 = solid
 	}
 	return $clut;
@@ -212,16 +215,15 @@ function vsp2clut( $fname )
 			$vsp["px"]*8, $vsp["py"], $vsp["pw"]*8, $vsp["ph"]
 		);
 
-		$head  = "CLUT";
-		$head .= chrint(16 , 4);
-		$head .= chrint($vsp["pw"]*8 , 4);
-		$head .= chrint($vsp["ph"]   , 4);
+		$clut = "CLUT";
+		$clut .= chrint(16 , 4);
+		$clut .= chrint($vsp["pw"]*8 , 4);
+		$clut .= chrint($vsp["ph"]   , 4);
 
-		$clut  = clut_vsp0( $file , 0xa );
-		$data  = data_vsp0( $file , $vsp , 0x3a );
+		$clut .= clut_vsp0( $file , 0xa );
+		$clut .= data_vsp0( $file , $vsp , 0x3a );
 
-		$file = $head . $clut . $data;
-		file_put_contents("{$fname}.clut", $file);
+		file_put_contents("{$fname}.clut", $clut);
 	}
 }
 

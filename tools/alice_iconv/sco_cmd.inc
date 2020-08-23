@@ -1,1 +1,0 @@
-../../files/sco_cmd.inc

@@ -20,7 +20,9 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "define.php";
-if ( ! defined("GAME") )  exit("NO GAME\n");
+header("Content-Type:text/html; charset=UTF-8;");
+if ( ! defined("GAME") )
+	exit("NO GAME\n");
 
 init_listfile( true );
 ?><!DOCTYPE html>
@@ -71,7 +73,7 @@ foreach( file(LIST_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $bgm 
 {
 	if ( stripos($bgm, ".ogg") != false )
 		echo "<li><button>". $bgm ."</button></li>\n";
-}
+} // foreach( file(LIST_FILE) as $bgm )
 ?>
 </ol>
 </div>

@@ -19,18 +19,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-$txt = "sco_cmd.txt";
-$bin = "sco_cmd.inc";
-
-define("ZERO", chr(  0));
-define("BYTE", chr(255));
-define("SEP",  chr(254));
+$txt = "cmd_sco39.txt";
+$bin = "cmd_sco39.inc";
 
 if ( ! file_exists($txt) )
 	exit();
 
 // to compile sco_cmd.txt to binary friendly format
-$data = "";
+$data = array();
 foreach ( file($txt, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line )
 {
 	$line = preg_replace('|[\s]|', '', $line);
@@ -43,34 +39,34 @@ foreach ( file($txt, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line )
 	// for sys38+ func uses id
 	if ( $line[0] >= 0 )
 	{
+		$cmd = array();
 		switch ( $line[1] )
 		{
 			case 'F':
 			case "LE":
 			case "QE":
-				$cmd = "{$line[1]}_{$line[2]}" . SEP;
-				$cmd .= '/' . chr($line[0]) . chr($line[2]);
+				$cmd[] = "{$line[1]}_{$line[2]}";
+				$cmd[] = '/' . chr($line[0]) . chr($line[2]);
 				$skp = 3;
 				break;
 			default:
-				$cmd = "{$line[1]}" . SEP;
-				$cmd .= '/' . chr($line[0]);
+				$cmd[] = "{$line[1]}";
+				$cmd[] = '/' . chr($line[0]);
 				$skp = 2;
 				break;
-		}
-		$arg = implode(SEP, array_slice($line, $skp));
-		if ( $arg )
-			$data .= $cmd . SEP . $arg . BYTE;
-		else
-			$data .= $cmd . BYTE;
+		} // switch ( $line[1] )
+
+		$cmd[] = array_slice($line, $skp);
+		$data[] = $cmd;
 	}
 
 	// for sys35
+	$cmd = array();
 	switch ( $line[1] )
 	{
 		case 'SX':
-			$cmd = "{$line[1]}_{$line[2]}_{$line[3]}" . SEP;
-			$cmd .= $line[1] . chr($line[2]) . chr($line[3]);
+			$cmd[] = "{$line[1]}_{$line[2]}_{$line[3]}";
+			$cmd[] = $line[1] . chr($line[2]) . chr($line[3]);
 			$skp = 4;
 			break;
 		case 'B':  case 'J':  case 'F':
@@ -87,20 +83,20 @@ foreach ( file($txt, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line )
 		case 'ZA':  case 'ZD':  case 'ZT':  case 'ZZ':
 		case 'LHD':  case 'LHG':  case 'LHM': case 'LHS':  case 'LHW':
 		case 'G':
-			$cmd = "{$line[1]}_{$line[2]}" . SEP;
-			$cmd .= $line[1] . chr($line[2]);
+			$cmd[] = "{$line[1]}_{$line[2]}";
+			$cmd[] = $line[1] . chr($line[2]);
 			$skp = 3;
 			break;
 		default:
-			$cmd = "{$line[1]}" . SEP;
-			$cmd .= $line[1];
+			$cmd[] = "{$line[1]}";
+			$cmd[] = $line[1];
 			$skp = 2;
 			break;
-	}
-	$arg = implode(SEP, array_slice($line, $skp));
-	if ( $arg )
-		$data .= $cmd . SEP . $arg . BYTE;
-	else
-		$data .= $cmd . BYTE;
-}
+	} // switch ( $line[1] )
+
+	$cmd[] = array_slice($line, $skp);
+	$data[] = $cmd;
+} // foreach ( file($txt) as $line )
+
+$data = serialize($data);
 file_put_contents($bin, $data);

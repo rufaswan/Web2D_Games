@@ -86,6 +86,22 @@ function chrint( $int, $byte )
 	return $str;
 }
 
+function int_range()
+{
+	$var = func_get_args();
+	$v = array_shift($var);
+	$min = $v;
+	$max = $v;
+	foreach ( $var as $v )
+	{
+		if ( $min > $v )
+			$min = $v;
+		if ( $max < $v )
+			$max = $v;
+	}
+	return array( (int)$min, (int)$max);
+}
+
 function req_ext( $func, $ext )
 {
 	if ( ! function_exists($func) )

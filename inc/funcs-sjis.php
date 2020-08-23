@@ -22,11 +22,11 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////
 /*
 REQUIRED defines
-define("SJIS_HALF", "sjis_half.inc" );
-define("FUNC_ICONV",  "iconv");
+define("SJIS_HALF" , "sjis_half.inc" );
+define("SJIS_ASCII", "sjis_ascii.inc");
  */
 ////////////////////////////////////////
-function subsjis0( &$file, $pos )
+function sjis_substr0( &$file, $pos )
 {
 	$len = 0;
 	while (1)
@@ -49,93 +49,84 @@ function subsjis0( &$file, $pos )
 	return substr($file, $pos, $len);
 }
 
-function sjis2utf8( $sjis )
+function sjis_strlen( $sjis )
 {
-	req_define("FUNC_ICONV");
-	req_define("SJIS_HALF");
-	$sjis_half = file_get_contents(SJIS_HALF);
-	$iconv = FUNC_ICONV;
-	$charset = "CP932";
-
-	$utf = "";
+	$len = array( 'a' => 0, 'j' => 0 );
 	$ed = strlen($sjis);
 	$st = 0;
 	while ( $st < $ed )
 	{
 		$b1 = ord( $sjis[$st] );
-		if ( $b1 >= 0xe0 ) // IBM/NEC extension
+		if ( $b1 >= 0xe0 )
 		{
-			$s = $sjis[$st+0] . $sjis[$st+1];
-				$st += 2;
-			$r = '?';
-			if ( $r == '?' )  $r = $iconv( $charset, "UTF-8//TRANSLIT", $s );
-			if ( $r == '?' )  $r = 'X';
-			$utf .= $r;
+			$st += 2;
+			$len['j']++;
 		}
 		else
-		if ( $b1 >= 0xa0 ) // half-width
+		if ( $b1 >= 0xa0 )
 		{
-			$p = $b1 * 2;
-			$s = $sjis_half[$p+0] . $sjis_half[$p+1];
-				$st++;
-			$r = '?';
-			if ( $r == '?' )  $r = $iconv( $charset, "UTF-8//TRANSLIT", $s );
-			if ( $r == '?' )  $r = 'X';
-			$utf .= $r;
+			$st += 1;
+			$len['j']++;
 		}
 		else
-		if ( $b1 >= 0x80 ) // shift jis
+		if ( $b1 >= 0x80 )
 		{
-			$s = $sjis[$st+0] . $sjis[$st+1];
-				$st += 2;
-			$r = '?';
-			if ( $r == '?' )  $r = $iconv( $charset, "ASCII//TRANSLIT", $s );
-			if ( $r == '?' )  $r = $iconv( $charset, "UTF-8//TRANSLIT", $s );
-			if ( $r == '?' )  $r = 'X';
-			$utf .= $r;
+			$st += 2;
+			$len['j']++;
 		}
-		else // ascii
+		else
 		{
-			$utf .= $sjis[$st];
-			$st++;
+			$st += 1;
+			$len['a']++;
 		}
-	}
-	return $utf;
+	} // while ( $st < $ed )
+	return $len;
 }
 
-function utf8len( $utf8 )
+function sjis_tidy( $sjis )
 {
-	req_define("FUNC_ICONV");
-	$iconv = FUNC_ICONV;
-	$len = array(
-		"asc" => 0,
-		"utf" => 0,
-	);
+	// tidy up half-width katakana as full-width hiragana
+	// and full-width ASCII as half-width ASCII
+	req_define("SJIS_HALF");
+	req_define("SJIS_ASCII");
+	$sjis_half  = file_get_contents(SJIS_HALF);
+	$sjis_ascii = file_get_contents(SJIS_ASCII);
 
-	$len = strlen($utf8);
-	$pos = 0;
-	while ( $pos < $len )
+	$ed = strlen($sjis);
+	$st = 0;
+	$jp = "";
+	while ( $st < $ed )
 	{
-		$b1 = ord( $utf8[$pos] );
-		if ( $b1 & 0x80 )
+		$b1 = ord( $sjis[$st] );
+		if ( $b1 >= 0xe0 )
 		{
-			$len['utf']++;
-			if ( $b1 >= 0xf1 )
-				$pos += 4;
+			$jp .= $sjis[$st+0] . $sjis[$st+1];
+			$st += 2;
+		}
+		else
+		if ( $b1 >= 0xa0 )
+		{
+			$p = $b1 * 2;
+			$jp .= $sjis_half[$p+0] . $sjis_half[$p+1];
+				$st++;
+		}
+		else
+		if ( $b1 >= 0x80 )
+		{
+			$p = ($b1 << 8) | ord( $sjis[$st+1] );
+			$p = $sjis_ascii[ $p - 0x8100];
+			if ( $p != "" || $p != ZERO )
+				$jp .= $p;
 			else
-			if ( $b1 >= 0xe0 )
-				$pos += 3;
-			else
-			if ( $b1 >= 0xc0 )
-				$pos += 2;
+				$jp .= $sjis[$st+0] . $sjis[$st+1];
+			$st += 2;
 		}
 		else
 		{
-			$len['asc']++;
-			$pos++;
+			$jp .= $sjis[$st];
+			$st += 1;
 		}
-	}
-
-	return $len;
+	} // while ( $st < $ed )
+	return $jp;
 }
 ////////////////////////////////////////

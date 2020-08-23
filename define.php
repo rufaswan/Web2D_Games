@@ -19,7 +19,6 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-header("Content-Type: text/html; charset=UTF-8;");
 header("Pragma: no-cache");
 header("Cache-Control: max-age=0, no-cache, no-store, must-revalidate");
 header("Expires: 0");
@@ -28,7 +27,7 @@ define("CRLF", "<br>");
 define("DEBUG", true);
 define("TRACE", true);
 define("TRACE_OB", false);
-define("ROOT", dirname(__FILE__) );
+define("ROOT", __DIR__ );
 
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
@@ -60,7 +59,7 @@ $gp_pc = array(
 $gp_input = array();
 
 // $_REQUEST = $_GET , $_POST , $_COOKIE
-foreach ( $_REQUEST as $key=>$var )
+foreach ( $_REQUEST as $key => $var )
 {
 	switch ( $key )
 	{
@@ -95,7 +94,6 @@ define("PATH_JPFONT", "files/mplus-1mn-063a.ttf");
 define("PATH_OGG_1S", "files/mono-1s.ogg");
 define("SJIS_HALF" , ROOT . "/files/sjis_half.inc");
 define("SJIS_ASC"  , ROOT . "/files/sjis_ascii.inc");
-define("FUNC_ICONV", "iconv");
 
 require ROOT . "/inc/" . $gp_init['engine'] . "/init.php";
 //print_r($gp_init);

@@ -35,13 +35,14 @@ function data_pms16( &$file, &$pms, $st )
 		{
 			$loc = $y * $pms['w'] + $x;
 			$c0  = ord( $file[$st] );
-			$st++;
+				$st++;
 
 			switch ( $c0 )
 			{
 				case 0xff:
-					$len = ord( $file[$st] ) + 2;
-					$st++;
+					$b0 = ord( $file[$st] );
+						$st++;
+					$len = $b0 + 2;
 
 					for ( $i=0; $i < $len; $i++ )
 					{
@@ -53,8 +54,9 @@ function data_pms16( &$file, &$pms, $st )
 					break;
 
 				case 0xfe:
-					$len = ord( $file[$st] ) + 2;
-					$st++;
+					$b0 = ord( $file[$st] );
+						$st++;
+					$len = $b0 + 2;
 
 					for ( $i=0; $i < $len; $i++ )
 					{
@@ -66,27 +68,29 @@ function data_pms16( &$file, &$pms, $st )
 					break;
 
 				case 0xfd:
-					$len = ord( $file[$st+0] ) + 3;
-					$b0  = str2int( $file, $st+1, 2 );
-					$st += 3;
+					$b0 = ord( $file[$st+0] );
+					$b1 = str2int( $file, $st+1, 2 );
+						$st += 3;
+					$len = $b0 + 3;
 
 					for ( $i=0; $i < $len; $i++ )
 					{
-						$data[ $loc+$i ] = $b0;
+						$data[ $loc+$i ] = $b1;
 						$x++;
 					}
 					break;
 
 				case 0xfc:
-					$len = (ord( $file[$st] ) + 2) * 2;
-					$b0  =  str2int( $file, $st+1, 2 );
-					$b1  =  str2int( $file, $st+3, 2 );
-					$st += 5;
+					$b0 = ord( $file[$st] );
+					$b1 = str2int( $file, $st+1, 2 );
+					$b2 = str2int( $file, $st+3, 2 );
+						$st += 5;
+					$len = ($b0 + 2) * 2;
 
 					for ( $i=0; $i < $len; $i += 2 )
 					{
-						$data[ $loc+$i+0 ] = $b0;
-						$data[ $loc+$i+1 ] = $b1;
+						$data[ $loc+$i+0 ] = $b1;
+						$data[ $loc+$i+1 ] = $b2;
 						$x += 2;
 					}
 					break;
@@ -102,29 +106,31 @@ function data_pms16( &$file, &$pms, $st )
 					break;
 
 				case 0xf9:
-					$len = ord( $file[$st+0] ) + 1;
-					$b0  = ord( $file[$st+1] );
-					$st += 2;
+					$b0 = ord( $file[$st+0] );
+					$b1 = ord( $file[$st+1] );
+						$st += 2;
+					$len = $b0 + 1;
 
-					// ff = 111- ---- ---- ----
-					//        -- -11- ---- ----
-					//             -- ---1 11--
-					//    = e    6    1    c
-					$tb0 = ( ($b0 & 0xe0) << 8 ) + ( ($b0 & 0x18) << 6 ) + ( ($b0 & 0x07) << 2 );
+					// 76543210 -> fedcba9876543210
+					// rrrggbbb    rrr--gg----bbb--
+					$br = ($b1 >> 5) & 7;
+					$bg = ($b1 >> 3) & 3;
+					$bb = ($b1 >> 0) & 7;
+					$tb1 = ($br << 13) | ($bg << 9) | ($bb << 2);
 
 					for ( $i=0; $i < $len; $i++ )
 					{
-						$b1 = ord( $file[$st] );
-						$st++;
-						// ff =    1 1--- ---- ----
-						//            --1 111- ----
-						//                ---- --11
-						//    = 1    9    e    3
-						$tb1 = ( ($b1 & 0xc0) << 5 ) + ( ($b1 & 0x3c) << 3 ) + ($b1 & 0x03);
-						$data[ $loc+$i ] = $tb0 + $tb1;
+						$b2 = ord( $file[$st] );
+							$st++;
+						// 76543210 -> fedcba9876543210
+						// rrggggbb    ---rr--gggg---bb
+						$br = ($b2 >> 6) &  3;
+						$bg = ($b2 >> 2) & 15;
+						$bb = ($b2 >> 0) &  3;
+						$tb2 = ($br << 11) | ($bg << 5) | ($bb << 0);
+						$data[ $loc+$i ] = $tb1 | $tb2;
 						$x++;
 					}
-
 					break;
 
 				case 0xf8:
@@ -147,9 +153,12 @@ function data_pms16( &$file, &$pms, $st )
 	//////////////////////////
 	foreach ( $data as $k => $v )
 	{
-		$r = ($v & 0xf800) >> 8;
-		$g = ($v & 0x07e0) >> 3;
-		$b = ($v & 0x001f) << 3;
+		// rgb565
+		// fedcba9876543210
+		// rrrrrggggggbbbbb
+		$r = ($v >> 8) & 0xf8; // <<  0 >> 8
+		$g = ($v >> 3) & 0xfc; // <<  5 >> 8
+		$b = ($v << 3) & 0xf8; // << 11 >> 8
 		$data[$k] = array( chr($r) , chr($g) , chr($b) );
 	}
 	return $data;
@@ -170,8 +179,9 @@ function data_pms8( &$file, &$pms, $st )
 			switch ( $c0 )
 			{
 				case 0xff:
-					$len = ord( $file[$st] ) + 3;
-					$st++;
+					$b0 = ord( $file[$st] );
+						$st++;
+					$len = $b0 + 3;
 
 					for ( $i=0; $i < $len; $i++ )
 					{
@@ -183,8 +193,9 @@ function data_pms8( &$file, &$pms, $st )
 					break;
 
 				case 0xfe:
-					$len = ord( $file[$st] ) + 3;
-					$st++;
+					$b0 = ord( $file[$st] );
+						$st++;
+					$len = $b0 + 3;
 
 					for ( $i=0; $i < $len; $i++ )
 					{
@@ -196,29 +207,29 @@ function data_pms8( &$file, &$pms, $st )
 					break;
 
 				case 0xfd:
-					$by  = str2int( $file, $st, 2 );
-					$st += 2;
-					$len = (($by>> 0) & BIT8) + 4;
-					$b0  =  ($by>> 8) & BIT8;
+					$b0 = ord( $file[$st+0] );
+					$b1 = ord( $file[$st+1] );
+						$st += 2;
+					$len = $b0 + 4;
 
 					for ( $i=0; $i < $len; $i++ )
 					{
-						$data[ $loc+$i ] = $b0;
+						$data[ $loc+$i ] = $b1;
 						$x++;
 					}
 					break;
 
 				case 0xfc:
-					$by  = str2int( $file, $st, 3 );
-					$st += 3;
-					$len = ((($by>> 0) & BIT8) + 3) * 2;
-					$b0  =   ($by>> 8) & BIT8;
-					$b1  =   ($by>>16) & BIT8;
+					$b0 = ord( $file[$st+0] );
+					$b1 = ord( $file[$st+1] );
+					$b2 = ord( $file[$st+2] );
+						$st += 3;
+					$len = ($b0 + 3) * 2;
 
 					for ( $i=0; $i < $len; $i += 2 )
 					{
-						$data[ $loc+$i+0 ] = $b0;
-						$data[ $loc+$i+1 ] = $b1;
+						$data[ $loc+$i+0 ] = $b1;
+						$data[ $loc+$i+1 ] = $b2;
 						$x += 2;
 					}
 					break;
@@ -228,7 +239,7 @@ function data_pms8( &$file, &$pms, $st )
 				case 0xf9:
 				case 0xf8:
 					$b0 = ord( $file[$st] );
-					$st++;
+						$st++;
 					$data[$loc] = $b0;
 					$x++;
 					break;
@@ -292,15 +303,15 @@ function pms2clut( $fname )
 				$pms['x'], $pms['y'], $pms['w'], $pms['h']
 			);
 
-			$data = "CLUT";
-			$data .= chrint(256 , 4);
-			$data .= chrint($pms['w'] , 4);
-			$data .= chrint($pms['h'] , 4);
+			$clut = "CLUT";
+			$clut .= chrint(256 , 4);
+			$clut .= chrint($pms['w'] , 4);
+			$clut .= chrint($pms['h'] , 4);
 
-			$data .= clut_pms8($file , $pms, $pms['pal']);
-			$data .= data_pms8($file , $pms, $pms['dat']);
+			$clut .= clut_pms8($file , $pms, $pms['pal']);
+			$clut .= data_pms8($file , $pms, $pms['dat']);
 
-			file_put_contents("{$fname}.clut", $data);
+			file_put_contents("{$fname}.clut", $clut);
 			return;
 
 		case 16:
@@ -312,10 +323,12 @@ function pms2clut( $fname )
 				$pms['x'], $pms['y'], $pms['w'], $pms['h']
 			);
 
-			$data = "RGBA";
-			$data .= chrint($pms['w'] , 4);
-			$data .= chrint($pms['h'] , 4);
+			$rgba = "RGBA";
+			$rgba .= chrint($pms['w'] , 4);
+			$rgba .= chrint($pms['h'] , 4);
 
+			// some PMS have only RGB, no A
+			// some PMS have only A, no RGB (used with AJP/effects, KLD/video)
 			$pix = ( $pms['dat'] ) ? data_pms16($file , $pms, $pms['dat']) : "";
 			$alp = ( $pms['pal'] ) ? data_pms8 ($file , $pms, $pms['pal']) : "";
 
@@ -326,10 +339,10 @@ function pms2clut( $fname )
 				$g = ( empty($pix) ) ? ZERO : $pix[$i][1];
 				$b = ( empty($pix) ) ? ZERO : $pix[$i][2];
 				$a = ( empty($alp) ) ? BYTE : $alp[$i];
-				$data .= $r . $g . $b . $a;
+				$rgba .= $r . $g . $b . $a;
 			}
 
-			file_put_contents("{$fname}.rgba", $data);
+			file_put_contents("{$fname}.rgba", $rgba);
 			return;
 
 		default:

@@ -2,12 +2,12 @@
 // toolset for PlayStation One games
 // - little-endian byte order
 // - 32-bit negative int
-// - load/store registers
-// - RGB555 color format
 // - 0x200000 RAM
 //   - 80000000-8000ffff BIOS
 //   - 80010000-801fffef WRAM
 //   - 801ffff0-801fffff stack
+//   - JUMP   are absolute RAM offset * 4
+//   - BRANCH are relative RAM offset * 4
 // - fileseek in sectors
 //   - n * sector_size
 //     - absolute position within the CD
@@ -15,6 +15,11 @@
 //   - minute:second:frame (absolute position)
 // - Sprites are PsuedoColor
 // - Backgrounds are PsuedoColor, very rarely DirectColor
+// - RGB555 color format , in ABBBBBGGGGGRRRRR order
+// - Alpha is by Additive Blending , as in FG + BG
+// - Layers are Top-to-Bottom order
+// - 0,0 is at Top-Left corner
+// - load/store registers
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
 define("BIT4",  0x0f);
@@ -33,10 +38,10 @@ function str2int( &$str, $pos, $byte )
 	return ordint($sub);
 }
 
-function substr0( &$str, $pos )
+function substr0( &$str, $pos, $end = ZERO )
 {
 	$len = 0;
-	while ( $str[$pos+$len] != ZERO )
+	while ( $str[$pos+$len] != $end )
 		$len++;
 	return substr($str, $pos, $len);
 }
@@ -105,14 +110,6 @@ function strupd( &$file, $pos, $str )
 	return;
 }
 
-function var_swap( &$var1, &$var2 )
-{
-	$bak = $var1;
-	$var1 = $var2;
-	$var2 = $bak;
-	return;
-}
-
 function int_clamp( $int, $min, $max )
 {
 	if ( $int < $min )  $int = $min;
@@ -132,22 +129,6 @@ function int_floor( $int, $floor )
 	while ( ($int % $floor) != 0 )
 		$int--;
 	return (int)$int;
-}
-
-function int_range()
-{
-	$var = func_get_args();
-	$v = array_shift($var);
-	$min = $v;
-	$max = $v;
-	foreach ( $var as $v )
-	{
-		if ( $min > $v )
-			$min = $v;
-		if ( $max < $v )
-			$max = $v;
-	}
-	return array( (int)$min, (int)$max);
 }
 
 function arrayint( &$array )
@@ -242,25 +223,41 @@ function patchfile( $fname )
 	return $data;
 }
 
+function lsfile_r( $dir, &$list)
+{
+	if ( empty($dir) || ! is_dir($dir) )
+		return;
+	if ( is_link($dir) ) // skip shortcuts / symbolic links
+		return;
+	$func = __FUNCTION__;
+	foreach ( scandir($dir) as $en )
+	{
+		if ( $en[0] == '.' )
+			continue;
+		$fn = "$dir/$en";
+
+		if ( is_file($fn) )  $list[] = $fn;
+		else
+		if ( is_dir ($fn) )  $func($fn, $list);
+	}
+	return;
+}
+
 function rmfile_r( $dir )
 {
-	if ( empty($dir) || is_link($dir) )
+	if ( empty($dir) )
 		return;
-	if ( $dir == '.' || $dir == '..' )
-		return;
-
-	$func = __FUNCTION__;
+	if ( is_file($dir) )
+		return unlink($dir);
 	if ( is_dir($dir) )
 	{
-		foreach ( scandir($dir) as $f )
-		{
-			if ( $f[0] == '.' )
-				continue;
-			$func("$dir/$f");
-		}
+		$list = array();
+		lsfile_r( $dir, $list );
+		if ( empty($list) )
+			return;
+		foreach ( $list as $en )
+			unlink($en);
 	}
-	else
-		unlink($dir);
 	return;
 }
 
@@ -505,28 +502,7 @@ function copypix( &$pix )
 	if ( defined("DRY_RUN") )
 		return;
 
-	// horizontal flip + vertical flip
-	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h']);
-	for ( $y=0; $y < $pix['src']['h']; $y++ )
-	{
-		$syy = $y * $pix['src']['w'];
-		$dyy = $y;
-		if ( $pix['vflip'] )
-			$dyy = $pix['src']['h'] - 1 - $y;
-		$dyy *= $pix['src']['w'];
-
-		for ( $x=0; $x < $pix['src']['w']; $x++ )
-		{
-			$sxx = $syy + $x;
-			$dxx = $x;
-			if ( $pix['hflip'] )
-				$dxx = $pix['src']['w'] - 1 - $x;
-			$dxx += $dyy;
-
-			$flip[$dxx] = $pix['src']['pix'][$sxx];
-
-		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
-	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
+	flippix($pix);
 
 	// src rotation
 	//   0x100 == 360 degree == 2 * pi() radian
@@ -579,12 +555,12 @@ function copypix( &$pix )
 				continue;
 
 			$sxx = ($ry * $pix['src']['w']) + $rx;
-			if ( $flip[$sxx] == ZERO && ! $pix['bgzero'] )
+			if ( $pix['src']['pix'][$sxx] == ZERO && ! $pix['bgzero'] )
 				continue;
-			$c1 = substr($pix['src']['pal'], ord( $flip[$sxx] )*4, 4);
+			$c1 = substr($pix['src']['pal'], ord( $pix['src']['pix'][$sxx] )*4, 4);
 
-			$dxx = ($dy * $pix['rgba']['w'] + $dx) * 4;
-			$c2 = substr($pix['rgba']['pix'], $dxx, 4);
+			$dxx = ($dy * $pix['rgba']['w']) + $dx;
+			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
 
 			// ALPHA BLENDING
 			// using callbacks due to implementation difference
@@ -735,29 +711,65 @@ function alpha_add( $fg, $bg )
 	return $fg;
 }
 
-function scalepix( &$pix, $factor = 1 )
+function flippix( &$pix, $byte=1 )
 {
-	if ( defined("DRY_RUN") )
-		return;
-	if ( $factor == 1 )
-		return;
-
-	$res = "";
+	// horizontal flip + vertical flip
+	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * $byte);
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
 	{
-		$line = "";
 		$syy = $y * $pix['src']['w'];
+		$dyy = $y;
+		if ( $pix['vflip'] )
+			$dyy = $pix['src']['h'] - 1 - $y;
+		$dyy *= $pix['src']['w'];
+
 		for ( $x=0; $x < $pix['src']['w']; $x++ )
 		{
 			$sxx = $syy + $x;
-			$b = $pix['src']['pix'][$sxx];
-			$line .= str_repeat($b, $factor);
-		}
-		$res .= str_repeat($line, $factor);
-	}
-	$pix['src']['w'] *= $factor;
-	$pix['src']['h'] *= $factor;
-	$pix['src']['pix'] = $res;
+			$dxx = $x;
+			if ( $pix['hflip'] )
+				$dxx = $pix['src']['w'] - 1 - $x;
+			$dxx += $dyy;
+
+			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
+			strupd($flip, $dxx*$byte, $c1);
+
+		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
+	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
+
+	$pix['src']['pix'] = $flip;
+	return;
+}
+
+function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
+{
+	if ( defined("DRY_RUN") )
+		return;
+	if ( $fact_x === 1 && $fact_y === 1 )
+		return;
+
+	$nw = (int)ceil( $pix['src']['w'] * $fact_x );
+	$nh = (int)ceil( $pix['src']['h'] * $fact_y );
+	$canv = canvpix($nw, $nh);
+	$mx = $pix['src']['w'] / $nw;
+	$my = $pix['src']['h'] / $nh;
+	for ( $y=0; $y < $nh; $y++ )
+	{
+		$dyy = $y * $nw;
+		$syy = (int)($y * $my) * $pix['src']['w'];
+		for ( $x=0; $x < $nw; $x++ )
+		{
+			$dxx = $dyy + $x;
+			$sxx = (int)($x * $mx) + $syy;
+
+			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
+			strupd($canv, $dxx*$byte, $c1);
+		} // for ( $x=0; $x < $nw; $x++ )
+	} // for ( $y=0; $y < $nh; $y++ )
+
+	$pix['src']['w'] = $nw;
+	$pix['src']['h'] = $nh;
+	$pix['src']['pix'] = $canv;
 	return;
 }
 //////////////////////////////

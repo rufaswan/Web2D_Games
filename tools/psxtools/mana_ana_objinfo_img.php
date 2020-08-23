@@ -100,10 +100,11 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 	if ( empty($data) )
 		return;
 
+	$ceil = int_ceil( CANV_S * SCALE, 2 );
 	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S * SCALE;
-	$pix['rgba']['h'] = CANV_S * SCALE;
-	$pix['rgba']['pix'] = canvpix(CANV_S * SCALE , CANV_S * SCALE);
+	$pix['rgba']['w'] = $ceil;
+	$pix['rgba']['h'] = $ceil;
+	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
@@ -120,8 +121,8 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 			$dx = sint8( $v[0] );
 			$dy = sint8( $v[1] );
 		}
-		$pix['dx'] = ($dx + (CANV_S / 2)) * SCALE;
-		$pix['dy'] = ($dy + (CANV_S / 2)) * SCALE;
+		$pix['dx'] = (int)($dx * SCALE) + $ceil/2;
+		$pix['dy'] = (int)($dy * SCALE) + $ceil/2;
 
 		$sx = ord( $v[2] );
 		$sy = ord( $v[3] );
@@ -145,7 +146,7 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $rippix8;
 		$pix['src']['pal'] = $gp_clut[$tid][$cid];
-		scalepix($pix, SCALE);
+		scalepix($pix, SCALE, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
 

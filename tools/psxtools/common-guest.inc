@@ -65,28 +65,7 @@ function copyrgba( &$pix )
 	if ( defined("DRY_RUN") )
 		return;
 
-	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * 4);
-	for ( $y=0; $y < $pix['src']['h']; $y++ )
-	{
-		$syy = $y * $pix['src']['w'];
-		$dyy = $y;
-		if ( $pix['vflip'] )
-			$dyy = $pix['src']['h'] - 1 - $y;
-		$dyy *= $pix['src']['w'];
-
-		for ( $x=0; $x < $pix['src']['w']; $x++ )
-		{
-			$sxx = $syy + $x;
-			$dxx = $x;
-			if ( $pix['hflip'] )
-				$dxx = $pix['src']['w'] - 1 - $x;
-			$dxx += $dyy;
-
-			$c1 = substr($pix['src']['pix'], $sxx*4, 4);
-			strupd($flip, $dxx*4, $c1);
-
-		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
-	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
+	flippix($pix, 4);
 
 	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
 	$sin = sin($rot);
@@ -125,7 +104,7 @@ function copyrgba( &$pix )
 				continue;
 
 			$sxx = ($ry * $pix['src']['w']) + $rx;
-			$c1 = substr($flip, $sxx*4, 4);
+			$c1 = substr($pix['src']['pix'], $sxx*4, 4);
 
 			$dxx = ($dy * $pix['rgba']['w']) + $dx;
 			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
@@ -169,6 +148,11 @@ function alpha_over( $src, $dst )
 	$b = int_clamp($b / $a, 0, BIT8);
 	$a = int_clamp($a * BIT8, 0, BIT8);
 	return chr($r) . chr($g) . chr($b) . chr($a);
+}
+
+function scalergba( &$pix, $fact_x, $fact_y )
+{
+	return scalepix( $pix, $fact_x, $fact_y, 4 );
 }
 //////////////////////////////
 function nds_ram( $dir )

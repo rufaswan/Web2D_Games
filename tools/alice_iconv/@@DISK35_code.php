@@ -22,17 +22,15 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 require "common.inc";
 require "common_sco.inc";
 
-define("SCO_CMD", ROOT . "/sco_cmd.inc");
-define("SEP", chr(254));
+define("SCO_CMD", ROOT . "/cmd_sco39.inc");
 
-$gp_code = array("# <?php exit();\n");
-$gp_data = array("");
-$gp_msg  = array("", "iconv() error");
-$gp_func = array();
+$sco_str = array("");
+$sco_func = array();
+$sco_code = array();
 
+$sco_file = array();
 $sco_cmd = array();
-$ain_hel0 = array();
-////////////////////////////////////////
+//////////////////////////////
 function ain_str8b( &$file, &$st )
 {
 	$str = "";
@@ -46,9 +44,9 @@ function ain_str8b( &$file, &$st )
 	}
 	$st++; // skip 0
 
-	global $gp_msg;
-	$str = sjis2utf8($gp_msg, $str);
-	$id = add_str($str);
+	global $sco_str;
+	$str = sjis2utf8($str);
+	$id = add_str($sco_str, $str);
 	return "@MSG=$id";
 }
 
@@ -99,8 +97,8 @@ function sco_table( &$file, $id, $pos, $cmd, $arg )
 
 function sco_msg( $msg )
 {
-	global $gp_msg;
-	$id = add_str($gp_msg, $msg);
+	global $sco_str;
+	$id = add_str($sco_str, $msg);
 	return array("@MSG=$id");
 }
 
@@ -135,8 +133,6 @@ function sco_cmd_msg( &$file, &$st, &$jump )
 	if ( $file[$st] == ZERO || $file[$st] == ':' )
 		$st++;
 	$str = sjis2utf8($str);
-	if ( $str == "" )
-		$str = "iconv() error";
 	return array("MSG", $str);
 }
 
@@ -146,7 +142,7 @@ function sco_get_cmd( &$file, &$st, &$select, &$jump )
 	if ( $cmd & 0x80 || $cmd == 0x20 )
 		return sco_cmd_msg( $file, $st, $jump );
 
-	global $sco_cmd, $gp_msg;
+	global $sco_cmd, $sco_str;
 	$len = 5;
 	while ( $len )
 	{
@@ -156,7 +152,7 @@ function sco_get_cmd( &$file, &$st, &$select, &$jump )
 			if ( $c[1] == $cmd )
 			{
 				$st += $len;
-				$arg = sco_cmd_arg($file, $st, array_slice($c, 2), $gp_msg);
+				$arg = sco_cmd_arg($file, $st, array_slice($c, 2), $sco_str);
 				return array( $c[0], $arg );
 			}
 		}
@@ -230,48 +226,52 @@ function sco_get_cmd( &$file, &$st, &$select, &$jump )
 	}
 	return array(0,0);
 }
-////////////////////////////////////////
-function save_sco( $fname, $var )
+//////////////////////////////
+function sco_run( $id, $pos )
 {
-	$fp = fopen($fname, "w");
-	foreach( $var as $v )
-		fwrite($fp, "$v\n");
-	fclose($fp);
-}
+	$func = __FUNCTION__;
+	global $sco_file;
+	if ( ! isset( $sco_file[$id] ) )
+	{
+		$fname = sprintf("%03d.sco", $id);
+		$file  = file_get_contents($fname);
+		if ( empty($file) )
+			return;
+		//$file = rtrim($file, ZERO);
+		$sco_file[$id] = array(
+			'f' => $file,
+			's' => strlen($file),
+		);
+	}
 
-function sco_run( $id, $fname )
-{
-	$file = file_get_contents($fname);
-	if ( empty($file) )
-		return;
-
-	$valid = array("S350", "S351", "153S", "S360", "S380");
-	$mgc = substr($file, 0, 4);
-	if ( ! in_array($mgc, $valid) )
-		return;
-	printf("[%s] %s\n", $mgc, $fname);
-
-	global $gp_func;
+	global $sco_code, $sco_func;
+	$sid = sprintf("%03d,%05d", $id, $pos);
+	$sco_func[$sid] = 1;
 	$select = false;
 	$jump = array();
 
-	$ed = strlen($file);
-	$st = 0;
-	$buf = "# $id,0\n";
-	while ( $st < $ed )
+	$len = strlen( $sco_file[$id]['f'] );
+	while ( $pos < $len )
 	{
-		$bak = $st;
-		list($cmd,$arg) = sco_get_cmd( $file, $st, $select, $jump );
+		$sid = sprintf("%03d,%05d", $id, $pos);
+		if ( isset( $sco_code[$sid] ) )
+			return;
+
+		$bak = $pos;
+		list($cmd,$arg) = sco_get_cmd( $sco_file[$id]['f'], $pos, $select, $jump );
 		if ( ! $cmd )
 			break;
+		$sco_file[$id]['s'] -= ($pos - $bak);
 
 		if ( $cmd == "MSG" )
 			$arg = sco_msg($arg);
 		if ( $cmd == '#' ) // data
-			$arg = sco_table($file, $id, $bak, $cmd, $arg);
+			$arg = sco_table($sco_file[$id]['f'], $id, $bak, $cmd, $arg);
 
-		array_unshift($arg, $cmd);
-		$buf .= "$id,$bak," .implode(',', $arg). "\n";
+		$sco_code[$sid] = $cmd;
+		if ( ! empty($arg) )
+			$sco_code[$sid] .= ',' . implode(',', $arg);
+		echo "$sid\n";
 
 		switch ( $cmd )
 		{
@@ -280,12 +280,44 @@ function sco_run( $id, $fname )
 			case "153S":
 			case "S360":
 			case "S380":
-				$st = $arg[0];
+				$sco_file[$id]['s'] -= ($pos + $bak - $arg[0]);
+				$pos = $arg[0];
 				break;
 
 			case '@': // label jump
-				$jump[] = $arg[0];
+				$j1 = $arg[0];
+				if ( (int)$j1 === $j1 )
+				{
+					$jump[] = $j1;
+					$func($id, $j1);
+				}
 				break;
+			case '&': // page jump
+				$j1 = $arg[0];
+				if ( (int)$j1 === $j1 )
+					$func($j1+1, 0);
+				break;
+			case '\\': // label call
+				$j1 = $arg[0];
+				if ( (int)$j1 === $j1 && $j1 > 0 )
+				{
+					$jump[] = $j1;
+					$func($id, $j1);
+				}
+				break;
+			case '%': // page call
+				$j1 = $arg[0];
+				if ( (int)$j1 === $j1 && $j1 > 0 )
+					$func($j1+1, 0);
+				break;
+
+			case '~': // function call
+				$j1 = $arg[0];
+				$j2 = $arg[1];
+				if ( (int)$j1 === $j1 && (int)$j2 === $j2 && $j1 > 0 )
+					$func($j1, $j2);
+				break;
+
 			case '<': // for
 			case '{': // if
 				$jump[] = $arg[1];
@@ -294,73 +326,51 @@ function sco_run( $id, $fname )
 				$jump[] = $arg[0];
 				break;
 
-			case '~': // function call
-				$jal = "{$arg[0]},{$arg[1]}";
-				if ( $arg[0] != 0 )
-					$gp_func[$jal] = 1;
-				break;
-			case '%': // page call
-				$jal = "{$arg[0]},0";
-				if ( $arg[0] != 0 )
-					$gp_func[$jal] = 1;
-				break;
-			case '\\': // label call
-				$jal = "$id,{$arg[0]}";
-				if ( $arg[0] != 0 )
-					$gp_func[$jal] = 1;
-				break;
 			default:
 				break;
 		} // switch ( $cmd )
 
-	} // while ( $st < $ed )
-	if ( $file[$st] != ZERO )
-		printf("ERROR $fname + %x unknown command\n", $st);
-
-	global $gp_code;
-	$gp_code[$id] = $buf;
+	}
 	return;
 }
 
 function sco_init_cmd()
 {
 	global $sco_cmd;
-	$sco_cmd = array();
 	$file = file_get_contents(SCO_CMD);
-	foreach ( explode(BYTE, $file) as $line )
-	{
-		if ( strpos($line, SEP) )
-			$sco_cmd[] = explode(SEP, $line);
-	}
-	//print_r($sco_cmd);
+	$sco_cmd = unserialize($file);
 	return;
 }
-////////////////////////////////////////
+//////////////////////////////
 sco_init_cmd();
 
 // S380 Escalayer
-//   Data (should be in *DA.ald) compiled as SCO
+//   DATA (should be in DA/*.dat) are compiled into SA/*.sco
 // S360_153S_Umini_Ochite
 //   1,647,&,|39|0| (page jump by $var[39])
-foreach ( scandir('.') as $f )
+for ( $i=1; $i < $argc; $i++ )
 {
-	if ( $f[0] == '.' )
-		continue;
-	if ( is_dir($f) || $f == 'log' )
-		continue;
-	if ( stripos($f, '.txt') || stripos($f, '.php') )
-		continue;
-
-	// should support *.sco *.dat *.s350 *.s351 *.153s *.s360 *.380
-	$id = substr($f, 0, strrpos($f, '.')) + 0;
-	sco_run($id, $f);
+	$id = $argv[$i];
+	if ( (int)$id == $id )
+		sco_run($id, 0);
 }
-//sco_run(1, "001.sco");
 
-$gp_func = array_keys($gp_func);
-sort($gp_func);
+ksort($sco_code);
+$fp = fopen("CODE", "w");
+fwrite($fp, "# <?php exit();\n");
+foreach( $sco_code as $ck => $cv )
+{
+	if ( isset($sco_func[$ck]) )
+		fwrite($fp, "\n# $ck\n");
+	fwrite($fp, "$ck,$cv\n");
+}
+fwrite($fp, "\n");
+foreach( $sco_file as $ck => $cv )
+	fwrite($fp, sprintf("# $ck.sco has 0x%x bytes left\n", $cv['s']));
+fclose($fp);
 
-save_sco("sco_code.txt", $gp_code);
-save_sco("sco_data.txt", $gp_data);
-save_sco("sco_msg.txt",  $gp_msg);
-save_sco("sco_func.txt", $gp_func);
+file_put_contents("STR0", implode("\n", $sco_str));
+
+$sco_func = array_keys($sco_func);
+sort($sco_func);
+file_put_contents("FUNC", implode("\n", $sco_func));

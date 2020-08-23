@@ -157,10 +157,11 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 		$id++;
 	} // while ( $id < $num )
 
+	$ceil = int_ceil( CANV_S * SCALE, 2 );
 	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S * SCALE;
-	$pix['rgba']['h'] = CANV_S * SCALE;
-	$pix['rgba']['pix'] = canvpix(CANV_S * SCALE , CANV_S * SCALE);
+	$pix['rgba']['w'] = $ceil;
+	$pix['rgba']['h'] = $ceil;
+	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
@@ -170,15 +171,15 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 
 		if ( $rot == 0 )
 		{
-			$pix['dx'] = ($dx + $rx + (CANV_S / 2)) * SCALE;
-			$pix['dy'] = ($dy + $ry + (CANV_S / 2)) * SCALE;
+			$pix['dx'] = (int)(($dx + $rx) * SCALE) + $ceil/2;
+			$pix['dy'] = (int)(($dy + $ry) * SCALE) + $ceil/2;
 			$pix['rotate'] = array(0,0,0);
 		}
 		else
 		{
-			$pix['dx'] = ($rx + (CANV_S / 2)) * SCALE;
-			$pix['dy'] = ($ry + (CANV_S / 2)) * SCALE;
-			$pix['rotate'] = array($rot, $dx * SCALE, $dy * SCALE);
+			$pix['dx'] = (int)($rx * SCALE) + $ceil/2;
+			$pix['dy'] = (int)($ry * SCALE) + $ceil/2;
+			$pix['rotate'] = array($rot, (int)($dx * SCALE), (int)($dy * SCALE));
 		}
 
 		$m10 = ord( $b1[0] );
@@ -201,7 +202,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$pix['src']['h'] = $h;
 			$pix['src']['pix'] = rippix8($gp_pix[$tid]['p'], $sx, $sy, $w, $h, $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
 			$pix['src']['pal'] = $gp_clut[$cid];
-			scalepix($pix, SCALE);
+			scalepix($pix, SCALE, SCALE);
 		}
 		else
 		{
@@ -214,7 +215,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$w = $pix['src']['w'];
 			$h = $pix['src']['h'];
 			$pix['src']['pal'] = $gp_clut[$cid];
-			scalepix($pix, SCALE);
+			scalepix($pix, SCALE, SCALE);
 		}
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);

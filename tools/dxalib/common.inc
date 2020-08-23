@@ -12,6 +12,14 @@ function str2int( &$str, $pos, $byte )
 	return ordint($int);
 }
 
+function substr0( &$str, $pos )
+{
+	$len = 0;
+	while ( $str[$pos+$len] != ZERO )
+		$len++;
+	return substr($str, $pos, $len);
+}
+
 function ordint( $str )
 {
 	if ( (int)$str === $str ) // already $int
@@ -40,4 +48,17 @@ function chrint( $int, $byte = 0 )
 	while ( strlen($str) < $byte )
 		$str .= ZERO;
 	return $str;
+}
+
+function save_file( $fname, $str )
+{
+	if ( empty($str) )
+		return;
+	if ( strpos($fname, '\\') )
+		$fname = str_replace('\\', '/', $fname);
+
+	if ( strpos($fname, '/') )
+		@mkdir( dirname($fname), 0755, true );
+	file_put_contents($fname, $str);
+	return;
 }
