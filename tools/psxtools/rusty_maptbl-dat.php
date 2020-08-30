@@ -7,38 +7,47 @@ function sectpart( &$dat, $pfx, $pos, $id, $w, $h )
 {
 	printf("== sectpart( $pfx , %x , $id , $w , $h )\n", $pos);
 	$bk = $w * $h / 8;
-	$pix = "";
-	for ( $i=0; $i < $bk; $i++ )
-	{
-		$b1 = ord( $dat[$pos + 1*$bk] );
-		$b2 = ord( $dat[$pos + 2*$bk] );
-		$b3 = ord( $dat[$pos + 3*$bk] );
-		$b4 = ord( $dat[$pos + 4*$bk] );
-			$pos++;
-
-		$j = 8;
-		while ( $j > 0 )
-		{
-			$j--;
-			$b11 = ($b1 >> $j) & 1;
-			$b21 = ($b2 >> $j) & 1;
-			$b31 = ($b3 >> $j) & 1;
-			$b41 = ($b4 >> $j) & 1;
-			$bj = ($b41 << 3) | ($b31 << 2) | ($b21 << 1) | ($b11 << 0);
-			$pix .= chr($bj);
-		}
-	} // for ( $i=0; $i < $bk; $i++ )
 
 	global $gp_clut;
-	$clut = "CLUT";
-	$clut .= chrint(16, 4);
-	$clut .= chrint($w, 4);
-	$clut .= chrint($h, 4);
-	$clut .= ( empty($gp_clut) ) ? grayclut(16) : $gp_clut;
-	$clut .= $pix;
+	$pal = ( empty($gp_clut) ) ? grayclut(16) : $gp_clut;
 
-	$fn = sprintf("$pfx/%04d.clut", $id);
-	save_file($fn, $clut);
+	$rgba = "RGBA";
+	$rgba .= chrint($w, 4);
+	$rgba .= chrint($h*2, 4);
+	for ( $y=0; $y < $h; $y++ )
+	{
+		$line = "";
+		for ( $x=0; $x < $w; $x += 8 )
+		{
+			$b0 = ord( $dat[$pos + 0*$bk] ); // mask
+			$b1 = ord( $dat[$pos + 1*$bk] );
+			$b2 = ord( $dat[$pos + 2*$bk] );
+			$b3 = ord( $dat[$pos + 3*$bk] );
+			$b4 = ord( $dat[$pos + 4*$bk] );
+				$pos++;
+
+			$j = 8;
+			while ( $j > 0 )
+			{
+				$j--;
+				$b01 = ($b0 >> $j) & 1; // mask
+				$b11 = ($b1 >> $j) & 1;
+				$b21 = ($b2 >> $j) & 1;
+				$b31 = ($b3 >> $j) & 1;
+				$b41 = ($b4 >> $j) & 1;
+				$bj = ($b41 << 3) | ($b31 << 2) | ($b21 << 1) | ($b11 << 0);
+
+				$line .= substr($pal, $bj*4, 3); // for RGB
+				$line .= ( $b01 ) ? BYTE : ZERO; // for A
+			}
+		} // for ( $x=0; $x < $w; $x += 8 )
+
+		$rgba .= $line;
+		$rgba .= $line;
+	} // for ( $y=0; $y < $h; $y++ )
+
+	$fn = sprintf("$pfx/%04d.rgba", $id);
+	save_file($fn, $rgba);
 	return;
 }
 
@@ -112,20 +121,20 @@ function loadtexx( &$dat )
 	$pix = "";
 	for ( $i=0; $i < 0x4000; $i++ )
 	{
-		$b1 = ord( $dat[$i+0     ] );
-		$b2 = ord( $dat[$i+0x4000] );
-		$b3 = ord( $dat[$i+0x8000] );
-		$b4 = ord( $dat[$i+0xc000] );
+		$b0 = ord( $dat[$i+0     ] );
+		$b1 = ord( $dat[$i+0x4000] );
+		$b2 = ord( $dat[$i+0x8000] );
+		$b3 = ord( $dat[$i+0xc000] );
 
 		$j = 8;
 		while ( $j > 0 )
 		{
 			$j--;
+			$b01 = ($b0 >> $j) & 1;
 			$b11 = ($b1 >> $j) & 1;
 			$b21 = ($b2 >> $j) & 1;
 			$b31 = ($b3 >> $j) & 1;
-			$b41 = ($b4 >> $j) & 1;
-			$bj = ($b41 << 3) | ($b31 << 2) | ($b21 << 1) | ($b11 << 0);
+			$bj = ($b31 << 3) | ($b21 << 2) | ($b11 << 1) | ($b01 << 0);
 			$pix .= chr($bj);
 		}
 	} // for ( $i=0; $i < 0x4000; $i++ )
@@ -147,7 +156,7 @@ function mapdat( &$map, &$dat, $pfx )
 //////////////////////////////
 function loadclut( $fname )
 {
-	$rgb = load_file($fname);
+	$rgb = file_get_contents($fname);
 	if ( empty($rgb) || strlen($rgb) != 0x30 )
 		return;
 	printf("== loadclut( $fname ) = 16\n");
@@ -167,10 +176,35 @@ function loadclut( $fname )
 	return;
 }
 
+function magclut( $fname )
+{
+	$mag = file_get_contents($fname);
+	if ( empty($mag) )  return;
+	printf("== magclut( $fname ) = 16\n");
+
+	$mgc = substr0($mag, 0, chr(0x1a));
+	if ( substr($mgc, 0, 6) != "MAKI02" )
+		return;
+
+	global $gp_clut;
+	$gp_clut = "";
+
+	$pos = strlen($mgc) + 1 + 0x20;
+	for ( $i=0; $i < 0x30; $i += 3 )
+	{
+		// in GRB order
+		$gp_clut .= $mag[$pos+1] . $mag[$pos+0] . $mag[$pos+2] . BYTE;
+		$pos += 3;
+	}
+	return;
+}
+
 function rusty( $fname )
 {
 	if ( stripos($fname, '.rgb') !== false )
 		return loadclut( $fname );
+	if ( stripos($fname, '.mag') !== false )
+		return magclut( $fname );
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	$f1 = load_file("$pfx.map");

@@ -2,7 +2,7 @@
 require "common.inc";
 
 define("CANV_S", 0x200);
-define("SCALE", 1);
+define("SCALE", 1.0);
 //define("DRY_RUN", true);
 
 $gp_pix  = array();
@@ -171,16 +171,18 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 
 		if ( $rot == 0 )
 		{
-			$pix['dx'] = (int)(($dx + $rx) * SCALE) + $ceil/2;
-			$pix['dy'] = (int)(($dy + $ry) * SCALE) + $ceil/2;
 			$pix['rotate'] = array(0,0,0);
+			$dx = (int)(($dx + $rx) * SCALE);
+			$dy = (int)(($dy + $ry) * SCALE);
 		}
 		else
 		{
-			$pix['dx'] = (int)($rx * SCALE) + $ceil/2;
-			$pix['dy'] = (int)($ry * SCALE) + $ceil/2;
 			$pix['rotate'] = array($rot, (int)($dx * SCALE), (int)($dy * SCALE));
+			$dx = (int)($rx * SCALE);
+			$dy = (int)($ry * SCALE);
 		}
+		$pix['dx'] = $dx + $ceil/2;
+		$pix['dy'] = $dy + $ceil/2;
 
 		$m10 = ord( $b1[0] );
 		$pix['hflip'] = $m10 & 0x40;

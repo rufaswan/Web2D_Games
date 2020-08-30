@@ -15,10 +15,10 @@ msg="
 usage: ${0##*/}  COMMAND  [files]...
 
 command
-  -push  COMMENT  add + commit + push updates to repo
+  -push  COMMENT  commit + push updates to repo
   -force CONFIRM  overwrite the repo
   -pull    pull updates from repo
-  -push2   push updates to repo [SKIP add + commit]
+  -push2   retry push updates to repo [SKIP commit]
   -update  fetch updates from upstream
   -last    view the last 5 commits
 
@@ -30,16 +30,17 @@ if [ $# = 0 ]; then
 	exit
 fi
 ##############################
+git add .
+git ls-files --deleted -z | xargs -0 git rm
+git reflog expire --expire=now --all
+git gc --prune=now
+
 cmd="$1"
 shift
 
 case "$cmd" in
 	'-push')
 		echo "git push $git : $@"
-		git add .
-		git ls-files --deleted -z | xargs -0 git rm
-		git reflog expire --expire=now --all
-		git gc --prune=now
 		git commit -m "$@"
 		git push origin master
 		;;
@@ -54,7 +55,7 @@ case "$cmd" in
 		git pull origin master
 		;;
 	"-push2")
-		echo "git push $git"
+		echo "git push/retry $git"
 		git push origin master
 		;;
 

@@ -2,7 +2,7 @@
 require "common.inc";
 
 define("CANV_S", 0x200);
-define("SCALE", 1);
+define("SCALE", 1.0);
 $gp_tim = array();
 
 function loadtim( $tim_fn )
@@ -78,8 +78,10 @@ function sect1( &$file, $off, $fn )
 		else
 			$dy = sint8 ( $v[1] );
 
-		$pix['dx'] = (int)($dx * SCALE) + $ceil/2;
-		$pix['dy'] = (int)($dy * SCALE) + $ceil/2;
+		$dx = (int)($dx * SCALE);
+		$dy = (int)($dy * SCALE);
+		$pix['dx'] = $dx + $ceil/2;
+		$pix['dy'] = $dy + $ceil/2;
 
 		$sx = ord($v[2]);
 		$sy = ord($v[3]);

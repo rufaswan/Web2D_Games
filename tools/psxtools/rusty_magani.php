@@ -5,7 +5,9 @@ $gp_clut = "";
 
 function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 {
-	printf("== mgx_decode( %x , %x , %x , %x , %x )\n", $w, $h, $pb1, $pb4, $pc);
+	// https://github.com/46OkuMen/rusty/blob/master/mag.py
+	// https://46okumen.com/projects/rusty/
+	printf("== mag_decode( %x , %x , %x , %x , %x )\n", $w, $h, $pb1, $pb4, $pc);
 	$pix = "";
 	$bycod = 0;
 	$bylen = 0;
@@ -185,14 +187,15 @@ function rusty( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
+	// for *.ani
+	if ( stripos($fname, '.ani') !== false )
+		return sectani($file, $fname);
+
 	// for *.mag
 	$mgc = substr0($file, 0, chr(0x1a));
 	if ( substr($mgc, 0, 6) == "MAKI02" )
 		return sectmag($file, $fname, strlen($mgc)+1);
 
-	// for *.ani
-	if ( stripos($fname, '.ani') !== false )
-		return sectani($file, $fname);
 	return;
 }
 
@@ -201,12 +204,40 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 visual.com
-	vs1_00.mag vs1_01.mag vs1_02.mag vs1_03.mag vs1_04.mag vs1.ani
-	vs2_00.mag vs2_01.mag vs2_02.mag vs2.ani
-	vs3_10.mag vs3_11.mag vs3_12.mag vs3_13.mag vs3_14.mag vs3_20.mag vs3_3.mag vs3.ani
-	vs4_00.mag vs4_01.mag vs4_02.mag vs4.ani
-	vs5_00.mag vs5_01.mag vs5_02.mag vs5.ani
-	vs6_00.mag vs6_01.mag vs6_02.mag vs6_03.mag vs6.ani
-	ed01.mag ed02.mag vsending.ani
-	ed03.mag ed04.mag ed05.mag ed06.mag ed07.mag ed08.mag ed09.mag ed10.mag ed11.mag
+	vs1_00.mag
+	vs1_01.mag vs1.ani  0-23
+	vs1_02.mag vs1.ani 24-27
+	vs1_03.mag vs1.ani 28-39
+	vs1_04.mag vs1.ani 40-44
+	vs2_00.mag
+	vs2_01.mag
+	vs2_02.mag vs2.ani  0- 5
+	vs3_10.mag
+	vs3_11.mag
+	vs3_12.mag
+	vs3_13.mag
+	vs3_14.mag
+	vs3_20.mag vs3.ani  0- 1
+	vs3_3.mag  vs3.ani  2- 3
+	vs4_00.mag
+	vs4_01.mag vs4.ani  0- 1  14-16
+	vs4_02.mag vs4.ani  2-13
+	vs5_00.mag
+	vs5_01.mag vs5.ani  0- 5
+	vs5_02.mag vs5.ani  6-11
+	vs6_00.mag
+	vs6_01.mag vs6.ani  0- 5
+	vs6_02.mag
+	vs6_03.mag
+	ed01.mag
+	ed02.mag
+	ed03.mag
+	ed04.mag
+	ed05.mag
+	ed06.mag
+	ed07.mag
+	ed08.mag vsending.ani  0- 8
+	ed09.mag vsending.ani  9-11
+	ed10.mag vsending.ani 12-20
+	ed11.mag
  */

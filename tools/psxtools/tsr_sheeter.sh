@@ -4,7 +4,8 @@ echo "${0##*/}  THUMB_ID";
 
 function thumbnail()
 {
-	# 148x125 = 74x62 * 200%
+	# game  icon = 240x125
+	# sheet icon = 148x125 = 74x62 * 200%
 	sc='-scale 200%'
 	(( $1 > 74 )) && sc=''
 	(( $2 > 62 )) && sc=''

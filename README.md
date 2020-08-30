@@ -11,17 +11,17 @@
 
 ## Requirements
 
-* A self-hosted web server with PHP-CGI
-  such as [XAMPP](https://sourceforge.net/projects/xampp/files/)
-* PHP MUST have the following extensions compiled/enabled
-  * ICONV extension - to convert non-unicode charset to utf-8 (both text and filenames)
-* Scripts in tools/ are for PHP-CLI (PHP command-line):
-  * NOT required to upload to web server.
-  * Each folder / toolset is indepandant of each other.
-  * For some PHP script, it requires
-    * ZLIB extension - for QNT/AI2/ZLB/ACX file decompression
+* A self-hosted web server, such as
+  * [XAMPP](https://sourceforge.net/projects/xampp/files/)
+* Minimalistic PHP-cgi executable with
+  * zlib extension
+
+## Tools
+
+* For minimalistic PHP-cli (command-line interface) executable with
+  * zlib extension
 
 ## Game Status
 
-_Everything broken due to in middle of a rewrite for DLL extensions._
-_Sorry._
+* Alice-soft System 3.5
+  _Everything broken due to rewrite to support game's DLL functions._

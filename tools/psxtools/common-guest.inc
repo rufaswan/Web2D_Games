@@ -1,11 +1,31 @@
 <?php
 // non-PlayStation One (guest systems) functions
 
+function str2big( &$str, $pos, $byte )
+{
+	$s = substr($str, $pos, $byte);
+	$s = strrev($s);
+	return ordint($s);
+}
+
+function chrbig( $int, $byte )
+{
+	$t = chrint($int, $byte);
+	return strrev($t);
+}
+
 function str_endian( &$str, $pos, $byte )
 {
 	$s = substr($str, $pos, $byte);
 	$s = strrev($s);
 	strupd($str, $pos, $s);
+	return;
+}
+
+function req_ext( $func, $ext )
+{
+	if ( ! function_exists($func) )
+		trigger_error("REQ $ext extension not found!\n", E_USER_ERROR);
 	return;
 }
 //////////////////////////////

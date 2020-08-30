@@ -1,18 +1,6 @@
 <?php
 // 3D texture quad-rendering + distortion related
 
-function int_unique()
-{
-	$int = array();
-	foreach ( func_get_args() as $i )
-	{
-		if ( array_search($i, $int) === false )
-			$int[] = $i;
-	}
-	sort($int);
-	return $int;
-}
-
 function vertex_type( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4 )
 {
 	// quad vertex
@@ -24,12 +12,6 @@ function vertex_type( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4 )
 	// reversed
 	//  0 = 21  40 = 32  80 = 43  c0 = 14
 	//      34       41       12       23
-	$vx = int_unique($x1, $x2, $x3, $x4);
-	$vy = int_unique($y1, $y2, $y3, $y4);
-	$cvx = count($vx);
-	$cvy = count($vy);
-	$w = abs($vx[$cvx-1] - $vx[0]);
-	$h = abs($vy[$cvy-1] - $vy[0]);
 
 /*
 	$fact_x = $w / $pix['src']['w'];
@@ -51,49 +33,19 @@ function vertex_type( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4 )
 	$iv = 1 / $h;
 */
 	$ret = array();
-	if ( ($x1 == $x4) && ($x2 == $x3) && ($y1 == $y2) && ($y3 == $y4) )
-	{
-		// 1243  4312  2134  3421
-		if ( $x1 < $x2 )
-		{
-			// 1243  4312
-			if ( $y2 < $y3 )
-				$ret = array("1243", $x1, $y1, $x3, $y3);
-			else
-				$ret = array("4312", $x4, $y4, $x2, $y2);
-		}
-		else
-		{
-			// 2134  3421
-			if ( $y2 < $y3 )
-				$ret = array("2134", $x2, $y2, $x4, $y4);
-			else
-				$ret = array("3421", $x3, $y3, $x1, $y1);
-		}
-	}
-	if ( ($x1 == $x2) && ($x3 == $x4) && ($y1 == $y4) && ($y2 == $y3) )
-	{
-		// 1423  4132  2314  3241
-		if ( $y1 < $y2 )
-		{
-			// 1423  4132
-			if ( $x2 < $x3 )
-				$ret = array("1423", $x1, $y1, $x3, $y3);
-			else
-				$ret = array("4132", $x4, $y4, $x2, $y2);
-		}
-		else
-		{
-			// 2314  3241
-			if ( $x2 < $x3 )
-				$ret = array("2314", $x2, $y2, $x4, $y4);
-			else
-				$ret = array("3241", $x3, $y3, $x1, $y1);
-		}
-	}
-	if ( empty($ret) )
-		trigger_error("vertex_type() corners not parallel\n", E_USER_ERROR);
 	return $ret;
+}
+
+function copyquad( &$pix, $byte=1 )
+{
+	printf("copyquad() : %4d,%4d  %4d,%4d  %4d,%4d  %4d,%4d\n",
+		$pix['vertex'][0][0], $pix['vertex'][0][1],
+		$pix['vertex'][1][0], $pix['vertex'][1][1],
+		$pix['vertex'][2][0], $pix['vertex'][2][1],
+		$pix['vertex'][3][0], $pix['vertex'][3][1]
+	);
+
+	return;
 }
 
 function hex_rotate( $x1, $y1, $x2, $y2 )

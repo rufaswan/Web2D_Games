@@ -37,63 +37,65 @@ function bmp_header( $cw , $ch )
 	for ($i=0; $i < 0x24; $i++)
 		$head .= ZERO; // colorspace - unused
 
-	$head .= chrint( 0 , 4 ); // gamma red
-	$head .= chrint( 0 , 4 ); // gamma green
-	$head .= chrint( 0 , 4 ); // gamma blue
+	$head .= chrint(0 , 4); // gamma red
+	$head .= chrint(0 , 4); // gamma green
+	$head .= chrint(0 , 4); // gamma blue
 
 	return $head;
 }
-
+//////////////////////////////
 function clut2bmp( &$clut, $fname )
 {
-	$cn = str2int($clut,  4, 4);
-	$cw = str2int($clut,  8, 4);
-	$ch = str2int($clut, 12, 4);
-	printf("CLUT , $cn , $cw , $ch , %s\n", $fname);
+	$cc = str2int($clut,  4, 4);
+	$w  = str2int($clut,  8, 4);
+	$h  = str2int($clut, 12, 4);
+	printf("CLUT , $cc , $w , $h , %s\n", $fname);
 
-	$head = bmp_header( $cw , $ch );
+	$head = bmp_header( $w , $h );
 
 	$pal = array();
-	for ($i=0; $i < $cn; $i++)
+	$pos = 0x10;
+	for ( $i=0; $i < $cc; $i++ )
 	{
-		$pos = 0x10 + ($i * 4);
 		$pal[] = substr($clut, $pos, 4);
-	} // for ($i=0; $i < $cn; $i++)
+		$pos += 4;
+	} // for ($i=0; $i < $cc; $i++)
 
 	$data = "";
-	while ( $ch > 0 )
+	while ( $h > 0 )
 	{
-		$ch--;
-		$pos = 0x10 + ($cn * 4) + ($cw * $ch);
-		$pix = substr($clut, $pos, $cw);
-		for ( $i=0; $i < $cw; $i++ )
+		$h--;
+		$pos = 0x10 + ($cc * 4) + ($h * $w);
+		$pix = substr($clut, $pos, $w);
+		for ( $x=0; $x < $w; $x++ )
 		{
-			$px = ord( $pix[$i] );
+			$px = ord( $pix[$x] );
 			$data .= $pal[$px];
-		} // for ( $i=0; $i < $cw; $i++ )
-	} // while ( $ch > 0 )
+		}
+	} // while ( $h > 0 )
 
-	return $bmp = $head . $data;
+	file_put_contents("$fname.bmp", $head.$data);
+	return;
 }
 
 function rgba2bmp( &$rgba, $fname )
 {
-	$cw = str2int($rgba, 4, 4);
-	$ch = str2int($rgba, 8, 4);
-	printf("RGBA , $cw , $ch , %s\n", $fname);
+	$w = str2int($rgba, 4, 4);
+	$h = str2int($rgba, 8, 4);
+	printf("RGBA , $w , $h , %s\n", $fname);
 
-	$head = bmp_header( $cw , $ch );
+	$head = bmp_header( $w , $h );
 
 	$data = "";
-	while ( $ch > 0 )
+	while ( $h > 0 )
 	{
-		$ch--;
-		$pos = 12 + ($cw * $ch * 4);
-		$pix = substr($rgba, $pos, $cw*4);
-		$data .= $pix;
-	} // while ( $ch > 0 )
+		$h--;
+		$pos = 12 + ($h * $w * 4);
+		$data .= substr($rgba, $pos, $w*4);
+	} // while ( $h > 0 )
 
-	return $head . $data;
+	file_put_contents("$fname.bmp", $head.$data);
+	return;
 }
 //////////////////////////////
 function img2bmp( $fname )
@@ -102,17 +104,12 @@ function img2bmp( $fname )
 	if ( empty($file) )  return;
 
 	$mgc = substr($file, 0, 4);
-	$bmp = "";
 	if ( $mgc == "CLUT" )
-		$bmp = clut2bmp( $file, $fname );
-	else
+		return clut2bmp( $file, $fname );
 	if ( $mgc == "RGBA" )
-		$bmp = rgba2bmp( $file, $fname );
-	else
-		return;
+		return rgba2bmp( $file, $fname );
 
-	if ( ! empty($bmp) )
-		file_put_contents( "$fname.bmp", $bmp );
+	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )

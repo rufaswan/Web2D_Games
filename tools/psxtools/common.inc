@@ -41,7 +41,7 @@ function str2int( &$str, $pos, $byte )
 function substr0( &$str, $pos, $end = ZERO )
 {
 	$len = 0;
-	while ( $str[$pos+$len] != $end )
+	while ( isset( $str[$pos+$len] ) && $str[$pos+$len] != $end )
 		$len++;
 	return substr($str, $pos, $len);
 }
@@ -119,16 +119,22 @@ function int_clamp( $int, $min, $max )
 
 function int_ceil( $int, $ceil )
 {
+	// 3 -> 4 and -3 -> -4
+	$int = (int)$int;
+	$step = ( $int < 0 ) ? -1 : 1;
 	while ( ($int % $ceil) != 0 )
-		$int++;
-	return (int)$int;
+		$int += $step;
+	return $int;
 }
 
 function int_floor( $int, $floor )
 {
+	// 3 -> 2 and -3 -> -2
+	$int = (int)$int;
+	$step = ( $int < 0 ) ? 1 : -1;
 	while ( ($int % $floor) != 0 )
-		$int--;
-	return (int)$int;
+		$int += $step;
+	return $int;
 }
 
 function arrayint( &$array )
@@ -429,6 +435,7 @@ function COPYPIX_DEF()
 		'vflip'  => false,
 		'hflip'  => false,
 		'rotate' => array(0,0,0),
+		'vertex' => array(),
 		'alpha'  => "",
 	);
 	return $php56;
@@ -571,7 +578,7 @@ function copypix( &$pix )
 				$c1 = $alpha($c1, $c2);
 
 			// COPY / UPDATE PIXEL
-			strupd($pix['rgba']['pix'], $dxx, $c1);
+			strupd($pix['rgba']['pix'], $dxx*4, $c1);
 
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
@@ -745,7 +752,7 @@ function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
 {
 	if ( defined("DRY_RUN") )
 		return;
-	if ( $fact_x === 1 && $fact_y === 1 )
+	if ( (int)($fact_x*100) === 100 && (int)($fact_y*100) === 100 )
 		return;
 
 	$nw = (int)ceil( $pix['src']['w'] * $fact_x );
