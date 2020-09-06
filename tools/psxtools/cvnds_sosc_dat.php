@@ -88,6 +88,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $loadtexx;
 		$pix['src']['pal'] = $gp_clut[$cid];
+		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
 
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;
@@ -174,7 +175,6 @@ function cvnds( $dir )
 	$src['rgba']['w'] = 0x100;
 	$src['rgba']['h'] = 0x100;
 	$src['rgba']['pix'] = canvpix(0x100,0x100);
-	$src['bgzero'] = true;
 		$ed = strlen($grps);
 		$st = 0;
 		$id = 0;

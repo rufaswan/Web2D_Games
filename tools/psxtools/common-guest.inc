@@ -28,6 +28,19 @@ function req_ext( $func, $ext )
 		trigger_error("REQ $ext extension not found!\n", E_USER_ERROR);
 	return;
 }
+
+function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
+{
+	$b7 = ($bit7 & 1) << 7;
+	$b6 = ($bit6 & 1) << 6;
+	$b5 = ($bit5 & 1) << 5;
+	$b4 = ($bit4 & 1) << 4;
+	$b3 = ($bit3 & 1) << 3;
+	$b2 = ($bit2 & 1) << 2;
+	$b1 = ($bit1 & 1) << 1;
+	$b0 = ($bit0 & 1) << 0;
+	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
+}
 //////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
 {
@@ -80,64 +93,7 @@ function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 
 function copyrgba( &$pix )
 {
-	if ( copypix_errs($pix) )
-		return;
-	if ( defined("DRY_RUN") )
-		return;
-
-	flippix($pix, 4);
-
-	$rot = ($pix['rotate'][0] & BIT8) * pi() / 0x80;
-	$sin = sin($rot);
-	$cos = cos($rot);
-	$hyp = hypot($pix['src']['w'], $pix['src']['h']) * 0.6;
-
-	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
-	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
-		$cx = $tx * $cos - $ty * $sin;
-		$cy = $tx * $sin + $ty * $cos;
-	$x1 = (int)($cx - $hyp);
-	$y1 = (int)($cy - $hyp);
-	$x2 = (int)($cx + $hyp);
-	$y2 = (int)($cy + $hyp);
-
-	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
-	$sin = sin($rot);
-	$cos = cos($rot);
-	for ( $y=$y1; $y <= $y2; $y++ )
-	{
-		$dy = $y + $pix['dy'];
-		if ( $dy < 0 || $dy >= $pix['rgba']['h'] )
-			continue;
-
-		for ( $x=$x1; $x <= $x2; $x++ )
-		{
-			$dx = $x + $pix['dx'];
-			if ( $dx < 0 || $dx >= $pix['rgba']['w'] )
-				continue;
-
-			$rx = (int)round($x * $cos - $y * $sin) - $pix['rotate'][1];
-			$ry = (int)round($x * $sin + $y * $cos) - $pix['rotate'][2];
-			if ( $rx < 0 || $rx >= $pix['src']['w'] )
-				continue;
-			if ( $ry < 0 || $ry >= $pix['src']['h'] )
-				continue;
-
-			$sxx = ($ry * $pix['src']['w']) + $rx;
-			$c1 = substr($pix['src']['pix'], $sxx*4, 4);
-
-			$dxx = ($dy * $pix['rgba']['w']) + $dx;
-			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
-
-			$alpha = $pix['alpha'];
-			if ( function_exists($alpha) )
-				$c1 = $alpha($c1, $c2);
-
-			strupd($pix['rgba']['pix'], $dxx*4, $c1);
-
-		} // for ( $x=$x1; $x < $x2; $x++ )
-	} // for ( $y=$y1; $y < $y2; $y++ )
-
+	copypix($pix, 4);
 	return;
 }
 
@@ -172,7 +128,8 @@ function alpha_over( $src, $dst )
 
 function scalergba( &$pix, $fact_x, $fact_y )
 {
-	return scalepix( $pix, $fact_x, $fact_y, 4 );
+	scalepix( $pix, $fact_x, $fact_y, 4 );
+	return;
 }
 //////////////////////////////
 function nds_ram( $dir )

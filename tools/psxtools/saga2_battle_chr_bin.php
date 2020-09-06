@@ -71,6 +71,7 @@ function sectpart( &$file, $nid, $st, $ed )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, 0x100, 0x100);
 		$pix['src']['pal'] = $gp_clut;
+		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
 
 		$dx = ord( $v[6] );
 		$dy = ord( $v[7] );

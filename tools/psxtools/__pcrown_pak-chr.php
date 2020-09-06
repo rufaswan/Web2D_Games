@@ -70,7 +70,6 @@ function sectpart( &$pak, $dir, $id, $off, $no )
 	$pix['rgba']['w'] = $ceil;
 	$pix['rgba']['h'] = $ceil;
 	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
-	$pix['bgzero'] = false;
 
 	global $gp_pix, $gp_clut;
 	for ( $i=0; $i < $no; $i++ )
@@ -91,6 +90,7 @@ function sectpart( &$pak, $dir, $id, $off, $no )
 		$pix['src']['h'] = $gp_pix[$tid][2];
 		$pix['src']['pix'] = $gp_pix[$tid][0];
 		$pix['src']['pal'] = ( empty($gp_clut) ) ? grayclut(16) : $gp_clut[$cid];
+		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
 
 		sectquad($pix, $dat, $tid);
 		//copyquad($pix);

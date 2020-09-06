@@ -126,7 +126,7 @@ function repos( $fname )
 		$dat = substr($file, 12, $w*$h*4);
 
 		$canv_s = ( $w > $h ) ? $w : $h;
-		$canv_s = int_ceil( $canv_s * 2, 0x100 );
+		$canv_s = int_ceil( $canv_s * 2, TRIM_SZ * 2 );
 
 		$pix = COPYPIX_DEF();
 		$pix['rgba']['w'] = $canv_s;

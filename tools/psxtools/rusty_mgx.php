@@ -1,5 +1,6 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
 
 //define("DRY_RUN", true);
 $gp_clut = "";
@@ -38,7 +39,7 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 			$bylen--;
 
 		$flgno[$flg]++;
-		if ( $flg )
+		if ( $flg == 0 )
 		{
 			$act = ord( $file[$pb4] );
 				$pb4++;
@@ -68,10 +69,10 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 				$p = ($actdy[$b] * $w/4) + $actdx[$b];
 				printf("---- REF  %x  [-%d,-%d]\n", $p, $actdx[$b], $actdy[$b]);
 				$p = count($pix) - $p;
-				if ( ! isset( $pix[$p] ) )
-					$pix[] = ZERO . ZERO;
-				else
+				if ( isset( $pix[$p] ) )
 					$pix[] = $pix[$p];
+				else
+					$pix[] = ZERO . ZERO;
 			}
 		} // foreach ( $by as $b )
 
@@ -81,7 +82,7 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 	return implode('', $pix);
 }
 
-function sectmag( &$file, $fname, $pos )
+function sectmgx( &$file, $fname, $pos )
 {
 	printf("== sectmag( $fname , %x )\n", $pos);
 	debug( substr($file, $pos+0, 4) );
@@ -113,84 +114,35 @@ function sectmag( &$file, $fname, $pos )
 	$pix = mag_decode($file, $w, $h, $pos+$b1, $pos+$b2, $pos+$b4 );
 	//save_file("$fname.pix", $pix);
 
-	$sz = $w * $h / 2;
-	while ( strlen($pix) < $sz )
+	while ( strlen($pix) % 2 )
 		$pix .= ZERO;
 
-	$clut = "CLUT";
-	$clut .= chrint(16, 4);
-	$clut .= chrint($w, 4);
-	$clut .= chrint($h, 4);
-	$clut .= $gp_clut;
+	$data = "CLUT";
+	$data .= chrint(16, 4);
+	$data .= chrint($w, 4);
+	$data .= chrint($h, 4);
+	$data .= $gp_clut;
 
-	for ( $i=0; $i < $sz; $i++ )
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i += 2 )
 	{
-		$b = ord( $pix[$i] );
-		$b1 = ($b >> 4) & BIT4;
-		$b2 = ($b >> 0) & BIT4;
-		$clut .= chr($b1) . chr($b2);
-	}
+		$b0 = ord( $pix[$i+0] );
+		$b1 = ord( $pix[$i+1] );
 
-	save_file("$fname.clut", $clut);
-	return;
-}
-//////////////////////////////
-function ani_part( &$file, $dir, $id, $pos )
-{
-	printf("== sectpart( $dir , $id , %x )\n", $pos);
-	$w = str2int($file, $pos+2, 2) * 8;
-	$h = str2int($file, $pos+4, 2);
-		$pos += 6;
-
-	$bk = $w * $h / 8;
-	printf("size %x x %x = %x\n", $w, $h, $bk);
-
-	$pix = "";
-	for ( $i=0; $i < $bk; $i++ )
-	{
-		$b1 = ord( $file[$pos + 0*$bk] );
-		$b2 = ord( $file[$pos + 1*$bk] );
-		$b3 = ord( $file[$pos + 2*$bk] );
-		$b4 = ord( $file[$pos + 3*$bk] );
-			$pos++;
-
-		$j = 8;
+		$j = 4;
 		while ( $j > 0 )
 		{
 			$j--;
-			$b11 = ($b1 >> $j) & 1;
-			$b21 = ($b2 >> $j) & 1;
-			$b31 = ($b3 >> $j) & 1;
-			$b41 = ($b4 >> $j) & 1;
-			$bj = ($b41 << 3) | ($b31 << 2) | ($b21 << 1) | ($b11 << 0);
-			$pix .= chr($bj);
+			$b01 = $b0 >> ($j+4);
+			$b02 = $b0 >> ($j+0);
+			$b11 = $b1 >> ($j+4);
+			$b12 = $b1 >> ($j+0);
+			$bj = bits8(0,0,0,0, $b11,$b12,$b01,$b02);
+			$data .= chr($bj);
 		}
-	} // for ( $i=0; $i < $bk; $i++ )
+	} // for ( $i=0; $i < $len; $i += 2 )
+	save_file("$fname.clut", $data);
 
-	global $gp_clut;
-	$clut = "CLUT";
-	$clut .= chrint(16, 4);
-	$clut .= chrint($w, 4);
-	$clut .= chrint($h, 4);
-	$clut .= ( empty($gp_clut) ) ? grayclut(16) : $gp_clut;
-	$clut .= $pix;
-
-	$fn = sprintf("$dir/%04d.clut", $id);
-	save_file($fn, $clut);
-	return;
-}
-
-function sectani( &$file, $fname )
-{
-	printf("== sectani( $fname )\n");
-
-	$dir = str_replace('.', '_', $fname);
-	$cnt = str2int($file, 0, 2) / 2;
-	for ( $i=0; $i < $cnt; $i++ )
-	{
-		$p = str2int($file, $i*2, 2);
-		ani_part( $file, $dir, $i, $p );
-	}
 	return;
 }
 //////////////////////////////
@@ -199,14 +151,10 @@ function rusty( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	// for *.ani
-	if ( stripos($fname, '.ani') !== false )
-		return sectani($file, $fname);
-
-	// for *.mag
+	// for *.mgx
 	$mgc = substr0($file, 0, chr(0x1a));
 	if ( substr($mgc, 0, 6) == "MAKI02" )
-		return sectmag($file, $fname, strlen($mgc)+1);
+		return sectmgx($file, $fname, strlen($mgc)+1);
 
 	return;
 }
@@ -215,41 +163,12 @@ for ( $i=1; $i < $argc; $i++ )
 	rusty( $argv[$i] );
 
 /*
-visual.com
-	vs1_00.mag
-	vs1_01.mag vs1.ani  0-23
-	vs1_02.mag vs1.ani 24-27
-	vs1_03.mag vs1.ani 28-39
-	vs1_04.mag vs1.ani 40-44
-	vs2_00.mag
-	vs2_01.mag
-	vs2_02.mag vs2.ani  0- 5
-	vs3_10.mag
-	vs3_11.mag
-	vs3_12.mag
-	vs3_13.mag
-	vs3_14.mag
-	vs3_20.mag vs3.ani  0- 1
-	vs3_3.mag  vs3.ani  2- 3
-	vs4_00.mag
-	vs4_01.mag vs4.ani  0- 1  14-16
-	vs4_02.mag vs4.ani  2-13
-	vs5_00.mag
-	vs5_01.mag vs5.ani  0- 5
-	vs5_02.mag vs5.ani  6-11
-	vs6_00.mag
-	vs6_01.mag vs6.ani  0- 5
-	vs6_02.mag
-	vs6_03.mag
-	ed01.mag
-	ed02.mag
-	ed03.mag
-	ed04.mag
-	ed05.mag
-	ed06.mag
-	ed07.mag
-	ed08.mag vsending.ani  0- 8
-	ed09.mag vsending.ani  9-11
-	ed10.mag vsending.ani 12-20
-	ed11.mag
+op.com
+	staff0.mgx
+	r_a11.mgx r_a11_1.mgx r_a11_2.mgx r_a11_3.mgx r_a11_4.mgx r_a11_5.mgx r_a11_6.mgx r_a11_7.mgx
+	r_a21.mgx r_a21pal.mgx r_a21p_.mgx r_a23.mgx r_a24.mgx r_a26.mgx r_a26a.mgx
+	r_a31.mgx r_a32.mgx r_a33.mgx r_a35.mgx r_a36.mgx
+	r_b11.mgx r_b12.mgx r_b14.mgx r_b15.mgx r_b16a.mgx r_b16b.mgx
+	r_b21a.mgx r_b21b.mgx r_b22.mgx r_b23.mgx r_b24.mgx
+	r_b31.mgx r_b32_1.mgx r_b32_2.mgx r_b33.mgx r_b33a.mgx r_b33b.mgx r_b33c.mgx r_b33d.mgx r_b34_1.mgx r_b34_2.mgx
  */

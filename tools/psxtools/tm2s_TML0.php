@@ -41,7 +41,6 @@ function sectparts( &$tml, &$anim, &$layout, $dir, $id, $name, $cnt, $data)
 		$pix['rgba']['w'] = CANV_S;
 		$pix['rgba']['h'] = CANV_S;
 		$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
-		$pix['bgzero'] = true;
 
 		for ( $i=0; $i < $cnt; $i++ )
 		{

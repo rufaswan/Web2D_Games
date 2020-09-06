@@ -30,7 +30,6 @@ function sectmap( &$mcb, &$chb, $w, $dir, $st, $id )
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
 	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
-	$pix['bgzero'] = true;
 
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;

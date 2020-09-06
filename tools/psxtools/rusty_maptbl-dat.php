@@ -1,19 +1,21 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
 
 $gp_clut = "";
+$gp_h = 1;
 
 function sectpart( &$dat, $pfx, $pos, $id, $w, $h )
 {
 	printf("== sectpart( $pfx , %x , $id , $w , $h )\n", $pos);
 	$bk = $w * $h / 8;
 
-	global $gp_clut;
+	global $gp_clut, $gp_h;
 	$pal = ( empty($gp_clut) ) ? grayclut(16) : $gp_clut;
 
 	$rgba = "RGBA";
 	$rgba .= chrint($w, 4);
-	$rgba .= chrint($h*2, 4);
+	$rgba .= chrint($h*$gp_h, 4);
 	for ( $y=0; $y < $h; $y++ )
 	{
 		$line = "";
@@ -30,20 +32,19 @@ function sectpart( &$dat, $pfx, $pos, $id, $w, $h )
 			while ( $j > 0 )
 			{
 				$j--;
-				$b01 = ($b0 >> $j) & 1; // mask
-				$b11 = ($b1 >> $j) & 1;
-				$b21 = ($b2 >> $j) & 1;
-				$b31 = ($b3 >> $j) & 1;
-				$b41 = ($b4 >> $j) & 1;
-				$bj = ($b41 << 3) | ($b31 << 2) | ($b21 << 1) | ($b11 << 0);
+				$b01 = $b0 >> $j; // mask
+				$b11 = $b1 >> $j;
+				$b21 = $b2 >> $j;
+				$b31 = $b3 >> $j;
+				$b41 = $b4 >> $j;
+				$bj = bits8(0,0,0,0, $b41,$b31,$b21,$b11);
 
 				$line .= substr($pal, $bj*4, 3); // for RGB
-				$line .= ( $b01 ) ? BYTE : ZERO; // for A
+				$line .= ( $b01 & 1 ) ? BYTE : ZERO; // for A
 			}
 		} // for ( $x=0; $x < $w; $x += 8 )
 
-		$rgba .= $line;
-		$rgba .= $line;
+		$rgba .= str_repeat($line, $gp_h);
 	} // for ( $y=0; $y < $h; $y++ )
 
 	$fn = sprintf("$pfx/%04d.rgba", $id);
@@ -80,7 +81,6 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
 	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
-	$pix['bgzero'] = true;
 
 	$pix['src']['w'] = 0x20;
 	$pix['src']['h'] = 0x10;
@@ -161,7 +161,8 @@ function loadclut( $fname )
 		return;
 	printf("== loadclut( $fname ) = 16\n");
 
-	global $gp_clut;
+	global $gp_clut, $gp_h;
+	$gp_h = 2;
 	$gp_clut = "";
 	for ( $i=0; $i < 0x30; $i += 3 )
 	{
@@ -186,7 +187,8 @@ function magclut( $fname )
 	if ( substr($mgc, 0, 6) != "MAKI02" )
 		return;
 
-	global $gp_clut;
+	global $gp_clut, $gp_h;
+	$gp_h = 1;
 	$gp_clut = "";
 
 	$pos = strlen($mgc) + 1 + 0x20;
@@ -320,4 +322,8 @@ storyop.com
 	op_2.rgb op_2.map
 	op_3.rgb op_3.map op_4.map
 	op_4.rgb op_5.map page0_op.tbl page1_op.tbl page12op.tbl page3_op.tbl
+
+boss1.tbl
+	0     1      2
+	0,96  96,68  16,0
 */

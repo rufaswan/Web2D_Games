@@ -11,6 +11,12 @@ star2  SLPM 861.06  Star Ocean 2 / Disc 2
 mkr    SLPM 861.34  Mitsumete Knight R
 valky  SLPM 863.79  Valkyrie Profile / Disc 1
 valky  SLPM 863.80  Valkyrie Profile / Disc 2
+tm2s   SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 1
+tm2s   SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 2
+tm2s   SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 1
+tm2s   SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 2
+tm2s   SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
+tm2s   SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
 
 sotn   SLUS 000.67  Castlevania Symphony of the Night
 xeno   SLUS 006.64  Xenogears / Disc 1
@@ -25,6 +31,7 @@ star2  SCUS 944.22  Star Ocean 2 / Disc 2
 	progress
 		mana   ALL DONE
 		saga2  ALL DONE , SLUS not supported
+		tm2s   ALL DONE
 		yuna   .ss1 only
 		xeno   2D battle sprites only
 		sotn   all maps only
@@ -32,7 +39,7 @@ star2  SCUS 944.22  Star Ocean 2 / Disc 2
 		valky  *upcoming*
 		star2  *upcoming*
 
-= Guest Games =
+= Guest System Games =
 cvnds      NDS     ACVJ      Akumajou Dracula Sougetsu no Juujika
 cvnds      NDS     ACBJ      Akumajou Dracula Gallery of Labyrinth
 cvnds      NDS     YR9J      Akumajou Dracula Ubawareta Kokuin
@@ -46,12 +53,13 @@ pcrown     SATURN  T-14418G  Princess Crown
 sotn_sat   SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 mura       WII     Oboro Muramasa
 rusty      PC98    Rusty
+tmix       PC98    Totsugeki Mix
 
 	progress
 		yuna_mika  ALL DONE
 		cvnds      all maps only
 		yuna       .ss1 only
 		pcrown     .chb/.mcb only (+PSP .tmx)
-		rusty      .map/.dat only
+		rusty      .map/.dat and .mag/.ani
 		sotn_sat   *upcoming*
 		mura       *upcoming*

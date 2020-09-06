@@ -65,8 +65,7 @@ function rusty( $fname )
 	$file = file_get_contents($fname);
 		if ( empty($file) )   return;
 
-	$mgc = substr($file, 0, 2);
-	if ( $mgc != "LZ" )
+	if ( substr($file, 0, 2) != "LZ" )
 		return;
 
 	$dec = rusty_decode( $file, 7 );
@@ -76,3 +75,11 @@ function rusty( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	rusty( $argv[$i] );
+
+/*
+Neko Project 2 GDC clock 5 MHz error
+	- restart emulator and hold End/Help key -> BIOS screen
+	- select DIP switch 2 settings
+	- change GDC clock from 5 MHz to 2.5 MHz
+	- exit
+ */

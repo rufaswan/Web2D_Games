@@ -29,7 +29,6 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
 	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
-	$pix['bgzero'] = false;
 
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
@@ -92,6 +91,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 				$pix['src']['pix'] = rippix8($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x80, 0x80);
 				$pix['src']['pal'] = strpal555($gp_clut[$mp3], $cid*0x20, 0x100);
 			}
+			$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
 
 			copypix($pix);
 		} // for ( $x=0; $x < $map_w; $x += 0x10 )

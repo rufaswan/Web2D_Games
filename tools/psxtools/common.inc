@@ -431,12 +431,12 @@ function COPYPIX_DEF()
 		),
 		'dx' => 0,
 		'dy' => 0,
-		'bgzero' => false,
+		'bgzero' => "", // RGBA to ignore
 		'vflip'  => false,
 		'hflip'  => false,
 		'rotate' => array(0,0,0),
 		'vertex' => array(),
-		'alpha'  => "",
+		'alpha'  => "", // callback
 	);
 	return $php56;
 }
@@ -502,14 +502,14 @@ function copypix_errs( &$pix )
 	return false;
 }
 
-function copypix( &$pix )
+function copypix( &$pix, $byte=1 )
 {
 	if ( copypix_errs($pix) )
 		return;
 	if ( defined("DRY_RUN") )
 		return;
 
-	flippix($pix);
+	flippix($pix, $byte);
 
 	// src rotation
 	//   0x100 == 360 degree == 2 * pi() radian
@@ -562,9 +562,13 @@ function copypix( &$pix )
 				continue;
 
 			$sxx = ($ry * $pix['src']['w']) + $rx;
-			if ( $pix['src']['pix'][$sxx] == ZERO && ! $pix['bgzero'] )
+			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
+			if ( $byte == 1 )
+				$c1 = substr($pix['src']['pal'], ord($c1)*4, 4);
+
+			// ignore bgcolor
+			if ( $c1 == $pix['bgzero'] )
 				continue;
-			$c1 = substr($pix['src']['pal'], ord( $pix['src']['pix'][$sxx] )*4, 4);
 
 			$dxx = ($dy * $pix['rgba']['w']) + $dx;
 			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);

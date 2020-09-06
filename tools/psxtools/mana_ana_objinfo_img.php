@@ -148,6 +148,7 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $rippix8;
 		$pix['src']['pal'] = $gp_clut[$tid][$cid];
+		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
 		scalepix($pix, SCALE, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
@@ -217,7 +218,6 @@ function sectmeta( &$meta, $dir, $ids )
 	$src['rgba']['w'] = 0x100;
 	$src['rgba']['h'] = 0x100;
 	$src['rgba']['pix'] = canvpix(0x100,0x100);
-	$src['bgzero'] = true;
 		for ( $m=0; $m < $cnt; $m++ )
 		{
 			$pos = $off + 2 + ($m * 2);

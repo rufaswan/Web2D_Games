@@ -82,7 +82,6 @@ function yuna( $fname )
 	$pix['rgba']['w'] = $w;
 	$pix['rgba']['h'] = $h;
 	$pix['rgba']['pix'] = canvpix($w,$h);
-	$pix['bgzero'] = true;
 
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;

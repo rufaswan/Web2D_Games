@@ -1,5 +1,6 @@
 <?php
 require "common.inc";
+require "common-guest.inc";
 
 // http://wiki.tockdom.com/w/index.php?title=TPL_%28File_Format%29
 // http://wiki.tockdom.com/w/index.php?title=Image_Formats
@@ -77,6 +78,88 @@ function cl_rgba32( $block )
 	return $pix;
 }
 ////////////////////////////////////////
+function cmpr_inter( $c1, $f1, $c2, $f2 )
+{
+	$c1r = ord( $c1[0] ) * $f1;
+	$c1g = ord( $c1[1] ) * $f1;
+	$c1b = ord( $c1[2] ) * $f1;
+	$c2r = ord( $c2[0] ) * $f2;
+	$c2g = ord( $c2[1] ) * $f2;
+	$c2b = ord( $c2[2] ) * $f2;
+	$cr = int_clamp($c1r + $c2r, 0, BIT8);
+	$cg = int_clamp($c1g + $c2g, 0, BIT8);
+	$cb = int_clamp($c1b + $c2b, 0, BIT8);
+	return chr($cr) . chr($cg) . chr($cb) . BYTE;
+}
+function tpl_dxt1( $str )
+{
+	// CMPR blocks are 2x2 DXT1 subblocks
+	// DXT1 blocks are 4x4 pixels =  8 bytes
+	// CMPR blocks are 8x8 pixels = 32 bytes
+	$dxt = array();
+	for ( $i=0; $i < 0x20; $i += 8 )
+	{
+		$bk = "";
+
+		// https://en.wikipedia.org/wiki/S3_Texture_Compression#DXT1
+		$c0 = substr($str, $i+0, 2);
+		$c1 = substr($str, $i+2, 2);
+
+		$pal = array();
+		$pal[] = cl_rgb565($c0[1] . $c0[0]);
+		$pal[] = cl_rgb565($c0[1] . $c0[0]);
+
+		$c01 = ordint($c0[1] . $c0[0]);
+		$c11 = ordint($c1[1] . $c1[0]);
+		if ( $c01 > $c11 )
+		{
+			$pal[] = cmpr_inter( $pal[0], 2/3, $pal[1], 1/3 );
+			$pal[] = cmpr_inter( $pal[0], 1/3, $pal[1], 2/3 );
+		}
+		else
+		{
+			$pal[] = cmpr_inter( $pal[0], 1/2, $pal[1], 1/2 );
+			$pal[] = PIX_ALPHA;
+		}
+
+		$byop = 0;
+		$byln = 0;
+		$p = $i + 4;
+		$ed = 16;
+		while ( $ed > 0 )
+		{
+			if ( $byln == 0 )
+			{
+				$byop = ord( $str[$p] );
+				$p++;
+				$byln = 8;
+			}
+
+			$b1 = ($byop >> 6) & 3;
+			$byop <<= 2;
+			$byln -= 2;
+			$bk .= $pal[$b1];
+			$ed--;
+		}
+
+		$dxt[] = $bk;
+	} // for ( $i=0; $i < 0x20; $i += 8 )
+
+	// forming 2x2 CMPR block
+	$pix = "";
+	for ( $i=0; $i < 4; $i++ )
+	{
+		$pix .= substr($dxt[0], $i*0x10, 0x10);
+		$pix .= substr($dxt[1], $i*0x10, 0x10);
+	}
+	for ( $i=0; $i < 4; $i++ )
+	{
+		$pix .= substr($dxt[2], $i*0x10, 0x10);
+		$pix .= substr($dxt[3], $i*0x10, 0x10);
+	}
+
+	return $pix;
+}
 function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 {
 	printf("== tplimage( $iw , $ih , $byte , $bw , $bh )\n");
@@ -182,7 +265,7 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$gp_clut )
 			$siz = $iwb * $ihb * 2;
 			while ( $siz > 0 )
 			{
-				$pix .= cl_rgb565( $file[$pos+0] . $file[$pos+1] );
+				$pix .= cl_rgb565( $file[$pos+1] . $file[$pos+0] );
 				$siz -= 2;
 				$pos += 2;
 			}
@@ -197,7 +280,7 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$gp_clut )
 			$siz = $iwb * $ihb * 2;
 			while ( $siz > 0 )
 			{
-				$pix .= cl_rgb5a3( $file[$pos+0] . $file[$pos+1] );
+				$pix .= cl_rgb5a3( $file[$pos+1] . $file[$pos+0] );
 				$siz -= 2;
 				$pos += 2;
 			}
@@ -262,22 +345,38 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$gp_clut )
 				$pos += 2;
 			}
 			break;
-		//case 14: // im_cmpr
+		case 14: // im_cmpr
+			$iwb = int_ceil($iw, 8);
+			$ihb = int_ceil($ih, 8);
+			$byte = 4;
+			$bw = 8;
+			$bh = 8;
+
+			$siz = $iwb/8 * $ihb/8;
+			while ( $siz > 0 )
+			{
+				$b1 = substr($file, $pos, 0x20);
+				$pix .= tpl_dxt1($b1);
+				$siz -= 1;
+				$pos += 0x20;
+			}
+			break;
 		default:
 			printf("UNKNOWN tpl im_fmt %d\n", $fmt);
 			return array();
 	}
-	return array($iwb,$ihb,$byte,$bw,$bh,$pix);
+
+	tplimage( $pix, $iwb, $ihb, $byte, $bw, $bh );
+	return array($iwb,$ihb,$byte,$pix);
 }
 
 function wiitpl( &$file, $base, $pfx, $id )
 {
 	printf("== wiitpl( %x , $pfx , $id )\n", $base);
-	$b = chrint(0x20af30, 4);
-	$b = strrev($b);
+	$b = chrbig(0x20af30, 4);
 	if ( substr($file, $base+0, 4) != $b  )
 		return;
-	$cnt = ordint( $file[$base+7] . $file[$base+6] . $file[$base+5] );
+	$cnt = str2big($file, $base+4, 4);
 
 	$pfmt = array(
 		0 => "cl_ia8",
@@ -302,8 +401,8 @@ function wiitpl( &$file, $base, $pfx, $id )
 	{
 		$p = $base + 12 + ($i * 8);
 
-		$p1 = ordint( $file[$p+3] . $file[$p+2] . $file[$p+1] ); // image
-		$p2 = ordint( $file[$p+7] . $file[$p+6] . $file[$p+5] ); // palette
+		$p1 = str2big($file, $p+0, 4); // image
+		$p2 = str2big($file, $p+4, 4); // palette
 
 		// optional - palette
 		$gp_clut = "";
@@ -311,10 +410,10 @@ function wiitpl( &$file, $base, $pfx, $id )
 		{
 			$p = $base + $p2;
 
-			$ph1 = ordint( $file[$p+1] . $file[$p+0] ); // cc
-			$ph2 = ord( $file[$p+2] );
-			$ph3 = ordint( $file[$p+ 7] . $file[$p+ 6] . $file[$p+5] ); // format
-			$ph4 = ordint( $file[$p+11] . $file[$p+10] . $file[$p+9] ); // palette data
+			$ph1 = str2big($file, $p+0, 2); // cc
+			$ph2 = str2big($file, $p+2, 1);
+			$ph3 = str2big($file, $p+4, 4); // format
+			$ph4 = str2big($file, $p+8, 4); // palette data
 
 			$p = $base + $ph4;
 			$c = $pfmt[$ph3];
@@ -327,19 +426,25 @@ function wiitpl( &$file, $base, $pfx, $id )
 
 		// image
 		$p = $base + $p1;
-		$ih = ordint( $file[$p+1] . $file[$p+0] );
-		$iw = ordint( $file[$p+3] . $file[$p+2] );
-		$ih1 = ordint( $file[$p+ 7] . $file[$p+ 6] . $file[$p+5] ); // format
-		$ih2 = ordint( $file[$p+11] . $file[$p+10] . $file[$p+9] ); // image data
-		$ih3 = ord( $file[$p+0x23] );
+		$ih  = str2big($file, $p+ 0, 2); // height
+		$iw  = str2big($file, $p+ 2, 2); // width
+		$ih1 = str2big($file, $p+ 4, 4); // format
+		$ih2 = str2big($file, $p+ 8, 4); // image data
+		//$ih3 = str2big($file, $p+12, 4); // wraps
+		//$ih4 = str2big($file, $p+16, 4); // wrapt
+		//$ih5 = str2big($file, $p+20, 4); // minfilter
+		//$ih6 = str2big($file, $p+24, 4); // magfilter
+		//$ih7 = str2big($file, $p+32, 1); // edgelod
+		//$ih8 = str2big($file, $p+33, 1); // minlod
+		//$ih9 = str2big($file, $p+34, 1); // maxlod
+		//$ih10 = str2big($file, $p+35, 1); // unpacked
 
 		$p = $base + $ih2;
 		$b = tplformat($file, $p, $ih1, $iw, $ih, $gp_clut);
 		if ( empty($b) )
 			continue;
 
-		list($iw,$ih,$byte,$bw,$bh,$gp_pix) = $b;
-		tplimage( $gp_pix, $iw, $ih, $byte, $bw, $bh );
+		list($iw,$ih,$byte,$gp_pix) = $b;
 
 		if ( $byte == 1 )
 		{

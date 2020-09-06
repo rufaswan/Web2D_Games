@@ -203,8 +203,6 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$pix['src']['w'] = $w;
 			$pix['src']['h'] = $h;
 			$pix['src']['pix'] = rippix8($gp_pix[$tid]['p'], $sx, $sy, $w, $h, $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
-			$pix['src']['pal'] = $gp_clut[$cid];
-			scalepix($pix, SCALE, SCALE);
 		}
 		else
 		{
@@ -216,9 +214,10 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$sy = 0;
 			$w = $pix['src']['w'];
 			$h = $pix['src']['h'];
-			$pix['src']['pal'] = $gp_clut[$cid];
-			scalepix($pix, SCALE, SCALE);
 		}
+		$pix['src']['pal'] = $gp_clut[$cid];
+		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		scalepix($pix, SCALE, SCALE);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , %08b , %02x\n", $m10, $m20);

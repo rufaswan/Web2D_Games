@@ -27,7 +27,6 @@ function mana( $fname )
 	$pix['rgba']['w'] = CANV_S;
 	$pix['rgba']['h'] = CANV_S;
 	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
-	$pix['bgzero'] = true;
 
 	$cnt = ord( $file[0x14] );
 	$st = 0x18;

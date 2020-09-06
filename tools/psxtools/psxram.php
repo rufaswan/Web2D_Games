@@ -134,6 +134,23 @@ function subram( &$file, $base )
 		return "";
 	}
 
+	// Neko Project II PC98 emulator (Linux)
+	if ( substr($file, 0, 15) == "Neko Project II" )
+	{
+		echo "DETECT emulator = Yabause\n";
+		$ed = strlen($file);
+		$st = 0x30;
+		while ( $st < $ed )
+		{
+			$mgc = substr0($file, $st);
+			$len = str2int($file, $st+12, 4);
+			printf("%8x , %8x , $mgc\n", $st, $len);
+			save_file("$base/$mgc", substr($file, $st+16, $len));
+			$st = int_ceil($st + $len + 16, 16);
+		} // while ( $st < $ed )
+		return "";
+	}
+
 	return "";
 }
 

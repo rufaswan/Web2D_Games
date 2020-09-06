@@ -31,7 +31,7 @@ function save_png( $fname, $w, $h, $rgba )
 	// 4 = Paeth(x) + PaethPredictor(Raw(x-bpp), Prior(x), Prior(x-bpp))
 	$idat = "";
 	for ( $y=0; $y < $h; $y++ )
-		$idat .= chr(0) . substr($rgba, $y*$w*4, $w*4);
+		$idat .= ZERO . substr($rgba, $y*$w*4, $w*4);
 
 	// PNG 8-bit RGBA
 	$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
