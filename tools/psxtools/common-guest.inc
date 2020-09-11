@@ -51,7 +51,13 @@ function clut2rgba( $pal, $pix, $bgzero = true )
 		if ( $pix[$i] == ZERO )
 			$rgba .= ( $bgzero ) ? substr($pal, 0, 4) : PIX_ALPHA;
 		else
-			$rgba .= substr($pal, ord($pix[$i])*4, 4);
+		{
+			$p = ord( $pix[$i] ) * 4;
+			if ( ! isset( $pal[$p+3] ) )
+				$rgba .= PIX_ALPHA;
+			else
+				$rgba .= substr($pal, $p, 4);
+		}
 	}
 	return $rgba;
 }

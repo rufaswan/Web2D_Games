@@ -1,6 +1,24 @@
 <?php
 // 3D texture quad-rendering + distortion related
 
+function dot_product( $vector )
+{
+	// can be vec2 or vec3
+	$scaler = 0;
+	foreach ( $vector as $v )
+		$scaler += ($v[0] * $v[1]);
+	return $scaler;
+}
+
+function cross_product( $vec2 )
+{
+	$vector = array();
+	$vector[0] = ($vec2[0][1] * $vec2[1][2]) - ($vec2[0][2] * $vec2[1][1]); // cx = aybz- azby
+	$vector[1] = ($vec2[0][2] * $vec2[1][0]) - ($vec2[0][0] * $vec2[1][2]); // cy = azbx- axbz
+	$vector[2] = ($vec2[0][0] * $vec2[1][1]) - ($vec2[0][1] * $vec2[1][0]); // cz = axby- aybx
+	return $vector; // cx,cy,cz
+}
+
 function vertex_type( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4 )
 {
 	// quad vertex
@@ -44,6 +62,17 @@ function copyquad( &$pix, $byte=1 )
 		$pix['vertex'][2][0], $pix['vertex'][2][1],
 		$pix['vertex'][3][0], $pix['vertex'][3][1]
 	);
+
+	// 2D transformations
+	// Homogeneous coordinates
+	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/
+	//
+	// matrix
+	//   src =  0,0   w-1,0   w-1,h-1   0,h-1
+	//   des = x1,y1   x2,y2   x3,y3   x4,y4
+	//    | 0  w-1  w-1 |   | x1  x2  x3 |
+	//   M| 0    0  h-1 | = | y1  y2  y3 |
+	//    | z    z    z |   |  z   z   z |
 
 	return;
 }

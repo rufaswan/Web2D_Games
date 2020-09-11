@@ -13,12 +13,13 @@ function mura_decode( &$file, $st )
 	$bycod = 0;
 	while ( $st < $ed )
 	{
+		printf("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] );
 				$st++;
+			printf("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
-			printf("%6x BYTECODE %2x\n", $st-1, $bycod);
 		}
 
 		$flg = $bycod & 1;
@@ -29,7 +30,7 @@ function mura_decode( &$file, $st )
 		{
 			$b1 = $file[$st];
 				$st++;
-			printf("%6x COPY %2x\n", $st-1, ord($b1));
+			printf("COPY %2x\n", ord($b1));
 
 			$dec .= $b1;
 			$dict[$dicp] = $b1;
@@ -43,7 +44,7 @@ function mura_decode( &$file, $st )
 				$st += 2;
 			$len =  ($b2 & 0x0f) + 3;
 			$pos = (($b2 & 0xf0) << 4) | $b1;
-			printf("%6x DICT %3x LEN %2x\n", $st-2, $pos, $len);
+			printf("DICT %3x LEN %2x\n", $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{
@@ -63,15 +64,22 @@ function mura_decode( &$file, $st )
 //////////////////////////////
 function mura( $fname )
 {
-	$file = file_get_contents($fname);
-		if ( empty($file) )   return;
+	$bak = file_exists("$fname.bak");
+	if ( $bak )
+		$file = file_get_contents("$fname.bak");
+	else
+		$file = file_get_contents($fname);
 
-	$mgc = substr($file, 0, 4);
-	if ( $mgc != "FCMP" )
+	if ( empty($file) )
+		return;
+	if ( substr($file, 0, 4) != "FCMP" )
 		return;
 
+	if ( ! $bak )
+		file_put_contents("$fname.bak", $file);
+
 	$dec = mura_decode( $file, 12 );
-	file_put_contents("$fname.dec", $dec);
+	file_put_contents($fname, $dec);
 	return;
 }
 

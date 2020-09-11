@@ -16,12 +16,13 @@ function yuna_decode( &$file, $fname )
 	$st = 0;
 	while ( $st < $siz )
 	{
+		printf("%6x  %6x  ", $pos, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] );
 				$st++;
+			printf("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
-			printf("%6x BYTECODE %2x\n", $st-1, $bycod);
 		}
 
 		$flg = $bycod & 1;
@@ -32,7 +33,7 @@ function yuna_decode( &$file, $fname )
 		{
 			$b1 = $file[$st];
 				$st++;
-			printf("%6x COPY %2x\n", $st-1, ord($b1));
+			printf("COPY %2x\n", ord($b1));
 			$dec .= $b1;
 		}
 		else
@@ -43,7 +44,7 @@ function yuna_decode( &$file, $fname )
 			$len = ($b2 >> 3) + 1;
 			$pos = (($b2 & 0x07) << 8) | $b1;
 				$pos -= 0x800;
-			printf("%6x POS  %3d LEN %2d\n", $st-2, $pos, $len);
+			printf("POS  %3d LEN %2d\n", $pos, $len);
 
 			while ( $len > 0 )
 			{

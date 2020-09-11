@@ -10,8 +10,7 @@ function mana_decode( &$file , $st )
 	$ed = strlen($file);
 	while ( $st < $ed )
 	{
-		$bak = $st;
-			printf("%6x , %6x , ", $bak, strlen($dec));
+		printf("%6x  %6x  ", $st, strlen($dec));
 		$b0 = ord( $file[$st+0] );
 		switch ( $b0 - 0xf0 )
 		{
@@ -258,16 +257,25 @@ function mana( $fname )
 	// for /map/*/*.prs
 	// for /wm/wmap/*.pim
 	// for /wm/wmtim/wmapt*/wm_*.pim
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
+	$bak = file_exists("$fname.bak");
+	if ( $bak )
+		$file = file_get_contents("$fname.bak");
+	else
+		$file = file_get_contents($fname);
 
+	if ( empty($file) )
+		return;
 	// file must starts with 01 and ends with FF
 	$ed = strlen($file);
 	if ( $file[0] != chr(1) || $file[$ed-1] != BYTE )
 		return;
 
+	if ( ! $bak )
+		file_put_contents("$fname.bak", $file);
+
 	$dec = mana_decode($file, 1);
-	file_put_contents("$fname.dec", $dec);
+	file_put_contents($fname, $dec);
+	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )

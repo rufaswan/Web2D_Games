@@ -137,7 +137,7 @@ function subram( &$file, $base )
 	// Neko Project II PC98 emulator (Linux)
 	if ( substr($file, 0, 15) == "Neko Project II" )
 	{
-		echo "DETECT emulator = Yabause\n";
+		echo "DETECT emulator = Neko Project II\n";
 		$ed = strlen($file);
 		$st = 0x30;
 		while ( $st < $ed )
