@@ -68,11 +68,12 @@ function valkyrie_toc( $fp, $dir, &$toc )
 	$st = 4;
 	while ( $st < $ed )
 	{
+		$no = $st / 4;
 		$lba = cdpos2int($toc[$st+0], $toc[$st+1], $toc[$st+2]);
 			$st += 4;
 
 		if ( $lba != 0 )
-			$list[] = array($st / 4, $lba);
+			$list[] = array($no, $lba);
 	}
 
 	$txt = "";
@@ -136,29 +137,32 @@ function iso_xenogears($fp, $dir)
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 	$str = fp2str($fp, 0xc000, 0x8000);
 
-	$list = array();
-	$st = 0;
-	while (1)
-	{
-		$lba = str2int($str, $st+0, 3);
-		$siz = str2int($str, $st+3, 4);
-			$st += 7;
-		if ( $lba >> 23 )
-			break;
-		if ( $lba == 0 || $siz >> 31 )
-			continue;
-		$list[] = array($st/7, $lba, $siz);
-	}
-
 	$txt = "";
-	foreach( $list as $l )
+	$dn = "";
+	for ( $i=0; $i < 0x8000; $i += 7 )
 	{
-		list($no,$lba,$siz) = $l;
-		$txt .= sprintf("%4x , %8x , %8x\n", $no, $lba*0x800, $siz);
+		$no = $i / 7;
+		$lba = sint24( substr($str, $i+0, 3) );
+		$siz = sint32( substr($str, $i+3, 4) );
 
-		$fn = sprintf("$dir/%06d.bin", $no);
-		save_file($fn, fp2str($fp, $lba*0x800, $siz));
-	}
+		if ( $lba == -1 )
+			break;
+		if ( $lba == 0 || $siz == 0 )
+			continue;
+
+		if ( $siz < 0 )
+		{
+			$dn = $no;
+			$siz *= -1;
+			$txt .= sprintf("%8x , DIR  , %8x , %s\n", $lba*0x800, $siz, $dn);
+		}
+		else
+		{
+			$fn = sprintf("$dn/%06d.bin", $no);
+			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba*0x800, $siz, $fn);
+			save_file("$dir/$fn", fp2str($fp, $lba*0x800, $siz));
+		}
+	} // for ( $i=0; $i < 0x8000; $i += 7 )
 
 	echo "$txt\n";
 	save_file("$dir/toc.bin", $str);
@@ -174,19 +178,27 @@ function iso_dewprism($fp, $dir)
 	$txt = "";
 	$ed = strlen($str) - 4;
 	$st = 0;
+	$dn = "";
 	while ( $st < $ed )
 	{
+		$no = $st / 4;
 		$lba1 = str2int($str, $st+0, 3) & 0x7fffff;
 		$lba2 = str2int($str, $st+4, 3) & 0x7fffff;
 			$st += 4;
-		$no = $st / 4;
 
-		$txt .= sprintf("%4x , %8x\n", $no, $lba1*0x800);
 		$sz = $lba2 - $lba1;
-		$fn = sprintf("$dir/%06d.bin", $no);
-
-		save_file($fn, fp2str($fp, $lba1*0x800, $sz*0x800));
-	}
+		if ( $sz > 0 )
+		{
+			$fn = sprintf("$dn/%06d.bin", $no);
+			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba1*0x800, $sz*0x800, $fn);
+			save_file("$dir/$fn", fp2str($fp, $lba1*0x800, $sz*0x800));
+		}
+		else
+		{
+			$dn = $no;
+			$txt .= sprintf("%8x , DIR  , %8x , %s\n", $lba1*0x800, 0, $dn);
+		}
+	} // while ( $st < $ed )
 
 	echo "$txt\n";
 	save_file("$dir/toc.bin", $str);

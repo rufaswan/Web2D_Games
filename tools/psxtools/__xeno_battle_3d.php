@@ -29,7 +29,7 @@ function loadtex( &$file, $pos, $dir )
 			case 0x1101:
 				$p2 = str2int($tex, $p+4, 4);
 				$cn = ($p2 - $p1 - 0x10) / 0x20;
-				$gp_clut = mstrpal555($tex, $p1+0x10, 16, $cn);
+				//$gp_clut = mstrpal555($tex, $p1+0x10, 16, $cn);
 				printf("CLUT , %d , %d [%x]\n", $i, $cn, $p+$pos);
 				save_file("$dir/pal", substr($tex, $p1+0x10, $cn*0x20));
 				break;
@@ -58,8 +58,11 @@ function loadtex( &$file, $pos, $dir )
 			default:
 				printf("UNK  , %d [%x]\n", $i, $p+$pos);
 				break;
-		}
-	}
+		} // switch ( $ty )
+	} // for ( $i=0; $i < $num; $i++ )
+
+	if ( empty($gp_clut) )
+		$gp_clut[] = grayclut(0x10);
 	return;
 }
 //////////////////////////////
@@ -143,9 +146,10 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 	xeno jp1 / slps 011.60
-		2619-2770  spr1 monsters bosses
-		2989-3018  spr2 party
+		2146-2288  3d models
+		2776-2925  3d models
+		2928-2988  3d models
+		2619-2770  spr1 monsters bosses , 3d models
 	xeno jp2 / slps 011.61
-		2610-2761  spr1 monsters bosses
-		2980-3009  spr2 party
+		2610-2761  spr1 monsters bosses , 3d models
 */

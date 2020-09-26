@@ -1,7 +1,8 @@
 <?php
 require "common.inc";
 
-define("TWO", chr(2));
+define("TWO",    chr(2));
+define("ZERO32", ZERO.ZERO.ZERO);
 
 $gp_files = array();
 
@@ -43,7 +44,7 @@ function cvnds( $dir )
 	for ( $i=$fst; $i < $fed; $i += $fbk )
 	{
 		$b1 = substr($file, $i+0, 3);
-		if ( trim($b1, ZERO) == "" )
+		if ( $b1 == ZERO24 )
 			continue;
 		$b2 = substr0($file, $i+6);
 

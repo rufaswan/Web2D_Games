@@ -50,16 +50,19 @@ yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
 yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3
 pcrown     SATURN  T-14418G  Princess Crown
-sotn_sat   SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 mura       WII     Oboro Muramasa
 rusty      PC98    Rusty
-tmix       PC98    Totsugeki Mix
+rusty      PC98    Totsugeki Mix
+galpani    PC98    Galpani
+galpani    PC98    Galpani 2
 
 	progress
 		yuna_mika  ALL DONE
 		cvnds      all maps only
 		yuna       .ss1 only
 		pcrown     .chb/.mcb only (+PSP .tmx)
-		rusty      .map/.dat and .mag/.ani
-		sotn_sat   *upcoming*
+		rusty      .map/.dat , .mag/.ani , .mgx only
+		galpani    .bgi/.bgs/.msk only
+		sotn       *upcoming*
 		mura       *upcoming*

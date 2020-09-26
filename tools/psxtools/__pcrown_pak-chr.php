@@ -288,25 +288,43 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 palette
-	grad             puro
+	grad             puro          port
 	1  f8f8f0  fbff  680810  882d
 	2  f8e0c0  e39f  881830  9871
-	3  f0c0a0  d31e  a83048  a4d5
+	3  f0c0a0  d31e  a83048  a4d5  482010  8889
 	4  d89088  c65b  c04060  b118
-	5  a07880  c1f4  c85870  b979
-	6  804050  a910  e08890  ca3c
-	7  a898f0  fa75  f0b8a8  d6fe
-	8  281860  b065  f8e0d0  eb9f
+	5  a07880  c1f4  c85870  b979  181020  9043
+	6  804050  a910  e08890  ca3c  301830  9866
+	7  a898f0  fa75  f0b8a8  d6fe  483048  a4c9
+	8  281860  b065  f8e0d0  eb9f  684868  b52d
 	9  503068  b4ca  402000  8088
-	a  d898c0  e27b  683018  8ccd
+	a  d898c0  e27b  683018  8ccd  b0a8b0  dab6
 	b  9070b8  ddd2  a87038  9dd5
-	c  9050a0  d152  c89058  ae59
-	d  684098  cd0d  804040  a110
-	e
-	f  c8d0f8  ff59
+	c  9050a0  d152  c89058  ae59  683830  98ed
+	d  684098  cd0d  804040  a110  885850  a971
+	e                              c08068  b618
+	f  c8d0f8  ff59                e0b890  cafc
 	=> RAM 9ca8e = 0.bin + 98a8e
 		size 5000 (640 set of 16 color palettes)
-	=> grad/+0[0] , puro/+3900[1c8]
+	=> grad/+0[0] , puro/+3900[1c8] , port/+3800[1c0]
+
+	mur1
+	1  f8f8c8  e7ff  f8e8b8  dfbf
+	2  f0d098  cf5e  f0c090  cb1e
+	3  d89858  ae7b  d88858  ae3b
+	4  a07840  a1f4  a06840  a1b4
+	5  705828  956e  704828  952e
+	6  887890  c9f1  985068  b553
+	7
+	8
+	9  a8a8b0  dab5  c8a038  9e99
+	a
+	b  e0e0f0  fb9c  e8d098  cf5d
+	c
+	d
+	e
+	f
+	=> 1/+1940[ca] , 2/+1920[c9]
 
 slct.pak 0 = 32x37
 	00   198,184  205,184  205,160  198,160  Normal ( 7x24)

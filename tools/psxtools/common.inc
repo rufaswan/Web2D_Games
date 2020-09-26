@@ -27,10 +27,13 @@ define("BIT8",  0xff);
 define("BIT16", 0xffff);
 define("BIT24", 0xffffff);
 define("BIT32", 0xffffffff);
+define("KILO", 1 << 10);
+define("MEGA", 1 << 20);
+define("GIGA", 1 << 30);
 //if ( defined("DRY_RUN") ) // per script
 
 if ( ! defined("PHP_VERSION_ID") || PHP_VERSION_ID < 050600 )
-	trigger_error("requires PHP 5.6 and above", E_USER_ERROR);
+	trigger_error("requires PHP 5.6 or above", E_USER_ERROR);
 //////////////////////////////
 function str2int( &$str, $pos, $byte )
 {
@@ -99,6 +102,14 @@ function sint24( $s )
 	$int = ordint($s);
 	if ( $int >> 23 )
 		return $int - BIT24 - 1;
+	return $int;
+}
+
+function sint32( $s )
+{
+	$int = ordint($s);
+	if ( $int >> 31 )
+		return $int - BIT32 - 1;
 	return $int;
 }
 
@@ -441,6 +452,26 @@ function COPYPIX_DEF()
 	return $php56;
 }
 //////////////////////////////
+function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
+{
+	$err = "";
+	if ( $sx < 0 )
+		$err .= sprintf("rippix() sx = %d\n", $sx);
+	if ( $sy < 0 )
+		$err .= sprintf("rippix() sy = %d\n", $sy);
+	if ( ($sx + $w) > $sw )
+		$err .= sprintf("rippix() sx + w = %d + %d [%d]\n", $sx, $w, $sw);
+	if ( ($sy + $h) > $sh )
+		$err .= sprintf("rippix() sy + h = %d + %d [%d]\n", $sy, $h, $sh);
+
+	if ( ! empty($err) )
+	{
+		trigger_error($err, E_USER_ERROR);
+		return true;
+	}
+	return false;
+}
+
 function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
@@ -448,6 +479,8 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	$sx /= 2;
 	$w  /= 2;
 	$sw /= 2;
+	if ( rippix_errs($sx, $sy, $w, $h, $sw, $sh) )
+		return;
 
 	$rip = "";
 	for ( $y=0; $y < $h; $y++ )
@@ -471,6 +504,8 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
+		return;
+	if ( rippix_errs($sx, $sy, $w, $h, $sw, $sh) )
 		return;
 
 	$rip = "";
@@ -869,7 +904,7 @@ function psxtim( &$file )
 			$pos++;
 		}
 
-		printf("load PSXTIM @ %d , size %d x %d , clut %d x %d\n",
+		printf("psxtim() = %d , %d x %d , %d x %d\n",
 			$tim['t'], $tim['w'], $tim['h'], $tim['cc'], $tim['cn']
 		);
 		return $tim;

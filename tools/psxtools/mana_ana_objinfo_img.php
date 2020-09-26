@@ -383,6 +383,10 @@ cid 13
 	mhm_gdn2_img
 cid 14
 	mhm_gdn2_img
+tid ff
+	jul_bss4.img
+	min_bs00.img
+	sea_bs10.img
 
 1-1-3  186,213
 m#888888   + i#606040 = r#e8e8c8 (in-game , additive blending)

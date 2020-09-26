@@ -63,16 +63,16 @@ function copyquad( &$pix, $byte=1 )
 		$pix['vertex'][3][0], $pix['vertex'][3][1]
 	);
 
-	// 2D transformations
-	// Homogeneous coordinates
-	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/
+	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/
+	// x,y,z == x/z,y/z
+	// x,y   == xz ,yz ,1z
 	//
 	// matrix
 	//   src =  0,0   w-1,0   w-1,h-1   0,h-1
 	//   des = x1,y1   x2,y2   x3,y3   x4,y4
 	//    | 0  w-1  w-1 |   | x1  x2  x3 |
 	//   M| 0    0  h-1 | = | y1  y2  y3 |
-	//    | z    z    z |   |  z   z   z |
+	//    | 1    1    1 |   |  1   1   1 |
 
 	return;
 }

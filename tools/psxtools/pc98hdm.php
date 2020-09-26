@@ -64,6 +64,13 @@ function pc98( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
+	// HDM -> 2HD/360rpm
+	//     -> 0x400 bytes * 8 sectors * 2 surfaces * 0x4d cycles
+	//     -> 0x134000
+	// FDI is basically the HDM raw image, with a 0x1000-byte header
+	if ( strlen($file) != 0x134000 )
+		return;
+
 	$st = 0x1400;
 	$ed = 0x2400;
 	$txt = scanpc98( $file, 0x1400, 0x2400, 0x2400, '.' );
