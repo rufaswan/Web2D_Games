@@ -1,6 +1,8 @@
 <?php
 require "common.inc";
 
+define("TRACE", true);
+
 function mura_decode( &$file, $st )
 {
 	$dicz = 0xfff;
@@ -13,13 +15,14 @@ function mura_decode( &$file, $st )
 	$bycod = 0;
 	while ( $st < $ed )
 	{
-		printf("%6x  %6x  ", $st, strlen($dec));
+		trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] );
 				$st++;
-			printf("BYTECODE %2x\n", $bycod);
+			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
+			continue;
 		}
 
 		$flg = $bycod & 1;
@@ -30,7 +33,7 @@ function mura_decode( &$file, $st )
 		{
 			$b1 = $file[$st];
 				$st++;
-			printf("COPY %2x\n", ord($b1));
+			trace("COPY %2x\n", ord($b1));
 
 			$dec .= $b1;
 			$dict[$dicp] = $b1;
@@ -44,7 +47,7 @@ function mura_decode( &$file, $st )
 				$st += 2;
 			$len =  ($b2 & 0x0f) + 3;
 			$pos = (($b2 & 0xf0) << 4) | $b1;
-			printf("DICT %3x LEN %2x\n", $pos, $len);
+			trace("DICT %3x LEN %2x\n", $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{

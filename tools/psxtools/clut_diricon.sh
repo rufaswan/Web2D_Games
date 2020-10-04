@@ -3,13 +3,20 @@ php="/tmp/clut2bmp.php"
 [ -f "$php" ] || exit
 export php
 
+[ $# = 0 ] && f0="head" || f0="tail"
+export f0
+
 function diricon
 {
 	[ -d "$1" ] || return
 	cd "$1"
+	[ -f '.DirIcon' ] && rm -vf '.DirIcon'
+
 	png=""
-	[ -f "0000.clut" ] && png="0000.clut"
-	[ -f "0000.rgba" ] && png="0000.rgba"
+	for t1 in clut rgba; do
+		t2=$(ls -1 *.$t1 | $f0 -1)
+		[ -f "$t2" ] && png="$t2"
+	done
 	[ "$png" ] || return
 	php.sh  "$php"  "$png"
 

@@ -88,7 +88,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $loadtexx;
 		$pix['src']['pal'] = $gp_clut[$cid];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;

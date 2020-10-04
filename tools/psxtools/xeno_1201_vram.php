@@ -34,7 +34,7 @@ function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 	for ( $y=0; $y < $h; $y++ )
 	{
 		$dyy = ($dy+$y) * VRAM_W * 2;
-		$syy =      $y  * $w       * 2;
+		$syy =      $y  * $w     * 2;
 		$dxx = $dyy + ($dx * 2);
 
 		$b1 = substr($part, $syy, $w*2);

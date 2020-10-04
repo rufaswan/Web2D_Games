@@ -125,7 +125,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 			$bin = substr($file, $tp, 0x2000);
 			$pix['src']['pix'] = rippix4($bin, $tx, $ty, 16, 16, 0x80, 0x80);
 			$pix['src']['pal'] = $gp_clut[$c3];
-			$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+			$pix['bgzero'] = 0;
 
 			copypix($pix);
 		} // for ( $x=0; $x < $map_w; $x++ )

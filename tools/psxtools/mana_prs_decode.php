@@ -1,6 +1,8 @@
 <?php
 require "common.inc";
 
+define("TRACE", true);
+
 function mana_decode( &$file , $st )
 {
 	// sub_80014448-80014888 , SLPS_021.70
@@ -10,7 +12,7 @@ function mana_decode( &$file , $st )
 	$ed = strlen($file);
 	while ( $st < $ed )
 	{
-		printf("%6x  %6x  ", $st, strlen($dec));
+		trace("%6x  %6x  ", $st, strlen($dec));
 		$b0 = ord( $file[$st+0] );
 		switch ( $b0 - 0xf0 )
 		{
@@ -19,7 +21,7 @@ function mana_decode( &$file , $st )
 					$st += 2;
 				$len = ($b1 & 0x0f) + 3;
 				$s0 = chr($b1 >> 4);
-				printf("F0 DUPL %2x [%3d]\n", $b1>>4, $len);
+				trace("F0 DUPL %2x [%3d]\n", $b1>>4, $len);
 				for ( $i=0; $i < $len; $i++ )
 					$dec .= $s0;
 				break;
@@ -29,7 +31,7 @@ function mana_decode( &$file , $st )
 					$st += 3;
 				$len = $b1 + 4;
 				$s0 = chr($b2);
-				printf("F1 DUPL %2x [%3d]\n", $b2, $len);
+				trace("F1 DUPL %2x [%3d]\n", $b2, $len);
 				for ( $i=0; $i < $len; $i++ )
 					$dec .= $s0;
 				break;
@@ -40,7 +42,7 @@ function mana_decode( &$file , $st )
 				$len = $b1 + 2;
 				$s0 = chr($b2 & 0x0f);
 				$s1 = chr($b2 >> 4);
-				printf("F2 DUPL %2x %2x [%3d]\n", $b2&0xf, $b2>>4, $len);
+				trace("F2 DUPL %2x %2x [%3d]\n", $b2&0xf, $b2>>4, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $s0;
@@ -55,7 +57,7 @@ function mana_decode( &$file , $st )
 				$len = $b1 + 2;
 				$s0 = chr($b2);
 				$s1 = chr($b3);
-				printf("F3 DUPL %2x %2x [%3d]\n", $b2, $b3, $len);
+				trace("F3 DUPL %2x %2x [%3d]\n", $b2, $b3, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $s0;
@@ -72,7 +74,7 @@ function mana_decode( &$file , $st )
 				$s0 = chr($b2);
 				$s1 = chr($b3);
 				$s2 = chr($b4);
-				printf("F4 DUPL %2x %2x %2x [%3d]\n", $b2, $b3, $b4, $len);
+				trace("F4 DUPL %2x %2x %2x [%3d]\n", $b2, $b3, $b4, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $s0;
@@ -86,7 +88,7 @@ function mana_decode( &$file , $st )
 					$st += 3;
 				$len = $b1 + 4;
 				$s0 = chr($b2);
-				printf("F5 REF  %2x st [%3d]\n", $b2, $len);
+				trace("F5 REF  %2x st [%3d]\n", $b2, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $s0;
@@ -102,7 +104,7 @@ function mana_decode( &$file , $st )
 				$len = $b1 + 3;
 				$s0 = chr($b2);
 				$s1 = chr($b3);
-				printf("F6 REF  %2x %2x st [%3d]\n", $b2, $b3, $len);
+				trace("F6 REF  %2x %2x st [%3d]\n", $b2, $b3, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $s0;
@@ -121,7 +123,7 @@ function mana_decode( &$file , $st )
 				$s0 = chr($b2);
 				$s1 = chr($b3);
 				$s2 = chr($b4);
-				printf("F7 REF  %2x %2x %2x st [%3d]\n", $b2, $b3, $b4, $len);
+				trace("F7 REF  %2x %2x %2x st [%3d]\n", $b2, $b3, $b4, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $s0;
@@ -137,7 +139,7 @@ function mana_decode( &$file , $st )
 					$st += 3;
 				$len = $b1 + 4;
 				$s0 = $b2;
-				printf("F8 INC  %2x++ [%3d]\n", $b2, $len);
+				trace("F8 INC  %2x++ [%3d]\n", $b2, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= chr($s0);
@@ -150,7 +152,7 @@ function mana_decode( &$file , $st )
 					$st += 3;
 				$len = $b1 + 4;
 				$s0 = $b2;
-				printf("F9 DEC  %2x-- [%3d]\n", $b2, $len);
+				trace("F9 DEC  %2x-- [%3d]\n", $b2, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= chr($s0);
@@ -164,7 +166,7 @@ function mana_decode( &$file , $st )
 					$st += 4;
 				$len = $b1 + 5;
 				$s0 = $b2;
-				printf("FA INC  %2x += %2x [%3d]\n", $b2, $b3, $len);
+				trace("FA INC  %2x += %2x [%3d]\n", $b2, $b3, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= chr($s0);
@@ -181,7 +183,7 @@ function mana_decode( &$file , $st )
 				$s0 = $b2;
 				$s1 = $b3;
 				$s2 = ($b4 & 0x80) ? $b4 - 0x100 : $b4;
-				printf("FB INC2 %2x %2x += %3d [%3d]\n", $b2, $b3, $s2, $len);
+				trace("FB INC2 %2x %2x += %3d [%3d]\n", $b2, $b3, $s2, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= chr($s0);
@@ -198,7 +200,7 @@ function mana_decode( &$file , $st )
 					$st += 3;
 				$len =  ($b2 >> 4) + 4;
 				$pos = (($b2 & 0x0f) << 8 ) | $b1;
-				printf("FC POS  %3d [%3d]\n", $pos+1, $len);
+				trace("FC POS  %3d [%3d]\n", $pos+1, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$cur = strlen($dec) - $pos - 1;
@@ -211,7 +213,7 @@ function mana_decode( &$file , $st )
 					$st += 3;
 				$len = $b2 + 20;
 				$pos = $b1;
-				printf("FD POS  %3d [%3d]\n", $pos+1, $len);
+				trace("FD POS  %3d [%3d]\n", $pos+1, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$cur = strlen($dec) - $pos - 1;
@@ -223,7 +225,7 @@ function mana_decode( &$file , $st )
 					$st += 2;
 				$len = ($b1 & 0x0f) + 3;
 				$pos = ($b1 & 0xf0) >> 1;
-				printf("FE POS  %3d [%3d]\n", $pos+8, $len);
+				trace("FE POS  %3d [%3d]\n", $pos+8, $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$cur = strlen($dec) - $pos - 8;
@@ -231,12 +233,12 @@ function mana_decode( &$file , $st )
 				}
 				break;
 			case 15:
-				echo "FF done\n";
+				trace("FF done\n");
 				break 2;
 			default:
 				$st++;
 				$len = $b0 + 1;
-				printf("-- COPY [%3d]\n", $len);
+				trace("-- COPY [%3d]\n", $len);
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$dec .= $file[$st];

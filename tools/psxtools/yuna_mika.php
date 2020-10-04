@@ -2,6 +2,8 @@
 require "common.inc";
 require "common-guest.inc";
 
+define("TRACE", true);
+
 function yuna_decode( &$file, $fname )
 {
 	$siz = strlen($file);
@@ -16,13 +18,14 @@ function yuna_decode( &$file, $fname )
 	$st = 0;
 	while ( $st < $siz )
 	{
-		printf("%6x  %6x  ", $pos, strlen($dec));
+		trace("%6x  %6x  ", $pos, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] );
 				$st++;
-			printf("BYTECODE %2x\n", $bycod);
+			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
+			continue;
 		}
 
 		$flg = $bycod & 1;
@@ -33,7 +36,7 @@ function yuna_decode( &$file, $fname )
 		{
 			$b1 = $file[$st];
 				$st++;
-			printf("COPY %2x\n", ord($b1));
+			trace("COPY %2x\n", ord($b1));
 			$dec .= $b1;
 		}
 		else
@@ -43,9 +46,9 @@ function yuna_decode( &$file, $fname )
 				$st += 2;
 			$len = ($b2 >> 3) + 1;
 			$pos = (($b2 & 0x07) << 8) | $b1;
-				$pos -= 0x800;
-			printf("POS  %3d LEN %2d\n", $pos, $len);
+			trace("POS  %3d LEN %2d\n", $pos, $len);
 
+			$pos -= 0x800;
 			while ( $len > 0 )
 			{
 				$len--;

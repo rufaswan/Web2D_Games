@@ -148,7 +148,7 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $rippix8;
 		$pix['src']['pal'] = $gp_clut[$tid][$cid];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 		scalepix($pix, SCALE, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);

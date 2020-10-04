@@ -96,7 +96,7 @@ function sect1( &$file, $off, $fn )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
 		$pix['src']['pal'] = $gp_tim['clut'][$cn];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 		scalepix($pix, SCALE, SCALE);
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);

@@ -1,6 +1,8 @@
 <?php
 require "common.inc";
 
+define("TRACE", true);
+
 function xeno_decode( &$file, $st, $ed )
 {
 	echo "== begin sub_80032cac\n";
@@ -12,19 +14,20 @@ function xeno_decode( &$file, $st, $ed )
 	$dec = '';
 	while ( $st < $ed )
 	{
+		trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] ); // t8
 				$st++;
-			printf("BYTECODE %2x\n", $bycod);
+			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8; // t9
+			continue;
 		}
 
 		$flg = $bycod & 1;
 			$bycod >>= 1;
 			$bylen--;
 
-		printf("%6x  %6x  ", $st, strlen($dec));
 		if ( $flg )
 		{
 			$b1 = ord( $file[$st+0] ); // t0
@@ -33,7 +36,7 @@ function xeno_decode( &$file, $st, $ed )
 			$pos = ($b2 & 0xf) << 8;
 				$pos |= $b1;
 			$len = ($b2 >> 4) + 3;
-			printf("REF  POS -%d LEN %d\n", $pos, $len);
+			trace("REF  POS -%d LEN %d\n", $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{
@@ -45,7 +48,7 @@ function xeno_decode( &$file, $st, $ed )
 		{
 			$b1 = $file[$st]; // t0
 				$st++;
-			printf("COPY %2x\n", ord($b1));
+			trace("COPY %2x\n", ord($b1));
 			$dec .= $b1;
 		}
 	} // while ( $st < $ed )

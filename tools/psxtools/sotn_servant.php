@@ -60,7 +60,7 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($src[$tid], $sx, $sy, $w, $h, 0x80, 0x80);
 		$pix['src']['pal'] = $clut[$cid];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 
 		$v20 = str2int($v, 20, 2);
 		//$pix['vflip'] = $v20 & 2;

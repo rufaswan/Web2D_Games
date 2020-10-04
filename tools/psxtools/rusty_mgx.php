@@ -3,6 +3,8 @@ require "common.inc";
 require "common-guest.inc";
 
 //define("DRY_RUN", true);
+define("TRACE", true);
+
 $gp_clut = "";
 
 function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
@@ -31,7 +33,8 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 			$bycod = ord( $file[$pb1] );
 				$pb1++;
 			$bylen = 8;
-			printf("%6x BYTECODE %2x\n", $pb1-1, $bycod);
+			trace("%6x BYTECODE %2x\n", $pb1-1, $bycod);
+			continue;
 		}
 
 		$flg = $bycod & 0x80;
@@ -44,10 +47,10 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 			$act = ord( $file[$pb4] );
 				$pb4++;
 			$action[ $actpos ] ^= $act;
-			printf("%6x ACT[%d] ^ %2x\n", $pb4-1, $actpos, $act);
+			trace("%6x ACT[%d] ^ %2x\n", $pb4-1, $actpos, $act);
 		}
 
-		printf("-- ACT %2x\n", $action[$actpos]);
+		trace("-- ACT %2x\n", $action[$actpos]);
 		$by = array();
 		$by[] = ($action[$actpos] >> 4) & BIT4;
 		$by[] = ($action[$actpos] >> 0) & BIT4;
@@ -57,7 +60,7 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 		{
 			if ( $b == 0 )
 			{
-				printf("---- COPY %x\n", $pc);
+				trace("---- COPY %x\n", $pc);
 				if ( isset( $file[$pc+1] ) )
 					$pix[] = substr($file, $pc, 2);
 				else
@@ -67,7 +70,7 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 			else
 			{
 				$p = ($actdy[$b] * $w/4) + $actdx[$b];
-				printf("---- REF  %x  [-%d,-%d]\n", $p, $actdx[$b], $actdy[$b]);
+				trace("---- REF  %x  [-%d,-%d]\n", $p, $actdx[$b], $actdy[$b]);
 				$p = count($pix) - $p;
 				if ( isset( $pix[$p] ) )
 					$pix[] = $pix[$p];

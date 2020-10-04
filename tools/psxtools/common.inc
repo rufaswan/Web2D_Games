@@ -297,6 +297,16 @@ function debug( $str, $sep = 4 )
 	return;
 }
 
+function trace()
+{
+	if ( ! defined("TRACE") )
+		return;
+	$args = func_get_args();
+	$echo = array_shift($args);
+	vprintf($echo, $args);
+	return;
+}
+
 // E_USER_ERROR
 // E_USER_WARNING
 // E_USER_NOTICE
@@ -442,7 +452,7 @@ function COPYPIX_DEF()
 		),
 		'dx' => 0,
 		'dy' => 0,
-		'bgzero' => "", // RGBA to ignore
+		'bgzero' => -1, // 1-byte (CLUT,int) or 4-byte (RGBA,string) to ignore
 		'vflip'  => false,
 		'hflip'  => false,
 		'rotate' => array(0,0,0),
@@ -598,11 +608,28 @@ function copypix( &$pix, $byte=1 )
 
 			$sxx = ($ry * $pix['src']['w']) + $rx;
 			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
-			if ( $byte == 1 )
-				$c1 = substr($pix['src']['pal'], ord($c1)*4, 4);
 
-			// ignore bgcolor
-			if ( $c1 == $pix['bgzero'] )
+			// Ignore BG color
+			//   byte 1 bgzero 0    = cmp c1, bgzero
+			//   byte 1 bgzero RGBA = c1 -> RGBA , cmp c1, bgzero
+			//   byte 4 bgzero 0    = skip
+			//   byte 4 bgzero RGBA = cmp c1, bgzero
+			// Xenogears Lucca = both 0th and 15th color are #000
+			//                   ignore 0th , but not #000
+			if ( $byte == 1 )
+			{
+				$c1 = ord($c1);
+				if ( $pix['bgzero'] === (int)$pix['bgzero'] )
+				{
+					if ( $c1 == $pix['bgzero'] )
+						continue;
+				}
+				$c1 = substr($pix['src']['pal'], $c1*4, 4);
+			}
+
+			// c1 is now RGBA
+			// Yuna Mika copyrgba()
+			if ( $c1 === $pix['bgzero'] )
 				continue;
 
 			$dxx = ($dy * $pix['rgba']['w']) + $dx;

@@ -3,6 +3,7 @@ require "common.inc";
 
 define("VRAM_W", 0x400);
 define("VRAM_H", 0x200);
+//define("TRACE", true);
 
 function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 {
@@ -72,19 +73,20 @@ function xeno_decode( &$file, $st, $ed )
 	$dec = '';
 	while ( $st < $ed )
 	{
+		trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] ); // t8
 				$st++;
-			printf("BYTECODE %2x\n", $bycod);
+			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8; // t9
+			continue;
 		}
 
 		$flg = $bycod & 1;
 			$bycod >>= 1;
 			$bylen--;
 
-		printf("%6x  %6x  ", $st, strlen($dec));
 		if ( $flg )
 		{
 			$b1 = ord( $file[$st+0] ); // t0
@@ -93,7 +95,7 @@ function xeno_decode( &$file, $st, $ed )
 			$pos = ($b2 & 0xf) << 8;
 				$pos |= $b1;
 			$len = ($b2 >> 4) + 3;
-			printf("REF  POS -%d LEN %d\n", $pos, $len);
+			trace("REF  POS -%d LEN %d\n", $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{
@@ -105,7 +107,7 @@ function xeno_decode( &$file, $st, $ed )
 		{
 			$b1 = $file[$st]; // t0
 				$st++;
-			printf("COPY %2x\n", ord($b1));
+			trace("COPY %2x\n", ord($b1));
 			$dec .= $b1;
 		}
 	} // while ( $st < $ed )
@@ -117,8 +119,8 @@ function xeno_decode( &$file, $st, $ed )
 function sectfile1( &$file )
 {
 	$sect = array();
-	//for ( $i=0; $i < 8; $i++ )
-	for ( $i=3; $i < 4; $i++ )
+	for ( $i=0; $i < 8; $i++ )
+	//for ( $i=3; $i < 4; $i++ )
 	{
 		$p = 0x130 + ($i * 4);
 		$p1 = str2int($file, $p+0, 3);
@@ -129,6 +131,74 @@ function sectfile1( &$file )
 	return $sect;
 }
 //////////////////////////////
+function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
+{
+	$pix = "";
+	$ty = ord( $str[6] );
+	printf("$dir/3.dec = %d\n", $ty);
+
+	switch ( $ty )
+	{
+		case 0: // compressed on $dec[4]
+			$p2 = 4 + ($dec_no * 4);
+			$p2 = str2int($dec4, $p2, 4);
+
+			$p3 = 8 + ($dec_no * 4);
+			$p3 = str2int($dec4, $p3, 4);
+
+			if ( $p3 < 8 )
+				$p3 = strlen($dec4);
+
+			$dec_no++;
+			$pix = substr($dec4, $p2, $p3-$p2);
+			return $pix;
+		case 1: // paired file (vram)
+			$data = array();
+
+			$sx = str2int($str, 0, 2);
+			$sy = str2int($str, 2, 2);
+			$data[] = array($sx,$sy);
+
+			//$data[] = array(0x140,0x100); //  966_2 aveh gear
+			//$data[] = array(0x180,0x100); //  966_2 aveh gear
+
+			//$data[] = array(0x200,0x100); // 1180_6 bart
+			//$data[] = array(0x240,0x100); // 1180_6 bart
+
+			//$data[] = array(0x140,0x100); // 1106_2 repair gear
+			//$data[] = array(0x140,0x100); // 1126_2 kislev gear
+			//$data[] = array(0x300,    0); // 1236_8 thames gear
+			//$data[] = array(0x140,0x100); // 1906_2 virge
+			//$data[] = array(0x1c0,0x100); // 1906_3 el stier
+
+			//$data[] = array(0,0); // 1514_4 gaspar uzuki
+
+			$cnt = count($data);
+			$pix = str_repeat(ZERO, 4+($cnt*4));
+				strupd($pix, 0, chr($cnt));
+
+			foreach ( $data as $k => $v )
+			{
+				$w = VRAM_W - $v[0];
+				if ( $w > 0x40  )  $w = 0x40;
+				$h = VRAM_H - $v[1];
+				if ( $h > 0x100 )  $h = 0x100;
+
+				$len = strlen($pix);
+					strupd($pix, 4+($k*4), chrint($len, 3));
+				$pix .= chrint($w, 2);
+				$pix .= chrint($h, 2);
+				$pix .= rippix8($file2, $v[0]*2, $v[1], $w*2, $h, VRAM_W*2, VRAM_H);
+			}
+
+			return $pix;
+		default:
+			trigger_error("UNKNOWN\n", E_USER_ERROR);
+			return $pix;
+	}
+	return $pix;
+}
+
 function xeno( $fname1, $fname2 )
 {
 	$file1 = file_get_contents($fname1); // even
@@ -140,28 +210,27 @@ function xeno( $fname1, $fname2 )
 	$dec = sectfile1($file1);
 	$file2 = tex2vram($file2);
 
-	$meta = $dec[3];
-	$cnt = str2int($meta, 0, 3);
+	foreach ( $dec as $k => $v )
+		save_file("$dir/$k.dec", $v);
+
+	$cnt = str2int($dec[3], 0, 3);
+
+	$dec_no = 0;
+	$pix = "";
+	$w = 0;
+	$h = 0;
+
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$p1 = $i * 8;
-		$sx = str2int($file1, $p1+0, 2);
-		$sy = str2int($file1, $p1+2, 2);
-
-		$w = VRAM_W - $sx;
-		if ( $w > 0x40  )  $w = 0x40;
-		$h = VRAM_H - $sy;
-		if ( $h > 0x100 )  $h = 0x100;
-
-		$pix = rippix8($file2, $sx*2, $sy, $w*2, $h, VRAM_W*2, VRAM_H);
-		if ( trim($pix, ZERO) == "" )
-			continue;
+		$p1 = substr($file1, $p1, 8);
+		$pix = sectpix($p1, $dir, $dec_no, $file2, $dec[4]);
 
 		$p1 = 4 + ($i * 4);
-		$base = str2int($meta, $p1, 3);
-		$c1 = str2int($meta, $base+0, 3);
-		$z1 = str2int($meta, $base+4+($c1*4), 3);
-		$data = substr($meta, $base, $z1);
+		$base = str2int($dec[3], $p1, 3);
+		$c1   = str2int($dec[3], $base+0, 3);
+		$z1   = str2int($dec[3], $base+4+($c1*4), 3);
+		$data = substr ($dec[3], $base, $z1);
 
 		// same format as monster battle sprites
 		$p1 = 8 + 12 + strlen($data);
@@ -172,10 +241,6 @@ function xeno( $fname1, $fname2 )
 		$btl .= chrint($p1, 4);
 		$btl .= chrint(0, 4);
 		$btl .= $data;
-		$btl .= chrint(1, 4);
-		$btl .= chrint(8, 4);
-		$btl .= chrint($w , 2);
-		$btl .= chrint($h, 2);
 		$btl .= $pix;
 		save_file("$dir/$i.bin", $btl);
 
@@ -189,3 +254,15 @@ for ( $i=1; $i < $argc; $i += 2 )
 		continue;
 	xeno( $argv[$i+0] , $argv[$i+1] );
 }
+
+/*
+1236.bin/1237.bin
+	thames  8.bin  marine gear
+		0 = vram 340,0  1b478, 88w = 180,  0+100
+		1 = vram 356,0  23e80,104w = 196, e0+ 20
+		2 = vram 370,0  3c240, 36w = 1b0, e0+ 20
+		3 = vram 379,0  440c0, 12w = 1b9, e0+ 20
+		4 = vram 37c,0  45000, 12w = 1bc,100
+		5 = vram 37f,0  4c800,  4w = 1bf,100
+		6 = vram 380,0  1f000,256w = 300,  0
+ */

@@ -251,7 +251,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$h = $pix['src']['h'];
 		}
 		$pix['src']['pal'] = $gp_clut[$cid];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 		scalepix($pix, SCALE, SCALE);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);

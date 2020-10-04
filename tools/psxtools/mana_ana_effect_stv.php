@@ -89,7 +89,7 @@ function sectparts( &$meta, $pos, $fn )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
 		$pix['src']['pal'] = $gp_tim['clut'][$cn];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 
 		$p7 = ord( $v[7] );
 		$pix['vflip'] = $p7 & 0x80;

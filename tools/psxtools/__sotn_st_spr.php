@@ -7,6 +7,7 @@
 require "common.inc";
 
 //define("DRY_RUN", true);
+define("TRACE", true);
 
 // map files are loaded to RAM 80180000
 // offsets here are RAM pointers

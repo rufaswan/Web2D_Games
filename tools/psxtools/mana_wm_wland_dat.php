@@ -77,7 +77,7 @@ function sect1( &$file, $base, $fn )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, 0x100, 0x3e);
 		$pix['src']['pal'] = $gp_clut[$cn];
-		$pix['bgzero'] = substr($pix['src']['pal'], 0, 4);
+		$pix['bgzero'] = 0;
 
 		$p9 = ord($v[9]);
 		$pix['alpha'] = "";

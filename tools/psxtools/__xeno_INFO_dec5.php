@@ -469,4 +469,9 @@ thames
 	2f  medic  1236/1237
 	3f  beer   1236/1237
 	4f  bridge 1234/1235
+gasper - shevat
+	debug event 454
+	file 1514/1515.bin
+	entry 14 of 24 , 1bd = c0 69 rr
+		rr = 0-7 N NE E SE S SW W NW
  */
