@@ -3,10 +3,15 @@
 
 function dot_product( $vector )
 {
-	// can be vec2 or vec3
+	// can be vec2 xy or vec3 xyz
 	$scaler = 0;
 	foreach ( $vector as $v )
-		$scaler += ($v[0] * $v[1]);
+	{
+		$sum = 1;
+		foreach ( $v as $vv )
+			$sum *= $vv;
+		$scaler += $sum;
+	}
 	return $scaler;
 }
 
@@ -64,15 +69,15 @@ function copyquad( &$pix, $byte=1 )
 	);
 
 	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/
-	// x,y,z == x/z,y/z
-	// x,y   == xz ,yz ,1z
-	//
 	// matrix
-	//   src =  0,0   w-1,0   w-1,h-1   0,h-1
-	//   des = x1,y1   x2,y2   x3,y3   x4,y4
-	//    | 0  w-1  w-1 |   | x1  x2  x3 |
-	//   M| 0    0  h-1 | = | y1  y2  y3 |
-	//    | 1    1    1 |   |  1   1   1 |
+	//   src 20x25 image =  0,0   19,0   19,24   0,24
+	//   transformed to  = 20,40  40,20  30,10  10,30
+	//
+	// |0  19  19   0| | | = |20  40  30  10|
+	// |0   0  24  24| |M| = |40  20  10  30|
+	// |1   1   1   1| | | = | 1   1   1   1|
+	//
+	//
 
 	return;
 }

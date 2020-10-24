@@ -1,6 +1,41 @@
 <?php
 require "common.inc";
 
+function psxvram2clut( &$vram, $base )
+{
+	// 8-bpp
+	$clut = "CLUT";
+	$clut .= chrint(0x100, 4);
+	$clut .= chrint(0x800, 4);
+	$clut .= chrint(0x200, 4);
+	$clut .= grayclut(0x100);
+	$clut .= $vram;
+	save_file("$base/vram-8.clut", $clut);
+
+	// 4-bpp
+	$clut = "CLUT";
+	$clut .= chrint(0x10,   4);
+	$clut .= chrint(0x1000, 4);
+	$clut .= chrint(0x200,  4);
+	$clut .= grayclut(0x10);
+	for ( $i=0; $i < 0x100000; $i++ )
+	{
+		$b = ord( $vram[$i] );
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
+		$clut .= chr($b1) . chr($b2);
+	}
+	save_file("$base/vram-4.clut", $clut);
+
+	// 16-bpp
+	$clut = "RGBA";
+	$clut .= chrint(0x400, 4);
+	$clut .= chrint(0x200, 4);
+	$clut .= pal555($vram);
+	save_file("$base/vram-16.clut", $clut);
+	return;
+}
+
 // extract RAM section from uncompressed save states
 function subram( &$file, $base )
 {
@@ -34,27 +69,17 @@ function subram( &$file, $base )
 		$st = 0x40;
 		while ( $st < $ed )
 		{
-			$mgc = substr($file, $st+0, 4);
-			switch ( $mgc )
-			{
-				case "CORE":
-				case "BIOS":
-				case "MRAM":
-				case "VRAM":
-				case "SRAM":
-				case "HC05":
-				case "SECT":
-				case "CDDA":
-				case "STOP":
-					$len = str2int($file, $st+8, 4);
-					printf("%8x , %8x , $mgc\n", $st, $len);
-					save_file("$base/$mgc", substr($file, $st+12, $len));
-					$st += ($len + 12);
-					break;
-				default:
-					printf("%8x , $mgc\n", $st);
-					return "";
-			} // switch ( $mgc )
+			$bak = $st;
+			$mgc = substr ($file, $st+0, 4);
+			$len = str2int($file, $st+8, 4);
+				$st += ($len + 12);
+			printf("%8x , %8x , $mgc\n", $bak, $len);
+
+			$sub = substr($file, $bak+12, $len);
+			save_file("$base/$mgc", $sub);
+
+			if ( $mgc == 'VRAM' )
+				psxvram2clut($sub, $base);
 		} // while ( $st < $ed )
 		return "";
 	}
@@ -67,27 +92,14 @@ function subram( &$file, $base )
 		$st = 0x40;
 		while ( $st < $ed )
 		{
-			$mgc = substr($file, $st+0, 4);
-			switch ( $mgc )
-			{
-				case "VAL2":
-				case "IOP7":
-				case "DTCM":
-				case "ITCM":
-				case "RAMS":
-				case "RAM7":
-				case "WIFI":
-				case "VALS":
-				case "RAM2":
-					$len = str2int($file, $st+8, 4);
-					printf("%8x , %8x , $mgc\n", $st, $len);
-					save_file("$base/$mgc", substr($file, $st+12, $len));
-					$st += ($len + 12);
-					break;
-				default:
-					printf("%8x , $mgc\n", $st);
-					return "";
-			} // switch ( $mgc )
+			$bak = $st;
+			$mgc = substr ($file, $st+0, 4);
+			$len = str2int($file, $st+8, 4);
+				$st += ($len + 12);
+			printf("%8x , %8x , $mgc\n", $bak, $len);
+
+			$sub = substr($file, $bak+12, $len);
+			save_file("$base/$mgc", $sub);
 		} // while ( $st < $ed )
 		return "";
 	}
@@ -100,36 +112,24 @@ function subram( &$file, $base )
 		$st = 0x14;
 		while ( $st < $ed )
 		{
-			$mgc = substr($file, $st+0, 4);
-			switch ( $mgc )
+			$bak = $st;
+			$mgc = substr ($file, $st+0, 4);
+			$len = str2int($file, $st+8, 4);
+				$st += ($len + 12);
+			printf("%8x , %8x , $mgc\n", $bak, $len);
+
+			$sub = substr($file, $bak+12, $len);
+			save_file("$base/$mgc", $sub);
+
+			if ( $mgc == 'OTHR' )
 			{
-				case "CART":
-				case "CS2 ":
-				case "MSH2":
-				case "SSH2":
-				case "SCSP":
-				case "SCU ":
-				case "VDP1":
-				case "SMPC":
-				case "VDP2":
-					$len = str2int($file, $st+8, 4);
-					printf("%8x , %8x , $mgc\n", $st, $len);
-					save_file("$base/$mgc", substr($file, $st+12, $len));
-					$st += ($len + 12);
-					break;
-				case "OTHR":
-					$len = str2int($file, $st+8, 4);
-					printf("%8x , %8x , $mgc\n", $st, $len);
-					$st += (12 + 0x10000);
-					$sz = $len - 0x10000;
-					$ram = "";
-					for ( $i=0; $i < $sz; $i += 2 )
-						$ram .= $file[$st+$i+1] . $file[$st+$i+0];
-					return $ram;
-				default:
-					printf("%8x , $mgc\n", $st);
-					return "";
-			} // switch ( $mgc )
+				$sub = substr($sub, 0x10000);
+				$len = strlen($sub);
+				$ram = "";
+				for ( $i=0; $i < $len; $i += 2 )
+					$ram .= $sub[$i+1] . $sub[$i+0];
+				return $ram;
+			}
 		} // while ( $st < $ed )
 		return "";
 	}
@@ -142,11 +142,14 @@ function subram( &$file, $base )
 		$st = 0x30;
 		while ( $st < $ed )
 		{
+			$bak = $st;
 			$mgc = substr0($file, $st);
 			$len = str2int($file, $st+12, 4);
-			printf("%8x , %8x , $mgc\n", $st, $len);
-			save_file("$base/$mgc", substr($file, $st+16, $len));
-			$st = int_ceil($st + $len + 16, 16);
+				$st = int_ceil($st + $len + 16, 16);
+			printf("%8x , %8x , $mgc\n", $bak, $len);
+
+			$sub = substr($file, $bak+16, $len);
+			save_file("$base/$mgc", $sub);
 		} // while ( $st < $ed )
 		return "";
 	}

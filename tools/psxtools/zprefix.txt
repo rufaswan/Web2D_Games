@@ -18,34 +18,22 @@ tm2s   SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / D
 tm2s   SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
 tm2s   SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
 
-sotn   SLUS 000.67  Castlevania Symphony of the Night
-xeno   SLUS 006.64  Xenogears / Disc 1
-xeno   SLUS 006.69  Xenogears / Disc 2
-mana   SLUS 010.13  Legend of Mana
-valky  SLUS 011.56  Valkyrie Profile / Disc 1
-valky  SLUS 011.79  Valkyrie Profile / Disc 2
-
-star2  SCUS 944.21  Star Ocean 2 / Disc 1
-star2  SCUS 944.22  Star Ocean 2 / Disc 2
-
 	progress
-		mana   ALL DONE
-		saga2  ALL DONE , SLUS not supported
-		tm2s   ALL DONE
-		yuna   .ss1 only
-		xeno   2D battle sprites only
-		sotn   all maps only
-		mkr    *upcoming*
-		valky  *upcoming*
-		star2  *upcoming*
+		mana    ALL DONE
+		saga2   ALL DONE , SLUS not supported
+		tm2s    ALL DONE
+		yuna    .ss1 only
+		xeno    2D battle sprites only
+		sotn    all maps only
+		lunar2  *upcoming*
+		mkr     *upcoming*
+		valky   *upcoming*
+		star2   *upcoming*
 
 = Guest System Games =
 cvnds      NDS     ACVJ      Akumajou Dracula Sougetsu no Juujika
 cvnds      NDS     ACBJ      Akumajou Dracula Gallery of Labyrinth
 cvnds      NDS     YR9J      Akumajou Dracula Ubawareta Kokuin
-cvnds      NDS     ACVE      Castlevania Dawn of Sorrow
-cvnds      NDS     ACBE      Castlevania Portrait of Ruin
-cvnds      NDS     YR9E      Castlevania Order of Ecclesia
 yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
 yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3

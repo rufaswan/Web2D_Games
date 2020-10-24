@@ -1,11 +1,17 @@
 <?php
 // non-PlayStation One (guest systems) functions
 
-function str2big( &$str, $pos, $byte )
+function str2big( &$str, $pos, $byte, $sign=false )
 {
-	$s = substr($str, $pos, $byte);
-	$s = strrev($s);
-	return ordint($s);
+	$sub = substr($str, $pos, $byte);
+	$sub = strrev($sub);
+	if ( $sign )
+	{
+		$sint = array("", "sint8", "sint16", "sint24", "sint32");
+		$func = $sint[$byte];
+		return $func($sub);
+	}
+	return ordint($sub);
 }
 
 function chrbig( $int, $byte )

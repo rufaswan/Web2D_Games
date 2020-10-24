@@ -2,6 +2,7 @@
 // toolset for PlayStation One games
 // - little-endian byte order
 // - 32-bit negative int
+// - int only , no float/double
 // - 0x200000 RAM
 //   - 80000000-8000ffff BIOS
 //   - 80010000-801fffef WRAM
@@ -15,11 +16,27 @@
 //   - minute:second:frame (absolute position)
 // - Sprites are PsuedoColor
 // - Backgrounds are PsuedoColor, very rarely DirectColor
-// - RGB555 color format , in ABBBBBGGGGGRRRRR order
+// - RGB555 color format , in 15-ABBBBBGGGGGRRRRR-0 order
 // - Alpha is by Additive Blending , as in FG + BG
 // - Layers are Top-to-Bottom order
 // - 0,0 is at Top-Left corner
 // - load/store registers
+//
+// CODING STANDARD
+// - use PHP core functions only
+// - if compile PHP from source, use option '--disable-all' on configure
+// - if extension(s) are absolutely required
+//   - use req_ext() from "common-guest.inc" to check
+//   - prefer NO EXTENSION is used, whenever possible
+// - *.php files
+//   - *.php are independant scripts
+//   - *.php MUST NOT include each other
+//   - *.php CAN include multiple *.inc , and in correct order
+// - *.inc files
+//   - *.inc are include/require common scripts
+//   - *.inc MUST NOT include each other
+//   - *.inc MUST NOT include *.php
+// - global variables are prefixed "gp_" (global pointer)
 define("ZERO", chr(  0));
 define("BYTE", chr(255));
 define("BIT4",  0x0f);
@@ -31,28 +48,61 @@ define("KILO", 1 << 10);
 define("MEGA", 1 << 20);
 define("GIGA", 1 << 30);
 //if ( defined("DRY_RUN") ) // per script
+//if ( defined("TRACE"  ) ) // per script
 
-if ( ! defined("PHP_VERSION_ID") || PHP_VERSION_ID < 050600 )
-	trigger_error("requires PHP 5.6 or above", E_USER_ERROR);
 //////////////////////////////
-function str2int( &$str, $pos, $byte )
+function php_req_def($def, $ver)
+{
+	if ( ! defined($def) )
+		trigger_error("requires PHP $ver or above", E_USER_ERROR);
+	return;
+}
+
+// https://www.php.net/manual/en/reserved.constants.php
+// 5.0.2  PHP_EOL
+// 5.0.5  PHP_INT_MAX  PHP_INT_SIZE
+// 5.2.7  PHP_MAJOR_VERSION  PHP_MINOR_VERSION  PHP_RELEASE_VERSION  PHP_EXTRA_VERSION  PHP_VERSION_ID  PHP_ZTS  PHP_DEBUG
+// 5.3.0  PHP_MAXPATHLEN
+// 5.3.7  PHP_MANDIR
+// 5.4.0  PHP_BINARY
+// 7.0.0  PHP_INT_MIN
+// 7.1.0  PHP_FD_SETSIZE
+// 7.2.0  PHP_OS_FAMILY  PHP_FLOAT_DIG  PHP_FLOAT_EPSILON  PHP_FLOAT_MIN  PHP_FLOAT_MAX
+// PHP 7.0+ for native 64-bit int on windows
+php_req_def("PHP_INT_SIZE"  , "5.0.5");
+php_req_def("PHP_VERSION_ID", "5.2.7");
+//////////////////////////////
+function str2int( &$str, $pos, $byte, $sign=false )
 {
 	$sub = substr($str, $pos, $byte);
+	if ( $sign )
+	{
+		$sint = array("", "sint8", "sint16", "sint24", "sint32");
+		$func = $sint[$byte];
+		return $func($sub);
+	}
 	return ordint($sub);
 }
 
-function substr0( &$str, $pos, $end = ZERO )
+function substr0( &$str, $pos, $end="" )
 {
+	if ( empty($end) )
+		$end = ZERO;
 	$len = 0;
-	while ( isset( $str[$pos+$len] ) && $str[$pos+$len] != $end )
+	while (1)
+	{
+		if ( ! isset( $str[$pos+$len] ) )
+			break;
+		if ( strpos($end, $str[$pos+$len]) !== false )
+			break;
 		$len++;
+	}
 	return substr($str, $pos, $len);
 }
 
 function ordint( $str )
 {
-	if ( (int)$str === $str ) // already $int
-		return $str;
+	$str = rtrim("$str", ZERO);
 	$len = strlen($str);
 	$int = 0;
 	for ( $i=0; $i < $len; $i++ )
@@ -65,10 +115,7 @@ function ordint( $str )
 
 function chrint( $int, $byte = 0 )
 {
-	if ( (float)$int === $int ) // in case return from round() ceil() floor()
-		$int = (int)$int;
-	if ( (int)$int !== $int ) // already $str
-		return $int;
+	$int = (int)$int;
 	$str = "";
 	for ( $i=0; $i < $byte; $i++ )
 	{
@@ -83,34 +130,30 @@ function chrint( $int, $byte = 0 )
 
 function sint8( $s )
 {
-	$int = ordint($s);
-	if ( $int >> 7 )
-		return $int - BIT8 - 1;
-	return $int;
+	$int = ( (int)$s === $s ) ? $s : ordint($s);
+	$sra = (PHP_INT_SIZE - 1) * 8; // shift right arithmetic
+	return ( ($int << $sra) >> $sra );
 }
 
 function sint16( $s )
 {
-	$int = ordint($s);
-	if ( $int >> 15 )
-		return $int - BIT16 - 1;
-	return $int;
+	$int = ( (int)$s === $s ) ? $s : ordint($s);
+	$sra = (PHP_INT_SIZE - 2) * 8; // shift right arithmetic
+	return ( ($int << $sra) >> $sra );
 }
 
 function sint24( $s )
 {
-	$int = ordint($s);
-	if ( $int >> 23 )
-		return $int - BIT24 - 1;
-	return $int;
+	$int = ( (int)$s === $s ) ? $s : ordint($s);
+	$sra = (PHP_INT_SIZE - 3) * 8; // shift right arithmetic
+	return ( ($int << $sra) >> $sra );
 }
 
 function sint32( $s )
 {
-	$int = ordint($s);
-	if ( $int >> 31 )
-		return $int - BIT32 - 1;
-	return $int;
+	$int = ( (int)$s === $s ) ? $s : ordint($s);
+	$sra = (PHP_INT_SIZE - 4) * 8; // shift right arithmetic
+	return ( ($int << $sra) >> $sra );
 }
 
 function strupd( &$file, $pos, $str )
@@ -133,7 +176,7 @@ function int_ceil( $int, $ceil )
 	// 3 -> 4 and -3 -> -4
 	$int = (int)$int;
 	$step = ( $int < 0 ) ? -1 : 1;
-	while ( ($int % $ceil) != 0 )
+	while ( ($int % (int)$ceil) != 0 )
 		$int += $step;
 	return $int;
 }
@@ -143,7 +186,7 @@ function int_floor( $int, $floor )
 	// 3 -> 2 and -3 -> -2
 	$int = (int)$int;
 	$step = ( $int < 0 ) ? 1 : -1;
-	while ( ($int % $floor) != 0 )
+	while ( ($int % (int)$floor) != 0 )
 		$int += $step;
 	return $int;
 }
@@ -167,7 +210,7 @@ function load_file( $fname )
 	if ( is_file($fname) )
 		return file_get_contents($fname);
 
-	// case-insensitive file load
+	// try different casing
 	$fname = strtoupper($fname);
 	if ( is_file($fname) )
 		return file_get_contents($fname);
@@ -176,6 +219,17 @@ function load_file( $fname )
 	if ( is_file($fname) )
 		return file_get_contents($fname);
 
+	// case-insensitive file load
+	$list = array();
+	lsfile_r('.', $list);
+	sort($list);
+	foreach ( $list as $v )
+	{
+		if ( stripos($v, $fname) )
+			return file_get_contents($v);
+	}
+
+	// nothing found
 	return "";
 }
 
@@ -570,9 +624,11 @@ function copypix( &$pix, $byte=1 )
 	$cos = cos($rot);
 	$hyp = hypot($pix['src']['w'], $pix['src']['h']) * 0.6;
 
-	// 10x10 square (-5,-5,5,5) rotate 45 degree = (  0, -7, 0, 7) or ~14x14 square
-	// hypotenuse 10x10 square = 14.1421        += (-14,-21,14,21)
-	//   center-based with hypot                 = (-14,-14,14,14) or ~28x28 square
+	// 10x10 square       = ( -5, -5, 5, 5)
+	//   rotate 45 degree = (  0, -7, 0, 7) or ~14x14 square
+	// hypotenuse 10x10 square         = 14.1421
+	//   center-based with hypot       = (-14,-14, 14, 14) or ~28x28 square
+	//   center-based with hypot * 0.6 = ( -8, -8,  8,  8) or ~16x16 square
 	$tx = $pix['rotate'][1] + ($pix['src']['w'] / 2);
 	$ty = $pix['rotate'][2] + ($pix['src']['h'] / 2);
 		$cx = $tx * $cos - $ty * $sin;
@@ -584,6 +640,8 @@ function copypix( &$pix, $byte=1 )
 	//printf("x %d y %d w %d h %d hyp %d\n", $x1, $y1, $x2-$x1, $y2-$y1, $hyp);
 
 	// dest rotation + alpha blend + copy
+	//   direct  rotate src ->  dest == holes on dest (rounding error)
+	//   reverse rotate dest <- src  == no holes
 	$rot = ((0x100 - $pix['rotate'][0]) & BIT8) * pi() / 0x80;
 	$sin = sin($rot);
 	$cos = cos($rot);
@@ -628,7 +686,6 @@ function copypix( &$pix, $byte=1 )
 			}
 
 			// c1 is now RGBA
-			// Yuna Mika copyrgba()
 			if ( $c1 === $pix['bgzero'] )
 				continue;
 
@@ -637,8 +694,9 @@ function copypix( &$pix, $byte=1 )
 
 			// ALPHA BLENDING
 			// using callbacks due to implementation difference
-			// Legend of Mana @ E=M+I
-			// Legend of Mana /wm/wmland/* @ 1 is E=M+I @ 3 is E=(M/5)+I
+			// Legend of Mana /wm/wmland/*
+			//   type 1 is PIX=  FG    + BG
+			//   type 3 is PIX= (FG/5) + BG
 			$alpha = $pix['alpha'];
 			if ( function_exists($alpha) )
 				$c1 = $alpha($c1, $c2);
@@ -765,7 +823,7 @@ function alpha_add( $fg, $bg )
 
 		// blend w/semi-transparent pixel
 		// #202020   + #204080   = #4060a0
-		// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0)
+		// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0 !!!)
 		// #202020   + #4080ff80 = #6699ffa0
 		default:
 			$a2 = ord($bg[3]);

@@ -45,7 +45,7 @@ function ramint( &$file, $pos )
 	return $int;
 }
 //////////////////////////////
-function secttile( $dat, $bit8, &$pix )
+function secttile( &$pix, $dat, $bpp, $x, $y )
 {
 	$cn = $dat & 0x7f;
 
@@ -53,20 +53,23 @@ function secttile( $dat, $bit8, &$pix )
 	$col = ($dat >> 16) & 0x0f;
 	$row = ($dat >> 20) & 0x0f;
 
-	// texture data is mixed 4-bit (4 columns) and 8-bit (2 columns)
-	// arranged like this
-	//  4-bit           |  8-bit
-	//   0  10  20  30  |   0  10
-	//   1  11  21  31  |   1  11
-	//   2  12  22  32  |   2  12
-	//   3  13  23  33  |   3  13
-	//  ...             |  ...
-	//   f  1f  2f  3f  |   f  1f
-	//  40  50  60  70  |  20  30
-	//  41  51  61  71  |  21  31
-	//  ...             |  ...
+	// texture data is mixed of
+	//   4-bit  (4 columns)
+	//   8-bit  (2 columns)
+	//   RGB555 (1 column)
+	//
+	//  4-bit           |  8-bit   |  RGB555
+	//   0  10  20  30  |   0  10  |   0
+	//   1  11  21  31  |   1  11  |   1
+	//   2  12  22  32  |   2  12  |   2
+	//   3  13  23  33  |   3  13  |   3
+	//  ...             |  ...     |  ...
+	//   f  1f  2f  3f  |   f  1f  |   f
+	//  40  50  60  70  |  20  30  |  10
+	//  41  51  61  71  |  21  31  |  11
+	//  ...             |  ...     |  ...
 	global $gp_pixd, $gp_clut;
-	if ( $bit8 ) // 8-bit , 256 colors , 1 pixel/byte
+	if ( $bpp == 'c8' ) // 8-bit , 256 colors , 1 pixel/byte
 	{
 		$blk = ($blk * 0x8000);
 		$col1 = (int)($col / 2) * 0x2000;
@@ -83,8 +86,12 @@ function secttile( $dat, $bit8, &$pix )
 		$ripd = substr($gp_pixd, $row, 0x200);
 		$pix['src']['pix'] = rippix8($ripd, 0, 0, 16, 16, $cls, 0x100);
 		$pix['src']['pal'] = $gp_clut[$cn];
+		$pix['dx'] = $x;
+		$pix['dy'] = $y;
+		copypix($pix, 1);
+		return;
 	}
-	else // 4-bit , 16 colors , 2 pixel/byte
+	if ( $bpp == 'c4' ) // 4-bit , 16 colors , 2 pixel/byte
 	{
 		$blk = ($blk * 0x8000);
 		$col1 = (int)($col / 4) * 0x2000;
@@ -108,6 +115,26 @@ function secttile( $dat, $bit8, &$pix )
 		$cn1 = ($cn >> 0) & BIT4;
 		$cn2 = ($cn >> 4) & BIT4;
 		$pix['src']['pal'] = substr($gp_clut[$cn2], $cn1*0x40, 0x40);
+		$pix['dx'] = $x;
+		$pix['dy'] = $y;
+		copypix($pix, 1);
+		return;
+	}
+	if ( $bpp == 'rgb' ) // RGB555 , 2 byte/pixel
+	{
+		$blk *= 0x8000;
+		$col *= 0x2000;
+		$row *= 0x200;
+
+		$row += ($blk + $col);
+		$ripd = substr($gp_pixd, $row, 0x200);
+
+		$pix['src']['pix'] = pal555($ripd);
+		$pix['src']['pal'] = '';
+
+		$pix['dx'] = $x;
+		$pix['dy'] = $y;
+		copypix($pix, 4);
 	}
 	return;
 }
@@ -130,11 +157,14 @@ function sectmap( &$file, $nid, $base )
 	// & 0x04
 	// & 0x08
 	// & 0x10 - 8-bit image
-	// & 0x20
+	// & 0x20 - RGB555 image
 	// & 0x40 - animated layer
 	// & 0x80
-	$bit8 = $b8 & 0x10;
-	echo ( $bit8 ) ? "8-bit pix\n" : "4-bit pix\n";
+	$bpp = 'c4';
+	if ( $b8 & 0x10 )  $bpp = 'c8';
+	if ( $b8 & 0x20 )  $bpp = 'rgb';
+	printf("pix = %s\n", $bpp);
+	if ( ($b8 & 0x21) == 0x20 )  return;
 
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $map_w;
@@ -159,12 +189,7 @@ function sectmap( &$file, $nid, $base )
 			if ( ($dat & 0x80) == 0 )
 				continue;
 
-			$dat = secttile( $dat, $bit8, $pix );
-
-			$pix['dx'] = $x;
-			$pix['dy'] = $y;
-
-			copypix($pix);
+			secttile($pix, $dat, $bpp, $x, $y);
 		} // for ( $x=0; $x < $map_w; $x += 0x10 )
 
 		$map .= "\n";
@@ -243,6 +268,39 @@ function sect1( &$file, $nid, $base )
 	return;
 }
 //////////////////////////////
+function srcpix( &$pix, $dir )
+{
+	save_file("$dir/pix.meta", $pix);
+	$len = strlen($pix);
+	$w = 0x20;
+	$h = $len / 0x20;
+
+	// 8-bpp
+	$clut = "CLUT";
+	$clut .= chrint(0x100, 4);
+	$clut .= chrint($w, 4);
+	$clut .= chrint($h, 4);
+	$clut .= grayclut(0x100);
+	$clut .= $pix;
+	save_file("$dir/pix-8.clut", $clut);
+
+	// 4-bpp
+	$clut = "CLUT";
+	$clut .= chrint(0x10, 4);
+	$clut .= chrint($w*2, 4);
+	$clut .= chrint($h,   4);
+	$clut .= grayclut(0x10);
+	for ( $i=0; $i < $len; $i++ )
+	{
+		$b = ord( $pix[$i] );
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
+		$clut .= chr($b1) . chr($b2);
+	}
+	save_file("$dir/pix-4.clut", $clut);
+	return;
+}
+
 function mana( $fname )
 {
 	$file = file_get_contents($fname);
@@ -254,10 +312,11 @@ function mana( $fname )
 	$dir = str_replace('.', '_', $fname);
 
 	global $gp_pixd, $gp_clut;
-	$pixp = ramint($file, 0x14);
-	$gp_pixd = substr($file, $pixp, str2int($file, 12, 4));
+	$pixp = ramint ($file, 0x14);
+	$pixz = str2int($file, 0x0c, 4);
+	$gp_pixd = substr($file, $pixp, $pixz);
 	$gp_clut = array();
-	//save_file("$dir/pix", $gp_pixd);
+	srcpix($gp_pixd, $dir);
 
 	$file = substr($file, 0, $pixp);
 

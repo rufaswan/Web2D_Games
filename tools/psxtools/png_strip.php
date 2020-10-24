@@ -2,18 +2,13 @@
 require "common.inc";
 require "common-guest.inc";
 
-// to strip off any optional PNG chunks (tIME,gAMA,iCCP,etc)
-function pngstrip( $fname )
+function png_chunk( &$png )
 {
-	$png = file_get_contents($fname);
-	if ( empty($png) )  return;
-
-	if ( substr($png, 1, 3) != "PNG" )
-		return;
+	$chunk = array();
+	$chunk['PNG'] = substr($png, 0, 8);
 
 	$ed = strlen($png);
 	$st = 8;
-	$chunk = array();
 	while ( $st < $ed )
 	{
 		//   uppercase     lowercase
@@ -33,9 +28,23 @@ function pngstrip( $fname )
 		$st += (8 + $len + 4);
 	} // while ( $st < $ed )
 
+	return $chunk;
+}
+
+// to strip off any optional PNG chunks (tIME,gAMA,iCCP,etc)
+function pngstrip( $fname )
+{
+	$png = file_get_contents($fname);
+	if ( empty($png) )  return;
+
+	if ( substr($png, 1, 3) != "PNG" )
+		return;
+
+	$chunk = png_chunk($png);
+
 	// chunks to keep
 	$tag = array("IHDR", "PLTE", "tRNS", "IDAT", "IEND");
-	$strip = substr($png, 0, 8);
+	$strip = $chunk['PNG'];
 	foreach ( $tag as $t )
 	{
 		if ( ! isset( $chunk[$t] ) )

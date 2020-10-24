@@ -1,5 +1,7 @@
 <?php
 require "common.inc";
+
+define("XASTRH", chr(0x60).chr(0x01).chr(0x01).chr(0x80));
 //define("DRY_RUN", true);
 
 function fp2str( $fp, $pos, $byte )
@@ -8,12 +10,6 @@ function fp2str( $fp, $pos, $byte )
 		return "";
 	fseek($fp, $pos, SEEK_SET);
 	return fread($fp, $byte);
-}
-
-function fp2int( $fp, $pos, $byte )
-{
-	$str = fp2str( $fp, $pos, $byte );
-	return ordint($str);
 }
 
 function chrbase10( $chr )
@@ -93,7 +89,10 @@ function valkyrie_toc( $fp, $dir, &$toc )
 			$sz = ftell($fp) - $lba;
 		}
 
-		save_file($fn, fp2str($fp, $lba, $sz));
+		$sub = fp2str($fp, $lba, $sz);
+		if ( substr($sub, 0, 4) == XASTRH )
+			$sub = ZERO;
+		save_file($fn, $sub);
 		$st++;
 	}
 
@@ -160,7 +159,11 @@ function iso_xenogears($fp, $dir)
 		{
 			$fn = sprintf("$dn/%06d.bin", $no);
 			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba*0x800, $siz, $fn);
-			save_file("$dir/$fn", fp2str($fp, $lba*0x800, $siz));
+
+			$sub = fp2str($fp, $lba*0x800, $siz);
+			if ( substr($sub, 0, 4) == XASTRH )
+				$sub = ZERO;
+			save_file("$dir/$fn", $sub);
 		}
 	} // for ( $i=0; $i < 0x8000; $i += 7 )
 
@@ -191,7 +194,11 @@ function iso_dewprism($fp, $dir)
 		{
 			$fn = sprintf("$dn/%06d.bin", $no);
 			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba1*0x800, $sz*0x800, $fn);
-			save_file("$dir/$fn", fp2str($fp, $lba1*0x800, $sz*0x800));
+
+			$sub = fp2str($fp, $lba1*0x800, $sz*0x800);
+			if ( substr($sub, 0, 4) == XASTRH )
+				$sub = ZERO;
+			save_file("$dir/$fn", $sub);
 		}
 		else
 		{

@@ -77,18 +77,10 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 {
 	printf("== sectmap( $map_w , $map_h )\n");
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $map_w;
-	$pix['rgba']['h'] = $map_h;
-	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
-
-	$pix['src']['w'] = 0x20;
-	$pix['src']['h'] = 0x10;
-
-	global $gp_clut;
+	$canvas = str_repeat(ZERO, $map_w*$map_h*2);
 	$pos = 4;
 	$mdt = "";
-	for ( $y=0; $y < $map_h; $y += 0x10 )
+	for ( $y=0; $y < $map_h; $y += 0x20 )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x20 )
 		{
@@ -96,19 +88,41 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 				$pos++;
 			$mdt .= sprintf("%2x ", $b1);
 
-			$pix['src']['pix'] = substr($dat, $b1*0x200, 0x200);
-			$pix['src']['pal'] = $gp_clut;
-			$pix['dx'] = $x;
-			$pix['dy'] = $y;
+			$src = substr($dat, $b1*0x200, 0x200);
+			for ( $sy=0; $sy < 0x10; $sy++ )
+			{
+				$syy = $sy * 0x20;
+				$dyy1 = ( $y+($sy*2)+0 ) * $map_w;
+				$dyy2 = ( $y+($sy*2)+1 ) * $map_w;
 
-			copypix($pix);
+				$b1 = substr($src, $syy, 0x20);
+				strupd($canvas, $dyy1 + $x, $b1);
+				strupd($canvas, $dyy2 + $x, $b1);
+			} // for ( $sy=0; $sy < 0x10; $sy++ )
 		} // for ( $x=0; $x < $map_w; $x += 0x20 )
 		$mdt .= "\n";
 
 	} // for ( $y=0; $y < $map_h; $y += 0x10 )
 	echo "$mdt\n";
 
-	savpix($pfx, $pix);
+	global $gp_clut;
+	$cc = strlen($gp_clut) / 4;
+
+	$clut = "CLUT";
+	$clut .= chrint($cc   , 4);
+	$clut .= chrint($map_w, 4);
+	$clut .= chrint($map_h, 4);
+	$clut .= $gp_clut;
+	$clut .= $canvas;
+	file_put_contents("$pfx.clut", $clut);
+
+	$clut = "CLUT";
+	$clut .= chrint(0x100, 4);
+	$clut .= chrint($map_w / 0x20, 4);
+	$clut .= chrint($map_h / 0x20, 4);
+	$clut .= grayclut(0x100);
+	$clut .= substr($map, $pos);
+	file_put_contents("$pfx.col.clut", $clut);
 	return;
 }
 
@@ -147,7 +161,7 @@ function mapdat( &$map, &$dat, $pfx )
 	$pix = loadtexx($dat);
 
 	$map_w = str2int($map, 0, 2) * 0x20;
-	$map_h = str2int($map, 2, 2) * 0x10;
+	$map_h = str2int($map, 2, 2) * 0x20;
 	echo "map : $map_w x $map_h\n";
 
 	sectmap($map, $pix, $pfx, $map_w, $map_h);

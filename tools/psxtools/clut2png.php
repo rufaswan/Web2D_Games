@@ -4,23 +4,6 @@ require "common-guest.inc";
 
 req_ext("zlib_decode", "zlib");
 
-/*
-// https://www.w3.org/TR/PNG-Filters.html
-function PaethPredictor (a, b, c)
-	begin
-		; a = left, b = above, c = upper left
-		p := a + b - c        ; initial estimate
-		pa := abs(p - a)      ; distances to a, b, c
-		pb := abs(p - b)
-		pc := abs(p - c)
-		; return nearest of a,b,c,
-		; breaking ties in order a,b,c.
-		if pa <= pb AND pa <= pc then return a
-		else if pb <= pc then return b
-		else return c
-	end
-*/
-
 function save_png( $fname, $w, $h, $rgba )
 {
 	// add filter byte on the beginning of every row

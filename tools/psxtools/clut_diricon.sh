@@ -3,7 +3,7 @@ php="/tmp/clut2bmp.php"
 [ -f "$php" ] || exit
 export php
 
-[ $# = 0 ] && f0="head" || f0="tail"
+[ $# = 0 ] && f0="-V" || f0="-r"
 export f0
 
 function diricon
@@ -12,21 +12,28 @@ function diricon
 	cd "$1"
 	[ -f '.DirIcon' ] && rm -vf '.DirIcon'
 
-	png=""
-	for t1 in clut rgba; do
-		t2=$(ls -1 *.$t1 | $f0 -1)
-		[ -f "$t2" ] && png="$t2"
-	done
-	[ "$png" ] || return
-	php.sh  "$php"  "$png"
-
 	tmp="/tmp/icon.png"
 	[ -f "$tmp" ] && rm -vf "$tmp"
-	convert  "$png.bmp" \
-		-define png:include-chunk=none,trns -trim -strip \
-		"$tmp" &> /dev/null
-	mv -f  "$tmp"  '.DirIcon'
-	rm "$png.bmp"
+
+	for t1 in $(ls -1 * | sort $f0); do
+		case "$t1" in
+			*'.rgba' | *'.clut')
+				php.sh  "$php"  "$t1"
+				convert  "$t1.bmp" \
+					-define png:include-chunk=none,trns -trim -strip \
+					"$tmp" &> /dev/null
+				mv -f  "$tmp"  '.DirIcon'
+				rm "$t1.bmp"
+				return;;
+
+			*'.bmp'  | *'.png' )
+				convert  "$t1" \
+					-define png:include-chunk=none,trns -trim -strip \
+					"$tmp" &> /dev/null
+				mv -f  "$tmp"  '.DirIcon'
+				return;;
+		esac
+	done
 }
 export -f diricon
 

@@ -2,17 +2,17 @@
 require "common.inc";
 
 // mips reg
-//  0  1  2  3  4  5  6  7  8  9
-//  0  1 v0 v1 a0 a1 a2 a3 t0 t1
+//  0  1  2  3  4  5  6  7
+//  0  1 v0 v1 a0 a1 a2 a3
 //
-// 10 11 12 13 14 15 16 17 18 19
-// t2 t3 t4 t5 t6 t7 s0 s1 s2 s3
+//  8  9 10 11 12 13 14 15
+// t0 t1 t2 t3 t4 t5 t6 t7
 //
-// 20 21 22 23 24 25 26 27 28 29
-// s4 s5 s6 s7 t8 t9 k0 k1 gp sp
+// 16 17 18 19 20 21 22 23
+// s0 s1 s2 s3 s4 s5 s6 s7
 //
-// 30 31
-// fp ra
+// 24 25 26 27 28 29 30 31
+// t8 t9 k0 k1 gp sp fp ra
 
 function prevnl( &$prev, $bak )
 {
@@ -22,11 +22,10 @@ function prevnl( &$prev, $bak )
 	return;
 }
 
-function ptr( $fname )
+function psxptr( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
-
 
 	$ed = strlen($file);
 	$st = 0;
@@ -110,4 +109,4 @@ function ptr( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	ptr( $argv[$i] );
+	psxptr( $argv[$i] );
