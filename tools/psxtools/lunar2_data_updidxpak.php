@@ -9,26 +9,37 @@ function lunar2( $dir )
 	if ( empty($upd) || empty($idx) || empty($pak) )
 		return;
 
-	$ed = strlen($upd);
-	$st = str2int($upd, 0x10, 4);
-	$fn = array();
-	while ( $st < $ed )
-	{
-		$s = substr0($upd, $st);
-		$fn[] = strtolower($s);
-		$st += strlen($s) + 1;
-	}
+	$b1 = str2int($upd,  0, 4); // toc base
+	$b2 = str2int($upd,  4, 4); // num of files
+	$b3 = str2int($upd,  8, 4); // padding
+	$b4 = str2int($upd, 12, 4);
+	$b5 = str2int($upd, 16, 4); // fname base
+	$b6 = str2int($upd, 20, 4);
 
-	$ed = strlen($idx);
-	$cnt = $ed / 5;
-	for ( $i=0; $i < $cnt; $i++ )
+	$buf = "";
+	for ( $i=0; $i < $b2; $i++ )
 	{
-		$p = $i * 5;
-		$lba = ordint( $idx[$p+2] . $idx[$p+1] . $idx[$p+0] );
-		$siz = ordint( $idx[$p+4] . $idx[$p+3] );
-		printf("%6x , %8x , %s\n", $lba, $siz, $fn[$i]);
-		save_file($fn[$i], substr($pak, $lba*0x800, $siz*0x800));
-	}
+		$p1 = $b1 + ($i * 0x14);
+		$pb1 = str2int($upd, $p1+ 0, 4);
+			$fn = substr0($upd, $b5+$pb1);
+			$fn = strtolower($fn);
+
+		$pb2 = str2int($upd, $p1+12, 4);
+			$p2 = $pb2 * 5;
+			$lba = ordint( $idx[$p2+2] . $idx[$p2+1] . $idx[$p2+0] );
+			$siz = ordint( $idx[$p2+4] . $idx[$p2+3] );
+
+		$pb3 = str2int($upd, $p1+16, 4);
+
+		$log = sprintf("%6x , %8x , %8x , %s\n", $lba, $lba*0x800, $pb3, $fn);
+		echo $log;
+		$buf .= $log;
+
+		$sub = substr($pak, $lba*0x800, $pb3);
+		save_file("$dir/data/$fn", $sub);
+	} // for ( $i=0; $i < $b2; $i++ )
+
+	save_file("$dir/data/toc.txt", $buf);
 	return;
 }
 

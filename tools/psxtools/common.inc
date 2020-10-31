@@ -102,6 +102,8 @@ function substr0( &$str, $pos, $end="" )
 
 function ordint( $str )
 {
+	if ( (int)$str === $str ) // already int
+		return $str;
 	$str = rtrim("$str", ZERO);
 	$len = strlen($str);
 	$int = 0;
@@ -115,6 +117,8 @@ function ordint( $str )
 
 function chrint( $int, $byte = 0 )
 {
+	if ( "$int" === $int ) // already str
+		return $int;
 	$int = (int)$int;
 	$str = "";
 	for ( $i=0; $i < $byte; $i++ )
@@ -488,34 +492,6 @@ function gradient( $cc, $src, $dst )
 	return $clut;
 }
 //////////////////////////////
-function COPYPIX_DEF()
-{
-	// PHP 5.6 fix
-	// Warning: Constants may only evaluate to scalar values
-	$php56 = array(
-		'rgba' => array(
-			'w' => 0,
-			'h' => 0,
-			'pix' => "",
-		),
-		'src' => array(
-			'w' => 0,
-			'h' => 0,
-			'pix' => "",
-			'pal' => "",
-		),
-		'dx' => 0,
-		'dy' => 0,
-		'bgzero' => -1, // 1-byte (CLUT,int) or 4-byte (RGBA,string) to ignore
-		'vflip'  => false,
-		'hflip'  => false,
-		'rotate' => array(0,0,0),
-		'vertex' => array(),
-		'alpha'  => "", // callback
-	);
-	return $php56;
-}
-//////////////////////////////
 function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 {
 	$err = "";
@@ -580,6 +556,199 @@ function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	} // for ( $y=0; $y < $h; $y++ )
 	return $rip;
 }
+//////////////////////////////
+function COPYPIX_DEF()
+{
+	// PHP 5.6 fix
+	// Warning: Constants may only evaluate to scalar values
+	$php56 = array(
+		'rgba' => array(
+			'w' => 0,
+			'h' => 0,
+			'pix' => "",
+		),
+		'src' => array(
+			'w' => 0,
+			'h' => 0,
+			'pix' => "",
+			'pal' => "",
+		),
+		'dx' => 0,
+		'dy' => 0,
+		'bgzero' => -1, // 1-byte (CLUT,int) or 4-byte (RGBA,string) to ignore
+		'vflip'  => false,
+		'hflip'  => false,
+		'rotate' => array(0,0,0),
+		'vector' => array(),
+		'alpha'  => "", // callback
+	);
+	return $php56;
+}
+//////////////////////////////
+function alpha_add( $fg, $bg )
+{
+	// FG is RGB from palette
+	// if BG is blank , FG RGB -> RGBA
+	// if BG is solid , FG += BG
+	// if BG is RGBA  , BG RGBA -> RGB, FG += BG, FG RGB -> RGBA
+	switch ( $bg[3] )
+	{
+		// blend w/normal pixels
+		case BYTE:
+			$pix = "";
+			for ( $i=0; $i < 4; $i++ )
+			{
+				$p1 = ord( $fg[$i] );
+				$p2 = ord( $bg[$i] );
+				$p = int_clamp($p1 + $p2, 0, BIT8);
+				$pix .= chr($p);
+			}
+			return $pix;
+
+		// blend w/transparent pixel
+		// #202020 + #00000000 = #ffffff20
+		// #204080 + #00000000 = #4080ff80
+		case ZERO:
+			$r = ord($fg[0]);
+			$g = ord($fg[1]);
+			$b = ord($fg[2]);
+
+			$a = ( $r > $g ) ? $r : $g;
+			$a = ( $b > $a ) ? $b : $a;
+
+			$r = int_clamp($r / $a * BIT8, 0, BIT8);
+			$g = int_clamp($g / $a * BIT8, 0, BIT8);
+			$b = int_clamp($b / $a * BIT8, 0, BIT8);
+			return chr($r) . chr($g) . chr($b) . chr($a);
+
+		// blend w/semi-transparent pixel
+		// #202020   + #204080   = #4060a0
+		// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0 !!!)
+		// #202020   + #4080ff80 = #6699ffa0
+		default:
+			$a2 = ord($bg[3]);
+			$r2 = ord($bg[0]) / BIT8 * $a2;
+			$g2 = ord($bg[1]) / BIT8 * $a2;
+			$b2 = ord($bg[2]) / BIT8 * $a2;
+
+			$r = int_clamp(ord($fg[0]) + $r2, 0, BIT8);
+			$g = int_clamp(ord($fg[1]) + $g2, 0, BIT8);
+			$b = int_clamp(ord($fg[2]) + $b2, 0, BIT8);
+			$nfg = chr($r) . chr($g) . chr($b) . BYTE;
+
+			$func = __FUNCTION__;
+			return $func($nfg, PIX_ALPHA);
+	}
+	return $fg;
+}
+
+function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
+{
+	if ( defined("DRY_RUN") )
+		return;
+	if ( (int)($fact_x*100) === 100 && (int)($fact_y*100) === 100 )
+		return;
+
+	$nw = (int)ceil( $pix['src']['w'] * $fact_x );
+	$nh = (int)ceil( $pix['src']['h'] * $fact_y );
+	$canv = canvpix($nw, $nh);
+	$mx = $pix['src']['w'] / $nw;
+	$my = $pix['src']['h'] / $nh;
+	for ( $y=0; $y < $nh; $y++ )
+	{
+		$dyy = $y * $nw;
+		$syy = (int)($y * $my) * $pix['src']['w'];
+		for ( $x=0; $x < $nw; $x++ )
+		{
+			$dxx = $dyy + $x;
+			$sxx = (int)($x * $mx) + $syy;
+
+			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
+			strupd($canv, $dxx*$byte, $c1);
+		} // for ( $x=0; $x < $nw; $x++ )
+	} // for ( $y=0; $y < $nh; $y++ )
+
+	$pix['src']['w'] = $nw;
+	$pix['src']['h'] = $nh;
+	$pix['src']['pix'] = $canv;
+	return;
+}
+
+function flippix( &$pix, $byte=1 )
+{
+	// horizontal flip + vertical flip
+	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * $byte);
+	for ( $y=0; $y < $pix['src']['h']; $y++ )
+	{
+		$syy = $y * $pix['src']['w'];
+		$dyy = $y;
+		if ( $pix['vflip'] )
+			$dyy = $pix['src']['h'] - 1 - $y;
+		$dyy *= $pix['src']['w'];
+
+		for ( $x=0; $x < $pix['src']['w']; $x++ )
+		{
+			$sxx = $syy + $x;
+			$dxx = $x;
+			if ( $pix['hflip'] )
+				$dxx = $pix['src']['w'] - 1 - $x;
+			$dxx += $dyy;
+
+			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
+			strupd($flip, $dxx*$byte, $c1);
+
+		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
+	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
+
+	$pix['src']['pix'] = $flip;
+	return;
+}
+
+function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
+{
+	if ( $sx < 0 || $sx >= $pix['src']['w'] )
+		return;
+	if ( $sy < 0 || $sy >= $pix['src']['h'] )
+		return;
+
+	$sxx = ($sy * $pix['src']['w']) + $sx;
+	$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
+
+	// Ignore BG color
+	//   byte 1 bgzero 0    = cmp c1, bgzero
+	//   byte 1 bgzero RGBA = c1 -> RGBA , cmp c1, bgzero
+	//   byte 4 bgzero 0    = skip
+	//   byte 4 bgzero RGBA = cmp c1, bgzero
+	// Xenogears Lucca = both 0th and 15th color are #000
+	//                   ignore 0th , but not #000
+	if ( $byte == 1 )
+	{
+		$c1 = ord($c1);
+		if ( $c1 === $pix['bgzero'] )
+			return;
+		$c1 = substr($pix['src']['pal'], $c1*4, 4);
+	}
+
+	// c1 is now RGBA
+	if ( $c1 === $pix['bgzero'] )
+		return;
+
+	$dxx = ($dy * $pix['rgba']['w']) + $dx;
+	$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
+
+	// ALPHA BLENDING
+	// using callbacks due to implementation difference
+	// Legend of Mana /wm/wmland/*
+	//   type 1 is PIX=  FG    + BG
+	//   type 3 is PIX= (FG/5) + BG
+	$alpha = $pix['alpha'];
+	if ( function_exists($alpha) )
+		$c1 = $alpha($c1, $c2);
+
+	// COPY / UPDATE PIXEL
+	strupd($pix['rgba']['pix'], $dxx*4, $c1);
+	return;
+}
 
 function copypix_errs( &$pix )
 {
@@ -589,9 +758,9 @@ function copypix_errs( &$pix )
 	if ( $pix['dy'] < 0 )
 		$err .= sprintf("copypix() dy = %d\n", $pix['dy']);
 	if ( ($pix['dx'] + $pix['src']['w']) > $pix['rgba']['w'] )
-		$err .= sprintf("copypix() dx + sw = %d + %d\n", $pix['dx'], $pix['src']['w']);
+		$err .= sprintf("copypix() dx + sw = %d + %d [%d]\n", $pix['dx'], $pix['src']['w'], $pix['rgba']['w']);
 	if ( ($pix['dy'] + $pix['src']['h']) > $pix['rgba']['h'] )
-		$err .= sprintf("copypix() dy + sh = %d + %d\n", $pix['dy'], $pix['src']['h']);
+		$err .= sprintf("copypix() dy + sh = %d + %d [%d]\n", $pix['dy'], $pix['src']['h'], $pix['rgba']['h']);
 
 	if ( ! empty($err) )
 	{
@@ -659,51 +828,8 @@ function copypix( &$pix, $byte=1 )
 
 			$rx = (int)round($x * $cos - $y * $sin) - $pix['rotate'][1];
 			$ry = (int)round($x * $sin + $y * $cos) - $pix['rotate'][2];
-			if ( $rx < 0 || $rx >= $pix['src']['w'] )
-				continue;
-			if ( $ry < 0 || $ry >= $pix['src']['h'] )
-				continue;
 
-			$sxx = ($ry * $pix['src']['w']) + $rx;
-			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
-
-			// Ignore BG color
-			//   byte 1 bgzero 0    = cmp c1, bgzero
-			//   byte 1 bgzero RGBA = c1 -> RGBA , cmp c1, bgzero
-			//   byte 4 bgzero 0    = skip
-			//   byte 4 bgzero RGBA = cmp c1, bgzero
-			// Xenogears Lucca = both 0th and 15th color are #000
-			//                   ignore 0th , but not #000
-			if ( $byte == 1 )
-			{
-				$c1 = ord($c1);
-				if ( $pix['bgzero'] === (int)$pix['bgzero'] )
-				{
-					if ( $c1 == $pix['bgzero'] )
-						continue;
-				}
-				$c1 = substr($pix['src']['pal'], $c1*4, 4);
-			}
-
-			// c1 is now RGBA
-			if ( $c1 === $pix['bgzero'] )
-				continue;
-
-			$dxx = ($dy * $pix['rgba']['w']) + $dx;
-			$c2 = substr($pix['rgba']['pix'], $dxx*4, 4);
-
-			// ALPHA BLENDING
-			// using callbacks due to implementation difference
-			// Legend of Mana /wm/wmland/*
-			//   type 1 is PIX=  FG    + BG
-			//   type 3 is PIX= (FG/5) + BG
-			$alpha = $pix['alpha'];
-			if ( function_exists($alpha) )
-				$c1 = $alpha($c1, $c2);
-
-			// COPY / UPDATE PIXEL
-			strupd($pix['rgba']['pix'], $dxx*4, $c1);
-
+			updatepix($pix, $byte, $rx, $ry, $dx, $dy);
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
 
@@ -784,125 +910,6 @@ function savpix( $fn, &$pix, $trim = false )
 	save_file("$fn.rgba", $rgba);
 	return;
 }
-
-function alpha_add( $fg, $bg )
-{
-	// FG is RGB from palette
-	// if BG is blank , FG RGB -> RGBA
-	// if BG is solid , FG += BG
-	// if BG is RGBA  , BG RGBA -> RGB, FG += BG, FG RGB -> RGBA
-	switch ( $bg[3] )
-	{
-		// blend w/normal pixels
-		case BYTE:
-			$pix = "";
-			for ( $i=0; $i < 4; $i++ )
-			{
-				$p1 = ord( $fg[$i] );
-				$p2 = ord( $bg[$i] );
-				$p = int_clamp($p1 + $p2, 0, BIT8);
-				$pix .= chr($p);
-			}
-			return $pix;
-
-		// blend w/transparent pixel
-		// #202020 + #00000000 = #ffffff20
-		// #204080 + #00000000 = #4080ff80
-		case ZERO:
-			$r = ord($fg[0]);
-			$g = ord($fg[1]);
-			$b = ord($fg[2]);
-
-			$a = ( $r > $g ) ? $r : $g;
-			$a = ( $b > $a ) ? $b : $a;
-
-			$r = int_clamp($r / $a * BIT8, 0, BIT8);
-			$g = int_clamp($g / $a * BIT8, 0, BIT8);
-			$b = int_clamp($b / $a * BIT8, 0, BIT8);
-			return chr($r) . chr($g) . chr($b) . chr($a);
-
-		// blend w/semi-transparent pixel
-		// #202020   + #204080   = #4060a0
-		// #ffffff20 + #4080ff80 = #6699ffa0 (NOT #ffffffa0 !!!)
-		// #202020   + #4080ff80 = #6699ffa0
-		default:
-			$a2 = ord($bg[3]);
-			$r2 = ord($bg[0]) / BIT8 * $a2;
-			$g2 = ord($bg[1]) / BIT8 * $a2;
-			$b2 = ord($bg[2]) / BIT8 * $a2;
-
-			$r = int_clamp(ord($fg[0]) + $r2, 0, BIT8);
-			$g = int_clamp(ord($fg[1]) + $g2, 0, BIT8);
-			$b = int_clamp(ord($fg[2]) + $b2, 0, BIT8);
-			$nfg = chr($r) . chr($g) . chr($b) . BYTE;
-
-			$func = __FUNCTION__;
-			return $func($nfg, PIX_ALPHA);
-	}
-	return $fg;
-}
-
-function flippix( &$pix, $byte=1 )
-{
-	// horizontal flip + vertical flip
-	$flip = str_repeat(ZERO, $pix['src']['w'] * $pix['src']['h'] * $byte);
-	for ( $y=0; $y < $pix['src']['h']; $y++ )
-	{
-		$syy = $y * $pix['src']['w'];
-		$dyy = $y;
-		if ( $pix['vflip'] )
-			$dyy = $pix['src']['h'] - 1 - $y;
-		$dyy *= $pix['src']['w'];
-
-		for ( $x=0; $x < $pix['src']['w']; $x++ )
-		{
-			$sxx = $syy + $x;
-			$dxx = $x;
-			if ( $pix['hflip'] )
-				$dxx = $pix['src']['w'] - 1 - $x;
-			$dxx += $dyy;
-
-			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
-			strupd($flip, $dxx*$byte, $c1);
-
-		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
-	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
-
-	$pix['src']['pix'] = $flip;
-	return;
-}
-
-function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
-{
-	if ( defined("DRY_RUN") )
-		return;
-	if ( (int)($fact_x*100) === 100 && (int)($fact_y*100) === 100 )
-		return;
-
-	$nw = (int)ceil( $pix['src']['w'] * $fact_x );
-	$nh = (int)ceil( $pix['src']['h'] * $fact_y );
-	$canv = canvpix($nw, $nh);
-	$mx = $pix['src']['w'] / $nw;
-	$my = $pix['src']['h'] / $nh;
-	for ( $y=0; $y < $nh; $y++ )
-	{
-		$dyy = $y * $nw;
-		$syy = (int)($y * $my) * $pix['src']['w'];
-		for ( $x=0; $x < $nw; $x++ )
-		{
-			$dxx = $dyy + $x;
-			$sxx = (int)($x * $mx) + $syy;
-
-			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
-			strupd($canv, $dxx*$byte, $c1);
-		} // for ( $x=0; $x < $nw; $x++ )
-	} // for ( $y=0; $y < $nh; $y++ )
-
-	$pix['src']['w'] = $nw;
-	$pix['src']['h'] = $nh;
-	$pix['src']['pix'] = $canv;
-	return;
-}
 //////////////////////////////
 function psx_patch( $dir, $pfx )
 {
@@ -943,57 +950,125 @@ function psxtim( &$file )
 	$pos = 0;
 
 	// TIM header
-	$tim['t'] = str2int( $file, $pos+4, 1 );
-	$tim['cc'] = 0;
-	if ( $tim['t'] == 9 )  $tim['cc'] = 0x100;
-	if ( $tim['t'] == 8 )  $tim['cc'] = 0x10;
-	if ( $tim['cc'] == 0 )
-		return $tim;
-	$pos += 8;
+	//   0 = 4-bpp grayscale
+	//   1 = 8-bpp grayscale
+	//   2 = rgb555 true color
+	//   3 = rgb888 true color
+	//   8 = 4-bpp pseudo-color
+	//   9 = 8-bpp pseudo-color
+	$type = str2int( $file, $pos+4, 1 );
+		$pos += 8;
 
-	// CLUT + header
-	$siz = str2int( $file, $pos+0, 4 ) - 12;
-	$tim['cn'] = (int)($siz / ($tim['cc'] * 2));
-	$tim['clut'] = mstrpal555($file, $pos+12, $tim['cc'], $tim['cn']);
-	$pos += $siz + 12;
-
-	// PIX + header
-	$siz = str2int( $file, $pos+0, 4 ) - 12;
-	$tim['w'] = str2int($file, $pos+ 8, 2);
-	$tim['h'] = str2int($file, $pos+10, 2);
-	$pos += 12;
-
-	if ( $tim['t'] == 9 )
+	$tim['pix'] = '';
+	switch ( $type )
 	{
-		$tim['w'] *= 2;
-		$tim['pix'] = substr($file, $pos, $siz);
+		case 0:
+			$tim['t'] = "CLUT";
+			// pixel header
+			$tim['cc'] = 16;
+			$siz = str2int($file, $pos, 4);
+			$tim['w'] = str2int($file, $pos+ 8, 2) * 4;
+			$tim['h'] = str2int($file, $pos+10, 2);
 
-		printf("psxtim() = %d , %d x %d , %d x %d\n",
-			$tim['t'], $tim['w'], $tim['h'], $tim['cc'], $tim['cn']
-		);
-		return $tim;
-	}
-	if ( $tim['t'] == 8 )
-	{
-		$tim['w'] *= 4;
-		$tim['pix'] = "";
+			$psz = $siz - 12;
+			$sub = substr($file, $pos+12, $psz);
+			for ( $i=0; $i < $psz; $i++ )
+			{
+				$b = ord( $sub[$i] );
+				$b1 = ($b >> 0) & BIT4;
+				$b2 = ($b >> 4) & BIT4;
+				$tim['pix'] .= chr($b1) . chr($b2);
+			}
+			$pos += $siz;
+			break;
+		case 1:
+			$tim['t'] = "CLUT";
+			// TokiMemo 2 substories *.tml
+			// pixel header
+			$tim['cc'] = 256;
+			$siz = str2int($file, $pos, 4);
+			$tim['w'] = str2int($file, $pos+ 8, 2) * 2;
+			$tim['h'] = str2int($file, $pos+10, 2);
+			$tim['pix'] = substr($file, $pos+12, $siz-12);
+				$pos += $siz;
+			break;
+		case 2:
+			$tim['t'] = "RGBA";
+			// Legend of Mana /ana/etc_etc/title00.dat/1.tim
+			// Xenogears 2464/*.tim
+			// Lunar 2 Eternal Blue data/isok/*.tim
+			// pixel header
+			$siz = str2int($file, $pos, 4);
+			$tim['w'] = str2int($file, $pos+ 8, 2);
+			$tim['h'] = str2int($file, $pos+10, 2);
 
-		while ( $siz > 0 )
-		{
-			$b = ord( $file[$pos] );
-			$b1 = ($b >> 0) & BIT4;
-			$b2 = ($b >> 4) & BIT4;
-			$tim['pix'] .= chr($b1) . chr($b2);
+			$sub = substr($file, $pos+12, $siz-12);
+			$tim['pix'] = pal555($sub);
+				$pos += $siz;
+			break;
+		case 3:
+			$tim['t'] = "RGBA";
+			// Legend of Mana /ana/zukan_p/z00/zukan1p.dat
+			// pixel header
+			$siz = str2int($file, $pos, 4);
+			$tim['w'] = str2int($file, $pos+ 8, 2);
+			$tim['h'] = str2int($file, $pos+10, 2);
 
-			$siz--;
-			$pos++;
-		}
+			$psz = $siz - 12;
+			$sub = substr($file, $pos+12, $psz);
+			$tim['pix'] = '';
+			for ( $i=0; $i < $psz; $i += 3 )
+				$tim['pix'] .= $sub[$i+0] . $sub[$i+1] . $sub[$i+2] . BYTE;
+			$pos += $siz;
+			break;
+		case 8:
+			$tim['t'] = "CLUT";
+			// VERY COMMON
+			// palette header
+			$siz = str2int($file, $pos, 4);
+			$tim['cc'] = 0x10;
+			$tim['cn'] = (int)($siz / 0x20);
+			$tim['clut'] = mstrpal555($file, $pos+12, $tim['cc'], $tim['cn']);
+				$pos += $siz;
 
-		printf("psxtim() = %d , %d x %d , %d x %d\n",
-			$tim['t'], $tim['w'], $tim['h'], $tim['cc'], $tim['cn']
-		);
-		return $tim;
-	}
+			// pixel header
+			$siz = str2int($file, $pos, 4);
+			$tim['w'] = str2int($file, $pos+ 8, 2) * 4;
+			$tim['h'] = str2int($file, $pos+10, 2);
+
+			$psz = $siz - 12;
+			$sub = substr($file, $pos+12, $psz);
+			for ( $i=0; $i < $psz; $i++ )
+			{
+				$b = ord( $sub[$i] );
+				$b1 = ($b >> 0) & BIT4;
+				$b2 = ($b >> 4) & BIT4;
+				$tim['pix'] .= chr($b1) . chr($b2);
+			}
+			$pos += $siz;
+			break;
+		case 9:
+			$tim['t'] = "CLUT";
+			// VERY COMMON
+			// palette header
+			$siz = str2int($file, $pos, 4);
+			$tim['cc'] = 0x100;
+			$tim['cn'] = (int)($siz / 0x200);
+			$tim['clut'] = mstrpal555($file, $pos+12, $tim['cc'], $tim['cn']);
+				$pos += $siz;
+
+			// pixel header
+			$siz = str2int($file, $pos, 4);
+			$tim['w'] = str2int($file, $pos+ 8, 2) * 2;
+			$tim['h'] = str2int($file, $pos+10, 2);
+			$tim['pix'] = substr($file, $pos+12, $siz-12);
+				$pos += $siz;
+			break;
+		default:
+			return $tim;
+	} // switch ( $tim['t'] )
+
+	printf("psxtim() %s @ %d x %d\n", $tim['t'], $tim['w'], $tim['h']);
 	return $tim;
 }
 //////////////////////////////

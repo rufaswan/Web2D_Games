@@ -1,22 +1,25 @@
 = Prefixes for PS One Games =
-xeno   SLPS 011.60  Xenogears / Disc 1
-xeno   SLPS 011.61  Xenogears / Disc 2
-yuna   SLPS 014.51  Galaxy Fraulein Yuna Final Edition
-saga2  SLPS 019.90  SaGa Frontier 2
-mana   SLPS 021.70  Seiken Densetsu
+xeno    SLPS 011.60  Xenogears / Disc 1
+xeno    SLPS 011.61  Xenogears / Disc 2
+yuna    SLPS 014.51  Galaxy Fraulein Yuna Final Edition
+saga2   SLPS 019.90  SaGa Frontier 2
+lunar2  SLPS 020.81  Lunar 2 Eternal Blue / Disc 1
+lunar2  SLPS 020.82  Lunar 2 Eternal Blue / Disc 2
+lunar2  SLPS 020.83  Lunar 2 Eternal Blue / Disc 3
+mana    SLPS 021.70  Seiken Densetsu
 
-sotn   SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
-star2  SLPM 861.05  Star Ocean 2 / Disc 1
-star2  SLPM 861.06  Star Ocean 2 / Disc 2
-mkr    SLPM 861.34  Mitsumete Knight R
-valky  SLPM 863.79  Valkyrie Profile / Disc 1
-valky  SLPM 863.80  Valkyrie Profile / Disc 2
-tm2s   SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 1
-tm2s   SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 2
-tm2s   SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 1
-tm2s   SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 2
-tm2s   SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
-tm2s   SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
+sotn    SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
+star2   SLPM 861.05  Star Ocean 2 / Disc 1
+star2   SLPM 861.06  Star Ocean 2 / Disc 2
+mkr     SLPM 861.34  Mitsumete Knight R
+valky   SLPM 863.79  Valkyrie Profile / Disc 1
+valky   SLPM 863.80  Valkyrie Profile / Disc 2
+tm2s    SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 1
+tm2s    SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 2
+tm2s    SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 1
+tm2s    SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 2
+tm2s    SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
+tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
 
 	progress
 		mana    ALL DONE
@@ -34,11 +37,11 @@ tm2s   SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 
 cvnds      NDS     ACVJ      Akumajou Dracula Sougetsu no Juujika
 cvnds      NDS     ACBJ      Akumajou Dracula Gallery of Labyrinth
 cvnds      NDS     YR9J      Akumajou Dracula Ubawareta Kokuin
+sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
 yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3
 pcrown     SATURN  T-14418G  Princess Crown
-sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 mura       WII     Oboro Muramasa
 rusty      PC98    Rusty
 rusty      PC98    Totsugeki Mix

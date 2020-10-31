@@ -110,6 +110,8 @@ function xeno( $fname )
 	global $gp_clut;
 	foreach ( $gp_clut as $k => $v )
 	{
+		if ( trim($v, ZERO.BYTE) == "" )
+			continue;
 		$clut = "CLUT";
 		$clut .= chrint(0x100  , 4);
 		$clut .= chrint(0x400*2, 4);

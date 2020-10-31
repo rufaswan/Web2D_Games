@@ -33,13 +33,17 @@ function png_chunk( &$png )
 	return $chunk;
 }
 //////////////////////////////
-function png_unfilter( &$idat, $w, $h )
+function png_unfilter( &$idat, $w, $h, $byte )
 {
 	$rows = array();
+	$dpw = $w * $byte;
 	for ( $y=0; $y < $h; $y++ )
-		$rows[] = substr($idat, $y*($w+1), $w+1);
+		$rows[] = substr($idat, $y*($dpw+1), $dpw+1);
 
 	// https://www.w3.org/TR/PNG-Filters.html
+	// dp PLTE = 1 2 4 8 , true = 8 16
+	// for PLTE , left is left byte regardless bit depth
+	// for true , left is left.RGB(A) byte correspond to filtered RGB(A)
 	$prv = "";
 	for ( $y=0; $y < $h; $y++ )
 	{
@@ -48,31 +52,31 @@ function png_unfilter( &$idat, $w, $h )
 		switch ( $fil )
 		{
 			case 1: // sub
-				for ( $x=1; $x < $w; $x++ )
+				for ( $x=0; $x < $dpw; $x++ )
 				{
 					$b0 = ord( $dat[$x] );
-					$b1 = ord( $dat[$x-1] ); // left
+					$b1 = ( isset($dat[$x-$byte]) ) ? ord($dat[$x-$byte]) : 0; // left
 
 					$b = ($b0 + $b1) & BIT8;
 					$dat[$x] = chr($b);
 				}
 				break;
 			case 2: // up
-				for ( $x=0; $x < $w; $x++ )
+				for ( $x=0; $x < $dpw; $x++ )
 				{
 					$b0 = ord( $dat[$x] );
-					$b1 = ord( $prv[$x] ); // up
+					$b1 = ( isset($prv[$x]) ) ? ord($prv[$x]) : 0; // up
 
 					$b = ($b0 + $b1) & BIT8;
 					$dat[$x] = chr($b);
 				}
 				break;
 			case 3: // average
-				for ( $x=1; $x < $w; $x++ )
+				for ( $x=0; $x < $dpw; $x++ )
 				{
 					$b0 = ord( $dat[$x] );
-					$b1 = ord( $dat[$x-1] ); // left
-					$b2 = ord( $prv[$x] );   // up
+					$b1 = ( isset($dat[$x-$byte]) ) ? ord($dat[$x-$byte]) : 0; // left
+					$b2 = ( isset($prv[$x      ]) ) ? ord($prv[$x      ]) : 0; // up
 
 					$bs = ($b1 + $b2) / 2;
 					$b  = (int)($b0 + $bs) & BIT8;
@@ -80,12 +84,12 @@ function png_unfilter( &$idat, $w, $h )
 				}
 				break;
 			case 4: // paeth
-				for ( $x=1; $x < $w; $x++ )
+				for ( $x=0; $x < $dpw; $x++ )
 				{
 					$b0 = ord( $dat[$x] );
-					$b1 = ord( $dat[$x-1] ); // left
-					$b2 = ord( $prv[$x] );   // up
-					$b3 = ord( $prv[$x-1] ); // up left
+					$b1 = ( isset($dat[$x-$byte]) ) ? ord($dat[$x-$byte]) : 0; // left
+					$b2 = ( isset($prv[$x      ]) ) ? ord($prv[$x      ]) : 0; // up
+					$b3 = ( isset($prv[$x-$byte]) ) ? ord($prv[$x-$byte]) : 0; // up left
 
 					$bs = ($b1 + $b2) - $b3;
 					$ba = ($bs - $b1);
@@ -190,7 +194,88 @@ function png_plte( &$chunk )
 	return $pal;
 }
 //////////////////////////////
-function png2clut( $fname )
+function png2clut( &$chunk, $w, $h, $dp, $cl, $fname )
+{
+	echo "== png2clut( $w , $h , $dp , $cl , $fname )\n";
+
+	// cl 3 valid dp = 1 2 4 8
+	$pix = "";
+	switch ( $dp )
+	{
+		case 1:
+			$w = int_ceil($w, 8);
+			png_unfilter($chunk['IDAT'], $w/8, $h, 1);
+			$pix = png_8bpp($chunk['IDAT'], 1);
+			break;
+		case 2:
+			$w = int_ceil($w, 4);
+			png_unfilter($chunk['IDAT'], $w/4, $h, 1);
+			$pix = png_8bpp($chunk['IDAT'], 2);
+			break;
+		case 4:
+			$w = int_ceil($w, 2);
+			png_unfilter($chunk['IDAT'], $w/2, $h, 1);
+			$pix = png_8bpp($chunk['IDAT'], 4);
+			break;
+		case 8:
+			//$w = int_ceil($w, 1);
+			png_unfilter($chunk['IDAT'], $w,   $h, 1);
+			$pix = $chunk['IDAT'];
+			break;
+	} // switch ( $dp )
+
+	$pal = png_plte($chunk);
+	$cc  = strlen($pal) / 4;
+
+	$rgba = 'CLUT';
+	$rgba .= chrint($cc, 4);
+	$rgba .= chrint($w,  4);
+	$rgba .= chrint($h,  4);
+	$rgba .= $pal;
+	$rgba .= $pix;
+	file_put_contents("$fname.clut", $rgba);
+	return;
+}
+
+function png2rgba( &$chunk, $w, $h, $dp, $cl, $fname )
+{
+	echo "== png2rgba( $w , $h , $dp , $cl , $fname )\n";
+
+	// cl 2 valid dp = 8 16
+	// cl 6 valid dp = 8 16
+	// tRNS shall NOT appear on (cl & 4)
+	$dpw = ( $cl & 4 ) ? 4 : 3;
+	if ( $dp == 16 )  $dpw *= 2;
+
+	save_file("png1.idat", $chunk['IDAT']);
+	png_unfilter($chunk['IDAT'], $w, $h, $dpw);
+	save_file("png2.idat", $chunk['IDAT']);
+
+	$rgba = 'RGBA';
+	$rgba .= chrint($w, 4);
+	$rgba .= chrint($h, 4);
+
+	$sz = strlen( $chunk['IDAT'] );
+	$i = 0;
+	while ( $i < $sz )
+	{
+		$rgba .= $chunk['IDAT'][$i+0] . $chunk['IDAT'][$i+1] . $chunk['IDAT'][$i+2];
+		if ( $cl & 4 ) // is RGBA
+		{
+			$rgba .= $chunk['IDAT'][$i+3];
+			$i += 4;
+		}
+		else // is RGB
+		{
+			$rgba .= BYTE;
+			$i += 3;
+		}
+	}
+	file_put_contents("$fname.rgba", $rgba);
+	return;
+}
+//////////////////////////////
+function pngfile( $fname )
 {
 	$png = file_get_contents($fname);
 	if ( empty($png) )  return;
@@ -201,57 +286,24 @@ function png2clut( $fname )
 	$chunk = png_chunk($png);
 	$w = str2big($chunk['IHDR'], 0, 4);
 	$h = str2big($chunk['IHDR'], 4, 4);
-	$dp = ord( $chunk['IHDR'][8] );
-	$cl = ord( $chunk['IHDR'][9] );
+	$dp = ord( $chunk['IHDR'][ 8] ); // bit depth
+	$cl = ord( $chunk['IHDR'][ 9] ); // color type , +1=index  +2=rgb  +4=alpha  (invalid=1 1+4 1+2+4)
+	$cm = ord( $chunk['IHDR'][10] ); // compression , 0=zlib
+	$fl = ord( $chunk['IHDR'][11] ); // filter , 0=adaptive/5 type
+	$in = ord( $chunk['IHDR'][12] ); // interlace , 0=none , 1=adam7
 
-	if ( $dp > 8 ) // 16-bit not supported
-		return;
-	if ( ($cl & 2) == 0 ) // grayscale not supported
-		return;
+	if ( ($cl & 2) == 0 )
+		return printf("grayscale not supported\n");
+	if ( $in != 0 )
+		return printf("adam7 interlace not supported\n");
 
-	$pix = "";
-	switch ( $dp )
-	{
-		case 1:
-			png_unfilter($chunk['IDAT'], $w/8, $h);
-			$pix = png_8bpp($chunk['IDAT'], 1);
-			break;
-		case 2:
-			png_unfilter($chunk['IDAT'], $w/4, $h);
-			$pix = png_8bpp($chunk['IDAT'], 2);
-			break;
-		case 4:
-			png_unfilter($chunk['IDAT'], $w/2, $h);
-			$pix = png_8bpp($chunk['IDAT'], 4);
-			break;
-		case 8:
-			png_unfilter($chunk['IDAT'], $w,   $h);
-			$pix = $chunk['IDAT'];
-			break;
-	} // switch ( $dp )
+	if ( $cl & 1 ) // indexed color , CLUT
+		png2clut($chunk, $w, $h, $dp, $cl, $fname);
+	else // true color , RGBA
+		png2rgba($chunk, $w, $h, $dp, $cl, $fname);
 
-	$pal = png_plte($chunk);
-	if ( empty($pal) )
-	{
-		$rgba = 'RGBA';
-		$rgba .= chrint($w, 4);
-		$rgba .= chrint($h, 4);
-		$rgba .= $pix;
-		file_put_contents("$fname.rgba", $rgba);
-	}
-	else
-	{
-		$cc = strlen($pal) / 4;
-		$rgba = 'CLUT';
-		$rgba .= chrint($cc, 4);
-		$rgba .= chrint($w,  4);
-		$rgba .= chrint($h,  4);
-		$rgba .= $pal;
-		$rgba .= $pix;
-		file_put_contents("$fname.clut", $rgba);
-	}
 	return;
 }
 
 for ( $i=0; $i < $argc; $i++ )
-	png2clut( $argv[$i] );
+	pngfile( $argv[$i] );

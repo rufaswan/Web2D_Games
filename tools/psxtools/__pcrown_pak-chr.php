@@ -7,57 +7,49 @@ define("CANV_S", 0x200);
 define("SCALE", 1.0);
 //define("DRY_RUN", true);
 
-define("PCROWN_EXE" , "0.bin");
-define("PCROWN_CLOF", 0x98a8e);
-
 $gp_pix  = array();
 $gp_clut = array();
 
-function sectquad( &$pix, $dat, &$tid )
+function sectquad( &$pix, $dat, $ceil )
 {
 	//return;
 	// 0 1  2  3   4  5   6  7   8  9   a  b
 	// tid  x1 y1  x2 y2  x3 y3  x4 y4  -  sign
-	$pix['vertex'] = array();
-	$pix['vertex'][0][0] = ord( $dat[2] ) * SCALE;
-	$pix['vertex'][0][1] = ord( $dat[3] ) * SCALE;
-	$pix['vertex'][1][0] = ord( $dat[4] ) * SCALE;
-	$pix['vertex'][1][1] = ord( $dat[5] ) * SCALE;
-	$pix['vertex'][2][0] = ord( $dat[6] ) * SCALE;
-	$pix['vertex'][2][1] = ord( $dat[7] ) * SCALE;
-	$pix['vertex'][3][0] = ord( $dat[8] ) * SCALE;
-	$pix['vertex'][3][1] = ord( $dat[9] ) * SCALE;
+	$b = array();
+	for ( $i=0; $i < 12; $i++ )
+		$b[] = ord( $dat[$i] );
+	$dat = $b;
 
-	$sign = ord( $dat[11] );
-	if ( $sign & 0x01 )  $pix['vertex'][0][0] *= -1;
-	if ( $sign & 0x02 )  $pix['vertex'][0][1] *= -1;
-	if ( $sign & 0x04 )  $pix['vertex'][1][0] *= -1;
-	if ( $sign & 0x08 )  $pix['vertex'][1][1] *= -1;
-	if ( $sign & 0x10 )  $pix['vertex'][2][0] *= -1;
-	if ( $sign & 0x20 )  $pix['vertex'][2][1] *= -1;
-	if ( $sign & 0x40 )  $pix['vertex'][3][0] *= -1;
-	if ( $sign & 0x80 )  $pix['vertex'][3][1] *= -1;
-	printf("QUAD : %4d,%4d  %4d,%4d  %4d,%4d  %4d,%4d\n",
-		$pix['vertex'][0][0], $pix['vertex'][0][1],
-		$pix['vertex'][1][0], $pix['vertex'][1][1],
-		$pix['vertex'][2][0], $pix['vertex'][2][1],
-		$pix['vertex'][3][0], $pix['vertex'][3][1]
+	$qax = ( $dat[11] & 0x01 ) ? -$dat[2] : $dat[2];
+	$qay = ( $dat[11] & 0x02 ) ? -$dat[3] : $dat[3];
+	$qbx = ( $dat[11] & 0x04 ) ? -$dat[4] : $dat[4];
+	$qby = ( $dat[11] & 0x08 ) ? -$dat[5] : $dat[5];
+	$qcx = ( $dat[11] & 0x10 ) ? -$dat[6] : $dat[6];
+	$qcy = ( $dat[11] & 0x20 ) ? -$dat[7] : $dat[7];
+	$qdx = ( $dat[11] & 0x40 ) ? -$dat[8] : $dat[8];
+	$qdy = ( $dat[11] & 0x80 ) ? -$dat[9] : $dat[9];
+		$qax = (int)($qax * SCALE);
+		$qay = (int)($qay * SCALE);
+		$qbx = (int)($qbx * SCALE);
+		$qby = (int)($qby * SCALE);
+		$qcx = (int)($qcx * SCALE);
+		$qcy = (int)($qcy * SCALE);
+		$qdx = (int)($qdx * SCALE);
+		$qdy = (int)($qdy * SCALE);
+
+	$pix['vector'] = array(
+		array( $qax+$ceil , $qay+$ceil , 1 ),
+		array( $qbx+$ceil , $qby+$ceil , 1 ),
+		array( $qcx+$ceil , $qcy+$ceil , 1 ),
+		array( $qdx+$ceil , $qdy+$ceil , 1 ),
 	);
 
-	$tu = 1.0 / $pix['src']['w'];
-	$tv = 1.0 / $pix['src']['h'];
+	printf("sign : %08b\n", $dat[11]);
+	printf("src | %4d,%4d  %4d,%4d |\n", 0, 0,                  $pix['src']['w']-1, 0);
+	printf("    | %4d,%4d  %4d,%4d |\n", 0, $pix['src']['h']-1, $pix['src']['w']-1, $pix['src']['h']-1);
 
-	$dx = $pix['vertex'][0][0];
-	$dy = $pix['vertex'][0][1];
-
-	//return;
-
-	//    -| 12  43  |- 21  34  || 14  41  -- 23  32
-	//    -| 43  12  |- 34  21  -- 23  32  || 14  41
-	// flip  -   y      x   xy     xr  l      r   xl
-
-	$pix['dx'] = $dx;
-	$pix['dy'] = $dy;
+	printf("des | %4d,%4d  %4d,%4d |\n", $qax, $qay, $qbx, $qby);
+	printf("    | %4d,%4d  %4d,%4d |\n", $qdx, $qdy, $qcx, $qcy);
 	return;
 }
 
@@ -72,6 +64,7 @@ function sectpart( &$pak, $dir, $id, $off, $no )
 	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
 
 	global $gp_pix, $gp_clut;
+	$gray = grayclut(16);
 	for ( $i=0; $i < $no; $i++ )
 	{
 		$p = $off + ($i * 12);
@@ -89,19 +82,13 @@ function sectpart( &$pak, $dir, $id, $off, $no )
 		$pix['src']['w'] = $gp_pix[$tid][1];
 		$pix['src']['h'] = $gp_pix[$tid][2];
 		$pix['src']['pix'] = $gp_pix[$tid][0];
-		$pix['src']['pal'] = ( empty($gp_clut) ) ? grayclut(16) : $gp_clut[$cid];
+		$pix['src']['pal'] = ( empty($gp_clut) ) ? $gray : $gp_clut[$cid];
 		$pix['bgzero'] = 0;
 
-		sectquad($pix, $dat, $tid);
-		//copyquad($pix);
+		sectquad($pix, $dat, $ceil/2);
+		printf("$tid , $cid\n");
 
-		$dx = $pix['dx'];
-		$dy = $pix['dy'];
-		$pix['dx'] += ($ceil/2);
-		$pix['dy'] += ($ceil/2);
-		printf("%4d , %4d , 0 , 0 , %4d , %4d", $dx, $dy, $gp_pix[$tid][1], $gp_pix[$tid][2]);
-		printf(" , $tid\n");
-		copypix($pix);
+		copyquad($pix, 1);
 	}
 
 	$fn = sprintf("$dir/%04d", $id);
@@ -228,48 +215,31 @@ function pakchr( &$pak, $pfx )
 	return;
 }
 //////////////////////////////
-function loadclut( $fname )
+function loadclut( $fname, $pos )
 {
-	echo "== loadclut( $fname )\n";
+	printf("== loadclut( $fname , %x )\n", $pos);
+
 	global $gp_clut;
 	$gp_clut = array();
+	$file = file_get_contents($fname);
 
-	$prg = file_get_contents($fname);
-	$exe = load_file( PCROWN_EXE );
-	if ( empty($prg) || empty($exe) )
-		return;
-
-	$v = substr0($prg, 0x40);
-	echo "$fname = $v\n";
-
-	$cl = array();
-	$cl[] = str2big($prg, 2, 2);
-	$cl[] = str2big($prg, 4, 2);
-
-	foreach ( $cl as $k => $v )
+	for ( $i=0; $i < 0x5000; $i += 0x20 )
 	{
-		if ( $v == BIT16 )
-			continue;
-
-		$pal = "";
-		$pos = PCROWN_CLOF + ($v * 0x20);
-		printf("add CLUT %x @ %x\n", $v, $pos);
-
-		for ( $i=0; $i < 0x20; $i += 2 )
-		{
-			$pal .= rgb555( $exe[$pos+1] . $exe[$pos+0] );
-			$pos += 2;
-		}
-		$gp_clut[$k] = $pal;
-	} // foreach ( $cl as $c )
-
+		$pal = substr($file, $pos+$i, 0x20);
+		$plt = "";
+		for ( $j=0; $j < 0x20; $j += 2 )
+			$plt .= rgb555( $pal[$j+1] . $pal[$j+0] );
+		$gp_clut[] = $plt;
+	} // for ( $i=0; $i < 0x5000; $i += 0x20 )
 	return;
 }
 
 function pcrown( $fname )
 {
-	if ( stripos($fname, '.prg') !== false )
-		return loadclut($fname);
+	if ( stripos($fname, '0.bin') !== false )
+		return loadclut($fname, 0x98a8e);
+	if ( stripos($fname, 'pcrown.pal') !== false )
+		return loadclut($fname, 0);
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 

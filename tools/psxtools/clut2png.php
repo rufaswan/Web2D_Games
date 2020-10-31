@@ -4,7 +4,7 @@ require "common-guest.inc";
 
 req_ext("zlib_decode", "zlib");
 
-function save_png( $fname, $w, $h, $rgba )
+function pngfilter( &$pix, $w, $h, $byte )
 {
 	// add filter byte on the beginning of every row
 	// 0 = none
@@ -14,42 +14,27 @@ function save_png( $fname, $w, $h, $rgba )
 	// 4 = Paeth(x) + PaethPredictor(Raw(x-bpp), Prior(x), Prior(x-bpp))
 	$idat = "";
 	for ( $y=0; $y < $h; $y++ )
-		$idat .= ZERO . substr($rgba, $y*$w*4, $w*4);
-
-	// PNG 8-bit RGBA
-	$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
-
-		$sect = "IHDR";
-		$sect .= chrbig($w, 4); // width
-		$sect .= chrbig($h, 4); // height
-		$sect .= chr(8); // bit depth
-		$sect .= chr(6); // color type , 0=gray , 2=rgb , 3=index , 4=gray+a , 6=rgb+a
-		$sect .= ZERO; // compression , 0=zlib
-		$sect .= ZERO; // filter , 0=adaptive/5 type
-		$sect .= ZERO; // interlace , 0=none , 1=adam7
-		$len = strlen($sect) - 4;
-		$crc = crc32 ($sect);
-	$png .= chrbig($len, 4);
-	$png .= $sect;
-	$png .= chrbig($crc, 4);
-
-		$sect = "IDAT";
-		$sect .= zlib_encode($idat, ZLIB_ENCODING_DEFLATE);
-		$len = strlen($sect) - 4;
-		$crc = crc32 ($sect);
-	$png .= chrbig($len, 4);
-	$png .= $sect;
-	$png .= chrbig($crc, 4);
-
-		$sect = "IEND";
-		$len = strlen($sect) - 4;
-		$crc = crc32 ($sect);
-	$png .= chrbig($len, 4);
-	$png .= $sect;
-	$png .= chrbig($crc, 4);
-
-	file_put_contents($fname, $png);
+		$idat .= ZERO . substr($pix, $y*$w*$byte, $w*$byte);
+	$pix = $idat;
 	return;
+}
+
+function pngchunk( $name, $data, $zlib = false )
+{
+	$sect = $name;
+	if ( $zlib )
+		$sect .= zlib_encode($data, ZLIB_ENCODING_DEFLATE);
+	else
+		$sect .= $data;
+
+	$len = strlen($sect) - 4;
+	$crc = crc32 ($sect);
+
+	$png = '';
+	$png .= chrbig($len, 4);
+	$png .= $sect;
+	$png .= chrbig($crc, 4);
+	return $png;
 }
 //////////////////////////////
 function clut2png( &$file, $fname )
@@ -59,11 +44,38 @@ function clut2png( &$file, $fname )
 	$w  = str2int($file,  8, 4);
 	$h  = str2int($file, 12, 4);
 
-	$pal = substr($file, 0x10 , $cc*4);
-	$pix = substr($file, 0x10 + $cc*4, $w*$h);
-	$rgba = clut2rgba($pal, $pix, true);
+	$plte = '';
+	$trns = '';
+	for ( $i=0; $i < $cc; $i++ )
+	{
+		$p = 0x10 + ($i * 4);
+		$plte .= $file[$p+0] . $file[$p+1] . $file[$p+2];
+		$trns .= $file[$p+3];
+	}
+	$trns = rtrim($trns, BYTE);
 
-	save_png("$fname.png", $w, $h, $rgba);
+	$idat = substr($file, 0x10 + $cc*4, $w*$h);
+	pngfilter($idat, $w, $h, 1);
+
+	// PNG 8-bit CLUT
+	$ihdr = '';
+	$ihdr .= chrbig($w, 4); // width
+	$ihdr .= chrbig($h, 4); // height
+	$ihdr .= chr(8); // bit depth , 1 2 4 8 16
+	$ihdr .= chr(3); // color type , +1=index  +2=rgb  +4=alpha  (invalid=1 1+4 1+2+4)
+	$ihdr .= ZERO; // compression , 0=zlib
+	$ihdr .= ZERO; // filter , 0=adaptive/5 type
+	$ihdr .= ZERO; // interlace , 0=none , 1=adam7
+
+	$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+	$png .= pngchunk("IHDR", $ihdr);
+	$png .= pngchunk("PLTE", $plte);
+	if ( ! empty($trns) )
+		$png .= pngchunk("tRNS", $trns);
+	$png .= pngchunk("IDAT", $idat, true);
+	$png .= pngchunk("IEND", "");
+
+	file_put_contents("$fname.png", $png);
 	return;
 }
 
@@ -73,9 +85,25 @@ function rgba2png( &$file, $fname )
 	$w = str2int($file, 4, 4);
 	$h = str2int($file, 8, 4);
 
-	$rgba = substr($file, 12, $w*$h*4);
+	$idat = substr($file, 12, $w*$h*4);
+	pngfilter($idat, $w, $h, 4);
 
-	save_png("$fname.png", $w, $h, $rgba);
+	// PNG 8-bit RGBA
+	$ihdr = '';
+	$ihdr .= chrbig($w, 4); // width
+	$ihdr .= chrbig($h, 4); // height
+	$ihdr .= chr(8); // bit depth
+	$ihdr .= chr(6); // color type , +1=index  +2=rgb  +4=alpha  (invalid=1 1+4 1+2+4)
+	$ihdr .= ZERO; // compression , 0=zlib
+	$ihdr .= ZERO; // filter , 0=adaptive/5 type
+	$ihdr .= ZERO; // interlace , 0=none , 1=adam7
+
+	$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+	$png .= pngchunk("IHDR", $ihdr);
+	$png .= pngchunk("IDAT", $idat, true);
+	$png .= pngchunk("IEND", "");
+
+	file_put_contents("$fname.png", $png);
 	return;
 }
 //////////////////////////////
