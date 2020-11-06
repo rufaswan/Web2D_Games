@@ -93,8 +93,9 @@ function lunar2( $fname )
 	$pal = pal555( substr($file, $b5, 0x200) );
 	$pix = substr($file, $b2);
 
-	//$paln = str_ireplace(array('mp','.dat'), array('pp','.pal'), $fname);
-	//file_put_contents($paln, $pal);
+	// tbl/pp*.dat reuse palette from map/mp*.dat
+	$paln = str_ireplace(array('mp','.dat'), array('pp','.pal'), $fname);
+	file_put_contents($paln, $pal);
 
 	// tileset
 		$w = 0x80;

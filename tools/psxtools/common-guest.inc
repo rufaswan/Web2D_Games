@@ -1,10 +1,15 @@
 <?php
 // non-PlayStation One (guest systems) functions
 
+function substrrev( &$str, $pos, $len )
+{
+	$sub = substr($str, $pos, $len);
+	return strrev($sub);
+}
+
 function str2big( &$str, $pos, $byte, $sign=false )
 {
-	$sub = substr($str, $pos, $byte);
-	$sub = strrev($sub);
+	$sub = substrrev($str, $pos, $byte);
 	if ( $sign )
 	{
 		$sint = array("", "sint8", "sint16", "sint24", "sint32");
@@ -46,6 +51,32 @@ function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 	$b1 = ($bit1 & 1) << 1;
 	$b0 = ($bit0 & 1) << 0;
 	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
+}
+
+function float32( $int )
+{
+	if ( "$int" === $int )
+		$int = ordint($int);
+
+	// IEEE 754
+	$NAN = BIT8;
+	$val = $int & 0x7fffff;
+		$int >>= 23;
+	$exp = $int & BIT8;
+		$int >>= 8;
+	$sig = $int;
+
+	if ( $exp == $NAN )
+		return 0; // infinite or not-a-number
+	if ( $exp == 0 && $val == 0 )
+		return 0; // exact zero
+
+	$norm = ( $exp == 0 ) ? 0 : 1 << 23;
+	$val += $norm;
+
+	$exp -= 0x7f;
+	$val *= (2 ** ($exp - 23));
+	return ( $sig ) ? -$val : $val;
 }
 //////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
@@ -188,4 +219,3 @@ function nds_overlay( &$ndsram, $dir, $id )
 	return array($off, $start);
 }
 //////////////////////////////
-

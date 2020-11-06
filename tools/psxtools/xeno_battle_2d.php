@@ -265,23 +265,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 //////////////////////////////
 function sectanim( &$meta, $dir )
 {
-	return;
-	// leftover animation names
-	//   2676/rico  2993/billy  2994/rico
-	// sub_800233b8
-	$num = ord( $meta[0] );
-	printf("== sectanim( $dir ) = %x\n", $num);
-	for ( $i=0; $i < $num; $i++ )
-	{
-		$p = str2int($meta, 2+($i*2), 2); // 1ca , 1d6 , 1e2
-		$p2 = str2int($meta, $p+2, 2); // 5c2 , 5c6 , 5be
-		//$p4 = str2int($meta, $p+4, 2); // 1ba , 1ae , 1a2
-
-		$p21 = $p2 + 2 + $p; // 78e , 79e , 7a2
-		//$p41 = $p4 + 4 + $p; // 388 , 388 , 388
-
-		// 78e => break @ sub_800c0934
-	}
+	// REMOVED : use xeno_INFO_meta0.php for decoding
 	return;
 }
 
@@ -315,7 +299,7 @@ function sect1( &$file, $dir, $mp, $pp )
 			$s1 = substr($file, $mp+$p1, $p2-$p1);
 			$s2 = substr($file, $mp+$p2, $p3-$p2);
 			$s3 = substr($file, $mp+$p3, $p4-$p3);
-			sectanim($s1, $dir);
+			//sectanim($s1, $dir);
 
 			global $gp_clut;
 			$cn = (strlen($s3) - 4) / 0x20;

@@ -44,12 +44,23 @@ function sectquad( &$pix, $dat, $ceil )
 		array( $qdx+$ceil , $qdy+$ceil , 1 ),
 	);
 
-	printf("sign : %08b\n", $dat[11]);
-	printf("src | %4d,%4d  %4d,%4d |\n", 0, 0,                  $pix['src']['w']-1, 0);
-	printf("    | %4d,%4d  %4d,%4d |\n", 0, $pix['src']['h']-1, $pix['src']['w']-1, $pix['src']['h']-1);
+	$pix['src']['vector'] = array(
+		array(                 0,                 0, 1),
+		array($pix['src']['w']-1,                 0, 1),
+		array($pix['src']['w']-1,$pix['src']['h']-1, 1),
+		array(                 0,$pix['src']['h']-1, 1),
+	);
 
-	printf("des | %4d,%4d  %4d,%4d |\n", $qax, $qay, $qbx, $qby);
-	printf("    | %4d,%4d  %4d,%4d |\n", $qdx, $qdy, $qcx, $qcy);
+	$des = array(
+		array($qax,$qay,1),
+		array($qbx,$qby,1),
+		array($qcx,$qcy,1),
+		array($qdx,$qdy,1),
+	);
+
+	printf("sign : %08b\n", $dat[11]);
+	quad_dump($pix['src']['vector'] , "src quad");
+	quad_dump($des                  , "des quad");
 	return;
 }
 
@@ -231,6 +242,8 @@ function loadclut( $fname, $pos )
 			$plt .= rgb555( $pal[$j+1] . $pal[$j+0] );
 		$gp_clut[] = $plt;
 	} // for ( $i=0; $i < 0x5000; $i += 0x20 )
+
+	file_get_contents('pcrown.pal', $gp_clut);
 	return;
 }
 
@@ -238,8 +251,13 @@ function pcrown( $fname )
 {
 	if ( stripos($fname, '0.bin') !== false )
 		return loadclut($fname, 0x98a8e);
+
 	if ( stripos($fname, 'pcrown.pal') !== false )
-		return loadclut($fname, 0);
+	{
+		global $gp_clut;
+		$gp_clut = file_get_contents($fname);
+		return;
+	}
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 

@@ -50,15 +50,8 @@ function subram( &$file, $base )
 	if ( substr($file, 0, 7) == "ARS2CPU" || substr($file, 0, 6) == "ARSCPU" )
 	{
 		echo "DETECT emulator = pSXfin\n";
-		$st = 0;
-		$ed = 0x800;
-		while ( $st < $ed )
-		{
-			if ( substr($file, $st, 3) == "RAM" )
-				return substr($file, $st + 12, 0x200000);
-			$st += 4;
-		}
-		return "";
+		$pos = strpos($file, "RAM".ZERO);
+		return substr($file, $pos + 12, 0x200000);
 	}
 
 	// no$psx PlayStation emulator (Windows)

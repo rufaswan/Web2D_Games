@@ -25,11 +25,100 @@ function sectquad( &$pix, &$meta, $p, $ceil )
 		array( $qdx+$ceil , $qdy+$ceil , 1 ),
 	);
 
-	printf("src | %4d,%4d  %4d,%4d |\n", 0, 0,                  $pix['src']['w']-1, 0);
-	printf("    | %4d,%4d  %4d,%4d |\n", 0, $pix['src']['h']-1, $pix['src']['w']-1, $pix['src']['h']-1);
+	$pix['src']['vector'] = array(
+		array(                 0,                 0, 1),
+		array($pix['src']['w']-1,                 0, 1),
+		array($pix['src']['w']-1,$pix['src']['h']-1, 1),
+		array(                 0,$pix['src']['h']-1, 1),
+	);
 
-	printf("des | %4d,%4d  %4d,%4d |\n", $qax, $qay, $qbx, $qby);
-	printf("    | %4d,%4d  %4d,%4d |\n", $qdx, $qdy, $qcx, $qcy);
+	$des = array(
+		array($qax,$qay,1),
+		array($qbx,$qby,1),
+		array($qcx,$qcy,1),
+		array($qdx,$qdy,1),
+	);
+
+	quad_dump($pix['src']['vector'] , "src quad");
+	quad_dump($des                  , "des quad");
 	return;
 }
 
+function sectparts( &$meta, $dir )
+{
+	printf("== sectparts( $dir )\n");
+
+	$ceil = int_ceil(CANV_S * SCALE, 2);
+	$pix = COPYPIX_DEF();
+	$pix['rgba']['w'] = $ceil;
+	$pix['rgba']['h'] = $ceil;
+	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	global $gp_pix, $gp_clut;
+	$len = strlen($meta);
+	$sw = strlen($gp_pix) / 0x100;
+	$sh = 0x100;
+	for ( $i=0; $i < $len; $i += 0x16 )
+	{
+		$b1 = ord( $meta[$i+0] );
+		$b2 = ord( $meta[$i+1] );
+		$sx = ord( $meta[$i+2] );
+		$sy = ord( $meta[$i+3] );
+		$w  = ord( $meta[$i+4] );
+		$h  = ord( $meta[$i+5] );
+			$sx = $b2 * 0x80 + $sx;
+
+		$pix['src']['w'] = $w;
+		$pix['src']['h'] = $h;
+		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, $sw, $sh);
+		$pix['src']['pal'] = $gp_clut;
+		$pix['bgzero'] = 0;
+
+		sectquad($pix, $meta, $i, $ceil/2);
+		printf("%4d , %4d , %4d , %4d", $sx, $sy, $w, $h);
+		printf(" , %02x\n", $b1);
+
+		copyquad($pix, 1);
+	} // for ( $i=0; $i < $len; $i += 0x16 )
+
+	savpix($dir, $pix, true);
+	return;
+}
+
+function sectmeta( &$meta, $dir )
+{
+	printf("== sectmeta( $dir )\n");
+	//save_file("$dir/meta", $meta);
+
+	$ed = str2int($meta, 4, 4);
+	$st = str2int($meta, 0, 4);
+	if ( $st < 8 )
+		return;
+	for ( $i=$st; $i < $ed; $i += 4 )
+	{
+		$num = str2int($meta, $i+0, 2);
+		$off = str2int($meta, $i+2, 2);
+
+		$pos = $ed + ($off * 0x16);
+		$sub = substr ($meta, $pos, $num*0x16);
+		printf("meta() %x , %x\n", $pos, $num*0x16);
+
+		$fn = sprintf("$dir/%04d", ($i-$st)/4);
+		sectparts($sub, $fn);
+	} // for ( $i=$st; $i < $ed; $i += 4 )
+
+	// tileset
+		global $gp_pix, $gp_clut;
+		$w = strlen($gp_pix) / 0x100;
+		$h = 0x100;
+
+		$clut = "CLUT";
+		$clut .= chrint(0x100, 4);
+		$clut .= chrint($w, 4);
+		$clut .= chrint($h, 4);
+		$clut .= $gp_clut;
+		$clut .= $gp_pix;
+		save_file("$dir/pix.clut", $clut);
+	return;
+}
+//////////////////////////////

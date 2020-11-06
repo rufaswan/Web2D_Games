@@ -79,6 +79,12 @@ function sjisstr( &$str, $siz, $fname, $pos )
 				return;
 		}
 		else
+		if ( $b1 == 0x09 || $b1 == 0x0d || $b1 == 0x0a ) // tab + newline
+		{
+			$str[$st] = ' ';
+			$st++;
+		}
+		else
 		if ( $b1 >= 0x20 && $b1 <= 0x7e ) // alphanum
 			$st++;
 		else

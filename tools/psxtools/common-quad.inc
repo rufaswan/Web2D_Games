@@ -17,17 +17,17 @@ function cross_product( $vb, $vc )
 	//             | x 0 0 |
 	// | x y z | = | 0 y 0 |
 	//             | 0 0 z |
-	//   | ax bx cx |
-	//   | ay by cy |
-	//   | az bz cz |
-	// ax = bycz - cybz
-	// ay = bzcx - czbx
-	// az = bxcy - cxby
-	//   cross = 0 parallel      , 1 perpendicular
-	//   dot   = 0 perpendicular , 1 parallel
-	//     perpendicular = 90 degree
-	//     parallel      = 0 or 180 degree (sin = 0)
-	// a X a = 0
+	// cross = 0 parallel      , 1 perpendicular
+	// dot   = 0 perpendicular , 1 parallel
+	//   perpendicular = 90 degree
+	//   parallel      = 0 or 180 degree (sin = 0)
+	// crx(a,a) = 0
+	// | ax bx cx |
+	// | ay by cy |
+	// | az bz cz |
+	//   ax = bycz - cybz
+	//   ay = bzcx - czbx
+	//   az = bxcy - cxby
 	$ax = ($vb[1] * $vc[2]) - ($vc[1] * $vb[2]);
 	$ay = ($vb[2] * $vc[0]) - ($vc[2] * $vb[0]);
 	$az = ($vb[0] * $vc[1]) - ($vc[0] * $vb[1]);
@@ -36,7 +36,11 @@ function cross_product( $vb, $vc )
 //////////////////////////////
 function vector_dump( $V, $name )
 {
-	printf("$name = %10.2f , %10.2f , %10.2f\n", $V[0], $V[1], $V[2]);
+	echo "$name ";
+	printf(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
+	if ( (int)($V[2]*100) !== 0 )
+		printf("  xy (%4d , %4d)", $V[0]/$V[2], $V[1]/$V[2]);
+	echo "\n";
 	return;
 }
 
@@ -44,8 +48,8 @@ function vector_box( $vector )
 {
 	$x1 = PHP_INT_MAX;
 	$y1 = PHP_INT_MAX;
-	$x2 = ~(PHP_INT_MAX) + 1;
-	$y2 = ~(PHP_INT_MAX) + 1;
+	$x2 = -PHP_INT_MAX;
+	$y2 = -PHP_INT_MAX;
 	for ( $i=0; $i < 4; $i++ ) // A B C D
 	{
 		if ( $x1 > $vector[$i][0] )  $x1 = $vector[$i][0];
@@ -56,6 +60,18 @@ function vector_box( $vector )
 	return array($x1, $y1, $x2, $y2);
 }
 //////////////////////////////
+function quad_dump( $V4, $name )
+{
+	// 1 - 2
+	//     |  order
+	// 4 - 3
+	printf("quad( %s )\n", $name);
+	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[0][0], $V4[0][1], $V4[1][0], $V4[1][1]);
+	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[3][0], $V4[3][1], $V4[2][0], $V4[2][1]);
+	printf("  w %.2f  h %.2f\n", $V4[2][0]-$V4[0][0], $V4[2][1]-$V4[0][1]);
+	return;
+}
+
 function matrix_dump( $M , $name )
 {
 	printf("matrix( %s )\n", $name);
@@ -158,6 +174,9 @@ function matrix_inverse( $M )
 
 	for ( $i=0; $i < 9; $i++ )
 		$s3[$i] = $s3[$i] / $det;
+	//     |  3  0  2 |         |  0.2  0.2  0   |
+	// A = |  2  0 -2 |  A^-1 = | -0.2  0.3  1.0 |
+	//     |  0  1  1 |         |  0.2 -0.3  0   |
 	return $s3;
 }
 
@@ -196,18 +215,21 @@ function copyquad( &$pix, $byte=1 )
 {
 	if ( copyquad_errs($pix) )
 		return;
+	if ( defined("DRY_RUN") )
+		return;
 
 	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
+	// vector ordering
 	//                       A      B      C      D
 	//   src 20x25 image =  0,0   19,0   19,24   0,24
 	//   transformed to  = 20,40  40,20  30,10  10,30
-	$srcvec = array(
-		array(                 0 , 0                 , 1),
-		array($pix['src']['w']-1 , 0                 , 1),
-		array($pix['src']['w']-1 , $pix['src']['h']-1, 1),
-		array(                 0 , $pix['src']['h']-1, 1),
-	);
-
+	//
+	//   Lunar 2
+	//   P.Crown  Muramasa
+	//   1 - 2    1   4
+	//       |    |   |
+	//   4 - 3    2 - 3
+	//
 	// vector = magnitude(size) and direction
 	//   B = vector from 0,0 to point B(x,y)
 	//   cross(B,A) = pseudo-vector from point B(x,y) to point A(x,y)
@@ -217,9 +239,9 @@ function copyquad( &$pix, $byte=1 )
 	// h2 = cross( cross(A,D) , cross(B,C) ) // cross( left   , right )
 	// h3 = cross( cross(A,C) , cross(B,D) ) // cross( center , center )
 	$crx = "cross_product";
-	$H1 = $crx( $crx( $srcvec[1],$srcvec[0] ) , $crx( $srcvec[2],$srcvec[3] ) );
-	$H2 = $crx( $crx( $srcvec[0],$srcvec[3] ) , $crx( $srcvec[1],$srcvec[2] ) );
-	$H3 = $crx( $crx( $srcvec[0],$srcvec[2] ) , $crx( $srcvec[1],$srcvec[3] ) );
+	$H1 = $crx( $crx( $pix['src']['vector'][1],$pix['src']['vector'][0] ) , $crx( $pix['src']['vector'][2],$pix['src']['vector'][3] ) );
+	$H2 = $crx( $crx( $pix['src']['vector'][0],$pix['src']['vector'][3] ) , $crx( $pix['src']['vector'][1],$pix['src']['vector'][2] ) );
+	$H3 = $crx( $crx( $pix['src']['vector'][0],$pix['src']['vector'][2] ) , $crx( $pix['src']['vector'][1],$pix['src']['vector'][3] ) );
 
 	$h1 = $crx( $crx( $pix['vector'][1],$pix['vector'][0] ) , $crx( $pix['vector'][2],$pix['vector'][3] ) );
 	$h2 = $crx( $crx( $pix['vector'][0],$pix['vector'][3] ) , $crx( $pix['vector'][1],$pix['vector'][2] ) );
@@ -258,13 +280,12 @@ function copyquad( &$pix, $byte=1 )
 			// t,r,s = M^-1 * (x,y,1)
 			// sx,sy = t/s,r/s
 			$t = matrix_multi31($Minv, array($x,$y,1));
+			//vector_dump($t, "$x,$y");
 
-			if ( $t[2] == 0 )
+			if ( (int)($t[2]*100) === 0 )
 				continue;
-			$sx = (int)($t[0] / $t[2]);
-			$sy = (int)($t[1] / $t[2]);
-			//vector_dump($t, "$x,$y t");
-			//printf("%4d,%4d = %4d,%4d\n", $x, $y, $sx, $sy);
+			$sx = (int)round($t[0] / $t[2]);
+			$sy = (int)round($t[1] / $t[2]);
 
 			updatepix($pix, $byte, $sx, $sy, $x, $y);
 		} // for ( $x=$x1; $x < $x2; $x++ )

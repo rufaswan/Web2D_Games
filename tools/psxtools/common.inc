@@ -69,7 +69,7 @@ function php_req_def($def, $ver)
 // 7.1.0  PHP_FD_SETSIZE
 // 7.2.0  PHP_OS_FAMILY  PHP_FLOAT_DIG  PHP_FLOAT_EPSILON  PHP_FLOAT_MIN  PHP_FLOAT_MAX
 // PHP 7.0+ for native 64-bit int on windows
-php_req_def("PHP_INT_SIZE"  , "5.0.5");
+//php_req_def("PHP_INT_SIZE"  , "5.0.5");
 php_req_def("PHP_VERSION_ID", "5.2.7");
 //////////////////////////////
 function str2int( &$str, $pos, $byte, $sign=false )
@@ -572,6 +572,7 @@ function COPYPIX_DEF()
 			'h' => 0,
 			'pix' => "",
 			'pal' => "",
+			'vector' => array(), // replaces sx,sy for copyquad
 		),
 		'dx' => 0,
 		'dy' => 0,
@@ -579,7 +580,7 @@ function COPYPIX_DEF()
 		'vflip'  => false,
 		'hflip'  => false,
 		'rotate' => array(0,0,0),
-		'vector' => array(),
+		'vector' => array(), // replaces dx,dy for copyquad
 		'alpha'  => "", // callback
 	);
 	return $php56;
@@ -876,8 +877,7 @@ function trimpix( &$pix )
 		$y2 -= $TRIM_SZ;
 		$x1 += $TRIM_SZ;
 		$x2 -= $TRIM_SZ;
-	}
-	printf("TRIM %4d , %4d , %4d , %4d\n", $x1, $y1, $x2, $y2);
+	} // while (1)
 
 	$w = $x2 - $x1;
 	$h = $y2 - $y1;
@@ -887,6 +887,8 @@ function trimpix( &$pix )
 		$p = $y * $pix['rgba']['w'] + $x1;
 		$canv .= substr($pix['rgba']['pix'], $p*4, $w*4);
 	}
+
+	printf("TRIM %4d x %4d => %4d x %4d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
 	$pix['rgba']['w'] = $w;
 	$pix['rgba']['h'] = $h;
 	$pix['rgba']['pix'] = $canv;
@@ -962,10 +964,16 @@ function psxtim( &$file )
 	$tim['pix'] = '';
 	switch ( $type )
 	{
+		//////////////////////////////
+		case 8:
+			// VERY COMMON
+			// palette header
+			$siz = str2int($file, $pos, 4);
+			$tim['cn'] = (int)($siz / 0x20);
+			$tim['clut'] = mstrpal555($file, $pos+12, 0x10, $tim['cn']);
+				$pos += $siz;
 		case 0:
-			$tim['t'] = "CLUT";
 			// pixel header
-			$tim['cc'] = 16;
 			$siz = str2int($file, $pos, 4);
 			$tim['w'] = str2int($file, $pos+ 8, 2) * 4;
 			$tim['h'] = str2int($file, $pos+10, 2);
@@ -980,20 +988,32 @@ function psxtim( &$file )
 				$tim['pix'] .= chr($b1) . chr($b2);
 			}
 			$pos += $siz;
-			break;
-		case 1:
+
 			$tim['t'] = "CLUT";
+			$tim['cc'] = 0x10;
+			break;
+		//////////////////////////////
+		case 9:
+			// VERY COMMON
+			// palette header
+			$siz = str2int($file, $pos, 4);
+			$tim['cn'] = (int)($siz / 0x200);
+			$tim['clut'] = mstrpal555($file, $pos+12, 0x100, $tim['cn']);
+				$pos += $siz;
+		case 1:
 			// TokiMemo 2 substories *.tml
 			// pixel header
-			$tim['cc'] = 256;
 			$siz = str2int($file, $pos, 4);
 			$tim['w'] = str2int($file, $pos+ 8, 2) * 2;
 			$tim['h'] = str2int($file, $pos+10, 2);
 			$tim['pix'] = substr($file, $pos+12, $siz-12);
 				$pos += $siz;
+
+			$tim['t'] = "CLUT";
+			$tim['cc'] = 0x100;
 			break;
+		//////////////////////////////
 		case 2:
-			$tim['t'] = "RGBA";
 			// Legend of Mana /ana/etc_etc/title00.dat/1.tim
 			// Xenogears 2464/*.tim
 			// Lunar 2 Eternal Blue data/isok/*.tim
@@ -1005,9 +1025,10 @@ function psxtim( &$file )
 			$sub = substr($file, $pos+12, $siz-12);
 			$tim['pix'] = pal555($sub);
 				$pos += $siz;
+
+			$tim['t'] = "RGBA";
 			break;
 		case 3:
-			$tim['t'] = "RGBA";
 			// Legend of Mana /ana/zukan_p/z00/zukan1p.dat
 			// pixel header
 			$siz = str2int($file, $pos, 4);
@@ -1016,54 +1037,13 @@ function psxtim( &$file )
 
 			$psz = $siz - 12;
 			$sub = substr($file, $pos+12, $psz);
-			$tim['pix'] = '';
 			for ( $i=0; $i < $psz; $i += 3 )
 				$tim['pix'] .= $sub[$i+0] . $sub[$i+1] . $sub[$i+2] . BYTE;
 			$pos += $siz;
-			break;
-		case 8:
-			$tim['t'] = "CLUT";
-			// VERY COMMON
-			// palette header
-			$siz = str2int($file, $pos, 4);
-			$tim['cc'] = 0x10;
-			$tim['cn'] = (int)($siz / 0x20);
-			$tim['clut'] = mstrpal555($file, $pos+12, $tim['cc'], $tim['cn']);
-				$pos += $siz;
 
-			// pixel header
-			$siz = str2int($file, $pos, 4);
-			$tim['w'] = str2int($file, $pos+ 8, 2) * 4;
-			$tim['h'] = str2int($file, $pos+10, 2);
-
-			$psz = $siz - 12;
-			$sub = substr($file, $pos+12, $psz);
-			for ( $i=0; $i < $psz; $i++ )
-			{
-				$b = ord( $sub[$i] );
-				$b1 = ($b >> 0) & BIT4;
-				$b2 = ($b >> 4) & BIT4;
-				$tim['pix'] .= chr($b1) . chr($b2);
-			}
-			$pos += $siz;
+			$tim['t'] = "RGBA";
 			break;
-		case 9:
-			$tim['t'] = "CLUT";
-			// VERY COMMON
-			// palette header
-			$siz = str2int($file, $pos, 4);
-			$tim['cc'] = 0x100;
-			$tim['cn'] = (int)($siz / 0x200);
-			$tim['clut'] = mstrpal555($file, $pos+12, $tim['cc'], $tim['cn']);
-				$pos += $siz;
-
-			// pixel header
-			$siz = str2int($file, $pos, 4);
-			$tim['w'] = str2int($file, $pos+ 8, 2) * 2;
-			$tim['h'] = str2int($file, $pos+10, 2);
-			$tim['pix'] = substr($file, $pos+12, $siz-12);
-				$pos += $siz;
-			break;
+		//////////////////////////////
 		default:
 			return $tim;
 	} // switch ( $tim['t'] )
