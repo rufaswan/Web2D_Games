@@ -59,8 +59,8 @@ function sectquad( &$pix, $dat, $ceil )
 	);
 
 	printf("sign : %08b\n", $dat[11]);
-	quad_dump($pix['src']['vector'] , "src quad");
-	quad_dump($des                  , "des quad");
+	quad_dump($pix['src']['vector'] , "1243", "src quad");
+	quad_dump($des                  , "1243", "des quad");
 	return;
 }
 
@@ -243,7 +243,7 @@ function loadclut( $fname, $pos )
 		$gp_clut[] = $plt;
 	} // for ( $i=0; $i < 0x5000; $i += 0x20 )
 
-	file_get_contents('pcrown.pal', $gp_clut);
+	file_put_contents("$fname.pal", $gp_clut);
 	return;
 }
 

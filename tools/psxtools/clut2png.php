@@ -1,8 +1,7 @@
 <?php
 require "common.inc";
 require "common-guest.inc";
-
-req_ext("zlib_decode", "zlib");
+require "common-zlib.inc";
 
 function pngfilter( &$pix, $w, $h, $byte )
 {
@@ -19,11 +18,11 @@ function pngfilter( &$pix, $w, $h, $byte )
 	return;
 }
 
-function pngchunk( $name, $data, $zlib = false )
+function pngchunk( $name, $data, $zlib=false )
 {
 	$sect = $name;
 	if ( $zlib )
-		$sect .= zlib_encode($data, ZLIB_ENCODING_DEFLATE);
+		$sect .= zlib_encode($data, ZLIB_ENCODING_DEFLATE, 9);
 	else
 		$sect .= $data;
 

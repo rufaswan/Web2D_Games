@@ -1,44 +1,45 @@
 <?php
 // toolset for PlayStation One games
 // - little-endian byte order
-// - 32-bit negative int
-// - int only , no float/double
+// - 31th bit is negative int flag
+// - One delayed slot on jump and branch
+// - All values in registers , no hidden CF/ZF/SF/PF etc
+// - All values in int , no float/double
 // - 0x200000 RAM
 //   - 80000000-8000ffff BIOS
 //   - 80010000-801fffef WRAM
 //   - 801ffff0-801fffff stack
 //   - JUMP   are absolute RAM offset * 4
 //   - BRANCH are relative RAM offset * 4
+//   - SWITCH is  absolute RAM offset + (c << 2)
+//     CASE   are absolute RAM offsets
 // - fileseek in sectors
-//   - n * sector_size
+//   - n * 0x800
 //     - absolute position within the CD
 //     - relative position within the file
-//   - minute:second:frame (absolute position)
+//   - Minute:Second:Frame (absolute position)
 // - Sprites are PsuedoColor
 // - Backgrounds are PsuedoColor, very rarely DirectColor
 // - RGB555 color format , in 15-ABBBBBGGGGGRRRRR-0 order
 // - Alpha is by Additive Blending , as in FG + BG
 // - Layers are Top-to-Bottom order
 // - 0,0 is at Top-Left corner
-// - load/store registers
+// - Points are Left-Hand Winding Order , or in Clockwise (CW)
 //
 // CODING STANDARD
 // - use PHP core functions only
-// - if compile PHP from source, use option '--disable-all' on configure
-// - if extension(s) are absolutely required
-//   - use req_ext() from "common-guest.inc" to check
-//   - prefer NO EXTENSION is used, whenever possible
+//   if compile PHP from source, use option '--disable-all' on configure
 // - *.php files
 //   - *.php are independant scripts
 //   - *.php MUST NOT include each other
 //   - *.php CAN include multiple *.inc , and in correct order
 // - *.inc files
-//   - *.inc are include/require common scripts
+//   - *.inc are shared scripts
 //   - *.inc MUST NOT include each other
 //   - *.inc MUST NOT include *.php
 // - global variables are prefixed "gp_" (global pointer)
-define("ZERO", chr(  0));
-define("BYTE", chr(255));
+define("ZERO", "\x00");
+define("BYTE", "\xff");
 define("BIT4",  0x0f);
 define("BIT8",  0xff);
 define("BIT16", 0xffff);
@@ -75,13 +76,13 @@ php_req_def("PHP_VERSION_ID", "5.2.7");
 function str2int( &$str, $pos, $byte, $sign=false )
 {
 	$sub = substr($str, $pos, $byte);
+	$int = ordint($sub);
 	if ( $sign )
 	{
-		$sint = array("", "sint8", "sint16", "sint24", "sint32");
-		$func = $sint[$byte];
-		return $func($sub);
+		$sra = (PHP_INT_SIZE - $byte) * 8; // shift right arithmetic
+		return ( ($int << $sra) >> $sra );
 	}
-	return ordint($sub);
+	return $int;
 }
 
 function substr0( &$str, $pos, $end="" )
@@ -336,9 +337,9 @@ function rmfile_r( $dir )
 	return;
 }
 
-function debug( $str, $sep = 4 )
+function debug( $str, $name="DEBUG", $sep=4 )
 {
-	echo "DEBUG : ";
+	echo "$name : ";
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
 	{

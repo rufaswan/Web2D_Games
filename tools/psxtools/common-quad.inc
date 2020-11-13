@@ -1,26 +1,36 @@
 <?php
 // 3D texture quad-rendering + transformation related
 // product = factor * factor
+//             | x 0 0 |
+// | x y z | = | 0 y 0 |
+//             | 0 0 z |
+// cross = 0 parallel      , 1 perpendicular
+// dot   = 0 perpendicular , 1 parallel
+//   perpendicular = 90 degree
+//   parallel      = 0 or 180 degree (sin = 0)
 
-function dot_product( $vb, $vc )
+function dot_product( $base, $V1, $V2 )
 {
 	// The direct, scalar, or dot product of two vectors
+	// dot product is normalized from $base as 0,0
+	$V1[0] -= $base[0];
+	$V1[1] -= $base[1];
+	$V1[2] -= $base[2];
+	$V2[0] -= $base[0];
+	$V2[1] -= $base[1];
+	$V2[2] -= $base[2];
+
+	// dot(a,a) = 1
 	// s = axbx + ayby
 	// s = axbx + ayby + azbz
-	$dot = $vb[0]*$vc[0] + $vb[1]*$vc[1] + $vb[2]*$vc[2];
+	$dot = $V1[0]*$V2[0] + $V1[1]*$V2[1] + $V1[2]*$V2[2];
 	return $dot;
 }
 
 function cross_product( $vb, $vc )
 {
 	// The skew, vector, or cross product of two vectors
-	//             | x 0 0 |
-	// | x y z | = | 0 y 0 |
-	//             | 0 0 z |
-	// cross = 0 parallel      , 1 perpendicular
-	// dot   = 0 perpendicular , 1 parallel
-	//   perpendicular = 90 degree
-	//   parallel      = 0 or 180 degree (sin = 0)
+
 	// crx(a,a) = 0
 	// | ax bx cx |
 	// | ay by cy |
@@ -32,6 +42,17 @@ function cross_product( $vb, $vc )
 	$ay = ($vb[2] * $vc[0]) - ($vc[2] * $vb[0]);
 	$az = ($vb[0] * $vc[1]) - ($vc[0] * $vb[1]);
 	return array($ax, $ay, $az);
+}
+
+function triad_area( $V1, $V2, $V3 )
+{
+	// https://www.mathopenref.com/coordtrianglearea.html
+	// 2r = ax(by-cy) + bx(cy-ay) + cx(ay-by)
+	$r1 = $V1[0] * ($V2[1] - $V3[1]);
+	$r2 = $V2[0] * ($V3[1] - $V1[1]);
+	$r3 = $V3[0] * ($V1[1] - $V2[1]);
+	$r = ($r1 + $r2 + $r3) / 2;
+	return abs($r);
 }
 //////////////////////////////
 function vector_dump( $V, $name )
@@ -60,15 +81,28 @@ function vector_box( $vector )
 	return array($x1, $y1, $x2, $y2);
 }
 //////////////////////////////
-function quad_dump( $V4, $name )
+function quad_dump( $V4, $type, $name )
 {
-	// 1 - 2
-	//     |  order
-	// 4 - 3
+	// winding order (x-hand-coordinate system)
+	//   1243 = 1 2 = left-hand / clockwise (CW)
+	//          4 3
+	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
+	//          2 3
+	//
+	// SAT  Princess Crown = LEFT
+	// PSX  Lunar 2        = LEFT
+	// WII  Muramasa       = RIGHT
+	//
+	// c1 c2
+	// c3 c4
+	$c1 = $type[0] - 1;
+	$c2 = $type[1] - 1;
+	$c3 = $type[2] - 1;
+	$c4 = $type[3] - 1;
 	printf("quad( %s )\n", $name);
-	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[0][0], $V4[0][1], $V4[1][0], $V4[1][1]);
-	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[3][0], $V4[3][1], $V4[2][0], $V4[2][1]);
-	printf("  w %.2f  h %.2f\n", $V4[2][0]-$V4[0][0], $V4[2][1]-$V4[0][1]);
+	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c1][0], $V4[$c1][1], $V4[$c2][0], $V4[$c2][1]);
+	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c3][0], $V4[$c3][1], $V4[$c4][0], $V4[$c4][1]);
+	printf("  w %.2f  h %.2f\n", $V4[$c4][0]-$V4[$c1][0]+1, $V4[$c4][1]-$V4[$c1][1]+1);
 	return;
 }
 
@@ -138,37 +172,29 @@ function matrix_inverse( $M )
 	//    | 0 1 2 |    | 4*8-5*7  3*8-5*6  3*7-4*6 |
 	//    | 3 4 5 | => | 1*8-2*7  0*8-2*6  0*7-1*6 |
 	//    | 6 7 8 |    | 1*5-2*4  0*5-2*3  0*4-1*3 |
-	$s1 = array(
-		$M[4]*$M[8]-$M[5]*$M[7] , $M[3]*$M[8]-$M[5]*$M[6] , $M[3]*$M[7]-$M[4]*$M[6] ,
-		$M[1]*$M[8]-$M[2]*$M[7] , $M[0]*$M[8]-$M[2]*$M[6] , $M[0]*$M[7]-$M[1]*$M[6] ,
-		$M[1]*$M[5]-$M[2]*$M[4] , $M[0]*$M[5]-$M[2]*$M[3] , $M[0]*$M[4]-$M[1]*$M[3] ,
-	);
-	//matrix_dump($s1, "inv s1");
-
-	// s2 matrix of cofactors | + - + |
-	//                        | - + - |
-	//                        | + - + |
-	$s2 = array(
-		+$s1[0] , -$s1[1] , +$s1[2] ,
-		-$s1[3] , +$s1[4] , -$s1[5] ,
-		+$s1[6] , -$s1[7] , +$s1[8] ,
-	);
-	//matrix_dump($s2, "inv s2");
-
-	// 3. adjugate
+	// s2 matrix of cofactors
+	//    | + - + |
+	//    | - + - |
+	//    | + - + |
+	// s3 adjugate
 	//    | 0 1 2 |    | 0 3 6 |
 	//    | 3 4 5 | => | 1 4 7 |
 	//    | 6 7 8 |    | 2 5 8 |
+	//
+	// SIMPLIFIED s1 to s3
+	//   | 0 1 2 |    | 4*8-5*7  2*7-1*8  1*5-2*4 |
+	//   | 3 4 5 | => | 5*6-3*8  0*8-2*6  2*3-0*5 |
+	//   | 6 7 8 |    | 3*7-4*6  1*6-0*7  0*4-1*3 |
 	$s3 = array(
-		$s2[0] , $s2[3] , $s2[6] ,
-		$s2[1] , $s2[4] , $s2[7] ,
-		$s2[2] , $s2[5] , $s2[8] ,
+		$M[4]*$M[8]-$M[5]*$M[7] , $M[2]*$M[7]-$M[1]*$M[8] , $M[1]*$M[5]-$M[2]*$M[4] ,
+		$M[5]*$M[6]-$M[3]*$M[8] , $M[0]*$M[8]-$M[2]*$M[6] , $M[2]*$M[3]-$M[0]*$M[5] ,
+		$M[3]*$M[7]-$M[4]*$M[6] , $M[1]*$M[6]-$M[0]*$M[7] , $M[0]*$M[4]-$M[1]*$M[3] ,
 	);
-	//matrix_dump($s3, "inv s3");
 
-	// 4. multiply by 1/det
+	// s4 multiply by 1/det
 	// https://www.mathsisfun.com/algebra/matrix-determinant.html
-	$det = $M[0]*$s2[0] + $M[1]*$s2[1] + $M[2]*$s2[2];
+	// if $det is zero , the matrix cannot be invert
+	$det = $M[0]*$s3[0] + $M[1]*$s3[3] + $M[2]*$s3[6];
 	if ( $det == 0 )
 		return array(0,0,0,0,0,0,0,0,0);
 
@@ -219,16 +245,11 @@ function copyquad( &$pix, $byte=1 )
 		return;
 
 	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
-	// vector ordering
-	//                       A      B      C      D
-	//   src 20x25 image =  0,0   19,0   19,24   0,24
-	//   transformed to  = 20,40  40,20  30,10  10,30
 	//
-	//   Lunar 2
-	//   P.Crown  Muramasa
-	//   1 - 2    1   4
-	//       |    |   |
-	//   4 - 3    2 - 3
+	// 2D transformation
+	//   |  0 19 19  0 |    | 20 40 30 10 |
+	//   |  0  0 24 24 | => | 40 20 10 30 |
+	//   |  1  1  1  1 |    |  1  1  1  1 |
 	//
 	// vector = magnitude(size) and direction
 	//   B = vector from 0,0 to point B(x,y)
@@ -272,16 +293,31 @@ function copyquad( &$pix, $byte=1 )
 		matrix_dump($M   , "M");
 		matrix_dump($Minv, "Minv");
 
+	// sum of quad area
+	$q1 = triad_area($pix['vector'][0], $pix['vector'][1], $pix['vector'][2]); // ABC
+	$q2 = triad_area($pix['vector'][0], $pix['vector'][3], $pix['vector'][2]); // ADC
+	$qsz = $q1 + $q2;
+
 	list($x1,$y1,$x2,$y2) = vector_box( $pix['vector'] );
 	for ( $y=$y1; $y <= $y2; $y++ )
 	{
 		for ( $x=$x1; $x <= $x2; $x++ )
 		{
+			$xy = array($x,$y,1);
+			$q1 = triad_area($xy, $pix['vector'][0], $pix['vector'][1]); // pAB
+			$q2 = triad_area($xy, $pix['vector'][1], $pix['vector'][2]); // pBC
+			$q3 = triad_area($xy, $pix['vector'][2], $pix['vector'][3]); // pCD
+			$q4 = triad_area($xy, $pix['vector'][3], $pix['vector'][0]); // pDA
+
+			// if $xy is outside quad , sum of $q will be bigger than $qsz
+			if ( ($q1+$q2+$q3+$q4) > $qsz )
+				continue;
+
 			// t,r,s = M^-1 * (x,y,1)
 			// sx,sy = t/s,r/s
 			$t = matrix_multi31($Minv, array($x,$y,1));
-			//vector_dump($t, "$x,$y");
 
+			// ERROR : $t[2] divide by zero
 			if ( (int)($t[2]*100) === 0 )
 				continue;
 			$sx = (int)round($t[0] / $t[2]);

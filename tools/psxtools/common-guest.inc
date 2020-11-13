@@ -10,13 +10,13 @@ function substrrev( &$str, $pos, $len )
 function str2big( &$str, $pos, $byte, $sign=false )
 {
 	$sub = substrrev($str, $pos, $byte);
+	$int = ordint($sub);
 	if ( $sign )
 	{
-		$sint = array("", "sint8", "sint16", "sint24", "sint32");
-		$func = $sint[$byte];
-		return $func($sub);
+		$sra = (PHP_INT_SIZE - $byte) * 8; // shift right arithmetic
+		return ( ($int << $sra) >> $sra );
 	}
-	return ordint($sub);
+	return $int;
 }
 
 function chrbig( $int, $byte )

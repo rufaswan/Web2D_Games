@@ -1,6 +1,7 @@
 <?php
 require "common.inc";
 require "common-guest.inc";
+require "common-zlib.inc";
 
 function png_chunk( &$png )
 {

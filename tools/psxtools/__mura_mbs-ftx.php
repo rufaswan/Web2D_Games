@@ -1,6 +1,7 @@
 <?php
 require "common.inc";
 require "common-guest.inc";
+require "common-quad.inc";
 
 define("CANV_S", 0x200);
 define("SCALE", 1);
@@ -66,10 +67,16 @@ function sects1( $pfx, &$s1 )
 		if ( $qby != $qfy )
 			trigger_error("qby != qfy [$qby,$qfy]\n", E_USER_NOTICE);
 
+		$bcde = array(
+			array($qbx, $qby,1),
+			array($qcx, $qcy,1),
+			array($qdx, $qdy,1),
+			array($qex, $qey,1),
+		);
+
 		printf("s1 %x\n", $i / 0x30);
-		printf("  bcde %7.2f,%7.2f  %7.2f,%7.2f\n", $qbx, $qby, $qcx, $qcy);
-		printf("       %7.2f,%7.2f  %7.2f,%7.2f\n", $qex, $qey, $qdx, $qdy);
 		printf("    af %7.2f,%7.2f  %7.2f,%7.2f\n", $qax, $qay, $qfx, $qfy);
+		quad_dump($bcde, "1423", "bcde");
 
 	} // for ( $i=0; $i < $len; $i += 0x30 )
 	return;
@@ -132,6 +139,18 @@ function sects9( $pfx, &$s9, &$sa, &$s8 )
 	}
 	return;
 }
+
+function mbsdbg( &$meta, $name, $blk )
+{
+	$len = int_floor( strlen($meta), $blk );
+	printf("== mbsdbg( $name , %x ) = %x\n", $blk, $len);
+	for ( $i=0; $i < $len; $i += $blk )
+	{
+		$n = sprintf("%4x", $i/$blk);
+		debug( substr($meta, $i, $blk), $n );
+	}
+	return;
+}
 //////////////////////////////
 function mura( $fname )
 {
@@ -191,6 +210,13 @@ function mura( $fname )
 	//            a0   6b8  2cc8 |        41*18 cb*30 7bd*30
 	//   1a038 26484 31a7c 1a7b8 | 18*50 f2a*c  f2*8  127*18
 	//   1c360 1c5c4 3220c 32e3c | 11*24 4f6*20 41*30  87*10
+	// s9[+28] =  85+2 => sa
+	// sa[+ 0] = 4ee+8 => s8
+	// s8[+ 0] = 126   => s6
+	// s6[+10] = f29+1 => s4
+	// s4[+ 4] =  ca   => s1 , [+ a] = 7bc => s2
+	//
+	// s9-sa-s8-s6-s4-s1,s2
 	$s0 = substr($mbs, $off0, $off1-$off0); // def * 0x18
 	$s1 = substr($mbs, $off1, $off2-$off1); // quad def * 0x30
 	$s2 = substr($mbs, $off2, $off3-$off2); // distort def * 0x30 , dummy_npc=0
@@ -202,21 +228,21 @@ function mura( $fname )
 	$s8 = substr($mbs, $off8, $off4-$off8); // anim def * 0x20
 	$s9 = substr($mbs, $off9, $offa-$off9); // anim name def * 0x30
 	$sa = substr($mbs, $offa, $feoc-$offa); // anim set def * 16
-		save_file("$pfx/s0.meta", $s0);
-		save_file("$pfx/s1.meta", $s1);
-		save_file("$pfx/s2.meta", $s2);
-		save_file("$pfx/s3.meta", $s3);
-		save_file("$pfx/s4.meta", $s4);
-		save_file("$pfx/s5.meta", $s5);
-		save_file("$pfx/s6.meta", $s6);
-		save_file("$pfx/s7.meta", $s7);
-		save_file("$pfx/s8.meta", $s8);
-		save_file("$pfx/s9.meta", $s9);
-		save_file("$pfx/sa.meta", $sa);
+		save_file("$pfx/s0.meta", $s0);  mbsdbg($s0, 's0', 0x18);
+		save_file("$pfx/s1.meta", $s1);  mbsdbg($s1, 's1', 0x30);
+		save_file("$pfx/s2.meta", $s2);  mbsdbg($s2, 's2', 0x30);
+		save_file("$pfx/s3.meta", $s3);  mbsdbg($s3, 's3', 0x50);
+		save_file("$pfx/s4.meta", $s4);  mbsdbg($s4, 's4', 0x0c);
+		save_file("$pfx/s5.meta", $s5);  mbsdbg($s5, 's5', 0x08);
+		save_file("$pfx/s6.meta", $s6);  mbsdbg($s6, 's6', 0x18);
+		save_file("$pfx/s7.meta", $s7);  mbsdbg($s7, 's7', 0x24);
+		save_file("$pfx/s8.meta", $s8);  mbsdbg($s8, 's8', 0x20);
+		save_file("$pfx/s9.meta", $s9);  mbsdbg($s9, 's9', 0x30);
+		save_file("$pfx/sa.meta", $sa);  mbsdbg($sa, 'sa', 0x10);
 
 	//sects9($pfx, $s9, $sa, $s8);
-	sects1($pfx, $s1);
-	sects1($pfx, $s2);
+	//sects1($pfx, $s1);
+	//sects1($pfx, $s2);
 	return;
 }
 
