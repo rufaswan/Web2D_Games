@@ -9,8 +9,9 @@ function thumbnail()
 	sc='-scale 200%'
 	(( $1 > 74 )) && sc=''
 	(( $2 > 62 )) && sc=''
-	mogrify -verbose -strip \
+	mogrify -verbose \
 		$sc \
+		-define png:include-chunk=none,trns -strip \
 		-background transparent \
 		-gravity center \
 		-extent 148x125 \

@@ -36,6 +36,7 @@ function png_chunk( &$png )
 //////////////////////////////
 function png_unfilter( &$idat, $w, $h, $byte )
 {
+	echo "== png_unfilter( $w , $h , $byte )\n";
 	$rows = array();
 	$dpw = $w * $byte;
 	for ( $y=0; $y < $h; $y++ )
@@ -122,6 +123,7 @@ function png_unfilter( &$idat, $w, $h, $byte )
 
 function png_8bpp( &$idat, $dp )
 {
+	echo "== png_8bpp( $dp )\n";
 	switch ( $dp )
 	{
 		case 8:
@@ -180,6 +182,7 @@ function png_plte( &$chunk )
 {
 	if ( ! isset( $chunk['PLTE'] ) )
 		return "";
+	echo "== png_plte()\n";
 
 	$len = strlen($chunk['PLTE']);
 	$num = (int)($len / 3);
@@ -293,10 +296,9 @@ function pngfile( $fname )
 	$fl = ord( $chunk['IHDR'][11] ); // filter , 0=adaptive/5 type
 	$in = ord( $chunk['IHDR'][12] ); // interlace , 0=none , 1=adam7
 
-	if ( ($cl & 2) == 0 )
-		return printf("grayscale not supported\n");
-	if ( $in != 0 )
-		return printf("adam7 interlace not supported\n");
+	if ( ($cl & 2) == 0 )  return printf("grayscale not supported\n");
+	if (       $dp >  8 )  return printf("bit depth >8 not supported\n");
+	if (       $in != 0 )  return printf("adam7 interlace not supported\n");
 
 	if ( $cl & 1 ) // indexed color , CLUT
 		png2clut($chunk, $w, $h, $dp, $cl, $fname);

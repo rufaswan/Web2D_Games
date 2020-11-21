@@ -889,7 +889,7 @@ function trimpix( &$pix )
 		$canv .= substr($pix['rgba']['pix'], $p*4, $w*4);
 	}
 
-	printf("TRIM %4d x %4d => %4d x %4d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
+	printf("TRIM %d x %d => %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
 	$pix['rgba']['w'] = $w;
 	$pix['rgba']['h'] = $h;
 	$pix['rgba']['pix'] = $canv;

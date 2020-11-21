@@ -66,7 +66,8 @@ function clut2png( &$file, $fname )
 	$ihdr .= ZERO; // filter , 0=adaptive/5 type
 	$ihdr .= ZERO; // interlace , 0=none , 1=adam7
 
-	$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+	//$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+	$png = "\x89PNG\x0d\x0a\x1a\x0a";
 	$png .= pngchunk("IHDR", $ihdr);
 	$png .= pngchunk("PLTE", $plte);
 	if ( ! empty($trns) )

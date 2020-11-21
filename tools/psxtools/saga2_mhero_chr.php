@@ -69,6 +69,8 @@ function saga2( $fname )
 
 	$clut = str2int ($file, 0x0c,  4);
 	$clut = strpal555($file, $clut, 0x10);
+		// first color is always alpha
+		$clut[3] = ZERO;
 
 	$st = 0x10 + count($spr_wh) * 4;
 	foreach ( $spr_wh as $k => $wh )

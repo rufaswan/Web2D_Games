@@ -73,10 +73,10 @@ function vector_box( $vector )
 	$y2 = -PHP_INT_MAX;
 	for ( $i=0; $i < 4; $i++ ) // A B C D
 	{
-		if ( $x1 > $vector[$i][0] )  $x1 = $vector[$i][0];
-		if ( $x2 < $vector[$i][0] )  $x2 = $vector[$i][0];
-		if ( $y1 > $vector[$i][1] )  $y1 = $vector[$i][1];
-		if ( $y2 < $vector[$i][1] )  $y2 = $vector[$i][1];
+		if ( $x1 > $vector[$i][0] )  $x1 = (int)floor($vector[$i][0]);
+		if ( $y1 > $vector[$i][1] )  $y1 = (int)floor($vector[$i][1]);
+		if ( $x2 < $vector[$i][0] )  $x2 = (int)ceil ($vector[$i][0]);
+		if ( $y2 < $vector[$i][1] )  $y2 = (int)ceil ($vector[$i][1]);
 	} // for ( $i=0; $i < 4; $i++ )
 	return array($x1, $y1, $x2, $y2);
 }
@@ -213,19 +213,19 @@ function copyquad_errs( &$pix )
 	{
 		// x y
 		if ( ! isset( $pix['vector'][$i][0] ) )
-			$err .= "copyquad() vector $i x not set\n";
+			$err .= "copyquad() vector x$i not set\n";
 		if ( ! isset( $pix['vector'][$i][1] ) )
-			$err .= "copyquad() vector $i y not set\n";
+			$err .= "copyquad() vector y$i not set\n";
 
 		if ( $pix['vector'][$i][0] < 0 )
-			$err .= sprintf("copyquad() vector $i x = %d\n", $pix['vector'][$i][0]);
+			$err .= sprintf("copyquad() vector x$i = %d\n", $pix['vector'][$i][0]);
 		if ( $pix['vector'][$i][1] < 0 )
-			$err .= sprintf("copyquad() vector $i y = %d\n", $pix['vector'][$i][1]);
+			$err .= sprintf("copyquad() vector y$i = %d\n", $pix['vector'][$i][1]);
 
 		if ( $pix['vector'][$i][0] > $pix['rgba']['w'] )
-			$err .= sprintf("copyquad() vector $i x = %d [%d]\n", $pix['vector'][$i][0], $pix['rgba']['w']);
+			$err .= sprintf("copyquad() vector x$i = %d [%d]\n", $pix['vector'][$i][0], $pix['rgba']['w']);
 		if ( $pix['vector'][$i][1] > $pix['rgba']['h'] )
-			$err .= sprintf("copyquad() vector $i y = %d [%d]\n", $pix['vector'][$i][1], $pix['rgba']['h']);
+			$err .= sprintf("copyquad() vector y$i = %d [%d]\n", $pix['vector'][$i][1], $pix['rgba']['h']);
 
 	} // for ( $i=0; $i < 4; $i++ )
 
