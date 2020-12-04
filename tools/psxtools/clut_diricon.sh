@@ -1,4 +1,9 @@
 #!/bin/bash
+<<'////'
+[license]
+[/license]
+////
+
 php="/tmp/clut2bmp.php"
 [ -f "$php" ] || exit
 export php
@@ -20,7 +25,10 @@ function diricon
 			*'.rgba' | *'.clut')
 				php.sh  "$php"  "$t1"
 				convert  "$t1.bmp" \
-					-define png:include-chunk=none,trns -trim -strip \
+					-define png:include-chunk=none,trns \
+					-define png:compression-filter=0 \
+					-define png:compression-level=9 \
+					-trim -strip \
 					"$tmp" &> /dev/null
 				mv -f  "$tmp"  '.DirIcon'
 				rm "$t1.bmp"
@@ -28,7 +36,10 @@ function diricon
 
 			*'.bmp'  | *'.png' )
 				convert  "$t1" \
-					-define png:include-chunk=none,trns -trim -strip \
+					-define png:include-chunk=none,trns \
+					-define png:compression-filter=0 \
+					-define png:compression-level=9 \
+					-trim -strip \
 					"$tmp" &> /dev/null
 				mv -f  "$tmp"  '.DirIcon'
 				return;;

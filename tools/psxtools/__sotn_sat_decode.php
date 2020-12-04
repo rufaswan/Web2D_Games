@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * stages
  *  00  *rondo of blood*
  *  0X  *entrance*
@@ -24,7 +28,7 @@
  */
 require "common.inc";
 
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 function sotn_decode( &$file, $st )
 {

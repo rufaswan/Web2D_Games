@@ -1,8 +1,12 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 function yuna_decode( &$file, $fname )
 {
@@ -10,7 +14,7 @@ function yuna_decode( &$file, $fname )
 	if ( ($siz % 0xa00) == 0 )
 		return;
 
-	echo "=== begin sub_6005058() ===\n";
+	trace("=== begin sub_6005058() ===\n");
 	$dec = "";
 	$bylen = 0;
 	$bycod = 0;
@@ -58,7 +62,7 @@ function yuna_decode( &$file, $fname )
 		}
 	} // while ( $st < $siz )
 
-	echo "=== end sub_6005058() ===\n";
+	trace("=== end sub_6005058() ===\n");
 	file_put_contents("$fname.dec", $dec);
 	$file = $dec;
 	return;

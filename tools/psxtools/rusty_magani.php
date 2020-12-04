@@ -1,14 +1,18 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 //define("DRY_RUN", true);
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 $gp_clut = "";
 
 function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 {
-	printf("== mag_decode( %x , %x , %x , %x , %x )\n", $w, $h, $pb1, $pb4, $pc);
+	trace("== mag_decode( %x , %x , %x , %x , %x )\n", $w, $h, $pb1, $pb4, $pc);
 	if ( defined("DRY_RUN") )
 		return "";
 	// https://github.com/46OkuMen/rusty/blob/master/mag.py
@@ -80,7 +84,7 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 
 	} // while ( $pb1 < $bak )
 
-	printf("flags [0]%x , [1]%x\n", $flgno[0], $flgno[0x80]);
+	trace("flags [0]%x , [1]%x\n", $flgno[0], $flgno[0x80]);
 	return implode('', $pix);
 }
 

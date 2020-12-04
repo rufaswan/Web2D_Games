@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 function fp2str( $fp, $pos, $byte )

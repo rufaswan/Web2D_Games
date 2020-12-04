@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-quad.inc";
 
@@ -70,7 +74,7 @@ require "common-quad.inc";
 		0 <= dot(AB,AM) <= dot(AB,AB) && 0 <= dot(BC,BM) <= dot(BC,BC)
 		REASON : went crazy when one corner is over 90 degree
 
-	triad_ared TEST
+	triad_area TEST
 		a 10,20
 		b 20,30
 		c 30,10

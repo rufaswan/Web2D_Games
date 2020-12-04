@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 //require "common.inc";
 $MSG = "{$argv[0]}  RAM_FILE  OFFSET...  OVERLAY_DIR\n";
 

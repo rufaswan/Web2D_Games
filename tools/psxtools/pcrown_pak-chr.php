@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 require "common-quad.inc";
@@ -88,12 +92,12 @@ function sectpart( &$pak, $dir, $off, $no )
 		$b1 = str2big($dat, 0, 2);
 		$tid = $b1 & 0x3fff;
 		$cid = $b1 >> 14;
-		flag_warn("cid-x", $b1 & 0xb000);
+		flag_watch("cid-x", $b1 & 0xb000);
 
 		// obaa.pak has both cat + 4 books having the same value
 		// probably the palette is referred by opcode
-		if ( $cid != 0 ) // OR $b1 & 0x4000
-			return;
+		//if ( $cid != 0 ) // OR $b1 & 0x4000
+			//return;
 
 		$pix['src']['w'] = $gp_pix[$tid][1];
 		$pix['src']['h'] = $gp_pix[$tid][2];
@@ -189,22 +193,46 @@ function load_texx( &$pak, $pfx )
 	return;
 }
 //////////////////////////////
+function pakcoldbg( &$pak, $id, $pos )
+{
+	$len = strlen( $pak[$id]['d'] );
+	$dbg = array();
+	for ( $i=0; $i < $len; $i += $pak[$id]['k'] )
+	{
+		$b1 = ord( $pak[$id]['d'][$i+$pos] );
+		if ( ! isset( $dbg[$b1] ) )
+			$dbg[$b1] = 0;
+		$dbg[$b1]++;
+	}
+
+	printf("== pakcoldbg( %x , %x )\n", $id, $pos);
+	foreach ( $dbg as $k => $v )
+		printf("  %2x = %8x\n", $k, $v);
+	return;
+}
+
 function pakdbg( &$meta, $name, $blk )
 {
 	$len = strlen($meta);
 	printf("== pakdbg( $name , %x ) = %x\n", $blk, $len);
+
+	ob_start();
 	for ( $i=0; $i < $len; $i += $blk )
 	{
 		$n = sprintf("%4x", $i/$blk);
 		debug( substr($meta, $i, $blk), $n );
 	}
+	$buf = ob_get_clean();
+	//echo "$buf\n";
+	save_file("$name.txt", $buf);
+
 	return;
 }
 
 function loadpak( &$pak, $sect, $pfx )
 {
-	$feof = strlen($pak);
 	$offs = array();
+	$offs[] = strlen($pak);
 	foreach ( $sect as $k => $v )
 	{
 		$b1 = str2big($pak, $v['p'], 4);
@@ -218,35 +246,16 @@ function loadpak( &$pak, $sect, $pfx )
 	foreach ( $sect as $k => $v )
 	{
 		$id = array_search($v['o'], $offs);
-		if ( isset( $offs[$id+1] ) )
-			$sz = $offs[$id+1] - $v['o'];
-		else
-			$sz = $feof - $v['o'];
-
-		$sz  = int_floor($sz, $v['k']);
+		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
 		$dat = substr($pak, $v['o'], $sz);
 
-		save_file("$pfx/meta/$k.meta", $dat);
-		//pakdbg($dat, "meta $k", $v['k']);
+		//save_file("$pfx/meta/$k.meta", $dat);
+		pakdbg($dat, "$pfx/meta/$k", $v['k']);
 
 		$sect[$k]['d'] = $dat;
 	} // foreach ( $sect as $k => $v )
 
 	$pak = $sect;
-
-	// check for palette flag
-	$len = strlen( $sect[1]['d'] );
-	$done = array();
-	for ( $i=0; $i < $len; $i += $sect[1]['k'] )
-	{
-		$b1 = str2big( $sect[1]['d'], $i+0, 2);
-		if ( ($b1 & 0xf000) == 0 )
-			continue;
-		if ( in_array($b1, $done) )
-			continue;
-		printf("%4x -> %4d.png\n", $b1, $b1 & 0xfff);
-		$done[] = $b1;
-	}
 	return;
 }
 
@@ -267,6 +276,7 @@ function pakchr( &$pak, $pfx )
 	// s3[+ 0] =   2f5   => s2
 	// s2[+ 8] =  2541+3 => s1
 	// s1[+ 0] =   122   => s0
+	// s0[]
 	//
 	// s4-s3-s2-s1-s0
 	$sect = array(
@@ -279,6 +289,7 @@ function pakchr( &$pak, $pfx )
 		array('p' => 0x30 , 'k' =>  8), // 6
 	);
 	loadpak($pak, $sect, $pfx);
+	pakcoldbg($pak, 1, 0); // byte code ref palette check
 	load_texx($pak[0]['d'], $pfx);
 
 	$anim = "";
@@ -323,7 +334,8 @@ function pcrown( $fname )
 	if ( substr($pak,0,4) != "unkn" )
 		return;
 
-	global $gp_clut;
+	global $gp_clut, $gp_pix;
+	$gp_pix = array();
 	$pal = load_file("$pfx.pal");
 	if ( ! empty($pal) )
 		$gp_clut = $pal;
@@ -343,22 +355,4 @@ book select
 	VORE  slct.pak
 	VORE  chap.pak
 	VORE  obaa.pak
-
-prg
-	0 dohdoh  10 ghost    20 polt  30 larv
-	1 slime   11 card     21 iced
-	2 myco    12 barb     22 hind
-	3 zombie  13 d/grad   23 blud
-	4 goblin  14 vorg     24 blud2
-	5         15 eeriel   25
-	6 frog    16 ryon     26
-	7 kage    17 necro    27
-	8 basil   18          28
-	9 dragon  19 sirene   29
-	a kumo    1a cent     2a
-	b nise    1b wgod     2b
-	c grifon  1c pirates  2c puppet
-	d demon   1d skul     2d
-	e knight  1e          2e pros
-	f egrad   1f          2f ceye
 */

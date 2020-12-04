@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 // 3D texture quad-rendering + transformation related
 // product = factor * factor
 //             | x 0 0 |
@@ -51,7 +55,7 @@ function triad_area( $V1, $V2, $V3 )
 	$r1 = $V1[0] * ($V2[1] - $V3[1]);
 	$r2 = $V2[0] * ($V3[1] - $V1[1]);
 	$r3 = $V3[0] * ($V1[1] - $V2[1]);
-	$r = ($r1 + $r2 + $r3) / 2;
+	$r = 0.5 * ($r1 + $r2 + $r3);
 	return abs($r);
 }
 //////////////////////////////
@@ -59,8 +63,13 @@ function vector_dump( $V, $name )
 {
 	echo "$name ";
 	printf(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
-	if ( (int)($V[2]*100) !== 0 )
-		printf("  xy (%4d , %4d)", $V[0]/$V[2], $V[1]/$V[2]);
+
+	// ERROR : $V[2] divide by zero
+	if ( $V[2] == 0.0 )
+	{
+		$V[2] = 1 / $V[2];
+		printf("  xy (%4d , %4d)", $V[0]*$V[2], $V[1]*$V[2]);
+	}
 	echo "\n";
 	return;
 }
@@ -81,17 +90,50 @@ function vector_box( $vector )
 	return array($x1, $y1, $x2, $y2);
 }
 //////////////////////////////
+function quad_rebase( $V4 )
+{
+	// rebase $V4 to 0,0
+	$base = array((int)$V4[0][0] , (int)$V4[0][1]);
+	for ( $i=0; $i < 4; $i++ ) // A B C D
+	{
+		$V4[$i][0] -= $base[0];
+		$V4[$i][1] -= $base[1];
+	}
+
+	// get box size
+	$x1 = PHP_INT_MAX;
+	$y1 = PHP_INT_MAX;
+	$x2 = -PHP_INT_MAX;
+	$y2 = -PHP_INT_MAX;
+	for ( $i=0; $i < 4; $i++ ) // A B C D
+	{
+		if ( $x1 > $V4[$i][0] )  $x1 = (int)floor($V4[$i][0]);
+		if ( $y1 > $V4[$i][1] )  $y1 = (int)floor($V4[$i][1]);
+		if ( $x2 < $V4[$i][0] )  $x2 = (int)ceil ($V4[$i][0]);
+		if ( $y2 < $V4[$i][1] )  $y2 = (int)ceil ($V4[$i][1]);
+	}
+
+	$quad = array(
+		'quad' => $V4,
+		'base' => $base,
+		'box'  => array($x1, $y1, $x2, $y2),
+	);
+	trace("== quad_rebase() = %.2f , %.2f\n", $base[0], $base[1]);
+	trace("   box x = %.2f - %.2f  y = %.2f - %.2f\n", $x1, $x2, $y1, $y2);
+	return $quad;
+}
+
 function quad_dump( $V4, $type, $name )
 {
 	// winding order (x-hand-coordinate system)
-	//   1243 = 1 2 = left-hand / clockwise (CW)
+	//   1243 = 1 2 =  left-hand / clockwise (CW)
 	//          4 3
 	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
 	//          2 3
 	//
-	// SAT  Princess Crown = LEFT
-	// PSX  Lunar 2        = LEFT
-	// WII  Muramasa       = RIGHT
+	// SAT  Princess Crown = LEFT  , CW
+	// PSX  Lunar 2        = LEFT  , CW
+	// WII  Muramasa       = RIGHT , CCW
 	//
 	// c1 c2
 	// c3 c4
@@ -192,14 +234,18 @@ function matrix_inverse( $M )
 	);
 
 	// s4 multiply by 1/det
-	// https://www.mathsisfun.com/algebra/matrix-determinant.html
-	// if $det is zero , the matrix cannot be invert
+	//    https://www.mathsisfun.com/algebra/matrix-determinant.html
+	//    if $det is zero , the matrix cannot be invert
 	$det = $M[0]*$s3[0] + $M[1]*$s3[3] + $M[2]*$s3[6];
 	if ( $det == 0 )
-		return array(0,0,0,0,0,0,0,0,0);
+	{
+		php_warning("matrix_inverse() determinant is zero");
+		return 0;
+	}
 
+	$det = 1 / $det;
 	for ( $i=0; $i < 9; $i++ )
-		$s3[$i] = $s3[$i] / $det;
+		$s3[$i] = $s3[$i] * $det;
 	//     |  3  0  2 |         |  0.2  0.2  0   |
 	// A = |  2  0 -2 |  A^-1 = | -0.2  0.3  1.0 |
 	//     |  0  1  1 |         |  0.2 -0.3  0   |
@@ -231,7 +277,7 @@ function copyquad_errs( &$pix )
 
 	if ( ! empty($err) )
 	{
-		trigger_error($err, E_USER_ERROR);
+		php_error($err);
 		return true;
 	}
 	return false;
@@ -239,11 +285,15 @@ function copyquad_errs( &$pix )
 
 function copyquad( &$pix, $byte=1 )
 {
+	if ( $byte != 1 && $byte != 4 ) // 1=CLUT  4=RGBA  *=invalid
+		return;
 	if ( copyquad_errs($pix) )
 		return;
 	if ( defined("DRY_RUN") )
 		return;
 
+	$qsrc = quad_rebase( $pix['src']['vector'] );
+	$qdes = quad_rebase( $pix['vector'] );
 	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
 	//
 	// 2D transformation
@@ -260,13 +310,13 @@ function copyquad( &$pix, $byte=1 )
 	// h2 = cross( cross(A,D) , cross(B,C) ) // cross( left   , right )
 	// h3 = cross( cross(A,C) , cross(B,D) ) // cross( center , center )
 	$crx = "cross_product";
-	$H1 = $crx( $crx( $pix['src']['vector'][1],$pix['src']['vector'][0] ) , $crx( $pix['src']['vector'][2],$pix['src']['vector'][3] ) );
-	$H2 = $crx( $crx( $pix['src']['vector'][0],$pix['src']['vector'][3] ) , $crx( $pix['src']['vector'][1],$pix['src']['vector'][2] ) );
-	$H3 = $crx( $crx( $pix['src']['vector'][0],$pix['src']['vector'][2] ) , $crx( $pix['src']['vector'][1],$pix['src']['vector'][3] ) );
+	$H1 = $crx( $crx( $qsrc['quad'][1],$qsrc['quad'][0] ) , $crx( $qsrc['quad'][2],$qsrc['quad'][3] ) );
+	$H2 = $crx( $crx( $qsrc['quad'][0],$qsrc['quad'][3] ) , $crx( $qsrc['quad'][1],$qsrc['quad'][2] ) );
+	$H3 = $crx( $crx( $qsrc['quad'][0],$qsrc['quad'][2] ) , $crx( $qsrc['quad'][1],$qsrc['quad'][3] ) );
 
-	$h1 = $crx( $crx( $pix['vector'][1],$pix['vector'][0] ) , $crx( $pix['vector'][2],$pix['vector'][3] ) );
-	$h2 = $crx( $crx( $pix['vector'][0],$pix['vector'][3] ) , $crx( $pix['vector'][1],$pix['vector'][2] ) );
-	$h3 = $crx( $crx( $pix['vector'][0],$pix['vector'][2] ) , $crx( $pix['vector'][1],$pix['vector'][3] ) );
+	$h1 = $crx( $crx( $qdes['quad'][1],$qdes['quad'][0] ) , $crx( $qdes['quad'][2],$qdes['quad'][3] ) );
+	$h2 = $crx( $crx( $qdes['quad'][0],$qdes['quad'][3] ) , $crx( $qdes['quad'][1],$qdes['quad'][2] ) );
+	$h3 = $crx( $crx( $qdes['quad'][0],$qdes['quad'][2] ) , $crx( $qdes['quad'][1],$qdes['quad'][3] ) );
 
 	//   | H1x H2x H3x |   | h1x h2x h3x |
 	// M | H1y H2y H3y | = | h1y h2y h3y |
@@ -287,27 +337,29 @@ function copyquad( &$pix, $byte=1 )
 		matrix_dump($h, "h");
 
 	$Hinv = matrix_inverse($H);
+		if ( $Hinv === 0 )  return;
+		matrix_dump($Hinv, "Hinv");
+
 	$M    = matrix_multi33($h, $Hinv);
 	$Minv = matrix_inverse($M);
-		matrix_dump($Hinv, "Hinv");
+		if ( $Minv === 0 )  return;
 		matrix_dump($M   , "M");
 		matrix_dump($Minv, "Minv");
 
 	// sum of quad area
-	$q1 = triad_area($pix['vector'][0], $pix['vector'][1], $pix['vector'][2]); // ABC
-	$q2 = triad_area($pix['vector'][0], $pix['vector'][3], $pix['vector'][2]); // ADC
+	$q1 = triad_area($qdes['quad'][0], $qdes['quad'][1], $qdes['quad'][2]); // ABC
+	$q2 = triad_area($qdes['quad'][0], $qdes['quad'][3], $qdes['quad'][2]); // ADC
 	$qsz = $q1 + $q2;
 
-	list($x1,$y1,$x2,$y2) = vector_box( $pix['vector'] );
-	for ( $y=$y1; $y <= $y2; $y++ )
+	for ( $y = $qdes['box'][1]; $y <= $qdes['box'][3]; $y++ )
 	{
-		for ( $x=$x1; $x <= $x2; $x++ )
+		for ( $x = $qdes['box'][0]; $x <= $qdes['box'][2]; $x++ )
 		{
 			$xy = array($x,$y,1);
-			$q1 = triad_area($xy, $pix['vector'][0], $pix['vector'][1]); // pAB
-			$q2 = triad_area($xy, $pix['vector'][1], $pix['vector'][2]); // pBC
-			$q3 = triad_area($xy, $pix['vector'][2], $pix['vector'][3]); // pCD
-			$q4 = triad_area($xy, $pix['vector'][3], $pix['vector'][0]); // pDA
+			$q1 = triad_area($xy, $qdes['quad'][0], $qdes['quad'][1]); // pAB
+			$q2 = triad_area($xy, $qdes['quad'][1], $qdes['quad'][2]); // pBC
+			$q3 = triad_area($xy, $qdes['quad'][2], $qdes['quad'][3]); // pCD
+			$q4 = triad_area($xy, $qdes['quad'][3], $qdes['quad'][0]); // pDA
 
 			// if $xy is outside quad , sum of $q will be bigger than $qsz
 			if ( ($q1+$q2+$q3+$q4) > $qsz )
@@ -318,15 +370,18 @@ function copyquad( &$pix, $byte=1 )
 			$t = matrix_multi31($Minv, array($x,$y,1));
 
 			// ERROR : $t[2] divide by zero
-			if ( (int)($t[2]*100) === 0 )
+			if ( $t[2] == 0.0 )
 				continue;
-			$sx = (int)round($t[0] / $t[2]);
-			$sy = (int)round($t[1] / $t[2]);
+			// MomohimeH_Rest_drm/0126.png
+			//   round() cause a gap between joint parts
+			//   can be prevented by using ceil() or floor() only
+			$t[2] = 1 / $t[2];
+			$sx = (int)($t[0] * $t[2]);
+			$sy = (int)($t[1] * $t[2]);
 
-			updatepix($pix, $byte, $sx, $sy, $x, $y);
+			updatepix($pix, $byte, $qsrc['base'][0]+$sx, $qsrc['base'][1]+$sy, $qdes['base'][0]+$x, $qdes['base'][1]+$y);
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
-
 	return;
 }
 //////////////////////////////

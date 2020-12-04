@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 // 800004a  0

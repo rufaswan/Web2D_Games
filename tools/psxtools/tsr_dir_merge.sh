@@ -1,4 +1,9 @@
 #!/bin/bash
+<<'////'
+[license]
+[/license]
+////
+
 echo "${0##*/}  DEST_DIR  [-mv/-cp]  SRC_DIR...";
 (( $# < 2 )) && exit
 

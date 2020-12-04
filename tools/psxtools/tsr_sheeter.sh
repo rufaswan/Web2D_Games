@@ -1,4 +1,9 @@
 #!/bin/bash
+<<'////'
+[license]
+[/license]
+////
+
 echo "${0##*/}  THUMB_ID";
 [ $# = 0 ] && exit
 

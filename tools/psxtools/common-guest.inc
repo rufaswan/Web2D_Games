@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 // non-PlayStation One (guest systems) functions
 
 function substrrev( &$str, $pos, $len )
@@ -36,7 +40,7 @@ function str_endian( &$str, $pos, $byte )
 function req_ext( $func, $ext )
 {
 	if ( ! function_exists($func) )
-		trigger_error("REQ $ext extension not found!\n", E_USER_ERROR);
+		php_error("$ext extension not found!");
 	return;
 }
 
@@ -113,7 +117,7 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 			$clut[] = $c;
 		$p = array_search($c, $clut);
 		if ( $p > BIT8 )
-			trigger_error("rgba2clut() clut over 256 colors\n", E_USER_ERROR);
+			php_error("rgba2clut() clut over 256 colors");
 		$pix .= chr($p);
 	}
 	$clut = implode('', $clut);
@@ -214,7 +218,7 @@ function nds_overlay( &$ndsram, $dir, $id )
 
 	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
 	$bin  = load_file($over);
-	printf("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
+	trace("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
 		strupd($ndsram, $off, $bin);
 	return array($off, $start);
 }

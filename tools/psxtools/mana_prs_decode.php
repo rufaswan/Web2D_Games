@@ -1,13 +1,17 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 function mana_decode( &$file , $st )
 {
 	// sub_80014448-80014888 , SLPS_021.70
 	// data loaded to 8001dc003 , decode to 8004fdd8
-	echo "=== begin sub_80014448 ===\n";
+	trace("=== begin sub_80014448 ===\n");
 	$dec = "";
 	$ed = strlen($file);
 	while ( $st < $ed )
@@ -248,7 +252,7 @@ function mana_decode( &$file , $st )
 		} // switch ( $b1 - 0xf0 )
 	} // while ( $st < $ed )
 
-	echo "=== end sub_80014448 ===\n";
+	trace("=== end sub_80014448 ===\n");
 	return $dec;
 }
 

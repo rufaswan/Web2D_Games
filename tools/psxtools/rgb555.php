@@ -1,4 +1,9 @@
 <?php
+/*
+[license]
+[/license]
+ */
+
 function rgb555( $clut )
 {
 	if ( preg_match("|[g-zG-Z]|", $clut) )

@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 function updmap( &$canvas, &$src, $dx, $dy, $w, $h )

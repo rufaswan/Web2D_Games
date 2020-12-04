@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * 00 4 HEAD end
  * 04 4
  * 08 4

@@ -1,7 +1,12 @@
 <?php
+/*
+[license]
+[/license]
+ */
+
 function xeno_decode( &$file, $st, $ed )
 {
-	echo "== begin sub_80032cac\n";
+	trace("== begin sub_80032cac\n");
 
 	$lw = str2int($file, $st, 3);
 		$st += 4;
@@ -48,7 +53,7 @@ function xeno_decode( &$file, $st, $ed )
 			$dec .= $b1;
 		}
 	} // while ( $st < $ed )
-	echo "== end sub_80032cac\n";
+	trace("== end sub_80032cac\n");
 
 	return $dec;
 }

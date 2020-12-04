@@ -1,15 +1,18 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 require "common-quad.inc";
 
-define("CANV_S", 0x400);
 define("SCALE", 1.0);
 //define("DRY_RUN", true);
 
 $gp_pix = array();
 
-function sectquad( &$mbs, $pos, &$pix, $ceil, $SCALE )
+function sectquad( &$mbs, $pos, $name, $SCALE )
 {
 	$qax = float32( substrrev($mbs, $pos+ 0, 4) );
 	$qay = float32( substrrev($mbs, $pos+ 4, 4) );
@@ -25,9 +28,9 @@ function sectquad( &$mbs, $pos, &$pix, $ceil, $SCALE )
 	$qfy = float32( substrrev($mbs, $pos+44, 4) );
 
 	if ( $qbx != $qfx )
-		trigger_error("qbx != qfx [$qbx,$qfx]\n", E_USER_NOTICE);
+		php_notice("qbx != qfx [%.2f,%.2f]", $qbx, $qfx);
 	if ( $qby != $qfy )
-		trigger_error("qby != qfy [$qby,$qfy]\n", E_USER_NOTICE);
+		php_notice("qby != qfy [%.2f,%.2f]", $qby, $qfy);
 
 	$qbx *= $SCALE;
 	$qby *= $SCALE;
@@ -38,13 +41,6 @@ function sectquad( &$mbs, $pos, &$pix, $ceil, $SCALE )
 	$qex *= $SCALE;
 	$qey *= $SCALE;
 
-	$pix = array(
-		array( $qbx+$ceil , $qby+$ceil , 1 ),
-		array( $qcx+$ceil , $qcy+$ceil , 1 ),
-		array( $qdx+$ceil , $qdy+$ceil , 1 ),
-		array( $qex+$ceil , $qey+$ceil , 1 ),
-	);
-
 	$bcde = array(
 		array($qbx,$qby,1),
 		array($qcx,$qcy,1),
@@ -52,10 +48,10 @@ function sectquad( &$mbs, $pos, &$pix, $ceil, $SCALE )
 		array($qex,$qey,1),
 	);
 
-	printf("== sectquad( %x , %d , %.2f )\n", $pos, $ceil, $SCALE);
+	printf("== sectquad( %x , $name , %.2f )\n", $pos, $SCALE);
 	printf("    af %7.2f,%7.2f  %7.2f,%7.2f\n", $qax, $qay, $qfx, $qfy);
 	quad_dump($bcde, "1423", "bcde");
-	return;
+	return $bcde;
 }
 
 function load_tpl( &$pix, $tid , $pfx )
@@ -108,33 +104,95 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 {
 	printf("== sectpart( $dir , $pfx , %x , %x )\n", $id6, $no6);
 
-	$ceil = int_ceil(CANV_S * SCALE, 2);
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
-	$pix['alpha'] = "alpha_over";
-
+	// ERROR : computer run out of memory
+	// required CANV_S is too large for bg/*.mbs
+	//   auto canvas size detection
+	//   auto move center point 0,0 from middle-center to top-left
+	//   auto trim is DISABLED
+	$data = array();
+	$CANV_S = 0;
+	$is_mid = false;
 	for ( $i4=0; $i4 < $no6; $i4++ )
 	{
 		$p4 = ($id6 + $i4) * $mbs[4]['k'];
 
-		// 0 1 2 3    4 5  6 7 8 9  a b
-		// - - - tid  s1   - - - -  s2
+		// 0  1    2    3    4 5  6 7 8 9  a b
+		// -  typ  flg  tid  s1   - - - -  s2
+		// 00 ??
+		// 01 always
+		// 03 eyes , leaf
+		// 05 censored naughty part
+		// ?  ??
+		$typ = str2big($mbs[4]['d'], $p4+ 1, 1);
+		if ( $typ != 1 )
+			continue;
+
+		// 00 always
+		// 01 [ERROR over-blending -> ALL WHITE]
+		// 02 additive blending
+		// ?  ??
+		$flg = str2big($mbs[4]['d'], $p4+ 2, 1);
+		if ( $flg == 1 )
+			continue;
+
 		$tid = str2big($mbs[4]['d'], $p4+ 3, 1);
 		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
 		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
 			$tid *= 10; // tpl can have multiple images
 
-		load_tpl($pix, $tid, $pfx);
-		sectquad($mbs[1]['d'], $s1*$mbs[1]['k'], $pix['src']['vector'], 0, 1);
-		sectquad($mbs[2]['d'], $s2*$mbs[2]['k'], $pix['vector'], $ceil/2, SCALE);
+		$sqd = sectquad($mbs[1]['d'], $s1*$mbs[1]['k'], "mbs 1 $s1", 1);
+		$dqd = sectquad($mbs[2]['d'], $s2*$mbs[2]['k'], "mbs 2 $s2", SCALE);
+		$data[] = array($flg, $tid, $sqd, $dqd);
 
-		debug( substr($mbs[6]['d'], $p4, 12) );
-		copyquad($pix, 4);
+		// detect origin and canvas size
+		for ( $i=0; $i < 4; $i++ )
+		{
+			$s1 = abs( $dqd[$i][0] );
+			$s2 = abs( $dqd[$i][1] );
+			if ( $s1 > $CANV_S )  $CANV_S = $s1;
+			if ( $s2 > $CANV_S )  $CANV_S = $s2;
+			if ( ! $is_mid )
+			{
+				if ( $dqd[$i][0] < 0 || $dqd[$i][1] < 0 )
+					$is_mid = true;
+			}
+		} // for ( $i=0; $i < 4; $i++ )
+		printf("CANV_S  %d\n", $CANV_S);
+
 	} // for ( $i4=0; $i4 < $no6; $i4++ )
+	if ( empty($data) )
+		return;
 
-	savpix($dir, $pix, true);
+	$ceil = int_ceil($CANV_S * 2, 16);
+	$pix = COPYPIX_DEF();
+	$pix['rgba']['w'] = $ceil;
+	$pix['rgba']['h'] = $ceil;
+	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$origin = ( $is_mid ) ? $ceil / 2 : 0;
+	printf("ORIGIN  %d\n", $origin);
+
+	foreach ( $data as $dv )
+	{
+		list($flg, $tid, $sqd, $dqd) = $dv;
+
+		$pix['alpha'] = "alpha_over";
+		if ( $flg == 2 )
+			$pix['alpha'] = "alpha_add";
+
+		$pix['src']['vector'] = $sqd;
+		for ( $i=0; $i < 4; $i++ )
+		{
+			$dqd[$i][0] += $origin;
+			$dqd[$i][1] += $origin;
+		}
+		$pix['vector'] = $dqd;
+
+		load_tpl($pix, $tid, $pfx);
+		copyquad($pix, 4);
+	} // foreach ( $data as $dv )
+
+	savpix($dir, $pix, false);
 	return;
 }
 
@@ -208,22 +266,46 @@ function sectanim( &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
+function mbscoldbg( &$mbs, $id, $pos )
+{
+	$len = strlen( $mbs[$id]['d'] );
+	$dbg = array();
+	for ( $i=0; $i < $len; $i += $mbs[$id]['k'] )
+	{
+		$b1 = ord( $mbs[$id]['d'][$i+$pos] );
+		if ( ! isset( $dbg[$b1] ) )
+			$dbg[$b1] = 0;
+		$dbg[$b1]++;
+	}
+
+	printf("== mbscoldbg( %x , %x )\n", $id, $pos);
+	foreach ( $dbg as $k => $v )
+		printf("  %2x = %8x\n", $k, $v);
+	return;
+}
+
 function mbsdbg( &$meta, $name, $blk )
 {
 	$len = strlen($meta);
 	printf("== mbsdbg( $name , %x ) = %x\n", $blk, $len);
+
+	ob_start();
 	for ( $i=0; $i < $len; $i += $blk )
 	{
 		$n = sprintf("%4x", $i/$blk);
 		debug( substr($meta, $i, $blk), $n );
 	}
+	$buf = ob_get_clean();
+	//echo "$buf\n";
+	save_file("$name.txt", $buf);
+
 	return;
 }
 
 function loadmbs( &$mbs, $sect, $pfx )
 {
-	$feof = strrpos($mbs, "FEOC");
 	$offs = array();
+	$offs[] = strrpos($mbs, "FEOC");
 	foreach ( $sect as $k => $v )
 	{
 		$b1 = str2big($mbs, $v['p'], 4);
@@ -236,17 +318,14 @@ function loadmbs( &$mbs, $sect, $pfx )
 
 	foreach ( $sect as $k => $v )
 	{
+		if ( ! isset( $v['o'] ) )
+			continue;
 		$id = array_search($v['o'], $offs);
-		if ( isset( $offs[$id+1] ) )
-			$sz = $offs[$id+1] - $v['o'];
-		else
-			$sz = $feof - $v['o'];
-
-		$sz  = int_floor($sz, $v['k']);
+		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
 		$dat = substr($mbs, $v['o'], $sz);
 
-		save_file("$pfx/meta/$k.meta", $dat);
-		//mbsdbg($dat, "meta $k", $v['k']);
+		//save_file("$pfx/meta/$k.meta", $dat);
+		mbsdbg($dat, "$pfx/meta/$k", $v['k']);
 
 		$sect[$k]['d'] = $dat;
 	} // foreach ( $sect as $k => $v )
@@ -269,8 +348,10 @@ function mura( $fname )
 	// $siz = str2int($mbs, 4, 3);
 	// $hdz = str2int($mbs, 8, 3);
 	// $len = 0x10 + $hdz + $siz;
-
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
+
+	global $gp_pix;
+	$gp_pix = array();
 
 	//   0 1 2 |     1-0 2-1 3-2
 	// 3 4 5 6 | 6-3 5-4 9-5 7-6
@@ -279,6 +360,10 @@ function mura( $fname )
 	//        a0  b8  e8 |      1*18 1*30 1*30
 	//   118 244 250 168 | 1*50 1*c  1*8  1*18
 	//   180 1a4 258 348 | 1*24 5*20 5*30 5*10
+	// s9[+28] = 4+1 => s8/sa
+	// sa[+ 0] = 4+1 => s8
+	// s8[]
+	//
 	// momohime_battle_drm.mbs
 	//            a0   6b8  2cc8 |        41*18 cb*30 7bd*30
 	//   1a038 26484 31a7c 1a7b8 | 18*50 f2a*c  f2*8  127*18
@@ -288,27 +373,92 @@ function mura( $fname )
 	// s8[+ 0] = 126   => s6
 	// s6[+10] = f29+1 => s4
 	// s4[+ 4] =  ca   => s1 , [+ a] = 7bc => s2
+	// s1[]
+	// s2[]
 	//
-	// s9-sa-s8-s6-s4-s1,s2
+	// s9-sa-s8-s6-s4-[s1,s2]
 	$sect = array(
-		array('p' => 0x54 ,'k' => 0x18), // 0
-		array('p' => 0x58 ,'k' => 0x30), // 1
-		array('p' => 0x5c ,'k' => 0x30), // 2 dummy_npc=0
-		array('p' => 0x60 ,'k' => 0x50), // 3 bg=0
-		array('p' => 0x64 ,'k' => 0x0c), // 4
-		array('p' => 0x68 ,'k' => 0x08), // 5 bg=0
-		array('p' => 0x6c ,'k' => 0x18), // 6
-		array('p' => 0x70 ,'k' => 0x24), // 7
-		array('p' => 0x74 ,'k' => 0x20), // 8
-		array('p' => 0x78 ,'k' => 0x30), // 9
-		array('p' => 0x7c ,'k' => 0x10), // 10
+		array('p' => 0x54 , 'k' => 0x18), // 0
+		array('p' => 0x58 , 'k' => 0x30), // 1
+		array('p' => 0x5c , 'k' => 0x30), // 2 dummy_npc=0
+		array('p' => 0x60 , 'k' => 0x50), // 3 bg=0
+		array('p' => 0x64 , 'k' => 0x0c), // 4
+		array('p' => 0x68 , 'k' => 0x08), // 5 bg=0
+		array('p' => 0x6c , 'k' => 0x18), // 6
+		array('p' => 0x70 , 'k' => 0x24), // 7
+		array('p' => 0x74 , 'k' => 0x20), // 8
+		array('p' => 0x78 , 'k' => 0x30), // 9
+		array('p' => 0x7c , 'k' => 0x10), // 10
 	);
 	loadmbs($mbs, $sect, $pfx);
+	mbscoldbg($mbs, 4, 1); // byte censored parts check
+	mbscoldbg($mbs, 4, 2); // byte alpha add blending check
 
 	sectanim($mbs, $pfx);
-	sectspr($mbs, $pfx);
+	sectspr ($mbs, $pfx);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	mura( $argv[$i] );
+
+/*
+type != 1 3 5
+	07  /bg/bg02/b_00.mbs
+	07  /bg/bg04_02.mbs
+	04  /bg/bg20_00.mbs
+	04  /bg/bg21c/f_00.mbs
+	11  /bg/bg23a_00.mbs
+	04  /bg/bg30/b/c_00.mbs
+	04  /bg/bg33_00.mbs
+	04  /bg/bg37_00.mbs
+	00  /bg/bg_share02a_00.mbs
+	00  /bg/bg_test.mbs
+	00  /bg/staffroll_kc.mbs
+
+	11  /char/keukegen00.mbs
+	11 29 2d  /char/Kongaradoji00.mbs
+	11  /char/musya00.mbs
+	11  /char/Seitakadoji00.mbs
+	00 04  /char/tokugawa00/04.mbs
+	00  /char/umibouzu00.mbs
+	11  /char/Yukionna00.mbs
+
+	29 2d  /drm_char/Kisuke_Battle_drm.mbs
+	02  /drm_char/Kongiku_drm.mbs
+	2d  /drm_char/Momohime_Battle_drm.mbs
+	11  /drm_char/MomohimeE_Battle_drm.mbs
+	2d  /drm_char/MomohimeH_Rest_drm.mbs
+	11 13 15  /drm_char/Momokurousoul_drm.mbs
+	00  /drm_char/Oooni_Stomach_drm00.mbs
+flag != 0 1
+	02  /char/Ashiba_A00.mbs
+	02  /char/bourei00.mbs
+	02  /char/dragon00.mbs
+	02  /char/Fudoumyouou00.mbs
+	02  /char/Fudoumyouou_A/B/C/D/E/F00.mbs
+	02  /char/gaki00/01/02.mbs
+	02  /char/Genin00/01/02.mbs
+	02  /char/Gozu00.mbs
+	02  /char/Karakasa00.mbs
+	02  /char/Karasutengu00/01.mbs
+	02  /char/keukegen00.mbs
+	02  /char/Kisuke_Rest.mbs
+	02  /char/Kongaradoji00.mbs
+	02  /char/Mezu00.mbs
+	02  /char/mukade00.mbs
+	02  /char/musya00.mbs
+	02  /char/nue00.mbs
+	02  /char/Ochimusya00/01.mbs
+	02  /char/Oni00.mbs
+
+	02  /drm_char/EchigoyaB_drm00.mbs
+	02  /drm_char/Fudoumyouou_drm00.mbs
+	02  /drm_char/Kisuke_Battle_drm.mbs
+	02  /drm_char/Morahime_drm00.mbs
+	02  /drm_char/musya_drm00.mbs
+	02  /drm_char/Ochimusya_drm00/01.mbs
+	02  /drm_char/Oooni_Stomach_drm00.mbs
+	02  /drm_char/tokugawa_drm00.mbs
+	02  /drm_char/wanyuudou_drm00.mbs
+ */

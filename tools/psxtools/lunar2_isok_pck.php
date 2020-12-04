@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-quad.inc";
 require "lunar2.inc";

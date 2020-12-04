@@ -1,10 +1,14 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "xeno.inc";
 
 define("VRAM_W", 0x400);
 define("VRAM_H", 0x200);
-//define("TRACE", true);
+//define("NO_TRACE", true);
 
 function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 {
@@ -140,7 +144,7 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 
 			return $pix;
 		default:
-			trigger_error("UNKNOWN\n", E_USER_ERROR);
+			php_error("UNKNOWN");
 			return $pix;
 	}
 	return $pix;

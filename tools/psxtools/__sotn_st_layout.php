@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * Special Thanks to:
  *   Zone File Technical Documentation by Nyxojaele (Dec 26, 2010)
  *   romhacking.net/documents/528/

@@ -1,7 +1,11 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 function rusty_decode( &$file, $st )
 {

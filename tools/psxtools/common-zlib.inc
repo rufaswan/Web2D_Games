@@ -1,9 +1,13 @@
 <?php
+/*
+[license]
+[/license]
+ */
 if ( PHP_VERSION_ID < 050400 )
-	trigger_error("zlib extension requires PHP 5.4.0 or later\n", E_USER_ERROR);
+	php_error("zlib extension requires PHP 5.4.0 or later");
 
 if ( ! function_exists("zlib_decode") )
-	trigger_error("zlib extension not found!\n", E_USER_ERROR);
+	php_error("zlib extension not found!");
 
 // enum
 //   ZLIB_ENCODING_RAW     = -15

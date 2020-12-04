@@ -1,4 +1,9 @@
 <?php
+/*
+[license]
+[/license]
+ */
+
 function sectquad( &$pix, &$meta, $p, $ceil )
 {
 	$qax = sint16( $meta[$p+ 6] . $meta[$p+ 7] );
@@ -46,7 +51,7 @@ function sectquad( &$pix, &$meta, $p, $ceil )
 
 function sectparts( &$meta, $dir )
 {
-	printf("== sectparts( $dir )\n");
+	trace("== sectparts( $dir )\n");
 
 	$ceil = int_ceil(CANV_S * SCALE, 2);
 	$pix = COPYPIX_DEF();
@@ -75,8 +80,8 @@ function sectparts( &$meta, $dir )
 		$pix['bgzero'] = 0;
 
 		sectquad($pix, $meta, $i, $ceil/2);
-		printf("%4d , %4d , %4d , %4d", $sx, $sy, $w, $h);
-		printf(" , %02x\n", $b1);
+		trace("%4d , %4d , %4d , %4d", $sx, $sy, $w, $h);
+		trace(" , %02x\n", $b1);
 
 		copyquad($pix, 1);
 	} // for ( $i=0; $i < $len; $i += 0x16 )
@@ -87,7 +92,7 @@ function sectparts( &$meta, $dir )
 
 function sectmeta( &$meta, $dir )
 {
-	printf("== sectmeta( $dir )\n");
+	trace("== sectmeta( $dir )\n");
 	//save_file("$dir/meta", $meta);
 
 	$ed = str2int($meta, 4, 4);
@@ -101,7 +106,7 @@ function sectmeta( &$meta, $dir )
 
 		$pos = $ed + ($off * 0x16);
 		$sub = substr ($meta, $pos, $num*0x16);
-		printf("meta() %x , %x\n", $pos, $num*0x16);
+		trace("meta() %x , %x\n", $pos, $num*0x16);
 
 		$fn = sprintf("$dir/%04d", ($i-$st)/4);
 		sectparts($sub, $fn);

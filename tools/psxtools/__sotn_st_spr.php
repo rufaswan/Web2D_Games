@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * Special Thanks to:
  *   Zone File Technical Documentation by Nyxojaele (Dec 26, 2010)
  *   romhacking.net/documents/528/
@@ -7,7 +11,7 @@
 require "common.inc";
 
 //define("DRY_RUN", true);
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 // map files are loaded to RAM 80180000
 // offsets here are RAM pointers
@@ -25,7 +29,7 @@ function sotn_decode( &$meta, $dir, $off )
 {
 	// sub_800eb398-800eb614 , SLPM_860.23/DRA.BIN
 	// st/top/top.bin , 80183538 -> 801ffe18 -> VRAM
-	echo "=== begin sub_800eb398 ===\n";
+	trace("=== begin sub_800eb398 ===\n");
 	$dn = "$dir/$off.dec";
 
 	$a0 = substr($meta, $off, 8);
@@ -34,6 +38,7 @@ function sotn_decode( &$meta, $dir, $off )
 	$dec = "";
 	while (1)
 	{
+		trace("%6x  %6x  ", $off, strlen($dec));
 		while ( count($v0) < 8 )
 		{
 			$b = ord( $meta[$off] );
@@ -49,31 +54,39 @@ function sotn_decode( &$meta, $dir, $off )
 				$b1 = array_shift($v0);
 				$b2 = array_shift($v0);
 				$b = ($b1 << 4) + $b2 + 19;
+
+				trace("%x ZERO %x\n", $flg, $b);
 				$dec .= str_repeat(ZERO, $b);
 				break;
 			case 2:
 				$b1 = array_shift($v0);
+				trace("%x REP2 %2x\n", $flg, $b1);
 				$dec .= chr($b1) . chr($b1);
 				break;
 
 			case 4:
 				$b1 = array_shift($v0);
+				trace("%x REP  %2x\n", $flg, $b1);
 				$dec .= chr($b1);
 			case 3:
 				$b1 = array_shift($v0);
+				trace("%x REP  %2x\n", $flg, $b1);
 				$dec .= chr($b1);
 			case 1:
 				$b1 = array_shift($v0);
+				trace("%x REP  %2x\n", $flg, $b1);
 				$dec .= chr($b1);
 				break;
 
 			case 5:
 				$b1 = array_shift($v0);
 				$b2 = array_shift($v0);
+				trace("%x DUP  %2x  %2x\n", $flg, $b1, $b2+3);
 				$dec .= str_repeat(chr($b1), $b2+3);
 				break;
 			case 6:
 				$b1 = array_shift($v0);
+				trace("%x ZERO %x\n", $flg, $b1+3);
 				$dec .= str_repeat(ZERO, $b1+3);
 				break;
 
@@ -88,22 +101,33 @@ function sotn_decode( &$meta, $dir, $off )
 				$b = ord( $a0[$flg-7] );
 				$b1 = ($b >> 4) & BIT4;
 				$b2 = ($b >> 0) & BIT4;
-				if ( $b1 == 2 )
-					$dec .= chr($b2) . chr($b2);
-				else
-				if ( $b1 == 1 )
-					$dec .= chr($b2);
-				else
-				if ( $b1 == 6 )
-					$dec .= str_repeat(ZERO, $b2+3);
+				switch ( $b1 )
+				{
+					case 2:
+						$dec .= chr($b2) . chr($b2);
+						trace("%x CTRL %2x REP2 %2x\n", $flg, $b, $b2);
+						break;
+					case 1:
+						$dec .= chr($b2);
+						trace("%x CTRL %2x REP  %2x\n", $flg, $b, $b2);
+						break;
+					case 6:
+						$dec .= str_repeat(ZERO, $b2+3);
+						trace("%x CTRL %2x ZERO %x\n", $flg, $b, $b2+3);
+						break;
+					default:
+						php_error("%x UNKNOWN b1 %x", $b1);
+						break;
+				}
 				break;
 
 			case 15:
+				trace("%x END\n", $flg);
 				break 2;
 		}
 	} // while (1)
 
-	echo "=== end sub_800eb398 ===\n";
+	trace("=== end sub_800eb398 ===\n");
 	file_put_contents($dn, $dec);
 	return $dec;
 }

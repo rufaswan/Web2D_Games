@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 
@@ -36,6 +40,8 @@ function cl_ia8( $str )
 
 function cl_rgb565( $str )
 {
+	// fedc ba98  7654 3210
+	// rrrr rggg  gggb bbbb
 	$pal = ordint($str);
 	$b = ($pal << 3) & 0xf8; // << 11 >> 8
 	$g = ($pal >> 3) & 0xfc; // <<  5 >> 8
@@ -49,6 +55,8 @@ function cl_rgb5a3( $str )
 	$pal = ordint($str);
 	if ( $pal & 0x8000 )
 	{
+		// fedc ba98 7654 3210
+		// -rrr rrgg gggb bbbb
 		$b = ($pal << 3) & 0xf8; // << 11 >> 8
 		$g = ($pal >> 2) & 0xf8; // <<  6 >> 8
 		$r = ($pal >> 7) & 0xf8; // <<  1 >> 8
@@ -56,6 +64,8 @@ function cl_rgb5a3( $str )
 	}
 	else
 	{
+		// fedc ba98 7654 3210
+		// -aaa rrrr gggg bbbb
 		$b = ($pal << 4) & 0xf0; // << 12 >> 8
 		$g = ($pal >> 0) & 0xf0; // <<  8 >> 8
 		$r = ($pal >> 4) & 0xf0; // <<  4 >> 8
@@ -69,6 +79,9 @@ function cl_rgba32( $block )
 	$pix = "";
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
+		// planar
+		//  a r a r a r ...
+		//  g b g b g b ...
 		$r = $block[$i+0x01];
 		$g = $block[$i+0x20];
 		$b = $block[$i+0x21];
@@ -192,6 +205,21 @@ function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 function tplformat( &$file, $pos, $fmt, $iw, $ih, &$gp_clut )
 {
 	printf("== tplformat( %x , $fmt , $iw , $ih )\n", $pos);
+	$ifmt = array(
+		0  => "im_i4",     //  4-bit ,  4*8 = 20
+		1  => "im_i8",     //  8-bit ,  8*4 = 20
+		2  => "im_ia4",    //  8-bit ,  8*4 = 20
+		3  => "im_ia8",    // 16-bit ,  8*4 = 20
+		4  => "im_rgb565", // 16-bit ,  8*4 = 20
+		5  => "im_rgb5a3", // 16-bit ,  8*4 = 20
+		6  => "im_rgba32", // 32-bit , 10*4 = 40
+		8  => "im_c4",     //  4-bit ,  4*8 = 20
+		9  => "im_c8",     //  8-bit ,  8*4 = 20
+		10 => "im_c14x2",  // 16-bit ,  8*4 = 20
+		14 => "im_cmpr",   //  4-bit ,  4*8 = 20
+	);
+	printf("DETECT %s\n", $ifmt[$fmt]);
+
 	$pix = "";
 	switch ( $fmt )
 	{
@@ -383,19 +411,6 @@ function wiitpl( &$file, $base, $pfx, $id )
 		1 => "cl_rgb565",
 		2 => "cl_rgb5a3",
 	);
-	$ifmt = array(
-		0  => "im_i4",     //  4-bit ,  4*8 = 20
-		1  => "im_i8",     //  8-bit ,  8*4 = 20
-		2  => "im_ia4",    //  8-bit ,  8*4 = 20
-		3  => "im_ia8",    // 16-bit ,  8*4 = 20
-		4  => "im_rgb565", // 16-bit ,  8*4 = 20
-		5  => "im_rgb5a3", // 16-bit ,  8*4 = 20
-		6  => "im_rgba32", // 32-bit , 10*4 = 40
-		8  => "im_c4",     //  4-bit ,  4*8 = 20
-		9  => "im_c8",     //  8-bit ,  8*4 = 20
-		10 => "im_c14x2",  // 16-bit ,  8*4 = 20
-		14 => "im_cmpr",   //  4-bit ,  4*8 = 20
-	);
 
 	for ( $i=0; $i < $cnt; $i++ )
 	{
@@ -422,6 +437,7 @@ function wiitpl( &$file, $base, $pfx, $id )
 				$gp_clut .= $c( $file[$p+1] . $file[$p+0] );
 				$p += 2;
 			}
+			printf("add CLUT %s @ %x\n", $c, $ph1);
 		}
 
 		// image

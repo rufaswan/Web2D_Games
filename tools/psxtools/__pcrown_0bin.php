@@ -1,14 +1,116 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 
-define("CLR_OFF", 0x154fc); // 0x9ca8e - 0x4000
-define("PAL_OFF", 0x98a8e); // 0x9ca8e - 0x4000
+define("CLR_OFF", 0x154fc); // ALL CLEAR! check
+define("PAL_ST_OFF", 0x98a8e); // 0x9ca8e - 0x4000
+define("PAL_ED_OFF", 0x9da8e); // 0xa1a8e - 0x4000
 
+//////////////////////////////
+/*
+	00    dodo.pak   dodoh.prg   10,-1  400
+	01    slim.pak   slime.prg   1c,-1
+	02    myco.pak    myco.prg   15,-1  6c0 , v2 540 , v3 580
+	03    zonb.pak  zombie.prg   40,41
+	04    gbln.pak  goblin.prg   24,2e
+	05 -
+	06    frog.pak    frog.prg   90,91  2400
+	07    kage.pak    kage.prg   50,51
+	08    bask.pak   basil.prg   a0,a8
+	09    drgn.pak  dragon.prg   70,6f  1bc0/1c00
+	0a    kumo.pak    kumo.prg   30,31
+	0b    nise.pak    nise.prg   66,67
+	0c    grif.pak  grifon.prg   36,37  9f40 , wing 9f00
+	0d    demn.pak   demon.prg   50,51
+	0e    head.pak  knight.prg   64,65
+	0f    adri.pak   egrad.prg   3a,3b
+
+	10    gost.pak   ghost.prg   b7,b8
+	11    card.pak    card.prg   60,61
+	12    barb.pak    barb.prg   be,bf
+	13    grdp.pak   dgrad.prg    0,1
+	14    maou.pak    vorg.prg   8b,8c
+	15    aeri.pak  eeriel.prg   86,87
+	16    ryon.pak    ryon.prg   93,94
+	17    necr.pak   necro.prg  16f,16e
+	18    ediv.pak  -
+	19    ning.pak  sirene.prg   9a,9b
+	1a    kent.pak    cent.prg  1dc,1dd
+	1b    wgod.pak    wgod.prg  1f4,1f5
+	1c    pira.pak  -            -1,1d0
+	1d    skul.pak    skul.prg   50,51
+	1e    slmd.pak  -
+	1f    mete.pak  -
+
+	20    polt.pak    polt.prg  1b0,1b1
+	21   d_ice.pak    iced.prg   7f,7e
+	22    hind.pak    hind.prg   70,6f
+	23   blud2.pak    blud.prg   50,51
+	24 blud2_4.pak   blud2.prg   50,51
+	25    grdp.pak    grad.prg    0,1
+	26 -
+	27 -
+	28 -
+	29 -
+	2a -
+	2b -
+	2c    slav.pak  puppet.prg  1b9,1b9
+	2d -
+	2e    epro.pak    pros.prg  1c8,1c9
+	2f    ceye.pak    ceye.prg  1ba,1bb
+
+	30    larv.pak    larv.prg  1f0,1f9
+ */
 $gp_index = <<<_INDEX
-grad ,   0 ,   6
-obaa ,  4d , 181
+dodo , 10 , -1
+slim , 1c , -1
+myco , 15 , -1
+zonb , 40 , 41
+gbln , 24 , 2e
+frog , 90 , 91
+kage , 50 , 51
+bask , a0 , a8
+drgn , 70 , 6f
+kumo , 30 , 31
+nise , 66 , 67
+grif , 36 , 37
+demn , 50 , 51
+head , 64 , 65
+adri , 3a , 3b
+gost , b7 , b8
+card , 60 , 61
+barb , be , bf
+grdp , 0 , 1
+maou , 8b , 8c
+aeri , 86 , 87
+ryon , 93 , 94
+necr , 16f , 16e
+ning , 9a , 9b
+kent , 1dc , 1dd
+wgod , 1f4 , 1f5
+pira , -1 , 1d0
+skul , 50 , 51
+polt , 1b0 , 1b1
+d_ice , 7f , 7e
+hind , 70 , 6f
+blud2 , 50 , 51
+blud2_4 , 50 , 51
+slav , 1b9 , 1b9
+epro , 1c8 , 1c9
+ceye , 1ba , 1bb
+larv , 1f0 , 1f9
 
+grad ,   0 ,   1
+edow , 160 , 161
+puro , 1c8 , 1c9
+port , 1c0 , 1c1
+
+obaa ,  4d ,  4e
+mur1 ,  c9 ,  ca
 _INDEX;
 
 function index_init()
@@ -20,13 +122,34 @@ function index_init()
 		$line = preg_replace("|[\s]+|", '', $line);
 		if ( empty($line) )
 			continue;
-		list($name,$id1,$id2) = explode(',', $line);
-		$ind[$name] = array( hexdec($id1) , hexdec($id2) );
+		$id = explode(',', $line);
+		$name = array_shift($id);
+		arrayhex($id);
+		$ind[$name] = $id;
 	}
 	$gp_index = $ind;
 	return;
 }
 
+function exp_pal( &$file )
+{
+	global $gp_index;
+	foreach ( $gp_index as $name => $id )
+	{
+		$pal = "";
+		foreach ( $id as $v )
+		{
+			if ( $v < 0 )
+				$pal .= str_repeat(ZERO, 0x40);
+			else
+				$pal .= substr($file, $v*0x40, 0x40);
+		}
+
+		file_put_contents("$name.pal", $pal);
+	} // foreach ( $gp_index as $k => $v )
+	return;
+}
+//////////////////////////////
 function pcrown( $fname )
 {
 	// for 0.bin only
@@ -39,21 +162,14 @@ function pcrown( $fname )
 	if ( substr($file, CLR_OFF, 10) != "ALL CLEAR!" )
 		return;
 
-	global $gp_index;
-	foreach ( $gp_index as $k => $v )
-	{
-		$pal = "";
+	$pal = "";
+	for ( $i = PAL_ST_OFF; $i < PAL_ED_OFF; $i += 2 )
+		$pal .= $file[$i+1] . $file[$i+0];
 
-		$p = PAL_OFF + ($v[0] * 0x20);
-		for ( $i=0; $i < 0x20; $i += 2 )
-			$pal .= rgb555( $file[$p+$i+1] . $file[$p+$i+0] );
-		$p = PAL_OFF + ($v[1] * 0x20);
-		for ( $i=0; $i < 0x20; $i += 2 )
-			$pal .= rgb555( $file[$p+$i+1] . $file[$p+$i+0] );
+	$file = pal555($pal);
+	file_put_contents("$fname.pal", $file);
 
-		file_put_contents("$k.pal", $pal);
-	} // foreach ( $gp_index as $k => $v )
-
+	exp_pal($file);
 	return;
 }
 
@@ -62,111 +178,48 @@ for ( $i=1; $i < $argc; $i++ )
 	pcrown( $argv[$i] );
 
 /*
+palette asm order
+	grad.pak  0 , slash 40 , sword , shield 100/140/180
+	edow.pak
+	puro.pak  7200 , rod 7240
+	port.pak  7000
+
+	dwaf.pak
+	dodo2.pak
+	jestonly.pak
+	ya_a.pak
+	card.pak
+	eril.pak
+	sdol.pak
+	jestelfa.pak
+	jestelf2.pak
+	volg.pak
+	goro.pak
+	ya_b.pak
+	demn.pak
+	soldd.pak
+	solb.pak
+	sens.pak
+	maid.pak
+	mur1.pak    3240 , 3280
+	loco.pak
+	hon1.pak
+	uma1.pak
+	boys.pak
+	baba.pak
+	ediv_2.pak
+	ediv_1.pak
+	ediv_3.pak
+	obaa.pak    1340 , cat 6040
+	chap.pak    6200
+	slct.pak    fire 1c80/1ec0/3c40 , fence 9080
+
+
 palette
 	=> RAM 9ca8e = 0.bin + 98a8e
 	=> 9ca8e-9da8e-9daae-9eb8e-a1a90
 	z   1000    20  10e0  2f02
 	=>  8790
-
-	grad             shield
-	1  f8f8f0  fbff
-	2  f8e0c0  e39f  604880  c12c
-	3  f0c0a0  d31e
-	4  d89088  c65b
-	5  a07880  c1f4  9890b8  de53
-	6  804050  a910  b0a8c8  e6b6
-	7  a898f0  fa75  c8c0d8  ef19
-	8  281860  b065  e0d8e8  f77c
-	9  503068  b4ca
-	a  d898c0  e27b
-	b  9070b8  ddd2
-	c  9050a0  d152
-	d  684098  cd0d
-	e
-	f  c8d0f8  ff59  e8e8e8  f7bd
-	=> 9ca8e         9cb4e
-		-> 9ca8e = 9ca8e[0] = 8790 = 8790[0]
-		-> 9cb4e = 9ca8e[6] = 8794 = 8790[2]
-	+4000
-	=> e0    | eb    | ec ed ee ef de df f0 f1 f2 f3 f4 f5 f6 f7 | f8
-	=> spark | sword | slash                                     | shield
-
-	puro             port
-	1  680810  882d
-	2  881830  9871
-	3  a83048  a4d5  482010  8889
-	4  c04060  b118
-	5  c85870  b979  181020  9043
-	6  e08890  ca3c  301830  9866
-	7  f0b8a8  d6fe  483048  a4c9
-	8  f8e0d0  eb9f  684868  b52d
-	9  402000  8088
-	a  683018  8ccd  b0a8b0  dab6
-	b  a87038  9dd5
-	c  c89058  ae59  683830  98ed
-	d  804040  a110  885850  a971
-	e                c08068  b618
-	f                e0b890  cafc
-	=> a038e         a028e
-	=> +3900[1c8]    +3800[1c0]
-
-	mur1
-	1  f8f8c8  e7ff  f8e8b8  dfbf
-	2  f0d098  cf5e  f0c090  cb1e
-	3  d89858  ae7b  d88858  ae3b
-	4  a07840  a1f4  a06840  a1b4
-	5  705828  956e  704828  952e
-	6  887890  c9f1  985068  b553
-	7
-	8
-	9  a8a8b0  dab5  c8a038  9e99
-	a
-	b  e0e0f0  fb9c  e8d098  cf5d
-	c
-	d
-	e
-	f
-	=> 9e3ce         9e3ae
-	=> 1/+1940[ca] , 2/+1920[c9]
-
-	dodo.pak
-	1
-	2  784848  a52f
-	3  907068  b5d2
-	4
-	5
-	6
-	7
-	8
-	9
-	a  885850  a971
-	b  683850  a8ed
-	c  402040  a088
-	d  281820  9065
-	e
-	f
-	=> 9cc8e
-	=>
-
-	obaa.pak  cat
-	1  -             f8f0e8  f7df
-	2  f8d8b0  db7f  -
-	3  e0a868  b6bc  986030  9993
-	4  a06038  9d94  -
-	5  -             -
-	6  -             -
-	7  683830  98ed  -
-	8  -             -
-	9  b87078  bdd7  202020  9084
-	a  784850  a92f  -
-	b  -             483838  9ce9
-	c  c0b8b8  def8  -
-	d  -             705050  a94e
-	e  -             -
-	f  907870  b9f2  -
-	=> 9d42e         9faae
-		-> 9d42e = 9ca8e[ 4d] = 87cc = 8790[1e]
-		-> 9faae = 9ca8e[181] = 88be = 8790[97]
 
 6012b5c - loop
 6012e88

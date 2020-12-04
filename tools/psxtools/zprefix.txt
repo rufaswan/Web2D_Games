@@ -1,4 +1,4 @@
-= Prefixes for PS One Games =
+== PlayStation One Games ==
 xeno    SLPS 011.60  Xenogears / Disc 1
 xeno    SLPS 011.61  Xenogears / Disc 2
 yuna    SLPS 014.51  Galaxy Fraulein Yuna Final Edition
@@ -7,6 +7,8 @@ lunar2  SLPS 020.81  Lunar 2 Eternal Blue / Disc 1
 lunar2  SLPS 020.82  Lunar 2 Eternal Blue / Disc 2
 lunar2  SLPS 020.83  Lunar 2 Eternal Blue / Disc 3
 mana    SLPS 021.70  Seiken Densetsu
+gihren  SLPS 025.70  Gihren no Yabou Zeon no Keibu / Federation Disc
+gihren  SLPS 025.71  Gihren no Yabou Zeon no Keibu / Zeon Disc
 
 sotn    SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
 star2   SLPM 861.05  Star Ocean 2 / Disc 1
@@ -25,24 +27,40 @@ tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC
 		mana    ALL DONE
 		saga2   ALL DONE , SLUS not supported
 		tm2s    ALL DONE
-		yuna    .ss1 only
-		xeno    2D battle sprites only
+		xeno    ALL DONE
+		yuna    *.ss1 only
 		sotn    all maps only
-		lunar2  *upcoming*
-		mkr     *upcoming*
-		valky   *upcoming*
-		star2   *upcoming*
+		lunar2  isok/*.pck , map/*.dat only
+		mkr     --upcoming--
+		valky   --upcoming--
+		star2   --upcoming--
+		gihren  --upcoming--
 
-= Guest System Games =
+== PlayStation System Games ==
+-> PS2 PSP
+
+odin     SLUS 215.77  Odin Sphere
+odin     SLUS 216.04  GrimGrimoire
+pcrown   ULJM 050.40  Princess Crown
+tengai4  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
+
+	progress
+		pcrown   *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
+		odin     --upcoming--
+		tengai4  --upcoming--
+
+== Guest System Games ==
 cvnds      NDS     ACVJ      Akumajou Dracula Sougetsu no Juujika
 cvnds      NDS     ACBJ      Akumajou Dracula Gallery of Labyrinth
 cvnds      NDS     YR9J      Akumajou Dracula Ubawareta Kokuin
-sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+sotn_sat   SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+tengai4    SATURN  T-14301G  Tengai Makyou Daishi no Mokushiroku [2 disc]
 yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
-yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3
+yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 pcrown     SATURN  T-14418G  Princess Crown
-mura       WII     Oboro Muramasa
+mura       WII     RSFE7U    Muramasa The Demon Blade
+vfcg       SATURN  Virtua Fighter CG Potrait Series
 rusty      PC98    Rusty
 rusty      PC98    Totsugeki Mix
 galpani    PC98    Galpani
@@ -50,10 +68,11 @@ galpani    PC98    Galpani 2
 
 	progress
 		yuna_mika  ALL DONE
-		cvnds      all maps only
-		yuna       .ss1 only
-		pcrown     .chb/.mcb only (+PSP .tmx)
-		rusty      .map/.dat , .mag/.ani , .mgx only
-		galpani    .bgi/.bgs/.msk only
-		sotn       *upcoming*
-		mura       *upcoming*
+		mura       ALL DONE
+		cvnds      all maps only , *.so/.sc (non-quad) only
+		yuna       *.ss1 only
+		pcrown     *.chb/.mcb , *.pak/chr only
+		rusty      *.map/.tbl/.dat , *.mag/.ani , *.mgx only
+		galpani    *.bgi/.bgs/.msk only
+		sotn_sat   --upcoming--
+		tengai4    --upcoming--

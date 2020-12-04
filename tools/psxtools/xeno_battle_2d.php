@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 define("CANV_S", 0x200);
@@ -233,7 +237,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 
 			$m20 = ord( $m2[0] );
 			$tid = $m20 >> 1;
-			flag_warn("m20", $m20 & 1);
+			flag_watch("m20", $m20 & 1);
 
 			$pix['src']['w'] = $w;
 			$pix['src']['h'] = $h;

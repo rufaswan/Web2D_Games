@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 
@@ -75,7 +79,7 @@ function savrgba_rect( $fn, &$pix )
 		return;
 
 	if ( trim($pix['rgba']['pix'], ZERO) == '' )
-		return trigger_error("ERROR $fn [pix] blank\n", E_USER_WARNING);
+		return php_warning("%s [pix] blank", $fn);
 
 	trimrgba_rect($pix);
 	$rgba = "RGBA";

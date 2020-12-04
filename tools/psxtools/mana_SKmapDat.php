@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * prefixes
  *  bon  Bone Fortress (Dragons arc)
  *  cv1  Mekiv Caverns

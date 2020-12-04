@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * 00 4  CHR size
  * 04 4  ??? offset
  * 08 4  ??? offset

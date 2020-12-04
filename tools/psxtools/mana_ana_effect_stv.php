@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 define("CANV_S", 0x200);
@@ -97,7 +101,7 @@ function sectparts( &$meta, $pos, $fn )
 		$pix['alpha'] = "";
 		if ( $p7 & 2 ) // mask
 			$pix['alpha'] = "stv_alp";
-		flag_warn('v7', $p7 & 0x3c);
+		flag_watch('v7', $p7 & 0x3c);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $cn\n");

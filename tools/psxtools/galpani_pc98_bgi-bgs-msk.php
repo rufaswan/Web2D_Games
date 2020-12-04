@@ -1,12 +1,16 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 function galpani_decode( &$file, $pos, $end, $bits )
 {
-	printf("== galpani_decode( %x , %x )\n", $pos, $end);
-	echo "=== begin sub_2436c() ===\n";
+	trace("== galpani_decode( %x , %x )\n", $pos, $end);
+	trace("=== begin sub_2436c() ===\n");
 
 	$pix = str_repeat(ZERO, 0x1000);
 	$pix .= $file[$pos];
@@ -122,7 +126,7 @@ function galpani_decode( &$file, $pos, $end, $bits )
 		$pos++;
 	} // while ( $pos < $end )
 
-	echo "=== end sub_2436c() ===\n";
+	trace("=== end sub_2436c() ===\n");
 	return substr($pix, 0x1000);
 }
 //////////////////////////////

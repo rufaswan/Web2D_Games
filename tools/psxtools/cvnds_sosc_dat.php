@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 define("CANV_S", 0x600);
@@ -31,7 +35,7 @@ function loadtexx( &$texx, $dir, $id, $sx, $sy, $w, $h )
 				$texx[$id] = $file;
 				break;
 			default:
-				trigger_error("$texx $id = $len\n", E_USER_WARNING);
+				php_error("texx %d = %x", $id, $len);
 				break;
 		} // switch ( $len )
 		echo "add TEXX $id\n";
@@ -93,7 +97,7 @@ function sectpart( &$meta, &$src, $dir, $id, $num, $off )
 		$p13 = ord( $meta[$p+13] );
 		$pix['vflip'] = $p13 & 1;
 		$pix['hflip'] = $p13 & 2;
-		flag_warn("p13", $p13 & 0xfc);
+		flag_watch("p13", $p13 & 0xfc);
 
 		/////////////////////////////////
 		//// original sheet in parts ////

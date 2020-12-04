@@ -1,8 +1,12 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "xeno.inc";
 
-define("TRACE", true);
+//define("NO_TRACE", true);
 
 function xeno( $fname )
 {

@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * /battle/chr%03d.bin
  *   0     test
  *   1- 31 party chars

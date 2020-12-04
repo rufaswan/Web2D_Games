@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 require "common-guest.inc";
 
@@ -65,7 +69,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 			$f1 = ($dat & 0x8000 ) ? 1 : 0;
 			$f2 = ($b2  & 0x40000) ? 1 : 0;
 				$pix['vflip'] = $f1 ^ $f2;
-			flag_warn("dat", $dat & 0x3c00);
+			flag_watch("dat", $dat & 0x3c00);
 
 			$sx = (($b2 >> 0) & 0x07) * 0x10;
 			$sy = (($b2 >> 4) & 0x0f) * 0x20;
@@ -75,7 +79,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 
 			$cid = ($b2 >> 24) & BIT8;
 			//$flg3 = $b2 & 0x80000;
-			flag_warn("b2", $b2 & 0x80f00);
+			flag_watch("b2", $b2 & 0x80f00);
 
 			$pix['src']['pix'] = "";
 			$pix['src']['pal'] = "";

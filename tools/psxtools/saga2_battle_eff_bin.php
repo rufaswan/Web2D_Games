@@ -1,5 +1,9 @@
 <?php
 /*
+[license]
+[/license]
+ */
+/*
  * has AKAO sound data
  */
 require "common.inc";
@@ -20,9 +24,9 @@ function sectparts( &$file, &$canv, $off, $dir )
 			$off += 8;
 		printf("%6x , %3d , %3d , %3d , %3d\n", $off-8, $dx, $dy, $w, $h);
 		if ( ($dx + $w*2) > CANV_S )
-			trigger_error("OVER dx\n", E_USER_ERROR);
+			php_error("OVER dx [%d,%d]", $dx, $w);
 		if ( ($dy + $h  ) > CANV_S )
-			trigger_error("OVER dy\n", E_USER_ERROR);
+			php_error("OVER dy [%d,%d]", $dy, $h);
 
 		$pix = "";
 		for ( $i=0; $i < $siz; $i++ )

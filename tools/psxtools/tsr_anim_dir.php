@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 
 function animtxt( $dir )
 {

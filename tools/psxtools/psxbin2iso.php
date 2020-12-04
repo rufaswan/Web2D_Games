@@ -1,4 +1,9 @@
 <?php
+/*
+[license]
+[/license]
+ */
+
 // cache 80 MB
 define("WRITE_S", 80 << 20);
 

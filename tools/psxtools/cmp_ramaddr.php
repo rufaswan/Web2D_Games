@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 define("PARTSIZE", 0x20);
 $gp_file = array();
 

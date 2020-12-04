@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 // toolset for PlayStation One games
 // - little-endian byte order
 // - 31th bit is negative int flag
@@ -7,8 +11,8 @@
 // - All values in int , no float/double
 // - 0x200000 RAM
 //   - 80000000-8000ffff BIOS
-//   - 80010000-801fffef WRAM
-//   - 801ffff0-801fffff stack
+//   - 80010000-801effff WRAM
+//   - 801f0000-801fffff stack
 //   - JUMP   are absolute RAM offset * 4
 //   - BRANCH are relative RAM offset * 4
 //   - SWITCH is  absolute RAM offset + (c << 2)
@@ -48,8 +52,8 @@ define("BIT32", 0xffffffff);
 define("KILO", 1 << 10);
 define("MEGA", 1 << 20);
 define("GIGA", 1 << 30);
-//if ( defined("DRY_RUN") ) // per script
-//if ( defined("TRACE"  ) ) // per script
+//if ( defined("DRY_RUN" ) ) // per script
+//if ( defined("NO_TRACE") ) // per script
 
 //////////////////////////////
 function php_req_def($def, $ver)
@@ -69,6 +73,7 @@ function php_req_def($def, $ver)
 // 7.0.0  PHP_INT_MIN
 // 7.1.0  PHP_FD_SETSIZE
 // 7.2.0  PHP_OS_FAMILY  PHP_FLOAT_DIG  PHP_FLOAT_EPSILON  PHP_FLOAT_MIN  PHP_FLOAT_MAX
+//
 // PHP 7.0+ for native 64-bit int on windows
 //php_req_def("PHP_INT_SIZE"  , "5.0.5");
 php_req_def("PHP_VERSION_ID", "5.2.7");
@@ -178,27 +183,33 @@ function int_clamp( $int, $min, $max )
 
 function int_ceil( $int, $ceil )
 {
-	// 3 -> 4 and -3 -> -4
-	$int = (int)$int;
+	// round int further from zero
+	//   int_ceil( 7,4) =  8
+	//   int_ceil(-7,4) = -8
+	$int  = (int)ceil($int);
+	$ceil = (int) abs($ceil);
 	$step = ( $int < 0 ) ? -1 : 1;
-	while ( ($int % (int)$ceil) != 0 )
+	while ( ($int % $ceil) != 0 )
 		$int += $step;
 	return $int;
 }
 
 function int_floor( $int, $floor )
 {
-	// 3 -> 2 and -3 -> -2
-	$int = (int)$int;
-	$step = ( $int < 0 ) ? 1 : -1;
-	while ( ($int % (int)$floor) != 0 )
+	// round int closer to zero
+	//   int_floor( 7,4) =  4
+	//   int_floor(-7,4) = -4
+	$int   = (int)floor($int);
+	$floor = (int)  abs($floor);
+	$step  = ( $int < 0 ) ? 1 : -1;
+	while ( ($int % $floor) != 0 )
 		$int += $step;
 	return $int;
 }
 
 function arrayint( &$array )
 {
-	foreach ( $tmp as $k => $v )
+	foreach ( $array as $k => $v )
 		$array[$k] = (int)$v;
 	return;
 }
@@ -241,10 +252,9 @@ function load_file( $fname )
 function load_text( $fname )
 {
 	$txt = load_file($fname);
-	if ( empty($txt) )  return "";
-
-	$txt = str_replace("\r\n", "\n", $txt);
-	$txt = str_replace("\r", "\n", $txt);
+	if ( empty($txt) )
+		return "";
+	$txt = str_replace( array("\r\n","\r"), "\n", $txt);
 	return explode("\n", $txt);
 }
 
@@ -270,7 +280,7 @@ function req_file( $fname )
 	return file_get_contents($fname);
 }
 
-function patchfile( $fname )
+function patchfile( $fname, $val_callback="" )
 {
 	$fn = __DIR__ . "/patch/$fname";
 	if ( ! file_exists($fn) )
@@ -293,13 +303,17 @@ function patchfile( $fname )
 
 		list($vk,$vv) = explode('=', $v);
 		if ( strpos($vv, ',') !== false )
+		{
 			$vv = explode(',', $vv);
+			if ( function_exists($val_callback) )
+				$val_callback($vv);
+		}
 		$data[$sect][$vk] = $vv;
 	}
 	return $data;
 }
 
-function lsfile_r( $dir, &$list)
+function lsfile_r( $dir, &$list )
 {
 	if ( empty($dir) || ! is_dir($dir) )
 		return;
@@ -358,11 +372,11 @@ function debug( $str, $name="DEBUG", $sep=4 )
 
 function trace()
 {
-	if ( ! defined("TRACE") )
+	if ( defined("NO_TRACE") )
 		return;
 	$args = func_get_args();
-	$echo = array_shift($args);
-	vprintf($echo, $args);
+	$fmt = array_shift($args);
+	vprintf($fmt, $args);
 	return;
 }
 
@@ -370,35 +384,55 @@ function trace()
 // E_USER_WARNING
 // E_USER_NOTICE
 // E_USER_DEPRECATED
+//          error  warning  notice  trace
+// script   stop   cont     cont    cont
+// reqfix   yes    yes      no      no
+// no_xxx   n/a    n/a      n/a     yes
+function php_error()
+{
+	$args = func_get_args();
+	$fmt = array_shift($args);
+	$err = vsprintf("$fmt\n", $args);
+	return trigger_error($err, E_USER_ERROR);
+}
+
+function php_warning()
+{
+	$args = func_get_args();
+	$fmt = array_shift($args);
+	$err = vsprintf("$fmt\n", $args);
+	return trigger_error($err, E_USER_WARNING);
+}
+
+function php_notice()
+{
+	$args = func_get_args();
+	$fmt = array_shift($args);
+	$err = vsprintf("$fmt\n", $args);
+	return trigger_error($err, E_USER_NOTICE);
+}
+
 function zero_watch( $name, $chr )
 {
-	$err = sprintf("ERROR $name not zero [%2x]\n", ord($chr));
-	if ( $chr != ZERO )
-		trigger_error($err, E_USER_WARNING);
+	if ( $chr == ZERO )
+		return;
+	php_notice("$name not zero [%2x]", ord($chr));
 	return;
 }
 
 function byte_watch( $name, $chr )
 {
-	$err = sprintf("ERROR $name not 0xFF [%2x]\n", ord($chr));
-	if ( $chr != BYTE )
-		trigger_error($err, E_USER_WARNING);
+	if ( $chr == BYTE )
+		return;
+	php_notice("$name not 0xFF [%2x]", ord($chr));
 	return;
 }
 
-function neg_warn( $name, $int )
+function flag_watch( $name, $int )
 {
-	$err = sprintf("ERROR $name is negative [%d]\n", $int);
-	if ( $int < 0 )
-		trigger_error($err, E_USER_WARNING);
-	return;
-}
-
-function flag_warn( $name, $int )
-{
-	$err = sprintf("ERROR $name some flags is set [%x]\n", $int);
-	if ( $int != 0 )
-		trigger_error($err, E_USER_WARNING);
+	if ( $int == 0 )
+		return;
+	php_notice("$name some flags is set [%x]", $int);
 	return;
 }
 //////////////////////////////
@@ -507,7 +541,7 @@ function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 
 	if ( ! empty($err) )
 	{
-		trigger_error($err, E_USER_ERROR);
+		php_error($err);
 		return true;
 	}
 	return false;
@@ -617,6 +651,8 @@ function alpha_add( $fg, $bg )
 
 			$a = ( $r > $g ) ? $r : $g;
 			$a = ( $b > $a ) ? $b : $a;
+			if ( $a == 0 )
+				return $bg;
 
 			$r = int_clamp($r / $a * BIT8, 0, BIT8);
 			$g = int_clamp($g / $a * BIT8, 0, BIT8);
@@ -648,7 +684,8 @@ function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
 {
 	if ( defined("DRY_RUN") )
 		return;
-	if ( (int)($fact_x*100) === 100 && (int)($fact_y*100) === 100 )
+	// ~1.00 == no scaling needed
+	if ( $fact_x == 1.0 && $fact_y == 1.0 )
 		return;
 
 	$nw = (int)ceil( $pix['src']['w'] * $fact_x );
@@ -712,6 +749,7 @@ function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
 		return;
 	if ( $sy < 0 || $sy >= $pix['src']['h'] )
 		return;
+	//trace("== updatepix( %d , %d , %d , %d , %d )\n", $byte, $sx, $sy, $dx, $dy);
 
 	$sxx = ($sy * $pix['src']['w']) + $sx;
 	$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
@@ -719,7 +757,7 @@ function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
 	// Ignore BG color
 	//   byte 1 bgzero 0    = cmp c1, bgzero
 	//   byte 1 bgzero RGBA = c1 -> RGBA , cmp c1, bgzero
-	//   byte 4 bgzero 0    = skip
+	//   byte 4 bgzero 0    = *OK*
 	//   byte 4 bgzero RGBA = cmp c1, bgzero
 	// Xenogears Lucca = both 0th and 15th color are #000
 	//                   ignore 0th , but not #000
@@ -766,7 +804,7 @@ function copypix_errs( &$pix )
 
 	if ( ! empty($err) )
 	{
-		trigger_error($err, E_USER_ERROR);
+		php_error($err);
 		return true;
 	}
 	return false;
@@ -774,6 +812,8 @@ function copypix_errs( &$pix )
 
 function copypix( &$pix, $byte=1 )
 {
+	if ( $byte != 1 && $byte != 4 ) // 1=CLUT  4=RGBA  *=invalid
+		return;
 	if ( copypix_errs($pix) )
 		return;
 	if ( defined("DRY_RUN") )
@@ -808,7 +848,7 @@ function copypix( &$pix, $byte=1 )
 	$y1 = (int)($cy - $hyp);
 	$x2 = (int)($cx + $hyp);
 	$y2 = (int)($cy + $hyp);
-	//printf("x %d y %d w %d h %d hyp %d\n", $x1, $y1, $x2-$x1, $y2-$y1, $hyp);
+	//trace("x %d y %d w %d h %d hyp %d\n", $x1, $y1, $x2-$x1, $y2-$y1, $hyp);
 
 	// dest rotation + alpha blend + copy
 	//   direct  rotate src ->  dest == holes on dest (rounding error)
@@ -889,7 +929,7 @@ function trimpix( &$pix )
 		$canv .= substr($pix['rgba']['pix'], $p*4, $w*4);
 	}
 
-	printf("TRIM %d x %d => %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
+	trace("TRIM %d x %d => %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
 	$pix['rgba']['w'] = $w;
 	$pix['rgba']['h'] = $h;
 	$pix['rgba']['pix'] = $canv;
@@ -902,7 +942,7 @@ function savpix( $fn, &$pix, $trim = false )
 		return;
 
 	if ( trim($pix['rgba']['pix'], ZERO) == '' )
-		return trigger_error("ERROR $fn [pix] blank\n", E_USER_WARNING);
+		return php_warning("%s [pix] blank", $fn);
 	if ( $trim )
 		trimpix($pix);
 
@@ -1049,7 +1089,7 @@ function psxtim( &$file )
 			return $tim;
 	} // switch ( $tim['t'] )
 
-	printf("psxtim() %s @ %d x %d\n", $tim['t'], $tim['w'], $tim['h']);
+	trace("psxtim() %s @ %d x %d\n", $tim['t'], $tim['w'], $tim['h']);
 	return $tim;
 }
 //////////////////////////////

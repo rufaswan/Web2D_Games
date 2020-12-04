@@ -1,4 +1,8 @@
 <?php
+/*
+[license]
+[/license]
+ */
 require "common.inc";
 
 define("XASTRH", chr(0x60).chr(0x01).chr(0x01).chr(0x80));
@@ -141,8 +145,8 @@ function iso_xenogears($fp, $dir)
 	for ( $i=0; $i < 0x8000; $i += 7 )
 	{
 		$no = $i / 7;
-		$lba = sint24( substr($str, $i+0, 3) );
-		$siz = sint32( substr($str, $i+3, 4) );
+		$lba = str2int($str, $i+0, 3, true);
+		$siz = str2int($str, $i+3, 4, true);
 
 		if ( $lba == -1 )
 			break;
@@ -218,13 +222,13 @@ function isofile( $fname )
 	$fp = fopen($fname, "rb");
 	if ( ! $fp )  return;
 
-	$mgc = fp2str($fp, 0x8001, 5);
-	if ( $mgc != "CD001" )
+	$root = fp2str($fp, 0x8000, 0x800);
+	if ( substr($root, 1, 5) != "CD001" )
 		return printf("%s is not an ISO 2048/sector file\n", $fname);
 
 	$dir = str_replace('.', '_', $fname);
 
-	$mgc = fp2str($fp, 0x8028, 0x20);
+	$mgc = substr($root, 0x28, 0x20);
 	$mgc = strtolower( trim($mgc, " ".ZERO) );
 
 	$func = "iso_" . $mgc;
