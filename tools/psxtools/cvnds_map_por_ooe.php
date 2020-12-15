@@ -5,6 +5,7 @@
  */
 require "common.inc";
 require "common-guest.inc";
+require "cvnds.inc";
 
 //define("DRY_RUN", true);
 
@@ -337,17 +338,6 @@ function maploop( &$ram, $dir, $ovid, $bc, $data )
 	return;
 }
 //////////////////////////////
-function nds_game( &$ram, $dir, $game )
-{
-	foreach ( $game as $g )
-	{
-		if ( strpos($g, 'ov-') === false )
-			continue;
-		nds_overlay( $ram, $dir, $g );
-	}
-	return;
-}
-
 function cvnds( $dir )
 {
 	if ( ! is_dir($dir) )

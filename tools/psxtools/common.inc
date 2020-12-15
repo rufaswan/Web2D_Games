@@ -178,179 +178,48 @@ function int_clamp( $int, $min, $max )
 {
 	if ( $int < $min )  $int = $min;
 	if ( $int > $max )  $int = $max;
-	return (int)round($int);
+	return (int)$int;
 }
 
+//        (int)    ceil()     floor()
+//  4.5 = int( 4)  float( 5)  float( 4)
+// -4.5 = int(-4)  float(-4)  float(-5)
 function int_ceil( $int, $ceil )
 {
-	// round int further from zero
-	//   int_ceil( 7,4) =  8
-	//   int_ceil(-7,4) = -8
-	$int  = (int)ceil($int);
-	$ceil = (int) abs($ceil);
-	$step = ( $int < 0 ) ? -1 : 1;
-	while ( ($int % $ceil) != 0 )
-		$int += $step;
-	return $int;
+	// round int away from zero
+	//          4   -4  4.5  -4.5
+	//  8   |   8    8   10     8 |
+	// -8   |  -8   -8  -10    -8 |
+	//  8.5 |  12   12   10    12 |
+	// -8.5 | -12  -12  -10   -12 |
+	$neg = ( 0 > $int );
+	if ( $neg )
+		$int = -$int;
+	$int  = (int)ceil($int );
+	$ceil = (int)ceil($ceil);
+	while ( $int % $ceil )
+		$int++;
+	return ( $neg ) ? -$int : $int;
 }
 
 function int_floor( $int, $floor )
 {
-	// round int closer to zero
-	//   int_floor( 7,4) =  4
-	//   int_floor(-7,4) = -4
-	$int   = (int)floor($int);
-	$floor = (int)  abs($floor);
-	$step  = ( $int < 0 ) ? 1 : -1;
-	while ( ($int % $floor) != 0 )
-		$int += $step;
-	return $int;
+	// round int toward to zero
+	//         4  -4  4.5  -4.5
+	//  8   |  8   8    8    10 |
+	// -8   | -8  -8   -8   -10 |
+	//  8.5 |  8   8    8    10 |
+	// -8.5 | -8  -8   -8   -10 |
+	$neg = ( 0 > $int );
+	if ( $neg )
+		$int = -$int;
+	$int   = (int)floor($int  );
+	$floor = (int)floor($floor);
+	while ( $int % $floor )
+		$int--;
+	return ( $neg ) ? -$int : $int;
 }
-
-function arrayint( &$array )
-{
-	foreach ( $array as $k => $v )
-		$array[$k] = (int)$v;
-	return;
-}
-
-function arrayhex( &$array )
-{
-	foreach ( $array as $k => $v )
-		$array[$k] = hexdec($v);
-	return;
-}
-
-function load_file( $fname )
-{
-	if ( is_file($fname) )
-		return file_get_contents($fname);
-
-	// try different casing
-	$fname = strtoupper($fname);
-	if ( is_file($fname) )
-		return file_get_contents($fname);
-
-	$fname = strtolower($fname);
-	if ( is_file($fname) )
-		return file_get_contents($fname);
-
-	// case-insensitive file load
-	$list = array();
-	lsfile_r('.', $list);
-	sort($list);
-	foreach ( $list as $v )
-	{
-		if ( stripos($v, $fname) )
-			return file_get_contents($v);
-	}
-
-	// nothing found
-	return "";
-}
-
-function load_text( $fname )
-{
-	$txt = load_file($fname);
-	if ( empty($txt) )
-		return "";
-	$txt = str_replace( array("\r\n","\r"), "\n", $txt);
-	return explode("\n", $txt);
-}
-
-function save_file( $fname, $str )
-{
-	if ( defined("DRY_RUN") )
-		return;
-	if ( empty($str) )
-		return;
-	if ( strpos($fname, '\\') )
-		$fname = str_replace('\\', '/', $fname);
-
-	if ( strpos($fname, '/') )
-		@mkdir( dirname($fname), 0755, true );
-	file_put_contents($fname, $str);
-	return;
-}
-
-function req_file( $fname )
-{
-	if ( ! file_exists($fname) )
-		trigger_error("req_file( $fname ) : not found\n", E_USER_ERROR);
-	return file_get_contents($fname);
-}
-
-function patchfile( $fname, $val_callback="" )
-{
-	$fn = __DIR__ . "/patch/$fname";
-	if ( ! file_exists($fn) )
-		return array();
-
-	$data = array();
-	$sect = "";
-	foreach ( file($fn) as $v )
-	{
-		$v = preg_replace("|[\s]+|", '', $v);
-		if ( empty($v) )
-			continue;
-		if ( $v[0] == '#' ) // comments
-			continue;
-		if ( $v[0] == '[' ) // section header
-		{
-			$sect = trim($v, '[]');
-			continue;
-		}
-
-		list($vk,$vv) = explode('=', $v);
-		if ( strpos($vv, ',') !== false )
-		{
-			$vv = explode(',', $vv);
-			if ( function_exists($val_callback) )
-				$val_callback($vv);
-		}
-		$data[$sect][$vk] = $vv;
-	}
-	return $data;
-}
-
-function lsfile_r( $dir, &$list )
-{
-	if ( empty($dir) || ! is_dir($dir) )
-		return;
-	if ( is_link($dir) ) // skip shortcuts / symbolic links
-		return;
-	$func = __FUNCTION__;
-	foreach ( scandir($dir) as $en )
-	{
-		if ( $en[0] == '.' )
-			continue;
-		$fn = "$dir/$en";
-
-		if ( is_file($fn) )  $list[] = $fn;
-		else
-		if ( is_dir ($fn) )  $func($fn, $list);
-	}
-	return;
-}
-
-function rmfile_r( $dir )
-{
-	if ( empty($dir) )
-		return;
-	if ( is_file($dir) )
-		return unlink($dir);
-	if ( is_dir($dir) )
-	{
-		$list = array();
-		lsfile_r( $dir, $list );
-		if ( empty($list) )
-			return;
-		foreach ( $list as $en )
-			unlink($en);
-	}
-	return;
-}
-
+//////////////////////////////
 function debug( $str, $name="DEBUG", $sep=4 )
 {
 	echo "$name : ";
@@ -433,6 +302,158 @@ function flag_watch( $name, $int )
 	if ( $int == 0 )
 		return;
 	php_notice("$name some flags is set [%x]", $int);
+	return;
+}
+//////////////////////////////
+function fp2str( $fp, $pos, $byte )
+{
+	if ( $byte == 0 )
+		return "";
+	fseek($fp, $pos, SEEK_SET);
+	return fread($fp, $byte);
+}
+
+function load_file( $fname )
+{
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+
+	// try different casing
+	$fname = strtoupper($fname);
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+
+	$fname = strtolower($fname);
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+
+	// case-insensitive file load
+	$list = array();
+	lsfile_r('.', $list);
+	sort($list);
+	foreach ( $list as $v )
+	{
+		if ( stripos($v, $fname) )
+			return file_get_contents($v);
+	}
+
+	// nothing found
+	return "";
+}
+
+function save_file( $fname, $str )
+{
+	if ( defined("DRY_RUN") )
+		return;
+	if ( empty($str) )
+		return;
+	if ( strpos($fname, '\\') )
+		$fname = str_replace('\\', '/', $fname);
+
+	if ( strpos($fname, '/') )
+		@mkdir( dirname($fname), 0755, true );
+	file_put_contents($fname, $str);
+	return;
+}
+
+function load_text( $fname )
+{
+	$txt = load_file($fname);
+	if ( empty($txt) )
+		return "";
+	$txt = str_replace( array("\r\n","\r"), "\n", $txt);
+	return explode("\n", $txt);
+}
+
+function req_file( $fname )
+{
+	if ( ! file_exists($fname) )
+		trigger_error("req_file( $fname ) : not found\n", E_USER_ERROR);
+	return file_get_contents($fname);
+}
+
+function arrayint( &$array )
+{
+	foreach ( $array as $k => $v )
+		$array[$k] = (int)$v;
+	return;
+}
+
+function arrayhex( &$array )
+{
+	foreach ( $array as $k => $v )
+		$array[$k] = hexdec($v);
+	return;
+}
+
+function patchfile( $fname, $val_callback="" )
+{
+	$fn = __DIR__ . "/patch/$fname";
+	if ( ! file_exists($fn) )
+		return array();
+
+	$data = array();
+	$sect = "";
+	foreach ( file($fn) as $v )
+	{
+		$v = preg_replace("|[\s]+|", '', $v);
+		if ( empty($v) )
+			continue;
+		if ( $v[0] == '#' ) // comments
+			continue;
+		if ( $v[0] == '[' ) // section header
+		{
+			$sect = trim($v, '[]');
+			continue;
+		}
+
+		list($vk,$vv) = explode('=', $v);
+		if ( strpos($vv, ',') !== false )
+		{
+			$vv = explode(',', $vv);
+			if ( function_exists($val_callback) )
+				$val_callback($vv);
+		}
+		$data[$sect][$vk] = $vv;
+	}
+	return $data;
+}
+
+function lsfile_r( $dir, &$list )
+{
+	if ( empty($dir) || ! is_dir($dir) )
+		return;
+	if ( is_link($dir) ) // skip shortcuts / symbolic links
+		return;
+	$func = __FUNCTION__;
+	foreach ( scandir($dir) as $en )
+	{
+		if ( $en[0] == '.' )
+			continue;
+		$fn = "$dir/$en";
+
+		if ( is_file($fn) )  $list[] = $fn;
+		else
+		if ( is_dir ($fn) )  $func($fn, $list);
+	}
+	return;
+}
+
+function rmfile_r( $dir )
+{
+	if ( empty($dir) )
+		return;
+	if ( is_file($dir) )
+		return unlink($dir);
+	if ( is_dir($dir) )
+	{
+		$list = array();
+		lsfile_r( $dir, $list );
+		if ( empty($list) )
+			return;
+		foreach ( $list as $en )
+			unlink($en);
+	}
 	return;
 }
 //////////////////////////////
@@ -814,6 +835,8 @@ function copypix( &$pix, $byte=1 )
 {
 	if ( $byte != 1 && $byte != 4 ) // 1=CLUT  4=RGBA  *=invalid
 		return;
+	if ( empty( $pix['src']['pix'] ) )
+		return;
 	if ( copypix_errs($pix) )
 		return;
 	if ( defined("DRY_RUN") )
@@ -929,7 +952,7 @@ function trimpix( &$pix )
 		$canv .= substr($pix['rgba']['pix'], $p*4, $w*4);
 	}
 
-	trace("TRIM %d x %d => %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
+	trace("trimpix() %d x %d => %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h'], $w, $h);
 	$pix['rgba']['w'] = $w;
 	$pix['rgba']['h'] = $h;
 	$pix['rgba']['pix'] = $canv;
@@ -946,11 +969,45 @@ function savpix( $fn, &$pix, $trim = false )
 	if ( $trim )
 		trimpix($pix);
 
-	$rgba = "RGBA";
-	$rgba .= chrint( $pix['rgba']['w'], 4 );
-	$rgba .= chrint( $pix['rgba']['h'], 4 );
-	$rgba .= $pix['rgba']['pix'];
-	save_file("$fn.rgba", $rgba);
+	$clpal = array();
+	$clpix = "";
+	$pos = 0;
+	for ( $y=0; $y < $pix['rgba']['h']; $y++ )
+	{
+		for ( $x=0; $x < $pix['rgba']['w']; $x++ )
+		{
+			$c1 = substr($pix['rgba']['pix'], $pos, 4);
+				$pos += 4;
+
+			if ( array_search($c1, $clpal) === false )
+				$clpal[] = $c1;
+			$c2 = array_search($c1, $clpal);
+
+			$clpix .= chr($c2);
+		} // for ( $x=0; $x < $pix['rgba']['w']; $x++ )
+	} // for ( $y=0; $y < $pix['rgba']['h']; $y++ )
+
+	$cc = count($clpal);
+	if ( $cc > 0x100 )
+	{
+		trace("savpix() RGBA [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
+		$img = "RGBA";
+		$img .= chrint( $pix['rgba']['w'], 4 );
+		$img .= chrint( $pix['rgba']['h'], 4 );
+		$img .= $pix['rgba']['pix'];
+		return save_file("$fn.rgba", $img);
+	}
+	else
+	{
+		trace("savpix() CLUT [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
+		$img = "CLUT";
+		$img .= chrint( $cc              , 4 );
+		$img .= chrint( $pix['rgba']['w'], 4 );
+		$img .= chrint( $pix['rgba']['h'], 4 );
+		$img .= implode('', $clpal);
+		$img .= $clpix;
+		return save_file("$fn.clut", $img);
+	}
 	return;
 }
 //////////////////////////////

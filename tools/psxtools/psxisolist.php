@@ -7,14 +7,6 @@ require "common.inc";
 
 $gp_list = array();
 
-function fp2str( $fp, $pos, $byte )
-{
-	if ( $byte == 0 )
-		return "";
-	fseek($fp, $pos, SEEK_SET);
-	return fread($fp, $byte);
-}
-
 function lba2frame( $lba )
 {
 	$lba += (75 * 2); // +2 sec

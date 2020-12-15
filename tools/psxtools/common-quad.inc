@@ -131,9 +131,10 @@ function quad_dump( $V4, $type, $name )
 	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
 	//          2 3
 	//
-	// SAT  Princess Crown = LEFT  , CW
-	// PSX  Lunar 2        = LEFT  , CW
-	// WII  Muramasa       = RIGHT , CCW
+	// LEFT /CW   SAT  Princess Crown
+	// LEFT /CW   PSX  Lunar 2
+	// RIGHT/CCW  PS2  Odin Sphere
+	// RIGHT/CCW  WII  Muramasa
 	//
 	// c1 c2
 	// c3 c4
@@ -287,6 +288,8 @@ function copyquad( &$pix, $byte=1 )
 {
 	if ( $byte != 1 && $byte != 4 ) // 1=CLUT  4=RGBA  *=invalid
 		return;
+	if ( empty( $pix['src']['pix'] ) )
+		return;
 	if ( copyquad_errs($pix) )
 		return;
 	if ( defined("DRY_RUN") )
@@ -347,9 +350,14 @@ function copyquad( &$pix, $byte=1 )
 		matrix_dump($Minv, "Minv");
 
 	// sum of quad area
+	// if $xy is outside quad , sum of $q will be bigger than $qsz
 	$q1 = triad_area($qdes['quad'][0], $qdes['quad'][1], $qdes['quad'][2]); // ABC
 	$q2 = triad_area($qdes['quad'][0], $qdes['quad'][3], $qdes['quad'][2]); // ADC
-	$qsz = $q1 + $q2;
+	$qdessz = $q1 + $q2;
+
+	$q1 = triad_area($qsrc['quad'][0], $qsrc['quad'][1], $qsrc['quad'][2]); // ABC
+	$q2 = triad_area($qsrc['quad'][0], $qsrc['quad'][3], $qsrc['quad'][2]); // ADC
+	$qsrcsz = $q1 + $q2;
 
 	for ( $y = $qdes['box'][1]; $y <= $qdes['box'][3]; $y++ )
 	{
@@ -360,24 +368,30 @@ function copyquad( &$pix, $byte=1 )
 			$q2 = triad_area($xy, $qdes['quad'][1], $qdes['quad'][2]); // pBC
 			$q3 = triad_area($xy, $qdes['quad'][2], $qdes['quad'][3]); // pCD
 			$q4 = triad_area($xy, $qdes['quad'][3], $qdes['quad'][0]); // pDA
-
-			// if $xy is outside quad , sum of $q will be bigger than $qsz
-			if ( ($q1+$q2+$q3+$q4) > $qsz )
+			if ( ($q1+$q2+$q3+$q4) > $qdessz )
 				continue;
 
-			// t,r,s = M^-1 * (x,y,1)
-			// sx,sy = t/s,r/s
+			// (t,r,s) = M^-1 * (x,y,1)
+			//  sx,sy  = t/s,r/s
 			$t = matrix_multi31($Minv, array($x,$y,1));
 
 			// ERROR : $t[2] divide by zero
 			if ( $t[2] == 0.0 )
 				continue;
-			// MomohimeH_Rest_drm/0126.png
-			//   round() cause a gap between joint parts
-			//   can be prevented by using ceil() or floor() only
+			// Rasterization (consistant rule)
+			//   for pixel from 0.0 to 1.0, but not including pixel 1.0
+			//   are considered pixel 0
 			$t[2] = 1 / $t[2];
 			$sx = (int)($t[0] * $t[2]);
 			$sy = (int)($t[1] * $t[2]);
+
+			$xy = array($sx,$sy,1);
+			$q1 = triad_area($xy, $qsrc['quad'][0], $qsrc['quad'][1]); // pAB
+			$q2 = triad_area($xy, $qsrc['quad'][1], $qsrc['quad'][2]); // pBC
+			$q3 = triad_area($xy, $qsrc['quad'][2], $qsrc['quad'][3]); // pCD
+			$q4 = triad_area($xy, $qsrc['quad'][3], $qsrc['quad'][0]); // pDA
+			if ( ($q1+$q2+$q3+$q4) > $qsrcsz )
+				continue;
 
 			updatepix($pix, $byte, $qsrc['base'][0]+$sx, $qsrc['base'][1]+$sy, $qdes['base'][0]+$x, $qdes['base'][1]+$y);
 		} // for ( $x=$x1; $x < $x2; $x++ )

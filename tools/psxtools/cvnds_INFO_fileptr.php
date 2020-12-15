@@ -4,9 +4,10 @@
 [/license]
  */
 require "common.inc";
+require "common-guest.inc";
 
-define("TWO",    chr(2));
-define("ZERO32", ZERO.ZERO.ZERO);
+define("TWO",    "\x02");
+define("ZERO24", ZERO.ZERO.ZERO);
 
 $gp_files = array();
 
@@ -17,6 +18,7 @@ function findptr( &$file, $name, $ram, $fst, $fed )
 	$ed = strlen($file);
 	for ( $i=0; $i < $ed; $i += 4 )
 	{
+		// NDS ram is 02xxxxxx range
 		if ( $file[$i+3] != TWO )
 			continue;
 		$p = $ram + $i;
@@ -24,7 +26,7 @@ function findptr( &$file, $name, $ram, $fst, $fed )
 			continue;
 		$b1 = substr($file, $i, 3);
 		if ( isset( $gp_files[$b1] ) )
-			printf("$name + %6x [%6x] = %s\n", $i, $p, $gp_files[$b1]);
+			printf("$name + %6x [%6x] = [%4x] %s\n", $i, $p, $gp_files[$b1][0], $gp_files[$b1][1]);
 	}
 	return;
 }
@@ -44,21 +46,29 @@ function cvnds( $dir )
 
 	global $gp_files;
 	$gp_files = array();
+	$id = 0;
+	echo "== FILE IDS ==\n";
+
 	list($fst,$fed,$fbk) = $patch['ndsram']['files'];
 	for ( $i=$fst; $i < $fed; $i += $fbk )
 	{
+		$b2 = substr0($file, $i+6);
+		printf("%4x = %s\n", $id, $b2);
+			$id++;
 		$b1 = substr($file, $i+0, 3);
 		if ( $b1 == ZERO24 )
 			continue;
-		$b2 = substr0($file, $i+6);
 
 		if ( isset( $gp_files[$b1] ) )
 			printf("SAME fp = %s [%s]\n", $b1, $b2, $gp_files[$b1]);
 		else
-			$gp_files[$b1] = $b2;
-	}
+			$gp_files[$b1] = array($id-1, $b2);
+	} // for ( $i=$fst; $i < $fed; $i += $fbk )
 
+	// analyze main exe
 	findptr($file, "ARM9_BIN", 0, $fst, $fed);
+
+	// analyze overlay dll
 	$id = 0;
 	while (1)
 	{
@@ -70,8 +80,7 @@ function cvnds( $dir )
 
 		findptr($file, "OVERLAY_{$id}", $ovps, $fst, $fed);
 		$id++;
-	}
-
+	} // while (1)
 	return;
 }
 

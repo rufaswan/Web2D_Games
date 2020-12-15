@@ -18,27 +18,21 @@ function ptr( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$ed = strlen($file);
-	$st = 0;
+	$len = strlen($file);
 	$prev = 0;
-	while ( $st < $ed )
+	for ( $i=0; $i < $len; $i += 4 )
 	{
-		$bak = $st;
-			$st += 4;
-		$op = ord( $file[$bak+3] );
-
 		// nds ram 2000000-23fffff
-		if ( $op == 0x02 )
+		if ( $file[$i+3] == "\x02" )
 		{
-			$ptr = str2int($file, $bak, 3);
+			$ptr = str2int($file, $i, 3);
 			if ( $ptr <= 0x3fffff )
 			{
-				prevnl( $prev, $bak );
-				printf("$fname , %8x , ptr %6x\n", $bak, $ptr);
+				prevnl( $prev, $i );
+				printf("%s + %6x = %6x\n", $fname, $i, $ptr);
 			}
-			continue;
 		}
-	} // while ( $st < $ed )
+	} // for ( $i=0; $i < $len; $i += 4 )
 	echo "\n";
 	return;
 }

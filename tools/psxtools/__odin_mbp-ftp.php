@@ -94,9 +94,17 @@ function load_tm2( &$pix, $tid , $pfx )
 				'd' => substr($ftp, 12, $w*$h*4),
 			);
 		} // if ( $b1 == "RGBA" )
+		else
+		{
+			$gp_pix[$tid] = array(
+				'w' => 0,
+				'h' => 0,
+				'd' => "",
+			);
+		}
 	} // if ( ! isset( $gp_pix[$tid] ) )
 
-	printf("== load_texx( $tid , $pfx ) = %x x %x\n", $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
+	printf("== load_tm2( $tid , $pfx ) = %x x %x\n", $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
 	$pix['src']['w'] = $gp_pix[$tid]['w'];
 	$pix['src']['h'] = $gp_pix[$tid]['h'];
 	$pix['src']['pix'] = &$gp_pix[$tid]['d'];

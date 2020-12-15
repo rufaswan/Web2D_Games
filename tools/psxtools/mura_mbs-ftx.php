@@ -90,9 +90,17 @@ function load_tpl( &$pix, $tid , $pfx )
 				'd' => substr($ftx, 12, $w*$h*4),
 			);
 		} // if ( $b1 == "RGBA" )
+		else
+		{
+			$gp_pix[$tid] = array(
+				'w' => 0,
+				'h' => 0,
+				'd' => "",
+			);
+		}
 	} // if ( ! isset( $gp_pix[$tid] ) )
 
-	printf("== load_texx( $tid , $pfx ) = %x x %x\n", $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
+	printf("== load_tpl( $tid , $pfx ) = %x x %x\n", $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
 	$pix['src']['w'] = $gp_pix[$tid]['w'];
 	$pix['src']['h'] = $gp_pix[$tid]['h'];
 	$pix['src']['pix'] = &$gp_pix[$tid]['d'];
@@ -116,33 +124,21 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 	{
 		$p4 = ($id6 + $i4) * $mbs[4]['k'];
 
-		// 0  1    2    3    4 5  6 7 8 9  a b
-		// -  typ  flg  tid  s1   - - - -  s2
-		// 00 ??
-		// 01 always
-		// 03 eyes , leaf
-		// 05 censored naughty part
-		// ?  ??
+		// 0  1    2    3    4 5  6 7  8 9  a b
+		// -  typ  trn  tid  s1   - -  s0   s2
 		$typ = str2big($mbs[4]['d'], $p4+ 1, 1);
-		if ( $typ != 1 )
-			continue;
-
-		// 00 always
-		// 01 [ERROR over-blending -> ALL WHITE]
-		// 02 additive blending
-		// ?  ??
-		$flg = str2big($mbs[4]['d'], $p4+ 2, 1);
-		if ( $flg == 1 )
-			continue;
-
+		$trn = str2big($mbs[4]['d'], $p4+ 2, 1);
 		$tid = str2big($mbs[4]['d'], $p4+ 3, 1);
+		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
+
 		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
 		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
 			$tid *= 10; // tpl can have multiple images
 
 		$sqd = sectquad($mbs[1]['d'], $s1*$mbs[1]['k'], "mbs 1 $s1", 1);
 		$dqd = sectquad($mbs[2]['d'], $s2*$mbs[2]['k'], "mbs 2 $s2", SCALE);
-		$data[] = array($flg, $tid, $sqd, $dqd);
+		$data[] = array($typ, $trn, $tid, $s0, $sqd, $dqd);
+		printf("DATA  %2x , %2x , %d , %x\n", $typ, $trn, $tid, $s0);
 
 		// detect origin and canvas size
 		for ( $i=0; $i < 4; $i++ )
@@ -163,7 +159,7 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 	if ( empty($data) )
 		return;
 
-	$ceil = int_ceil($CANV_S * 2, 16);
+	$ceil = ( $is_mid ) ? int_ceil($CANV_S*2, 16) : int_ceil($CANV_S, 16);
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $ceil;
 	$pix['rgba']['h'] = $ceil;
@@ -172,13 +168,34 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 	printf("ORIGIN  %d\n", $origin);
 
+	if ( defined("DRY_RUN") )
+		return;
 	foreach ( $data as $dv )
 	{
-		list($flg, $tid, $sqd, $dqd) = $dv;
+		list($typ, $trn, $tid, $s0, $sqd, $dqd) = $dv;
+
+		// 00  ok
+		// +01 normal
+		// +02 eyes , leaf
+		// +04 censored / broken
+		// +08 ok
+		// +10 ok
+		// +20 has trn == 1 or 2
+		// +40 --
+		// +80 --
+		if ( $typ & 2 || $typ & 4 || $typ & 0x20 )
+			continue;
+
+		// TODO
+		//   get the alpha-blending formula right
+		//   make it blueish (save portal npc)
+		//$s0 = substr($mbs[0]['d'], $s0*0x18, 4);
+		if ( $trn == 1 || $trn == 2 )
+			continue;
 
 		$pix['alpha'] = "alpha_over";
-		if ( $flg == 2 )
-			$pix['alpha'] = "alpha_add";
+		if ( $trn == 1 )  $pix['alpha'] = "alpha_add";
+		if ( $trn == 2 )  $pix['alpha'] = "alpha_add";
 
 		$pix['src']['vector'] = $sqd;
 		for ( $i=0; $i < 4; $i++ )
@@ -372,7 +389,7 @@ function mura( $fname )
 	// sa[+ 0] = 4ee+8 => s8
 	// s8[+ 0] = 126   => s6
 	// s6[+10] = f29+1 => s4
-	// s4[+ 4] =  ca   => s1 , [+ a] = 7bc => s2
+	// s4[+ 4] =  ca   => s1 , [+ 8] = 40 => s0 , [+ a] = 7bc => s2
 	// s1[]
 	// s2[]
 	//
@@ -403,6 +420,26 @@ for ( $i=1; $i < $argc; $i++ )
 	mura( $argv[$i] );
 
 /*
+mbs files = fe6ea
+	type
+		00  ---- ----    de7
+		01  ---- ---1  ed060  *normal*
+		02  ---- --1-      2
+		03  ---- --11   2432
+		04  ---- -1--     8d
+		05  ---- -1-1   39e1
+		07  ---- -111     a4
+		09  ---- 1--1      4
+		11  ---1 ---1    495
+		13  ---1 --11      1
+		15  ---1 -1-1      4
+		29  --1- 1--1   26cb
+		2d  --1- 11-1   7df4
+	trn
+		00  e2008  *normal*
+		01  1878a
+		02   3f58
+
 type != 1 3 5
 	07  /bg/bg02/b_00.mbs
 	07  /bg/bg04_02.mbs
@@ -416,6 +453,7 @@ type != 1 3 5
 	00  /bg/bg_test.mbs
 	00  /bg/staffroll_kc.mbs
 
+	09  /char/Karasutengu00/01.mbs
 	11  /char/keukegen00.mbs
 	11 29 2d  /char/Kongaradoji00.mbs
 	11  /char/musya00.mbs
@@ -431,7 +469,8 @@ type != 1 3 5
 	2d  /drm_char/MomohimeH_Rest_drm.mbs
 	11 13 15  /drm_char/Momokurousoul_drm.mbs
 	00  /drm_char/Oooni_Stomach_drm00.mbs
-flag != 0 1
+
+trn != 0 1
 	02  /char/Ashiba_A00.mbs
 	02  /char/bourei00.mbs
 	02  /char/dragon00.mbs

@@ -21,166 +21,363 @@
 	mon_ov   = d9b48 , d9be0
 	mon_func = 48358 , 48458
 
-	obj_sc = f3df0 , f4024
-	item_sc = f4908 , f4920
+	obj_sc   = f3df0 , f4024
+	item_sc  = f4908 , f4920
 
+[sosc]
+	# so = 347 files
+	# = ov- , so- , sc- , pal- , jnt-
 
+	aadoor  = ov-40 , so-88e , sc-367 , pal-2c74f0
+	aasky   = ov-40 , so-88f , sc-36a-36c , pal-2c7534
+	widlit  = ov-41 , so-9d9 , sc-6ac , pal-d17c8
+	dawave  = ov-45 , so-8bb , sc-3f9 , pal-2e3290
+	kirai   = ov-45 , so-91a , sc-532-533 , pal-d15d0
+	damizu  = ov-45 , so-8ba , sc-3f8 , pal-d0c2c
+	ironm   = ov-50 , so-910 , sc-50e-50f , pal-2cebf8
+	elec    = ov-51 , so-8d7 , sc-41b , pal-2cc540
+	faobj1  = ov-52 , so-8e2 , sc-457-459 , pal-2cd00c
+	faobj0  = ov-52 , so-8e1 , sc-456 , sc-45a , pal-2ccfc8
+	stal    = ov-54 , so-9bf , sc-65a , pal-2cee40
+	wind    = ov-54 , so-9db , sc-6b6 , pal-2cee64
+	cold00  = ov-56 , so-8b5 , sc-3e3-3e4 , pal-2d079c
+	cold01  = ov-56 , so-8b6 , sc-3e5-3e7 , pal-2d079c
+	fall00  = ov-56 , so-8df , sc-450-451 , pal-2d07c0
+	fall01  = ov-56 , so-8e0 , sc-452-454 , pal-2d07c0
+	mari    = ov-61 , so-926 , sc-565 , pal-cdd0c
+	ibbobj  = ov-62 , so-90d , sc-506-507 , pal-d0f28
+	kaobj   = ov-64 , so-916 , sc-527 , pal-d0ea4
+	ball    = ov-67 , so-89c , sc-39d , pal-2e99c8
+	cand    = ov-67 , so-8ad , sc-3c4-3c5 , pal-2e9a0c
+	maobj   = ov-68 , so-925 , sc-564 , pal-2d9338
+	shutter = ov-71 , so-9b9 , sc-653 , pal-d0f90
+	roll    = ov-71 , so-9a8 , sc-615-618 , pal-2db640
+	qaobj   = ov-75 , so-949 , sc-5c3 , pal-d0f6c
+	cerbe   = ov-76 , so-8b1 , sc-3da-3dc , pal-d169c
+	almap   = ov-77 , so-896 , sc-37c , pal-d5208
+	saobj   = ov-77 , so-9b0 , sc-633 , pal-2d7130
+	edca    = ov-83 , so-8d6 , sc-418-41a , pal-2c4a84
 
-	npc = 2b55e0 , 2b5620
-	portrait = 2b56dc , 2b574c
-	loading  = 2b6b7c , 2b6c4c
-	#overlay = d8bbc , d8bd4
-	weapons = d9c34 , da1c4
-	# 14fcc8
+	armag  = ov-23 , so-898 , sc-37f-38e , pal-2ba0a0
+	sgami  = ov-24 , so-9b7 , sc-63c-64a , pal-2bc14c
+	man    = ov-25 , so-923 , sc-55f-562 , pal-2bab58
+	mael   = ov-26 , so-922 , sc-54e-55e , pal-2bb418
+	wallm  = ov-27 , so-9d5 , sc-697-69c , pal-2ba2b8
+	kyon   = ov-28 , so-91d , sc-53e-542 , pal-2b9c54
+	kani   = ov-29 , so-915 , sc-522-526 , pal-2b96a0
+	cent   = ov-30 , so-8b0 , sc-3cb-3d9 , pal-2bdb38
+	fran03 = ov-31 , so-8ec , sc-47a-47e , pal-2bc180
+	grav   = ov-32 , so-905 , sc-4ea-4f4 , pal-2ba02c
+	dra00  = ov-33 , so-8ce , sc-77f-790 , sc-7a2-7a3 , pal-2ce604
+	alessi = ov-34 , so-895 , sc-372-37b , pal-2b983c
+	albus  = ov-35 , so-894 , sc-702-70c , pal-d6d64
+	bar    = ov-36 , so-8a0 , sc-3a6-3b6 , pal-2bf398
+	owl_ar = ov-37 , so-942 , sc-5bc-5be , pal-ca4fc
+	draf   = ov-37 , so-8d1 , sc-40f-411 , pal-cb8fc
+	fu_pg2 = ov-37 , so-8f3 , sc-6e4 , pal-c9d28
+	fran02 = ov-37 , so-8eb , sc-471-475 , pal-cb21c
 
-[mon_sc]
-	# playable char
-	play_1a = d93ac , 3-d6ce0 , 2-9aa , 1-86b-887
-	play_1b = d9408 , 3-d6bb4 , 2-943 , 1-7c6-7c9
-	play_1c = d9464 , 3-d6c18 , 2-944 , 1-7ca-7d2
-	play_1d = d94c0 , 3-d6cbc , 2-945 , 1-7d3
-	play_2  = d951c , 3-d6d64 , 2-893 , 1-6f7-701
+	aataru  = ov-21 , so-890 , sc-36d , pal-d17a4
+	baobj   = ov-21 , so-89d , sc-39e-39f , pal-2d28b8
+	fsmi    = ov-21 , so-8f0 , sc-48d-48f , pal-d4da8
+	deam    = ov-21 , so-8bd , sc-6d9-6db , pal-ca5a0
+	sf_dhk  = ov-21 , so-9b4 , sc-6ea , pal-ca624
+	bom_am  = ov-21 , so-8a3 , sc-6d3-6d4 , pal-ca648
+	tako    = ov-21 , so-9c2 , sc-6ec , pal-ca6cc
+	peep    = ov-21 , so-947 , sc-5c1-5c2 , pal-ca7b0
+	uo      = ov-21 , so-9d0 , sc-68d , pal-ca9b8
+	wwolf   = ov-21 , so-9de , sc-6c6-6cb , pal-ca9fc
+	ya_skl  = ov-21 , so-9e3 , sc-6f4 , pal-cac60
+	medusa  = ov-21 , so-929 , sc-571 , pal-cad08
+	rskl    = ov-21 , so-9ab , sc-61a , pal-cad6c
+	flykf   = ov-21 , so-8e6 , sc-46a-46c , pal-cad90
+	spec    = ov-21 , so-9bd , sc-657-658 , pal-cae3c
+	fredy   = ov-21 , so-8ee , sc-484-486 , pal-cadb4
+	elmo    = ov-21 , so-8d8 , sc-43b-43c , pal-cae18
+	troop   = ov-21 , so-9c9 , sc-685 , pal-ca2b4
+	geva    = ov-21 , so-8fe , sc-4ad-4af , pal-cb344
+	zbr     = ov-21 , so-9e6 , sc-6ce-6cf , pal-cb59c
+	zbs     = ov-21 , so-9e7 , sc-6d0-6d1 , pal-cb664
+	necro   = ov-21 , so-93d , sc-5b2-5b3 , pal-cb5e0
+	bap1    = ov-21 , so-89e , sc-3a0-3a2 , pal-cb6a8
+	bap2    = ov-21 , so-89f , sc-3a3-3a5 , pal-cb70c
+	garg    = ov-21 , so-8f8 , sc-49f-4a1 , pal-cb770
+	gk      = ov-21 , so-901 , sc-4b5 , pal-cb7d4
+	worb    = ov-21 , so-9dd , sc-6be-6c5 , pal-cba20
+	sack    = ov-21 , so-9ae , sc-627-62e , pal-cbac4
+	fk      = ov-21 , so-8e5 , sc-468 , pal-cbcf0
+	uma     = ov-21 , so-9ce , sc-68a-68b , pal-cbd34
+	dem     = ov-21 , so-8be , sc-3fc-400 , pal-cbe3c
+	thdm    = ov-21 , so-9c3 , sc-669-66d , pal-cbee0
+	frdm    = ov-21 , so-8ed , sc-47f-483 , pal-cbfa4
+	sedm    = ov-21 , so-9b3 , sc-636-63a , pal-cc048
+	lddm    = ov-21 , so-921 , sc-549-54d , pal-cc0ec
+	golem   = ov-21 , so-903 , sc-4be-4c1 , pal-cc190
+	sakan   = ov-21 , so-9af , sc-62f-632 , pal-ccc6c
+	fskl68  = ov-21 , so-8ef , sc-6e1 , pal-ca974
+	axarm   = ov-21 , so-89a , sc-391-393 , pal-ccd50
+	mandra  = ov-21 , so-924 , sc-563 , pal-cce74
+	fu_he   = ov-21 , so-8f2 , sc-6e3 , pal-cced8
+	dino    = ov-21 , so-8cc , sc-40e , pal-c9a0c
+	imp     = ov-21 , so-90e , sc-508 , pal-c9b14
+	crow    = ov-21 , so-8b7 , sc-6d5 , pal-c9b98
+	inves   = ov-21 , so-90f , sc-509-50d , pal-c9bfc
+	jfish   = ov-21 , so-912 , sc-519-51c , pal-c9c60
+	gesso   = ov-21 , so-8fd , sc-4ac , pal-c9e6c
+	nomi    = ov-21 , so-940 , sc-5b5-5b7 , pal-c9e90
+	riz00   = ov-21 , so-9a6 , sc-60c-612 , pal-c9f14
+	riz01   = ov-21 , so-9a7 , sc-60c-60d , sc-60f , sc-611-614 , pal-c9f98
+	take    = ov-21 , so-9c1 , sc-663-668 , pal-ca01c
+	ya_ya   = ov-21 , so-9e4 , sc-6f5-6f6 , pal-ca0a4
+	bigskl  = ov-21 , so-8a2 , sc-3b8-3ba , pal-ca128
+	ger     = ov-21 , so-8fc , sc-4a6-4ab , pal-ca498
+	fran00  = ov-21 , so-8e9 , sc-470 , sc-475 , pal-cb0f4
+	fran01  = ov-21 , so-8ea , sc-476-479 , pal-cb178
+	alakh   = ov-21 , so-892 , sc-36f-371 , pal-cb3e8
+	horse   = ov-21 , so-90b , sc-4ff-501 , pal-cb44c
+	gho     = ov-21 , so-8ff , sc-4b0-4b3 , pal-cb4b0
+	lady    = ov-21 , so-91e , sc-543-546 , pal-cb538
+	sfish   = ov-21 , so-9b6 , sc-63b , pal-cb818
+	fm68    = ov-21 , so-8e7 , sc-6de-6df , pal-cc83c
+	ya_fm   = ov-21 , so-9df , sc-6ee-6ef , pal-cc9c0
+	needle  = ov-21 , so-93e , sc-5b4 , pal-cd03c
+	mimi    = ov-21 , so-92c , sc-57f-580 , pal-caf88
+	skani   = ov-21 , so-9bb , sc-655 , pal-cafcc
+	catp    = ov-21 , so-8ae , sc-3c6-3ca , pal-cb010
+	umih    = ov-21 , so-9cf , sc-68c , pal-cb514
+	tppa    = ov-21 , so-9c8 , sc-684 , pal-cc45c
+	yeti    = ov-21 , so-9e5 , sc-6cc-6cd , pal-cc610
+	sf_une  = ov-21 , so-9b5 , sc-6eb , pal-cc738
+	jour    = ov-21 , so-913 , sc-51d-520 , pal-cc654
+	nirus   = ov-21 , so-93f , sc-6e8 , pal-ccb24
+	eagl    = ov-21 , so-8d5 , sc-416-417 , pal-ccc28
+	fu_sb   = ov-21 , so-8f4 , sc-6e5-6e7 , pal-cc480
+	divsk   = ov-21 , so-8cd , sc-6dc-6dd , pal-cc584
+	ya_sk3  = ov-21 , so-9e0 , sc-6f0 , pal-cc5a8
+	ya_sk6  = ov-21 , so-9e1 , sc-6f1 , pal-cc5cc
+	#area02  = ov-21 , so-897 , sc- , pal-
+	boswap  = ov-21 , so-8a4 , sc-3bb , pal-cd210
+	mark    = ov-21 , so-927 , sc-56a , pal-cd624
+	clou    = ov-21 , so-8b3 , sc-3df-3e1 , pal-d0ae8
+	kcask   = ov-21 , so-919 , sc-52f-531 , pal-cd2f8
+	kafog   = ov-21 , so-914 , sc-521 , pal-cd4fc
+	gear    = ov-21 , so-8fb , sc-4a5 , pal-2a5ed4
+	heart   = ov-21 , so-908 , sc-4fc , pal-cd294
+	bflo    = ov-21 , so-8a1 , sc-3b7 , pal-cdd94
+	mflo    = ov-21 , so-92b , sc-57e , pal-cd1a8
+	mouse   = ov-21 , so-92e , sc-5a2 , pal-cdce8
+	rost    = ov-21 , so-9a9 , sc-619 , pal-cdddc
+	sav     = ov-21 , so-9b1 , sc-634 , pal-d09e4
+	drift   = ov-21 , so-8d2 , sc-412 , pal-d0e3c
+	nami    = ov-21 , so-93c , sc-5b1 , pal-d0d74
+	spike   = ov-21 , so-8ba , sc-3f8 , pal-cd104
+	swdoor  = ov-21 , so-9c0 , sc-662 , pal-d1760
+	walin   = ov-21 , so-9d4 , sc-696 , pal-d0cb0
+	wap     = ov-21 , so-9d6 , sc-69d-69f , pal-cde20
+	rstatue = ov-21 , so-9ac , sc-61b , pal-cdc7c
+	dest00  = ov-21 , so-8bf , sc-401 , pal-cd6a8
+	dest01  = ov-21 , so-8c0 , sc-402 , pal-cd6ec
+	dest02  = ov-21 , so-8c1 , sc-403 , pal-cd770
+	dest03  = ov-21 , so-8c2 , sc-404 , pal-cd7b4
+	dest04  = ov-21 , so-8c3 , sc-405 , pal-cd8d8
+	dest05  = ov-21 , so-8c4 , sc-406 , pal-cd99c
+	dest06  = ov-21 , so-8c5 , sc-407 , pal-cda20
+	dest07  = ov-21 , so-8c6 , sc-408 , pal-cdac4
+	dest08  = ov-21 , so-8c7 , sc-409 , pal-cdae8
+	dest09  = ov-21 , so-8c8 , sc-40a , pal-cdb4c
+	dest10  = ov-21 , so-8c9 , sc-40b , pal-cdb90
+	dest11  = ov-21 , so-8ca , sc-40c , pal-cdbb4
+	dest12  = ov-21 , so-8cb , sc-40d , pal-cdc38
 
-	##########################
+	enr00  = ov-19 , so-8da , sc-7ac-7c3 , pal-
+	enbg   = ov-19 , so-8d9 , sc-7a4-7ab , pal-
+	prolo  = ov-19 , so-948 , sc-7d4-7d6 , pal-
+	tlog00 = ov-19 , so-9c5 , sc-66e-6673 , pal-d3f70
+	tlog01 = ov-19 , so-9c6 , sc-674-67c , sc-67e , pal-d4174
+	tlog02 = ov-19 , so-9c7 , sc-680-683 , pal-d4b78
 
-	# monster (no overlay)
-	mon_1a = 3-cb59c , 2-9e6 , 1-6ce-6cf
-	mon_1b = 3-cb664 , 2-9e6 , 1-6ce-6cf
-	mon_68a = 3-cbc2c , 2-993 , 1-5d9-5db
-	mon_68b = 3-cbb68 , 2-993 , 1-5d9-5db
-	mon_69a = 3-cb6a8 , 2-89e , 1-3a0-3a2
-	mon_69b = 3-cb70c , 2-89e , 1-3a0-3a2
+	scare  = ov-18 , so-9b2 , sc-6e9 , pal-c9968
+	fu_bsk = ov-18 , so-8f1 , sc-6e2 , pal-caca4
+	raze   = ov-18 , so-993 , sc-5d9-5db , pal-cbc2c
+	jays   = ov-18 , so-911 , sc-516-518 , pal-cbb68
+	cyupa  = ov-18 , so-8b8 , sc-6d6-6d8 , pal-c9a90
+	wdrag  = ov-18 , so-9d8 , sc-6ab , pal-c9ce4
+	head   = ov-18 , so-907 , sc-4f6-4fb , pal-cb2e0
+	chyon  = ov-18 , so-8b2 , sc-3dd-3de , pal-cc254
+	tinman = ov-18 , so-9c4 , sc-6ed , pal-cc398
+	armc02 = ov-18 , so-899 , sc-38f , pal-ca080
+	honeb  = ov-18 , so-90a , sc-4fe , pal-cae80
+	fmhb   = ov-18 , so-8e8 , sc-6e0 , pal-caee4
+	ya_sk7 = ov-18 , so-9e2 , sc-6f2 , pal-cbdd8
+	giloti = ov-18 , so-900 , sc-4b4 , pal-d0e80
+	eabblk = ov-18 , so-8d3 , sc-413 , pal-cd1ec
+	boxx   = ov-18 , so-8a5 , sc-3bc , pal-cdd70
+	race   = ov-18 , so-94a , sc-5c8 , sc-5cf , sc-5d6 , pal-cd520
+	zzador = ov-18 , so-9e8 , sc-6d2 , pal-d1678
+	signbd = ov-18 , so-9ba , sc-654 , pal-d1634
+	kitt   = ov-18 , so-91b , sc-534-536 , pal-d0d98
+	coffer = ov-18 , so-8b4 , sc-3e2 , pal-cd060
+	aflo   = ov-18 , so-891 , sc-36e , pal-cddb8
+	hinow  = ov-18 , so-909 , sc-4fd , pal-cdca0
+	fire   = ov-18 , so-8e4 , sc-465 , pal-ba310
 
-	# monster (own overlay/22bxxxx)
+	exp    = so-8de , sc-449 , pal-b0670
+	hasira = so-906 , sc-4f5 , pal-cdcc4
+	rplay  = so-9aa , sc-86b-887 , pal-d6ce0
+	p00c00 = so-943 , sc-7c6-7c9 , pal-d6bb4
+	p01c00 = so-944 , sc-7ca-7d2 , pal-d6c18
+	p02c00 = so-945 , sc-7d3 , pal-d6cbc
 
-	# monster w/jnt
-	reset = ov-38 , boss
-	mon_17 = 3-cbe3c , 1-3fc-400 , 2-8be , 4-34e
-	mon_22 = 1-471-475 , 2-8eb , 4-355 , 3-cb21c
-	mon_26 = 3-cc048 , 1-636-63a , 2-9b3 , 4-364
-	mon_28 = 3-cbd34 , 1-68a-68b , 4-363 , 2-9ce
-	mon_30 = 3-cbfa4 , 1-47f-483 , 2-8ed , 4-357
-	mon_36 = 3-cb178 , 1-476-479 , 4-354 , 2-8ea
-	mon_41 = 1-40e , 2-8cc , 4-350 , 3-c9a0c
-	mon_53 = 1-3b8-3ba , 2-8a2 , 4-34b , 3-ca16c
-	mon_57 = 1-4ad-4af , 2-8fe , 4-358 , 3-cb344
-	mon_59 = 3-cbee0 , 1-669-66d , 2-9c3 , 4-365
-	mon_82 = 3-cc190 , 1-4be-4c1 , 2-903 , 4-35c
-	mon_84 = 1-685 , 2-9c9 , 4-35e , 3-ca2b4
-	mon_85 = 1-685 , 2-9c9 , 4-362 , 3-ca2b4
-	mon_90 = 1-685 , 2-9c9 , 4-35f , 3-ca2b4
-	mon_91 = 1-470 , 1-475 , 2-8e9 , 4-353 , 3-cb0f4
-	mon_99 = 3-cb7d4 , 1-4b5 , 2-901 , 4-35a
-	mon_100 = 1-3b8-3ba , 2-8a2 , 4-34c , 3-ca1f0
-	mon_102 = 3-cbcf0 , 1-468 , 2-8e5 , 4-352
-	mon_104 = 3-cc0ec , 1-549-54d , 2-921 , 4-361
-	mon_105 = 1-685 , 2-9c9 , 4-34f , 3-ca2b4
-	mon_106 = 1-685 , 2-9c9 , 4-366 , 3-ca2b4
-	mon_107 = 1-3b8-3ba , 2-8a2 , 4-34a , 3-ca128
-
-	##########################
-
-	# boss
-	mon_103 = ov-28 , ov-57 , 1-53e-542 , 2-91d , 3-2b9c54
-	mon_110 = ov-25 , ov-63 , 3-2bab58 , 2-923 , 1-55f-562
-	mon_111 = ov-26 , ov-48 , 3-2bb418 , 2-922 , 1-54e-55e
-	mon_114 = ov-35 , ov-52 , 3-d6d64  , 2-894 , 1-702-70c
-	mon_115 = ov-36 , ov-41 , 3-2bf398 , 2-8a0 , 1-3a6-3b6
-	mon_116 = ov-27 , 3-2ba2b8 , 2-9d5 , 1-697-69c
-	mon_119 = ov-24 , ov-71 , 3-2bc14c , 2-9b7 , 1-63c-64a
-
-	# boss w/jnt
-	mon_108 = ov-23 , ov-77 , 2-898 , 4-349 , 3-2ba0a0 , 1-37f-38e
-	mon_109 = ov-29 , ov-52 , 1-522-526 , 2-915 , 4-360 , 3-2b96a0
-	mon_112 = ov-31 , ov-58 , 3-2bc180 , 1-47a-47e , 4-356 , 2-8ec
-	mon_113 = ov-32 , ov-62 , 3-2ba02c , 1-4ea-4f4 , 4-35d , 2-905
-	mon_117 = ov-34 , ov-67 , 3-2b983c , 2-895 , 4-347 , 1-372-37b
-	mon_118 = ov-30 , ov-75 , 3-2bdb38 , 1-3cb-3d9 , 4-34d , 2-8b0
-	mon_120 = ov-33 , ov-74 , 3-2ce604 , 4-351 , 2-8ce , 1-77f-7a3
-
-	reset = ov-38 , boss
-	reset = ov-41 , map
-
-	##########################
-
-[obj_sc]
-	obj_4 = 3-cd1ec , 2-8d3 , 1-413
-	obj_5 = 3-cdd70 , 1-3bc , 2-8a5
-	obj_7 = 3-d0cb0 , 2-9d4 , 1-696
-	obj_8 = 3-cd520 , 1-5c8 , 1-5cf , 1-5d6 , 2-94a
-	obj_12 = 3-d0d98 , 1-534-536 , 2-91b
-	obj_13 = 3-d1678 , 1-6d2 , 2-9e8
-	obj_14 = 3-d1634 , 1-654 , 2-9ba
-	obj_17 = 3-cd210 , 2-8a4 , 1-3bb
-	obj_18 = 3-cd624 , 1-56a , 2-927
-	obj_19 = 3-cd294 , 2-908 , 1-4fc
-	obj_20 = 3-cd104 , 1-659 , 2-9be
-	obj_21 = 3-cd060 , 1-3e2 , 2-8b4
-	obj_22 = 3-cd060 , 1-3e2 , 2-8b4
-	obj_23 = 3-cd060 , 1-3e2 , 2-8b4
-	obj_29 = 3-cd2f8 , 1-52f-531 , 2-919
-	obj_30 = 3-cd4fc , 1-521 , 2-914
-	obj_31 = 1-3c4-3c5 , 2-8ad
-	obj_32 = 3-cdca0 , 1-4fd , 2-909
-	obj_33 = 3-cdcc4 , 1-4f5 , 2-906
-	obj_37 = 1-565 , 2-926
-	obj_38 = 3-cdce8 , 1-5a2 , 2-92e
-	obj_39 = 1-50e-50f , 2-910
-	obj_40 = 1-457-459 , 2-8e2
-	obj_41 = 3-cd1a8 , 1-57e , 2-92b
-	obj_44 = 1-367 , 2-88e
-	obj_47 = 1-456 , 1-45a , 2-8e1
-	obj_48 = 3-cdd94 , 1-3b7 , 2-8a1
-	obj_49 = 3-cddb8 , 1-36e , 2-891
-	obj_50 = 3-cdddc , 1-619 , 2-9a9
-	obj_51 = 3-cdddc , 1-619 , 2-9a9
-	obj_52 = 3-cde20 , 1-69d-69f , 2-9d6
-	obj_55 = 3-d0ae8 , 1-3df-3e1 , 2-8b3
-	obj_56 = 1-3f9 , 2-8bb
-	obj_57 = 3-d0c2c , 1-3f8 , 2-8ba
-	obj_59 = 1-6b6 , 2-9db
-	obj_60 = 3-d0d74 , 1-5b1 , 2-93c
-	obj_61 = 1-564 , 2-925
-	obj_63 = 3-d0d98 , 1-534-536 , 2-91b
-	obj_64 = 1-633 , 2-9b0
-	obj_65 = 3-d0e3c , 1-412 , 2-8d2
-	obj_66 = 3-d0e80 , 1-4b4 , 2-900
-	obj_67 = 1-527 , 2-916
-	obj_68 = 1-39d , 2-89c
-	obj_69 = 1-65a , 2-9bf
-	obj_70 = 3-d09e4 , 1-634 , 2-9b1
-	obj_71 = 1-3e3-3e4 , 2-8b5
-	obj_72 = 1-3e5-3e7 , 2-8b6
-	obj_73 = 1-450-451 , 2-8df
-	obj_74 = 1-452-454 , 2-8e0
-	obj_76 = 2-8d7 , 1-41b
-	obj_78 = 3-2d28b8 , 2-89d , 1-39e-39f
-	obj_79 = 1-506-507 , 2-90d
-	obj_80 = 1-5c3 , 2-949
-	obj_81 = 2-8b1 , 1-3da-3dc
-	obj_82 = 3-221e9c , 1-465 , 2-8e4
-	obj_83 = 1-653 , 2-9b9
-	obj_85 = 2-897
-	obj_86 = 3-2a5ed4 , 1-4a5 , 2-8fb
-	obj_87 = 2-9a8 , 1-615-618
-	obj_88 = 1-36a-36c , 2-88f
-	obj_89 = 2-916 , 1-527
-	obj_90 = 2-91a , 1-532-533
-	obj_91 = 3-d0c2c , 2-8ba , 1-3f8
-	obj_93 = 2-8d6 , 1-418-41a
-	obj_94 = 3-d1760 , 2-9c0 , 1-662
-	obj_95 = 3-d17a4 , 2-890 , 1-36d
-	obj_96 = 3-2d28b8 , 2-89d , 1-39e-39f
-	obj_97 = 3-d17c8 , 2-9d9 , 1-6ac
-	obj_102 = 2-896 , 1-37c
-	obj_123 = 2-89b , 1-394-39c
-	obj_135 = 3-d4da8 , 2-8f0 , 1-48d-48f
-
-	##########################
-
-##############################
-# GAME SPECIFIC DATASET
-##############################
-[ooe]
-	dest_data = 2b6968 , 2b6a80
-	load_data = 2b6b7c , 2b6c4c
+	# alb_p
+	# bakuha
+	# bwall0
+	# bwall1
+	# bwall2
+	# bwall3
+	# bwall5
+	# bwall7
+	# bwall8
+	# cdemo
+	# dablod
+	# dbblod
+	# dra01
+	# dra02
+	# eablod
+	# enr00_p
+	# evalb
+	# ev_bar
+	# fens
+	# fwindow
+	# gaalod
+	# gam
+	# gauge
+	# gbalod
+	# gloss
+	# gout
+	# iba01
+	# kbalod
+	# kcalo
+	# konami
+	# lang
+	# lcast
+	# mbalod
+	# menu
+	# moai
+	# mrb00
+	# mrb01
+	# mrb02
+	# mrb03
+	# mrb04
+	# mrb05
+	# mrb06
+	# mrb07
+	# mrb08
+	# mrb09
+	# mrb0a
+	# mrb0b
+	# mrb0c
+	# oaalod
+	# paalod
+	# rae00
+	# rae01
+	# rae02
+	# rae03
+	# ram00
+	# ram01
+	# ram02
+	# ram03
+	# ram04
+	# ram05
+	# ram06
+	# ram07
+	# ram08
+	# ram09
+	# ram0a
+	# ram0b
+	# ram0c
+	# ram0d
+	# ram0e
+	# ram0f
+	# ram10
+	# ram11
+	# ram12
+	# ram13
+	# rap00
+	# rap01
+	# rap02
+	# rap03
+	# rap04
+	# rap05
+	# rap06
+	# rap07
+	# rap08
+	# rap09
+	# rap0a
+	# rap0b
+	# rap0c
+	# rap0d
+	# rap0e
+	# rap0f
+	# rap10
+	# rap11
+	# rap12
+	# rap13
+	# rap14
+	# rap15
+	# raw00
+	# raw01
+	# raw02
+	# raw03
+	# raw04
+	# raw05
+	# raw06
+	# raw07
+	# raw08
+	# raw09
+	# raw0a
+	# raw0b
+	# raw0c
+	# raw0d
+	# raw0e
+	# raw0f
+	# raw10
+	# raw11
+	# raw12
+	# raw13
+	# raw14
+	# raw15
+	# raw16
+	# raw17
+	# raw18
+	# raw19
+	# rbc00
+	# rbc01
+	# rbc02
+	# rbc03
+	# rbc04
+	# rbc05
+	# rbc06
+	# rbc07
+	# rbc08
+	# rbc09
+	# rbc0a
+	# rbc0b
+	# rbc0c
+	# rbc0d
+	# rbc0e
+	# rbc0f
+	# record
+	# rend
+	# sablo
+	# shop
+	# skel3a
+	# ub01
+	# ub03
+	# ub13
+	# ub14
+	# uy00
+	# uy01
+	# vsstart
+	# wapbg
+	# wiids
+	# wmap

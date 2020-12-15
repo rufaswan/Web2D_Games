@@ -8,14 +8,6 @@ require "common.inc";
 define("XASTRH", chr(0x60).chr(0x01).chr(0x01).chr(0x80));
 //define("DRY_RUN", true);
 
-function fp2str( $fp, $pos, $byte )
-{
-	if ( $byte == 0 )
-		return "";
-	fseek($fp, $pos, SEEK_SET);
-	return fread($fp, $byte);
-}
-
 function chrbase10( $chr )
 {
 	$b = ord( $chr );
