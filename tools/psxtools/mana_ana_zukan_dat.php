@@ -49,7 +49,7 @@ function mana( $fname )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($tim['pix'], $sx, $sy, $w, $h, $tim['w'], $tim['h']);
-		$pix['src']['pal'] = $tim['clut'][0];
+		$pix['src']['pal'] = $tim['pal'][0];
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf("\n");
@@ -59,7 +59,7 @@ function mana( $fname )
 		$st += 0x10;
 	} // while ( $cnt > 0 )
 
-	savpix($fname, $pix);
+	savepix($fname, $pix);
 	return;
 }
 

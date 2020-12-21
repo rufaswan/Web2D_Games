@@ -53,20 +53,20 @@ function mana( $fname )
 			$str = substr($file, $ps);
 			$tim = psxtim($str);
 
-			foreach ( $tim["clut"] as $k => $v )
+			foreach ( $tim['pal'] as $k => $v )
 			{
 				if ( trim($v, ZERO.BYTE) == "" )
 					continue;
 				$clut = "CLUT";
-				$clut .= chrint($tim["cc"], 4); // no clut
+				$clut .= chrint($tim['cc'], 4); // no clut
 				$clut .= chrint($tim['w'], 4); // width
 				$clut .= chrint($tim['h'], 4); // height
 				$clut .= $v;
-				$clut .= $tim["pix"];
+				$clut .= $tim['pix'];
 
 				$fn = sprintf("$dir/%04d_%d.clut", $i, $k);
 				save_file($fn, $clut);
-			} // foreach ( $tim["clut"] as $k => $v )
+			} // foreach ( $tim['pal'] as $k => $v )
 			continue;
 		}
 

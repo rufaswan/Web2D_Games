@@ -95,7 +95,7 @@ function sect1( &$file, $base, $fn )
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix, true);
+	savepix($fn, $pix, true);
 	return;
 }
 //////////////////////////////

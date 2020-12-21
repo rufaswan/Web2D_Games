@@ -86,7 +86,7 @@ function sectparts( &$meta, $dir )
 		copyquad($pix, 1);
 	} // for ( $i=0; $i < $len; $i += 0x16 )
 
-	savpix($dir, $pix, true);
+	savepix($dir, $pix, true);
 	return;
 }
 

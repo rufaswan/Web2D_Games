@@ -90,7 +90,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 	} // for ( $y=0; $y < $map_h; $y += 0x10 )
 
 	echo "$map\n";
-	savpix($fn, $pix);
+	savepix($fn, $pix);
 	return;
 }
 

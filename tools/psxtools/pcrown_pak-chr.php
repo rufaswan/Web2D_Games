@@ -111,7 +111,7 @@ function sectpart( &$pak, $dir, $off, $no )
 		copyquad($pix, 1);
 	} // for ( $i=0; $i < $no; $i++ )
 
-	savpix($dir, $pix, true);
+	savepix($dir, $pix, true);
 	return;
 }
 //////////////////////////////

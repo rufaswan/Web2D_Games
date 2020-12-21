@@ -91,7 +91,7 @@ function sectpart( &$file, $nid, $st, $ed )
 		copypix($pix);
 	} // foreach ( $data as $k => $v )
 
-	savpix($nid, $pix, true);
+	savepix($nid, $pix, true);
 	return;
 }
 

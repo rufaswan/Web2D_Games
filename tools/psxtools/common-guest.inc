@@ -57,30 +57,55 @@ function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
 }
 
-function float32( $int )
+function iee754_float( $int, $exp_bit, $man_bit, $bias )
 {
 	if ( "$int" === $int )
 		$int = ordint($int);
 
-	// IEEE 754
-	$NAN = BIT8;
-	$val = $int & 0x7fffff;
-		$int >>= 23;
-	$exp = $int & BIT8;
-		$int >>= 8;
+	// https://en.m.wikipedia.org/wiki/IEEE_754
+	$m = (1 << $man_bit) - 1;
+	$e = (1 << $exp_bit) - 1;
+	$man = $int & $m;  $int >>= $man_bit;
+	$exp = $int & $e;  $int >>= $exp_bit;
 	$sig = $int;
 
-	if ( $exp == $NAN )
-		return 0; // infinite or not-a-number
+	// e=0 m=0 zero
+	// e=0 m=1 denormalized
+	// e=1 m=0 infinity
+	// e=1 m=1 not a number
+	if ( $exp == $e )
+		return 0.0; // infinite or not-a-number
 	if ( $exp == 0 && $val == 0 )
-		return 0; // exact zero
+		return 0.0; // exact zero
 
-	$norm = ( $exp == 0 ) ? 0 : 1 << 23;
-	$val += $norm;
+	//   normalized = leading 1.0
+	// denormalized = leading 0.0
+	$norm = ( $exp == 0 ) ? 0 : 1 << $man_bit;
+	$man += $norm;
 
-	$exp -= 0x7f;
-	$val *= (2 ** ($exp - 23));
+	$exp -= $bias;
+	$man *= (2 ** ($exp - $man_bit));
 	return ( $sig ) ? -$val : $val;
+}
+
+function float16( $int )
+{
+	// IEEE 754 half precision
+	//   signed   bit  = 1
+	//   exponent bits = 5
+	//   mantissa bits = 10
+	//   bias = 2^4-1 = 15
+	return iee754_float($int, 5, 10, 0x0f);
+}
+
+function float32( $int )
+{
+	// IEEE 754 single precision
+	//   signed   bit  = 1
+	//   exponent bits = 8
+	//   mantissa bits = 23
+	//   bias = 2^7-1 = 127
+	return iee754_float($int, 8, 23, 0x7f);
 }
 //////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
@@ -136,12 +161,6 @@ function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 		$rip .= substr($rgba, $sxx*4, $w*4);
 	} // for ( $y=0; $y < $h; $y++ )
 	return $rip;
-}
-
-function copyrgba( &$pix )
-{
-	copypix($pix, 4);
-	return;
 }
 
 function alpha_over( $src, $dst )

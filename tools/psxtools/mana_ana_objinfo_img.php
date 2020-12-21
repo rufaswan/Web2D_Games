@@ -19,7 +19,7 @@ function loadtim( &$file, $base )
 	$tim = psxtim($dat);
 
 	global $gp_pix, $gp_clut;
-	$gp_clut[] = $tim['clut'];
+	$gp_clut[] = $tim['pal'];
 	$gp_pix[]  = $tim['pix'];
 	return;
 }
@@ -32,9 +32,6 @@ function ana_alp( $fg, $bg )
 //////////////////////////////
 function secttalk( &$file, $talk, $dir )
 {
-	if ( defined("DRY_RUN") )
-		return;
-
 	$num = str2int($file, $talk, 4);
 	if ( $num == 0 )
 		return;
@@ -179,15 +176,12 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix, true);
+	savepix($fn, $pix, true);
 	return;
 }
 
 function sectanim( &$meta, $id, $pos, $flg )
 {
-	if ( defined("DRY_RUN") )
-		return;
-
 	$num = ord($meta[$pos]);
 		$pos++;
 	if ( $num == 0 )
@@ -229,7 +223,7 @@ function sectmeta( &$meta, $dir, $ids )
 			$fn  = sprintf("$dir/%04d", $m);
 			sectparts($meta, $src, $pos, $fn, $ids, $m, $big);
 		}
-	savpix("$dir/src", $src);
+	savepix("$dir/src", $src);
 
 	// sprite animation sequence
 	$ed = $off;

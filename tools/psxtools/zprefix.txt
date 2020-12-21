@@ -37,7 +37,7 @@ tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC
 		gihren  --upcoming--
 
 == PlayStation System Games ==
--> PS2 PSP
+-> PS2  PSP  VITA
 
 odin     SLUS 215.77  Odin Sphere
 odin     SLUS 216.04  GrimGrimoire

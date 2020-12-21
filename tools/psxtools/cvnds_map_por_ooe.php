@@ -110,7 +110,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	echo "$map8a\n";
 	//echo "$map8b\n";
 	$fn = sprintf("$dir/cvnds_map/ma_%04d/l_%04d", $MA, $RL);
-	savpix($fn, $pix);
+	savepix($fn, $pix);
 	return;
 }
 //////////////////////////////

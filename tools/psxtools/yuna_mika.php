@@ -106,11 +106,11 @@ function yuna( $fname )
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 
-			copyrgba($pix);
+			copypix($pix, 4);
 		} // for ( $x=0; $x < $w; $x += 8 )
 	} // for ( $y=0; $y < $h; $y += 8 )
 
-	savpix($fname, $pix);
+	savepix($fname, $pix);
 	return;
 }
 

@@ -168,8 +168,6 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 	printf("ORIGIN  %d\n", $origin);
 
-	if ( defined("DRY_RUN") )
-		return;
 	foreach ( $data as $dv )
 	{
 		list($typ, $trn, $tid, $s0, $sqd, $dqd) = $dv;
@@ -209,7 +207,7 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		copyquad($pix, 4);
 	} // foreach ( $data as $dv )
 
-	savpix($dir, $pix, false);
+	savepix($dir, $pix, false);
 	return;
 }
 

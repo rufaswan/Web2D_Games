@@ -72,7 +72,7 @@ function sectparts( &$tml, &$anim, &$layout, $dir, $id, $name, $cnt, $data)
 			copypix($pix);
 		} // for ( $i=0; $i < $cnt; $i++ )
 
-		savpix("$dir/$name", $pix);
+		savepix("$dir/$name", $pix);
 		return;
 	}
 	else

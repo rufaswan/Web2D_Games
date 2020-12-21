@@ -3,11 +3,13 @@
 [license]
 [/license]
  */
-if ( PHP_VERSION_ID < 050400 )
-	php_error("zlib extension requires PHP 5.4.0 or later");
+// PHP 5.4.0+
+php_req_extension("zlib_decode", "zlib");
+//php_req_extension("zlib_encode", "zlib");
 
-if ( ! function_exists("zlib_decode") )
-	php_error("zlib extension not found!");
+// PHP 7+
+//php_req_extension("inflate_init", "zlib"); // for custom dictionary
+//php_req_extension("deflate_init", "zlib"); // for custom dictionary
 
 // enum
 //   ZLIB_ENCODING_RAW     = -15

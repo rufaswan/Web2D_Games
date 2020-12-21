@@ -200,7 +200,7 @@ function sectmap( &$file, $nid, $base )
 	} // for ( $y=0; $y < $map_h; $y += 0x10 )
 
 	echo "$map\n";
-	savpix($nid, $pix);
+	savepix($nid, $pix);
 	return;
 }
 

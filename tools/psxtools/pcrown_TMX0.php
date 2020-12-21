@@ -5,6 +5,54 @@
  */
 require "common.inc";
 
+function tmxpal( &$pal )
+{
+	// swizzled
+	//  0- 7  10-17
+	//  8- f  18-1f
+	// 20-27  30-37
+	// 28-2f  38-3f
+	// ...
+	// e0-e7  f0-f7
+	// e8-ef  f8-ff
+	$new = '';
+	$len = strlen($pal);
+	for ( $i=0; $i < $len; $i += 0x80 )
+	{
+		$b1 = substr($pal, $i+0x00, 0x20);
+		$b2 = substr($pal, $i+0x20, 0x20);
+		$b3 = substr($pal, $i+0x40, 0x20);
+		$b4 = substr($pal, $i+0x60, 0x20);
+		$new .= $b1 . $b3 . $b2 . $b4;
+	} // for ( $i=0; $i < 0x400; $i += 4 )
+
+	for ( $i=0; $i < $len; $i += 4 )
+	{
+		$a = ord( $new[$i+3] );
+		$a = int_clamp($a*2, 0, BIT8);
+		$new[$i+3] = chr($a);
+	}
+
+	$pal = $new;
+	return;
+}
+
+function bpp4to8( &$pix )
+{
+	$new = '';
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i++ )
+	{
+		$b = ord( $pix[$i] );
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
+		$new .= chr($b1) . chr($b2);
+	}
+
+	$pix = $new;
+	return;
+}
+
 function pcrown( $fname )
 {
 	$file = file_get_contents($fname);
@@ -13,26 +61,36 @@ function pcrown( $fname )
 	if ( substr($file, 8, 4) != "TMX0" )
 		return;
 
+	$siz = str2int($file, 4, 4);
 	$w = str2int($file, 0x12, 2);
 	$h = str2int($file, 0x14, 2);
-	$cc = 0x100;
-	printf("TMX0-%d  %4d x %4d  %s\n", $cc, $w, $h, $fname);
 
-	$pal = substr($file, 0x40, $cc*4);
-	$len = strlen($pal);
-	for ( $i=0; $i < $len; $i += 4 )
+	if ( $w*$h+0x400+0x40 == $siz )
 	{
-		$b = ord( $pal[$i+3] );
-		$b = int_clamp($b*2, 0, BIT8);
-		$pal[$i+3] = chr($b);
+		$cc = 0x100;
+		$pal = substr($file, 0x40, 0x400);
+		$pix = substr($file, 0x40+0x400, $w*$h);
+		tmxpal($pal);
 	}
+	else
+	if ( $w/2*$h+0x40+0x40 == $siz )
+	{
+		$cc = 0x10;
+		$pal = substr($file, 0x40, 0x40);
+		$pix = substr($file, 0x40+0x40, $w/2*$h);
+		tmxpal ($pal);
+		bpp4to8($pix);
+	}
+	else
+		php_error("UNKNOWN bpp %s", $fname);
 
+	printf("TMX0-%d  %4d x %4d  %s\n", $cc, $w, $h, $fname);
 	$clut = "CLUT";
 	$clut .= chrint($cc, 4);
 	$clut .= chrint($w, 4);
 	$clut .= chrint($h, 4);
 	$clut .= $pal;
-	$clut .= substr($file, 0x40+($cc*4), $w*$h);
+	$clut .= $pix;
 
 	file_put_contents("$fname.clut", $clut);
 	return;

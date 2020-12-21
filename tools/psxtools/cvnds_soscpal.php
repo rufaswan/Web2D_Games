@@ -160,7 +160,7 @@ function sectpart( &$meta, &$src, $pfx, $id, $num, $off )
 	} // for ( $i=0; $i < $num; $i++ )
 
 	$fn = sprintf("$pfx/%04d", $id);
-	savpix($fn, $pix, false);
+	savepix($fn, $pix, false);
 	return;
 }
 
@@ -232,7 +232,7 @@ function cvnds( $fname )
 		sectpart($meta, $src, $pfx, $i/12, $num, $off);
 	} // for ( $i=0; $i < $len; $i += 12 )
 
-	savpix("$pfx/src", $src);
+	savepix("$pfx/src", $src);
 
 	// sprite animation sequence
 	$meta = substr($so, $o4, $o5-$o4);

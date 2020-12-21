@@ -33,8 +33,8 @@ function psxtimfile( $fname )
 	if ( $tim['t'] == 'CLUT' )
 	{
 		$pal = array();
-		if ( isset( $tim['clut'] ) )
-			$pal = $tim['clut'];
+		if ( isset( $tim['pal'] ) )
+			$pal = $tim['pal'];
 		else
 			$pal[] = grayclut( $tim['cc'] );
 

@@ -263,7 +263,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix, true);
+	savepix($fn, $pix, true);
 	return;
 }
 //////////////////////////////

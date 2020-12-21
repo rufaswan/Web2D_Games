@@ -138,7 +138,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 	} // for ( $y=0; $y < $map_h; $y++ )
 
 	echo "$map\n";
-	savpix("$dir/map_$off", $pix);
+	savepix("$dir/map_$off", $pix);
 	$done[$off] = 'x';
 	return;
 }

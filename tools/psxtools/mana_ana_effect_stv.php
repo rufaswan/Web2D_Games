@@ -18,9 +18,6 @@ function stv_alp( $fg, $bg )
 //////////////////////////////
 function sectanim( &$meta, $id, $pos, $flg )
 {
-	if ( defined("DRY_RUN") )
-		return;
-
 	$num = ord($meta[$pos]);
 		$pos++;
 	if ( $num == 0 )
@@ -92,7 +89,7 @@ function sectparts( &$meta, $pos, $fn )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
-		$pix['src']['pal'] = $gp_tim['clut'][$cn];
+		$pix['src']['pal'] = $gp_tim['pal'][$cn];
 		$pix['bgzero'] = 0;
 
 		$p7 = ord( $v[7] );
@@ -108,7 +105,7 @@ function sectparts( &$meta, $pos, $fn )
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix, true);
+	savepix($fn, $pix, true);
 	return;
 }
 

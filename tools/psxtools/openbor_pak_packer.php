@@ -63,6 +63,7 @@ function pak_unpack( $fname )
 		$off = str2int($file, $st+4, 4);
 		$siz = str2int($file, $st+8, 4);
 		$nam = substr0($file, $st+12);
+			$nam = strtolower($nam);
 		printf("%8x , %8x , %s\n", $off, $siz, $nam);
 
 		$sub = substr($file, $off, $siz);

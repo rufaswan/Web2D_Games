@@ -8,7 +8,7 @@ require "common.inc";
 $gp_pix  = array();
 $gp_clut = array();
 
-function load_clut( &$mcb, $st )
+function loadclut( &$mcb, $st )
 {
 	global $gp_clut;
 	$gp_clut = array();
@@ -67,7 +67,7 @@ function sectmap( &$mcb, &$chb, $w, $dir, $st, $id )
 	} // for ( $y=0; $y < $map_h; $y += 8 )
 
 	echo "$map\n";
-	savpix("$dir/$id", $pix);
+	savepix("$dir/$id", $pix);
 	return;
 }
 //////////////////////////////
@@ -85,18 +85,18 @@ function pcrown( $fname )
 	switch ( $len )
 	{
 		case 0x2200:
-			load_clut($mcb, 0x2000);
+			loadclut($mcb, 0x2000);
 			sectmap($mcb, $chb, 0x40, $dir,      0, "40-0");
 			sectmap($mcb, $chb, 0x3d, $dir,      0, "3d-0");
 			break;
 		case 0x4400:
-			load_clut($mcb, 0x4000);
+			loadclut($mcb, 0x4000);
 			sectmap($mcb, $chb, 0x40, $dir,      0, "40-0");
 			sectmap($mcb, $chb, 0x20, $dir, 0x2000, "20-2");
 			sectmap($mcb, $chb, 0x20, $dir, 0x3000, "20-3");
 			break;
 		case 0x10400:
-			load_clut($mcb, 0x10000);
+			loadclut($mcb, 0x10000);
 			sectmap($mcb, $chb, 0x20, $dir,      0, "20-00");
 			sectmap($mcb, $chb, 0x20, $dir, 0x1000, "20-01");
 			sectmap($mcb, $chb, 0x20, $dir, 0x2000, "20-02");

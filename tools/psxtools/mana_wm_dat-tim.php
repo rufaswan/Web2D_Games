@@ -99,7 +99,7 @@ function sect1( &$file, $off, $fn )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_tim['pix'], $sx, $sy, $w, $h, $gp_tim['w'], $gp_tim['h']);
-		$pix['src']['pal'] = $gp_tim['clut'][$cn];
+		$pix['src']['pal'] = $gp_tim['pal'][$cn];
 		$pix['bgzero'] = 0;
 		scalepix($pix, SCALE, SCALE);
 
@@ -117,7 +117,7 @@ function sect1( &$file, $off, $fn )
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($fn, $pix, true);
+	savepix($fn, $pix, true);
 	return;
 }
 

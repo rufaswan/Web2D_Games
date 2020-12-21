@@ -75,7 +75,7 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 		copypix($pix);
 	} // foreach ( $data as $v )
 
-	savpix($dir, $pix, true);
+	savepix($dir, $pix, true);
 	return;
 }
 

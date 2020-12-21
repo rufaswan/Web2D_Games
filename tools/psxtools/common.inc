@@ -56,10 +56,44 @@ define("GIGA", 1 << 30);
 //if ( defined("NO_TRACE") ) // per script
 
 //////////////////////////////
-function php_req_def($def, $ver)
+// E_USER_ERROR
+// E_USER_WARNING
+// E_USER_NOTICE
+// E_USER_DEPRECATED
+function php_error()
 {
-	if ( ! defined($def) )
-		trigger_error("requires PHP $ver or above", E_USER_ERROR);
+	$args = func_get_args();
+	$fmt = array_shift($args);
+	$err = vsprintf("$fmt\n", $args);
+	return trigger_error($err, E_USER_ERROR);
+}
+
+function php_warning()
+{
+	$args = func_get_args();
+	$fmt = array_shift($args);
+	$err = vsprintf("$fmt\n", $args);
+	return trigger_error($err, E_USER_WARNING);
+}
+
+function php_notice()
+{
+	$args = func_get_args();
+	$fmt = array_shift($args);
+	$err = vsprintf("$fmt\n", $args);
+	return trigger_error($err, E_USER_NOTICE);
+}
+//////////////////////////////
+function php_req_define($define, $ver)
+{
+	if ( ! defined($define) )
+		php_error("not defined %s = require PHP %s", $define, $ver);
+	return;
+}
+function php_req_extension($func, $ext)
+{
+	if ( ! function_exists($func) )
+		php_error("no %s() = require extension %s", $func, $ext);
 	return;
 }
 
@@ -75,8 +109,8 @@ function php_req_def($def, $ver)
 // 7.2.0  PHP_OS_FAMILY  PHP_FLOAT_DIG  PHP_FLOAT_EPSILON  PHP_FLOAT_MIN  PHP_FLOAT_MAX
 //
 // PHP 7.0+ for native 64-bit int on windows
-//php_req_def("PHP_INT_SIZE"  , "5.0.5");
-php_req_def("PHP_VERSION_ID", "5.2.7");
+//php_req_define("PHP_INT_SIZE"  , "5.0.5");
+php_req_define("PHP_VERSION_ID", "5.2.7");
 //////////////////////////////
 function str2int( &$str, $pos, $byte, $sign=false )
 {
@@ -249,38 +283,6 @@ function trace()
 	return;
 }
 
-// E_USER_ERROR
-// E_USER_WARNING
-// E_USER_NOTICE
-// E_USER_DEPRECATED
-//          error  warning  notice  trace
-// script   stop   cont     cont    cont
-// reqfix   yes    yes      no      no
-// no_xxx   n/a    n/a      n/a     yes
-function php_error()
-{
-	$args = func_get_args();
-	$fmt = array_shift($args);
-	$err = vsprintf("$fmt\n", $args);
-	return trigger_error($err, E_USER_ERROR);
-}
-
-function php_warning()
-{
-	$args = func_get_args();
-	$fmt = array_shift($args);
-	$err = vsprintf("$fmt\n", $args);
-	return trigger_error($err, E_USER_WARNING);
-}
-
-function php_notice()
-{
-	$args = func_get_args();
-	$fmt = array_shift($args);
-	$err = vsprintf("$fmt\n", $args);
-	return trigger_error($err, E_USER_NOTICE);
-}
-
 function zero_watch( $name, $chr )
 {
 	if ( $chr == ZERO )
@@ -353,6 +355,65 @@ function save_file( $fname, $str )
 	if ( strpos($fname, '/') )
 		@mkdir( dirname($fname), 0755, true );
 	file_put_contents($fname, $str);
+	return;
+}
+
+function load_clutfile( $fname )
+{
+	$clut = load_file($fname);
+	if ( empty($clut) )
+		return 0;
+
+	$mgc = substr($clut, 0, 4);
+	$data = array();
+	if ( $mgc == "CLUT" )
+	{
+		$data['cc'] = str2int($clut,  4, 4);
+		$data['w']  = str2int($clut,  8, 4);
+		$data['h']  = str2int($clut, 12, 4);
+		$cc = $data['cc'] * 4;
+		$sz = $data['w'] * $data['h'];
+
+		$data['pal'] = substr($clut, 16, $cc);
+		$data['pix'] = substr($clut, 16+$cc, $sz);
+		return $data;
+	}
+	if ( $mgc == "RGBA" )
+	{
+		$data['w'] = str2int($clut, 4, 4);
+		$data['h'] = str2int($clut, 8, 4);
+		$sz = $data['w'] * $data['h'] * 4;
+
+		$data['pix'] = substr($clut, 12, $sz);
+		return $data;
+	}
+	return 0;
+}
+
+function save_clutfile( $fname, &$data )
+{
+	if ( ! isset( $data['w'] ) || ! isset( $data['h'] ) )
+		return;
+	if ( ! isset( $data['pix'] ) )
+		return;
+	if ( isset( $data['cc'] ) )
+	{
+		$clut = "CLUT";
+		$clut .= chrint($data['cc'], 4);
+		$clut .= chrint($data['w'], 4);
+		$clut .= chrint($data['h'], 4);
+		$clut .= $data['pal'];
+		$clut .= $data['pix'];
+		save_file($fname, $clut);
+	}
+	else
+	{
+		$rgba = "RGBA";
+		$rgba .= chrint($data['w'], 4);
+		$rgba .= chrint($data['h'], 4);
+		$rgba .= $data['pix'];
+		save_file($fname, $rgba);
+	}
 	return;
 }
 
@@ -959,7 +1020,7 @@ function trimpix( &$pix )
 	return;
 }
 
-function savpix( $fn, &$pix, $trim = false )
+function savepix( $fn, &$pix, $trim = false )
 {
 	if ( defined("DRY_RUN") )
 		return;
@@ -990,23 +1051,27 @@ function savpix( $fn, &$pix, $trim = false )
 	$cc = count($clpal);
 	if ( $cc > 0x100 )
 	{
-		trace("savpix() RGBA [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
-		$img = "RGBA";
-		$img .= chrint( $pix['rgba']['w'], 4 );
-		$img .= chrint( $pix['rgba']['h'], 4 );
-		$img .= $pix['rgba']['pix'];
-		return save_file("$fn.rgba", $img);
+		trace("savepix() RGBA [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
+		$img = array(
+			'w' => $pix['rgba']['w'],
+			'h' => $pix['rgba']['h'],
+			'pix' => $pix['rgba']['pix'],
+		);
+		$pix = 0;
+		return save_clutfile("$fn.rgba", $img);
 	}
 	else
 	{
-		trace("savpix() CLUT [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
-		$img = "CLUT";
-		$img .= chrint( $cc              , 4 );
-		$img .= chrint( $pix['rgba']['w'], 4 );
-		$img .= chrint( $pix['rgba']['h'], 4 );
-		$img .= implode('', $clpal);
-		$img .= $clpix;
-		return save_file("$fn.clut", $img);
+		trace("savepix() CLUT [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
+		$img = array(
+			'cc' => $cc,
+			'w' => $pix['rgba']['w'],
+			'h' => $pix['rgba']['h'],
+			'pal' => implode('', $clpal),
+			'pix' => $clpix,
+		);
+		$pix = 0;
+		return save_clutfile("$fn.clut", $img);
 	}
 	return;
 }
@@ -1068,7 +1133,7 @@ function psxtim( &$file )
 			// palette header
 			$siz = str2int($file, $pos, 4);
 			$tim['cn'] = (int)($siz / 0x20);
-			$tim['clut'] = mstrpal555($file, $pos+12, 0x10, $tim['cn']);
+			$tim['pal'] = mstrpal555($file, $pos+12, 0x10, $tim['cn']);
 				$pos += $siz;
 		case 0:
 			// pixel header
@@ -1096,7 +1161,7 @@ function psxtim( &$file )
 			// palette header
 			$siz = str2int($file, $pos, 4);
 			$tim['cn'] = (int)($siz / 0x200);
-			$tim['clut'] = mstrpal555($file, $pos+12, 0x100, $tim['cn']);
+			$tim['pal'] = mstrpal555($file, $pos+12, 0x100, $tim['cn']);
 				$pos += $siz;
 		case 1:
 			// TokiMemo 2 substories *.tml
