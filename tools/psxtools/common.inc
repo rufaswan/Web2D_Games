@@ -44,16 +44,15 @@
 // - global variables are prefixed "gp_" (global pointer)
 define("ZERO", "\x00");
 define("BYTE", "\xff");
-define("BIT4",  0x0f);
-define("BIT8",  0xff);
-define("BIT16", 0xffff);
-define("BIT24", 0xffffff);
-define("BIT32", 0xffffffff);
-define("KILO", 1 << 10);
-define("MEGA", 1 << 20);
-define("GIGA", 1 << 30);
-//if ( defined("DRY_RUN" ) ) // per script
-//if ( defined("NO_TRACE") ) // per script
+define("BIT4",  (1 <<  4)-1);
+define("BIT8",  (1 <<  8)-1);
+define("BIT16", (1 << 16)-1);
+define("BIT24", (1 << 24)-1);
+define("BIT32", (1 << 32)-1);
+//define("DRY_RUN", true);  // per script
+//define("NO_TRACE", true); // per script
+//if ( defined("DRY_RUN") )
+//if ( defined("NO_TRACE") )
 
 //////////////////////////////
 // E_USER_ERROR
@@ -64,7 +63,7 @@ function php_error()
 {
 	$args = func_get_args();
 	$fmt = array_shift($args);
-	$err = vsprintf("$fmt\n", $args);
+	$err = vsprintf("PHP : $fmt\n", $args);
 	return trigger_error($err, E_USER_ERROR);
 }
 
@@ -72,7 +71,7 @@ function php_warning()
 {
 	$args = func_get_args();
 	$fmt = array_shift($args);
-	$err = vsprintf("$fmt\n", $args);
+	$err = vsprintf("PHP : $fmt\n", $args);
 	return trigger_error($err, E_USER_WARNING);
 }
 
@@ -80,40 +79,35 @@ function php_notice()
 {
 	$args = func_get_args();
 	$fmt = array_shift($args);
-	$err = vsprintf("$fmt\n", $args);
+	$err = vsprintf("PHP : $fmt\n", $args);
 	return trigger_error($err, E_USER_NOTICE);
 }
 //////////////////////////////
-function php_req_define($define, $ver)
+function php_req_define($define)
 {
 	if ( ! defined($define) )
-		php_error("not defined %s = require PHP %s", $define, $ver);
+		php_error("required global constant %s not defined", $define);
 	return;
 }
 function php_req_extension($func, $ext)
 {
 	if ( ! function_exists($func) )
-		php_error("no %s() = require extension %s", $func, $ext);
+		php_error("required %s() [%s] not found", $func, $ext);
 	return;
 }
 
 // https://www.php.net/manual/en/reserved.constants.php
-// 5.0.2  PHP_EOL
-// 5.0.5  PHP_INT_MAX  PHP_INT_SIZE
-// 5.2.7  PHP_MAJOR_VERSION  PHP_MINOR_VERSION  PHP_RELEASE_VERSION  PHP_EXTRA_VERSION  PHP_VERSION_ID  PHP_ZTS  PHP_DEBUG
-// 5.3.0  PHP_MAXPATHLEN
-// 5.3.7  PHP_MANDIR
-// 5.4.0  PHP_BINARY
-// 7.0.0  PHP_INT_MIN
-// 7.1.0  PHP_FD_SETSIZE
-// 7.2.0  PHP_OS_FAMILY  PHP_FLOAT_DIG  PHP_FLOAT_EPSILON  PHP_FLOAT_MIN  PHP_FLOAT_MAX
-//
+php_req_define("PHP_INT_SIZE");   // since 5.0.5
+php_req_define("PHP_VERSION_ID"); // since 5.2.7
+
 // PHP 7.0+ for native 64-bit int on windows
-//php_req_define("PHP_INT_SIZE"  , "5.0.5");
-php_req_define("PHP_VERSION_ID", "5.2.7");
+if ( PHP_VERSION_ID < 50600 )
+	php_warning("version older than 5.6 is not supported");
 //////////////////////////////
 function str2int( &$str, $pos, $byte, $sign=false )
 {
+	if ( PHP_INT_SIZE < $byte )
+		return php_error("required %d-bit support", $byte*8);
 	$sub = substr($str, $pos, $byte);
 	$int = ordint($sub);
 	if ( $sign )
@@ -200,7 +194,7 @@ function sint32( $s )
 	return ( ($int << $sra) >> $sra );
 }
 
-function strupd( &$file, $pos, $str )
+function str_update( &$file, $pos, $str )
 {
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
@@ -226,14 +220,14 @@ function int_ceil( $int, $ceil )
 	// -8   |  -8   -8  -10    -8 |
 	//  8.5 |  12   12   10    12 |
 	// -8.5 | -12  -12  -10   -12 |
-	$neg = ( 0 > $int );
-	if ( $neg )
+	$sign = ( 0 > $int );
+	if ( $sign )
 		$int = -$int;
 	$int  = (int)ceil($int );
 	$ceil = (int)ceil($ceil);
 	while ( $int % $ceil )
 		$int++;
-	return ( $neg ) ? -$int : $int;
+	return ( $sign ) ? -$int : $int;
 }
 
 function int_floor( $int, $floor )
@@ -244,33 +238,44 @@ function int_floor( $int, $floor )
 	// -8   | -8  -8   -8   -10 |
 	//  8.5 |  8   8    8    10 |
 	// -8.5 | -8  -8   -8   -10 |
-	$neg = ( 0 > $int );
-	if ( $neg )
+	$sign = ( 0 > $int );
+	if ( $sign )
 		$int = -$int;
 	$int   = (int)floor($int  );
 	$floor = (int)floor($floor);
 	while ( $int % $floor )
 		$int--;
-	return ( $neg ) ? -$int : $int;
+	return ( $sign ) ? -$int : $int;
 }
 //////////////////////////////
-function debug( $str, $name="DEBUG", $sep=4 )
+function debug( $str, $name="DEBUG" )
 {
-	echo "$name : ";
+	$buf = "$name : ";
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
 	{
-		if ( $i > 0 && ($i % $sep) == 0 )
-			echo "  ";
-
-		$b = ord( $str[$i] );
-		if ( $b == 0 )
-			echo "-- ";
+		if ( $i > 0 && ($i % 4) == 0 )
+			$buf .= '  ';
+		if ( $str[$i] == ZERO )
+			$buf .= '-- ';
 		else
-			printf("%02x ", $b);
+			$buf .= sprintf("%02x ", ord($str[$i]) );
 	}
-	echo "\n";
-	return;
+	$buf .= "\n";
+	//echo $buf;
+	return $buf;
+}
+
+function debug_block( &$str, $blksz )
+{
+	$len = int_floor( strlen($str), $blksz);
+	$buf = '';
+	for ( $i=0; $i < $len; $i += $blksz )
+	{
+		$n = sprintf("%4x", $i/$blksz);
+		$buf .= debug( substr($str, $i, $blksz), $n );
+	}
+	return $buf;
 }
 
 function trace()
@@ -583,6 +588,8 @@ function grayclut( $cc )
 
 function gradient( $cc, $src, $dst )
 {
+	if ( $cc <= 1 )
+		return php_error("gradient() cc [%d]", $cc);
 	$r1 = ord( $src[0] );
 	$g1 = ord( $src[1] );
 	$b1 = ord( $src[2] );
@@ -608,6 +615,21 @@ function gradient( $cc, $src, $dst )
 	}
 	return $clut;
 }
+
+function bpp4to8( &$pix )
+{
+	$new = '';
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i++ )
+	{
+		$b = ord( $pix[$i] );
+		$b1 = ($b >> 0) & BIT4;
+		$b2 = ($b >> 4) & BIT4;
+		$new .= chr($b1) . chr($b2);
+	}
+	$pix = $new;
+	return;
+}
 //////////////////////////////
 function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 {
@@ -632,12 +654,12 @@ function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
-		return;
-	$sx /= 2;
-	$w  /= 2;
-	$sw /= 2;
+		return "";
+	$sx >>= 1;
+	$w  >>= 1;
+	$sw >>= 1;
 	if ( rippix_errs($sx, $sy, $w, $h, $sw, $sh) )
-		return;
+		return "";
 
 	$rip = "";
 	for ( $y=0; $y < $h; $y++ )
@@ -661,9 +683,9 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
-		return;
+		return "";
 	if ( rippix_errs($sx, $sy, $w, $h, $sw, $sh) )
-		return;
+		return "";
 
 	$rip = "";
 	for ( $y=0; $y < $h; $y++ )
@@ -785,7 +807,7 @@ function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
 			$sxx = (int)($x * $mx) + $syy;
 
 			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
-			strupd($canv, $dxx*$byte, $c1);
+			str_update($canv, $dxx*$byte, $c1);
 		} // for ( $x=0; $x < $nw; $x++ )
 	} // for ( $y=0; $y < $nh; $y++ )
 
@@ -816,7 +838,7 @@ function flippix( &$pix, $byte=1 )
 			$dxx += $dyy;
 
 			$c1 = substr($pix['src']['pix'], $sxx*$byte, $byte);
-			strupd($flip, $dxx*$byte, $c1);
+			str_update($flip, $dxx*$byte, $c1);
 
 		} // for ( $x=0; $x < $pix['src']['w']; $x++ )
 	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
@@ -841,8 +863,8 @@ function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
 	//   byte 1 bgzero RGBA = c1 -> RGBA , cmp c1, bgzero
 	//   byte 4 bgzero 0    = *OK*
 	//   byte 4 bgzero RGBA = cmp c1, bgzero
-	// Xenogears Lucca = both 0th and 15th color are #000
-	//                   ignore 0th , but not #000
+	// Xenogears Lucca = 0th and 15th color are both #000
+	//                   ignore 0th #000 , but not 15th #000
 	if ( $byte == 1 )
 	{
 		$c1 = ord($c1);
@@ -868,7 +890,7 @@ function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
 		$c1 = $alpha($c1, $c2);
 
 	// COPY / UPDATE PIXEL
-	strupd($pix['rgba']['pix'], $dxx*4, $c1);
+	str_update($pix['rgba']['pix'], $dxx*4, $c1);
 	return;
 }
 
@@ -1105,7 +1127,7 @@ function psx_exe( &$psxram, $psxexe )
 
 	// Tokimemo 2 EVS series has garbage data at the end
 	$bin = substr($bin, 0x800, $off3);
-	strupd($psxram, $off2, $bin);
+	str_update($psxram, $off2, $bin);
 	return;
 }
 

@@ -40,9 +40,9 @@ function arc_pack( $dir )
 		$b3 = chrint($lba, 4);
 
 		$p = 4 + ($k * 0x18);
-		strupd($file, $p+   0, $b1);
-		strupd($file, $p+0x10, $b2);
-		strupd($file, $p+0x14, $b3);
+		str_update($file, $p+   0, $b1);
+		str_update($file, $p+0x10, $b2);
+		str_update($file, $p+0x14, $b3);
 
 		$file .= $fdt;
 		pad800($file);

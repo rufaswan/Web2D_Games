@@ -213,19 +213,10 @@ function pakcoldbg( &$pak, $id, $pos )
 
 function pakdbg( &$meta, $name, $blk )
 {
-	$len = strlen($meta);
-	printf("== pakdbg( $name , %x ) = %x\n", $blk, $len);
-
-	ob_start();
-	for ( $i=0; $i < $len; $i += $blk )
-	{
-		$n = sprintf("%4x", $i/$blk);
-		debug( substr($meta, $i, $blk), $n );
-	}
-	$buf = ob_get_clean();
+	printf("== pakdbg( $name , %x )\n", $blk);
+	$buf = debug_block( $meta, $blk );
 	//echo "$buf\n";
 	save_file("$name.txt", $buf);
-
 	return;
 }
 

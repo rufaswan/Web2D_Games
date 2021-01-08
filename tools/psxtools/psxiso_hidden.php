@@ -5,7 +5,7 @@
  */
 require "common.inc";
 
-define("XASTRH", chr(0x60).chr(0x01).chr(0x01).chr(0x80));
+define("XASTRH", "x60x01x01x80");
 //define("DRY_RUN", true);
 
 function chrbase10( $chr )

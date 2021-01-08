@@ -4,9 +4,14 @@
 [/license]
  */
 require "common.inc";
+require "common-guest.inc";
+
+//define("DRY_RUN", true);
 
 function tmxpal( &$pal )
 {
+	if ( defined("DRY_RUN") )
+		return;
 	// swizzled
 	//  0- 7  10-17
 	//  8- f  18-1f
@@ -26,30 +31,8 @@ function tmxpal( &$pal )
 		$new .= $b1 . $b3 . $b2 . $b4;
 	} // for ( $i=0; $i < 0x400; $i += 4 )
 
-	for ( $i=0; $i < $len; $i += 4 )
-	{
-		$a = ord( $new[$i+3] );
-		$a = int_clamp($a*2, 0, BIT8);
-		$new[$i+3] = chr($a);
-	}
-
+	ps2_alpha2x($new);
 	$pal = $new;
-	return;
-}
-
-function bpp4to8( &$pix )
-{
-	$new = '';
-	$len = strlen($pix);
-	for ( $i=0; $i < $len; $i++ )
-	{
-		$b = ord( $pix[$i] );
-		$b1 = ($b >> 0) & BIT4;
-		$b2 = ($b >> 4) & BIT4;
-		$new .= chr($b1) . chr($b2);
-	}
-
-	$pix = $new;
 	return;
 }
 

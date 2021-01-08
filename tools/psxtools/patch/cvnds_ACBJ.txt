@@ -83,8 +83,8 @@
 	frank   = ov-60 , so-791 , sc-45a-45f , pal-2aea0c
 	medu    = ov-61 , so-7d7 , sc-505-516 , pal-2aefdc
 	kari    = ov-62 , so-7bb , sc-4be-4c0 , pal-2cd2dc
-	ane     = ov-63 , so-717 , sc-2c9-2d0 , pal-2d7f74
-	imo     = ov-63 , so-4b2 , sc-49e-4a5 , pal-2d7e40
+	ane     = ov-63 , so-717 , sc-2c9-2d0 , pal-2d7cdc
+	imo     = ov-63 , so-7b2 , sc-49e-4a5 , pal-2d7e40
 	death   = ov-64 , so-74e , sc-362-36c , pal-2aecb8
 	drac    = ov-64 , so-767 , sc-396-397 , sc-39c , sc-39f-3a2 , pal-2da4dc
 	drac2   = ov-65 , so-768 , sc-398-39b , pal-2d08fc

@@ -100,8 +100,8 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 				$dyy2 = ( $y+($sy*2)+1 ) * $map_w;
 
 				$b1 = substr($src, $syy, 0x20);
-				strupd($canvas, $dyy1 + $x, $b1);
-				strupd($canvas, $dyy2 + $x, $b1);
+				str_update($canvas, $dyy1 + $x, $b1);
+				str_update($canvas, $dyy2 + $x, $b1);
 			} // for ( $sy=0; $sy < 0x10; $sy++ )
 		} // for ( $x=0; $x < $map_w; $x += 0x20 )
 		$mdt .= "\n";

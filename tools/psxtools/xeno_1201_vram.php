@@ -42,7 +42,7 @@ function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 		$dxx = $dyy + ($dx * 2);
 
 		$b1 = substr($part, $syy, $w*2);
-		strupd($vram, $dxx, $b1);
+		str_update($vram, $dxx, $b1);
 	}
 	return;
 }

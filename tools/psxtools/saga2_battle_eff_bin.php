@@ -43,7 +43,7 @@ function sectparts( &$file, &$canv, $off, $dir )
 			$syy = $y * $w * 2;
 			$dyy = ($y + $dy) * CANV_S + ($dx * 2);
 			$b = substr($pix, $syy, $w*2);
-			strupd($canv, $dyy, $b);
+			str_update($canv, $dyy, $b);
 		}
 	} // while ( $off < $siz )
 	return;

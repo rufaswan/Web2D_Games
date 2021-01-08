@@ -255,9 +255,9 @@ function png2rgba( &$chunk, $w, $h, $dp, $cl, $fname )
 	$dpw = ( $cl & 4 ) ? 4 : 3;
 	if ( $dp == 16 )  $dpw *= 2;
 
-	save_file("png1.idat", $chunk['IDAT']);
+	//save_file("png1.idat", $chunk['IDAT']);
 	png_unfilter($chunk['IDAT'], $w, $h, $dpw);
-	save_file("png2.idat", $chunk['IDAT']);
+	//save_file("png2.idat", $chunk['IDAT']);
 
 	$rgba = 'RGBA';
 	$rgba .= chrint($w, 4);

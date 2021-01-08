@@ -355,9 +355,9 @@ function copyquad( &$pix, $byte=1 )
 	$q2 = triad_area($qdes['quad'][0], $qdes['quad'][3], $qdes['quad'][2]); // ADC
 	$qdessz = $q1 + $q2;
 
-	$q1 = triad_area($qsrc['quad'][0], $qsrc['quad'][1], $qsrc['quad'][2]); // ABC
-	$q2 = triad_area($qsrc['quad'][0], $qsrc['quad'][3], $qsrc['quad'][2]); // ADC
-	$qsrcsz = $q1 + $q2;
+	//$q1 = triad_area($qsrc['quad'][0], $qsrc['quad'][1], $qsrc['quad'][2]); // ABC
+	//$q2 = triad_area($qsrc['quad'][0], $qsrc['quad'][3], $qsrc['quad'][2]); // ADC
+	//$qsrcsz = $q1 + $q2;
 
 	for ( $y = $qdes['box'][1]; $y <= $qdes['box'][3]; $y++ )
 	{
@@ -379,19 +379,20 @@ function copyquad( &$pix, $byte=1 )
 			if ( $t[2] == 0.0 )
 				continue;
 			// Rasterization (consistant rule)
-			//   for pixel from 0.0 to 1.0, but not including pixel 1.0
-			//   are considered pixel 0
+			//   for subpixel from 0.0 to 1.0, but not including 1.0
+			//   are considered part of pixel 0
 			$t[2] = 1 / $t[2];
 			$sx = (int)($t[0] * $t[2]);
 			$sy = (int)($t[1] * $t[2]);
 
-			$xy = array($sx,$sy,1);
-			$q1 = triad_area($xy, $qsrc['quad'][0], $qsrc['quad'][1]); // pAB
-			$q2 = triad_area($xy, $qsrc['quad'][1], $qsrc['quad'][2]); // pBC
-			$q3 = triad_area($xy, $qsrc['quad'][2], $qsrc['quad'][3]); // pCD
-			$q4 = triad_area($xy, $qsrc['quad'][3], $qsrc['quad'][0]); // pDA
-			if ( ($q1+$q2+$q3+$q4) > $qsrcsz )
-				continue;
+			// is this check required ???
+			//$xy = array($sx,$sy,1);
+			//$q1 = triad_area($xy, $qsrc['quad'][0], $qsrc['quad'][1]); // pAB
+			//$q2 = triad_area($xy, $qsrc['quad'][1], $qsrc['quad'][2]); // pBC
+			//$q3 = triad_area($xy, $qsrc['quad'][2], $qsrc['quad'][3]); // pCD
+			//$q4 = triad_area($xy, $qsrc['quad'][3], $qsrc['quad'][0]); // pDA
+			//if ( ($q1+$q2+$q3+$q4) > $qsrcsz )
+				//continue;
 
 			updatepix($pix, $byte, $qsrc['base'][0]+$sx, $qsrc['base'][1]+$sy, $qdes['base'][0]+$x, $qdes['base'][1]+$y);
 		} // for ( $x=$x1; $x < $x2; $x++ )

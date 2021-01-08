@@ -7,11 +7,13 @@ require "common.inc";
 
 //define("DRY_RUN", true);
 
+$gp_pix  = array();
 $gp_clut = "";
 
-function loadtexx( &$texx, $pfx, $id, $sx, $sy, $w, $h )
+function loadsc( $pfx, $id, $sx, $sy, $w, $h )
 {
-	if ( ! isset( $texx[$id] ) )
+	global $gp_pix;
+	if ( ! isset( $gp_pix[$id] ) )
 	{
 		$scfn = "$pfx.$id.sc";
 		$file = load_file($scfn);
@@ -23,17 +25,17 @@ function loadtexx( &$texx, $pfx, $id, $sx, $sy, $w, $h )
 		{
 			case 0x2000: // 128x128 , 4-bit
 			case 0x8000: // 256x256 , 4-bit
-				$texx[$id] = "";
+				$gp_pix[$id] = "";
 				for ( $i=0; $i < $len; $i++ )
 				{
 					$b = ord($file[$i]);
 					$b1 = ($b >> 0) & BIT4;
 					$b2 = ($b >> 4) & BIT4;
-					$texx[$id] .= chr($b1) . chr($b2);
+					$gp_pix[$id] .= chr($b1) . chr($b2);
 				}
 				break;
 			case 0x4000: // 128x128 , 8-bit
-				$texx[$id] = $file;
+				$gp_pix[$id] = $file;
 				break;
 			default:
 				return php_error("UNKNOWN LEN %s = %x", $scfn, $len);
@@ -41,12 +43,12 @@ function loadtexx( &$texx, $pfx, $id, $sx, $sy, $w, $h )
 		echo "add TEXX $id\n";
 	}
 
-	$len = strlen( $texx[$id] );
+	$len = strlen( $gp_pix[$id] );
 	if ( $len == 0x4000 ) // 128x128
-		return rippix8($texx[$id], $sx, $sy, $w, $h, 0x80, 0x80);
+		return rippix8($gp_pix[$id], $sx, $sy, $w, $h, 0x80, 0x80);
 	else
 	if ( $len == 0x10000 ) // 256x256
-		return rippix8($texx[$id], $sx, $sy, $w, $h, 0x100, 0x100);
+		return rippix8($gp_pix[$id], $sx, $sy, $w, $h, 0x100, 0x100);
 	return "";
 }
 //////////////////////////////
@@ -54,49 +56,44 @@ function abs_canv( &$CANV_S, $int )
 {
 	$int = abs($int);
 	if ( $int > $CANV_S )
-		$CANV_S = $int;
+		$CANV_S = $int + 1;
 	return;
 }
 
-function sectpart( &$meta, &$src, $pfx, $id, $num, $off )
+function sectpart( &$meta, &$src, $pfx, $id, $blk )
 {
-	printf("=== sectpart( $pfx , $id , $num , %x )\n", $off);
+	printf("=== sectpart( $pfx , $id , %x )\n", $blk);
 
 	$data = array();
 	$CANV_S = 0;
 	$is_mid = false;
-	while ( $num > 0 )
+	$pos = strlen($meta);
+	while ( $pos > 0 )
 	{
 		// 0 1  2 3  4 5  6 7  8 9  10 11  12 13 14 15
 		// dx-  dy-  sx-  sy-  w--  h----  t  f  c  -
-		$num--;
-		$p = $off + ($num * 0x10);
+		$pos -= $blk;
+		zero_watch("v15", $meta[$pos+15]);
 
-		zero_watch("v15", $meta[$p+15]);
+		$dx = str2int($meta, $pos+ 0, 2, true);
+		$dy = str2int($meta, $pos+ 2, 2, true);
+		$sx = str2int($meta, $pos+ 4, 2);
+		$sy = str2int($meta, $pos+ 6, 2);
+		$w  = str2int($meta, $pos+ 8, 2);
+		$h  = str2int($meta, $pos+10, 2);
+		$p12 = ord( $meta[$pos+12] );
+		$p13 = ord( $meta[$pos+13] );
+		$p14 = ord( $meta[$pos+14] );
 
-		$dx = sint16( $meta[$p+0] . $meta[$p+1] );
-		$dy = sint16( $meta[$p+2] . $meta[$p+3] );
-		$sx = str2int($meta, $p+ 4, 2);
-		$sy = str2int($meta, $p+ 6, 2);
-		$w  = str2int($meta, $p+ 8, 2);
-		$h  = str2int($meta, $p+10, 2);
-		$p12 = ord( $meta[$p+12] );
-		$p13 = ord( $meta[$p+13] );
-		$p14 = ord( $meta[$p+14] );
-
-		$v = array($dx,$dy,$sx,$sy,$w,$h,$p12,$p13,$p14);
-		$data[] = $v;
+		$data[] = array($dx,$dy,$sx,$sy,$w,$h,$p12,$p13,$p14);
 
 		// detect origin and canvas size
 		abs_canv($CANV_S, $dx);
 		abs_canv($CANV_S, $dy);
 		abs_canv($CANV_S, $dx + $w);
 		abs_canv($CANV_S, $dy + $h);
-		if ( ! $is_mid )
-		{
-			if ( $dx < 0 || $dy < 0 )
-				$is_mid = true;
-		}
+		if ( $dx < 0 || $dy < 0 )
+			$is_mid = true;
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , %2x , %2x , %2x\n", $p12, $p13, $p14);
@@ -115,7 +112,6 @@ function sectpart( &$meta, &$src, $pfx, $id, $num, $off )
 	printf("ORIGIN  %d\n", $origin);
 
 	global $gp_clut;
-	$texx = array();
 	foreach ( $data as $v )
 	{
 		list($dx,$dy,$sx,$sy,$w,$h,$p12,$p13,$p14) = $v;
@@ -125,11 +121,11 @@ function sectpart( &$meta, &$src, $pfx, $id, $num, $off )
 
 		$tid = $p12;
 		$cid = $p14;
-		$loadtexx = loadtexx($texx, $pfx, $tid, $sx, $sy, $w, $h);
+		$loadsc = loadsc($pfx, $tid, $sx, $sy, $w, $h);
 
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
-		$pix['src']['pix'] = $loadtexx;
+		$pix['src']['pix'] = $loadsc;
 		$pix['src']['pal'] = substr($gp_clut, $cid*0x40, 0x40);
 		$pix['bgzero'] = 0;
 
@@ -150,7 +146,7 @@ function sectpart( &$meta, &$src, $pfx, $id, $num, $off )
 			$src['dy'] = $sy + ($tid * 0x100);
 			$src['src']['w'] = $w;
 			$src['src']['h'] = $h;
-			$src['src']['pix'] = $loadtexx;
+			$src['src']['pix'] = $loadsc;
 			$src['src']['pal'] = substr($gp_clut, $cid*0x40, 0x40);
 			copypix($src);
 		//// original sheet in parts ////
@@ -164,30 +160,103 @@ function sectpart( &$meta, &$src, $pfx, $id, $num, $off )
 	return;
 }
 
-function sectanim( &$grps, &$meta, $pfx )
+//////////////////////////////
+function sectspr( &$so, $pfx )
 {
-	$len = strlen($grps);
-	$buf = "";
-	for ( $i=0; $i < $len; $i++ )
+	$src = COPYPIX_DEF();
+	$src['rgba']['w'] = 0x100;
+	$src['rgba']['h'] = 0x100;
+	$src['rgba']['pix'] = canvpix(0x100,0x100);
+
+	$len2 = strlen( $so[2]['d'] );
+	$id2 = 0;
+	for ( $i2=0; $i2 < $len2; $i2 += $so[2]['k'] )
 	{
-		$num = str2int($grps, $i+0, 1);
-		$off = str2int($grps, $i+4, 2);
+		$num = str2int($so[2]['d'], $i2+3, 1);
+		$off = str2int($so[2]['d'], $i2+8, 2);
+		$id2++;
 		if ( $num == 0 )
 			continue;
 
-		$ret = array();
-		for ( $j=0; $j < $num; $j++ )
+		$sub = substr($so[0]['d'], $off, $num*$so[0]['k']);
+		sectpart($sub, $src, $pfx, $id2-1, $so[0]['k']);
+	} // for ( $i2=0; $i2 < $len2; $i2 += $so[2]['k'] )
+
+	savepix("$pfx/src", $src);
+	return;
+}
+function sectanim( &$so, $pfx )
+{
+	if ( ! isset( $so[3]['o'] ) || ! isset( $so[4]['o'] ) )
+		return php_warning("no anim data on %s.so", $pfx);
+
+	$anim = '';
+	$len4 = strlen( $so[4]['d'] );
+	$id4 = 0;
+	for ( $i4=0; $i4 < $len4; $i4 += $so[4]['k'] )
+	{
+		$num = str2int($so[4]['d'], $i4+0, 2);
+		$off = str2int($so[4]['d'], $i4+4, 2);
+		$id4++;
+		if ( $num == 0 )
+			continue;
+
+		$dat = array();
+		for ( $n3=0; $n3 < $num; $n3++ )
 		{
-			$p = $off + ($j*8);
-			$b1 = str2int($meta, $p+0, 2);
-			$b2 = str2int($meta, $p+2, 2);
-			$ret[] = "$b1-$b2";
+			$p = $off + ($n3 * $so[3]['k']);
+			$b1 = str2int($so[3]['d'], $p+0, 2);
+			$b2 = str2int($so[3]['d'], $p+2, 2);
+			$dat[] = "$b1-$b2";
 		}
+		$dat = implode(' , ', $dat);
+		$anim .= sprintf("anim_%d = %s\n", $id4-1, $dat);
 
-		$buf .= sprintf("anim_%d = %s\n", $i/8, implode(' , ', $ret) );
-	} // for ( $i=0; $i < $len; $i++ )
+	} // for ( $i4=0; $i4 < $len4; $i4 += $so[4]['k'] )
 
-	save_file("$pfx/anim.txt", $buf);
+	save_file("$pfx/anim.txt", $anim);
+	return;
+}
+//////////////////////////////
+function sodbg( &$meta, $name, $blk )
+{
+	printf("== sodbg( $name , %x )\n", $blk);
+	$buf = debug_block( $meta, $blk );
+	//echo "$buf\n";
+	save_file("$name.txt", $buf);
+	return;
+}
+
+function loadso( &$so, $sect, $pfx )
+{
+	$offs = array();
+	$offs[] = strlen($so);
+	foreach ( $sect as $k => $v )
+	{
+		$b1 = str2int($so, $v['p'], 4);
+		if ( $b1 == 0 )
+			continue;
+		$offs[] = $b1;
+		$sect[$k]['o'] = $b1;
+	}
+	sort($offs);
+
+	foreach ( $sect as $k => $v )
+	{
+		if ( ! isset( $v['o'] ) )
+			continue;
+		$id = array_search($v['o'], $offs);
+		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
+		$dat = substr($so, $v['o'], $sz);
+
+		//save_file("$pfx/meta/$k.meta", $dat);
+		sodbg($dat, "$pfx/meta/$k", $v['k']);
+
+		$sect[$k]['d'] = $dat;
+	} // foreach ( $sect as $k => $v )
+
+	$so = $sect;
+	return;
 }
 //////////////////////////////
 function cvnds( $fname )
@@ -198,46 +267,31 @@ function cvnds( $fname )
 	if ( empty($so) || empty($pal) )
 		return;
 
-	global $gp_clut;
+	global $gp_clut, $gp_pix;
 	$gp_clut = $pal;
+	$gp_pix  = array();
 
-	$o1 = str2int($so, 0x04, 4);
-	$o2 = str2int($so, 0x08, 4);
-	$o3 = str2int($so, 0x0c, 4);
-	$o4 = str2int($so, 0x10, 4);
-	$o5 = str2int($so, 0x14, 4);
-	$o6 = str2int($so, 0x20, 4);
-	// 0x24 = total sprite
-	// 0x28 = total animation
-	if ( $o5 == 0 )  $o5 = $o6;
-	if ( $o4 == 0 )  $o4 = $o5;
-	if ( $o3 == 0 )  $o3 = $o4;
-	if ( $o2 == 0 )  $o2 = $o3;
-	if ( $o1 == 0 )  $o1 = $o2;
+	//   0 1 2 |     1-0 2-1 3-2
+	// 3 4     | 4-3 5-4
+	// 5       | s-5
+	// p_imo.dat
+	//          40 3c70 3e20 |      3c3*10 36*8 7f*c
+	//   4414 48e4           | 9a*8  22*8
+	//   49f4                |  2*c
+	// s3[+ 0] = 7e => s2
+	// s2
+	$sect = array(
+		array('p' => 0x04 , 'k' => 16), // 0
+		array('p' => 0x08 , 'k' =>  8), // 1
+		array('p' => 0x0c , 'k' => 12), // 2
+		array('p' => 0x10 , 'k' =>  8), // 3 jnt=0
+		array('p' => 0x14 , 'k' =>  8), // 4 jnt=0
+		array('p' => 0x20 , 'k' => 12), // 5
+	);
+	loadso($so, $sect, $pfx);
 
-	// sprite parts data
-	$meta = substr($so, $o1, $o2-$o1);
-	$grps = substr($so, $o3, $o4-$o3);
-
-	$src = COPYPIX_DEF();
-	$src['rgba']['w'] = 0x100;
-	$src['rgba']['h'] = 0x100;
-	$src['rgba']['pix'] = canvpix(0x100,0x100);
-
-	$len = strlen($grps);
-	for ( $i=0; $i < $len; $i += 12 )
-	{
-		$num = str2int($grps, $i+3, 1);
-		$off = str2int($grps, $i+8, 2);
-		sectpart($meta, $src, $pfx, $i/12, $num, $off);
-	} // for ( $i=0; $i < $len; $i += 12 )
-
-	savepix("$pfx/src", $src);
-
-	// sprite animation sequence
-	$meta = substr($so, $o4, $o5-$o4);
-	$grps = substr($so, $o5, $o6-$o5);
-	sectanim($grps, $meta, $pfx);
+	sectanim($so, $pfx);
+	sectspr ($so, $pfx);
 	return;
 }
 

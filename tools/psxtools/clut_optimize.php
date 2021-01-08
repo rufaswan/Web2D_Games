@@ -7,13 +7,14 @@ require "common.inc";
 
 function rgba_optimize( &$file, $fname )
 {
+	$log = "$fname [RGBA]";
 	$w = str2int($file, 4, 4);
 	$h = str2int($file, 8, 4);
-	if ( $w == 0 )  php_error("RGBA zero width  : %s", $fname);
-	if ( $h == 0 )  php_error("RGBA zero height : %s", $fname);
+	if ( $w == 0 )  php_error("$log zero width");
+	if ( $h == 0 )  php_error("$log zero height");
 	$s = $w * $h * 4;
 	if ( strlen($file) < (12+$s) )
-		php_error("RGBA not enough data : %s", $fname);
+		php_error("$log not enough data");
 
 	// optimize by converting into CLUT
 	$clpal = array();
@@ -35,10 +36,10 @@ function rgba_optimize( &$file, $fname )
 
 	$cc = count($clpal);
 	if ( $cc > 0x100 )
-		return printf("RGBA [%x]  %d x %d  %s\n", $cc, $w, $h, $fname);
+		return printf("$log [%x] %d x %d\n", $cc, $w, $h);
 	else
 	{
-		printf("RGBA->CLUT [%x]  %d x %d  %s\n", $cc, $w, $h, $fname);
+		printf("%s [RGBA->CLUT] [%x] %d x %d\n", $fname, $cc, $w, $h);
 
 		$clut = "CLUT";
 		$clut .= chrint($cc, 4);
@@ -53,29 +54,30 @@ function rgba_optimize( &$file, $fname )
 
 function clut_optimize( &$file, $fname )
 {
-	$c = str2int($file,  4, 4);
-	$w = str2int($file,  8, 4);
-	$h = str2int($file, 12, 4);
-	if ( $c == 0 )  php_error("CLUT zero color  : %s", $fname);
-	if ( $w == 0 )  php_error("CLUT zero width  : %s", $fname);
-	if ( $h == 0 )  php_error("CLUT zero height : %s", $fname);
-	$cc = $c * 4;
+	$log = "$fname [CLUT]";
+	$cc = str2int($file,  4, 4);
+	$w  = str2int($file,  8, 4);
+	$h  = str2int($file, 12, 4);
+	if ( $cc == 0 )  php_error("$log zero color");
+	if ( $w  == 0 )  php_error("$log zero width");
+	if ( $h  == 0 )  php_error("$log zero height");
+	$cz = $cc * 4;
 	$sz = $w * $h;
-	if ( strlen($file) < (16+$cc+$sz) )
-		php_error("CLUT not enough data : %s", $fname);
+	if ( strlen($file) < (16+$cz+$sz) )
+		php_error("$log not enough data");
 
 	// optimize by removing duplicate and unused palettes
 	$clpal = array();
 	$clpix = "";
-	$pos = 16 + $cc;
+	$pos = 16 + $cz;
 	for ( $y=0; $y < $h; $y++ )
 	{
 		for ( $x=0; $x < $w; $x++ )
 		{
 			$b1 = ord( $file[$pos] );
 				$pos++;
-			if ( $b1 > $c )
-				php_error("CLUT %d,%d @ over cc %2x  %s", $x, $y, $b1, $fname);
+			if ( $b1 > $cc )
+				php_error("$log %x [%d,%d] @ over cc %2x", $pos-1, $x, $y, $b1);
 
 			$b2 = substr($file, 16+$b1*4, 4);
 			if ( array_search($b2, $clpal) === false )
@@ -86,12 +88,12 @@ function clut_optimize( &$file, $fname )
 		} // for ( $x=0; $x < $w; $x++ )
 	} // for ( $y=0; $y < $h; $y++ )
 
-	if ( count($clpal) == $c )
-		return printf("CLUT [%x]  %d x %d  %s\n", $c, $w, $h, $fname);
+	if ( count($clpal) == $cc )
+		return printf("$log [%x] %d x %d\n", $cc, $w, $h);
 	else
 	{
 		$cc = count($clpal);
-		printf("CLUT [%x->%x]  %d x %d  %s\n", $c, $cc, $w, $h, $fname);
+		printf("$log [%x->%x] %d x %d\n", $c, $cc, $w, $h);
 
 		$clut = "CLUT";
 		$clut .= chrint($cc, 4);

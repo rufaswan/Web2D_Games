@@ -11,7 +11,7 @@ function updmap( &$canvas, &$src, $dx, $dy, $w, $h )
 	{
 		$row = substr($src, $y*8, 8);
 		$dxx = ($dy + $y) * $w + $dx;
-		strupd($canvas, $dxx, $row);
+		str_update($canvas, $dxx, $row);
 	}
 	return;
 }

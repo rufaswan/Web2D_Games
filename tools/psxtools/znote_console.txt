@@ -1,0 +1,17 @@
+
+Layering
+	Top-to-Bottom  PSX  NDS
+	Bottom-to-Top  SATURN  PS2  WII
+	???  PC98  VITA  PSP  PS3
+
+	# NOTE
+		Painter's Algorithm is Bottom-to-Top order
+		so we'll need to loop Top-to-Bottom order in reverse
+
+Endian
+	Little  PSX  PS2  PSP  VITA  NDS  PC98
+	Big     SATURN
+	BOTH    WII
+	NONE
+	???
+

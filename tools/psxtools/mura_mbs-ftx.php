@@ -49,7 +49,7 @@ function sectquad( &$mbs, $pos, $name, $SCALE )
 	);
 
 	printf("== sectquad( %x , $name , %.2f )\n", $pos, $SCALE);
-	printf("    af %7.2f,%7.2f  %7.2f,%7.2f\n", $qax, $qay, $qfx, $qfy);
+	printf("    af %7.2f,%7.2f\n", $qax, $qay);
 	quad_dump($bcde, "1423", "bcde");
 	return $bcde;
 }
@@ -59,44 +59,23 @@ function load_tpl( &$pix, $tid , $pfx )
 	global $gp_pix;
 	if ( ! isset( $gp_pix[$tid] ) )
 	{
-		$ftx = load_file("$pfx.$tid.tpl");
-		if ( empty($ftx) )
-			return;
+		$fn = sprintf("%s.%d.tpl", $pfx, $tid);
+		$ftx = load_clutfile($fn);
+		if ( $ftx === 0 )
+			return php_error("NOT FOUND %s", $fn);
 
-		$b1 = substr($ftx, 0, 4);
-		if ( $b1 == "CLUT" )
+		$gp_pix[$tid] = array();
+		if ( isset( $ftx['cc'] ) )
 		{
-			$cc = str2int($ftx,  4, 4);
-			$w  = str2int($ftx,  8, 4);
-			$h  = str2int($ftx, 12, 4);
-
-			$pal = substr($ftx, 16, $cc*4);
-			$dat = substr($ftx, 16 + $cc*4, $w*$h);
-			$gp_pix[$tid] = array(
-				'w' => $w,
-				'h' => $h,
-				'd' => clut2rgba($pal, $dat, false),
-			);
-		} // if ( $b1 == "CLUT" )
-		else
-		if ( $b1 == "RGBA" )
-		{
-			$w  = str2int($ftx, 4, 4);
-			$h  = str2int($ftx, 8, 4);
-
-			$gp_pix[$tid] = array(
-				'w' => $w,
-				'h' => $h,
-				'd' => substr($ftx, 12, $w*$h*4),
-			);
-		} // if ( $b1 == "RGBA" )
+			$gp_pix[$tid]['w'] = $ftx['w'];
+			$gp_pix[$tid]['h'] = $ftx['h'];
+			$gp_pix[$tid]['d'] = clut2rgba($ftx['pal'], $ftx['pix'], false);
+		}
 		else
 		{
-			$gp_pix[$tid] = array(
-				'w' => 0,
-				'h' => 0,
-				'd' => "",
-			);
+			$gp_pix[$tid]['w'] = $ftx['w'];
+			$gp_pix[$tid]['h'] = $ftx['h'];
+			$gp_pix[$tid]['d'] = $ftx['pix'];
 		}
 	} // if ( ! isset( $gp_pix[$tid] ) )
 
@@ -128,30 +107,28 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		// -  typ  trn  tid  s1   - -  s0   s2
 		$typ = str2big($mbs[4]['d'], $p4+ 1, 1);
 		$trn = str2big($mbs[4]['d'], $p4+ 2, 1);
-		$tid = str2big($mbs[4]['d'], $p4+ 3, 1);
 		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
 
+		$tid = str2big($mbs[4]['d'], $p4+ 3, 1);
 		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
 		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
-			$tid *= 10; // tpl can have multiple images
 
 		$sqd = sectquad($mbs[1]['d'], $s1*$mbs[1]['k'], "mbs 1 $s1", 1);
 		$dqd = sectquad($mbs[2]['d'], $s2*$mbs[2]['k'], "mbs 2 $s2", SCALE);
-		$data[] = array($typ, $trn, $tid, $s0, $sqd, $dqd);
-		printf("DATA  %2x , %2x , %d , %x\n", $typ, $trn, $tid, $s0);
+		$dv = array($typ, $trn, $s0, $tid, $sqd, $dqd);
+		$data[] = $dv;
+		//array_unshift($data, $dv);
+		printf("DATA  %d , %2x , %2x , %x\n", $tid, $typ, $trn, $s0);
 
 		// detect origin and canvas size
 		for ( $i=0; $i < 4; $i++ )
 		{
 			$s1 = abs( $dqd[$i][0] );
 			$s2 = abs( $dqd[$i][1] );
-			if ( $s1 > $CANV_S )  $CANV_S = $s1;
-			if ( $s2 > $CANV_S )  $CANV_S = $s2;
-			if ( ! $is_mid )
-			{
-				if ( $dqd[$i][0] < 0 || $dqd[$i][1] < 0 )
-					$is_mid = true;
-			}
+			if ( $s1 > $CANV_S )  $CANV_S = $s1 + 1;
+			if ( $s2 > $CANV_S )  $CANV_S = $s2 + 1;
+			if ( $dqd[$i][0] < 0 || $dqd[$i][1] < 0 )
+				$is_mid = true;
 		} // for ( $i=0; $i < 4; $i++ )
 		printf("CANV_S  %d\n", $CANV_S);
 
@@ -170,7 +147,7 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 
 	foreach ( $data as $dv )
 	{
-		list($typ, $trn, $tid, $s0, $sqd, $dqd) = $dv;
+		list($typ, $trn, $s0, $tid, $sqd, $dqd) = $dv;
 
 		// 00  ok
 		// +01 normal
@@ -301,19 +278,10 @@ function mbscoldbg( &$mbs, $id, $pos )
 
 function mbsdbg( &$meta, $name, $blk )
 {
-	$len = strlen($meta);
-	printf("== mbsdbg( $name , %x ) = %x\n", $blk, $len);
-
-	ob_start();
-	for ( $i=0; $i < $len; $i += $blk )
-	{
-		$n = sprintf("%4x", $i/$blk);
-		debug( substr($meta, $i, $blk), $n );
-	}
-	$buf = ob_get_clean();
+	printf("== mbsdbg( $name , %x )\n", $blk);
+	$buf = debug_block( $meta, $blk );
 	//echo "$buf\n";
 	save_file("$name.txt", $buf);
-
 	return;
 }
 

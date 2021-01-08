@@ -19,7 +19,7 @@ function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 		$dxx = $dyy + ($dx * 2);
 
 		$b1 = substr($part, $syy, $w*2);
-		strupd($vram, $dxx, $b1);
+		str_update($vram, $dxx, $b1);
 	}
 	return;
 }
@@ -126,7 +126,7 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 
 			$cnt = count($data);
 			$pix = str_repeat(ZERO, 4+($cnt*4));
-				strupd($pix, 0, chr($cnt));
+				str_update($pix, 0, chr($cnt));
 
 			foreach ( $data as $k => $v )
 			{
@@ -136,7 +136,7 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 				if ( $h > 0x100 )  $h = 0x100;
 
 				$len = strlen($pix);
-					strupd($pix, 4+($k*4), chrint($len, 3));
+					str_update($pix, 4+($k*4), chrint($len, 3));
 				$pix .= chrint($w, 2);
 				$pix .= chrint($h, 2);
 				$pix .= rippix8($file2, $v[0]*2, $v[1], $w*2, $h, VRAM_W*2, VRAM_H);

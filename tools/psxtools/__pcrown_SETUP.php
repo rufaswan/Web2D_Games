@@ -214,6 +214,32 @@ palette asm order
 	chap.pak    6200
 	slct.pak    fire 1c80/1ec0/3c40 , fence 9080
 
+select color bank
+	21a80  obaa
+	21b00  book brown
+	21b80  book blue
+	21c00  book pink
+	21c80  book black
+	21d00  book orange
+	21e00  fence
+	21e80  cat
+	21f00  girl
+	21f80  circle
+	23d80  fire
+
+	VDP1 palette order
+		0    20*2
+		1  2120*2
+		2   9a0*2  obaa
+		3  3160*2  book
+		4  3180*2  book
+		5  31a0*2  book
+		6  31c0*2  book
+		7  31e0*2  book
+		8  e40/f60/1e20  fire
+		9  4840*2  fence
+		a  3020*2  cat
+		b  3100*2  girl
 
 palette
 	=> RAM 9ca8e = 0.bin + 98a8e

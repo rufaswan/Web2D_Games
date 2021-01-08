@@ -508,37 +508,37 @@ function wiitpl( &$file, $base, $pfx, $id )
 		return;
 
 	$cnt = str2big($file, $base+4, 4);
-	for ( $i=0; $i < $cnt; $i++ )
+	if ( $cnt != 1 )
+		return php_error("%s/%04d is multi-TPL [%d]", $pfx, $id, $cnt);
+
+	$p = $base + 12 + 8;
+	$p1 = str2big($file, $p+0, 4); // image
+	$p2 = str2big($file, $p+4, 4); // palette
+
+	$wiipal = wiitpl_pal($file, $base, $p2);
+	list($iw,$ih,$byte,$wiipix) = wiitpl_pix($file, $base, $p1, $wiipal);
+
+	$img = '';
+	if ( $byte == 1 )
 	{
-		$p = $base + 12 + ($i * 8);
+		$img = "CLUT";
+		$img .= chrint( strlen($wiipal)/4, 4 );
+		$img .= chrint( $iw, 4 );
+		$img .= chrint( $ih, 4 );
+		$img .= $wiipal;
+		$img .= $wiipix;
+	}
+	else
+	if ( $byte == 4 )
+	{
+		$img = "RGBA";
+		$img .= chrint( $iw, 4 );
+		$img .= chrint( $ih, 4 );
+		$img .= $wiipix;
+	}
 
-		$p1 = str2big($file, $p+0, 4); // image
-		$p2 = str2big($file, $p+4, 4); // palette
-
-		$wiipal = wiitpl_pal($file, $base, $p2);
-		list($iw,$ih,$byte,$wiipix) = wiitpl_pix($file, $base, $p1, $wiipal);
-
-		$bin = '';
-		if ( $byte == 1 )
-		{
-			$bin = "CLUT";
-			$bin .= chrint( strlen($wiipal)/4, 4 );
-			$bin .= chrint( $iw, 4 );
-			$bin .= chrint( $ih, 4 );
-			$bin .= $wiipal;
-			$bin .= $wiipix;
-		}
-		else
-		if ( $byte == 4 )
-		{
-			$bin = "RGBA";
-			$bin .= chrint( $iw, 4 );
-			$bin .= chrint( $ih, 4 );
-			$bin .= $wiipix;
-		}
-		$n = $id * 10 + $i;
-		save_file("$pfx.$n.tpl", $bin);
-	} // for ( $i=0; $i < $cnt; $i++ )
+	$fn = sprintf("%s.%d.tpl", $pfx, $id);
+	save_file($fn, $img);
 	return;
 }
 ////////////////////////////////////////

@@ -41,9 +41,9 @@ function canvas_rect( &$pix, $byte )
 
 		$dyy = ($dy+$y) * ($nw*2) * $byte;
 		$dxx = $dyy + ($dx*$byte);
-		strupd($canvas, $dxx, $row);
+		str_update($canvas, $dxx, $row);
 	}
-	save_file("pix", $canvas);
+	//save_file("pix", $canvas);
 
 	$pix['w'] = $nw*2;
 	$pix['h'] = $nh*2;

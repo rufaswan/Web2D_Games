@@ -13,6 +13,8 @@ function substrrev( &$str, $pos, $len )
 
 function str2big( &$str, $pos, $byte, $sign=false )
 {
+	if ( PHP_INT_SIZE < $byte )
+		return php_error("required %d-bit support", $byte*8);
 	$sub = substrrev($str, $pos, $byte);
 	$int = ordint($sub);
 	if ( $sign )
@@ -33,7 +35,7 @@ function str_endian( &$str, $pos, $byte )
 {
 	$s = substr($str, $pos, $byte);
 	$s = strrev($s);
-	strupd($str, $pos, $s);
+	str_update($str, $pos, $s);
 	return;
 }
 
@@ -75,7 +77,7 @@ function iee754_float( $int, $exp_bit, $man_bit, $bias )
 	// e=1 m=1 not a number
 	if ( $exp == $e )
 		return 0.0; // infinite or not-a-number
-	if ( $exp == 0 && $val == 0 )
+	if ( $exp == 0 && $man == 0 )
 		return 0.0; // exact zero
 
 	//   normalized = leading 1.0
@@ -85,7 +87,7 @@ function iee754_float( $int, $exp_bit, $man_bit, $bias )
 
 	$exp -= $bias;
 	$man *= (2 ** ($exp - $man_bit));
-	return ( $sig ) ? -$val : $val;
+	return ( $sig ) ? -$man : $man;
 }
 
 function float16( $int )
@@ -198,6 +200,18 @@ function scalergba( &$pix, $fact_x, $fact_y )
 	return;
 }
 //////////////////////////////
+function ps2_alpha2x( &$pal )
+{
+	$len = strlen($pal);
+	for ( $i=0; $i < $len; $i += 4 )
+	{
+		$a = ord( $pal[$i+3] );
+		$a = int_clamp($a*2, 0, BIT8);
+		$pal[$i+3] = chr($a);
+	}
+	return;
+}
+//////////////////////////////
 function nds_ram( $dir )
 {
 	$head = load_file("$dir/header.bin");
@@ -207,10 +221,10 @@ function nds_ram( $dir )
 
 	$bin = load_file("$dir/arm9.bin");
 	$off = str2int($head, 0x28, 3);
-		strupd($ram, $off, $bin);
+		str_update($ram, $off, $bin);
 	$bin = load_file("$dir/arm7.bin");
 	$off = str2int($head, 0x38, 3);
-		strupd($ram, $off, $bin);
+		str_update($ram, $off, $bin);
 	return $ram;
 }
 
@@ -238,7 +252,7 @@ function nds_overlay( &$ndsram, $dir, $id )
 	$over = sprintf("$dir/overlay/overlay_%04d.bin", $id);
 	$bin  = load_file($over);
 	trace("load OVERLAY %d[0x%x] @ %x => %x\n", $id, $id, $off, $start);
-		strupd($ndsram, $off, $bin);
+		str_update($ndsram, $off, $bin);
 	return array($off, $start);
 }
 //////////////////////////////
