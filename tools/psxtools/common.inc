@@ -288,6 +288,16 @@ function trace()
 	return;
 }
 
+function performance( $func )
+{
+	$st = microtime(true);
+	$func();
+	$ed = microtime(true);
+	$mem = memory_get_peak_usage();
+	printf("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
+	return;
+}
+
 function zero_watch( $name, $chr )
 {
 	if ( $chr == ZERO )
@@ -578,6 +588,31 @@ function mstrpal555( &$file, $pos, $cc, $cn )
 		$cn--;
 	}
 	return $ret;
+}
+
+function is_blank( &$pix )
+{
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i += 4 )
+	{
+		if ( $pix[$i+0] != ZERO )  return false;
+		if ( $pix[$i+1] != ZERO )  return false;
+		if ( $pix[$i+2] != ZERO )  return false;
+		if ( $pix[$i+3] != ZERO && $pix[$i+3] != BYTE )
+			return false;
+	}
+	return true;
+}
+
+function is_gray( &$pix )
+{
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i += 4 )
+	{
+		if ( $pix[$i+0] != $pix[$i+1] || $pix[$i+0] != $pix[$i+2] )
+			return false;
+	}
+	return true;
 }
 
 function grayclut( $cc )
@@ -1047,7 +1082,7 @@ function savepix( $fn, &$pix, $trim = false )
 	if ( defined("DRY_RUN") )
 		return;
 
-	if ( trim($pix['rgba']['pix'], ZERO) == '' )
+	if ( is_blank( $pix['rgba']['pix'] ) )
 		return php_warning("%s [pix] blank", $fn);
 	if ( $trim )
 		trimpix($pix);

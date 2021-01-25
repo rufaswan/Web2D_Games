@@ -227,10 +227,12 @@ function pix4square( &$pix, $ow, $oh )
 		} // for ( $ix=0; $ix < 4; $ix++ )
 	} // for ( $zy=0; $zy < $zh; $zy++ )
 
-	// swizzled in 80x80 block
+	// swizzled in 128x128 block
 	//  1 2 3    1 4 7
 	//  4 5 6 => 2 5 8
 	//  7 8 9    3 6 9
+	if ( $ow % 0x80 || $oh % 0x80 )
+		return;
 	$zw = $ow / 0x80;
 	$zh = $oh / 0x80;
 	$new = $pix;
@@ -240,6 +242,8 @@ function pix4square( &$pix, $ow, $oh )
 		{
 			$zxx = (($zy * $zw) * 0x80 + $zx) * 0x80;
 			$dxx = (($zx * $zw) * 0x80 + $zy) * 0x80;
+			if ( $zxx == $dxx ) // no change
+				continue;
 
 			for ( $y=0; $y < 0x80; $y++ )
 			{
@@ -247,6 +251,7 @@ function pix4square( &$pix, $ow, $oh )
 				$sub = substr($new, $zxx+$p, 0x80);
 				str_update($pix, $dxx+$p, $sub);
 			} // for ( $y=0; $y < 0x80; $y++ )
+
 		} // for ( $zx=0; $zx < $zw; $zx++ )
 	} // for ( $zy=0; $zy < $zh; $zy++ )
 
@@ -263,14 +268,13 @@ function tm2pix4( &$pix, $ow, $oh )
 	// 12 34 56 78 => 02 01 04 03 06 05 08 07
 	//
 	// minimum size 128x128 for swizzled image
-	//
 
-	// square image = 80x80
+	// square image = 128x128
 	if ( $ow == $oh )
 		return pix4square($pix, $ow, $oh);
 
-	// landscape image = 200x80
-	// pad zeroes to make it into 200x200 square
+	// landscape image = 512x128
+	// pad zeroes to make it into 512x512 square
 	if ( $ow > $oh )
 	{
 		$pad = ($ow - $oh) * $ow;
@@ -278,8 +282,8 @@ function tm2pix4( &$pix, $ow, $oh )
 		return pix4square($pix, $ow, $ow);
 	}
 
-	// portrait image = 80x200
-	// split it into 4 parts of 80x80 square
+	// portrait image = 128x512
+	// split it into 4 parts of 128x128 square
 	if ( $oh > $ow )
 	{
 		$siz = $ow * $ow;
@@ -303,14 +307,10 @@ function tm2pal( &$pal, $swizzle )
 	if ( ! $swizzle )
 		return ps2_alpha2x($pal);
 
-	// also swizzled
-	//  0- 7  10-17
-	//  8- f  18-1f
-	// 20-27  30-37
-	// 28-2f  38-3f
-	// ...
-	// e0-e7  f0-f7
-	// e8-ef  f8-ff
+	// swizzled in RGBA blocks
+	//  0 1 2 3  4 5 6 7  10 11 12 13  14 15 16 17
+	//  8 9 a b  c d e f  18 19 1a 1b  1c 1d 1e 1f
+	//  ...
 	$new = '';
 	for ( $i=0; $i < 0x400; $i += 0x80 )
 	{

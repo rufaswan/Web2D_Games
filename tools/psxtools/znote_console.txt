@@ -1,5 +1,22 @@
+== Script Naming Scheme ==
+{console}_{prefix}_{identifier}_{function}.php
+	console
+		*blank* = PlayStation One
+		ps2 , psp , vita , sat , wii , nds
+		pc98
+	prefix
+		*refer zprefix.txt*
+	identifier
+		use FIRST 4 BYTES of the file , if ASCII; else
+		use {directory}_{filename}_{extension}
+	function
+		*blank* = output sprites
+		decode  = decompress the files
+		packer  = pack if is_dir , unpack if is_file
+		INFO    = display useful information
+		SETUP   = output self-contained file sets
 
-Layering
+== Layering ==
 	Top-to-Bottom  PSX  NDS
 	Bottom-to-Top  SATURN  PS2  WII
 	???  PC98  VITA  PSP  PS3
@@ -8,7 +25,7 @@ Layering
 		Painter's Algorithm is Bottom-to-Top order
 		so we'll need to loop Top-to-Bottom order in reverse
 
-Endian
+== Endian ==
 	Little  PSX  PS2  PSP  VITA  NDS  PC98
 	Big     SATURN
 	BOTH    WII

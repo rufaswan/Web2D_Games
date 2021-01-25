@@ -7,6 +7,8 @@ require "common.inc";
 require "common-guest.inc";
 require "common-64bit.inc";
 
+define("NO_TRACE", true);
+
 //////////////////////////////
 function cpk_decrypt( &$str )
 {
@@ -129,64 +131,156 @@ function cpklist( &$meta )
 	return $list;
 }
 //////////////////////////////
-function cpkfiles( $fp, $dir, $off, $siz )
+function crilay_bits( &$file, &$pos, &$bybit, $bitned )
 {
+	// get bits = 1 , 2 , 8
+	// 76543210  76543210
+	// 333-----  01133333
+	while ( strlen($bybit) < $bitned )
+	{
+		$b = ord( $file[$pos] );
+			$pos++;
+		trace("BIT  %8x %2x [%s]\n", $pos+1, $b, $bybit);
+
+		$i = 8;
+		while ( $i > 0 )
+		{
+			$i--;
+			$bybit .= ($b >> $i) & 1;
+		}
+	} // while ( $bits > $bylen )
+
+	$bits = 0;
+	for ( $i=0; $i < $bitned; $i++ )
+	{
+		$bits <<= 1;
+		if ( $bybit[$i] )
+			$bits |= 1;
+	}
+	$bybit = substr($bybit, $bitned);
+	trace("RET  %x [%s]\n", $bits, $bybit);
+	return $bits;
+}
+
+function crilay_len( &$file, &$pos, &$bybit )
+{
+	$len = 0;
+bit_2:
+	$b = crilay_bits($file, $pos, $bybit, 2);
+	$len += $b;
+	if ( $b != 0x03 )
+		goto done;
+bit_3:
+	$b = crilay_bits($file, $pos, $bybit, 3);
+	$len += $b;
+	if ( $b != 0x07 )
+		goto done;
+bit_5:
+	$b = crilay_bits($file, $pos, $bybit, 5);
+	$len += $b;
+	if ( $b != 0x1f )
+		goto done;
+bit_8:
+	$b = crilay_bits($file, $pos, $bybit, 8);
+	$len += $b;
+	if ( $b == 0xff )
+		goto bit_8;
+done:
+	return $len;
+}
+
+function crilayla_decode( &$file )
+{
+	//return;
+	if ( substr($file, 0, 8) !== "CRILAYLA" )
+		return;
+
+	$len  = str2int($file,  8, 4);
+	$size = str2int($file, 12, 4);
+	$head = substr($file, $size+0x10, 0x100);
+
+	$file = substr($file, 0x10, $size);
+	$file = strrev($file);
+
+	$bybit = '';
+	$dec = '';
+	$pos = 0;
+	while ( $pos < $size )
+	{
+		if ( strlen($dec) >= $len )
+			break;
+
+		$flg = crilay_bits($file, $pos, $bybit, 1);
+		if ( $flg )
+		{
+			$b = crilay_bits($file, $pos, $bybit, 13);
+			$dpos = $b + 3;
+
+			$b = crilay_len($file, $pos, $bybit);
+			$dlen = $b + 3;
+
+			trace("REF  POS -%d LEN %d\n", $dpos, $dlen);
+			for ( $i=0; $i < $dlen; $i++ )
+			{
+				$b = strlen($dec) - $dpos;
+				$dec .= $dec[$b];
+			}
+		}
+		else
+		{
+			$b = crilay_bits($file, $pos, $bybit, 8);
+			trace("COPY %2x [%s]\n", $b, $bybit);
+			$dec .= chr($b);
+		}
+	} // while ( $st < $ed )
+
+	//$file = $dec;
+	$file = $head . strrev($dec);
 	return;
 }
 //////////////////////////////
-function sect_toc( $fp, &$meta, $dir )
+function sect_toc( $type, $fp, $dir, $off, $siz )
 {
-	echo "== sect_toc( $dir )\n";
+	printf("== sect_toc( %s , %s , %x , %x )\n", $type, $dir, $off, $siz);
+	if ( $off == 0 || $siz == 0 )
+		return;
+
+	$meta = fp2str($fp, $off+0x10, $siz);
 	cpk_decrypt($meta);
-	save_file("$dir/toc.bin", $meta);
+	save_file("$dir/$type.bin", $meta);
+
 	$list = cpklist($meta);
 	if ( empty($list) )
 		return;
-	print_r($list);
+	//print_r($list);
+	printf("list = %x\n", count($list));
 
+	$data = array();
 	foreach ( $list as $lv )
 	{
+		if ( ! isset( $lv['FileName'] ) )
+			continue;
+
 		$fn = sprintf("%s/%s", $lv['DirName'], $lv['FileName']);
-		printf("%8x , %8x , %s\n", $lv['FileOffset'], $lv['FileSize'], $fn);
+		$v = array( $lv['FileSize'], $fn );
+		$k = $lv['FileOffset'] + $off;
+		$data[$k] = $v;
 	} // foreach ( $list as $lk => $lv )
-	return;
-}
 
-function sect_etoc( $fp, &$meta, $dir )
-{
-	echo "== sect_etoc( $dir )\n";
-	cpk_decrypt($meta);
-	save_file("$dir/etoc.bin", $meta);
-	$list = cpklist($meta);
-	if ( empty($list) )
-		return;
-	print_r($list);
-	return;
-}
+	ksort($data);
+	$buf = '';
+	foreach ( $data as $k => $v )
+	{
+		$log = sprintf("%8x , %8x , %s\n", $k, $v[0], $v[1]);
+		echo $log;
+		$buf .= $log;
 
-function sect_itoc( $fp, &$meta, $dir )
-{
-	echo "== sect_itoc( $dir )\n";
-	cpk_decrypt($meta);
-	save_file("$dir/itoc.bin", $meta);
-	$list = cpklist($meta);
-	if ( empty($list) )
-		return;
-	print_r($list);
-	// OPTIONAL
-	return;
-}
-
-function sect_gtoc( $fp, &$meta, $dir )
-{
-	echo "== sect_gtoc( $dir )\n";
-	cpk_decrypt($meta);
-	save_file("$dir/gtoc.bin", $meta);
-	$list = cpklist($meta);
-	if ( empty($list) )
-		return;
-	print_r($list);
-	// OPTIONAL
+		$meta = fp2str($fp, $k, $v[0]);
+		//save_file("$dir/{$v[1]}.bak", $meta);
+		crilayla_decode($meta);
+		save_file("$dir/{$v[1]}", $meta);
+	}
+	save_file("$dir/$type.txt", $buf);
 	return;
 }
 
@@ -194,32 +288,16 @@ function sect_cpk( $fp, &$meta, $dir )
 {
 	echo "== sect_cpk( $dir )\n";
 	cpk_decrypt($meta);
-	save_file("$dir/cpk.bin", $meta);
+	save_file("$dir/CPK.bin", $meta);
 	$list = cpklist($meta);
 	if ( empty($list) )
 		return;
 	print_r($list);
 
-	if ( $list[0]['TocOffset'] != 0 && $list[0]['TocSize'] != 0 )
-	{
-		$sub = fp2str($fp, $list[0]['TocOffset']+0x10, $list[0]['TocSize']);
-		sect_toc($fp, $sub, $dir);
-	}
-	if ( $list[0]['EtocOffset'] != 0 && $list[0]['EtocSize'] != 0 )
-	{
-		$sub = fp2str($fp, $list[0]['EtocOffset']+0x10, $list[0]['EtocSize']);
-		sect_etoc($fp, $sub, $dir);
-	}
-	if ( $list[0]['ItocOffset'] != 0 && $list[0]['ItocSize'] != 0 )
-	{
-		$sub = fp2str($fp, $list[0]['ItocOffset']+0x10, $list[0]['ItocSize']);
-		sect_itoc($fp, $sub, $dir);
-	}
-	if ( $list[0]['GtocOffset'] != 0 && $list[0]['GtocSize'] != 0 )
-	{
-		$sub = fp2str($fp, $list[0]['GtocOffset']+0x10, $list[0]['GtocSize']);
-		sect_gtoc($fp, $sub, $dir);
-	}
+	sect_toc("TOC" , $fp, $dir, $list[0]['TocOffset'] , $list[0]['TocSize']);
+	sect_toc("ETOC", $fp, $dir, $list[0]['EtocOffset'], $list[0]['EtocSize']);
+	sect_toc("ITOC", $fp, $dir, $list[0]['ItocOffset'], $list[0]['ItocSize']);
+	sect_toc("GTOC", $fp, $dir, $list[0]['GtocOffset'], $list[0]['GtocSize']);
 	return;
 }
 //////////////////////////////

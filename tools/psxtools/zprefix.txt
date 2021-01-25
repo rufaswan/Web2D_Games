@@ -23,19 +23,19 @@ tm2s    SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / 
 tm2s    SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
 tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
 
-	progress
-		mana    ALL DONE
-		saga2   ALL DONE , SLUS not supported
-		tm2s    ALL DONE
-		xeno    ALL DONE
-		yuna    *.ss1 only
-		sotn    all maps only
-		lunar2  isok/*.pck , map/*.dat only
-		mkr     --upcoming--
-		valky   --upcoming--
-		star2   --upcoming--
-		gihren  --upcoming--
+	mana    ALL DONE
+	saga2   ALL DONE , SLUS not supported
+	tm2s    ALL DONE
+	xeno    ALL DONE
+	yuna    *.ss1 only
+	sotn    all maps only
+	lunar2  isok/*.pck , map/*.dat only
+	mkr     --upcoming--
+	valky   --upcoming--
+	star2   --upcoming--
+	gihren  --upcoming--
 
+==============================
 == PlayStation System Games ==
 -> PS2  PSP  VITA
 
@@ -43,36 +43,48 @@ odin     SLUS 215.77  Odin Sphere
 odin     SLUS 216.04  GrimGrimoire
 pcrown   ULJM 050.40  Princess Crown
 tengai4  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
+-        ULJS_003.94  Grand Knights History
+mura     PCSE00240    Muramasa Rebirth
+odin     PCSE00899    Odin Sphere Leifthrasir
+-        PCSE00019    Dragon Crown
 
-	progress
-		pcrown   *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
-		odin     --upcoming--
-		tengai4  --upcoming--
+	pcrown   *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
+	odin     *.mbp/*.ftp only
+	mura     *.mbs/*.ftx only
+	tengai4  --upcoming--
 
+==============================
 == Guest System Games ==
-cvnds      NDS     ACVJ      Akumajou Dracula Sougetsu no Juujika
-cvnds      NDS     ACBJ      Akumajou Dracula Gallery of Labyrinth
-cvnds      NDS     YR9J      Akumajou Dracula Ubawareta Kokuin
-sotn_sat   SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+cvpor  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
+cvpor  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
+cvpor  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
+
+	cvpor  all maps only , *.so/.sc (non-quad) only
+
+sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 tengai4    SATURN  T-14301G  Tengai Makyou Daishi no Mokushiroku [2 disc]
 yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
 yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3
 yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 pcrown     SATURN  T-14418G  Princess Crown
-mura       WII     RSFE7U    Muramasa The Demon Blade
 vfcg       SATURN  Virtua Fighter CG Potrait Series
-rusty      PC98    Rusty
-rusty      PC98    Totsugeki Mix
-galpani    PC98    Galpani
-galpani    PC98    Galpani 2
 
-	progress
-		yuna_mika  ALL DONE
-		mura       ALL DONE
-		cvnds      all maps only , *.so/.sc (non-quad) only
-		yuna       *.ss1 only
-		pcrown     *.chb/.mcb , *.pak/chr only
-		rusty      *.map/.tbl/.dat , *.mag/.ani , *.mgx only
-		galpani    *.bgi/.bgs/.msk only
-		sotn_sat   --upcoming--
-		tengai4    --upcoming--
+	yuna_mika  ALL DONE
+	yuna       *.ss1 only
+	pcrown     *.chb/.mcb , *.pak/chr only
+	sotn       --upcoming--
+	tengai4    --upcoming--
+
+rusty    PC98  Rusty
+rusty    PC98  Totsugeki Mix
+galpani  PC98  Galpani
+galpani  PC98  Galpani 2
+
+	rusty    *.map/.tbl/.dat , *.mag/.ani , *.mgx only
+	galpani  *.bgi/.bgs/.msk only
+
+mura  WII  RSFE7U  Muramasa The Demon Blade
+
+	mura  *.mbs/*.ftx only
+
+==============================

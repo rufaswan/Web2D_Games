@@ -57,6 +57,9 @@ function sectquad( &$mbs, $pos, $name, $SCALE )
 function load_tpl( &$pix, $tid , $pfx )
 {
 	global $gp_pix;
+	if ( defined("DRY_RUN") )
+		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
+
 	if ( ! isset( $gp_pix[$tid] ) )
 	{
 		$fn = sprintf("%s.%d.tpl", $pfx, $tid);
@@ -64,7 +67,7 @@ function load_tpl( &$pix, $tid , $pfx )
 		if ( $ftx === 0 )
 			return php_error("NOT FOUND %s", $fn);
 
-		$gp_pix[$tid] = array();
+		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
 		if ( isset( $ftx['cc'] ) )
 		{
 			$gp_pix[$tid]['w'] = $ftx['w'];
@@ -89,6 +92,7 @@ function load_tpl( &$pix, $tid , $pfx )
 //////////////////////////////
 function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 {
+	//return;
 	printf("== sectpart( $dir , $pfx , %x , %x )\n", $id6, $no6);
 
 	// ERROR : computer run out of memory
@@ -103,22 +107,20 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 	{
 		$p4 = ($id6 + $i4) * $mbs[4]['k'];
 
-		// 0  1    2    3    4 5  6 7  8 9  a b
-		// -  typ  trn  tid  s1   - -  s0   s2
-		$typ = str2big($mbs[4]['d'], $p4+ 1, 1);
-		$trn = str2big($mbs[4]['d'], $p4+ 2, 1);
+		// 0 1 2 3  4 5  6 7  8 9  a b
+		// sub      s1   - -  s0   s2
+		$sub = substr ($mbs[4]['d'], $p4+ 0, 4);
 		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
 
-		$tid = str2big($mbs[4]['d'], $p4+ 3, 1);
 		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
 		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
-
 		$sqd = sectquad($mbs[1]['d'], $s1*$mbs[1]['k'], "mbs 1 $s1", 1);
 		$dqd = sectquad($mbs[2]['d'], $s2*$mbs[2]['k'], "mbs 2 $s2", SCALE);
-		$dv = array($typ, $trn, $s0, $tid, $sqd, $dqd);
+
+		$dv = array($sub, $s0, $sqd, $dqd);
 		$data[] = $dv;
 		//array_unshift($data, $dv);
-		printf("DATA  %d , %2x , %2x , %x\n", $tid, $typ, $trn, $s0);
+		printf("DATA  %x , %x , %x\n", $s0, $s1, $s2);
 
 		// detect origin and canvas size
 		for ( $i=0; $i < 4; $i++ )
@@ -137,17 +139,41 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		return;
 
 	$ceil = ( $is_mid ) ? int_ceil($CANV_S*2, 16) : int_ceil($CANV_S, 16);
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+	$pix0 = COPYPIX_DEF();
+	$pix0['rgba']['w'] = $ceil;
+	$pix0['rgba']['h'] = $ceil;
+	$pix0['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$pix1 = COPYPIX_DEF();
+	$pix1['rgba']['w'] = $ceil;
+	$pix1['rgba']['h'] = $ceil;
+	$pix1['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$pix2 = COPYPIX_DEF();
+	$pix2['rgba']['w'] = $ceil;
+	$pix2['rgba']['h'] = $ceil;
+	$pix2['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$pix0['alpha'] = "alpha_over";
+	$pix1['alpha'] = "alpha_over";
+	$pix2['alpha'] = "alpha_over";
+	//$pix1['alpha'] = "alpha_add";
+	//$pix2['alpha'] = "alpha_add";
 
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 	printf("ORIGIN  %d\n", $origin);
 
 	foreach ( $data as $dv )
 	{
-		list($typ, $trn, $s0, $tid, $sqd, $dqd) = $dv;
+		list($sub, $s0, $sqd, $dqd) = $dv;
+
+		echo debug($sub);
+		$s1 = str2big($sub, 0, 2); // ?type?
+		$s3 = ord( $sub[2] ); // mask
+		$s4 = ord( $sub[3] ); // tid
+
+		//if ( $s1 != 0x00 )
+			//continue;
 
 		// 00  ok
 		// +01 normal
@@ -158,19 +184,12 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		// +20 has trn == 1 or 2
 		// +40 --
 		// +80 --
-		if ( $typ & 2 || $typ & 4 || $typ & 0x20 )
-			continue;
+		//if ( $s2 & 2 || $s2 & 4 || $s2 & 0x20 )
+			//continue;
 
-		// TODO
-		//   get the alpha-blending formula right
-		//   make it blueish (save portal npc)
-		//$s0 = substr($mbs[0]['d'], $s0*0x18, 4);
-		if ( $trn == 1 || $trn == 2 )
-			continue;
-
-		$pix['alpha'] = "alpha_over";
-		if ( $trn == 1 )  $pix['alpha'] = "alpha_add";
-		if ( $trn == 2 )  $pix['alpha'] = "alpha_add";
+		if ( $s3 == 0 )  $pix = &$pix0;
+		if ( $s3 == 1 )  $pix = &$pix1;
+		if ( $s3 == 2 )  $pix = &$pix2;
 
 		$pix['src']['vector'] = $sqd;
 		for ( $i=0; $i < 4; $i++ )
@@ -180,11 +199,13 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		}
 		$pix['vector'] = $dqd;
 
-		load_tpl($pix, $tid, $pfx);
+		load_tpl($pix, $s4, $pfx);
 		copyquad($pix, 4);
 	} // foreach ( $data as $dv )
 
-	savepix($dir, $pix, false);
+	savepix("$dir.0", $pix0, false);
+	savepix("$dir.1", $pix1, false);
+	savepix("$dir.2", $pix2, false);
 	return;
 }
 
@@ -374,8 +395,9 @@ function mura( $fname )
 		array('p' => 0x7c , 'k' => 0x10), // 10
 	);
 	loadmbs($mbs, $sect, $pfx);
-	mbscoldbg($mbs, 4, 1); // byte censored parts check
-	mbscoldbg($mbs, 4, 2); // byte alpha add blending check
+	mbscoldbg($mbs, 4, 0); // = 0
+	mbscoldbg($mbs, 4, 1); //
+	mbscoldbg($mbs, 4, 2); // 0 1 2
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx);
@@ -386,84 +408,32 @@ for ( $i=1; $i < $argc; $i++ )
 	mura( $argv[$i] );
 
 /*
-mbs files = fe6ea
-	type
-		00  ---- ----    de7
-		01  ---- ---1  ed060  *normal*
-		02  ---- --1-      2
-		03  ---- --11   2432
-		04  ---- -1--     8d
-		05  ---- -1-1   39e1
-		07  ---- -111     a4
-		09  ---- 1--1      4
-		11  ---1 ---1    495
-		13  ---1 --11      1
-		15  ---1 -1-1      4
-		29  --1- 1--1   26cb
-		2d  --1- 11-1   7df4
-	trn
-		00  e2008  *normal*
-		01  1878a
-		02   3f58
+mbs 4-01 valids
+	0 1 2 3 4 5 7 9 11 13 15 29 2d
+mbs 4-2 valids
+	0 1 2
 
-type != 1 3 5
-	07  /bg/bg02/b_00.mbs
-	07  /bg/bg04_02.mbs
-	04  /bg/bg20_00.mbs
-	04  /bg/bg21c/f_00.mbs
-	11  /bg/bg23a_00.mbs
-	04  /bg/bg30/b/c_00.mbs
-	04  /bg/bg33_00.mbs
-	04  /bg/bg37_00.mbs
-	00  /bg/bg_share02a_00.mbs
-	00  /bg/bg_test.mbs
-	00  /bg/staffroll_kc.mbs
+	0   ---- ----
+	1   ---- ---1
+	2   ---- --1-
+	3   ---- --11
+	4   ---- -1--
+	5   ---- -1-1
+	7   ---- -111
+	9   ---- 1--1
+	11  ---1 ---1
+	13  ---1 --11
+	15  ---1 -1-1
+	29  --1- 1--1
+	2d  --1- 11-1
 
-	09  /char/Karasutengu00/01.mbs
-	11  /char/keukegen00.mbs
-	11 29 2d  /char/Kongaradoji00.mbs
-	11  /char/musya00.mbs
-	11  /char/Seitakadoji00.mbs
-	00 04  /char/tokugawa00/04.mbs
-	00  /char/umibouzu00.mbs
-	11  /char/Yukionna00.mbs
-
-	29 2d  /drm_char/Kisuke_Battle_drm.mbs
-	02  /drm_char/Kongiku_drm.mbs
-	2d  /drm_char/Momohime_Battle_drm.mbs
-	11  /drm_char/MomohimeE_Battle_drm.mbs
-	2d  /drm_char/MomohimeH_Rest_drm.mbs
-	11 13 15  /drm_char/Momokurousoul_drm.mbs
-	00  /drm_char/Oooni_Stomach_drm00.mbs
-
-trn != 0 1
-	02  /char/Ashiba_A00.mbs
-	02  /char/bourei00.mbs
-	02  /char/dragon00.mbs
-	02  /char/Fudoumyouou00.mbs
-	02  /char/Fudoumyouou_A/B/C/D/E/F00.mbs
-	02  /char/gaki00/01/02.mbs
-	02  /char/Genin00/01/02.mbs
-	02  /char/Gozu00.mbs
-	02  /char/Karakasa00.mbs
-	02  /char/Karasutengu00/01.mbs
-	02  /char/keukegen00.mbs
-	02  /char/Kisuke_Rest.mbs
-	02  /char/Kongaradoji00.mbs
-	02  /char/Mezu00.mbs
-	02  /char/mukade00.mbs
-	02  /char/musya00.mbs
-	02  /char/nue00.mbs
-	02  /char/Ochimusya00/01.mbs
-	02  /char/Oni00.mbs
-
-	02  /drm_char/EchigoyaB_drm00.mbs
-	02  /drm_char/Fudoumyouou_drm00.mbs
-	02  /drm_char/Kisuke_Battle_drm.mbs
-	02  /drm_char/Morahime_drm00.mbs
-	02  /drm_char/musya_drm00.mbs
-	02  /drm_char/Ochimusya_drm00/01.mbs
-	02  /drm_char/Oooni_Stomach_drm00.mbs
-	02  /drm_char/tokugawa_drm00.mbs
-	02  /drm_char/wanyuudou_drm00.mbs
+Momohime_Battle_drm
+	3 = eyes , shadow
+	5 = thigh shadow
+	2d = effects
+Kisuke_Battle_drm
+	3 = eyes
+	5 = flame circle
+	1+29 = sword + shine
+	2d = effects
  */

@@ -68,6 +68,9 @@ function sectquad( &$mbp, $pos, $name, $SCALE )
 function load_tm2( &$pix, $tid , $pfx )
 {
 	global $gp_pix;
+	if ( defined("DRY_RUN") )
+		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
+
 	if ( ! isset( $gp_pix[$tid] ) )
 	{
 		$fn = sprintf("%s.%d.tm2", $pfx, $tid);
@@ -75,7 +78,7 @@ function load_tm2( &$pix, $tid , $pfx )
 		if ( $ftp === 0 )
 			return php_error("NOT FOUND %s", $fn);
 
-		$gp_pix[$tid] = array();
+		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
 		if ( isset( $ftp['cc'] ) )
 		{
 			$gp_pix[$tid]['w'] = $ftp['w'];
@@ -100,6 +103,7 @@ function load_tm2( &$pix, $tid , $pfx )
 //////////////////////////////
 function sectpart( &$mbp, $dir, $pfx, $id6, $no6 )
 {
+	//return;
 	printf("== sectpart( $dir , $pfx , %x , %x )\n", $id6, $no6);
 
 	// ERROR : computer run out of memory
@@ -114,13 +118,10 @@ function sectpart( &$mbp, $dir, $pfx, $id6, $no6 )
 	{
 		$p4 = ($id6 + $i4) * $mbp[4]['k'];
 
-		// 0 1 2  3    4   6 8 c  10    12    14    16
-		// - - -  tid  s1  - - -  s2-0  s2-6  s2-c  s2-2
-		//$u0 = str2int($mbp[4]['d'], $p4+ 0, 1);
-		//$u1 = str2int($mbp[4]['d'], $p4+ 1, 1);
-		//$u2 = str2int($mbp[4]['d'], $p4+ 2, 1);
+		// 0 1 2 3  4   6 8 c  10    12    14    16
+		// sub      s1  - - -  s2-0  s2-6  s2-c  s2-2
+		$sub = substr ($mbp[4]['d'], $p4+ 0, 4);
 
-		$tid = str2int($mbp[4]['d'], $p4+ 3, 1);
 		$s1  = str2int($mbp[4]['d'], $p4+ 4, 2); // sx,sy
 		$s2  = str2int($mbp[4]['d'], $p4+16, 2); // dx,dy
 		//if ( $s1 == 0 )
@@ -128,10 +129,10 @@ function sectpart( &$mbp, $dir, $pfx, $id6, $no6 )
 
 		$sqd = sectquad($mbp[1]['d'], $s1*$mbp[1]['k'], "mbp 1 $s1", 1);
 		$dqd = sectquad($mbp[2]['d'], $s2*$mbp[2]['k'], "mbp 2 $s2", SCALE);
-		$dv = array($tid, $sqd, $dqd);
+		$dv = array($sub, $sqd, $dqd);
 		$data[] = $dv;
 		//array_unshift($data, $dv);
-		printf("DATA  %d\n", $tid);
+		printf("DATA  %x , %x\n", $s1, $s2);
 
 		// detect origin and canvas size
 		for ( $i=0; $i < 4; $i++ )
@@ -150,19 +151,45 @@ function sectpart( &$mbp, $dir, $pfx, $id6, $no6 )
 		return;
 
 	$ceil = ( $is_mid ) ? int_ceil($CANV_S*2, 16) : int_ceil($CANV_S, 16);
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+	$pix0 = COPYPIX_DEF();
+	$pix0['rgba']['w'] = $ceil;
+	$pix0['rgba']['h'] = $ceil;
+	$pix0['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$pix1 = COPYPIX_DEF();
+	$pix1['rgba']['w'] = $ceil;
+	$pix1['rgba']['h'] = $ceil;
+	$pix1['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$pix2 = COPYPIX_DEF();
+	$pix2['rgba']['w'] = $ceil;
+	$pix2['rgba']['h'] = $ceil;
+	$pix2['rgba']['pix'] = canvpix($ceil,$ceil);
+
+	$pix0['alpha'] = "alpha_over";
+	$pix1['alpha'] = "alpha_over";
+	$pix2['alpha'] = "alpha_over";
+	//$pix1['alpha'] = "alpha_add";
+	//$pix2['alpha'] = "alpha_add";
 
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 	printf("ORIGIN  %d\n", $origin);
 
 	foreach ( $data as $dv )
 	{
-		list($tid, $sqd, $dqd) = $dv;
+		list($sub, $sqd, $dqd) = $dv;
 
-		$pix['alpha'] = "alpha_over";
+		echo debug($sub);
+		$s1 = str2int($sub, 0, 2); // ??
+		$s3 = ord( $sub[2] ); // mask
+		$s4 = ord( $sub[3] ); // tid
+
+		//if ( $s1 != 0x00 )
+			//continue;
+
+		if ( $s3 == 0 )  $pix = &$pix0;
+		if ( $s3 == 1 )  $pix = &$pix1;
+		if ( $s3 == 2 )  $pix = &$pix2;
 
 		$pix['src']['vector'] = $sqd;
 		for ( $i=0; $i < 4; $i++ )
@@ -172,11 +199,13 @@ function sectpart( &$mbp, $dir, $pfx, $id6, $no6 )
 		}
 		$pix['vector'] = $dqd;
 
-		load_tm2($pix, $tid, $pfx);
+		load_tm2($pix, $s4, $pfx);
 		copyquad($pix, 4);
 	} // foreach ( $data as $dv )
 
-	savepix($dir, $pix, false);
+	savepix("$dir.0", $pix0, false);
+	savepix("$dir.1", $pix1, false);
+	savepix("$dir.2", $pix2, false);
 	return;
 }
 
@@ -250,6 +279,24 @@ function sectanim( &$mbp, $pfx )
 	return;
 }
 //////////////////////////////
+function mbpcoldbg( &$mbp, $id, $pos )
+{
+	$len = strlen( $mbp[$id]['d'] );
+	$dbg = array();
+	for ( $i=0; $i < $len; $i += $mbp[$id]['k'] )
+	{
+		$b1 = ord( $mbp[$id]['d'][$i+$pos] );
+		if ( ! isset( $dbg[$b1] ) )
+			$dbg[$b1] = 0;
+		$dbg[$b1]++;
+	}
+
+	printf("== mbpcoldbg( %x , %x )\n", $id, $pos);
+	foreach ( $dbg as $k => $v )
+		printf("  %2x = %8x\n", $k, $v);
+	return;
+}
+
 function mbpdbg( &$meta, $name, $blk )
 {
 	printf("== mbpdbg( $name , %x )\n", $blk);
@@ -347,6 +394,9 @@ function odin( $fname )
 		array('p' => 0x7c , 'k' => 0x08), // 10
 	);
 	loadmbp($mbp, $sect, $pfx);
+	mbpcoldbg($mbp, 4, 0); //
+	mbpcoldbg($mbp, 4, 1); // = 0
+	mbpcoldbg($mbp, 4, 2); // 0 1 2
 
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);
@@ -357,4 +407,44 @@ for ( $i=1; $i < $argc; $i++ )
 	odin( $argv[$i] );
 
 /*
+mbp 4-01 valids
+	grim 1 3 5 7 9 d 11 29
+	odin 0 1 2 3 4 5 6 7 9 b d f 10 11 13 15 19 21 28 29 2d 2f 31 35 39
+mbp 4-2 valids
+	0 1 2
+
+	0   ---- ----
+	1   ---- ---1
+	2   ---- --1-
+	3   ---- --11
+	4   ---- -1--
+	5   ---- -1-1
+	6   ---- -11-
+	7   ---- -111
+	9   ---- 1--1
+	b   ---- 1-11
+	d   ---- 11-1
+	f   ---- 1111
+	10  ---1 ----
+	11  ---1 ---1
+	13  ---1 --11
+	15  ---1 -1-1
+	19  ---1 1--1
+	21  --1- ---1
+	28  --1- 1---
+	29  --1- 1--1
+	2d  --1- 11-1
+	2f  --1- 1111
+	31  --11 ---1
+	35  --11 -1-1
+	39  --11 1--1
+
+gwendlyn
+	3 = eyes
+	9 = light
+	1+29 = spear + tip light
+	2d = effects
+
+
+bg 88d3d4 + fg 26cbe6 = a3ffff
  */

@@ -8,18 +8,14 @@ require "common-guest.inc";
 
 //define("DRY_RUN", true);
 
+// http://wiki.tockdom.com/w/index.php?title=TPL_%28File_Format%29
+// http://wiki.tockdom.com/w/index.php?title=Image_Formats
 $gp_ifmt = array(
-	0  => "im_i4",     //  4-bit ,  4*8 = 20
-	1  => "im_i8",     //  8-bit ,  8*4 = 20
-	2  => "im_ia4",    //  8-bit ,  8*4 = 20
-	3  => "im_ia8",    // 16-bit ,  8*4 = 20
-	4  => "im_rgb565", // 16-bit ,  8*4 = 20
-	5  => "im_rgb5a3", // 16-bit ,  8*4 = 20
-	6  => "im_rgba32", // 32-bit , 10*4 = 40
-	8  => "im_c4",     //  4-bit ,  4*8 = 20
-	9  => "im_c8",     //  8-bit ,  8*4 = 20
-	10 => "im_c14x2",  // 16-bit ,  8*4 = 20
-	14 => "im_cmpr",   //  4-bit ,  4*8 = 20
+	0x6 => "im_rgba32", // 32-bit , 10*4 = 40
+	0x8 => "im_c4",     //  4-bit ,  4*8 = 20
+	0x9 => "im_c8",     //  8-bit ,  8*4 = 20
+	0xa => "im_c14x2",  // 16-bit ,  8*4 = 20
+	0xe => "im_cmpr",   //  4-bit ,  4*8 = 20
 );
 $gp_pfmt = array(
 	0 => "cl_ia8",
@@ -27,44 +23,7 @@ $gp_pfmt = array(
 	2 => "cl_rgb5a3",
 );
 
-// http://wiki.tockdom.com/w/index.php?title=TPL_%28File_Format%29
-// http://wiki.tockdom.com/w/index.php?title=Image_Formats
-function cl_i4( $str )
-{
-	if ( strlen($str) != 1 )
-		php_error("cl_i4() is not 1 [%x]", strlen($str));
-
-	$pal = ord($str);
-	$p1 = ($pal >> 4) & BIT4;
-	$p2 = ($pal >> 0) & BIT4;
-	$c1 = chr($p1 * 0x11);
-	$c2 = chr($p2 * 0x11);
-	return $c1.$c1.$c1.BYTE . $c2.$c2.$c1.BYTE;
-}
-
-function cl_i8( $str )
-{
-	if ( strlen($str) != 1 )
-		php_error("cl_i8() is not 1 [%x]", strlen($str));
-
-	return $str . $str . $str . BYTE;
-}
-
-function cl_ia4( $str )
-{
-	if ( strlen($str) != 1 )
-		php_error("cl_ia4() is not 1 [%x]", strlen($str));
-
-	// 7654 3210
-	// aaaa cccc
-	$pal = ord($str);
-	$p1 = ($pal >> 4) & BIT4;
-	$p2 = ($pal >> 0) & BIT4;
-	$c1 = chr($p1 * 0x11);
-	$c2 = chr($p2 * 0x11);
-	return $c2.$c2.$c2.$c1;
-}
-
+//////////////////////////////
 function cl_ia8( $str )
 {
 	if ( strlen($str) != 2 )
@@ -73,6 +32,7 @@ function cl_ia8( $str )
 	// fedc ba98 7654 3210
 	// aaaa aaaa cccc cccc
 	return $str[0] . $str[0] . $str[0] . $str[1];
+	//return $str[1] . $str[1] . $str[1] . $str[0];
 }
 
 function cl_rgb565( $str )
@@ -167,7 +127,7 @@ function tpl_dxt1( $str )
 
 		$pal = array();
 		$pal[] = cl_rgb565($c0[1] . $c0[0]);
-		$pal[] = cl_rgb565($c0[1] . $c0[0]);
+		$pal[] = cl_rgb565($c1[1] . $c1[0]);
 
 		$c01 = ordint($c0[1] . $c0[0]);
 		$c11 = ordint($c1[1] . $c1[0]);
@@ -220,8 +180,11 @@ function tpl_dxt1( $str )
 
 	return $pix;
 }
+//////////////////////////////
 function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 {
+	if ( defined("DRY_RUN") )
+		return;
 	printf("== tplimage( %x , %x , $byte , %x , %x )\n", $iw, $ih, $bw, $bh);
 	$cw = $iw / $bw;
 	$ch = $ih / $bh;
@@ -256,102 +219,6 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$wiipal )
 	$pix = "";
 	switch ( $fmt )
 	{
-		case  0: // im_i4
-			$iwb = int_ceil($iw, 4);
-			$ihb = int_ceil($ih, 8);
-			$byte = 4;
-			$bw = 8;
-			$bh = 8;
-
-			$siz = $iwb / 2 * $ihb;
-			printf("SIZ %x\n", $siz);
-			while ( $siz > 0 )
-			{
-				$pix .= cl_i4( $file[$pos] );
-				$siz--;
-				$pos++;
-			}
-			break;
-		case  1: // im_i8
-			$iwb = int_ceil($iw, 8);
-			$ihb = int_ceil($ih, 4);
-			$byte = 4;
-			$bw = 8;
-			$bh = 4;
-
-			$siz = $iwb * $ihb;
-			printf("SIZ %x\n", $siz);
-			while ( $siz > 0 )
-			{
-				$pix .= cl_i8( $file[$pos] );
-				$siz--;
-				$pos++;
-			}
-			break;
-		case  2: // im_ia4
-			$iwb = int_ceil($iw, 8);
-			$ihb = int_ceil($ih, 4);
-			$byte = 4;
-			$bw = 8;
-			$bh = 4;
-
-			$siz = $iwb * $ihb;
-			printf("SIZ %x\n", $siz);
-			while ( $siz > 0 )
-			{
-				$pix .= cl_ia4( $file[$pos] );
-				$siz--;
-				$pos++;
-			}
-			break;
-		case  3: // im_ia8
-			$iwb = int_ceil($iw, 8);
-			$ihb = int_ceil($ih, 4);
-			$byte = 4;
-			$bw = 4;
-			$bh = 4;
-
-			$siz = $iwb * $ihb * 2;
-			printf("SIZ %x\n", $siz);
-			while ( $siz > 0 )
-			{
-				$pix .= cl_ia8( $file[$pos+1] . $file[$pos+0] );
-				$siz -= 2;
-				$pos += 2;
-			}
-			break;
-		case  4: // im_rgb565
-			$iwb = int_ceil($iw, 8);
-			$ihb = int_ceil($ih, 4);
-			$byte = 4;
-			$bw = 4;
-			$bh = 4;
-
-			$siz = $iwb * $ihb * 2;
-			printf("SIZ %x\n", $siz);
-			while ( $siz > 0 )
-			{
-				$pix .= cl_rgb565( $file[$pos+1] . $file[$pos+0] );
-				$siz -= 2;
-				$pos += 2;
-			}
-			break;
-		case  5: // im_rgb5a3
-			$iwb = int_ceil($iw, 8);
-			$ihb = int_ceil($ih, 4);
-			$byte = 4;
-			$bw = 4;
-			$bh = 4;
-
-			$siz = $iwb * $ihb * 2;
-			printf("SIZ %x\n", $siz);
-			while ( $siz > 0 )
-			{
-				$pix .= cl_rgb5a3( $file[$pos+1] . $file[$pos+0] );
-				$siz -= 2;
-				$pos += 2;
-			}
-			break;
 		case  6: // im_rgba32
 			$iwb = int_ceil($iw, 4);
 			$ihb = int_ceil($ih, 4);
@@ -435,8 +302,7 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$wiipal )
 			}
 			break;
 		default:
-			php_error("UNKNOWN tpl im_fmt %d", $fmt);
-			return array();
+			return php_error("UNKNOWN tpl im_fmt %d", $fmt);
 	}
 
 	printf("POS %x\n", $pos);
@@ -446,9 +312,9 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$wiipal )
 //////////////////////////////
 function wiitpl_pal( &$file, $base, $pos )
 {
-	printf("== wiitpl_pal( %x , %x )\n", $base, $pos);
 	if ( $pos == 0 )
 		return '';
+	printf("== wiitpl_pal( %x , %x )\n", $base, $pos);
 	global $gp_pfmt;
 	$p = $base + $pos;
 
@@ -511,7 +377,7 @@ function wiitpl( &$file, $base, $pfx, $id )
 	if ( $cnt != 1 )
 		return php_error("%s/%04d is multi-TPL [%d]", $pfx, $id, $cnt);
 
-	$p = $base + 12 + 8;
+	$p = $base + 12;
 	$p1 = str2big($file, $p+0, 4); // image
 	$p2 = str2big($file, $p+4, 4); // palette
 
@@ -551,8 +417,8 @@ function mura( $fname )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	$hdsz = str2int($file,  8, 3);
-	$cnt  = str2int($file, 12, 3);
+	$hdsz = str2int($file,  8, 4);
+	$cnt  = str2int($file, 12, 4);
 
 	$st = $hdsz;
 	for ( $i=0; $i < $cnt; $i++ )
@@ -564,14 +430,28 @@ function mura( $fname )
 		if ( substr($file, $st, 4) != "FTX0" )
 			return php_error("%s 0x%x not FTX0\n", $fname, $st);
 
-		$sz = str2int($file, $st+4, 3);
-		printf("TPL  %x , %x , %s\n", $st, $sz, $fn);
+		$sz1 = str2int($file, $st+4, 4);
+		$sz2 = str2int($file, $st+8, 4);
+		printf("TPL  %x , %x , %s\n", $st, $sz1, $fn);
 
-		wiitpl($file, $st+0x40, $pfx, $i);
-		$st += ($sz + 0x40);
+		wiitpl($file, $st+$sz2, $pfx, $i);
+		$st += ($sz1 + $sz2);
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	mura( $argv[$i] );
+
+/*
+cl_fmt
+	00   64  cl_ia8
+	01    3  cl_rgb565
+	02  426  cl_rgb5a3
+im_fmt
+	06    3  im_rgba32
+	08   47  im_c4
+	09  445  im_c8
+	0a    1  im_c14x2
+	0e  189  im_cmpr
+ */

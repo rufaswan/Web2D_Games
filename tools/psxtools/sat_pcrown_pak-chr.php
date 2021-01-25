@@ -98,11 +98,13 @@ function sectpart( &$pak, $dir, $off, $no )
 		// probably the palette is referred by opcode
 		//if ( $cid != 0 ) // OR $b1 & 0x4000
 			//return;
+		$pal = ( empty($gp_clut) ) ? $gray : substr($gp_clut, $cid*0x40, 0x40);
+		$gp_pix[$tid][3] = $pal;
 
 		$pix['src']['w'] = $gp_pix[$tid][1];
 		$pix['src']['h'] = $gp_pix[$tid][2];
 		$pix['src']['pix'] = $gp_pix[$tid][0];
-		$pix['src']['pal'] = ( empty($gp_clut) ) ? $gray : substr($gp_clut, $cid*0x40, 0x40);
+		$pix['src']['pal'] = $pal;
 		$pix['bgzero'] = 0;
 
 		sectquad($pix, $dat, $ceil/2);
@@ -136,6 +138,34 @@ function sectanim( &$pak, $off )
 	}
 	return implode(' , ', $anim);
 }
+//////////////////////////////
+function save_texx( $pfx )
+{
+	global $gp_pix;
+	foreach ( $gp_pix as $k => $v )
+	{
+		if ( isset($v[3]) )
+			list($pix,$w,$h,$pal) = $v;
+		else
+		{
+			list($pix,$w,$h) = $v;
+			$pal = grayclut(16);
+		}
+
+		// first color is alpha
+		$pal[3] = ZERO;
+
+		$clut = "CLUT";
+		$clut .= chrint(16, 4);
+		$clut .= chrint($w, 4);
+		$clut .= chrint($h, 4);
+		$clut .= $pal;
+		$clut .= $pix;
+		$fn = sprintf("$pfx/src/%04d.clut", $k);
+		save_file($fn, $clut);
+	} // foreach ( $gp_pix as $k => $v )
+	return;
+}
 
 function load_texx( &$pak, $pfx )
 {
@@ -144,11 +174,6 @@ function load_texx( &$pak, $pfx )
 
 	global $gp_pix;
 	$gp_pix = array();
-
-	global $gp_clut;
-	$pal = ( empty($gp_clut) ) ? grayclut(16) : substr($gp_clut, 0, 0x40);
-		// first color is alpha
-		$pal[3] = ZERO;
 
 	$pos = 0;
 	$len = strlen($pak);
@@ -173,18 +198,6 @@ function load_texx( &$pak, $pfx )
 			$pix .= chr($b3) . chr($b4);
 		}
 		$gp_pix[$d] = array($pix, $w, $h);
-
-		//////////////////////////////
-			$clut = "CLUT";
-			$clut .= chrint(16, 4);
-			$clut .= chrint($w, 4);
-			$clut .= chrint($h, 4);
-			$clut .= $pal;
-			$clut .= $pix;
-
-			$fn = sprintf("$pfx/src/%04d.clut", $d);
-			save_file($fn, $clut);
-		//////////////////////////////
 
 		// aligned to 8x8 tile
 		$pos = int_ceil($pos + $siz, 0x20);
@@ -312,6 +325,7 @@ function pakchr( &$pak, $pfx )
 		$dir = sprintf("$pfx/%04d", $i/12);
 		sectpart($pak, $dir, $st*12, $no);
 	}
+	save_texx($pfx);
 	return;
 }
 //////////////////////////////

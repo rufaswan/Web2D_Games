@@ -5,7 +5,7 @@
  */
 require "common.inc";
 require "common-guest.inc";
-require "cvnds.inc";
+require "nds_cvpor.inc";
 
 //define("DRY_RUN", true);
 
