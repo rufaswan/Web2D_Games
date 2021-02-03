@@ -5,12 +5,28 @@
  */
 // non-PlayStation One (guest systems) functions
 
+//////////////////////////////
+function req_ext( $func, $ext )
+{
+	if ( ! function_exists($func) )
+		php_error("$ext extension not found!");
+	return;
+}
+
 function substrrev( &$str, $pos, $len )
 {
 	$sub = substr($str, $pos, $len);
 	return strrev($sub);
 }
 
+function str_endian( &$str, $pos, $byte )
+{
+	$s = substr($str, $pos, $byte);
+	$s = strrev($s);
+	str_update($str, $pos, $s);
+	return;
+}
+//////////////////////////////
 function str2big( &$str, $pos, $byte, $sign=false )
 {
 	if ( PHP_INT_SIZE < $byte )
@@ -30,22 +46,7 @@ function chrbig( $int, $byte )
 	$t = chrint($int, $byte);
 	return strrev($t);
 }
-
-function str_endian( &$str, $pos, $byte )
-{
-	$s = substr($str, $pos, $byte);
-	$s = strrev($s);
-	str_update($str, $pos, $s);
-	return;
-}
-
-function req_ext( $func, $ext )
-{
-	if ( ! function_exists($func) )
-		php_error("$ext extension not found!");
-	return;
-}
-
+//////////////////////////////
 function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 {
 	$b7 = ($bit7 & 1) << 7;
@@ -59,6 +60,20 @@ function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
 }
 
+function int_ceil_pow2( $int )
+{
+	// round int to nearest 2^n
+	// away from zero
+	$sign = ( 0 > $int );
+	if ( $sign )
+		$int = -$int;
+	$int  = (int)$int;
+	$ceil = 1;
+	while ( $ceil < $int )
+		$ceil <<= 1;
+	return ( $sign ) ? -$ceil : $ceil;
+}
+//////////////////////////////
 function iee754_float( $int, $exp_bit, $man_bit, $bias )
 {
 	if ( "$int" === $int )
