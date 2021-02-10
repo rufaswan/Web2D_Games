@@ -205,3 +205,23 @@ stackoverflow.com/questions/299267/image-scaling-and-rotating-in-c-c
 	Mapping for rotation is only a little bit harder.
 		x' = x * cos(a) + y * sin(a)
 		y' = y * cos(a) - x * sin(a)
+
+https://stackoverflow.com/questions/50255282/webgl2-has-anti-alias-automatically-built-in
+
+	No, it's only a request, not a requirement.
+	WebGL2 allows you to create antialiased renderbuffers with renderbufferStorageMultisample
+	and resolve them using blitFramebuffer,
+	a feature which was not available in WebGL1.
+	Rendering to an antialiased framebuffer and then blitting that to the canvas
+	is a way to force antialiasing, at least in WebGL2.
+
+https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
+
+	Took me all afternoon to figure out on my system under chrome settings
+	I didn't have checked "allow hardware acceleration when available",
+	and viola, antialiasing is now working.
+
+https://askubuntu.com/questions/40024/how-do-i-delete-a-directory-from-a-zip-file-using-a-bash-script
+
+	If you want to delete all files from a specific dir, you could do this:
+		zip --delete file.zip "assets/*"  "*.ext"

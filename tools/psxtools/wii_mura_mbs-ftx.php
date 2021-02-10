@@ -90,10 +90,10 @@ function load_tpl( &$pix, $tid , $pfx )
 	return;
 }
 //////////////////////////////
-function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
+function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 {
 	//return;
-	printf("== sectpart( $dir , $pfx , %x , %x )\n", $id6, $no6);
+	printf("== sectpart( $pfx , %d, %x , %x )\n", $k6, $id6, $no6);
 
 	// ERROR : computer run out of memory
 	// required CANV_S is too large for bg/*.mbs
@@ -139,26 +139,7 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		return;
 
 	$ceil = ( $is_mid ) ? int_ceil($CANV_S*2, 16) : int_ceil($CANV_S, 16);
-	$pix0 = COPYPIX_DEF();
-	$pix0['rgba']['w'] = $ceil;
-	$pix0['rgba']['h'] = $ceil;
-	$pix0['rgba']['pix'] = canvpix($ceil,$ceil);
-
-	$pix1 = COPYPIX_DEF();
-	$pix1['rgba']['w'] = $ceil;
-	$pix1['rgba']['h'] = $ceil;
-	$pix1['rgba']['pix'] = canvpix($ceil,$ceil);
-
-	$pix2 = COPYPIX_DEF();
-	$pix2['rgba']['w'] = $ceil;
-	$pix2['rgba']['h'] = $ceil;
-	$pix2['rgba']['pix'] = canvpix($ceil,$ceil);
-
-	$pix0['alpha'] = "alpha_over";
-	$pix1['alpha'] = "alpha_over";
-	$pix2['alpha'] = "alpha_over";
-	//$pix1['alpha'] = "alpha_add";
-	//$pix2['alpha'] = "alpha_add";
+	$pix = array();
 
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 	printf("ORIGIN  %d\n", $origin);
@@ -172,40 +153,35 @@ function sectpart( &$mbs, $dir, $pfx, $id6, $no6 )
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
 
-		//if ( $s1 != 0x00 )
-			//continue;
+		if ( ! isset( $pix[$s1][$s3] ) )
+		{
+			$pix[$s1][$s3] = COPYPIX_DEF();
+			$pix[$s1][$s3]['rgba']['w'] = $ceil;
+			$pix[$s1][$s3]['rgba']['h'] = $ceil;
+			$pix[$s1][$s3]['rgba']['pix'] = canvpix($ceil,$ceil);
+			$pix[$s1][$s3]['alpha'] = "alpha_over";
+		}
 
-		// 00  ok
-		// +01 normal
-		// +02 eyes , leaf
-		// +04 censored / broken
-		// +08 ok
-		// +10 ok
-		// +20 has trn == 1 or 2
-		// +40 --
-		// +80 --
-		//if ( $s2 & 2 || $s2 & 4 || $s2 & 0x20 )
-			//continue;
-
-		if ( $s3 == 0 )  $pix = &$pix0;
-		if ( $s3 == 1 )  $pix = &$pix1;
-		if ( $s3 == 2 )  $pix = &$pix2;
-
-		$pix['src']['vector'] = $sqd;
+		$pix[$s1][$s3]['src']['vector'] = $sqd;
 		for ( $i=0; $i < 4; $i++ )
 		{
 			$dqd[$i][0] += $origin;
 			$dqd[$i][1] += $origin;
 		}
-		$pix['vector'] = $dqd;
+		$pix[$s1][$s3]['vector'] = $dqd;
 
-		load_tpl($pix, $s4, $pfx);
-		copyquad($pix, 4);
+		load_tpl($pix[$s1][$s3], $s4, $pfx);
+		copyquad($pix[$s1][$s3], 4);
 	} // foreach ( $data as $dv )
 
-	savepix("$dir.0", $pix0, false);
-	savepix("$dir.1", $pix1, false);
-	savepix("$dir.2", $pix2, false);
+	foreach ( $pix as $s1 => $v1 )
+	{
+		foreach ( $v1 as $s2 => $v2 )
+		{
+			$fn = sprintf("$pfx/%x/%04d.%d", $s1, $k6, $s2);
+			savepix("$fn", $v2, false);
+		}
+	}
 	return;
 }
 
@@ -222,8 +198,8 @@ function sectspr( &$mbs, $pfx )
 		if ( $no6 == 0 )
 			continue;
 
-		$dir = sprintf("$pfx/%04d", $i6/$mbs[6]['k']);
-		sectpart($mbs, $dir, $pfx, $id6, $no6);
+		$k6 = $i6 / $mbs[6]['k'];
+		sectpart($mbs, $pfx, $k6, $id6, $no6);
 
 	} // for ( $i6=0; $i6 < $len6; $i6 += $mbs[6]['k'] )
 	return;

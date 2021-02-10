@@ -32,7 +32,13 @@ $gp_key = array(
 	'tab'   => (1 << 7), // joy = D
 );
 
+$gp_init['path_sa'] = GAME . "/sa/%03d"; // adisk
+$gp_init['path_ma'] = GAME . "/ma/%03d"; // amidi
+$gp_init['path_ba'] = GAME . "/ba/%03d"; // abgm
+$gp_init['path_da'] = GAME . "/da/%03d"; // adata
+$gp_init['path_ra'] = GAME . "/ra/%03d"; // ares
+$gp_init['path_ga'] = GAME . "/ga/%03d/%05d"; // acg
+$gp_init['path_wa'] = GAME . "/wa/%03d/%05d"; // awave
+
 define("PATH_META"  , ROOT ."/". GAME ."/ga/meta.phpstr");
-define("PATH_PHPASM", ROOT ."/". GAME ."/sa/phpasm.php");
 define("PATH_PATCH" , ROOT ."/". GAME ."/sa/patch.php");
-define("PATH_SCOMSG", ROOT ."/". GAME ."/sa/sco_msg.txt");

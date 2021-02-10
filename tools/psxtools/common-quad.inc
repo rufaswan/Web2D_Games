@@ -131,10 +131,11 @@ function quad_dump( $V4, $type, $name )
 	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
 	//          2 3
 	//
-	// LEFT /CW   SAT  Princess Crown
-	// LEFT /CW   PSX  Lunar 2
-	// RIGHT/CCW  PS2  Odin Sphere
-	// RIGHT/CCW  WII  Muramasa
+	// LEFT /CW   SAT   Princess Crown
+	// LEFT /CW   PSX   Lunar 2
+	// RIGHT/CCW  PS2   Odin Sphere
+	// RIGHT/CCW  WII   Muramasa
+	// RIGHT/CCW  VITA  Muramasa/Dragon Crown
 	//
 	// c1 c2
 	// c3 c4

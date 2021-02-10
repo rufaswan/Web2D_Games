@@ -45,8 +45,8 @@ pcrown   ULJM 050.40  Princess Crown
 tengai4  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
 -        ULJS_003.94  Grand Knights History
 mura     PCSE00240    Muramasa Rebirth
+mura     PCSE00019    Dragon Crown
 odin     PCSE00899    Odin Sphere Leifthrasir
--        PCSE00019    Dragon Crown
 
 	pcrown   *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
 	odin     *.mbp/*.ftp only
