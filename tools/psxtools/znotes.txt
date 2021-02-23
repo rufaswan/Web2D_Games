@@ -225,3 +225,65 @@ https://askubuntu.com/questions/40024/how-do-i-delete-a-directory-from-a-zip-fil
 
 	If you want to delete all files from a specific dir, you could do this:
 		zip --delete file.zip "assets/*"  "*.ext"
+
+https://stackoverflow.com/questions/8985588/webgl-canvas-coordinates-to-3d-coords
+
+	Basically if you want to draw in 2D use a 2D shader, don't try messing with a 3D shader.
+	WebGL draws in clipspace so all you need to do is convert from pixels to clip space.
+		attribute vec2 a_position;
+		uniform   vec2 u_resolution;
+
+		void main() {
+			// convert positions from pixels to 0.0 to 1.0
+			vec2 zeroToOne = a_position / u_resolution;
+
+			// convert from 0->1 to 0->2
+			vec2 zeroToTwo = zeroToOne * 2.0;
+
+			// convert from 0->2 to -1->+1 (clipspace)
+			vec2 clipSpace = zeroToTwo - 1.0;
+
+			gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+		}
+
+https://stackoverflow.com/questions/30445467/webgl-vs-css3d-for-large-scatter-plot-of-images
+
+	The way game engines run fast is BY OPTIMIZING WHAT THEY DRAW!
+	They draw as little as possible.
+	They combine textures into text atlases,
+	they combine meshes into large meshes.
+	They get their draw calls down to a < 5000, often under 1000.
+
+https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendEquation
+https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendEquationSeparate
+
+	// void gl.blendEquation(mode);
+	// void gl.blendEquationSeparate(modeRGB, modeAlpha);
+
+	(default)
+	gl.blendEquation(gl.FUNC_ADD);
+	gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+
+https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFunc
+https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFuncSeparate
+
+	// BLEND_SRC_RGB, BLEND_SRC_ALPHA, BLEND_DST_RGB, and BLEND_DST_ALPHA
+
+	// void gl.blendFunc(sfactor, dfactor);
+	// void gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+
+	No Blend (default)
+		gl.blendFunc(gl.ONE, gl.ZERO);
+		gl.blendFuncSeparate(gl.ONE, gl.ZERO, gl.ONE, gl.ZERO);
+
+	Normal Blending
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+	Additive Blending
+		gl.blendFunc(gl.ONE, gl.ONE);
+		gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+
+https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendColor
+
+	// void gl.blendColor(red, green, blue, alpha);

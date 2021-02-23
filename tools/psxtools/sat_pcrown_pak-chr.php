@@ -99,11 +99,11 @@ function sectpart( &$pak, $dir, $off, $no )
 		//if ( $cid != 0 ) // OR $b1 & 0x4000
 			//return;
 		$pal = ( empty($gp_clut) ) ? $gray : substr($gp_clut, $cid*0x40, 0x40);
-		$gp_pix[$tid][3] = $pal;
+		$gp_pix[$tid]['pal'] = $pal;
 
-		$pix['src']['w'] = $gp_pix[$tid][1];
-		$pix['src']['h'] = $gp_pix[$tid][2];
-		$pix['src']['pix'] = $gp_pix[$tid][0];
+		$pix['src']['w'] = $gp_pix[$tid]['w'];
+		$pix['src']['h'] = $gp_pix[$tid]['h'];
+		$pix['src']['pix'] = $gp_pix[$tid]['pix'];
 		$pix['src']['pal'] = $pal;
 		$pix['bgzero'] = 0;
 
@@ -144,25 +144,14 @@ function save_texx( $pfx )
 	global $gp_pix;
 	foreach ( $gp_pix as $k => $v )
 	{
-		if ( isset($v[3]) )
-			list($pix,$w,$h,$pal) = $v;
-		else
-		{
-			list($pix,$w,$h) = $v;
-			$pal = grayclut(16);
-		}
+		if ( ! isset($v['pal']) )
+			$v['pal'] = grayclut(16);
 
 		// first color is alpha
-		$pal[3] = ZERO;
+		$v['pal'][3] = ZERO;
 
-		$clut = "CLUT";
-		$clut .= chrint(16, 4);
-		$clut .= chrint($w, 4);
-		$clut .= chrint($h, 4);
-		$clut .= $pal;
-		$clut .= $pix;
 		$fn = sprintf("$pfx/src/%04d.clut", $k);
-		save_file($fn, $clut);
+		save_clutfile($fn, $v);
 	} // foreach ( $gp_pix as $k => $v )
 	return;
 }
@@ -197,7 +186,12 @@ function load_texx( &$pak, $pfx )
 			$b4 = ($b2 >> 0) & BIT4;
 			$pix .= chr($b3) . chr($b4);
 		}
-		$gp_pix[$d] = array($pix, $w, $h);
+		$gp_pix[$d] = array(
+			'pix' => $pix,
+			'cc' => 16,
+			'w' => $w,
+			'h' => $h,
+		);
 
 		// aligned to 8x8 tile
 		$pos = int_ceil($pos + $siz, 0x20);

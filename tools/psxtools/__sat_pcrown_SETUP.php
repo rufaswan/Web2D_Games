@@ -6,7 +6,7 @@
 require "common.inc";
 require "common-guest.inc";
 
-define("CLR_OFF", 0x154fc); // ALL CLEAR! check
+define("SHA1SUM", 'd549facf31c89627d43aa645fa0727411d9c544e');
 define("PAL_ST_OFF", 0x98a8e); // 0x9ca8e - 0x4000
 define("PAL_ED_OFF", 0x9da8e); // 0xa1a8e - 0x4000
 
@@ -159,8 +159,8 @@ function pcrown( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, CLR_OFF, 10) != "ALL CLEAR!" )
-		return;
+	if ( sha1($file) !== SHA1SUM )
+		return php_error("checksum not matched %s", sha1($file));
 
 	$pal = "";
 	for ( $i = PAL_ST_OFF; $i < PAL_ED_OFF; $i += 2 )
