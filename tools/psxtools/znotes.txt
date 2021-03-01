@@ -254,36 +254,30 @@ https://stackoverflow.com/questions/30445467/webgl-vs-css3d-for-large-scatter-pl
 	they combine meshes into large meshes.
 	They get their draw calls down to a < 5000, often under 1000.
 
-https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendEquation
-https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendEquationSeparate
+https://forums.codeguru.com/showthread.php?259953-Code-to-create-Color-Gradient-programatically
 
-	// void gl.blendEquation(mode);
-	// void gl.blendEquationSeparate(modeRGB, modeAlpha);
+	GRADIENT_FILL_TRIANGLE
+	The triangle's vertices are defined as V1, V2, and V3.
+	Point P is inside the triangle.
+	Draw lines from P to V1, V2, and V3 to form three sub-triangles.
+	Let ai denote the area of the [sub-triangle] opposite Vi for i=1,2,3.
+	The color at point P is computed as:
+		RedP   = (RedV1   * a1 + RedV2   * a2 + RedV3   * a3) / (a1+a2+a3)
+		GreenP = (GreenV1 * a1 + GreenV2 * a2 + GreenV3 * a3) / (a1+a2+a3)
+		BlueP  = (BlueV1  * a1 + BlueV2  * a2 + BlueV3  * a3) / (a1+a2+a3)
 
-	(default)
-	gl.blendEquation(gl.FUNC_ADD);
-	gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+	GRADIENT_FILL_RECT_H
+	The rectangle's top-left point is V1 and the bottom-right point is V2.
+	Point P is inside the rectangle.
+	The color at point P is given by:
+		RedP   = (RedV2   * (Px-V1x) + RedV1   * (V2x-Px)) / (V2x-V1x)
+		GreenP = (GreenV2 * (Px-V1x) + GreenV1 * (V2x-Px)) / (V2x-V1x)
+		BlueP  = (BlueV2  * (Px-V1x) + BlueV1  * (V2x-Px)) / (V2x-V1x)
 
-https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFunc
-https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendFuncSeparate
-
-	// BLEND_SRC_RGB, BLEND_SRC_ALPHA, BLEND_DST_RGB, and BLEND_DST_ALPHA
-
-	// void gl.blendFunc(sfactor, dfactor);
-	// void gl.blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
-
-	No Blend (default)
-		gl.blendFunc(gl.ONE, gl.ZERO);
-		gl.blendFuncSeparate(gl.ONE, gl.ZERO, gl.ONE, gl.ZERO);
-
-	Normal Blending
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-
-	Additive Blending
-		gl.blendFunc(gl.ONE, gl.ONE);
-		gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
-
-https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendColor
-
-	// void gl.blendColor(red, green, blue, alpha);
+	GRADIENT_FILL_RECT_V
+	The rectangle's top-left point is V1 and the bottom-right point is V2.
+	Point P is inside the rectangle.
+	The color at point P is given by:
+		RedP   = (RedV2   * (Py-V1y) + RedV1   * (V2y-Py)) / (V2y-V1y)
+		GreenP = (GreenV2 * (Py-V1y) + GreenV1 * (V2y-Py)) / (V2y-V1y)
+		BlueP  = (BlueV2  * (Py-V1y) + BlueV1  * (V2y-Py)) / (V2y-V1y)

@@ -14,53 +14,34 @@ $gp_pix = array();
 
 function sectquad( &$mbp, $pos, $name, $SCALE )
 {
-	$qax = str2int($mbp, $pos+ 0, 2, true);
-	$qay = str2int($mbp, $pos+ 2, 2, true);
-	$qbx = str2int($mbp, $pos+ 4, 2, true);
-	$qby = str2int($mbp, $pos+ 6, 2, true);
-	$qcx = str2int($mbp, $pos+ 8, 2, true);
-	$qcy = str2int($mbp, $pos+10, 2, true);
-	$qdx = str2int($mbp, $pos+12, 2, true);
-	$qdy = str2int($mbp, $pos+14, 2, true);
-	$qex = str2int($mbp, $pos+16, 2, true);
-	$qey = str2int($mbp, $pos+18, 2, true);
-	$qfx = str2int($mbp, $pos+20, 2, true);
-	$qfy = str2int($mbp, $pos+22, 2, true);
-	$qgx = str2int($mbp, $pos+24, 2, true);
-	$qgy = str2int($mbp, $pos+26, 2, true);
-	$qhx = str2int($mbp, $pos+28, 2, true);
-	$qhy = str2int($mbp, $pos+30, 2, true);
+	$float = array();
+	for ( $i=0; $i < $mbp['k']; $i += 2 )
+		$float[] = str2int($mbp, $pos+$i, 2, true) / 0x10;
 
-	if ( $qcx != $qgx )
-		php_notice("qcx != qgx [%x,%x]", $qcx, $qgx);
-	if ( $qcy != $qgy )
-		php_notice("qcy != qgy [%x,%x]", $qcy, $qgy);
-	if ( $qhx != 0 || $qhy != 0 )
-		php_notice("qhx,qhy not zero [%x,%x]", $qhx, $qhy);
+	if ( $float[ 4] != $float[12] )
+		php_notice("float[ 4] != float[12] [%x,%x]", $float[4], $float[12]);
+	if ( $float[ 5] != $float[13] )
+		php_notice("float[ 5] != float[13] [%x,%x]", $float[5], $float[13]);
+	if ( $float[14] != 0 || $float[15] != 0 )
+		php_notice("float[14],float[15] not zero [%x,%x]", $float[14], $float[15]);
 
-	$inv16 = 1.0 / 0x10;
-	// qbx,qby is the center point of quad cdef
-	//  qbx == average(qcx,qex)
-	//  qby == average(qcy,qey)
-	$qcx *= $SCALE * $inv16;
-	$qcy *= $SCALE * $inv16;
-	$qdx *= $SCALE * $inv16;
-	$qdy *= $SCALE * $inv16;
-	$qex *= $SCALE * $inv16;
-	$qey *= $SCALE * $inv16;
-	$qfx *= $SCALE * $inv16;
-	$qfy *= $SCALE * $inv16;
+	// float[2],float[3] is the center point of quad cdef
+	//  float[2] == average(float[4],float[8])
+	//  float[3] == average(float[5],float[9])
+
+	for ( $i=4; $i < 12; $i++ )
+		$float[$i] *= $SCALE;
 
 	$cdef = array(
-		array($qcx,$qcy,1),
-		array($qdx,$qdy,1),
-		array($qex,$qey,1),
-		array($qfx,$qfy,1),
+		array($float[ 4] , $float[ 5] , 1),
+		array($float[ 6] , $float[ 7] , 1),
+		array($float[ 8] , $float[ 9] , 1),
+		array($float[10] , $float[11] , 1),
 	);
 
 	printf("== sectquad( %x , $name , %.2f )\n", $pos, $SCALE);
-	printf("    a %7d,%7d  \n", $qax, $qay);
-	printf("    b %7.2f,%7.2f  \n", $qbx*$inv16, $qby*$inv16);
+	printf("    a %7.2f,%7.2f  \n", $float[0], $float[1]);
+	printf("    b %7.2f,%7.2f  \n", $float[2], $float[3]);
 	quad_dump($cdef, "1423", "cdef");
 	return $cdef;
 }

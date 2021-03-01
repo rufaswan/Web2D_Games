@@ -6,11 +6,20 @@
 require "common.inc";
 require "common-guest.inc";
 
-req_ext("json_encode", "json");
+php_req_extension("json_encode", "json");
 
 $gp_json = array();
 
-function sectquad_int( &$mbs, $pos, &$sqd, &$dqd )
+function colorquad( &$cqd, &$mbs, $pos )
+{
+	$cqd[] = ord( $mbs[$pos+0] ) / BIT8; // r
+	$cqd[] = ord( $mbs[$pos+1] ) / BIT8; // g
+	$cqd[] = ord( $mbs[$pos+2] ) / BIT8; // b
+	$cqd[] = ord( $mbs[$pos+3] ) / BIT8; // a
+	return;
+}
+
+function sectquad_int( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 {
 	$float = array();
 	for ( $i=0; $i < $mbs['k']; $i += 2 )
@@ -39,7 +48,7 @@ function sectquad_int( &$mbs, $pos, &$sqd, &$dqd )
 	return;
 }
 
-function sectquad_float( &$mbs, $pos, &$sqd, &$dqd )
+function sectquad_float( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 {
 	$float = array();
 	for ( $i=0; $i < $mbs['k']; $i += 4 )
@@ -49,9 +58,14 @@ function sectquad_float( &$mbs, $pos, &$sqd, &$dqd )
 		$float[] = float32($b);
 	}
 
-	// 1 4    1-2    8-23-18-13
-	// | | =>   |  , 5-20-15-10
-	// 2-3    4-3
+	//  0  1  2  3  4
+	//  5  6  7  8  9
+	// 10 11 12 13 14
+	// 15 16 17 18 19
+	// 20 21 22 23 24
+	//   1 4    1-2    8-23-18-13
+	//   | | =>   |  , 5-20-15-10
+	//   2-3    4-3
 	$sqd = array(
 		$float[ 8] , $float[ 9] ,
 		$float[23] , $float[24] ,
@@ -64,6 +78,20 @@ function sectquad_float( &$mbs, $pos, &$sqd, &$dqd )
 		$float[15] , $float[16] ,
 		$float[10] , $float[11] ,
 	);
+
+	//  0  4  8  c 10
+	// 14 18 1c 20 24
+	// 28 2c 30 34 38
+	// 3c 40 44 48 4c
+	// 50 54 58 5c 60
+	$p = $pos * $mbs['k'];
+	$cqd = array();
+	colorquad($cqd, $mbs['d'], $p+0x1c);
+	colorquad($cqd, $mbs['d'], $p+0x58);
+	colorquad($cqd, $mbs['d'], $p+0x44);
+	colorquad($cqd, $mbs['d'], $p+0x30);
+	if ( (int)array_sum($cqd) == 16 )
+		$cqd = '';
 	return;
 }
 //////////////////////////////
@@ -77,6 +105,7 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 		$p1 = ($id3 + $i1) * $mbs[1]['k'];
 		$sqd = array();
 		$dqd = array();
+		$cqd = array();
 		switch ( $game )
 		{
 			case "mura":
@@ -85,14 +114,14 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 				// sub      - - - -  - -  s8
 				$sub = substr ($mbs[1]['d'], $p1+0 , 4);
 				$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
-				sectquad_float($mbs[8], $s8, $sqd, $dqd);
+				sectquad_float($mbs[8], $s8, $sqd, $dqd, $cqd);
 				break;
 			case "gran":
 				// 0 1 2 3  4 5 6 7  8 9  a b
 				// sub      - - - -  - -  s8
 				$sub = substr ($mbs[1]['d'], $p1+0 , 4);
 				$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
-				sectquad_int($mbs[8], $s8, $sqd, $dqd);
+				sectquad_int($mbs[8], $s8, $sqd, $dqd, $cqd);
 				break;
 			case "odin":
 				// 0 1 2 3  4 5 6 7  8 9 a b  c d e f
@@ -100,18 +129,38 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 				//$sub = substr ($mbs[1]['d'], $p1+5 , 4);
 				$sub = $mbs[1]['d'][$p1+5] . $mbs[1]['d'][$p1+4] . $mbs[1]['d'][$p1+6] . $mbs[1]['d'][$p1+7];
 				$s8  = str2int($mbs[1]['d'], $p1+14, 2); // quads
-				sectquad_float($mbs[9], $s8, $sqd, $dqd);
+				sectquad_float($mbs[9], $s8, $sqd, $dqd, $cqd);
 				break;
 		}
 
 		$s1 = str2int($sub, 0, 2); // ??
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
-		$data[$i1] = array(
-			'TexID' => $s4,
-			'SrcQuad' => $sqd,
-			'DstQuad' => $dqd,
-		);
+
+		$data[$i1] = array();
+		if ( $s1 & (4|2) )
+			continue;
+
+		$data[$i1]['DstQuad'] = $dqd;
+		// if ( $cqd !== '' )
+			//$data[$i1]['ClrQuad']  = $cqd;
+
+		//  1 layer normal
+		//  2 layer top
+		//  4 gradientFill
+		//  8 attack box
+		// 10
+		// 20
+		if ( ($s1 & 4) == 0 )
+		{
+			$data[$i1]['TexID']   = $s4;
+			$data[$i1]['SrcQuad'] = $sqd;
+		}
+
+		if ( $s3 != 0 )
+		{
+			$data[$i1]['Blend'] = array('ADD', 'ONE', 'ONE');
+		}
 
 	} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -185,7 +234,7 @@ function sectanim( &$mbs, $pfx )
 				$id5 = str2int($mbs[5]['d'], $p5+0, 2);
 				$no5 = str2int($mbs[5]['d'], $p5+6, 2);
 
-				$ent[] = array($id5, $no5);
+				$ent[] = array($id5,$no5);
 
 			} // for ( $i5=0; $i5 < $no7; $i5++ )
 

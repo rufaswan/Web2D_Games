@@ -6,13 +6,6 @@
 // non-PlayStation One (guest systems) functions
 
 //////////////////////////////
-function req_ext( $func, $ext )
-{
-	if ( ! function_exists($func) )
-		php_error("$ext extension not found!");
-	return;
-}
-
 function substrrev( &$str, $pos, $len )
 {
 	$sub = substr($str, $pos, $len);
@@ -58,20 +51,6 @@ function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 	$b1 = ($bit1 & 1) << 1;
 	$b0 = ($bit0 & 1) << 0;
 	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
-}
-
-function int_ceil_pow2( $int )
-{
-	// round int to nearest 2^n
-	// away from zero
-	$sign = ( 0 > $int );
-	if ( $sign )
-		$int = -$int;
-	$int  = (int)$int;
-	$ceil = 1;
-	while ( $ceil < $int )
-		$ceil <<= 1;
-	return ( $sign ) ? -$ceil : $ceil;
 }
 //////////////////////////////
 function iee754_float( $int, $exp_bit, $man_bit, $bias )

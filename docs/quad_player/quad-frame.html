@@ -1,0 +1,104 @@
+<!doctype html><!--
+[license]
+Copyright (C) 2019 by Rufas Wan
+
+This file is part of Web2D_Games. <https://github.com/rufaswan/Web2D_Games>
+
+Web2D_Games is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Web2D_Games is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
+[/license]
+--><html>
+<head>
+	<meta charset='utf-8'>
+	<link rel='stylesheet' href='style.css'>
+</head>
+<body>
+	<img id='imgbg' src='bg.png'>
+	<div id='hidden'></div>
+	<div id='topbar'>
+		<input id='upload' type='file' multiple>
+
+		<button id='xpos'>X</button>
+		<button id='ypos'>Y</button>
+
+		<button id='zoom_add'>+</button>
+		<button id='zoom_btn'>ZOOM</button>
+		<button id='zoom_sub'>-</button>
+
+		<button id='save_png'>Save PNG</button>
+	</div>
+	<div id='lowbar'>
+		<button id='prev_btn'>&lt;</button>
+		<button id='play_btn'>PLAY</button>
+		<button id='next_btn'>&gt;</button>
+	</div>
+	<canvas id='canvas'>Required JavaScript, Canvas Context or WebGL is disabled or not supported</canvas>
+
+	<script src='quad.js'></script>
+	<script>
+	// standard UI
+	var dom_canvas = document.getElementById('canvas');
+	var dom_upload = document.getElementById('upload');
+	var dom_hidden = document.getElementById('hidden');
+	var dom_play   = document.getElementById('play_btn');
+	QUAD.init_webgl(dom_canvas);
+
+	dom_upload.addEventListener("change", function(e){
+		QUAD.file_reader(dom_upload.files, dom_hidden, function(){
+			//console.log(QUAD);
+		});
+	});
+	document.getElementById('save_png').addEventListener("click", function(e){
+		QUAD.save_png(QUAD.anim.cur_frame);
+	});
+	document.getElementById('zoom_btn').addEventListener("click", function(e){
+		QUAD.zoom(0);
+	});
+	document.getElementById('zoom_add').addEventListener("click", function(e){
+		QUAD.zoom(1);
+	});
+	document.getElementById('zoom_sub').addEventListener("click", function(e){
+		QUAD.zoom(-1);
+	});
+	document.getElementById('xpos').addEventListener("click", function(e){
+		QUAD.axis_x();
+	});
+	document.getElementById('ypos').addEventListener("click", function(e){
+		QUAD.axis_y();
+	});
+
+	// frame ver
+	document.getElementById('prev_btn').addEventListener("click", function(e){
+		QUAD.anim.cur_frame -= 1;
+	});
+	document.getElementById('next_btn').addEventListener("click", function(e){
+		QUAD.anim.cur_frame += 1;
+	});
+	dom_play.addEventListener("click", function(e){
+		//console.log(QUAD);
+	});
+
+	function render(){
+		if ( QUAD.files.done === 3 ){
+			QUAD.render_frame();
+			var len = QUAD.files.quad.Frame.length - 1;
+			dom_play.innerHTML = QUAD.anim.cur_frame + ' of ' + len + ' Frames';
+		} else {
+			dom_play.innerHTML = 'FRAMES';
+		}
+		return;
+	}
+	setInterval(render, 250);
+	</script>
+</body>
+</html>

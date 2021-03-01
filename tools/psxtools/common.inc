@@ -247,6 +247,20 @@ function int_floor( $int, $floor )
 		$int--;
 	return ( $sign ) ? -$int : $int;
 }
+
+function int_ceil_pow2( $int )
+{
+	// round int to nearest 2^n
+	// away from zero
+	$sign = ( 0 > $int );
+	if ( $sign )
+		$int = -$int;
+	$int  = (int)ceil($int);
+	$ceil = 1;
+	while ( $ceil < $int )
+		$ceil <<= 1;
+	return ( $sign ) ? -$ceil : $ceil;
+}
 //////////////////////////////
 function debug( $str, $name="DEBUG" )
 {
@@ -294,7 +308,7 @@ function performance( $func )
 	$func();
 	$ed = microtime(true);
 	$mem = memory_get_peak_usage();
-	printf("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
+	trace("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
 	return;
 }
 
@@ -1100,37 +1114,23 @@ function savepix( $fn, &$pix, $trim = false )
 			if ( array_search($c1, $clpal) === false )
 				$clpal[] = $c1;
 			$c2 = array_search($c1, $clpal);
+			if ( count($clpal) > 0x100 )
+				goto rgba;
 
 			$clpix .= chr($c2);
 		} // for ( $x=0; $x < $pix['rgba']['w']; $x++ )
 	} // for ( $y=0; $y < $pix['rgba']['h']; $y++ )
 
-	$cc = count($clpal);
-	if ( $cc > 0x100 )
-	{
-		trace("savepix() RGBA [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
-		$img = array(
-			'w' => $pix['rgba']['w'],
-			'h' => $pix['rgba']['h'],
-			'pix' => $pix['rgba']['pix'],
-		);
-		$pix = 0;
-		return save_clutfile("$fn.rgba", $img);
-	}
-	else
-	{
-		trace("savepix() CLUT [%x]  %d x %d\n", $cc, $pix['rgba']['w'], $pix['rgba']['h']);
-		$img = array(
-			'cc' => $cc,
-			'w' => $pix['rgba']['w'],
-			'h' => $pix['rgba']['h'],
-			'pal' => implode('', $clpal),
-			'pix' => $clpix,
-		);
-		$pix = 0;
-		return save_clutfile("$fn.clut", $img);
-	}
-	return;
+clut:
+	$pix['rgba']['cc']  = count($clpal);
+	$pix['rgba']['pal'] = implode('', $clpal);
+	$pix['rgba']['pix'] = $clpix;
+	trace("savepix() CLUT [%x]  %d x %d\n", $pix['rgba']['cc'], $pix['rgba']['w'], $pix['rgba']['h']);
+	return save_clutfile("$fn.clut", $pix['rgba']);
+
+rgba:
+	trace("savepix() RGBA  %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h']);
+	return save_clutfile("$fn.rgba", $pix['rgba']);
 }
 //////////////////////////////
 function psx_patch( $dir, $pfx )

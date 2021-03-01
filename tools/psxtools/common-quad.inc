@@ -61,16 +61,18 @@ function triad_area( $V1, $V2, $V3 )
 //////////////////////////////
 function vector_dump( $V, $name )
 {
-	echo "$name ";
-	printf(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
+	if ( defined("NO_TRACE") )
+		return;
+	trace("$name ");
+	trace(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
 
 	// ERROR : $V[2] divide by zero
 	if ( $V[2] == 0.0 )
 	{
 		$V[2] = 1 / $V[2];
-		printf("  xy (%4d , %4d)", $V[0]*$V[2], $V[1]*$V[2]);
+		trace("  xy (%4d , %4d)", $V[0]*$V[2], $V[1]*$V[2]);
 	}
-	echo "\n";
+	trace("\n");
 	return;
 }
 
@@ -125,6 +127,8 @@ function quad_rebase( $V4 )
 
 function quad_dump( $V4, $type, $name )
 {
+	if ( defined("NO_TRACE") )
+		return;
 	// winding order (x-hand-coordinate system)
 	//   1243 = 1 2 =  left-hand / clockwise (CW)
 	//          4 3
@@ -143,19 +147,21 @@ function quad_dump( $V4, $type, $name )
 	$c2 = $type[1] - 1;
 	$c3 = $type[2] - 1;
 	$c4 = $type[3] - 1;
-	printf("quad( %s )\n", $name);
-	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c1][0], $V4[$c1][1], $V4[$c2][0], $V4[$c2][1]);
-	printf("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c3][0], $V4[$c3][1], $V4[$c4][0], $V4[$c4][1]);
-	printf("  w %.2f  h %.2f\n", $V4[$c4][0]-$V4[$c1][0]+1, $V4[$c4][1]-$V4[$c1][1]+1);
+	trace("quad( %s )\n", $name);
+	trace("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c1][0], $V4[$c1][1], $V4[$c2][0], $V4[$c2][1]);
+	trace("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c3][0], $V4[$c3][1], $V4[$c4][0], $V4[$c4][1]);
+	trace("  w %.2f  h %.2f\n", $V4[$c4][0]-$V4[$c1][0]+1, $V4[$c4][1]-$V4[$c1][1]+1);
 	return;
 }
 
 function matrix_dump( $M , $name )
 {
-	printf("matrix( %s )\n", $name);
-	printf("  | %10.2f %10.2f %10.2f |\n", $M[0], $M[1], $M[2]);
-	printf("  | %10.2f %10.2f %10.2f |\n", $M[3], $M[4], $M[5]);
-	printf("  | %10.2f %10.2f %10.2f |\n", $M[6], $M[7], $M[8]);
+	if ( defined("NO_TRACE") )
+		return;
+	trace("matrix( %s )\n", $name);
+	trace("  | %10.2f %10.2f %10.2f |\n", $M[0], $M[1], $M[2]);
+	trace("  | %10.2f %10.2f %10.2f |\n", $M[3], $M[4], $M[5]);
+	trace("  | %10.2f %10.2f %10.2f |\n", $M[6], $M[7], $M[8]);
 	return;
 }
 
