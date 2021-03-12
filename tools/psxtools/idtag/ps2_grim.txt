@@ -1,0 +1,33 @@
+[System]
+PlayStation 2
+
+[Game]
+Grim Grimoire
+
+[Year]
+2007
+
+[Copyright]
+Vanillaware Ltd.
+Nippon Ichi Software Inc.
+
+[Character Designers]
+Kouichi Maenou
+George Kamitani
+
+[Designers]
+Takehiro Shiga
+Yoshio Nishimura
+Entsugu Inatani
+Yasuhiro Fujiwara
+Yasuo Shirai
+Daichi Yamashita
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

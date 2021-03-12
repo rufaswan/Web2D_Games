@@ -5,26 +5,44 @@
  */
 require "common.inc";
 require "common-guest.inc";
-require "common-quad.inc";
+require "html.inc";
 
-define("SCALE", 1.0);
-//define("DRY_RUN", true);
+php_req_extension("json_encode", "json");
 
-$gp_pix = array();
+$gp_json = array();
 
-function sectquad( &$mbs, $pos, $name, $SCALE )
+function colorquad( &$mbs, $pos )
+{
+	$color = array();
+	for ( $i=0; $i < $mbs['k']; $i += 4 )
+	{
+		$s = substr($mbs['d'], $pos+$i, 4);
+		if ( trim($s, BYTE) == '' )
+			$color[] = '1';
+		else
+		{
+			$r = ord( $s[0] );
+			$g = ord( $s[1] );
+			$b = ord( $s[2] );
+			$a = ord( $s[3] );
+			$color[] = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+		}
+	} // for ( $i=0; $i < $mbs['k']; $i += 4 )
+
+	$cqd = array($color[1] , $color[2] , $color[3] , $color[4]);
+	if ( implode('',$cqd) == '1111' )
+		$cqd = '';
+	return $cqd;
+}
+
+function sectquad( &$mbs, $pos )
 {
 	$float = array();
 	for ( $i=0; $i < $mbs['k']; $i += 4 )
 	{
-		$b = substrrev($mbs, $pos+$i, 4);
-		$float[] = float32($b) * $SCALE;
+		$b = substrrev($mbs['d'], $pos+$i, 4);
+		$float[] = float32($b);
 	}
-
-	if ( $float[2] != $float[10] )
-		php_notice("float[2] != float[10] [%.2f,%.2f]", $float[2], $float[10]);
-	if ( $float[3] != $float[11] )
-		php_notice("float[3] != float[11] [%.2f,%.2f]", $float[3], $float[11]);
 
 	$bcde = array(
 		array($float[2] , $float[3] , 1),
@@ -32,62 +50,14 @@ function sectquad( &$mbs, $pos, $name, $SCALE )
 		array($float[6] , $float[7] , 1),
 		array($float[8] , $float[9] , 1),
 	);
-
-	printf("== sectquad( %x , $name , %.2f )\n", $pos, $SCALE);
-	printf("    af %7.2f,%7.2f\n", $float[0], $float[1]);
-	quad_dump($bcde, "1423", "bcde");
 	return $bcde;
-}
-
-function load_tpl( &$pix, $tid , $pfx )
-{
-	global $gp_pix;
-	if ( defined("DRY_RUN") )
-		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
-
-	if ( ! isset( $gp_pix[$tid] ) )
-	{
-		$fn = sprintf("%s.%d.tpl", $pfx, $tid);
-		$ftx = load_clutfile($fn);
-		if ( $ftx === 0 )
-			return php_error("NOT FOUND %s", $fn);
-
-		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
-		if ( isset( $ftx['cc'] ) )
-		{
-			$gp_pix[$tid]['w'] = $ftx['w'];
-			$gp_pix[$tid]['h'] = $ftx['h'];
-			$gp_pix[$tid]['d'] = clut2rgba($ftx['pal'], $ftx['pix'], false);
-		}
-		else
-		{
-			$gp_pix[$tid]['w'] = $ftx['w'];
-			$gp_pix[$tid]['h'] = $ftx['h'];
-			$gp_pix[$tid]['d'] = $ftx['pix'];
-		}
-	} // if ( ! isset( $gp_pix[$tid] ) )
-
-	printf("== load_tpl( $tid , $pfx ) = %x x %x\n", $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
-	$pix['src']['w'] = $gp_pix[$tid]['w'];
-	$pix['src']['h'] = $gp_pix[$tid]['h'];
-	$pix['src']['pix'] = &$gp_pix[$tid]['d'];
-	$pix['src']['pal'] = "";
-	return;
 }
 //////////////////////////////
 function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 {
-	//return;
-	printf("== sectpart( $pfx , %d, %x , %x )\n", $k6, $id6, $no6);
+	global $gp_json;
 
-	// ERROR : computer run out of memory
-	// required CANV_S is too large for bg/*.mbs
-	//   auto canvas size detection
-	//   auto move center point 0,0 from middle-center to top-left
-	//   auto trim is DISABLED
 	$data = array();
-	$CANV_S = 0;
-	$is_mid = false;
 	for ( $i4=0; $i4 < $no6; $i4++ )
 	{
 		$p4 = ($id6 + $i4) * $mbs[4]['k'];
@@ -95,78 +65,50 @@ function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 		// 0 1 2 3  4 5  6 7  8 9  a b
 		// sub      s1   - -  s0   s2
 		$sub = substr ($mbs[4]['d'], $p4+ 0, 4);
-		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
 
 		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
+		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
 		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
-		$sqd = sectquad($mbs[1], $s1*$mbs[1]['k'], "mbs 1 $s1", 1);
-		$dqd = sectquad($mbs[2], $s2*$mbs[2]['k'], "mbs 2 $s2", SCALE);
 
-		$dv = array($sub, $s0, $sqd, $dqd);
-		$data[] = $dv;
-		//array_unshift($data, $dv);
-		printf("DATA  %x , %x , %x\n", $s0, $s1, $s2);
+		$sqd = sectquad ($mbs[1], $s1*$mbs[1]['k']);
+		$cqd = colorquad($mbs[0], $s0*$mbs[0]['k']);
+		$dqd = sectquad ($mbs[2], $s2*$mbs[2]['k']);
 
-		// detect origin and canvas size
-		for ( $i=0; $i < 4; $i++ )
-		{
-			$s1 = abs( $dqd[$i][0] );
-			$s2 = abs( $dqd[$i][1] );
-			if ( $s1 > $CANV_S )  $CANV_S = $s1 + 1;
-			if ( $s2 > $CANV_S )  $CANV_S = $s2 + 1;
-			if ( $dqd[$i][0] < 0 || $dqd[$i][1] < 0 )
-				$is_mid = true;
-		} // for ( $i=0; $i < 4; $i++ )
-		printf("CANV_S  %d\n", $CANV_S);
-
-	} // for ( $i4=0; $i4 < $no6; $i4++ )
-	if ( empty($data) )
-		return;
-
-	$ceil = ( $is_mid ) ? int_ceil($CANV_S*2, 16) : int_ceil($CANV_S, 16);
-	$pix = array();
-
-	$origin = ( $is_mid ) ? $ceil / 2 : 0;
-	printf("ORIGIN  %d\n", $origin);
-
-	foreach ( $data as $dv )
-	{
-		list($sub, $s0, $sqd, $dqd) = $dv;
-
-		echo debug($sub);
 		$s1 = str2big($sub, 0, 2); // ?type?
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
 
-		if ( ! isset( $pix[$s1][$s3] ) )
+		if ( $gp_json['TexReq'] <= $s4 )
+			$gp_json['TexReq'] = $s4 + 1;
+
+		$data[$i4] = array();
+		if ( $s1 & 2 )
+			continue;
+
+		$data[$i4]['DstQuad'] = $dqd;
+		if ( ! empty($cqd) )
+			$data[$i4]['ClrQuad']  = $cqd;
+
+		//  1 layer normal
+		//  2 layer top
+		//  4 gradientFill
+		//  8 attack box
+		// 10
+		// 20
+		if ( ($s1 & 4) == 0 )
 		{
-			$pix[$s1][$s3] = COPYPIX_DEF();
-			$pix[$s1][$s3]['rgba']['w'] = $ceil;
-			$pix[$s1][$s3]['rgba']['h'] = $ceil;
-			$pix[$s1][$s3]['rgba']['pix'] = canvpix($ceil,$ceil);
-			$pix[$s1][$s3]['alpha'] = "alpha_over";
+			$data[$i4]['TexID']   = $s4;
+			$data[$i4]['SrcQuad'] = $sqd;
 		}
 
-		$pix[$s1][$s3]['src']['vector'] = $sqd;
-		for ( $i=0; $i < 4; $i++ )
+		if ( $s3 != 0 )
 		{
-			$dqd[$i][0] += $origin;
-			$dqd[$i][1] += $origin;
+			$data[$i4]['Blend'] = array('ADD', 'ONE', 'ONE');
 		}
-		$pix[$s1][$s3]['vector'] = $dqd;
 
-		load_tpl($pix[$s1][$s3], $s4, $pfx);
-		copyquad($pix[$s1][$s3], 4);
-	} // foreach ( $data as $dv )
+	} // for ( $i4=0; $i4 < $no6; $i4++ )
 
-	foreach ( $pix as $s1 => $v1 )
-	{
-		foreach ( $v1 as $s2 => $v2 )
-		{
-			$fn = sprintf("$pfx/%x/%04d.%d", $s1, $k6, $s2);
-			savepix("$fn", $v2, false);
-		}
-	}
+	$gp_json['Frame'][$k6] = $data;
 	return;
 }
 
@@ -180,8 +122,8 @@ function sectspr( &$mbs, $pfx )
 		// - - - -  id     -  -   no  -  -  -
 		$id6 = str2big($mbs[6]['d'], $i6+0x10, 2);
 		$no6 = str2big($mbs[6]['d'], $i6+0x14, 1);
-		if ( $no6 == 0 )
-			continue;
+		// DO NOT skip numbering
+		// JSON will become {object} instead [array]
 
 		$k6 = $i6 / $mbs[6]['k'];
 		sectpart($mbs, $pfx, $k6, $id6, $no6);
@@ -192,7 +134,8 @@ function sectspr( &$mbs, $pfx )
 //////////////////////////////
 function sectanim( &$mbs, $pfx )
 {
-	$anim = "";
+	global $gp_json;
+
 	// s9-sa-s8 [30-10-20]
 	$len9 = strlen( $mbs[9]['d'] );
 	for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
@@ -224,49 +167,18 @@ function sectanim( &$mbs, $pfx )
 				$id8 = str2big($mbs[8]['d'], $p8+0, 2);
 				$no8 = str2big($mbs[8]['d'], $p8+6, 2);
 
-				$ent[] = "$id8-$no8";
+				$ent[] = array($id8,$no8);
 
 			} // for ( $i8=0; $i8 < $noa; $i8++ )
 
-			$anim .= sprintf("%s_%d = ", $name, $ia);
-			$anim .= implode(' , ', $ent);
-			$anim .= "\n";
-
+			$gp_json['Animation'][$name][$ia] = $ent;
 		} // for ( $ia=0; $ia < $no9; $ia++ )
 
 	} // for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
 
-	save_file("$pfx/anim.txt", $anim);
 	return;
 }
 //////////////////////////////
-function mbscoldbg( &$mbs, $id, $pos )
-{
-	$len = strlen( $mbs[$id]['d'] );
-	$dbg = array();
-	for ( $i=0; $i < $len; $i += $mbs[$id]['k'] )
-	{
-		$b1 = ord( $mbs[$id]['d'][$i+$pos] );
-		if ( ! isset( $dbg[$b1] ) )
-			$dbg[$b1] = 0;
-		$dbg[$b1]++;
-	}
-
-	printf("== mbscoldbg( %x , %x )\n", $id, $pos);
-	foreach ( $dbg as $k => $v )
-		printf("  %2x = %8x\n", $k, $v);
-	return;
-}
-
-function mbsdbg( &$meta, $name, $blk )
-{
-	printf("== mbsdbg( $name , %x )\n", $blk);
-	$buf = debug_block( $meta, $blk );
-	//echo "$buf\n";
-	save_file("$name.txt", $buf);
-	return;
-}
-
 function loadmbs( &$mbs, $sect, $pfx )
 {
 	$offs = array();
@@ -288,9 +200,6 @@ function loadmbs( &$mbs, $sect, $pfx )
 		$id = array_search($v['o'], $offs);
 		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
 		$dat = substr($mbs, $v['o'], $sz);
-
-		//save_file("$pfx/meta/$k.meta", $dat);
-		mbsdbg($dat, "$pfx/meta/$k", $v['k']);
 
 		$sect[$k]['d'] = $dat;
 	} // foreach ( $sect as $k => $v )
@@ -314,9 +223,6 @@ function mura( $fname )
 	// $hdz = str2int($mbs, 8, 3);
 	// $len = 0x10 + $hdz + $siz;
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
-
-	global $gp_pix;
-	$gp_pix = array();
 
 	//   0 1 2 |     1-0 2-1 3-2
 	// 3 4 5 6 | 6-3 5-4 9-5 7-6
@@ -356,12 +262,18 @@ function mura( $fname )
 		array('p' => 0x7c , 'k' => 0x10), // 10
 	);
 	loadmbs($mbs, $sect, $pfx);
-	mbscoldbg($mbs, 4, 0); // = 0
-	mbscoldbg($mbs, 4, 1); //
-	mbscoldbg($mbs, 4, 2); // 0 1 2
+
+	global $gp_json;
+	$gp_json = load_idtagfile('wii_mura');
+	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx);
+
+	// JSON_PRETTY_PRINT
+	// JSON_FORCE_OBJECT
+	if ( ! empty($gp_json) )
+		file_put_contents("$fname.quad", json_encode($gp_json));
 	return;
 }
 

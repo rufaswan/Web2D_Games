@@ -99,14 +99,13 @@ function sectpart( &$mbp, $pfx, $k6, $id6, $no6 )
 	{
 		$p4 = ($id6 + $i4) * $mbp[4]['k'];
 
-		// 0 1 2 3  4   6 8 c  10    12    14    16
-		// sub      s1  - - -  s2-0  s2-6  s2-c  s2-2
+		// 0 1 2 3  4   6  8    a    c    e     10   12   14   16
+		// sub      s1  -  s0-0 s0-6 s0-c s0-2  s2-0 s2-6 s2-c s2-2
 		$sub = substr ($mbp[4]['d'], $p4+ 0, 4);
 
-		$s1  = str2int($mbp[4]['d'], $p4+ 4, 2); // sx,sy
-		$s2  = str2int($mbp[4]['d'], $p4+16, 2); // dx,dy
-		//if ( $s1 == 0 )
-			//continue;
+		$s1 = str2int($mbp[4]['d'], $p4+ 4, 2); // sx,sy
+		$s0 = str2int($mbp[4]['d'], $p4+ 8, 2);
+		$s2 = str2int($mbp[4]['d'], $p4+16, 2); // dx,dy
 
 		$sqd = sectquad($mbp[1]['d'], $s1*$mbp[1]['k'], "mbp 1 $s1", 1);
 		$dqd = sectquad($mbp[2]['d'], $s2*$mbp[2]['k'], "mbp 2 $s2", SCALE);

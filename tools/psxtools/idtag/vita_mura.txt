@@ -1,0 +1,39 @@
+[System]
+PlayStation Vita
+
+[Game]
+Muramasa Rebirth
+
+[Year]
+2009, 2013
+
+[Copyright]
+MarvelousAQL Inc.
+
+[Character Designs]
+Yasuhiro Fujiwara
+Kouichi Maenou
+Yasuo Shirai
+Ine Kawazu
+Takehiro Shiga
+(DLC) Yukiko Hirai
+(DLC) Emika Kida
+(DLC) Akira Murakami
+(DLC) Tomoyo Shimabukuro
+(DLC) Takafumi Noma
+
+[Background Designers]
+Yoshio Nishimura
+Daichi Yamashita
+Yukitsuna Maeda
+(DLC) Ryo Kobayashi
+(DLC) Haruka Kawamura
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

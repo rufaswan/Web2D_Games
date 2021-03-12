@@ -371,7 +371,7 @@ function wiitpl( &$file, $base, $pfx, $id )
 {
 	printf("== wiitpl( %x , $pfx , $id )\n", $base);
 	if ( str2big($file, $base+0, 4) != 0x20af30 )
-		return;
+		return php_error("not TPL");
 
 	$cnt = str2big($file, $base+4, 4);
 	if ( $cnt != 1 )

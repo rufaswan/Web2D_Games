@@ -1,0 +1,29 @@
+[System]
+PlayStation 2
+
+[Game]
+Odin Sphere
+
+[Year]
+2007
+
+[Copyright]
+Atlus Co. Ltd.
+
+[Designers]
+Yasuhiro Fujiwara
+Entsugu Inatani
+Kouichi Maenou
+Yoshio Nishimura
+Takehiro Shiga
+Yasuo Shirai
+Daichi Yamashita
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

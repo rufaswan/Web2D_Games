@@ -5,16 +5,42 @@
  */
 require "common.inc";
 require "common-guest.inc";
+require "html.inc";
 
 php_req_extension("json_encode", "json");
 
 $gp_json = array();
+$gp_tag  = '';
+
+function colorquad( &$mbp, $pos )
+{
+	$color = array();
+	for ( $i=0; $i < $mbp['k']; $i += 4 )
+	{
+		$s = substr($mbp['d'], $pos+$i, 4);
+		if ( trim($s, BYTE) == '' )
+			$color[] = '1';
+		else
+		{
+			$r = ord( $s[0] );
+			$g = ord( $s[1] );
+			$b = ord( $s[2] );
+			$a = ord( $s[3] );
+			$color[] = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+		}
+	} // for ( $i=0; $i < $mbp['k']; $i += 4 )
+
+	$cqd = array($color[2] , $color[3] , $color[4] , $color[5]);
+	if ( implode('',$cqd) == '1111' )
+		$cqd = '';
+	return $cqd;
+}
 
 function sectquad( &$mbp, $pos )
 {
 	$float = array();
-	for ( $i=0; $i < 0x20; $i += 2 )
-		$float[] = str2int($mbp, $pos+$i, 2, true) / 0x10;
+	for ( $i=0; $i < $mbp['k']; $i += 2 )
+		$float[] = str2int($mbp['d'], $pos+$i, 2, true) / 0x10;
 
 	//   1 4    1-2
 	//   | | =>   |  , 4-10-8-6
@@ -37,30 +63,32 @@ function sectpart( &$mbp, $pfx, $k6, $id6, $no6 )
 	{
 		$p4 = ($id6 + $i4) * $mbp[4]['k'];
 
-		// 0 1 2 3  4   6 8 c  10    12    14    16
-		// sub      s1  - - -  s2-0  s2-6  s2-c  s2-2
+		// 0 1 2 3  4   6  8    a    c    e     10   12   14   16
+		// sub      s1  -  s0-0 s0-6 s0-c s0-2  s2-0 s2-6 s2-c s2-2
 		$sub = substr ($mbp[4]['d'], $p4+ 0, 4);
 
-		$s1  = str2int($mbp[4]['d'], $p4+ 4, 2); // sx,sy
-		$s2  = str2int($mbp[4]['d'], $p4+16, 2); // dx,dy
-		//if ( $s1 == 0 )
-			//continue;
+		$s1 = str2int($mbp[4]['d'], $p4+ 4, 2); // sx,sy
+		$s0 = str2int($mbp[4]['d'], $p4+ 8, 2);
+		$s2 = str2int($mbp[4]['d'], $p4+16, 2); // dx,dy
 
-		$sqd = sectquad($mbp[1]['d'], $s1*$mbp[1]['k']);
-		$dqd = sectquad($mbp[2]['d'], $s2*$mbp[2]['k']);
-		$cqd = array();
+		$sqd = sectquad ($mbp[1], $s1*$mbp[1]['k']);
+		$cqd = colorquad($mbp[0], $s0*$mbp[0]['k']);
+		$dqd = sectquad ($mbp[2], $s2*$mbp[2]['k']);
 
 		$s1 = str2int($sub, 0, 2); // ??
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
 
+		if ( $gp_json['TexReq'] <= $s4 )
+			$gp_json['TexReq'] = $s4 + 1;
+
 		$data[$i4] = array();
-		if ( $s1 & (4|2) )
+		if ( $s1 & 2 )
 			continue;
 
 		$data[$i4]['DstQuad'] = $dqd;
-		// if ( $cqd !== '' )
-			//$data[$i1]['ClrQuad']  = $cqd;
+		if ( ! empty($cqd) )
+			$data[$i4]['ClrQuad']  = $cqd;
 
 		//  1 layer normal
 		//  2 layer top
@@ -197,9 +225,6 @@ function odin( $fname )
 	// $len = 0x10 + $hdz + $siz;
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 
-	global $gp_json;
-	$gp_json = array();
-
 	//   0 1 2 |     1-0 2-1 3-2
 	// 3 4 5 6 | 6-3 5-4 9-5 7-6
 	// 7 8 9 a | 8-7 4-8 a-9 s-a
@@ -238,6 +263,12 @@ function odin( $fname )
 	);
 	loadmbp($mbp, $sect, $pfx);
 
+	global $gp_json, $gp_tag;
+	if ( $gp_tag == '' )
+		return;
+	$gp_json = load_idtagfile($gp_tag);
+	$gp_json['TexReq'] = 0;
+
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);
 
@@ -249,4 +280,12 @@ function odin( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	odin( $argv[$i] );
+{
+	if ( $argv[$i] == '-grim' )
+		$gp_tag = 'ps2_grim';
+	else
+	if ( $argv[$i] == '-odin' )
+		$gp_tag = 'ps2_odin';
+	else
+		odin( $argv[$i] );
+}

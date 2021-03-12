@@ -1,0 +1,33 @@
+[System]
+PlayStation Portable
+
+[Game]
+Grand Knights History
+
+[Year]
+2011
+
+[Copyright]
+MarvelousAQL Inc.
+
+[Art Director]
+Kouichi Maenou
+
+[Designs]
+Yasuhiro Fujiwara
+Yasuo Shirai
+Akira Murakami
+Tomoyo Shimabukuro
+
+[Background Designs]
+Daichi Yamashita
+Ryo Kobayashi
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

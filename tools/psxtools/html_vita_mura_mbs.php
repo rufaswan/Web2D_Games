@@ -5,6 +5,7 @@
  */
 require "common.inc";
 require "common-guest.inc";
+require "html.inc";
 
 php_req_extension("json_encode", "json");
 
@@ -12,10 +13,18 @@ $gp_json = array();
 
 function colorquad( &$cqd, &$mbs, $pos )
 {
-	$cqd[] = ord( $mbs[$pos+0] ) / BIT8; // r
-	$cqd[] = ord( $mbs[$pos+1] ) / BIT8; // g
-	$cqd[] = ord( $mbs[$pos+2] ) / BIT8; // b
-	$cqd[] = ord( $mbs[$pos+3] ) / BIT8; // a
+	$s = substr($mbs, $pos, 4);
+	if ( trim($s, BYTE) == '' )
+	{
+		$cqd[] = '1';
+		return;
+	}
+	$r = ord( $s[0] );
+	$g = ord( $s[1] );
+	$b = ord( $s[2] );
+	$a = ord( $s[3] );
+	$clr = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+	$cqd[] = $clr;
 	return;
 }
 
@@ -29,22 +38,41 @@ function sectquad_int( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 		$float[] = $b / 0x10;
 	}
 
-	// 1 4    1-2    8-20-18-10
-	// | | =>   |  , c-24-1c-14
-	// 2-3    4-3
+	//  0  1   2  3   4  5   6  7
+	//  8  9  10 11  12 13  14 15
+	// 16 17  18 19  20 21  22 23
+	// 24 25  26 27  28 29  30 31
+	// 32 33  34 35  36 37  38 39
+	//   1 4    1-2     8-32-24-16
+	//   | | =>   |  , 12-36-28-20
+	//   2-3    4-3
 	$sqd = array(
-		$float[0x08] , $float[0x09] ,
-		$float[0x20] , $float[0x21] ,
-		$float[0x18] , $float[0x19] ,
-		$float[0x10] , $float[0x11] ,
+		$float[ 8] , $float[ 9] ,
+		$float[32] , $float[33] ,
+		$float[24] , $float[25] ,
+		$float[16] , $float[17] ,
 	);
 	$dqd = array(
-		$float[0x0c] , $float[0x0d] ,
-		$float[0x24] , $float[0x25] ,
-		$float[0x1c] , $float[0x1d] ,
-		$float[0x14] , $float[0x15] ,
+		$float[12] , $float[13] ,
+		$float[36] , $float[37] ,
+		$float[28] , $float[29] ,
+		$float[20] , $float[21] ,
 	);
 
+	//  0  2   4  6   8  a   c  e
+	// 10 12  14 16  18 1a  1c 1e
+	// 20 22  24 26  28 2a  2c 2e
+	// 30 32  34 36  38 3a  3c 3e
+	// 40 42  44 46  48 4a  4c 4e
+	// 50 52  54 56  58 5a  5c 5e
+	$p = $pos * $mbs['k'];
+	$cqd = array();
+	colorquad($cqd, $mbs['d'], $p+0x14);
+	colorquad($cqd, $mbs['d'], $p+0x44);
+	colorquad($cqd, $mbs['d'], $p+0x34);
+	colorquad($cqd, $mbs['d'], $p+0x24);
+	if ( implode('',$cqd) == '1111' )
+		$cqd = '';
 	return;
 }
 
@@ -58,11 +86,11 @@ function sectquad_float( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 		$float[] = float32($b);
 	}
 
-	//  0  1  2  3  4
-	//  5  6  7  8  9
-	// 10 11 12 13 14
-	// 15 16 17 18 19
-	// 20 21 22 23 24
+	//  0  1   2   3  4
+	//  5  6   7   8  9
+	// 10 11  12  13 14
+	// 15 16  17  18 19
+	// 20 21  22  23 24
 	//   1 4    1-2    8-23-18-13
 	//   | | =>   |  , 5-20-15-10
 	//   2-3    4-3
@@ -79,18 +107,18 @@ function sectquad_float( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 		$float[10] , $float[11] ,
 	);
 
-	//  0  4  8  c 10
-	// 14 18 1c 20 24
-	// 28 2c 30 34 38
-	// 3c 40 44 48 4c
-	// 50 54 58 5c 60
+	//  0  4   8   c 10
+	// 14 18  1c  20 24
+	// 28 2c  30  34 38
+	// 3c 40  44  48 4c
+	// 50 54  58  5c 60
 	$p = $pos * $mbs['k'];
 	$cqd = array();
 	colorquad($cqd, $mbs['d'], $p+0x1c);
 	colorquad($cqd, $mbs['d'], $p+0x58);
 	colorquad($cqd, $mbs['d'], $p+0x44);
 	colorquad($cqd, $mbs['d'], $p+0x30);
-	if ( (int)array_sum($cqd) == 16 )
+	if ( implode('',$cqd) == '1111' )
 		$cqd = '';
 	return;
 }
@@ -137,13 +165,16 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
 
+		if ( $gp_json['TexReq'] <= $s4 )
+			$gp_json['TexReq'] = $s4 + 1;
+
 		$data[$i1] = array();
-		if ( $s1 & (4|2) )
+		if ( $s1 & 2 )
 			continue;
 
 		$data[$i1]['DstQuad'] = $dqd;
-		// if ( $cqd !== '' )
-			//$data[$i1]['ClrQuad']  = $cqd;
+		if ( ! empty($cqd) )
+			$data[$i1]['ClrQuad']  = $cqd;
 
 		//  1 layer normal
 		//  2 layer top
@@ -314,6 +345,10 @@ function head_e0( &$mbs, $pfx )
 	);
 	loadmbs($mbs, $sect, $pfx);
 
+	global $gp_json;
+	$gp_json = load_idtagfile('vita_mura');
+	$gp_json['TexReq'] = 0;
+
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "mura");
 	return;
@@ -357,6 +392,10 @@ function head_e4( &$mbs, $pfx )
 	);
 	loadmbs($mbs, $sect, $pfx);
 
+	global $gp_json;
+	$gp_json = load_idtagfile('vita_drag');
+	$gp_json['TexReq'] = 0;
+
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "drag");
 	return;
@@ -399,6 +438,10 @@ function head_e8( &$mbs, $pfx )
 		array('p' => 0xa4 , 'k' => 0x60), // 8
 	);
 	loadmbs($mbs, $sect, $pfx);
+
+	global $gp_json;
+	$gp_json = load_idtagfile('psp_gran');
+	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "gran");
@@ -458,6 +501,10 @@ function head_120( &$mbs, $pfx )
 	);
 	loadmbs($mbs, $sect, $pfx);
 
+	global $gp_json;
+	$gp_json = load_idtagfile('vita_odin');
+	$gp_json['TexReq'] = 0;
+
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "odin");
 	return;
@@ -474,9 +521,6 @@ function mura( $fname )
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	$typ = str2int($mbs, 8, 4);
 
-	global $gp_json;
-	$gp_json = array();
-
 	$func = sprintf("head_%x", $typ);
 	if ( ! function_exists($func) )
 		return php_error("NO FUNC %s() for %s", $func, $fname);
@@ -485,6 +529,7 @@ function mura( $fname )
 
 	// JSON_PRETTY_PRINT
 	// JSON_FORCE_OBJECT
+	global $gp_json;
 	if ( ! empty($gp_json) )
 		file_put_contents("$fname.quad", json_encode($gp_json));
 	return;

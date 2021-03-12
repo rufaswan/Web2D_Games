@@ -1,0 +1,38 @@
+[System]
+PlayStation Vita
+
+[Game]
+Odin Sphere Leifthsar
+
+[Year]
+2007, 2016
+
+[Copyright]
+Atlus
+Sega
+
+[Designers]
+Takehiro Shiga
+Yasuhiro Fujiwara
+Akira Murakami
+Emika Kida
+Entsugu Inatani
+Yasuo Shirai
+Yukiko Hirai
+Tomoyo Shimabukuro
+
+[Background Designers]
+Yukitsuna Maeda
+Ryo Kobayashi
+Haruka Kawamura
+Yoshio Nishimura
+Daichi Yamashita
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

@@ -26,6 +26,8 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	<img id='imgbg' src='bg.png'>
 	<div id='hidden'></div>
 	<div id='topbar'>
+		<button id='tag_btn'>TAG</button>
+
 		<input id='upload' type='file' multiple>
 
 		<button id='xpos'>X</button>
@@ -42,6 +44,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 		<button id='play_btn'>PLAY</button>
 		<button id='next_btn'>&gt;</button>
 	</div>
+	<div id='idtag' style='display:none;'></div>
 	<canvas id='canvas'>Required JavaScript, Canvas Context or WebGL is disabled or not supported</canvas>
 
 	<script src='quad.js'></script>
@@ -51,15 +54,27 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	var dom_upload = document.getElementById('upload');
 	var dom_hidden = document.getElementById('hidden');
 	var dom_play   = document.getElementById('play_btn');
+	var dom_idtag  = document.getElementById('idtag');
 	QUAD.init_webgl(dom_canvas);
 
 	dom_upload.addEventListener("change", function(e){
 		QUAD.file_reader(dom_upload.files, dom_hidden, function(){
+			QUAD.html_idtag(dom_idtag);
 			//console.log(QUAD);
 		});
 	});
 	document.getElementById('save_png').addEventListener("click", function(e){
 		QUAD.save_png(QUAD.anim.cur_frame);
+	});
+	document.getElementById('tag_btn').addEventListener("click", function(e){
+		dom_idtag.style.display = 'inline';
+		var top  = (window.innerHeight / 2) - (dom_idtag.clientHeight / 2);
+		var left = (window.innerWidth  / 2) - (dom_idtag.clientWidth  / 2);
+		dom_idtag.style.top  = top  + 'px';
+		dom_idtag.style.left = left + 'px';
+	});
+	dom_idtag.addEventListener("click", function(e){
+		dom_idtag.style.display = 'none';
 	});
 	document.getElementById('zoom_btn').addEventListener("click", function(e){
 		QUAD.zoom(0);

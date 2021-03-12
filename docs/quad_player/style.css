@@ -24,7 +24,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 body {
-	background:#000;
+	background:#808080;
 	color:#fff;
 }
 
@@ -51,7 +51,7 @@ input, button, select {
 }
 
 #topbar, #lowbar {
-	background:#ff0;
+	background:#c0c0c0;
 	color:#000;
 	text-align:center;
 	position:fixed;
@@ -66,4 +66,28 @@ canvas {
 	height:100vh;
 	position:fixed;
 	z-index:-9;
+}
+
+#idtag {
+	position:fixed;
+}
+
+#idtag table {
+	border-collapse:collapse;
+}
+
+#idtag tr:nth-child(odd) {
+	color :#000;
+	background:#eee;
+}
+
+#idtag tr:nth-child(even) {
+	color :#000;
+	background:#ddd;
+}
+
+#idtag td {
+	border:1px #000 solid;
+	padding:0.3em;
+	text-align:center;
 }

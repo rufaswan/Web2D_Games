@@ -18,7 +18,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
 */
-var QUAD = {};
+'use strict';
+
+var QUAD = QUAD || {};
 //////////////////////////////
 // init vars
 (function(QUAD){
@@ -70,6 +72,8 @@ var QUAD = {};
 		QUAD.webgl.maxtex = GL.getParameter(GL.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
 		console.log('MAX_VERTEX_TEXTURE_IMAGE_UNITS = ' + QUAD.webgl.maxtex);
 
+		//////////////////////////////
+		// SHADER //
 		function new_shader(vert_src, frag_src){
 			var vert_shader = GL.createShader(GL.VERTEX_SHADER);
 			GL.shaderSource (vert_shader, vert_src);
@@ -86,50 +90,7 @@ var QUAD = {};
 			return shader_prog;
 		}
 
-		QUAD.webgl.shader = {};
-		var SHADER = QUAD.webgl.shader;
-		// Normal Shader
-		//   = (FG.rgb * FG.a) + (BG.rgb * BG.a * (1 - FG.a))
-		//   Blend = ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'] (default)
-		//   no ClrQuad
-		//   has TexID
-		//   has SrcQuad
-		var vert_src = `
-			attribute vec2  a_uv;
-			attribute vec3  a_xyz;
-			varying   vec2  v_uv;
-
-			void main(void){
-				v_uv = a_uv;
-				gl_Position = vec4(a_xyz, 1.0);
-			}
-		`
-
-		var frag_src = `
-			precision highp float;
-			uniform sampler2D u_tex;
-			varying vec2      v_uv;
-
-			void main(void){
-				gl_FragColor = texture2D(u_tex, v_uv);
-			}
-		`
-		SHADER.normal = new_shader(vert_src, frag_src);
-
-		// Additive Shader
-		//   = FG.rgba + BG.rgba
-		//   Blend = ['ADD', 'ONE', 'ONE']
-		//   no ClrQuad
-		//   has TexID
-		//   has SrcQuad
-		SHADER.add = new_shader(vert_src, frag_src);
-
-		// Additive Grayscale Shader
-		//   = (FG.rgba * mask) + BG.rgba
-		//   Blend = ['ADD', 'ONE', 'ONE']
-		//   ClrQuad = [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1]
-		//   has TexID
-		//   has SrcQuad
+		// standardized shader
 		var vert_src = `
 			attribute vec2  a_uv;
 			attribute vec3  a_xyz;
@@ -154,35 +115,9 @@ var QUAD = {};
 				gl_FragColor = texture2D(u_tex, v_uv) * v_clr;
 			}
 		`
-		SHADER.addgray = new_shader(vert_src, frag_src);
+		QUAD.webgl.shader = new_shader(vert_src, frag_src);
 
-		// Color Shader
-		//   = ???
-		//   Blend = ???
-		//   ClrQuad = [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1]
-		//   no TexID
-		//   no SrcQuad
-		var vert_src = `
-			attribute vec3  a_xyz;
-			attribute vec4  a_clr;
-			varying   vec4  v_clr;
-
-			void main(void){
-				v_clr = a_clr;
-				gl_Position = vec4(a_xyz, 1.0);
-			}
-		`
-
-		var frag_src = `
-			precision highp float;
-			varying   vec4  v_clr;
-
-			void main(void){
-				gl_FragColor = v_clr;
-			}
-		`
-		SHADER.color = new_shader(vert_src, frag_src);
-
+		//////////////////////////////
 		QUAD.webgl.buffer = {};
 		var BUFFER = QUAD.webgl.buffer;
 		BUFFER.uv  = GL.createBuffer();
@@ -245,8 +180,8 @@ var QUAD = {};
 								GL.deleteTexture( QUAD.files.image[n].tex );
 
 							QUAD.files.image[n] = {
-								width  : img.width,
-								height : img.height,
+								width  : img.width  - 1,
+								height : img.height - 1,
 								tex    : texture,
 							}
 
@@ -266,11 +201,32 @@ var QUAD = {};
 			if ( list.length > done )
 				return;
 			clearInterval(timer);
+			console.log('TexReq = ' + QUAD.files.quad.TexReq);
 			console.log(QUAD);
 
 			QUAD.init_anim();
 			callback();
 		}, 100);
+		return;
+	}
+
+	QUAD.html_idtag = function(dom){
+		var tag = QUAD.files.quad.TAG;
+		if ( tag === undefined )
+			return;
+
+		var html = '<table>';
+		for ( var key in tag )
+		{
+			html += '<tr>';
+			if ( tag.hasOwnProperty(key) ){
+				html += '<td>' + key + '</td>';
+				html += '<td>' + tag[key] + '</td>';
+			}
+			html += '</tr>';
+		}
+		html += '</table>';
+		dom.innerHTML = html;
 		return;
 	}
 
@@ -286,13 +242,6 @@ var QUAD = {};
 		a.href = canvas.toDataURL('image/png');
 		a.setAttribute('download', fn);
 		a.click();
-/*
-		canvas.toBlob(function(blob){
-			a.href = window.URL.createObjectURL(blob);
-			a.setAttribute('download', fn);
-			a.click();
-		}, 'image/png')
-*/
 		return;
 	}
 
@@ -358,13 +307,13 @@ var QUAD = {};
 		return '';
 	}
 
-	function render_framebuffer( mode, texid, src, dst, clr, blend ){
-		if ( src.length === 0 || dst.length === 0 )
+	function render_framebuffer( texid, src, dst, clr, blend ){
+		if ( src.length === 0 || dst.length === 0 || clr.length === 0 )
 			return;
 
-		var WEB = QUAD.webgl;
-		var GL  = WEB.gl;
-		var PROGRAM = WEB.shader[mode];
+		var GL      = QUAD.webgl.gl;
+		var PROGRAM = QUAD.webgl.shader;
+		var BUFFER  = QUAD.webgl.buffer;
 		GL.useProgram(PROGRAM);
 
 		function glAttr(attr, buf, data, cnt){
@@ -389,7 +338,7 @@ var QUAD = {};
 				uv.push(v[4]/w); uv.push(v[5]/h);
 				uv.push(v[6]/w); uv.push(v[7]/h);
 			});
-			glAttr("a_uv", WEB.uv, uv, 2);
+			glAttr("a_uv", BUFFER.uv, uv, 2);
 			return;
 		}
 
@@ -405,7 +354,7 @@ var QUAD = {};
 				xyz.push(v[4]/hw+x); xyz.push(v[5]/hh+y); xyz.push(1.0);
 				xyz.push(v[6]/hw+x); xyz.push(v[7]/hh+y); xyz.push(1.0);
 			});
-			glAttr("a_xyz", WEB.xyz, xyz, 3);
+			glAttr("a_xyz", BUFFER.xyz, xyz, 3);
 			return;
 		}
 
@@ -417,15 +366,40 @@ var QUAD = {};
 				idx.push(j+0); idx.push(j+1); idx.push(j+2);
 				idx.push(j+0); idx.push(j+2); idx.push(j+3);
 			}
-			GL.deleteBuffer(WEB.idx);
-			WEB.idx = GL.createBuffer();
-			GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, WEB.idx);
+			GL.deleteBuffer(BUFFER.idx);
+			BUFFER.idx = GL.createBuffer();
+			GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, BUFFER.idx);
 			GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), GL.STATIC_DRAW);
 			return;
 		}
 
 		function set_clr( quad ){
-			glAttr("a_clr", WEB.clr, quad, 4);
+			var clr = [];
+			quad.forEach(function(v){
+				for ( var i=0; i < 4; i++ )
+				{
+					var c = v[i];
+					if ( c.charAt(0) === '#' )
+					{
+						var r = parseInt( c.substring(1,3), 16);
+						var g = parseInt( c.substring(3,5), 16);
+						var b = parseInt( c.substring(5,7), 16);
+						var a = parseInt( c.substring(7,9), 16);
+						clr.push(r/255);
+						clr.push(g/255);
+						clr.push(b/255);
+						clr.push(a/255);
+					}
+					else
+					{
+						clr.push(1);
+						clr.push(1);
+						clr.push(1);
+						clr.push(1);
+					}
+				}
+			});
+			glAttr("a_clr", BUFFER.clr, clr, 4);
 			return;
 		}
 
@@ -437,7 +411,39 @@ var QUAD = {};
 			return;
 		}
 
+		function dummy_tex(texid){
+			if ( texid >= 0 )
+				return;
+			if ( QUAD.files.image[texid] !== undefined )
+				return;
+
+			var texture = GL.createTexture();
+			var pixel = [
+				255,255,255,255,
+				255,255,255,255,
+				255,255,255,255,
+				255,255,255,255,
+			];
+			GL.bindTexture  (GL.TEXTURE_2D, texture);
+			GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
+			GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
+			GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+			GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+			GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, 2, 2, 0, GL.RGBA, GL.UNSIGNED_BYTE, new Uint8Array(pixel));
+
+			QUAD.files.image[texid] = {
+				width  : 2,
+				height : 2,
+				tex    : texture,
+			}
+			return;
+		}
+
+		dummy_tex(texid);
 		var image = QUAD.files.image[texid];
+		if ( image === undefined )
+			return;
+
 		set_uv (src, image.width    , image.height);
 		set_xyz(dst, GL.canvas.width, GL.canvas.height);
 		set_idx(dst.length);
@@ -461,104 +467,35 @@ var QUAD = {};
 		if ( frame.length === 0 )
 			return;
 
-
-		var cur_mode  = "normal";
-		var cur_texid = undefined;
-		var cur_clr   = [];
+		var cur_texid = -1;
 		var cur_blend = ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
 		var src = [];
 		var dst = [];
+		var clr = [];
 		frame.forEach(function(v){
-			var blend = v.Blend || ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
-			if ( v.TexID === undefined )
+			if ( v.DstQuad === undefined )
 				return;
+
+			var blend   = v.Blend   || ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
+			var texid   = v.TexID   || -1;
+			var clrquad = v.ClrQuad || ['1','1','1','1'];
+			var srcquad = v.SrcQuad || [0,0 , 1,0 , 1,1 , 0,1];
 
 			if ( cur_texid !== v.TexID || cur_blend.toString() !== blend.toString() )
 			{
-				render_framebuffer(cur_mode, cur_texid, src, dst, cur_clr, cur_blend);
+				render_framebuffer(cur_texid, src, dst, clr, cur_blend);
 				cur_texid = v.TexID;
+				cur_blend = blend;
 				src = [];
 				dst = [];
+				clr = [];
 			}
 
-			src.push( v.SrcQuad );
 			dst.push( v.DstQuad );
-			cur_blend = blend;
+			src.push( srcquad );
+			clr.push( clrquad );
 		});
-		render_framebuffer(cur_mode, cur_texid, src, dst, cur_clr, cur_blend);
-
-/*
-
-		function set_cur(mode, texid, clr){
-			cur_mode  = mode;
-			cur_texid = texid;
-			cur_clr   = clr;
-			src = [];
-			dst = [];
-		}
-
-
-		frame.forEach(function(v){
-			var blend = v.Blend || ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
-
-			// SHADER.normal
-			// SHADER.add
-			// SHADER.addgray
-			// SHADER.color
-			if ( v.TexID === undefined ){
-				var mode = 'color';
-				if ( cur_mode === mode && cur_clr.toString() === clr.toString() ){
-					dst.push( v.DstQuad );
-				} else {
-					render_framebuffer(cur_mode, v.TexID, src, dst, cur_clr, blend);
-					set_cur(mode, v.TexID, v.ClrQuad);
-				}
-				return;
-			}
-
-			if ( v.TexID >= QUAD.webgl.maxtex )
-				return console.log('TexID ' + v.TexID + ' >= Max ' + QUAD.webgl.maxtex);
-
-			if ( v.ClrQuad !== undefined ){
-				var mode = 'addgray';
-				if ( cur_mode === mode && cur_texid === v.TexID && cur_clr.toString() === clr.toString() ){
-					src.push( v.SrcQuad );
-					dst.push( v.DstQuad );
-				} else {
-					render_framebuffer(cur_mode, v.TexID, src, dst, cur_clr, blend);
-					set_cur(mode, v.TexID, v.ClrQuad);
-				}
-				return;
-			}
-
-
-
-				if ( v.Blend === undefined )
-					mode = 'normal';
-				else
-					mode = 'add';
-			if ( mode === '' )
-				return console.log('Cant detect shader mode');
-
-
-			if ( cur_mode === 'normal' ){
-				render_framebuffer(cur_mode, cur_texid, src, dst, cur_clr, ['ADD', 'SRC_ALPHA', '-SRC_ALPHA']);
-				set_cur(mode, v.TexID, []);
-			} else if ( cur_mode === 'add' ){
-			}
-			} else if ( cur_mode === 'addgray' ){
-			}
-			} else if ( cur_mode === 'addcolor' ){
-			}
-
-			if ( cur_mode !== mode )
-			{
-			}
-
-
-
-
-*/
+		render_framebuffer(cur_texid, src, dst, clr, cur_blend);
 		return;
 	}
 
@@ -598,6 +535,9 @@ var QUAD = {};
 		QUAD.anim.cur_anim_time = [];
 
 		var anim = QUAD.files.quad.Animation;
+		if ( anim === undefined )
+			return;
+
 		if ( anim.hasOwnProperty(key) ){
 			QUAD.anim.cur_anim_key  = key;
 			QUAD.anim.cur_anim_data = anim[key];
@@ -663,6 +603,8 @@ var QUAD = {};
 
 		if ( ! QUAD.anim.cur_anim_stop )
 			QUAD.anim_timer(1);
+		else
+			QUAD.anim_timer(0);
 
 		QUAD.resize_canvas();
 		var data = QUAD.anim.cur_anim_data;

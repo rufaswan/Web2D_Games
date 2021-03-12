@@ -1,0 +1,32 @@
+[System]
+Nintendo Wii
+
+[Game]
+Muramasa - The Demon Blade
+
+[Year]
+2009
+
+[Copyright]
+Marvelous Entertainment Inc.
+
+[Character Designs]
+Yasuhiro Fujiwara
+Kouichi Maenou
+Yasuo Shirai
+Ine Kawazu
+Takehiro Shiga
+
+[Background Designers]
+Yoshio Nishimura
+Daichi Yamashita
+Yukitsuna Maeda
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project
