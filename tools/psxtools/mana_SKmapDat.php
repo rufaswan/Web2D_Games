@@ -92,7 +92,7 @@ function secttile( &$pix, $dat, $bpp, $x, $y )
 		$pix['src']['pal'] = $gp_clut[$cn];
 		$pix['dx'] = $x;
 		$pix['dy'] = $y;
-		copypix($pix, 1);
+		copypix_fast($pix, 1);
 		return;
 	}
 	if ( $bpp == 'c4' ) // 4-bit , 16 colors , 2 pixel/byte
@@ -121,7 +121,7 @@ function secttile( &$pix, $dat, $bpp, $x, $y )
 		$pix['src']['pal'] = substr($gp_clut[$cn2], $cn1*0x40, 0x40);
 		$pix['dx'] = $x;
 		$pix['dy'] = $y;
-		copypix($pix, 1);
+		copypix_fast($pix, 1);
 		return;
 	}
 	if ( $bpp == 'rgb' ) // RGB555 , 2 byte/pixel
@@ -138,7 +138,7 @@ function secttile( &$pix, $dat, $bpp, $x, $y )
 
 		$pix['dx'] = $x;
 		$pix['dy'] = $y;
-		copypix($pix, 4);
+		copypix_fast($pix, 4);
 	}
 	return;
 }

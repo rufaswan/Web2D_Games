@@ -179,35 +179,6 @@ function sectanim( &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
-function loadmbs( &$mbs, $sect, $pfx )
-{
-	$offs = array();
-	$offs[] = strrpos($mbs, "FEOC");
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = str2big($mbs, $v['p'], 4);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	}
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
-		$dat = substr($mbs, $v['o'], $sz);
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$mbs = $sect;
-	return;
-}
-//////////////////////////////
 function mura( $fname )
 {
 	$mbs = load_file($fname);
@@ -261,7 +232,7 @@ function mura( $fname )
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x10), // 10
 	);
-	loadmbs($mbs, $sect, $pfx);
+	file2sect($mbs, $sect, $pfx, array('str2big', 4), strrpos($mbs, "FEOC"), false);
 
 	global $gp_json;
 	$gp_json = load_idtagfile('wii_mura');

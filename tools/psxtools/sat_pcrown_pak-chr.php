@@ -85,7 +85,7 @@ function sectpart( &$pak, $dir, $off, $no )
 	{
 		$p = $off + ($i * 12);
 		$dat = substr($pak[1]['d'], $p, 12);
-		//debug($dat);
+		//echo debug($dat);
 
 		// fedc ba98  7654 3210
 		// cctt tttt  tttt tttt
@@ -200,63 +200,6 @@ function load_texx( &$pak, $pfx )
 	return;
 }
 //////////////////////////////
-function pakcoldbg( &$pak, $id, $pos )
-{
-	$len = strlen( $pak[$id]['d'] );
-	$dbg = array();
-	for ( $i=0; $i < $len; $i += $pak[$id]['k'] )
-	{
-		$b1 = ord( $pak[$id]['d'][$i+$pos] );
-		if ( ! isset( $dbg[$b1] ) )
-			$dbg[$b1] = 0;
-		$dbg[$b1]++;
-	}
-
-	printf("== pakcoldbg( %x , %x )\n", $id, $pos);
-	foreach ( $dbg as $k => $v )
-		printf("  %2x = %8x\n", $k, $v);
-	return;
-}
-
-function pakdbg( &$meta, $name, $blk )
-{
-	printf("== pakdbg( $name , %x )\n", $blk);
-	$buf = debug_block( $meta, $blk );
-	//echo "$buf\n";
-	save_file("$name.txt", $buf);
-	return;
-}
-
-function loadpak( &$pak, $sect, $pfx )
-{
-	$offs = array();
-	$offs[] = strlen($pak);
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = str2big($pak, $v['p'], 4);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	}
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
-		$dat = substr($pak, $v['o'], $sz);
-
-		//save_file("$pfx/meta/$k.meta", $dat);
-		pakdbg($dat, "$pfx/meta/$k", $v['k']);
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$pak = $sect;
-	return;
-}
-
 function pakchr( &$pak, $pfx )
 {
 	echo "== pakchr( $pfx )\n";
@@ -286,8 +229,9 @@ function pakchr( &$pak, $pfx )
 		array('p' => 0x2c , 'k' =>  4), // 5
 		array('p' => 0x30 , 'k' =>  8), // 6
 	);
-	loadpak($pak, $sect, $pfx);
-	pakcoldbg($pak, 1, 0); // byte code ref palette check
+	file2sect($pak, $sect, $pfx, array('str2big', 4), 0, true);
+	sect_sum($pak[1], 'pak[1][0]', 0); // byte code ref palette check
+
 	load_texx($pak[0]['d'], $pfx);
 
 	$anim = "";

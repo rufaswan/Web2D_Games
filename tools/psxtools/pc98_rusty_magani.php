@@ -89,7 +89,7 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 function sectmag( &$file, $fname, $pos )
 {
 	printf("== sectmag( $fname , %x )\n", $pos);
-	debug( substr($file, $pos+0, 4) );
+	echo debug( substr($file, $pos+0, 4) );
 
 	$x1 = str2int($file, $pos+ 4, 2);
 	$y1 = str2int($file, $pos+ 6, 2);

@@ -48,7 +48,7 @@ function sectpart( &$file, $nid, $st, $ed )
 	if ( $pos < $ed )
 	{
 		printf("adj_h  %x - %x\n", $pos, $ed);
-		debug( substr($file, $pos, $ed-$pos) );
+		echo debug( substr($file, $pos, $ed-$pos) );
 		foreach ( $data as $k => $v )
 		{
 			$b1 = ord( $v[3] );

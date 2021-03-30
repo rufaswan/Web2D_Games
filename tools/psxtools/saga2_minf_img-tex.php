@@ -83,7 +83,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 
-			copypix($pix);
+			copypix_fast($pix);
 		} // for ( $x=0; $x < $map_w; $x += 0x10 )
 
 		$map .= "\n";

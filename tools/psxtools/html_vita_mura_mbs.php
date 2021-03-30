@@ -277,35 +277,6 @@ function sectanim( &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
-function loadmbs( &$mbs, $sect, $pfx )
-{
-	$offs = array();
-	$offs[] = strrpos($mbs, "FEOC");
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = str2int($mbs, $v['p'], 4);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	}
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
-		$dat = substr($mbs, $v['o'], $sz);
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$mbs = $sect;
-	return;
-}
-//////////////////////////////
 function head_e0( &$mbs, $pfx )
 {
 	printf("DETECT e0 = Muramasa Rebirth [%s]\n", $pfx);
@@ -343,7 +314,7 @@ function head_e0( &$mbs, $pfx )
 		array('p' => 0x98 , 'k' => 0x14), // 7
 		array('p' => 0xa0 , 'k' => 0x78), // 8
 	);
-	loadmbs($mbs, $sect, $pfx);
+	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), false);
 
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_mura');
@@ -390,7 +361,7 @@ function head_e4( &$mbs, $pfx )
 		array('p' => 0x9c , 'k' => 0x14), // 7
 		array('p' => 0xa4 , 'k' => 0x78), // 8
 	);
-	loadmbs($mbs, $sect, $pfx);
+	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), false);
 
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_drag');
@@ -437,7 +408,7 @@ function head_e8( &$mbs, $pfx )
 		array('p' => 0xa0 , 'k' => 0x14), // 7
 		array('p' => 0xa4 , 'k' => 0x60), // 8
 	);
-	loadmbs($mbs, $sect, $pfx);
+	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), false);
 
 	global $gp_json;
 	$gp_json = load_idtagfile('psp_gran');
@@ -499,7 +470,7 @@ function head_120( &$mbs, $pfx )
 		array('p' => 0x108 , 'k' => 0x14), // 8 sd=0
 		array('p' => 0x118 , 'k' => 0x78), // 9
 	);
-	loadmbs($mbs, $sect, $pfx);
+	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), false);
 
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_odin');

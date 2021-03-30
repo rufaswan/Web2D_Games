@@ -412,11 +412,10 @@ var QUAD = QUAD || {};
 		}
 
 		function dummy_tex(texid){
-			if ( texid >= 0 )
-				return;
 			if ( QUAD.files.image[texid] !== undefined )
 				return;
 
+			// a dummy 2x2 white image
 			var texture = GL.createTexture();
 			var pixel = [
 				255,255,255,255,
@@ -480,6 +479,8 @@ var QUAD = QUAD || {};
 			var texid   = v.TexID   || -1;
 			var clrquad = v.ClrQuad || ['1','1','1','1'];
 			var srcquad = v.SrcQuad || [0,0 , 1,0 , 1,1 , 0,1];
+			if ( QUAD.files.image[texid] === undefined )
+				srcquad = [0,0 , 1,0 , 1,1 , 0,1];
 
 			if ( cur_texid !== v.TexID || cur_blend.toString() !== blend.toString() )
 			{

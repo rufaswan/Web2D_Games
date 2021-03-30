@@ -54,7 +54,7 @@ function canvas_rect( &$pix, $byte )
 function trim_rect( &$pix, $byte, $ZERO )
 {
 	printf("== trim_rect( $byte )\n");
-	debug($ZERO);
+	echo debug($ZERO);
 	$x1 = 0;
 	$x2 = $pix['w'];
 	$y1 = 0;

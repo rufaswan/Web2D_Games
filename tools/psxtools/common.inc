@@ -455,6 +455,84 @@ function load_text( $fname )
 	return explode("\n", $txt);
 }
 
+function file2sect( &$file, $sect, $pfx, $parse, $end=0, $save=true )
+{
+	if ( $end <= 0 )
+		$end = strlen($file);
+
+	list($parse,$int) = $parse;
+	if ( ! function_exists($parse) )
+		return;
+
+	// sect = [
+	//   { 'p' : 0 , 'k' : 0 }, // p = position , k = block size/row
+	// ]
+	// added 'o' = offset
+	// added 'd' = data
+	$offs = array();
+	$offs[] = $end;
+	foreach ( $sect as $k => $v )
+	{
+		$b1 = $parse($file, $v['p'], $int);
+		if ( $b1 == 0 )
+			continue;
+		$offs[] = $b1;
+		$sect[$k]['o'] = $b1;
+	}
+	sort($offs);
+
+	foreach ( $sect as $k => $v )
+	{
+		if ( ! isset( $v['o'] ) )
+			continue;
+		$id = array_search($v['o'], $offs);
+		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
+		$dat = substr($file, $v['o'], $sz);
+
+		if ( $save )
+		{
+			$name = "$pfx/meta/$k";
+			trace("== %s( %s , %x )\n", __FUNCTION__, $name, $v['k']);
+
+			$buf = debug_block( $dat, $v['k'] );
+			//trace("%s\n", $buf);
+			save_file("$name.txt", $buf);
+		}
+
+		$sect[$k]['d'] = $dat;
+	} // foreach ( $sect as $k => $v )
+
+	$file = $sect;
+	return;
+}
+
+function sect_sum( &$sect, $name, $off )
+{
+	if ( defined("NO_TRACE") )
+		return;
+
+	$pos = 0;
+	$sum = array();
+	while (1)
+	{
+		if ( ! isset( $sect['d'][$pos+$off] ) )
+			break;
+
+		$b = ord( $sect['d'][$pos+$off] );
+		if ( ! isset( $sum[$b] ) )
+			$sum[$b] = 0;
+
+		$sum[$b]++;
+		$pos += $sect['k'];
+	}
+	ksort($sum);
+
+	trace("== %s( %s , %x )\n", __FUNCTION__, $name, $off);
+	foreach ( $sum as $k => $v )
+		trace("  %2x = %8x\n", $k, $v);
+	return;
+}
+
 function req_file( $fname )
 {
 	if ( ! file_exists($fname) )
@@ -1029,6 +1107,51 @@ function copypix( &$pix, $byte=1 )
 			updatepix($pix, $byte, $rx, $ry, $dx, $dy);
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
+
+	return;
+}
+
+function copypix_fast( &$pix, $byte=1 )
+{
+	if ( $byte != 1 && $byte != 4 ) // 1=CLUT  4=RGBA  *=invalid
+		return;
+	if ( empty( $pix['src']['pix'] ) )
+		return;
+	if ( copypix_errs($pix) )
+		return;
+	if ( defined("DRY_RUN") )
+		return;
+
+	flippix($pix, $byte);
+
+	// copypix() with
+	//   IGNORED [rotate]
+	//   IGNORED [alpha ]
+	//   IGNORED [bgzero]
+	for ( $y=0; $y < $pix['src']['h']; $y++ )
+	{
+		$row = '';
+		if ( $byte == 1 )
+		{
+			$syy = $y * $pix['src']['w'];
+			for ( $x=0; $x < $pix['src']['w']; $x++ )
+			{
+				$b = ord( $pix['src']['pix'][$syy+$x] );
+				$row .= substr($pix['src']['pal'], $b*4, 4);
+			}
+		}
+		else
+		if ( $byte == 4 )
+		{
+			$syy = $y * $pix['src']['w'] * 4;
+			$row = substr($pix['src']['pix'], $syy, $pix['src']['w']*4);
+		}
+
+		$dyy = ($pix['dy'] + $y) * $pix['rgba']['w'];
+		$dxx = ($pix['dx'] + $dyy) * 4;
+
+		str_update($pix['rgba']['pix'], $dxx, $row);
+	} // for ( $y=0; $y < $pix['src']['h']; $y++ )
 
 	return;
 }

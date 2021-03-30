@@ -218,47 +218,6 @@ function sectanim( &$so, $pfx )
 	return;
 }
 //////////////////////////////
-function sodbg( &$meta, $name, $blk )
-{
-	printf("== sodbg( $name , %x )\n", $blk);
-	$buf = debug_block( $meta, $blk );
-	//echo "$buf\n";
-	save_file("$name.txt", $buf);
-	return;
-}
-
-function loadso( &$so, $sect, $pfx )
-{
-	$offs = array();
-	$offs[] = strlen($so);
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = str2int($so, $v['p'], 4);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	}
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
-		$dat = substr($so, $v['o'], $sz);
-
-		//save_file("$pfx/meta/$k.meta", $dat);
-		sodbg($dat, "$pfx/meta/$k", $v['k']);
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$so = $sect;
-	return;
-}
-//////////////////////////////
 function cvnds( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -288,7 +247,7 @@ function cvnds( $fname )
 		array('p' => 0x14 , 'k' =>  8), // 4 jnt=0
 		array('p' => 0x20 , 'k' => 12), // 5
 	);
-	loadso($so, $sect, $pfx);
+	file2sect($so, $sect, $pfx, array('str2int', 4), 0, true);
 
 	sectanim($so, $pfx);
 	sectspr ($so, $pfx);

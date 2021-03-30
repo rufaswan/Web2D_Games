@@ -16,7 +16,7 @@ function sectquad( &$mbp, $pos, $name, $SCALE )
 {
 	$float = array();
 	for ( $i=0; $i < $mbp['k']; $i += 2 )
-		$float[] = str2int($mbp, $pos+$i, 2, true) / 0x10;
+		$float[] = str2int($mbp['d'], $pos+$i, 2, true) / 0x10;
 
 	if ( $float[ 4] != $float[12] )
 		php_notice("float[ 4] != float[12] [%x,%x]", $float[4], $float[12]);
@@ -247,65 +247,6 @@ function sectanim( &$mbp, $pfx )
 	return;
 }
 //////////////////////////////
-function mbpcoldbg( &$mbp, $id, $pos )
-{
-	$len = strlen( $mbp[$id]['d'] );
-	$dbg = array();
-	for ( $i=0; $i < $len; $i += $mbp[$id]['k'] )
-	{
-		$b1 = ord( $mbp[$id]['d'][$i+$pos] );
-		if ( ! isset( $dbg[$b1] ) )
-			$dbg[$b1] = 0;
-		$dbg[$b1]++;
-	}
-
-	printf("== mbpcoldbg( %x , %x )\n", $id, $pos);
-	foreach ( $dbg as $k => $v )
-		printf("  %2x = %8x\n", $k, $v);
-	return;
-}
-
-function mbpdbg( &$meta, $name, $blk )
-{
-	printf("== mbpdbg( $name , %x )\n", $blk);
-	$buf = debug_block( $meta, $blk );
-	//echo "$buf\n";
-	save_file("$name.txt", $buf);
-	return;
-}
-
-function loadmbp( &$mbp, $sect, $pfx )
-{
-	$offs = array();
-	$offs[] = strrpos($mbp, "FEOC");
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = str2int($mbp, $v['p'], 4);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	}
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
-		$dat = substr($mbp, $v['o'], $sz);
-
-		//save_file("$pfx/meta/$k.meta", $dat);
-		mbpdbg($dat, "$pfx/meta/$k", $v['k']);
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$mbp = $sect;
-	return;
-}
-//////////////////////////////
 function odin( $fname )
 {
 	$mbp = load_file($fname);
@@ -361,10 +302,10 @@ function odin( $fname )
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x08), // 10
 	);
-	loadmbp($mbp, $sect, $pfx);
-	mbpcoldbg($mbp, 4, 0); //
-	mbpcoldbg($mbp, 4, 1); // = 0
-	mbpcoldbg($mbp, 4, 2); // 0 1 2
+	file2sect($mbp, $sect, $pfx, array('str2int', 4), strrpos($mbp, "FEOC"), true);
+	sect_sum($mbp[4], 'mbp[4][0]', 0); //
+	sect_sum($mbp[4], 'mbp[4][1]', 1); // = 0
+	sect_sum($mbp[4], 'mbp[4][2]', 2); // 0 1 2
 
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);

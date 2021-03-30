@@ -180,35 +180,6 @@ function sectanim( &$mbp, $pfx )
 	return;
 }
 //////////////////////////////
-function loadmbp( &$mbp, $sect, $pfx )
-{
-	$offs = array();
-	$offs[] = strrpos($mbp, "FEOC");
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = str2int($mbp, $v['p'], 4);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	}
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
-		$dat = substr($mbp, $v['o'], $sz);
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$mbp = $sect;
-	return;
-}
-//////////////////////////////
 function odin( $fname )
 {
 	$mbp = load_file($fname);
@@ -261,7 +232,7 @@ function odin( $fname )
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x08), // 10
 	);
-	loadmbp($mbp, $sect, $pfx);
+	file2sect($mbp, $sect, $pfx, array('str2int', 4), strrpos($mbp, "FEOC"), false);
 
 	global $gp_json, $gp_tag;
 	if ( $gp_tag == '' )

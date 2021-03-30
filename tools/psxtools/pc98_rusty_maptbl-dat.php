@@ -69,7 +69,7 @@ function tbldat( &$tbl, &$dat, $pfx )
 		$p = 8 + ($i * 12);
 		$w = str2int($tbl, $p+4, 2);
 		$h = str2int($tbl, $p+6, 2);
-		debug( substr($tbl, $p, 12) );
+		echo debug( substr($tbl, $p, 12) );
 
 		sectpart( $dat, $pfx, $pos, $i, $w, $h );
 		$pos += ($w * $h * 5 / 8);

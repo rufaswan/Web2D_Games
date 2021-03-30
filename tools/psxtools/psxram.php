@@ -54,7 +54,11 @@ function subram( &$file, $base )
 	if ( substr($file, 0, 7) == "ARS2CPU" || substr($file, 0, 6) == "ARSCPU" )
 	{
 		echo "DETECT emulator = pSXfin\n";
-		$pos = strpos($file, "RAM".ZERO);
+		$pos = strpos($file, "\xff\x00UPG\xbb\x00\x10");
+		$sub = substr($file, $pos+0xc8, 0x100000);
+		psxvram2clut($sub, $base);
+
+		$pos = strpos($file, "RAM\x00");
 		return substr($file, $pos + 12, 0x200000);
 	}
 

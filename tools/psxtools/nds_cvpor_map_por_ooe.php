@@ -166,7 +166,7 @@ function monobj( &$ram, &$room, $off)
 		if ( $x == 0x7fff || $y == 0x7fff )
 			return;
 
-		debug( substr($ram, $bak, 12) );
+		echo debug( substr($ram, $bak, 12) );
 		$ty = ord( $ram[$bak+5] );
 		$id = str2int($ram, $bak+ 6, 2);
 		$v1 = str2int($ram, $bak+ 8, 2);
