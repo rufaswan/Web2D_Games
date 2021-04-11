@@ -5,7 +5,7 @@
  */
 require "common.inc";
 
-define("CANV_S", 0x200);
+define("CANV_S", 0x300);
 
 $gp_pix  = array();
 $gp_clut = "";
@@ -69,7 +69,7 @@ function sectparts( &$tml, &$anim, &$layout, $dir, $id, $name, $cnt, $data)
 
 			printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 			printf(" , $tid\n");
-			copypix($pix);
+			copypix_fast($pix);
 		} // for ( $i=0; $i < $cnt; $i++ )
 
 		savepix("$dir/$name", $pix);

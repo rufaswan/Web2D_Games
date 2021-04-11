@@ -75,7 +75,8 @@ function sectpart( &$file, $nid, $st, $ed )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, 0x100, 0x100);
 		$pix['src']['pal'] = $gp_clut;
-		$pix['bgzero'] = 0;
+		$pix['src']['pal'][3] = ZERO;
+		//$pix['bgzero'] = 0;
 
 		$dx = ord( $v[6] );
 		$dy = ord( $v[7] );
@@ -88,7 +89,7 @@ function sectpart( &$file, $nid, $st, $ed )
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , %08b\n", $p0);
-		copypix($pix);
+		copypix_fast($pix);
 	} // foreach ( $data as $k => $v )
 
 	savepix($nid, $pix, true);

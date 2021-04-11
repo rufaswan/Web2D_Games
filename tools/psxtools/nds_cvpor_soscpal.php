@@ -60,7 +60,7 @@ function abs_canv( &$CANV_S, $int )
 	return;
 }
 
-function sectpart( &$meta, &$src, $pfx, $id, $blk )
+function sectpart( &$meta, $pfx, $id, $blk )
 {
 	printf("=== sectpart( $pfx , $id , %x )\n", $blk);
 
@@ -127,7 +127,8 @@ function sectpart( &$meta, &$src, $pfx, $id, $blk )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = $loadsc;
 		$pix['src']['pal'] = substr($gp_clut, $cid*0x40, 0x40);
-		$pix['bgzero'] = 0;
+		$pix['src']['pal'][3] = ZERO;
+		//$pix['bgzero'] = 0;
 
 		// 7654 3210
 		// ---- --hv
@@ -135,24 +136,7 @@ function sectpart( &$meta, &$src, $pfx, $id, $blk )
 		$pix['hflip'] = $p13 & 2;
 		flag_watch("p13", $p13 & 0xfc);
 
-		/////////////////////////////////
-		//// original sheet in parts ////
-			while ( ($tid+1)*0x100 > $src['rgba']['h'] )
-			{
-				$src['rgba']['pix'] .= canvpix(0x100,0x100);
-				$src['rgba']['h'] += 0x100;
-			}
-			$src['dx'] = $sx;
-			$src['dy'] = $sy + ($tid * 0x100);
-			$src['src']['w'] = $w;
-			$src['src']['h'] = $h;
-			$src['src']['pix'] = $loadsc;
-			$src['src']['pal'] = substr($gp_clut, $cid*0x40, 0x40);
-			copypix($src);
-		//// original sheet in parts ////
-		/////////////////////////////////
-
-		copypix($pix);
+		copypix_fast($pix);
 	} // for ( $i=0; $i < $num; $i++ )
 
 	$fn = sprintf("$pfx/%04d", $id);
@@ -163,11 +147,6 @@ function sectpart( &$meta, &$src, $pfx, $id, $blk )
 //////////////////////////////
 function sectspr( &$so, $pfx )
 {
-	$src = COPYPIX_DEF();
-	$src['rgba']['w'] = 0x100;
-	$src['rgba']['h'] = 0x100;
-	$src['rgba']['pix'] = canvpix(0x100,0x100);
-
 	$len2 = strlen( $so[2]['d'] );
 	$id2 = 0;
 	for ( $i2=0; $i2 < $len2; $i2 += $so[2]['k'] )
@@ -179,10 +158,9 @@ function sectspr( &$so, $pfx )
 			continue;
 
 		$sub = substr($so[0]['d'], $off, $num*$so[0]['k']);
-		sectpart($sub, $src, $pfx, $id2-1, $so[0]['k']);
+		sectpart($sub, $pfx, $id2-1, $so[0]['k']);
 	} // for ( $i2=0; $i2 < $len2; $i2 += $so[2]['k'] )
 
-	savepix("$pfx/src", $src);
 	return;
 }
 function sectanim( &$so, $pfx )

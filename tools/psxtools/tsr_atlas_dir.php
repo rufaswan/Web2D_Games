@@ -11,20 +11,22 @@ function tsr( $dir )
 	if ( ! is_dir($dir) )
 		return;
 
+	$dir = rtrim($dir, '/\\');
+
+	$list = array();
+	lsfile_r($dir, $list);
+
 	$files = array();
-	foreach ( scandir($dir) as $fname )
+	foreach ( $list as $fname )
 	{
-		if ( $fname[0] === '.' )
+		$img = load_clutfile($fname);
+		if ( empty($img) )
 			continue;
 
-		$file = load_clutfile("$dir/$fname");
-		if ( empty($file) )
-			continue;
-
-		//printf("add file %x x %x\n", $file['w'], $file['h']);
-		$file['id'] = $fname;
-		$files[] = $file;
-	} // foreach ( scandir($dir) as $fname )
+		printf("add image %x x %x = %s\n", $img['w'], $img['h'], $fname);
+		$img['id'] = $fname;
+		$files[] = $img;
+	} // foreach ( $list as $fname )
 
 	list($ind, $cw, $ch) = atlasmap($files);
 
@@ -33,17 +35,17 @@ function tsr( $dir )
 	$pix['rgba']['h'] = $ch;
 	$pix['rgba']['pix'] = canvpix($cw,$ch);
 
-	foreach ( $files as $file )
+	foreach ( $files as $img )
 	{
-		$pix['src'] = $file;
-		$pix['dx'] = $file['x'];
-		$pix['dy'] = $file['y'];
+		$pix['src'] = $img;
+		$pix['dx'] = $img['x'];
+		$pix['dy'] = $img['y'];
 
-		if ( isset($file['cc']) )
+		if ( isset($img['cc']) )
 			copypix_fast($pix, 1);
 		else
 			copypix_fast($pix, 4);
-	}
+	} // foreach ( $files as $img )
 
 	savepix("$dir.atlas", $pix);
 	return;

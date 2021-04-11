@@ -64,7 +64,8 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($src[$tid], $sx, $sy, $w, $h, 0x80, 0x80);
 		$pix['src']['pal'] = $clut[$cid];
-		$pix['bgzero'] = 0;
+		$pix['src']['pal'][3] = ZERO;
+		//$pix['bgzero'] = 0;
 
 		$v20 = str2int($v, 20, 2);
 		//$pix['vflip'] = $v20 & 2;
@@ -72,7 +73,7 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $cid , $tid , %04x\n", $v20);
-		copypix($pix);
+		copypix_fast($pix);
 	} // foreach ( $data as $v )
 
 	savepix($dir, $pix, true);

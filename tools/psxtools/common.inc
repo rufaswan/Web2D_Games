@@ -405,6 +405,12 @@ function load_clutfile( $fname )
 
 		$data['pal'] = substr($clut, 16, $cc);
 		$data['pix'] = substr($clut, 16+$cc, $sz);
+
+		// pad to enough data
+		while ( strlen($data['pal']) < $cc )
+			$data['pal'] .= ZERO;
+		while ( strlen($data['pix']) < $sz )
+			$data['pix'] .= ZERO;
 		return $data;
 	}
 	if ( $mgc == "RGBA" )
@@ -414,6 +420,10 @@ function load_clutfile( $fname )
 		$sz = $data['w'] * $data['h'] * 4;
 
 		$data['pix'] = substr($clut, 12, $sz);
+
+		// pad to enough data
+		while ( strlen($data['pix']) < $sz )
+			$data['pix'] .= ZERO;
 		return $data;
 	}
 	return 0;
@@ -427,6 +437,15 @@ function save_clutfile( $fname, &$data )
 		return;
 	if ( isset( $data['cc'] ) )
 	{
+		// pad to enough data
+		$cc = $data['cc'] * 4;
+		while ( strlen($data['pal']) < $cc )
+			$data['pal'] .= ZERO;
+
+		$sz = $data['w'] * $data['h'];
+		while ( strlen($data['pix']) < $sz )
+			$data['pix'] .= ZERO;
+
 		$clut = "CLUT";
 		$clut .= chrint($data['cc'], 4);
 		$clut .= chrint($data['w'], 4);
@@ -437,6 +456,11 @@ function save_clutfile( $fname, &$data )
 	}
 	else
 	{
+		// pad to enough data
+		$sz = $data['w'] * $data['h'] * 4;
+		while ( strlen($data['pix']) < $sz )
+			$data['pix'] .= ZERO;
+
 		$rgba = "RGBA";
 		$rgba .= chrint($data['w'], 4);
 		$rgba .= chrint($data['h'], 4);
@@ -1128,6 +1152,7 @@ function copypix_fast( &$pix, $byte=1 )
 	//   IGNORED [rotate]
 	//   IGNORED [alpha ]
 	//   IGNORED [bgzero]
+	//   = blendFunc( fg=ONE , bg=ZERO )
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
 	{
 		$row = '';

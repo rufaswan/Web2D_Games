@@ -43,10 +43,10 @@ odin     SLUS 215.77  Odin Sphere
 odin     SLUS 216.04  GrimGrimoire
 pcrown   ULJM 050.40  Princess Crown
 tengai4  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
--        ULJS_003.94  Grand Knights History
-mura     PCSE00240    Muramasa Rebirth
+mura     ULJS_003.94  Grand Knights History
+mura     PCSE00240    Muramasa Rebirth + DLC
 mura     PCSE00019    Dragon Crown
-odin     PCSE00899    Odin Sphere Leifthrasir
+mura     PCSE00899    Odin Sphere Leifthrasir
 
 	pcrown   *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
 	odin     *.mbp/*.ftp only
@@ -58,8 +58,10 @@ odin     PCSE00899    Odin Sphere Leifthrasir
 cvpor  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
 cvpor  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
+kuma   NDS  CKUJ  Kumatanchi
 
 	cvpor  all maps only , *.so/.sc (non-quad) only
+	kuma   *.mbs/*.ftx , *.ncgr/*.nclr/*.nscr only
 
 sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 tengai4    SATURN  T-14301G  Tengai Makyou Daishi no Mokushiroku [2 disc]

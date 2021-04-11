@@ -4,6 +4,7 @@
 [/license]
  */
 require "common.inc";
+require "common-guest.inc";
 
 $gp_pix  = array();
 $gp_clut = array();
@@ -47,11 +48,11 @@ function sectmap( &$mcb, &$chb, $w, $dir, $st, $id )
 	{
 		for ( $x=0; $x < $map_w; $x += 8 )
 		{
-			$dat = ordint( $mcb[$st+3] . $mcb[$st+2] . $mcb[$st+1] . $mcb[$st+0] );
+			$dat = str2big($mcb, $st, 4);
 				$st += 4;
 			$map .= sprintf("%8x ", $dat);
 
-			$tid = ($dat & BIT16) / 2;
+			$tid = ($dat & BIT16) >> 1;
 
 			$pix['hflip'] = $dat & 0x40000000;
 
@@ -60,7 +61,7 @@ function sectmap( &$mcb, &$chb, $w, $dir, $st, $id )
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 
-			copypix($pix);
+			copypix_fast($pix);
 		} // for ( $x=0; $x < $map_w; $x += 8 )
 
 		$map .= "\n";
@@ -111,7 +112,7 @@ function pcrown( $fname )
 			sectmap($mcb, $chb, 0x20, $dir, 0xb000, "20-11");
 			sectmap($mcb, $chb, 0x20, $dir, 0xc000, "20-12");
 			sectmap($mcb, $chb, 0x20, $dir, 0xd000, "20-13");
-			sectmap($mcb, $chb, 0x20, $dir, 0xe000, "20-14");
+			sectmap($mcb, $chb, 0x21, $dir, 0xe000, "21-14");
 			sectmap($mcb, $chb, 0x20, $dir, 0xf000, "20-15");
 			break;
 	}
@@ -121,3 +122,14 @@ function pcrown( $fname )
 for ( $i=1; $i < $argc; $i++ )
 	pcrown( $argv[$i] );
 
+/*
+mori1k  20[0-13] , [14]
+mori2k  20[0-13] , [14]
+mori3k  20[0-13] , [14]
+mori1e  40
+mori2e  40
+mori3e  40
+mori1c  40
+mori2c  40
+mori3c  40
+ */

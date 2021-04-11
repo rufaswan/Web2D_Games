@@ -106,7 +106,7 @@ function yuna( $fname )
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 
-			copypix($pix, 4);
+			copypix_fast($pix, 4);
 		} // for ( $x=0; $x < $w; $x += 8 )
 	} // for ( $y=0; $y < $h; $y += 8 )
 

@@ -66,7 +66,7 @@ function secttalk( &$file, $talk, $dir )
 	return;
 }
 
-function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
+function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 {
 	$num = ord( $meta[$off] );
 		$off++;
@@ -154,23 +154,6 @@ function sectparts( &$meta, &$src, $off, $fn, $ids, $m, &$big )
 
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
 
-		/////////////////////////////////
-		//// original sheet in parts ////
-			while ( ($tid+1)*0x100 > $src['rgba']['h'] )
-			{
-				$src['rgba']['pix'] .= canvpix(0x100,0x100);
-				$src['rgba']['h'] += 0x100;
-			}
-			$src['dx'] = $sx;
-			$src['dy'] = $sy + ($tid * 0x100);
-			$src['src']['w'] = $w;
-			$src['src']['h'] = $h;
-			$src['src']['pix'] = $rippix8;
-			$src['src']['pal'] = $gp_clut[$tid][$cid];
-			copypix($src);
-		//// original sheet in parts ////
-		/////////////////////////////////
-
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $cid , %08b , %d\n", $p7, $pix['rotate'][0]);
 		copypix($pix);
@@ -212,18 +195,13 @@ function sectmeta( &$meta, $dir, $ids )
 	$cnt = str2int($meta, $off, 2);
 	$big = "";
 
-	$src = COPYPIX_DEF();
-	$src['rgba']['w'] = 0x100;
-	$src['rgba']['h'] = 0x100;
-	$src['rgba']['pix'] = canvpix(0x100,0x100);
-		for ( $m=0; $m < $cnt; $m++ )
-		{
-			$pos = $off + 2 + ($m * 2);
-			$pos = str2int($meta, $pos, 2);
-			$fn  = sprintf("$dir/%04d", $m);
-			sectparts($meta, $src, $pos, $fn, $ids, $m, $big);
-		}
-	savepix("$dir/src", $src);
+	for ( $m=0; $m < $cnt; $m++ )
+	{
+		$pos = $off + 2 + ($m * 2);
+		$pos = str2int($meta, $pos, 2);
+		$fn  = sprintf("$dir/%04d", $m);
+		sectparts($meta, $pos, $fn, $ids, $m, $big);
+	}
 
 	// sprite animation sequence
 	$ed = $off;

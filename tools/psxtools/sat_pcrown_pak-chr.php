@@ -117,28 +117,6 @@ function sectpart( &$pak, $dir, $off, $no )
 	return;
 }
 //////////////////////////////
-function sectanim( &$pak, $off )
-{
-	// anim def
-	// 0 1  2  3  4 5  6  7
-	// sid  -  -  ms   -  rep
-	$anim = array();
-	while (1)
-	{
-		$bak = $off;
-			$off += 8;
-		if ( $pak[$bak+3] == BYTE && $pak[$bak+2] == BYTE )
-			continue;
-		if ( $pak[$bak+7] != ZERO )
-			return implode(' , ', $anim);
-
-		$b1 = ordint( $pak[$bak+1] . $pak[$bak+0] );
-		$b2 = ordint( $pak[$bak+5] . $pak[$bak+4] );
-		$anim[] = sprintf("%d-%d", $b1 & 0x0fff, $b2);
-	}
-	return implode(' , ', $anim);
-}
-//////////////////////////////
 function save_texx( $pfx )
 {
 	global $gp_pix;
@@ -200,6 +178,34 @@ function load_texx( &$pak, $pfx )
 	return;
 }
 //////////////////////////////
+function sectanim( &$pak, $off )
+{
+	// anim def
+	// 0 1  2  3  4 5  6  7
+	// sid  -  -  ms   -  rep
+	$anim = array();
+	while (1)
+	{
+		$bak = $off;
+			$off += 8;
+
+		$b2 = str2big($pak, $bak+2, 2, true);
+		if ( $b2 == -1 )
+			continue;
+
+		$b7 = str2big($pak, $bak+7, 1);
+		if ( $b7 != 0 )
+			return implode(' , ', $anim);
+
+		$b0 = str2big($pak, $bak+0, 2, true);
+		$b4 = str2big($pak, $bak+4, 2, true);
+		#$b6 = str2big($pak, $bak+6, 1);
+
+		$anim[] = sprintf("%d-%d", $b0 & 0x0fff, $b4);
+	}
+	return implode(' , ', $anim);
+}
+//////////////////////////////
 function pakchr( &$pak, $pfx )
 {
 	echo "== pakchr( $pfx )\n";
@@ -236,12 +242,12 @@ function pakchr( &$pak, $pfx )
 
 	$anim = "";
 	$len = strlen($pak[4]['d']);
-	for ( $i=0; $i < $len; $i += 12 )
+	for ( $i=0; $i < $len; $i += $pak[4]['k'] )
 	{
 		$st = str2big($pak[4]['d'], $i+0, 4);
 			$st -= $pak[3]['o'];
 
-		$n = $i / 12;
+		$n = $i / $pak[4]['k'];
 		$buf  = sprintf("anim_%d = ", $n);
 		$buf .= sectanim($pak[3]['d'], $st);
 		echo "$buf\n";
@@ -251,16 +257,17 @@ function pakchr( &$pak, $pfx )
 
 
 	$len = strlen($pak[2]['d']);
-	for ( $i=0; $i < $len; $i += 12 )
+	for ( $i=0; $i < $len; $i += $pak[2]['k'] )
 	{
 		// distort set def
 		// 0 1 2 3 4 5 6 7  8 9  a b
 		// - - - - - - - -  st   no
 		$st = str2big($pak[2]['d'], $i+ 8, 2);
 		$no = str2big($pak[2]['d'], $i+10, 2);
+		$id = $i / $pak[2]['k'];
 
-		printf("SPR %d = %x , %x\n", $i/12, $st, $no);
-		$dir = sprintf("$pfx/%04d", $i/12);
+		printf("SPR %d = %x , %x\n", $id, $st, $no);
+		$dir = sprintf("$pfx/%04d", $id);
 		sectpart($pak, $dir, $st*12, $no);
 	}
 	save_texx($pfx);

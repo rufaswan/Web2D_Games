@@ -53,7 +53,7 @@ function mana( $fname )
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf("\n");
-		copypix($pix);
+		copypix_fast($pix);
 
 		$cnt--;
 		$st += 0x10;

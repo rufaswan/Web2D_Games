@@ -552,12 +552,12 @@ var QUAD = QUAD || {};
 		time[1]++;
 		if ( time[1] >= data[time[0]][1] )
 		{
-			time[1] = 0;
 			time[0]++;
+			time[1] = 0;
 		}
 		if ( time[0] >= data.length )
 			time[0] -= data.length;
-		return;
+		return 0;
 	}
 
 	function anim_timer_sub(time, data){
@@ -573,7 +573,7 @@ var QUAD = QUAD || {};
 				time[0]--;
 			time[1] = data[time[0]][1];
 		}
-		return;
+		return 0;
 	}
 
 	QUAD.anim_timer = function(int){
@@ -582,6 +582,7 @@ var QUAD = QUAD || {};
 		if ( data === undefined )
 			return;
 
+		var loop = 0;
 		data.forEach(function(v,k){
 			// per track timer
 			if ( time[k] === undefined )
@@ -589,12 +590,20 @@ var QUAD = QUAD || {};
 			else
 			{
 				if ( int > 0 )
-					anim_timer_add(time[k], v);
+					loop |= anim_timer_add(time[k], v);
 				else
 				if ( int < 0 )
-					anim_timer_sub(time[k], v);
+					loop |= anim_timer_sub(time[k], v);
 			}
 		});
+
+/*
+		if ( loop )
+		{
+			QUAD.anim.cur_anim_time = [];
+			QUAD.anim_timer(0);
+		}
+*/
 		return;
 	}
 
