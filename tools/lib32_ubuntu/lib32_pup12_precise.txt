@@ -2,6 +2,7 @@ pool/main/f/freeglut/freeglut3_2.6.0-1ubuntu2_i386.deb
 pool/main/g/gtk2-engines-murrine/gtk2-engines-murrine_0.98.2-0ubuntu1_i386.deb
 pool/main/g/gtk2-engines-oxygen/gtk2-engines-oxygen_1.2.2-0ubuntu1_i386.deb
 pool/main/g/gtk2-engines/gtk2-engines_2.20.2-1ubuntu1_i386.deb
+pool/main/liba/libaio/libaio1_0.3.109-2ubuntu1_i386.deb
 pool/main/h/heimdal/libasn1-8-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/a/alsa-lib/libasound2_1.0.25-1ubuntu10_i386.deb
 pool/main/liba/libasyncns/libasyncns0_0.8-4_i386.deb
@@ -30,6 +31,7 @@ pool/main/libd/libdrm/libdrm-intel1_2.4.32-1ubuntu1_i386.deb
 pool/main/libd/libdrm/libdrm-nouveau1a_2.4.32-1ubuntu1_i386.deb
 pool/main/libd/libdrm/libdrm-radeon1_2.4.32-1ubuntu1_i386.deb
 pool/main/libd/libdrm/libdrm2_2.4.32-1ubuntu1_i386.deb
+pool/main/m/mesa/libegl1-mesa_8.0.2-0ubuntu3_i386.deb
 pool/main/libe/libexif/libexif12_0.6.20-2_i386.deb
 pool/main/e/expat/libexpat1_2.0.1-7.2ubuntu1_i386.deb
 pool/main/libf/libffi/libffi6_3.0.11~rc1-5_i386.deb
@@ -38,6 +40,7 @@ pool/main/f/fontconfig/libfontconfig1_2.8.0-3ubuntu9_i386.deb
 pool/main/f/freetype/libfreetype6_2.4.8-1ubuntu2_i386.deb
 pool/main/g/gtk+2.0/libgail-common_2.24.10-0ubuntu6_i386.deb
 pool/main/g/gtk+2.0/libgail18_2.24.10-0ubuntu6_i386.deb
+pool/main/m/mesa/libgbm1_8.0.2-0ubuntu3_i386.deb
 pool/main/g/gcc-4.6/libgcc1_4.6.3-1ubuntu5_i386.deb
 pool/main/g/gconf/libgconf-2-4_3.2.5-0ubuntu2_i386.deb
 pool/main/libg/libgcrypt11/libgcrypt11_1.5.0-3_i386.deb
@@ -73,6 +76,7 @@ pool/main/h/heimdal/libheimntlm0-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/h/heimdal/libhx509-5-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/libi/libice/libice6_1.0.7-2build1_i386.deb
 pool/main/libi/libidn/libidn11_1.23-2_i386.deb
+pool/main/j/jack-audio-connection-kit/libjack0_0.121.0+svn4538-3ubuntu1_i386.deb
 pool/main/j/jasper/libjasper1_1.900.1-13_i386.deb
 pool/main/libj/libjpeg-turbo/libjpeg-turbo8_1.1.90+svn733-0ubuntu4_i386.deb
 pool/main/libj/libjpeg6b/libjpeg62_6b1-2ubuntu1_i386.deb
@@ -87,6 +91,7 @@ pool/main/l/lcms2/liblcms2-2_2.2+git20110628-2ubuntu3_i386.deb
 pool/main/o/openldap/libldap-2.4-2_2.4.28-1.1ubuntu4_i386.deb
 pool/main/l/llvm-3.0/libllvm3.0_3.0-4ubuntu1_i386.deb
 pool/main/libt/libtool/libltdl7_2.4.2-1ubuntu1_i386.deb
+pool/main/x/xz-utils/liblzma5_5.1.1alpha+20110809-3_i386.deb
 pool/main/libm/libmad/libmad0_0.15.1b-7ubuntu1_i386.deb
 pool/universe/libm/libmikmod/libmikmod2_3.1.12-2_i386.deb
 pool/main/libm/libmng/libmng1_1.0.10-3_i386.deb
@@ -106,6 +111,7 @@ pool/main/libp/libpciaccess/libpciaccess0_0.12.902-1_i386.deb
 pool/main/p/pcre3/libpcre3_8.12-4_i386.deb
 pool/main/p/pixman/libpixman-1-0_0.24.4-1_i386.deb
 pool/main/libp/libpng/libpng12-0_1.2.46-3ubuntu4_i386.deb
+pool/main/p/portaudio19/libportaudio2_19+svn20111121-1_i386.deb
 pool/main/p/pulseaudio/libpulse0_1.1-0ubuntu15_i386.deb
 pool/main/q/qt4-x11/libqt4-dbus_4.8.1-0ubuntu4_i386.deb
 pool/main/q/qt4-x11/libqt4-declarative_4.8.1-0ubuntu4_i386.deb
@@ -139,6 +145,7 @@ pool/main/libs/libsm/libsm6_1.2.0-2build1_i386.deb
 pool/universe/s/smpeg/libsmpeg0_0.4.5+cvs20030824-4_i386.deb
 pool/main/libs/libsndfile/libsndfile1_1.0.25-4_i386.deb
 pool/universe/libs/libsoil/libsoil1_1.07~20080707.dfsg-2_i386.deb
+pool/universe/s/soundtouch/libsoundtouch0_1.6.0-2build1_i386.deb
 pool/main/s/speex/libspeex1_1.2~rc1-3ubuntu2_i386.deb
 pool/main/s/sqlite3/libsqlite3-0_3.7.9-2ubuntu1_i386.deb
 pool/main/o/openssl/libssl1.0.0_1.0.1-4ubuntu3_i386.deb
@@ -158,8 +165,11 @@ pool/main/libv/libvorbis/libvorbis0a_1.3.2-1ubuntu3_i386.deb
 pool/main/libv/libvorbis/libvorbisenc2_1.3.2-1ubuntu3_i386.deb
 pool/main/libv/libvorbis/libvorbisfile3_1.3.2-1ubuntu3_i386.deb
 pool/main/libv/libvpx/libvpx1_1.0.0-1_i386.deb
+pool/main/w/wayland/libwayland0_0.85.0-1ubuntu2_i386.deb
 pool/main/h/heimdal/libwind0-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/t/tcp-wrappers/libwrap0_7.6.q-21_i386.deb
+pool/universe/w/wxwidgets2.6/libwxbase2.6-0_2.6.3.2.2-5ubuntu4_i386.deb
+pool/universe/w/wxwidgets2.6/libwxgtk2.6-0_2.6.3.2.2-5ubuntu4_i386.deb
 pool/main/libx/libx11/libx11-6_1.4.99.1-0ubuntu2_i386.deb
 pool/main/libx/libx11/libx11-xcb1_1.4.99.1-0ubuntu2_i386.deb
 pool/main/libx/libxau/libxau6_1.0.6-4_i386.deb
@@ -167,6 +177,7 @@ pool/main/libx/libxcb/libxcb-dri2-0_1.8.1-1_i386.deb
 pool/main/libx/libxcb/libxcb-glx0_1.8.1-1_i386.deb
 pool/main/libx/libxcb/libxcb-render0_1.8.1-1_i386.deb
 pool/main/libx/libxcb/libxcb-shm0_1.8.1-1_i386.deb
+pool/main/libx/libxcb/libxcb-xfixes0_1.8.1-1_i386.deb
 pool/main/libx/libxcb/libxcb1_1.8.1-1_i386.deb
 pool/main/libx/libxcomposite/libxcomposite1_0.4.3-2build1_i386.deb
 pool/main/libx/libxcursor/libxcursor1_1.1.12-1_i386.deb
