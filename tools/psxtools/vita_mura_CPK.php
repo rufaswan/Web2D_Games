@@ -2,6 +2,14 @@
 /*
 [license]
 [/license]
+ *
+ * Special Thanks
+ *   CriPakTools-mod
+ *   http://github.com/wmltogether/CriPakTools/
+ *     Falo
+ *     Nanashi3
+ *     esperknight
+ *     yjulian
  */
 require "common.inc";
 require "common-guest.inc";

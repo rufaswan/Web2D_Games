@@ -2,7 +2,14 @@
 /*
 [license]
 [/license]
+ *
+ * Special Thanks
+ *   ezSwizzle @ PS2Linux
+ *   http://ps2linux.no-ip.info/playstation2-linux.com/project/ezSwizzle
+ *     Victor Suba
+ *     Lionel Lemarie
  */
+
 require "common.inc";
 require "common-guest.inc";
 

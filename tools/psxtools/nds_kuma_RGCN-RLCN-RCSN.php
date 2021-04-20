@@ -78,7 +78,8 @@ function sect_RCSN( &$file, $fname )
 		} // for ( $bx=0; $bx < $sw; $bx += 0x100 )
 	} // for ( $by=0; $by < $sh; $by += 0x100 )
 
-	savepix($fname, $pix);
+	$pfx = substr($fname, 0, strrpos($fname, '.'));
+	savepix($pfx, $pix);
 	return;
 }
 

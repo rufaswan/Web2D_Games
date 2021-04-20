@@ -173,7 +173,7 @@ function sectmap( &$file, $nid, $base )
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $map_w;
 	$pix['rgba']['h'] = $map_h;
-	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
+	$pix['rgba']['pix'] = canvpix($map_w,$map_h,PIX_BLACK);
 
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
@@ -274,6 +274,7 @@ function sect1( &$file, $nid, $base )
 //////////////////////////////
 function srcpix( &$pix, $dir )
 {
+	return;
 	save_file("$dir/pix.meta", $pix);
 	$len = strlen($pix);
 	$w = 0x20;

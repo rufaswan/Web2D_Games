@@ -98,9 +98,9 @@ function png_unfilter( &$idat, $w, $h, $byte )
 					$b3 = ( isset($prv[$x-$byte]) ) ? ord($prv[$x-$byte]) : 0; // up left
 
 					$bs = ($b1 + $b2) - $b3;
-					$ba = ($bs - $b1);
-					$bb = ($bs - $b2);
-					$bc = ($bs - $b3);
+					$ba = abs($bs - $b1); // always positive
+					$bb = abs($bs - $b2);
+					$bc = abs($bs - $b3);
 
 					if ( $ba <= $bb && $ba <= $bc )
 						$b = ($b0 + $b1) & BIT8;
@@ -256,8 +256,10 @@ function png2rgba( &$chunk, $w, $h, $dp, $cl, $fname )
 	if ( $dp == 16 )  $dpw *= 2;
 
 	//save_file("png1.idat", $chunk['IDAT']);
+	//save_file("pix1.$dpw", debug_block($chunk['IDAT'],$dpw*$w+1));
 	png_unfilter($chunk['IDAT'], $w, $h, $dpw);
 	//save_file("png2.idat", $chunk['IDAT']);
+	//save_file("pix2.4", debug_block($chunk['IDAT'],4*$w));
 
 	$rgba = 'RGBA';
 	$rgba .= chrint($w, 4);

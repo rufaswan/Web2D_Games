@@ -45,10 +45,10 @@ function sectquad( &$mbs, $pos )
 	}
 
 	$bcde = array(
-		array($float[2] , $float[3] , 1),
-		array($float[4] , $float[5] , 1),
-		array($float[6] , $float[7] , 1),
-		array($float[8] , $float[9] , 1),
+		$float[2] , $float[3] ,
+		$float[4] , $float[5] ,
+		$float[6] , $float[7] ,
+		$float[8] , $float[9] ,
 	);
 	return $bcde;
 }
@@ -77,9 +77,6 @@ function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 		$s1 = str2big($sub, 0, 2); // ?type?
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
-
-		if ( $gp_json['TexReq'] <= $s4 )
-			$gp_json['TexReq'] = $s4 + 1;
 
 		$data[$i4] = array();
 		if ( $s1 & 2 )
@@ -236,7 +233,6 @@ function mura( $fname )
 
 	global $gp_json;
 	$gp_json = load_idtagfile('wii_mura');
-	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx);

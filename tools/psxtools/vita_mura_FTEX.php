@@ -2,13 +2,16 @@
 /*
 [license]
 [/license]
+ *
+ * Special Thanks
+ *   http://playstationdev.wiki/psvitadevwiki/index.php?title=GXT
+ *   http://forum.xentax.com/viewtopic.php?f=18&t=16171&sid=00e26d4f119d2985bbc8137c42e3a10d
  */
 require "common.inc";
 require "common-guest.inc";
 
 //define("DRY_RUN", true);
 
-// https://playstationdev.wiki/psvitadevwiki/index.php?title=GXT
 $gp_type = array(
 	"\x00\x00\x00\x00" => 'gxt_swizzled',
 	"\x00\x00\x00\xa0" => 'gxt_a0',

@@ -344,6 +344,19 @@ function fp2str( $fp, $pos, $byte )
 	return fread($fp, $byte);
 }
 
+function fopen_file( $fname )
+{
+	$fp = fopen($fname, 'rb');
+	if ( $fp )  return $fp;
+
+	$fp = fopen( strtolower($fname), 'rb');
+	if ( $fp )  return $fp;
+
+	$fp = fopen( strtoupper($fname), 'rb');
+	if ( $fp )  return $fp;
+	return false;
+}
+
 function load_file( $fname )
 {
 	if ( is_file($fname) )

@@ -201,7 +201,6 @@ var QUAD = QUAD || {};
 			if ( list.length > done )
 				return;
 			clearInterval(timer);
-			console.log('TexReq = ' + QUAD.files.quad.TexReq);
 			console.log(QUAD);
 
 			QUAD.init_anim();
@@ -440,8 +439,6 @@ var QUAD = QUAD || {};
 
 		dummy_tex(texid);
 		var image = QUAD.files.image[texid];
-		if ( image === undefined )
-			return;
 
 		set_uv (src, image.width    , image.height);
 		set_xyz(dst, GL.canvas.width, GL.canvas.height);
@@ -476,10 +473,17 @@ var QUAD = QUAD || {};
 				return;
 
 			var blend   = v.Blend   || ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
-			var texid   = v.TexID   || -1;
 			var clrquad = v.ClrQuad || ['1','1','1','1'];
 			var srcquad = v.SrcQuad || [0,0 , 1,0 , 1,1 , 0,1];
-			if ( QUAD.files.image[texid] === undefined )
+
+			// in case color blending part , no texture
+			var texid = -1;
+			if ( v.TexID !== undefined )
+				texid = v.TexID;
+
+			// dummy texture for color blending part and/or invalid texid
+			if ( QUAD.files.image[texid] === undefined
+				|| (QUAD.files.image[texid].width === 2 && QUAD.files.image[texid].height === 2) )
 				srcquad = [0,0 , 1,0 , 1,1 , 0,1];
 
 			if ( cur_texid !== v.TexID || cur_blend.toString() !== blend.toString() )
@@ -500,17 +504,21 @@ var QUAD = QUAD || {};
 		return;
 	}
 
-	QUAD.render_frame = function(){
-		if ( QUAD.files.quad === undefined )
-			return;
+	QUAD.set_cur_frame = function(){
 		var len = QUAD.files.quad.Frame.length;
 		if ( len < 1 )
 			return;
 		while ( QUAD.anim.cur_frame < 0 )
 			QUAD.anim.cur_frame += len;
+		while ( QUAD.anim.cur_frame >= len )
+			QUAD.anim.cur_frame -= len;
+		return;
+	}
 
+	QUAD.render_frame = function(){
+		if ( QUAD.files.quad === undefined )
+			return;
 		QUAD.resize_canvas();
-		QUAD.anim.cur_frame = QUAD.anim.cur_frame % len;
 		QUAD.render_frameid( QUAD.anim.cur_frame );
 		return;
 	}
@@ -542,6 +550,7 @@ var QUAD = QUAD || {};
 		if ( anim.hasOwnProperty(key) ){
 			QUAD.anim.cur_anim_key  = key;
 			QUAD.anim.cur_anim_data = anim[key];
+			console.log('cur_anim_data', anim[key]);
 		}
 		return;
 	}
@@ -556,7 +565,10 @@ var QUAD = QUAD || {};
 			time[1] = 0;
 		}
 		if ( time[0] >= data.length )
-			time[0] -= data.length;
+		{
+			time[0] = data.length - 1;
+			return 1;
+		}
 		return 0;
 	}
 
@@ -582,7 +594,7 @@ var QUAD = QUAD || {};
 		if ( data === undefined )
 			return;
 
-		var loop = 0;
+		var loop = data.length;
 		data.forEach(function(v,k){
 			// per track timer
 			if ( time[k] === undefined )
@@ -590,20 +602,18 @@ var QUAD = QUAD || {};
 			else
 			{
 				if ( int > 0 )
-					loop |= anim_timer_add(time[k], v);
+					loop -= anim_timer_add(time[k], v);
 				else
 				if ( int < 0 )
-					loop |= anim_timer_sub(time[k], v);
+					loop -= anim_timer_sub(time[k], v);
 			}
 		});
 
-/*
-		if ( loop )
+		if ( loop <= 0 )
 		{
 			QUAD.anim.cur_anim_time = [];
 			QUAD.anim_timer(0);
 		}
-*/
 		return;
 	}
 

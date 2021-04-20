@@ -29,12 +29,12 @@ convert -verbose  "$png"  -trim -strip  thumb.png
 thumbnail $(identify -format "%w %h %i"  thumb.png)
 
 montage -verbose -strip \
-	-tile 10x \
+	-tile 10x20 \
 	-geometry '1x1<' \
 	-background  none \
 	-bordercolor none \
 	-gravity center \
-	0*.rgba.bmp  sheet.png
+	[0123456789]*.rgba.bmp  sheet.png
 
 <<'////'
 #mogrify -verbose -strip -trim +repage  0*.png

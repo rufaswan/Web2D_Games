@@ -93,11 +93,13 @@ function disc1( $fname )
 		$typ = str2int($file, $st+0, 4);
 		$nxt = str2int($file, $st+4, 4);
 		$fn  = sprintf("%s/%04d.%d", $dir, $id, $typ & BIT8);
-		printf("%8x , %8x , %s\n", $typ, $nxt, $fn);
 
 		if ( $nxt === 0 )
 			$nxt = $ed;
-		$sub = substr($file, $st, $nxt-$st);
+		$siz = $nxt - $st;
+		printf("%8x , %6x , %6x , %s\n", $typ, $st, $siz, $fn);
+
+		$sub = substr($file, $st, $siz);
 		sectscn($sub, $typ & BIT8, $fn);
 		$st = $nxt;
 		$id++;

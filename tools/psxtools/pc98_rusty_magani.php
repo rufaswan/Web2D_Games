@@ -2,6 +2,11 @@
 /*
 [license]
 [/license]
+ *
+ * Special Thanks
+ *   Rusty English translation project
+ *   http://46okumen.com/projects/rusty/
+ *     46 Okumen
  */
 require "common.inc";
 
@@ -14,7 +19,6 @@ function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 {
 	trace("== mag_decode( %x , %x , %x , %x , %x )\n", $w, $h, $pb1, $pb4, $pc);
 	// https://github.com/46OkuMen/rusty/blob/master/mag.py
-	// https://46okumen.com/projects/rusty/
 	$pix = array();
 	$bycod = 0;
 	$bylen = 0;

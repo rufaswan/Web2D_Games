@@ -41,7 +41,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	</div>
 	<div id='lowbar'>
 		<button id='prev_btn'>&lt;</button>
-		<button id='play_btn'>PLAY</button>
+		<input id='play_btn' type='text'></button>
 		<button id='next_btn'>&gt;</button>
 	</div>
 	<div id='idtag' style='display:none;'></div>
@@ -60,6 +60,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	dom_upload.addEventListener("change", function(e){
 		QUAD.file_reader(dom_upload.files, dom_hidden, function(){
 			QUAD.html_idtag(dom_idtag);
+			dom_play.value = 0;
 			//console.log(QUAD);
 		});
 	});
@@ -95,25 +96,27 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	// frame ver
 	document.getElementById('prev_btn').addEventListener("click", function(e){
 		QUAD.anim.cur_frame -= 1;
+		QUAD.set_cur_frame();
+		dom_play.value = QUAD.anim.cur_frame;
 	});
 	document.getElementById('next_btn').addEventListener("click", function(e){
 		QUAD.anim.cur_frame += 1;
+		QUAD.set_cur_frame();
+		dom_play.value = QUAD.anim.cur_frame;
 	});
-	dom_play.addEventListener("click", function(e){
-		//console.log(QUAD);
+	dom_play.addEventListener("change", function(e){
+		var fid = parseInt( dom_play.value, 10);
+		QUAD.anim.cur_frame = fid;
+		QUAD.set_cur_frame();
+		dom_play.value = QUAD.anim.cur_frame;
 	});
 
 	function render(){
-		if ( QUAD.files.done === 3 ){
+		if ( QUAD.files.done === 3 )
 			QUAD.render_frame();
-			var len = QUAD.files.quad.Frame.length - 1;
-			dom_play.innerHTML = QUAD.anim.cur_frame + ' of ' + len + ' Frames';
-		} else {
-			dom_play.innerHTML = 'FRAMES';
-		}
 		return;
 	}
-	setInterval(render, 250);
+	setInterval(render, 333);
 	</script>
 </body>
 </html>

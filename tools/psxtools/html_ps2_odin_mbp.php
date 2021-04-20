@@ -22,10 +22,10 @@ function colorquad( &$mbp, $pos )
 			$color[] = '1';
 		else
 		{
-			$r = ord( $s[0] );
-			$g = ord( $s[1] );
-			$b = ord( $s[2] );
-			$a = ord( $s[3] );
+			$r = int_clamp( ord($s[0]) << 1, 0, BIT8);
+			$g = int_clamp( ord($s[1]) << 1, 0, BIT8);
+			$b = int_clamp( ord($s[2]) << 1, 0, BIT8);
+			$a = int_clamp( ord($s[3]) << 1, 0, BIT8);
 			$color[] = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
 		}
 	} // for ( $i=0; $i < $mbp['k']; $i += 4 )
@@ -78,9 +78,6 @@ function sectpart( &$mbp, $pfx, $k6, $id6, $no6 )
 		$s1 = str2int($sub, 0, 2); // ??
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
-
-		if ( $gp_json['TexReq'] <= $s4 )
-			$gp_json['TexReq'] = $s4 + 1;
 
 		$data[$i4] = array();
 		if ( $s1 & 2 )
@@ -238,7 +235,6 @@ function odin( $fname )
 	if ( $gp_tag == '' )
 		return;
 	$gp_json = load_idtagfile($gp_tag);
-	$gp_json['TexReq'] = 0;
 
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);
@@ -250,6 +246,7 @@ function odin( $fname )
 	return;
 }
 
+echo "{$argv[0]}  -grim/-odin  MBP_FILE...\n";
 for ( $i=1; $i < $argc; $i++ )
 {
 	if ( $argv[$i] == '-grim' )

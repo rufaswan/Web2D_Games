@@ -2,14 +2,17 @@
 /*
 [license]
 [/license]
+ *
+ * Special Thanks
+ *   TPL File Format
+ *   http://wiki.tockdom.com/w/index.php?title=TPL_%28File_Format%29
+ *   http://wiki.tockdom.com/w/index.php?title=Image_Formats
  */
 require "common.inc";
 require "common-guest.inc";
 
 //define("DRY_RUN", true);
 
-// http://wiki.tockdom.com/w/index.php?title=TPL_%28File_Format%29
-// http://wiki.tockdom.com/w/index.php?title=Image_Formats
 $gp_ifmt = array(
 	0x6 => "im_rgba32", // 32-bit , 10*4 = 40
 	0x8 => "im_c4",     //  4-bit ,  4*8 = 20

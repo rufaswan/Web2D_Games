@@ -20,29 +20,38 @@ function disc1( $fname )
 
 	$dir = str_replace('.', '_', $fname);
 	$len = strlen($file);
-	$off = array($len);
+
+	$ids = array();
 	for ( $i=0; $i < $len; $i += 4 )
 	{
 		$b = str2int($file, $i, 4);
-		if ( array_search($b, $off) === false )
-			$off[] = $b;
+		if ( $b === 0 )
+			continue;
+		$ids[ $i/4 ] = $b;
 	}
-	sort($off);
 
-	$len = count($off) - 1;
-	for ( $i=0; $i < $len; $i++ )
+	foreach ( $ids as $k => $v )
 	{
-		$p1 = $off[$i+0];
-		$p2 = $off[$i+1];
-		$sz = $p2 - $p1;
-		$fn = sprintf("%s/%04d.vb", $dir, $i);
-		printf("%8x , %8x , %s\n", $p1, $sz, $fn);
+		$b = fp2str($fp, $v, 0x10);
+		$size = str2int($b, 0, 4);
+		$skip = 4;
 
-		fseek($fp, $p1, SEEK_SET);
-		$b = fread($fp, $sz);
-		$sz = str2int($b, 0, 4);
-		save_file($fn, substr($b, 4, $sz));
-	}
+		if ( $size > 0xfffff )
+		{
+			$size = str2int($b, 4, 4);
+			$skip = 8;
+		}
+
+		if ( $size > 0xfffff )
+			continue;
+
+		$fn = sprintf("%s/%06d.vb", $dir, $k);
+		printf("%8x , %8x , %s\n", $v, $size, $fn);
+
+		$b = fp2str($fp, $v+$skip, $size);
+		save_file($fn, $b);
+	} // foreach ( $ids as $k => $v )
+
 	return;
 }
 

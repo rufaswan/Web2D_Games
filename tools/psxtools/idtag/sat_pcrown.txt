@@ -1,0 +1,35 @@
+[System]
+Sega Saturn
+
+[Game]
+Princess Crown
+
+[Year]
+1997
+
+[Copyright]
+Sega Enterprises Ltd.
+Atlus
+
+[Character Design & Animation Edit]
+Kawazuine Shioya
+Satomi Iwasaki
+Kouichiro Miyanaga
+Chikahito Ikami
+Masahiro Maeda
+Yoshikazu Hishikawa
+Nana Ishiguro
+Haruhiko Morita
+
+[Design Work]
+Yuka Makai
+George Kamitani
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

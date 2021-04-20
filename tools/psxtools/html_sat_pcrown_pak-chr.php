@@ -5,16 +5,16 @@
  */
 require "common.inc";
 require "common-guest.inc";
-require "common-quad.inc";
+require "common-atlas.inc";
+require "html.inc";
 
-define("CANV_S", 0x200);
-define("SCALE", 1.0);
-//define("DRY_RUN", true);
+php_req_extension("json_encode", "json");
 
+$gp_json = array();
 $gp_pix  = array();
 $gp_clut = array();
 
-function sectquad( &$pix, $dat, $ceil )
+function sectquad( &$dqd, $dat )
 {
 	//return;
 	// 0 1  2  3   4  5   6  7   8  9   a  b
@@ -23,7 +23,6 @@ function sectquad( &$pix, $dat, $ceil )
 	for ( $i=0; $i < 12; $i++ )
 		$b[] = ord( $dat[$i] );
 	$dat = $b;
-	//zero_watch("dat", $dat[10] );
 
 	$qax = ( $dat[11] & 0x01 ) ? -$dat[2] : $dat[2];
 	$qay = ( $dat[11] & 0x02 ) ? -$dat[3] : $dat[3];
@@ -33,57 +32,24 @@ function sectquad( &$pix, $dat, $ceil )
 	$qcy = ( $dat[11] & 0x20 ) ? -$dat[7] : $dat[7];
 	$qdx = ( $dat[11] & 0x40 ) ? -$dat[8] : $dat[8];
 	$qdy = ( $dat[11] & 0x80 ) ? -$dat[9] : $dat[9];
-		$qax = (int)($qax * SCALE);
-		$qay = (int)($qay * SCALE);
-		$qbx = (int)($qbx * SCALE);
-		$qby = (int)($qby * SCALE);
-		$qcx = (int)($qcx * SCALE);
-		$qcy = (int)($qcy * SCALE);
-		$qdx = (int)($qdx * SCALE);
-		$qdy = (int)($qdy * SCALE);
 
 	// 1-2
 	//   |
 	// 4-3
-	$pix['vector'] = array(
-		array( $qax+$ceil , $qay+$ceil , 1 ),
-		array( $qbx+$ceil , $qby+$ceil , 1 ),
-		array( $qcx+$ceil , $qcy+$ceil , 1 ),
-		array( $qdx+$ceil , $qdy+$ceil , 1 ),
+	$dqd = array(
+		$qax , $qay ,
+		$qbx , $qby ,
+		$qcx , $qcy ,
+		$qdx , $qdy ,
 	);
-
-	$pix['src']['vector'] = array(
-		array(                 0,                 0, 1),
-		array($pix['src']['w']-1,                 0, 1),
-		array($pix['src']['w']-1,$pix['src']['h']-1, 1),
-		array(                 0,$pix['src']['h']-1, 1),
-	);
-
-	$des = array(
-		array($qax,$qay,1),
-		array($qbx,$qby,1),
-		array($qcx,$qcy,1),
-		array($qdx,$qdy,1),
-	);
-
-	printf("sign : %08b\n", $dat[11]);
-	quad_dump($pix['src']['vector'] , "1243", "src quad");
-	quad_dump($des                  , "1243", "des quad");
 	return;
 }
 
 function sectpart( &$pak, $pfx, $k2, $id2, $no2 )
 {
-	printf("== sectpart( $pfx , %x , %x , %x )\n", $k2, $id2, $no2);
+	global $gp_json, $gp_pix, $gp_clut;
 
-	$ceil = int_ceil(CANV_S * SCALE, 2);
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
-
-	global $gp_pix, $gp_clut;
-	$gray = grayclut(16);
+	$data = array();
 	for ( $i=0; $i < $no2; $i++ )
 	{
 		$p = ($id2 + $i) * $pak[1]['k'];
@@ -95,46 +61,82 @@ function sectpart( &$pak, $pfx, $k2, $id2, $no2 )
 		$b1 = str2big($dat, 0, 2);
 		$tid = $b1 & 0x3fff;
 		$cid = $b1 >> 14;
-		flag_watch("cid-x", $b1 & 0xb000);
 
 		// obaa.pak has both cat + 4 books having the same value
 		// probably the palette is referred by opcode
 		//if ( $cid != 0 ) // OR $b1 & 0x4000
 			//return;
-		$pal = ( empty($gp_clut) ) ? $gray : substr($gp_clut, $cid*0x40, 0x40);
+		$pal = substr($gp_clut, $cid*0x40, 0x40);
+
 		$gp_pix[$tid]['pal'] = $pal;
+		$w = $gp_pix[$tid]['w'];
+		$h = $gp_pix[$tid]['h'];
 
-		$pix['src']['w'] = $gp_pix[$tid]['w'];
-		$pix['src']['h'] = $gp_pix[$tid]['h'];
-		$pix['src']['pix'] = $gp_pix[$tid]['pix'];
-		$pix['src']['pal'] = $pal;
-		$pix['bgzero'] = 0;
+		$data[$i] = array();
+		$data[$i]['TexID'] = 0;
+		$data[$i]['_tmp_'] = $tid;
 
-		sectquad($pix, $dat, $ceil/2);
-		printf("$tid , $cid\n");
+		$data[$i]['DstQuad'] = array();
+		sectquad($data[$i]['DstQuad'], $dat);
 
-		copyquad($pix, 1);
 	} // for ( $i=0; $i < $no; $i++ )
 
-	$fn = sprintf("%s/%04d", $pfx, $k2);
-	savepix($fn, $pix, true);
+	$gp_json['Frame'][$k2] = $data;
 	return;
 }
 //////////////////////////////
 function save_texx( $pfx )
 {
-	global $gp_pix;
-	foreach ( $gp_pix as $k => $v )
+	global $gp_json, $gp_pix;
+
+	// atlas map texture
+	list($ind, $cw, $ch) = atlasmap($gp_pix);
+
+	$pix = COPYPIX_DEF();
+	$pix['rgba']['w'] = $cw;
+	$pix['rgba']['h'] = $ch;
+	$pix['rgba']['pix'] = canvpix($cw,$ch);
+
+	$gray = grayclut(16);
+	foreach ( $gp_pix as $img )
 	{
-		if ( ! isset($v['pal']) )
-			$v['pal'] = grayclut(16);
+		if ( ! isset( $img['pal'] ) || empty( $img['pal'] ) )
+			$img['pal'] = $gray;
+		$img['pal'][3] = ZERO;
 
-		// first color is alpha
-		$v['pal'][3] = ZERO;
+		$pix['src'] = $img;
+		$pix['dx'] = $img['x'];
+		$pix['dy'] = $img['y'];
 
-		$fn = sprintf("$pfx/src/%04d.clut", $k);
-		save_clutfile($fn, $v);
-	} // foreach ( $gp_pix as $k => $v )
+		if ( isset($img['cc']) )
+			copypix_fast($pix, 1);
+		else
+			copypix_fast($pix, 4);
+	} // foreach ( $files as $img )
+
+	savepix("$pfx.0", $pix);
+
+	// update gp_json[Frame][][SrcQuad]
+	foreach ( $gp_json['Frame'] as $fk => $fv )
+	{
+		foreach ( $fv as $fvk => $fvv )
+		{
+			$tmp = $fvv['_tmp_'];
+			unset( $gp_json['Frame'][$fk][$fvk]['_tmp_'] );
+
+			$img = $gp_pix[ $ind[$tmp] ];
+			$x = $img['x'];
+			$y = $img['y'];
+			$w = $img['w'] - 1;
+			$h = $img['h'] - 1;
+			$gp_json['Frame'][$fk][$fvk]['SrcQuad'] = array(
+				$x      , $y ,
+				$x + $w , $y ,
+				$x + $w , $y + $h ,
+				$x      , $y + $h ,
+			);
+		} // foreach ( $fv as $fvk => $fvv )
+	} // foreach ( $gp_json['Frame'] as $fk => $fv )
 	return;
 }
 
@@ -171,8 +173,8 @@ function load_texx( &$pak, $pfx )
 		$gp_pix[$d] = array(
 			'pix' => $pix,
 			'cc' => 16,
-			'w' => $w,
-			'h' => $h,
+			'w'  => $w,
+			'h'  => $h,
 			'id' => $d,
 		);
 
@@ -190,12 +192,11 @@ function sectspr( &$pak, $pfx )
 	{
 		// distort set def
 		// 0 1 2 3 4 5 6 7  8 9  a b
-		// - - - - - - - -  st   no
+		// - - - - - - - -  id   no
 		$id2 = str2big($pak[2]['d'], $i2+ 8, 2);
 		$no2 = str2big($pak[2]['d'], $i2+10, 2);
 		$k2  = $i2 / $pak[2]['k'];
 
-		printf("SPR %d = %x , %x\n", $k2, $id2, $no2);
 		sectpart($pak, $pfx, $k2, $id2, $no2);
 	}
 	return;
@@ -203,7 +204,8 @@ function sectspr( &$pak, $pfx )
 
 function sectanim( &$pak, $pfx )
 {
-	$anim = "";
+	global $gp_json;
+
 	$len = strlen($pak[4]['d']);
 	for ( $i4=0; $i4 < $len; $i4 += $pak[4]['k'] )
 	{
@@ -211,7 +213,6 @@ function sectanim( &$pak, $pfx )
 
 		$b0 = str2big($pak[4]['d'], $i4+0, 4);
 		$st = $b0 - $pak[3]['o'];
-		printf("anim_%d @ %6x - %6x = %6x\n", $k4, $b0, $pak[3]['o'], $st);
 
 		$ent = array();
 		// 0 1  2  3  4 5  6  7
@@ -235,15 +236,13 @@ function sectanim( &$pak, $pfx )
 			$b4 = str2big($pak[3]['d'], $bak+4, 2, true);
 			#$b6 = str2big($pak[3]['d'], $bak+6, 1);
 
-			$ent[] = sprintf("%d-%d", $b0 & 0x0fff, $b4);
+			$ent[] = array($b0 & 0x0fff, $b4);
 		} // while (1)
 
-		$anim .= sprintf("anim_%d = ", $k4);
-		$anim .= implode(' , ', $ent);
-		$anim .= "\n";
+		$name = sprintf("anim_%d", $k4);
+		$gp_json['Animation'][$name][0] = $ent;
 	} // for ( $i4=0; $i4 < $len; $i4 += $pak[4]['k'] )
 
-	save_file("$pfx/anim.txt", $anim);
 	return;
 }
 //////////////////////////////
@@ -276,8 +275,10 @@ function pakchr( &$pak, $pfx )
 		array('p' => 0x2c , 'k' =>  4), // 5
 		array('p' => 0x30 , 'k' =>  8), // 6
 	);
-	file2sect($pak, $sect, $pfx, array('str2big', 4), 0, true);
-	sect_sum($pak[1], 'pak[1][0]', 0); // byte code ref palette check
+	file2sect($pak, $sect, $pfx, array('str2big', 4), 0, false);
+
+	global $gp_json;
+	$gp_json = load_idtagfile('sat_pcrown');
 
 	load_texx($pak[0], $pfx);
 
@@ -285,6 +286,11 @@ function pakchr( &$pak, $pfx )
 	sectspr ($pak, $pfx);
 
 	save_texx($pfx);
+
+	// JSON_PRETTY_PRINT
+	// JSON_FORCE_OBJECT
+	if ( ! empty($gp_json) )
+		file_put_contents("$pfx.quad", json_encode($gp_json));
 	return;
 }
 //////////////////////////////
@@ -302,7 +308,10 @@ function pcrown( $fname )
 	$gp_pix = array();
 	$pal = load_file("$pfx.pal");
 	if ( ! empty($pal) )
+	{
+		echo "added CLUT @ $pfx.pal\n";
 		$gp_clut = $pal;
+	}
 
 	pakchr($pak, $pfx);
 	return;

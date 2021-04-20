@@ -47,6 +47,10 @@ _TXT;
 
 function set_license( $fname )
 {
+	if ( ! is_file($fname) )
+		return;
+	$orig = file_get_contents($fname);
+
 	global $LICENSE;
 
 	$skip = false;
@@ -72,7 +76,9 @@ function set_license( $fname )
 		}
 	} // foreach ( $file as $line )
 
-	file_put_contents($fname, $text);
+	if ( $orig !== $text )
+		file_put_contents($fname, $text);
+	return;
 }
 
 if ( $argc == 1 )  exit();

@@ -2,11 +2,11 @@
 /*
 [license]
 [/license]
- */
-/*
- * Special Thanks to:
- *   Zone File Technical Documentation by Nyxojaele (Dec 26, 2010)
- *   romhacking.net/documents/528/
+ *
+ * Special Thanks
+ *   Zone File Technical Documentation (Dec 26, 2010)
+ *   http://romhacking.net/documents/528/
+ *     Nyxojaele
  */
 require "common.inc";
 

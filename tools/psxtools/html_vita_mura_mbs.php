@@ -165,9 +165,6 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
 
-		if ( $gp_json['TexReq'] <= $s4 )
-			$gp_json['TexReq'] = $s4 + 1;
-
 		$data[$i1] = array();
 		if ( $s1 & 2 )
 			continue;
@@ -318,7 +315,6 @@ function head_e0( &$mbs, $pfx )
 
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_mura');
-	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "mura");
@@ -365,7 +361,6 @@ function head_e4( &$mbs, $pfx )
 
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_drag');
-	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "drag");
@@ -412,7 +407,6 @@ function head_e8( &$mbs, $pfx )
 
 	global $gp_json;
 	$gp_json = load_idtagfile('psp_gran');
-	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "gran");
@@ -474,7 +468,6 @@ function head_120( &$mbs, $pfx )
 
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_odin');
-	$gp_json['TexReq'] = 0;
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx, "odin");
