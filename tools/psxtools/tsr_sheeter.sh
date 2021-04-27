@@ -23,6 +23,10 @@ function thumbnail()
 		thumb.png
 }
 
+if [ "$(ls -1 *.clut | tail)" ]; then
+	rename  .clut  .rgba  *.clut  *.clut.bmp
+fi
+
 png=$(printf "%04d.rgba.bmp"  $1)
 [ -f "$png" ] || exit
 convert -verbose  "$png"  -trim -strip  thumb.png

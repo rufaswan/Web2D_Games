@@ -9,7 +9,7 @@ require "common-quad.inc";
 
 define("CANV_S", 0x200);
 define("SCALE", 1.0);
-//define("DRY_RUN", true);
+define("DRY_RUN", true);
 
 $gp_pix  = array();
 $gp_clut = array();
@@ -228,6 +228,12 @@ function sectanim( &$pak, $pfx )
 			$b7 = str2big($pak[3]['d'], $bak+7, 1);
 			if ( $b7 === 1 || $b7 === 2 )
 				break;
+			if ( $b7 === 5 )
+			{
+				$b2 = str2big($pak[3]['d'], $bak+2, 2);
+				$b4 = str2big($pak[3]['d'], $bak+4, 2);
+				php_notice("b7=5  %s  %4x  %4x", $pfx, $b2, $b4);
+			}
 			if ( $b7 !== 0 )
 				continue;
 
@@ -319,4 +325,6 @@ book select
 	VORE  slct.pak
 	VORE  chap.pak
 	VORE  obaa.pak
+
+e_ex  cid-x
 */

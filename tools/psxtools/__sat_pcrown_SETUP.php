@@ -11,123 +11,189 @@ define("PAL_ST_OFF", 0x98a8e); // 0x9ca8e - 0x4000
 define("PAL_ED_OFF", 0x9da8e); // 0xa1a8e - 0x4000
 
 //////////////////////////////
-/*
-	00    dodo.pak   dodoh.prg   10,-1  400
-	01    slim.pak   slime.prg   1c,-1
-	02    myco.pak    myco.prg   15,-1  6c0 , v2 540 , v3 580
-	03    zonb.pak  zombie.prg   40,41
-	04    gbln.pak  goblin.prg   24,2e
+// got these from *.prg files
+$gp_prg = <<<_PRG
+	00    dodo.pak   dodoh.prg   10  -1
+	01    slim.pak   slime.prg   1c  -1
+	02    myco.pak    myco.prg   15  -1  -1 f8  -1 fe
+	03    zonb.pak  zombie.prg   40  41  -1 46
+	04    gbln.pak  goblin.prg   24  2e
 	05 -
-	06    frog.pak    frog.prg   90,91  2400
-	07    kage.pak    kage.prg   50,51
-	08    bask.pak   basil.prg   a0,a8
-	09    drgn.pak  dragon.prg   70,6f  1bc0/1c00
-	0a    kumo.pak    kumo.prg   30,31
-	0b    nise.pak    nise.prg   66,67
-	0c    grif.pak  grifon.prg   36,37  9f40 , wing 9f00
-	0d    demn.pak   demon.prg   50,51
-	0e    head.pak  knight.prg   64,65
-	0f    adri.pak   egrad.prg   3a,3b
+	06    frog.pak    frog.prg   90  91  102 -1
+	07    kage.pak    kage.prg   50  51  -1 54  -1 53  77 77  76 76  50 59  5b 5b  75 5b  58 52  50 5a
+	08    bask.pak   basil.prg   a0  a8
+	09    drgn.pak  dragon.prg   70  6f  70 77  70 76  -1 73  70 71  -1 71  -1 75  77 76
+	0a    kumo.pak    kumo.prg   30  31
+	0b    nise.pak    nise.prg   66  67  66 -1
+	0c    grif.pak  grifon.prg   36  37  38 39
+	0d    demn.pak   demon.prg   50  51  -1 54  -1 53  77 77  76 76
+	0e    head.pak  knight.prg   64  65  -1 65  64 6b
+	0f    adri.pak   egrad.prg   3a  3b
 
-	10    gost.pak   ghost.prg   b7,b8
-	11    card.pak    card.prg   60,61
-	12    barb.pak    barb.prg   be,bf
-	13    grdp.pak   dgrad.prg    0,1
-	14    maou.pak    vorg.prg   8b,8c
-	15    aeri.pak  eeriel.prg   86,87
-	16    ryon.pak    ryon.prg   93,94
-	17    necr.pak   necro.prg  16f,16e
+	10    gost.pak   ghost.prg   b7  b8  b7 b7  b9 b9  ba ba
+	11    card.pak    card.prg   60  61  60 60
+	12    barb.pak    barb.prg   be  bf  -1 bf
+	13    grdp.pak   dgrad.prg    0   1  -1 6  69 -1
+	14    maou.pak    vorg.prg   8b  8c  8e 8f  8d 8e  8c 8d
+	15    aeri.pak  eeriel.prg   86  87  -1 87  3a 3b  89 89  64 64
+	16    ryon.pak    ryon.prg   93  94  95 95  96 96
+	17    necr.pak   necro.prg  16f 16e  16f -1  -1 16c  16e -1
 	18    ediv.pak  -
-	19    ning.pak  sirene.prg   9a,9b
-	1a    kent.pak    cent.prg  1dc,1dd
-	1b    wgod.pak    wgod.prg  1f4,1f5
-	1c    pira.pak  -            -1,1d0
-	1d    skul.pak    skul.prg   50,51
+	19    ning.pak  sirene.prg   9a  9b  9c 9d
+	1a    kent.pak    cent.prg  1dc 1dd
+	1b    wgod.pak    wgod.prg  1f4 1f5  -1 65  1f4 1fb  64 65
+	1c    pira.pak  -            -1 1d0  -1 1da  -1 1db
+	1d    skul.pak    skul.prg   50  51  -1 54  -1 53  77 77  76 76  50 59  5b 5b  75 5b  58 52  50 5a
 	1e    slmd.pak  -
 	1f    mete.pak  -
 
-	20    polt.pak    polt.prg  1b0,1b1
-	21   d_ice.pak    iced.prg   7f,7e
-	22    hind.pak    hind.prg   70,6f
-	23   blud2.pak    blud.prg   50,51
-	24 blud2_4.pak   blud2.prg   50,51
-	25    grdp.pak    grad.prg    0,1
+	20    polt.pak    polt.prg  1b0 1b1  1b0 1b2  1b1 1b3  1b0 1b5  1b0 1b4
+	21   d_ice.pak    iced.prg   7f  7e  7f a3  7f 76  -1 73  7f 4b  -1 71  -1 75  77 76
+	22    hind.pak    hind.prg   70  6f  70 77  70 76  -1 73  70 71  -1 71  -1 75  77 76
+	23   blud2.pak    blud.prg   50  51  -1 54  -1 53  77 77  76 76  50 59  5b 5b  75 5b  58 52  50 5a
+	24 blud2_4.pak   blud2.prg   50  51  -1 54  -1 53  77 77  76 76
+	25    grad.pak    grad.prg    0   1
 	26 -
 	27 -
 	28 -
 	29 -
 	2a -
 	2b -
-	2c    slav.pak  puppet.prg  1b9,1b9
+	2c    slav.pak  puppet.prg  1b9 1b9
 	2d -
-	2e    epro.pak    pros.prg  1c8,1c9
-	2f    ceye.pak    ceye.prg  1ba,1bb
+	2e    epro.pak    pros.prg  1c8 1c9
+	2f    ceye.pak    ceye.prg  1ba 1bb  1ba -1  69 -1
 
-	30    larv.pak    larv.prg  1f0,1f9
- */
-$gp_index = <<<_INDEX
-dodo , 10 , -1
-slim , 1c , -1
-myco , 15 , -1
-zonb , 40 , 41
-gbln , 24 , 2e
-frog , 90 , 91
-kage , 50 , 51
-bask , a0 , a8
-drgn , 70 , 6f
-kumo , 30 , 31
-nise , 66 , 67
-grif , 36 , 37
-demn , 50 , 51
-head , 64 , 65
-adri , 3a , 3b
-gost , b7 , b8
-card , 60 , 61
-barb , be , bf
-grdp , 0 , 1
-maou , 8b , 8c
-aeri , 86 , 87
-ryon , 93 , 94
-necr , 16f , 16e
-ning , 9a , 9b
-kent , 1dc , 1dd
-wgod , 1f4 , 1f5
-pira , -1 , 1d0
-skul , 50 , 51
-polt , 1b0 , 1b1
-d_ice , 7f , 7e
-hind , 70 , 6f
-blud2 , 50 , 51
-blud2_4 , 50 , 51
-slav , 1b9 , 1b9
-epro , 1c8 , 1c9
-ceye , 1ba , 1bb
-larv , 1f0 , 1f9
+	30    larv.pak    larv.prg  1f0 1f9  200 -1  -1 1f1  -1 1f6  -1 1f8  -1 1f7  -1 75  -1 f2  41 -1  5b 50  5b -1  71 77  -1 5b  1f1 -1  107 -1
 
-grad ,   0 ,   1
-edow , 160 , 161
-puro , 1c8 , 1c9
-port , 1c0 , 1c1
+_PRG;
+$gp_prg = explode("\n", $gp_prg);
+//////////////////////////////
+// manual discovered
+$gp_pak = <<<_PAK
+arel       80  -1
+ba_a       -1  e6
+baba       e3  -1
+comm       -1 106  -1 f2  -1 107  -1 f6  -1 f1  -1 102  -1 114  -1 115  -1 fe
+demo      172  -1  170 -1  176 -1  17b -1  174 -1
+ee2c       -1 243
+e_ex       -1 161
+evee       -1 248
+evje      1a4 1a5
+frogp1     -1  91
+g_ex       3a  3b
+goda      1f0 1f3
+gody      108  -1
+gost2p     b7  b7  b7 b8
+gradp5     -1   6
+hon1       8b  -1
+item        7  -1  -1 9  171 -1  5 -1  c -1
+jestelf2   -1  ff  cc -1
+jestelfa   -1  ff  cc -1  b5 -1  -1 b6
+jestonly   -1  ff  cc -1
+kdv3      203 203
+kent      1dc  -1  -1 1dd
+kg2c       -1 14e
+kizo       -1  22
+lasw2     203 203  247 -1
+loco       48  -1
+maid        9  -1
+mete       3d  3e
+mur1       c9  -1  ca -1  cb -1
+mur4      185  -1  186 -1  187 -1
+mur7      188  -1  189 -1  18a -1
+mur8      11e  -1
+mur9      182 182  183 183  184 184
+mura       d5  -1
+murc       23  -1
+nelt      203 203
+robe       d9  -1
+sagn      203 203
+seme      203 203
+sens       bb  -1  -1 bd
+sensonly   bb  -1
+skul_4     -1  54  -1 53  77 77  76 76
+solb       bf  bf  bd -1  bb -1
+soldd      -1  bc  bc -1  bc 0  108 -1
+tn1c      21c  -1
+vldn      203 203
+vlga      203 203
+volg       62  63
+yousei     80  -1
 
-obaa ,  4d ,  4e
-mur1 ,  c9 ,  ca
-_INDEX;
+#OVER#
+item        7   9
+jestelf2   cc  ff
+jestelfa   cc  ff
+jestonly   cc  ff
+kent      1dc 1dd
+sens       bb  bd
+soldd      bc  bc
+myco       15  f8
+frogp1     90  91
+skul_4     50  51
+
+edow  160 161
+puro  1c8 1c9
+port  1c0 1c1
+
+obaa     4d  4e
+drek     10  -1
+ediv    160 161
+ediv_1  160 161
+ediv_2  160 161
+ediv_3  160 161
+gbel     24  2e
+port1p  1c0 1c1
+port2p  1c0 1c1
+port4p  1c0 1c1
+prad    1c8 1c9
+purop2  1c8 1c9
+purop3  1c8 1c9
+purop5  1c8 1c9
+
+_PAK;
+$gp_pak = explode("\n", $gp_pak);
+//////////////////////////////
+$gp_index = array();
 
 function index_init()
 {
-	global $gp_index;
-	$ind = array();
-	foreach ( explode("\n", $gp_index) as $line )
+	global $gp_index, $gp_prg, $gp_pak;
+	$gp_index = array();
+
+	foreach ( $gp_prg as $line )
 	{
-		$line = preg_replace("|[\s]+|", '', $line);
+		$line = trim($line);
 		if ( empty($line) )
 			continue;
-		$id = explode(',', $line);
-		$name = array_shift($id);
-		arrayhex($id);
-		$ind[$name] = $id;
-	}
-	$gp_index = $ind;
+
+		$line = preg_split('|[\s]+|', $line);
+		if ( count($line) < 5 )
+			continue;
+
+		$pak = substr($line[1], 0, strrpos($line[1], '.'));
+		$c1 = hexdec($line[3]);
+		$c2 = hexdec($line[4]);
+		$gp_index[$pak] = array($c1,$c2);
+	} // foreach ( $gp_prg as $line )
+
+	foreach ( $gp_pak as $line )
+	{
+		$line = trim($line);
+		if ( empty($line) )
+			continue;
+
+		$line = preg_split('|[\s]+|', $line);
+		if ( count($line) < 3 )
+			continue;
+
+		$pak = $line[0];
+		$c1 = hexdec($line[1]);
+		$c2 = hexdec($line[2]);
+		$gp_index[$pak] = array($c1,$c2);
+	} // foreach ( $gp_pak as $line )
+
 	return;
 }
 
@@ -167,7 +233,12 @@ function pcrown( $fname )
 		$pal .= $file[$i+1] . $file[$i+0];
 
 	$file = pal555($pal);
-	file_put_contents("$fname.pal", $file);
+	$img = array(
+		'w' => 0x10,
+		'h' => strlen($file) >> 6,
+		'pix' => $file,
+	);
+	save_clutfile("$fname.pal.rgba", $img);
 
 	exp_pal($file);
 	return;
@@ -213,6 +284,9 @@ palette asm order
 	obaa.pak    1340 , cat 6040
 	chap.pak    6200
 	slct.pak    fire 1c80/1ec0/3c40 , fence 9080
+
+4790-6792 [0 to 2000] ???
+
 
 select color bank
 	21a80  obaa

@@ -38,16 +38,21 @@ require "common.inc";
 function loopsect( &$mrg, $st, $ed, $bk, $callback )
 {
 	printf("== loopsect( %x , %x , %x )\n", $st, $ed, $bk);
-	if ( $bk == 0 || $callback == "" )
+	if ( $bk == 0 || ! function_exists($callback) )
 		return;
+
+	// 0x800 === 1 << 11
+	$id = 0;
 	while ( $st < $ed )
 	{
-		$meta = substr($mrg, $st*0x800, $bk*0x800);
-		//$callback($meta);
-		$fn = sprintf("mrg/%s/%x.bin", $callback, $st);
+		$meta = substr($mrg, $st<<11, $bk<<11);
+		$callback($meta);
+
+		$fn = sprintf("mrg/%s/%04d.meta", $callback, $id);
 		save_file($fn, $meta);
+
 		$st += $bk;
-		return;
+		$id++;
 	}
 	return;
 }
