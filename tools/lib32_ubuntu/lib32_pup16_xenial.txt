@@ -28,6 +28,8 @@ pool/main/c/colord/libcolord2_1.2.12-1ubuntu1_i386.deb
 pool/main/e/e2fsprogs/libcomerr2_1.42.13-1ubuntu1_i386.deb
 pool/universe/c/crystalhd/libcrystalhd3_0.0~git20110715.fdd2f19-11build1_i386.deb
 pool/main/c/cups/libcups2_2.1.3-4_i386.deb
+pool/main/c/curl/libcurl3-gnutls_7.47.0-1ubuntu2_i386.deb
+pool/main/c/curl/libcurl3-nss_7.47.0-1ubuntu2_i386.deb
 pool/main/c/curl/libcurl3_7.47.0-1ubuntu2_i386.deb
 pool/main/libd/libdatrie/libdatrie1_0.2.10-2_i386.deb
 pool/main/d/db5.3/libdb5.3_5.3.28-11_i386.deb
@@ -44,6 +46,7 @@ pool/main/e/elfutils/libelf1_0.165-3ubuntu1_i386.deb
 pool/main/libe/libepoxy/libepoxy0_1.3.1-1_i386.deb
 pool/main/libe/libexif/libexif12_0.6.21-2_i386.deb
 pool/main/e/expat/libexpat1_2.1.0-7_i386.deb
+pool/universe/f/faad2/libfaad2_2.8.0~cvs20150510-1_i386.deb
 pool/main/libf/libffi/libffi6_3.2.1-4_i386.deb
 pool/main/f/flac/libflac8_1.3.1-4_i386.deb
 pool/universe/f/fluidsynth/libfluidsynth1_1.1.6-3_i386.deb
@@ -91,6 +94,7 @@ pool/main/h/heimdal/libhx509-5-heimdal_1.7~git20150920+dfsg-4ubuntu1_i386.deb
 pool/main/libi/libice/libice6_1.0.9-1_i386.deb
 pool/main/i/icu/libicu55_55.1-7_i386.deb
 pool/main/libi/libidn/libidn11_1.32-3ubuntu1_i386.deb
+pool/universe/libi/libinstpatch/libinstpatch-1.0-0_1.0.0-4_i386.deb
 pool/universe/j/jack-audio-connection-kit/libjack0_0.124.1+20140122git5013bed0-3build2_i386.deb
 pool/main/j/jbigkit/libjbig0_2.1-3.1_i386.deb
 pool/main/libj/libjpeg-turbo/libjpeg-turbo8_1.4.2-0ubuntu3_i386.deb
@@ -116,6 +120,8 @@ pool/main/libm/libmng/libmng2_2.0.2-0ubuntu3_i386.deb
 pool/universe/libm/libmodplug/libmodplug1_0.8.8.5-2_i386.deb
 pool/universe/l/lame/libmp3lame0_3.99.5+repack1-9build1_i386.deb
 pool/universe/libm/libmpc/libmpcdec6_0.1~r459-4.1build1_i386.deb
+pool/universe/m/mpeg2dec/libmpeg2-4_0.5.1-7_i386.deb
+pool/universe/libm/libmpeg3/libmpeg3-2_1.8.dfsg-2_i386.deb
 pool/universe/m/mpg123/libmpg123-0_1.22.4-1_i386.deb
 pool/main/n/ncurses/libncurses5_6.0+20160213-1ubuntu1_i386.deb
 pool/main/n/ncurses/libncursesw5_6.0+20160213-1ubuntu1_i386.deb
@@ -154,6 +160,7 @@ pool/main/q/qt4-x11/libqt4-xmlpatterns_4.8.7+dfsg-5ubuntu2_i386.deb
 pool/main/q/qt4-x11/libqtcore4_4.8.7+dfsg-5ubuntu2_i386.deb
 pool/main/q/qt4-x11/libqtdbus4_4.8.7+dfsg-5ubuntu2_i386.deb
 pool/main/q/qt4-x11/libqtgui4_4.8.7+dfsg-5ubuntu2_i386.deb
+pool/main/r/readline5/libreadline5_5.2+dfsg-3build1_i386.deb
 pool/main/r/readline6/libreadline6_6.3-8ubuntu2_i386.deb
 pool/main/libr/librest/librest-0.7-0_0.7.93-1_i386.deb
 pool/main/h/heimdal/libroken18-heimdal_1.7~git20150920+dfsg-4ubuntu1_i386.deb
@@ -189,6 +196,7 @@ pool/universe/s/soundtouch/libsoundtouch1_1.9.2-2_i386.deb
 pool/main/libs/libsoup2.4/libsoup-gnome2.4-1_2.52.2-1_i386.deb
 pool/main/libs/libsoup2.4/libsoup2.4-1_2.52.2-1_i386.deb
 pool/universe/libs/libsoxr/libsoxr0_0.1.2-1_i386.deb
+pool/main/s/speech-dispatcher/libspeechd2_0.8.3-1ubuntu3_i386.deb
 pool/main/s/speex/libspeex1_1.2~rc1.2-1ubuntu1_i386.deb
 pool/main/s/sqlite3/libsqlite3-0_3.11.0-1ubuntu1_i386.deb
 pool/main/libs/libssh/libssh-gcrypt-4_0.6.3-4.3_i386.deb

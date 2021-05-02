@@ -8,8 +8,6 @@ require "common-guest.inc";
 require "common-atlas.inc";
 require "html.inc";
 
-php_req_extension("json_encode", "json");
-
 $gp_json = array();
 $gp_pix  = array();
 $gp_clut = array();
@@ -286,11 +284,7 @@ function pakchr( &$pak, $pfx )
 	sectspr ($pak, $pfx);
 
 	save_texx($pfx);
-
-	// JSON_PRETTY_PRINT
-	// JSON_FORCE_OBJECT
-	if ( ! empty($gp_json) )
-		file_put_contents("$pfx.quad", json_encode($gp_json));
+	save_quadfile($pfx);
 	return;
 }
 //////////////////////////////

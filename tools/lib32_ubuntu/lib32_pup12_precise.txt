@@ -21,6 +21,8 @@ pool/main/c/cairo/libcairo-gobject2_1.10.2-6.1ubuntu2_i386.deb
 pool/main/c/cairo/libcairo2_1.10.2-6.1ubuntu2_i386.deb
 pool/main/e/e2fsprogs/libcomerr2_1.42-1ubuntu2_i386.deb
 pool/main/c/cups/libcups2_1.5.2-9ubuntu1_i386.deb
+pool/main/c/curl/libcurl3-gnutls_7.22.0-3ubuntu4_i386.deb
+pool/main/c/curl/libcurl3-nss_7.22.0-3ubuntu4_i386.deb
 pool/main/c/curl/libcurl3_7.22.0-3ubuntu4_i386.deb
 pool/main/libd/libdatrie/libdatrie1_0.2.5-3_i386.deb
 pool/main/d/db4.8/libdb4.8_4.8.30-11ubuntu1_i386.deb
@@ -34,8 +36,10 @@ pool/main/libd/libdrm/libdrm2_2.4.32-1ubuntu1_i386.deb
 pool/main/m/mesa/libegl1-mesa_8.0.2-0ubuntu3_i386.deb
 pool/main/libe/libexif/libexif12_0.6.20-2_i386.deb
 pool/main/e/expat/libexpat1_2.0.1-7.2ubuntu1_i386.deb
+pool/universe/f/faad2/libfaad2_2.7-7_i386.deb
 pool/main/libf/libffi/libffi6_3.0.11~rc1-5_i386.deb
 pool/main/f/flac/libflac8_1.2.1-6_i386.deb
+pool/universe/f/fluidsynth/libfluidsynth1_1.1.5-2_i386.deb
 pool/main/f/fontconfig/libfontconfig1_2.8.0-3ubuntu9_i386.deb
 pool/main/f/freetype/libfreetype6_2.4.8-1ubuntu2_i386.deb
 pool/main/g/gtk+2.0/libgail-common_2.24.10-0ubuntu6_i386.deb
@@ -73,9 +77,11 @@ pool/universe/g/gtkglext/libgtkglext1_1.2.0-2fakesync1_i386.deb
 pool/main/h/heimdal/libhcrypto4-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/h/heimdal/libheimbase1-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/h/heimdal/libheimntlm0-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
+pool/main/n/nettle/libhogweed2_2.4-1_i386.deb
 pool/main/h/heimdal/libhx509-5-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/libi/libice/libice6_1.0.7-2build1_i386.deb
 pool/main/libi/libidn/libidn11_1.23-2_i386.deb
+pool/universe/libi/libinstpatch/libinstpatch-1.0-0_1.0.0-2_i386.deb
 pool/main/j/jack-audio-connection-kit/libjack0_0.121.0+svn4538-3ubuntu1_i386.deb
 pool/main/j/jasper/libjasper1_1.900.1-13_i386.deb
 pool/main/libj/libjpeg-turbo/libjpeg-turbo8_1.1.90+svn733-0ubuntu4_i386.deb
@@ -95,9 +101,12 @@ pool/main/x/xz-utils/liblzma5_5.1.1alpha+20110809-3_i386.deb
 pool/main/libm/libmad/libmad0_0.15.1b-7ubuntu1_i386.deb
 pool/universe/libm/libmikmod/libmikmod2_3.1.12-2_i386.deb
 pool/main/libm/libmng/libmng1_1.0.10-3_i386.deb
+pool/universe/m/mpeg2dec/libmpeg2-4_0.4.1-3_i386.deb
+pool/universe/libm/libmpeg3/libmpeg3-1_1.5.4-5ubuntu1_i386.deb
 pool/universe/m/mpg123/libmpg123-0_1.12.1-3.2ubuntu1_i386.deb
 pool/main/n/ncurses/libncurses5_5.9-4_i386.deb
 pool/main/n/ncurses/libncursesw5_5.9-4_i386.deb
+pool/main/n/nettle/libnettle4_2.4-1_i386.deb
 pool/main/libn/libnotify/libnotify4_0.7.5-1_i386.deb
 pool/main/n/nspr/libnspr4_4.8.9-1ubuntu2_i386.deb
 pool/main/n/nss/libnss3_3.13.1.with.ckbi.1.88-1ubuntu6_i386.deb
@@ -123,6 +132,8 @@ pool/main/q/qt4-x11/libqt4-xml_4.8.1-0ubuntu4_i386.deb
 pool/main/q/qt4-x11/libqt4-xmlpatterns_4.8.1-0ubuntu4_i386.deb
 pool/main/q/qt4-x11/libqtcore4_4.8.1-0ubuntu4_i386.deb
 pool/main/q/qt4-x11/libqtgui4_4.8.1-0ubuntu4_i386.deb
+pool/main/r/readline5/libreadline5_5.2-11_i386.deb
+pool/main/r/readline6/libreadline6_6.2-8_i386.deb
 pool/main/h/heimdal/libroken18-heimdal_1.6~git20120311.dfsg.1-2_i386.deb
 pool/main/r/rtmpdump/librtmp0_2.4~20110711.gitc28f1bab-1_i386.deb
 pool/main/c/cyrus-sasl2/libsasl2-2_2.1.25.dfsg1-3_i386.deb
@@ -146,6 +157,7 @@ pool/universe/s/smpeg/libsmpeg0_0.4.5+cvs20030824-4_i386.deb
 pool/main/libs/libsndfile/libsndfile1_1.0.25-4_i386.deb
 pool/universe/libs/libsoil/libsoil1_1.07~20080707.dfsg-2_i386.deb
 pool/universe/s/soundtouch/libsoundtouch0_1.6.0-2build1_i386.deb
+pool/main/s/speech-dispatcher/libspeechd2_0.7.1-6ubuntu3_i386.deb
 pool/main/s/speex/libspeex1_1.2~rc1-3ubuntu2_i386.deb
 pool/main/s/sqlite3/libsqlite3-0_3.7.9-2ubuntu1_i386.deb
 pool/main/o/openssl/libssl1.0.0_1.0.1-4ubuntu3_i386.deb

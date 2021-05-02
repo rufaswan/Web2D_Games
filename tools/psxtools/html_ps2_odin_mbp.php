@@ -7,8 +7,6 @@ require "common.inc";
 require "common-guest.inc";
 require "html.inc";
 
-php_req_extension("json_encode", "json");
-
 $gp_json = array();
 $gp_tag  = '';
 
@@ -239,10 +237,7 @@ function odin( $fname )
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);
 
-	// JSON_PRETTY_PRINT
-	// JSON_FORCE_OBJECT
-	if ( ! empty($gp_json) )
-		file_put_contents("$fname.quad", json_encode($gp_json));
+	save_quadfile($fname);
 	return;
 }
 
