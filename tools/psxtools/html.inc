@@ -3,7 +3,6 @@
 [license]
 [/license]
  */
-
 php_req_extension("json_encode", "json");
 
 function load_idtagfile( $pfx )

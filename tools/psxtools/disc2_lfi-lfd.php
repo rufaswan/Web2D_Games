@@ -30,8 +30,8 @@ function disc2( $fname )
 		$fn = strtolower( rtrim($fn, ZERO) );
 		printf("%8x , %8x , %s\n", $ps, $sz, $fn);
 
-		fseek($fp, $ps, SEEK_SET);
-		save_file("$dir/$fn", fread($fp, $sz));
+		$sub = fp2str($fp, $ps, $sz);
+		save_file("$dir/$fn", $sub);
 	}
 	return;
 }

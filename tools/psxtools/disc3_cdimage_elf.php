@@ -16,14 +16,11 @@ function disc3( $fname )
 
 	$dir = str_replace('.', '_', $fname);
 
-	fseek($fp, 0, SEEK_SET);
-	$head = fread($fp, 0x10);
+	$head = fp2str($fp, 0, 0x10);
 
 	$cnt = str2int($head, 0, 4);
 	$siz = str2int($head, 8, 4);
-
-	fseek($fp, 0, SEEK_SET);
-	$head = fread($fp, $siz);
+	$head = fp2str($fp, 0, $siz);
 
 	for ( $i=0; $i < $cnt; $i++ )
 	{
@@ -33,8 +30,8 @@ function disc3( $fname )
 		$fn = sprintf("%s/%04d.bin", $dir, $i);
 		printf("%6x , %8x , %8x , %s\n", $lba, $lba*0x800, $siz, $fn);
 
-		fseek($fp, $lba*0x800, SEEK_SET);
-		save_file($fn, fread($fp, $siz));
+		$sub = fp2str($fp, $lba*0x800, $siz);
+		save_file($fn, $sub);
 	}
 	return;
 }

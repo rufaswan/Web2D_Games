@@ -1,51 +1,3 @@
-PlayStation ONE EXE header
-	00  8  "PS-X EXE"
-	10  4  mips start()
-	18  4  mips ram
-	1c  4  mips size
-	30  4  init stack
-	# RAM 80000000-80200000 (2 MB , first 10000 = bios)
-
-Saturn ISO boot header
-	00   16  "SEGA SEGASATURN"
-	10   16  "SEGA TP T-" + version
-	20   10  Game ID
-	2a    6  Game Version
-	30    8  yyyymmdd
-	38    8  "CD-1/1"
-	40   16  "J"
-	50   16  "J"
-	60  128  Game Title
-	e0    4  sh-4 start()
-	e8    4  init stack master
-	ec    4  init stack slave
-	f0    4  sh-4 ram
-	f4    4  sh-4 size
-	# RAM 6002000-6100000 (~1 MB)
-
-Nintendo DS ROM header
-	00  12  Game Title
-	0c   4  Game ID (NTR-xxxx)
-	20   4  arm9.bin offset
-	24   4  arm9 start()
-	28   4  arm9 ram
-	2c   4  arm9.bin size
-	30   4  arm7.bin offset
-	34   4  arm7 start()
-	38   4  arm7 ram
-	3c   4  arm7.bin size
-	40   4  file name table offset
-	44   4  file name table size
-	48   4  file allocation table offset
-	4c   4  file allocation table size
-	50   4  y9.bin offset
-	54   4  y9.bin size
-	58   4  y7.bin offset
-	5c   4  y7.bin size
-	80   4  ROM size
-	84   4  header.bin size
-	# RAM 2000000-24000000 (4 MB)
-
 info.sonicretro.org/SPG:Solid_Tiles
 
 	The Mega Drive games use angles in hex,
@@ -200,13 +152,13 @@ stackoverflow.com/questions/299267/image-scaling-and-rotating-in-c-c
 		sx,sy = M(dx,dy)
 
 	Mapping for a resize is easy:
-		x' = x * (width' / width)
+		x' = x * ( width' /  width)
 		y' = y * (height' / height)
 	Mapping for rotation is only a little bit harder.
 		x' = x * cos(a) + y * sin(a)
 		y' = y * cos(a) - x * sin(a)
 
-https://stackoverflow.com/questions/50255282/webgl2-has-anti-alias-automatically-built-in
+stackoverflow.com/questions/50255282/webgl2-has-anti-alias-automatically-built-in
 
 	No, it's only a request, not a requirement.
 	WebGL2 allows you to create antialiased renderbuffers with renderbufferStorageMultisample
@@ -215,18 +167,23 @@ https://stackoverflow.com/questions/50255282/webgl2-has-anti-alias-automatically
 	Rendering to an antialiased framebuffer and then blitting that to the canvas
 	is a way to force antialiasing, at least in WebGL2.
 
-https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
+stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
 
 	Took me all afternoon to figure out on my system under chrome settings
 	I didn't have checked "allow hardware acceleration when available",
 	and viola, antialiasing is now working.
 
-https://askubuntu.com/questions/40024/how-do-i-delete-a-directory-from-a-zip-file-using-a-bash-script
+askubuntu.com/questions/40024/how-do-i-delete-a-directory-from-a-zip-file-using-a-bash-script
 
 	If you want to delete all files from a specific dir, you could do this:
 		zip --delete file.zip "assets/*"  "*.ext"
 
-https://stackoverflow.com/questions/8985588/webgl-canvas-coordinates-to-3d-coords
+sevenzip.osdn.jp/chm/cmdline/commands/delete.htm
+
+deletes *.bak files from archive archive.zip.
+	7z d archive.zip *.bak -r
+
+stackoverflow.com/questions/8985588/webgl-canvas-coordinates-to-3d-coords
 
 	Basically if you want to draw in 2D use a 2D shader, don't try messing with a 3D shader.
 	WebGL draws in clipspace so all you need to do is convert from pixels to clip space.
@@ -246,7 +203,7 @@ https://stackoverflow.com/questions/8985588/webgl-canvas-coordinates-to-3d-coord
 			gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
 		}
 
-https://stackoverflow.com/questions/30445467/webgl-vs-css3d-for-large-scatter-plot-of-images
+stackoverflow.com/questions/30445467/webgl-vs-css3d-for-large-scatter-plot-of-images
 
 	The way game engines run fast is BY OPTIMIZING WHAT THEY DRAW!
 	They draw as little as possible.
@@ -254,7 +211,7 @@ https://stackoverflow.com/questions/30445467/webgl-vs-css3d-for-large-scatter-pl
 	they combine meshes into large meshes.
 	They get their draw calls down to a < 5000, often under 1000.
 
-https://forums.codeguru.com/showthread.php?259953-Code-to-create-Color-Gradient-programatically
+forums.codeguru.com/showthread.php?259953-Code-to-create-Color-Gradient-programatically
 
 	GRADIENT_FILL_TRIANGLE
 	The triangle's vertices are defined as V1, V2, and V3.
@@ -262,22 +219,22 @@ https://forums.codeguru.com/showthread.php?259953-Code-to-create-Color-Gradient-
 	Draw lines from P to V1, V2, and V3 to form three sub-triangles.
 	Let ai denote the area of the [sub-triangle] opposite Vi for i=1,2,3.
 	The color at point P is computed as:
-		RedP   = (RedV1   * a1 + RedV2   * a2 + RedV3   * a3) / (a1+a2+a3)
+		  RedP = (  RedV1 * a1 +   RedV2 * a2 +   RedV3 * a3) / (a1+a2+a3)
 		GreenP = (GreenV1 * a1 + GreenV2 * a2 + GreenV3 * a3) / (a1+a2+a3)
-		BlueP  = (BlueV1  * a1 + BlueV2  * a2 + BlueV3  * a3) / (a1+a2+a3)
+		 BlueP = ( BlueV1 * a1 +  BlueV2 * a2 +  BlueV3 * a3) / (a1+a2+a3)
 
 	GRADIENT_FILL_RECT_H
 	The rectangle's top-left point is V1 and the bottom-right point is V2.
 	Point P is inside the rectangle.
 	The color at point P is given by:
-		RedP   = (RedV2   * (Px-V1x) + RedV1   * (V2x-Px)) / (V2x-V1x)
+		  RedP = (  RedV2 * (Px-V1x) +   RedV1 * (V2x-Px)) / (V2x-V1x)
 		GreenP = (GreenV2 * (Px-V1x) + GreenV1 * (V2x-Px)) / (V2x-V1x)
-		BlueP  = (BlueV2  * (Px-V1x) + BlueV1  * (V2x-Px)) / (V2x-V1x)
+		 BlueP = ( BlueV2 * (Px-V1x) +  BlueV1 * (V2x-Px)) / (V2x-V1x)
 
 	GRADIENT_FILL_RECT_V
 	The rectangle's top-left point is V1 and the bottom-right point is V2.
 	Point P is inside the rectangle.
 	The color at point P is given by:
-		RedP   = (RedV2   * (Py-V1y) + RedV1   * (V2y-Py)) / (V2y-V1y)
+		  RedP = (  RedV2 * (Py-V1y) +   RedV1 * (V2y-Py)) / (V2y-V1y)
 		GreenP = (GreenV2 * (Py-V1y) + GreenV1 * (V2y-Py)) / (V2y-V1y)
-		BlueP  = (BlueV2  * (Py-V1y) + BlueV1  * (V2y-Py)) / (V2y-V1y)
+		 BlueP = ( BlueV2 * (Py-V1y) +  BlueV1 * (V2y-Py)) / (V2y-V1y)

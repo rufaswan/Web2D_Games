@@ -6,8 +6,7 @@ function tm2decrypt($fp, $off, $end)
 	$siz = $end - $off;
 	if ( $siz < 1 )  return '';
 
-	fseek($fp, $off, SEEK_SET);
-	$sub = fread($fp, $siz);
+	$sub = fp2str($fp, $off, $siz);
 	for ( $i=0; $i < $siz; $i++ )
 	{
 		$b = ord( $sub[$i] );
