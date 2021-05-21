@@ -19,3 +19,10 @@ php_req_extension("zlib_decode", "zlib");
 //   -1 = auto (same as level 6)
 //    0 = store
 //    9 = best
+// zip file methods
+//  unzip -v ZIPFILE
+//  zipinfo  ZIPFILE
+//  0   = Stored
+//  1-2 = Defl:F
+//  3-7 = Defl:N
+//  8-9 = Defl:X

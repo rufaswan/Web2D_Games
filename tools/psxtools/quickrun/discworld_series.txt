@@ -1,0 +1,507 @@
+===================
+=== Discworld 1 ===
+===================
+
+=====
+Act 1
+=====
+Unseen University
+	Rincewind's Room
+		get Pouch
+		use Broom , get Luggage
+	Arch Chancellor's Room
+	# use Book to confirm materials
+		use [E]Staff
+		use [E]Magic Coil/Hair Roller
+		use [E]Imp
+		use [E]Metal Container/Frying Pan
+		use [E]Dragon Breath
+	Closet
+		get Broom
+		use Matches , get Packet/Starch
+	Lirary
+		use Banana , get Book
+	Dining Room
+		use Broom , get [E]Staff
+	Garden Path
+		get Bag/Fertilizer
+		use Ladder
+		use Butterfly Net
+	Kitchen
+		get Banana
+		get [E]Frying Pan
+Palace
+	get Mirror
+Broken Drum
+	get Tankard , get Matches
+	get Glass
+	talk Tankard/Beer
+Street
+	get String , get Toys/Donkey
+	get Picture(Octopus)
+	use Pickpocket , get [E]Hair Roller
+Square
+	get Tomato , use Tomato
+	get Tomato , get Worm
+	talk Bloomers(P)
+	get Butterfly Net
+Alley
+	get Ladder
+	use Mirror , get [E]Dragon Breath
+	use Corn
+	use String+Worm , get [E]Imp
+Livery Stable
+	get Sack/Corn
+=====
+Act 2
+=====
+Unseen University
+	Library
+		use Treasure * 4 , get Gold Banana
+		use Gold Banana
+		get Dragon Book , use Dragon+Custard Book
+	Dining Room
+		use Drumstick
+	Garden Path
+		get Garbage Can
+	Kitchen
+		get Corn Flour
+	Garden
+		get Bag/Prunes
+Palace
+	use Ink Blot * 2
+	use Garbage Can
+	use Bubble Bath , get [E]Cap
+Square
+	talk Donut
+	use Donut
+	get Ink Blot * 2
+	get Note
+	use Bloomers(Y) , get Bra
+	talk Carpet , get Custard Book
+Street
+	get Robe
+	use Note , get [E]Tooth
+	get Toys/Doll
+	use String , get Octopus
+	use Octopus , use Pot(Custard) , get Pot
+	use Prunes , get [E]Belt
+Alley
+	use Doll
+	use Keg , use String , use Matches , get [E]Brush
+Shades
+	use Handshake , get [E]Trowel
+	use Ladder+Bra , use Feather , get [E]Skeleton Key
+Barn
+	get Screwdriver
+	use [E]Belt
+	use [E]Trowel
+	use [E]Brush
+	use [E]Cap
+	use [E]Tooth
+	use [E]Skeleton Key
+Inn
+	get Sheet , get Bubble Bath
+City Gate
+	get Fireworks , get Keg
+	use Pass
+Mountain Pass
+	get Feather , get Egg
+Dark Wood
+	use Pot , get Pot(Custard)
+Edge of World
+	get Lamp
+	use Butterfly Net ,  get Coconut
+L-Drum
+	use Ladder , get Shingle/Drumstick
+L-Street
+	get Pot
+	use Butterfly
+L-Shades
+	use Coconut+Screwdriver , use Egg , use Cornflour , get Bloomers(Y)
+L-Park
+	use Frog
+	use Butterfly Net , get Butterfly
+L-Hideout
+	use Glass , use Robe
+L-Inn
+	use Sheet
+	use Sheet , get Gate Pass
+=====
+Act 3
+=====
+Unseen University
+	Arch Chancellor's Room
+		get Hat
+	Library
+	# pixel-perfect , right-most lower shelf
+		get [E]Magic Book/Spell
+	Dining Room
+		use Snake+Starch+Fertilizer , get Broom Handle
+	Kitchen
+		get Spatula
+Palace
+	use Leech/Paper Bag
+	get Brush
+	get Bone
+	use Worm , get Rat , get Imp
+	use Crank , get Sword
+Broken Drum
+	get Glass/Worm
+	use Nail+Mallet , use Picture(Octopus)+Picture
+	talk Tankard(Beer) , use Tankard(Beer)+Truth Potion
+	use Tankard , get Tankard(Wine)
+Square
+	talk Paper Bag , get Leeches
+	get Egg , get Snake
+	use Scissors , get [E]Moustache
+	use Appointment Book , get Appointment Book(milkmaid)
+	use Knife , get Rubber Belt
+Street
+	get Scissors , get Little/Appointment Book
+	get Toys/Dinosaur
+	use Bone , get Bone(glued)
+Alley
+	get Box/Impstamatic
+	use Knife , get Ladder(2)
+	use Rubber Belt , get [E]Birthmark
+Livery Stable
+	use Brush+Pot(Frothy)
+Shades
+	use Spatula , get [E]Soot
+	use Ladder+Bra , get Knife
+Hide-out
+	get Custard Tart
+Dragon Santuary
+	get Leash , get Nail , get Rosette
+Inn
+	use Pot(Water) , get Pot(Frothy)
+	use Screwdriver
+	use Bone(glued) , get Whistle
+	use Parrot , use Whistle
+Woods
+	use Pot , get Pot(Water)
+	use Screwdriver , get Crank
+	use Appointment Book(milkmaid)
+Gorge
+	use Carpet
+	get Bandana/Blindfold
+	use Leash , use Blindfold , use Pouch , get [E]Eye of Offler
+Mines
+	use Sword
+	use Tankard(Wine) , use [E]Sword(ting)
+Dark Wood
+	use Custard Tart , get Truth Potion
+	get Mallet
+	use Rosette , use Impstamatic+Imp , get Picture
+Edge of World
+	use Whistle , use Fireworks+Matches , use Butterfly Net+Broom Handle , get Polly/Parrot
+	use Hat , get Glint/Whistle
+=====
+Act 4
+=====
+Square
+	get Key
+Dragon Santuary
+	use Key , get Mambo/M16
+POWERUP (use M16 , any 3)
+	Fireworks + Matches
+	Palace
+	Mines
+	Dark Wood
+use Custard Tart
+
+===================
+=== Discworld 2 ===
+===================
+
+=====
+Act 1
+=====
+Unseen University
+	Dining Hall
+	# use Rite of AshkEnte to confirm materials
+		use [E]Teeth+Mousie!!!+Test Tube
+		use [E]Glitter Dust
+		use [E]Mallet * 3
+		use [E]Dribbly Candles
+		use [E]Vile Smell
+	High Energy Facility
+		get Magnet , get Bellows , get Test Tube
+		use Haunted Brick , get Ectoplasm
+	Garden
+		use Magnet , get [E]Boots
+		use Tankard+Corn , get Rooster
+		use Chili , use Brochure
+		use Petticoat , use Incense+Matches , get Dribbly Beeswax
+		use Petticoat , use Incense+Matches , use Pot , get Honey Pot
+		use Hammerhead Shark , get [E]Mallet
+		use Flamingo , get [E]Mallet
+		use Wading Bird , get [E]Mallet
+Cemetery
+	get Pick
+	use Ladder , get Teeth
+Shades
+	Street
+		get Saw , get Pot
+		use Rooster , get Rooster(Wake)
+		use Genie Bottle+Boots , get [E]Vile Smell
+	Mrs Cake's
+		get Ironing Board , get Petticoat , get Scissors
+		use Saw , get Wooden Arm
+		use Ectoplasm , get Genie Bottle
+	Mortuary
+		get Knife
+	Troll's Head Pub
+		talk Ladder
+		talk Tankard , get Matches
+		use Rooster(Wake)
+	Grimlets
+		talk Mousie!!! , get Chili
+Plaza
+	talk Brochure , talk Corn
+Fools' Guild
+	get Brick
+	use Brick , get Haunted Brick
+	get Hooter
+	use Bellows , get [E]Glitter Dust
+Shop
+	get Flamingo , get Stuffed Fish , get Incense
+	use Dribbly Beeswax , get [E]Dribbly Candles
+Docks
+	use Stuffed Fish , get Stunned/Wading Bird
+	use Knife , get Hammerhead Shark
+=====
+Act 2
+=====
+Unseen University
+	Dining Hall
+		use Picnic Basket , get Picnic Basket(Food)
+		talk Librarian
+	High Energy Facility
+		use Picnic Basket(Ant) , use Honey Pot , use Wire+Plans , get Answer
+	Garden
+		get Hoops
+		use Stake , get Suffrajester
+Shades
+	Street
+		use Certification
+	Mortuary
+		use Wooden Arm , use Ice , get Certification
+	Undead Brotherhood
+		use Certification , use Film(sheep)
+Fools' Guild
+	use Pick , get Ice
+Docks
+	use Weight+Sticker , get [E]Snow Storms
+Forest
+	use Hooter+Glue+Horse Suit+Librarian , use Camera , get Film(elf)
+Holy Wood
+	Sets
+		get Weight , get Sticker , get Camera
+		use Stick , get Boomerang
+		use Boomerang , get Imp
+	Dressing
+		use Ring , get Horse Suit
+	Makeup
+		use Film(elf) , get Film(elf2)
+	Camera
+		talk Key
+		use Candy Rock , use Rope , get Tooth
+		use Key , use Tooth , get [E]Babe
+		use [E]Jingle
+		use [E]Babe
+		use [E]Snow Storms
+		use [E]Band
+Djelibeybi
+	get Poster/Plans
+	get Stake
+	use Hoops , get Wire
+	use Suffrajester , get Candy Rock , get Rope
+Pyramid
+	get Pot/Glue
+	use Scissors , get Bandages
+Hill
+	use Knife , get [E]Band
+Oasis
+	use Bandages+Wooden Arm , get Rotten Arm
+	use Rotten Arm , get Ring
+Cartwheel
+	use Answer , get [E]Jingle
+XXXX
+	talk Stick , talk Picnic Basket
+	use Ironing Board+Saw+Glue , use Imp+Camera , get Film(sheep)
+	use Picnic Basket(Food) , get Picnic Basket(Ant)
+Projector Room
+	get Reel
+	use Reel , use Film(elf2) , get Reel2
+	use Reel2
+=====
+Act 3
+=====
+Field
+	use Toy Cart+[E]Scythe
+Stable
+	get Rope
+	use Sugar Bowl , use Glue
+Garden
+	use Book
+	use Tablet , get Toy Cart
+	use Inkwell , use Curtain , get [E]Robe
+	use Pyjamas , use Oily Rag+Matches , get Beeswax
+	use Pyjamas , use Oily Rag+Matches , use Sugar Pot(empty) , get Honey Pot
+	get Fishing Rod
+	use Fishing Rod+Honey Pot , get [E]Ant Souls
+House
+	Entrance
+		get Key
+		use Rope+Boomerang
+	Hallway
+		get [E]Scythe , get Curtain
+	Kitchen
+		get Sugar Bowl , get Oily Rag
+		use [E]Scythe
+		use [E]Robe
+		use [E]Ant Souls
+	Library
+		get Book
+		use Key , use Beeswax+String+Matches , get Tablet
+	Bedroom
+		get String , get Rabbit/Bunny
+		use Bunny , get Pyjamas
+	Study
+		get Inkwell
+=====
+Act 4
+=====
+Bonestock
+	get Cork
+Djelibeybi
+	get Saddle Bag/Canteen , use Rotten Arm
+Fountain of Youth
+	use Canteen , get Canteen(water)
+	use Cork , use Hour-glass
+EPILOGUE
+	talk Bladders
+	get Broom
+	use Bladders+Canteen(water) , use Broom
+
+======================
+=== Discworld Noir ===
+======================
+
+=====
+Act 1
+=====
+Cafe Ankh
+	use Label
+	get Crowbar
+Lewton's Office
+	get Note/Invitation
+Mausoleum
+	talk Grapple , get Troll's Teeth
+Octarine Parrot
+	use Matchbook+Scrap
+Pier Five
+	use Grapple , use Crowbar , get Matchbook
+The Wharf
+	use Crowbar , get Label
+	get Bunk/Scrap
+Von Uberwald Mansion
+	use Invitation
+=====
+Act 2
+=====
+Cafe Ankh
+	talk Key to Wine Cellar
+	use Key to Wine Cellar
+Guild of Archaelogists
+	clue 3712V
+	use Tooth
+Lewton's Office
+	get Card/Sapphire Note
+Maudlin Bridge
+	get Torn Fabric
+	use Iconograph , get Key
+Patrician Palace
+	use Grapple(line)
+	clue Hiding Place
+Pier Five
+	use Shipping Order
+Octarine Parrot
+	clue Frayed Rope
+	talk Coin
+Rhodan's Workshop
+	use Grapple(line)
+Saturnalia
+	use Purse
+	use Key , get Charm Braclet , get Envelop
+	talk Shipping Order
+Temple of Small Gods
+	use Charm Braclet
+The Wharf
+	use Iconograph
+	use Grapple , get Grapple(line)
+Von Uberwald Mansion
+	talk Iconograph
+=====
+Act 3
+=====
+Cafe Ankh
+	use Crowbar
+Lewton's Office
+	get Crowbar
+New Hall
+	clue Temple of Anu-anu
+	use Pendant , get List
+Octarine Parrot
+	get Perfume
+Patrician Palace
+	use Grapple
+	scent magento
+Sanctuary
+	clue Counterweight Killings
+	clue Octagram of Murders
+Saturnalia
+	get Moss
+Sewers
+	get Pendant
+Temple of Small Gods
+	use List
+	use Perfume
+The Dysk Theather
+	get Flyer
+	clue Elver Sign
+	clue Octagram of Murders
+Von Uberwald Mansion
+	use Moss
+	use Moss , clue The Sewers
+	clue Nylonathatep
+	clue Strange Symbol
+	use Flyer
+=====
+Act 4
+=====
+Dagon Street
+	use Amulet , use Falchion
+Mausoleum
+	use Astrolabe
+	use Coin
+	use Falchion
+New Hall
+	get Astrolabe
+	use Map
+Patrician Palace
+	use Grapple
+Rhodan's Workshop
+	get Plaster-excrusted Bandages
+	use Bandage
+Sanctuary
+	get Amulet
+Temple of Small Gods
+	use Amulet , get Map
+The Dysk Theather
+	get Falchion
+Von Uberwald Mansion
+	clue Nylonathatep
+

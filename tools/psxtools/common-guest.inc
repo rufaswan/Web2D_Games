@@ -159,21 +159,32 @@ function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 	return $rip;
 }
 
-function alpha_over( $src, $dst )
+function alpha_normal( $src, $dst )
 {
 	if ( $src[3] == BYTE )  return $src;
 	if ( $src[3] == ZERO )  return $dst;
 	if ( $dst[3] == ZERO )  return $src;
+
 	// en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending
-	// a is [0.0-1.0]
-	//   out_a = src_a + dst_a (1-src_a)
-	//   out_rgb = ( src_rgb*src_a + dst_rgb*dst_a (1-src_a) ) / out_a
-	// if dst_a = 1
-	//   out_a = 1
-	//   out_rgb = src_rgb*src_a + dst_rgb (1-src_a)
-	// if rgb is premultiplied
-	//   out_a = src_a + dst_a (1-src_a)
-	//   out_rgb = src_rgb + dst_rgb (1-src_a)
+	// rgb is int 0-255 , a is float 0-1
+	//
+	// FULL Formula
+	//   out_a   =   src_a           + dst_a           * (1-src_a)
+	//   out_rgb = ( src_rgb * src_a + dst_rgb * dst_a * (1-src_a) ) / out_a
+	//
+	// rgba(40,40,40,0.5) + rgba(60,60,60,1)
+	//   a   = 0.5 + 1 * (1 - 0.5)
+	//       = 0.5 + 0.5
+	//       = 1
+	//   rgb = ( 40 * 0.5 + 60 * 1 * (1 - 0.5) ) / 1
+	//       = ( 20 + 30 ) / 1
+	//       = 50
+	//   out = rgba(50,50,50,1);
+	//
+	// IF dst_a == 1 , SIMPLIFIED Formula
+	//   out_a   = 1
+	//   out_rgb = src_rgb * src_a + dst_rgb * (1-src_a)
+	//
 	$src_a = ord($src[3]) / BIT8;
 	$dst_a = ord($dst[3]) / BIT8;
 	$r = ord($src[0]) * $src_a + ord($dst[0]) * $dst_a * (1-$src_a);
@@ -181,9 +192,9 @@ function alpha_over( $src, $dst )
 	$b = ord($src[2]) * $src_a + ord($dst[2]) * $dst_a * (1-$src_a);
 	$a = $src_a + $dst_a * (1-$src_a);
 
-	$r = int_clamp($r / $a, 0, BIT8);
-	$g = int_clamp($g / $a, 0, BIT8);
-	$b = int_clamp($b / $a, 0, BIT8);
+	$r = int_clamp($r / $a  , 0, BIT8);
+	$g = int_clamp($g / $a  , 0, BIT8);
+	$b = int_clamp($b / $a  , 0, BIT8);
 	$a = int_clamp($a * BIT8, 0, BIT8);
 	return chr($r) . chr($g) . chr($b) . chr($a);
 }

@@ -5,32 +5,16 @@
  */
 require "common.inc";
 require "common-guest.inc";
-require "html.inc";
+require "common-quad.inc";
+require "quad.inc";
+
+define("METAFILE", true);
 
 $gp_json = array();
 
 function colorquad( &$mbs, $pos )
 {
-	$color = array();
-	for ( $i=0; $i < $mbs['k']; $i += 4 )
-	{
-		$s = substr($mbs['d'], $pos+$i, 4);
-		if ( trim($s, BYTE) == '' )
-			$color[] = '1';
-		else
-		{
-			$r = ord( $s[0] );
-			$g = ord( $s[1] );
-			$b = ord( $s[2] );
-			$a = ord( $s[3] );
-			$color[] = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
-		}
-	} // for ( $i=0; $i < $mbs['k']; $i += 4 )
-
-	$cqd = array($color[1] , $color[2] , $color[3] , $color[4]);
-	if ( implode('',$cqd) == '1111' )
-		$cqd = '';
-	return $cqd;
+	return '';
 }
 
 function sectquad( &$mbs, $pos )
@@ -38,15 +22,27 @@ function sectquad( &$mbs, $pos )
 	$float = array();
 	for ( $i=0; $i < $mbs['k']; $i += 4 )
 	{
-		$b = substrrev($mbs['d'], $pos+$i, 4);
+		$b = substr($mbs['d'], $pos+$i, 4);
 		$float[] = float32($b);
 	}
 
+	cmp_quadxy($float, 2, 10);
+	cmp_quadxy($float, 3, 11);
+
+	//  0  1  center
+	//  2  3  c1
+	//  4  5  c2
+	//  6  7  c3
+	//  8  9  c4
+	// 10 11  c1
+	//   1 4    1-2
+	//   | | =>   |  , 2-8-6-4
+	//   2-3    4-3
 	$bcde = array(
 		$float[2] , $float[3] ,
-		$float[4] , $float[5] ,
-		$float[6] , $float[7] ,
 		$float[8] , $float[9] ,
+		$float[6] , $float[7] ,
+		$float[4] , $float[5] ,
 	);
 	return $bcde;
 }
@@ -64,15 +60,15 @@ function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 		// sub      s1   - -  s0   s2
 		$sub = substr ($mbs[4]['d'], $p4+ 0, 4);
 
-		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
-		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
-		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
+		$s1  = str2int($mbs[4]['d'], $p4+ 4, 2); // sx,sy
+		$s0  = str2int($mbs[4]['d'], $p4+ 8, 2);
+		$s2  = str2int($mbs[4]['d'], $p4+10, 2); // dx,dy
 
 		$sqd = sectquad ($mbs[1], $s1*$mbs[1]['k']);
 		$cqd = colorquad($mbs[0], $s0*$mbs[0]['k']);
 		$dqd = sectquad ($mbs[2], $s2*$mbs[2]['k']);
 
-		$s1 = str2big($sub, 0, 2); // ?type?
+		$s1 = str2int($sub, 0, 2); // ???
 		$s3 = ord( $sub[2] ); // mask
 		$s4 = ord( $sub[3] ); // tid
 
@@ -115,8 +111,8 @@ function sectspr( &$mbs, $pfx )
 	{
 		// 0 4 8 c  10 11  12 13  14  15 16 17
 		// - - - -  id     -  -   no  -  -  -
-		$id6 = str2big($mbs[6]['d'], $i6+0x10, 2);
-		$no6 = str2big($mbs[6]['d'], $i6+0x14, 1);
+		$id6 = str2int($mbs[6]['d'], $i6+0x10, 2);
+		$no6 = str2int($mbs[6]['d'], $i6+0x14, 1);
 		// DO NOT skip numbering
 		// JSON will become {object} instead [array]
 
@@ -131,7 +127,7 @@ function sectanim( &$mbs, $pfx )
 {
 	global $gp_json;
 
-	// s9-sa-s8 [30-10-20]
+	// s9-sa-s8 [30-8-20]
 	$len9 = strlen( $mbs[9]['d'] );
 	for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
 	{
@@ -140,17 +136,17 @@ function sectanim( &$mbs, $pfx )
 		// 28 29  2a  2b 2c 2d 2e 2f
 		// id     no  -  -  -  -  -
 		$name = substr0($mbs[9]['d'], $i9+0x10);
-		$id9  = str2big($mbs[9]['d'], $i9+0x28, 2);
-		$no9  = str2big($mbs[9]['d'], $i9+0x2a, 1);
+		$id9  = str2int($mbs[9]['d'], $i9+0x28, 2);
+		$no9  = str2int($mbs[9]['d'], $i9+0x2a, 1);
 
 		for ( $ia=0; $ia < $no9; $ia++ )
 		{
 			$pa = ($id9 + $ia) * $mbs[10]['k'];
 
-			// 0 1  2 3  4 5 6 7  8 9 a b  c d e f
-			// id   no   sum      -        -
-			$ida = str2big($mbs[10]['d'], $pa+0, 2);
-			$noa = str2big($mbs[10]['d'], $pa+2, 2);
+			// 0 1  2 3  4 5 6 7
+			// id   no   - - - -
+			$ida = str2int($mbs[10]['d'], $pa+0, 2);
+			$noa = str2int($mbs[10]['d'], $pa+2, 2);
 
 			$ent = array();
 			for ( $i8=0; $i8 < $noa; $i8++ )
@@ -159,8 +155,8 @@ function sectanim( &$mbs, $pfx )
 
 				// 0   2 4  6   8 c 10 14 18 1c
 				// id  - -  no  - - -  -  -  -
-				$id8 = str2big($mbs[8]['d'], $p8+0, 2);
-				$no8 = str2big($mbs[8]['d'], $p8+6, 2);
+				$id8 = str2int($mbs[8]['d'], $p8+0, 2);
+				$no8 = str2int($mbs[8]['d'], $p8+6, 2);
 
 				$ent[] = array($id8,$no8);
 
@@ -174,7 +170,7 @@ function sectanim( &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
-function mura( $fname )
+function kuma( $fname )
 {
 	$mbs = load_file($fname);
 	if ( empty($mbs) )  return;
@@ -190,85 +186,60 @@ function mura( $fname )
 	// $len = 0x10 + $hdz + $siz;
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 
-	//   0 1 2 |     1-0 2-1 3-2
-	// 3 4 5 6 | 6-3 5-4 9-5 7-6
-	// 7 8 9 a | 8-7 4-8 a-9 s-a
-	// dummy_npc.mbs
-	//        a0  b8  e8 |      1*18 1*30 1*30
-	//   118 244 250 168 | 1*50 1*c  1*8  1*18
-	//   180 1a4 258 348 | 1*24 5*20 5*30 5*10
-	// s9[+28] = 4+1 => s8/sa
-	// sa[+ 0] = 4+1 => s8
-	// s8[]
+	global $gp_pix;
+	$gp_pix = array();
+
+	//   0 1 2 |
+	// 3 4 5 6 |
+	// 7 8 9 a |
+	// reform01b.mbs
+	//        a0  d0 100 |  -   2*18 1*30 2*30
+	//     - 1bc   - 160 |  -   2*c   -   1*18
+	//   178 19c 1d4 204 | 1*24 1*20 1*30 1*10
 	//
-	// momohime_battle_drm.mbs
-	//            a0   6b8  2cc8 |        41*18 cb*30 7bd*30
-	//   1a038 26484 31a7c 1a7b8 | 18*50 f2a*c  f2*8  127*18
-	//   1c360 1c5c4 3220c 32e3c | 11*24 4f6*20 41*30  87*10
-	// s9[+28] =  85+2 => sa
-	// sa[+ 0] = 4ee+8 => s8
-	// s8[+ 0] = 126   => s6
-	// s6[+10] = f29+1 => s4
-	// s4[+ 4] =  ca   => s1 , [+ 8] = 40 => s0 , [+ a] = 7bc => s2
-	// s1[]
-	// s2[]
-	//
-	// s9-sa-s8-s6-s4-[s1,s2]
+	// k_item00.mbs
+	//            a0   358  5ff8 |    -     1d*18 1ee*30 857*30
+	//   1f048 6954c 768e4 1f098 |   4*14 11a2*c    1*20 30b*18
+	//   239a0 2832c 76904 7bee4 | 20b*24 2091*20 1ca*30 310*10
+	// s9[+28] =  30c+4 => sa
+	// sa[+ 0] = 208d+4 => s8
+	// s8[+ 0] =  30a   => s6
+	// s6[+10] = 11a0+2 => s4 , [+12] =  3+1 => s3
+	// s4[+ 4] =  1ed   => s1 , [+ 8] = 1c   => s0 , [+ a] = 856 => s2
+	// s2
+	// s0
+	// s1
+	// s3
 	$sect = array(
 		array('p' => 0x54 , 'k' => 0x18), // 0
 		array('p' => 0x58 , 'k' => 0x30), // 1
-		array('p' => 0x5c , 'k' => 0x30), // 2 dummy_npc=0
-		array('p' => 0x60 , 'k' => 0x50), // 3 bg=0
-		array('p' => 0x64 , 'k' => 0x0c), // 4
-		array('p' => 0x68 , 'k' => 0x08), // 5 bg=0
+		array('p' => 0x5c , 'k' => 0x30), // 2
+		array('p' => 0x60 , 'k' => 0x14), // 3 reform=0
+		array('p' => 0x64 , 'k' => 0xc ), // 4
+		array('p' => 0x68 , 'k' => 0x20), // 5 reform=0
 		array('p' => 0x6c , 'k' => 0x18), // 6
 		array('p' => 0x70 , 'k' => 0x24), // 7
 		array('p' => 0x74 , 'k' => 0x20), // 8
 		array('p' => 0x78 , 'k' => 0x30), // 9
-		array('p' => 0x7c , 'k' => 0x10), // 10
+		array('p' => 0x7c , 'k' => 0x10), // a
 	);
-	file2sect($mbs, $sect, $pfx, array('str2big', 4), strrpos($mbs, "FEOC"), false);
+	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
+	if ( METAFILE )
+	{
+		sect_sum($mbs[4], 'mbs[4][0]', 0); //
+		sect_sum($mbs[4], 'mbs[4][1]', 1); // = 0
+		sect_sum($mbs[4], 'mbs[4][2]', 2); //
+	}
 
 	global $gp_json;
-	$gp_json = load_idtagfile('wii_mura');
+	$gp_json = load_idtagfile('nds_kuma');
 
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx);
 
-	save_quadfile($fname);
+	save_quadfile($pfx);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	mura( $argv[$i] );
-
-/*
-mbs 4-01 valids
-	0 1 2 3 4 5 7 9 11 13 15 29 2d
-mbs 4-2 valids
-	0 1 2
-
-	0   ---- ----
-	1   ---- ---1
-	2   ---- --1-
-	3   ---- --11
-	4   ---- -1--
-	5   ---- -1-1
-	7   ---- -111
-	9   ---- 1--1
-	11  ---1 ---1
-	13  ---1 --11
-	15  ---1 -1-1
-	29  --1- 1--1
-	2d  --1- 11-1
-
-Momohime_Battle_drm
-	3 = eyes , shadow
-	5 = thigh shadow
-	2d = effects
-Kisuke_Battle_drm
-	3 = eyes
-	5 = flame circle
-	1+29 = sword + shine
-	2d = effects
- */
+	kuma( $argv[$i] );

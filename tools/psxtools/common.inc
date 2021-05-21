@@ -362,27 +362,21 @@ function load_file( $fname )
 	if ( is_file($fname) )
 		return file_get_contents($fname);
 
-	// try different casing
-	$fname = strtoupper($fname);
-	if ( is_file($fname) )
-		return file_get_contents($fname);
-
-	$fname = strtolower($fname);
-	if ( is_file($fname) )
-		return file_get_contents($fname);
-
-	// case-insensitive file load
+	// case-insensitive loading
+	// files/data/enemydata.bin == FILES/Data/EnemyData.bin
 	$list = array();
 	lsfile_r('.', $list);
-	sort($list);
-	foreach ( $list as $v )
+	foreach ( $list as $f )
 	{
-		if ( stripos($v, $fname) )
-			return file_get_contents($v);
-	}
+		if ( stripos($f, $fname) === false )
+			continue;
+		$data = $func($f);
+		if ( $data !== '' )
+			return $data;
+	} // foreach ( $list as $f )
 
 	// nothing found
-	return "";
+	return '';
 }
 
 function save_file( $fname, $str )
@@ -402,43 +396,62 @@ function save_file( $fname, $str )
 
 function load_clutfile( $fname )
 {
-	$clut = load_file($fname);
-	if ( empty($clut) )
+	if ( is_file($fname) )
+	{
+		$clut = file_get_contents($fname);
+		$mgc = substr($clut, 0, 4);
+		$data = array();
+		if ( $mgc == "CLUT" )
+		{
+			$data['cc'] = str2int($clut,  4, 4);
+			$data['w']  = str2int($clut,  8, 4);
+			$data['h']  = str2int($clut, 12, 4);
+			$cc = $data['cc'] * 4;
+			$sz = $data['w'] * $data['h'];
+
+			$data['pal'] = substr($clut, 16, $cc);
+			$data['pix'] = substr($clut, 16+$cc, $sz);
+
+			// pad to enough data
+			while ( strlen($data['pal']) < $cc )
+				$data['pal'] .= ZERO;
+			while ( strlen($data['pix']) < $sz )
+				$data['pix'] .= ZERO;
+			return $data;
+		}
+
+		if ( $mgc == "RGBA" )
+		{
+			$data['w'] = str2int($clut, 4, 4);
+			$data['h'] = str2int($clut, 8, 4);
+			$sz = $data['w'] * $data['h'] * 4;
+
+			$data['pix'] = substr($clut, 12, $sz);
+
+			// pad to enough data
+			while ( strlen($data['pix']) < $sz )
+				$data['pix'] .= ZERO;
+			return $data;
+		}
+
+		// not CLUT/RGBA
 		return 0;
+	} // if ( is_file($fname) )
 
-	$mgc = substr($clut, 0, 4);
-	$data = array();
-	if ( $mgc == "CLUT" )
+	// case-insensitive + extensionless loading
+	// files/data/enemydata == FILES/Data/EnemyData.rgba
+	$func = __FUNCTION__;
+	$list = array();
+	lsfile_r('.', $list);
+	foreach ( $list as $f )
 	{
-		$data['cc'] = str2int($clut,  4, 4);
-		$data['w']  = str2int($clut,  8, 4);
-		$data['h']  = str2int($clut, 12, 4);
-		$cc = $data['cc'] * 4;
-		$sz = $data['w'] * $data['h'];
+		if ( stripos($f, $fname) === false )
+			continue;
+		$data = $func($f);
+		if ( $data !== 0 )
+			return $data;
+	} // foreach ( $list as $f )
 
-		$data['pal'] = substr($clut, 16, $cc);
-		$data['pix'] = substr($clut, 16+$cc, $sz);
-
-		// pad to enough data
-		while ( strlen($data['pal']) < $cc )
-			$data['pal'] .= ZERO;
-		while ( strlen($data['pix']) < $sz )
-			$data['pix'] .= ZERO;
-		return $data;
-	}
-	if ( $mgc == "RGBA" )
-	{
-		$data['w'] = str2int($clut, 4, 4);
-		$data['h'] = str2int($clut, 8, 4);
-		$sz = $data['w'] * $data['h'] * 4;
-
-		$data['pix'] = substr($clut, 12, $sz);
-
-		// pad to enough data
-		while ( strlen($data['pix']) < $sz )
-			$data['pix'] .= ZERO;
-		return $data;
-	}
 	return 0;
 }
 
@@ -515,7 +528,7 @@ function file2sect( &$file, $sect, $pfx, $parse, $end=0, $save=true )
 			continue;
 		$offs[] = $b1;
 		$sect[$k]['o'] = $b1;
-	}
+	} // foreach ( $sect as $k => $v )
 	sort($offs);
 
 	foreach ( $sect as $k => $v )
@@ -620,7 +633,8 @@ function patchfile( $fname, $val_callback="" )
 				$val_callback($vv);
 		}
 		$data[$sect][$vk] = $vv;
-	}
+	} // foreach ( file($fn) as $v )
+
 	return $data;
 }
 
@@ -630,6 +644,7 @@ function lsfile_r( $dir, &$list )
 		return;
 	if ( is_link($dir) ) // skip shortcuts / symbolic links
 		return;
+
 	$func = __FUNCTION__;
 	foreach ( scandir($dir) as $en )
 	{
@@ -640,13 +655,13 @@ function lsfile_r( $dir, &$list )
 		if ( is_file($fn) )  $list[] = $fn;
 		else
 		if ( is_dir ($fn) )  $func($fn, $list);
-	}
+	} // foreach ( scandir($dir) as $en )
 	return;
 }
 
 function rmfile_r( $dir )
 {
-	if ( empty($dir) )
+	if ( is_link($dir) ) // MUST NOT recursively DELETE shortcuts / symbolic links
 		return;
 	if ( is_file($dir) )
 		return unlink($dir);
@@ -889,6 +904,12 @@ function COPYPIX_DEF()
 	return $php56;
 }
 //////////////////////////////
+function alpha_none( $fg, $bg )
+{
+	if ( $fg[3] == ZERO )  return $bg;
+	return $fg;
+}
+
 function alpha_add( $fg, $bg )
 {
 	// FG is RGB from palette
@@ -1304,7 +1325,7 @@ function psx_patch( $dir, $pfx )
 		if ( $m[0] == '' )
 			return array();
 		return patchfile("{$pfx}_{$m[0]}.txt");
-	}
+	} // foreach( file("$dir/system.cnf") as $sys )
 	return array();
 }
 

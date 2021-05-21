@@ -45,6 +45,7 @@ function disc1_scn( &$sect, $dir )
 	if ( ! isset($sect[5][0]) )  return; // clut
 	if ( ! isset($sect[6][0]) )  return; // size
 
+	// from SCUS_946.00 , sub_8001588c
 	$pos3 = 8;
 	$len3 = strlen($sect[3][0]);
 
@@ -59,6 +60,19 @@ function disc1_scn( &$sect, $dir )
 		$b2 = str2int($sect[3][0], $pos3+2, 2);
 		printf("%6x , %4x %4x\n", $pos3, $b1, $b2);
 
+		// fedcba98 76543210
+		// ffpppppp pppppppp
+		if ( $b1 & 0x8000 )
+			$flg = 1;
+		else
+		if ( $b1 & 0x4000 )
+			$flg = 2;
+		else
+			$flg = 0;
+
+		$b1 &= 0x3fff;
+
+/*
 		switch ( $b1 >> 12 )
 		{
 			case 12:
@@ -102,6 +116,8 @@ function disc1_scn( &$sect, $dir )
 				$pos3 += 2;
 				break;
 		} // switch ( $b1>>12 )
+*/
+
 	} // while ( $pos3 < $len3 )
 
 	save_disc1_scn($clut, $dir, $id);
@@ -282,4 +298,7 @@ psyhnosi.scn.4
 	28+4   10a0  10a4  10a8  10ac +240/4 = 90
 	2c+4   12e0  12e4  12e8  12ec +250/4 = 94
 	30+4   1530  1534  1538  153c
+
+title.scn => 8015b72c
+	-> 80016d44
  */

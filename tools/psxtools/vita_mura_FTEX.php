@@ -12,33 +12,31 @@ require "common-guest.inc";
 
 //define("DRY_RUN", true);
 
-$gp_type = array(
-	"\x00\x00\x00\x00" => 'gxt_swizzled',
-	"\x00\x00\x00\xa0" => 'gxt_a0',
-);
 $gp_fmt = array(
 	"\x00\x10\x00\x0c" => 'im_argb8888',
 	"\x00\x00\x00\x85" => 'im_dxt1',
 	"\x00\x00\x00\x86" => 'im_dxt3',
 	"\x00\x00\x00\x87" => 'im_dxt5',
 );
-
+$gp_type = array(
+	"\x00\x00\x00\x00" => 'gxt_swizzled',
+	"\x00\x00\x00\xa0" => 'gxt_a0',
+);
 //////////////////////////////
-
-function unmorton_square( &$pix, &$buf, $base, &$pos, $min, $row, $bytes )
+function unmorton_square( &$pix, &$buf, $base, &$pos, $min, $row )
 {
 	if ( $min == 2 )
 	{
-		$s1 = substr($buf, $pos+(0*$bytes), $bytes);
-		$s2 = substr($buf, $pos+(1*$bytes), $bytes);
-		$s3 = substr($buf, $pos+(2*$bytes), $bytes);
-		$s4 = substr($buf, $pos+(3*$bytes), $bytes);
-			$pos += (4 * $bytes);
+		$s1 = substr($buf, $pos+ 0, 4);
+		$s2 = substr($buf, $pos+ 4, 4);
+		$s3 = substr($buf, $pos+ 8, 4);
+		$s4 = substr($buf, $pos+12, 4);
+			$pos += 16;
 
-		str_update($pix, ($base           ) * $bytes, $s1);
-		str_update($pix, ($base + $row    ) * $bytes, $s2);
-		str_update($pix, ($base + 1       ) * $bytes, $s3);
-		str_update($pix, ($base + $row + 1) * $bytes, $s4);
+		str_update($pix, ($base           ) * 4, $s1);
+		str_update($pix, ($base + $row    ) * 4, $s2);
+		str_update($pix, ($base + 1       ) * 4, $s3);
+		str_update($pix, ($base + $row + 1) * 4, $s4);
 		return;
 	}
 	else
@@ -46,17 +44,18 @@ function unmorton_square( &$pix, &$buf, $base, &$pos, $min, $row, $bytes )
 		$func = __FUNCTION__;
 		$hm = $min >> 1;
 		$rh = $row * $hm;
-		$func($pix, $buf, $base            , $pos, $hm, $row, $bytes);
-		$func($pix, $buf, $base + $rh      , $pos, $hm, $row, $bytes);
-		$func($pix, $buf, $base + $hm      , $pos, $hm, $row, $bytes);
-		$func($pix, $buf, $base + $rh + $hm, $pos, $hm, $row, $bytes);
+		$func($pix, $buf, $base            , $pos, $hm, $row);
+		$func($pix, $buf, $base + $rh      , $pos, $hm, $row);
+		$func($pix, $buf, $base + $hm      , $pos, $hm, $row);
+		$func($pix, $buf, $base + $rh + $hm, $pos, $hm, $row);
 		return;
 	}
 	return;
 }
 
-function gxt_swizzled( &$pix, $ow, $oh, $bytes )
+function gxt_swizzled( &$pix, $ow, $oh )
 {
+	printf("== gxt_swizzled( %x , %x )\n", $ow, $oh);
 	//return;
 	$buf = $pix;
 	$row = $ow;
@@ -65,7 +64,7 @@ function gxt_swizzled( &$pix, $ow, $oh, $bytes )
 	// square image = 128x128
 	$min = $ow;
 	if ( $ow == $oh )
-		return unmorton_square($pix, $buf, 0, $pos, $min, $row, $bytes);
+		return unmorton_square($pix, $buf, 0, $pos, $min, $row);
 
 	// landscape image = 512x128
 	// split it into 4 parts of 128x128 square
@@ -73,7 +72,7 @@ function gxt_swizzled( &$pix, $ow, $oh, $bytes )
 	{
 		$min = $oh;
 		for ( $i=0; $i < $ow; $i += $min )
-			unmorton_square($pix, $buf, $i, $pos, $min, $row, $bytes);
+			unmorton_square($pix, $buf, $i, $pos, $min, $row);
 		return;
 	}
 
@@ -83,7 +82,7 @@ function gxt_swizzled( &$pix, $ow, $oh, $bytes )
 	{
 		$min = $ow;
 		for ( $i=0; $i < $oh; $i += $min )
-			unmorton_square($pix, $buf, $i*$min, $pos, $min, $row, $bytes);
+			unmorton_square($pix, $buf, $i*$min, $pos, $min, $row);
 		return;
 	}
 	return;
@@ -94,9 +93,10 @@ function gxt_swizzled( &$pix, $ow, $oh, $bytes )
 // REMOVED = wrong unswizzle
 //           image is flipped and rotated 270 degree
 
-function gxt_a0( &$pix, $w, $h, $bytes )
+function gxt_a0( &$pix, $w, $h )
 {
-	return gxt_swizzled($pix, $w, $h, $bytes);
+	printf("== gxt_a0( %x , %x )\n", $w, $h);
+	return gxt_swizzled($pix, $w, $h);
 	//return;
 }
 //////////////////////////////
@@ -238,9 +238,9 @@ function dxt_color( $str, $bc )
 	return $data;
 }
 //////////////////////////////
-function im_dxt5( &$file, $pos, $fn, $w, $h, $swizz )
+function im_dxt5( &$file, $pos, $fn, $w, $h )
 {
-	printf("== im_dxt5( %x , %s , %x , %x , %s )\n", $pos, $fn, $w, $h, $swizz);
+	printf("== im_dxt5( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
 	$w = int_ceil_pow2($w);
 	$h = int_ceil_pow2($h);
 
@@ -263,20 +263,12 @@ function im_dxt5( &$file, $pos, $fn, $w, $h, $swizz )
 		} // for ( $x=0; $x < $w; $x += 4 )
 	} // for ( $y=0; $y < $h; $y += 4 )
 
-	if ( function_exists($swizz) )
-		$swizz($pix, $w, $h, 4);
-
-	$img = "RGBA";
-	$img .= chrint($w, 4);
-	$img .= chrint($h, 4);
-	$img .= $pix;
-	save_file($fn, $img);
-	return;
+	return $pix;
 }
 
-function im_dxt3( &$file, $pos, $fn, $w, $h, $swizz )
+function im_dxt3( &$file, $pos, $fn, $w, $h )
 {
-	printf("== im_dxt3( %x , %s , %x , %x , %s )\n", $pos, $fn, $w, $h, $swizz);
+	printf("== im_dxt3( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
 	$w = int_ceil_pow2($w);
 	$h = int_ceil_pow2($h);
 
@@ -299,20 +291,12 @@ function im_dxt3( &$file, $pos, $fn, $w, $h, $swizz )
 		} // for ( $x=0; $x < $w; $x += 4 )
 	} // for ( $y=0; $y < $h; $y += 4 )
 
-	if ( function_exists($swizz) )
-		$swizz($pix, $w, $h, 4);
-
-	$img = "RGBA";
-	$img .= chrint($w, 4);
-	$img .= chrint($h, 4);
-	$img .= $pix;
-	save_file($fn, $img);
-	return;
+	return $pix;
 }
 
-function im_dxt1( &$file, $pos, $fn, $w, $h, $swizz )
+function im_dxt1( &$file, $pos, $fn, $w, $h )
 {
-	printf("== im_dxt1( %x , %s , %x , %x , %s )\n", $pos, $fn, $w, $h, $swizz);
+	printf("== im_dxt1( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
 	$w = int_ceil_pow2($w);
 	$h = int_ceil_pow2($h);
 
@@ -332,15 +316,24 @@ function im_dxt1( &$file, $pos, $fn, $w, $h, $swizz )
 		} // for ( $x=0; $x < $w; $x += 4 )
 	} // for ( $y=0; $y < $h; $y += 4 )
 
-	if ( function_exists($swizz) )
-		$swizz($pix, $w, $h, 4);
+	return $pix;
+}
+//////////////////////////////
+function im_argb8888( &$file, $pos, $fn, $w, $h )
+{
+	printf("== im_argb8888( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
 
-	$img = "RGBA";
-	$img .= chrint($w, 4);
-	$img .= chrint($h, 4);
-	$img .= $pix;
-	save_file($fn, $img);
-	return;
+	$pix = '';
+	$siz = $w * $h;
+	for ( $i=0; $i < $siz; $i++ )
+	{
+		$pix .= $file[$pos+2]; // r
+		$pix .= $file[$pos+1]; // g
+		$pix .= $file[$pos+0]; // b
+		$pix .= $file[$pos+3]; // a
+			$pos += 4;
+	}
+	return $pix;
 }
 //////////////////////////////
 function vitagxt( &$file, $base, $pfx, $id )
@@ -353,18 +346,18 @@ function vitagxt( &$file, $base, $pfx, $id )
 	if ( $cnt != 1 )
 		return php_error("%s/%04d is multi-GXT [%d]", $pfx, $id, $cnt);
 
-	$typ = substr($file, $base+0x30, 4);
-	$fmt = substr($file, $base+0x34, 4);
-	$w = str2int($file, $base+0x38, 2);
-	$h = str2int($file, $base+0x3a, 2);
+	$typ = substr ($file, $base+0x30, 4);
+	$fmt = substr ($file, $base+0x34, 4);
+	$w   = str2int($file, $base+0x38, 2);
+	$h   = str2int($file, $base+0x3a, 2);
 	printf("SIZE %x x %x = %x\n", $w, $h, $w*$h);
 
 	global $gp_type, $gp_fmt;
+	if ( ! isset( $gp_fmt [$fmt] ) )
+		return php_error("UNKNOWN im fmt  %s", debug($fmt));
 	if ( ! isset( $gp_type[$typ] ) )
 		return php_error("UNKNOWN im type %s", debug($typ));
-	if ( ! isset( $gp_fmt [$fmt] ) )
-		return php_error("UNKNOWN im fmt %s", debug($fmt));
-	printf("DETECT type %s  fmt %s\n", $gp_type[$typ], $gp_fmt[$fmt]);
+	printf("DETECT  fmt %s  type %s\n", $gp_fmt[$fmt], $gp_type[$typ]);
 	//return;
 
 	$pos = str2int($file, $base+0x20, 4);
@@ -372,7 +365,17 @@ function vitagxt( &$file, $base, $pfx, $id )
 	$fn  = sprintf("%s.%d.gtx", $pfx, $id);
 
 	$func = $gp_fmt[$fmt];
-	$func($file, $base+$pos, $fn, $w, $h, $gp_type[$typ]);
+	$pix = $func($file, $base+$pos, $fn, $w, $h);
+
+	$func = $gp_type[$typ];
+	if ( function_exists($func) )
+		$func($pix, $w, $h);
+
+	$img = "RGBA";
+	$img .= chrint($w, 4);
+	$img .= chrint($h, 4);
+	$img .= $pix;
+	save_file($fn, $img);
 	return;
 }
 //////////////////////////////

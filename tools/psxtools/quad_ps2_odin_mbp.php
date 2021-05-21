@@ -5,7 +5,10 @@
  */
 require "common.inc";
 require "common-guest.inc";
-require "html.inc";
+require "common-quad.inc";
+require "quad.inc";
+
+define("METAFILE", true);
 
 $gp_json = array();
 $gp_tag  = '';
@@ -18,6 +21,9 @@ function colorquad( &$mbp, $pos )
 		$s = substr($mbp['d'], $pos+$i, 4);
 		if ( trim($s, BYTE) == '' )
 			$color[] = '1';
+		else
+		if ( trim($s, ZERO) == '' )
+			$color[] = '0';
 		else
 		{
 			$r = int_clamp( ord($s[0]) << 1, 0, BIT8);
@@ -40,6 +46,17 @@ function sectquad( &$mbp, $pos )
 	for ( $i=0; $i < $mbp['k']; $i += 2 )
 		$float[] = str2int($mbp['d'], $pos+$i, 2, true) / 0x10;
 
+	cmp_quadxy($float, 4, 12);
+	cmp_quadxy($float, 5, 13);
+
+	//  0  1
+	//  2  3  center
+	//  4  5  c1
+	//  6  7  c2
+	//  8  9  c3
+	// 10 11  c4
+	// 12 13  c1
+	// 14 15  padding
 	//   1 4    1-2
 	//   | | =>   |  , 4-10-8-6
 	//   2-3    4-3
@@ -227,17 +244,23 @@ function odin( $fname )
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x08), // 10
 	);
-	file2sect($mbp, $sect, $pfx, array('str2int', 4), strrpos($mbp, "FEOC"), false);
+	file2sect($mbp, $sect, $pfx, array('str2int', 4), strrpos($mbp, "FEOC"), METAFILE);
+	if ( METAFILE )
+	{
+		sect_sum($mbs[4], 'mbs[4][0]', 0); //
+		sect_sum($mbs[4], 'mbs[4][1]', 1); // = 0
+		sect_sum($mbs[4], 'mbs[4][2]', 2); //
+	}
 
 	global $gp_json, $gp_tag;
 	if ( $gp_tag == '' )
-		return;
+		return php_error('NO TAG %s', $fname);
 	$gp_json = load_idtagfile($gp_tag);
 
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);
 
-	save_quadfile($fname);
+	save_quadfile($pfx);
 	return;
 }
 
@@ -252,3 +275,11 @@ for ( $i=1; $i < $argc; $i++ )
 	else
 		odin( $argv[$i] );
 }
+
+/*
+mbp 4-01 valids
+	grim 1 3 5 7 9 d 11 29
+	odin 0 1 2 3 4 5 6 7 9 b d f 10 11 13 15 19 21 28 29 2d 2f 31 35 39
+mbp 4-2 valids
+	0 1 2
+ */

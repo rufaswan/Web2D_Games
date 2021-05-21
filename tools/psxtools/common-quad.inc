@@ -407,6 +407,13 @@ function copyquad( &$pix, $byte=1 )
 	return;
 }
 //////////////////////////////
+function cmp_quadxy( &$data, $id1, $id2 )
+{
+	if ( $data[$id1] != $data[$id2] )
+		php_notice("cmp %d [%7.2f] != %d [%7.2f]", $id1, $data[$id1], $id2, $data[$id2]);
+	return;
+}
+
 function hex_rotate( $x1, $y1, $x2, $y2 )
 {
 	$dx = $x1 - $x2;

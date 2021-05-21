@@ -1,0 +1,304 @@
+============================
+=== Clock Tower 1st Fear ===
+============================
+
+- West Key (random @ 1F box or 2F bird cage)
+- Pesticide -> Gold Key -> Silver Key
+- Rope
+- Black Robe
+- Ham
+=> [SAVE]
+
+(ANY)   -> Engine Key => ENDING H
+(ANY)   -> (ANY)+  -> Engine Key => ENDING G
+(ANY)   -> RITUAL => ENDING F
+(ANY)   -> RITUAL  -> (LOTTE) -> FLOOR 3 => ENDING E
+(ANY)   -> RITUAL  -> (LOTTE) -> FLOOR 2 => ENDING D
+(ANNE)  -> (LAURA) -> DESK    -> (JAIL) -> RITUAL  -> FLOOR 2 => ENDING C
+(ANNE)  -> (LAURA) -> DESK    -> (JAIL) -> RITUAL  -> FLOOR 3 => ENDING B
+(LAURA) -> DESK    -> (JAIL)  -> CROWS  -> RITUAL  -> FLOOR 3 => ENDING A
+(LAURA) -> DAD     -> CROWS   -> RITUAL -> (LOTTE) -> FLOOR 3 => ENDING S
+
+(ANY) , dripping sound
+	- Sharp Stone , Anne DIED (pool)
+	- Laura DIED (bathtub)
+	- Anne DIED (left hall)
+(ANY)+
+	- Gold Key -> Laura DIED (armor)
+	- west hallway (scream) -> Anne DIED (window)
+		-> fireplace -> Latern
+		-> Library -> Copper Key
+CROWS
+	-> Dagger -> Cage Key
+RITUAL
+	-> Ritual Key -> Statue/Rod
+(JAIL)
+	Gold Key -> Mary -> jail
+	use Ham
+	use Copper Key to escape , or Lotte DIED (rescue)
+DESK
+	Silver Key -> read books on the desk
+
+=====================
+=== Clock Tower 2 ===
+=====================
+
+Ending A-E
+	E     = Scene 2 bad end
+	D C B = Scene 3 bad ends
+	A
+Hint 1-10
+	1       = Prologue
+	2 3 4 5 = Scene 1
+	6 7 8   = Scene 2
+	9 10    = Scene 3
+
+========
+Prologue
+========
+- talk to Harris
+  1  = Helen / Cotts
+  2+ = Jenn  / Nolan
+- Devil Statue
+  Yes = at Rick's House (Nolan/Cotts)
+  No  = at Library (Helen)
+- get Hint 1 (2F)
+
+=======
+Scene 1
+=======
+University (Jenn)
+	HINT 2 -> Oil Can -> Ladder Key -> Office Key
+	-> HINT 3 -> CLEAR @ 4F
+
+University (Helen)
+	Plier -> Flashlight -> HINT 5 -> Office Key
+	-> HINT 4 -> Storage Key -> CLEAR @ 1F
+
+===============
+Scene 2 (Nolan)
+===============
+Rick House (Nolan)
+	Powder Soap -> [E]Devil Statue -> HINT 6 -> Mask
+	-> CLEAR @ dog house
+
+Rick House (Cotts)
+	Powder Soap -> [E]Devil Statue -> Painting -> HINT 8
+	-> CLEAR @ dog house
+
+Library (Helen)
+	Reading Room Key -> HINT 7 -> Collection Room Key -> [E]Devil Statue
+	-> Screwdriver
+
+ENDING E (Jenn/Helen) FAILED to get back [E]Devil Statue
+
+==============
+Scene 3 (Jenn)
+==============
+- (1/9) Harris DIED (1F chapel library)
+- (2/9) Cotts  ALIVE (1F torture room , DIED if no Stair Key)
+- (3/9) Barton ALIVE (1F fountain , DIED if late)
+- (4/9) Beth   ALIVE (B1F wine storage , DIED if late)
+- (5/9) Helen  ALIVE (1F storage , need Oil Can(S1))
+- (6/9) Nolan  ALIVE (2F corpse room)
+- (7/9) Tim    ALIVE (2F living room , need 2F Library , DIED if late)
+- (8/9) Key    DIED (B1F under fountain)
+- (9/9) Edward DIED (B1F under fountain)
+- Hint 9 : 2F living
+- ENDING D
+- ENDING C  Helen SAVED
+- ENDING B  Helen SAVED, get Door Spell
+- ENDING A  Helen SAVED, get Door Spell, Dagger
+
+# Beth gives Mansion Key
+# Tim  gives Matches
+# need Helen or Barton to turn Foreign Note to Door Spell
+# Oil Can(S1) is to save Helen
+
+Stair Key -> Foreign Note -> (Star Plate[A]) -> Candle
+-> HINT 9 -> Library Key -> (Copper Book[A]) -> Mansion Key
+-> Genealogy -> (Dagger[A]) -> Matches -> Mansion Map
+=> [SAVE]
+
+-> (Box Key[C+]) -> (Rope[C+])
+-> (Door Spell[B+])
+
+===============
+Scene 3 (Helen)
+===============
+- (1/9) Harris ALIVE (1F kitchen , DIED if late)
+- (2/9) Tim    ALIVE (B1F wine storage , DIED if late)
+- (3/9) Nolan  ALIVE (1F storage)
+- (4/9) Beth   ALIVE (1F hole room , DIED if talk once)
+- (5/9) Cotts  ALIVE (2F corpse room , need lead ball)
+- (6/9) Jenn   ALIVE (1F chapel , DIED if no pistol(from Cotts) or missed)
+- (7/9) Barton DIED (1F chapel)
+- (8/9) Key    DIED (B1F under fountain)
+- (9/9) Edward DIED (B1F under fountain)
+- Hint 10 : 1F chapel library
+- ENDING D  Jenn ALIVE (premature end at chapel)
+- ENDING C  Jenn DIED
+- ENDING B  Jenn DIED  , get Door Spell
+- ENDING A  Jenn ALIVE , get Door Spell
+
+# Harris gives Fireplace Key
+# Cotts  gives Pistol
+
+# Fireplace Key = access chapel without pistol = Jenn DIED
+# Flashlight(S1) is to get Door Spell
+
+Library Key -> Mansion Key -> (Copper Book[A/D]) -> Fireplace Key[B/C]
+-> (Lead Balls[A/D]) -> (Battery[B+]) -> Wooden Box -> Cosmetic Key
+-> Pistol
+=> [SAVE]
+
+-> (Door Spell[B+])
+-> HINT 10 -> Mansion Map
+
+=============================
+=== Clock Tower Ghosthead ===
+=============================
+
+ENDING A-M
+	M L K J I     = chapter 1 bad ends
+	H G F E D C B = chapter 3 bad ends
+	A
+Hint 1-8
+	1 2 3 4 = Chapter 1
+	5 6     = Chapter 2
+	7 8     = Chapter 3
+
+Yu  = [F] Alyssa
+Sho = [M] Bates
+[grab] = repeatly tab CANCEL button
+=========
+Chapter 1
+=========
+NOTE = skip [SAMURAI] for ending G
+
+[ALY] [1F light] -> HINT 1 -> Dining Key -> [bathtub/body]
+	-> [1F light] -> [1F toilet/leg] -> [kitchen/arm]-> [SAMURAI]
+	-> [2F bedroom/head]
+[BAT] [2F light] -> Pistol -> +AMULET
+[ALY] [SAMURAI] -> [2F light] -> Man -> Golden Statue
+	-> Bedroom Key -> HINT 2
+	=> [SAVE]
+
+[ALY] open 1F bedroom -> push killer
+	=> ENDING M
+[ALY] -AMULET -> open 1F bedroom -> push killer
+	=> [SAVE]
+
+[BAT] +AMULET
+[ALY] Woman
+	=> ENDING L
+[BAT] lock 1F bedroom , +AMULET
+[ALY] [1F light] -> Woman -> Oil Can -> open 1F bedroom
+	-> letter -> Golden Statue -> -AMULET
+	=> [SAVE]
+
+[ALY] BATES
+[BAT] Man -> Corridor Key -> Golden Statue
+	=> ENDING K
+[ALY] Man -> Corridor Key
+	=> [SAVE]
+
+[ALY] BATES
+[BAT] open corridor -> [1F light] -> HINT 4 -> [B1F light]
+	-> Man
+	=> ENDING J
+[ALY] open corridor -> [1F light] -> [B1F light] -> Lighter
+	-> Man -> [grab] -> Man -> Golden Statue
+	-> HINT 3 -> +Amulet
+	=> [SAVE]
+
+[ALY] Fireplace -> Golden Statue -> Oil Can
+	grab amulet failed
+	=> ENDING I
+	grab amulet success -> Lighter
+	=> continue
+=========
+Chapter 2
+=========
+[ALY] [103] -> Drawer Key -> [hallway/double door] -> [exam room]
+	-> paper -> [staff office] -> [F toilet/stall] -> Storage Key
+	 -> [lift/2F]
+	 -> [lift/1F] -> [101/sink] -> Pistol -> -AMULET
+	 -> [102] -> HINT 5 -> BATES
+
+[BAT] [104/nightstand]
+	 -> [lift/2F] -> [storage room] -> Nurse -> Screwdriver
+	 -> [director office] -> Back Door Key
+	 -> [lift/1F] -> [nurse office] -> Shotgun -> files
+	 -> +AMULET
+
+[ALY] [lift/2F] -> Nurse -> [director office] -> [grab]
+	-> HINT 6
+	-> [lift/1F] -> [reception office] -> [hallway/double door]
+=========
+Chapter 3
+=========
+[ALY] [L stair/1F] -> [L file room] -> Exam Room Key -> Man
+	-> [exam room] -> Shotgun -> [L office]
+	======
+	if [SAMURAI] is skipped -> [M courtyard]
+		=> ENDING G
+	======
+
+[ALY] [F toilet] -> Blue Card Key
+	-> [lift/2F]
+	-> [lift/1F]
+	=> [SAVE]
+
+[ALY] -AMULET -> BATES
+[BAT] [R office] -> Lady
+	=> ENDING H
+[ALY] [R office] -> Lady -> -AMULET -> BATES
+[BAT] [shower room] -> [lab] -> Wire -> Security Key
+	-> [M office] -> HINT 7 -> [courtyard] -> Desk Key
+	=> [SAVE++]
+
+======
+[ALY] -AMULET -> BATES
+[BAT] [R lab] -> Knife
+	-> [lift/2F] -> [R office] -> Lighter -> [R computer room]
+	-> Lab Key
+	=> [SAVE]
+
+	[BAT] [L office]
+		=> ENDING F
+	[BAT] +AMULET
+	[ALY] [L office] -> [grab] -> -AMULET -> BATES
+	[BAT] [L storeroom]
+		=> ENDING E
+======
+[ALY] [R lab] -> Storage Key
+	-> [lift/2F] -> [R office] -> Lighter -> [R computer room]
+	-> Lab Key -> [L office] -> [grab] -> [L lab]
+	-> Handcuff Key -> [L storeroom] -> [library]
+	-> Red Card Key -> [R office] -> Green Card Key
+	-> [lift/B1F]
+	=> [SAVE]
+
+[ALY] -> [R lab] -> LADY
+	=> ENDING D
+[ALY] -AMULET -> BATES
+[BAT] [R lab] -> hatchets -> Graveyard Key -> +AMULET
+	=> [SAVE]
+
+[ALY] Man
+	answer YES
+	=> ENDING C
+	answer NO
+	=> continue
+[ALY] [graveyard] -> Large Door Key -> -AMULET -> BATES
+[BAT] [L lab] -> Man -> +AMULET
+	=> [SAVE]
+
+[ALY] [stair/B2F] -> Man
+	answer YES
+	=> ENDING B
+	answer NO
+	=> continue
+[ALY] [chapel] -> [grab] -> [grab]
+	=> ENDING A

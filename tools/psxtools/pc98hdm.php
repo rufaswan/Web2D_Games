@@ -9,7 +9,7 @@ function pc98toc( &$file, $pos, $base )
 {
 	$toc = array();
 	$fn = substr($file, $pos+0, 8);
-		$fn = rtrim($fn, ' ');
+		$fn = rtrim($fn, ' .');
 	if ( preg_match("|[^A-Z0-9_.]|", $fn) )
 		return $toc;
 
@@ -25,6 +25,7 @@ function pc98toc( &$file, $pos, $base )
 	$dir = ( $ty & 0x10 ) ? "DIR " : "FILE";
 	$off = $base + $of * 0x400;
 
+	$fn = strtolower($fn);
 	$toc = array($fn, $ex, $dir, $off, $sz);
 	return $toc;
 }
