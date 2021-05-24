@@ -33,7 +33,6 @@ function sect_BIT( &$sub )
 	return;
 }
 //////////////////////////////
-//////////////////////////////
 function kuma( $fname )
 {
 	$file = file_get_contents($fname);

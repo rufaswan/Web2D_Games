@@ -84,28 +84,11 @@ function gunvolt( $fname )
 		// 00 model
 		// 12 model compressed
 		$s = substr($arc, $of, $sz);
-		if ( $un == 0x17 )
-		{
+		if ( $un == 0x17 || $un == 0x12 )
 			gv_decode($s);
-			$un = 7;
-		}
 
-		if ( $un != 7 )
-		{
-			php_notice("UNKNOWN %x = %s/%04d", $un, $pfx, $id);
-			continue;
-		}
-
-		$p = str2int($s, 12, 4);
-		$p = substr ($s, $p, 4);
-		if ( $p !== 'IOBJ' )
-		{
-			php_notice("IMG UNK = %s/%04d", $pfx, $id);
-			continue;
-		}
-
-		$fn = sprintf("%s/%04d.%s", $pfx, $id, strtolower($p));
-		printf("%8x , %8x , %8x , %s\n", $of, $sz, $un, $fn);
+		$fn = sprintf("%s/%04d.%x", $pfx, $id, $un);
+		printf("%8x , %8x , %s\n", $of, $sz, $fn);
 
 		save_file($fn, $s);
 	} // for ( $i=0; $i < $cnt; $i++ )

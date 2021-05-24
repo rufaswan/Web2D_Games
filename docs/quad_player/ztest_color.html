@@ -1,0 +1,154 @@
+<!doctype html><!--
+[license]
+Copyright (C) 2019 by Rufas Wan
+
+This file is part of Web2D_Games. <https://github.com/rufaswan/Web2D_Games>
+
+Web2D_Games is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Web2D_Games is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
+[/license]
+--><html>
+<head>
+	<meta charset='utf-8'>
+	<title>TEST - Quad Player Color Blending</title>
+	<style>
+	* {
+		padding : 0;
+		margin  : 0;
+	}
+	canvas {
+		width    : 100vw;
+		height   : 100vh;
+		position : fixed;
+	}
+	</style>
+</head>
+<body>
+	<canvas id='canvas'>Required JavaScript, Canvas Context or WebGL is disabled or not supported</canvas>
+
+	<script>
+	'use strict';
+
+	function QUAD()
+	{
+		// Init WebGL
+		var dom_canvas = document.getElementById('canvas');
+		var option = {
+			alpha                 : true,
+			depth                 : false,
+			stencil               : false,
+			antialias             : true,
+			premultipliedAlpha    : false,
+			preserveDrawingBuffer : true,
+		};
+		var GL = dom_canvas.getContext('webgl', option) || dom_canvas.getContext('experiment-webgl', option);
+		if ( ! GL )
+			return console.log("GL", GL);
+
+		// setup shader
+		var vert_src = `
+			attribute vec2  a_uv;
+			attribute vec3  a_xyz;
+			attribute vec4  a_clr;
+			varying   vec2  v_uv;
+			varying   vec4  v_clr;
+
+			void main(void){
+				v_uv  = a_uv;
+				v_clr = a_clr;
+				gl_Position = vec4(a_xyz, 1.0);
+			}
+		`;
+
+		var frag_src = `
+			precision highp float;
+			uniform sampler2D u_tex;
+			varying vec2      v_uv;
+			varying vec4      v_clr;
+
+			void main(void){
+				gl_FragColor = texture2D(u_tex, v_uv) * v_clr;
+			}
+		`;
+
+		var vert_shader = GL.createShader(GL.VERTEX_SHADER);
+		GL.shaderSource (vert_shader, vert_src);
+		GL.compileShader(vert_shader);
+
+		var frag_shader = GL.createShader(GL.FRAGMENT_SHADER);
+		GL.shaderSource (frag_shader, frag_src);
+		GL.compileShader(frag_shader);
+
+		var shader_prog = GL.createProgram();
+		GL.attachShader(shader_prog, vert_shader);
+		GL.attachShader(shader_prog, frag_shader);
+		GL.linkProgram (shader_prog);
+		GL.useProgram  (shader_prog);
+
+		// input data
+		function glAttr(attr, data, cnt){
+			var loc = GL.getAttribLocation(shader_prog, attr);
+			var buf = GL.createBuffer();
+			GL.bindBuffer(GL.ARRAY_BUFFER, buf);
+			GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
+			GL.enableVertexAttribArray(loc);
+			GL.vertexAttribPointer(loc, cnt, GL.FLOAT, false, 0, 0);
+			return;
+		}
+
+		// vertex are clockwise winding order
+		// 1 - 2        0,0 - 1,0         -1, 1,1 - 1, 1,1
+		//     | , uv =        |  , xyz =            |
+		// 4 - 3        0,1 - 1,1         -1,-1,1 - 1,-1,1
+		var uv  = [ 0,0     , 1,0     , 1, 1     ,  0, 1    ];
+		var xyz = [-1,1,1   , 1,1,1   , 1,-1,1   , -1,-1,1  ];
+		var clr = [ 1,0,0,1 , 0,1,0,1 , 0, 0,1,0 ,  0, 0,0,1];
+		glAttr("a_uv" , uv , 2);
+		glAttr("a_xyz", xyz, 3);
+		glAttr("a_clr", clr, 4);
+
+		var idx = [0,1,2 , 0,2,3];
+		var buf = GL.createBuffer();
+		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, buf);
+		GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), GL.STATIC_DRAW);
+
+		// a dummy 2x2 white image
+		var texture = GL.createTexture();
+		var pixel = [
+			255,255,255,255,
+			255,255,255,255,
+			255,255,255,255,
+			255,255,255,255,
+		];
+		GL.bindTexture  (GL.TEXTURE_2D, texture);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, 2, 2, 0, GL.RGBA, GL.UNSIGNED_BYTE, new Uint8Array(pixel));
+
+		var u_tex = GL.getUniformLocation(shader_prog, "u_tex");
+		GL.uniform1i(u_tex, 0);
+		GL.activeTexture(GL.TEXTURE0);
+		GL.bindTexture(GL.TEXTURE_2D, texture);
+
+		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
+		GL.drawElements(GL.TRIANGLES, 1*6, GL.UNSIGNED_SHORT, 0);
+		return;
+	}
+
+	QUAD();
+	</script>
+</body>
+</html>
+

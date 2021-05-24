@@ -5,7 +5,7 @@
  */
 require "common.inc";
 
-function cvnds( $fname )
+function cvpor( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -94,4 +94,4 @@ function cvnds( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvnds( $argv[$i] );
+	cvpor( $argv[$i] );

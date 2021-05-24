@@ -18,19 +18,20 @@ function colorquad( &$mbs, $pos )
 	for ( $i=0; $i < $mbs['k']; $i += 4 )
 	{
 		$s = substr($mbs['d'], $pos+$i, 4);
-		if ( trim($s, BYTE) == '' )
+
+		$r = ord( $s[0] );
+		$g = ord( $s[1] );
+		$b = ord( $s[2] );
+		$a = ord( $s[3] );
+		$rgba = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+
+		if ( $rgba == '#ffffffff' )
 			$color[] = '1';
 		else
-		if ( trim($s, ZERO) == '' )
+		if ( $rgba == '#00000000' )
 			$color[] = '0';
 		else
-		{
-			$r = ord( $s[0] );
-			$g = ord( $s[1] );
-			$b = ord( $s[2] );
-			$a = ord( $s[3] );
-			$color[] = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
-		}
+			$color[] = $rgba;
 	} // for ( $i=0; $i < $mbs['k']; $i += 4 )
 
 	$cqd = array($color[1] , $color[2] , $color[3] , $color[4]);
@@ -259,7 +260,7 @@ function mura( $fname )
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx);
 
-	save_quadfile($pfx);
+	save_quadfile($pfx, $gp_json);
 	return;
 }
 

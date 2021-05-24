@@ -338,13 +338,13 @@ function maploop( &$ram, $dir, $ovid, $bc, $data )
 	return;
 }
 //////////////////////////////
-function cvnds( $dir )
+function cvpor( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
 
 	global $gp_patch;
-	$gp_patch = nds_patch($dir, 'cvnds');
+	$gp_patch = nds_patch($dir, 'cvpor');
 	if ( empty($gp_patch) )
 		return;
 	$ram = nds_ram($dir);
@@ -369,7 +369,7 @@ function cvnds( $dir )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvnds( $argv[$i] );
+	cvpor( $argv[$i] );
 
 /*
 	POR map 0-0 pos (ram 2106320 , overlay 78 , dracula castle entrance)

@@ -5,6 +5,7 @@
  */
 require "common.inc";
 require "common-guest.inc";
+require "nds.inc";
 
 if ( ! file_exists("header.bin") )  exit();
 if ( ! file_exists("arm9.bin"  ) )  exit();

@@ -103,7 +103,7 @@ var QUAD = QUAD || {};
 				v_clr = a_clr;
 				gl_Position = vec4(a_xyz, 1.0);
 			}
-		`
+		`;
 
 		var frag_src = `
 			precision highp float;
@@ -114,7 +114,7 @@ var QUAD = QUAD || {};
 			void main(void){
 				gl_FragColor = texture2D(u_tex, v_uv) * v_clr;
 			}
-		`
+		`;
 		QUAD.webgl.shader = new_shader(vert_src, frag_src);
 
 		//////////////////////////////
@@ -389,6 +389,13 @@ var QUAD = QUAD || {};
 						clr.push(b/255);
 						clr.push(a/255);
 					}
+					else if ( c.charAt(0) === '0' )
+					{
+						clr.push(0);
+						clr.push(0);
+						clr.push(0);
+						clr.push(0);
+					}
 					else
 					{
 						clr.push(1);
@@ -396,7 +403,7 @@ var QUAD = QUAD || {};
 						clr.push(1);
 						clr.push(1);
 					}
-				}
+				} // for ( var i=0; i < 4; i++ )
 			});
 			glAttr("a_clr", BUFFER.clr, clr, 4);
 			return;

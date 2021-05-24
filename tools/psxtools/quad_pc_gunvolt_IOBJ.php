@@ -8,6 +8,7 @@ require "common-guest.inc";
 require "quad.inc";
 
 $gp_json = array();
+$gp_tag  = '';
 
 function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 {
@@ -20,26 +21,62 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 	}
 
 	// dqd    sqd
-	//  1  2   3  4  c1
-	//  5  6   7  8  c2
-	//  9 10  11 12  c3
-	// 13 14  15 16  c4
-	//   4 1    1-2   13-1-5-9
-	//   | | =>   | , 15-3-7-11
+	//  0  1   2  3  c1
+	//  4  5   6  7  c2
+	//  8  9  10 11  c3
+	// 12 13  14 15  c4
+	//   4 1    1-2   12-0-4-8
+	//   | | =>   | , 14-2-6-10
 	//   3-2    4-3
 	$dqd = array(
-		$float[13] , $float[14] ,
-		$float[ 1] , $float[ 2] ,
-		$float[ 5] , $float[ 6] ,
-		$float[ 9] , $float[10] ,
+		$float[12] , $float[13] ,
+		$float[ 0] , $float[ 1] ,
+		$float[ 4] , $float[ 5] ,
+		$float[ 8] , $float[ 9] ,
 	);
 
 	$sqd = array(
-		$float[15]*$w , $float[16]*$h ,
-		$float[ 3]*$w , $float[ 4]*$h ,
-		$float[ 7]*$w , $float[ 8]*$h ,
-		$float[11]*$w , $float[12]*$h ,
+		$float[14]*$w , $float[15]*$h ,
+		$float[ 2]*$w , $float[ 3]*$h ,
+		$float[ 6]*$w , $float[ 7]*$h ,
+		$float[10]*$w , $float[11]*$h ,
 	);
+
+	return;
+}
+
+function sect_spr( &$file, $ptgt_off, $w, $h )
+{
+	global $gp_json;
+	$cnt = str2int($file, $ptgt_off+8, 4);
+	$off1 = $ptgt_off + 12;
+	$off2 = $ptgt_off + 12 + ($cnt * 8);
+
+	for ( $i1=0; $i1 < $cnt; $i1++ )
+	{
+		// 0 1 2 3  4 5  6 7
+		// off?     no   - -
+		$no = str2int($file, $off1+4, 2);
+			$off1 += 8;
+
+		$data = array();
+		for ( $i2=0; $i2 < $no; $i2++ )
+		{
+			$sqd = array();
+			$dqd = array();
+			sectquad($file, $off2, $w, $h, $sqd, $dqd);
+				$off2 += 0x40;
+
+			$data[$i2] = array(
+				'SrcQuad' => $sqd,
+				'DstQuad' => $dqd,
+				'TexID'   => 0,
+			);
+		} // for ( $i2=0; $i2 < $no; $i2++ )
+
+		$gp_json['Frame'][$i1] = $data;
+	} // for ( $i1=0; $i1 < $cnt; $i1++ )
+
 	return;
 }
 //////////////////////////////
@@ -53,10 +90,10 @@ function sect_anim( &$file, $off1, $off2 )
 	{
 		$p = 4 + ($i * 4);
 		$p1 = str2int($sub, $p+0, 4);
-		if ( $i+1 == $cnt )
-			$p2 = $off2 - $off1;
-		else
+		if ( ($i+1) < $cnt )
 			$p2 = str2int($sub, $p+4, 4);
+		else
+			$p2 = $off2 - $off1;
 
 		$len = $p2 - $p1;
 		$dat = substr($sub, $p1, $len);
@@ -65,8 +102,12 @@ function sect_anim( &$file, $off1, $off2 )
 		for ( $i2=0; $i2 < $len; $i2 += 4 )
 		{
 			$id = str2int($dat, $i2+0, 2);
-			$no = str2int($dat, $i2+2, 2);
-
+			$no = str2int($dat, $i2+2, 1, true);
+			if ( $no < 0 )
+			{
+				php_notice("anim_%d[%x] = %x , %d\n", $i, $i2, $id, $no);
+				continue;
+			}
 			$ent[] = array($id,$no);
 		}
 
@@ -76,6 +117,22 @@ function sect_anim( &$file, $off1, $off2 )
 	return;
 }
 //////////////////////////////
+function gv_rgba32( &$pix )
+{
+	$dec = '';
+	$len = strlen($pix);
+	for ( $i=0; $i < $len; $i += 4 )
+	{
+		$dec .= $pix[$i+2];
+		$dec .= $pix[$i+1];
+		$dec .= $pix[$i+0];
+		$dec .= $pix[$i+3];
+	} // for ( $i=0; $i < $len; $i += 4 )
+
+	$pix = $dec;
+	return;
+}
+
 function gv_rgba16( &$pix )
 {
 	$dec = '';
@@ -93,7 +150,8 @@ function gv_rgba16( &$pix )
 		$dec .= chr($r) . chr($g) . chr($b) . chr($a);
 	} // for ( $i=0; $i < $len; $i += 2 )
 
-	return $dec;
+	$pix = $dec;
+	return;
 }
 
 function save_tex( &$file, $pixd_off, $pfx, &$w, &$h )
@@ -108,10 +166,11 @@ function save_tex( &$file, $pixd_off, $pfx, &$w, &$h )
 	{
 		case 4:
 			printf("32-bit RGBA = %s\n", $pfx);
+			gv_rgba32($pix);
 			break;
 		case 5:
 			printf("16-bit RGBA = %s\n", $pfx);
-			$pix = gv_rgba16($pix);
+			gv_rgba16($pix);
 			break;
 		default:
 			return php_error("UNKNOWN %x = %s", $ty, $pfx);
@@ -155,13 +214,29 @@ function gunvolt( $fname )
 	$h = 0;
 	save_tex($file, $pixd_off, $pfx, $w, $h);
 
-	global $gp_json;
-	$gp_json = load_idtagfile('pc_gv');
+	global $gp_json, $gp_tag;
+	if ( $gp_tag == '' )
+		return php_error('NO TAG %s', $fname);
+	$gp_json = load_idtagfile($gp_tag);
 
 	sect_anim($file, $anim_off, $ptgt_off);
+	sect_spr ($file, $ptgt_off, $w, $h);
 
+	save_quadfile($pfx, $gp_json);
 	return;
 }
 
+echo "{$argv[0]}  -gv/-gv2/-gva/-mgv  FILE...\n";
 for ( $i=1; $i < $argc; $i++ )
-	gunvolt( $argv[$i] );
+{
+	switch ( $argv[$i] )
+	{
+		case '-gv' :  $gp_tag = 'pc_gv' ; break;
+		case '-gv2':  $gp_tag = 'pc_gv2'; break;
+		case '-gva':  $gp_tag = 'pc_gva'; break;
+		case '-mgv':  $gp_tag = 'pc_mgv'; break;
+		default:
+			gunvolt( $argv[$i] );
+			break;
+	} // switch ( $argv[$i] )
+} // for ( $i=1; $i < $argc; $i++ )

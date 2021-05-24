@@ -1,0 +1,45 @@
+[System]
+PC Steam
+
+[Game]
+Azure Striker Gunvolt 2
+
+[Year]
+2020
+
+[Copyright]
+Inti Creates Co. Ltd
+
+[Character Designers]
+Yoshitaka Hatakeyama
+Munehiro Araki
+
+[Character Graphics]
+Ken Fujii
+Yuta Watanabe
+Hirokatsu Maeda
+Hironori Suzuki
+Hidemi Okazaki
+Fumika Matsuo
+Masaya Suzuki
+
+[Character Graphics - Parabola Co. Ltd]
+Shinji Kyogoku
+Naomi Takemoto
+Miki Hase
+
+[Background Graphics]
+Tetsuya Enda
+Shin Nakamura
+Masashi Yamaguchi
+Kenta Takeda
+Karin Shimizu
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+-

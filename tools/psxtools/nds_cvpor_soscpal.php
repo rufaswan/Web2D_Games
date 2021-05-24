@@ -196,7 +196,7 @@ function sectanim( &$so, $pfx )
 	return;
 }
 //////////////////////////////
-function cvnds( $fname )
+function cvpor( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	$so  = load_file("$pfx.so");
@@ -233,4 +233,4 @@ function cvnds( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvnds( $argv[$i] );
+	cvpor( $argv[$i] );

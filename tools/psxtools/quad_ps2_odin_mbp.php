@@ -19,19 +19,20 @@ function colorquad( &$mbp, $pos )
 	for ( $i=0; $i < $mbp['k']; $i += 4 )
 	{
 		$s = substr($mbp['d'], $pos+$i, 4);
-		if ( trim($s, BYTE) == '' )
+
+		$r = int_clamp( ord($s[0]) << 1, 0, BIT8);
+		$g = int_clamp( ord($s[1]) << 1, 0, BIT8);
+		$b = int_clamp( ord($s[2]) << 1, 0, BIT8);
+		$a = int_clamp( ord($s[3]) << 1, 0, BIT8);
+		$rgba = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+
+		if ( $rgba == '#ffffffff' )
 			$color[] = '1';
 		else
-		if ( trim($s, ZERO) == '' )
+		if ( $rgba == '#00000000' )
 			$color[] = '0';
 		else
-		{
-			$r = int_clamp( ord($s[0]) << 1, 0, BIT8);
-			$g = int_clamp( ord($s[1]) << 1, 0, BIT8);
-			$b = int_clamp( ord($s[2]) << 1, 0, BIT8);
-			$a = int_clamp( ord($s[3]) << 1, 0, BIT8);
-			$color[] = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
-		}
+			$color[] = $rgba;
 	} // for ( $i=0; $i < $mbp['k']; $i += 4 )
 
 	$cqd = array($color[2] , $color[3] , $color[4] , $color[5]);
@@ -260,21 +261,22 @@ function odin( $fname )
 	sectanim($mbp, $pfx);
 	sectspr ($mbp, $pfx);
 
-	save_quadfile($pfx);
+	save_quadfile($pfx, $gp_json);
 	return;
 }
 
 echo "{$argv[0]}  -grim/-odin  MBP_FILE...\n";
 for ( $i=1; $i < $argc; $i++ )
 {
-	if ( $argv[$i] == '-grim' )
-		$gp_tag = 'ps2_grim';
-	else
-	if ( $argv[$i] == '-odin' )
-		$gp_tag = 'ps2_odin';
-	else
-		odin( $argv[$i] );
-}
+	switch ( $argv[$i] )
+	{
+		case '-grim':  $gp_tag = 'ps2_grim'; break;
+		case '-odin':  $gp_tag = 'ps2_odin'; break;
+		default:
+			odin( $argv[$i] );
+			break;
+	} // switch ( $argv[$i] )
+} // for ( $i=1; $i < $argc; $i++ )
 
 /*
 mbp 4-01 valids

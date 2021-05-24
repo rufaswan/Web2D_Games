@@ -464,6 +464,13 @@ odin
 		-- -- -- 87  im_dxt5
 		-- 10 -- 0c  im_argb8888
 
+non-power-of-2 ftx
+	vita odin
+		Odin2_OR_US_cpk/HIDE_*.ftx
+		Odin2_OR_US_cpk/Other.ftx
+		Odin2_RE_US_cpk/GUI/SD_HIDE_*.ftx
+		Odin2_RE_US_cpk/OnMemory/SD_Other.ftx
+
 NinPriPack1_cpk
 	ftx.7z               = 16 MB
 	ftx -> gtx.7z        = 28 MB

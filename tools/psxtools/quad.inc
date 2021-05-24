@@ -40,19 +40,18 @@ function load_idtagfile( $pfx )
 	return $data;
 }
 
-function save_quadfile( $fname, $pretty=false )
+function save_quadfile( $pfx, &$json, $pretty=false )
 {
-	global $gp_json;
-	if ( empty($gp_json) )
+	if ( empty($json) )
 		return;
 
 	// JSON_PRETTY_PRINT
 	// JSON_FORCE_OBJECT
 	if ( $pretty )
-		$gp_json = json_encode($gp_json, JSON_PRETTY_PRINT);
+		$json = json_encode($json, JSON_PRETTY_PRINT);
 	else
-		$gp_json = json_encode($gp_json);
+		$json = json_encode($json);
 
-	file_put_contents("$fname.quad", $gp_json);
+	file_put_contents("$pfx.quad", $json);
 	return;
 }

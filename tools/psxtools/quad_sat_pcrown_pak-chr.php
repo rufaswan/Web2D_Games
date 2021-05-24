@@ -286,7 +286,7 @@ function pakchr( &$pak, $pfx )
 	sectspr ($pak, $pfx);
 
 	save_texx($pfx);
-	save_quadfile($pfx);
+	save_quadfile($pfx, $gp_json);
 	return;
 }
 //////////////////////////////

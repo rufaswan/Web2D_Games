@@ -1,0 +1,25 @@
+[System]
+Nintendo DS
+
+[Game]
+Kumatanchi
+
+[Year]
+2008
+
+[Copyright]
+Vanillaware
+dimple
+
+[Illustrator]
+Ashinaga Oji-san
+Shigatake
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

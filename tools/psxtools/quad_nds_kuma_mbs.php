@@ -197,26 +197,27 @@ function kuma( $fname )
 	//     - 1bc   - 160 |  -   2*c   -   1*18
 	//   178 19c 1d4 204 | 1*24 1*20 1*30 1*10
 	//
-	// k_item00.mbs
-	//            a0   358  5ff8 |    -     1d*18 1ee*30 857*30
-	//   1f048 6954c 768e4 1f098 |   4*14 11a2*c    1*20 30b*18
-	//   239a0 2832c 76904 7bee4 | 20b*24 2091*20 1ca*30 310*10
-	// s9[+28] =  30c+4 => sa
-	// sa[+ 0] = 208d+4 => s8
-	// s8[+ 0] =  30a   => s6
-	// s6[+10] = 11a0+2 => s4 , [+12] =  3+1 => s3
-	// s4[+ 4] =  1ed   => s1 , [+ 8] = 1c   => s0 , [+ a] = 856 => s2
+	// kuma01.mbs
+	//            a0   268  5de8 |    -     13*18 1e8*30 67e*30
+	//   19588 59b8c 663c0 195d8 |   4*14 10af*c    3*8  2d4*18
+	//   1d9b8 22ecc 663d8 6a878 | 25d*24 1b66*20 16e*30 4e8*10
+	// s9[+28] =  4e5+3 => sa
+	// sa[+ 0] = 1b64+2 => s8
+	// s8[+ 0] =  2d3   => s6 , [+ 4] = 25c   => s7
+	// s6[+10] = 10a6+9 => s4 , [+12] =   3+0 => s3
+	// s4[+ 4] =  1e7   => s1 , [+ 8] =  12   => s0 , [+ a] = 67d => s2
 	// s2
 	// s0
 	// s1
 	// s3
+	// s7
 	$sect = array(
 		array('p' => 0x54 , 'k' => 0x18), // 0
 		array('p' => 0x58 , 'k' => 0x30), // 1
 		array('p' => 0x5c , 'k' => 0x30), // 2
 		array('p' => 0x60 , 'k' => 0x14), // 3 reform=0
 		array('p' => 0x64 , 'k' => 0xc ), // 4
-		array('p' => 0x68 , 'k' => 0x20), // 5 reform=0
+		array('p' => 0x68 , 'k' => 0x8 ), // 5 reform=0
 		array('p' => 0x6c , 'k' => 0x18), // 6
 		array('p' => 0x70 , 'k' => 0x24), // 7
 		array('p' => 0x74 , 'k' => 0x20), // 8
@@ -237,9 +238,16 @@ function kuma( $fname )
 	sectanim($mbs, $pfx);
 	sectspr ($mbs, $pfx);
 
-	save_quadfile($pfx);
+	save_quadfile($pfx, $gp_json);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	kuma( $argv[$i] );
+
+/*
+mbs 4-01 valids
+	0 2 4 6
+mbs 4-2 valids
+	0
+ */

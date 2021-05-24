@@ -1,0 +1,30 @@
+[System]
+PC Steam
+
+[Game]
+Mighty Gunvolt
+
+[Year]
+2014,2015
+
+[Copyright]
+Inti Creates Co. Ltd
+
+[Bitmap Artist]
+Hira
+M.Dot
+Miyaman
+
+[BG Design]
+Hatsumi
+Muransin
+TZG
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+-

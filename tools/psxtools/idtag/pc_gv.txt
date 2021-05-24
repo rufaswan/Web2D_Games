@@ -1,0 +1,45 @@
+[System]
+PC Steam
+
+[Game]
+Azure Striker Gunvolt
+
+[Year]
+2014,2015
+
+[Copyright]
+Inti Creates Co. Ltd
+
+[Character Designer]
+Yoshitaka Hatakeyama
+
+[Character Graphics]
+Ken Fujii
+Yuta Watanabe
+Rie Oonishi
+Yuki Suzuki
+Fumika Matsuo
+Masaya Suzuki
+Erina Fukuoka
+Masanori Ito
+Hirokatsu Maeda
+Hatsune Kawai
+
+[Background Graphics]
+Tetsuya Enda
+Munehiro Araki
+Hidetaka Katsuki
+Hatsumi Yokoyama
+Eri Furukawa
+Hiroyuki Tamura
+Kenta Takeda
+Masashi Yamaguchi
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+-

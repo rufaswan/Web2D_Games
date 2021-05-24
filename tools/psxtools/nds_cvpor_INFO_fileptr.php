@@ -31,12 +31,12 @@ function findptr( &$file, $name, $ram, $fst, $fed )
 	return;
 }
 
-function cvnds( $dir )
+function cvpor( $dir )
 {
 	if ( ! is_dir($dir) )
 		return;
 
-	$patch = nds_patch($dir, "cvnds");
+	$patch = nds_patch($dir, "cvpor");
 	if ( empty($patch) )
 		return;
 
@@ -85,4 +85,4 @@ function cvnds( $dir )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	cvnds( $argv[$i] );
+	cvpor( $argv[$i] );
