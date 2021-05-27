@@ -133,6 +133,11 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	}
 	//setInterval(render, 250);
 	render();
+
+	// normal  = CPU 28-33% , load 78-93% , pause 51-53%
+	// +hwa    = CPU 34-39% , load 40-42% , pause 35-37%
+	// -canvas = CPU 25-28% , load 27-30% , pause 26-28%
+	QUAD.performance();
 	</script>
 </body>
 </html>

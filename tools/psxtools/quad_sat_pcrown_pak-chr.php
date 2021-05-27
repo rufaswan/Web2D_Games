@@ -214,14 +214,18 @@ function sectanim( &$pak, $pfx )
 		$b0 = str2big($pak[4]['d'], $i4+0, 4);
 		$st = $b0 - $pak[3]['o'];
 
-		$ent = array();
-		// 0 1  2  3  4 5  6  7
-		// sid  -  -  ms   -  rep
+		$ent = array(
+			'FID' => array(),
+			'FPS' => array(),
+		);
+		$name = sprintf("anim_%d", $k4);
 		while (1)
 		{
 			$bak = $st;
 				$st += 8;
 
+			// 0 1  2  3  4 5  6  7
+			// sid  -  -  ms   -  rep
 			//$b2 = str2big($pak[3]['d'], $bak+2, 2, true);
 			//if ( $b2 == -1 )
 				//continue;
@@ -236,10 +240,10 @@ function sectanim( &$pak, $pfx )
 			$b4 = str2big($pak[3]['d'], $bak+4, 2, true);
 			#$b6 = str2big($pak[3]['d'], $bak+6, 1);
 
-			$ent[] = array($b0 & 0x0fff, $b4);
+			$ent['FID'][] = $b0 & 0x0fff;
+			$ent['FPS'][] = $b4;
 		} // while (1)
 
-		$name = sprintf("anim_%d", $k4);
 		$gp_json['Animation'][$name][0] = $ent;
 	} // for ( $i4=0; $i4 < $len; $i4 += $pak[4]['k'] )
 

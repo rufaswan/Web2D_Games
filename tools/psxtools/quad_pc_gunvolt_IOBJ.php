@@ -98,22 +98,29 @@ function sect_anim( &$file, $off1, $off2 )
 		$len = $p2 - $p1;
 		$dat = substr($sub, $p1, $len);
 
-		$ent = array();
+		$ent = array(
+			'FID' => array(),
+			'FPS' => array(),
+		);
+		$name = sprintf("anim_%d", $i);
 		for ( $i2=0; $i2 < $len; $i2 += 4 )
 		{
+			// 1 2  3 4
+			// id   no
 			$id = str2int($dat, $i2+0, 2);
 			$no = str2int($dat, $i2+2, 1, true);
 			if ( $no < 0 )
 			{
-				php_notice("anim_%d[%x] = %x , %d\n", $i, $i2, $id, $no);
+				php_notice("%s[%x] = %x , %d\n", $name, $i2, $id, $no);
 				continue;
 			}
-			$ent[] = array($id,$no);
+			$ent['FID'][] = $id;
+			$ent['FPS'][] = $no;
 		}
 
-		$gp_json['Animation']["anim_$i"][0] = $ent;
-
+		$gp_json['Animation'][$name][0] = $ent;
 	} // for ( $i=0; $i < $cnt; $i++ )
+
 	return;
 }
 //////////////////////////////

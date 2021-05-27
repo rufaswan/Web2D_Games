@@ -81,7 +81,7 @@ function sectpart( &$mbp, $pfx, $k6, $id6, $no6 )
 
 		// 0 1 2 3  4   6  8    a    c    e     10   12   14   16
 		// sub      s1  -  s0-0 s0-6 s0-c s0-2  s2-0 s2-6 s2-c s2-2
-		$sub = substr ($mbp[4]['d'], $p4+ 0, 4);
+		$sub = substr($mbp[4]['d'], $p4+ 0, 4);
 
 		$s1 = str2int($mbp[4]['d'], $p4+ 4, 2); // sx,sy
 		$s0 = str2int($mbp[4]['d'], $p4+ 8, 2);
@@ -115,10 +115,20 @@ function sectpart( &$mbp, $pfx, $k6, $id6, $no6 )
 			$data[$i4]['SrcQuad'] = $sqd;
 		}
 
-		if ( $s3 != 0 )
+/*
+		switch ( $s3 )
 		{
-			$data[$i4]['Blend'] = array('ADD', 'ONE', 'ONE');
-		}
+			case 1:
+				$data[$i4]['Blend'] = array('SUB', 1);
+				break;
+			case 2:
+				$data[$i4]['Blend'] = array('ADD', 1);
+				break;
+			default: // 0
+				//$data[$i4]['Blend'] = array('NORMAL', 1);
+				break;
+		} // switch ( $s3 )
+*/
 
 	} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -128,7 +138,7 @@ function sectpart( &$mbp, $pfx, $k6, $id6, $no6 )
 
 function sectspr( &$mbp, $pfx )
 {
-	// s6-s4-s1,s2 [18-18-20,20]
+	// s6-s4-s0/s1/s2 [18-18-20/20/20]
 	$len6 = strlen( $mbp[6]['d'] );
 	for ( $i6=0; $i6 < $len6; $i6 += $mbp[6]['k'] )
 	{
@@ -154,10 +164,8 @@ function sectanim( &$mbp, $pfx )
 	$len9 = strlen( $mbp[9]['d'] );
 	for ( $i9=0; $i9 < $len9; $i9 += $mbp[9]['k'] )
 	{
-		// 0 4 8 c  10
-		// - - - -  name
-		// 28 29  2a  2b 2c 2d 2e 2f
-		// id     no  -  -  -  -  -
+		// 0 4 8 c  10    28 29  2a  2b 2c 2d 2e 2f
+		// - - - -  name  id     no  -  -  -  -  -
 		$name = substr0($mbp[9]['d'], $i9+0x10);
 		$id9  = str2int($mbp[9]['d'], $i9+0x28, 2);
 		$no9  = str2int($mbp[9]['d'], $i9+0x2a, 1);
@@ -171,20 +179,37 @@ function sectanim( &$mbp, $pfx )
 			$ida = str2int($mbp[10]['d'], $pa+0, 2);
 			$noa = str2int($mbp[10]['d'], $pa+2, 2);
 
-			$ent = array();
+			$ent = array(
+				'FID' => array(),
+				'POS' => array(),
+				'FPS' => array(),
+			);
+			$is_mov = false;
 			for ( $i8=0; $i8 < $noa; $i8++ )
 			{
 				$p8 = ($ida + $i8) * $mbp[8]['k'];
 
-				// 0   2 4  6   8 c 10 14 18 1c
-				// id  - -  no  - - -  -  -  -
+				// 0   2  4    6   8 c 10 14 18 1c
+				// id  -  pos  no  - - -  -  -  -
 				$id8 = str2int($mbp[8]['d'], $p8+0, 2);
+				$id7 = str2int($mbp[8]['d'], $p8+4, 2);
 				$no8 = str2int($mbp[8]['d'], $p8+6, 2);
 
-				$ent[] = array($id8,$no8);
+				$p7 = $id7 * $mbp[7]['k'];
+				$x7 = float32( substr($mbp[7]['d'], $p7+0, 4) );
+				$y7 = float32( substr($mbp[7]['d'], $p7+4, 4) );
 
+				$ent['FID'][] = $id8;
+				$ent['FPS'][] = $no8;
+				$ent['POS'][] = array($x7,$y7);
+
+				if ( $x7 != 0 || $y7 != 0 )
+					$is_mov = true;
 			} // for ( $i8=0; $i8 < $noa; $i8++ )
 
+			// skip all zero Pos
+			if ( ! $is_mov )
+				unset( $ent['POS'] );
 			$gp_json['Animation'][$name][$ia] = $ent;
 		} // for ( $ia=0; $ia < $no9; $ia++ )
 
@@ -248,9 +273,9 @@ function odin( $fname )
 	file2sect($mbp, $sect, $pfx, array('str2int', 4), strrpos($mbp, "FEOC"), METAFILE);
 	if ( METAFILE )
 	{
-		sect_sum($mbs[4], 'mbs[4][0]', 0); //
-		sect_sum($mbs[4], 'mbs[4][1]', 1); // = 0
-		sect_sum($mbs[4], 'mbs[4][2]', 2); //
+		sect_sum($mbp[4], 'mbp[4][0]', 0); //
+		sect_sum($mbp[4], 'mbp[4][1]', 1); // = 0
+		sect_sum($mbp[4], 'mbp[4][2]', 2); //
 	}
 
 	global $gp_json, $gp_tag;

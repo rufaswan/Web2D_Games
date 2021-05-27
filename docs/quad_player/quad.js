@@ -46,8 +46,9 @@ var QUAD = QUAD || {};
 			cur_frame     : 0,
 			cur_anim_key  : '',
 			cur_anim_data : [],
-			cur_anim_time : [],
+			cur_anim_time : 0,
 			cur_anim_stop : false,
+			prev_anim_frame : '',
 		};
 		return;
 	}
@@ -67,6 +68,7 @@ var QUAD = QUAD || {};
 		QUAD.webgl.gl = dom_canvas.getContext('webgl', option) || dom_canvas.getContext('experiment-webgl', option);
 		if ( ! QUAD.webgl.gl )
 			return console.log('WebGL is disabled or not supported');
+		QUAD.webgl.draw = 0;
 
 		var GL = QUAD.webgl.gl;
 		QUAD.webgl.maxtex = GL.getParameter(GL.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
@@ -94,13 +96,13 @@ var QUAD = QUAD || {};
 		var vert_src = `
 			attribute vec2  a_uv;
 			attribute vec3  a_xyz;
-			attribute vec4  a_clr;
+			attribute vec4  a_color;
 			varying   vec2  v_uv;
-			varying   vec4  v_clr;
+			varying   vec4  v_color;
 
 			void main(void){
-				v_uv  = a_uv;
-				v_clr = a_clr;
+				v_uv    = a_uv;
+				v_color = a_color;
 				gl_Position = vec4(a_xyz, 1.0);
 			}
 		`;
@@ -109,10 +111,10 @@ var QUAD = QUAD || {};
 			precision highp float;
 			uniform sampler2D u_tex;
 			varying vec2      v_uv;
-			varying vec4      v_clr;
+			varying vec4      v_color;
 
 			void main(void){
-				gl_FragColor = texture2D(u_tex, v_uv) * v_clr;
+				gl_FragColor = texture2D(u_tex, v_uv) * v_color;
 			}
 		`;
 		QUAD.webgl.shader = new_shader(vert_src, frag_src);
@@ -282,33 +284,28 @@ var QUAD = QUAD || {};
 
 	QUAD.resize_canvas = function(){
 		var GL = QUAD.webgl.gl;
-		GL.clear(GL.COLOR_BUFFER_BIT);
-
 		GL.canvas.width  = GL.canvas.clientWidth;
 		GL.canvas.height = GL.canvas.clientHeight;
 		return;
 	}
 
+	QUAD.performance = function(d=1){
+		if ( ! d )  return;
+		setInterval(function(){
+			console.log('draw/sec', QUAD.webgl.draw);
+			QUAD.webgl.draw = 0;
+		}, 1000);
+		return;
+	}
 }(QUAD));
 //////////////////////////////
 // webgl frames
 (function(QUAD){
 
-	function glEnum( blend ){
-		var GL = QUAD.webgl.gl;
-		if ( blend === 'ADD'        )  return GL.FUNC_ADD;
-		if ( blend === 'SUB'        )  return GL.FUNC_SUBTRACT;
-		if ( blend === '-SUB'       )  return GL.FUNC_REVERSE_SUBTRACT;
-		if ( blend === 'ONE'        )  return GL.ONE;
-		if ( blend === 'ZERO'       )  return GL.ZERO;
-		if ( blend === 'SRC_ALPHA'  )  return GL.SRC_ALPHA;
-		if ( blend === '-SRC_ALPHA' )  return GL.ONE_MINUS_SRC_ALPHA;
-		return '';
-	}
-
-	function render_framebuffer( texid, src, dst, clr, blend ){
+	function render_framebuffer( texid, src, dst, clr, pos, fact, blend ){
 		if ( src.length === 0 || dst.length === 0 || clr.length === 0 )
 			return;
+		//console.log(src.length, dst.length, clr.length, fact.length, blend);
 
 		var GL      = QUAD.webgl.gl;
 		var PROGRAM = QUAD.webgl.shader;
@@ -341,17 +338,17 @@ var QUAD = QUAD || {};
 			return;
 		}
 
-		function set_xyz( quad, w, h ){
+		function set_xyz( quad, pos, w, h ){
 			var xyz = [];
 			var hw = w *  0.5 * QUAD.files.zoom;
 			var hh = h * -0.5 * QUAD.files.zoom;
 			var x = QUAD.files.axis_x;
 			var y = QUAD.files.axis_y;
 			quad.forEach(function(v){
-				xyz.push(v[0]/hw+x); xyz.push(v[1]/hh+y); xyz.push(1.0);
-				xyz.push(v[2]/hw+x); xyz.push(v[3]/hh+y); xyz.push(1.0);
-				xyz.push(v[4]/hw+x); xyz.push(v[5]/hh+y); xyz.push(1.0);
-				xyz.push(v[6]/hw+x); xyz.push(v[7]/hh+y); xyz.push(1.0);
+				xyz.push( (v[0]+pos[0])/hw + x); xyz.push( (v[1]+pos[1])/hh + y); xyz.push(1.0);
+				xyz.push( (v[2]+pos[0])/hw + x); xyz.push( (v[3]+pos[1])/hh + y); xyz.push(1.0);
+				xyz.push( (v[4]+pos[0])/hw + x); xyz.push( (v[5]+pos[1])/hh + y); xyz.push(1.0);
+				xyz.push( (v[6]+pos[0])/hw + x); xyz.push( (v[7]+pos[1])/hh + y); xyz.push(1.0);
 			});
 			glAttr("a_xyz", BUFFER.xyz, xyz, 3);
 			return;
@@ -372,9 +369,9 @@ var QUAD = QUAD || {};
 			return;
 		}
 
-		function set_clr( quad ){
+		function set_clr( quad, fact ){
 			var clr = [];
-			quad.forEach(function(v){
+			quad.forEach(function(v, k){
 				for ( var i=0; i < 4; i++ )
 				{
 					var c = v[i];
@@ -384,10 +381,10 @@ var QUAD = QUAD || {};
 						var g = parseInt( c.substring(3,5), 16);
 						var b = parseInt( c.substring(5,7), 16);
 						var a = parseInt( c.substring(7,9), 16);
-						clr.push(r/255);
-						clr.push(g/255);
-						clr.push(b/255);
-						clr.push(a/255);
+						clr.push( r/255 * fact[k] );
+						clr.push( g/255 * fact[k] );
+						clr.push( b/255 * fact[k] );
+						clr.push( a/255 * fact[k] );
 					}
 					else if ( c.charAt(0) === '0' )
 					{
@@ -398,14 +395,14 @@ var QUAD = QUAD || {};
 					}
 					else
 					{
-						clr.push(1);
-						clr.push(1);
-						clr.push(1);
-						clr.push(1);
+						clr.push( fact[k] );
+						clr.push( fact[k] );
+						clr.push( fact[k] );
+						clr.push( fact[k] );
 					}
 				} // for ( var i=0; i < 4; i++ )
 			});
-			glAttr("a_clr", BUFFER.clr, clr, 4);
+			glAttr("a_color", BUFFER.clr, clr, 4);
 			return;
 		}
 
@@ -448,21 +445,43 @@ var QUAD = QUAD || {};
 		var image = QUAD.files.image[texid];
 
 		set_uv (src, image.width    , image.height);
-		set_xyz(dst, GL.canvas.width, GL.canvas.height);
+		set_xyz(dst, pos, GL.canvas.width, GL.canvas.height);
 		set_idx(dst.length);
-		set_clr(clr);
+		set_clr(clr, fact);
 		set_tex(image.tex);
 
 		GL.enable(GL.BLEND);
-		GL.blendEquation( glEnum(blend[0]) );
-		GL.blendFunc( glEnum(blend[1]) , glEnum(blend[2]) );
+		if ( blend === 'NONE' )
+		{
+			GL.blendEquation( GL.FUNC_ADD );
+			GL.blendFunc( GL.ONE , GL.ZERO );
+		}
+		else
+		if ( blend === 'ADD' )
+		{
+			GL.blendEquation( GL.FUNC_ADD );
+			GL.blendFunc( GL.ONE , GL.ONE );
+		}
+		else
+		if ( blend === 'SUB' )
+		{
+			GL.blendEquation( GL.FUNC_SUBTRACT );
+			//GL.blendEquation( GL.FUNC_REVERSE_SUBTRACT );
+			GL.blendFunc( GL.ONE , GL.ONE );
+		}
+		else // NORMAL
+		{
+			GL.blendEquation( GL.FUNC_ADD );
+			GL.blendFunc( GL.SRC_ALPHA , GL.ONE_MINUS_SRC_ALPHA );
+		}
 
 		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
 		GL.drawElements(GL.TRIANGLES, dst.length*6, GL.UNSIGNED_SHORT, 0);
+		QUAD.webgl.draw++;
 		return;
 	}
 
-	QUAD.render_frameid = function(id){
+	QUAD.render_frameid = function(id, pos){
 		var GL = QUAD.webgl.gl;
 		var frame = QUAD.files.quad.Frame[id];
 		if ( frame === undefined )
@@ -471,17 +490,26 @@ var QUAD = QUAD || {};
 			return;
 
 		var cur_texid = -1;
-		var cur_blend = ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
-		var src = [];
-		var dst = [];
-		var clr = [];
+		var cur_blend = 'NORMAL';
+		var src  = [];
+		var dst  = [];
+		var clr  = [];
+		var fact = [];
 		frame.forEach(function(v){
 			if ( v.DstQuad === undefined )
 				return;
 
-			var blend   = v.Blend   || ['ADD', 'SRC_ALPHA', '-SRC_ALPHA'];
 			var clrquad = v.ClrQuad || ['1','1','1','1'];
 			var srcquad = v.SrcQuad || [0,0 , 1,0 , 1,1 , 0,1];
+
+			// blending
+			var blend = 'NORMAL';
+			var bfact = 1;
+			if ( v.Blend !== undefined )
+			{
+				blend = v.Blend[0];
+				bfact = v.Blend[1];
+			}
 
 			// in case color blending part , no texture
 			var texid = -1;
@@ -493,21 +521,24 @@ var QUAD = QUAD || {};
 				|| (QUAD.files.image[texid].width === 2 && QUAD.files.image[texid].height === 2) )
 				srcquad = [0,0 , 1,0 , 1,1 , 0,1];
 
-			if ( cur_texid !== v.TexID || cur_blend.toString() !== blend.toString() )
+			// optimize all same texture / blend type for one draw call
+			if ( cur_texid !== v.TexID || cur_blend !== blend )
 			{
-				render_framebuffer(cur_texid, src, dst, clr, cur_blend);
+				render_framebuffer(cur_texid, src, dst, clr, pos, fact, cur_blend);
 				cur_texid = v.TexID;
 				cur_blend = blend;
-				src = [];
-				dst = [];
-				clr = [];
+				src  = [];
+				dst  = [];
+				clr  = [];
+				fact = [];
 			}
 
 			dst.push( v.DstQuad );
 			src.push( srcquad );
 			clr.push( clrquad );
+			fact.push( bfact );
 		});
-		render_framebuffer(cur_texid, src, dst, clr, cur_blend);
+		render_framebuffer(cur_texid, src, dst, clr, pos, fact, cur_blend);
 		return;
 	}
 
@@ -517,16 +548,18 @@ var QUAD = QUAD || {};
 			return;
 		while ( QUAD.anim.cur_frame < 0 )
 			QUAD.anim.cur_frame += len;
-		while ( QUAD.anim.cur_frame >= len )
-			QUAD.anim.cur_frame -= len;
+		QUAD.anim.cur_frame %= len;
 		return;
 	}
 
 	QUAD.render_frame = function(){
+		QUAD.resize_canvas();
 		if ( QUAD.files.quad === undefined )
 			return;
-		QUAD.resize_canvas();
-		QUAD.render_frameid( QUAD.anim.cur_frame );
+
+		var GL = QUAD.webgl.gl;
+		GL.clear(GL.COLOR_BUFFER_BIT);
+		QUAD.render_frameid( QUAD.anim.cur_frame, [0,0] );
 		return;
 	}
 
@@ -548,84 +581,53 @@ var QUAD = QUAD || {};
 	QUAD.anim_set = function(key){
 		QUAD.anim.cur_anim_key  = '';
 		QUAD.anim.cur_anim_data = [];
-		QUAD.anim.cur_anim_time = [];
+		QUAD.anim.cur_anim_time = 0;
+		QUAD.anim.prev_anim_frame = '';
 
 		var anim = QUAD.files.quad.Animation;
 		if ( anim === undefined )
 			return;
 
+		var data = [];
 		if ( anim.hasOwnProperty(key) ){
-			QUAD.anim.cur_anim_key  = key;
-			QUAD.anim.cur_anim_data = anim[key];
-			console.log('cur_anim_data', anim[key]);
+			QUAD.anim.cur_anim_key = key;
+			data = anim[key].slice();
+
+			data.forEach(function(v,k){
+				var time = [];
+				for ( var i=0; i < v.FPS.length; i++ )
+				{
+					for ( var j=0; j < v.FPS[i]; j++ )
+						time.push(i);
+				} // for ( var i=0; i < v.FPS.length; i++ )
+
+				v.TIME = time;
+			});
+
+			console.log('cur_anim_data', data);
+			QUAD.anim.cur_anim_data = data;
 		}
 		return;
 	}
 
-	function anim_timer_add(time, data){
-		// data = [[0,22],[1,4],[2,3]]
-		// time = [0,0]
-		time[1]++;
-		if ( time[1] >= data[time[0]][1] )
-		{
-			time[0]++;
-			time[1] = 0;
-		}
-		if ( time[0] >= data.length )
-		{
-			time[0] = data.length - 1;
-			return 1;
-		}
-		return 0;
-	}
-
-	function anim_timer_sub(time, data){
-		// data = [[0,22],[1,4],[2,3]]
-		// time = [0,0]
-		time[1]--;
-		var len = data.length;
-		if ( time[1] < 0 )
-		{
-			if ( time[0] === 0 )
-				time[0] = len - 1;
-			else
-				time[0]--;
-			time[1] = data[time[0]][1];
-		}
-		return 0;
-	}
-
 	QUAD.anim_timer = function(int){
-		var data = QUAD.anim.cur_anim_data;
-		var time = QUAD.anim.cur_anim_time;
-		if ( data === undefined )
+		if ( int === 0 )
+			return;
+		if ( QUAD.anim.cur_anim_data === undefined )
 			return;
 
-		var loop = data.length;
-		data.forEach(function(v,k){
-			// per track timer
-			if ( time[k] === undefined )
-				time[k] = [0,0];
-			else
-			{
-				if ( int > 0 )
-					loop -= anim_timer_add(time[k], v);
-				else
-				if ( int < 0 )
-					loop -= anim_timer_sub(time[k], v);
-			}
-		});
-
-		if ( loop <= 0 )
-		{
-			QUAD.anim.cur_anim_time = [];
-			QUAD.anim_timer(0);
-		}
+		QUAD.anim.cur_anim_time += int;
+		if ( QUAD.anim.cur_anim_time < 0 )
+			QUAD.anim.cur_anim_time = 0;
 		return;
 	}
 
 	QUAD.render_anim = function(){
+		QUAD.resize_canvas();
 		if ( QUAD.anim.cur_anim_key === '' )
+			return;
+		var data = QUAD.anim.cur_anim_data;
+		if ( data === undefined )
 			return;
 
 		if ( ! QUAD.anim.cur_anim_stop )
@@ -633,14 +635,35 @@ var QUAD = QUAD || {};
 		else
 			QUAD.anim_timer(0);
 
-		QUAD.resize_canvas();
-		var data = QUAD.anim.cur_anim_data;
-		var time = QUAD.anim.cur_anim_time;
-		time.forEach(function(v,k){
-			// data = [[0,22],[1,4],[2,3]]
-			// time = [0,0]
-			QUAD.render_frameid( data[k][v[0]][0] );
+		// reuse previous rendered frame
+		var cur = '';
+		var reset = true;
+		data.forEach(function(v,k){
+			// v = {"FID":[1,2,3],"POS":[[0,0],[1,0],[2,0]],"FPS":[2,2,2],"TIME":[0,0,1,1,2,2]}
+			var time = QUAD.anim.cur_anim_time % v.TIME.length;
+			var id  = v.TIME[time];
+			cur += '+' + id;
+			if ( time !== 0 )
+				reset = false;
 		});
+		if ( QUAD.anim.prev_anim_frame === cur )
+			return;
+		if ( reset )
+			QUAD.anim.cur_anim_time = 0;
+
+		// render new frame
+		var GL = QUAD.webgl.gl;
+		GL.clear(GL.COLOR_BUFFER_BIT);
+		data.forEach(function(v,k){
+			// v = {"FID":[1,2,3],"POS":[[0,0],[1,0],[2,0]],"FPS":[2,2,2],"TIME":[0,0,1,1,2,2]}
+			var time = QUAD.anim.cur_anim_time % v.TIME.length;
+			var id  = v.TIME[time];
+			var pos = [0,0];
+			if ( v.POS )  pos = v.POS[id];
+
+			QUAD.render_frameid( v.FID[id], pos );
+		});
+		QUAD.anim.prev_anim_frame = cur;
 		return;
 	}
 

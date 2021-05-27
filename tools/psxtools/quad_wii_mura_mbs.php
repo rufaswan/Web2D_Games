@@ -115,10 +115,20 @@ function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 			$data[$i4]['SrcQuad'] = $sqd;
 		}
 
-		if ( $s3 != 0 )
+/*
+		switch ( $s3 )
 		{
-			$data[$i4]['Blend'] = array('ADD', 'ONE', 'ONE');
-		}
+			case 1:
+				$data[$i4]['Blend'] = array('SUB', 1);
+				break;
+			case 2:
+				$data[$i4]['Blend'] = array('ADD', 1);
+				break;
+			default: // 0
+				//$data[$i4]['Blend'] = array('NORMAL', 1);
+				break;
+		} // switch ( $s3 )
+*/
 
 	} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -128,7 +138,7 @@ function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
 
 function sectspr( &$mbs, $pfx )
 {
-	// s6-s4-s1,s2 [18-c-30,30]
+	// s6-s4-s0/s1/s2 [18-c-18/30/30]
 	$len6 = strlen( $mbs[6]['d'] );
 	for ( $i6=0; $i6 < $len6; $i6 += $mbs[6]['k'] )
 	{
@@ -154,10 +164,8 @@ function sectanim( &$mbs, $pfx )
 	$len9 = strlen( $mbs[9]['d'] );
 	for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
 	{
-		// 0 4 8 c  10
-		// - - - -  name
-		// 28 29  2a  2b 2c 2d 2e 2f
-		// id     no  -  -  -  -  -
+		// 0 4 8 c  10    28 29  2a  2b 2c 2d 2e 2f
+		// - - - -  name  id     no  -  -  -  -  -
 		$name = substr0($mbs[9]['d'], $i9+0x10);
 		$id9  = str2big($mbs[9]['d'], $i9+0x28, 2);
 		$no9  = str2big($mbs[9]['d'], $i9+0x2a, 1);
@@ -171,20 +179,37 @@ function sectanim( &$mbs, $pfx )
 			$ida = str2big($mbs[10]['d'], $pa+0, 2);
 			$noa = str2big($mbs[10]['d'], $pa+2, 2);
 
-			$ent = array();
+			$ent = array(
+				'FID' => array(),
+				'POS' => array(),
+				'FPS' => array(),
+			);
+			$is_mov = false;
 			for ( $i8=0; $i8 < $noa; $i8++ )
 			{
 				$p8 = ($ida + $i8) * $mbs[8]['k'];
 
-				// 0   2 4  6   8 c 10 14 18 1c
-				// id  - -  no  - - -  -  -  -
+				// 0   2  4    6   8 c 10 14 18 1c
+				// id  -  pos  no  - - -  -  -  -
 				$id8 = str2big($mbs[8]['d'], $p8+0, 2);
+				$id7 = str2big($mbs[8]['d'], $p8+4, 2);
 				$no8 = str2big($mbs[8]['d'], $p8+6, 2);
 
-				$ent[] = array($id8,$no8);
+				$p7 = $id7 * $mbs[7]['k'];
+				$x7 = float32( substrrev($mbs[7]['d'], $p7+0, 4) );
+				$y7 = float32( substrrev($mbs[7]['d'], $p7+4, 4) );
 
+				$ent['FID'][] = $id8;
+				$ent['FPS'][] = $no8;
+				$ent['POS'][] = array($x7,$y7);
+
+				if ( $x7 != 0 || $y7 != 0 )
+					$is_mov = true;
 			} // for ( $i8=0; $i8 < $noa; $i8++ )
 
+			// skip all zero Pos
+			if ( ! $is_mov )
+				unset( $ent['POS'] );
 			$gp_json['Animation'][$name][$ia] = $ent;
 		} // for ( $ia=0; $ia < $no9; $ia++ )
 
@@ -238,8 +263,8 @@ function mura( $fname )
 		array('p' => 0x58 , 'k' => 0x30), // 1
 		array('p' => 0x5c , 'k' => 0x30), // 2 dummy_npc=0
 		array('p' => 0x60 , 'k' => 0x50), // 3 bg=0
-		array('p' => 0x64 , 'k' => 0x0c), // 4
-		array('p' => 0x68 , 'k' => 0x08), // 5 bg=0
+		array('p' => 0x64 , 'k' => 0xc ), // 4
+		array('p' => 0x68 , 'k' => 0x8 ), // 5 bg=0
 		array('p' => 0x6c , 'k' => 0x18), // 6
 		array('p' => 0x70 , 'k' => 0x24), // 7
 		array('p' => 0x74 , 'k' => 0x20), // 8
@@ -272,28 +297,4 @@ mbs 4-01 valids
 	0 1 2 3 4 5 7 9 11 13 15 29 2d
 mbs 4-2 valids
 	0 1 2
-
-	0   ---- ----
-	1   ---- ---1
-	2   ---- --1-
-	3   ---- --11
-	4   ---- -1--
-	5   ---- -1-1
-	7   ---- -111
-	9   ---- 1--1
-	11  ---1 ---1
-	13  ---1 --11
-	15  ---1 -1-1
-	29  --1- 1--1
-	2d  --1- 11-1
-
-Momohime_Battle_drm
-	3 = eyes , shadow
-	5 = thigh shadow
-	2d = effects
-Kisuke_Battle_drm
-	3 = eyes
-	5 = flame circle
-	1+29 = sword + shine
-	2d = effects
  */

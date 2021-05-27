@@ -31,62 +31,6 @@ function colorquad( &$cqd, &$mbs, $pos )
 	return;
 }
 
-function sectquad_int( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
-{
-	$float = array();
-	for ( $i=0; $i < $mbs['k']; $i += 2 )
-	{
-		$p = ($pos * $mbs['k']) + $i;
-		$b = str2int($mbs['d'], $p, 2, true);
-		$float[] = $b / 0x10;
-	}
-
-	cmp_quadxy($float,  8, 40);
-	cmp_quadxy($float,  9, 41);
-	cmp_quadxy($float, 12, 44);
-	cmp_quadxy($float, 13, 45);
-
-	// sqd           dqd
-	//  0  1   2  3   4  5   6  7  center
-	//  8  9  10 11  12 13  14 15  c1
-	// 16 17  18 19  20 21  22 23  c2
-	// 24 25  26 27  28 29  30 31  c3
-	// 32 33  34 35  36 37  38 39  c4
-	// 40 41  42 43  44 45  46 47  c1
-	//   1 4    1-2     8-32-24-16
-	//   | | =>   |  , 12-36-28-20
-	//   2-3    4-3
-	$sqd = array(
-		$float[ 8] , $float[ 9] ,
-		$float[32] , $float[33] ,
-		$float[24] , $float[25] ,
-		$float[16] , $float[17] ,
-	);
-	$dqd = array(
-		$float[12] , $float[13] ,
-		$float[36] , $float[37] ,
-		$float[28] , $float[29] ,
-		$float[20] , $float[21] ,
-	);
-
-	//        cqd
-	//  0  2   4  6   8  a   c  e  center
-	// 10 12  14 16  18 1a  1c 1e  c1
-	// 20 22  24 26  28 2a  2c 2e  c2
-	// 30 32  34 36  38 3a  3c 3e  c3
-	// 40 42  44 46  48 4a  4c 4e  c4
-	// 50 52  54 56  58 5a  5c 5e  c1
-	$p = $pos * $mbs['k'];
-	$cqd = array();
-	colorquad($cqd, $mbs['d'], $p+0x14);
-	colorquad($cqd, $mbs['d'], $p+0x44);
-	colorquad($cqd, $mbs['d'], $p+0x34);
-	colorquad($cqd, $mbs['d'], $p+0x24);
-	if ( implode('',$cqd) == '1111' )
-		$cqd = '';
-	return;
-}
-
 function sectquad_float( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 {
 	$float = array();
@@ -164,13 +108,6 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 				$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
 				sectquad_float($mbs[8], $s8, $sqd, $dqd, $cqd);
 				break;
-			case "gran":
-				// 0 1 2 3  4 5 6 7  8 9  a b
-				// sub      - - - -  - -  s8
-				$sub = substr ($mbs[1]['d'], $p1+0 , 4);
-				$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
-				sectquad_int($mbs[8], $s8, $sqd, $dqd, $cqd);
-				break;
 			case "odin":
 				// 0 1 2 3  4 5 6 7  8 9 a b  c d e f
 				// - - - -  sub      - - - -  - - s8
@@ -205,10 +142,20 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 			$data[$i1]['SrcQuad'] = $sqd;
 		}
 
-		if ( $s3 != 0 )
+/*
+		switch ( $s3 )
 		{
-			$data[$i1]['Blend'] = array('ADD', 'ONE', 'ONE');
-		}
+			case 1:
+				$data[$i1]['Blend'] = array('SUB', 1);
+				break;
+			case 2:
+				$data[$i1]['Blend'] = array('ADD', 1);
+				break;
+			default: // 0 6
+				//$data[$i1]['Blend'] = array('NORMAL', 1);
+				break;
+		} // switch ( $s3 )
+*/
 
 	} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -223,20 +170,26 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 // odin  s3,1c[10,16]  s1,10[e]  s9,78
 function sectspr( &$mbs, $pfx, $game )
 {
+	// s3-s1-s8/s9
 	$len3 = strlen( $mbs[3]['d'] );
 	for ( $i3=0; $i3 < $len3; $i3 += $mbs[3]['k'] )
 	{
-		// 0 4 8 c  10 11  12 13  14  15 16 17
-		// - - - -  id     -  -   no  -  -  -
-		// 0 4 8 c  10 11  12 13 14 15  16  17 18 19 1a 1b
-		// - - - -  id     -  -  -  -   no  -  -  -  -  -
-		if ( $game == 'mura' || $game == 'gran' )
-			$k3 = 0x14;
-		if ( $game == 'drag' || $game == 'odin' )
-			$k3 = 0x16;
-
-		$id3 = str2int($mbs[3]['d'], $i3+0x10, 2);
-		$no3 = str2int($mbs[3]['d'], $i3+$k3 , 1);
+		switch ( $game )
+		{
+			case 'mura':
+				// 0 4 8 c   10 11  12 13  14  15 16 17
+				// sizequad  id     -  -   no  -  -  -
+				$id3 = str2int($mbs[3]['d'], $i3+0x10, 2);
+				$no3 = str2int($mbs[3]['d'], $i3+0x14, 1);
+				break;
+			case 'drag':
+			case 'odin':
+				// 0 4 8 c   10 11  12 13 14 15  16  17 18 19 1a 1b
+				// sizequad  id     -  -  -  -   no  -  -  -  -  -
+				$id3 = str2int($mbs[3]['d'], $i3+0x10, 2);
+				$no3 = str2int($mbs[3]['d'], $i3+0x16, 1);
+				break;
+		} // switch ( $game )
 		// DO NOT skip numbering
 		// JSON will become {object} instead [array]
 
@@ -247,18 +200,16 @@ function sectspr( &$mbs, $pfx, $game )
 	return;
 }
 //////////////////////////////
-function sectanim( &$mbs, $pfx )
+function sectanim( &$mbs, $pfx, $game )
 {
 	global $gp_json;
 
-	// s6-s7-s5 [30-14-20]
+	// s6-s7-s5-s4 [30-14/18-20-24]
 	$len6 = strlen( $mbs[6]['d'] );
 	for ( $i6=0; $i6 < $len6; $i6 += $mbs[6]['k'] )
 	{
-		// 0 4 8 c  10
-		// - - - -  name
-		// 28 29  2a  2b 2c 2d 2e 2f
-		// id     no  -  -  -  -  -
+		// 0 4 8 c  10    28 29  2a  2b 2c 2d 2e 2f
+		// - - - -  name  id     no  -  -  -  -  -
 		$name = substr0($mbs[6]['d'], $i6+0x10);
 		$id6  = str2int($mbs[6]['d'], $i6+0x28, 2);
 		$no6  = str2int($mbs[6]['d'], $i6+0x2a, 1);
@@ -267,25 +218,54 @@ function sectanim( &$mbs, $pfx )
 		{
 			$p7 = ($id6 + $i7) * $mbs[7]['k'];
 
-			// 0 1  2 3  4 5 6 7
-			// id   no   - - - -
-			$id7 = str2int($mbs[7]['d'], $p7+0, 2);
-			$no7 = str2int($mbs[7]['d'], $p7+2, 2);
+			switch ( $game )
+			{
+				case 'mura':
+				case 'drag':
+					// 0   2   4  6  8 c  10 12
+					// id  no  -  -  - -  -  -
+					$id7 = str2int($mbs[7]['d'], $p7+0, 2);
+					$no7 = str2int($mbs[7]['d'], $p7+2, 2);
+					break;
+				case 'odin':
+					// 0   2   4  6  8 c  10 12 14 16
+					// id  no  -  -  - -  -  -  -  -
+					$id7 = str2int($mbs[7]['d'], $p7+0, 2);
+					$no7 = str2int($mbs[7]['d'], $p7+2, 2);
+					break;
+			} // switch ( $game )
 
-			$ent = array();
+			$ent = array(
+				'FID' => array(),
+				'POS' => array(),
+				'FPS' => array(),
+			);
+			$is_mov = false;
 			for ( $i5=0; $i5 < $no7; $i5++ )
 			{
 				$p5 = ($id7 + $i5) * $mbs[5]['k'];
 
-				// 0   2 4  6   8 c 10 14 18 1c
-				// id  - -  no  - - -  -  -  -
+				// 0   2  4    6   8 c 10 14 18 1c
+				// id  -  pos  no  - - -  -  -  -
 				$id5 = str2int($mbs[5]['d'], $p5+0, 2);
+				$id4 = str2int($mbs[5]['d'], $p5+4, 2);
 				$no5 = str2int($mbs[5]['d'], $p5+6, 2);
 
-				$ent[] = array($id5,$no5);
+				$p4 = $id4 * $mbs[4]['k'];
+				$x4 = float32( substr($mbs[4]['d'], $p4+0, 4) );
+				$y4 = float32( substr($mbs[4]['d'], $p4+4, 4) );
 
+				$ent['FID'][] = $id5;
+				$ent['FPS'][] = $no5;
+				$ent['POS'][] = array($x4,$y4);
+
+				if ( $x4 != 0 || $y4 != 0 )
+					$is_mov = true;
 			} // for ( $i5=0; $i5 < $no7; $i5++ )
 
+			// skip all zero Pos
+			if ( ! $is_mov )
+				unset( $ent['POS'] );
 			$gp_json['Animation'][$name][$i7] = $ent;
 		} // for ( $i7=0; $i7 < $no6; $i7++ )
 
@@ -314,7 +294,7 @@ function head_e0( &$mbs, $pfx )
 	//   19970                  | 7df*78
 	// s6[+28] =  85+2 => s7
 	// s7[+ 0] = 4ee+8 => s5
-	// s5[+ 0] = 126   => s3
+	// s5[+ 0] = 126   => s3 , [+ 4] = => s4
 	// s3[+10] = f29+1 => s1 , [+12] = f2+0 => s2
 	// s1[+ a] = 7de   => s8
 	// s8
@@ -342,7 +322,7 @@ function head_e0( &$mbs, $pfx )
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_mura');
 
-	sectanim($mbs, $pfx);
+	sectanim($mbs, $pfx, "mura");
 	sectspr ($mbs, $pfx, "mura");
 
 	save_quadfile($pfx, $gp_json);
@@ -396,62 +376,8 @@ function head_e4( &$mbs, $pfx )
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_drag');
 
-	sectanim($mbs, $pfx);
+	sectanim($mbs, $pfx, "drag");
 	sectspr ($mbs, $pfx, "drag");
-
-	save_quadfile($pfx, $gp_json);
-	return;
-}
-
-function head_e8( &$mbs, $pfx )
-{
-	printf("DETECT e8 = Grand Kinghts History [%s]\n", $pfx);
-	// - 0 1 2 |     3-0 2-1 6-2
-	// 3 4 5 6 | 4-3 5-4 1-5 7-6
-	// 7 8 - - | 8-7 s-8
-	// Cut_In00.mbs
-	//     -   - 314   - |           5*c
-	//    e8 148 1b4 350 | 4*18 3*24 b*20 2*30
-	//   3b0 400   -   - | 4*14 5*60
-	// s6[+28] = 2+2 =>
-	//
-	// Witch00.mbs
-	//      -   e8 5d98 758c |        19*50 1ff*c  36*8
-	//    8b8  fc0 1878 773c | 4b*18  3e*24 229*20 7c*30
-	//   8e7c 97a0    -    - | 75*14 1bc*60
-	// s6[+28] =  68+d  => s7
-	// s7[+ 0] = 228+1  => s5
-	// s5[+ 0] =  4a    => s3 , [+ 4] = 3d   => s4
-	// s3[+10] = 1ef+10 => s1 , [+12] = 36+0 => s2
-	// s1[+ a] = 1bb    => s8
-	// s8
-	// s4
-	// s2
-	//
-	$sect = array(
-		array('p' => 0x84 , 'k' => 0x50), // 0 cutin=0
-		array('p' => 0x88 , 'k' => 0xc ), // 1
-		array('p' => 0x8c , 'k' => 0x8 ), // 2 cutin=0
-		array('p' => 0x90 , 'k' => 0x18), // 3
-		array('p' => 0x94 , 'k' => 0x24), // 4
-		array('p' => 0x98 , 'k' => 0x20), // 5
-		array('p' => 0x9c , 'k' => 0x30), // 6
-		array('p' => 0xa0 , 'k' => 0x14), // 7
-		array('p' => 0xa4 , 'k' => 0x60), // 8
-	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbs[1], 'mbs[1][0]', 0); //
-		sect_sum($mbs[1], 'mbs[1][1]', 1); // = 0
-		sect_sum($mbs[1], 'mbs[1][2]', 2); //
-	}
-
-	global $gp_json;
-	$gp_json = load_idtagfile('psp_gran');
-
-	sectanim($mbs, $pfx);
-	sectspr ($mbs, $pfx, "gran");
 
 	save_quadfile($pfx, $gp_json);
 	return;
@@ -523,7 +449,7 @@ function head_120( &$mbs, $pfx )
 	global $gp_json;
 	$gp_json = load_idtagfile('vita_odin');
 
-	sectanim($mbs, $pfx);
+	sectanim($mbs, $pfx, "odin");
 	sectspr ($mbs, $pfx, "odin");
 
 	save_quadfile($pfx, $gp_json);
@@ -532,7 +458,7 @@ function head_120( &$mbs, $pfx )
 //////////////////////////////
 function mura( $fname )
 {
-	$mbs = file_get_contents($fname);
+	$mbs = load_file($fname);
 	if ( empty($mbs) )  return;
 
 	if ( substr($mbs, 0, 4) != "FMBS" )
@@ -556,12 +482,10 @@ for ( $i=1; $i < $argc; $i++ )
 mbs 1-01 valids
 	mura      0 1 2 3 4 5 7 9 11 13 15 21 29 2d
 	mura dlc  0 1 3 4 5 7 9 11 13 15 21 29 2d 2f 39 3d
-	gran      0 1 2 3 4 5 7 d 10 11 21 29 2b 2d
 	drag      0 1 2 3 4 5 7 9 11 21 23 29 31
 mbs 1-2 valids
 	mura      0 1 2 6
 	mura dlc  0 1 2 6
-	gran      0 1 2
 	drag      0 1 2 6
 
 mbs 1-0 valids
@@ -598,7 +522,16 @@ mbs 1-7 valids
 	odin  0 1 2 3 4 5 6 7 8 9 a b c d
 
 odin alice
-	ps2      1196
-	vita or  1196
-	vita re   956
+	ps2      1196 frames
+	vita or  1196 frames
+	vita re   956 frames
+
+Okoi00 - BACK s6/0+6
+	-  s7      s5                             s4
+	0   0       -                           -   0.0     0.0
+	1   1- 7  2a3 2a9 2aa 2ab 2ac 2ad 2ae   1 -14.66  -84.52
+	2   8- e   46  8c  8d  8e  8f  90  91   8   0.0     3.0
+	3   f-10   4a   -                       8   0.0     3.0
+	4  11-16    4   4   4   4   4   4   4   f -14.0  -179.5
+	5  17       6                          15  -8.33 -145.33
  */
