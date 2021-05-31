@@ -30,9 +30,9 @@ function cvnds_dos_mon( $fp, $pos )
 		// drop 1 = (rate * 3) / (1024 - LUCK)
 		// drop 2 = 256 / (1024 - LUCK)
 		//
-		$mon[$p+0x12] = BYTE; // experience points
-		$mon[$p+0x14] = $sr;  // soul drop rate
-		$mon[$p+0x17] = $dr;  // item 1 drop rate
+		str_update($mon, $p+0x12, "\x10\x27"); // experience points
+		str_update($mon, $p+0x14, "\x00"); // soul drop rate
+		str_update($mon, $p+0x17, "\xff"); // item 1 drop rate
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);
@@ -60,10 +60,10 @@ function cvnds_por_mon( $fp, $pos )
 		// drop rate (get++) , stars (rare--)
 		// weak/half (all=FF 07)
 		//
-		$mon[$p+0x0d] = $sp;  // skill points/jonathan
-		$mon[$p+0x10] = BYTE; // experience points
-		$mon[$p+0x16] = $dr;  // item 1 drop rate
-		$mon[$p+0x17] = $dr;  // item 2 drop rate
+		str_update($mon, $p+0x0d, "\x63"); // skill points/jonathan
+		str_update($mon, $p+0x10, "\x10\x27"); // experience points
+		str_update($mon, $p+0x16, "\xff"); // item 1 drop rate
+		str_update($mon, $p+0x17, "\xff"); // item 2 drop rate
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);
@@ -93,10 +93,10 @@ function cvnds_ooe_mon( $fp, $pos )
 		// glyph rarity (get++) , stars (rare--)
 		// drop  rate   (get++) , stars (rare--)
 		//
-		$mon[$p+0x10] = BYTE; // experience points
-		$mon[$p+0x16] = $gr;  // gryph drop rate
-		$mon[$p+0x1a] = $dr;  // item 1 drop rate
-		$mon[$p+0x1b] = $dr;  // item 2 drop rate
+		str_update($mon, $p+0x10, "\x10\x27"); // experience points
+		str_update($mon, $p+0x16, "\x64"); // gryph drop rate
+		str_update($mon, $p+0x1a, "\xff"); // item 1 drop rate
+		str_update($mon, $p+0x1b, "\xff"); // item 2 drop rate
 	}
 	fseek($fp, $pos, SEEK_SET);
 	fwrite($fp, $mon);

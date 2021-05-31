@@ -5,7 +5,7 @@
  */
 require "common.inc";
 
-define('NO_TRACE', true);
+//define('NO_TRACE', true);
 
 function gv_decode( &$sub )
 {
@@ -87,7 +87,7 @@ function gunvolt( $fname )
 		if ( $un == 0x17 || $un == 0x12 )
 			gv_decode($s);
 
-		$fn = sprintf("%s/%04d.%x", $pfx, $id, $un);
+		$fn = sprintf("%s/gv_%04d.%x", $pfx, $id, $un);
 		printf("%8x , %8x , %s\n", $of, $sz, $fn);
 
 		save_file($fn, $s);
@@ -100,6 +100,7 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 https://steamcommunity.com/app/388800/eventcomments/
+https://steamcommunity.com/app/1034900/eventcomments/
 https://steamcommunity.com/app/1065180/eventcomments/
 https://steamcommunity.com/app/1085180/eventcomments/
  */

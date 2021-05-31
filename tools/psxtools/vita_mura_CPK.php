@@ -309,7 +309,7 @@ function sect_cpk( $fp, &$meta, $dir )
 	return;
 }
 //////////////////////////////
-function muravita( $fname )
+function cpkfile( $fname )
 {
 	$fp = fopen($fname, "rb");
 	if ( ! $fp )  return;
@@ -327,4 +327,4 @@ function muravita( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	muravita( $argv[$i] );
+	cpkfile( $argv[$i] );

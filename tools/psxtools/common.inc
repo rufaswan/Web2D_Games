@@ -312,6 +312,27 @@ function performance( $func )
 	return;
 }
 
+function wincmd_argv( $func, $ext='' )
+{
+	// for windows cmd.exe char limitation
+	if ( ! function_exists($func) )
+		return;
+	$list = array();
+	lsfile_r('.', $list);
+
+	$st = microtime(true);
+	foreach ( $list as $f )
+	{
+		if ( ! empty($ext) && stripos($f, ".$ext") === false )
+			continue;
+		$func($f);
+	} // foreach ( $list as $f )
+	$ed = microtime(true);
+	$mem = memory_get_peak_usage();
+	trace("%s()  %.2f msec  %x RAM\n", __FUNCTION__, $ed-$st, $mem);
+	return;
+}
+
 function zero_watch( $name, $chr )
 {
 	if ( $chr == ZERO )
@@ -642,7 +663,7 @@ function lsfile_r( $dir, &$list )
 {
 	if ( empty($dir) || ! is_dir($dir) )
 		return;
-	if ( is_link($dir) ) // skip shortcuts / symbolic links
+	if ( is_link($dir) ) // DO NOT follow symlinks
 		return;
 
 	$func = __FUNCTION__;
@@ -652,16 +673,18 @@ function lsfile_r( $dir, &$list )
 			continue;
 		$fn = "$dir/$en";
 
-		if ( is_file($fn) )  $list[] = $fn;
+		if ( is_file($fn) ) // allow FILE Symlinks
+			$list[] = $fn;
 		else
-		if ( is_dir ($fn) )  $func($fn, $list);
+		if ( is_dir ($fn) )
+			$func($fn, $list);
 	} // foreach ( scandir($dir) as $en )
 	return;
 }
 
 function rmfile_r( $dir )
 {
-	if ( is_link($dir) ) // MUST NOT recursively DELETE shortcuts / symbolic links
+	if ( is_link($dir) ) // skip ALL Symlinks
 		return;
 	if ( is_file($dir) )
 		return unlink($dir);

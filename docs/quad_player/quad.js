@@ -640,24 +640,31 @@ var QUAD = QUAD || {};
 		var reset = true;
 		data.forEach(function(v,k){
 			// v = {"FID":[1,2,3],"POS":[[0,0],[1,0],[2,0]],"FPS":[2,2,2],"TIME":[0,0,1,1,2,2]}
-			var time = QUAD.anim.cur_anim_time % v.TIME.length;
-			var id  = v.TIME[time];
-			cur += '+' + id;
-			if ( time !== 0 )
+			if ( QUAD.anim.cur_anim_time < v.TIME.length )
+			{
+				var id = v.TIME[ QUAD.anim.cur_anim_time ];
 				reset = false;
+			}
+			else
+				var id = v.TIME[ v.TIME.length-1 ];
+
+			cur += '+' + id;
 		});
-		if ( QUAD.anim.prev_anim_frame === cur )
-			return;
 		if ( reset )
 			QUAD.anim.cur_anim_time = 0;
+		if ( QUAD.anim.prev_anim_frame === cur )
+			return;
 
 		// render new frame
 		var GL = QUAD.webgl.gl;
 		GL.clear(GL.COLOR_BUFFER_BIT);
 		data.forEach(function(v,k){
 			// v = {"FID":[1,2,3],"POS":[[0,0],[1,0],[2,0]],"FPS":[2,2,2],"TIME":[0,0,1,1,2,2]}
-			var time = QUAD.anim.cur_anim_time % v.TIME.length;
-			var id  = v.TIME[time];
+			if ( QUAD.anim.cur_anim_time < v.TIME.length )
+				var id = v.TIME[ QUAD.anim.cur_anim_time ];
+			else
+				var id = v.TIME[ v.TIME.length-1 ];
+
 			var pos = [0,0];
 			if ( v.POS )  pos = v.POS[id];
 

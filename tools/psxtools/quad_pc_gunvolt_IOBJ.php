@@ -199,10 +199,10 @@ function gunvolt( $fname )
 	if ( empty($file) )  return;
 
 	$b1  = str2int($file, 12, 4);
-	$b2  = str2int($file, 16, 4);
-	$len = strlen ($file);
-	if ( ($b1+$b2) != $len )
-		return;
+	//$b2  = str2int($file, 16, 4);
+	//$len = strlen ($file);
+	//if ( ($b1+$b2) != $len )
+		//return;
 
 	$file = substr($file, $b1);
 	if ( substr($file,0,4) != 'IOBJ' )
