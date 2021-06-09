@@ -75,14 +75,11 @@ function sectquad( &$mbs, $pos )
 	//  6  7  c3
 	//  8  9  c4
 	// 10 11  c1
-	//   1 4    1-2
-	//   | | =>   |  , 2-8-6-4
-	//   2-3    4-3
 	$bcde = array(
 		$float[2] , $float[3] ,
-		$float[8] , $float[9] ,
-		$float[6] , $float[7] ,
 		$float[4] , $float[5] ,
+		$float[6] , $float[7] ,
+		$float[8] , $float[9] ,
 	);
 	return $bcde;
 }

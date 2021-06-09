@@ -48,7 +48,7 @@ function colorquad( &$cqd, &$mbs, $pos )
 	return;
 }
 
-function sectquad_int( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
+function sectquad( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 {
 	$float = array();
 	for ( $i=0; $i < $mbs['k']; $i += 2 )
@@ -70,35 +70,32 @@ function sectquad_int( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 	// 24 25  26 27  28 29  30 31  c3
 	// 32 33  34 35  36 37  38 39  c4
 	// 40 41  42 43  44 45  46 47  c1
-	//   1 4    1-2     8-32-24-16
-	//   | | =>   |  , 12-36-28-20
-	//   2-3    4-3
 	$sqd = array(
 		$float[ 8] , $float[ 9] ,
-		$float[32] , $float[33] ,
-		$float[24] , $float[25] ,
 		$float[16] , $float[17] ,
+		$float[24] , $float[25] ,
+		$float[32] , $float[33] ,
 	);
 	$dqd = array(
 		$float[12] , $float[13] ,
-		$float[36] , $float[37] ,
-		$float[28] , $float[29] ,
 		$float[20] , $float[21] ,
+		$float[28] , $float[29] ,
+		$float[36] , $float[37] ,
 	);
 
 	//        cqd
-	//  0  2   4  6   8  a   c  e  center
-	// 10 12  14 16  18 1a  1c 1e  c1
-	// 20 22  24 26  28 2a  2c 2e  c2
-	// 30 32  34 36  38 3a  3c 3e  c3
-	// 40 42  44 46  48 4a  4c 4e  c4
-	// 50 52  54 56  58 5a  5c 5e  c1
+	//  0  2   4   8  a   c  e  center
+	// 10 12  14  18 1a  1c 1e  c1
+	// 20 22  24  28 2a  2c 2e  c2
+	// 30 32  34  38 3a  3c 3e  c3
+	// 40 42  44  48 4a  4c 4e  c4
+	// 50 52  54  58 5a  5c 5e  c1
 	$p = $pos * $mbs['k'];
 	$cqd = array();
 	colorquad($cqd, $mbs['d'], $p+0x14);
-	colorquad($cqd, $mbs['d'], $p+0x44);
-	colorquad($cqd, $mbs['d'], $p+0x34);
 	colorquad($cqd, $mbs['d'], $p+0x24);
+	colorquad($cqd, $mbs['d'], $p+0x34);
+	colorquad($cqd, $mbs['d'], $p+0x44);
 	if ( implode('',$cqd) == '1111' )
 		$cqd = '';
 	return;
@@ -120,7 +117,7 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3 )
 		// sub      - - - -  - -  s8
 		$sub = substr ($mbs[1]['d'], $p1+0 , 4);
 		$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
-		sectquad_int($mbs[8], $s8, $sqd, $dqd, $cqd);
+		sectquad($mbs[8], $s8, $sqd, $dqd, $cqd);
 
 		$s1 = str2int($sub, 0, 2); // ??
 		$s3 = ord( $sub[2] ); // mask

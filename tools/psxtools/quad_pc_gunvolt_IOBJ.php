@@ -42,23 +42,18 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 	//  4  5   6  7  c2
 	//  8  9  10 11  c3
 	// 12 13  14 15  c4
-	//   4 1    1-2   12-0-4-8
-	//   | | =>   | , 14-2-6-10
-	//   3-2    4-3
 	$dqd = array(
-		$float[12] , $float[13] ,
 		$float[ 0] , $float[ 1] ,
 		$float[ 4] , $float[ 5] ,
 		$float[ 8] , $float[ 9] ,
+		$float[12] , $float[13] ,
 	);
-
 	$sqd = array(
-		$float[14]*$w , $float[15]*$h ,
 		$float[ 2]*$w , $float[ 3]*$h ,
 		$float[ 6]*$w , $float[ 7]*$h ,
 		$float[10]*$w , $float[11]*$h ,
+		$float[14]*$w , $float[15]*$h ,
 	);
-
 	return;
 }
 
@@ -266,11 +261,17 @@ function sect_IOBJ( &$sect, $pfx )
 	sect_anim($sect['IOBJ'], $anim_off, $ptgt_off);
 	sect_spr ($sect['IOBJ'], $ptgt_off, $img);
 
-	global $gp_json;
-	save_quadfile("$pfx/$pfx", $gp_json);
+	global $gp_json, $gp_tag;
+	save_quadfile("$pfx/$gp_tag", $gp_json);
 
 	foreach ( $img as $k => $v )
-		save_clutfile("$pfx/$pfx.$k.rgba", $v);
+	{
+		if ( isset( $sect['TLPI'] ) )
+			$fn = sprintf("%s/%s-%d.0.rgba", $pfx, $gp_tag, $k);
+		else
+			$fn = sprintf("%s/%s.%d.rgba", $pfx, $gp_tag, $k);
+		save_clutfile($fn, $v);
+	}
 	return;
 }
 
@@ -314,7 +315,7 @@ function gunvolt( $fname )
 				{
 					$type = "pix ";
 					$img = gv_pixd($sub, 0);
-					save_clutfile("$pfx/$pfx.$i.rgba", $img);
+					save_clutfile("$pfx/$gp_tag.$i.rgba", $img);
 				}
 				else
 					$type = "????";
@@ -328,11 +329,12 @@ function gunvolt( $fname )
 	return;
 }
 
-echo "{$argv[0]}  -gv/-gv2/-gva/-mgv  FILE...\n";
+echo "{$argv[0]}  -bsm/-gv/-gv2/-gva/-mgv  FILE...\n";
 for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
+		case '-bsm':  $gp_tag = 'pc_bsm' ; break;
 		case '-gv' :  $gp_tag = 'pc_gv' ; break;
 		case '-gv2':  $gp_tag = 'pc_gv2'; break;
 		case '-gva':  $gp_tag = 'pc_gva'; break;
@@ -342,3 +344,16 @@ for ( $i=1; $i < $argc; $i++ )
 			break;
 	} // switch ( $argv[$i] )
 } // for ( $i=1; $i < $argc; $i++ )
+
+/*
+staff roll
+gv1  resarc/resarc_30_add_00/4354.17
+gv1  resarc/resarc_30_add_00/4355.17
+gv1  resarc/resarc_30_add_00/4356.17
+gv1  resarc/resarc_30_add_00/4357.17
+
+gv2  resarc/eu_cmn_arc/1270.17
+gv2  resarc/eu_cmn_arc/1276.17
+
+mgv  resarc/resarc_en/4020.17
+ */

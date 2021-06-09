@@ -755,6 +755,8 @@ function mstrpal555( &$file, $pos, $cc, $cn )
 
 function is_blank( &$pix )
 {
+	// TOFIX : GVA 0022.17
+	//         frame 0,3,4 are shadow sprite , have only alpha and black pixels
 	$len = strlen($pix);
 	for ( $i=0; $i < $len; $i += 4 )
 	{

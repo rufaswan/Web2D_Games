@@ -75,14 +75,11 @@ function sectquad( &$mbp, $pos )
 	// 10 11  c4
 	// 12 13  c1
 	// 14 15  padding
-	//   1 4    1-2
-	//   | | =>   |  , 4-10-8-6
-	//   2-3    4-3
 	$cdef = array(
 		$float[ 4] , $float[ 5] ,
-		$float[10] , $float[11] ,
-		$float[ 8] , $float[ 9] ,
 		$float[ 6] , $float[ 7] ,
+		$float[ 8] , $float[ 9] ,
+		$float[10] , $float[11] ,
 	);
 	return $cdef;
 }

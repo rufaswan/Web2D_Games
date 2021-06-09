@@ -254,25 +254,14 @@ var QUAD = QUAD || {};
 		if ( int > 0 ){
 			// canvas become smaller = sprite become bigger
 			QUAD.files.zoom /= 1.1;
-			if ( QUAD.files.zoom < 0.1 )
-				QUAD.files.zoom = 0.1;
 			return;
 		}
 		if ( int < 0 ){
 			// canvas become bigger = sprite become smaller
 			QUAD.files.zoom *= 1.1;
-			if ( QUAD.files.zoom > 10.0 )
-				QUAD.files.zoom = 10.0;
 			return;
 		}
 		return;
-	}
-
-	function clamp_space( int )
-	{
-		if ( int < -1 )  int =  1;
-		if ( int >  1 )  int = -1;
-		return int;
 	}
 
 	QUAD.axis_x = function(int = 0){
@@ -280,7 +269,7 @@ var QUAD = QUAD || {};
 			QUAD.files.axis_x = 0;
 			return;
 		}
-		QUAD.files.axis_x = clamp_space(QUAD.files.axis_x + int);
+		QUAD.files.axis_x += int;
 		return;
 	}
 
@@ -289,7 +278,7 @@ var QUAD = QUAD || {};
 			QUAD.files.axis_y = 0;
 			return;
 		}
-		QUAD.files.axis_y = clamp_space(QUAD.files.axis_y - int);
+		QUAD.files.axis_y -= int;
 		return;
 	}
 
@@ -603,6 +592,7 @@ var QUAD = QUAD || {};
 		if ( anim.hasOwnProperty(key) ){
 			QUAD.anim.cur_anim_key = key;
 			data = anim[key].slice();
+			console.log('anim_key', anim[key]);
 
 			data.forEach(function(v,k){
 				var time = [];

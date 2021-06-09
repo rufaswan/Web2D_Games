@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-//define('NO_TRACE', true);
+define('NO_TRACE', true);
 
 function gv_decode( &$sub )
 {
@@ -87,6 +87,7 @@ function gunvolt( $fname )
 		return;
 
 	$cnt = str2int($lst, 0, 4);
+	$done = array();
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$p = 4 + ($i * 0x10);
@@ -94,6 +95,10 @@ function gunvolt( $fname )
 		$of = str2int($lst, $p+ 4, 4);
 		$sz = str2int($lst, $p+ 8, 4);
 		$un = str2int($lst, $p+12, 4);
+
+		if ( isset( $done[$id] ) )
+			return php_error("DUPL ID %x = %s", $id, $pfx);
+		$done[$id] = 1;
 
 		// 07 IOBJ
 		// 17 IOBJ compressed

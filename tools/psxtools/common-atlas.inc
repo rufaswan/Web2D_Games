@@ -22,21 +22,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 // Accept a list of CLUT/RGBA data and create an atlas map
 
-function sort_atlas_by_size( $a, $b )
-{
-	// sort
-	if ( $a['h'] == $b['h'] )
-	{
-		$sa = $a['w'] * $a['h'];
-		$sb = $b['w'] * $b['h'];
-		// sort total pixels DESC
-		return ( $sa < $sb );
-	}
-	else
-		// sort height DESC
-		return ( $a['h'] < $b['h'] );
-}
-
 function MAPTREE_DEF( $x, $y, $w, $h )
 {
 	return array(
@@ -90,7 +75,13 @@ function maptree_add( &$tree, &$img, $x, $y, $w, $h )
 
 function atlasmap( &$list )
 {
-	usort($list, "sort_atlas_by_size");
+	usort($list, function ($a, $b){
+		// sort height DESC , then width DESC
+		if ( $a['h'] == $b['h'] )
+			return ( $a['w'] < $b['w'] );
+		else
+			return ( $a['h'] < $b['h'] );
+	});
 	$cw = 1;
 	$ch = 1;
 

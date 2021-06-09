@@ -142,7 +142,7 @@ function quad_rebase( $V4 )
 	return $quad;
 }
 
-function quad_dump( $V4, $type, $name )
+function quad_dump( $V4, $name )
 {
 	if ( defined("NO_TRACE") )
 		return;
@@ -151,23 +151,26 @@ function quad_dump( $V4, $type, $name )
 	//          4 3
 	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
 	//          2 3
-	//
-	// LEFT /CW   SAT   Princess Crown
-	// LEFT /CW   PSX   Lunar 2
-	// RIGHT/CCW  PS2   Odin Sphere
-	// RIGHT/CCW  WII   Muramasa
-	// RIGHT/CCW  VITA  Muramasa/Dragon Crown
-	//
-	// c1 c2
-	// c3 c4
-	$c1 = $type[0] - 1;
-	$c2 = $type[1] - 1;
-	$c3 = $type[2] - 1;
-	$c4 = $type[3] - 1;
+	// NOTE : it doesn't matter
+	$minx = PHP_INT_MAX;
+	$miny = PHP_INT_MAX;
+	$maxx = -PHP_INT_MAX;
+	$maxy = -PHP_INT_MAX;
+	for ( $i=0; $i < 4; $i++ )
+	{
+		if ( $V4[$i][0] < $minx )  $minx = $V4[$i][0];
+		if ( $V4[$i][0] > $maxx )  $maxx = $V4[$i][0];
+		if ( $V4[$i][1] < $miny )  $miny = $V4[$i][1];
+		if ( $V4[$i][1] > $maxy )  $maxy = $V4[$i][1];
+	}
+
 	trace("quad( %s )\n", $name);
-	trace("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c1][0], $V4[$c1][1], $V4[$c2][0], $V4[$c2][1]);
-	trace("  %10.2f,%10.2f  %10.2f,%10.2f\n", $V4[$c3][0], $V4[$c3][1], $V4[$c4][0], $V4[$c4][1]);
-	trace("  w %.2f  h %.2f\n", $V4[$c4][0]-$V4[$c1][0]+1, $V4[$c4][1]-$V4[$c1][1]+1);
+	trace("  %10.2f,%10.2f\n", $V4[0][0], $V4[0][1]);
+	trace("  %10.2f,%10.2f\n", $V4[1][0], $V4[1][1]);
+	trace("  %10.2f,%10.2f\n", $V4[2][0], $V4[2][1]);
+	trace("  %10.2f,%10.2f\n", $V4[3][0], $V4[3][1]);
+	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx+1);
+	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny+1);
 	return;
 }
 

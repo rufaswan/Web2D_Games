@@ -61,8 +61,8 @@ function sectquad( &$pix, &$meta, $p, $ceil )
 		array($qdx,$qdy,1),
 	);
 
-	quad_dump($pix['src']['vector'] , "1243", "src quad");
-	quad_dump($des                  , "1243", "des quad");
+	quad_dump($pix['src']['vector'] , "src quad");
+	quad_dump($des                  , "des quad");
 	return;
 }
 

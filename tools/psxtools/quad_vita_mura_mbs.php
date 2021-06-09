@@ -48,7 +48,7 @@ function colorquad( &$cqd, &$mbs, $pos )
 	return;
 }
 
-function sectquad_float( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
+function sectquad( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 {
 	$float = array();
 	for ( $i=0; $i < $mbs['k']; $i += 4 )
@@ -70,35 +70,32 @@ function sectquad_float( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 	// 15 16  17  18 19  c3
 	// 20 21  22  23 24  c4
 	// 25 26  27  28 29  c1
-	//   1 4    1-2    8-23-18-13
-	//   | | =>   |  , 5-20-15-10
-	//   2-3    4-3
-	$sqd = array(
-		$float[ 8] , $float[ 9] ,
-		$float[23] , $float[24] ,
-		$float[18] , $float[19] ,
-		$float[13] , $float[14] ,
-	);
 	$dqd = array(
 		$float[ 5] , $float[ 6] ,
-		$float[20] , $float[21] ,
-		$float[15] , $float[16] ,
 		$float[10] , $float[11] ,
+		$float[15] , $float[16] ,
+		$float[20] , $float[21] ,
+	);
+	$sqd = array(
+		$float[ 8] , $float[ 9] ,
+		$float[13] , $float[14] ,
+		$float[18] , $float[19] ,
+		$float[23] , $float[24] ,
 	);
 
 	//        cqd
-	//  0  4   8   c 10
-	// 14 18  1c  20 24
-	// 28 2c  30  34 38
-	// 3c 40  44  48 4c
-	// 50 54  58  5c 60
-	// 64 68  6c  70 74
+	//  0  4   8   c 10  center
+	// 14 18  1c  20 24  c1
+	// 28 2c  30  34 38  c2
+	// 3c 40  44  48 4c  c3
+	// 50 54  58  5c 60  c4
+	// 64 68  6c  70 74  c1
 	$p = $pos * $mbs['k'];
 	$cqd = array();
 	colorquad($cqd, $mbs['d'], $p+0x1c);
-	colorquad($cqd, $mbs['d'], $p+0x58);
-	colorquad($cqd, $mbs['d'], $p+0x44);
 	colorquad($cqd, $mbs['d'], $p+0x30);
+	colorquad($cqd, $mbs['d'], $p+0x44);
+	colorquad($cqd, $mbs['d'], $p+0x58);
 	if ( implode('',$cqd) == '1111' )
 		$cqd = '';
 	return;
@@ -123,7 +120,7 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 				// sub      - - - -  - -  s8
 				$sub = substr ($mbs[1]['d'], $p1+0 , 4);
 				$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
-				sectquad_float($mbs[8], $s8, $sqd, $dqd, $cqd);
+				sectquad($mbs[8], $s8, $sqd, $dqd, $cqd);
 				break;
 			case "odin":
 				// 0 1 2 3  4 5 6 7  8 9 a b  c d e f
@@ -131,7 +128,7 @@ function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
 				//$sub = substr ($mbs[1]['d'], $p1+5 , 4);
 				$sub = $mbs[1]['d'][$p1+5] . $mbs[1]['d'][$p1+4] . $mbs[1]['d'][$p1+6] . $mbs[1]['d'][$p1+7];
 				$s8  = str2int($mbs[1]['d'], $p1+14, 2); // quads
-				sectquad_float($mbs[9], $s8, $sqd, $dqd, $cqd);
+				sectquad($mbs[9], $s8, $sqd, $dqd, $cqd);
 				break;
 		}
 

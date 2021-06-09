@@ -28,23 +28,6 @@ body {
 	color      : #fff;
 }
 
-#hidden {
-	display  : none;
-	position : fixed;
-	top      : -999px;
-	left     : -999px;
-}
-
-#imgbg {
-	position : fixed;
-	top      : 0;
-	left     : 0;
-	display  : block;
-	width    : 100%;
-	height   : 100%;
-	z-index  : -19;
-}
-
 input, button {
 	padding    : 0.5em;
 	margin     : 0 0.5em;
@@ -57,16 +40,9 @@ select {
 	text-align : left;
 }
 
-#topbar, #lowbar {
-	background : #c0c0c0;
-	color      : #000;
-	text-align : center;
-	position   : fixed;
-	width      : 100%;
+table {
+	border-collapse : collapse;
 }
-
-#topbar { top    : 0; }
-#lowbar { bottom : 0; }
 
 canvas {
 	width    : 100vw;
@@ -75,22 +51,81 @@ canvas {
 	z-index  : -9;
 }
 
+#hidden {
+	display  : none;
+	position : fixed;
+	top      : -999px;
+	left     : -999px;
+}
+
+#uploadbox {
+	min-width  : 80%;
+	height     : 100%;
+	margin     : auto;
+	padding    : 0 10%;
+	position   : fixed;
+	z-index    : 99;
+	background : #808080;
+	text-align : left;
+	display    : block;
+}
+
+#uploadbox h1 {
+	margin : 1em 0;
+}
+
+#uploadbox li {
+	margin : 1em 3em;
+}
+
+#uploadbox input {
+	border : 0.5em #fff solid;
+}
+
+#imgbg {
+	position : fixed;
+	top      : 0;
+	left     : 0;
+	display  : block;
+	width    : 100%;
+	height   : 100%;
+	z-index  : -19;
+}
+
+#uibar {
+	position   : fixed;
+	width      : 100%;
+	bottom     : 0;
+	text-align : center;
+}
+
+#lowbar {
+	clear      : both;
+	width      : 100%;
+	background : #c0c0c0;
+	color      : #000;
+}
+
+#movectrl {
+	float : left;
+}
+
+#btnctrl {
+	float : right;
+}
+
 #idtag {
 	position : fixed;
 }
 
-#idtag table {
-	border-collapse : collapse;
-}
-
 #idtag tr:nth-child(odd) {
 	color      : #000;
-	background : rgba(240,240,240,.5);
+	background : rgba(240,240,240,.75);
 }
 
 #idtag tr:nth-child(even) {
 	color      : #000;
-	background : rgba(200,200,200,.5);
+	background : rgba(200,200,200,.75);
 }
 
 #idtag td {

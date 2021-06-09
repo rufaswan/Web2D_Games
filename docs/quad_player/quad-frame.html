@@ -24,30 +24,67 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	<link rel='stylesheet' href='style.css'>
 </head>
 <body>
+	<div id='uploadbox'>
+		<h1>Open File (*.quad and *.png set)</h2>
+		<input id='upload' type='file' multiple>
+		<ul>
+			<li>Require <strong>WebGL and Javascript</strong> enabled.</li>
+			<li>For better performance, turn on hardware acceleration.
+			<ol>
+				<li>For <strong>MS Edge</strong>, go to <strong>Settings &gt; System</strong>, then go to STEP 5.</li>
+				<li>For <strong>Chrome/Opera</strong>, go to <strong>Chrome Menu &gt; Settings &gt; Advanced &gt; System</strong>, then go to STEP 5.</li>
+				<li>For <strong>Firefox</strong>, go to <strong>Options &gt; Advanced &gt; General &gt; Browsing</strong>, then go to STEP 5.</li>
+				<li>For <strong>Palemoon</strong>, go to <strong>Tools &gt; Preferences &gt; Advanced &gt; Hardware Acceleration (HWA)</strong>, then go to STEP 5.</li>
+				<li>Turn on <strong>Use hardware acceleration when available.</strong> and restart the web browser.</li>
+			</ol>
+			</li>
+		</ul>
+	</div>
 	<img id='imgbg' src='bg.png'>
 	<div id='hidden'></div>
-	<div id='topbar'>
-		<button id='tag_btn'>TAG</button>
-
-		<input id='upload' type='file' multiple>
-
-		<button id='xpos'>X</button>
-		<button id='ypos'>Y</button>
-
-		<button id='zoom_add'>+</button>
-		<button id='zoom_btn'>ZOOM</button>
-		<button id='zoom_sub'>-</button>
-
-		<button id='save_png'>Save PNG</button>
-	</div>
-	<div id='lowbar'>
-		<button id='prev_btn'>&lt;</button>
-		<input id='play_btn' type='text'></button>
-		<button id='next_btn'>&gt;</button>
+	<div id='uibar'>
+		<div id='movectrl'>
+			<table>
+			<tr>
+				<td>&nbsp;</td>
+				<td><button id='move_u'>U</button></td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><button id='move_l'>L</button></td>
+				<td><button id='move_0'>MOVE</button></td>
+				<td><button id='move_r'>R</button></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><button id='move_d'>D</button></td>
+				<td>&nbsp;</td>
+			</tr>
+			</table>
+		</div>
+		<div id='btnctrl'>
+			<table>
+			<tr><td>
+				<button id='tag_btn'>TAG</button>
+				<button id='save_png'>Save PNG</button>
+			</td></tr>
+			<tr><td>
+				<button id='zoom_a'>+</button>
+				<button id='zoom_0'>ZOOM</button>
+				<button id='zoom_s'>-</button>
+			</td></tr>
+			</table>
+		</div>
+		<div id='lowbar'>
+			<button id='prev_btn'>&lt;</button>
+			<input id='play_btn' type='text'></button>
+			<button id='next_btn'>&gt;</button>
+		</div>
 	</div>
 	<div id='idtag' style='display:none;'></div>
 	<canvas id='canvas'>Required JavaScript, Canvas Context or WebGL is disabled or not supported</canvas>
 
+	<script src='ui.js'></script>
 	<script src='quad.js'></script>
 	<script>
 	// standard UI
@@ -67,31 +104,6 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	});
 	document.getElementById('save_png').addEventListener("click", function(e){
 		QUAD.save_png(QUAD.anim.cur_frame);
-	});
-	document.getElementById('tag_btn').addEventListener("click", function(e){
-		dom_idtag.style.display = 'inline';
-		var top  = (window.innerHeight / 2) - (dom_idtag.clientHeight / 2);
-		var left = (window.innerWidth  / 2) - (dom_idtag.clientWidth  / 2);
-		dom_idtag.style.top  = top  + 'px';
-		dom_idtag.style.left = left + 'px';
-	});
-	dom_idtag.addEventListener("click", function(e){
-		dom_idtag.style.display = 'none';
-	});
-	document.getElementById('zoom_btn').addEventListener("click", function(e){
-		QUAD.zoom(0);
-	});
-	document.getElementById('zoom_add').addEventListener("click", function(e){
-		QUAD.zoom(1);
-	});
-	document.getElementById('zoom_sub').addEventListener("click", function(e){
-		QUAD.zoom(-1);
-	});
-	document.getElementById('xpos').addEventListener("click", function(e){
-		QUAD.axis_x(0.1);
-	});
-	document.getElementById('ypos').addEventListener("click", function(e){
-		QUAD.axis_y(0.1);
 	});
 
 	// frame ver
@@ -113,8 +125,10 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	});
 
 	function render(){
-		if ( QUAD.files.done === 3 )
+		if ( QUAD.files.done === 3 ){
+			document.getElementById('uploadbox').style.display = 'none';
 			QUAD.render_frame();
+		}
 		return;
 	}
 	setInterval(render, 333);
