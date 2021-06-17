@@ -319,16 +319,6 @@ function trace()
 	return;
 }
 
-function performance( $func )
-{
-	$st = microtime(true);
-	$func();
-	$ed = microtime(true);
-	$mem = memory_get_peak_usage();
-	trace("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
-	return;
-}
-
 function zero_watch( $name, $chr )
 {
 	if ( $chr == ZERO )
@@ -352,6 +342,29 @@ function flag_watch( $name, $int )
 	php_notice("$name some flags is set [%x]", $int);
 	return;
 }
+
+function performance( $file_func='', $dir_func='', $op_func='' )
+{
+	global $argc, $argv;
+
+	$st = microtime(true);
+	for ( $i=1; $i < $argc; $i++ )
+	{
+		if ( is_file($argv[$i]) && function_exists($file_func) )
+			$file_func( $argv[$i] );
+		else
+		if ( is_dir ($argv[$i]) && function_exists($dir_func ) )
+			$dir_func ( $argv[$i] );
+		else
+		if ( function_exists($op_func) )
+			$op_func( $argv[$i] );
+	}
+	$ed = microtime(true);
+
+	$mem = memory_get_peak_usage();
+	trace("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
+	return;
+}
 //////////////////////////////
 function fp2str( $fp, $pos, $byte )
 {
@@ -361,33 +374,55 @@ function fp2str( $fp, $pos, $byte )
 	return fread($fp, $byte);
 }
 
-function fopen_file( $fname )
+function fp_update( $fp, $pos, $str )
+{
+	if ( empty($str) )
+		return;
+	fseek($fp, $pos, SEEK_SET);
+	return fwrite($fp, $str);
+}
+
+function fopen_file( $fname, $scan=true )
 {
 	$fp = fopen($fname, 'rb');
 	if ( $fp )  return $fp;
-
-	$fp = fopen( strtolower($fname), 'rb');
-	if ( $fp )  return $fp;
-
-	$fp = fopen( strtoupper($fname), 'rb');
-	if ( $fp )  return $fp;
-	return false;
-}
-
-function load_file( $fname )
-{
-	if ( is_file($fname) )
-		return file_get_contents($fname);
+	if ( ! $scan )
+		return false;
 
 	// case-insensitive loading
 	// files/data/enemydata.bin == FILES/Data/EnemyData.bin
+	$func = __FUNCTION__;
 	$list = array();
 	lsfile_r('.', $list);
 	foreach ( $list as $f )
 	{
 		if ( stripos($f, $fname) === false )
 			continue;
-		$data = $func($f);
+		$fp = $func($f, false);
+		if ( $fp )
+			return $fp;
+	} // foreach ( $list as $f )
+
+	return false;
+}
+
+function load_file( $fname, $scan=true )
+{
+	if ( is_file($fname) )
+		return file_get_contents($fname);
+	if ( ! $scan )
+		return '';
+
+	// case-insensitive loading
+	// files/data/enemydata.bin == FILES/Data/EnemyData.bin
+	$func = __FUNCTION__;
+	$list = array();
+	lsfile_r('.', $list);
+	foreach ( $list as $f )
+	{
+		if ( stripos($f, $fname) === false )
+			continue;
+		$data = $func($f, false);
 		if ( $data !== '' )
 			return $data;
 	} // foreach ( $list as $f )
@@ -1402,14 +1437,8 @@ function psxtim( &$file )
 			$tim['h'] = str2int($file, $pos+10, 2);
 
 			$psz = $siz - 12;
-			$sub = substr($file, $pos+12, $psz);
-			for ( $i=0; $i < $psz; $i++ )
-			{
-				$b = ord( $sub[$i] );
-				$b1 = ($b >> 0) & BIT4;
-				$b2 = ($b >> 4) & BIT4;
-				$tim['pix'] .= chr($b1) . chr($b2);
-			}
+			$tim['pix'] = substr($file, $pos+12, $psz);
+			bpp4to8( $tim['pix'] );
 			$pos += $siz;
 
 			$tim['t'] = "CLUT";

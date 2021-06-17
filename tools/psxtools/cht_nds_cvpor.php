@@ -51,8 +51,7 @@ function cvnds_dos_mon( $fp, $pos )
 		str_update($mon, $p+0x14, "\x00"); // soul drop rate
 		str_update($mon, $p+0x17, "\xff"); // item 1 drop rate
 	}
-	fseek($fp, $pos, SEEK_SET);
-	fwrite($fp, $mon);
+	fp_update($fp, $pos, $mon);
 	return;
 }
 
@@ -82,8 +81,7 @@ function cvnds_por_mon( $fp, $pos )
 		str_update($mon, $p+0x16, "\xff"); // item 1 drop rate
 		str_update($mon, $p+0x17, "\xff"); // item 2 drop rate
 	}
-	fseek($fp, $pos, SEEK_SET);
-	fwrite($fp, $mon);
+	fp_update($fp, $pos, $mon);
 	return;
 }
 
@@ -115,8 +113,7 @@ function cvnds_ooe_mon( $fp, $pos )
 		str_update($mon, $p+0x1a, "\xff"); // item 1 drop rate
 		str_update($mon, $p+0x1b, "\xff"); // item 2 drop rate
 	}
-	fseek($fp, $pos, SEEK_SET);
-	fwrite($fp, $mon);
+	fp_update($fp, $pos, $mon);
 	return;
 }
 //////////////////////////////

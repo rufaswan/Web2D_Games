@@ -482,6 +482,8 @@ var QUAD = QUAD || {};
 	}
 
 	QUAD.render_frameid = function(id, pos){
+		if ( id < 0 )
+			return;
 		var GL = QUAD.webgl.gl;
 		var frame = QUAD.files.quad.Frame[id];
 		if ( frame === undefined )

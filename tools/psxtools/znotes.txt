@@ -238,3 +238,20 @@ forums.codeguru.com/showthread.php?259953-Code-to-create-Color-Gradient-programa
 		  RedP = (  RedV2 * (Py-V1y) +   RedV1 * (V2y-Py)) / (V2y-V1y)
 		GreenP = (GreenV2 * (Py-V1y) + GreenV1 * (V2y-Py)) / (V2y-V1y)
 		 BlueP = ( BlueV2 * (Py-V1y) +  BlueV1 * (V2y-Py)) / (V2y-V1y)
+
+stackoverflow.com/questions/22657381/batch-opening-a-webpage-using-the-default-browser
+
+	would only open with your default browser (which is not necessarily Chrome)
+		start http://www.google.com
+
+	If you want it to open only in Google Chrome
+		start "" "C:\Your-Chrome-Path-Here\chrome.exe" https://google.com
+
+stackoverflow.com/questions/28852942/how-do-i-kill-a-specific-process-running-in-the-background-from-the-command-prom
+
+	you can write in the exact name of the task to kill,
+		taskkill /IM firefox.exe /F
+
+	or you can check the PID of specific task by writing Tasklist, and then kill the task by mentioning its PID
+		tasklist
+		taskkill /PID 26356 /F

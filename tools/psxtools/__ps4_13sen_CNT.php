@@ -19,16 +19,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
- * Special Thanks
- *   pkg_parser lib
- *     n1ghty
  */
 require "common.inc";
 require "common-guest.inc";
 
-function sect_psf( $fp, &$psf )
+function sect_image( $fp, $base, $pfx )
 {
-	// param.sfo
+	// https://www.psdevwiki.com/ps4/PFS
+	$sub = fp2str($fp, $base, 0x800);
+	if ( str2int($sub,8,4) !== 0x01332a0b ) // 20130315
+		return;
+
+	$blksz  = str2int($sub, 0x20, 4);
+	$ninode = str2int($sub, 0x30, 4);
+	$ndata  = str2int($sub, 0x38, 4);
+	$ninblk = str2int($sub, 0x40, 4);
+
+	return;
+}
+//////////////////////////////
+function sect_PSF( $fp, &$psf )
+{
+	// https://www.psdevwiki.com/ps4/Param.sfo
 	if ( substr($psf,0,4) !== "\x00PSF" )
 		return;
 
@@ -71,16 +83,12 @@ function sect_psf( $fp, &$psf )
 	return $buf;
 }
 
-function pkgfile( $fname )
+function sect_CNT( $fp, $pfx )
 {
-	$fp = fopen($fname, 'rb');
-	if ( ! $fp )  return;
-
 	$head = fp2str($fp, 0, 0x800);
 	if ( substr($head,0,4) !== "\x7fCNT" )
-		return;
+		return false;
 
-	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	$tbl_cnt = str2big($head, 0x10, 4);
 	$tbl_pos = str2big($head, 0x18, 4);
 	$tbl_siz = $tbl_cnt * 0x20;
@@ -90,11 +98,13 @@ function pkgfile( $fname )
 	$file_dat = '';
 	for ( $i=0; $i < $tbl_siz; $i += 0x20 )
 	{
-		$typ = str2big($head, $i+0, 4);
-		$nam = str2big($head, $i+4, 4);
+		$typ = str2big($head, $i+0x00, 4);
+		$nam = str2big($head, $i+0x04, 4);
 		$pos = str2big($head, $i+0x10, 4);
 		$siz = str2big($head, $i+0x14, 4);
-		printf("%4x , %8x , %8x , %8x\n", $i, $typ, $pos, $siz);
+
+		$flg1 = ord( $head[$i+0x08] );
+		$flg2 = str2big($head, $i+0x0c, 4);
 
 		$sub = fp2str($fp, $pos, $siz);
 
@@ -105,16 +115,39 @@ function pkgfile( $fname )
 		}
 
 		if ( $typ === 0x1000 )
-			$sub = sect_psf($fp, $sub);
+			$sub = sect_PSF($fp, $sub);
 
 		if ( $nam === 0 )
 			$fn = sprintf("%04d.bin", $i/0x20);
 		else
 			$fn = substr0($file_dat, $nam);
 
+		printf("%8x , %8x , %8x , %s\n", $typ, $pos, $siz, $fn);
 		save_file("$pfx/$fn", $sub);
 	} // for ( $i=0; $i < $tbl_cnt; $i++ )
 
+	return true;
+}
+//////////////////////////////
+function pkgfile( $fname )
+{
+	$fp = fopen($fname, 'rb');
+	if ( ! $fp )  return;
+
+	$pfx = substr($fname, 0, strrpos($fname, '.'));
+
+	// https://www.psdevwiki.com/ps4/Package_Files
+	$r = sect_CNT($fp, "$pfx/cnt");
+	if ( ! $r )
+		return;
+
+	$sub = fp2str($fp, 0x400, 0x800);
+	$off = str2big($sub, 0x14, 4);
+	$siz = str2big($sub, 0x1c, 4);
+	if ( filesize($fname) !== ($off+$siz) )
+		return;
+
+	sect_image($fp, $off, "$pfx/image");
 	return;
 }
 

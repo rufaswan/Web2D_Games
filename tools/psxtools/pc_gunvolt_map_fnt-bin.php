@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+require "common-guest.inc";
 
 $gp_pix = array();
 
@@ -117,6 +118,69 @@ function gva_bin( &$bin, $pfx )
 	return;
 }
 //////////////////////////////
+function gv2_src( &$pix, $int, $x, $y, $ix, $iy )
+{
+	$pix['src']['w'] = 8;
+	$pix['src']['h'] = 8;
+	$pix['dx'] = ($x * 16) + $ix;
+	$pix['dy'] = ($y * 16) + $iy;
+
+	// fedcba98 76543210  fedcba98  7   6   543210
+	// -------- --------  row       hf  vf  col
+	$b1 = ($int >>  0) & BIT8;
+	$b2 = ($int >>  8) & BIT8;
+	//$b3 = ($int >> 16) & BIT8;
+	//$b4 = ($int >> 24) & BIT8;
+	flag_watch('gv2_src', $int & 0xffff0000);
+
+	//$pix['hflip'] = $b1 & 0x80;
+	//$pix['vflip'] = $b1 & 0x40;
+
+	$col = ($b1 & 0x7f) * 8;
+	$row =  $b2 * 8;
+	$tid = 1;
+
+	global $gp_pix;
+	$pix['src']['pix'] = riprgba($gp_pix[$tid]['pix'], $col, $row, 8, 8, $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
+	return;
+}
+
+function gv2_tile( &$bin, $pfx, $st, $ed )
+{
+	$cnt = ($ed - $st) / 0x10;
+	$map_w = 16;
+	$map_h = ceil( $cnt/$map_w );
+
+	$pix = COPYPIX_DEF();
+	$pix['rgba']['w'] = $map_w * 16;
+	$pix['rgba']['h'] = $map_h * 16;
+	$pix['rgba']['pix'] = canvpix($pix['rgba']['w'] , $pix['rgba']['h']);
+
+	for ( $y=0; $y < $map_h; $y++ )
+	{
+		for ( $x=0; $x < $map_w; $x++ )
+		{
+			$b1 = str2int($bin, $st+ 0, 4);
+			$b2 = str2int($bin, $st+ 4, 4);
+			$b3 = str2int($bin, $st+ 8, 4);
+			$b4 = str2int($bin, $st+12, 4);
+				$st += 16;
+
+			gv2_src($pix, $b1, $x, $y, 0, 0);
+			copypix_fast($pix, 4);
+			gv2_src($pix, $b2, $x, $y, 8, 0);
+			copypix_fast($pix, 4);
+			gv2_src($pix, $b3, $x, $y, 0, 8);
+			copypix_fast($pix, 4);
+			gv2_src($pix, $b4, $x, $y, 8, 8);
+			copypix_fast($pix, 4);
+		} // for ( $x=0; $x < $map_w; $x++ )
+	} // for ( $y=0; $y < $map_h; $y++ )
+
+	savepix("$pfx/tile", $pix, false);
+	return;
+}
+
 function gv2_bin( &$bin, $pfx )
 {
 	echo "== gv2_bin( $pfx )\n";
@@ -129,6 +193,7 @@ function gv2_bin( &$bin, $pfx )
 	listmapid($bin, $p3 , $p1, 2);
 	listmapid($bin, $off, $p2, 4);
 	//sectmap($bin, $pfx, $p1, $p2, $p3, $off, 25, 15, 8);
+	gv2_tile($bin, $pfx, $off, $p2);
 	return;
 }
 //////////////////////////////
@@ -143,8 +208,9 @@ function mgv_src( &$pix, $int, $x, $y )
 	// -------- --------  row       hf  vf  col
 	$b1 = ($int >>  0) & BIT8;
 	$b2 = ($int >>  8) & BIT8;
-	$b3 = ($int >> 16) & BIT8;
-	$b4 = ($int >> 24) & BIT8;
+	//$b3 = ($int >> 16) & BIT8;
+	//$b4 = ($int >> 24) & BIT8;
+	flag_watch('mgv_src', $int & 0xffff0000);
 
 	$pix['hflip'] = $b1 & 0x80;
 	$pix['vflip'] = $b1 & 0x40;
@@ -154,15 +220,7 @@ function mgv_src( &$pix, $int, $x, $y )
 	$tid = 0;
 
 	global $gp_pix;
-	$pix['src']['pix'] = '';
-	for ( $y=0; $y < 16; $y++ )
-	{
-		$syy = ($row + $y) * $gp_pix[$tid]['w'];
-		$sxx = $syy + $col;
-
-		$pix['src']['pix'] .= substr($gp_pix[$tid]['pix'], $sxx*4, 16*4);
-	} // for ( $y=0; $y < 16; $y++ )
-
+	$pix['src']['pix'] = riprgba($gp_pix[$tid]['pix'], $col, $row, 16, 16, $gp_pix[$tid]['w'], $gp_pix[$tid]['h']);
 	return;
 }
 function mgv_room( &$bin, $rps, $off, &$pix, $ax, $ay )
@@ -184,31 +242,47 @@ function mgv_room( &$bin, $rps, $off, &$pix, $ax, $ay )
 }
 function mgv_area( &$bin, $pfx, $p1, $p2, $p3, $off )
 {
-	$b1 = str2int($bin, $p1+4, 4);
-		$p1 += (4 + $b1);
+	// 0    4    8    c    10   14   18   1c
+	// sz1  ps1  sz2  ps2  sz3  ps3  sz4  ps4
+	$sz  = str2int($bin, $p1+0, 4);
+	$st  = str2int($bin, $p1+4, 4);
+	$mgc = substr ($bin, $p1+$st, 8);
+		$p1 += $st;
 
-	$aw = str2int($bin, $p1+0, 2);
-	$ah = str2int($bin, $p1+2, 2);
-		$p1 += 4;
+	$aw = str2int($mgc, 0, 2);
+	$ah = str2int($mgc, 6, 2);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $aw * 16 * 16;
-	$pix['rgba']['h'] = $ah * 15 * 16;
-	$pix['rgba']['pix'] = canvpix($pix['rgba']['w'] , $pix['rgba']['h']);
-
-	for ( $ay=0; $ay < $ah; $ay++ )
+	$id = 0;
+	while (1)
 	{
-		for ( $ax=0; $ax < $aw; $ax++ )
+		$sub = substr($bin, $p1, $sz);
+			$p1 += $sz;
+		if ( substr($sub,0,8) !== $mgc )
+			break;
+
+		$st = 8;
+		$pix = COPYPIX_DEF();
+		$pix['rgba']['w'] = $aw * 16 * 16;
+		$pix['rgba']['h'] = $ah * 15 * 16;
+		$pix['rgba']['pix'] = canvpix($pix['rgba']['w'] , $pix['rgba']['h']);
+
+		for ( $ay=0; $ay < $ah; $ay++ )
 		{
-			$rid = str2int($bin, $p1, 2);
-				$p1 += 2;
+			for ( $ax=0; $ax < $aw; $ax++ )
+			{
+				$rid = str2int($sub, $st, 2);
+					$st += 2;
 
-			$rps = $p3 + ($rid * 16 * 15 * 2);
-			mgv_room($bin, $rps, $off, $pix, $ax*16, $ay*15);
-		} // for ( $ax=0; $ax < $aw; $ax++ )
-	} // for ( $ay=0; $ay < $ah; $ay++ )
+				$rps = $p3 + ($rid * 16 * 15 * 2);
+				mgv_room($bin, $rps, $off, $pix, $ax*16, $ay*15);
+			} // for ( $ax=0; $ax < $aw; $ax++ )
+		} // for ( $ay=0; $ay < $ah; $ay++ )
 
-	savepix("$pfx/map", $pix, false);
+		$fn = sprintf("%s/map-%04d", $pfx, $id);
+		savepix($fn, $pix, false);
+		$id++;
+	} // while (1)
+
 	return;
 }
 function mgv_tile( &$bin, $pfx, $st, $ed )
@@ -366,3 +440,24 @@ function gunvolt( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	gunvolt( $argv[$i] );
+
+/*
+mgv
+	screen = 16x15 tile
+	tile   = 16x16 pixel
+	set    = 16x   tile
+gv2
+	screen = 25x15 tile
+	tile   =  8x8  pixel , st01_a 16x16 pixel
+	set    = 16x   tile
+gva
+	screen =   x   tile
+	tile   =  8x8  pixel
+	set    = 16x   tile
+
+
+gv2 st1403_a
+	0    x288  tga 0 [  0-120]
+	288  x112  tga 2 [120- 70]
+	400  x486  tga 1 [190-1e6]
+ */

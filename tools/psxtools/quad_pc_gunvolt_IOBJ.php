@@ -54,6 +54,38 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 		$float[10]*$w , $float[11]*$h ,
 		$float[14]*$w , $float[15]*$h ,
 	);
+
+	// readjustments
+	if ( ((int)$sqd[0] & 1) === 0 )
+	{
+		$cx = ($sqd[0] + $sqd[4]) / 2;
+		if ( $sqd[0] < $cx )
+		{
+			$sqd[0]++;  $sqd[6]--;
+			$sqd[2]++;  $sqd[4]--;
+		}
+		else
+		{
+			$sqd[0]--;  $sqd[6]++;
+			$sqd[2]--;  $sqd[4]++;
+		}
+	}
+
+	if ( ((int)$sqd[1] & 1) === 0 )
+	{
+		$cy = ($sqd[1] + $sqd[5]) / 2;
+		if ( $sqd[1] < $cy )
+		{
+			$sqd[1]++;  $sqd[7]++;
+			$sqd[3]--;  $sqd[5]--;
+		}
+		else
+		{
+			$sqd[1]--;  $sqd[7]--;
+			$sqd[3]++;  $sqd[5]++;
+		}
+	}
+
 	return;
 }
 

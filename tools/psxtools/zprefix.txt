@@ -1,27 +1,40 @@
 == PlayStation One Games ==
-xeno    SLPS 011.60  Xenogears / Disc 1
-xeno    SLPS 011.61  Xenogears / Disc 2
-yuna    SLPS 014.51  Galaxy Fraulein Yuna Final Edition
-saga2   SLPS 019.90  SaGa Frontier 2
+gihren  SLPS 025.70  Gihren no Yabou Zeon no Keibu / Federation Disc
+gihren  SLPS 025.71  Gihren no Yabou Zeon no Keibu / Zeon Disc
+gbm1    SLPS 008.83  Gundam Battle Master
+gbm2    SLPS 012.86  Gundam Battle Master 2
+gbm-g   SLPS 034.71  Gundam Battle Master G Gundam
+gbm-w   SLPS 034.72  Gundam Battle Master Gundam Wing
+lunar1  SLPS 013.97  Lunar 1 Silver Star Story / Disc 1
+lunar1  SLPS 013.98  Lunar 1 Silver Star Story / Disc 2
 lunar2  SLPS 020.81  Lunar 2 Eternal Blue / Disc 1
 lunar2  SLPS 020.82  Lunar 2 Eternal Blue / Disc 2
 lunar2  SLPS 020.83  Lunar 2 Eternal Blue / Disc 3
-mana    SLPS 021.70  Seiken Densetsu
-gihren  SLPS 025.70  Gihren no Yabou Zeon no Keibu / Federation Disc
-gihren  SLPS 025.71  Gihren no Yabou Zeon no Keibu / Zeon Disc
+xeno    SLPS 011.60  Xenogears / Disc 1
+xeno    SLPS 011.61  Xenogears / Disc 2
 
-sotn    SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
-star2   SLPM 861.05  Star Ocean 2 / Disc 1
-star2   SLPM 861.06  Star Ocean 2 / Disc 2
-mkr     SLPM 861.34  Mitsumete Knight R
-valky   SLPM 863.79  Valkyrie Profile / Disc 1
-valky   SLPM 863.80  Valkyrie Profile / Disc 2
-tm2s    SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 1
-tm2s    SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 2
-tm2s    SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 1
-tm2s    SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 2
-tm2s    SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
-tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
+tm2s   SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 1
+tm2s   SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 2
+tm2s   SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 1
+tm2s   SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 2
+tm2s   SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
+tm2s   SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
+star2  SLPM 861.05  Star Ocean 2 / Disc 1
+star2  SLPM 861.06  Star Ocean 2 / Disc 2
+valky  SLPM 863.79  Valkyrie Profile / Disc 1
+valky  SLPM 863.80  Valkyrie Profile / Disc 2
+
+disc1  SCES 000.12  Discworld 1
+disc2  SLES 007.93  Discworld 2 Missing Presumed
+disc3  SLES 015.49  Discworld Noir
+
+yuna   SLPS 014.51  Galaxy Fraulein Yuna Final Edition
+ralph  SLPS 018.53  Adventure of Little Ralph
+saga2  SLPS 019.90  SaGa Frontier 2
+mana   SLPS 021.70  Seiken Densetsu
+
+sotn  SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
+mkr   SLPM 861.34  Mitsumete Knight R
 
 	mana    ALL DONE
 	saga2   ALL DONE , SLUS not supported
@@ -34,48 +47,74 @@ tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC
 	valky   --upcoming--
 	star2   --upcoming--
 	gihren  --upcoming--
+	lunar1  --upcoming--
+	disc1   --upcoming--
+	disc2   --upcoming--
+	disc3   --upcoming--
+	ralph   --upcoming--
+	gbm1    --upcoming--
+	gbm2    --upcoming--
+	gbm-g   --upcoming--
+	gbm-w   --upcoming--
 
 ==============================
 == PlayStation System Games ==
--> PS2  PSP  VITA
+-> PS2  PS4  PSP  VITA
 
-odin     SLUS 215.77  Odin Sphere
-odin     SLUS 216.04  GrimGrimoire
+odin  SLUS 215.77  Odin Sphere
+odin  SLUS 216.04  GrimGrimoire
+
+	odin  *.mbp/*.ftp only
+
+lunar    NPJH_500.54  Lunar Harmony of Silver Star
 pcrown   ULJM 050.40  Princess Crown
 tengai4  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
-mura     ULJS_003.94  Grand Knights History
-mura     PCSE00240    Muramasa Rebirth + DLC
-mura     PCSE00019    Dragon Crown
-mura     PCSE00899    Odin Sphere Leifthrasir
+grand    ULJS_003.94  Grand Knights History
 
 	pcrown   *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
-	odin     *.mbp/*.ftp only
-	mura     *.mbs/*.ftx only
 	tengai4  --upcoming--
+	lunar    --upcoming--
+	grand    *.mbs/*.ftx only
 
+mura  PCSE00240  Muramasa Rebirth + DLC
+mura  PCSE00019  Dragon Crown
+mura  PCSE00899  Odin Sphere Leifthrasir
+
+	mura  *.mbs/*.ftx only
+
+13sen  CUSA 196.20  13 Sentinels Aegis Rim
+
+	13sen  --upcoming--
 ==============================
 == Guest System Games ==
 cvpor  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
 cvpor  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
 kuma   NDS  CKUJ  Kumatanchi
+mvac   NDS  AVCJ  Magical Vacation
 
 	cvpor  all maps only , *.so/.sc (non-quad) only
 	kuma   *.mbs/*.ftx , *.ncgr/*.nclr/*.nscr only
 
-sotn       SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
-tengai4    SATURN  T-14301G  Tengai Makyou Daishi no Mokushiroku [2 disc]
-yuna       SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
-yuna       SATURN  T-14311G  Galaxy Fraulein Yuna 3
-yuna_mika  SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
-pcrown     SATURN  T-14418G  Princess Crown
-vfcg       SATURN  Virtua Fighter CG Potrait Series
+sotn     SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
+tengai4  SATURN  T-14301G  Tengai Makyou Daishi no Mokushiroku [2 disc]
+yuna     SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
+yuna     SATURN  T-14311G  Galaxy Fraulein Yuna 3
+mika1    SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
+pcrown   SATURN  T-14418G  Princess Crown
+vfcg     SATURN  Virtua Fighter CG Potrait Series
 
-	yuna_mika  ALL DONE
-	yuna       *.ss1 only
-	pcrown     *.chb/.mcb , *.pak/chr only
-	sotn       --upcoming--
-	tengai4    --upcoming--
+	mika1    ALL DONE
+	vfcg     ALL DONE
+	yuna     *.ss1 only
+	pcrown   *.chb/.mcb , *.pak/chr only
+	mika2    --upcoming--
+	sotn     --upcoming--
+	tengai4  --upcoming--
+
+mura  WII  RSFE7U  Muramasa The Demon Blade
+
+	mura  *.mbs/*.ftx only
 
 rusty    PC98  Rusty
 rusty    PC98  Totsugeki Mix
@@ -85,8 +124,23 @@ galpani  PC98  Galpani 2
 	rusty    *.map/.tbl/.dat , *.mag/.ani , *.mgx only
 	galpani  *.bgi/.bgs/.msk only
 
-mura  WII  RSFE7U  Muramasa The Demon Blade
+gunvolt  PC  Blaster Master Zero
+gunvolt  PC  Azure Striker Gunvolt
+gunvolt  PC  Azure Striker Gunvolt 2
+gunvolt  PC  Gunvolt Chronicles Luminous Avenger iX
+gunvolt  PC  Mighty Gunvolt
+vagrant  PC  The Vagrant
 
-	mura  *.mbs/*.ftx only
+	gunvolt  IOBJ only
+	vagrant  --upcoming--
 
+egglia  APK  Egglia
+smurf   APK  Smurfs
+
+	egglia  --upcoming--
+	smurf   --upcoming--
+
+mmx     IPA  Mega man X
+
+	mmx  --upcoming--
 ==============================
