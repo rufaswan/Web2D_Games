@@ -122,11 +122,18 @@ function cvnds( $fname )
 	$fp = fopen($fname, "rb+");
 	if ( ! $fp )  return;
 
-	$head = fp2str($fp, 0, 0x160);
-	$mgc = substr($head, 0x0c, 4);
-	$ver = ord( $head[0x1e] );
+	$head = fp2str($fp, 0, 0x180);
 
-	$mgc = sprintf("%s_%d", $mgc, $ver);
+	// RAM address check
+	if ( $head[0x27] != "\x02" )  return;
+	if ( $head[0x2b] != "\x02" )  return;
+	if ( $head[0x37] != "\x02" )  return;
+	if ( $head[0x3b] != "\x02" )  return;
+
+	$code = substr($head, 0x0c, 4);
+	$vers = ord( $head[0x1e] );
+
+	$mgc = sprintf("%s_%d", $code, $vers);
 	switch ( $mgc )
 	{
 		case 'ACVJ_1':  return cvnds_dos_mon($fp, 0x7cca8);

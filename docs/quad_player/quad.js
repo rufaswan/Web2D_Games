@@ -43,6 +43,7 @@ var QUAD = QUAD || {};
 
 	QUAD.init_anim = function(){
 		QUAD.anim = {
+			cur_texid     : -999,
 			cur_frame     : 0,
 			cur_anim_key  : '',
 			cur_anim_data : [],
@@ -406,11 +407,16 @@ var QUAD = QUAD || {};
 			return;
 		}
 
-		function set_tex(tex){
+		function set_tex(texid, tex){
+			if ( QUAD.anim.cur_texid === texid )
+				return;
+
 			var u_tex = GL.getUniformLocation(PROGRAM, "u_tex");
 			GL.uniform1i(u_tex, 0);
 			GL.activeTexture(GL.TEXTURE0);
 			GL.bindTexture(GL.TEXTURE_2D, tex);
+
+			QUAD.anim.cur_texid = texid;
 			return;
 		}
 
@@ -448,7 +454,7 @@ var QUAD = QUAD || {};
 		set_xyz(dst, pos, GL.canvas.width, GL.canvas.height);
 		set_idx(dst.length);
 		set_clr(clr, fact);
-		set_tex(image.tex);
+		set_tex(texid, image.tex);
 
 		GL.enable(GL.BLEND);
 		if ( blend === 'NONE' )

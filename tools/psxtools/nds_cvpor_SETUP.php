@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
-require "nds_cvpor.inc";
+require "nds.inc";
 
 $gp_patch = array();
 

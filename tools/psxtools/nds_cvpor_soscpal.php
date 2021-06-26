@@ -42,14 +42,8 @@ function loadsc( $pfx, $id, $sx, $sy, $w, $h )
 		{
 			case 0x2000: // 128x128 , 4-bit
 			case 0x8000: // 256x256 , 4-bit
-				$gp_pix[$id] = "";
-				for ( $i=0; $i < $len; $i++ )
-				{
-					$b = ord($file[$i]);
-					$b1 = ($b >> 0) & BIT4;
-					$b2 = ($b >> 4) & BIT4;
-					$gp_pix[$id] .= chr($b1) . chr($b2);
-				}
+				bpp4to8($file);
+				$gp_pix[$id] = $file;
 				break;
 			case 0x4000: // 128x128 , 8-bit
 				$gp_pix[$id] = $file;

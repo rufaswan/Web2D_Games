@@ -20,40 +20,25 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-define("PARTSIZE", 0x20);
-$gp_file = array();
+require "common.inc";
 
-function partcmp( $pos )
+function gunvolt( $fname )
 {
-	global $gp_file;
-	if ( empty($gp_file) )
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
+
+	if ( stripos($file,'.tga') === false )
 		return;
 
-	$cnt = count($gp_file);
-	$diff = false;
-	for ( $c1=0; $c1 < ($cnt-1); $c1++ )
-	{
-		for ( $c2=$c1+1; $c2 < $cnt; $c2++ )
-		{
-			$b1 = substr($gp_file[$c1][1], $pos, PARTSIZE);
-			$b2 = substr($gp_file[$c2][1], $pos, PARTSIZE);
-			if ( $b1 != $b2 )
-				$diff = printf("DIFF %x @ %s != %s\n", $pos, $gp_file[$c1][0], $gp_file[$c2][0]);
-		}
-	}
-	if ( ! $diff )
-		printf("ALL SAME %x\n", $pos);
+	$bin1 = str2int($file, 0x0c, 4);
+	$bin2 = str2int($file, 0x10, 4);
+	$fnt1 = str2int($file, 0x1c, 4);
+	$fnt2 = str2int($file, 0x20, 4);
+
+	save_file("$fname.bin", substr($file, $bin1, $bin2));
+	save_file("$fname.fnt", substr($file, $fnt1, $fnt2));
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-{
-	$opt = $argv[$i];
-	if ( file_exists($opt) )
-		$gp_file[] = array($opt, file_get_contents($opt));
-	else
-	{
-		$pos = hexdec($opt);
-		partcmp( $pos );
-	}
-}
+	gunvolt( $argv[$i] );

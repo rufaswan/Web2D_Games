@@ -20,12 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
 
-Linux ONLY - required command 'stty' to work
+Linux ONLY , required exec() command
+	- stty
+	- tput
  */
 $gp_opts = array(
 	'termx' => 82,
 	'termy' => 28,
-	'col'   => 16,
+	'col'   => 32,
 	'pos'   =>  0,
 	'block' => 0x800,
 );
@@ -39,13 +41,15 @@ function hexread( $fname )
 	$done = false;
 	$size = filesize($fname);
 
+	// bash title bar
+	printf("\033]0;[READ] %s (%x)\007", $fname, $size);
 	while ( ! $done )
 	{
 		$gp_opts['termx'] = exec('tput cols');
 		$gp_opts['termy'] = exec('tput lines') - 2;
 
 		ob_start();
-		printf("======== %s [%8x/%8x] (%2d%%) ========\n", $fname, $gp_opts['pos'], $size, $gp_opts['pos']*100/($size-1));
+		printf("======== %s [%x/%x] (%d%%) ========\n", $fname, $gp_opts['pos'], $size, $gp_opts['pos']*100/($size-1));
 
 		fseek($fp, $gp_opts['pos'], SEEK_SET);
 		$sub = fread($fp, $gp_opts['col']*$gp_opts['termy']);

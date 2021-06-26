@@ -370,6 +370,8 @@ function ps2cvm( $fname )
 	$enc = ( $h33 & 0x10 );
 	$isost = str2big($head, 0x88, 4);
 
+	// if encrypted , decrypt it first to loop all dirs
+	// if decrypted , loop all dirs to encrypt it back
 	$root = read_sect($fp, $isost, 16, 0x800);
 	if ( $enc )
 		encrypt_sect($root, 16);

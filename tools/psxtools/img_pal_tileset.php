@@ -24,53 +24,50 @@ require "common.inc";
 
 define("TILE_S", 16);
 
-$gp_cc = 0; // 16 or 256
-
-function paltile( $str )
+function palfile( $cc, $fname )
 {
-	$len = strlen($str);
-	$pix = "";
-	for ( $i=0; $i < $len; $i += 4 )
-	{
-		$c = substr($str, $i, 4);
-		$pix .= str_repeat($c, TILE_S);
-	}
-	return str_repeat($pix, TILE_S);
-}
-
-function palette( $fname )
-{
-	global $gp_cc;
-	if ( $gp_cc < 1 )
-		return printf("ERROR gp_cc is zero\n");
+	if ( $cc < 1 )
+		return php_error("ERROR cc", $cc);
 
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$cc = $gp_cc * 2;
-	while ( strlen($file) % $cc )
+	$ceil = int_ceil( strlen($file), $cc*4);
+	while ( strlen($file) < $ceil )
 		$file .= ZERO;
 
-	$cn = strlen($file) / $cc;
-	$clut = mstrpal555($file, 0, $gp_cc, $cn);
+	$w = $cc;
+	$h = $ceil / ($cc*4);
 
-	$rgba = "RGBA";
-	$rgba .= chrint($gp_cc * TILE_S, 4);
-	$rgba .= chrint($cn    * TILE_S, 4);
+	$img  = "RGBA";
+	$img .= chrint($w * TILE_S, 4);
+	$img .= chrint($h * TILE_S, 4);
 
-	foreach ( $clut as $cv )
-		$rgba .= paltile($cv);
+	$p = 0;
+	for ( $y=0; $y < $h; $y++ )
+	{
+		$row = '';
+		for ( $x=0; $x < $w; $x++ )
+		{
+			$c = substr($file, $p, 4);
+				$p += 4;
+			$row .= str_repeat($c, TILE_S);
+		} // for ( $x=0; $x < $w; $x++ )
 
-	save_file("$fname.rgba", $rgba);
+		$img .= str_repeat($row, TILE_S);
+	} // for ( $y=0; $y < $h; $y++ )
+
+	save_file("$fname.tile.rgba", $img);
 	return;
 }
 
 echo "{$argv[0]}  [-16/-256]  PALETTE_FILE...\n";
+$cc = 0;
 for ( $i=1; $i < $argc; $i++ )
 {
 	$opt = $argv[$i];
 	if ( $opt[0] == '-' )
-		$gp_cc = $opt * -1;
+		$cc = (int)(-$opt);
 	else
-		palette( $opt );
+		palfile( $cc, $opt );
 }

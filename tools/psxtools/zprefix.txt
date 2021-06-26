@@ -1,3 +1,35 @@
+== Script Naming Scheme ==
+{console}_{prefix}_{identifier}_{function}.php
+	console
+		*blank* = PlayStation One
+		ps2 , ps4 , psp , vita , sat , wii , nds
+		pc98 , pc
+
+		tsr    = for The Sprite Resource
+		img    = related *.clut/*.rgba files
+			for convert between common file formats
+		quad   = related *.quad files
+			for use with WebGL Quad Player
+			*followed by console as usual*
+		layout = related layout.txt
+			for use as interactive VG map
+			*followed by console as usual*
+	prefix
+		*see below*
+	identifier
+		priority in order
+		1 use FIRST 4 BYTES of the file , if ASCII
+		2 use {directory}_{filename}_{extension}
+		3 use {directory}_{extension}
+		4 use {extension}
+		5 use {note}
+	function
+		*blank* = output sprites
+		decode  = decompress the files
+		packer  = pack if is_dir , unpack if is_file
+		INFO    = display useful information
+		SETUP   = output self-contained file sets
+
 == PlayStation One Games ==
 gihren  SLPS 025.70  Gihren no Yabou Zeon no Keibu / Federation Disc
 gihren  SLPS 025.71  Gihren no Yabou Zeon no Keibu / Zeon Disc
@@ -92,6 +124,7 @@ cvpor  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
 kuma   NDS  CKUJ  Kumatanchi
 mvac   NDS  AVCJ  Magical Vacation
+comm   NDS  YW7E  Commando Steel Disaster
 
 	cvpor  all maps only , *.so/.sc (non-quad) only
 	kuma   *.mbs/*.ftx , *.ncgr/*.nclr/*.nscr only

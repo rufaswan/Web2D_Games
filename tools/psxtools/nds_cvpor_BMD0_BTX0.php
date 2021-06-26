@@ -61,17 +61,10 @@ function cvpor( $fname )
 				{
 					$cn = $cns / 0x20;
 					$clut = mstrpal555($file, $off3, 0x10, $cn);
+					$pix  = substr($file, $off2, $off3-$off2);
+					bpp4to8($pix);
 
-					$pix = "";
-					for ( $i=$off2; $i < $off3; $i++ )
-					{
-						$p = ord( $file[$i] );
-						$p1 = ($p >> 0) & BIT4;
-						$p2 = ($p >> 4) & BIT4;
-						$pix .= chr($p1) . chr($p2);
-					}
-
-					$h = strlen($pix) / 0x80;
+					$h = strlen($pix) >> 7; // div 0x80
 					foreach ( $clut as $k => $v )
 					{
 						$clut = "CLUT";
@@ -89,7 +82,7 @@ function cvpor( $fname )
 					$clut = mstrpal555($file, $off3, 0x100, $cn);
 					$pix  = substr($file, $off2, $off3-$off2);
 
-					$h = strlen($pix) / 0x80;
+					$h = strlen($pix) >> 7; // div 0x80
 					foreach ( $clut as $k => $v )
 					{
 						$clut = "CLUT";

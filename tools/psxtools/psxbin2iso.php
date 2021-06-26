@@ -55,33 +55,30 @@ function bin2iso( $fname )
 	if ( ! $fp )  return;
 
 	$detect = array(
-		//    type        s-size  s-head  cd-head
-		array("iso/2048",  0x800,      0, 0),
-		array("psx/2352",  0x930,   0x18, 0), // psx bin
-		array("sat/2352",  0x930,   0x10, 0), // saturn bin
-		array("bin/2336",  0x920,   0x08, 0),
-		array("bin/2448",  0x990,   0x18, 0),
+		//    type              s-size  s-head cd-head
+		array("iso/800+ 0"      , 0x800 ,    0  , 0      ),
+		array("psx/930+18"      , 0x930 , 0x18  , 0      ), // psx bin
+		array("sat/930+10"      , 0x930 , 0x10  , 0      ), // saturn bin
+		array("bin/920+ 8"      , 0x920 , 0x08  , 0      ),
+		array("bin/990+18"      , 0x990 , 0x18  , 0      ),
+		array("bin/990+10"      , 0x990 , 0x10  , 0      ), // mds+mdf
 
-		array("bin/2352+930"  , 0x930, 0x10, 0x930  ),
-		array("cvm/2048+1800" , 0x800,    0, 0x1800 ),
-		array("cdi/2048+4b000", 0x800,    0, 0x4b000),
+		array("bin/930+10+  930", 0x930 , 0x10  , 0x930  ),
+		array("cvm/800+ 0+ 1800", 0x800 ,    0  , 0x1800 ),
+		array("cdi/800+ 0+4b000", 0x800 ,    0  , 0x4b000),
 	);
 
-	$bkhd = 0;
-	$bksz = 0;
 	foreach ( $detect as $det )
 	{
-		$p = $det[3] + ($det[1] * 0x10) + $det[2];
+		list($type,$ssize,$shead,$cdhead) = $det;
+		$p = $cdhead + ($ssize * 0x10) + $shead;
 
 		fseek($fp, $p, SEEK_SET);
 		$head = fread($fp, 0x800);
 		if ( substr($head, 1, 5) == 'CD001' )
 		{
-			$skip = $det[3];
-			$bkhd = $det[2];
-			$bksz = $det[1];
-			printf("DETECT %s , %x , %x , %x , %s\n", $det[0], $det[1], $det[2], $det[3], $fname);
-			return expiso($fp, $fname, $bksz, $bkhd, $skip);
+			printf("DETECT %s , %x , %x , %x , %s\n", $type, $ssize, $shead, $cdhead, $fname);
+			return expiso($fp, $fname, $ssize, $shead, $cdhead);
 		}
 	}
 	fclose($fp);

@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
 ////
 
-php="/tmp/clut2png.php"
+php="/tmp/img_clut2png.php"
 [ -f "$php" ] || exit
 export php
 

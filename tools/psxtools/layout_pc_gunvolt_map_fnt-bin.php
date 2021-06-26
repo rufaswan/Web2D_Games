@@ -25,6 +25,7 @@ require "common-guest.inc";
 
 $gp_pix = array();
 
+/*
 //////////////////////////////
 function srcfnt8( &$pix, $int, $x, $y )
 {
@@ -354,6 +355,82 @@ function sect_bin( &$bin, $pfx )
 		return gva_bin($bin, $pfx);
 
 	php_error("UNKNOWN %s.bin", $pfx);
+	return;
+}
+*/
+//////////////////////////////
+function origtile( &$bin, $pfx )
+{
+	$len = strlen( $bin['data'][0] );
+
+	return;
+}
+
+function bin2sect( &$bin, $h1, $h2, $h3, $p1, $p2, $p3 )
+{
+	$b1 = str2int($bin, $h1, 4);
+	$b2 = str2int($bin, $h2, 4);
+	$b3 = str2int($bin, $h3, 4);
+	$s1 = substr ($bin, $b1, $b2-$b1);
+	$s2 = substr ($bin, $b2, $b3-$b2);
+
+	$b1 = str2int($s1, $p1, 4);
+	$b2 = str2int($s1, $p2, 4);
+	$b3 = str2int($s1, $p3, 4);
+	$s3 = substr ($s1, $b1, $b2-$b1);
+	$s4 = substr ($s1, $b2, $b3-$b2);
+	$s5 = substr ($s1, $b3);
+	return array($s3, $s4, $s5, $s2);
+}
+
+function sect_bin( &$bin, $pfx )
+{
+	if ( $bin[4] == "\x18" && $bin[0x18] == "\x01" && $bin[0x1c] == "\x10" )
+	{
+		$bin = array(
+			'type'   => 'mgv',
+			'data'   => bin2sect($bin, 4,8,12 , 4,8,12),
+			'tile_s' => 16, // size 16x16
+			'tile_b' =>  4, // 1 * 16x16 = 4 bytes
+			'tile_d' =>  2, // data
+			'map_w'  => 16,
+			'map_h'  => 15,
+		);
+	}
+	else
+	if ( $bin[4] == "\x18" && $bin[0x18] == "\x0c" )
+	{
+		$bin = array(
+			'type'   => 'gv2',
+			'data'   => bin2sect($bin, 4,8,12 , 0,4,8),
+			'tile_s' =>  8, // size 8x8
+			'tile_b' => 16, // 4 * 8x8 = 16 bytes
+			'tile_d' =>  4, // data
+			'map_w'  => 25,
+			'map_h'  => 15,
+		);
+	}
+	else
+	if ( $bin[4] == "\x00" && $bin[0x30] == "\x0c" )
+	{
+		$bin = array(
+			'type'   => 'gva',
+			'data'   => bin2sect($bin, 8,16,24 , 0,4,8),
+			'tile_s' =>  8, // size 8x8
+			'tile_b' => 16, // 4 * 8x8 = 16 bytes
+			'tile_d' =>  4, // data
+			'map_w'  => 27,
+			'map_h'  => 15,
+		);
+	}
+	else
+		return php_error("UNKNOWN %s.bin", $pfx);
+
+	foreach ( $bin['data'] as $k => $v )
+		save_file("$pfx/meta/$k.meta", $v);
+
+	origtile($bin, $pfx);
+	//
 	return;
 }
 //////////////////////////////

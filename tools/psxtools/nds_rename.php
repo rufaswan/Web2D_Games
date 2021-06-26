@@ -22,37 +22,40 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-function prevnl( &$prev, $bak )
+function ndsren( $fname )
 {
-	if ( ($bak - 4) != $prev )
-		echo "\n";
-	$prev = $bak;
-	return;
-}
+	// for *.ext only
+	if ( stripos($fname, '.nds') === false )
+		return;
 
-function ptr( $fname )
-{
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
+	$fp = fopen($fname, 'rb');
+	if ( ! $fp )  return;
 
-	$len = strlen($file);
-	$prev = 0;
-	for ( $i=0; $i < $len; $i += 4 )
-	{
-		// nds ram 2000000-23fffff
-		if ( $file[$i+3] == "\x02" )
-		{
-			$ptr = str2int($file, $i, 3);
-			if ( $ptr <= 0x3fffff )
-			{
-				prevnl( $prev, $i );
-				printf("%s + %6x = %6x\n", $fname, $i, $ptr);
-			}
-		}
-	} // for ( $i=0; $i < $len; $i += 4 )
-	echo "\n";
+	$head = fp2str($fp, 0, 0x180);
+	fclose($fp);
+
+	// RAM address check
+	if ( $head[0x27] != "\x02" )  return;
+	if ( $head[0x2b] != "\x02" )  return;
+	if ( $head[0x37] != "\x02" )  return;
+	if ( $head[0x3b] != "\x02" )  return;
+
+	$name = substr($head,  0, 12);
+	$code = substr($head, 12,  4);
+	$vers = ord( $head[0x1e] );
+		$name = rtrim($name, ZERO);
+
+	$new = sprintf("%s-%d_%s.nds", $code, $vers, $name);
+		$new = strtolower($new);
+		//$new = preg_replace('|[^0-9a-z._-]|', '_', $new);
+
+	if ( $fname === $new )
+		return;
+
+	printf("RENAME %s -> %s\n", $fname, $new);
+	rename($fname, $new);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	ptr( $argv[$i] );
+	ndsren( $argv[$i] );

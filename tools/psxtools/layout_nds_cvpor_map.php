@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
-require "nds_cvpor.inc";
+require "nds.inc";
 
 //define("DRY_RUN", true);
 
@@ -165,8 +165,8 @@ function mappos( $dat )
 		$b5 = 0; //
 	}
 
-	$b2 = $b2 * 0x100;
-	$b3 = $b3 * 0xc0;
+	$b2 = $b2 * 0x100; // 256 pixels or 16 tiles
+	$b3 = $b3 * 0xc0;  // 192 pixels or 12 tiles
 	printf("mappos() %8x = %x  %x  %x  %x  %x\n", $dat, $b1, $b2, $b3, $b4, $b5);
 	$map = array($b1, $b2, $b3, $b4, $b5);
 	return $map;
@@ -307,6 +307,8 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 		$off1 = str2int($ram, $ovid + $p, 3); // 40
 		$off2 = str2int($ram, $bc   + $p, 3); // ef5fc
 		$off3 = str2int($ram, $data + $p, 3); // 21f664
+		printf("off %x , %x , %x\n", $off1, $off2, $off3);
+
 		if ( $off1 == BIT24 || $off2 == 0 || $off3 == 0 )
 			break;
 		nds_overlay($ram, $dir, $off1);
@@ -323,7 +325,7 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 			$fps = $fst + ($fid * $fbk);
 			$fp = str2int($ram, $fps+0, 3);
 			$fn = substr0($ram, $fps+6);
-			echo "add PIX @ $fn\n";
+			printf("add PIX %6x @ %s\n", $fp, $fn);
 			$gp_pix_a[$fp] = "$dir/data/$fn";
 		}
 
@@ -373,7 +375,7 @@ function cvpor( $dir )
 	arrayhex( $gp_patch['ndsram']['stg_data'] );
 
 	$ovid = $gp_patch['ndsram']['stg_ovid'][0]; // b60fc
-	$bc   = $gp_patch['ndsram']['stg_bc'][0];   // d8da0
+	$bc   = $gp_patch['ndsram']['stg_bc'  ][0]; // d8da0
 	$data = $gp_patch['ndsram']['stg_data'][0]; // d8fc4
 
 	global $gp_game;
@@ -389,6 +391,10 @@ for ( $i=1; $i < $argc; $i++ )
 	cvpor( $argv[$i] );
 
 /*
+	TILE_S = 16 x 16 pixel
+	ROOM_S = 16 x 12 tile
+
+
 	POR map 0-0 pos (ram 2106320 , overlay 78 , dracula castle entrance)
 	1b          #####
 	1c ########-#####-#####-xx

@@ -23,11 +23,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 php=""
 png=''
-if [ -f "/tmp/clut2png.php" ]; then
-	php="/tmp/clut2png.php"
+if [ -f "/tmp/img_clut2png.php" ]; then
+	php="/tmp/img_clut2png.php"
 	png=1
-elif [ -f "/tmp/clut2bmp.php" ]; then
-	php="/tmp/clut2bmp.php"
+elif [ -f "/tmp/img_clut2bmp.php" ]; then
+	php="/tmp/img_clut2bmp.php"
 	png=''
 fi
 [ "$php" ] || exit

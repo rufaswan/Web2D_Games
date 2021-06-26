@@ -132,8 +132,6 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 	});
 
 	function render(){
-		requestAnimationFrame(render);
-
 		if ( QUAD.anim.cur_anim_stop )
 			dom_play.innerHTML = 'STOP';
 		else
@@ -143,10 +141,11 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 			document.getElementById('uploadbox').style.display = 'none';
 			QUAD.render_anim();
 		}
+		requestAnimationFrame(render);
 		return;
 	}
 	//setInterval(render, 250);
-	render();
+	requestAnimationFrame(render);
 
 	// normal  = CPU 28-33% , load 78-93% , pause 51-53%
 	// +hwa    = CPU 34-39% , load 40-42% , pause 35-37%
