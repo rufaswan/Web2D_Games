@@ -21,35 +21,34 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+require "pvab.inc";
 
-function disc1( $fname )
+function disc1( $idx, $smp )
 {
-	// for *.idx only
-	if ( stripos($fname, '.idx') === false )
+	$idxp = file_get_contents($idx);
+	$smpp = fopen($smp, 'rb');
+	if ( empty($idxp) || ! $smpp )
 		return;
 
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
-
-	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	$fp = fopen("$pfx.smp", "rb");
-	if ( ! $fp )  return;
-
-	$dir = str_replace('.', '_', $fname);
-	$len = strlen($file);
+	$dir = str_replace('.', '_', $smp);
+	$len = strlen($idxp);
 
 	$ids = array();
 	for ( $i=0; $i < $len; $i += 4 )
 	{
-		$b = str2int($file, $i, 4);
+		$b = str2int($idxp, $i, 4);
 		if ( $b === 0 )
 			continue;
 		$ids[ $i/4 ] = $b;
 	}
 
+	$vbop = PVAB_DEF();
+	$vbop['ac'] = 1;
+	$vbop['ar'] = 44100;
+
 	foreach ( $ids as $k => $v )
 	{
-		$b = fp2str($fp, $v, 0x10);
+		$b = fp2str($smpp, $v, 0x10);
 		$size = str2int($b, 0, 4);
 		$skip = 4;
 
@@ -62,15 +61,17 @@ function disc1( $fname )
 		if ( $size > 0xfffff )
 			continue;
 
-		$fn = sprintf("%s/%06d.vb", $dir, $k);
+		$fn = sprintf("%s/%06d.wav", $dir, $k);
 		printf("%8x , %8x , %s\n", $v, $size, $fn);
 
-		$b = fp2str($fp, $v+$skip, $size);
-		save_file($fn, $b);
+		$b = fp2str($smpp, $v+$skip, $size);
+		$w = pvabblock($b, $vbop);
+		save_wavefile($fn, $w, $vbop);
 	} // foreach ( $ids as $k => $v )
 
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	disc1( $argv[$i] );
+printf("%s  english.idx  english.smp\n", $argv[0]);
+if ( $argc != 3 )  exit();
+disc1( $argv[1] , $argv[2] );

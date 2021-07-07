@@ -22,7 +22,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-printf("%s  EXT  CMD\n", $argv[0]);
+printf("%s  EXTENSION  \"COMMAND\"\n", $argv[0]);
+echo "  note : remember to double-quote COMMAND\n";
 if ( $argc != 3 )
 	exit("not enough argument\n");
 
@@ -39,10 +40,12 @@ if ( $argc != 3 )
 $ext = trim( $argv[1] );
 $cmd = trim( $argv[2] );
 if ( empty($ext) || empty($cmd) )
-	exit("empty EXT or CMD\n");
+	exit("empty EXTENSION or COMMAND\n");
 
 $list = array();
 lsfile_r('.', $list);
+$exit = -1;
+$out  = '';
 foreach ( $list as $f )
 {
 	$e = substr($f, strrpos($f, '.'));
@@ -53,5 +56,14 @@ foreach ( $list as $f )
 	// single-quote in cmd.exe have no special meaning
 	$c = "$cmd \"$f\"";
 	echo "$c\n";
-	exec($c);
+
+	exec($c, $out, $exit);
+	echo "$out\n";
+
+	// Stop the script when error!
+	// - when invalid COMMAND
+	// - when run out of disk space
+	// - when it went crazy
+	if ( $exit !== 0 )
+		exit("COMMAND encounter an error and cannot continue\n");
 } // foreach ( $list as $f )

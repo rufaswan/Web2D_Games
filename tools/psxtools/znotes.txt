@@ -255,3 +255,22 @@ stackoverflow.com/questions/28852942/how-do-i-kill-a-specific-process-running-in
 	or you can check the PID of specific task by writing Tasklist, and then kill the task by mentioning its PID
 		tasklist
 		taskkill /PID 26356 /F
+
+superuser.com/questions/198525/how-can-i-execute-a-windows-command-line-in-background
+
+	unix
+		program &
+	windows
+		START /B program
+		START /MIN program
+		START /B "" php -S 0.0.0.0:8000 &
+
+superuser.com/questions/571463/how-do-i-append-a-bunch-of-wav-files-while-retaining-not-zero-padded-numeric
+
+	If all the files have the same parameters, like sample rate and number of channels, you still can't just catenate them.
+	You have to strip away the WAV header.
+	It may be easiest to use an audio file manipulation utility like sox, which contains a method for catenating files.
+	In fact, it does this by default.
+
+		sox  short1.wav  short2.wav  short3.wav  long.wav
+

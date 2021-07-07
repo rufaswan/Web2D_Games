@@ -1,31 +1,40 @@
 == Script Naming Scheme ==
 {console}_{prefix}_{identifier}_{function}.php
 	console
-		*blank* = PlayStation One
-		ps2 , ps4 , psp , vita , sat , wii , nds
-		pc98 , pc
-
-		tsr    = for The Sprite Resource
-		img    = related *.clut/*.rgba files
+		*blank*
+			= PlayStation One
+		ps2 , ps4 , psp , vita , sat , wii , nds , pc98 , pc
+			= guest consoles
+		tsr
+			= for The Sprite Resource
+			for generating sprite sheets
+			helper script for public users
+		img
+			= related *.clut/*.rgba files
 			for convert between common file formats
-		quad   = related *.quad files
+		quad
+			= related *.quad files
 			for use with WebGL Quad Player
 			*followed by console as usual*
-		layout = related layout.txt
+		layout
+			= related layout.txt
 			for use as interactive VG map
 			*followed by console as usual*
 	prefix
 		*see below*
 	identifier
 		priority in order
-		1 use FIRST 4 BYTES of the file , if ASCII
-		2 use {directory}_{filename}_{extension}
-		3 use {directory}_{extension}
-		4 use {extension}
-		5 use {note}
+			1 use FIRST 4 ASCII char of the file
+			2 use any 3 of FIRST 4 ASCII char of the file
+			3 use any 2 of FIRST 4 ASCII char of the file
+			4 use {directory}_{filename}_{extension}
+			5 use {directory}_{extension}
+			6 use {extension}
+			7 use {note}
+		*[4-6] for file sets , use ext1-ext2[-ext3]... format*
 	function
 		*blank* = output sprites
-		decode  = decompress the files
+		decode  = decompress/decrypt the files
 		packer  = pack if is_dir , unpack if is_file
 		INFO    = display useful information
 		SETUP   = output self-contained file sets
@@ -42,6 +51,11 @@ lunar1  SLPS 013.98  Lunar 1 Silver Star Story / Disc 2
 lunar2  SLPS 020.81  Lunar 2 Eternal Blue / Disc 1
 lunar2  SLPS 020.82  Lunar 2 Eternal Blue / Disc 2
 lunar2  SLPS 020.83  Lunar 2 Eternal Blue / Disc 3
+taled   SLPS 011.00  Tales of Destiny
+talep   SLPS 017.70  Tales of Phantasia
+talee   SLPS 030.50  Tales of Eternia / Disc 1
+talee   SLPS 030.51  Tales of Eternia / Disc 2
+talee   SLPS 030.52  Tales of Eternia / Disc 3
 xeno    SLPS 011.60  Xenogears / Disc 1
 xeno    SLPS 011.61  Xenogears / Disc 2
 
@@ -83,6 +97,9 @@ mkr   SLPM 861.34  Mitsumete Knight R
 	disc1   --upcoming--
 	disc2   --upcoming--
 	disc3   --upcoming--
+	talep   --upcoming--
+	taled   --upcoming--
+	talee   --upcoming--
 	ralph   --upcoming--
 	gbm1    --upcoming--
 	gbm2    --upcoming--
@@ -114,6 +131,8 @@ mura  PCSE00899  Odin Sphere Leifthrasir
 
 	mura  *.mbs/*.ftx only
 
+13sen  Odin Sphere Leifthrasir
+13sen  Dragon Crown Pro
 13sen  CUSA 196.20  13 Sentinels Aegis Rim
 
 	13sen  --upcoming--

@@ -44,10 +44,12 @@ function disc3( $fname )
 		$pos = 0x10 + ($i * 0x10);
 		$lba = str2int($head, $pos+4, 3);
 		$siz = str2int($head, $pos+8, 4);
-		$fn = sprintf("%s/%04d.bin", $dir, $i);
-		printf("%6x , %8x , %8x , %s\n", $lba, $lba*0x800, $siz, $fn);
+		if ( $lba == 0 || $siz == 0 )
+			continue;
 
 		$sub = fp2str($fp, $lba*0x800, $siz);
+		$fn  = sprintf("%s/%04d.bin", $dir, $i);
+		printf("%6x , %8x , %8x , %s\n", $lba, $lba*0x800, $siz, $fn);
 		save_file($fn, $sub);
 	}
 	return;
