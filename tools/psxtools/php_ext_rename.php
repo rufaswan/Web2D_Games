@@ -20,24 +20,33 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
-
-function hexfloat( $str )
+function renext( $fname )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	$fp = fopen( $fname, "rb" );
+	if ( ! $fp )   return;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	$bin = fread($fp, 16);
+	fclose($fp);
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
+	$mgc = substr($bin, 0, 4);
+	$mgc = preg_replace('|[^0-9a-zA-Z]|', '', $mgc);
+	if ( strlen($mgc) < 3 )
+		return;
+
+	$base = substr($fname, 0, strrpos($fname, '.'));
+	$ext = strtolower($mgc);
+	$new = "$base.$ext";
+	printf("RENAME $fname -> $new\n");
+	rename($fname, $new);
 	return;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
+if ( $argc == 1 )   exit();
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
+	renext( $argv[$i] );
+
+/*
+non-alnum
+60 01 01 80  PSX STR
+10 00 00 00  PSX TIM
+ */

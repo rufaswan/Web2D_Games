@@ -25,7 +25,7 @@ function xeno_decode( &$file, $st, $ed )
 {
 	trace("== begin sub_80032cac\n");
 
-	$lw = str2int($file, $st, 3);
+	//$lw = str2int($file, $st, 3);
 		$st += 4;
 	$bycod = 0;
 	$bylen = 0;

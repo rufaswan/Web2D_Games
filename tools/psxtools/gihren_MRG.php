@@ -21,23 +21,33 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
 
-function hexfloat( $str )
+function gihren( $fname )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	if ( substr($file, 0, 4) != "MRG\x00" )
+		return;
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
+	$dir = str_replace('.', '_', $fname);
+	$len = str2int($file, 4, 4);
+	$cnt = str2int($file, 8, 4);
+
+	for ( $i=0; $i < $cnt; $i++ )
+	{
+		$p = 12 + ($i * 4);
+		$off1 = str2int($file, $p, 4);
+		if ( ($i+1) == $cnt )
+			$off2 = $len;
+		else
+			$off2 = str2int($file, $p+4, 4);
+
+		$sub = substr($file, $off1, $off2-$off1);
+		save_file("$dir/$i.bin", $sub);
+	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
+	gihren( $argv[$i] );

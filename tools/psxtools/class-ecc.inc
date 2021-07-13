@@ -23,6 +23,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * Special Thanks
  *   cmdpack - ecm
  *     Neill Corlett
+ *   The PlayStation 1 Video (STR) Format v1.00
+ *     Michael Sabin
  */
 class ECC
 {
@@ -128,19 +130,22 @@ class ECC
 			return php_error("XA subheader not identical");
 
 		// 00 00 08 00  PS-X EXE
-		// 00 00 09 00  CD001
+		// 00 00 09 00  \x01CD001
 		// 00 00 20 00
-		// 00 00 89 00  BOOT
+		// 00 00 89 00  \xffCD001
 		// 01 01 42 80  STR [60 01 01 80]
 		// 01 01 64 05
 		$sh3= ord( $sect[0x12] );
-		if ( $sh & 0x08 )
+		if ( ($sh & 0x0e) == 0 ) // padding sector
+			return $sect;
+		else
+		if ( $sh & 0x08 ) // data sector
 		{
 			$this->edc_update($sect, 0x818);
 			$this->ecc_pq($sect, 86, 24,  2, 86, 0x81c); // p
 			$this->ecc_pq($sect, 52, 43, 86, 88, 0x8c8); // q
 		}
-		else
+		else // video or audio sector
 			$this->edc_update($sect, 0x92c);
 		return $sect;
 	}
@@ -152,19 +157,16 @@ class ECC
 		$f = '';
 		switch ( $len )
 		{
-			// https://club.myce.com/t/sub-headers/188704/6
-			// 0 Identification of interlocked files (00 when not interleaved)
-			// 1 Channel Number
-			// 2 Submode Byte
-			//     80 Signals End of File (EOF)
-			//     40 Signals if Data is dependent on time
-			//     20 Signals if sector is Form 1 or Form 2
-			//     10 Type on (depends on the Operating System)
-			//     08 Data Sector        -\
-			//     04 ADPCM Audio Sector -|--> Identification for the type of data found in the sector
-			//     02 Video Sector       -/
-			//     01 Signals End of Record (EOR)
-			// 3 Type of Coding for the Video and Audio data (00 when data sector)
+			// sub-header
+			//   0  interleave
+			//   1  channel number
+			//   2  submode
+			//      08  Data  Sector *
+			//      04  Audio Sector *
+			//      02  Video Sector *
+			//          * mutual exclusive
+			//   3  coding info
+			//      for submode audio sector only
 
 			case 0x800:
 				$h .= $this->hex2bin('00 ff ff ff  ff ff ff ff  ff ff ff 00');

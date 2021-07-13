@@ -1,0 +1,387 @@
+XENOGEARS Data Structures
+==============================
+Character Stats (BLOCK = 0xa4 or 164 bytes)
+-0x10 int32 EXP
+-0x0c int32 EXP
+-0x08 int32 next EXP
+-0x04 int32 next EXP
++0x00 int16 HP
++0x02 int16 max HP
++0x04 int16 EP
++0x06 int16 max EP
+
++0x09 int8  Deathblow Learning Rate
+
++0x0c int8  Attack
++0x0d int8  Defense
++0x0e int8  Agility
++0x0f int8  Ether
++0x10 int8  Ether Defense
+
++0x12 int8  Hit %
++0x13 int8  Evade %
+
++0x16 int8  Level
+
++0x28 int8  Accessory Slot 1
++0x29 int8  Accessory Slot 2
++0x2a int8  Accessory Slot 3
+
++0x44 int16 Deathblow Mastery 1
++0x46 int16 Deathblow Mastery 2
++0x48 int16 Deathblow Mastery 3
++0x4a int16 Deathblow Mastery 4
++0x4c int16 Deathblow Mastery 5
++0x4e int16 Deathblow Mastery 6
++0x50 int16 Deathblow Mastery 7
+
++0x55 int8  Deathblow Modifier
+
+Order / bitflag
+01 00  Fei
+02 00  Elly
+04 00  Citan
+08 00  Bart
+10 00  Billy
+20 00  Rico
+40 00  Emerald
+80 00  Chu-chu
+00 01  Maria
+00 02  Citan/Sword
+00 04  Emerald/Adult
+==============================
+Gear Stats (BLOCK = 0xa4 or 164 bytes)
++0x00 int32 HP
++0x04 int32 max HP
++0x08 int32 weight
++0x10 int16 gear defense
++0x12 int16 gear ether defense
+
++0x38 int8  gear agility
+
++0x3e int8  gear eth amp
+
++0x47 int8  gear engine (36=omega100)
+
++0x4c int8  gear armor (38=z80/30)
+
+Order / bitflag
+01 00 00  Weltall
+02 00 00  Weltall-2
+04 00 00  Vierge
+08 00 00  Heimdal
+10 00 00  Brigandier
+20 00 00  Renmazuo
+40 00 00  Stier
+80 00 00  Chu-chu
+00 01 00  Seibzehn
+00 02 00  Crescens
+00 04 00  El-Vierge
+00 08 00  Heimdal/Sword
+00 10 00  El-Andvari
+00 20 00  El-Renmazuo
+00 40 00  El-Stier
+00 80 00  Xenogears
+00 00 01  El-Fenrir
+==============================
+Items
+2594.bin/0.bin (BLOCK = 0x10 or 16 bytes)
+ 0 int16 always fc ff
+ 2 int16 buying price
+ 4
+ 5
+ 6
+ 7 int8  always 00
+ 8 int8  value
+ 9
+10
+11 int8  bitflag (hp-ep-phy-mnt-inc-??-elem-ko)
+12
+13 int8  bitflag (speed-def-??-??-earth-wind-water-fire)
+14 int16
+
+for HP , value * 50 (1=50, 3=150, a=500, 28=full)
+for EP , value * 10 (1=10, 2=20, 3=30, a=100)
+==============================
+Character Weapons
+2594.bin/1.bin (BLOCK = 0x10 or 16 bytes)
+ 0 int16 bitflag for wearable character
+ 2 int8  always 00
+ 3 int8  bullets (64 = normal, ff = infinite , 00 = the rest)
+ 4 int16 buying price
+ 6 int8  gun type (for gun/buttet pairing, 00 = the rest)
+ 7 int8  always 00
+ 8 int32 effects type
+12 int8  +attack
+13 int8  always 00
+14 int8  always 00
+15 int8  always 00
+
+Effect Type
+00 80 00 64  +wind element
+00 40 00 64  +earth element
+00 20 00 64  +fire element
+00 10 00 64  +water element
+00 10 64 02  put enemy to sleep (elly/lunar rod)
+00 04 50 02  eth def down (bart/black snake)
+00 08 64 00  use poison (bart/cobra cracker)
+00 01 64 00  enemy DUR down (elly/queen rod)
+
+01 00 64 02  enemy silenced (elly/psycho rod)
+==============================
+Character Accessory
+2594.bin/2.bin (BLOCK = 0x10 or 16 bytes)
+ 0 int16 bitflag for wearable character
+ 2 int32 buying price
+ 6 int8  always 22
+ 7 int8  ID
+ 8 int8  +defense
+ 9 int24 effects type
+12 int8  +bonus value
+13 int8  +bonus bitflags (atk-def-agi-eth-edef-hit-evd-??)
+14 int8  type (00 accessory , 01=armor , 02=helmet)
+15 int8  always 00
+
+Effects Type
+01 7c 3f  block physical effects
+01 00 08  block poison effect
+
+02 fe ff  block mental effects
+02 00 20  block confusion effect
+02 00 10  block sleep effect
+02 00 08  block forget effect
+
+03 80 00  2x amount of HP restore
+03 40 00  increase defense
+03 20 00  increase evade %
+03 00 80  1/2x time between turns
+03 00 40  increase defense
+03 00 04  as HP goes down/atk goes up
+
+04 00 20  use 2x EP to create 2x effect
+04 00 02  block EP-absorb attacks
+
+05 80 00  ??? (elly jr doll)
+05 40 00  2x support effect times
+05 20 00  ??? (emer jr doll)
+05 10 00  ??? (chu-chu idol , chu-chu only)
+05 00 40  halves EP usage in battles
+05 00 20  EXP pts gain up 50%
+05 00 08  rare item gain rate increase
+05 00 04  ??? (fei jr doll)
+05 00 02  ??? (bart jr doll)
+05 00 01  ??? (billy jr doll)
+
+07 08 00  restore HP if hit by defd elem
+07 04 00  doubles elemental def
+07 02 00  elem def block eth weap.
+07 00 08  defense vs earth element
+07 00 04  defense vs wind element
+07 00 02  defense vs water element
+07 00 01  defense vs fire element
+
+08 [02] 00  max HP 10% up/restore (05 = 25%)
+
+0a 02 00  deathblow learning rate up (wizardy ring , combo star)
+
+momento chain (rico only)
+==============================
+Gear Frames
+2594.bin/16.bin (BLOCK = 0x18 or 24 bytes)
+ 0 int32 bitflag for wearable gear
+ 4 int32 HP
+ 8 int16
+10 int16 buying price
+12 int32 always 00 00 00 00
+16 int32 always 00 00 00 00
+20 int8
+21 int8  type (a=gear , 64=yggdrasil 4)
+22 int16 always 00 00
+==============================
+Gear Armor
+2594.bin/17.bin (BLOCK = 0x14 or 20 bytes)
+ 0 int32 always ff ff ff ff
+ 4 int16 buying price
+ 6 int8  type (a=gear)
+ 7 int8  always 00
+ 8 int16 +gear defense
+10 int16 +gear ether defense
+12 int32 always 00 00 00 00
+16 int32 always 00 00 00 00
+==============================
+Gear Engine
+2594.bin/18.bin (BLOCK = 0x10 or 16 bytes)
+ 0 int32 always ff ff ff ff
+ 4 int16 gear fuel
+ 6 int16 gear fuel
+ 8 int16 always 00 00
+10 int16 buying price
+12 int8  gear output
+13 int8  always 0a
+14 int8  always 0a
+15 int8  always 00
+==============================
+Gear Accessory
+2594.bin/19.bin (BLOCK = 0x1c or 28 bytes)
+ 0 int32 always 7f ff ff ff
+ 4 int16 buying price
+ 6 int16 ???
+ 8 int32 always 00 00 00 00
+12 int8  always 00
+13 int8  +gear defense
+14 int8  +gear ether defense
+15 int8  always 00
+16 int8  +gear agility on barrens
+17 int8  +gear agility on snow
+18 int8  +gear agility on desert
+19 int8  +gear agility on water
+20 int8  +gear response
+21 int40 effects type
+26 int8  effects value (in 5s , for % , so 2 == 10% , f == 75%)
+27 int8  +gear ether
+
+Effects Type
+00 00 00 05 00 increase defense & response (old circuit)
+
+01 ff 1f 05 00 increase defense & response (simp circuit)
+01 40 00 00 00 prevent loss of armor def
+01 20 00 00 00 prevent slow status
+01 10 00 00 00 prevent camera damage
+
+02 10 00 00 00 charge removes status dx
+
+03 00 08 00 00 defense vs wind ether
+03 00 04 00 00 defense vs earth ether
+03 00 02 00 00 defense vs fire ether
+03 00 01 00 00 defense vs water ether
+
+04 40 00 00 00 stress damage down %
+04 10 00 00 00 beam damage down %
+04 08 00 00 00 angel damage down %
+04 00 40 00 00 spin damage down % (huh?)
+04 00 40 00 00 seal damage down %
+04 00 10 00 00 sonic damage down %
+04 00 04 00 00 gas damage down %
+04 00 02 00 00 gel damage down %
+04 00 01 00 00 electric damage down %
+
+05 [01] 00 00 00 restore 10% of frame HP (03 = 30%, 05 = 50% , 07 = 70% , 09 = 90%)
+06 00 00 00 00 enable level 1 deathblow
+07 00 00 00 00 enable level 2 deathblow
+08 00 00 00 00 enable level 3 deathblow
+
+09 00 80 00 00 saves fuel usage (energy saver)
+
+0a [02] 00 00 00 engine output up 20% (05 = 50%)
+0b [05] 00 00 00 charge restores 50 fuel (0a = 100 , 14 = 200 , 32 = 500)
+==============================
+Gear Weapon
+2594.bin/42.bin (BLOCK = 0x14 or 20 bytes)
+ 0 int8  weapon level
+ 1 int8  weapon level
+ 2 int8  always 00
+ 3 int8  weapon level
+ 4 int32 bitflag for wearable gear
+ 8 int32 buying price
+12 int8  bullets (ff = infinite , 00 = the rest)
+13 int8  always 00
+14 int8  +gear attack
+15 int8  gun type (for gun/buttet pairing, 00 = the rest)
+16 int32 effect type
+
+for weapon level
+- column 0 is for gear weapons
+- column 1 is for hand gun bullets
+- column 3 is for big gun bullets
+
+Effect Type
+00 64 00 80  wind atk (elly/thunder rodG)
+00 64 00 40  earth atk (elly/stone rodG)
+00 64 00 20  fire atk (elly/flare rodG)
+00 64 00 10  water atk (elly/ice rodG)
+
+00 0a 00 0f  cancel enemy elem def (billy/GMLuminAmmo)
+
+19 00 20 00  slow (elly/chrono rodG)
+19 00 10 00  camera damaged (elly/smoke rodG)
+19 00 04 00  power loss (bart/thor gwhip)
+19 00 00 10  ??? (elly/chaos rodG)
+19 00 00 01  eth mech silenced (bart/sonic gwhip)
+==============================
+Character Skill + Spells
+2594.bin/3.bin - 13.bin (BLOCK = 0x28 or 40 bytes)
+	03  Fei
+	04  Elly
+	05  Citan
+	06  Bart
+	07  Billy
+	08  Rico
+	09  Emerald
+	10  Chu-chu
+	11  Maria
+	12  Citan/Sword
+	13  Emerald/Adult
+BLOCK 0x0   / Deathblow Area
+BLOCK 0x370 / Spell Area
+==============================
+Gear Skill + Spells
+2594.bin/22.bin - 38.bin (BLOCK = 0x28 or 40 bytes)
+	22  Weltall
+	23  Weltall-2
+	24  Vierge
+	25  Heimdal
+	26  Brigandier
+	27  Renmazuo
+	28  Stier
+	29  Chu-chu
+	30  Seibzehn
+	31  Crescens
+	32  El-Vierge
+	33  Heimdal/Sword
+	34  El-Andvari
+	35  El-Renmazuo
+	36  El-Stier
+	37  Xenogears
+	38  El-Fenrir
+BLOCK 0x0   / Deathblow Area
+BLOCK 0x348 / Spell Area
+BLOCK 0x5c8 / Option Area
+==============================
+Deathblow Area
+	0x00 int16 always 00 20
+	0x11 int8  deathblow power
+	0x17 int8  AP cost
+	0x20 int16 action
+	0x22 int16 element
+
+Spell Area
+Option Area
+	0x00 int16 targeting
+	0x11 int8  spell power
+	0x13 int8  EP cost
+	0x20 int16 action
+	0x22 int16 element
+	0x24 int32 fuel cost
+
+Targeting
+	00 10  single enemy
+	00 20  single ally
+	00 30  single enemy
+	00 40  self-only
+	01 10  all enemy
+	02 10  area enemy
+
+Action
+	80 00 normal attack
+	40 00 deathblow
+	20 00 limiter deathblow
+	10 00 spell
+
+Element
+	20 00 light
+	10 00 dark
+	08 00 wind
+	04 00 earth
+	02 00 fire
+	01 00 water
+==============================

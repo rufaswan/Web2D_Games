@@ -21,23 +21,42 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
 
-function hexfloat( $str )
+function disc2( $fname )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	if ( substr($file, 0, 8) != "0VMBOFNI" ) // BMV 0 INFO
+		return;
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
+	$dir = str_replace('.', '_', $fname);
+	$len = strlen($file);
+
+	$pos = str2int($file, 8, 4);
+	$id = 0;
+
+	$pos += 12;
+	while ( $pos < $len )
+	{
+		$bak = $pos;
+		$mgc = substr ($file, $pos, 4);
+			$pos += 4;
+		if ( $mgc == "MARF" )
+			continue;
+
+		$siz = str2int($file, $pos, 4);
+			$pos += 4;
+		$sub = substr($file, $pos, $siz);
+			$pos += $siz;
+		$fn  = sprintf("%s/%04d.%s", $dir, $id, $mgc);
+			$id++;
+
+		printf("%6x , %6x , %s\n", $bak, $siz, $fn);
+		save_file($fn, $sub);
+	} // while ( $st < $pos )
 	return;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
+	disc2( $argv[$i] );

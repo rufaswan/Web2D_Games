@@ -21,23 +21,32 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
 
-function hexfloat( $str )
+$gp_list = array();
+
+function gunvolt( $fname )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	// for *.irlst only
+	if ( stripos($fname, '.irlst') === false )
+		return;
+	if ( is_link($fname) )
+		return;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
+	global $gp_list;
+	$len = strlen($file);
+	for ( $i=4; $i < $len; $i += 0x10 )
+	{
+		$id = str2int($file, $i, 4);
+		if ( isset( $gp_list[$id] ) )
+			printf("DUP %x = %s -> %s\n", $id, $gp_list[$id], $fname);
+
+		$gp_list[$id] = $fname;
+	} // for ( $i=4; $i < $len; $i += 0x10 )
 	return;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
+	gunvolt( $argv[$i] );

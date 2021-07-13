@@ -20,24 +20,31 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
-
-function hexfloat( $str )
+function fhead( $fname )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	$fp = fopen($fname, "rb");
+	if ( ! $fp )  return;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	$head = fread($fp, 16);
+	fclose($fp);
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
+	$ed = strlen($head);
+	$st = 0;
+	while ( $st < $ed )
+	{
+		if ( $st > 0 && ($st&3) == 0 )
+			echo "  ";
+		$p = ord( $head[$st] );
+		if ( $p )
+			printf("%2x ", $p);
+		else
+			echo '-- ';
+		$st++;
+	} // while ( $st < $ed )
+	echo " , $fname\n";
 	return;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
+echo "Show first 16 bytes file header\n";
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
+	fhead( $argv[$i] );

@@ -21,23 +21,33 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
+require "xeno.inc";
 
-function hexfloat( $str )
+function xeno( $fname )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	$cnt = str2int($file, 0, 4);
+	$len = strlen($file);
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
+	$p = 4 + ($cnt * 4);
+	if ( str2int($file,$p,4) != $len )
+		return;
+
+	$dir = str_replace('.', '_', $fname);
+	for ( $i=0; $i < $cnt; $i++ )
+	{
+		$p = 4 + ($i * 4);
+		$of1 = str2int($file, $p+0, 4);
+		$of2 = str2int($file, $p+4, 4);
+
+		$sub = xeno_decode($file, $of1, $of2);
+		$fn  = sprintf("%s/%04d.bin", $dir, $i);
+		save_file($fn, $sub);
+	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
+	xeno( $argv[$i] );

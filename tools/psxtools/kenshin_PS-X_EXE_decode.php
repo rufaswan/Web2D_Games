@@ -108,7 +108,7 @@ function kenshin_decode( &$file, $st )
 			{
 				// loc_801e00f0
 				$b = dec_gethalf($file, $st, $hfcod, $hflen);
-				$dpos =  $b | (~0x1fff);
+				$dpos =  $b - 0x2000;
 				$dlen = ($b >> 13) & 7;
 
 				$b = ($dlen == 7);
@@ -119,7 +119,7 @@ function kenshin_decode( &$file, $st )
 			{
 				// loc_801e00ac
 				$b = dec_getbyte($file, $st, $bycod, $bylen);
-				$dpos = $b | (~BIT8);
+				$dpos = $b - 0x100;
 				$dlen = dec_getint($file, $st, $fgcod, $fglen, 2);
 
 				$b = ($dlen == 3);
