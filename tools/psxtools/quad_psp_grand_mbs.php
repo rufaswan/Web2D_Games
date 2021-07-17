@@ -32,11 +32,7 @@ $gp_json = array();
 function colorquad( &$cqd, &$mbs, $pos )
 {
 	$s = substr($mbs, $pos, 4);
-	$r = ord( $s[0] );
-	$g = ord( $s[1] );
-	$b = ord( $s[2] );
-	$a = ord( $s[3] );
-	$rgba = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+	$rgba = '#' . bin2hex($s);
 
 	if ( $rgba == '#ffffffff' )
 		$cqd[] = '1';

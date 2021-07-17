@@ -42,7 +42,9 @@ function xeno( $fname )
 		$of1 = str2int($file, $p+0, 4);
 		$of2 = str2int($file, $p+4, 4);
 
-		$sub = xeno_decode($file, $of1, $of2);
+		$sub = substr($file, $of1, $of2-$of1);
+		xeno_decode($sub);
+
 		$fn  = sprintf("%s/%04d.bin", $dir, $i);
 		save_file($fn, $sub);
 	} // for ( $i=0; $i < $cnt; $i++ )

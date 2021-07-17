@@ -55,7 +55,13 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 		$float[14]*$w , $float[15]*$h ,
 	);
 
-	// readjustments
+	// auto-shrink quad
+	// 0,0           32,0  <- even number , need 1 pixel padding
+	//     1,1  31,1       <-  odd number , all OK
+	//     1,31 31,31
+	// 0,32          32,32
+
+	// even x
 	if ( ((int)$sqd[0] & 1) === 0 )
 	{
 		$cx = ($sqd[0] + $sqd[4]) / 2;
@@ -69,8 +75,9 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 			$sqd[0]--;  $sqd[6]++;
 			$sqd[2]--;  $sqd[4]++;
 		}
-	}
+	} // if ( ((int)$sqd[0] & 1) === 0 )
 
+	// even y
 	if ( ((int)$sqd[1] & 1) === 0 )
 	{
 		$cy = ($sqd[1] + $sqd[5]) / 2;
@@ -84,7 +91,7 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 			$sqd[1]--;  $sqd[7]--;
 			$sqd[3]++;  $sqd[5]++;
 		}
-	}
+	} // if ( ((int)$sqd[1] & 1) === 0 )
 
 	return;
 }
@@ -366,7 +373,7 @@ for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case '-bsm':  $gp_tag = 'pc_bsm' ; break;
+		case '-bsm':  $gp_tag = 'pc_bsm'; break;
 		case '-gv' :  $gp_tag = 'pc_gv' ; break;
 		case '-gv2':  $gp_tag = 'pc_gv2'; break;
 		case '-gva':  $gp_tag = 'pc_gva'; break;

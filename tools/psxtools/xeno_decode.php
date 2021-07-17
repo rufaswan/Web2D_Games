@@ -39,8 +39,8 @@ function xeno( $fname )
 	if ( ! $bak )
 		file_put_contents("$fname.bak", $file);
 
-	$dec = xeno_decode($file, 0, strlen($file));
-	file_put_contents($fname, $dec);
+	xeno_decode($file);
+	file_put_contents($fname, $file);
 	return;
 }
 

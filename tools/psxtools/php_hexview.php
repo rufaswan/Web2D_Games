@@ -32,6 +32,19 @@ $gp_opts = array(
 	'block' => 0x800,
 );
 
+function hexdigit( $int )
+{
+	$hx = 0;
+	while ( $int > 0 )
+	{
+		$int >>= 4;
+		$hx++;
+		if ( $int == -1 )
+			break;
+	}
+	return $hx;
+}
+
 function hexread( $fname )
 {
 	global $gp_opts;
@@ -40,6 +53,7 @@ function hexread( $fname )
 
 	$done = false;
 	$size = filesize($fname);
+	$hx = hexdigit($size);
 
 	// bash title bar
 	printf("\033]0;[READ] %s (%x)\007", $fname, $size);
@@ -49,7 +63,8 @@ function hexread( $fname )
 		$gp_opts['termy'] = exec('tput lines') - 2;
 
 		ob_start();
-		printf("======== %s [%x/%x] (%d%%) ========\n", $fname, $gp_opts['pos'], $size, $gp_opts['pos']*100/($size-1));
+		printf("======== %s [%{$hx}x/%{$hx}x] (%d%%) ========\n",
+			$fname, $gp_opts['pos'], $size, $gp_opts['pos']*100/($size-1));
 
 		fseek($fp, $gp_opts['pos'], SEEK_SET);
 		$sub = fread($fp, $gp_opts['col']*$gp_opts['termy']);
@@ -59,11 +74,11 @@ function hexread( $fname )
 			$sy = $y * $gp_opts['col'];
 			//if ( ! isset($sub[$sy]) )
 				//break;
-			printf("%8x :", $gp_opts['pos'] + $sy);
+			printf("%{$hx}x :", $gp_opts['pos'] + $sy);
 
-			$x   = 10+3;
-			$sep =  0;
-			$sx  =  0;
+			$x   = $hx + 2 + 3;
+			$sep = 0;
+			$sx  = 0;
 			$buf = '';
 			while ( $x < $gp_opts['termx'] )
 			{
@@ -140,14 +155,17 @@ function get_opt( $argv, $i )
 		case '--':
 			return 1;
 		case '-p':
+		case '-pos':
 			$gp_opts['pos'] = hexdec( $argv[$i+1] );
 			//printf("gp_pos = %x\n", $gp_opts['pos']);
 			return 2;
 		case '-c':
+		case '-col':
 			$gp_opts['col'] = hexdec( $argv[$i+1] );
 			//printf("gp_col = %x\n", $gp_opts['col']);
 			return 2;
-		case '-c':
+		case '-b':
+		case '-blk':
 			$gp_opts['block'] = hexdec( $argv[$i+1] );
 			//printf("gp_block = %x\n", $gp_opts['block']);
 			return 2;

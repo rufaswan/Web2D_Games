@@ -35,12 +35,7 @@ function colorquad( &$mbs, $pos )
 	for ( $i=0; $i < $mbs['k']; $i += 4 )
 	{
 		$s = substr($mbs['d'], $pos+$i, 4);
-
-		$r = ord( $s[0] );
-		$g = ord( $s[1] );
-		$b = ord( $s[2] );
-		$a = ord( $s[3] );
-		$rgba = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+		$rgba = '#' . bin2hex($s);
 
 		if ( $rgba == '#ffffffff' )
 			$color[] = '1';

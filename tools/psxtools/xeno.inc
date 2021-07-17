@@ -21,9 +21,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
-function xeno_decode( &$file, $st, $ed )
+function xeno_decode( &$file )
 {
 	trace("== begin sub_80032cac\n");
+	$ed = strlen($file);
+	$st = 0;
 
 	//$lw = str2int($file, $st, 3);
 		$st += 4;
@@ -72,5 +74,6 @@ function xeno_decode( &$file, $st, $ed )
 	} // while ( $st < $ed )
 	trace("== end sub_80032cac\n");
 
-	return $dec;
+	$file = $dec;
+	return;
 }

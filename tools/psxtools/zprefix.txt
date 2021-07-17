@@ -1,27 +1,38 @@
 == Script Naming Scheme ==
-{console}_{prefix}_{identifier}_{function}.php
+{avi}_{console}_{prefix}_{identifier}_{function}.php
+
+	avi
+		*blank*
+			= for graphic/sprites/images
+		quad
+			= related *.quad files
+			for use with WebGL Quad Player
+		layout
+			= related layout.txt
+			for use as interactive VG map
+		pvab
+			= related to pBAV pQES PS1 ADPCM sounds
+			convert to *.wav
+		tsr
+			= for The Sprite Resource
+			for generating sprite sheets
+			helper script for public users
+			*skip console, prefix, identifier*
+		img
+			= related *.clut/*.rgba files
+			for convert between common file formats
+			for image post-processing
+			*skip console, prefix, identifier*
+
 	console
 		*blank*
 			= PlayStation One
 		ps2 , ps4 , psp , vita , sat , wii , nds , pc98 , pc
 			= guest consoles
-		tsr
-			= for The Sprite Resource
-			for generating sprite sheets
-			helper script for public users
-		img
-			= related *.clut/*.rgba files
-			for convert between common file formats
-		quad
-			= related *.quad files
-			for use with WebGL Quad Player
-			*followed by console as usual*
-		layout
-			= related layout.txt
-			for use as interactive VG map
-			*followed by console as usual*
+
 	prefix
 		*see below*
+
 	identifier
 		priority in order
 			1 use FIRST 4 ASCII char of the file
@@ -32,6 +43,7 @@
 			6 use {extension}
 			7 use {note}
 		*[4-6] for file sets , use ext1-ext2[-ext3]... format*
+
 	function
 		*blank* = output sprites
 		decode  = decompress/decrypt the files
@@ -142,7 +154,7 @@ cvpor  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
 cvpor  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
 kuma   NDS  CKUJ  Kumatanchi
-mvac   NDS  AVCJ  Magical Vacation
+mvac   NDS  AVCJ  Magical Vacation 2
 comm   NDS  YW7E  Commando Steel Disaster
 
 	cvpor  all maps only , *.so/.sc (non-quad) only

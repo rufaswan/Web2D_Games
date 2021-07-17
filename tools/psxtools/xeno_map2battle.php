@@ -93,8 +93,10 @@ function sectfile1( &$file )
 		$p = 0x130 + ($i * 4);
 		$p1 = str2int($file, $p+0, 3);
 		$p2 = str2int($file, $p+4, 3);
-		$bin = xeno_decode($file, $p1, $p2);
-		$sect[$i] = $bin;
+
+		$sub = substr($file, $p1, $p2-$p1);
+		xeno_decode($sub);
+		$sect[$i] = $sub;
 	}
 	return $sect;
 }
