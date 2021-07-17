@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Special Thanks
  *   ScummVM
- *   http://scummvm-2.2.0/engines/tinsel/graphics.cpp
+ *   https://github.com/scummvm/scummvm/tree/master/engines/tinsel/graphics.cpp
  */
 require "common.inc";
 
