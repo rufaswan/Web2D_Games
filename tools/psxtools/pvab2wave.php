@@ -31,41 +31,40 @@ function vab2wav( &$vbop, $fname )
 	echo "pVAB $fname\n";
 	$wav = pvabblock($file, $vbop);
 	save_wavefile("$fname.wav", $wav, $vbop);
-	return 1;
+	return;
 }
 
 $vbop = PVAB_DEF();
 $i = 1;
 while ( $i < $argc )
 {
-	if ( is_file($argv[$i]) )
-		$i += vab2wav($vbop, $argv[$i]);
-	else
+	$opt = $argv[$i+0];
+	switch( $opt )
 	{
-		switch( $argv[$i+0] )
-		{
-			case 'ar': // default 44100
-			case '-ar':
-				$vbop['ar'] = (int)$argv[$i+1];
-				printf("SET sample rate %d\n", $vbop['ar']);
-				$i += 2;
-				break;
-			case 'ac': // default 1 / mono
-			case '-ac':
-				$vbop['ac'] = (int)$argv[$i+1];
-				printf("SET channels %d\n", $vbop['ac']);
-				$i += 2;
-				break;
-			case 'in': // default 0x10
-			case '-in':
-				$vbop['in'] = hexdec($argv[$i+1]);
-				printf("SET interlace %x\n", $vbop['in']);
-				$i += 2;
-				break;
-			default:
-				exit();
-		} // switch( $argv[$i+0] )
-	}
+		case 'ar': // default 44100
+		case '-ar':
+			$vbop['ar'] = (int)$argv[$i+1];
+			printf("SET sample rate %d\n", $vbop['ar']);
+			$i += 2;
+			break;
+		case 'ac': // default 1 / mono
+		case '-ac':
+			$vbop['ac'] = (int)$argv[$i+1];
+			printf("SET channels %d\n", $vbop['ac']);
+			$i += 2;
+			break;
+		case 'in': // default 0x10
+		case '-in':
+			$vbop['in'] = hexdec($argv[$i+1]);
+			printf("SET interlace %x\n", $vbop['in']);
+			$i += 2;
+			break;
+		default:
+			if ( is_file($argv[$i]) )
+				vab2wav($vbop, $argv[$i]);
+			$i++;
+			break;
+	} // switch( $argv[$i+0] )
 } // while ( $i < $argc )
 
 /*

@@ -16,6 +16,8 @@ Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 -0x1c int16 accessory type 8 effect
 -0x1a int16 accessory type 5 effect
 
+-0x14 int8  element effect (battle only)
+
 -0x10 int32 EXP
 -0x0c int32 EXP
 -0x08 int32 next EXP
@@ -47,10 +49,19 @@ Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 +0x2b int8  Weight (in 2.2 lbs)
 +0x2c int8  Weight (in 2.2 lbs)
 
++0x2e int24 play dead
++0x31 int8  physical effect (battle only)
 +0x32 int16 accessory type 1 effect
+
++0x35 int8  mental effect (battle only)
 +0x36 int16 accessory type 2 effect
+
++0x39 int8  stat 1 effect
 +0x3a int16 accessory type 3 effect
++0x3c int8  stat 2 effect
+
 +0x3e int16 accessory type 4 effect
+
 +0x42 int16 accessory type 7 effect
 +0x44 int16 Deathblow Mastery 1
 +0x46 int16 Deathblow Mastery 2
@@ -61,6 +72,38 @@ Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 +0x50 int16 Deathblow Mastery 7
 
 +0x55 int8  Deathblow Modifier
+
+Battle Only
+	+0xf1   Defense Down
+	+0x110  Physical Effect Countdown
+	+0x114  Speed Up Countdown
+	+0x11d  Element Effect Countdown
+
+Element Effect
+	01 weak vs water
+	02 weak vs fire
+	04 weak vs earth
+	08 weak vs wind
+	40 weakling
+
+Play Dead
+	00 01 00 normal
+	ef ff 02 play dead
+
+Physical Effects
+	08 poisoned
+	20 stop
+
+Mental Effects
+	10 sleep
+	20 confusion
+
+Stat 1 Effect
+	80 Speed UP
+
+Stat 2 Effect
+	04 Def UP / Atk DOWN
+	08 Atk UP / Def DOWN
 
 Order / bitflag
 	01 00  Fei
@@ -77,6 +120,7 @@ Order / bitflag
 ==============================
 Gear Base Stats (BLOCK = 0xa4 or 164 bytes)
 2595.bin
+-0x5c int8  gear frame
 -0x5d int8  gear engine (36=omega100)
 
 -0x58 int8  gear armor (38=z80/30)
@@ -89,6 +133,12 @@ Gear Base Stats (BLOCK = 0xa4 or 164 bytes)
 -0x4e int8  +gear weapon attack
 -0x4d int16 gear weapon type
 
+-0x28 int16 fuel
+-0x26 int16 max fuel
+
+-0x24 int8  power output multiplier
+
+-0x21 int8  power output
 -0x20 int16 +gear accessory defense
 -0x1e int16 +gear accessory eth def
 -0x1c int16 gear real weight (heavier = slower)
@@ -116,6 +166,7 @@ Gear Base Stats (BLOCK = 0xa4 or 164 bytes)
 +0x12 int16 gear ether defense
 
 +0x1e int16 gear accessory type 1+4 effect [0-1]
++0x20 int8  stat 2 effect
 
 +0x22 int16 gear accessory type 2 effect
 
@@ -137,6 +188,13 @@ Gear Base Stats (BLOCK = 0xa4 or 164 bytes)
 +0x38 int8  gear agility
 
 +0x3e int8  gear eth amp
+
+Battle Only
+	+0x44 Attack Level (04=infinity)
+
+Stat 2 Effect
+	04 Def UP / Atk DOWN
+	08 Atk UP / Def DOWN
 
 Order / bitflag
 	01 00 00  Weltall
@@ -200,7 +258,7 @@ Effect Type
 	00 08 64 00  use poison (bart/cobra cracker)
 	00 01 64 00  enemy DUR down (elly/queen rod)
 
-	01 00 64 02  enemy silenced (elly/psycho rod)
+	01 00 64 02  #enemy silenced# (elly/psycho rod)
 ==============================
 Character Accessory
 2594.bin/2.bin (BLOCK = 0x10 or 16 bytes)
@@ -234,16 +292,16 @@ Effects Type
 	04 00 20  use 2x EP to create 2x effect
 	04 00 02  block EP-absorb attacks
 
-	05 80 00  ??? (elly jr doll)
+	05 80 00  #Randomly changes Ether to +50% or -50%# (elly jr doll)
 	05 40 00  2x support effect times
-	05 20 00  ??? (emer jr doll)
-	05 10 00  ??? (chu-chu idol , chu-chu only)
+	05 20 00  #Counter attacks with same damage# (emer jr doll)
+	05 10 00  #Attack and Defense +20%# (chu-chu idol , chu-chu only)
 	05 00 40  halves EP usage in battles
 	05 00 20  EXP pts gain up 50%
 	05 00 08  rare item gain rate increase
-	05 00 04  ??? (fei jr doll)
-	05 00 02  ??? (bart jr doll)
-	05 00 01  ??? (billy jr doll)
+	05 00 04  #Raises Critical Damage# (fei jr doll)
+	05 00 02  #Raises Critical Hit Rate# (bart jr doll)
+	05 00 01  #Raises Accuracy and Evade# (billy jr doll)
 
 	07 08 00  restore HP if hit by defd elem
 	07 04 00  doubles elemental def

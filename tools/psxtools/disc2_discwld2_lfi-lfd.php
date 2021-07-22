@@ -22,36 +22,68 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
+function crcsum( &$sub )
+{
+	// SCUS 946.05 , sub_80012598
+	//   auto-detect if the 0x800 block has checksum
+	$crc = str2int($sub, 0x7fc, 4);
+	$sum = 0;
+	for ( $i=0; $i < 0x7fc; $i += 4 )
+		$sum ^= str2int($sub, $i, 4);
+	return ( $sum == $crc ) ? 0x7fc : 0x800;
+}
+
 function disc2( $fname )
 {
-	// for *.lfi only
-	if ( stripos($fname, '.lfi') === false )
+	$pfx = substr($fname, 0, strrpos($fname, '.'));
+	$lfi =  load_file("$pfx.lfi");
+	$lfd = fopen_file("$pfx.lfd");
+	if ( empty($lfi) || ! $lfd )
 		return;
 
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
-
-	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	$fp = fopen("$pfx.lfd", "rb");
-	if ( ! $fp )  return;
-
-	$dir = str_replace('.', '_', $fname);
-	$ed = strlen($file);
+	$ed = strlen($lfi);
 	$st = 0;
 	while ( $st < $ed )
 	{
-		$fn = substr ($file, $st+0 , 12);
-		$sz = str2int($file, $st+12,  4);
-		$ps = str2int($file, $st+16,  4);
+		$fn = rtrim( substr($lfi,$st,12), ZERO );
+		$sz = str2int($lfi, $st+12,  4);
+		$of = str2int($lfi, $st+16,  4);
 			$st += 20;
-		$fn = strtolower( rtrim($fn, ZERO) );
-		printf("%8x , %8x , %s\n", $ps, $sz, $fn);
 
-		$sub = fp2str($fp, $ps, $sz);
-		save_file("$dir/$fn", $sub);
+		if ( $sz >= 0x800 )
+		{
+			$sub = fp2str($lfd, $of, 0x800);
+			$sct = crcsum($sub);
+			if ( $sct == 0x800 )
+				$sub = fp2str($lfd, $of, $sz);
+			else
+			{
+				$b1  = $sz;
+				$b2  = $of;
+				$sub = '';
+				while ( $b1 > 0 )
+				{
+					$rsz  = ( $b1 > $sct ) ? $sct : $b1;
+					$sub .= fp2str($lfd, $b2, $rsz);
+						$b1 -= $rsz;
+						$b2 += 0x800;
+				} // while ( $b1 > 0 )
+			}
+		}
+		else
+			$sub = fp2str($lfd, $of, $sz);
+
+		$fn = strtolower($fn);
+		printf("%8x , %8x , %s\n", $of, $sz, $fn);
+		save_file("$pfx/$fn", $sub);
 	}
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	disc2( $argv[$i] );
+
+/*
+0x7fc
+	-> 80012598  lw a1, 0x7fc(a0)
+ */

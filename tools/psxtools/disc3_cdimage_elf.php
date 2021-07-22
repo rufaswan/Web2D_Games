@@ -42,16 +42,36 @@ function disc3( $fname )
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$pos = 0x10 + ($i * 0x10);
-		$lba = str2int($head, $pos+4, 3);
-		$siz = str2int($head, $pos+8, 4);
+		$lba = str2int($head, $pos+ 4, 3);
+		$siz = str2int($head, $pos+ 8, 4);
+		$crc = str2int($head, $pos+12, 2);
+		$sct = str2int($head, $pos+14, 2);
 		if ( $lba == 0 || $siz == 0 )
 			continue;
 
-		$sub = fp2str($fp, $lba*0x800, $siz);
-		$fn  = sprintf("%s/%04d.bin", $dir, $i);
+		if ( $sct == 0x800 )
+		{
+			$sub = fp2str($fp, $lba*0x800, $siz);
+		}
+		else // 0x7fc
+		{
+			$b1  = $siz;
+			$b2  = $lba;
+			$sub = '';
+			while ( $b1 > 0 )
+			{
+				$rsz  = ( $b1 > $sct ) ? $sct : $b1;
+				$sub .= fp2str($fp, $b2*0x800, $rsz);
+					$b1 -= $rsz;
+					$b2++;
+			} // while ( $b1 > 0 )
+		}
+
+		$fn  = sprintf("%s/%04d.%x", $dir, $i, $sct);
 		printf("%6x , %8x , %8x , %s\n", $lba, $lba*0x800, $siz, $fn);
 		save_file($fn, $sub);
-	}
+	} // for ( $i=0; $i < $cnt; $i++ )
+
 	return;
 }
 

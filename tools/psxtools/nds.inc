@@ -40,7 +40,7 @@ function nds_ram( $dir, $dsi=false )
 	if ( empty($head) )
 		return php_error("NDS_RAM %s/head.bin not found", $dir);
 
-	$siz = ( $dsi ) ? NDSI_RAM ? NDS_RAM;
+	$siz = ( $dsi ) ? NDSI_RAM : NDS_RAM;
 	$ram = str_repeat(ZERO, $siz);
 	$off9 = str2int($head, 0x28, 3);
 	$off7 = str2int($head, 0x38, 3);

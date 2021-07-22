@@ -48,17 +48,19 @@ function psxptr( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$ed = strlen($file);
-	$st = 0;
-	$prev = 0;
-	$preg = 0;
-	$pimm = 0;
+	$list = array();
 	$mips = array(
 		0x08 => "addi", 0x09 => "addiu",
 		0x0f => "lui",
 		0x20 => "lb" , 0x21 => "lh" , 0x23 => "lw",
 		0x24 => "lbu", 0x25 => "lhu",
 	);
+
+	$ed = strlen($file);
+	$st = 0;
+	$prev = 0;
+	$preg = 0;
+	$pimm = 0;
 	while ( $st < $ed )
 	{
 		$bak = $st;
@@ -69,11 +71,12 @@ function psxptr( $fname )
 		// bios    80000000-8000ffff
 		if ( $op == 0x80 )
 		{
-			$ptr = str2int($file, $bak, 3);
-			if ( $ptr >= 0x10000 && $ptr <= 0x1fffff )
+			$ptr = str2int($file, $bak, 4);
+			if ( $ptr >= 0x80010000 && $ptr <= 0x801f0000 )
 			{
 				prevnl( $prev, $bak );
-				printf("$fname , %8x , ptr %6x\n", $bak, $ptr);
+				printf("$fname , %8x , ptr %8x\n", $bak, $ptr);
+				$list[$ptr] = 1;
 			}
 			continue;
 		}
@@ -85,17 +88,17 @@ function psxptr( $fname )
 		switch ( $op )
 		{
 			case 0x0f: // lui
-				$b1 = ord( $file[$bak+0] );
-				$b2 = ord( $file[$bak+1] );
-				if ( $b2 == 0x80 )
+				if ( $file[$bak+1] === "\x80" )
 				{
-					if ( $b1 >= 0x01 && $b1 <= 0x1f )
-					{
-						prevnl( $prev, $bak );
-						$pimm = $b1 << 16;
-						$preg = $rt;
-						printf("$fname , %8x , %-6s %6x\n", $bak, $mips[$op], $pimm);
-					}
+					$b1 = str2int($file, $bak+0, 2);
+
+					// 80xx == RAM
+					// 1fxx == IO
+					prevnl( $prev, $bak );
+					$pimm = $b1 << 16;
+					$preg = $rt;
+					printf("$fname , %8x , %-6s %8x\n", $bak, $mips[$op], $pimm);
+					$list[$pimm] = 1;
 				}
 				break;
 			case 0x20: // lb
@@ -108,7 +111,8 @@ function psxptr( $fname )
 					prevnl( $prev, $bak );
 					$b1 = sint16( $file[$bak+0] . $file[$bak+1] );
 					$b2 = $pimm + $b1;
-					printf("$fname , %8x , %-6s %6x\n", $bak, $mips[$op], $b2);
+					printf("$fname , %8x , %-6s %8x\n", $bak, $mips[$op], $b2);
+					$list[$b2] = 1;
 				}
 				break;
 			case 0x08: // addi
@@ -118,7 +122,9 @@ function psxptr( $fname )
 					prevnl( $prev, $bak );
 					$b1 = sint16( $file[$bak+0] . $file[$bak+1] );
 					$b2 = $pimm + $b1;
-					printf("$fname , %8x , %-6s %6x\n", $bak, $mips[$op], $b2);
+					printf("$fname , %8x , %-6s %8x\n", $bak, $mips[$op], $b2);
+					$list[$b2] = 1;
+
 					if ( $rs == $rt )
 						$pimm = $b2;
 				}
@@ -126,6 +132,15 @@ function psxptr( $fname )
 		} // switch ( $op )
 	} // while ( $st < $ed )
 	echo "\n";
+
+	echo "=== list ===\n";
+	ksort($list);
+	foreach ( $list as $k => $v )
+	{
+		if ( $k < 0x80010000 )  continue;
+		if ( $k > 0x801f0000 )  continue;
+		printf("  %6x\n", $k);
+	}
 	return;
 }
 

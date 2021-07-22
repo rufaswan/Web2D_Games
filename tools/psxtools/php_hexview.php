@@ -39,8 +39,6 @@ function hexdigit( $int )
 	{
 		$int >>= 4;
 		$hx++;
-		if ( $int == -1 )
-			break;
 	}
 	return $hx;
 }

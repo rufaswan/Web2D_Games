@@ -25,10 +25,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   https://github.com/scummvm/scummvm/tree/master/engines/tinsel/graphics.cpp
  */
 require "common.inc";
+require "disc.inc";
 
-function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $lzs )
+function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle )
 {
-	printf("== sect_map( %s , %x , %x , %x , %x , %x , %d , %d )\n", $fn, $st3, $st4, $st5, $w, $h, $bpp, $lzs);
+	printf("== sect_map( %s , %x , %x , %x , %x , %x , %d , %d )\n", $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle);
 
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $w;
@@ -40,9 +41,7 @@ function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $lzs )
 	// set pallete data
 	if ( $bpp == 8 )  $pix['src']['pal'] = substr($file, $st5, 0x400);
 	if ( $bpp == 4 )  $pix['src']['pal'] = substr($file, $st5, 0x40);
-	$len = strlen( $pix['src']['pal'] );
-	for ( $i=0; $i < $len; $i += 4 )
-		$pix['src']['pal'][$i+3] = BYTE;
+	palbyte( $pix['src']['pal'] );
 
 	// set pixel data
 	$pcnt = 0;
@@ -54,8 +53,9 @@ function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $lzs )
 		{
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
+			$ssid = 0;
 
-			if ( $lzs ) // 0xcc
+			if ( $rle ) // 0xcc
 			{
 				if ( $pcnt <= 0 )
 				{
@@ -77,42 +77,43 @@ function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $lzs )
 				switch ( $ptyp )
 				{
 					case 0:
-						$b1 = str2int($file, $st3, 2);
+						$ssid = str2int($file, $st3, 2);
 							$st3 += 2;
 						break;
 					case 1:
-						$b1 = $pind;
+						$ssid = $pind;
 						break;
 					case 2:
-						$b1 = $pind;
+						$ssid = $pind;
 						$pind++;
 						break;
 				} // switch ( $ptyp )
 
-				if ( $bpp == 8 )
-				{
-					$pix['src']['pix'] = substr($file, $st4+$b1*16, 16);
-					copy_fast($pix);
-				}
-				else
-				if ( $bpp == 4 )
-				{
-					$pix['src']['pix'] = substr($file, $st4+$b1*8, 8);
-					bpp4to8( $pix['src']['pix'] );
-					copy_fast($pix);
-				}
 				$pcnt--;
 			}
 			else // 0xdd
 			{
+				$ssid = str2int($file, $st3, 2);
+					$st3 += 2;
 			}
+
+			if ( $bpp == 8 )
+				$pix['src']['pix'] = substr($file, $st4+$ssid*16, 16);
+			else
+			if ( $bpp == 4 )
+			{
+				$pix['src']['pix'] = substr($file, $st4+$ssid*8, 8);
+				bpp4to8( $pix['src']['pix'] );
+			}
+
+			copypix_fast($pix);
 		} // for ( $x=0; $x < $w; $x += 4 )
 	} // for ( $y=0; $y < $h; $y += 4 )
 
 	savepix($fn, $pix, false);
 	return;
 }
-
+//////////////////////////////
 function save_gfx( &$file, &$sect, $dir )
 {
 	if ( ! isset($sect[3]) )  return; // tile data   -> 4
@@ -143,84 +144,40 @@ function save_gfx( &$file, &$sect, $dir )
 			$st3 = $b1 & 0xfffff;
 			$st5 = $b2 & 0xfffff;
 
+		// from SCUS_946.00 , sub_8001588c
 		$bpp = -1;
 		if ( $file[$st3+0] == "\x88" )  $bpp = 8;
 		if ( $file[$st3+0] == "\x44" )  $bpp = 4;
 
-		$lzs = -1;
-		if ( $file[$st3+1] == "\xcc" )  $lzs = 1;
-		if ( $file[$st3+1] == "\xdd" )  $lzs = 0;
+		$rle = -1;
+		if ( $file[$st3+1] == "\xcc" )  $rle = 1;
+		if ( $file[$st3+1] == "\xdd" )  $rle = 0;
 
-		if ( $bpp < 0 || $lzs < 0 )
-			return php_error("UNKNOWN st3 type %d , %d", $bpp, $lzs);
+		if ( $bpp < 0 || $rle < 0 )
+			return php_error("UNKNOWN st3 type %d , %d", $bpp, $rle);
 
 		$fn = sprintf("%s/%06d", $dir, $id7);
 			$id7++;
-		sect_map($file, $fn, $st3+2, $st4, $st5, $w, $h, $bpp, $lzs);
+
+		if ( $bpp == 8 )  $st3 += 2;
+		if ( $bpp == 4 )  $st3 += (2 + 32);
+		sect_map($file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle);
 	} // while ( $st7 < $ed7 )
 	return;
 }
-
-function save_txt( &$file, &$sect, $dir )
-{
-	if ( empty($sect[1]) )
-		return;
-	printf("== save_txt( $dir )\n");
-
-	foreach ( $sect[1] as $k => $v )
-	{
-		$ed = str2int($file, $v-4, 4);
-		$st = $v;
-		$txt = '';
-		while ( $st < $ed )
-		{
-			$len = ord($file[$st]);
-			$sub = substr($file, $st+1, $len);
-
-			$st += (1 + $len);
-			$txt .= "$sub\n";
-		} // while ( $st < $ed )
-
-		$fn = sprintf("$dir/%04d.txt", $k);
-		save_file($fn, $txt);
-	} // foreach ( $sect[1] as $k => $v )
-
-	return;
-}
-
+//////////////////////////////
 function disc( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$dir = str_replace('.', '_', $fname);
+	$dir  = str_replace('.', '_', $fname);
+	$sect = scnsect($file);
 
-	$sect = array();
-	$sect[1] = array();
-
-	$pos = 0;
-	while (1)
-	{
-		if ( substr($file,$pos+1,3) !== "\x0043" )
-			return php_error("NOT 43 %s @ %x", $fname, $pos);
-
-		$id = ord( $file[$pos] );
-		$nx = str2int($file, $pos+4, 4);
-
-		if ( $id == 1 )
-			$sect[1][] = $pos + 8;
-		else
-		{
-			if ( isset( $sect[$id] ) )
-				return php_error("DUP 43 %s @ %x = %x", $fname, $pos, $id);
-			$sect[$id] = $pos + 8;
-		}
-
-		$pos = $nx;
-		if ( $pos == 0 )
-			break;
-	} // while (1)
-
+	# http://rewiki.regengedanken.de/wiki/.SCN
+	#   DW1 3 4 5 - c d -  -  -  -  -  -  -  -  -  -  -
+	#   DW2 - - 5 - c d f 12 13  - 19 1b 1c 1d 1e  -  -
+	#   DWN - - - 9 - - f  -  - 18 19 1b 1c 1d  - 20 31
 	save_txt($file, $sect, "$dir/txt");
 	save_gfx($file, $sect, "$dir/gfx");
 	return;

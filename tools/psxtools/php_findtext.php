@@ -20,65 +20,46 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function figfile( &$file )
+require "common.inc";
+
+function decdigit( $int )
 {
-	$c = count($file);
-	$f = 0;
-	while ( $c > 0 )
+	$dc = 0;
+	while ( $int > 0 )
 	{
-		$c = (int)($c / 10);
-		$f++;
+		$dc++;
+		$int = (int)($int / 10);
 	}
-	return "%{$f}d";
-}
-
-function findstr( $path , $terms )
-{
-	if ( is_file($path) )
-	{
-		$file = file($path);
-		$res = array();
-		foreach ( $file as $no => $line )
-		{
-			$line = trim($line);
-			if ( empty($line) )
-				continue;
-
-			$has_str = true;
-			foreach ( $terms as $t )
-			{
-				if ( stripos($line, $t) === false )
-					$has_str = false;
-			}
-
-			if ( $has_str )
-				$res[$no] = $line;
-		} // foreach ( $file as $no => $line )
-
-		if ( empty($res) )
-			return;
-
-		echo "=== $path ===\n";
-		$fig = figfile($file);
-		foreach ( $res as $no => $line )
-			printf("$fig : %s\n", $no+1 , $line);
-		return;
-	}
-	else
-	if ( is_dir($path) )
-	{
-		$func = __FUNCTION__;
-		foreach ( scandir($path) as $dir )
-		{
-			if ( $dir[0] == '.' )
-				continue;
-			$func( "$path/$dir", $terms );
-		}
-		return;
-	}
-	return;
+	return $dc;
 }
 
 if ( $argc == 1 )  exit();
-array_shift($argv);
-findstr('.' , $argv);
+
+$list = array();
+lsfile_r('.', $list);
+
+foreach ( $list as $f )
+{
+	$fsz = filesize($f);
+	$txt = '';
+	$dc  = decdigit($fsz);
+
+	foreach ( file($f) as $lnum => $line )
+	{
+		$line = trim($line);
+		if ( empty($line) )
+			continue;
+
+		for ( $i=1; $i < $argc; $i++ )
+		{
+			if ( stripos($line, $argv[$i]) !== false )
+				$txt .= sprintf("%{$dc}d : %s\n", $lnum+1 , substr($line,0,256));
+		} // for ( $i=1; $i < $argc; $i++ )
+	} // foreach ( file($f) as $lnum => $line )
+
+	if ( empty($txt) )
+		continue;
+
+	echo "== $f ==\n";
+	echo "$txt\n";
+} // foreach ( $list as $f )

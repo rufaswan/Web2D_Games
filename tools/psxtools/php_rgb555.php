@@ -54,6 +54,6 @@ function rgb555( $clut )
 	return;
 }
 
-echo "PS1 RGB555 <-> RGB32 convert\n"
+echo "PS1 RGB555 <-> RGB32 convert\n";
 for ( $i=1; $i < $argc; $i++ )
 	rgb555( $argv[$i] );
