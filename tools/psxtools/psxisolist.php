@@ -21,25 +21,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+require "common-iso.inc";
 
 $gp_list = array();
 
-function lba2frame( $lba )
-{
-	$lba += (75 * 2); // +2 sec
-
-	$f = $lba % 75;
-	$lba = ($lba - $f) / 75;
-
-	$s = $lba % 60;
-	$lba = ($lba - $s) / 60;
-
-	$m = $lba;
-	$cd = sprintf("%02d:%02d:%02d", $m, $s, $f);
-	return $cd;
-}
-
-//////////////////////////////
 function sectent( &$str, $fp, $pos, $par )
 {
 	$ensz = ord( $str[$pos] );
