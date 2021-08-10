@@ -92,10 +92,7 @@ function yuna( $fname )
 
 	yuna_decode( $file, $fname );
 
-	$rgba = "";
-	$siz = strlen($file);
-	for ( $i=0; $i < $siz; $i += 2 )
-		$rgba .= rgb555( $file[$i+1] . $file[$i+0] );
+	$rgba = pal555( big2little16($file) );
 
 	$siz = strlen($rgba) / 4;
 	$w = 8 * 0x28;

@@ -26,7 +26,8 @@ require "common.inc";
 
 function gihren_decode( &$file )
 {
-	// from SLPS 025.70 / Earth Federation disc
+	// SLPS 025.70 , Earth Federation   , sub_80016f28
+	// SLPS 028.20 , Kouryaku Shireisho , sub_80017144
 	trace("== begin sub_80016f28\n");
 	$dec = "";
 	$bycod = 0;

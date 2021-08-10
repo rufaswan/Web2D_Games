@@ -57,6 +57,24 @@ function chrbig( $int, $byte )
 	return strrev($t);
 }
 //////////////////////////////
+function big2little16( &$be )
+{
+	$le = '';
+	$len = strlen($be);
+	for ( $i=0; $i < $len; $i += 2 )
+		$le .= $be[$i+1] . $be[$i+0];
+	return $le;
+}
+
+function big2little32( &$be )
+{
+	$le = '';
+	$len = strlen($be);
+	for ( $i=0; $i < $len; $i += 4 )
+		$le .= $be[$i+3] . $be[$i+2] . $be[$i+1] . $be[$i+0];
+	return $le;
+}
+
 function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 {
 	$b7 = ($bit7 & 1) << 7;

@@ -3,31 +3,42 @@
 
 	avi
 		*blank*
-			= for graphic/sprites/images
+			= for graphic/sprites/background images
 		quad
 			= related *.quad files
 			for use with WebGL Quad Player
 		layout
 			= related layout.txt
-			for use as interactive VG map
+			for create interactive VG Map
 		pvab
 			= related to pBAV pQES PS1 ADPCM sounds
-			convert to *.wav
+			for convert to *.wav
 		tsr
-			= for The Sprite Resource
+			= for The Sprite Resource / general user
 			for generating sprite sheets
 			helper script for public users
 			*skip console, prefix, identifier*
 		img
 			= related *.clut/*.rgba files
-			for convert between common file formats
+			for convert between common image file formats
 			for image post-processing
+			*skip console, prefix, identifier*
+		php
+			= PHP script for hacking tools
 			*skip console, prefix, identifier*
 
 	console
 		*blank*
 			= PlayStation One
-		ps2 , ps4 , psp , vita , sat , wii , nds , pc98 , pc
+		ps2
+		ps4
+		psp
+		vita
+		sat
+		wii
+		nds
+		pc98
+		pc
 			= guest consoles
 
 	prefix
@@ -37,27 +48,37 @@
 		priority in order
 			1 use FIRST 4 ASCII char of the file
 			2 use any 3 of FIRST 4 ASCII char of the file
-			3 use any 2 of FIRST 4 ASCII char of the file
-			4 use {directory}_{filename}_{extension}
-			5 use {directory}_{extension}
-			6 use {extension}
-			7 use {note}
-		*[4-6] for file sets , use ext1-ext2[-ext3]... format*
+			3 use {directory}_{filename}_{extension}
+			4 use {directory}_{extension}
+			5 use {extension}
+			6 use {note}
+		* ext1-ext2[-ext3...] for naming file sets
+		-   eg "gunvolt_irlst-irarc" will auto-load both *.irlst + *.irarc
+		-      as a set when either one file as input
+		* ext1_ext2[_ext3...] for listing acceptable files
+		-   eg "cvpor_BMD0_BTX0" will accept file starts with
+		-      "BMD0" or "BTX0" as input
 
 	function
 		*blank* = output sprites
-		decode  = decompress/decrypt the files
-		packer  = pack if is_dir , unpack if is_file
-		INFO    = display useful information
+		INFO    = display information for hunting data
 		SETUP   = output self-contained file sets
+		decode  = decompress/decrypt the files
+			* always load its *.bak
+			* generate its *.bak from INPUT if not found
+			* the result overwrite the INPUT
+		packer  = for VFS (Virtual FileSystem)
+			* if is_dir  , pack all files to a VFS file
+			* if is_file , unpack content of VFS file to its own directory
 
 == PlayStation One Games ==
 gihren  SLPS 025.70  Gihren no Yabou Zeon no Keibu / Federation Disc
 gihren  SLPS 025.71  Gihren no Yabou Zeon no Keibu / Zeon Disc
+gihren  SLPS 028.20  Gihren no Yabou Zeon no Keibu / Kouryaku Shireisho
 gbm1    SLPS 008.83  Gundam Battle Master
 gbm2    SLPS 012.86  Gundam Battle Master 2
-gbm-g   SLPS 034.71  Gundam Battle Master G Gundam
-gbm-w   SLPS 034.72  Gundam Battle Master Gundam Wing
+gbmg    SLPS 034.71  Gundam Battle Master G Gundam
+gbmw    SLPS 034.72  Gundam Battle Master Gundam Wing
 lunar1  SLPS 013.97  Lunar 1 Silver Star Story / Disc 1
 lunar1  SLPS 013.98  Lunar 1 Silver Star Story / Disc 2
 lunar2  SLPS 020.81  Lunar 2 Eternal Blue / Disc 1
@@ -71,29 +92,40 @@ talee   SLPS 030.52  Tales of Eternia / Disc 3
 xeno    SLPS 011.60  Xenogears / Disc 1
 xeno    SLPS 011.61  Xenogears / Disc 2
 
-tm2s   SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 1
-tm2s   SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / DISC 2
-tm2s   SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 1
-tm2s   SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / DISC 2
-tm2s   SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 1
-tm2s   SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / DISC 2
-star2  SLPM 861.05  Star Ocean 2 / Disc 1
-star2  SLPM 861.06  Star Ocean 2 / Disc 2
-valky  SLPM 863.79  Valkyrie Profile / Disc 1
-valky  SLPM 863.80  Valkyrie Profile / Disc 2
+suigai  SLPM 866.37  Genso Suikogaiden Vol.1
+suigai  SLPM 866.63  Genso Suikogaiden Vol.2
+tome2   SLPM 863.55  Tokimeki Memorial 2 / Disc 1 [DISC 5]
+tome2   SLPM 863.56  Tokimeki Memorial 2 / Disc 2 [DISC 1]
+tome2   SLPM 863.57  Tokimeki Memorial 2 / Disc 3 [DISC 2]
+tome2   SLPM 863.58  Tokimeki Memorial 2 / Disc 4 [DISC 3]
+tome2   SLPM 863.59  Tokimeki Memorial 2 / Disc 5 [DISC 4]
+tome2   SLPM 805.27  Tokimeki Memorial 2 EVS 1 [DISC 6]
+tome2   SLPM 805.44  Tokimeki Memorial 2 EVS 2 [DISC 7]
+tome2   SLPM 805.50  Tokimeki Memorial 2 EVS 3 [DISC 8]
+tm2s    SLPM 865.49  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / Disc 1
+tm2s    SLPM 865.50  Tokimeki Memorial 2 Substories 1 Dancing Summer Vacation / Disc 2
+tm2s    SLPM 867.75  Tokimeki Memorial 2 Substories 2 Leaping School Festival / Disc 1
+tm2s    SLPM 867.76  Tokimeki Memorial 2 Substories 2 Leaping School Festival / Disc 2
+tm2s    SLPM 868.81  Tokimeki Memorial 2 Substories 3 Memories Ringing On / Disc 1
+tm2s    SLPM 868.82  Tokimeki Memorial 2 Substories 3 Memories Ringing On / Disc 2
+star2   SLPM 861.05  Star Ocean 2 / Disc 1
+star2   SLPM 861.06  Star Ocean 2 / Disc 2
+valky   SLPM 863.79  Valkyrie Profile / Disc 1
+valky   SLPM 863.80  Valkyrie Profile / Disc 2
 
-disc1  SCES 000.12  Discworld 1
-disc2  SLES 007.93  Discworld 2 Missing Presumed
-disc3  SLES 015.49  Discworld Noir
+disc1   SCES 000.12  Discworld 1
+disc2   SLES 007.93  Discworld 2 Missing Presumed
+disc3   SLES 015.49  Discworld Noir
 
-yuna   SLPS 014.51  Galaxy Fraulein Yuna Final Edition
-ralph  SLPS 018.53  Adventure of Little Ralph
-saga2  SLPS 019.90  SaGa Frontier 2
-mana   SLPS 021.70  Seiken Densetsu
+yuna    SLPS 014.51  Galaxy Fraulein Yuna Final Edition
+ralph   SLPS 018.53  Adventure of Little Ralph
+saga2   SLPS 019.90  SaGa Frontier 2
+mana    SLPS 021.70  Seiken Densetsu
 
-sotn  SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
-mkr   SLPM 861.34  Mitsumete Knight R
+sotn    SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
+mkr     SLPM 861.34  Mitsumete Knight R
 
+	disc1   ALL DONE
 	mana    ALL DONE
 	saga2   ALL DONE , SLUS not supported
 	tm2s    ALL DONE
@@ -106,17 +138,17 @@ mkr   SLPM 861.34  Mitsumete Knight R
 	star2   --upcoming--
 	gihren  --upcoming--
 	lunar1  --upcoming--
-	disc1   --upcoming--
 	disc2   --upcoming--
 	disc3   --upcoming--
 	talep   --upcoming--
 	taled   --upcoming--
 	talee   --upcoming--
 	ralph   --upcoming--
+	tome2   --upcoming--
 	gbm1    --upcoming--
 	gbm2    --upcoming--
-	gbm-g   --upcoming--
-	gbm-w   --upcoming--
+	gbmg    --upcoming--
+	gbmw    --upcoming--
 
 ==============================
 == PlayStation System Games ==

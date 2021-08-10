@@ -22,7 +22,7 @@ arch="i386  amd64"
 zipp="xz  bz2  gz"
 locc="archive  old-releases"
 
-tmp="/tmp/deb_pool"
+tmp="/tmp/deb_pool.$$"
 pwd="$PWD"
 pool=''
 deb=''

@@ -63,11 +63,8 @@ function vfcg( $fname )
 	$img = array(
 		'w' => $w,
 		'h' => $h,
-		'pix' => '',
+		'pix' => pal555( big2little16($file) ),
 	);
-
-	for ( $i=0; $i < $len; $i += 2 )
-		$img['pix'] .= rgb555( $file[$i+1] . $file[$i+0] );
 
 	save_clutfile("$fname.rgba", $img);
 	return;

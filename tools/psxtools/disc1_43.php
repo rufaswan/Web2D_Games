@@ -27,9 +27,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require "common.inc";
 require "disc.inc";
 
-function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle )
+function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle, $alpha )
 {
-	printf("== sect_map( %s , %x , %x , %x , %x , %x , %d , %d )\n", $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle);
+	printf("== sect_map( %s , %x , %x , %x , %x , %x , %d , %d , %d )\n", $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle, $alpha);
 
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $w;
@@ -39,9 +39,20 @@ function sect_map( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle )
 	$pix['src']['h'] = 4;
 
 	// set pallete data
-	if ( $bpp == 8 )  $pix['src']['pal'] = substr($file, $st5, 0x400);
-	if ( $bpp == 4 )  $pix['src']['pal'] = substr($file, $st5, 0x40);
-	palbyte( $pix['src']['pal'] );
+	if ( $bpp == 8 )
+	{
+		$b1 = substr($file, $st5, 0x400);
+		palbyte($b1);
+		$pix['src']['pal'] = $b1;
+	}
+	if ( $bpp == 4 )
+	{
+		$b1 = substr($file, $st5, 0x20);
+		$b1 = pal555($b1);
+		$pix['src']['pal'] = $b1;
+	}
+	if ( $alpha )
+		str_update( $pix['src']['pal'], 0, "\xff\x00\xff\xff" );
 
 	// set pixel data
 	$pcnt = 0;
@@ -123,7 +134,9 @@ function save_gfx( &$file, &$sect, $dir )
 	if ( ! isset($sect[7]) )  return; // anim data   -> 6
 	printf("== save_gfx( $dir )\n");
 
-	$st4 = str2int($file, $sect[3], 4);
+	$st48 = str2int($file, $sect[3]+0, 4);
+	$b1   = str2int($file, $sect[3]+4, 4);
+	$st44 = $st48 + $b1 * 16;
 
 	$ed7 = str2int($file, $sect[7]-4, 4);
 	$st7 = $sect[7];
@@ -138,6 +151,9 @@ function save_gfx( &$file, &$sect, $dir )
 		$b2 = str2int($file, $st6+2, 2);
 			$w = int_ceil($b1 & 0x7fff, 4);
 			$h = int_ceil($b2 & 0x7fff, 4);
+
+		$b1 = str2int($file, $st6+4, 4);
+			$alpha = ( $b1 != 0 );
 
 		$b1 = str2int($file, $st6+ 8, 3);
 		$b2 = str2int($file, $st6+12, 3);
@@ -156,12 +172,21 @@ function save_gfx( &$file, &$sect, $dir )
 		if ( $bpp < 0 || $rle < 0 )
 			return php_error("UNKNOWN st3 type %d , %d", $bpp, $rle);
 
-		$fn = sprintf("%s/%06d", $dir, $id7);
+		$fn = sprintf("%s/%04d", $dir, $id7);
 			$id7++;
 
-		if ( $bpp == 8 )  $st3 += 2;
-		if ( $bpp == 4 )  $st3 += (2 + 32);
-		sect_map($file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle);
+		if ( $bpp == 8 )
+		{
+			$st4 = $st48;
+			$st3 += 2;
+		}
+		if ( $bpp == 4 )
+		{
+			$st5 = $st3 + 2;
+			$st4 = $st44;
+			$st3 += (2 + 32);
+		}
+		sect_map($file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle, $alpha);
 	} // while ( $st7 < $ed7 )
 	return;
 }
@@ -178,8 +203,8 @@ function disc( $fname )
 	#   DW1 3 4 5 - c d -  -  -  -  -  -  -  -  -  -  -
 	#   DW2 - - 5 - c d f 12 13  - 19 1b 1c 1d 1e  -  -
 	#   DWN - - - 9 - - f  -  - 18 19 1b 1c 1d  - 20 31
-	save_txt($file, $sect, "$dir/txt");
-	save_gfx($file, $sect, "$dir/gfx");
+	save_txt($file, $sect, "{$dir}_txt");
+	save_gfx($file, $sect, "{$dir}_gfx");
 	return;
 }
 

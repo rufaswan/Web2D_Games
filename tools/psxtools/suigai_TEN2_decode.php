@@ -29,7 +29,7 @@ function suigai_decode( &$file )
 	for ( $i=0; $i < 0x100; $i++ )
 		$NEW_DICT[ 0x200+$i ] = chr($i);
 
-	echo "== begin sub_80051e38\n";
+	trace("== begin sub_80051e38\n");
 	$dec = '';
 
 	$len = strlen($file);
@@ -136,8 +136,8 @@ function suigai_decode( &$file )
 
 		$b1 = $b2;
 	} // while ( $pos < $len )
-	echo "== end sub_80051e38\n";
 
+	trace("== end sub_80051e38\n");
 	return $dec;
 }
 

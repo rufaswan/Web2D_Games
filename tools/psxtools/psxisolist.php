@@ -25,6 +25,13 @@ require "common-iso.inc";
 
 $gp_list = array();
 
+function lba2min( $lba )
+{
+	$frame = lba2frame($lba);
+	$f = bin2hex($frame);
+	return $f[0].$f[1] . ':' . $f[2].$f[3] . ':' . $f[4].$f[5];
+}
+
 function sectent( &$str, $fp, $pos, $par )
 {
 	$ensz = ord( $str[$pos] );
@@ -104,7 +111,7 @@ function isofile( $fname )
 	$buf = "";
 	foreach ( $gp_list as $k => $v )
 	{
-		$min = lba2frame($k);
+		$min = lba2min($k);
 		$typ = 'M2  ';
 		if ( $v['m'] & 0x40 )  $typ = 'CDDA';
 		if ( $v['m'] & 0x30 )  $typ = 'M2F2'; // 0x10 Form 2 + 0x20 Interleaved

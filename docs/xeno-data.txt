@@ -522,3 +522,28 @@ Element
 	02 00 fire
 	01 00 water
 ==============================
+Monster Data
+2617/[even].bin (BLOCK 0x170 or 368 bytes)
+# NOTE : Even + Odd file pair
+#        Odd file has 256x256 pixel data
+
++0x00 int16 HP
++0x02 int16 max HP
+
++0x0c int8
++0x0d int8
++0x0e int8
++0x0f int8
++0x10 int8
++0x11 int8
++0x12 int8
++0x13 int8
++0x14 int8
++0x15 int8
+
++0x100 int32 drop EXP
++0x104 int16 drop item rate (max=0x64)
++0x106 int16 drop item
++0x108 int16
++0x10a int16 drop gil
+==============================

@@ -179,14 +179,9 @@ function load_texx( &$pak, $pfx )
 		printf("%4x , %6x , %3d x %3d = %4x\n", $d, $pos, $w, $h, $siz);
 
 		$b1 = substr($chr, $pos, $siz);
-		$pix = "";
-		for ( $s=0; $s < $siz; $s++ )
-		{
-			$b2 = ord( $b1[$s] );
-			$b3 = ($b2 >> 4) & BIT4;
-			$b4 = ($b2 >> 0) & BIT4;
-			$pix .= chr($b3) . chr($b4);
-		}
+		bpp4to8($b1);
+		$pix = big2little16($b1);
+
 		$gp_pix[$d] = array(
 			'pix' => $pix,
 			'cc' => 16,

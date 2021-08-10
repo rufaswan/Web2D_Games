@@ -25,11 +25,11 @@ Linux ONLY , required exec() command
 	- tput
  */
 $gp_opts = array(
-	'termx' => 82,
-	'termy' => 28,
-	'col'   => 32,
-	'pos'   =>  0,
-	'block' => 0x800,
+	'termx' => 1,
+	'termy' => 1,
+	'pos'   => 0,
+	'col'   => 0x20,
+	'block' => 0x2000,
 );
 
 function hexdigit( $int )
@@ -43,6 +43,12 @@ function hexdigit( $int )
 	return $hx;
 }
 
+function upd_blk( &$opt )
+{
+	$opt['block'] = $opt['col'] << 8;
+	return;
+}
+//////////////////////////////
 function hexread( $fname )
 {
 	global $gp_opts;
@@ -116,15 +122,18 @@ function hexread( $fname )
 		switch ( $in )
 		{
 			case  '':  break;
-			case '+':  $gp_opts['col']++; break;
-			case '-':  $gp_opts['col']--; break;
-			case '*':  $gp_opts['pos'] += $gp_opts['block']; break;
+			case '+':  $gp_opts['col']++; upd_blk($gp_opts); break;
+			case '-':  $gp_opts['col']--; upd_blk($gp_opts); break;
+
 			case '/':  $gp_opts['pos'] -= $gp_opts['block']; break;
+			case '*':  $gp_opts['pos'] += $gp_opts['block']; break;
 
 			case 'w':  $gp_opts['pos'] -= $gp_opts['col']; break;
 			case 's':  $gp_opts['pos'] += $gp_opts['col']; break;
+
 			case 'a':  $gp_opts['pos']--; break;
 			case 'd':  $gp_opts['pos']++; break;
+
 			case 'q':
 				$done = true;
 				break;
@@ -160,12 +169,8 @@ function get_opt( $argv, $i )
 		case '-c':
 		case '-col':
 			$gp_opts['col'] = hexdec( $argv[$i+1] );
+			upd_blk($gp_opts);
 			//printf("gp_col = %x\n", $gp_opts['col']);
-			return 2;
-		case '-b':
-		case '-blk':
-			$gp_opts['block'] = hexdec( $argv[$i+1] );
-			//printf("gp_block = %x\n", $gp_opts['block']);
 			return 2;
 		default:
 			hexread($argv[$i]);

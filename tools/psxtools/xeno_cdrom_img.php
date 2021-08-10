@@ -74,6 +74,7 @@ function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
 					$e = $exts[$b2];
 			}
 			$fn .= $e;
+			if ( $e == '.str' )  $s = ZERO;
 
 			$b1 = sprintf("%8x , %8x , %s\n", $bak, $bak+$ez[0], $fn);
 			echo $b1;

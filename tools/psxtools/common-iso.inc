@@ -20,20 +20,6 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function lba2frame( $lba )
-{
-	$lba += (75 * 2); // +2 sec
-
-	$f = $lba % 75;
-	$lba = ($lba - $f) / 75;
-
-	$s = $lba % 60;
-	$lba = ($lba - $s) / 60;
-
-	$m = $lba;
-	$cd = sprintf("%02d:%02d:%02d", $m, $s, $f);
-	return $cd;
-}
 
 function isofile_r( $iso, &$sub, &$list, $par )
 {
@@ -102,4 +88,50 @@ function lsiso_r( $iso )
 	$list = array();
 	isofile_r($iso, $s, $list, '');
 	return $list;
+}
+//////////////////////////////
+// frame = min:sec:frame binary format
+//       = 3 byte BIN , as 00 02 00
+//
+// min   = frame in string format
+//       = 6 char STR , as "000200"
+//       = 8 char STR , as "00:02:00"
+//
+// lba   = int format
+//       = 3 byte BIN , as 17 00 00
+//       - INT        , as 0x17
+//
+// NOTE : 4 byte lba starts from offset 0x800000000
+//        or (1 << (11+24))
+//        or 32 GB (not used in CD/DVD)
+
+function lba2frame( $lba )
+{
+	// frames starts at 00:02:00
+	$lba += (75 * 2);
+
+	$f = $lba % 75;
+	$f = ( $f > 9 ) ? "$f" : "0$f";
+		$lba = (int)($lba / 75);
+
+	$s = $lba % 60;
+	$s = ( $s > 9 ) ? "$s" : "0$s";
+		$lba = (int)($lba / 60);
+
+	$m = $lba;
+	$m = ( $m > 9 ) ? "$m" : "0$m";
+	return hex2bin( $m.$s.$f );
+}
+
+function frame2lba( $frame )
+{
+	$frame = bin2hex($frame);
+	$m = (int)( $frame[0].$frame[1] );
+	$s = (int)( $frame[2].$frame[3] );
+	$f = (int)( $frame[4].$frame[5] );
+
+	// frames starts at 00:02:00
+	$lba = ($m * 60 + $s) * 60 + $f;
+	$lba -= (75 * 2);
+	return $lba;
 }

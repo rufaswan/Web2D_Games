@@ -40,7 +40,7 @@ function tm2_dec_flag( &$file, &$pos, &$bycod, &$bylen )
 function tm2_decode( &$file )
 {
 	// SLPM 805.50 , EVS 3 , sub_8001a6fc
-	echo "== begin sub_8001a6fc\n";
+	trace("== begin sub_8001a6fc\n");
 	$bycod = 0;
 	$bylen = 0;
 	$dec = '';
@@ -106,7 +106,7 @@ function tm2_decode( &$file )
 	} // while ( $pos < $len )
 
 end:
-	echo "== end sub_8001a6fc\n";
+	trace("== end sub_8001a6fc\n");
 	return $dec;
 }
 

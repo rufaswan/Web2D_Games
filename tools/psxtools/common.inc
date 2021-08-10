@@ -153,6 +153,8 @@ function substr0( &$str, $pos, $end="" )
 
 function ordint( $str )
 {
+	if ( $str === '' )
+		php_warning("ordint() empty");
 	if ( (int)$str === $str ) // already int
 		return $str;
 	$str = rtrim("$str", ZERO);
@@ -370,6 +372,14 @@ function fp2str( $fp, $pos, $byte )
 {
 	if ( $byte == 0 )
 		return "";
+	fseek($fp, 0, SEEK_END);
+	$fsz = ftell($fp);
+	if ( ($pos+$byte) >= $fsz )
+	{
+		php_warning("fp2str (%x + %x) >= %x", $pos, $byte, $fsz);
+		return ZERO;
+	}
+
 	fseek($fp, $pos, SEEK_SET);
 	return fread($fp, $byte);
 }
@@ -519,10 +529,12 @@ function save_clutfile( $fname, &$data )
 		$cc = $data['cc'] * 4;
 		while ( strlen($data['pal']) < $cc )
 			$data['pal'] .= ZERO;
+		$data['pal'] = substr($data['pal'], 0, $cc);
 
 		$sz = $data['w'] * $data['h'];
 		while ( strlen($data['pix']) < $sz )
 			$data['pix'] .= ZERO;
+		$data['pix'] = substr($data['pix'], 0, $sz);
 
 		$clut = "CLUT";
 		$clut .= chrint($data['cc'], 4);
@@ -538,6 +550,7 @@ function save_clutfile( $fname, &$data )
 		$sz = $data['w'] * $data['h'] * 4;
 		while ( strlen($data['pix']) < $sz )
 			$data['pix'] .= ZERO;
+		$data['pix'] = substr($data['pix'], 0, $sz);
 
 		$rgba = "RGBA";
 		$rgba .= chrint($data['w'], 4);
@@ -1363,11 +1376,11 @@ clut:
 	$pix['rgba']['cc']  = count($clpal);
 	$pix['rgba']['pal'] = implode('', $clpal);
 	$pix['rgba']['pix'] = $clpix;
-	trace("savepix() CLUT [%x]  %d x %d\n", $pix['rgba']['cc'], $pix['rgba']['w'], $pix['rgba']['h']);
+	trace("savepix() CLUT [%x]  %d x %d = %s\n", $pix['rgba']['cc'], $pix['rgba']['w'], $pix['rgba']['h'], $fn);
 	return save_clutfile("$fn.clut", $pix['rgba']);
 
 rgba:
-	trace("savepix() RGBA  %d x %d\n", $pix['rgba']['w'], $pix['rgba']['h']);
+	trace("savepix() RGBA  %d x %d = %s\n", $pix['rgba']['w'], $pix['rgba']['h'], $fn);
 	return save_clutfile("$fn.rgba", $pix['rgba']);
 }
 //////////////////////////////
@@ -1427,9 +1440,19 @@ function psxtim( &$file )
 			// VERY COMMON
 			// palette header
 			$siz = str2int($file, $pos, 4);
-			$tim['cn'] = (int)($siz / 0x20);
-			$tim['pal'] = mstrpal555($file, $pos+12, 0x10, $tim['cn']);
-				$pos += $siz;
+				$pos += 12;
+				$siz -= 12;
+			$tim['cn']  = 0;
+			$tim['pal'] = array();
+			while ( $siz > 0 )
+			{
+				$rsz = ($siz > 0x20) ? 0x20 : $siz;
+				$tim['pal'][] = pal555( substr($file,$pos,$rsz) );
+				$tim['cn']++;
+
+				$pos += $rsz;
+				$siz -= $rsz;
+			} // while ( $siz > 0 )
 		case 0:
 			// pixel header
 			$siz = str2int($file, $pos, 4);
@@ -1449,9 +1472,19 @@ function psxtim( &$file )
 			// VERY COMMON
 			// palette header
 			$siz = str2int($file, $pos, 4);
-			$tim['cn'] = (int)($siz / 0x200);
-			$tim['pal'] = mstrpal555($file, $pos+12, 0x100, $tim['cn']);
-				$pos += $siz;
+				$pos += 12;
+				$siz -= 12;
+			$tim['cn']  = 0;
+			$tim['pal'] = array();
+			while ( $siz > 0 )
+			{
+				$rsz = ($siz > 0x200) ? 0x200 : $siz;
+				$tim['pal'][] = pal555( substr($file,$pos,$rsz) );
+				$tim['cn']++;
+
+				$pos += $rsz;
+				$siz -= $rsz;
+			} // while ( $siz > 0 )
 		case 1:
 			// TokiMemo 2 substories *.tml
 			// pixel header

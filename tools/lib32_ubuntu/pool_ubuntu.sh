@@ -1,6 +1,6 @@
 #!/bin/bash
 [ $# = 0 ] && exit
-tmp="/tmp/deb"
+tmp="/tmp/deb.$$"
 [ -f "$tmp" ] && rm -vf "$tmp"
 
 while [ "$1" ]; do
