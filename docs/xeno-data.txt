@@ -527,8 +527,8 @@ Monster Data
 # NOTE : Even + Odd file pair
 #        Odd file has 256x256 pixel data
 
-+0x00 int16 HP
-+0x02 int16 max HP
++0x00 int16 Char HP
++0x02 int16 Char max HP
 
 +0x0c int8
 +0x0d int8
@@ -540,6 +540,9 @@ Monster Data
 +0x13 int8
 +0x14 int8
 +0x15 int8
+
++0xb8 int32 Gear HP
++0xbc int32 Gear max HP
 
 +0x100 int32 drop EXP
 +0x104 int16 drop item rate (max=0x64)

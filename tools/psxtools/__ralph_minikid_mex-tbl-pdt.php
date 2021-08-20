@@ -23,6 +23,24 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require "common.inc";
 require "ralph.inc";
 
+function sect_map()
+{
+	$pos = 0;
+
+	$b1 = ord( $sub[$pos+0] );
+	$b2 = ord( $sub[$pos+1] );
+		$pos += 2;
+
+	$col = $b1 & BIT4;
+	$row = $b1 >> 4;
+
+	$tid = $b2 & BIT4;
+	$cid = $b2 >> 4;
+
+
+	return;
+}
+//////////////////////////////
 function load_mex( $fname, $pfx )
 {
 	$mex = load_file($fname);
@@ -82,9 +100,15 @@ function ralph( $fname )
 	);
 	$cex = $mex[1];
 	ralph_tbl_cex ($cex, "$pfx/cex", $sect);
-	ralph_cex_cpdt($cex, $pdt, $cdt, $pfx, $sect);
+	//ralph_cex_cpdt($cex, $pdt, $cdt, $pfx, $sect);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	ralph( $argv[$i] );
+
+/*
+st01a.mex = RAM 801619c0
+	room = 16x16 tile
+
+ */

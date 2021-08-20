@@ -128,11 +128,12 @@ mkr     SLPM 861.34  Mitsumete Knight R
 	disc1   ALL DONE
 	mana    ALL DONE
 	saga2   ALL DONE , SLUS not supported
-	tm2s    ALL DONE
+	tm2sub  ALL DONE
 	xeno    ALL DONE
 	yuna    *.ss1 only
 	sotn    all maps only
 	lunar2  isok/*.pck , map/*.dat only
+	ralph   --upcoming--
 	mkr     --upcoming--
 	valky   --upcoming--
 	star2   --upcoming--
@@ -143,7 +144,6 @@ mkr     SLPM 861.34  Mitsumete Knight R
 	talep   --upcoming--
 	taled   --upcoming--
 	talee   --upcoming--
-	ralph   --upcoming--
 	tome2   --upcoming--
 	gbm1    --upcoming--
 	gbm2    --upcoming--
@@ -189,20 +189,25 @@ kuma   NDS  CKUJ  Kumatanchi
 mvac   NDS  AVCJ  Magical Vacation 2
 comm   NDS  YW7E  Commando Steel Disaster
 
+	kuma   ALL DONE
 	cvpor  all maps only , *.so/.sc (non-quad) only
-	kuma   *.mbs/*.ftx , *.ncgr/*.nclr/*.nscr only
 
+cotton   SATURN  T-9904G   Magical Night Dreams Cotton 2
+cotton   SATURN  T-9906G   Magical Night Dreams Cotton Boomerang
 sotn     SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 tengai4  SATURN  T-14301G  Tengai Makyou Daishi no Mokushiroku [2 disc]
 yuna     SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
-yuna     SATURN  T-14311G  Galaxy Fraulein Yuna 3
 mika1    SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
+yuna     SATURN  T-14311G  Galaxy Fraulein Yuna 3
 pcrown   SATURN  T-14418G  Princess Crown
+mujin    SATURN  T-28901G  Mujintou Monogatari R
 vfcg     SATURN  Virtua Fighter CG Potrait Series
 
+	cotton   ALL DONE
 	mika1    ALL DONE
 	vfcg     ALL DONE
 	yuna     *.ss1 only
+	mujin    *.vd1 , *.vd2 only
 	pcrown   *.chb/.mcb , *.pak/chr only
 	mika2    --upcoming--
 	sotn     --upcoming--

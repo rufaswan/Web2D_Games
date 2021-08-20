@@ -228,43 +228,30 @@ function int_clamp( $int, $min, $max )
 	return (int)$int;
 }
 
-//        (int)    ceil()     floor()
-//  4.5 = int( 4)  float( 5)  float( 4)
-// -4.5 = int(-4)  float(-4)  float(-5)
-function int_ceil( $int, $ceil )
+//  int near
+//  123, 100 =  200 / ceil
+//  123,-100 =  100 / floor
+// -123, 100 = -100 / ceil
+// -123,-100 = -200 / floor
+//  123,   0 =    0 / invalid
+// -123,   0 =    0 / invalid
+function int_ceil( $int, $near )
 {
-	// round int away from zero
-	//          4   -4  4.5  -4.5
-	//  8   |   8    8   10     8 |
-	// -8   |  -8   -8  -10    -8 |
-	//  8.5 |  12   12   10    12 |
-	// -8.5 | -12  -12  -10   -12 |
-	$sign = ( 0 > $int );
-	if ( $sign )
-		$int = -$int;
-	$int  = (int)ceil($int );
-	$ceil = (int)ceil($ceil);
-	while ( $int % $ceil )
-		$int++;
-	return ( $sign ) ? -$int : $int;
-}
-
-function int_floor( $int, $floor )
-{
-	// round int toward to zero
-	//         4  -4  4.5  -4.5
-	//  8   |  8   8    8    10 |
-	// -8   | -8  -8   -8   -10 |
-	//  8.5 |  8   8    8    10 |
-	// -8.5 | -8  -8   -8   -10 |
-	$sign = ( 0 > $int );
-	if ( $sign )
-		$int = -$int;
-	$int   = (int)floor($int  );
-	$floor = (int)floor($floor);
-	while ( $int % $floor )
-		$int--;
-	return ( $sign ) ? -$int : $int;
+	$int  = (int)$int;
+	$near = (int)$near;
+	if ( $near > 0 )
+	{
+		while ( $int % $near )
+			$int++;
+		return $int;
+	}
+	if ( $near < 0 )
+	{
+		while ( $int % $near )
+			$int--;
+		return $int;
+	}
+	return 0;
 }
 
 function int_ceil_pow2( $int )
@@ -301,7 +288,7 @@ function debug( $str, $name="DEBUG" )
 
 function debug_block( &$str, $blksz )
 {
-	$len = int_floor( strlen($str), $blksz);
+	$len = int_ceil( strlen($str) , -$blksz);
 	$buf = '';
 	for ( $i=0; $i < $len; $i += $blksz )
 	{
@@ -601,7 +588,7 @@ function file2sect( &$file, $sect, $pfx, $parse, $end=0, $save=true )
 		if ( ! isset( $v['o'] ) )
 			continue;
 		$id = array_search($v['o'], $offs);
-		$sz = int_floor($offs[$id+1] - $v['o'], $v['k']);
+		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);
 		$dat = substr($file, $v['o'], $sz);
 
 		if ( $save )

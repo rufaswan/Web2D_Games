@@ -74,6 +74,9 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 ferica
+	tbl = RAM 80111508
+	pdt = RAM 80183e1c
+
 	cdt =  14
 	pdt = b69-1
 	s0  =  224/8  =   44+4

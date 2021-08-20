@@ -145,7 +145,7 @@ function load_tbltim( $fname, $pfx )
 	if ( empty($tbl) )
 		return '';
 
-	$data = array( array() , array() );
+	$data = array();
 	$b1 = str2int($tbl, 4, 4);
 	$b2 = str2int($tbl, 8, 4);
 
@@ -155,16 +155,23 @@ function load_tbltim( $fname, $pfx )
 	{
 		$bak = $st;
 		$st += 8; // TIM header size
-		$b1 = str2int($tbl, $st, 4); $st += $b1; // TIM clut size
-		$b1 = str2int($tbl, $st, 4); $st += $b1; // TIM pixel size
+		$st += str2int($tbl, $st, 4); // TIM clut size
+		$st += str2int($tbl, $st, 4); // TIM pixel size
 
 		printf("%x - %x\n", $bak, $st);
 		$sub = substr($tbl, $bak, $st-$bak);
 		$data[0][] = psxtim($sub);
 	} // while ( $st < $ed )
 
-	$cn = str2int($tbl, $st+8, 4);
-	$data[1] = mstrpal555($tbl, $st+12, 16, $cn);
+	$ed = strlen($tbl);
+	$st = $b2 + 12;
+	while ( $st < $ed )
+	{
+		$cn = str2int($tbl, $st+8, 4);
+			$st += 12;
+		$data[] = mstrpal555($tbl, $st, 16, $cn);
+			$st += ($cn * 0x20);
+	} // while ( $st < $ed )
 
 	// debug
 	foreach ( $data[0] as $k => $v )
@@ -172,7 +179,7 @@ function load_tbltim( $fname, $pfx )
 		if ( $v['t'] == 'CLUT' )
 		{
 			if ( ! isset($v['pal']) || empty($v['pal']) )
-				$v['pal'] = $data[1];
+				$v['pal'] = ( isset($data[2]) ) ? $data[2] : $data[1];
 			foreach ( $v['pal'] as $pk => $pv )
 			{
 				$img = array(

@@ -37,7 +37,7 @@ function PVAB_DEF()
 
 function pvabline( &$vab, &$p1, &$p2 )
 {
-	$len = int_floor(strlen($vab), 0x10);
+	$len = int_ceil(strlen($vab), -0x10);
 	$coef = array(
 		array(  0 ,   0),
 		array( 60 ,   0),
@@ -86,7 +86,7 @@ function pvabline( &$vab, &$p1, &$p2 )
 
 function pvabblock( &$vab, &$vbop )
 {
-	$len = int_floor(strlen($vab), $vbop['in']*$vbop['ac']);
+	$len = int_ceil(strlen($vab), -$vbop['in']*$vbop['ac']);
 	$pos = 0;
 
 	$p1a = 0;

@@ -64,10 +64,10 @@ function LZ00_decode( &$sub )
 	$sub = $dec;
 	return;
 }
-
-function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid )
+//////////////////////////////
+function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid, $bpp )
 {
-	printf("== sect_map( %s , %x , %x , %x )\n", $fn, $w, $h, $cid);
+	printf("== sect_map( %s , %x , %x , %x , %x )\n", $fn, $w, $h, $cid, $bpp);
 
 	$pix = COPYPIX_DEF();
 	$pix['rgba']['w'] = $w;
@@ -77,6 +77,7 @@ function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid )
 	$pix['src']['h'] = 8;
 
 	$pos = 0;
+	$map = '';
 	for ( $y=0; $y < $h; $y += 8 )
 	{
 		for ( $x=0; $x < $w; $x += 8 )
@@ -84,10 +85,10 @@ function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid )
 			$b1 = str2big($spt, $pos+0, 2);
 			$b2 = str2big($spt, $pos+2, 2);
 				$pos += 4;
+			$map .= sprintf("%4x ", $b2);
 
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
-			$tid = $b2 >> 1;
 
 			flag_watch('spt', $b1 & 0x3f00);
 			$pix['hflip'] = $b1 & 0x4000;
@@ -95,21 +96,37 @@ function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid )
 
 			$nid = $b1 & BIT8; // override default palette
 			if ( $nid === 0 )
-				$pal = substr($spl, $cid*0x40, 0x400);
-			else
-				$pal = substr($spl, $nid*0x40, 0x400);
+				$nid = $cid;
 
-			$pix['src']['pal'] = $pal;
-			$pix['src']['pix'] = substr($scp, $tid*0x40, 0x40);
+			if ( $bpp == 4 )
+			{
+				$tid = $b2;
+				$pix['src']['pal'] = substr($spl, $nid*0x40, 0x40);
+
+				$b2 = substr($scp, $tid*0x20, 0x20);
+				bpp4to8($b2);
+				$src = big2little16($b2);
+			}
+			if ( $bpp == 8 )
+			{
+				$tid = $b2 >> 1;
+				$pix['src']['pal'] = substr($spl, $nid*0x40, 0x400);
+
+				$src = substr($scp, $tid*0x40, 0x40);
+			}
+			$pix['src']['pix'] = $src;
 
 			copypix_fast($pix);
 		} // for ( $x=0; $x < $w; $x += 8 )
+		$map .= "\n";
+
 	} // for ( $y=0; $y < $h; $y += 8 )
+	echo "$map\n";
 
 	savepix($fn, $pix, false);
 	return;
 }
-//////////////////////////////
+
 function sch_spt_scp( &$file, $dir )
 {
 	$sch = ''; // sets
@@ -154,6 +171,7 @@ function sch_spt_scp( &$file, $dir )
 		$head = substr($spt, $sptps+0, 0x20);
 		echo debug($head, 'SPT');
 
+		$type  = str2big($head, 0, 2);
 		$sptw  = str2big($head, 4, 2);
 		$spth  = str2big($head, 6, 2);
 		$sptsz = str2big($head, 8, 4);
@@ -164,49 +182,56 @@ function sch_spt_scp( &$file, $dir )
 		{
 			$sptsz = str2big($body, 4, 4);
 			LZ00_decode($body);
+		}
 
-			$bpp = -1;
-			if ( ($sptw*$spth) ==  $sptsz    )  $bpp = 8;
-			if ( ($sptw*$spth) == ($sptsz*2) )  $bpp = 4;
-			printf("%x x %x = %x [%d bpp]\n", $sptw, $spth, $sptsz, $bpp);
-			if ( $bpp < 0 )
-				continue;
-
-			$pal = '';
-			$pix = '';
-			$cc  = 0;
-			if ( $bpp == 8 )
-			{
-				$cc  = 0x100;
-				$pal = substr($spl, $cid*0x40, 0x400);
-				$pix = $body;
-			}
-			if ( $bpp == 4 )
-			{
-				$cc  = 0x10;
+		switch ( $type )
+		{
+			case 0x0000:
+				printf("[4 bpp] %x x %x = %x\n", $sptw, $spth, $sptsz);
 				$pal = substr($spl, $cid*0x40, 0x40);
 				bpp4to8($body);
 				$pix = big2little16($body);
-			}
 
-			$img = array(
-				'cc'  => $cc,
-				'w'   => $sptw,
-				'h'   => $spth,
-				'pal' => $pal,
-				'pix' => $pix,
-			);
-			save_clutfile("$fn.clut", $img);
-		}
-		else // in tilemap
-		{
-			sect_map($body, $scp, $spl, $fn, $sptw, $spth, $cid);
-		}
+				$img = array(
+					'cc'  => 0x10,
+					'w'   => $sptw,
+					'h'   => $spth,
+					'pal' => $pal,
+					'pix' => $pix,
+				);
+				save_clutfile("$fn.clut", $img);
+				break;
+			case 0x0001:
+				printf("[8 bpp] %x x %x = %x\n", $sptw, $spth, $sptsz);
+				$pal = substr($spl, $cid*0x40, 0x400);
+				$pix = $body;
+
+				$img = array(
+					'cc'  => 0x100,
+					'w'   => $sptw,
+					'h'   => $spth,
+					'pal' => $pal,
+					'pix' => $pix,
+				);
+				save_clutfile("$fn.clut", $img);
+				break;
+			case 0x0100:
+				printf("[SCP-4] %x x %x = %x\n", $sptw, $spth, $sptsz);
+				sect_map($body, $scp, $spl, $fn, $sptw, $spth, $cid, 4);
+				break;
+			case 0x0101:
+				printf("[SCP-8] %x x %x = %x\n", $sptw, $spth, $sptsz);
+				sect_map($body, $scp, $spl, $fn, $sptw, $spth, $cid, 8);
+				break;
+			default:
+				php_error("UNKNOWN type %x", $type);
+				break;
+		} // switch ( $type )
 
 	} // while (1)
 	return;
 }
-
+//////////////////////////////
 function cottonmf( &$file, $dir )
 {
 	$data = array();
