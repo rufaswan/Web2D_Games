@@ -437,7 +437,7 @@ function save_file( $fname, $str )
 	if ( strpos($fname, '\\') )
 		$fname = str_replace('\\', '/', $fname);
 
-	if ( strpos($fname, '/') )
+	if ( strpos($fname, '/') !== false )
 		@mkdir( dirname($fname), 0755, true );
 	file_put_contents($fname, $str);
 	return;

@@ -22,28 +22,42 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-printf("%s  SRC_DIR  DST_DIR\n", $argv[0]);
-if ( $argc != 3 )  exit();
-if ( ! is_dir($argv[1]) )  exit();
-if ( ! is_dir($argv[2]) )  exit();
-
-$src = rtrim($argv[1], '/\\');
-$dst = rtrim($argv[2], '/\\');
-
-$list = array();
-lsfile_r($src, $list);
-sort($list);
-
-foreach ( $list as $f )
+function panzer( $fname )
 {
-	$copy = "$dst/$f";
-	if ( file_exists($copy) )
-	{
-		echo "SKIP $copy\n";
-		continue;
-	}
+	// for *.bg only
+	if ( stripos($fname, '.bg') === false )
+		return;
 
-	$file = file_get_contents($f);
-	printf("[%x] COPY %s -> %s\n", strlen($file), $f, $copy);
-	save_file($copy, $file);
-} // foreach ( $list as $f )
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
+
+	// first offset = end header
+	$st = 0;
+	$ed = 0;
+	while (1)
+	{
+		$ed = str2int($file, $st, 4);
+		if ( $ed !== 0 )
+			break;
+		$st += 8;
+	} // while (1)
+
+	$dir = str_replace('.', '_', $fname);
+	while ( $st < $ed )
+	{
+		$id  = $st >> 3;
+		$off = str2int($file, $st+0, 4);
+		$siz = str2int($file, $st+4, 4);
+			$st += 8;
+		if ( $off == 0 || $siz == 0 )
+			continue;
+
+		$sub = substr($file, $off, $siz);
+		$fn = sprintf("%s/%04d.bin", $dir, $id);
+		save_file($fn, $sub);
+	} // while ( $st < $ed )
+	return;
+}
+
+for ( $i=1; $i < $argc; $i++ )
+	panzer( $argv[$i] );

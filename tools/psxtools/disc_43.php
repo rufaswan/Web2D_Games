@@ -203,27 +203,13 @@ function dwn_scn( &$file, &$sect, $dir )
 	return;
 }
 //////////////////////////////
-function dw2_pak( &$file, $pos, $pak, $siz )
+function dw2_pak( &$file, $pos, $siz, $clr )
 {
 	// SCUS 946.05 , sub_80043e04
-	if ( $pak == 3 )
-	{
-		$clr = substr($file, $pos, 16);
-			$pos += 16;
-	}
-	else
-	{
-		$clr = '';
-		$b1 = ord( $file[$pos] ) - 0x10;
-			$pos++;
-		for ( $i=0; $i < 16; $i++ )
-			$clr .= chr($b1+$i);
-	}
 	echo debug($clr, 'pakpal');
 
 	$dec = '';
 	$buf = array();
-	$bak = $pos;
 
 	while ( $siz > 0 )
 	{
@@ -254,7 +240,6 @@ function dw2_pak( &$file, $pos, $pak, $siz )
 		}
 	} // while ( $siz > 0 )
 
-	printf("%x - %x [%x]\n", $bak, $pos, $pos-$bak);
 	return $dec;
 }
 
@@ -317,42 +302,65 @@ function dw2_scn( &$file, &$sect, $dir )
 
 		$b1 = str2int($sub6, 0, 2);
 		$b2 = str2int($sub6, 2, 2);
-			$w = $b1 & 0xfff;
-			$h = $b2 & 0xfff;
-			$pak = $b2 >> 14;
+			$w   = $b1 & 0x0fff;
+			$h   = $b2 & 0x0fff;
+			$pak = $b2 & 0xf000;
 
 		$b1 = str2int($sub6,  8, 3);
 		$b2 = str2int($sub6, 12, 3);
 			$st19 = $b1;
 			$st5  = $b2;
 
-		if ( $st5 != 0 )
+		$fn = sprintf("%s/%d_%d/%04d.clut", $dir, ($st5 !== 0), $pak >> 12, $id6-1);
+		$img = array(
+			'cc' => 0x100,
+			'w'  => $w,
+			'h'  => $h,
+		);
+
+		if ( $st5 !== 0 )
 		{
-			$pal = substr($file, $st5, 0x400);
-			palbyte($pal);
-			$pix = dw2_rle($file, $st19, $w*$h);
-			$img = array(
-				'cc' => 0x100,
-				'w'  => $w,
-				'h'  => $h,
-				'pal' => $pal,
-				'pix' => $pix,
-			);
-			save_clutfile("$fn.clut", $img);
+			$img['pal'] = substr($file, $st5, 0x400);
+			palbyte( $img['pal'] );
 		}
 		else
 		{
-			$pal = ( $pak == 3 ) ? dw2_syspal($file, $st5) : grayclut(0x100);
-			$pix = dw2_pak($file, $st19, $pak, $w*$h);
-			$img = array(
-				'cc' => 0x100,
-				'w'  => $w,
-				'h'  => $h,
-				'pal' => $pal,
-				'pix' => $pix,
-			);
-			save_clutfile("$fn.clut", $img);
+			$img['pal'] = dw2_syspal($file, $sect[5], $sect[6]);
 		}
+
+		switch ( $pak )
+		{
+			case 0xc000: // +10 clut , 4-bpp
+				$clr = substr($file, $st19, 0x10);
+					$st19 += 0x10;
+				$img['pix'] = dw2_pak($file, $st19, $w*$h, $clr);
+				break;
+
+			//case 0x8000:
+				//break;
+
+			case 0x4000: // +1 clut , 4-bpp
+				$b1 = ord( $file[$st19] );
+					$st19++;
+
+				$clr = '';
+				for ( $i=0; $i < 0x10; $i++ )
+				{
+					$b2 = ($b1 - 1 + $i) & BIT8;
+					$clr .= chr($b2);
+				}
+				$img['pix'] = dw2_pak($file, $st19, $w*$h, $clr);
+				break;
+
+			case 0: // +0 clut , 8-bpp
+				$img['pix'] = dw2_rle($file, $st19, $w*$h);
+				break;
+
+			default:
+				return php_error("UNKNOWN pak %x", $pak);
+		} // switch ( $pak )
+
+		save_clutfile($fn, $img);
 	} // while ( $st6 < $ed6 )
 	return;
 }
@@ -533,7 +541,7 @@ function disc( $tag, $fname )
 	#   DWN - - - 9 - - f  -  - 18 19 1b 1c 1d  - 20 31
 	#   psx - - p - p - -  -  -  -  -  -  -  p  p  -  -
 	# psx = Playstation One release of Discworld Noir
-	save_txt($file, $sect, "{$dir}_txt");
+	//save_txt($file, $sect, "{$dir}_txt");
 
 	switch ( $tag )
 	{
@@ -607,6 +615,16 @@ sub_80043e04 - 80044588
 	10  c8  10  c8  10  c5  c8  c5
 	10  c8  10  c7  ff*2
 	c8  c7  10*8  0*16
+
+no palette / sect[5]
+	act[1-4].scn
+	dw2.scn
+	lug[01-10].scn
+	objects.scn
+	rw[01-10].scn
+	title.scn => 3 palettes
+
+
 
 discworld noir
 	RAM 801005d0 =   4.scn/ 3120

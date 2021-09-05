@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "pvab.inc";
+require "psx_pvab.inc";
 
 function vab2wav( &$vbop, $fname )
 {

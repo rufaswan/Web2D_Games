@@ -212,7 +212,7 @@ function xeno( $fname1, $fname2 )
 		$btl .= chrint(0, 4);
 		$btl .= $data;
 		$btl .= $pix;
-		save_file("$dir/$i.bin", $btl);
+		save_file("$dir/spr/$i.bin", $btl);
 
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;

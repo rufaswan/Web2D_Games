@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-function crcsum( &$sub )
+function xorsum( &$sub )
 {
 	// SCUS 946.05 , sub_80012598
 	//   auto-detect if the 0x800 block has checksum
@@ -50,14 +50,18 @@ function disc2( $fname )
 		$of = str2int($lfi, $st+16,  4);
 			$st += 20;
 
-		if ( $sz >= 0x800 )
+		if ( $sz > 0x7fc )
 		{
+			// auto-detect checksum
 			$sub = fp2str($lfd, $of, 0x800);
-			$sct = crcsum($sub);
+			$sct = xorsum($sub);
+
+			// no skipping
 			if ( $sct == 0x800 )
 				$sub = fp2str($lfd, $of, $sz);
 			else
 			{
+				// on every 800 , read 7fc and skip 4
 				$b1  = $sz;
 				$b2  = $of;
 				$sub = '';
@@ -70,7 +74,7 @@ function disc2( $fname )
 				} // while ( $b1 > 0 )
 			}
 		}
-		else
+		else // under 1 sector
 			$sub = fp2str($lfd, $of, $sz);
 
 		$fn = strtolower($fn);

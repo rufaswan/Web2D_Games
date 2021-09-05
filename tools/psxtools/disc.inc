@@ -104,14 +104,25 @@ function scnsect( &$file )
 	return $sect;
 }
 //////////////////////////////
-function dw2_syspal( $file, $st5 )
+function dw2_syspal( $file, $st5, $st6 )
 {
-	// Discworld 2 reuses background palette for sprites
-	// it is to use the FIRST palette from st5
-	// and if st5 is empty, return grayscale palette
-	$nx = str2int($file, $st5-4, 4);
-	if ( ($st5+0x400) < $nx ) // no palette available
+	// it is for indexed images without required palette.
+	// Discworld 2 reuses background palette for sprites/objects
+	//
+	// This allows Rincewind sprites to be:
+	//   lighter on desert/outdoor/daytime
+	//   darker  on shades/indoor /nighttime
+	$siz = $st6 - 8 - $st5;
+	$cn  = $siz >> 10; // div  siz, 0x400
+	trace("st5  %x  [%x]\n", $siz, $cn);
+
+	// ZERO palette = manual pairing = grayscale
+	// TWO+ palette = manual fixing  = grayscale
+	if ( $cn !== 1 )
+	{
+		php_notice("s[5] has ZERO or TWO+ palettes [%d]", $cn);
 		return grayclut(0x100);
+	}
 
 	$pal = substr($file, $st5, 0x400);
 	palbyte($pal);

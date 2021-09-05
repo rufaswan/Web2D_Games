@@ -21,9 +21,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "pvab.inc";
+require "psx_pvab.inc";
 
-function disc2( $idx, $smp )
+function disc1( $idx, $smp )
 {
 	$idxp = file_get_contents($idx);
 	$smpp = fopen($smp, 'rb');
@@ -44,7 +44,7 @@ function disc2( $idx, $smp )
 
 	$vbop = PVAB_DEF();
 	$vbop['ac'] = 1;
-	$vbop['ar'] = 22050;
+	$vbop['ar'] = 44100;
 
 	foreach ( $ids as $k => $v )
 	{
@@ -74,4 +74,4 @@ function disc2( $idx, $smp )
 
 printf("%s  english.idx  english.smp\n", $argv[0]);
 if ( $argc != 3 )  exit();
-disc2( $argv[1] , $argv[2] );
+disc1( $argv[1] , $argv[2] );

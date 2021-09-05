@@ -72,7 +72,7 @@ function dwn_scn( &$file, &$sect, $dir )
 			$st19 = $b1 & 0x01ffffff;
 			$rle  = ( $b2 & 1 ); // 0 raw , 1 rle , 40000 raw+locale
 
-		if ( ! $rle )
+		if ( $rle === 0 )
 		{
 			$src = substr($file, $st19, $w*$h*2);
 			$img = array(
@@ -81,6 +81,7 @@ function dwn_scn( &$file, &$sect, $dir )
 				'pix' => dwn_pal565($src),
 			);
 			save_clutfile("$fn.rgba", $img);
+			continue;
 		}
 	} // while ( $st6 < $ed6 )
 
@@ -115,7 +116,7 @@ function dw2_scn( &$file, &$sect, $dir )
 			$st5  = $b2;
 
 		$img = array('w' => $w , 'h' => $h);
-		if ( $st5 != 0 )
+		if ( $st5 !== 0 )
 		{
 			$pal = substr($file, $st5, 0x400);
 			palbyte($pal);
@@ -123,6 +124,7 @@ function dw2_scn( &$file, &$sect, $dir )
 			$img['pal'] = $pal;
 			$img['pix'] = substr($file, $st19, $w*$h);
 			save_clutfile("$fn.clut", $img);
+			continue;
 		}
 		//else
 			//dw2_pak($file, $st19, $w, $h, $pak, $fn);
@@ -215,9 +217,10 @@ function disc( $fname )
 	// 3 = tile map   data
 	// 4 = tile pixel data
 	// 5 = palette data
-	save_txt($file, $sect, "{$dir}_txt");
+	//save_txt($file, $sect, "{$dir}_txt");
 	if ( ! isset( $sect[6] ) ) // no graphic
 		return;
+
 	if ( isset( $sect[3] ) )
 		return dw1_scn($file, $sect, "{$dir}_gfx");
 	if ( isset( $sect[5] ) )

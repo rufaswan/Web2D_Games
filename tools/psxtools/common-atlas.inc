@@ -75,7 +75,7 @@ function maptree_add( &$tree, &$img, $x, $y, $w, $h )
 
 function atlasmap( &$list )
 {
-	usort($list, function ($a, $b){
+	usort($list, function($a, $b){
 		// sort height DESC , then width DESC
 		if ( $a['h'] == $b['h'] )
 			return ( $a['w'] < $b['w'] );
