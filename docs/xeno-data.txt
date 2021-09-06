@@ -445,6 +445,23 @@ Effect Type
 	19 00 00 10  ??? (elly/chaos rodG)
 	19 00 00 01  eth mech silenced (bart/sonic gwhip)
 ==============================
+Character Level
+2594.bin/43.bin (BLOCK = 0x110 or 272 bytes)
+ 0 int8[] Spell Learning Level
+16 int8[] Deathblow Learning Level
+
+	0xf0  Fei
+	0x200 Elly
+	0x310 Citan
+	0x420 Bart
+	0x530 Billy
+	0x640 Rico
+	0x750 Emerald
+	0x860 Chu-chu
+	0x970 Maria
+	0xa80 Citan/Sword
+	0xb90 Emerald/Adult
+==============================
 Character Skill + Spells
 2594.bin/3.bin - 13.bin (BLOCK = 0x28 or 40 bytes)
 	03  Fei
