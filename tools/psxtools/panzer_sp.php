@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+require "common-guest.inc";
 
 //define("DRY_RUN", true);
 
@@ -59,7 +60,7 @@ function pz_alpha6( $fg, $bg )
 	return alpha_add($fg, $bg);
 }
 //////////////////////////////
-function sect_part( &$file, $off, $fn, &$src, &$pal )
+function sect_part( &$file, $off, $fn, &$pal, &$src )
 {
 	$cnt = str2int($file, $off, 4);
 		$off += 4;
@@ -129,7 +130,7 @@ function sect_part( &$file, $off, $fn, &$src, &$pal )
 	savepix($fn, $pix, true);
 	return;
 }
-
+//////////////////////////////
 function pixtex( &$pix )
 {
 	$len  = strlen($pix);
@@ -173,6 +174,46 @@ done:
 	return;
 }
 
+function spfile( &$file, $dir )
+{
+	$meta = array();
+
+	// animation data
+	$of = str2int($file, 0, 4);
+	$sz = str2int($file, 4, 4);
+	$meta[0] = substr($file, $of, $sz);
+
+	// ???
+	$of = str2int($file,  8, 4);
+	$sz = str2int($file, 12, 4);
+	$meta[1] = substr($file, $of, $sz);
+
+	// sprite data
+	$of = str2int($file, 16, 4);
+	$sz = str2int($file, 20, 4);
+	$meta[2] = substr($file, $of, $sz);
+
+	// pixel data
+	$of = str2int($file, 24, 4);
+	$sz = str2int($file, 28, 4);
+	$sub = substr($file, $of, $sz);
+
+		$pal = substr($sub, 0, 0x200);
+		$pix = substr($sub, 0x200);
+			$pal = pal555($pal);
+			pixtex($pix);
+
+	$meta[3] = array($pal, $pix);
+
+	save_file("$dir/meta/0.meta", $meta[0]);
+	save_file("$dir/meta/1.meta", $meta[1]);
+	save_file("$dir/meta/2.spr" , $meta[2]);
+	save_file("$dir/meta/30.pal", $meta[3][0]);
+	save_file("$dir/meta/31.pix", $meta[3][1]);
+	$file = $meta;
+	return;
+}
+
 function panzer( $fname )
 {
 	// for *.sp only
@@ -183,27 +224,17 @@ function panzer( $fname )
 	if ( empty($file) )  return;
 
 	$dir = str_replace('.', '_', $fname);
+	spfile($file, $dir);
 
-	$b1 = str2int($file, 0x18, 4);
-	$b2 = str2int($file, 0x1c, 4);
-	$sub = substr($file, $b1, $b2);
-
-	$pal = substr($sub, 0, 0x200);
-	$pix = substr($sub, 0x200);
-		$pal = pal555($pal);
-		pixtex($pix);
-	//save_file("$fname.pix", $pix);
-
-	$bas = str2int($file, 0x10, 4);
-	$cnt = str2int($file, $bas+8, 4);
+	$cnt = str2int($file[2], 8, 4);
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$p = 0x10 + ($i * 4);
-		$of = str2int($file, $bas+$p, 4);
+		$of = str2int($file[2], $p, 4);
 
 		$fn = sprintf("%s/%04d", $dir, $i);
-		sect_part($file, $bas+$of, $fn, $pix, $pal);
-	}
+		sect_part($file[2], $of, $fn, $file[3][0], $file[3][1]);
+	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }
 
@@ -212,11 +243,17 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 blending
-	FG 6880e8 + BG 705038
-		80 + 00 = 686890 ( (FG+BG) / 2 )
-		80 + 20 = d8d0f8 ( FG + BG )
-		80 + 40 = 080000 ( BG - FG )
-		80 + 60 = 887070 ( FG/4 + BG )
+	koh.sp  = 800d6cfc    0.png/+ 1b8=800d6eb4
+	kasu.sp = 800d70ec  122.png/+6e44=800ddf30
+	syou.sp = 80
+	aine.sp = 800d7018    0.png/+ 294=800d72ac
+
+	koh 77,166
+		BG 392018 + FG 6a83ee
+			80  525283 or (BG +  FG) / 2
+			82  a4a4ff or  BG +  FG
+			84  000000 or  BG -  FG
+			86  524152 or  BG + (FG  / 4)
 
 	headlight error if without blending
 		zako06

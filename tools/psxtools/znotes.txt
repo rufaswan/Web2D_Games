@@ -274,3 +274,11 @@ superuser.com/questions/571463/how-do-i-append-a-bunch-of-wav-files-while-retain
 
 		sox  short1.wav  short2.wav  short3.wav  long.wav
 
+legacy.imagemagick.org/discourse-server/viewtopic.php?t=19297
+
+	The best way from command line is to either use a -format FX/Pixel escape to get a specific pixel values,
+	or to crop the image down to just that one pixel and then use format or txt: output.
+
+		convert rose: -format  '%[pixel:p{40,30}]' info:-
+		convert rose: -format '#%[hex:p{40,30}]'   info:-
+		convert rose: -crop 1x1+40+30 -depth 8 txt:

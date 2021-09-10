@@ -29,8 +29,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require "common.inc";
 require "common-guest.inc";
 
-$gp_key = '';
-
 function calchash( $key, $mask, $val )
 {
 	$primes = array(
@@ -260,17 +258,14 @@ function calclocalkey( $key, $hash, $idx )
 	return $local;
 }
 
-function encrypt_sect( &$root, $isec )
+function encrypt_sect( &$root, $isec, $cvmkey )
 {
-	global $gp_key;
-	if ( empty($gp_key) )
-		return;
-	printf("== encrypt_sect( %x )\n", $isec);
+	printf("== encrypt_sect( %x , %s )\n", $isec, bin2hex($cvmkey));
 
 	$len = strlen($root);
 	for ( $i=0; $i < $len; $i += 0x800 )
 	{
-		$seed = ord( $gp_key[5] );
+		$seed = ord( $cvmkey[5] );
 
 		for ( $j=0; $j < 0x800; $j += 8 )
 		{
@@ -284,7 +279,7 @@ function encrypt_sect( &$root, $isec )
 			$hash  = chrbig($hv2, 2);
 			$hash .= chrbig($hv3, 2);
 
-			$local = calclocalkey($gp_key, $hash, $idx);
+			$local = calclocalkey($cvmkey, $hash, $idx);
 			$seed  = $idx + $j;
 			for ( $k=0; $k < 8; $k++ )
 			{
@@ -317,11 +312,11 @@ function read_sect( $fp, $st, $sect, $size )
 	return fp2str($fp, $pos, $size);
 }
 
-function isoloopdir( $fp, $isost, $lba, $siz, $enc )
+function isoloopdir( $fp, $isost, $lba, $siz, $enc, $cvmkey )
 {
 	$sect = read_sect($fp, $isost, $lba, $siz);
 	if ( $enc )
-		encrypt_sect($sect, $lba);
+		encrypt_sect($sect, $lba, $cvmkey);
 
 	$func = __FUNCTION__;
 	for ( $i=0; $i < $siz; $i += 0x800 )
@@ -351,13 +346,13 @@ function isoloopdir( $fp, $isost, $lba, $siz, $enc )
 	} // for ( $i=0; $i < $siz; $i += 0x800 )
 
 	if ( ! $enc )
-		encrypt_sect($sect, $lba);
+		encrypt_sect($sect, $lba, $cvmkey);
 
 	write_sect($fp, $isost, $lba, $sect);
 	return;
 }
 
-function ps2cvm( $fname )
+function ps2cvm( $fname, $cvmkey )
 {
 	$fp = fopen($fname, 'rb+');
 	if ( ! $fp )  return;
@@ -374,13 +369,13 @@ function ps2cvm( $fname )
 	// if decrypted , loop all dirs to encrypt it back
 	$root = read_sect($fp, $isost, 16, 0x800);
 	if ( $enc )
-		encrypt_sect($root, 16);
+		encrypt_sect($root, 16, $cvmkey);
 	$lba = str2int($root, 0x9e, 4);
 	$siz = str2int($root, 0xa6, 4);
-	isoloopdir($fp, $isost, $lba, $siz, $enc);
+	isoloopdir($fp, $isost, $lba, $siz, $enc, $cvmkey);
 
 	if ( ! $enc )
-		encrypt_sect($root, 16);
+		encrypt_sect($root, 16, $cvmkey);
 	write_sect($fp, $isost, 16, $root);
 
 	$head[0x33] = chr( $h33 ^ 0x10 );
@@ -390,12 +385,15 @@ function ps2cvm( $fname )
 	return;
 }
 //////////////////////////////
+printf("%s  [KEY]  CVMFILE\n", $argv[0]);
+
+$cvmkey = cvmkey('shinobutan');
 for ( $i=1; $i < $argc; $i++ )
 {
 	if ( is_file( $argv[$i] ) )
-		ps2cvm( $argv[$i] );
+		ps2cvm( $argv[$i], $cvmkey );
 	else
-		$gp_key = cvmkey( $argv[$i] );
+		$cvmkey = cvmkey( $argv[$i] );
 }
 
 /*

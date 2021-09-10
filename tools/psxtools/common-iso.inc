@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
-function isofile_r( $iso, &$sub, &$list, $par )
+function isofile_r( $iso, &$sub, &$list, $par, $skip=0 )
 {
 	$func = __FUNCTION__;
 	$size = strlen($sub);
@@ -47,7 +47,7 @@ function isofile_r( $iso, &$sub, &$list, $par )
 			$lfg = ord( $sub[$p+25] );
 			if ( $lfg & 2 ) // is_dir
 			{
-				$s = fp2str($iso, $lba*0x800, $lsz);
+				$s = fp2str($iso, $skip+$lba*0x800, $lsz);
 				$func($iso, $s, $list, "$par/$lfn");
 				goto endp;
 			}
@@ -74,19 +74,19 @@ endp:
 	return;
 }
 
-function lsiso_r( $iso )
+function lsiso_r( $iso, $skip=0 )
 {
-	$s = fp2str($iso, 0x8000, 0x800);
+	$s = fp2str($iso, $skip+0x8000, 0x800);
 	if ( substr($s,1,5) !== 'CD001' )
 		return '';
 
 	$s = substr($s, 0x9c); // root dir
 	$lba = str2int($s,  2, 4);
 	$siz = str2int($s, 10, 4);
-	$s = fp2str($iso, $lba*0x800, $siz);
+	$s = fp2str($iso, $skip+$lba*0x800, $siz);
 
 	$list = array();
-	isofile_r($iso, $s, $list, '');
+	isofile_r($iso, $s, $list, '', $skip);
 	return $list;
 }
 //////////////////////////////

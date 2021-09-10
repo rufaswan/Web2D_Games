@@ -55,7 +55,7 @@ function bin2iso( $fname )
 	if ( ! $fp )  return;
 
 	$detect = array(
-		//    type              s-size  s-head cd-head
+		//    type               s-size  s-head  cd-head
 		array("iso/800+ 0"      , 0x800 ,    0  , 0      ),
 		array("psx/930+18"      , 0x930 , 0x18  , 0      ), // psx bin
 		array("sat/930+10"      , 0x930 , 0x10  , 0      ), // saturn bin
@@ -80,7 +80,7 @@ function bin2iso( $fname )
 			printf("DETECT %s , %x , %x , %x , %s\n", $type, $ssize, $shead, $cdhead, $fname);
 			return expiso($fp, $fname, $ssize, $shead, $cdhead);
 		}
-	}
+	} // foreach ( $detect as $det )
 	fclose($fp);
 	return;
 }
