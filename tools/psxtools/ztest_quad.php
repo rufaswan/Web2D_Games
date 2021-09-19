@@ -36,19 +36,19 @@ require "common-quad.inc";
 	//   0, 0  10,13    0, 0  11,12
 	//  13,10  23,23   12,11  23,23
 	$quad = array(
-		array( 0, 0,1),
-		array(10,13,1),
-		array(23,23,1),
-		array(13,10,1),
+		array(23, 0,1),
+		array(17,17,1),
+		array( 0,23,1),
+		array( 7, 7,1),
 	);
 
 	$q1 = triad_area($quad[0], $quad[1], $quad[2]); // ABC
 	$q2 = triad_area($quad[0], $quad[3], $quad[2]); // ADC
 	$qsz = $q1 + $q2;
 
-	for ( $y=0; $y < 25; $y++ )
+	for ( $y=0; $y < 26; $y++ )
 	{
-		for ( $x=0; $x < 25; $x++ )
+		for ( $x=0; $x < 26; $x++ )
 		{
 			$xy = array($x,$y,1);
 			$q1 = triad_area($xy, $quad[0], $quad[1]); // pAB
@@ -59,10 +59,10 @@ require "common-quad.inc";
 			// if $xy is outside , $q will be bigger than $r
 			if ( ($q1+$q2+$q3+$q4) > $qsz )
 			{
-				if ( ($y%10) == 0 )
-					echo ( ($x%10) == 0 ) ? '+' : '-';
+				if ( ($y%5) == 0 )
+					echo ( ($x%5) == 0 ) ? '+' : '-';
 				else
-					echo ( ($x%10) == 0 ) ? '|' : ' ';
+					echo ( ($x%5) == 0 ) ? '|' : ' ';
 				continue;
 			}
 
@@ -100,7 +100,8 @@ require "common-quad.inc";
 		10(30-10) + 20(10-20) + 30(20-30)
 		= 10*20 + 20*-10 + 30*-10
 		= 200 + -200 + -300
-		= -300 / 2 = 150
+		= -300 / 2
+		= 150
 
 		// GIMP
 		21*21 - 11*11/2 - 11*21/2 - 21*11/2

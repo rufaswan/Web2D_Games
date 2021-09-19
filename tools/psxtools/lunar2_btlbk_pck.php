@@ -22,33 +22,38 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-function xeno( $fname )
+function lunar2( $fname )
 {
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
+	// for btlbk*.pck only
+	if ( preg_match('|btlbk[0-9]+\.pck|', $fname) === false )
+		return;
 
-	$dir = str_replace('.', '_', $fname);
-	$len = strlen($file);
+	$pck = file_get_contents($fname);
+	if ( empty($pck) )  return;
 
-	for ( $i=0; $i < $len; $i += 0x1000 )
-	{
-		$pal = substr($file, $i+0,     0x100);
-		$pix = substr($file, $i+0x100, 60*64);
+	 // all 2 (pix , clut)
+	if ( str2int($pck,0,4) !== 2 )
+		return;
 
-		$img = array(
-			'cc'  => 0x80,
-			'w'   => 60,
-			'h'   => 64,
-			'pal' => pal555($pal),
-			'pix' => $pix,
-		);
+	$pos = 4;
+	$sz1 = str2int($pck, $pos+0, 4);
+	$pix = substr ($pck, $pos+4, $sz1);
 
-		$fn = sprintf("$dir/%04d.clut", $i/0x1000);
-		save_clutfile($fn, $img);
-	} // for ( $i=0; $i < $len; $i += 0x1000 )
+	$pos += (4 + $sz1);
+	$sz2 = str2int($pck, $pos+0, 4);
+	$pal = substr ($pck, $pos+4, $sz2);
+		$pal = pal555($pal);
 
+	$img = array(
+		'cc'  => strlen($pal) >> 2,
+		'w'   => strlen($pix) >> 8,
+		'h'   => 0x100,
+		'pal' => $pal,
+		'pix' => $pix,
+	);
+	save_clutfile("$fname.clut", $img);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	xeno( $argv[$i] );
+	lunar2( $argv[$i] );

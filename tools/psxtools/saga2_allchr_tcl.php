@@ -31,34 +31,49 @@ function saga2( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$pix = "";
-	for ( $i=0; $i < 0xb000; $i++ )
-	{
-		$b = ord( $file[$i] );
-		$b1 = ($b >> 0) & BIT4;
-		$b2 = ($b >> 4) & BIT4;
-		$pix .= chr($b1) . chr($b2);
-	}
-
-	$clut = mstrpal555($file, 0xb000, 0x10, 64);
 	$dir = str_replace('.', '_', $fname);
 
-	foreach ( $clut as $k => $c )
+	$px1 = substr($file, 0     , 0xa800);
+	$px2 = substr($file, 0xa800, 0x800 );
+	$pal = substr($file, 0xb000, 0x800 );
+
+	bpp4to8($px1);
+	bpp4to8($px2);
+	$pal = pal555($pal);
+
+	$cid = 0;
+	for ( $x=0; $x < 0x100; $x += 0x10 )
 	{
-		if ( trim($c, ZERO.BYTE) == "" )
-			continue;
-		$fn = sprintf("$dir/%02d.clut", $k);
+		$img = array(
+			'cc'  => 0x10,
+			'w'   => 0x10,
+			'h'   => 0x10,
+			'pal' => substr($pal, $cid*0x40, 0x40),
+			'pix' => rippix8($px2, $x, 0, 0x10, 0x10, 0x100, 0x10),
+		);
 
-		$data = "CLUT";
-		$data .= chrint(0x10, 4); // no clut
-		$data .= chrint(256 , 4); // width
-		$data .= chrint(352 , 4); // height
-		$data .= $c;
-		$data .= $pix;
+		$fn = sprintf("%s/%04d.clut", $dir, $cid);
+			$cid++;
+		save_clutfile($fn, $img);
+	} // for ( $x=0; $x < 0x100; $x += 0x20 )
 
-		printf("%8x , %8x , $fn\n", $st, $siz);
-		save_file($fn, $data);
-	}
+	for ( $y=0; $y < 0x150; $y += 0x38 )
+	{
+		for ( $x=0; $x < 0x100; $x += 0x20 )
+		{
+			$img = array(
+				'cc'  => 0x10,
+				'w'   => 0x20,
+				'h'   => 0x38,
+				'pal' => substr($pal, $cid*0x40, 0x40),
+				'pix' => rippix8($px1, $x, $y, 0x20, 0x38, 0x100, 0x150),
+			);
+
+			$fn = sprintf("%s/%04d.clut", $dir, $cid);
+				$cid++;
+			save_clutfile($fn, $img);
+		} // for ( $x=0; $x < 0x100; $x += 0x20 )
+	} // for ( $y=0; $y < 0x150; $y += 0x38 )
 
 	return;
 }

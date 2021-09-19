@@ -43,7 +43,8 @@ function load_cdt( $fname )
 		return '';
 
 	$cn  = str2int($cdt, 0, 4);
-	return mstrpal555($cdt, 4, 16, $cn);
+	$pal = substr($cdt, 4, $cn*0x20);
+	return pal555($pal);
 }
 //////////////////////////////
 function ralph( $fname )

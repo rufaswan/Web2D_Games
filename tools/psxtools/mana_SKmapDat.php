@@ -106,7 +106,7 @@ function secttile( &$pix, $dat, $bpp, $x, $y )
 
 		$ripd = substr($gp_pixd, $row, 0x200);
 		$pix['src']['pix'] = rippix8($ripd, 0, 0, 16, 16, $cls, 0x100);
-		$pix['src']['pal'] = $gp_clut[$cn];
+		$pix['src']['pal'] = substr($gp_clut, $cn*0x400, 0x400);
 		$pix['dx'] = $x;
 		$pix['dy'] = $y;
 		copypix_fast($pix, 1);
@@ -133,9 +133,7 @@ function secttile( &$pix, $dat, $bpp, $x, $y )
 		$ripd = substr($gp_pixd, $row, 0x200);
 		$pix['src']['pix'] = rippix4($ripd, 0, 0, 16, 16, $cls, 0x100);
 
-		$cn1 = ($cn >> 0) & BIT4;
-		$cn2 = ($cn >> 4) & BIT4;
-		$pix['src']['pal'] = substr($gp_clut[$cn2], $cn1*0x40, 0x40);
+		$pix['src']['pal'] = substr($gp_clut, $cn*0x40, 0x40);
 		$pix['dx'] = $x;
 		$pix['dy'] = $y;
 		copypix_fast($pix, 1);
@@ -259,19 +257,8 @@ function sect1( &$file, $nid, $base )
 			$clut_end = $data_off;
 
 		$siz = $clut_end - $clut_off;
-		while ( $siz >= 0x200 )
-		{
-			printf("add CLUT 0x200 @ %x\n", $clut_off);
-			$gp_clut[] = strpal555($file, $clut_off, 0x100);
-			$clut_off += 0x200;
-			$siz -= 0x200;
-		} // while ( $siz >= 0x200 )
-
-		if ( $siz > 0 )
-		{
-			printf("add CLUT 0x%x @ %x\n", $siz, $clut_off);
-			$gp_clut[] = strpal555($file, $clut_off, $siz/2);
-		}
+		$pal = substr($file, $clut_off, $siz);
+		$gp_clut = pal555($pal);
 	}
 
 	$st = $data_off;
@@ -307,18 +294,15 @@ function srcpix( &$pix, $dir )
 	save_file("$dir/pix-8.clut", $clut);
 
 	// 4-bpp
+	$b = $pix;
+	bpp4to8($b);
+
 	$clut = "CLUT";
 	$clut .= chrint(0x10, 4);
 	$clut .= chrint($w*2, 4);
 	$clut .= chrint($h,   4);
 	$clut .= grayclut(0x10);
-	for ( $i=0; $i < $len; $i++ )
-	{
-		$b = ord( $pix[$i] );
-		$b1 = ($b >> 0) & BIT4;
-		$b2 = ($b >> 4) & BIT4;
-		$clut .= chr($b1) . chr($b2);
-	}
+	$clut .= $b;
 	save_file("$dir/pix-4.clut", $clut);
 	return;
 }

@@ -54,7 +54,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 8e 86 = 32 * 56 (700/2 +380)
  * => y++ = 8+(i*8)
  */
-
 require "common.inc";
 
 function spr_wh( &$file, $st )
@@ -88,35 +87,32 @@ function saga2( $fname )
 	$dir = str_replace('.', '_', $fname);
 	$spr_wh = spr_wh($file, 0x10);
 
-	$clut = str2int ($file, 0x0c,  4);
-	$clut = strpal555($file, $clut, 0x10);
-		// first color is always alpha
-		$clut[3] = ZERO;
+	$clut = str2int($file, 0x0c, 4);
+	$clut = substr ($file, $clut, 0x20);
+		$clut = pal555($clut);
+		$clut[3] = ZERO; // bgzero
 
 	$st = 0x10 + count($spr_wh) * 4;
 	foreach ( $spr_wh as $k => $wh )
 	{
-		$out = sprintf("$dir/%04d.clut", $k);
 		list($w,$h) = $wh;
-
-		$data = "CLUT";
-		$data .= chrint(0x10, 4); // no clut
-		$data .= chrint($w, 4); // width
-		$data .= chrint($h, 4); // height
-		$data .= $clut;
 
 		$len = $w * $h / 2;
 		$pix = substr($file, $st, $len);
-		for ( $i=0; $i < $len; $i++ )
-		{
-			$b = ord( $pix[$i] );
-			$b1 = ($b >> 0) & BIT4;
-			$b2 = ($b >> 4) & BIT4;
-			$data .= chr($b1) . chr($b2);
-		}
-		save_file($out, $data);
-		$st += $len;
-	}
+			$st += $len;
+		bpp4to8($pix);
+
+		$img = array(
+			'cc'  => 0x10,
+			'w'   => $w,
+			'h'   => $h,
+			'pal' => $clut,
+			'pix' => $pix,
+		);
+
+		$out = sprintf("$dir/%04d.clut", $k);
+		save_clutfile($out, $img);
+	} // foreach ( $spr_wh as $k => $wh )
 	return;
 }
 

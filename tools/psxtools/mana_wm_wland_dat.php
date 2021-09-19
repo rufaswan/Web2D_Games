@@ -97,7 +97,7 @@ function sect1( &$file, $base, $fn )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($gp_pix, $sx, $sy, $w, $h, 0x100, 0x3e);
-		$pix['src']['pal'] = $gp_clut[$cn];
+		$pix['src']['pal'] = substr($gp_clut, $cn*0x40, 0x40);
 		$pix['bgzero'] = 0;
 
 		$p9 = ord($v[9]);
@@ -121,15 +121,12 @@ function landdata( &$file, $dir )
 	printf("=== landdata( $dir )\n");
 
 	global $gp_pix, $gp_clut;
-	$gp_pix = "";
-	for ( $i=0; $i < 0x1f00; $i++ )
-	{
-		$b = ord( $file[$i] );
-		$b1 = ($b >> 0) & BIT4;
-		$b2 = ($b >> 4) & BIT4;
-		$gp_pix .= chr($b1) . chr($b2);
-	}
-	$gp_clut = mstrpal555($file, 0x1f00, 16, 8);
+	$pix = substr($file, 0, 0x1f00);
+	$pal = substr($file, 0x1f00, 0x100);
+
+	bpp4to8($pix);
+	$gp_pix  = $pix;
+	$gp_clut = pal555($pal);
 
 	$id = 0;
 	$st = 0x2044;

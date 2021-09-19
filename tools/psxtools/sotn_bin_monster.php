@@ -40,14 +40,15 @@ function sotn( $fname )
 	$id = 0;
 	while ( $st < $ed )
 	{
-		$pix = strpal555($file, $st, 96*112);
-		$rgba = "RGBA";
-		$rgba .= chrint( 96, 4);
-		$rgba .= chrint(112, 4);
-		$rgba .= $pix;
-
+		$pix = substr($file, $st, 96*112*2);
+		$img = array(
+			'w' =>  96,
+			'h' => 112,
+			'pix' => pal555($pix),
+		);
 		$fn = sprintf("$dir/%04d.rgba", $id);
-		save_file($fn, $rgba);
+		save_clutfile($fn, $img);
+
 		printf("%4x , %8x\n", $id, $st);
 		$st += 0x5800;
 		$id++;

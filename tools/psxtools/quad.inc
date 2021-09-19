@@ -72,3 +72,10 @@ function save_quadfile( $pfx, &$json, $pretty=false )
 	save_file("$pfx.quad", $json);
 	return;
 }
+
+function cmp_quadxy( &$data, $id1, $id2 )
+{
+	if ( $data[$id1] != $data[$id2] )
+		php_notice("cmp %d [%7.2f] != %d [%7.2f]", $id1, $data[$id1], $id2, $data[$id2]);
+	return;
+}

@@ -33,33 +33,45 @@ function decdigit( $int )
 	return $dc;
 }
 
-if ( $argc == 1 )  exit();
-
-$list = array();
-lsfile_r('.', $list);
-
-foreach ( $list as $f )
+function findtext( $fname, &$word )
 {
-	$fsz = filesize($f);
-	$txt = '';
+	$fsz = filesize($fname);
 	$dc  = decdigit($fsz);
 
-	foreach ( file($f) as $lnum => $line )
+	$txt = '';
+	foreach ( file($fname) as $lnum => $line )
 	{
 		$line = trim($line);
 		if ( empty($line) )
 			continue;
 
-		for ( $i=1; $i < $argc; $i++ )
+		$match = true;
+		foreach ( $word as $w )
 		{
-			if ( stripos($line, $argv[$i]) !== false )
-				$txt .= sprintf("%{$dc}d : %s\n", $lnum+1 , substr($line,0,256));
-		} // for ( $i=1; $i < $argc; $i++ )
+			if ( stripos($line, $w) === false )
+				$match = false;
+		} // foreach ( $word as $w )
+
+		if ( $match )
+			$txt .= sprintf("%{$dc}d : %s\n", $lnum+1 , substr($line,0,256));
 	} // foreach ( file($f) as $lnum => $line )
 
-	if ( empty($txt) )
-		continue;
+	if ( ! empty($txt) )
+	{
+		echo "== $fname ==\n";
+		echo "$txt\n";
+	}
+	return;
+}
 
-	echo "== $f ==\n";
-	echo "$txt\n";
-} // foreach ( $list as $f )
+printf("%s  WORD...\n", $argv[0]);
+if ( $argc == 1 )  exit();
+
+$list = array();
+lsfile_r('.', $list);
+
+$word = $argv;
+array_shift($word);
+
+foreach ( $list as $f )
+	findtext($f, $word);

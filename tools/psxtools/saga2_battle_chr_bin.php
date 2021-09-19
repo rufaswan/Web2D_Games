@@ -166,7 +166,8 @@ function saga2( $fname )
 
 	global $gp_clut;
 	$clut_off = str2int($file, 0x1c, 4);
-	$gp_clut = strpal555($file, $clut_off, 0x100);
+	$pal = substr($file, $clut_off, 0x200);
+	$gp_clut = pal555($pal);
 
 	$cnt = str2int($file, 0x08, 4);
 	$pos = str2int($file, 0x18, 4);

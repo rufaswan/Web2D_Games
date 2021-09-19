@@ -37,27 +37,23 @@ function mana( $fname )
 
 		if ( $file[$ps] == ZERO ) // allface.dat
 		{
-			$clut = "CLUT";
-			$clut .= chrint(16,4); // no clut
-			$clut .= chrint(48,4); // width
-			$clut .= chrint(48,4); // height
-			$clut .= strpal555($file, $ps, 16);
+			$pal = substr($file, $ps, 0x20);
 				$ps += 0x20;
 
-			$sz = 0x18 * 0x30;
-			while ( $sz )
-			{
-				$b = ord( $file[$ps] );
+			$sz = 0x30 * 0x30 / 2;
+			$pix = substr($file, $ps, $sz);
+			bpp4to8($pix);
 
-				$b1 = ($b >> 0) & BIT4;
-				$b2 = ($b >> 4) & BIT4;
-				$clut .= chr($b1) . chr($b2);
+			$img = array(
+				'cc'  => 0x10,
+				'w'   => 0x30,
+				'h'   => 0x30,
+				'pal' => pal555($pal),
+				'pix' => $pix,
+			);
 
-				$ps++;
-				$sz--;
-			}
 			$fn = sprintf("$dir/%04d.clut", $i);
-			save_file($fn, $clut);
+			save_clutfile($fn, $img);
 			continue;
 		}
 
@@ -70,6 +66,7 @@ function mana( $fname )
 			$str = substr($file, $ps);
 			$tim = psxtim($str);
 
+			// FIXME : unknown cid , pair all pal with pix
 			foreach ( $tim['pal'] as $k => $v )
 			{
 				if ( trim($v, ZERO.BYTE) == "" )
@@ -96,13 +93,9 @@ function mana( $fname )
 		$rgba .= chrint($w, 4); // width
 		$rgba .= chrint($h, 4); // height
 
-		$sz = $w * $h;
-		while ( $sz > 0 )
-		{
-			$rgba .= rgb555( $file[$ps+0] . $file[$ps+1] );
-			$ps += 2;
-			$sz--;
-		}
+		$b = substr($file, $ps, $w*$h*2);
+		$rgba .= pal555($b);
+
 		$fn = sprintf("$dir/%04d.rgba", $i);
 		save_file($fn, $rgba);
 	} // for ( $i=0; $i < $cnt; $i++ )

@@ -36,7 +36,8 @@ function loadsrc( &$tml, $id, $pos )
 	global $gp_pix, $gp_clut;
 	if ( $type == 9 )
 	{
-		$gp_clut = strpal555($tml, $pos+12, 0x100);
+		$pal = substr($tml, $pos+12, 0x200);
+		$gp_clut = pal555($pal);
 		$pos += 0x20c;
 	}
 	if ( $type == 9 || $type == 1 )

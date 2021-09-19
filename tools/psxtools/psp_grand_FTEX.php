@@ -94,14 +94,9 @@ function pspgim_pix( &$file, $base, &$data )
 			$data['byte'] = 1;
 			$data['w'] = $w;
 			$data['h'] = $h;
-			$data['pix'] = '';
-			for ( $i=0; $i < $size; $i++ )
-			{
-				$b = ord($file[$base+$i]);
-				$b1 = ($b >> 0) & BIT4;
-				$b2 = ($b >> 4) & BIT4;
-				$data['pix'] .= chr($b1) . chr($b2);
-			}
+
+			$data['pix'] = substr($file, $base, $size);
+			bpp4to8($data['pix']);
 			gimpix($data['pix'], $w, $h, 32);
 			break;
 

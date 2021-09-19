@@ -106,12 +106,12 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 			if ( $gp_pix_r[$tid][1] == 4 )
 			{
 				$pix['src']['pix'] = rippix4($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x80, 0x80);
-				$pix['src']['pal'] = strpal555($gp_clut[$mp3], $cid*0x20, 0x10);
+				$pix['src']['pal'] = substr($gp_clut[$mp3], $cid*0x40, 0x40);
 			}
 			if ( $gp_pix_r[$tid][1] == 8 )
 			{
 				$pix['src']['pix'] = rippix8($gp_pix_r[$tid][0], $sx, $sy, 16, 16, 0x80, 0x80);
-				$pix['src']['pal'] = strpal555($gp_clut[$mp3], $cid*0x20, 0x100);
+				$pix['src']['pal'] = substr($gp_clut[$mp3], $cid*0x40, 0x400);
 			}
 			$pix['src']['pal'][3] = ZERO;
 
@@ -261,7 +261,8 @@ function roomloop( &$ram, $dir, $MA, $off )
 			$b2 = str2int($ram, $cps+2, 2);
 			printf("add CLUT %d @ %x\n", $b2, $cps+4);
 
-			$gp_clut[] = substr($ram, $cps+4, $b2*0x20);
+			$pal = substr($ram, $cps+4, $b2*0x20);
+			$gp_clut[] = pal555($pal);
 			$off3 += 8;
 		}
 

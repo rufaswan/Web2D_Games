@@ -21,6 +21,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 // 3D texture quad-rendering + transformation related
+//
+// TESTING : ztest_quad.php
+//
 // product = factor * factor
 //             | x 0 0 |
 // | x y z | = | 0 y 0 |
@@ -76,104 +79,6 @@ function triad_area( $V1, $V2, $V3 )
 	return abs($r);
 }
 //////////////////////////////
-function vector_dump( $V, $name )
-{
-	if ( defined("NO_TRACE") )
-		return;
-	trace("$name ");
-	trace(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
-
-	// ERROR : $V[2] divide by zero
-	if ( $V[2] == 0.0 )
-	{
-		$V[2] = 1 / $V[2];
-		trace("  xy (%4d , %4d)", $V[0]*$V[2], $V[1]*$V[2]);
-	}
-	trace("\n");
-	return;
-}
-
-function vector_box( $vector )
-{
-	$x1 = PHP_INT_MAX;
-	$y1 = PHP_INT_MAX;
-	$x2 = -PHP_INT_MAX;
-	$y2 = -PHP_INT_MAX;
-	for ( $i=0; $i < 4; $i++ ) // A B C D
-	{
-		if ( $x1 > $vector[$i][0] )  $x1 = (int)floor($vector[$i][0]);
-		if ( $y1 > $vector[$i][1] )  $y1 = (int)floor($vector[$i][1]);
-		if ( $x2 < $vector[$i][0] )  $x2 = (int)ceil ($vector[$i][0]);
-		if ( $y2 < $vector[$i][1] )  $y2 = (int)ceil ($vector[$i][1]);
-	} // for ( $i=0; $i < 4; $i++ )
-	return array($x1, $y1, $x2, $y2);
-}
-//////////////////////////////
-function quad_rebase( $V4 )
-{
-	// rebase $V4 to 0,0
-	$base = array((int)$V4[0][0] , (int)$V4[0][1]);
-	for ( $i=0; $i < 4; $i++ ) // A B C D
-	{
-		$V4[$i][0] -= $base[0];
-		$V4[$i][1] -= $base[1];
-	}
-
-	// get box size
-	$x1 = PHP_INT_MAX;
-	$y1 = PHP_INT_MAX;
-	$x2 = -PHP_INT_MAX;
-	$y2 = -PHP_INT_MAX;
-	for ( $i=0; $i < 4; $i++ ) // A B C D
-	{
-		if ( $x1 > $V4[$i][0] )  $x1 = (int)floor($V4[$i][0]);
-		if ( $y1 > $V4[$i][1] )  $y1 = (int)floor($V4[$i][1]);
-		if ( $x2 < $V4[$i][0] )  $x2 = (int)ceil ($V4[$i][0]);
-		if ( $y2 < $V4[$i][1] )  $y2 = (int)ceil ($V4[$i][1]);
-	}
-
-	$quad = array(
-		'quad' => $V4,
-		'base' => $base,
-		'box'  => array($x1, $y1, $x2, $y2),
-	);
-	trace("== quad_rebase() = %.2f , %.2f\n", $base[0], $base[1]);
-	trace("   box x = %.2f - %.2f  y = %.2f - %.2f\n", $x1, $x2, $y1, $y2);
-	return $quad;
-}
-
-function quad_dump( $V4, $name )
-{
-	if ( defined("NO_TRACE") )
-		return;
-	// winding order (x-hand-coordinate system)
-	//   1243 = 1 2 =  left-hand / clockwise (CW)
-	//          4 3
-	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
-	//          2 3
-	// NOTE : it doesn't matter
-	$minx = PHP_INT_MAX;
-	$miny = PHP_INT_MAX;
-	$maxx = -PHP_INT_MAX;
-	$maxy = -PHP_INT_MAX;
-	for ( $i=0; $i < 4; $i++ )
-	{
-		if ( $V4[$i][0] < $minx )  $minx = $V4[$i][0];
-		if ( $V4[$i][0] > $maxx )  $maxx = $V4[$i][0];
-		if ( $V4[$i][1] < $miny )  $miny = $V4[$i][1];
-		if ( $V4[$i][1] > $maxy )  $maxy = $V4[$i][1];
-	}
-
-	trace("quad( %s )\n", $name);
-	trace("  %10.2f,%10.2f\n", $V4[0][0], $V4[0][1]);
-	trace("  %10.2f,%10.2f\n", $V4[1][0], $V4[1][1]);
-	trace("  %10.2f,%10.2f\n", $V4[2][0], $V4[2][1]);
-	trace("  %10.2f,%10.2f\n", $V4[3][0], $V4[3][1]);
-	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx+1);
-	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny+1);
-	return;
-}
-
 function matrix_dump( $M , $name )
 {
 	if ( defined("NO_TRACE") )
@@ -279,29 +184,103 @@ function matrix_inverse( $M )
 	//     |  0  1  1 |         |  0.2 -0.3  0   |
 	return $s3;
 }
+//////////////////////////////
+function quad_rebase( $V4 )
+{
+	// rebase $V4 to 0,0
+	$base = array(
+		(int)$V4[0] ,
+		(int)$V4[1] ,
+	);
+	for ( $i=0; $i < 8; $i += 2 ) // A B C D
+	{
+		$V4[$i+0] -= $base[0];
+		$V4[$i+1] -= $base[1];
+	}
 
+	// get box size
+	$x1 = PHP_INT_MAX;
+	$y1 = PHP_INT_MAX;
+	$x2 = -PHP_INT_MAX;
+	$y2 = -PHP_INT_MAX;
+	for ( $i=0; $i < 8; $i += 2 ) // A B C D
+	{
+		if ( $x1 > $V4[$i+0] )  $x1 = (int)floor($V4[$i+0]);
+		if ( $y1 > $V4[$i+1] )  $y1 = (int)floor($V4[$i+1]);
+		if ( $x2 < $V4[$i+0] )  $x2 = (int)ceil ($V4[$i+0]);
+		if ( $y2 < $V4[$i+1] )  $y2 = (int)ceil ($V4[$i+1]);
+	}
+
+	$quad = array(
+		'quad' => array(
+			array( $V4[0] , $V4[1] , 1 ),
+			array( $V4[2] , $V4[3] , 1 ),
+			array( $V4[4] , $V4[5] , 1 ),
+			array( $V4[6] , $V4[7] , 1 ),
+		),
+		'base' => $base,
+		'box'  => array($x1, $y1, $x2, $y2),
+	);
+	trace("== quad_rebase() = %.2f , %.2f\n", $base[0], $base[1]);
+	trace("   box x = %.2f - %.2f  y = %.2f - %.2f\n", $x1, $x2, $y1, $y2);
+	quad_dump($V4, 'rebase');
+	return $quad;
+}
+
+function quad_dump( $V4, $name )
+{
+	if ( defined("NO_TRACE") )
+		return;
+	// winding order (x-hand-coordinate system)
+	//   1243 = 1 2 =  left-hand / clockwise (CW)
+	//          4 3
+	//   1423 = 1 4 = right-hand / counter clockwise (CCW)
+	//          2 3
+	// NOTE : it doesn't matter
+	$minx = PHP_INT_MAX;
+	$miny = PHP_INT_MAX;
+	$maxx = -PHP_INT_MAX;
+	$maxy = -PHP_INT_MAX;
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		if ( $V4[$i+0] < $minx )  $minx = $V4[$i+0];
+		if ( $V4[$i+0] > $maxx )  $maxx = $V4[$i+0];
+		if ( $V4[$i+1] < $miny )  $miny = $V4[$i+1];
+		if ( $V4[$i+1] > $maxy )  $maxy = $V4[$i+1];
+	}
+
+	trace("quad( %s )\n", $name);
+	trace("  %10.2f,%10.2f\n", $V4[0], $V4[1]);
+	trace("  %10.2f,%10.2f\n", $V4[2], $V4[3]);
+	trace("  %10.2f,%10.2f\n", $V4[4], $V4[5]);
+	trace("  %10.2f,%10.2f\n", $V4[6], $V4[7]);
+	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx);
+	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
+	return;
+}
+//////////////////////////////
 function copyquad_errs( &$pix )
 {
 	$err = "";
-	for ( $i=0; $i < 4; $i++ ) // A B C D
+	for ( $i=0; $i < 8; $i += 2 ) // A B C D
 	{
 		// x y
-		if ( ! isset( $pix['vector'][$i][0] ) )
+		if ( ! isset( $pix['quad'][$i+0] ) )
 			$err .= "copyquad() vector x$i not set\n";
-		if ( ! isset( $pix['vector'][$i][1] ) )
+		if ( ! isset( $pix['quad'][$i+1] ) )
 			$err .= "copyquad() vector y$i not set\n";
 
-		if ( $pix['vector'][$i][0] < 0 )
-			$err .= sprintf("copyquad() vector x$i = %d\n", $pix['vector'][$i][0]);
-		if ( $pix['vector'][$i][1] < 0 )
-			$err .= sprintf("copyquad() vector y$i = %d\n", $pix['vector'][$i][1]);
+		if ( $pix['quad'][$i+0] < 0 )
+			$err .= sprintf("copyquad() vector x$i = %d\n", $pix['quad'][$i+0]);
+		if ( $pix['quad'][$i+1] < 0 )
+			$err .= sprintf("copyquad() vector y$i = %d\n", $pix['quad'][$i+1]);
 
-		if ( $pix['vector'][$i][0] > $pix['rgba']['w'] )
-			$err .= sprintf("copyquad() vector x$i = %d [%d]\n", $pix['vector'][$i][0], $pix['rgba']['w']);
-		if ( $pix['vector'][$i][1] > $pix['rgba']['h'] )
-			$err .= sprintf("copyquad() vector y$i = %d [%d]\n", $pix['vector'][$i][1], $pix['rgba']['h']);
+		if ( $pix['quad'][$i+0] > $pix['rgba']['w'] )
+			$err .= sprintf("copyquad() vector x$i = %d [%d]\n", $pix['quad'][$i+0], $pix['rgba']['w']);
+		if ( $pix['quad'][$i+1] > $pix['rgba']['h'] )
+			$err .= sprintf("copyquad() vector y$i = %d [%d]\n", $pix['quad'][$i+1], $pix['rgba']['h']);
 
-	} // for ( $i=0; $i < 4; $i++ )
+	} // for ( $i=0; $i < 8; $i += 2 )
 
 	if ( ! empty($err) )
 	{
@@ -322,8 +301,8 @@ function copyquad( &$pix, $byte=1 )
 	if ( defined("DRY_RUN") )
 		return;
 
-	$qsrc = quad_rebase( $pix['src']['vector'] );
-	$qdes = quad_rebase( $pix['vector'] );
+	$qsrc = quad_rebase( $pix['src']['quad'] );
+	$qdst = quad_rebase( $pix['quad'] );
 	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
 	//
 	// 2D transformation
@@ -344,9 +323,9 @@ function copyquad( &$pix, $byte=1 )
 	$H2 = $crx( $crx( $qsrc['quad'][0],$qsrc['quad'][3] ) , $crx( $qsrc['quad'][1],$qsrc['quad'][2] ) );
 	$H3 = $crx( $crx( $qsrc['quad'][0],$qsrc['quad'][2] ) , $crx( $qsrc['quad'][1],$qsrc['quad'][3] ) );
 
-	$h1 = $crx( $crx( $qdes['quad'][1],$qdes['quad'][0] ) , $crx( $qdes['quad'][2],$qdes['quad'][3] ) );
-	$h2 = $crx( $crx( $qdes['quad'][0],$qdes['quad'][3] ) , $crx( $qdes['quad'][1],$qdes['quad'][2] ) );
-	$h3 = $crx( $crx( $qdes['quad'][0],$qdes['quad'][2] ) , $crx( $qdes['quad'][1],$qdes['quad'][3] ) );
+	$h1 = $crx( $crx( $qdst['quad'][1],$qdst['quad'][0] ) , $crx( $qdst['quad'][2],$qdst['quad'][3] ) );
+	$h2 = $crx( $crx( $qdst['quad'][0],$qdst['quad'][3] ) , $crx( $qdst['quad'][1],$qdst['quad'][2] ) );
+	$h3 = $crx( $crx( $qdst['quad'][0],$qdst['quad'][2] ) , $crx( $qdst['quad'][1],$qdst['quad'][3] ) );
 
 	//   | H1x H2x H3x |   | h1x h2x h3x |
 	// M | H1y H2y H3y | = | h1y h2y h3y |
@@ -377,25 +356,25 @@ function copyquad( &$pix, $byte=1 )
 		matrix_dump($Minv, "Minv");
 
 	// sum of quad area
-	// if $xy is outside quad , sum of $q will be bigger than $qsz
-	$q1 = triad_area($qdes['quad'][0], $qdes['quad'][1], $qdes['quad'][2]); // ABC
-	$q2 = triad_area($qdes['quad'][0], $qdes['quad'][3], $qdes['quad'][2]); // ADC
-	$qdessz = $q1 + $q2;
+	// if $xy is outside quad , sum of $q will be bigger than $qdstsz
+	$q1 = triad_area($qdst['quad'][0], $qdst['quad'][1], $qdst['quad'][2]); // ABC
+	$q2 = triad_area($qdst['quad'][0], $qdst['quad'][3], $qdst['quad'][2]); // ADC
+	$qdstsz = $q1 + $q2;
 
 	//$q1 = triad_area($qsrc['quad'][0], $qsrc['quad'][1], $qsrc['quad'][2]); // ABC
 	//$q2 = triad_area($qsrc['quad'][0], $qsrc['quad'][3], $qsrc['quad'][2]); // ADC
 	//$qsrcsz = $q1 + $q2;
 
-	for ( $y = $qdes['box'][1]; $y <= $qdes['box'][3]; $y++ )
+	for ( $y = $qdst['box'][1]; $y <= $qdst['box'][3]; $y++ )
 	{
-		for ( $x = $qdes['box'][0]; $x <= $qdes['box'][2]; $x++ )
+		for ( $x = $qdst['box'][0]; $x <= $qdst['box'][2]; $x++ )
 		{
 			$xy = array($x,$y,1);
-			$q1 = triad_area($xy, $qdes['quad'][0], $qdes['quad'][1]); // pAB
-			$q2 = triad_area($xy, $qdes['quad'][1], $qdes['quad'][2]); // pBC
-			$q3 = triad_area($xy, $qdes['quad'][2], $qdes['quad'][3]); // pCD
-			$q4 = triad_area($xy, $qdes['quad'][3], $qdes['quad'][0]); // pDA
-			if ( ($q1+$q2+$q3+$q4) > $qdessz )
+			$q1 = triad_area($xy, $qdst['quad'][0], $qdst['quad'][1]); // pAB
+			$q2 = triad_area($xy, $qdst['quad'][1], $qdst['quad'][2]); // pBC
+			$q3 = triad_area($xy, $qdst['quad'][2], $qdst['quad'][3]); // pCD
+			$q4 = triad_area($xy, $qdst['quad'][3], $qdst['quad'][0]); // pDA
+			if ( ($q1+$q2+$q3+$q4) > $qdstsz )
 				continue;
 
 			// (t,r,s) = M^-1 * (x,y,1)
@@ -421,19 +400,13 @@ function copyquad( &$pix, $byte=1 )
 			//if ( ($q1+$q2+$q3+$q4) > $qsrcsz )
 				//continue;
 
-			updatepix($pix, $byte, $qsrc['base'][0]+$sx, $qsrc['base'][1]+$sy, $qdes['base'][0]+$x, $qdes['base'][1]+$y);
+			updatepix($pix, $byte, $qsrc['base'][0]+$sx, $qsrc['base'][1]+$sy, $qdst['base'][0]+$x, $qdst['base'][1]+$y);
 		} // for ( $x=$x1; $x < $x2; $x++ )
 	} // for ( $y=$y1; $y < $y2; $y++ )
+
 	return;
 }
 //////////////////////////////
-function cmp_quadxy( &$data, $id1, $id2 )
-{
-	if ( $data[$id1] != $data[$id2] )
-		php_notice("cmp %d [%7.2f] != %d [%7.2f]", $id1, $data[$id1], $id2, $data[$id2]);
-	return;
-}
-
 function hex_rotate( $x1, $y1, $x2, $y2 )
 {
 	$dx = $x1 - $x2;
@@ -453,3 +426,143 @@ function hex_rotate( $x1, $y1, $x2, $y2 )
 	return $rot;
 }
 //////////////////////////////
+
+/*
+	FAILED :
+		copyquad() triangle-base looping
+		REASON : WORSE than current
+
+	// opposite corners
+	$w02 = $qdst['quad'][2][0] - $qdst['quad'][0][0];
+	$h02 = $qdst['quad'][2][1] - $qdst['quad'][0][1];
+
+	$x02 = 0;
+	$y02 = 0;
+		$w102 = 0.5 / ($w02+1);
+		$h102 = 0.5 / ($h02+1);
+	while (1)
+	{
+		if ( ( $x02 > 1.0 || $x02 < -1.0 ) && ( $y02 > 1.0 || $y02 < -1.0 ) )
+			break;
+
+		$x02p = $qdst['quad'][0][0] + ($x02 * $w02);
+		$y02p = $qdst['quad'][0][1] + ($y02 * $h02);
+
+
+		// line 0,2 to 1
+		$wx1 = $qdst['quad'][1][0] - ($qdst['quad'][0][0] + $x02 * $w02);
+		$hx1 = $qdst['quad'][1][1] - ($qdst['quad'][0][1] + $y02 * $h02);
+
+		$xx1 = 0;
+		$yx1 = 0;
+			$w1x1 = 0.5 / ($wx1+1);
+			$h1x1 = 0.5 / ($hx1+1);
+		while (1)
+		{
+			if ( ( $xx1 > 1.0 || $xx1 < -1.0 ) && ( $yx1 > 1.0 || $yx1 < -1.0 ) )
+				break;
+
+			$bx = $x02p + ($xx1 * $wx1);
+			$by = $y02p + ($yx1 * $hx1);
+
+			// (t,r,s) = M^-1 * (x,y,1)
+			//  sx,sy  = t/s,r/s
+			$t = matrix_multi31($Minv, array($bx,$by,1));
+
+			// ERROR : $t[2] divide by zero
+			if ( $t[2] !== 0.0 )
+			{
+				$t[2] = 1 / $t[2];
+				$sx = (int)($qsrc['base'][0] + $t[0] * $t[2] - 0);
+				$sy = (int)($qsrc['base'][1] + $t[1] * $t[2] - 0);
+				$dx = (int)($qdst['base'][0] + $bx);
+				$dy = (int)($qdst['base'][1] + $by);
+				//trace("xx1  sx %d,%d  dx %d,%d\n", $sx, $sy, $dx, $dy);
+				updatepix($pix, $byte, $sx, $sy, $dx, $dy);
+			}
+
+			if ( abs($xx1) < abs($yx1) )
+				$xx1 += $w1x1;
+			else
+				$yx1 += $h1x1;
+		} // while (1)
+
+
+		// line 0,2 to 3
+		$wx3 = $qdst['quad'][3][0] - ($qdst['quad'][0][0] + $x02 * $w02);
+		$hx3 = $qdst['quad'][3][1] - ($qdst['quad'][0][1] + $y02 * $h02);
+
+		$xx3 = 0;
+		$yx3 = 0;
+			$w1x3 = 0.5 / ($wx3+1);
+			$h1x3 = 0.5 / ($hx3+1);
+		while (1)
+		{
+			if ( ( $xx3 > 1.0 || $xx3 < -1.0 ) && ( $yx3 > 1.0 || $yx3 < -1.0 ) )
+				break;
+
+			$bx = $x02p + ($xx3 * $wx3);
+			$by = $y02p + ($yx3 * $hx3);
+
+			// (t,r,s) = M^-1 * (x,y,1)
+			//  sx,sy  = t/s,r/s
+			$t = matrix_multi31($Minv, array($bx,$by,1));
+
+			// ERROR : $t[2] divide by zero
+			if ( $t[2] !== 0.0 )
+			{
+				$t[2] = 1 / $t[2];
+				$sx = (int)($qsrc['base'][0] + $t[0] * $t[2] - 0);
+				$sy = (int)($qsrc['base'][1] + $t[1] * $t[2] - 0);
+				$dx = (int)($qdst['base'][0] + $bx);
+				$dy = (int)($qdst['base'][1] + $by);
+				//trace("xx3  sx %d,%d  dx %d,%d\n", $sx, $sy, $dx, $dy);
+				updatepix($pix, $byte, $sx, $sy, $dx, $dy);
+			}
+
+			if ( abs($xx3) < abs($yx3) )
+				$xx3 += $w1x3;
+			else
+				$yx3 += $h1x3;
+		} // while (1)
+
+
+		if ( abs($x02) < abs($y02) )
+			$x02 += $w102;
+		else
+			$y02 += $h102;
+	} // while (1)
+
+function vector_dump( $V, $name )
+{
+	if ( defined("NO_TRACE") )
+		return;
+	trace("$name ");
+	trace(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
+
+	// ERROR : $V[2] divide by zero
+	if ( $V[2] == 0.0 )
+	{
+		$V[2] = 1 / $V[2];
+		trace("  xy (%4d , %4d)", $V[0]*$V[2], $V[1]*$V[2]);
+	}
+	trace("\n");
+	return;
+}
+
+function vector_box( $vector )
+{
+	$x1 = PHP_INT_MAX;
+	$y1 = PHP_INT_MAX;
+	$x2 = -PHP_INT_MAX;
+	$y2 = -PHP_INT_MAX;
+	for ( $i=0; $i < 4; $i++ ) // A B C D
+	{
+		if ( $x1 > $vector[$i][0] )  $x1 = (int)floor($vector[$i][0]);
+		if ( $y1 > $vector[$i][1] )  $y1 = (int)floor($vector[$i][1]);
+		if ( $x2 < $vector[$i][0] )  $x2 = (int)ceil ($vector[$i][0]);
+		if ( $y2 < $vector[$i][1] )  $y2 = (int)ceil ($vector[$i][1]);
+	} // for ( $i=0; $i < 4; $i++ )
+	return array($x1, $y1, $x2, $y2);
+}
+ */

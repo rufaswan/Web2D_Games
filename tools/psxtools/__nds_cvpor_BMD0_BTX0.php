@@ -59,6 +59,7 @@ function cvpor( $fname )
 				$cns = $off1 - $off3;
 				if ( $cns < 0x200 ) // 4-bit
 				{
+					// FIXME : unknown cid , pair all pal with pix
 					$cn = $cns / 0x20;
 					$clut = mstrpal555($file, $off3, 0x10, $cn);
 					$pix  = substr($file, $off2, $off3-$off2);
@@ -78,6 +79,7 @@ function cvpor( $fname )
 				}
 				else // 8-bit
 				{
+					// FIXME : unknown cid , pair all pal with pix
 					$cn = $cns / 0x200;
 					$clut = mstrpal555($file, $off3, 0x100, $cn);
 					$pix  = substr($file, $off2, $off3-$off2);

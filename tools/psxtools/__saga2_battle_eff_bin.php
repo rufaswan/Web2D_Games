@@ -37,23 +37,17 @@ function sectparts( &$file, &$canv, $off, $dir )
 		$dy = str2int($file, $off+2, 2);
 		$w  = str2int($file, $off+4, 2) * 2;
 		$h  = str2int($file, $off+6, 2);
-		$siz = $w * $h;
 			$off += 8;
+
 		printf("%6x , %3d , %3d , %3d , %3d\n", $off-8, $dx, $dy, $w, $h);
 		if ( ($dx + $w*2) > CANV_S )
 			php_error("OVER dx [%d,%d]", $dx, $w);
 		if ( ($dy + $h  ) > CANV_S )
 			php_error("OVER dy [%d,%d]", $dy, $h);
 
-		$pix = "";
-		for ( $i=0; $i < $siz; $i++ )
-		{
-			$b = ord( $file[$off+$i] );
-			$b1 = ($b >> 0) & 0x0f;
-			$b2 = ($b >> 4) & 0x0f;
-			$pix .= chr($b1) . chr($b2);
-		}
-		$off += $siz;
+		$pix = substr($file, $off, $w*$h);
+			$off += ($w * $h);
+		bpp4to8($pix);
 
 		for ( $y=0; $y < $h; $y++ )
 		{
@@ -82,6 +76,7 @@ function saga2( $fname )
 	$off  = str2int($file, 0x04, 4);
 	sectparts( $file, $canv, $off, $dir );
 
+	// FIXME : unknown cid , pair all pal with pix
 	foreach ( $clut as $k => $c )
 	{
 		if ( trim($c, ZERO.BYTE) == "" )

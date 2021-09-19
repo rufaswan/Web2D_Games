@@ -22,7 +22,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
-require "common-quad.inc";
 require "quad.inc";
 
 define("METAFILE", true);

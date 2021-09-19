@@ -58,28 +58,23 @@ function secttalk( &$file, $talk, $dir )
 	for ( $i=0; $i < $num; $i++ )
 	{
 		printf("= $dir/talk/$i.clut , %x\n", $st);
-		$clut = "CLUT";
-		$clut .= chrint(16,4); // no clut
-		$clut .= chrint(48,4); // width
-		$clut .= chrint(48,4); // height
-		$clut .= strpal555($file, $st, 0x10);
-			$st += 0x20;
+		$sz = 0x30 * 0x30 / 2;
 
-		$sz = 0x18 * 0x30;
-		while ( $sz > 0 )
-		{
-			$b = ord( $file[$st] );
+		$pal = substr($file, $st+0, 0x20);
+		$pix = substr($file, $st+0x20, $sz);
+			$st += (0x20 + $sz);
 
-			$b1 = ($b >> 0) & BIT4;
-			$b2 = ($b >> 4) & BIT4;
-			$clut .= chr($b1);
-			$clut .= chr($b2);
+		bpp4to8($pix);
+		$img = array(
+			'cc'  => 0x10,
+			'w'   => 0x30,
+			'h'   => 0x30,
+			'pal' => pal555($pal),
+			'pix' => $pix,
+		);
 
-			$sz--;
-			$st++;
-		}
-		save_file("$dir/talk/$i.clut", $clut);
-	}
+		save_clutfile("$dir/talk/$i.clut", $img);
+	} // for ( $i=0; $i < $num; $i++ )
 	return;
 }
 

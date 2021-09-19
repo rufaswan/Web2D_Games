@@ -22,33 +22,38 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-function xeno( $fname )
+function simon( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
 	$dir = str_replace('.', '_', $fname);
-	$len = strlen($file);
-
-	for ( $i=0; $i < $len; $i += 0x1000 )
+	$pos = 0;
+	$id  = 0;
+	while (1)
 	{
-		$pal = substr($file, $i+0,     0x100);
-		$pix = substr($file, $i+0x100, 60*64);
+		$fn = sprintf("%s/%06d.wav", $dir, $id);
+			$id++;
 
-		$img = array(
-			'cc'  => 0x80,
-			'w'   => 60,
-			'h'   => 64,
-			'pal' => pal555($pal),
-			'pix' => $pix,
-		);
+		$of1 = str2int($file, $pos+0, 4);
+		$of2 = str2int($file, $pos+4, 4);
+			$pos += 4;
 
-		$fn = sprintf("$dir/%04d.clut", $i/0x1000);
-		save_clutfile($fn, $img);
-	} // for ( $i=0; $i < $len; $i += 0x1000 )
+		if ( $of1 == 0 )
+			continue;
+		if ( $of2 == 0x46464952 ) // RIFF
+			$of2 = strlen($file);
+		if ( $of1 == 0x46464952 ) // RIFF
+			break;
+
+		$sz  = $of2 - $of1;
+		$sub = substr($file, $of1, $sz);
+		printf("%8x , %8x , %s\n", $of1, $sz, $fn);
+		save_file($fn, $sub);
+	} // while (1)
 
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	xeno( $argv[$i] );
+	simon( $argv[$i] );

@@ -45,7 +45,7 @@ function ramint( &$file, $pos )
 function loadclut( &$file )
 {
 	global $gp_clut;
-	$gp_clut = array();
+	$gp_clut = '';
 
 	// f_xxx.bin is sets of 4-bit 128x128 pix data
 	// arranged like this
@@ -64,12 +64,15 @@ function loadclut( &$file )
 			$p2 = $pos + 0x7c00;
 			printf("add CLUT @ %x , %x\n", $p1, $p2);
 
-			$gp_clut[] = strpal555($file, $p1+ 0, 16);
-			$gp_clut[] = strpal555($file, $p1+32, 16);
-			$gp_clut[] = strpal555($file, $p2+ 0, 16);
-			$gp_clut[] = strpal555($file, $p2+32, 16);
-		}
-	}
+			$pal  = '';
+			$pal .= substr($file, $p1+0   , 0x20);
+			$pal .= substr($file, $p1+0x20, 0x20);
+			$pal .= substr($file, $p2+0   , 0x20);
+			$pal .= substr($file, $p2+0x20, 0x20);
+
+			$gp_clut .= pal555($pal);
+		} // for ( $s=0; $s < 4; $s++ )
+	} // for ( $c=0; $c < 16; $c++ )
 	var_dump( count($gp_clut) );
 	return;
 }
@@ -145,7 +148,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 
 			$bin = substr($file, $tp, 0x2000);
 			$pix['src']['pix'] = rippix4($bin, $tx, $ty, 16, 16, 0x80, 0x80);
-			$pix['src']['pal'] = $gp_clut[$c3];
+			$pix['src']['pal'] = substr($gp_clut, $c3*0x40, 0x40);
 			$pix['src']['pal'][3] = ZERO;
 
 			copypix_fast($pix);

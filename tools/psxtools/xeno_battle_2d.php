@@ -47,17 +47,9 @@ function loadpix( &$file, $pos )
 			$p += 4;
 
 		$siz = $w * $h;
-		$rip = "";
-		while ( $siz > 0 )
-		{
-			$b = ord($pix[$p]);
-			$b1 = ($b >> 0) & BIT4;
-			$b2 = ($b >> 4) & BIT4;
-			$rip .= chr($b1) . chr($b2);
+		$rip = substr($pix, $p, $siz);
+		bpp4to8($rip);
 
-			$siz--;
-			$p++;
-		}
 		$gp_pix[$i]['p'] = $rip;
 		$gp_pix[$i]['w'] = $w * 2;
 		$gp_pix[$i]['h'] = $h;
@@ -81,14 +73,8 @@ function loadsrc( &$meta, $off, &$pix )
 	else
 	{
 		$siz = (int)($w / 2 * $h);
-		$src = "";
-		for ( $i=0; $i < $siz; $i++ )
-		{
-			$b = ord( $meta[$off+$i] );
-			$b1 = ($b >> 0) & BIT4;
-			$b2 = ($b >> 4) & BIT4;
-			$src .= chr($b1) . chr($b2);
-		}
+		$src = substr($meta, $off, $siz);
+		bpp4to8($src);
 	}
 
 	$pix['src']['w'] = $w;
@@ -271,7 +257,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 			$w = $pix['src']['w'];
 			$h = $pix['src']['h'];
 		}
-		$pix['src']['pal'] = $gp_clut[$cid];
+		$pix['src']['pal'] = substr($gp_clut, $cid*0x40, 0x40);
 		$pix['bgzero'] = 0;
 		scalepix($pix, SCALE, SCALE);
 
@@ -323,8 +309,8 @@ function sect1( &$file, $dir, $mp, $pp )
 			//sectanim($s1, $dir);
 
 			global $gp_clut;
-			$cn = (strlen($s3) - 4) / 0x20;
-			$gp_clut = mstrpal555($s3, 4, 16, $cn);
+			$pal = substr($s3, 4);
+			$gp_clut = pal555($pal);
 
 			$p256 = ord( $s2[1] ) >> 7;
 			if ( $p256 )

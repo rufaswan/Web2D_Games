@@ -107,19 +107,22 @@ function qrender( &$frame, $pfx, $id )
 		if ( isset($pv['Blend']) )
 			continue;
 
-		$pix['vector'] = array(
-			array( $pv['DstQuad'][0]+$origin , $pv['DstQuad'][1]+$origin , 1 ),
-			array( $pv['DstQuad'][2]+$origin , $pv['DstQuad'][3]+$origin , 1 ),
-			array( $pv['DstQuad'][4]+$origin , $pv['DstQuad'][5]+$origin , 1 ),
-			array( $pv['DstQuad'][6]+$origin , $pv['DstQuad'][7]+$origin , 1 ),
+		$pix['quad'] = array(
+			$pv['DstQuad'][0]+$origin , $pv['DstQuad'][1]+$origin ,
+			$pv['DstQuad'][2]+$origin , $pv['DstQuad'][3]+$origin ,
+			$pv['DstQuad'][4]+$origin , $pv['DstQuad'][5]+$origin ,
+			$pv['DstQuad'][6]+$origin , $pv['DstQuad'][7]+$origin ,
 		);
 
-		$pix['src']['vector'] = array(
-			array( $pv['SrcQuad'][0] , $pv['SrcQuad'][1] , 1 ),
-			array( $pv['SrcQuad'][2] , $pv['SrcQuad'][3] , 1 ),
-			array( $pv['SrcQuad'][4] , $pv['SrcQuad'][5] , 1 ),
-			array( $pv['SrcQuad'][6] , $pv['SrcQuad'][7] , 1 ),
+		$pix['src']['quad'] = array(
+			$pv['SrcQuad'][0] , $pv['SrcQuad'][1] ,
+			$pv['SrcQuad'][2] , $pv['SrcQuad'][3] ,
+			$pv['SrcQuad'][4] , $pv['SrcQuad'][5] ,
+			$pv['SrcQuad'][6] , $pv['SrcQuad'][7] ,
 		);
+
+		quad_dump($pix['src']['quad'], 'src quad');
+		quad_dump($pix['quad']       , 'dst quad');
 
 		qtexture($pix, $pfx, $pv['TexID']);
 		copyquad($pix, 4);

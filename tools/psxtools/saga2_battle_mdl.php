@@ -28,17 +28,20 @@ function tim2clut( &$file, $pos, $out )
 	if ( $timh_sz != 0x20c )
 		return 0;
 
-	$sz = str2int($file, $pos + 8 + $timh_sz, 4);
-	$w = str2int($file, $pos + 8 + $timh_sz + 8, 2);
-	$h = str2int($file, $pos + 8 + $timh_sz + 10, 2);
+	$sz = str2int($file, $pos + 8 + $timh_sz     , 4);
+	$w  = str2int($file, $pos + 8 + $timh_sz +  8, 2);
+	$h  = str2int($file, $pos + 8 + $timh_sz + 10, 2);
+	$pix = substr($file, $pos + 8 + $timh_sz + 12, $sz - 12);
+	$pal = substr($file, $pos + 0x14, 0x200);
 
-	$data = "CLUT";
-	$data .= chrint(0x100, 4); // no clut
-	$data .= chrint($w*2, 4); // width
-	$data .= chrint($h  , 4); // height
-	$data .= strpal555($file, $pos + 0x14, 0x100);
-	$data .= substr($file, $pos + 8 + $timh_sz + 12, $sz - 12);
-	save_file($out, $data);
+	$img = array(
+		'cc'  => 0x100,
+		'w'   => $w,
+		'h'   => $h,
+		'pal' => pal555($pal),
+		'pix' => $pix,
+	);
+	save_clutfile($out, $img);
 	return (8 + $timh_sz + $sz);
 }
 
@@ -53,7 +56,7 @@ function saga2( $fname )
 
 	$dir = str_replace('.', '_', $fname);
 
-	$n = 1;
+	$n = 0;
 	$st = str2int($file, 0x28, 4);
 	$ed = strlen($file);
 	while ( $st < $ed )
@@ -65,7 +68,7 @@ function saga2( $fname )
 
 		$st += $sz;
 		$n++;
-	}
+	} // while ( $st < $ed )
 
 	return;
 }

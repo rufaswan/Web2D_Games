@@ -29,14 +29,6 @@ function substrrev( &$str, $pos, $len )
 	return strrev($sub);
 }
 
-function str_endian( &$str, $pos, $byte )
-{
-	$s = substr($str, $pos, $byte);
-	$s = strrev($s);
-	str_update($str, $pos, $s);
-	return;
-}
-//////////////////////////////
 function str2big( &$str, $pos, $byte, $sign=false )
 {
 	if ( PHP_INT_SIZE < $byte )
@@ -73,19 +65,6 @@ function big2little32( &$be )
 	for ( $i=0; $i < $len; $i += 4 )
 		$le .= $be[$i+3] . $be[$i+2] . $be[$i+1] . $be[$i+0];
 	return $le;
-}
-
-function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
-{
-	$b7 = ($bit7 & 1) << 7;
-	$b6 = ($bit6 & 1) << 6;
-	$b5 = ($bit5 & 1) << 5;
-	$b4 = ($bit4 & 1) << 4;
-	$b3 = ($bit3 & 1) << 3;
-	$b2 = ($bit2 & 1) << 2;
-	$b1 = ($bit1 & 1) << 1;
-	$b0 = ($bit0 & 1) << 0;
-	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
 }
 //////////////////////////////
 function iee754_float( $int, $exp_bit, $man_bit, $bias )
@@ -183,7 +162,7 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
-		return;
+		return "";
 
 	$rip = "";
 	for ( $y=0; $y < $h; $y++ )
@@ -233,11 +212,18 @@ function alpha_normal( $src, $dst )
 	$a = int_clamp($a * BIT8, 0, BIT8);
 	return chr($r) . chr($g) . chr($b) . chr($a);
 }
-
-function scalergba( &$pix, $fact_x, $fact_y )
+//////////////////////////////
+function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 {
-	scalepix( $pix, $fact_x, $fact_y, 4 );
-	return;
+	$b7 = ($bit7 & 1) << 7;
+	$b6 = ($bit6 & 1) << 6;
+	$b5 = ($bit5 & 1) << 5;
+	$b4 = ($bit4 & 1) << 4;
+	$b3 = ($bit3 & 1) << 3;
+	$b2 = ($bit2 & 1) << 2;
+	$b1 = ($bit1 & 1) << 1;
+	$b0 = ($bit0 & 1) << 0;
+	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
 }
 //////////////////////////////
 function ps2_alpha2x( &$pal )

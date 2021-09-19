@@ -331,29 +331,6 @@ function flag_watch( $name, $int )
 	php_notice("$name some flags is set [%x]", $int);
 	return;
 }
-
-function performance( $file_func='', $dir_func='', $op_func='' )
-{
-	global $argc, $argv;
-
-	$st = microtime(true);
-	for ( $i=1; $i < $argc; $i++ )
-	{
-		if ( is_file($argv[$i]) && function_exists($file_func) )
-			$file_func( $argv[$i] );
-		else
-		if ( is_dir ($argv[$i]) && function_exists($dir_func ) )
-			$dir_func ( $argv[$i] );
-		else
-		if ( function_exists($op_func) )
-			$op_func( $argv[$i] );
-	}
-	$ed = microtime(true);
-
-	$mem = memory_get_peak_usage();
-	trace("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
-	return;
-}
 //////////////////////////////
 function fp2str( $fp, $pos, $byte )
 {
@@ -548,148 +525,6 @@ function save_clutfile( $fname, &$data )
 	return;
 }
 
-function load_text( $fname )
-{
-	$txt = load_file($fname);
-	if ( empty($txt) )
-		return "";
-	$txt = str_replace( array("\r\n","\r"), "\n", $txt);
-	return explode("\n", $txt);
-}
-
-function file2sect( &$file, $sect, $pfx, $parse, $end=0, $save=true )
-{
-	if ( $end <= 0 )
-		$end = strlen($file);
-
-	list($parse,$int) = $parse;
-	if ( ! function_exists($parse) )
-		return;
-
-	// sect = [
-	//   { 'p' : 0 , 'k' : 0 }, // p = position , k = block size/row
-	// ]
-	// added 'o' = offset
-	// added 'd' = data
-	$offs = array();
-	$offs[] = $end;
-	foreach ( $sect as $k => $v )
-	{
-		$b1 = $parse($file, $v['p'], $int);
-		if ( $b1 == 0 )
-			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	} // foreach ( $sect as $k => $v )
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);
-		$dat = substr($file, $v['o'], $sz);
-
-		if ( $save )
-		{
-			$name = "$pfx/meta/$k";
-			trace("== %s( %s , %x )\n", __FUNCTION__, $name, $v['k']);
-
-			$buf = debug_block( $dat, $v['k'] );
-			//trace("%s\n", $buf);
-			save_file("$name.txt", $buf);
-		}
-
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$file = $sect;
-	return;
-}
-
-function sect_sum( &$sect, $name, $off )
-{
-	if ( defined("NO_TRACE") )
-		return;
-
-	$pos = 0;
-	$sum = array();
-	while (1)
-	{
-		if ( ! isset( $sect['d'][$pos+$off] ) )
-			break;
-
-		$b = ord( $sect['d'][$pos+$off] );
-		if ( ! isset( $sum[$b] ) )
-			$sum[$b] = 0;
-
-		$sum[$b]++;
-		$pos += $sect['k'];
-	}
-	ksort($sum);
-
-	trace("== %s( %s , %x )\n", __FUNCTION__, $name, $off);
-	foreach ( $sum as $k => $v )
-		trace("  %2x = %8x\n", $k, $v);
-	return;
-}
-
-function req_file( $fname )
-{
-	if ( ! file_exists($fname) )
-		trigger_error("req_file( $fname ) : not found\n", E_USER_ERROR);
-	return file_get_contents($fname);
-}
-
-function arrayint( &$array )
-{
-	foreach ( $array as $k => $v )
-		$array[$k] = (int)$v;
-	return;
-}
-
-function arrayhex( &$array )
-{
-	foreach ( $array as $k => $v )
-		$array[$k] = hexdec($v);
-	return;
-}
-
-function patchfile( $fname, $val_callback="" )
-{
-	$fn = __DIR__ . "/patch/$fname";
-	if ( ! file_exists($fn) )
-		return array();
-
-	$data = array();
-	$sect = "";
-	foreach ( file($fn) as $v )
-	{
-		$v = preg_replace("|[\s]+|", '', $v);
-		if ( empty($v) )
-			continue;
-		if ( $v[0] == '#' ) // comments
-			continue;
-		if ( $v[0] == '[' ) // section header
-		{
-			$sect = trim($v, '[]');
-			continue;
-		}
-
-		list($vk,$vv) = explode('=', $v);
-		if ( strpos($vv, ',') !== false )
-		{
-			$vv = explode(',', $vv);
-			if ( function_exists($val_callback) )
-				$val_callback($vv);
-		}
-		$data[$sect][$vk] = $vv;
-	} // foreach ( file($fn) as $v )
-
-	return $data;
-}
-
 function lsfile_r( $dir, &$list )
 {
 	if ( empty($dir) || ! is_dir($dir) )
@@ -768,24 +603,6 @@ function pal555( $str )
 	for ( $i=0; $i < $siz; $i += 2 )
 		$clut .= rgb555( $str[$i+0] . $str[$i+1] );
 	return $clut;
-}
-
-function strpal555( &$file, $pos, $cc )
-{
-	$str = substr($file, $pos, $cc*2);
-	return pal555($str);
-}
-
-function mstrpal555( &$file, $pos, $cc, $cn )
-{
-	$ret = array();
-	while ( $cn > 0 )
-	{
-		$ret[] = strpal555($file, $pos, $cc);
-		$pos += ($cc*2);
-		$cn--;
-	}
-	return $ret;
 }
 
 function is_blank( &$pix )
@@ -893,25 +710,8 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	$sx >>= 1;
 	$w  >>= 1;
 	$sw >>= 1;
-	if ( rippix_errs($sx, $sy, $w, $h, $sw, $sh) )
-		return "";
-
-	$rip = "";
-	for ( $y=0; $y < $h; $y++ )
-	{
-		$syy = ($sy + $y) * $sw;
-		for ( $x=0; $x < $w; $x++ )
-		{
-			$sxx = $syy + $sx + $x;
-			$p = ord( $pix[$sxx] );
-
-			$buf = "";
-			$buf .= chr( ($p >> 0) & BIT4 );
-			$buf .= chr( ($p >> 4) & BIT4 );
-
-			$rip .= $buf;
-		} // for ( $x=0; $x < ($w/2); $x++ )
-	} // for ( $y=0; $y < $h; $y++ )
+	$rip = rippix8($pix, $sx, $sy, $w, $h, $sw, $sh);
+	bpp4to8($rip);
 	return $rip;
 }
 
@@ -942,11 +742,11 @@ function COPYPIX_DEF()
 			'pix' => "",
 		),
 		'src' => array(
-			'w' => 0,
-			'h' => 0,
-			'pix' => "",
-			'pal' => "",
-			'vector' => array(), // replaces sx,sy for copyquad
+			'w'    => 0,
+			'h'    => 0,
+			'pix'  => "",
+			'pal'  => "",
+			'quad' => array(), // replaces sx,sy for copyquad
 		),
 		'dx' => 0,
 		'dy' => 0,
@@ -954,7 +754,7 @@ function COPYPIX_DEF()
 		'vflip'  => false,
 		'hflip'  => false,
 		'rotate' => array(0,0,0),
-		'vector' => array(), // replaces dx,dy for copyquad
+		'quad'   => array(), // replaces dx,dy for copyquad
 		'alpha'  => "", // callback
 	);
 	return $php56;
@@ -1522,5 +1322,170 @@ function psxtim( &$file )
 
 	trace("psxtim() %s @ %d x %d\n", $tim['t'], $tim['w'], $tim['h']);
 	return $tim;
+}
+//////////////////////////////
+function performance( $file_func='', $dir_func='', $op_func='' )
+{
+	global $argc, $argv;
+
+	$st = microtime(true);
+	for ( $i=1; $i < $argc; $i++ )
+	{
+		if ( is_file($argv[$i]) && function_exists($file_func) )
+			$file_func( $argv[$i] );
+		else
+		if ( is_dir ($argv[$i]) && function_exists($dir_func ) )
+			$dir_func ( $argv[$i] );
+		else
+		if ( function_exists($op_func) )
+			$op_func( $argv[$i] );
+	}
+	$ed = microtime(true);
+
+	$mem = memory_get_peak_usage();
+	trace("%s()  %.2f msec  %x RAM\n", $func, $ed-$st, $mem);
+	return;
+}
+
+function load_text( $fname )
+{
+	$txt = load_file($fname);
+	if ( empty($txt) )
+		return "";
+	$txt = str_replace( array("\r\n","\r"), "\n", $txt);
+	return explode("\n", $txt);
+}
+
+function file2sect( &$file, $sect, $pfx, $parse, $end=0, $save=true )
+{
+	if ( $end <= 0 )
+		$end = strlen($file);
+
+	list($parse,$int) = $parse;
+	if ( ! function_exists($parse) )
+		return;
+
+	// sect = [
+	//   { 'p' : 0 , 'k' : 0 }, // p = position , k = block size/row
+	// ]
+	// added 'o' = offset
+	// added 'd' = data
+	$offs = array();
+	$offs[] = $end;
+	foreach ( $sect as $k => $v )
+	{
+		$b1 = $parse($file, $v['p'], $int);
+		if ( $b1 == 0 )
+			continue;
+		$offs[] = $b1;
+		$sect[$k]['o'] = $b1;
+	} // foreach ( $sect as $k => $v )
+	sort($offs);
+
+	foreach ( $sect as $k => $v )
+	{
+		if ( ! isset( $v['o'] ) )
+			continue;
+		$id = array_search($v['o'], $offs);
+		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);
+		$dat = substr($file, $v['o'], $sz);
+
+		if ( $save )
+		{
+			$name = "$pfx/meta/$k";
+			trace("== %s( %s , %x )\n", __FUNCTION__, $name, $v['k']);
+
+			$buf = debug_block( $dat, $v['k'] );
+			//trace("%s\n", $buf);
+			save_file("$name.txt", $buf);
+		}
+
+		$sect[$k]['d'] = $dat;
+	} // foreach ( $sect as $k => $v )
+
+	$file = $sect;
+	return;
+}
+
+function sect_sum( &$sect, $name, $off )
+{
+	if ( defined("NO_TRACE") )
+		return;
+
+	$pos = 0;
+	$sum = array();
+	while (1)
+	{
+		if ( ! isset( $sect['d'][$pos+$off] ) )
+			break;
+
+		$b = ord( $sect['d'][$pos+$off] );
+		if ( ! isset( $sum[$b] ) )
+			$sum[$b] = 0;
+
+		$sum[$b]++;
+		$pos += $sect['k'];
+	}
+	ksort($sum);
+
+	trace("== %s( %s , %x )\n", __FUNCTION__, $name, $off);
+	foreach ( $sum as $k => $v )
+		trace("  %2x = %8x\n", $k, $v);
+	return;
+}
+
+function arrayint( &$array )
+{
+	foreach ( $array as $k => $v )
+		$array[$k] = (int)$v;
+	return;
+}
+
+function arrayhex( &$array )
+{
+	foreach ( $array as $k => $v )
+		$array[$k] = hexdec($v);
+	return;
+}
+
+function patchfile( $fname, $val_callback="" )
+{
+	$fn = __DIR__ . "/patch/$fname";
+	if ( ! file_exists($fn) )
+		return array();
+
+	$data = array();
+	$sect = "";
+	foreach ( file($fn) as $v )
+	{
+		$v = preg_replace("|[\s]+|", '', $v);
+		if ( empty($v) )
+			continue;
+		if ( $v[0] == '#' ) // comments
+			continue;
+		if ( $v[0] == '[' ) // section header
+		{
+			$sect = trim($v, '[]');
+			continue;
+		}
+
+		list($vk,$vv) = explode('=', $v);
+		if ( strpos($vv, ',') !== false )
+		{
+			$vv = explode(',', $vv);
+			if ( function_exists($val_callback) )
+				$val_callback($vv);
+		}
+		$data[$sect][$vk] = $vv;
+	} // foreach ( file($fn) as $v )
+
+	return $data;
+}
+
+function req_file( $fname )
+{
+	if ( ! file_exists($fname) )
+		trigger_error("req_file( $fname ) : not found\n", E_USER_ERROR);
+	return file_get_contents($fname);
 }
 //////////////////////////////

@@ -79,8 +79,8 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 	$pix['src']['h'] = 16;
 
 	global $gp_pix, $gp_clut;
-	$cn = ord( $meta[0x2b] ) & 0x0f;
-	$pix['src']['pal'] = $gp_clut[$cn];
+	$cid = ord( $meta[0x2b] ) & 0x0f;
+	$pix['src']['pal'] = substr($gp_clut, $cid*0x400, 0x400);
 
 	$pos = $base + ($id * 4);
 	$pos = $base + str2int($img, $pos, 4);
@@ -89,12 +89,16 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x10 )
 		{
-			$dat = str2int($img, $pos, 2);
+			$dat = str2int($img, $pos, 2, true);
 				$pos += 2;
-			$map .= sprintf("%4x ", $dat);
 
-			if ( $dat == BIT16 )
+			if ( $dat < 0 )
+			{
+				$map .= '---- ';
 				continue;
+			}
+			else
+				$map .= sprintf("%4x ", $dat);
 
 			$pix['src']['pix'] = substr($gp_pix, $dat*0x100, 0x100);
 			$pix['dx'] = $x;
@@ -144,9 +148,11 @@ function saga2( $fname )
 	$off = str2int($tex, 4, 4);
 	$gp_pix = substr($tex, 12, $off-12);
 
-	$cc = str2int($tex, $off+0, 2);
+	$cc = str2int($tex, $off+0, 2); // always 0x100
 	$cn = str2int($tex, $off+2, 2);
-	$gp_clut = mstrpal555($tex, $off+4, $cc, $cn);
+	printf("cc %x  cn %x\n", $cc, $cn);
+	$pal = substr($tex, $off+4, $cc*$cn*2);
+	$gp_clut = pal555($pal);
 
 	$tex = "";
 	savemap($img, $dir);

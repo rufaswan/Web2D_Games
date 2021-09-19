@@ -22,33 +22,41 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-function xeno( $fname )
+$list = array();
+lsfile_r('.', $list);
+
+if ( empty($list) )
+	exit("no file\n");
+
+$fsz = array();
+$ext = array();
+$all = 0;
+foreach ( $list as $f )
 {
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
+	$sz  = filesize($f);
+	$all += $sz;
 
-	$dir = str_replace('.', '_', $fname);
-	$len = strlen($file);
+	if ( ! isset($fsz[$sz]) )
+		$fsz[$sz] = array();
+	$fsz[$sz][] = $f;
 
-	for ( $i=0; $i < $len; $i += 0x1000 )
-	{
-		$pal = substr($file, $i+0,     0x100);
-		$pix = substr($file, $i+0x100, 60*64);
+	$e = substr($f, strrpos($f, '.')+1);
+	if ( $e[0] === '/' )
+		$e = ' ';
+	if ( ! isset($ext[$e]) )
+		$ext[$e] = 0;
+	$ext[$e] += $sz;
+} // foreach ( $list as $f )
 
-		$img = array(
-			'cc'  => 0x80,
-			'w'   => 60,
-			'h'   => 64,
-			'pal' => pal555($pal),
-			'pix' => $pix,
-		);
+if ( empty($fsz) )
+	exit("no file\n");
+ksort($fsz);
 
-		$fn = sprintf("$dir/%04d.clut", $i/0x1000);
-		save_clutfile($fn, $img);
-	} // for ( $i=0; $i < $len; $i += 0x1000 )
+foreach ( $fsz as $fz => $list )
+{
+	foreach ( $list as $f )
+		printf("[%4.1f%%]  %8x  %s\n", $fz/$all*100, $fz, $f);
+} // foreach ( $fsz as $fz => $list )
 
-	return;
-}
-
-for ( $i=1; $i < $argc; $i++ )
-	xeno( $argv[$i] );
+foreach ( $ext as $e => $sz )
+	printf("[%4.1f%%]  %8x  EXT %s\n", $sz/$all*100, $sz, $e);

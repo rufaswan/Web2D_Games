@@ -34,18 +34,15 @@ function psxvram2clut( &$vram, $base )
 	save_file("$base/vram-8.clut", $clut);
 
 	// 4-bpp
+	$v = $vram;
+	bpp4to8($v);
+
 	$clut = "CLUT";
 	$clut .= chrint(0x10,   4);
 	$clut .= chrint(0x1000, 4);
 	$clut .= chrint(0x200,  4);
 	$clut .= grayclut(0x10);
-	for ( $i=0; $i < 0x100000; $i++ )
-	{
-		$b = ord( $vram[$i] );
-		$b1 = ($b >> 0) & BIT4;
-		$b2 = ($b >> 4) & BIT4;
-		$clut .= chr($b1) . chr($b2);
-	}
+	$clut .= $v;
 	save_file("$base/vram-4.clut", $clut);
 
 	// 16-bpp

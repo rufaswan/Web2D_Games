@@ -80,7 +80,7 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($src[$tid], $sx, $sy, $w, $h, 0x80, 0x80);
-		$pix['src']['pal'] = $clut[$cid];
+		$pix['src']['pal'] = substr($clut, $cid*0x40, 0x40);
 		$pix['src']['pal'][3] = ZERO;
 		//$pix['bgzero'] = 0;
 
@@ -110,21 +110,22 @@ function sectmeta( &$meta, &$src, $dir, $ram )
 	$clut_pos = 0;
 	while (1)
 	{
-		if ( $meta[$st+3] != chr(0x80) )
+		if ( $meta[$st+3] != "\x80" )
 			break;
 		$pos = ramint($meta, $st, $ram);
-		$addr[] = $pos;
-		$clut_pos = $pos;
+			$st += 4;
 
-		$st += 4;
-	}
+		$addr[]   = $pos;
+		$clut_pos = $pos;
+	} // while (1)
 
 	$num = ord( $meta[$clut_pos] );
 	$clut_pos += (4 + $num * 0x16);
 	while ( $clut_pos % 4 )
 		$clut_pos++;
 	printf("add CLUT @ %x\n", $clut_pos);
-	$clut = mstrpal555($meta, $clut_pos, 16, 0x100);
+	$clut = substr($meta, $clut_pos, 0x20*0x100);
+		$clut = pal555($clut);
 
 	foreach ( $addr as $ak => $av )
 	{

@@ -21,7 +21,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 define("CANV_S", 0x400);
-define("SCALE", 1.0);
 //define("DRY_RUN", true);
 
 function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
@@ -45,11 +44,10 @@ function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 			$data[] = $p7;
 		} // for ( $i7=0; $i7 < $no7; $i7++ )
 
-		$ceil = int_ceil( CANV_S * SCALE, 2 );
 		$pix = COPYPIX_DEF();
-		$pix['rgba']['w'] = $ceil;
-		$pix['rgba']['h'] = $ceil;
-		$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+		$pix['rgba']['w'] = CANV_S;
+		$pix['rgba']['h'] = CANV_S;
+		$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
 		$pix['src']['w'] = 16;
 		$pix['src']['h'] = 16;
 		$pix['bgzero'] = 0;
@@ -68,11 +66,10 @@ function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 			$pix['hflip'] = $b7 & 1;
 			$pix['vflip'] = $b7 & 2;
 
-			$pix['dx'] = $dx + $ceil/2;
-			$pix['dy'] = $dy + $ceil/2;
-			$pix['src']['pal'] = $cdt[$cid];
-			$pix['src']['pix'] = substr($pdt , $tid*0x100, 0x100);
-			scalepix($pix, SCALE, SCALE);
+			$pix['dx'] = $dx + CANV_S/2;
+			$pix['dy'] = $dy + CANV_S/2;
+			$pix['src']['pal'] = substr($cdt, $cid*0x40, 0x40);
+			$pix['src']['pix'] = substr($pdt, $tid*0x100, 0x100);
 
 			if ( $v[8] !== ZERO )
 				$pix['src']['pal'] = str_repeat("\xff\x00\x00\xff", 16);
@@ -169,8 +166,9 @@ function load_tbltim( $fname, $pfx )
 	{
 		$cn = str2int($tbl, $st+8, 4);
 			$st += 12;
-		$data[] = mstrpal555($tbl, $st, 16, $cn);
+		$sub = substr($tbl, $st, $cn*0x20);
 			$st += ($cn * 0x20);
+		$data[] = pal555($sub);
 	} // while ( $st < $ed )
 
 	// debug
@@ -180,18 +178,9 @@ function load_tbltim( $fname, $pfx )
 		{
 			if ( ! isset($v['pal']) || empty($v['pal']) )
 				$v['pal'] = ( isset($data[2]) ) ? $data[2] : $data[1];
-			foreach ( $v['pal'] as $pk => $pv )
-			{
-				$img = array(
-					'cc' => $v['cc'],
-					'w'  => $v['w' ],
-					'h'  => $v['h' ],
-					'pix' => $v['pix'],
-					'pal' => $pv,
-				);
-				$fn = sprintf("%s/%04d-%02d.clut", $pfx, $k, $pk);
-				save_clutfile($fn, $img);
-			} // foreach ( $v['pal'] as $pk => $pv )
+
+			$fn = sprintf("%s/%04d.clut", $pfx, $k);
+			save_clutfile($fn, $v);
 		}
 		else
 		if ( $v['t'] == 'RGBA' )
