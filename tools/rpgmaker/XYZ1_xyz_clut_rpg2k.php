@@ -4,15 +4,14 @@
 //   https://github.com/EasyRPG/Tools/blob/master/xyz2png/src/xyz2png.cpp
 //   GNU GPL v3
 require "common.inc";
-req_ext( "zlib_decode", "zlib" );
+php_req_extension( "zlib_decode", "zlib" );
 
 function rpg2k( $fname )
 {
 	$file = file_get_contents( $fname );
 		if ( empty($file) )   return;
 
-	$mgc = substr($file, 0, 4);
-	if ( $mgc != "XYZ1" )
+	if ( substr($file,0,4) !== "XYZ1" )
 		return;
 
 	$w = str2int($file, 4, 2);

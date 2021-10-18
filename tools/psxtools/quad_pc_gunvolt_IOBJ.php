@@ -24,9 +24,6 @@ require "common.inc";
 require "common-guest.inc";
 require "quad.inc";
 
-$gp_json = array();
-$gp_tag  = '';
-
 function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 {
 	$float =array();
@@ -96,9 +93,8 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 	return;
 }
 
-function sect_spr( &$file, $ptgt_off, $img )
+function sect_spr( &$json, &$file, $ptgt_off, $img )
 {
-	global $gp_json;
 	$cnt = str2int($file, $ptgt_off+8, 4);
 	$off1 = $ptgt_off + 12;
 	$off2 = $ptgt_off + 12 + ($cnt * 8);
@@ -126,17 +122,16 @@ function sect_spr( &$file, $ptgt_off, $img )
 			);
 		} // for ( $i2=0; $i2 < $no; $i2++ )
 
-		$gp_json['Frame'][$i1] = $data;
+		$json['Frame'][$i1] = $data;
 	} // for ( $i1=0; $i1 < $cnt; $i1++ )
 
 	return;
 }
 //////////////////////////////
-function sect_anim( &$file, $off1, $off2 )
+function sect_anim( &$json, &$file, $off1, $off2 )
 {
 	$sub = substr($file, $off1, $off2-$off1);
 
-	global $gp_json;
 	$cnt = str2int($sub, 0, 4);
 	for ( $i=0; $i < $cnt; $i++ )
 	{
@@ -170,7 +165,7 @@ function sect_anim( &$file, $off1, $off2 )
 			$ent['FPS'][] = $no;
 		}
 
-		$gp_json['Animation'][$name][0] = $ent;
+		$json['Animation'][$name][0] = $ent;
 	} // for ( $i=0; $i < $cnt; $i++ )
 
 	return;
@@ -274,7 +269,7 @@ function sect_TLPI( &$sect, &$img, $pfx )
 	return;
 }
 
-function sect_IOBJ( &$sect, $pfx )
+function sect_IOBJ( &$json, &$sect, $pfx, $idtag )
 {
 	if ( ! isset($sect['IOBJ']) )
 		return;
@@ -297,24 +292,23 @@ function sect_IOBJ( &$sect, $pfx )
 	}
 	sect_TLPI($sect, $img, $pfx);
 
-	sect_anim($sect['IOBJ'], $anim_off, $ptgt_off);
-	sect_spr ($sect['IOBJ'], $ptgt_off, $img);
+	sect_anim($json, $sect['IOBJ'], $anim_off, $ptgt_off);
+	sect_spr ($json, $sect['IOBJ'], $ptgt_off, $img);
 
-	global $gp_json, $gp_tag;
-	save_quadfile("$pfx/$gp_tag", $gp_json);
+	save_quadfile("$pfx/$idtag", $json);
 
 	foreach ( $img as $k => $v )
 	{
 		if ( isset( $sect['TLPI'] ) )
-			$fn = sprintf("%s/%s-%d.0.rgba", $pfx, $gp_tag, $k);
+			$fn = sprintf("%s/%s-%d.0.rgba", $pfx, $idtag, $k);
 		else
-			$fn = sprintf("%s/%s.%d.rgba", $pfx, $gp_tag, $k);
+			$fn = sprintf("%s/%s.%d.rgba", $pfx, $idtag, $k);
 		save_clutfile($fn, $v);
 	}
 	return;
 }
 
-function gunvolt( $fname )
+function gunvolt( $fname, $idtag )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -322,10 +316,9 @@ function gunvolt( $fname )
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	$len = strlen ($file);
 
-	global $gp_json, $gp_tag;
-	if ( $gp_tag == '' )
+	if ( $idtag == '' )
 		return php_error('NO TAG %s', $fname);
-	$gp_json = load_idtagfile($gp_tag);
+	$json = load_idtagfile($idtag);
 
 	// no duplicate magic in one file
 	// TLPI will have IOBJ , with pix_cnt = 1 always
@@ -354,7 +347,7 @@ function gunvolt( $fname )
 				{
 					$type = "pix ";
 					$img = gv_pixd($sub, 0);
-					save_clutfile("$pfx/$gp_tag.$i.rgba", $img);
+					save_clutfile("$pfx/$idtag.$i.rgba", $img);
 				}
 				else
 					$type = "????";
@@ -364,22 +357,23 @@ function gunvolt( $fname )
 		printf("%8x , %8x , %s , %s.%d\n", $pos, $siz, $type, $pfx, $i);
 	} // for ( $i=0; $i < $cnt; $i++ )
 
-	sect_IOBJ($sect, $pfx);
+	sect_IOBJ($json, $sect, $pfx, $idtag);
 	return;
 }
 
-echo "{$argv[0]}  -bsm/-gv/-gv2/-gva/-mgv  FILE...\n";
+printf("%s  -bsm/-gv/-gv2/-gva/-mgv  FILE...\n", $argv[0]);
+$idtag = "";
 for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case '-bsm':  $gp_tag = 'pc_bsm'; break;
-		case '-gv' :  $gp_tag = 'pc_gv' ; break;
-		case '-gv2':  $gp_tag = 'pc_gv2'; break;
-		case '-gva':  $gp_tag = 'pc_gva'; break;
-		case '-mgv':  $gp_tag = 'pc_mgv'; break;
+		case '-bsm':  $idtag = 'pc_bsm'; break;
+		case '-gv' :  $idtag = 'pc_gv' ; break;
+		case '-gv2':  $idtag = 'pc_gv2'; break;
+		case '-gva':  $idtag = 'pc_gva'; break;
+		case '-mgv':  $idtag = 'pc_mgv'; break;
 		default:
-			gunvolt( $argv[$i] );
+			gunvolt( $argv[$i], $idtag );
 			break;
 	} // switch ( $argv[$i] )
 } // for ( $i=1; $i < $argc; $i++ )

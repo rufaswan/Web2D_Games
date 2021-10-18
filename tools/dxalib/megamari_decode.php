@@ -10,13 +10,12 @@ function mari_decode( &$file, $pos, $siz )
 	$step = 100;
 	for ( $i=0; $i < $siz; $i++ )
 	{
-		$b = ord( $file[$pos] );
-		$b = ($b ^ $key) & BIT8;
+		$b  = ord( $file[$pos+$i] );
+		$b ^= $key;
 		$dec .= chr($b);
 
-		$key  += $step;
-		$step += 77;
-		$pos++;
+		$key  = ($key  + $step) & BIT8;
+		$step = ($step + 77   ) & BIT8;
 	}
 	return $dec;
 }
@@ -46,10 +45,9 @@ function marisa( $fname )
 		$dec = "";
 		for ( $j=0; $j < $sz; $j++ )
 		{
-			$b = ord( $file[$of] );
+			$b  = ord( $file[$of+$j] );
 			$b ^= $key;
 			$dec .= chr($b);
-			$of++;
 		}
 		save_file("$dir/$fn", $dec);
 	}

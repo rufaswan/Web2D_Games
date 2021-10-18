@@ -20,7 +20,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-req_ext( "zlib_decode", "zlib" );
+php_req_extension("zlib_decode", "zlib");
 
 function ain_dec( $fname )
 {

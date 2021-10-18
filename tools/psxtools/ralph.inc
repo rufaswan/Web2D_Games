@@ -44,10 +44,7 @@ function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 			$data[] = $p7;
 		} // for ( $i7=0; $i7 < $no7; $i7++ )
 
-		$pix = COPYPIX_DEF();
-		$pix['rgba']['w'] = CANV_S;
-		$pix['rgba']['h'] = CANV_S;
-		$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+		$pix = COPYPIX_DEF(CANV_S,CANV_S);
 		$pix['src']['w'] = 16;
 		$pix['src']['h'] = 16;
 		$pix['bgzero'] = 0;

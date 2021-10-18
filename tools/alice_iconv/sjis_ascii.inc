@@ -1,1 +1,0 @@
-../../files/sjis_ascii.inc

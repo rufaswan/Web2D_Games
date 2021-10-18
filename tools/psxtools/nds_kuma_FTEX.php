@@ -46,6 +46,7 @@ function sect_BIT( &$sub )
 		$gp_pix[$i]['w']   = str2int($sub, $p+0, 2);
 		$gp_pix[$i]['h']   = str2int($sub, $p+2, 2);
 		$gp_pix[$i]['pal'] = pal555( substr($sub, $p+16, 32) );
+			$gp_pix[$i]['pal'][3] = ZERO; // bgzero
 	}
 	return;
 }

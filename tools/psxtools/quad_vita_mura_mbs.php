@@ -26,8 +26,6 @@ require "quad.inc";
 
 define("METAFILE", true);
 
-$gp_json = array();
-
 function colorquad( &$cqd, &$mbs, $pos )
 {
 	$s = substr($mbs, $pos, 4);
@@ -96,88 +94,12 @@ function sectquad( &$mbs, $pos, &$sqd, &$dqd, &$cqd )
 	return;
 }
 //////////////////////////////
-function sectpart( &$mbs, $pfx, $k3, $id3, $no3, $game )
-{
-	global $gp_json;
-
-	$data = array();
-	for ( $i1=0; $i1 < $no3; $i1++ )
-	{
-		$p1 = ($id3 + $i1) * $mbs[1]['k'];
-		$sqd = array();
-		$dqd = array();
-		$cqd = array();
-		switch ( $game )
-		{
-			case "mura":
-			case "drag":
-				// 0 1 2 3  4 5 6 7  8 9  a b
-				// sub      - - - -  - -  s8
-				$sub = substr ($mbs[1]['d'], $p1+0 , 4);
-				$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
-				sectquad($mbs[8], $s8, $sqd, $dqd, $cqd);
-				break;
-			case "odin":
-				// 0 1 2 3  4 5 6 7  8 9 a b  c d e f
-				// - - - -  sub      - - - -  - - s8
-				//$sub = substr ($mbs[1]['d'], $p1+5 , 4);
-				$sub = $mbs[1]['d'][$p1+5] . $mbs[1]['d'][$p1+4] . $mbs[1]['d'][$p1+6] . $mbs[1]['d'][$p1+7];
-				$s8  = str2int($mbs[1]['d'], $p1+14, 2); // quads
-				sectquad($mbs[9], $s8, $sqd, $dqd, $cqd);
-				break;
-		}
-
-		$s1 = str2int($sub, 0, 2); // ??
-		$s3 = ord( $sub[2] ); // mask
-		$s4 = ord( $sub[3] ); // tid
-
-		$data[$i1] = array();
-		if ( $s1 & 2 )
-			continue;
-
-		$data[$i1]['DstQuad'] = $dqd;
-		if ( ! empty($cqd) )
-			$data[$i1]['ClrQuad']  = $cqd;
-
-		//  1 layer normal
-		//  2 layer top
-		//  4 gradientFill
-		//  8 attack box
-		// 10
-		// 20
-		if ( ($s1 & 4) == 0 )
-		{
-			$data[$i1]['TexID']   = $s4;
-			$data[$i1]['SrcQuad'] = $sqd;
-		}
-
-/*
-		switch ( $s3 )
-		{
-			case 1:
-				$data[$i1]['Blend'] = array('SUB', 1);
-				break;
-			case 2:
-				$data[$i1]['Blend'] = array('ADD', 1);
-				break;
-			default: // 0 6
-				//$data[$i1]['Blend'] = array('NORMAL', 1);
-				break;
-		} // switch ( $s3 )
-*/
-
-	} // for ( $i4=0; $i4 < $no6; $i4++ )
-
-	$gp_json['Frame'][$k3] = $data;
-	return;
-}
-
 //       frames        parts     quad
 // mura  s3,18[10,14]  s1,c [a]  s8,78
 // drag  s3,1c[10,16]  s1,c [a]  s8,78
 // gran  s3,18[10,14]  s1,c [a]  s8,60
 // odin  s3,1c[10,16]  s1,10[e]  s9,78
-function sectspr( &$mbs, $pfx, $game )
+function sectspr( &$json, &$mbs, $pfx, $game )
 {
 	// s3-s1-s8/s9
 	$len3 = strlen( $mbs[3]['d'] );
@@ -203,16 +125,81 @@ function sectspr( &$mbs, $pfx, $game )
 		// JSON will become {object} instead [array]
 
 		$k3 = $i3 / $mbs[3]['k'];
-		sectpart($mbs, $pfx, $k3, $id3, $no3, $game);
+		$data = array();
+		for ( $i1=0; $i1 < $no3; $i1++ )
+		{
+			$p1 = ($id3 + $i1) * $mbs[1]['k'];
+			$sqd = array();
+			$dqd = array();
+			$cqd = array();
+			switch ( $game )
+			{
+				case "mura":
+				case "drag":
+					// 0 1 2 3  4 5 6 7  8 9  a b
+					// sub      - - - -  - -  s8
+					$sub = substr ($mbs[1]['d'], $p1+0 , 4);
+					$s8  = str2int($mbs[1]['d'], $p1+10, 2); // quads
+					sectquad($mbs[8], $s8, $sqd, $dqd, $cqd);
+					break;
+				case "odin":
+					// 0 1 2 3  4 5 6 7  8 9 a b  c d e f
+					// - - - -  sub      - - - -  - - s8
+					//$sub = substr ($mbs[1]['d'], $p1+5 , 4);
+					$sub = $mbs[1]['d'][$p1+5] . $mbs[1]['d'][$p1+4] . $mbs[1]['d'][$p1+6] . $mbs[1]['d'][$p1+7];
+					$s8  = str2int($mbs[1]['d'], $p1+14, 2); // quads
+					sectquad($mbs[9], $s8, $sqd, $dqd, $cqd);
+					break;
+			}
 
+			$s1 = str2int($sub, 0, 2); // ??
+			$s3 = ord( $sub[2] ); // mask
+			$s4 = ord( $sub[3] ); // tid
+
+			$data[$i1] = array();
+			if ( $s1 & 2 )
+				continue;
+
+			$data[$i1]['DstQuad'] = $dqd;
+			if ( ! empty($cqd) )
+				$data[$i1]['ClrQuad']  = $cqd;
+
+			//  1 layer normal
+			//  2 layer top
+			//  4 gradientFill
+			//  8 attack box
+			// 10
+			// 20
+			if ( ($s1 & 4) == 0 )
+			{
+				$data[$i1]['TexID']   = $s4;
+				$data[$i1]['SrcQuad'] = $sqd;
+			}
+
+	/*
+			switch ( $s3 )
+			{
+				case 1:
+					$data[$i1]['Blend'] = array('SUB', 1);
+					break;
+				case 2:
+					$data[$i1]['Blend'] = array('ADD', 1);
+					break;
+				default: // 0 6
+					//$data[$i1]['Blend'] = array('NORMAL', 1);
+					break;
+			} // switch ( $s3 )
+	*/
+
+		} // for ( $i4=0; $i4 < $no6; $i4++ )
+
+		$json['Frame'][$k3] = $data;
 	} // for ( $i3=0; $i3 < $len3; $i3 += $mbs[3]['k'] )
 	return;
 }
 //////////////////////////////
-function sectanim( &$mbs, $pfx, $game )
+function sectanim( &$json, &$mbs, $pfx, $game )
 {
-	global $gp_json;
-
 	// s6-s7-s5-s4 [30-14/18-20-24]
 	$len6 = strlen( $mbs[6]['d'] );
 	for ( $i6=0; $i6 < $len6; $i6 += $mbs[6]['k'] )
@@ -275,7 +262,7 @@ function sectanim( &$mbs, $pfx, $game )
 			// skip all zero Pos
 			if ( ! $is_mov )
 				unset( $ent['POS'] );
-			$gp_json['Animation'][$name][$i7] = $ent;
+			$json['Animation'][$name][$i7] = $ent;
 		} // for ( $i7=0; $i7 < $no6; $i7++ )
 
 	} // for ( $i6=0; $i6 < $len6; $i6 += $mbs[6]['k'] )
@@ -295,7 +282,6 @@ function head_e0( &$mbs, $pfx )
 	//   13c   -  e0 f8 | 1*c       1*18 1*24
 	//   11c 148 178  - | 1*20 1*30 1*14
 	//   18c   -   -  - | 1*78
-	//
 	// Momohime_Battle_drm.mbs
 	//       -     -     -   e0 |                     18*50
 	//    c52c 17b24   860 2408 | f2a*c  f2*8  127*18 11*24
@@ -308,7 +294,6 @@ function head_e0( &$mbs, $pfx )
 	// s1[+ a] = 7de   => s8
 	// s8
 	// s2
-	//
 	$sect = array(
 		array('p' => 0x7c , 'k' => 0x50), // 0 bg=0
 		array('p' => 0x80 , 'k' => 0xc ), // 1
@@ -328,13 +313,12 @@ function head_e0( &$mbs, $pfx )
 		sect_sum($mbs[1], 'mbs[1][2]', 2); //
 	}
 
-	global $gp_json;
-	$gp_json = load_idtagfile('vita_mura');
+	$json = load_idtagfile('vita_mura');
 
-	sectanim($mbs, $pfx, "mura");
-	sectspr ($mbs, $pfx, "mura");
+	sectanim($json, $mbs, $pfx, "mura");
+	sectspr ($json, $mbs, $pfx, "mura");
 
-	save_quadfile($pfx, $gp_json);
+	save_quadfile($pfx, $json);
 	return;
 }
 
@@ -348,8 +332,6 @@ function head_e4( &$mbs, $pfx )
 	//     - 144   -  e4 |      1*c       1*1c
 	//   100 124 150 180 | 1*24 1*20 1*30 1*14
 	//     - 194   -   - |      1*78
-	// s6[+28] = 0+1 =>
-	//
 	// Sorceress00.mbs
 	//     e4 3bd8c d08e0  c254 | 26b*50 c647*c  30f*8  6ae*1c
 	//  17d5c 1f40c d2158 d8098 | 34c*24  e4c*20 1fc*30 232*14
@@ -362,7 +344,6 @@ function head_e4( &$mbs, $pfx )
 	// s8
 	// s4
 	// s2
-	//
 	$sect = array(
 		array('p' => 0x80 , 'k' => 0x50), // 0 bg=0
 		array('p' => 0x84 , 'k' => 0xc ), // 1
@@ -382,13 +363,12 @@ function head_e4( &$mbs, $pfx )
 		sect_sum($mbs[1], 'mbs[1][2]', 2); //
 	}
 
-	global $gp_json;
-	$gp_json = load_idtagfile('vita_drag');
+	$json = load_idtagfile('vita_drag');
 
-	sectanim($mbs, $pfx, "drag");
-	sectspr ($mbs, $pfx, "drag");
+	sectanim($json, $mbs, $pfx, "drag");
+	sectspr ($json, $mbs, $pfx, "drag");
 
-	save_quadfile($pfx, $gp_json);
+	save_quadfile($pfx, $json);
 	return;
 }
 
@@ -408,13 +388,6 @@ function head_120( &$mbs, $pfx )
 	//    b68 - 2658 - | a5*20 3af*30
 	//   d728 -    - - | 2f*18
 	//      - - db90 - |        45*78
-	// s6[+28] = 2c+3 => s7
-	// s7[+ 0] = a3+2 => s5
-	// s5[+ 0] = 27   => s3
-	// s3[+10] = 64+1 => s1
-	// s1[+ e] = 44   => s9
-	// s9
-	//
 	// Gwendlyn.mbs
 	//       - -   120 - |           fb*50
 	//   2e8d0 - 5b7b0 - | 2cee*10  20d*8
@@ -430,7 +403,6 @@ function head_120( &$mbs, $pfx )
 	// s9
 	// s4
 	// s2
-	//
 	$sect = array(
 		array('p' => 0xc8  , 'k' => 0x50), // 0 sd=0
 		array('p' => 0xd0  , 'k' => 0x10), // 1
@@ -455,13 +427,12 @@ function head_120( &$mbs, $pfx )
 		sect_sum($mbs[1], 'mbs[1][6]', 6); //
 	}
 
-	global $gp_json;
-	$gp_json = load_idtagfile('vita_odin');
+	$json = load_idtagfile('vita_odin');
 
-	sectanim($mbs, $pfx, "odin");
-	sectspr ($mbs, $pfx, "odin");
+	sectanim($json, $mbs, $pfx, "odin");
+	sectspr ($json, $mbs, $pfx, "odin");
 
-	save_quadfile($pfx, $gp_json);
+	save_quadfile($pfx, $json);
 	return;
 }
 //////////////////////////////

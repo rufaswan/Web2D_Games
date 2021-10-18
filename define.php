@@ -29,12 +29,13 @@ define("TRACE", true);
 define("TRACE_OB", false);
 define("ROOT", __DIR__ );
 
-define("ZERO", chr(  0));
-define("BYTE", chr(255));
-define("BIT8",  0xff);
-define("BIT16", 0xffff);
-define("BIT24", 0xffffff);
-define("BIT32", 0xffffffff);
+define("ZERO", "\x00");
+define("BYTE", "\xff");
+define("BIT4",  (1 <<  4)-1);
+define("BIT8",  (1 <<  8)-1);
+define("BIT16", (1 << 16)-1);
+define("BIT24", (1 << 24)-1);
+define("BIT32", (1 << 32)-1);
 require ROOT . "/inc/funcs.php";
 
 $gp_init = array(
@@ -85,8 +86,8 @@ foreach ( $_REQUEST as $key => $var )
 		case "resume":
 			$gp_pc = load_savefile( "pc" );
 			break;
-	}
-}
+	} // switch ( $key )
+} // foreach ( $_REQUEST as $key => $var )
 //print_r($gp_init);
 
 define("PATH_JQUERY", "files/jquery-3.4.0.min.js");

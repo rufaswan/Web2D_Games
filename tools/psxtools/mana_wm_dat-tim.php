@@ -77,10 +77,7 @@ function sect1( &$file, $off, $fn )
 	if ( empty($data) )  return;
 
 	$ceil = int_ceil( CANV_S * SCALE, 2 );
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+	$pix = COPYPIX_DEF($ceil,$ceil);
 
 	global $gp_tim;
 	foreach ( $data as $v )

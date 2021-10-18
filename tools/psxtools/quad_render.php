@@ -90,10 +90,7 @@ function qrender( &$frame, $pfx, $id )
 	$ceil   = ( $is_mid ) ? int_ceil($CANV_S*2, 16) : int_ceil($CANV_S, 16);
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+	$pix = COPYPIX_DEF($ceil,$ceil);
 	$pix['alpha'] = "alpha_normal";
 
 	foreach ( $frame as $pk => $pv )

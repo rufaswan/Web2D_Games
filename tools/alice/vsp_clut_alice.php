@@ -184,9 +184,9 @@ function clut_vsp0( &$file , $st )
 		$cr = ord( $file[$st+$i+1] );
 		$cg = ord( $file[$st+$i+2] );
 
-		$clut .= int_range($cr * 0x11, 0, BIT8);
-		$clut .= int_range($cg * 0x11, 0, BIT8);
-		$clut .= int_range($cb * 0x11, 0, BIT8);
+		$clut .= int_clamp($cr * 0x11, 0, BIT8);
+		$clut .= int_clamp($cg * 0x11, 0, BIT8);
+		$clut .= int_clamp($cb * 0x11, 0, BIT8);
 		$clut .= BYTE; // alpha , 0 = trans , 255 = solid
 	}
 	return $clut;

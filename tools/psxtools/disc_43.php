@@ -369,10 +369,7 @@ function dw1_rle( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle )
 {
 	printf("== dw1_rle( %s , %x , %x , %x , %x , %x , %d , %d )\n", $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $w;
-	$pix['rgba']['h'] = $h;
-	$pix['rgba']['pix'] = canvpix($w,$h);
+	$pix = COPYPIX_DEF($w,$h);
 	$pix['src']['w'] = 4;
 	$pix['src']['h'] = 4;
 

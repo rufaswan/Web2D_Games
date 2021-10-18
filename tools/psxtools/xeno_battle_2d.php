@@ -201,10 +201,7 @@ function sectparts( &$meta, $off, $fn, $p256, $phdz, $pofz )
 	} // while ( $id < $num )
 
 	$ceil = int_ceil( CANV_S * SCALE, 2 );
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $ceil;
-	$pix['rgba']['h'] = $ceil;
-	$pix['rgba']['pix'] = canvpix($ceil,$ceil);
+	$pix = COPYPIX_DEF($ceil,$ceil);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )

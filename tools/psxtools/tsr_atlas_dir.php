@@ -47,10 +47,7 @@ function tsr( $dir )
 
 	list($ind, $cw, $ch) = atlasmap($files);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $cw;
-	$pix['rgba']['h'] = $ch;
-	$pix['rgba']['pix'] = canvpix($cw,$ch);
+	$pix = COPYPIX_DEF($cw,$ch);
 
 	foreach ( $files as $img )
 	{

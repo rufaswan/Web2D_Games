@@ -79,3 +79,26 @@ function cmp_quadxy( &$data, $id1, $id2 )
 		php_notice("cmp %d [%7.2f] != %d [%7.2f]", $id1, $data[$id1], $id2, $data[$id2]);
 	return;
 }
+
+function quad_ext1px( &$quad )
+{
+	// To fix Lunar 2 EB 1px gap between quads
+	//    17, b   0, b   0, 0   17, 0  =>   18, c  0, c  0,0   18,0
+	//    17,-c   0,-c   0,-1   17,-1  =>   18,-c  0,-c  0,0   18,0
+	//   -18, b  -1, b  -1, 0  -18, 0  =>  -18, c  0, c  0,0  -18,0
+	//   -18,-c  -1,-c  -1,-1  -18,-1  =>  -18,-c  0,-c  0,0  -18,0
+	//
+	// -18,0  - 0,c  - 18,c
+	//          |
+	// -18,0  - 0,0  - 18,0
+	//          |
+	// -18,-c - 0,-c - 18,-c
+
+	// x1 y1  x2 y2  x3 y3  x4 y4
+	// 0  1   2  3   4  5   6  7
+	( $quad[0] > $quad[4] ) ? $quad[0]++ : $quad[4]++;
+	( $quad[1] > $quad[5] ) ? $quad[1]++ : $quad[5]++;
+	( $quad[2] > $quad[6] ) ? $quad[2]++ : $quad[6]++;
+	( $quad[3] > $quad[7] ) ? $quad[3]++ : $quad[7]++;
+	return;
+}

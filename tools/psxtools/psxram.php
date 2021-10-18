@@ -65,7 +65,7 @@ function subram( &$file, $base )
 	}
 
 	// pSXfin PlayStation emulator (Windows + Linux)
-	if ( substr($file, 0, 7) == "ARS2CPU" || substr($file, 0, 6) == "ARSCPU" )
+	if ( substr($file, 0, 7) == 'ARS2CPU' || substr($file, 0, 6) == 'ARSCPU' )
 	{
 		echo "DETECT emulator = pSXfin\n";
 		$pos = strpos($file, "\xff\x00UPG\xbb\x00\x10");
@@ -150,7 +150,7 @@ function subram( &$file, $base )
 	}
 
 	// Neko Project II PC98 emulator (Linux)
-	if ( substr($file, 0, 15) == "Neko Project II" )
+	if ( substr($file, 0, 15) == 'Neko Project II' )
 	{
 		echo "DETECT emulator = Neko Project II\n";
 		$ed = strlen($file);

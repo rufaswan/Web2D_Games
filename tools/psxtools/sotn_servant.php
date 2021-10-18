@@ -55,10 +55,7 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 	if ( empty($data) )
 		return;
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S;
-	$pix['rgba']['h'] = CANV_S;
-	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+	$pix = COPYPIX_DEF(CANV_S,CANV_S);
 
 	foreach ( $data as $v )
 	{

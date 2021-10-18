@@ -282,3 +282,22 @@ legacy.imagemagick.org/discourse-server/viewtopic.php?t=19297
 		convert rose: -format  '%[pixel:p{40,30}]' info:-
 		convert rose: -format '#%[hex:p{40,30}]'   info:-
 		convert rose: -crop 1x1+40+30 -depth 8 txt:
+
+stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
+
+	Deep copy by performance: Ranked from best to worst
+		spread operator ...            (primitive arrays - only)
+		splice(0)                      (primitive arrays - only)
+		slice()                        (primitive arrays - only)
+		concat()                       (primitive arrays - only)
+		custom function, as seen below (any array)
+		jQuery's $.extend()            (any array)
+		JSON.parse(JSON.stringify())   (primitive and literal arrays - only)
+		Underscore's _.clone()         (primitive and literal arrays - only)
+		Lodash's _.cloneDeep()         (any array)
+
+	Where:
+		primitives = strings, numbers, and booleans
+		literals   = object literals {}, array literals []
+		any        = primitives, literals, and prototypes
+

@@ -24,7 +24,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 // Original License:
 //   GNU GPL v2 or later
 require "common.inc";
-req_ext( "zlib_decode", "zlib" );
+php_req_extension("zlib_decode", "zlib");
 
 define("DEBUG", false);
 //////////////////////////////

@@ -1,0 +1,99 @@
+1997  SAT   Princess Crown
+2007  PS2   Grim Grimoire
+2007  PS2   Odin Sphere
+2008  NDS   Kumatanchi
+2009  WII   Muramasa - The Demon Blade
+2011  PSP   Grand Knights History
+2013  VITA  Muramasa Rebirth + DLC
+2013  VITA  Dragon's Crown
+2016  VITA  Odin Sphere Leifthsar
+xxxx  PS3   Dragon's Crown
+xxxx  PS3   Odin Sphere Leifthsar HD
+xxxx  PS4   Odin Sphere Leifthsar HD
+xxxx  PS4   Dragon's Crown Pro
+xxxx  PS4   13 Sentinel Aegis Rim
+xxxx  PS4   Princess Crown
+==============================
+ps2 grim/cat00.mbp
+	- 0 1 2 |    -   a0  1a0  3e0 |  -    8*20 12*20 70*20
+	3 4 5 6 |    - 16f8    - 11e0 |  -   1f*18   -    b*18
+	7 8 9 a | 12e8 1318 19e0 1a40 | 1*30 1f*20  2*30  a*8
+
+nds kuma/reform01a.mbs
+	- 0 1 2 |   -  a0  d0 100 |  -   2*18 1*30 2*30
+	3 4 5 6 |   - 1bc   - 160 |  -   2*c   -   1*18
+	7 8 9 a | 178 19c 1d4 204 | 1*24 1*20 1*30 1*10
+
+psp gran/Cut_In00.mbs
+	- 0 1 2 |   -   - 314   - |  -    -   5*c   -
+	3 4 5 6 |  e8 148 1b4 350 | 4*18 3*24 b*20 2*30
+	7 8 - - | 3b0 400   -   - | 4*14 5*60  -    -
+
+wii mura/bg07_04_0.mbs
+	- 0 1 2 |   -  a0  b8  e8 |  -   1*18 1*30 1*30
+	3 4 5 6 |   - 174   - 118 |  -   1*c   -   1*18
+	7 8 9 a | 130 154 180 1b0 | 1*24 1*20 1*30 1*10
+
+vit mura/bg07_04_0.mbs
+	- - - 0 |   -   -   -  - |  -    -    -    -
+	1 2 3 4 | 13c   -  e0 f8 | 1*c   -   1*18 1*24
+	5 6 7 - | 11c 148 178  - | 1*20 1*30 1*14  -
+	8 - - - | 18c   -   -  - | 1*78  -    -    -
+
+ps2 odin/area21.mbp
+	- 0 1 2 |   -  a0 120 140 |  -   4*20 1*20 4*20
+	3 4 5 6 |   - 228   - 1c0 |  -   1*18  -   1*18
+	7 8 9 a | 1d8 208 240 270 | 1*30 1*20 1*30 1*8
+
+vit odin/area21.mbs
+vit odin/RESD_area21.mbs
+	- - 0 - |   - -   - - |  -    -
+	1 - 2 - | 180 -   - - | 1*10  -
+	3 - 4 - | 120 - 13c - | 1*1c 1*24
+	5 - 6 - | 160 - 190 - | 1*20 1*30
+	7 - 8 - | 1c0 -   - - | 1*18  -
+	- - 9 - |   - - 1d8 - |  -   1*78
+
+vit drag/bg14a_01.mbs
+	0 1 2 3 |   - 144   -  e4 |  -   1*c   -   1*1c
+	4 5 6 7 | 100 124 150 180 | 1*24 1*20 1*30 1*14
+	- 8 - - |   - 194   -   - |  -   1*78  -    -
+
+ps3 drag/bg14a_01.mbs
+	- 0 1 2 |   -  e4  fc 12c |  -   1*18 1*30 1*30
+	3 4 5 6 |   - 1bc   - 15c |  -   1*c   -   1*1c
+	7 8 9 a | 178 19c 1c8 1f8 | 1*24 1*20 1*30 1*14
+
+ps3 odin/REHD_area21.mbs
+ps4 odin/REHD_area21.mbs
+ps4 drag/bg14a_01.mbs
+	0 - 1 - | 120 - 138 - | 1*18 1*30
+	2 - 3 - | 168 -   - - | 1*30  -
+	4 - 5 - | 1f8 -   - - | 1*10  -
+	6 - 7 - | 198 - 1b4 - | 1*1c 1*24
+	8 - 9 - | 1d8 - 208 - | 1*20 1*30
+	a - b - | 238 -   - - | 1*18  -
+
+ps4 13sent/cutin_EnemyDamage.mbs
+	0 - 1 - | 120 - 138 - | 1*18 1*30
+	2 - 3 - | 168 -   - - | 1*30  -
+	4 - 5 - | 1f8 -   - - | 1*14  -
+	6 - 7 - | 198 - 1b4 - | 1*1c 1*24
+	8 - 9 - | 1d8 - 20c - | 1*20 1*30
+	a - b - | 23c -   - - | 1*18  -
+==============================
+FMBP      bit     pos  cnt  anim   track  fps    frame  part   src    dst    clr
+ps2 grim  le int   a0  11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
+ps2 odin  le int   a0  11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
+nds kuma  le flt   a0  11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
+wii mura  BE flt   a0  11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
+psp gran  le int   e8   9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*60  <-     <-
+vit mura  le flt   e0   9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*78  <-     <-
+vit drag  le flt   e4   9   s6*30  s7*14  s5*20  s3*1c  s1*c   s8*78  <-     <-
+vit odin  le flt  120  10   s6*30  s7*18  s5*20  s3*1c  s1*10  s9*78  <-     <-
+ps3 drag  BE flt   e4  11   s9*30  sa*14  s8*20  s6*1c  s4*c   s1*30  s2*30  s0*18
+ps3 odin  BE flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
+ps4 drag  le flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
+ps4 odin  le flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
+ps4 sent  le flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*14  s1*30  s2*30  s0*18
+==============================

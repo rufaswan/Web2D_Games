@@ -167,10 +167,7 @@ function dw1_scn( &$file, &$sect, $dir )
 		$pal = substr($file, $st5, 0x400);
 		palbyte($pal);
 
-		$pix = COPYPIX_DEF();
-		$pix['rgba']['w'] = $w;
-		$pix['rgba']['h'] = $h;
-		$pix['rgba']['pix'] = canvpix($w,$h);
+		$pix = COPYPIX_DEF($w,$h);
 		$pix['src']['w'] = 4;
 		$pix['src']['h'] = 4;
 		$pix['src']['pal'] = $pal;

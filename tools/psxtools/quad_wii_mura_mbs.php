@@ -26,8 +26,6 @@ require "quad.inc";
 
 define("METAFILE", true);
 
-$gp_json = array();
-
 function colorquad( &$mbs, $pos )
 {
 	$color = array();
@@ -78,73 +76,7 @@ function sectquad( &$mbs, $pos )
 	return $bcde;
 }
 //////////////////////////////
-function sectpart( &$mbs, $pfx, $k6, $id6, $no6 )
-{
-	global $gp_json;
-
-	$data = array();
-	for ( $i4=0; $i4 < $no6; $i4++ )
-	{
-		$p4 = ($id6 + $i4) * $mbs[4]['k'];
-
-		// 0 1 2 3  4 5  6 7  8 9  a b
-		// sub      s1   - -  s0   s2
-		$sub = substr ($mbs[4]['d'], $p4+ 0, 4);
-
-		$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
-		$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
-		$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
-
-		$sqd = sectquad ($mbs[1], $s1*$mbs[1]['k']);
-		$cqd = colorquad($mbs[0], $s0*$mbs[0]['k']);
-		$dqd = sectquad ($mbs[2], $s2*$mbs[2]['k']);
-
-		$s1 = str2big($sub, 0, 2); // ?type?
-		$s3 = ord( $sub[2] ); // mask
-		$s4 = ord( $sub[3] ); // tid
-
-		$data[$i4] = array();
-		if ( $s1 & 2 )
-			continue;
-
-		$data[$i4]['DstQuad'] = $dqd;
-		if ( ! empty($cqd) )
-			$data[$i4]['ClrQuad']  = $cqd;
-
-		//  1 layer normal
-		//  2 layer top
-		//  4 gradientFill
-		//  8 attack box
-		// 10
-		// 20
-		if ( ($s1 & 4) == 0 )
-		{
-			$data[$i4]['TexID']   = $s4;
-			$data[$i4]['SrcQuad'] = $sqd;
-		}
-
-/*
-		switch ( $s3 )
-		{
-			case 1:
-				$data[$i4]['Blend'] = array('SUB', 1);
-				break;
-			case 2:
-				$data[$i4]['Blend'] = array('ADD', 1);
-				break;
-			default: // 0
-				//$data[$i4]['Blend'] = array('NORMAL', 1);
-				break;
-		} // switch ( $s3 )
-*/
-
-	} // for ( $i4=0; $i4 < $no6; $i4++ )
-
-	$gp_json['Frame'][$k6] = $data;
-	return;
-}
-
-function sectspr( &$mbs, $pfx )
+function sectspr( &$json, &$mbs, $pfx )
 {
 	// s6-s4-s0/s1/s2 [18-c-18/30/30]
 	$len6 = strlen( $mbs[6]['d'] );
@@ -158,16 +90,71 @@ function sectspr( &$mbs, $pfx )
 		// JSON will become {object} instead [array]
 
 		$k6 = $i6 / $mbs[6]['k'];
-		sectpart($mbs, $pfx, $k6, $id6, $no6);
+		$data = array();
+		for ( $i4=0; $i4 < $no6; $i4++ )
+		{
+			$p4 = ($id6 + $i4) * $mbs[4]['k'];
 
+			// 0 1 2 3  4 5  6 7  8 9  a b
+			// sub      s1   - -  s0   s2
+			$sub = substr ($mbs[4]['d'], $p4+ 0, 4);
+
+			$s1  = str2big($mbs[4]['d'], $p4+ 4, 2); // sx,sy
+			$s0  = str2big($mbs[4]['d'], $p4+ 8, 2);
+			$s2  = str2big($mbs[4]['d'], $p4+10, 2); // dx,dy
+
+			$sqd = sectquad ($mbs[1], $s1*$mbs[1]['k']);
+			$cqd = colorquad($mbs[0], $s0*$mbs[0]['k']);
+			$dqd = sectquad ($mbs[2], $s2*$mbs[2]['k']);
+
+			$s1 = str2big($sub, 0, 2); // ?type?
+			$s3 = ord( $sub[2] ); // mask
+			$s4 = ord( $sub[3] ); // tid
+
+			$data[$i4] = array();
+			if ( $s1 & 2 )
+				continue;
+
+			$data[$i4]['DstQuad'] = $dqd;
+			if ( ! empty($cqd) )
+				$data[$i4]['ClrQuad']  = $cqd;
+
+			//  1 layer normal
+			//  2 layer top
+			//  4 gradientFill
+			//  8 attack box
+			// 10
+			// 20
+			if ( ($s1 & 4) == 0 )
+			{
+				$data[$i4]['TexID']   = $s4;
+				$data[$i4]['SrcQuad'] = $sqd;
+			}
+
+	/*
+			switch ( $s3 )
+			{
+				case 1:
+					$data[$i4]['Blend'] = array('SUB', 1);
+					break;
+				case 2:
+					$data[$i4]['Blend'] = array('ADD', 1);
+					break;
+				default: // 0
+					//$data[$i4]['Blend'] = array('NORMAL', 1);
+					break;
+			} // switch ( $s3 )
+	*/
+
+		} // for ( $i4=0; $i4 < $no6; $i4++ )
+
+		$json['Frame'][$k6] = $data;
 	} // for ( $i6=0; $i6 < $len6; $i6 += $mbs[6]['k'] )
 	return;
 }
 //////////////////////////////
-function sectanim( &$mbs, $pfx )
+function sectanim( &$json, &$mbs, $pfx )
 {
-	global $gp_json;
-
 	// s9-sa-s8 [30-10-20]
 	$len9 = strlen( $mbs[9]['d'] );
 	for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
@@ -218,7 +205,7 @@ function sectanim( &$mbs, $pfx )
 			// skip all zero Pos
 			if ( ! $is_mov )
 				unset( $ent['POS'] );
-			$gp_json['Animation'][$name][$ia] = $ent;
+			$json['Animation'][$name][$ia] = $ent;
 		} // for ( $ia=0; $ia < $no9; $ia++ )
 
 	} // for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
@@ -249,10 +236,6 @@ function mura( $fname )
 	//        a0  b8  e8 |      1*18 1*30 1*30
 	//   118 244 250 168 | 1*50 1*c  1*8  1*18
 	//   180 1a4 258 348 | 1*24 5*20 5*30 5*10
-	// s9[+28] = 4+1 => s8/sa
-	// sa[+ 0] = 4+1 => s8
-	// s8[]
-	//
 	// momohime_battle_drm.mbs
 	//            a0   6b8  2cc8 |        41*18 cb*30 7bd*30
 	//   1a038 26484 31a7c 1a7b8 | 18*50 f2a*c  f2*8  127*18
@@ -262,10 +245,9 @@ function mura( $fname )
 	// s8[+ 0] = 126   => s6
 	// s6[+10] = f29+1 => s4
 	// s4[+ 4] =  ca   => s1 , [+ 8] = 40 => s0 , [+ a] = 7bc => s2
-	// s1[]
-	// s2[]
-	//
-	// s9-sa-s8-s6-s4-[s1,s2]
+	// s1
+	// s0
+	// s2
 	$sect = array(
 		array('p' => 0x54 , 'k' => 0x18), // 0
 		array('p' => 0x58 , 'k' => 0x30), // 1
@@ -287,13 +269,12 @@ function mura( $fname )
 		sect_sum($mbs[4], 'mbs[4][2]', 2); // 0 1 2
 	}
 
-	global $gp_json;
-	$gp_json = load_idtagfile('wii_mura');
+	$json = load_idtagfile('wii_mura');
 
-	sectanim($mbs, $pfx);
-	sectspr ($mbs, $pfx);
+	sectanim($json, $mbs, $pfx);
+	sectspr ($json, $mbs, $pfx);
 
-	save_quadfile($pfx, $gp_json);
+	save_quadfile($pfx, $json);
 	return;
 }
 

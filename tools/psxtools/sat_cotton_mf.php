@@ -69,10 +69,7 @@ function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid, $bpp )
 {
 	printf("== sect_map( %s , %x , %x , %x , %x )\n", $fn, $w, $h, $cid, $bpp);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $w;
-	$pix['rgba']['h'] = $h;
-	$pix['rgba']['pix'] = canvpix($w,$h);
+	$pix = COPYPIX_DEF($w,$h);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 

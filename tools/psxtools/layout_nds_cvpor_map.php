@@ -47,11 +47,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	echo "map : $map_w x $map_h\n";
 	printf("off : %6x , %6x , %6x\n", $off1, $off2, $off3);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $map_w;
-	$pix['rgba']['h'] = $map_h;
-	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
-
+	$pix = COPYPIX_DEF($map_w,$map_h);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 

@@ -100,11 +100,7 @@ function yuna( $fname )
 	$h = (int)($siz / $w);
 	printf("$fname , %x , $w , $h\n", $siz*4);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $w;
-	$pix['rgba']['h'] = $h;
-	$pix['rgba']['pix'] = canvpix($w,$h);
-
+	$pix = COPYPIX_DEF($w,$h);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 

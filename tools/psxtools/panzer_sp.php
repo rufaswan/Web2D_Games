@@ -74,10 +74,7 @@ function sect_part( &$file, $off, $fn, &$pal, &$src )
 		$data[] = $b1;
 	} // for ( $i=0; $i < $cnt; $i++ )
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = 0x200;
-	$pix['rgba']['h'] = 0x200;
-	$pix['rgba']['pix'] = canvpix(0x200,0x200);
+	$pix = COPYPIX_DEF(0x200,0x200);
 	$pix['bgzero'] = 0;
 
 	foreach ( $data as $v )

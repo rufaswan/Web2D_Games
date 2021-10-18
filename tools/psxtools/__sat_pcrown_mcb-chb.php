@@ -48,10 +48,7 @@ function sectmap( &$mcb, &$chb, $w, $dir, $st, $id )
 	$map_w = $w * 8;
 	$map_h = 0x20 * 8;
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $map_w;
-	$pix['rgba']['h'] = $map_h;
-	$pix['rgba']['pix'] = canvpix($map_w,$map_h);
+	$pix = COPYPIX_DEF($map_w,$map_h);
 
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;

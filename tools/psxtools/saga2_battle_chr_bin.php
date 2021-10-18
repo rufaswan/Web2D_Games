@@ -73,10 +73,7 @@ function sectpart( &$file, $nid, $st, $ed )
 		} // foreach ( $data as $k => $v )
 	}
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = CANV_S;
-	$pix['rgba']['h'] = CANV_S;
-	$pix['rgba']['pix'] = canvpix(CANV_S,CANV_S);
+	$pix = COPYPIX_DEF(CANV_S,CANV_S);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $k => $v )

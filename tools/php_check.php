@@ -27,9 +27,9 @@ function php_check( $func )
 		echo "check for $func() ... not found\n";
 }
 
-php_check("zlib_encode");
 php_check("zlib_decode");
+php_check("json_decode");
 
-echo "--> FreeBSD : iconv() is defined as libiconv()\n";
+echo "--> FreeBSD/MacOS : iconv() is defined as libiconv()\n";
 php_check("iconv");
 php_check("libiconv");

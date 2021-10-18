@@ -1,1 +1,0 @@
-../../files/sjis_half.inc

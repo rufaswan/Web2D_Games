@@ -27,7 +27,6 @@ require "quad.inc";
 
 define("METAFILE", false);
 
-$gp_json = array();
 $gp_pix  = array();
 $gp_clut = array();
 
@@ -62,9 +61,9 @@ function sectquad( &$dqd, $dat )
 	return;
 }
 
-function sectpart( &$pak, $pfx, $k2, $id2, $no2 )
+function sectpart( &$json, &$pak, $pfx, $k2, $id2, $no2 )
 {
-	global $gp_json, $gp_pix, $gp_clut;
+	global $gp_pix, $gp_clut;
 
 	$data = array();
 	for ( $i=0; $i < $no2; $i++ )
@@ -98,21 +97,18 @@ function sectpart( &$pak, $pfx, $k2, $id2, $no2 )
 
 	} // for ( $i=0; $i < $no; $i++ )
 
-	$gp_json['Frame'][$k2] = $data;
+	$json['Frame'][$k2] = $data;
 	return;
 }
 //////////////////////////////
-function save_texx( $pfx )
+function save_texx( &$json, $pfx )
 {
-	global $gp_json, $gp_pix;
+	global $gp_pix;
 
 	// atlas map texture
 	list($ind, $cw, $ch) = atlasmap($gp_pix);
 
-	$pix = COPYPIX_DEF();
-	$pix['rgba']['w'] = $cw;
-	$pix['rgba']['h'] = $ch;
-	$pix['rgba']['pix'] = canvpix($cw,$ch);
+	$pix = COPYPIX_DEF($cw,$ch);
 
 	$gray = grayclut(16);
 	foreach ( $gp_pix as $img )
@@ -133,27 +129,27 @@ function save_texx( $pfx )
 
 	savepix("$pfx.0", $pix);
 
-	// update gp_json[Frame][][SrcQuad]
-	foreach ( $gp_json['Frame'] as $fk => $fv )
+	// update json[Frame][][SrcQuad]
+	foreach ( $json['Frame'] as $fk => $fv )
 	{
 		foreach ( $fv as $fvk => $fvv )
 		{
 			$tmp = $fvv['_tmp_'];
-			unset( $gp_json['Frame'][$fk][$fvk]['_tmp_'] );
+			unset( $json['Frame'][$fk][$fvk]['_tmp_'] );
 
 			$img = $gp_pix[ $ind[$tmp] ];
 			$x = $img['x'];
 			$y = $img['y'];
 			$w = $img['w'] - 1;
 			$h = $img['h'] - 1;
-			$gp_json['Frame'][$fk][$fvk]['SrcQuad'] = array(
+			$json['Frame'][$fk][$fvk]['SrcQuad'] = array(
 				$x      , $y ,
 				$x + $w , $y ,
 				$x + $w , $y + $h ,
 				$x      , $y + $h ,
 			);
 		} // foreach ( $fv as $fvk => $fvv )
-	} // foreach ( $gp_json['Frame'] as $fk => $fv )
+	} // foreach ( $json['Frame'] as $fk => $fv )
 	return;
 }
 
@@ -197,7 +193,7 @@ function load_texx( &$pak, $pfx )
 	return;
 }
 //////////////////////////////
-function sectspr( &$pak, $pfx )
+function sectspr( &$json, &$pak, $pfx )
 {
 	$len = strlen($pak[2]['d']);
 	for ( $i2=0; $i2 < $len; $i2 += $pak[2]['k'] )
@@ -209,15 +205,13 @@ function sectspr( &$pak, $pfx )
 		$no2 = str2big($pak[2]['d'], $i2+10, 2);
 		$k2  = $i2 / $pak[2]['k'];
 
-		sectpart($pak, $pfx, $k2, $id2, $no2);
+		sectpart($json, $pak, $pfx, $k2, $id2, $no2);
 	}
 	return;
 }
 
-function sectanim( &$pak, $pfx )
+function sectanim( &$json, &$pak, $pfx )
 {
-	global $gp_json;
-
 	$len = strlen($pak[4]['d']);
 	for ( $i4=0; $i4 < $len; $i4 += $pak[4]['k'] )
 	{
@@ -256,7 +250,7 @@ function sectanim( &$pak, $pfx )
 			$ent['FPS'][] = $b4;
 		} // while (1)
 
-		$gp_json['Animation'][$name][0] = $ent;
+		$json['Animation'][$name][0] = $ent;
 	} // for ( $i4=0; $i4 < $len; $i4 += $pak[4]['k'] )
 
 	return;
@@ -293,16 +287,15 @@ function pakchr( &$pak, $pfx )
 	);
 	file2sect($pak, $sect, $pfx, array('str2big', 4), 0, METAFILE);
 
-	global $gp_json;
-	$gp_json = load_idtagfile('sat_pcrown');
+	$json = load_idtagfile('sat_pcrown');
 
 	load_texx($pak[0], $pfx);
 
-	sectanim($pak, $pfx);
-	sectspr ($pak, $pfx);
+	sectanim($json, $pak, $pfx);
+	sectspr ($json, $pak, $pfx);
 
-	save_texx($pfx);
-	save_quadfile($pfx, $gp_json);
+	save_texx($json, $pfx);
+	save_quadfile($pfx, $json);
 	return;
 }
 //////////////////////////////

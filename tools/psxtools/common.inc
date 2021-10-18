@@ -731,15 +731,15 @@ function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	return $rip;
 }
 //////////////////////////////
-function COPYPIX_DEF()
+function COPYPIX_DEF( $w, $h, $c = PIX_ALPHA )
 {
 	// PHP 5.6 fix
 	// Warning: Constants may only evaluate to scalar values
 	$php56 = array(
 		'rgba' => array(
-			'w' => 0,
-			'h' => 0,
-			'pix' => "",
+			'w' => $w,
+			'h' => $h,
+			'pix' => canvpix($w,$h,$c),
 		),
 		'src' => array(
 			'w'    => 0,
