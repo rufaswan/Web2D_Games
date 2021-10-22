@@ -22,6 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 php_req_extension("json_encode", "json");
 
+// .quad file
 function load_idtagfile( $pfx )
 {
 	$fn = __DIR__ . "/idtag/$pfx.txt";
@@ -72,7 +73,8 @@ function save_quadfile( $pfx, &$json, $pretty=false )
 	save_file("$pfx.quad", $json);
 	return;
 }
-
+//////////////////////////////
+// debug + fix
 function cmp_quadxy( &$data, $id1, $id2 )
 {
 	if ( $data[$id1] != $data[$id2] )
@@ -100,5 +102,114 @@ function quad_ext1px( &$quad )
 	( $quad[1] > $quad[5] ) ? $quad[1]++ : $quad[5]++;
 	( $quad[2] > $quad[6] ) ? $quad[2]++ : $quad[6]++;
 	( $quad[3] > $quad[7] ) ? $quad[3]++ : $quad[7]++;
+	return;
+}
+
+function quad_is_convex( &$dst )
+{
+	// check if 3 is within 0,1,2
+	$qsz = triad_area($dst[0], $dst[1], $dst[2]);
+
+	$q1 = triad_area($dst[3], $dst[0], $dst[1]);
+	$q2 = triad_area($dst[3], $dst[1], $dst[2]);
+	$q3 = triad_area($dst[3], $dst[2], $dst[0]);
+	if ( ($q1+$q2+$q3) <= $qsz )
+		return true;
+
+	// check if 1 is within 0,3,2
+	$qsz = triad_area($dst[0], $dst[3], $dst[2]);
+
+	$q1 = triad_area($dst[1], $dst[0], $dst[2]);
+	$q2 = triad_area($dst[1], $dst[2], $dst[3]);
+	$q3 = triad_area($dst[1], $dst[3], $dst[0]);
+	if ( ($q1+$q2+$q3) <= $qsz )
+		return true;
+
+	// all good , simple quad
+	return false;
+}
+
+function quad_unconvex( &$quad )
+{
+	// Auto-detect complex quads
+	//   Saturn Princess Crown , e_ex.pak , frame 3
+	//     p0 = 116,-109 ,  77,-41 ,  86,-71  , 51,-136
+	//     p5 =  70,-49  , 254,-33 , 101,-116 , 95,-57
+	// 0 1 | 0     | 0   2
+	//     |   3 1 |   1
+	// 3 2 | 2     |   3
+	$dst = array(
+		array($quad['DstQuad'][0] , $quad['DstQuad'][1] , 1),
+		array($quad['DstQuad'][2] , $quad['DstQuad'][3] , 1),
+		array($quad['DstQuad'][4] , $quad['DstQuad'][5] , 1),
+		array($quad['DstQuad'][6] , $quad['DstQuad'][7] , 1),
+	);
+
+	// detect convex quad
+	if ( ! quad_is_convex($dst) )
+		return;
+	$quad['_debug_'] = 'convex';
+
+	// rotate
+	$dst[] = array_shift($dst);
+	$quad['DstQuad'][] = array_shift($quad['DstQuad']); // x
+	$quad['DstQuad'][] = array_shift($quad['DstQuad']); // y
+	if ( isset($quad['SrcQuad']) )
+	{
+		$quad['SrcQuad'][] = array_shift($quad['SrcQuad']); // x
+		$quad['SrcQuad'][] = array_shift($quad['SrcQuad']); // y
+	}
+
+	// detect twisted quad
+	if ( ! quad_is_convex($dst) )
+		return;
+	$quad['_debug_'] = 'twist';
+
+	php_error("quad is twisted !");
+	return;
+}
+
+function quad_move( &$quad, $opt )
+{
+	foreach ( $opt as $k => $v )
+	{
+		switch ( $k )
+		{
+			case 'hflip':
+				for ( $i=0; $i < 8; $i += 2 )
+					$quad[$i+0] = -$quad[$i+0];
+				break;
+			case 'vflip':
+				for ( $i=0; $i < 8; $i += 2 )
+					$quad[$i+1] = -$quad[$i+1];
+				break;
+			case 'move':
+				list($x,$y) = $v;
+				for ( $i=0; $i < 8; $i += 2 )
+				{
+					$quad[$i+0] += $x;
+					$quad[$i+1] += $y;
+				} // for ( $i=0; $i < 8; $i += 2 )
+				break;
+			case 'rotate':
+				list($degree,$rx,$ry) = $v;
+
+				// 360 degree = 2 * pi() radian
+				// 180 degree = pi() radian
+				$radian = $degree / 180 * pi();
+				$sin = sin($radian);
+				$cos = cos($radian);
+				for ( $i=0; $i < 8; $i += 2 )
+				{
+					$quad[$i+0] += $rx;
+					$quad[$i+1] += $ry;
+					$x = $quad[$i+0] * $cos - $quad[$i+1] * $sin;
+					$y = $quad[$i+0] * $sin + $quad[$i+1] * $cos;
+					$quad[$i+0] = $x;
+					$quad[$i+1] = $y;
+				} // for ( $i=0; $i < 8; $i += 2 )
+				break;
+		} // switch ( $k )
+	} // foreach ( $opt as $k => $v )
 	return;
 }

@@ -33,24 +33,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //   perpendicular = 90 degree
 //   parallel      = 0 or 180 degree (sin = 0)
 
-function dot_product( $base, $V1, $V2 )
-{
-	// The direct, scalar, or dot product of two vectors
-	// dot product is normalized from $base as 0,0
-	$V1[0] -= $base[0];
-	$V1[1] -= $base[1];
-	$V1[2] -= $base[2];
-	$V2[0] -= $base[0];
-	$V2[1] -= $base[1];
-	$V2[2] -= $base[2];
-
-	// dot(a,a) = 1
-	// s = axbx + ayby
-	// s = axbx + ayby + azbz
-	$dot = $V1[0]*$V2[0] + $V1[1]*$V2[1] + $V1[2]*$V2[2];
-	return $dot;
-}
-
+// v3 = x,y,z
 function cross_product( $vb, $vc )
 {
 	// The skew, vector, or cross product of two vectors
@@ -68,6 +51,7 @@ function cross_product( $vb, $vc )
 	return array($ax, $ay, $az);
 }
 
+// v2 = x.y
 function triad_area( $V1, $V2, $V3 )
 {
 	// https://www.mathopenref.com/coordtrianglearea.html
@@ -83,11 +67,58 @@ function matrix_dump( $M , $name )
 {
 	if ( defined("NO_TRACE") )
 		return;
-	trace("matrix( %s )\n", $name);
-	trace("  | %10.2f %10.2f %10.2f |\n", $M[0], $M[1], $M[2]);
-	trace("  | %10.2f %10.2f %10.2f |\n", $M[3], $M[4], $M[5]);
-	trace("  | %10.2f %10.2f %10.2f |\n", $M[6], $M[7], $M[8]);
+	$c = (int)sqrt( count($M) );
+	trace("matrix %dx%d ( %s )\n", $c, $c, $name);
+
+	$p = 0;
+	for ( $y=0; $y < $c; $y++ )
+	{
+		trace("  | ");
+		for ( $x=0; $x < $c; $x++ )
+		{
+			trace("%10.2f ", $M[$p]);
+				$p++;
+		} // for ( $x=0; $x < $c; $x++ )
+		trace("|\n");
+	} // for ( $y=0; $y < $c; $y++ )
 	return;
+}
+
+// multiply series
+function matrix_multi12( $V, $M )
+{
+	//          | a b |
+	// | 0 1 |  | c d | = | 0a+1c  0b+1d |
+	$VM = array(
+		$V[0]*$M[0] + $V[1]*$M[2] ,
+		$V[0]*$M[1] + $V[1]*$M[3] ,
+	);
+	return $VM;
+}
+
+function matrix_multi21( $M, $V )
+{
+	// | 0 1 |  | a |   | 0a+1b |
+	// | 2 3 |  | b | = | 2a+3b |
+	$MV = array(
+		$M[0]*$V[0] + $M[1]*$V[1] ,
+		$M[2]*$V[0] + $M[3]*$V[1] ,
+	);
+	return $MV;
+}
+
+function matrix_multi22( $M1, $M2 )
+{
+	//            | 1 0 |
+	// M * Minv = | 0 1 | or identify matrix
+	$M = array(
+		$M1[0]*$M2[0] + $M1[1]*$M2[2],
+		$M1[0]*$M2[1] + $M1[1]*$M2[3],
+
+		$M1[2]*$M2[0] + $M1[3]*$M2[2],
+		$M1[2]*$M2[1] + $M1[3]*$M2[3],
+	);
+	return $M;
 }
 
 function matrix_multi13( $V, $M )
@@ -137,53 +168,212 @@ function matrix_multi33( $M1, $M2 )
 	return $M;
 }
 
-function matrix_inverse( $M )
+function matrix_multi14( $V, $M )
+{
+	//              | a b c d |
+	// | 0 1 2 3 |  | e f g h | = | 0a+1e+2i+3m  0b+1f+2j+3n  0c+1g+2k+3o  0d+1h+2l+3p |
+	//              | i j k l |
+	//              | m n o p |
+	$VM = array(
+		$V[0]*$M[0] + $V[1]*$M[4] + $V[2]*$M[ 8] + $V[3]*$M[12] ,
+		$V[0]*$M[1] + $V[1]*$M[5] + $V[2]*$M[ 9] + $V[3]*$M[13] ,
+		$V[0]*$M[2] + $V[1]*$M[6] + $V[2]*$M[10] + $V[3]*$M[14] ,
+		$V[0]*$M[3] + $V[1]*$M[7] + $V[2]*$M[11] + $V[3]*$M[15] ,
+	);
+	return $VM;
+}
+
+function matrix_multi41( $M, $V )
+{
+	// | 0 1 2 3 |  | a |   | 0a+1b+2c+3d |
+	// | 4 5 6 7 |  | b | = | 4a+5b+6c+7d |
+	// | 8 9 A B |  | c |   | 8a+9b+Ac+Bd |
+	// | C D E F |  | d |   | Ca+Db+Ec+Fd |
+	$MV = array(
+		$M[ 0]*$V[0] + $M[ 1]*$V[1] + $M[ 2]*$V[2] + $M[ 3]*$V[3] ,
+		$M[ 4]*$V[0] + $M[ 5]*$V[1] + $M[ 6]*$V[2] + $M[ 7]*$V[3] ,
+		$M[ 8]*$V[0] + $M[ 9]*$V[1] + $M[10]*$V[2] + $M[11]*$V[3] ,
+		$M[12]*$V[0] + $M[13]*$V[1] + $M[14]*$V[2] + $M[15]*$V[3] ,
+	);
+	return $MV;
+}
+
+function matrix_multi44( $M1, $M2 )
+{
+	//            | 1 0 0 0 |
+	// M * Minv = | 0 1 0 0 | or identify matrix
+	//            | 0 0 1 0 |
+	//            | 0 0 0 1 |
+	$M = array(
+		$M1[ 0]*$M2[0] + $M1[ 1]*$M2[4] + $M1[ 2]*$M2[ 8] + $M1[ 3]*$M2[12] ,
+		$M1[ 0]*$M2[1] + $M1[ 1]*$M2[5] + $M1[ 2]*$M2[ 9] + $M1[ 3]*$M2[13] ,
+		$M1[ 0]*$M2[2] + $M1[ 1]*$M2[6] + $M1[ 2]*$M2[10] + $M1[ 3]*$M2[14] ,
+		$M1[ 0]*$M2[3] + $M1[ 1]*$M2[7] + $M1[ 2]*$M2[11] + $M1[ 3]*$M2[15] ,
+
+		$M1[ 4]*$M2[0] + $M1[ 5]*$M2[4] + $M1[ 6]*$M2[ 8] + $M1[ 7]*$M2[12] ,
+		$M1[ 4]*$M2[1] + $M1[ 5]*$M2[5] + $M1[ 6]*$M2[ 9] + $M1[ 7]*$M2[13] ,
+		$M1[ 4]*$M2[2] + $M1[ 5]*$M2[6] + $M1[ 6]*$M2[10] + $M1[ 7]*$M2[14] ,
+		$M1[ 4]*$M2[3] + $M1[ 5]*$M2[7] + $M1[ 6]*$M2[11] + $M1[ 7]*$M2[15] ,
+
+		$M1[ 8]*$M2[0] + $M1[ 9]*$M2[4] + $M1[10]*$M2[ 8] + $M1[11]*$M2[12] ,
+		$M1[ 8]*$M2[1] + $M1[ 9]*$M2[5] + $M1[10]*$M2[ 9] + $M1[11]*$M2[13] ,
+		$M1[ 8]*$M2[2] + $M1[ 9]*$M2[6] + $M1[10]*$M2[10] + $M1[11]*$M2[14] ,
+		$M1[ 8]*$M2[3] + $M1[ 9]*$M2[7] + $M1[10]*$M2[11] + $M1[11]*$M2[15] ,
+
+		$M1[12]*$M2[0] + $M1[13]*$M2[4] + $M1[14]*$M2[ 8] + $M1[15]*$M2[12] ,
+		$M1[12]*$M2[1] + $M1[13]*$M2[5] + $M1[14]*$M2[ 9] + $M1[15]*$M2[13] ,
+		$M1[12]*$M2[2] + $M1[13]*$M2[6] + $M1[14]*$M2[10] + $M1[15]*$M2[14] ,
+		$M1[12]*$M2[3] + $M1[13]*$M2[7] + $M1[14]*$M2[11] + $M1[15]*$M2[15] ,
+	);
+	return $M;
+}
+
+// determinant series
+function matrix_det2( $M )
+{
+	// | 0 1 |
+	// | 2 3 |
+	$d = $M[0]*$M[3] - $M[1]*$M[2];
+	return $d;
+}
+
+function matrix_det3( $M )
+{
+	// | 0 1 2 |
+	// | 3 4 5 |
+	// | 6 7 8 |
+	$d0 =  $M[0] * matrix_det2( array($M[4],$M[5] , $M[7],$M[8]) );
+	$d1 = -$M[1] * matrix_det2( array($M[3],$M[5] , $M[6],$M[8]) );
+	$d2 =  $M[2] * matrix_det2( array($M[3],$M[4] , $M[6],$M[7]) );
+	$d = $d0 + $d1 + $d2;
+	return $d;
+}
+
+function matrix_det4( $M )
+{
+	// | 0 1 2 3 |
+	// | 4 5 6 7 |
+	// | 8 9 a b |
+	// | c d e f |
+	$d0 =  $M[0] * matrix_det3( array($M[5],$M[6],$M[7] , $M[9],$M[10],$M[11] , $M[13],$M[14],$M[15]) );
+	$d1 = -$M[1] * matrix_det3( array($M[4],$M[6],$M[7] , $M[8],$M[10],$M[11] , $M[12],$M[14],$M[15]) );
+	$d2 =  $M[2] * matrix_det3( array($M[4],$M[5],$M[7] , $M[8],$M[ 9],$M[11] , $M[12],$M[13],$M[15]) );
+	$d3 = -$M[3] * matrix_det3( array($M[4],$M[5],$M[6] , $M[8],$M[ 9],$M[10] , $M[12],$M[13],$M[14]) );
+	$d = $d0 + $d1 + $d2 + $d3;
+	return $d;
+}
+
+// inverse series
+// https://en.wikipedia.org/wiki/Invertible_matrix#Analytic_solution
+function matrix_inv2( $M )
+{
+	//             |  3 -1 |
+	// 1/det($M) * | -2  0 |
+	$d = matrix_det2($M);
+	if ( $d == 0 )
+		return 0;
+	$dinv = 1 / $d;
+	$Mco = array(
+		 $M[3] , -$M[1] ,
+		-$M[2] ,  $M[0] ,
+	);
+	for ( $i=0; $i < 4; $i++ )
+		$Mco[$i] *= $dinv;
+	return $Mco;
+}
+
+function matrix_inv3( $M )
 {
 	// https://www.mathsisfun.com/algebra/matrix-inverse-minors-cofactors-adjugate.html
-	// inverse a matrix
-	// s1 matrix of minors | - a - |
-	//                     | 1 - 3 | = determinant
-	//                     | 4 - 2 |
-	//    | 0 1 2 |    | 4*8-5*7  3*8-5*6  3*7-4*6 |
-	//    | 3 4 5 | => | 1*8-2*7  0*8-2*6  0*7-1*6 |
-	//    | 6 7 8 |    | 1*5-2*4  0*5-2*3  0*4-1*3 |
-	// s2 matrix of cofactors
-	//    | + - + |
-	//    | - + - |
-	//    | + - + |
-	// s3 adjugate
-	//    | 0 1 2 |    | 0 3 6 |
-	//    | 3 4 5 | => | 1 4 7 |
-	//    | 6 7 8 |    | 2 5 8 |
-	//
-	// SIMPLIFIED s1 to s3
-	//   | 0 1 2 |    | 4*8-5*7  2*7-1*8  1*5-2*4 |
-	//   | 3 4 5 | => | 5*6-3*8  0*8-2*6  2*3-0*5 |
-	//   | 6 7 8 |    | 3*7-4*6  1*6-0*7  0*4-1*3 |
-	$s3 = array(
-		$M[4]*$M[8]-$M[5]*$M[7] , $M[2]*$M[7]-$M[1]*$M[8] , $M[1]*$M[5]-$M[2]*$M[4] ,
-		$M[5]*$M[6]-$M[3]*$M[8] , $M[0]*$M[8]-$M[2]*$M[6] , $M[2]*$M[3]-$M[0]*$M[5] ,
-		$M[3]*$M[7]-$M[4]*$M[6] , $M[1]*$M[6]-$M[0]*$M[7] , $M[0]*$M[4]-$M[1]*$M[3] ,
+	// matrix of minors
+	// | 0 1 2 |
+	// | 3 4 5 |
+	// | 6 7 8 |
+	$Mdet = array(
+		matrix_det2( array($M[4],$M[5] , $M[7],$M[8]) ) ,
+		matrix_det2( array($M[3],$M[5] , $M[6],$M[8]) ) ,
+		matrix_det2( array($M[3],$M[4] , $M[6],$M[7]) ) ,
+
+		matrix_det2( array($M[1],$M[2] , $M[7],$M[8]) ) ,
+		matrix_det2( array($M[0],$M[2] , $M[6],$M[8]) ) ,
+		matrix_det2( array($M[0],$M[1] , $M[6],$M[7]) ) ,
+
+		matrix_det2( array($M[1],$M[2] , $M[4],$M[5]) ) ,
+		matrix_det2( array($M[0],$M[2] , $M[3],$M[5]) ) ,
+		matrix_det2( array($M[0],$M[1] , $M[3],$M[4]) ) ,
 	);
 
-	// s4 multiply by 1/det
-	//    https://www.mathsisfun.com/algebra/matrix-determinant.html
-	//    if $det is zero , the matrix cannot be invert
-	$det = $M[0]*$s3[0] + $M[1]*$s3[3] + $M[2]*$s3[6];
-	if ( $det == 0 )
-	{
-		php_warning("matrix_inverse() determinant is zero");
-		return 0;
-	}
+	// matrix of cofactors + adjugate
+	$Mco = array(
+		 $Mdet[0] , -$Mdet[3] ,  $Mdet[6] ,
+		-$Mdet[1] ,  $Mdet[4] , -$Mdet[7] ,
+		 $Mdet[2] , -$Mdet[5] ,  $Mdet[8] ,
+	);
 
-	$det = 1 / $det;
+	//             |  c0 -c3  c6 |
+	// 1/det($M) * | -c1  c4 -c7 |
+	//             |  c2 -c5  c8 |
+	$d = $M[0]*$Mco[0] + $M[1]*$Mco[3] + $M[2]*$Mco[6];
+	if ( $d == 0 )
+		return 0;
+	$dinv = 1 / $d;
+
 	for ( $i=0; $i < 9; $i++ )
-		$s3[$i] = $s3[$i] * $det;
-	//     |  3  0  2 |         |  0.2  0.2  0   |
-	// A = |  2  0 -2 |  A^-1 = | -0.2  0.3  1.0 |
-	//     |  0  1  1 |         |  0.2 -0.3  0   |
-	return $s3;
+		$Mco[$i] *= $dinv;
+	return $Mco;
 }
+
+function matrix_inv4( $M )
+{
+	// matrix of minors
+	// | 0 1 2 3 |
+	// | 4 5 6 7 |
+	// | 8 9 a b |
+	// | c d e f |
+	$Mdet = array(
+		matrix_det3( array($M[ 5],$M[ 6],$M[ 7] , $M[ 9],$M[10],$M[11] , $M[13],$M[14],$M[15]) ) ,
+		matrix_det3( array($M[ 4],$M[ 6],$M[ 7] , $M[ 8],$M[10],$M[11] , $M[12],$M[14],$M[15]) ) ,
+		matrix_det3( array($M[ 4],$M[ 5],$M[ 7] , $M[ 8],$M[ 9],$M[11] , $M[12],$M[13],$M[15]) ) ,
+		matrix_det3( array($M[ 4],$M[ 5],$M[ 6] , $M[ 8],$M[ 9],$M[10] , $M[12],$M[13],$M[14]) ) ,
+
+		matrix_det3( array($M[ 1],$M[ 2],$M[ 3] , $M[ 9],$M[10],$M[11] , $M[13],$M[14],$M[15]) ) ,
+		matrix_det3( array($M[ 0],$M[ 2],$M[ 3] , $M[ 8],$M[10],$M[11] , $M[12],$M[14],$M[15]) ) ,
+		matrix_det3( array($M[ 0],$M[ 1],$M[ 3] , $M[ 8],$M[ 9],$M[11] , $M[12],$M[13],$M[15]) ) ,
+		matrix_det3( array($M[ 0],$M[ 1],$M[ 2] , $M[ 8],$M[ 9],$M[10] , $M[12],$M[13],$M[14]) ) ,
+
+		matrix_det3( array($M[ 1],$M[ 2],$M[ 3] , $M[ 5],$M[ 6],$M[ 7] , $M[13],$M[14],$M[15]) ) ,
+		matrix_det3( array($M[ 0],$M[ 2],$M[ 3] , $M[ 4],$M[ 6],$M[ 7] , $M[12],$M[14],$M[15]) ) ,
+		matrix_det3( array($M[ 0],$M[ 1],$M[ 3] , $M[ 4],$M[ 5],$M[ 7] , $M[12],$M[13],$M[15]) ) ,
+		matrix_det3( array($M[ 0],$M[ 1],$M[ 2] , $M[ 4],$M[ 5],$M[ 6] , $M[12],$M[13],$M[14]) ) ,
+
+		matrix_det3( array($M[ 1],$M[ 2],$M[ 3] , $M[ 5],$M[ 6],$M[ 7] , $M[ 9],$M[10],$M[11]) ) ,
+		matrix_det3( array($M[ 0],$M[ 2],$M[ 3] , $M[ 4],$M[ 6],$M[ 7] , $M[ 8],$M[10],$M[11]) ) ,
+		matrix_det3( array($M[ 0],$M[ 1],$M[ 3] , $M[ 4],$M[ 5],$M[ 7] , $M[ 8],$M[ 9],$M[11]) ) ,
+		matrix_det3( array($M[ 0],$M[ 1],$M[ 2] , $M[ 4],$M[ 5],$M[ 6] , $M[ 8],$M[ 9],$M[10]) ) ,
+	);
+
+	// matrix of cofactors + adjugate
+	$Mco = array(
+		 $Mdet[0] , -$Mdet[4] ,  $Mdet[ 8] , -$Mdet[12] ,
+		-$Mdet[1] ,  $Mdet[5] , -$Mdet[ 9] ,  $Mdet[13] ,
+		 $Mdet[2] , -$Mdet[6] ,  $Mdet[10] , -$Mdet[14] ,
+		-$Mdet[3] ,  $Mdet[7] , -$Mdet[11] ,  $Mdet[15] ,
+	);
+
+	//             |  c0 -c4  c8 -cc |
+	// 1/det($M) * | -c1  c5 -c9  cd |
+	//             |  c2 -c6  ca -ce |
+	//             | -c3  c7 -cb  cf |
+	$d = $M[0]*$Mco[0] + $M[1]*$Mco[4] + $M[2]*$Mco[8] + $M[3]*$Mco[12];
+	if ( $d == 0 )
+		return 0;
+	$dinv = 1 / $d;
+
+	for ( $i=0; $i < 16; $i++ )
+		$Mco[$i] *= $dinv;
+	return $Mco;
+}
+
 //////////////////////////////
 function quad_rebase( $V4 )
 {
@@ -213,10 +403,10 @@ function quad_rebase( $V4 )
 
 	$quad = array(
 		'quad' => array(
-			array( $V4[0] , $V4[1] , 1 ),
-			array( $V4[2] , $V4[3] , 1 ),
-			array( $V4[4] , $V4[5] , 1 ),
-			array( $V4[6] , $V4[7] , 1 ),
+			array( $V4[0] , $V4[1] , 1 , 1 ),
+			array( $V4[2] , $V4[3] , 1 , 1 ),
+			array( $V4[4] , $V4[5] , 1 , 1 ),
+			array( $V4[6] , $V4[7] , 1 , 1 ),
 		),
 		'base' => $base,
 		'box'  => array($x1, $y1, $x2, $y2),
@@ -345,12 +535,12 @@ function copyquad( &$pix, $byte=1 )
 		matrix_dump($H, "H");
 		matrix_dump($h, "h");
 
-	$Hinv = matrix_inverse($H);
+	$Hinv = matrix_inv3($H);
 		if ( $Hinv === 0 )  return;
 		matrix_dump($Hinv, "Hinv");
 
 	$M    = matrix_multi33($h, $Hinv);
-	$Minv = matrix_inverse($M);
+	$Minv = matrix_inv3($M);
 		if ( $Minv === 0 )  return;
 		matrix_dump($M   , "M");
 		matrix_dump($Minv, "Minv");
@@ -407,162 +597,5 @@ function copyquad( &$pix, $byte=1 )
 	return;
 }
 //////////////////////////////
-function hex_rotate( $x1, $y1, $x2, $y2 )
-{
-	$dx = $x1 - $x2;
-	$dy = $y1 - $y2;
-	$rot = atan( $dx/$dy ) * 0x80 / pi();
-	if ( $dy < 0 )  $rot += 0x80;
-	else
-	if ( $dx < 0 )  $rot += 0x100;
-
-	// 20  0  e0
-	//    \|/
-	// 40 -*- c0
-	//    /|\
-	// 60 80  a0
-	// $rot from atan() is reverse-clockwise
-	$rot = (int)(0x100 - $rot) & BIT8;
-	return $rot;
-}
 //////////////////////////////
 
-/*
-	FAILED :
-		copyquad() triangle-base looping
-		REASON : WORSE than current
-
-	// opposite corners
-	$w02 = $qdst['quad'][2][0] - $qdst['quad'][0][0];
-	$h02 = $qdst['quad'][2][1] - $qdst['quad'][0][1];
-
-	$x02 = 0;
-	$y02 = 0;
-		$w102 = 0.5 / ($w02+1);
-		$h102 = 0.5 / ($h02+1);
-	while (1)
-	{
-		if ( ( $x02 > 1.0 || $x02 < -1.0 ) && ( $y02 > 1.0 || $y02 < -1.0 ) )
-			break;
-
-		$x02p = $qdst['quad'][0][0] + ($x02 * $w02);
-		$y02p = $qdst['quad'][0][1] + ($y02 * $h02);
-
-
-		// line 0,2 to 1
-		$wx1 = $qdst['quad'][1][0] - ($qdst['quad'][0][0] + $x02 * $w02);
-		$hx1 = $qdst['quad'][1][1] - ($qdst['quad'][0][1] + $y02 * $h02);
-
-		$xx1 = 0;
-		$yx1 = 0;
-			$w1x1 = 0.5 / ($wx1+1);
-			$h1x1 = 0.5 / ($hx1+1);
-		while (1)
-		{
-			if ( ( $xx1 > 1.0 || $xx1 < -1.0 ) && ( $yx1 > 1.0 || $yx1 < -1.0 ) )
-				break;
-
-			$bx = $x02p + ($xx1 * $wx1);
-			$by = $y02p + ($yx1 * $hx1);
-
-			// (t,r,s) = M^-1 * (x,y,1)
-			//  sx,sy  = t/s,r/s
-			$t = matrix_multi31($Minv, array($bx,$by,1));
-
-			// ERROR : $t[2] divide by zero
-			if ( $t[2] !== 0.0 )
-			{
-				$t[2] = 1 / $t[2];
-				$sx = (int)($qsrc['base'][0] + $t[0] * $t[2] - 0);
-				$sy = (int)($qsrc['base'][1] + $t[1] * $t[2] - 0);
-				$dx = (int)($qdst['base'][0] + $bx);
-				$dy = (int)($qdst['base'][1] + $by);
-				//trace("xx1  sx %d,%d  dx %d,%d\n", $sx, $sy, $dx, $dy);
-				updatepix($pix, $byte, $sx, $sy, $dx, $dy);
-			}
-
-			if ( abs($xx1) < abs($yx1) )
-				$xx1 += $w1x1;
-			else
-				$yx1 += $h1x1;
-		} // while (1)
-
-
-		// line 0,2 to 3
-		$wx3 = $qdst['quad'][3][0] - ($qdst['quad'][0][0] + $x02 * $w02);
-		$hx3 = $qdst['quad'][3][1] - ($qdst['quad'][0][1] + $y02 * $h02);
-
-		$xx3 = 0;
-		$yx3 = 0;
-			$w1x3 = 0.5 / ($wx3+1);
-			$h1x3 = 0.5 / ($hx3+1);
-		while (1)
-		{
-			if ( ( $xx3 > 1.0 || $xx3 < -1.0 ) && ( $yx3 > 1.0 || $yx3 < -1.0 ) )
-				break;
-
-			$bx = $x02p + ($xx3 * $wx3);
-			$by = $y02p + ($yx3 * $hx3);
-
-			// (t,r,s) = M^-1 * (x,y,1)
-			//  sx,sy  = t/s,r/s
-			$t = matrix_multi31($Minv, array($bx,$by,1));
-
-			// ERROR : $t[2] divide by zero
-			if ( $t[2] !== 0.0 )
-			{
-				$t[2] = 1 / $t[2];
-				$sx = (int)($qsrc['base'][0] + $t[0] * $t[2] - 0);
-				$sy = (int)($qsrc['base'][1] + $t[1] * $t[2] - 0);
-				$dx = (int)($qdst['base'][0] + $bx);
-				$dy = (int)($qdst['base'][1] + $by);
-				//trace("xx3  sx %d,%d  dx %d,%d\n", $sx, $sy, $dx, $dy);
-				updatepix($pix, $byte, $sx, $sy, $dx, $dy);
-			}
-
-			if ( abs($xx3) < abs($yx3) )
-				$xx3 += $w1x3;
-			else
-				$yx3 += $h1x3;
-		} // while (1)
-
-
-		if ( abs($x02) < abs($y02) )
-			$x02 += $w102;
-		else
-			$y02 += $h102;
-	} // while (1)
-
-function vector_dump( $V, $name )
-{
-	if ( defined("NO_TRACE") )
-		return;
-	trace("$name ");
-	trace(" xyz (%4d , %4d , %4.2f)", $V[0], $V[1], $V[2]);
-
-	// ERROR : $V[2] divide by zero
-	if ( $V[2] == 0.0 )
-	{
-		$V[2] = 1 / $V[2];
-		trace("  xy (%4d , %4d)", $V[0]*$V[2], $V[1]*$V[2]);
-	}
-	trace("\n");
-	return;
-}
-
-function vector_box( $vector )
-{
-	$x1 = PHP_INT_MAX;
-	$y1 = PHP_INT_MAX;
-	$x2 = -PHP_INT_MAX;
-	$y2 = -PHP_INT_MAX;
-	for ( $i=0; $i < 4; $i++ ) // A B C D
-	{
-		if ( $x1 > $vector[$i][0] )  $x1 = (int)floor($vector[$i][0]);
-		if ( $y1 > $vector[$i][1] )  $y1 = (int)floor($vector[$i][1]);
-		if ( $x2 < $vector[$i][0] )  $x2 = (int)ceil ($vector[$i][0]);
-		if ( $y2 < $vector[$i][1] )  $y2 = (int)ceil ($vector[$i][1]);
-	} // for ( $i=0; $i < 4; $i++ )
-	return array($x1, $y1, $x2, $y2);
-}
- */

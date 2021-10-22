@@ -111,7 +111,7 @@ xeno demo
 	3678
 	3695
 	3702
-
+//////////////////////////////
 xeno jp1 / slps 011.60
 	0
 		1 -17  STR movie
@@ -189,9 +189,37 @@ xeno jp1 / slps 011.60
 xeno jp2 / slps 011.61
 	2610-2761  spr1 monsters bosses , 3d models
 	2980-3009  spr2 party
+//////////////////////////////
+battle vierge data
+	RAM hp 8006e154  fuel 8006e12c
+	after AEROD animation
+		801e2a38  lw   v0[   0], 0x60(t1[800ccefc])
+		801e2a48  lhu  v1[ 258], 0x38(t1[800ccefc])
+		801e2a54  sh   v1[ 258], 0x38(a3[8006e0f4])
+		801e2a58  sw   a0[37dc], 0x60(a3[8006e0f4])
+	RAM 800ccf34
+		8008ce88  lhu   s5[ 190], a1[ c80](800cef34)
+		8008cf48  subu  v0[ 258], s5[ 190]
+		8008cf54  sh    v0[ 258], s2[ 170](800ccdc4)
+	RAM 800cfbb4
+		8003f9e4  lbu  v0[90], 0(a1[801c4dc1])
+		8003f9f4  sb   v0[90], 0(a0[800cfbb4])
+	RAM 801c4dc0
+		80032ed8  lbu  t0[90], 0(a0[801de58c])
+		80032eec  sb   t0[90], 0(a1[801c4dc0])
+	ISO
+		1d3650cc  2594.bin + 48cc
+		1d365eac  2594.bin + 56ac
+		1d44afdc  2614.bin + 87dc / 18.bin
+		1d44bdac  2614.bin + 95ac / 26.bin
+//////////////////////////////
+https://ffhacktics.com/smf/index.php?msg=219487
+Fast text mod
+	68 00 02 92 = lbu v0, 0x68(s0)
+	ff 00 02 34 = li  v0, 0xff
 
-
-
+	SLUS 1  RAM 80034964
+//////////////////////////////
 MDEC_rest
 	19.bin
 	591.bin

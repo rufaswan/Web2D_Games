@@ -22,6 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
+require "common-quad.inc";
 require "quad.inc";
 
 define("METAFILE", true);
@@ -112,6 +113,7 @@ function sectspr( &$json, &$mbs, $pfx )
 				$data[$i4]['TexID']   = $s4;
 				$data[$i4]['SrcQuad'] = $sqd;
 			}
+			quad_unconvex($data[$i4]);
 
 		} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -256,12 +258,63 @@ mbs 4-01 valids
 	0 2 4 6
 mbs 4-2 valids
 	0
-
+//////////////////////////////
+MBS file
+	s0*18 ( done)
+	s1*30 ( done)
+	s2*30 ( done)
+	s3 bg skip
+	s4*c  ( done)
+	s5 bg skip
+	s6*18 ( done)
+	s7*24 ( done)
+	s8*20 (e done)
+		00  2032028  ldrh  r1, 0(r9)
+			203203c  ldrh  rc, 0(r5)
+		02
+		03
+		04  2032058  ldrh  rb, 4(r9)
+		06  20328b8  ldrh  r0, 6(r0)
+		08  2032128  ldr  r0, 8(r9)  tst  r0, 0x01
+			203215c  ldr  r0, 8(r9)  tst  r0, 0x02
+			203222c  ldr  r0, 8(r9)  tst  r0, 0x400
+			20324b0  ldr  r0, 8(r9)  tst  r0, 0x20
+			20326c4  ldr  r1, 8(r3)  tst  r1, 0x40
+			20327bc  ldr  r0, 8(r8)  tst  r0, 0x80
+			2032864  ldr  r0, 8(r8)  tst  r0, 0x100
+			2032944  ldr  r0, 8(r8)  tst  r0, 0x2000
+		10
+		11
+		12
+		13
+		14
+		15
+		16
+		17
+		18
+		19
+		1a
+		1b
+		1c
+		1d
+		1e
+		1f
+	s9*30 ( done)
+		00  float32
+		04  float32
+		08  float32
+		0c  float32
+		10  char[]
+		28  int32  ID
+		2c  int16  cnt
+		2e  int16
+	sa*10 ( done)
+//////////////////////////////
 SHOPPING
 	momo01.mbs = RAM 21ced80
-		74  s8 =  52cc/21d404c + n * 20
-		78  s9 = 166bc/21e543c + n * 30
-		7c  sa = 16f8c/21e5d0c + n * 10
+		//  -   0,54 1,58 2,5c | - 21cee20 21cee68 21d08a8
+		// 3,60 4,64 5,68 6,6c | - 21e372c - 21d2cd8
+		// 7,70 8,74 9,78 a,7c | 21d3b60 21d404c 21e543c 21e5d0c
 
 		s9-ptr 21cedf8
 			20333cc  ldrsh   rc[  28], c4(r0[ 21933f0])
@@ -333,8 +386,8 @@ SHOPPING
 			RAM 219e9a0
 			RAM 219e9a8
 
-			9a8  d   e   f     10     11             0 1 2 3 4   5     6     7     8             9 a b c d   e   f     10     11               0
-			a1c  1 2   3   4 5    6 7    8 9 a b c d           1   2 3   4 5   6 7   8 9 a b c d           1   2   3 4    5 6    7 8 9 a b c d
+			219e9a8  d   e   f     10     11             0 1 2 3 4   5     6     7     8             9 a b c d   e   f     10     11               0
+			219ea1c  1 2   3   4 5    6 7    8 9 a b c d           1   2 3   4 5   6 7   8 9 a b c d           1   2   3 4    5 6    7 8 9 a b c d
 
 		s8 21d404c + cbe0 = 21e0c2c
 			2032028  ldrh  r1[  90], 0(r9[ 21e0c4c])
@@ -364,7 +417,7 @@ SHOPPING
 			& 0x0040 = clear
 			& 0x0400 = clear
 			& 0x0800 = loop
-
+//////////////////////////////
 RAM 218a2a0 = YEN
 	206bb04  str  r0[YEN], 1c(r2[ 218a284])
 

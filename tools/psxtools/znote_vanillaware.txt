@@ -4,6 +4,7 @@
 2008  NDS   Kumatanchi
 2009  WII   Muramasa - The Demon Blade
 2011  PSP   Grand Knights History
+xxxx  PSP   Princess Crown
 2013  VITA  Muramasa Rebirth + DLC
 2013  VITA  Dragon's Crown
 2016  VITA  Odin Sphere Leifthsar
@@ -11,7 +12,7 @@ xxxx  PS3   Dragon's Crown
 xxxx  PS3   Odin Sphere Leifthsar HD
 xxxx  PS4   Odin Sphere Leifthsar HD
 xxxx  PS4   Dragon's Crown Pro
-xxxx  PS4   13 Sentinel Aegis Rim
+2020  PS4   13 Sentinels: Aegis Rim
 xxxx  PS4   Princess Crown
 ==============================
 ps2 grim/cat00.mbp
@@ -82,18 +83,25 @@ ps4 13sent/cutin_EnemyDamage.mbs
 	8 - 9 - | 1d8 - 20c - | 1*20 1*30
 	a - b - | 23c -   - - | 1*18  -
 ==============================
-FMBP      bit     pos  cnt  anim   track  fps    frame  part   src    dst    clr
-ps2 grim  le int   a0  11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
-ps2 odin  le int   a0  11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
-nds kuma  le flt   a0  11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
-wii mura  BE flt   a0  11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
-psp gran  le int   e8   9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*60  <-     <-
-vit mura  le flt   e0   9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*78  <-     <-
-vit drag  le flt   e4   9   s6*30  s7*14  s5*20  s3*1c  s1*c   s8*78  <-     <-
-vit odin  le flt  120  10   s6*30  s7*18  s5*20  s3*1c  s1*10  s9*78  <-     <-
-ps3 drag  BE flt   e4  11   s9*30  sa*14  s8*20  s6*1c  s4*c   s1*30  s2*30  s0*18
-ps3 odin  BE flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
-ps4 drag  le flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
-ps4 odin  le flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
-ps4 sent  le flt  120  12   s9*30  sa*18  s8*20  s6*1c  s4*14  s1*30  s2*30  s0*18
+FMBP      bit     pos  toc  cnt  anim   track  frame  key    part   src    dst    clr
+ps2 grim  le int   a0  54   11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
+ps2 odin  le int   a0  54   11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
+nds kuma  le flt   a0  54   11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
+wii mura  BE flt   a0  54   11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
+psp gran  le int   e8  84    9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*60  <-     <-
+vit mura  le flt   e0  7c    9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*78  <-     <-
+vit drag  le flt   e4  80    9   s6*30  s7*14  s5*20  s3*1c  s1*c   s8*78  <-     <-
+vit odin  le flt  120  c8   10   s6*30  s7*18  s5*20  s3*1c  s1*10  s9*78  <-     <-
+ps3 drag  BE flt   e4  74   11   s9*30  sa*14  s8*20  s6*1c  s4*c   s1*30  s2*30  s0*18
+ps3 odin  BE flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
+ps4 drag  le flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
+ps4 odin  le flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
+ps4 sent  le flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*14  s1*30  s2*30  s0*18
+==============================
+COUNT
+	0 1 2 4 3 5 7 8 6 9 a x
+	4+ 0 1 2 3 5 7 8 6 9 a x b
+	1+ - - - 0 2 4 5 - 3 6 7 x - 8
+	1+ - - - 0 2 4 5 3 6 7 x 8 - 9
+	1 0 2 4 5 3 6 7 x - 8
 ==============================

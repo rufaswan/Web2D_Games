@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+require "common-quad.inc";
 require "quad.inc";
 require "quad_lunar2.inc";
 

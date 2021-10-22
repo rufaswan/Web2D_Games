@@ -24,12 +24,26 @@ require "common.inc";
 require "common-quad.inc";
 
 ///// MATRIX TEST /////
-	$M = array(3,0,2, 2,0,-2, 0,1,1);
-		matrix_dump($M, "M");
-	$Minv = matrix_inverse($M);
-		matrix_dump($Minv, "Minv");
+	$M = array(-3,1 , 5,-2);
+		matrix_dump($M, "M2");
+	$Minv = matrix_inv2($M);
+		matrix_dump($Minv, "Minv2");
+	$I = matrix_multi22($M, $Minv);
+		matrix_dump($I, "I2");
+
+	$M = array(3,0,2 , 2,0,-2 , 0,1,1);
+		matrix_dump($M, "M3");
+	$Minv = matrix_inv3($M);
+		matrix_dump($Minv, "Minv3");
 	$I = matrix_multi33($M, $Minv);
-		matrix_dump($I, "I");
+		matrix_dump($I, "I3");
+
+	$M = array(5,0,0,0 , 0,0,3,0 , 0,1,3,0 , 1,0,0,1);
+		matrix_dump($M, "M4");
+	$Minv = matrix_inv4($M);
+		matrix_dump($Minv, "Minv4");
+	$I = matrix_multi44($M, $Minv);
+		matrix_dump($I, "I4");
 
 ///// QUAD AREA TEST /////
 	// Lunar 2 sysspr.pck 0365-0366

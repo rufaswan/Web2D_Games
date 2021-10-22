@@ -217,6 +217,7 @@ Order / bitflag
 ==============================
 Items
 2594.bin/0.bin (BLOCK = 0x10 or 16 bytes)
+2614.bin/2.bin
  0 int16 always fc ff
  2 int16 buying price
  4
@@ -236,6 +237,7 @@ for EP , value * 10 (1=10, 2=20, 3=30, a=100)
 ==============================
 Character Weapons
 2594.bin/1.bin (BLOCK = 0x10 or 16 bytes)
+2614.bin/36.bin
  0 int16 bitflag for wearable character
  2 int8  always 00
  3 int8  bullets (64 = normal, ff = infinite , 00 = the rest)
@@ -464,39 +466,43 @@ Character Level
 ==============================
 Character Skill + Spells
 2594.bin/3.bin - 13.bin (BLOCK = 0x28 or 40 bytes)
-	03  Fei
-	04  Elly
-	05  Citan
-	06  Bart
-	07  Billy
-	08  Rico
-	09  Emerald
-	10  Chu-chu
-	11  Maria
-	12  Citan/Sword
-	13  Emerald/Adult
+2614.bin/4.bin - 14.bin
+	03  04  Fei
+	04  05  Elly
+	05  06  Citan
+	06  07  Bart
+	07  08  Billy
+	08  09  Rico
+	09  10  Emerald
+	10  11  Chu-chu
+	11  12  Maria
+	12  13  Citan/Sword
+	13  14  Emerald/Adult
 BLOCK 0x0   / Deathblow Area
 BLOCK 0x370 / Spell Area
 ==============================
 Gear Skill + Spells
 2594.bin/22.bin - 38.bin (BLOCK = 0x28 or 40 bytes)
-	22  Weltall
-	23  Weltall-2
-	24  Vierge
-	25  Heimdal
-	26  Brigandier
-	27  Renmazuo
-	28  Stier
-	29  Chu-chu
-	30  Seibzehn
-	31  Crescens
-	32  El-Regurus
-	33  Heimdal/Sword
-	34  El-Andvari
-	35  El-Renmazuo
-	36  El-Stier
-	37  Xenogears
-	38  El-Fenrir
+2614.bin/16.bin - 32.bin
+	22  16  Weltall
+	23  17  Weltall-2
+	24  18  Vierge
+	25  19  Heimdal
+	26  20  Brigandier
+	27  21  Renmazuo
+	28  22  Stier
+	29  23  Chu-chu
+	30  24  Seibzehn
+	31  25  Crescens
+	32  26  El-Regurus
+	33  27  Heimdal/Sword
+	34  28  El-Andvari
+	35  29  El-Renmazuo
+	36  30  El-Stier
+	37  31  Xenogears
+	38  32  El-Fenrir
+	--  33  xenogear hyper/weltall-2 id?
+	--  34  xenogear hyper/weltall-2 id?
 BLOCK 0x0   / Deathblow Area
 BLOCK 0x348 / Spell Area
 BLOCK 0x5c8 / Option Area

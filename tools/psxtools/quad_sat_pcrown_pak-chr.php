@@ -23,12 +23,13 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require "common.inc";
 require "common-guest.inc";
 require "common-atlas.inc";
+require "common-quad.inc";
 require "quad.inc";
 
 define("METAFILE", false);
 
 $gp_pix  = array();
-$gp_clut = array();
+$gp_clut = '';
 
 function sectquad( &$dqd, $dat )
 {
@@ -95,6 +96,7 @@ function sectpart( &$json, &$pak, $pfx, $k2, $id2, $no2 )
 		$data[$i]['DstQuad'] = array();
 		sectquad($data[$i]['DstQuad'], $dat);
 
+		quad_unconvex($data[$i]);
 	} // for ( $i=0; $i < $no; $i++ )
 
 	$json['Frame'][$k2] = $data;
@@ -317,6 +319,8 @@ function pcrown( $fname )
 		echo "added CLUT @ $pfx.pal\n";
 		$gp_clut = $pal;
 	}
+	else
+		$gp_clut = grayclut(0x10);
 
 	pakchr($pak, $pfx);
 	return;

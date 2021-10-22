@@ -22,6 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
+require "common-quad.inc";
 require "quad.inc";
 
 define("METAFILE", true);
@@ -111,7 +112,7 @@ function aegis( $fname, $idtag )
 	$json = load_idtagfile($idtag);
 
 	printf("== %s( %s )\n", $idtag, $pfx);
-	$idtag($mbs, $pfx, $idtag);
+	$idtag($json, $mbs, $pfx);
 	return;
 }
 
@@ -122,7 +123,7 @@ for ( $i=1; $i < $argc; $i++ )
 	switch ( $argv[$i] )
 	{
 		case '-dragon':  $idtag = 'ps4_dragon'; break;
-		case '-odin'  :  $idtag = 'ps4_odin'; break;
+		case '-odin'  :  $idtag = 'ps4_odin';   break;
 		case '-13sent':  $idtag = 'ps4_13sent'; break;
 		default:
 			aegis( $argv[$i], $idtag );

@@ -1,0 +1,45 @@
+[System]
+PlayStation 4
+
+[Game]
+13 Sentinels : Aegis Rim
+
+[Year]
+2020
+
+[Copyright]
+Atlus, Sega
+
+[Character Designer]
+Yukiko Hirai
+
+[Character Animation]
+Yukiko Hirai
+Emika Kida
+Tomoyo Shimabukuro
+Sho Matsumoto
+Kouichi Maenou
+Nami Waku
+
+[Character Animation Support]
+Yasuhiro Fujiwara
+Akira Murakami
+Yasuo Shirai
+
+[Background Designers]
+Daichi Yamashita
+Ryo Kobayashi
+Kaiji Suehiro
+Yoshio Nishimura
+Haruka Kawamura
+Hiroshi Yamamori
+Yukitsuna Maeda
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

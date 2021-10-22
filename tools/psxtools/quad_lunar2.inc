@@ -98,7 +98,7 @@ function sectspr( &$json, &$spr )
 
 			// DstQuad (w=20,18)
 			//   0,-18  1f,-18  1f,-1  0,-1
-			$frame[] = array(
+			$data = array(
 				'TexID' => 0,
 				'SrcQuad' => array(
 					$sx+0    , $sy+0    ,
@@ -113,6 +113,10 @@ function sectspr( &$json, &$spr )
 					$quad[6] , $quad[7] ,
 				),
 			);
+			quad_ext1px  ($data);
+			quad_unconvex($data);
+
+			$frame[] = $data;
 		} // foreach ( $frame as $fk => $fv )
 
 		$json['Frame'][] = $frame;
