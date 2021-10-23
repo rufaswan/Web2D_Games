@@ -121,9 +121,9 @@ Order / bitflag
 Gear Base Stats (BLOCK = 0xa4 or 164 bytes)
 2595.bin
 -0x5c int8  gear frame
--0x5d int8  gear engine (36=omega100)
+-0x5d int8  gear engine
 
--0x58 int8  gear armor (38=z80/30)
+-0x58 int8  gear armor
 -0x57 int8  gear accessory slot 1
 -0x56 int8  gear accessory slot 2
 -0x55 int8  gear accessory slot 3
@@ -569,7 +569,341 @@ Monster Data
 
 +0x100 int32 drop EXP
 +0x104 int16 drop item rate (max=0x64)
-+0x106 int16 drop item
-+0x108 int16
++0x106 int16 drop item ID
++0x108 int16 drop item type
 +0x10a int16 drop gil
 ==============================
+Item Type
+0 Character Weapon
+1 Character Accessory
+2 Items
+3 Gear Weapon
+4 Gear Accessory
+
+Item ID
+   0             1             2             3             4           -
+01 Magical Rod   Martial Wear  Aquasol       Magic RodG    Extra Ar    -
+02 Arcana Rod    Fencing Wear  Aquasol S     Arcana RodG   Extra Ar+1  -
+03 Hot Rod       Leather Vest  Aquasol DX    IronFistRodG  Extra Ar+2  -
+04 Lunar Rod     Metal Vest    Alphasol      SparetheRodG  Extra Ar+3  -
+05 Marshal Rod   Metal Jacket  Panalphasol   Hot RodG      Extra Ar+4  -
+06 Thunder Rod   Penguin Coat  Rosesol       ThunderRodG   Extra Ar+5  -
+07 Stone Rod     War Mail      Rosesol S     Stone RodG    Extra Ar+6  -
+08 Flare Rod     Crimson Vest  Rosesol DX    Flare RodG    Extra Ar+7  -
+09 Ice Rod       BlackLeather  Sigmasol      Ice RodG      Extra Ar DX -
+0a Queen's Rod   Golden Vest   Zetasol       Chrono RodG   Lite Ar+1   -
+0b Dynamite Rod  *cloth*       Zetasol DX    Smoke RodG    Lite Ar+2   -
+0c Dark Rod      *cloth*       Physisol      Chaos RodG    Lite Ar+3   -
+0d Chaoes Rod    *cloth*       Mentsol                     Silver Ar   -
+0e Psycho Rod    *cloth*       Physimentsol                Silver Ar+1 -
+0f Skull Rod     WeddingDress  White Star                  Lite Alloy  -
+
+10 Leather Whip  Martial Cap   Brown Star    LeatherGWhip  Heavy Alloy -
+11 Iron Whip     Fencing Cap   Red Star      Iron GWhip    Beam Coat   -
+12 WhippaShappa  Leather Hat   Blue Star     SnapperGWhip  Mirror Ar   -
+13 Cobra Cracka  Metal Helmet  Hard Star     SerpentGWhip  Mirror Ar+1 -
+14 SerpentSting  War Helm      Speed Star    BSnake GWhip  Mica        -
+15 Black Snake   FeatheredCap  Tragedienne   SBlood GWhip  Insulated Ar-
+16 Silver Blood  Black Helmet  Comedienne    Thor GWhip    InsulateAr+1-
+17 Whip-Lasher   Golden Hood   Igissol       Sonic GWhip   Molecular Ar-
+18 Desert Worm   *head*        Aegissol                    Stress Ar   -
+19 Sonic Wave    Uniform       Blue Rose                   Stress Ar+1 -
+1a Wonder Whip   BellonaTunic  Red Rose                    ShockproofAr-
+1b Thor'sThunda  DervishDress  Black Rose                  Seal Ar     -
+1c Death Adder   Mermaid Mail  ElementAero                 Seal Ar+1   -
+1d *whip*        Beastly Robe  ElementTerra                Angel Ar    -
+1e *whip*        ExecutorGown  ElementPyro                 Angel Ar+1  -
+1f B&J M10  Gun  Angelic Robe  ElementHydro  G-M10 Gun     Angel Ar S  -
+
+20 B&J M686 Gun  Goddess Robe  Samson'sHair  G-M686 Gun    Ether Ar    -
+21 Godfather     Blessed Habi  Debug Item    G-Godfather   Ether Ar+1  -
+22 Matchlock     Ladies' Dres  Debug Skill   G-Matchlock   Ether Ar+2  -
+23 Ether Pistol  White Beret   Weak vs Wind  G-EthPistol   Ether Ar+3  -
+24 *gun*         Silver Beret  Weak vs Earth *gun*         Wind Veil Ar-
+25 Shotgun       Ruby Helmet   Weak vs Fire  G-GatlingGun  EarthVeil Ar-
+26 *gun*         Starlight     Weak vs Water               Fire Veil Ar-
+27 SengokuSword  Vivid Turban  Stop!         SengokuSword  WaterVeil Ar-
+28 Yamame Sword  Ladies'Bonne  Sleep!        Yamame Sword  Cast Ar     -
+29 Yamoto Sword  Blessed Helm  Weakling      Yamato Sword  Old Circuit -
+2a Mumyo  Sword  Stellar Cap   Confusion     Kijin Sword   Simp Circuit-
+2b *sword*       Red Mail      Armor Loss    Kishin Sword  Resp Circuit-
+2c *weapon*      Iron Mail     EXP Ball      *weapon*      Def Circuit -
+2d *weapon*      Knight Mail   Combo Ball10  *weapon*      A Circuit   -
+2e *weapon*      Dark Armor    Omni          *weapon*      B Circuit   -
+2f *weapon*      Rose Tabard   option        *weapon*      C Circuit   -
+
+30 *weapon*      Slayer Robe   option        *weapon*      D Circuit   -
+31 *weapon*      Manly Mantle  Omegasol      *weapon*      E Circuit   -
+32 B&JM10A Ammo  Hero Costume  SurvivalTent  G-M10A Ammo   F Circuit   -
+33 B&JM10S Ammo  LegendaryRob  STR Drive     G-M10S Ammo   G Circuit   -
+34 B&JM10X Ammo  Kingly Armor  VIT Drive     G-M10X Ammo   A Circuit+1 -
+35 B&JM686AAmmo  Iron Helmet   ETH Drive     G-M686A Ammo  B Circuit+1 -
+36 B&JM686SAmmo  Knight Helm   ETHDEF Drive  G-M686S Ammo  C Circuit+1 -
+37 B&JM686XAmmo  Dark Helm     HP Drive      G-M686X Ammo  D Circuit+1 -
+38 Godson  Ammo  King's Helm   EP Drive      G-GodsonAmmo  E Circuit+1 -
+39 ShotG50 Ammo  Kaiser Helm   Hob-Jerky     G-GG040 Ammo  F Circuit+1 -
+3a ShotG60 Ammo  Men's Hat     Hob-Meat      G-GG060 Ammo  G Circuit+1 -
+3b ShotG70 Ammo  PilotUniform  Hob-Steak     G-GG080 Ammo  A/C         -
+3c ShotG80 Ammo  Battle Vest   Fang          G-GG100 Ammo  Beam Jammer -
+3d MatAero Ammo  Holy Habit    Eyeball       G-MAero Ammo  Ground      -
+3e MatTerraAmmo  Devil Dress   Scales        G-MTerraAmmo  Stress Mat  -
+3f MatPyro Ammo  Fuzzy Frock   Bizfruit      G-MPyro Ammo  AirtightHull-
+
+40 MatHydroAmmo  BattleDress   Elfanana      G-MHydroAmmo  Noise Filter-
+41 MatLuminAmmo                Ariberry      G-MLuminAmmo  AntiAngelSys-
+42 MatUmbraAmmo                Radish        G-MUmbraAmmo  O2 Cylinder -
+43 EthWind Ammo                Durian Juice  EthWind Ammo  MagneticCoat-
+44 EthEarthAmmo                Nisan Water   EthEarthAmmo  Ballast     -
+45 EthFire Ammo                Aveh Water    EthFire Ammo  Gold Plate  -
+46 EthWaterAmmo                Toy gun       EthWaterAmmo  Seal Barrier-
+47 EthLightAmmo                Minigear      EthLightAmmo  Customizer  -
+48 EthDark Ammo                Anoret Seed   EthDark Ammo  Hex         -
+49                             Anoret Fruit                Wind Stone  -
+4a                             Bulimy Seed                 Earth Stone -
+4b                             Bulimy Fruit                Fire Stone  -
+4c                             Gold Nugget                 Water Stone -
+4d                             Gold Bullion                Energy Saver-
+4e                             Ivory                                   -
+4f                                                         Power Magic -
+
+50                                                         Lens Cover  -
+51                                                         Veil Doubler-
+52                                                         Sword Veil  -
+53                                                         Magic Guard -
+54                                                         Engine Guard-
+55                                                         Pilot Shield-
+56                                                         Tank Guard  -
+57                                                         Ar Repairer -
+58                                                         Motion Guard-
+59                                                         Ar Guard    -
+5a               Power Ring                                Frame HP10  -
+5b               Power Ring S                              Frame HP30  -
+5c               StaminaRing                               Frame HP50  -
+5d               StaminaRingS                              Frame HP70  -
+5e               Glasses                                   Frame HP90  -
+5f               SuperGoggles                              FX Cleaner  -
+
+60               Step Shoes                                DeathBlower1-
+61               PremierShoes                              DeathBlower2-
+62               EtherStone                                DeathBlower3-
+63               EtherStoneL                               GNRS20      -
+64               AntiEthStone                              GNRS50      -
+65               AntiEthRockL                              A Charger   -
+66               Speed Ring                                S Charger   -
+67               Speed Ring S                              X Charger   -
+68               Gallant Belt                              Z Charger   -
+69               Yamato Belt                                           -
+6a               Economether                                           -
+6b               WizardryRing                                          -
+6c               HerculesRing                                          -
+6d               Trader Card                                           -
+6e               Holy Pendant                                          -
+6f               Coin of Fate                                          -
+
+70               Life Stone                                            -
+71               Power Crisis                                          -
+72               GuardianRing                                          -
+73               Evasion Ring                                          -
+74               LongDarkCoat                                          -
+75               Battle Apron                                          -
+76               Body Guard                                            -
+77               Mind Guard                                            -
+78               Poison Guard                                          -
+79               Sleep Guard                                           -
+7a               Cool Shades                                           -
+7b               Brain Guard                                           -
+7c               Speed Shoes                                           -
+7d               Muscle Belt                                           -
+7e               EtherDoubler                                          -
+7f               Ether Guard                                           -
+
+80               Wind Ring                                             -
+81               Earth Ring                                            -
+82               Fire Ring                                             -
+83               Water Ring                                            -
+84               EtherReversa                                          -
+85               Ether Veiler                                          -
+86               Ether Maxer                                           -
+87               Fei  Jr.Doll                                          -
+88               Bart Jr.Doll                                          -
+89               BillyJr.Doll                                          -
+8a               Elly Jr.Doll                                          -
+8b               Emer Jr.Doll                                          -
+8c               Mermaid Ring                                                      -
+8d               Combo Star                                            -
+8e               Chu-chu Idol                                          -
+8f               MomentoChain                                          -
+========================================================================
+Gear Tune up Parts ID
+
+   Frame         Engine        Armor         -
+01 WELT-01800    G2-1200       MS 1          -
+02 WELT-02100    G3-1200       MS 2          -
+03 WELT-02500    G4-1200       MS 3          -
+04 WELT-03000    G5-1200       MS 4          -
+05 WELT-03600    G6-1200       MS 5          -
+06 WELT-04300    G7-1200       MS 6          -
+07 WELT-05100    G8-1200       MS 7.5        -
+08 WELT-06100    Z9-1500       MS 9          -
+09 WELT-07300    V10-2000      MS 10         -
+0a WELT-08700    V12-2000      MS 12         -
+0b WELT-10400    W13-1700      MS 15         -
+0c WELT-12400    V15-2000      3B            -
+0d WELT-14800    V18-2000      4B            -
+0e WELT-17700    E20-2700      5B            -
+0f WELT-21200    R23-3000      Z Alloy20/5   -
+
+10 WELT-25400    V28-2200      XMS 25        -
+11 XENO-30400    GNR4C         3C            -
+12               GNR5C         4C            -
+13               B30-4200      5C            -
+14               K35-3500      XMS 30        -
+15 VIER-01500    GNR3D         Z Alloy30/10  -
+16 VIER-01800    GNR4D         3D            -
+17 VIER-02200    GNR5D         4D            -
+18 VIER-02700    F40-5400      5D            -
+19 VIER-03300    G45-4600      XMS 40        -
+1a VIER-04000    GNR3E         Z Alloy40/15  -
+1b VIER-04800    GNR4E         3E            -
+1c VIER-05800    GNR5E         4E            -
+1d VIER-07000    S50-6600      5E            -
+1e VIER-08400    N55-5800      RX Metal 50   -
+1f VIER-09800    GNR3F         Z Alloy50/20  -
+
+20 VIER-12000    GNR4F         3F            -
+21 VIER-14300    GNR5F         4F            -
+22 VIER-17000    Y60-7000      5F            -
+23               GNR2G         RX Metal 60   -
+24               GNR3G         Z Alloy60/25  -
+25               GNR4G         3G            -
+26               GNR5G         4G            -
+27               X70-8000      5G            -
+28               X70-8000      RX Metal 70   -
+29 HEIM-02500    X70-8000      Z Alloy70/25  -
+2a HEIM-03200    GNR4H         3H            -
+2b HEIM-03800    GNR5H         4H            -
+2c HEIM-04500    V80-2000      5H            -
+2d HEIM-05400    GNR2I         RX Metal 80   -
+2e HEIM-06400    GNR3I         Z Alloy80/30  -
+2f HEIM-07800    GNR4I         3I            -
+
+30 HEIM-09200    GNR5I         4I            -
+31 HEIM-11000    Z90-1500      5I            -
+32 HEIM-13000    GNR2J         RX Metal 90   -
+33 HEIM-15800    GNR3J         Z Alloy80/30  -
+34 HEIM-19000    GNR4J         3I            -
+35 HEIM-23000    GNR5J         4I            -
+36 HEIM-27000    OMEGA100      5I            -
+37 HEIM-32000    GNR2K         Z Gold 100    -
+38               GNR3K         Z Alloy80/30  -
+39               GNR4K         3I            -
+3a               GNR5K         4I            -
+3b                             5I            -
+3c                                           -
+3d BRIG-01900                                -
+3e BRIG-02200                                -
+3f BRIG-02700                                -
+
+40 BRIG-03200                                -
+41 BRIG-03800                                -
+42 BRIG-04600                                -
+43 BRIG-05400                                -
+44 BRIG-06400                                -
+45 BRIG-07700                                -
+46 BRIG-09100                                -
+47 BRIG-11000                                -
+48 BRIG-13000                                -
+49 BRIG-15800                                -
+4a BRIG-18500                                -
+4b BRIG-22200                                -
+4c BRIG-26000                                -
+4d                                           -
+4e                                           -
+4f                                           -
+
+50                                           -
+51 RENM-06000                                -
+52 RENM-07200                                -
+53 RENM-08600                                -
+54 RENM-10200                                -
+55 RENM-12000                                -
+56 RENM-14200                                -
+57 RENM-17000                                -
+58 RENM-20800                                -
+59 RENM-24800                                -
+5a                                           -
+5b                                           -
+5c                                           -
+5d                                           -
+5e                                           -
+5f                                           -
+
+60 STIE-05800                                -
+61 STIE-06900                                -
+62 STIE-08200                                -
+63 STIE-09800                                -
+64 STIE-11700                                -
+65 STIE-13800                                -
+66 STIE-16500                                -
+67 STIE-20000                                -
+68 STIE-25000                                -
+69 STIE-30000                                -
+6a STIE-36000                                -
+6b                                           -
+6c                                           -
+6d                                           -
+6e                                           -
+6f                                           -
+
+70                                           -
+71                                           -
+72                                           -
+73                                           -
+74                                           -
+75                                           -
+76                                           -
+77                                           -
+78                                           -
+79                                           -
+7a                                           -
+7b                                           -
+7c                                           -
+7d                                           -
+7e #17-18000                                 -
+7f #17-22000                                 -
+
+80 #17-30000                                 -
+81 #17-38000                                 -
+82                                           -
+83                                           -
+84                                           -
+85                                           -
+86                                           -
+87                                           -
+88                                           -
+89                                           -
+8a                                           -
+8b                                           -
+8c                                           -
+8d CRES-14000                                -
+8e CRES-17200                                -
+8f CRES-20800                                -
+
+90 CRES-24800                                -
+91                                           -
+92                                           -
+93                                           -
+94                                           -
+95                                           -
+96                                           -
+97                                           -
+98                                           -
+99                                           -
+9a                                           -
+9b                                           -
+9c                                           -
+9d                                           -
+9e                                           -
+9f                                           -
+========================================================================
+
