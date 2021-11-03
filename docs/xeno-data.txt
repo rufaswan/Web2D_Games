@@ -1,4 +1,15 @@
 XENOGEARS Data Structures
+by Rufas Wan
+
+Special Thanks
+	Xenogears Shrine
+	http://shrines.rpgclassics.com/psx/xeno/
+		Ryuuhi
+	Xenogears Perfect Works Build
+	http://github.com/NoharOSP/Perfect_Works_Build/
+		NoharOSP
+		rafael
+		Will Bill
 ==============================
 Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 2595.bin
@@ -255,6 +266,7 @@ Effect Type
 	00 40 00 64  earth element
 	00 20 00 64  fire element
 	00 10 00 64  water element
+	00 20 64 00  #stop#
 	00 10 64 02  put enemy to sleep (elly/lunar rod)
 	00 04 50 02  eth def down (bart/black snake)
 	00 08 64 00  use poison (bart/cobra cracker)
@@ -501,8 +513,8 @@ Gear Skill + Spells
 	36  30  El-Stier
 	37  31  Xenogears
 	38  32  El-Fenrir
-	--  33  xenogear hyper/weltall-2 id?
-	--  34  xenogear hyper/weltall-2 id?
+	--  33  ?xenogear hyper/weltall-2 id?
+	--  34  ?xenogear hyper/weltall-2 id?
 BLOCK 0x0   / Deathblow Area
 BLOCK 0x348 / Spell Area
 BLOCK 0x5c8 / Option Area
@@ -906,4 +918,58 @@ Gear Tune up Parts ID
 9e                                           -
 9f                                           -
 ========================================================================
+Char Shop Data
+2593.bin/6.bin (BLOCK = 0x5c or 92 bytes)
+3958.bin/6.bin
+	0x98   Item
+	0xf4   Item
+	0x114  Weapon
+	0x132  Accessory
+	0x1ac  Item
+	0x1cc  Weapon
+	0x264  Items
+	0x2a2  Accessory
+	0x31c  Item
+	0x35a  Accessory
+	0x3d4  Item
+	0x412  Accessory
+	0x48c  Item
+	0x4ac  Weapon
+	0x4ca  Accessory
+	0x544  Item
+	0x564  Weapon
+	0x582  Accessory
+	0x5fc  Item
+	0x61c  Weapon
+	0x63a  Accessory
+	0x6b4  Item
+	0x6d4  Weapon
+	0x6f2  Accessory
+	0x76c  Item
+	0x78c  Weapon
+	0x7aa  Accessory
+	0x824  Item
+	0x844  Weapon
+	0x862  Accessory
+	0x8dc  Item
+	0x8fc  Weapon
+	0x91a  Accessory
+	0x994  Item
+	0x9b4  Weapon
+	0x9d2  Accessory
+	0xa4c  Item
+	0xa8a  Accessory
+	0xb04  Item
+	0xb24  Weapon
+	0xb42  Accessory
+	0xbbc  Item
+	0xbdc  Weapon
+	0xbfa  Accessory
+	0xc56
+	0xc94  Weapon
+	0xcb2  Accessory
 
+Gear Shop Data
+2593.bin/7.bin (BLOCK = 0x14 or 20 bytes)
+3958.bin/7.bin
+==============================

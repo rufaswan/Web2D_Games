@@ -121,7 +121,7 @@ function sect_spr( &$json, &$file, $ptgt_off, $img )
 				'DstQuad' => $dqd,
 				'TexID'   => $tid,
 			);
-			quad_unconvex($data[$i2]);
+			quad_convexfix($data[$i2]);
 		} // for ( $i2=0; $i2 < $no; $i2++ )
 
 		$json['Frame'][$i1] = $data;

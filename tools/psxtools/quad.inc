@@ -52,8 +52,6 @@ function load_idtagfile( $pfx )
 	{
 		if ( count($line) == 1 )
 			$data['TAG'][$head] = $line[0];
-		else
-			$data['TAG'][$head] = implode('<br>', $line);
 	}
 	return $data;
 }
@@ -105,70 +103,6 @@ function quad_ext1px( &$quad )
 	return;
 }
 
-function quad_is_convex( &$dst )
-{
-	// check if 3 is within 0,1,2
-	$qsz = triad_area($dst[0], $dst[1], $dst[2]);
-
-	$q1 = triad_area($dst[3], $dst[0], $dst[1]);
-	$q2 = triad_area($dst[3], $dst[1], $dst[2]);
-	$q3 = triad_area($dst[3], $dst[2], $dst[0]);
-	if ( ($q1+$q2+$q3) <= $qsz )
-		return true;
-
-	// check if 1 is within 0,3,2
-	$qsz = triad_area($dst[0], $dst[3], $dst[2]);
-
-	$q1 = triad_area($dst[1], $dst[0], $dst[2]);
-	$q2 = triad_area($dst[1], $dst[2], $dst[3]);
-	$q3 = triad_area($dst[1], $dst[3], $dst[0]);
-	if ( ($q1+$q2+$q3) <= $qsz )
-		return true;
-
-	// all good , simple quad
-	return false;
-}
-
-function quad_unconvex( &$quad )
-{
-	// Auto-detect complex quads
-	//   Saturn Princess Crown , e_ex.pak , frame 3
-	//     p0 = 116,-109 ,  77,-41 ,  86,-71  , 51,-136
-	//     p5 =  70,-49  , 254,-33 , 101,-116 , 95,-57
-	// 0 1 | 0     | 0   2
-	//     |   3 1 |   1
-	// 3 2 | 2     |   3
-	$dst = array(
-		array($quad['DstQuad'][0] , $quad['DstQuad'][1] , 1),
-		array($quad['DstQuad'][2] , $quad['DstQuad'][3] , 1),
-		array($quad['DstQuad'][4] , $quad['DstQuad'][5] , 1),
-		array($quad['DstQuad'][6] , $quad['DstQuad'][7] , 1),
-	);
-
-	// detect convex quad
-	if ( ! quad_is_convex($dst) )
-		return;
-	$quad['_debug_'] = 'convex';
-
-	// rotate
-	$dst[] = array_shift($dst);
-	$quad['DstQuad'][] = array_shift($quad['DstQuad']); // x
-	$quad['DstQuad'][] = array_shift($quad['DstQuad']); // y
-	if ( isset($quad['SrcQuad']) )
-	{
-		$quad['SrcQuad'][] = array_shift($quad['SrcQuad']); // x
-		$quad['SrcQuad'][] = array_shift($quad['SrcQuad']); // y
-	}
-
-	// detect twisted quad
-	if ( ! quad_is_convex($dst) )
-		return;
-	$quad['_debug_'] = 'twist';
-
-	php_error("quad is twisted !");
-	return;
-}
-
 function quad_move( &$quad, $opt )
 {
 	foreach ( $opt as $k => $v )
@@ -213,3 +147,40 @@ function quad_move( &$quad, $opt )
 	} // foreach ( $opt as $k => $v )
 	return;
 }
+//////////////////////////////
+function quad_convexfix( &$quad )
+{
+	//          0          0--\
+	// 0 - 1   / \   0--3   \  \
+	// |   |  3   1   \/     3  1
+	// 3 - 2   \ /    /\    /  /
+	//          2    2--1  2--/
+	//
+	$dst = array(
+		array($quad['DstQuad'][0] , $quad['DstQuad'][1] , 1),
+		array($quad['DstQuad'][2] , $quad['DstQuad'][3] , 1),
+		array($quad['DstQuad'][4] , $quad['DstQuad'][5] , 1),
+		array($quad['DstQuad'][6] , $quad['DstQuad'][7] , 1),
+	);
+
+	// normal quad
+	//   0,1,2 + 0,3,2  ==  1,2,3 + 1,0,3
+	$q1 = triad_area($dst[0], $dst[1], $dst[2]);
+	$q2 = triad_area($dst[0], $dst[3], $dst[2]);
+	$qsz1 = $q1 + $q2;
+
+	$q1 = triad_area($dst[1], $dst[2], $dst[3]);
+	$q2 = triad_area($dst[1], $dst[0], $dst[3]);
+	$qsz2 = $q1 + $q2;
+
+	if ( $qsz1 == $qsz2 )
+		return; // simple
+
+	//   Saturn Princess Crown , e_ex.pak , frame 3
+	//     p0 = 116,-109 ,  77,-41 ,  86,-71  , 51,-136
+	//     p5 =  70,-49  , 254,-33 , 101,-116 , 95,-57
+
+
+	return;
+}
+//////////////////////////////

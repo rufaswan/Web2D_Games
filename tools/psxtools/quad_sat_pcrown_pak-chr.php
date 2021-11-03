@@ -96,7 +96,7 @@ function sectpart( &$json, &$pak, $pfx, $k2, $id2, $no2 )
 		$data[$i]['DstQuad'] = array();
 		sectquad($data[$i]['DstQuad'], $dat);
 
-		quad_unconvex($data[$i]);
+		quad_convexfix($data[$i]);
 	} // for ( $i=0; $i < $no; $i++ )
 
 	$json['Frame'][$k2] = $data;

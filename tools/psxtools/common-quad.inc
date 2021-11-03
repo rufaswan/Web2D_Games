@@ -32,34 +32,39 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 // dot   = 0 perpendicular , 1 parallel
 //   perpendicular = 90 degree
 //   parallel      = 0 or 180 degree (sin = 0)
+//
+//   dot(x,y) = |x||y| cos Q
+// cross(x,y) = |x||y| sin Q
 
-// v3 = x,y,z
 function cross_product( $vb, $vc )
 {
-	// The skew, vector, or cross product of two vectors
+	list($bx,$by,$bz) = $vb;
+	list($cx,$cy,$cz) = $vc;
 
-	// crx(a,a) = 0
 	// | ax bx cx |
 	// | ay by cy |
 	// | az bz cz |
-	//   ax = bycz - cybz
-	//   ay = bzcx - czbx
-	//   az = bxcy - cxby
-	$ax = ($vb[1] * $vc[2]) - ($vc[1] * $vb[2]);
-	$ay = ($vb[2] * $vc[0]) - ($vc[2] * $vb[0]);
-	$az = ($vb[0] * $vc[1]) - ($vc[0] * $vb[1]);
+	$ax = ($by * $cz) - ($cy * $bz);
+	$ay = ($bz * $cx) - ($cz * $bx);
+	$az = ($bx * $cy) - ($cx * $by);
 	return array($ax, $ay, $az);
 }
 
 // v2 = x.y
-function triad_area( $V1, $V2, $V3 )
+function triad_area( $va, $vb, $vc )
 {
+	list($ax,$ay) = $va;
+	list($bx,$by) = $vb;
+	list($cx,$cy) = $vc;
+
 	// https://www.mathopenref.com/coordtrianglearea.html
+	// | ax bx cx |
+	// | ay by cy |
 	// 2r = ax(by-cy) + bx(cy-ay) + cx(ay-by)
-	$r1 = $V1[0] * ($V2[1] - $V3[1]);
-	$r2 = $V2[0] * ($V3[1] - $V1[1]);
-	$r3 = $V3[0] * ($V1[1] - $V2[1]);
-	$r = 0.5 * ($r1 + $r2 + $r3);
+	$r1 = $ax * ($by - $cy);
+	$r2 = $bx * ($cy - $ay);
+	$r3 = $cx * ($ay - $by);
+	$r  = 0.5 * ($r1 + $r2 + $r3);
 	return abs($r);
 }
 //////////////////////////////
@@ -375,6 +380,14 @@ function matrix_inv4( $M )
 }
 
 //////////////////////////////
+function quad_center( $V4 )
+{
+	$cx = ($V4[0] + $V4[2] + $V4[4] + $V4[6]) / 4;
+	$cy = ($V4[1] + $V4[3] + $V4[5] + $V4[7]) / 4;
+	trace("== center : %.2f , %.2f\n", $cx, $cy);
+	return array($cx,$cy);
+}
+
 function quad_rebase( $V4 )
 {
 	// rebase $V4 to 0,0
@@ -403,10 +416,10 @@ function quad_rebase( $V4 )
 
 	$quad = array(
 		'quad' => array(
-			array( $V4[0] , $V4[1] , 1 , 1 ),
-			array( $V4[2] , $V4[3] , 1 , 1 ),
-			array( $V4[4] , $V4[5] , 1 , 1 ),
-			array( $V4[6] , $V4[7] , 1 , 1 ),
+			array( $V4[0] , $V4[1] , 1 ),
+			array( $V4[2] , $V4[3] , 1 ),
+			array( $V4[4] , $V4[5] , 1 ),
+			array( $V4[6] , $V4[7] , 1 ),
 		),
 		'base' => $base,
 		'box'  => array($x1, $y1, $x2, $y2),
@@ -569,17 +582,17 @@ function copyquad( &$pix, $byte=1 )
 
 			// (t,r,s) = M^-1 * (x,y,1)
 			//  sx,sy  = t/s,r/s
-			$t = matrix_multi31($Minv, array($x,$y,1));
-
-			// ERROR : $t[2] divide by zero
-			if ( $t[2] == 0.0 )
+			list($mx,$my,$mz) = matrix_multi31($Minv, array($x,$y,1));
+			if ( $mz == 0.0 )
 				continue;
+			$mx /= $mz;
+			$my /= $mz; // $mz = 1
+
 			// Rasterization (consistant rule)
 			//   for subpixel from 0.0 to 1.0, but not including 1.0
 			//   are considered part of pixel 0
-			$t[2] = 1 / $t[2];
-			$sx = (int)($t[0] * $t[2]);
-			$sy = (int)($t[1] * $t[2]);
+			$sx = (int)$mx;
+			$sy = (int)$my;
 
 			// is this check required ???
 			//$xy = array($sx,$sy,1);
@@ -597,5 +610,24 @@ function copyquad( &$pix, $byte=1 )
 	return;
 }
 //////////////////////////////
+// sum of all interior angles
+//   side  degree  radian
+//   3     180     pi      // tri
+//   4     360     2 pi    // quad
+//   5     540     3 pi    // penta
+//   6     720     4 pi    // hex
+//   ...
+//
+// https://en.m.wikipedia.org/wiki/Trigonometric_functions
+// Q2 | Q1  Qref = Q1         sin Q rel Y value
+// -------  Qref = 180 - Q2   cos Q rel X value
+// Q3 | Q4  Qref = Q3  - 180  tan Q is Y/X value
+//          Qref = 360 - Q4
+//
+// SOH  sine    = opposite / hypotenuse , cosecant  = hypotenuse / opposite
+// CAH  cosine  = adjacent / hypotenuse , secant    = hypotenuse / adjacent
+// TOA  tangent = opposite / adjacent   , cotangent = adjacent   / opposite
+//
+
 //////////////////////////////
 

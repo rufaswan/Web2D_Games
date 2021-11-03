@@ -113,7 +113,7 @@ function sectspr( &$json, &$mbs, $pfx )
 				$data[$i4]['TexID']   = $s4;
 				$data[$i4]['SrcQuad'] = $sqd;
 			}
-			quad_unconvex($data[$i4]);
+			quad_convexfix($data[$i4]);
 
 		} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -260,61 +260,157 @@ mbs 4-2 valids
 	0
 //////////////////////////////
 MBS file
-	s0*18 ( done)
-	s1*30 ( done)
-	s2*30 ( done)
+	s0*18 (18 done)
+		00  // center RGB
+		04  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 1
+			20308d4  ldrb  r1, 0(r0)
+		05  20308dc  ldrb  r1, 1(r0)
+		06  20308e4  ldrb  r0, 2(r0)
+		08  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 2
+			20308d4  ldrb  r1, 0(r0)
+		09  20308dc  ldrb  r1, 1(r0)
+		0a  20308e4  ldrb  r0, 2(r0)
+		0c  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 3
+			20308d4  ldrb  r1, 0(r0)
+		0d  20308dc  ldrb  r1, 1(r0)
+		0e  20308e4  ldrb  r0, 2(r0)
+		10  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 4
+			20308d4  ldrb  r1, 0(r0)
+		11  20308dc  ldrb  r1, 1(r0)
+		12  20308e4  ldrb  r0, 2(r0)
+		14  // RGB 5 == RGB 1
+	s1*30 (30 done)
+		00  // center x
+		04  // center y
+		08  2030578  ldr  r2,  0(r0)  // x1
+			20306b8  ldr  r7   8(r5)
+		0c  2030574  ldr  r1,  4(r0)  // y1
+			20306d0  ldr  r7   c(r5)
+		10  2030578  ldr  r2,  0(r0)  // x2
+		14  2030574  ldr  r1,  4(r0)  // y2
+		18  2030578  ldr  r2,  0(r0)  // x3
+			20306bc  ldr  r3, 18(r5)
+		1c  2030574  ldr  r1,  4(r0)  // y3
+			20306d4  ldr  r3, 1c(r5)
+		20  2030578  ldr  r2,  0(r0)  // x4
+		24  2030574  ldr  r1,  4(r0)  // y4
+		28  // x5 == x1
+		2c  // y5 == y1
+	s2*30 (30 done)
+		00  // center x
+		04  // center y
+		08  2030538  ldrh   r3,  0(r0) // x1
+			2030688  ldrsh  r1,  8(rb)
+		0a  2030690  ldrsh  r0,  a(rb)
+		0c  // y1
+		10  2030538  ldrh   r3,  0(r0) // x2
+		14  // y2
+		18  2030538  ldrh   r3,  0(r0) // x3
+			203068c  ldrsh  r2, 18(rb)
+		1a  2030694  ldrsh  r3, 1a(rb)
+		1c  // y3
+		20  2030538  ldrh   r3,  0(r0) // x4
+		24  // y4
+		28  // x5 == x1
+		2c  // y5 == y1
 	s3 bg skip
-	s4*c  ( done)
-	s5 bg skip
-	s6*18 ( done)
-	s7*24 ( done)
-	s8*20 (e done)
-		00  2032028  ldrh  r1, 0(r9)
-			203203c  ldrh  rc, 0(r5)
+	s4*c  (9 done)
+		00  2030ad0  ldrh  r0, 0(r9)
 		02
-		03
-		04  2032058  ldrh  rb, 4(r9)
-		06  20328b8  ldrh  r0, 6(r0)
-		08  2032128  ldr  r0, 8(r9)  tst  r0, 0x01
-			203215c  ldr  r0, 8(r9)  tst  r0, 0x02
-			203222c  ldr  r0, 8(r9)  tst  r0, 0x400
-			20324b0  ldr  r0, 8(r9)  tst  r0, 0x20
-			20326c4  ldr  r1, 8(r3)  tst  r1, 0x40
-			20327bc  ldr  r0, 8(r8)  tst  r0, 0x80
-			2032864  ldr  r0, 8(r8)  tst  r0, 0x100
-			2032944  ldr  r0, 8(r8)  tst  r0, 0x2000
-		10
-		11
+		03  2030af0  ldrb  r1, 3(r9)
+		04  2030b94  ldrh  r2, 4(r9) // s1 ID
+		06
+		07
+		08  2030b8c  ldrh  r1, 8(r9) // s0 ID
+		0a  2030ba8  ldrh  r3, a(r9) // s2 ID
+	s5 bg skip
+	s6*18 (14 done)
+		00  2032080  ldr     r3, r0(r1)
+			20320a8  ldr     r0, r0(r1)
+		04  203208c  ldr     r3,  4(r5)
+			20320b4  ldr     r0,  4(r5)
+		08  2032098  ldr     r3,  8(r5)
+			20320c0  ldr     r0,  8(r5)
+		0c  20320a0  ldr     r3,  c(r5)
+			20320c8  ldr     r0,  c(r5)
+		10  2030a48  ldrh    r2, 10(r5)  // s4 ID
 		12
 		13
-		14
-		15
+		14  2030ab8  ldrb    r0, 14(r5)
+			2030bc4  ldrb    r0, 14(r5)
+			203221c  ldrbne  r0, 14(r5)
+		15  2031f38  ldrb    r3, 15(r5)
 		16
 		17
-		18
-		19
-		1a
-		1b
+	s7*24 (14 done)
+		00  // ldr x
+		04  // ldr y
+		0c  203211c  ldr  r3,  c(r6)
+		10  2032104  ldr  r1, 10(r6)
+		14  2032110  ldr  r1, 14(r6)
+		18  2032100  ldr  r2, 18(r6) // scale / 0x1000
 		1c
 		1d
 		1e
 		1f
-	s9*30 ( done)
-		00  float32
-		04  float32
-		08  float32
-		0c  float32
-		10  char[]
-		28  int32  ID
-		2c  int16  cnt
-		2e  int16
-	sa*10 ( done)
+		20  2032394  ldrb  r6, 20(r6) // red
+		21  2032398  ldrb  r0, 21(r6) // green
+		22  2032364  ldrb  r7, 22(r6) // blue
+		23  2032360  ldrb  rc, 23(r6) // alpha
+	s8*20 (1a done)
+		00  2032028  ldrh  r1, 0(r9) // s6 ID
+			203203c  ldrh  rc, 0(r5)
+		02
+		03
+		04  2032058  ldrh  rb, 4(r9) // s7 ID
+		06  20328b8  ldrh  r0, 6(r0)
+		08  2032128  ldr   r0, 8(r9)  tst  r0,   01  // flip x
+			203215c  ldr   r0, 8(r9)  tst  r0,   02  // flip y
+			203222c  ldr   r0, 8(r9)  tst  r0, 0400  // skip
+			20324b0  ldr   r0, 8(r9)  tst  r0,   20
+			20326c4  ldr   r1, 8(r3)  tst  r1,   40  // skip
+			20327bc  ldr   r0, 8(r8)  tst  r0,   80
+			2032864  ldr   r0, 8(r8)  tst  r0, 0100  // skip
+			2032944  ldr   r0, 8(r8)  tst  r0, 2000
+		0c
+		0d
+		0e  20320e0  ldrb  r0, e(r9)
+		0f
+		10
+		11  20325c0  ldrb    r9, 11(r9)
+		12  203258c  ldrbeq  r0, 12(r9)
+		13  2032008  ldrsb   r1, 13(r9)
+		14  2032834  ldr     r1, 14(r8)
+		18  203282c  ldrh    r2, 18(r8)
+		1a  2032830  ldrh    r3, 1a(r8)
+		1c  2032824  ldr     r1, 1c(r8)
+	s9*30 (4 done)
+		28  203317c  ldrh  r0, 28(r7) // sa ID
+		2a  203304c  ldrb  r1, 2a(r7) // sa count
+			2033168  ldrb  r0, 2a(r7)
+			203319c  ldrb  r0, 2a(r7)
+		2b
+		2c  203300c  ldrb  r0, 2c(r7)  tst r0, 01
+	sa*10 (4 done)
+		00  20326a8  ldrh  r3, 0(r0) // s8 ID
+			2032784  ldrh  r0, 0(r6)
+		02  20326d4  ldrh  re, 2(r0) // s8 count
+		04
 //////////////////////////////
 SHOPPING
 	momo01.mbs = RAM 21ced80
-		//  -   0,54 1,58 2,5c | - 21cee20 21cee68 21d08a8
-		// 3,60 4,64 5,68 6,6c | - 21e372c - 21d2cd8
-		// 7,70 8,74 9,78 a,7c | 21d3b60 21d404c 21e543c 21e5d0c
+		// 0  54  21cee20 +   0*18 = 21cee20
+		// 1  58  21cee68 +  64*30 = 21d0128
+		// 2  5c  21d08a8 +  8f*30 = 21d2378
+		// 3  60  -
+		// 4  64  21e372c + 229*c  = 21e5118
+		// 5  68  -
+		// 6  6c  21d2cd8 +  8c*18 = 21d39f8
+		// 7  70  21d3b60 +   0*24 = 21d3b60
+		// 8  74  21d404c + 6be*20 = 21e180c
+		// 9  78  21e543c +  28*30 = 21e5bbc
+		// a  7c  21e5d0c +  c7*10 = 21e697c
+
 
 		s9-ptr 21cedf8
 			20333cc  ldrsh   rc[  28], c4(r0[ 21933f0])
@@ -389,34 +485,6 @@ SHOPPING
 			219e9a8  d   e   f     10     11             0 1 2 3 4   5     6     7     8             9 a b c d   e   f     10     11               0
 			219ea1c  1 2   3   4 5    6 7    8 9 a b c d           1   2 3   4 5   6 7   8 9 a b c d           1   2   3 4    5 6    7 8 9 a b c d
 
-		s8 21d404c + cbe0 = 21e0c2c
-			2032028  ldrh  r1[  90], 0(r9[ 21e0c4c])
-			203203c  ldrh  rc[  90], 0(r5[ 21e0c4c])
-			2032058  ldrh  rb[  16], 4(r9[ 21e0c4c])
-			20328b8  ldrh  r0[   4], 6(r0[ 21e0c4c])
-
-			2032128  ldr   r0[      21], 8(r9[ 21e0c4c])
-					tst  r0, 0x01
-			203215c  ldr   r0[      21], 8(r9[ 21e0c4c])
-					tst  r0, 0x02
-			203222c  ldr   r0[      21], 8(r9[ 21e0c4c])
-					tst  r0, 0x400
-			20324b0  ldr   r0[      21], 8(r9[ 21e0c4c])
-					tst  r0, 0x20
-			20326c4  ldr   r1[      21], 8(r3[ 21e0c4c])
-					tst  r1, 0x40
-			20327bc  ldr   r0[      21], 8(r8[ 21e0c4c])
-					tst  r0, 0x80
-			2032864  ldr   r0[      21], 8(r8[ 21e0c4c])
-					tst  r0, 0x100
-			2032944  ldr   r0[      21], 8(r8[ 21e0c4c])
-					tst  r0, 0x2000
-
-			& 0x0001 = flip x
-			& 0x0002 = flip y
-			& 0x0040 = clear
-			& 0x0400 = clear
-			& 0x0800 = loop
 //////////////////////////////
 RAM 218a2a0 = YEN
 	206bb04  str  r0[YEN], 1c(r2[ 218a284])

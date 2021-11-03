@@ -114,7 +114,7 @@ function sectspr( &$json, &$spr )
 				),
 			);
 			quad_ext1px  ($data);
-			quad_unconvex($data);
+			quad_convexfix($data);
 
 			$frame[] = $data;
 		} // foreach ( $frame as $fk => $fv )

@@ -176,7 +176,7 @@ function sectspr( &$json, &$mbs, $pfx, $game )
 				$data[$i1]['TexID']   = $s4;
 				$data[$i1]['SrcQuad'] = $sqd;
 			}
-			quad_unconvex($data[$i1]);
+			quad_convexfix($data[$i1]);
 
 	/*
 			switch ( $s3 )

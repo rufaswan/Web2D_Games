@@ -131,7 +131,7 @@ function sectspr( &$json, &$mbs, $pfx )
 				$data[$i4]['TexID']   = $s4;
 				$data[$i4]['SrcQuad'] = $sqd;
 			}
-			quad_unconvex($data[$i4]);
+			quad_convexfix($data[$i4]);
 
 	/*
 			switch ( $s3 )

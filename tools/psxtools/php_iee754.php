@@ -41,3 +41,8 @@ function hexfloat( $str )
 echo "float(IEE 754) <-> hex convert\n";
 for ( $i=1; $i < $argc; $i++ )
 	hexfloat( $argv[$i] );
+
+/*
+1.0 = float32( 3f800000 )
+2.0 = float32( 40000000 )
+ */
