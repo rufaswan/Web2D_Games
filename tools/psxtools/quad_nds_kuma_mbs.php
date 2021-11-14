@@ -161,8 +161,8 @@ function sectanim( &$json, &$mbs, $pfx )
 				$no8 = str2int($mbs[8]['d'], $p8+6, 2);
 
 				$p7 = $id7 * $mbs[7]['k'];
-				$x7 = float32( substr($mbs[7]['d'], $p7+0, 4) );
-				$y7 = float32( substr($mbs[7]['d'], $p7+4, 4) );
+				$x7 = str2int($mbs[7]['d'], $p7+0, 4, true);
+				$y7 = str2int($mbs[7]['d'], $p7+4, 4, true);
 
 				$ent['FID'][] = $id8;
 				$ent['FPS'][] = $no8;
@@ -183,6 +183,17 @@ function sectanim( &$json, &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2int($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function kuma( $fname )
 {
 	$mbs = load_file($fname);
@@ -232,8 +243,11 @@ function kuma( $fname )
 		array('p' => 0x74 , 'k' => 0x20), // 8
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x10), // a
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 	if ( METAFILE )
 	{
 		sect_sum($mbs[4], 'mbs[4][0]', 0); //
@@ -315,55 +329,53 @@ MBS file
 		2c  // y5 == y1
 	s3 bg skip
 	s4*c  (9 done)
-		00  2030ad0  ldrh  r0, 0(r9)
-		02
-		03  2030af0  ldrb  r1, 3(r9)
+		00  2030ad0  ldrh  r0, 0(r9) //
+		02  //
+		03  2030af0  ldrb  r1, 3(r9) //
 		04  2030b94  ldrh  r2, 4(r9) // s1 ID
-		06
+		06  //
 		07
 		08  2030b8c  ldrh  r1, 8(r9) // s0 ID
 		0a  2030ba8  ldrh  r3, a(r9) // s2 ID
 	s5 bg skip
 	s6*18 (14 done)
-		00  2032080  ldr     r3, r0(r1)
+		00  2032080  ldr     r3, r0(r1)  // x1
 			20320a8  ldr     r0, r0(r1)
-		04  203208c  ldr     r3,  4(r5)
+		04  203208c  ldr     r3,  4(r5)  // y1
 			20320b4  ldr     r0,  4(r5)
-		08  2032098  ldr     r3,  8(r5)
+		08  2032098  ldr     r3,  8(r5)  // x2
 			20320c0  ldr     r0,  8(r5)
-		0c  20320a0  ldr     r3,  c(r5)
+		0c  20320a0  ldr     r3,  c(r5)  // y2
 			20320c8  ldr     r0,  c(r5)
 		10  2030a48  ldrh    r2, 10(r5)  // s4 ID
 		12
 		13
-		14  2030ab8  ldrb    r0, 14(r5)
+		14  2030ab8  ldrb    r0, 14(r5)  // s4 count
 			2030bc4  ldrb    r0, 14(r5)
 			203221c  ldrbne  r0, 14(r5)
-		15  2031f38  ldrb    r3, 15(r5)
-		16
+		15  2031f38  ldrb    r3, 15(r5) //
+		16  //
 		17
 	s7*24 (14 done)
-		00  // ldr x
-		04  // ldr y
+		00  // + x
+		04  // + y
+		08
 		0c  203211c  ldr  r3,  c(r6)
 		10  2032104  ldr  r1, 10(r6)
 		14  2032110  ldr  r1, 14(r6)
-		18  2032100  ldr  r2, 18(r6) // scale / 0x1000
-		1c
-		1d
-		1e
-		1f
+		18  2032100  ldr  r2, 18(r6) // * scale x
+		1c  // * scale y
 		20  2032394  ldrb  r6, 20(r6) // red
 		21  2032398  ldrb  r0, 21(r6) // green
 		22  2032364  ldrb  r7, 22(r6) // blue
 		23  2032360  ldrb  rc, 23(r6) // alpha
 	s8*20 (1a done)
-		00  2032028  ldrh  r1, 0(r9) // s6 ID
+		00  2032028  ldrh  r1, 0(r9)  // s6 ID
 			203203c  ldrh  rc, 0(r5)
 		02
 		03
-		04  2032058  ldrh  rb, 4(r9) // s7 ID
-		06  20328b8  ldrh  r0, 6(r0)
+		04  2032058  ldrh  rb, 4(r9)  // s7 ID
+		06  20328b8  ldrh  r0, 6(r0)  // frames
 		08  2032128  ldr   r0, 8(r9)  tst  r0,   01  // flip x
 			203215c  ldr   r0, 8(r9)  tst  r0,   02  // flip y
 			203222c  ldr   r0, 8(r9)  tst  r0, 0400  // skip
@@ -372,7 +384,7 @@ MBS file
 			20327bc  ldr   r0, 8(r8)  tst  r0,   80
 			2032864  ldr   r0, 8(r8)  tst  r0, 0100  // skip
 			2032944  ldr   r0, 8(r8)  tst  r0, 2000
-		0c
+		0c  // loop ID
 		0d
 		0e  20320e0  ldrb  r0, e(r9)
 		0f
@@ -385,17 +397,35 @@ MBS file
 		1a  2032830  ldrh    r3, 1a(r8)
 		1c  2032824  ldr     r1, 1c(r8)
 	s9*30 (4 done)
-		28  203317c  ldrh  r0, 28(r7) // sa ID
-		2a  203304c  ldrb  r1, 2a(r7) // sa count
+		00  // x1
+		04  // y1
+		08  // x2
+		0c  // y2
+		10  // name[17] + NULL
+		28  203317c  ldrh  r0, 28(r7)  // sa ID
+		2a  203304c  ldrb  r1, 2a(r7)  // sa count
 			2033168  ldrb  r0, 2a(r7)
 			203319c  ldrb  r0, 2a(r7)
-		2b
-		2c  203300c  ldrb  r0, 2c(r7)  tst r0, 01
+		2b  // sa ID+n with highest sum of s8 frames
+		2c  203300c  ldrb  r0, 2c(r7)  tst r0, 01  // dummied
+		2d
+		2e
+		2f
 	sa*10 (4 done)
 		00  20326a8  ldrh  r3, 0(r0) // s8 ID
 			2032784  ldrh  r0, 0(r6)
 		02  20326d4  ldrh  re, 2(r0) // s8 count
-		04
+		04  // sum of s8 frames
+		06
+		07
+		08  //
+		09
+		0a
+		0b
+		0c  //
+		0d
+		0e
+		0f
 //////////////////////////////
 SHOPPING
 	momo01.mbs = RAM 21ced80

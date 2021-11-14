@@ -46,6 +46,18 @@ function ps4_odin( &$json, &$mbs, $pfx )
 // ERROR Odin , dragon = s4[k]
 	return;
 }
+
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2int($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function ps4_13sent( &$json, &$mbs, $pfx )
 {
 	// 0 - 1 - | 1-0 2-1
@@ -87,8 +99,11 @@ function ps4_13sent( &$json, &$mbs, $pfx )
 		array('p' => 0xf8  , 'k' => 0x30), // 9
 		array('p' => 0x100 , 'k' => 0x18), // a
 		array('p' => 0x108 , 'k' => 0x14), // b , cutin=0
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 	return;
 
 	sectanim($json, $mbs, $pfx);

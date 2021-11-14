@@ -26,319 +26,140 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
+require "class-s3tc.inc";
 
 //define("DRY_RUN", true);
 
-$gp_fmt = array(
-	"\x00\x10\x00\x0c" => 'im_argb8888',
-	"\x00\x00\x00\x85" => 'im_dxt1',
-	"\x00\x00\x00\x86" => 'im_dxt3',
-	"\x00\x00\x00\x87" => 'im_dxt5',
-);
-$gp_type = array(
-	"\x00\x00\x00\x00" => 'gxt_swizzled',
-	"\x00\x00\x00\xa0" => 'gxt_a0',
-);
-//////////////////////////////
-function unmorton_square( &$pix, &$buf, $base, &$pos, $min, $row )
+function morton_swizzle4( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 {
-	if ( $min == 2 )
+	if ( $bw == 4 && $bh == 4 )
 	{
-		$s1 = substr($buf, $pos+ 0, 4);
-		$s2 = substr($buf, $pos+ 4, 4);
-		$s3 = substr($buf, $pos+ 8, 4);
-		$s4 = substr($buf, $pos+12, 4);
-			$pos += 16;
-
-		str_update($pix, ($base           ) * 4, $s1);
-		str_update($pix, ($base + $row    ) * 4, $s2);
-		str_update($pix, ($base + 1       ) * 4, $s3);
-		str_update($pix, ($base + $row + 1) * 4, $s4);
-		return;
+		for ( $y=0; $y < 4; $y++ )
+		{
+			$dyy = ($dy  + $y) * $ow;
+			$dxx = ($dyy + $dx) * 4;
+			$s = substr($pix, $pos, 16); // 4 RGBA
+				$pos += 16;
+			str_update($dec, $dxx, $s);
+		} // for ( $y=0; $y < 4; $y++ )
 	}
 	else
 	{
 		$func = __FUNCTION__;
-		$hm = $min >> 1;
-		$rh = $row * $hm;
-		$func($pix, $buf, $base            , $pos, $hm, $row);
-		$func($pix, $buf, $base + $rh      , $pos, $hm, $row);
-		$func($pix, $buf, $base + $hm      , $pos, $hm, $row);
-		$func($pix, $buf, $base + $rh + $hm, $pos, $hm, $row);
-		return;
+		$hbw = $bw >> 1;
+		$hbh = $bh >> 1;
+		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
 	}
 	return;
 }
 
-function gxt_swizzled( &$pix, $ow, $oh )
+function dxt_swizzled( &$pix, $ow, $oh )
 {
-	printf("== gxt_swizzled( %x , %x )\n", $ow, $oh);
-	//return;
-	$buf = $pix;
-	$row = $ow;
+	// 1 tile = 4*4 pixels
+	// unswizzled pixels
+	//    0  2  8 10
+	//    1  3  9 11
+	//    4  6 12 14
+	//    5  7 13 15
+	printf("== dxt_swizzled( %x , %x )\n", $ow, $oh);
+	$dec = $pix;
 	$pos = 0;
+	$min = ( $ow > $oh ) ? $oh : $ow;
 
-	// square image = 128x128
-	$min = $ow;
-	if ( $ow == $oh )
-		return unmorton_square($pix, $buf, 0, $pos, $min, $row);
-
-	// landscape image = 512x128
-	// split it into 4 parts of 128x128 square
-	if ( $ow > $oh )
+	for ( $y=0; $y < $oh; $y += $min )
 	{
-		$min = $oh;
-		for ( $i=0; $i < $ow; $i += $min )
-			unmorton_square($pix, $buf, $i, $pos, $min, $row);
-		return;
-	}
+		for ( $x=0; $x < $ow; $x += $min )
+			morton_swizzle4($pix, $dec, $pos, $x, $y, $min, $min, $ow, $oh);
+	} // for ( $y=0; $y < $oh; $y += 32 )
 
-	// portrait image = 128x512
-	// split it into 4 parts of 128x128 square
-	if ( $oh > $ow )
-	{
-		$min = $ow;
-		for ( $i=0; $i < $oh; $i += $min )
-			unmorton_square($pix, $buf, $i*$min, $pos, $min, $row);
-		return;
-	}
+	$pix = $dec;
 	return;
-}
-
-// Unswizzle logic by @FireyFly
-//   http://xen.firefly.nu/up/rearrange.c.html
-// REMOVED = wrong unswizzle
-//           image is flipped and rotated 270 degree
-
-function gxt_a0( &$pix, $w, $h )
-{
-	printf("== gxt_a0( %x , %x )\n", $w, $h);
-	return gxt_swizzled($pix, $w, $h);
-	//return;
 }
 //////////////////////////////
-// https://en.m.wikipedia.org/wiki/S3_Texture_Compression
-function dxt_block( &$pix, &$dxt )
+function im_dxt1( &$file, $pos, $w, $h )
 {
-	$pix .= $dxt[ 0] . $dxt[ 4] . $dxt[ 1] . $dxt[ 5];
-	$pix .= $dxt[ 8] . $dxt[12] . $dxt[ 9] . $dxt[13];
-	$pix .= $dxt[ 2] . $dxt[ 6] . $dxt[ 3] . $dxt[ 7];
-	$pix .= $dxt[10] . $dxt[14] . $dxt[11] . $dxt[15];
-	return;
+	printf("== im_dxt1( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $w*$h);
+
+	$s3  = new S3TC_Texture;
+	$pix = $s3->DXT1($pix);
+	//$pix = $s3->S3TC_debug($pix, $w, $h);
+
+	dxt_swizzled($pix, $w, $h);
+	return $pix;
 }
 
-function dxt_mix( &$color, $alpha )
+function im_dxt3( &$file, $pos, $w, $h )
 {
-	// in 4x4 block
-	//echo debug( $alpha );
-	for ( $i=0; $i < 16; $i++ )
-	{
-		$color[$i][3] = $alpha[$i];
-		//echo debug( $color[$i] );
-	}
-	return;
+	printf("== im_dxt3( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $w*$h);
+
+	$s3  = new S3TC_Texture;
+	$pix = $s3->DXT3($pix);
+	//$pix = $s3->S3TC_debug($pix, $w, $h);
+
+	dxt_swizzled($pix, $w, $h);
+	return $pix;
 }
 
-function dxt5_alpha( $str )
+function im_dxt5( &$file, $pos, $w, $h )
 {
-	$a = array();
-	$a[0] = ord( $str[0] );
-	$a[1] = ord( $str[1] );
-	if ( $a[0] > $a[1] )
+	printf("== im_dxt5( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $w*$h);
+
+	$s3  = new S3TC_Texture;
+	$pix = $s3->DXT5($pix);
+	//$pix = $s3->S3TC_debug($pix, $w, $h);
+
+	dxt_swizzled($pix, $w, $h);
+	return $pix;
+}
+//////////////////////////////
+function morton_swizzle1( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
+{
+	if ( $bw == 1 && $bh == 1 )
 	{
-		$a[2] = int_clamp((6*$a[0] + 1*$a[1])/7, 0, BIT8);
-		$a[3] = int_clamp((5*$a[0] + 2*$a[1])/7, 0, BIT8);
-		$a[4] = int_clamp((4*$a[0] + 3*$a[1])/7, 0, BIT8);
-		$a[5] = int_clamp((3*$a[0] + 4*$a[1])/7, 0, BIT8);
-		$a[6] = int_clamp((2*$a[0] + 5*$a[1])/7, 0, BIT8);
-		$a[7] = int_clamp((1*$a[0] + 6*$a[1])/7, 0, BIT8);
+		$dxx = (($dy * $ow) + $dx) * 4;
+		$s = substr($pix, $pos, 16); // 4 RGBA
+				$pos += 4;
+		str_update($dec, $dxx, $s);
 	}
 	else
 	{
-		$a[2] = int_clamp((4*$a[0] + 1*$a[1])/5, 0, BIT8);
-		$a[3] = int_clamp((3*$a[0] + 2*$a[1])/5, 0, BIT8);
-		$a[4] = int_clamp((2*$a[0] + 3*$a[1])/5, 0, BIT8);
-		$a[5] = int_clamp((1*$a[0] + 4*$a[1])/5, 0, BIT8);
-		$a[6] = 0;
-		$a[7] = BIT8;
+		$func = __FUNCTION__;
+		$hbw = $bw >> 1;
+		$hbh = $bh >> 1;
+		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
 	}
-
-	// 4x4 3-bit lookup
-	$data = '';
-	for ( $i=2; $i < 8; $i += 3 )
-	{
-		$b = ordint( $str[$i+0] . $str[$i+1] . $str[$i+2] );
-		for ( $j=0; $j < 24; $j += 3 )
-		{
-			$b1 = ($b >> $j) & 7;
-			$data .= chr( $a[$b1] );
-		}
-	}
-	return $data;
+	return;
 }
 
-function dxt3_alpha( $str )
+function argb_swizzled( &$pix, $ow, $oh )
 {
-	$alp = '';
-	for ( $i=0; $i < 8; $i++ )
+	printf("== argb_swizzled( %x , %x )\n", $ow, $oh);
+	$dec = $pix;
+	$pos = 0;
+	$min = ( $ow > $oh ) ? $oh : $ow;
+
+	for ( $y=0; $y < $oh; $y += $min )
 	{
-		$b = ord( $str[$i] );
-		$b1 = ($b >> 0) & BIT4;
-		$b2 = ($b >> 4) & BIT4;
+		for ( $x=0; $x < $ow; $x += $min )
+			morton_swizzle1($pix, $dec, $pos, $x, $y, $min, $min, $ow, $oh);
+	} // for ( $y=0; $y < $oh; $y += 32 )
 
-		$b1 |= ($b1 << 4);
-		$b2 |= ($b2 << 4);
-		$alp .= chr($b1) . chr($b2);
-	}
-	return $alp;
-}
-
-function dxt_rgb565( $str )
-{
-	// fedc ba98  7654 3210
-	// rrrr rggg  gggb bbbb
-	$pal = ordint($str);
-	$b = ($pal << 3) & 0xf8; // << 11 >> 8
-	$g = ($pal >> 3) & 0xfc; // <<  5 >> 8
-	$r = ($pal >> 8) & 0xf8; // <<  0 >> 8
-	return chr($r) . chr($g) . chr($b) . BYTE;
-}
-
-function dxt_color_math( $c0, $f0, $c1, $f1 )
-{
-	$c0r = ord( $c0[0] ) * $f0;
-	$c0g = ord( $c0[1] ) * $f0;
-	$c0b = ord( $c0[2] ) * $f0;
-	$c1r = ord( $c1[0] ) * $f1;
-	$c1g = ord( $c1[1] ) * $f1;
-	$c1b = ord( $c1[2] ) * $f1;
-	$cr = int_clamp($c0r + $c1r, 0, BIT8);
-	$cg = int_clamp($c0g + $c1g, 0, BIT8);
-	$cb = int_clamp($c0b + $c1b, 0, BIT8);
-	return chr($cr) . chr($cg) . chr($cb) . BYTE;
-}
-
-function dxt_color( $str, $bc )
-{
-	$c0 = $str[0] . $str[1];
-	$c1 = $str[2] . $str[3];
-
-	$pal = array();
-	$pal[0] = dxt_rgb565($c0);
-	$pal[1] = dxt_rgb565($c1);
-
-	$c01 = ordint($c0);
-	$c11 = ordint($c1);
-	// always use 4-colors version for non-BC1 / DXT1
-	if ( $bc != 1 || $c01 > $c11 )
-	{
-		$pal[2] = dxt_color_math( $pal[0], 2/3, $pal[1], 1/3 );
-		$pal[3] = dxt_color_math( $pal[0], 1/3, $pal[1], 2/3 );
-	}
-	else
-	{
-		$pal[2] = dxt_color_math( $pal[0], 1/2, $pal[1], 1/2 );
-		$pal[3] = PIX_ALPHA;
-	}
-
-	// 4x4 2-bit lookup
-	$data = array();
-	for ( $i=4; $i < 8; $i++ )
-	{
-		$b1 = ord( $str[$i] );
-		for ( $j=0; $j < 8; $j += 2 )
-		{
-			$b2 = ($b1 >> $j) & 3;
-			$data[] = $pal[$b2];
-		}
-	} // for ( $i=4; $i < 8; $i++ )
-	return $data;
+	$pix = $dec;
+	return;
 }
 //////////////////////////////
-function im_dxt5( &$file, $pos, $fn, $w, $h )
+function im_argb8888( &$file, $pos, $w, $h )
 {
-	printf("== im_dxt5( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
-	$w = int_ceil_pow2($w);
-	$h = int_ceil_pow2($h);
-
-	// store 16 pixel = to 16 bytes
-	// alpha = 2x  8-bit alpha  , then 4x4 3-bit lookup
-	// color = 2x 16-bit RGB565 , then 4x4 2-bit lookup
-	$pix = '';
-	for ( $y=0; $y < $h; $y += 4 )
-	{
-		for ( $x=0; $x < $w; $x += 4 )
-		{
-			$alp = substr($file, $pos+0, 8);
-			$clr = substr($file, $pos+8, 8);
-				$pos += 16;
-			$alp = dxt5_alpha($alp);
-			$clr =  dxt_color($clr, 3);
-				dxt_mix($clr, $alp);
-
-			dxt_block($pix, $clr);
-		} // for ( $x=0; $x < $w; $x += 4 )
-	} // for ( $y=0; $y < $h; $y += 4 )
-
-	return $pix;
-}
-
-function im_dxt3( &$file, $pos, $fn, $w, $h )
-{
-	printf("== im_dxt3( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
-	$w = int_ceil_pow2($w);
-	$h = int_ceil_pow2($h);
-
-	// store 16 pixel = to 16 bytes
-	// alpha = 16x  4-bit alpha
-	// color =  2x 16-bit RGB565 , then 4x4 2-bit lookup
-	$pix = '';
-	for ( $y=0; $y < $h; $y += 4 )
-	{
-		for ( $x=0; $x < $w; $x += 4 )
-		{
-			$alp = substr($file, $pos+0, 8);
-			$clr = substr($file, $pos+8, 8);
-				$pos += 16;
-			$alp = dxt3_alpha($alp);
-			$clr =  dxt_color($clr, 2);
-				dxt_mix($clr, $alp);
-
-			dxt_block($pix, $clr);
-		} // for ( $x=0; $x < $w; $x += 4 )
-	} // for ( $y=0; $y < $h; $y += 4 )
-
-	return $pix;
-}
-
-function im_dxt1( &$file, $pos, $fn, $w, $h )
-{
-	printf("== im_dxt1( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
-	$w = int_ceil_pow2($w);
-	$h = int_ceil_pow2($h);
-
-	// store 16 pixel to 8 bytes
-	// alpha = none
-	// color = 2x 16-bit RGB565 , then 4x4 2-bit lookup
-	$pix = '';
-	for ( $y=0; $y < $h; $y += 4 )
-	{
-		for ( $x=0; $x < $w; $x += 4 )
-		{
-			$clr = substr($file, $pos+8, 8);
-				$pos += 8;
-			$clr = dxt_color($clr, 1);
-
-			dxt_block($pix, $clr);
-		} // for ( $x=0; $x < $w; $x += 4 )
-	} // for ( $y=0; $y < $h; $y += 4 )
-
-	return $pix;
-}
-//////////////////////////////
-function im_argb8888( &$file, $pos, $fn, $w, $h )
-{
-	printf("== im_argb8888( %x , %s , %x , %x )\n", $pos, $fn, $w, $h);
+	printf("== im_argb8888( %x , %x , %x )\n", $pos, $w, $h);
 
 	$pix = '';
 	$siz = $w * $h;
@@ -349,7 +170,9 @@ function im_argb8888( &$file, $pos, $fn, $w, $h )
 		$pix .= $file[$pos+0]; // b
 		$pix .= $file[$pos+3]; // a
 			$pos += 4;
-	}
+	} // for ( $i=0; $i < $siz; $i++ )
+
+	argb_swizzled($pix, $w, $h);
 	return $pix;
 }
 //////////////////////////////
@@ -363,36 +186,38 @@ function vitagxt( &$file, $base, $pfx, $id )
 	if ( $cnt != 1 )
 		return php_error("%s/%04d is multi-GXT [%d]", $pfx, $id, $cnt);
 
-	$typ = substr ($file, $base+0x30, 4);
 	$fmt = substr ($file, $base+0x34, 4);
 	$w   = str2int($file, $base+0x38, 2);
 	$h   = str2int($file, $base+0x3a, 2);
-	printf("SIZE %x x %x = %x\n", $w, $h, $w*$h);
+		$w = int_ceil_pow2($w);
+		$h = int_ceil_pow2($h);
 
-	global $gp_type, $gp_fmt;
-	if ( ! isset( $gp_fmt [$fmt] ) )
+	$list_fmt = array(
+		"\x00\x10\x00\x0c" => 'im_argb8888',
+		"\x00\x00\x00\x85" => 'im_dxt1',
+		"\x00\x00\x00\x86" => 'im_dxt3',
+		"\x00\x00\x00\x87" => 'im_dxt5',
+	);
+	if ( ! isset( $list_fmt [$fmt] ) )
 		return php_error("UNKNOWN im fmt  %s", debug($fmt));
-	if ( ! isset( $gp_type[$typ] ) )
-		return php_error("UNKNOWN im type %s", debug($typ));
-	printf("DETECT  fmt %s  type %s\n", $gp_fmt[$fmt], $gp_type[$typ]);
-	//return;
+	printf("DETECT  fmt %s\n", $list_fmt[$fmt]);
 
 	$pos = str2int($file, $base+0x20, 4);
 	$siz = str2int($file, $base+0x24, 4);
-	$fn  = sprintf("%s.%d.gtx", $pfx, $id);
+	$fn  = sprintf("%s.%d.gxt", $pfx, $id);
+	printf("%4x x %4x  %s\n", $w, $h, $fn);
 
-	$func = $gp_fmt[$fmt];
-	$pix = $func($file, $base+$pos, $fn, $w, $h);
+	if ( defined("DRY_RUN") )
+		return;
 
-	$func = $gp_type[$typ];
-	if ( function_exists($func) )
-		$func($pix, $w, $h);
+	$func = $list_fmt[$fmt];
+	$img = array(
+		'w' => $w,
+		'h' => $h,
+		'pix' => $func($file, $base+$pos, $w, $h),
+	);
 
-	$img = "RGBA";
-	$img .= chrint($w, 4);
-	$img .= chrint($h, 4);
-	$img .= $pix;
-	save_file($fn, $img);
+	save_clutfile($fn, $img);
 	return;
 }
 //////////////////////////////
@@ -487,9 +312,18 @@ non-power-of-2 ftx
 		Odin2_OR_US_cpk/Other.ftx
 		Odin2_RE_US_cpk/GUI/SD_HIDE_*.ftx
 		Odin2_RE_US_cpk/OnMemory/SD_Other.ftx
+gxt_a0
+	vita odin
+		a0,85  Odin2_OR_US_cpk/HIDE_[00/01].ftx
+		a0,87  Odin2_OR_US_cpk/HIDE_[02/03/04/05/06].ftx
+		a0,87  Odin2_OR_US_cpk/Other.ftx
+im_argb8888
+	vita odin
+		Odin2_OR_US_cpk/Alice.ftx
+		Odin2_OR_US_cpk/Alice_Event01.ftx
 
 NinPriPack1_cpk
 	ftx.7z               = 16 MB
-	ftx -> gtx.7z        = 28 MB
-	ftx -> gtx -> png.7z = 38 MB
+	ftx -> gxt.7z        = 28 MB
+	ftx -> gxt -> png.7z = 38 MB
  */

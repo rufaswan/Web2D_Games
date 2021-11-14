@@ -218,7 +218,23 @@ Fast text mod
 	68 00 02 92 = lbu v0, 0x68(s0)
 	ff 00 02 34 = li  v0, 0xff
 
-	SLUS 1  RAM 80034964
+	XENO-JP-1  RAM 80034788
+	XENO-US-1  RAM 80034964
+//////////////////////////////
+Debug mode
+# title screen == 01ea
+	XENO-JP-1  RAM 8004e9f0
+	800776d8  lhu  v1[ 1ea], 0(8006efde)
+	80077704  sw   v1[ 1ea], 0(8004e9f0)
+
+	XENO-US-1  RAM 8004f34c
+	80078044  lhu  v1[ 1ea], 0(8006f94e)
+	80078070  sw   v1[ 1ea], 0(8004f34c)
+//////////////////////////////
+Save anywhere
+	# Open MENU first!
+	XENO-JP-1  RAM 80058811  00 -> 01
+	XENO-US-1  RAM 80059171  00 -> 01
 //////////////////////////////
 MDEC_rest
 	19.bin

@@ -215,6 +215,17 @@ function sectanim( &$json, &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2big($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function mura( $fname )
 {
 	$mbs = load_file($fname);
@@ -262,14 +273,11 @@ function mura( $fname )
 		array('p' => 0x74 , 'k' => 0x20), // 8
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x10), // 10
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2big', 4), strrpos($mbs, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbs[4], 'mbs[4][0]', 0); // = 0
-		sect_sum($mbs[4], 'mbs[4][1]', 1); //
-		sect_sum($mbs[4], 'mbs[4][2]', 2); // 0 1 2
-	}
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 
 	$json = load_idtagfile('wii_mura');
 

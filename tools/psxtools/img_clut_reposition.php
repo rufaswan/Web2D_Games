@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-define("TRIM_SZ", 8);
+define("TRIM_SZ", 4);
 $gp_adj = array(0,0);
 
 function canvas_rect( &$pix, $byte )

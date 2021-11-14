@@ -921,55 +921,83 @@ Gear Tune up Parts ID
 Char Shop Data
 2593.bin/6.bin (BLOCK = 0x5c or 92 bytes)
 3958.bin/6.bin
-	0x98   Item
-	0xf4   Item
-	0x114  Weapon
-	0x132  Accessory
-	0x1ac  Item
-	0x1cc  Weapon
-	0x264  Items
-	0x2a2  Accessory
-	0x31c  Item
-	0x35a  Accessory
-	0x3d4  Item
-	0x412  Accessory
-	0x48c  Item
-	0x4ac  Weapon
-	0x4ca  Accessory
-	0x544  Item
-	0x564  Weapon
-	0x582  Accessory
-	0x5fc  Item
-	0x61c  Weapon
-	0x63a  Accessory
-	0x6b4  Item
-	0x6d4  Weapon
-	0x6f2  Accessory
-	0x76c  Item
-	0x78c  Weapon
-	0x7aa  Accessory
-	0x824  Item
-	0x844  Weapon
-	0x862  Accessory
-	0x8dc  Item
-	0x8fc  Weapon
-	0x91a  Accessory
-	0x994  Item
-	0x9b4  Weapon
-	0x9d2  Accessory
-	0xa4c  Item
-	0xa8a  Accessory
-	0xb04  Item
-	0xb24  Weapon
-	0xb42  Accessory
-	0xbbc  Item
-	0xbdc  Weapon
-	0xbfa  Accessory
-	0xc56
-	0xc94  Weapon
-	0xcb2  Accessory
 
+0x98   Item    -
+0xf4   Item    Dazil
+0x114  Weapon  Dazil
+0x132  Armor   -
+0x1ac  Item    Aveh
+0x1cc  Weapon  Aveh
+0x264  Items   -
+0x2a2  Armor   -
+0x31c  Item    Yggdrasil 3/Mason
+0x35a  Armor   -
+0x3d4  Item    -
+0x412  Armor   -
+0x48c  Item    Kislev A Block
+0x4ac  Weapon  Kislev A Block
+0x4ca  Armor   -
+0x544  Item    Thames Deck
+0x564  Weapon  Thames Deck, Yggdrasil 3/Mason  +Armor
+0x582  Armor   -
+0x5fc  Item    -
+0x61c  Weapon  -
+0x63a  Armor   -
+0x6b4  Item    Shevat/Chu-chu, Nisan 2
+0x6d4  Weapon  Shevat/Chu-chu, Nisan 2
+0x6f2  Armor   -
+0x76c  Item    -
+0x78c  Weapon  -
+0x7aa  Armor   -
+0x824  Item    -
+0x844  Weapon  -
+0x862  Armor   -
+0x8dc  Item    -
+0x8fc  Weapon  -
+0x91a  Armor   -
+0x994  Item    -
+0x9b4  Weapon  -
+0x9d2  Armor   -
+0xa4c  Item    -
+0xa8a  Armor   -
+0xb04  Item    -
+0xb24  Weapon  -
+0xb42  Armor   -
+0xbbc  Item    -
+0xbdc  Weapon  -
+0xbfa  Armor   -
+0xc56  Armor   Aveh
+0xc94  Weapon  -
+0xcb2  Armor   -
+==============================
 Gear Shop Data
-2593.bin/7.bin (BLOCK = 0x14 or 20 bytes)
+2593.bin/7.bin (BLOCK = 0x64 or 100 bytes)
 3958.bin/7.bin
+
+	+0x00  Gear Armor
+	+0x14  Gear Frame
+	+0x28  Gear Engine
+	+0x3c  Gear Part
+	+0x50  Gear Weapon
+
+0
+64   Dazil
+c8
+12c  Aveh
+190
+1f4
+258
+2bc  Kislev D Block
+320
+384
+3e8  Shevat, Nisan 2
+44c  Thames Loading Bay, Yggdrasil 3
+4b0
+514
+578
+5dc
+640
+6a4
+708
+76c
 ==============================

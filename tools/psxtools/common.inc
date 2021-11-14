@@ -58,6 +58,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //   - *.inc are shared scripts
 //   - *.inc MUST NOT include each other
 //   - *.inc MUST NOT include *.php
+//   - *.inc MUST NOT use echo/printf , only trace()
 // - global variables are prefixed "gp_" (global pointer)
 define("ZERO", "\x00");
 define("BYTE", "\xff");
@@ -223,9 +224,10 @@ function str_update( &$file, $pos, $str )
 
 function int_clamp( $int, $min, $max )
 {
-	if ( $int < $min )  $int = $min;
-	if ( $int > $max )  $int = $max;
-	return (int)$int;
+	$int = (int)$int;
+	if ( $int < $min )  return $min;
+	if ( $int > $max )  return $max;
+	return $int;
 }
 
 //  int near
@@ -266,6 +268,19 @@ function int_ceil_pow2( $int )
 	while ( $ceil < $int )
 		$ceil <<= 1;
 	return ( $sign ) ? -$ceil : $ceil;
+}
+
+function count_bits( $int )
+{
+	$bits = array(0,0);
+	$int  = (int)$int;
+	while ( $int > 0 )
+	{
+		$b = $int & 1;
+		$int >>= 1;
+		$bits[$b]++;
+	}
+	return $bits;
 }
 //////////////////////////////
 function debug( $str, $name="DEBUG" )
@@ -1077,7 +1092,7 @@ function trimpix( &$pix )
 	$x2 = $pix['rgba']['w'];
 	$y1 = 0;
 	$y2 = $pix['rgba']['h'];
-	$TRIM_SZ = 16;
+	$TRIM_SZ = 4;
 
 	// keep it square
 	while (1)
@@ -1324,6 +1339,37 @@ function psxtim( &$file )
 	return $tim;
 }
 //////////////////////////////
+function rgba_array( $rgba )
+{
+	if ( "$rgba" === $rgba )
+		return array( ord($rgba[0]) , ord($rgba[1]) , ord($rgba[2]) , ord($rgba[3]) );
+
+	$pix = '';
+	for ( $i=0; $i < 4; $i++ )
+	{
+		$c = int_clamp($rgba[$i], 0, BIT8);
+		$pix .= chr($c);
+	}
+	return $pix;
+}
+
+function rgba_multiply1( $rgba, $factor, $in_array=false )
+{
+	$rgba = rgba_array($rgba);
+	for ( $i=0; $i < 4; $i++ )
+		$rgba[$i] *= $factor;
+	return ( $in_array ) ? $rgba : rgba_array($rgba);
+}
+
+function rgba_multiply2( $rgba1, $fact1, $rgba2, $fact2 )
+{
+	$rgba1 = rgba_multiply1($rgba1, $fact1, true);
+	$rgba2 = rgba_multiply1($rgba2, $fact2, true);
+	for ( $i=0; $i < 4; $i++ )
+		$rgba1[$i] += $rgba2[$i];
+	return rgba_array($rgba1);
+}
+//////////////////////////////
 function performance( $file_func='', $dir_func='', $op_func='' )
 {
 	global $argc, $argv;
@@ -1356,54 +1402,51 @@ function load_text( $fname )
 	return explode("\n", $txt);
 }
 
-function file2sect( &$file, $sect, $pfx, $parse, $end=0, $save=true )
+function load_sect( &$file, $sect )
 {
-	if ( $end <= 0 )
-		$end = strlen($file);
-
-	list($parse,$int) = $parse;
-	if ( ! function_exists($parse) )
-		return;
-
-	// sect = [
-	//   { 'p' : 0 , 'k' : 0 }, // p = position , k = block size/row
-	// ]
-	// added 'o' = offset
-	// added 'd' = data
+	// sect = array(
+	//   array( 'p' => 0 , 'k' => 0, 'o' => 0, 'd' => "" ),
+	// );
+	// p = position
+	// k = block
+	// o = offset
+	// d = data
 	$offs = array();
-	$offs[] = $end;
-	foreach ( $sect as $k => $v )
+	foreach ( $sect as $v )
 	{
-		$b1 = $parse($file, $v['p'], $int);
-		if ( $b1 == 0 )
+		if ( ! isset($v['o']) )
 			continue;
-		$offs[] = $b1;
-		$sect[$k]['o'] = $b1;
-	} // foreach ( $sect as $k => $v )
+		$offs[] = $v['o'];
+	} // foreach ( $sect as $v )
 	sort($offs);
 
-	foreach ( $sect as $k => $v )
+	foreach ( $sect as $v )
 	{
 		if ( ! isset( $v['o'] ) )
 			continue;
 		$id = array_search($v['o'], $offs);
 		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);
+		if ( $sz == 0 )
+			continue;
+
 		$dat = substr($file, $v['o'], $sz);
-
-		if ( $save )
-		{
-			$name = "$pfx/meta/$k";
-			trace("== %s( %s , %x )\n", __FUNCTION__, $name, $v['k']);
-
-			$buf = debug_block( $dat, $v['k'] );
-			//trace("%s\n", $buf);
-			save_file("$name.txt", $buf);
-		}
-
 		$sect[$k]['d'] = $dat;
 	} // foreach ( $sect as $k => $v )
 
 	$file = $sect;
+	return;
+}
+
+function save_sect( &$sect, $pfx )
+{
+	foreach ( $sect as $k => $v )
+	{
+		if ( ! isset($v['d']) || $v['k'] < 1 )
+			continue;
+		$fn  = sprintf("%s/%04d.txt", $pfx, $k);
+		$buf = debug_block( $v['d'], $v['k'] );
+		save_file($fn, $buf);
+	} // foreach ( $sect as $k => $v )
 	return;
 }
 

@@ -1,19 +1,20 @@
 1997  SAT   Princess Crown
+2005  PSP   Princess Crown
 2007  PS2   Grim Grimoire
 2007  PS2   Odin Sphere
 2008  NDS   Kumatanchi
 2009  WII   Muramasa - The Demon Blade
 2011  PSP   Grand Knights History
-xxxx  PSP   Princess Crown
-2013  VITA  Muramasa Rebirth + DLC
+2013  VITA  Muramasa Rebirth
 2013  VITA  Dragon's Crown
+2013  PS3   Dragon's Crown
+2014  VITA  Muramasa Rebirth DLC
 2016  VITA  Odin Sphere Leifthsar
-xxxx  PS3   Dragon's Crown
-xxxx  PS3   Odin Sphere Leifthsar HD
-xxxx  PS4   Odin Sphere Leifthsar HD
-xxxx  PS4   Dragon's Crown Pro
-2020  PS4   13 Sentinels: Aegis Rim
-xxxx  PS4   Princess Crown
+2016  PS3   Odin Sphere Leifthsar HD
+2016  PS4   Odin Sphere Leifthsar HD
+2018  PS4   Dragon's Crown Pro
+2019  PS4   13 Sentinels: Aegis Rim
+2020  PS4   Princess Crown
 ==============================
 ps2 grim/cat00.mbp
 	- 0 1 2 |    -   a0  1a0  3e0 |  -    8*20 12*20 70*20
@@ -83,20 +84,20 @@ ps4 13sent/cutin_EnemyDamage.mbs
 	8 - 9 - | 1d8 - 20c - | 1*20 1*30
 	a - b - | 23c -   - - | 1*18  -
 ==============================
-FMBP      bit     pos  toc  cnt  anim   track  frame  key    part   src    dst    clr
-ps2 grim  le int   a0  54   11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
-ps2 odin  le int   a0  54   11   s9*30  sa*8   s8*20  s6*18  s4*18  s1*20  s2*20  s0*20
-nds kuma  le flt   a0  54   11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
-wii mura  BE flt   a0  54   11   s9*30  sa*10  s8*20  s6*18  s4*c   s1*30  s2*30  s0*18
-psp gran  le int   e8  84    9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*60  <-     <-
-vit mura  le flt   e0  7c    9   s6*30  s7*14  s5*20  s3*18  s1*c   s8*78  <-     <-
-vit drag  le flt   e4  80    9   s6*30  s7*14  s5*20  s3*1c  s1*c   s8*78  <-     <-
-vit odin  le flt  120  c8   10   s6*30  s7*18  s5*20  s3*1c  s1*10  s9*78  <-     <-
-ps3 drag  BE flt   e4  74   11   s9*30  sa*14  s8*20  s6*1c  s4*c   s1*30  s2*30  s0*18
-ps3 odin  BE flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
-ps4 drag  le flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
-ps4 odin  le flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*10  s1*30  s2*30  s0*18
-ps4 sent  le flt  120  b0   12   s9*30  sa*18  s8*20  s6*1c  s4*14  s1*30  s2*30  s0*18
+FMBP      bit     pos  toc  cnt  anim   track  frame  meta   key    part   src    dst    clr    0
+ps2 grim  le int   a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3 s5
+ps2 odin  le int   a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3 s5
+nds kuma  le flt   a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3 s5
+wii mura  BE flt   a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3 s5
+psp gran  le int   e8  84    9   s6*30  s7*14  s5*20  s4*24  s3*18  s1*c   s8*60  <-     <-     s0 s2
+vit mura  le flt   e0  7c    9   s6*30  s7*14  s5*20  s4*24  s3*18  s1*c   s8*78  <-     <-     s0 s2
+vit drag  le flt   e4  80    9   s6*30  s7*14  s5*20  s4*24  s3*1c  s1*c   s8*78  <-     <-     s0 s2
+vit odin  le flt  120  c8   10   s6*30  s7*18  s5*20  s4*24  s3*1c  s1*10  s9*78  <-     <-     s0 s2 s8
+ps3 drag  BE flt   e4  74   11   s9*30  sa*14  s8*20  s7*24  s6*1c  s4*c   s1*30  s2*30  s0*18  s3 s5
+ps3 odin  BE flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
+ps4 drag  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
+ps4 odin  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
+ps4 sent  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3 s5 sb
 ==============================
 COUNT
 	0 1 2 4 3 5 7 8 6 9 a x

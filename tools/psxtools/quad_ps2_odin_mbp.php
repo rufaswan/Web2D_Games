@@ -219,6 +219,17 @@ function sectanim( &$json, &$mbp, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2int($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function odin( $fname, $idtag )
 {
 	$mbp = load_file($fname);
@@ -266,14 +277,11 @@ function odin( $fname, $idtag )
 		array('p' => 0x74 , 'k' => 0x20), // 8
 		array('p' => 0x78 , 'k' => 0x30), // 9
 		array('p' => 0x7c , 'k' => 0x08), // 10
+		array('o' => strrpos($mbp, "FEOC")),
 	);
-	file2sect($mbp, $sect, $pfx, array('str2int', 4), strrpos($mbp, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbp[4], 'mbp[4][0]', 0); //
-		sect_sum($mbp[4], 'mbp[4][1]', 1); // = 0
-		sect_sum($mbp[4], 'mbp[4][2]', 2); //
-	}
+	sect_addoff($mbp, $sect);
+	load_sect($mbp, $sect);
+	save_sect($mbp, "$pfx/meta");
 
 	if ( $idtag == '' )
 		return php_error('NO TAG %s', $fname);

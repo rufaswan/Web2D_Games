@@ -204,6 +204,17 @@ function sectanim( &$so, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2int($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function cvpor( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -232,8 +243,11 @@ function cvpor( $fname )
 		array('p' => 0x10 , 'k' =>  8), // 3 jnt=0
 		array('p' => 0x14 , 'k' =>  8), // 4 jnt=0
 		array('p' => 0x20 , 'k' => 12), // 5
+		array('o' => strlen($so)),
 	);
-	file2sect($so, $sect, $pfx, array('str2int', 4), 0, true);
+	sect_addoff($so, $sect);
+	load_sect($so, $sect);
+	save_sect($so, "$pfx/meta");
 
 	sectanim($so, $pfx);
 	sectspr ($so, $pfx);

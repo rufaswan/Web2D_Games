@@ -258,6 +258,17 @@ function sectanim( &$json, &$pak, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2big($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function pakchr( &$pak, $pfx )
 {
 	echo "== pakchr( $pfx )\n";
@@ -286,8 +297,11 @@ function pakchr( &$pak, $pfx )
 		array('p' => 0x18 , 'k' => 12), // 4
 		array('p' => 0x2c , 'k' =>  4), // 5
 		array('p' => 0x30 , 'k' =>  8), // 6
+		array('o' => strlen($pak)),
 	);
-	file2sect($pak, $sect, $pfx, array('str2big', 4), 0, METAFILE);
+	sect_addoff($pak, $sect);
+	load_sect($pak, $sect);
+	save_sect($pak, "$pfx/meta");
 
 	$json = load_idtagfile('sat_pcrown');
 

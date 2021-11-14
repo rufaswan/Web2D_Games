@@ -81,8 +81,11 @@ function pakchr( &$pak, $pfx )
 		array('p' => 0x18 , 'k' => 12), // 4
 		array('p' => 0x2c , 'k' =>  4), // 5
 		array('p' => 0x30 , 'k' =>  8), // 6
+		array('o' => strlen($pak)),
 	);
-	file2sect($pak, $sect, $pfx, array('str2big', 4), 0, true);
+	sect_addoff($pak, $sect);
+	load_sect($pak, $sect);
+	save_sect($pak, "$pfx/meta");
 
 	sect4($pak, $pfx);
 	return;

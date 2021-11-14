@@ -232,6 +232,17 @@ function sectanim( &$json, &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2int($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function grand( $fname )
 {
 	$mbs = load_file($fname);
@@ -277,14 +288,11 @@ function grand( $fname )
 		array('p' => 0x9c , 'k' => 0x30), // 6
 		array('p' => 0xa0 , 'k' => 0x14), // 7
 		array('p' => 0xa4 , 'k' => 0x60), // 8
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbs[1], 'mbs[1][0]', 0); //
-		sect_sum($mbs[1], 'mbs[1][1]', 1); // = 0
-		sect_sum($mbs[1], 'mbs[1][2]', 2); //
-	}
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 
 	$json = load_idtagfile('psp_gran');
 

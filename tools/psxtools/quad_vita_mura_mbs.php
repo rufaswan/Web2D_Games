@@ -306,14 +306,11 @@ function head_e0( &$mbs, $pfx )
 		array('p' => 0x94 , 'k' => 0x30), // 6
 		array('p' => 0x98 , 'k' => 0x14), // 7
 		array('p' => 0xa0 , 'k' => 0x78), // 8
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbs[1], 'mbs[1][0]', 0); //
-		sect_sum($mbs[1], 'mbs[1][1]', 1); // = 0
-		sect_sum($mbs[1], 'mbs[1][2]', 2); //
-	}
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 
 	$json = load_idtagfile('vita_mura');
 
@@ -356,14 +353,11 @@ function head_e4( &$mbs, $pfx )
 		array('p' => 0x98 , 'k' => 0x30), // 6
 		array('p' => 0x9c , 'k' => 0x14), // 7
 		array('p' => 0xa4 , 'k' => 0x78), // 8
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbs[1], 'mbs[1][0]', 0); //
-		sect_sum($mbs[1], 'mbs[1][1]', 1); // = 0
-		sect_sum($mbs[1], 'mbs[1][2]', 2); //
-	}
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 
 	$json = load_idtagfile('vita_drag');
 
@@ -416,18 +410,11 @@ function head_120( &$mbs, $pfx )
 		array('p' => 0x100 , 'k' => 0x18), // 7
 		array('p' => 0x108 , 'k' => 0x14), // 8 sd=0
 		array('p' => 0x118 , 'k' => 0x78), // 9
+		array('o' => strrpos($mbs, "FEOC")),
 	);
-	file2sect($mbs, $sect, $pfx, array('str2int', 4), strrpos($mbs, "FEOC"), METAFILE);
-	if ( METAFILE )
-	{
-		sect_sum($mbs[1], 'mbs[1][0]', 0); //
-		sect_sum($mbs[1], 'mbs[1][1]', 1); //
-		sect_sum($mbs[1], 'mbs[1][2]', 2); // = 0
-		sect_sum($mbs[1], 'mbs[1][3]', 3); // = 0
-		sect_sum($mbs[1], 'mbs[1][4]', 4); // = 0
-		sect_sum($mbs[1], 'mbs[1][5]', 5); //
-		sect_sum($mbs[1], 'mbs[1][6]', 6); //
-	}
+	sect_addoff($mbs, $sect);
+	load_sect($mbs, $sect);
+	save_sect($mbs, "$pfx/meta");
 
 	$json = load_idtagfile('vita_odin');
 
@@ -438,6 +425,17 @@ function head_120( &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
+function sect_addoff( &$file, &$sect )
+{
+	foreach ( $sect as $k => $v )
+	{
+		$off = str2int($file, $v['p'], 4);
+		if ( $off !== 0 )
+			$sect[$k]['o'] = $off;
+	}
+	return;
+}
+
 function mura( $fname )
 {
 	$mbs = load_file($fname);

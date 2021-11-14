@@ -167,7 +167,7 @@ function pspgim( &$file, $base, $pfx, $id )
 	} // while (1)
 
 	//return;
-	$fn = sprintf("%s.%d.gtx", $pfx, $id);
+	$fn = sprintf("%s.%d.gim", $pfx, $id);
 	if ( empty($gp_clut) )
 		save_clutfile($fn, $gp_pix);
 	else
