@@ -30,11 +30,12 @@ function im_dxt3( &$file, $pos, $w, $h )
 {
 	printf("== im_dxt3( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
+	$w = int_ceil_pow2($w);
+	$h = int_ceil_pow2($h);
 
 	$dxt3 = new S3TC_Texture;
 	$pix  = $dxt3->DXT3($pix);
 	$pix  = $dxt3->S3TC_debug($pix, $w, $h);
-
 	return $pix;
 }
 
@@ -42,11 +43,102 @@ function im_dxt5( &$file, $pos, $w, $h )
 {
 	printf("== im_dxt5( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
+	$w = int_ceil_pow2($w);
+	$h = int_ceil_pow2($h);
 
 	$dxt5 = new S3TC_Texture;
 	$pix  = $dxt5->DXT5($pix);
 	$pix  = $dxt5->S3TC_debug($pix, $w, $h);
+	return $pix;
+}
 
+function im_dxt1p2( &$file, $pos, $w, $h )
+{
+	printf("== im_dxt1( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $w*$h/2);
+	$w = int_ceil($w, 4);
+	$h = int_ceil($h, 4);
+
+	$dxt1 = new S3TC_Texture;
+	$pix  = $dxt1->DXT1($pix);
+	$pix  = $dxt1->S3TC_debug($pix, $w, $h);
+	return $pix;
+}
+
+function im_dxt5p2( &$file, $pos, $w, $h )
+{
+	printf("== im_dxt5( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $w*$h);
+	$w = int_ceil($w, 4);
+	$h = int_ceil($h, 4);
+
+	$dxt5 = new S3TC_Texture;
+	$pix  = $dxt5->DXT5($pix);
+	$pix  = $dxt5->S3TC_debug($pix, $w, $h);
+	return $pix;
+}
+
+//////////////////////////////
+function morton_swizzle1( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
+{
+	if ( $bw == 1 && $bh == 1 )
+	{
+		$dxx = (($dy * $ow) + $dx) * 4;
+		$s = substr($pix, $pos, 4); // 1 RGBA pixel
+				$pos += 4;
+		str_update($dec, $dxx, $s);
+	}
+	else
+	{
+		$func = __FUNCTION__;
+		$hbw = $bw >> 1;
+		$hbh = $bh >> 1;
+		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
+		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
+	}
+	return;
+}
+
+function argb_swizzled( &$pix, $ow, $oh )
+{
+	// unswizzle pixels
+	//   0 1
+	//   2 3
+	printf("== argb_swizzled( %x , %x )\n", $ow, $oh);
+	$dec = $pix;
+	$pos = 0;
+	$min = ( $ow > $oh ) ? $oh : $ow;
+
+	for ( $y=0; $y < $oh; $y += $min )
+	{
+		for ( $x=0; $x < $ow; $x += $min )
+			morton_swizzle1($pix, $dec, $pos, $x, $y, $min, $min, $ow, $oh);
+	} // for ( $y=0; $y < $oh; $y += 32 )
+
+	$pix = $dec;
+	return;
+}
+//////////////////////////////
+function im_argb( &$file, $pos, $w, $h )
+{
+	printf("== im_argb( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = '';
+	$w = int_ceil_pow2($w);
+	$h = int_ceil_pow2($h);
+	$siz = $w * $h;
+
+	for ( $i=0; $i < $siz; $i++ )
+	{
+		$pix .= $file[$pos+1]; // r
+		$pix .= $file[$pos+2]; // g
+		$pix .= $file[$pos+3]; // b
+		$pix .= $file[$pos+0]; // a
+			$pos += 4;
+	} // for ( $i=0; $i < $siz; $i++ )
+
+	argb_swizzled($pix, $w, $h);
 	return $pix;
 }
 //////////////////////////////
@@ -63,15 +155,19 @@ function ps3gtf( &$file, $base, $pfx, $id )
 	$fmt = str2big($file, $base+0x18, 1);
 	$w = str2big($file, $base+0x20, 2);
 	$h = str2big($file, $base+0x22, 2);
-		$w = int_ceil_pow2($w);
-		$h = int_ceil_pow2($h);
 
 	$list_fmt = array(
+		0x85 => 'im_argb',
 		0x87 => 'im_dxt3',
 		0x88 => 'im_dxt5',
+		0xa6 => 'im_dxt1p2',
+		0xa8 => 'im_dxt5p2',
 	);
-	$fn = sprintf("%s.%d.gtf", $pfx, $id);
+	if ( ! isset($list_fmt[$fmt]) )
+		return php_error("UNKNOWN im fmt  %x", $fmt);
 	printf("DETECT fmt %s\n", $list_fmt[$fmt]);
+
+	$fn = sprintf("%s.%d.gtf", $pfx, $id);
 	printf("%4x x %4x , %s\n", $w, $h, $fn);
 
 	if ( defined("DRY_RUN") )
@@ -83,10 +179,6 @@ function ps3gtf( &$file, $base, $pfx, $id )
 		'h'   => $h,
 		'pix' => $func($file, $base+$off, $w, $h),
 	);
-
-	if ( empty($img['pix']) )
-		return;
-
 	save_clutfile($fn, $img);
 	return;
 }
@@ -125,3 +217,23 @@ function odin( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	odin( $argv[$i] );
+
+/*
+ps3 dcrown
+	87 im_dxt3
+	88 im_dxt5
+ps3 odin
+	85 im_argb
+	87 im_dxt3
+	88 im_dxt5
+	a6 im_dxt1p2
+	a8 im_dxt5p2
+
+ps3 odin
+	im_85
+		HD_Cook03.ftx
+	im_a6  w/non-pow-2 size
+		HD_HIDE_[00/01].ftx
+	im_a8  w/non-pow-2 size
+		HD_HIDE_[02/03/04/05/06].ftx
+ */

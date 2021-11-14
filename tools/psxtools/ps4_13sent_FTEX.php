@@ -19,6 +19,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
+ *
+ * Special Thanks
+ *   GFD Studio
+ *   https://github.com/TGEnigma/GFD-Studio/blob/master/GFDLibrary/Textures/GNF/GNFTexture.cs
  */
 require "common.inc";
 require "common-guest.inc";
@@ -187,22 +191,19 @@ function ps4gnf( &$file, $base, $pfx, $id )
 	if ( ! isset($list_fmt[$fmt]) )
 		return php_error("UNKNOWN im fmt  %x", $fmt);
 	printf("DETECT  fmt %s , %x x %x \n", $list_fmt[$fmt], $w, $h);
-		$base += $off;
 
 	if ( defined("DRY_RUN") )
 		return;
+
+	$fn = sprintf("%s.%d.gnf", $pfx, $id);
+	printf("%4x x %4x , %s\n", $w, $h, $fn);
 
 	$func = $list_fmt[$fmt];
 	$img = array(
 		'w'   => $w,
 		'h'   => $h,
-		'pix' => $func($file, $base, $w, $h),
+		'pix' => $func($file, $base+$off, $w, $h),
 	);
-
-	if ( empty($img['pix']) )
-		return;
-
-	$fn = sprintf("%s.%d.gnf", $pfx, $id);
 	save_clutfile($fn, $img);
 	return;
 }

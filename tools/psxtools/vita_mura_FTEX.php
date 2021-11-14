@@ -38,7 +38,7 @@ function morton_swizzle4( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 		{
 			$dyy = ($dy  + $y) * $ow;
 			$dxx = ($dyy + $dx) * 4;
-			$s = substr($pix, $pos, 16); // 4 RGBA
+			$s = substr($pix, $pos, 16); // 4 RGBA pixels
 				$pos += 16;
 			str_update($dec, $dxx, $s);
 		} // for ( $y=0; $y < 4; $y++ )
@@ -59,11 +59,11 @@ function morton_swizzle4( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 function dxt_swizzled( &$pix, $ow, $oh )
 {
 	// 1 tile = 4*4 pixels
-	// unswizzled pixels
-	//    0  2  8 10
-	//    1  3  9 11
-	//    4  6 12 14
-	//    5  7 13 15
+	// unswizzled tiles
+	//   0 2  8 10
+	//   1 3  9 11
+	//   4 6 12 14
+	//   5 7 13 15
 	printf("== dxt_swizzled( %x , %x )\n", $ow, $oh);
 	$dec = $pix;
 	$pos = 0;
@@ -123,7 +123,7 @@ function morton_swizzle1( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 	if ( $bw == 1 && $bh == 1 )
 	{
 		$dxx = (($dy * $ow) + $dx) * 4;
-		$s = substr($pix, $pos, 16); // 4 RGBA
+		$s = substr($pix, $pos, 16); // 1 RGBA pixel
 				$pos += 4;
 		str_update($dec, $dxx, $s);
 	}
@@ -140,9 +140,12 @@ function morton_swizzle1( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 	return;
 }
 
-function argb_swizzled( &$pix, $ow, $oh )
+function bgra_swizzled( &$pix, $ow, $oh )
 {
-	printf("== argb_swizzled( %x , %x )\n", $ow, $oh);
+	// unswizzle pixels
+	//   0 2
+	//   1 3
+	printf("== bgra_swizzled( %x , %x )\n", $ow, $oh);
 	$dec = $pix;
 	$pos = 0;
 	$min = ( $ow > $oh ) ? $oh : $ow;
@@ -157,9 +160,9 @@ function argb_swizzled( &$pix, $ow, $oh )
 	return;
 }
 //////////////////////////////
-function im_argb8888( &$file, $pos, $w, $h )
+function im_bgra8888( &$file, $pos, $w, $h )
 {
-	printf("== im_argb8888( %x , %x , %x )\n", $pos, $w, $h);
+	printf("== im_bgra8888( %x , %x , %x )\n", $pos, $w, $h);
 
 	$pix = '';
 	$siz = $w * $h;
@@ -172,7 +175,7 @@ function im_argb8888( &$file, $pos, $w, $h )
 			$pos += 4;
 	} // for ( $i=0; $i < $siz; $i++ )
 
-	argb_swizzled($pix, $w, $h);
+	bgra_swizzled($pix, $w, $h);
 	return $pix;
 }
 //////////////////////////////
@@ -193,7 +196,7 @@ function vitagxt( &$file, $base, $pfx, $id )
 		$h = int_ceil_pow2($h);
 
 	$list_fmt = array(
-		"\x00\x10\x00\x0c" => 'im_argb8888',
+		"\x00\x10\x00\x0c" => 'im_bgra8888',
 		"\x00\x00\x00\x85" => 'im_dxt1',
 		"\x00\x00\x00\x86" => 'im_dxt3',
 		"\x00\x00\x00\x87" => 'im_dxt5',
@@ -202,7 +205,7 @@ function vitagxt( &$file, $base, $pfx, $id )
 		return php_error("UNKNOWN im fmt  %s", debug($fmt));
 	printf("DETECT  fmt %s\n", $list_fmt[$fmt]);
 
-	$pos = str2int($file, $base+0x20, 4);
+	$off = str2int($file, $base+0x20, 4);
 	$siz = str2int($file, $base+0x24, 4);
 	$fn  = sprintf("%s.%d.gxt", $pfx, $id);
 	printf("%4x x %4x  %s\n", $w, $h, $fn);
@@ -214,9 +217,8 @@ function vitagxt( &$file, $base, $pfx, $id )
 	$img = array(
 		'w' => $w,
 		'h' => $h,
-		'pix' => $func($file, $base+$pos, $w, $h),
+		'pix' => $func($file, $base+$off, $w, $h),
 	);
-
 	save_clutfile($fn, $img);
 	return;
 }
@@ -297,28 +299,24 @@ odin
 		-- -- -- 85  im_dxt1
 		-- -- -- 86  im_dxt3
 		-- -- -- 87  im_dxt5
-		-- 10 -- 0c  im_argb8888
+		-- 10 -- 0c  im_bgra8888
 	re
 		-- -- -- --  gxt_swizzled
 		-- -- -- a0  gxt_
 		-- -- -- 85  im_dxt1
 		-- -- -- 86  im_dxt3
 		-- -- -- 87  im_dxt5
-		-- 10 -- 0c  im_argb8888
+		-- 10 -- 0c  im_bgra8888
 
-non-power-of-2 ftx
-	vita odin
-		Odin2_OR_US_cpk/HIDE_*.ftx
-		Odin2_OR_US_cpk/Other.ftx
-		Odin2_RE_US_cpk/GUI/SD_HIDE_*.ftx
-		Odin2_RE_US_cpk/OnMemory/SD_Other.ftx
-gxt_a0
-	vita odin
+vita odin
+	gxt_a0  w/non-pow-2 size
 		a0,85  Odin2_OR_US_cpk/HIDE_[00/01].ftx
 		a0,87  Odin2_OR_US_cpk/HIDE_[02/03/04/05/06].ftx
 		a0,87  Odin2_OR_US_cpk/Other.ftx
-im_argb8888
-	vita odin
+		a0,85  Odin2_RE_US_cpk/GUI/SD_HIDE_[00/01].ftx
+		a0,87  Odin2_RE_US_cpk/GUI/SD_HIDE_[02/03/04/05/06].ftx
+		a0,87  Odin2_RE_US_cpk/OnMemory/SD_Other.ftx
+	im_10000c
 		Odin2_OR_US_cpk/Alice.ftx
 		Odin2_OR_US_cpk/Alice_Event01.ftx
 

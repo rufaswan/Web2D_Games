@@ -84,9 +84,6 @@ class S3TC_Texture
 		$r = ($rgb1[0] * $fact1) + ($rgb2[0] * $fact2);
 		$g = ($rgb1[1] * $fact1) + ($rgb2[1] * $fact2);
 		$b = ($rgb1[2] * $fact1) + ($rgb2[2] * $fact2);
-			$r = (int)$r;
-			$g = (int)$g;
-			$b = (int)$b;
 		return array($r,$g,$b,BIT8);
 	}
 
@@ -180,7 +177,7 @@ class S3TC_Texture
 
 		$pix = array();
 		foreach ( $index as $v )
-			$pix[] = (int)$a[$v];
+			$pix[] = $a[$v];
 		return $pix;
 	}
 	//////////////////////////////
@@ -195,7 +192,7 @@ class S3TC_Texture
 			foreach ( $rgb as $v )
 				$alp[] = $v[3];
 			$pix .= $this->rgba_mix($rgb, $alp);
-		} // while ( $siz > 0 )
+		} // for ( $i=0; $i < $len; $i += 8 )
 		return $pix;
 	}
 
@@ -208,7 +205,7 @@ class S3TC_Texture
 			$alp = $this->bc2_alpha($data, $i+0);
 			$rgb = $this->bc1_color($data, $i+8, 2);
 			$pix .= $this->rgba_mix($rgb, $alp);
-		} // while ( $siz > 0 )
+		} // for ( $i=0; $i < $len; $i += 16 )
 		return $pix;
 	}
 
@@ -221,7 +218,7 @@ class S3TC_Texture
 			$alp = $this->bc3_alpha($data, $i+0);
 			$rgb = $this->bc1_color($data, $i+8, 3);
 			$pix .= $this->rgba_mix($rgb, $alp);
-		} // while ( $siz > 0 )
+		} // for ( $i=0; $i < $len; $i += 16 )
 		return $pix;
 	}
 
@@ -253,7 +250,7 @@ class S3TC_Texture
 					$dyy = ($y   + $by) * $w;
 					$dxx = ($dyy + $x ) * 4;
 					str_update($canvas, $dxx, $src);
-				}
+				} // for ( $by=0; $by < 4; $by++ )
 			} // for ( $x=0; $x < $w; $x += 4 )
 		} // for ( $y=0; $y < $h; $y += 4 )
 		return $canvas;
