@@ -39,12 +39,12 @@ class Merkel_Damgard
 
 	// FIX for 32-bit PHP.exe
 	//   right shift will copy the negative bit , generate incorrect hash
-	function  LEFT_SHIFT ($a,$n,$b) { $mask = (1 <<  $b    ) - 1; return ($a << $n) & $mask; }
-	function RIGHT_SHIFT ($a,$n,$b) { $mask = (1 << ($b-$n)) - 1; return ($a >> $n) & $mask; }
-	function  LEFT_ROTATE($a,$n,$b) { return ($this->LEFT_SHIFT ($a,$n,$b) | $this->RIGHT_SHIFT($a,$b-$n,$b)); }
-	function RIGHT_ROTATE($a,$n,$b) { return ($this->RIGHT_SHIFT($a,$n,$b) | $this->LEFT_SHIFT ($a,$b-$n,$b)); }
+	private function  LEFT_SHIFT ($a,$n,$b) { $mask = (1 <<  $b    ) - 1; return ($a << $n) & $mask; }
+	private function RIGHT_SHIFT ($a,$n,$b) { $mask = (1 << ($b-$n)) - 1; return ($a >> $n) & $mask; }
+	private function  LEFT_ROTATE($a,$n,$b) { return ($this->LEFT_SHIFT ($a,$n,$b) | $this->RIGHT_SHIFT($a,$b-$n,$b)); }
+	private function RIGHT_ROTATE($a,$n,$b) { return ($this->RIGHT_SHIFT($a,$n,$b) | $this->LEFT_SHIFT ($a,$b-$n,$b)); }
 
-	function PADSTR32( &$s, $n, $p )
+	private function PADSTR32( &$s, $n, $p )
 	{
 		if    ( ((strlen($s)+8) % $n) !== 0 )  $s .= "\x80";
 		while ( ((strlen($s)+8) % $n) !== 0 )  $s .= ZERO;
@@ -343,7 +343,7 @@ class Merkel_Damgard
 
 class HMAC
 {
-	function HMACX( $hash, $key, $max, $msg )
+	private function HMACX( $hash, $key, $max, $msg )
 	{
 		$mer = new Merkel_Damgard;
 		if    ( strlen($key) > $max )  $key  = $mer->$hash($key);

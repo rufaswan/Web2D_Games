@@ -1,14 +1,11 @@
 [System]
-PlayStation 2
+Sony PlayStation 2
 
 [Game]
 Odin Sphere
 
-[Year]
-2007
-
 [Copyright]
-Atlus Co. Ltd.
+ATLUS CO.LTD 2007
 
 [Designers]
 Yasuhiro Fujiwara

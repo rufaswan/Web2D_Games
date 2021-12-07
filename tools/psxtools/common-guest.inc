@@ -117,6 +117,15 @@ function float32( $int )
 	//   bias = 2^7-1 = 127
 	return iee754_float($int, 8, 23, 0x7f);
 }
+
+function cmp_float( $fl1, $fl2, $near=1.0 )
+{
+	$diff = abs($fl1 - $fl2);
+	if ( $diff > abs($near) ) // too far apart
+		return false;
+	else // close enough to consider the same
+		return true;
+}
 //////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
 {
@@ -151,8 +160,12 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 		if ( array_search($c, $clut) === false )
 			$clut[] = $c;
 		$p = array_search($c, $clut);
+
 		if ( $p > BIT8 )
-			php_error("rgba2clut() clut over 256 colors");
+		{
+			php_warning("rgba2clut() clut over 256 colors");
+			return -1;
+		}
 		$pix .= chr($p);
 	}
 	$clut = implode('', $clut);

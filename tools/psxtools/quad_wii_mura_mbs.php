@@ -59,9 +59,6 @@ function sectquad( &$mbs, $pos )
 		$float[] = float32($b);
 	}
 
-	cmp_quadxy($float, 2, 10);
-	cmp_quadxy($float, 3, 11);
-
 	//  0  1  center
 	//  2  3  c1
 	//  4  5  c2
@@ -219,6 +216,8 @@ function sect_addoff( &$file, &$sect )
 {
 	foreach ( $sect as $k => $v )
 	{
+		if ( ! isset($v['p']) )
+			continue;
 		$off = str2big($file, $v['p'], 4);
 		if ( $off !== 0 )
 			$sect[$k]['o'] = $off;

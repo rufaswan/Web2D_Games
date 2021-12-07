@@ -22,7 +22,31 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-function gimpix( &$pix, $w, $h )
+function swizrgba( &$pix, $w, $h )
+{
+	// blocks of 4x8 for RGBA
+	$buf = $pix;
+	$pos = 0;
+	for ( $by=0; $by < $h; $by += 8 )
+	{
+		for ( $bx=0; $bx < $w; $bx += 4 )
+		{
+			for ( $y=0; $y < 8; $y++ )
+			{
+				$sub = substr($pix, $pos, 4*4);
+					$pos += (4*4);
+				$dyy = ($by + $y) * $w;
+				$dxx = $dyy + $bx;
+				str_update($buf, $dxx*4, $sub);
+			} // for ( $y=0; $y < 8; $y++ )
+		} // for ( $bx=0; $bx < $w; $bx += 16 )
+	} // for ( $by=0; $by < $h; $by += 8 )
+
+	$pix = $buf;
+	return;
+}
+
+function swizbpp( &$pix, $w, $h )
 {
 	// blocks of 16x8 for 8-bpp
 	// blocks of 32x8 for 4-bpp
@@ -51,9 +75,13 @@ function pspgim_pix( &$file, $base )
 {
 	$size = str2int($file, $base+0, 2);
 	$type = str2int($file, $base+4, 2);
-	//$swiz = str2int($file, $base+6, 2);
+	$swiz = str2int($file, $base+6, 2);
 	$w = str2int($file, $base+ 8, 2);
 	$h = str2int($file, $base+10, 2);
+	$algx = str2int($file, $base+14, 2);
+	$algy = str2int($file, $base+16, 2);
+		$w = int_ceil($w, $algx);
+		$h = int_ceil($h, $algy);
 
 	$base += ($size + 0x10);
 	$data = array();
@@ -67,6 +95,8 @@ function pspgim_pix( &$file, $base )
 			$data['h'] = $h;
 			$data['pix'] = substr($file, $base, $size);
 			// all RGBA32 are palette
+			if ( $swiz )
+				swizrgba($data['pix'], $w, $h);
 			return $data;
 
 		case 4:
@@ -77,7 +107,8 @@ function pspgim_pix( &$file, $base )
 			$data['h'] = $h;
 
 			$data['pix'] = substr($file, $base, $size);
-			gimpix($data['pix'], $w, $h);
+			if ( $swiz )
+				swizbpp($data['pix'], $w, $h);
 			bpp4to8($data['pix']);
 			return $data;
 
@@ -87,27 +118,51 @@ function pspgim_pix( &$file, $base )
 			$data['byte'] = 1;
 			$data['w'] = $w;
 			$data['h'] = $h;
+
 			$data['pix'] = substr($file, $base, $size);
-			gimpix($data['pix'], $w, $h);
+			if ( $swiz )
+				swizbpp($data['pix'], $w, $h);
 			return $data;
 
 		default:
-			return php_error("TYPE %x UNKNOWN", $type);
+			return 0;
 	} // switch ( $type )
 	return 0;
 }
-
-function pspgim( &$file, $base, $pfx, $id )
+//////////////////////////////
+function save_gim( &$pix, &$pal, &$id, $fname )
 {
-	printf("== pspgim( %x , $pfx , $id )\n", $base);
-	if ( substr($file, $base, 11) !== "MIG.00.1PSP" )
-		return php_error("not GIM");
+	if ( empty($pix) )
+		return;
 
-	$pix = '';
-	$pal = '';
+	if ( ! empty($pal) )
+	{
+		$pix['pal'] = $pal['pix'];
+		$pix['cc']  = $pal['w'];
+	}
+	save_clutfile("$fname.$id.rgba", $pix);
 
-	$pos = $base + 0x10;
-	while (1)
+	$id++;
+	$pix = array();
+	$pal = array();
+	return;
+}
+
+function pspgim( $fname )
+{
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
+
+	if ( substr($file, 0, 11) !== "MIG.00.1PSP" )
+		return;
+
+	$pix = array();
+	$pal = array();
+
+	$len = strlen($file);
+	$pos = 0x10;
+	$id = 0;
+	while ( $pos < $len )
 	{
 		$blk   = str2int($file, $pos+ 0, 2);
 		$bsize = str2int($file, $pos+ 4, 4);
@@ -116,15 +171,16 @@ function pspgim( &$file, $base, $pfx, $id )
 		switch ( $blk )
 		{
 			case 2:
-				printf("%8x , %s/%d/root\n", $pos, $pfx, $id);
+				printf("%8x , %s/root\n", $pos, $fname);
 				$pos += $bnext;
 				break;
 			case 3:
-				printf("%8x , %s/%d/picture\n", $pos, $pfx, $id);
+				printf("%8x , %s/picture\n", $pos, $fname);
+				save_gim($pix, $pal, $id, $fname);
 				$pos += $bnext;
 				break;
 			case 4:
-				printf("%8x , %s/%d/image\n", $pos, $pfx, $id);
+				printf("%8x , %s/image\n", $pos, $fname);
 				if ( ! empty($pix) )
 					return php_error("multiple image blocks");
 
@@ -132,64 +188,21 @@ function pspgim( &$file, $base, $pfx, $id )
 				$pos += $bnext;
 				break;
 			case 5:
-				printf("%8x , %s/%d/palette\n", $pos, $pfx, $id);
+				printf("%8x , %s/palette\n", $pos, $fname);
 				if ( ! empty($pal) )
 					return php_error("multiple palette blocks");
 
 				$pal = pspgim_pix($file, $pos+$bdata);
 				$pos += $bnext;
 				break;
-			case 0:
-				break 2;
 			default:
-				return php_error("%8x UNKNOWN", $pos);
+				break 2;
 		}
 	} // while (1)
 
-	if ( empty($pix) )
-		return php_error("empty pix");
-
-	$fn = sprintf("%s.%d.gim", $pfx, $id);
-	if ( ! empty($pal) )
-	{
-		$pix['pal'] = $pal['pix'];
-		$pix['cc']  = $pal['w'];
-	}
-	save_clutfile($fn, $pix);
-	return;
-}
-
-function grand( $fname )
-{
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
-
-	if ( substr($file, 0, 4) != "FTEX" )
-		return;
-
-	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	$hdsz = str2int($file,  8, 4);
-	$cnt  = str2int($file, 12, 4);
-
-	$st = $hdsz;
-	for ( $i=0; $i < $cnt; $i++ )
-	{
-		$p1 = 0x20 + ($i * 0x30);
-		$fn = substr($file, $p1, 0x20);
-			$fn = rtrim($fn, ZERO);
-
-		if ( substr($file, $st, 4) != "FTX0" )
-			return php_error("%s 0x%x not FTX0\n", $fname, $st);
-
-		$sz1 = str2int($file, $st+4, 4);
-		$sz2 = str2int($file, $st+8, 4);
-		printf("GIM  %x , %x , %s\n", $st, $sz1, $fn);
-
-		pspgim($file, $st+$sz2, $pfx, $i);
-		$st += ($sz1 + $sz2);
-	} // for ( $i=0; $i < $cnt; $i++ )
+	save_gim($pix, $pal, $id, $fname);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	grand( $argv[$i] );
+	pspgim( $argv[$i] );

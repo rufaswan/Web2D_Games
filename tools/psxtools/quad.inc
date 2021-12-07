@@ -25,8 +25,16 @@ php_req_extension("json_encode", "json");
 // .quad file
 function load_idtagfile( $pfx )
 {
-	$fn = __DIR__ . "/idtag/$pfx.txt";
-	if ( ! file_exists($fn) )
+	$list = array();
+	lsfile_r(__DIR__ . "/idtag/", $list);
+
+	$fn = '';
+	foreach ( $list as $v )
+	{
+		if ( stripos($v, $pfx) !== false )
+			$fn = $v;
+	}
+	if ( empty($fn) )
 		return array();
 
 	$data = array('TAG' => array());
@@ -73,13 +81,6 @@ function save_quadfile( $pfx, &$json, $pretty=false )
 }
 //////////////////////////////
 // debug + fix
-function cmp_quadxy( &$data, $id1, $id2 )
-{
-	if ( $data[$id1] != $data[$id2] )
-		php_notice("cmp %d [%7.2f] != %d [%7.2f]", $id1, $data[$id1], $id2, $data[$id2]);
-	return;
-}
-
 function quad_ext1px( &$quad )
 {
 	// To fix Lunar 2 EB 1px gap between quads

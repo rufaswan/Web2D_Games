@@ -4,11 +4,8 @@ Nintendo Wii
 [Game]
 Muramasa - The Demon Blade
 
-[Year]
-2009
-
 [Copyright]
-Marvelous Entertainment Inc.
+2009 Marvelous Entertainment Inc.
 
 [Character Designs]
 Yasuhiro Fujiwara

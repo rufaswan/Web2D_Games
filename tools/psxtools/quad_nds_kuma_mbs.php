@@ -41,9 +41,6 @@ function sectquad( &$mbs, $pos )
 		$float[] = float32($b);
 	}
 
-	cmp_quadxy($float, 2, 10);
-	cmp_quadxy($float, 3, 11);
-
 	//  0  1  center
 	//  2  3  c1
 	//  4  5  c2
@@ -187,6 +184,8 @@ function sect_addoff( &$file, &$sect )
 {
 	foreach ( $sect as $k => $v )
 	{
+		if ( ! isset($v['p']) )
+			continue;
 		$off = str2int($file, $v['p'], 4);
 		if ( $off !== 0 )
 			$sect[$k]['o'] = $off;
@@ -219,12 +218,12 @@ function kuma( $fname )
 	//   178 19c 1d4 204 | 1*24 1*20 1*30 1*10
 	// kuma01.mbs
 	//            a0   268  5de8 |    -     13*18 1e8*30 67e*30
-	//   19588 59b8c 663c0 195d8 |   4*14 10af*c    3*8  2d4*18
+	//   19588 59b8c 663c0 195d8 |   1*50 10af*c    3*8  2d4*18
 	//   1d9b8 22ecc 663d8 6a878 | 25d*24 1b66*20 16e*30 4e8*10
 	// s9[+28] =  4e5+3 => sa
 	// sa[+ 0] = 1b64+2 => s8
 	// s8[+ 0] =  2d3   => s6 , [+ 4] = 25c   => s7
-	// s6[+10] = 10a6+9 => s4 , [+12] =   3+0 => s3
+	// s6[+10] = 10a6+9 => s4
 	// s4[+ 4] =  1e7   => s1 , [+ 8] =  12   => s0 , [+ a] = 67d => s2
 	// s2
 	// s0
@@ -235,7 +234,7 @@ function kuma( $fname )
 		array('p' => 0x54 , 'k' => 0x18), // 0
 		array('p' => 0x58 , 'k' => 0x30), // 1
 		array('p' => 0x5c , 'k' => 0x30), // 2
-		array('p' => 0x60 , 'k' => 0x14), // 3 reform=0
+		array('p' => 0x60 , 'k' => 0x50), // 3 reform=0
 		array('p' => 0x64 , 'k' => 0xc ), // 4
 		array('p' => 0x68 , 'k' => 0x8 ), // 5 reform=0
 		array('p' => 0x6c , 'k' => 0x18), // 6
@@ -274,7 +273,7 @@ mbs 4-2 valids
 	0
 //////////////////////////////
 MBS file
-	s0*18 (18 done)
+	s0*18 clr (18 done)
 		00  // center RGB
 		04  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 1
 			20308d4  ldrb  r1, 0(r0)
@@ -293,7 +292,7 @@ MBS file
 		11  20308dc  ldrb  r1, 1(r0)
 		12  20308e4  ldrb  r0, 2(r0)
 		14  // RGB 5 == RGB 1
-	s1*30 (30 done)
+	s1*30 src (30 done)
 		00  // center x
 		04  // center y
 		08  2030578  ldr  r2,  0(r0)  // x1
@@ -310,7 +309,7 @@ MBS file
 		24  2030574  ldr  r1,  4(r0)  // y4
 		28  // x5 == x1
 		2c  // y5 == y1
-	s2*30 (30 done)
+	s2*30 dst (30 done)
 		00  // center x
 		04  // center y
 		08  2030538  ldrh   r3,  0(r0) // x1
@@ -328,17 +327,17 @@ MBS file
 		28  // x5 == x1
 		2c  // y5 == y1
 	s3 bg skip
-	s4*c  (9 done)
+	s4*c  part (9 done)
 		00  2030ad0  ldrh  r0, 0(r9) //
 		02  //
-		03  2030af0  ldrb  r1, 3(r9) //
+		03  2030af0  ldrb  r1, 3(r9) // [kuma02] tex ID
 		04  2030b94  ldrh  r2, 4(r9) // s1 ID
 		06  //
 		07
 		08  2030b8c  ldrh  r1, 8(r9) // s0 ID
 		0a  2030ba8  ldrh  r3, a(r9) // s2 ID
 	s5 bg skip
-	s6*18 (14 done)
+	s6*18 key (14 done)
 		00  2032080  ldr     r3, r0(r1)  // x1
 			20320a8  ldr     r0, r0(r1)
 		04  203208c  ldr     r3,  4(r5)  // y1
@@ -348,15 +347,15 @@ MBS file
 		0c  20320a0  ldr     r3,  c(r5)  // y2
 			20320c8  ldr     r0,  c(r5)
 		10  2030a48  ldrh    r2, 10(r5)  // s4 ID
-		12
+		12  // [kuma02] s5 ID
 		13
 		14  2030ab8  ldrb    r0, 14(r5)  // s4 count
 			2030bc4  ldrb    r0, 14(r5)
 			203221c  ldrbne  r0, 14(r5)
-		15  2031f38  ldrb    r3, 15(r5) //
+		15  2031f38  ldrb    r3, 15(r5) // [kuma02] s5 count
 		16  //
 		17
-	s7*24 (14 done)
+	s7*24 meta (14 done)
 		00  // + x
 		04  // + y
 		08
@@ -369,7 +368,7 @@ MBS file
 		21  2032398  ldrb  r0, 21(r6) // green
 		22  2032364  ldrb  r7, 22(r6) // blue
 		23  2032360  ldrb  rc, 23(r6) // alpha
-	s8*20 (1a done)
+	s8*20 frame (1a done)
 		00  2032028  ldrh  r1, 0(r9)  // s6 ID
 			203203c  ldrh  rc, 0(r5)
 		02
@@ -396,7 +395,7 @@ MBS file
 		18  203282c  ldrh    r2, 18(r8)
 		1a  2032830  ldrh    r3, 1a(r8)
 		1c  2032824  ldr     r1, 1c(r8)
-	s9*30 (4 done)
+	s9*30 anim (2d done)
 		00  // x1
 		04  // y1
 		08  // x2
@@ -411,7 +410,7 @@ MBS file
 		2d
 		2e
 		2f
-	sa*10 (4 done)
+	sa*10 track (5 done)
 		00  20326a8  ldrh  r3, 0(r0) // s8 ID
 			2032784  ldrh  r0, 0(r6)
 		02  20326d4  ldrh  re, 2(r0) // s8 count
@@ -515,6 +514,17 @@ SHOPPING
 			219e9a8  d   e   f     10     11             0 1 2 3 4   5     6     7     8             9 a b c d   e   f     10     11               0
 			219ea1c  1 2   3   4 5    6 7    8 9 a b c d           1   2 3   4 5   6 7   8 9 a b c d           1   2   3 4    5 6    7 8 9 a b c d
 
+//////////////////////////////
+kuma02.mbs
+	s3 [50]
+		-22   -31
+		-22    22
+		 22    22
+		 22   -31
+		 1   -0   0
+		-0   -1   0
+		-1   -0   0
+		-0    1   0
 //////////////////////////////
 RAM 218a2a0 = YEN
 	206bb04  str  r0[YEN], 1c(r2[ 218a284])

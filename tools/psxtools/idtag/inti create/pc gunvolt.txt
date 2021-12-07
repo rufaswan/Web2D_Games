@@ -2,38 +2,38 @@
 PC Steam
 
 [Game]
-Gunvolt Chronicles Luminous Avenger iX
-
-[Year]
-2019
+Azure Striker Gunvolt
 
 [Copyright]
-Inti Creates Co. Ltd
+INTI CREATES CO., LTD. 2014
 
-[Character Designers]
+[Character Designer]
 Yoshitaka Hatakeyama
-Munehiro Araki
 
 [Character Graphics]
+Ken Fujii
 Yuta Watanabe
 Rie Oonishi
+Yuki Suzuki
 Fumika Matsuo
 Masaya Suzuki
-Ken Fujii
-Syouta Takagi
-Hikari Sugiura
-Masanori Ito
-Masayo Seto
-Eri Suzuki
-Hidemi Oonishi
 Erina Fukuoka
+Masanori Ito
+Hirokatsu Maeda
+Hatsune Kawai
 
 [Background Graphics]
 Tetsuya Enda
-Shin Nakamura
+Munehiro Araki
+Hidetaka Katsuki
+Hatsumi Yokoyama
+Eri Furukawa
+Hiroyuki Tamura
+Kenta Takeda
 Masashi Yamaguchi
-Atsuko Nozaki
-Yuusuke Ootsu
+
+[UI Designer]
+Tetsuya Enda
 
 [Ripped by]
 Rufas Wan

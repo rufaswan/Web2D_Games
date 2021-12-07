@@ -4,11 +4,8 @@ PC Steam
 [Game]
 Azure Striker Gunvolt 2
 
-[Year]
-2020
-
 [Copyright]
-Inti Creates Co. Ltd
+Inti Creates Co., Ltd. 2016
 
 [Character Designers]
 Yoshitaka Hatakeyama
@@ -23,7 +20,7 @@ Hidemi Okazaki
 Fumika Matsuo
 Masaya Suzuki
 
-[Character Graphics - Parabola Co. Ltd]
+[Character Graphics - PARABOLA CO., LTD.]
 Shinji Kyogoku
 Naomi Takemoto
 Miki Hase
@@ -34,6 +31,11 @@ Shin Nakamura
 Masashi Yamaguchi
 Kenta Takeda
 Karin Shimizu
+
+[UI Designers]
+Tetsuya Enda
+Munehiro Araki
+Sayaka Yamanaka
 
 [Ripped by]
 Rufas Wan

@@ -1,14 +1,13 @@
 [System]
-PlayStation 4
+Sony PlayStation 4
 
 [Game]
-13 Sentinels : Aegis Rim
-
-[Year]
-2020
+13 Sentinels: Aegis Rim
 
 [Copyright]
-Atlus, Sega
+2020 SEGA.
+Published by SEGA.
+Developed by ATLUS
 
 [Character Designer]
 Yukiko Hirai

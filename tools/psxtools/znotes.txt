@@ -301,3 +301,8 @@ stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-
 		literals   = object literals {}, array literals []
 		any        = primitives, literals, and prototypes
 
+geom.at/products/fade2d/
+
+	A Delaunay triangulation is always convex.
+	You must insert the segments of your concave polygon,
+	define a zone and retrieve the triangles of the non-convex area.

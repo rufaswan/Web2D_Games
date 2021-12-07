@@ -1,6 +1,8 @@
 [System]
+Sony PlayStation 4
 
 [Game]
+Princess Crown
 
 [Copyright]
 
@@ -13,4 +15,4 @@ Rufas Wan
 -
 
 [Comment]
--
+Vanillaware Ripping Project

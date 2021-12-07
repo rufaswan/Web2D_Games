@@ -1,0 +1,36 @@
+[System]
+Sony PlayStation 4
+
+[Game]
+Dragon's Crown Pro
+
+[Copyright]
+ATLUS
+SEGA
+
+[Designers]
+Takehiro Shiga
+Sakuzo Shibanuma
+Yukiko Hirai
+Emika Kida
+Haruka Kawamura
+Yasuhiro Fujiwara
+Yasuo Shirai
+Kouichi Maenou
+Akira Murakami
+Tomoyo Shimabukuro
+
+[Background Designers]
+Yoshio Nishimura
+Yukitsuna Maeda
+Daichi Yamashita
+Ryo Kobayashi
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

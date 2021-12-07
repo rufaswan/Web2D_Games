@@ -51,6 +51,8 @@ function sect_addoff( &$file, &$sect )
 {
 	foreach ( $sect as $k => $v )
 	{
+		if ( ! isset($v['p']) )
+			continue;
 		$off = str2int($file, $v['p'], 4);
 		if ( $off !== 0 )
 			$sect[$k]['o'] = $off;

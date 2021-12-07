@@ -1,19 +1,13 @@
 [System]
-Nintendo DS
+Sony PlayStation Portable
 
 [Game]
-Kumatanchi
-
-[Year]
-2008
+Princess Crown
 
 [Copyright]
-Vanillaware
-dimple
+SEGA & ATLUS 1997,2005,2007
 
-[Illustrator]
-Ashinaga Oji-san
-Shigatake
+[???]
 
 [Ripped by]
 Rufas Wan

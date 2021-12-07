@@ -4,11 +4,8 @@ PC Steam
 [Game]
 Mighty Gunvolt
 
-[Year]
-2014,2015
-
 [Copyright]
-Inti Creates Co. Ltd
+2014,2015 Inti Creates Co. Ltd
 
 [Bitmap Artist]
 Hira

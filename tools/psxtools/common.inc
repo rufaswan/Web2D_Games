@@ -270,6 +270,38 @@ function int_ceil_pow2( $int )
 	return ( $sign ) ? -$ceil : $ceil;
 }
 
+function var_swap( &$var1, &$var2 )
+{
+	$t = $var2;
+	$var2 = $var1;
+	$var1 = $t;
+	return;
+}
+
+function var_min()
+{
+	$arg = func_get_args();
+	$min = array_shift($arg);
+	foreach ( $arg as $a );
+	{
+		if ( $a < $min )
+			$min = $a;
+	}
+	return $min;
+}
+
+function var_max()
+{
+	$arg = func_get_args();
+	$max = array_shift($arg);
+	foreach ( $arg as $a );
+	{
+		if ( $a > $max )
+			$max = $a;
+	}
+	return $max;
+}
+
 function count_bits( $int )
 {
 	$bits = array(0,0);
@@ -1420,9 +1452,11 @@ function load_sect( &$file, $sect )
 	} // foreach ( $sect as $v )
 	sort($offs);
 
-	foreach ( $sect as $v )
+	foreach ( $sect as $k => $v )
 	{
 		if ( ! isset( $v['o'] ) )
+			continue;
+		if ( ! isset( $v['k'] ) )
 			continue;
 		$id = array_search($v['o'], $offs);
 		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);

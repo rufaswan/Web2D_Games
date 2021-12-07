@@ -1,0 +1,36 @@
+[System]
+Sony PlayStation 3
+
+[Game]
+Dragon's Crown
+
+[Copyright]
+Index Corporation 2011.
+Produced by ATLUS.
+
+[Designers]
+Takehiro Shiga
+Sakuzo Shibanuma
+Yukiko Hirai
+Emika Kida
+Haruka Kawamura
+Yasuhiro Fujiwara
+Yasuo Shirai
+Kouichi Maenou
+Akira Murakami
+Tomoyo Shimabukuro
+
+[Background Designers]
+Yoshio Nishimura
+Daichi Yamashita
+Yukitsuna Maeda
+Ryo Kobayashi
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

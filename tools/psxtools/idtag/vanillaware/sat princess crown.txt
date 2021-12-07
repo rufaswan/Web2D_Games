@@ -4,12 +4,8 @@ Sega Saturn
 [Game]
 Princess Crown
 
-[Year]
-1997
-
 [Copyright]
-Sega Enterprises Ltd.
-Atlus
+SEGA ENTERPRISES.LTD & ATLUS 1997
 
 [Character Design & Animation Edit]
 Kawazuine Shioya

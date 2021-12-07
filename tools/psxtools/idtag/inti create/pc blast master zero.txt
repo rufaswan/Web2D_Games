@@ -1,0 +1,44 @@
+[System]
+PC Steam
+
+[Game]
+Blast Master Zero
+
+[Copyright]
+INTI CREATES CO. LTD.
+SUNSOFT
+
+[Character Design]
+Yuji Natsume
+
+[Lead Character Graphics]
+Hidemi Ohnishi
+
+[Character Graphics]
+Erina Fukuoka
+Mai Enokido
+Hatsune Kawai
+Eri Suzuki
+Yuki Suzuki
+Hirokatsu Maeda
+Miho Iijima
+
+[Lead Background Graphics]
+Shin Nakamura
+
+[Background Graphics]
+Atsuko Nozaki
+Karin Shimizu
+Masashi Yamaguchi
+
+[UI Designer]
+Ryota Nakayama
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+-

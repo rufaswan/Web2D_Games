@@ -1,0 +1,35 @@
+[System]
+Sony PlayStation 4
+
+[Game]
+Odin Sphere Leifthsar
+
+[Copyright]
+ATLUS
+SEGA
+
+[Designers]
+Takehiro Shiga
+Yasuhiro Fujiwara
+Akira Murakami
+Emika Kida
+Entsugu Inatani
+Yasuo Shirai
+Yukiko Hirai
+Tomoyo Shimabukuro
+
+[Background Designers]
+Yukitsuna Maeda
+Ryo Kobayashi
+Haruka Kawamura
+Yoshio Nishimura
+Daichi Yamashita
+
+[Ripped by]
+Rufas Wan
+
+[Tagged by]
+-
+
+[Comment]
+Vanillaware Ripping Project

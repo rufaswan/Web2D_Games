@@ -24,33 +24,34 @@ require "common.inc";
 
 function psxvram2clut( &$vram, $base )
 {
+	// 16-bpp
+	$img = array(
+		'w'   => 0x400,
+		'h'   => 0x200,
+		'pix' => pal555($vram),
+	);
+	save_clutfile("$base/vram-16.clut", $img);
+
 	// 8-bpp
-	$clut = "CLUT";
-	$clut .= chrint(0x100, 4);
-	$clut .= chrint(0x800, 4);
-	$clut .= chrint(0x200, 4);
-	$clut .= grayclut(0x100);
-	$clut .= $vram;
-	save_file("$base/vram-8.clut", $clut);
+	$img = array(
+		'cc'  => 0x100,
+		'w'   => 0x800,
+		'h'   => 0x200,
+		'pal' => grayclut(0x100),
+		'pix' => $vram,
+	);
+	save_clutfile("$base/vram-8.clut", $img);
 
 	// 4-bpp
-	$v = $vram;
-	bpp4to8($v);
-
-	$clut = "CLUT";
-	$clut .= chrint(0x10,   4);
-	$clut .= chrint(0x1000, 4);
-	$clut .= chrint(0x200,  4);
-	$clut .= grayclut(0x10);
-	$clut .= $v;
-	save_file("$base/vram-4.clut", $clut);
-
-	// 16-bpp
-	$clut = "RGBA";
-	$clut .= chrint(0x400, 4);
-	$clut .= chrint(0x200, 4);
-	$clut .= pal555($vram);
-	save_file("$base/vram-16.clut", $clut);
+	bpp4to8($vram);
+	$img = array(
+		'cc'  => 0x10,
+		'w'   => 0x1000,
+		'h'   => 0x200,
+		'pal' => grayclut(0x10),
+		'pix' => $vram,
+	);
+	save_clutfile("$base/vram-4.clut", $img);
 	return;
 }
 
@@ -61,6 +62,9 @@ function subram( &$file, $base )
 	if ( substr($file, 0, 5) == 'ePSXe' )
 	{
 		echo "DETECT emulator = ePSXe\n";
+		$sub = substr($file, 0x2733df, 0x100000);
+		psxvram2clut($sub, $base);
+
 		return substr($file, 0x1ba, 0x200000);
 	}
 

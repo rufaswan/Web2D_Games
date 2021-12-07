@@ -1,14 +1,11 @@
 [System]
-PlayStation Portable
+Sony PlayStation Portable
 
 [Game]
 Grand Knights History
 
-[Year]
-2011
-
 [Copyright]
-MarvelousAQL Inc.
+2011 MarvelousAQL Inc.
 
 [Art Director]
 Kouichi Maenou

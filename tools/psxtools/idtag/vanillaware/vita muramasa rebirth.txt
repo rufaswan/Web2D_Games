@@ -1,14 +1,11 @@
 [System]
-PlayStation Vita
+Sony PlayStation Vita
 
 [Game]
 Muramasa Rebirth
 
-[Year]
-2009, 2013
-
 [Copyright]
-MarvelousAQL Inc.
+2009,2013 MarvelousAQL Inc.
 
 [Character Designs]
 Yasuhiro Fujiwara

@@ -1,15 +1,12 @@
 [System]
-PlayStation 2
+Sony PlayStation 2
 
 [Game]
 Grim Grimoire
 
-[Year]
-2007
-
 [Copyright]
-Vanillaware Ltd.
-Nippon Ichi Software Inc.
+2007 VANILLAWARE Ltd.
+NIPPON ICHI SOFTWARE INC.
 
 [Character Designers]
 Kouichi Maenou
