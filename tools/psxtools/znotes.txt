@@ -306,3 +306,12 @@ geom.at/products/fade2d/
 	A Delaunay triangulation is always convex.
 	You must insert the segments of your concave polygon,
 	define a zone and retrieve the triangles of the non-convex area.
+
+sites.google.com/site/misbullah/posts/howtocreatesilenceaudiousingsox
+
+	sox -n -r 16000 -c 1 silence0.4.wav trim 0.0 0.4
+		-n : no input (null file handle)
+		-r : sampling rate (16000 Hz)
+		-c : channel (1 for mono, 2 for stereo)
+
+	The above command will create a silence audio with the length is 0.4 seconds.

@@ -22,14 +22,19 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 
-echo "<style>* { margin:0;padding:0; } img { border:3px #f00 solid; max-width:100%; }</style>\n";
-$list = array();
-lsfile_r('.', $list);
-foreach ( $list as $f )
+function gunvolt( $fname )
 {
-	$e = substr($f, strrpos($f, '.'));
-	if ( stripos($e, 'png') === false )
-		continue;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	printf("<img src='%s' title='%s'>\n", $f, $f);
-} // foreach ( $list as $f )
+	$pfx = substr($fname, 0, strrpos($fname,'.'));
+
+	if ( strpos($file, 'IOBJ') )
+		return rename($fname, "$pfx.iobj");
+	if ( strpos($file, '.tga') )
+		return rename($fname, "$pfx.tga");
+	return;
+}
+
+for ( $i=1; $i < $argc; $i++ )
+	gunvolt( $argv[$i] );

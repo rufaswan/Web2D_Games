@@ -31,8 +31,7 @@ function substrrev( &$str, $pos, $len )
 
 function str2big( &$str, $pos, $byte, $sign=false )
 {
-	if ( PHP_INT_SIZE < $byte )
-		return php_error("required %d-bit support", $byte*8);
+	php_req_bytes($byte);
 	$sub = substrrev($str, $pos, $byte);
 	$int = ordint($sub);
 	if ( $sign )

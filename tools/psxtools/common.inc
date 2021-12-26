@@ -69,8 +69,8 @@ define("BIT24", (1 << 24)-1);
 define("BIT32", (1 << 32)-1);
 //define("DRY_RUN", true);  // per script
 //define("NO_TRACE", true); // per script
-//if ( defined("DRY_RUN") )
-//if ( defined("NO_TRACE") )
+//if ( defined('DRY_RUN') )
+//if ( defined('NO_TRACE') )
 
 //////////////////////////////
 // E_USER_ERROR
@@ -101,31 +101,34 @@ function php_notice()
 	return trigger_error($err, E_USER_NOTICE);
 }
 //////////////////////////////
-function php_req_define($define)
+function php_req_bytes( $byte )
+{
+	if ( PHP_INT_SIZE < $byte )
+		return php_error('required %d-bit support', $byte*8);
+}
+function php_req_define( $define )
 {
 	if ( ! defined($define) )
-		php_error("required global constant %s not defined", $define);
-	return;
+		return php_error('required global constant %s not defined', $define);
 }
-function php_req_extension($func, $ext)
+function php_req_extension( $func, $ext )
 {
 	if ( ! function_exists($func) )
-		php_error("required %s() [%s] not found", $func, $ext);
-	return;
+		return php_error('required %s() [%s] not found', $func, $ext);
 }
 
 // https://www.php.net/manual/en/reserved.constants.php
-php_req_define("PHP_INT_SIZE");   // since 5.0.5
-php_req_define("PHP_VERSION_ID"); // since 5.2.7
+php_req_define('PHP_INT_SIZE');   // since 5.0.5
+php_req_define('PHP_VERSION_ID'); // since 5.2.7
 
 // PHP 7.0+ for native 64-bit int on windows
+php_req_bytes(4);
 if ( PHP_VERSION_ID < 50600 )
-	php_warning("version older than 5.6 is not supported");
+	php_warning('version older than 5.6 is not supported');
 //////////////////////////////
 function str2int( &$str, $pos, $byte, $sign=false )
 {
-	if ( PHP_INT_SIZE < $byte )
-		return php_error("required %d-bit support", $byte*8);
+	php_req_bytes($byte);
 	$sub = substr($str, $pos, $byte);
 	$int = ordint($sub);
 	if ( $sign )
@@ -155,7 +158,7 @@ function substr0( &$str, $pos, $end="" )
 function ordint( $str )
 {
 	if ( $str === '' )
-		php_warning("ordint() empty");
+		php_warning('ordint() empty');
 	if ( (int)$str === $str ) // already int
 		return $str;
 	$str = rtrim("$str", ZERO);
@@ -174,7 +177,7 @@ function chrint( $int, $byte = 0 )
 	if ( "$int" === $int ) // already str
 		return $int;
 	$int = (int)$int;
-	$str = "";
+	$str = '';
 	for ( $i=0; $i < $byte; $i++ )
 	{
 		$b = $int & BIT8;
@@ -315,7 +318,7 @@ function count_bits( $int )
 	return $bits;
 }
 //////////////////////////////
-function debug( $str, $name="DEBUG" )
+function debug( $str, $name='DEBUG' )
 {
 	$buf = "$name : ";
 	$len = strlen($str);
@@ -323,10 +326,10 @@ function debug( $str, $name="DEBUG" )
 	{
 		if ( $i > 0 && ($i % 4) == 0 )
 			$buf .= '  ';
-		if ( $str[$i] == ZERO )
+		if ( $str[$i] === ZERO )
 			$buf .= '-- ';
 		else
-			$buf .= sprintf("%02x ", ord($str[$i]) );
+			$buf .= sprintf('%02x ', ord($str[$i]) );
 	}
 	$buf .= "\n";
 	//echo $buf;
@@ -339,7 +342,7 @@ function debug_block( &$str, $blksz )
 	$buf = '';
 	for ( $i=0; $i < $len; $i += $blksz )
 	{
-		$n = sprintf("%4x", $i/$blksz);
+		$n = sprintf('%4x', $i/$blksz);
 		$buf .= debug( substr($str, $i, $blksz), $n );
 	}
 	return $buf;
@@ -347,7 +350,7 @@ function debug_block( &$str, $blksz )
 
 function trace()
 {
-	if ( defined("NO_TRACE") )
+	if ( defined('NO_TRACE') )
 		return;
 	$args = func_get_args();
 	$fmt = array_shift($args);
@@ -357,37 +360,37 @@ function trace()
 
 function zero_watch( $name, $chr )
 {
-	if ( $chr == ZERO )
+	if ( $chr === ZERO )
 		return;
-	php_notice("$name not zero [%2x]", ord($chr));
+	php_notice('%s not zero [%2x]', $name, ord($chr));
 	return;
 }
 
 function byte_watch( $name, $chr )
 {
-	if ( $chr == BYTE )
+	if ( $chr === BYTE )
 		return;
-	php_notice("$name not 0xFF [%2x]", ord($chr));
+	php_notice('%s not 0xFF [%2x]', $name, ord($chr));
 	return;
 }
 
 function flag_watch( $name, $int )
 {
-	if ( $int == 0 )
+	if ( $int === 0 )
 		return;
-	php_notice("$name some flags is set [%x]", $int);
+	php_notice('%s some flags is set [%x]', $name, $int);
 	return;
 }
 //////////////////////////////
 function fp2str( $fp, $pos, $byte )
 {
-	if ( $byte == 0 )
-		return "";
+	if ( $byte === 0 )
+		return '';
 	fseek($fp, 0, SEEK_END);
 	$fsz = ftell($fp);
 	if ( ($pos+$byte) >= $fsz )
 	{
-		php_warning("fp2str (%x + %x) >= %x", $pos, $byte, $fsz);
+		php_warning('fp2str (%x + %x) >= %x', $pos, $byte, $fsz);
 		return ZERO;
 	}
 
@@ -454,7 +457,7 @@ function load_file( $fname, $scan=true )
 
 function save_file( $fname, $str )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 	if ( empty($str) )
 		return;
@@ -467,6 +470,21 @@ function save_file( $fname, $str )
 	return;
 }
 
+function load_bakfile( $fname, $scan=true )
+{
+	$file = load_file("$fname.bak", $scan);
+	if ( ! empty($file) )
+		return $file;
+
+	$file = load_file($fname, $scan);
+	if ( ! empty($file) )
+	{
+		save_file("$fname.bak", $file);
+		return $file;
+	}
+	return '';
+}
+
 function load_clutfile( $fname )
 {
 	if ( is_file($fname) )
@@ -474,7 +492,7 @@ function load_clutfile( $fname )
 		$clut = file_get_contents($fname);
 		$mgc = substr($clut, 0, 4);
 		$data = array();
-		if ( $mgc == "CLUT" )
+		if ( $mgc === 'CLUT' )
 		{
 			$data['cc'] = str2int($clut,  4, 4);
 			$data['w']  = str2int($clut,  8, 4);
@@ -493,7 +511,7 @@ function load_clutfile( $fname )
 			return $data;
 		}
 
-		if ( $mgc == "RGBA" )
+		if ( $mgc === 'RGBA' )
 		{
 			$data['w'] = str2int($clut, 4, 4);
 			$data['h'] = str2int($clut, 8, 4);
@@ -547,7 +565,7 @@ function save_clutfile( $fname, &$data )
 			$data['pix'] .= ZERO;
 		$data['pix'] = substr($data['pix'], 0, $sz);
 
-		$clut = "CLUT";
+		$clut = 'CLUT';
 		$clut .= chrint($data['cc'], 4);
 		$clut .= chrint($data['w'], 4);
 		$clut .= chrint($data['h'], 4);
@@ -563,7 +581,7 @@ function save_clutfile( $fname, &$data )
 			$data['pix'] .= ZERO;
 		$data['pix'] = substr($data['pix'], 0, $sz);
 
-		$rgba = "RGBA";
+		$rgba = 'RGBA';
 		$rgba .= chrint($data['w'], 4);
 		$rgba .= chrint($data['h'], 4);
 		$rgba .= $data['pix'];
@@ -582,7 +600,7 @@ function lsfile_r( $dir, &$list )
 	$func = __FUNCTION__;
 	foreach ( scandir($dir) as $en )
 	{
-		if ( $en[0] == '.' )
+		if ( $en[0] === '.' )
 			continue;
 		$fn = "$dir/$en";
 
@@ -645,7 +663,7 @@ function rgb555( $str )
 
 function pal555( $str )
 {
-	$clut = "";
+	$clut = '';
 	$siz = strlen($str);
 	for ( $i=0; $i < $siz; $i += 2 )
 		$clut .= rgb555( $str[$i+0] . $str[$i+1] );
@@ -688,7 +706,7 @@ function grayclut( $cc )
 function gradient( $cc, $src, $dst )
 {
 	if ( $cc <= 1 )
-		return php_error("gradient() cc [%d]", $cc);
+		return php_error('gradient() cc [%d]', $cc);
 	$r1 = ord( $src[0] );
 	$g1 = ord( $src[1] );
 	$b1 = ord( $src[2] );
@@ -732,7 +750,7 @@ function bpp4to8( &$pix )
 //////////////////////////////
 function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 {
-	$err = "";
+	$err = '';
 	if ( $sx < 0 )
 		$err .= sprintf("rippix() sx = %d\n", $sx);
 	if ( $sy < 0 )
@@ -752,8 +770,8 @@ function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 
 function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
-	if ( defined("DRY_RUN") )
-		return "";
+	if ( defined('DRY_RUN') )
+		return '';
 	$sx >>= 1;
 	$w  >>= 1;
 	$sw >>= 1;
@@ -764,12 +782,12 @@ function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 
 function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 {
-	if ( defined("DRY_RUN") )
-		return "";
+	if ( defined('DRY_RUN') )
+		return '';
 	if ( rippix_errs($sx, $sy, $w, $h, $sw, $sh) )
-		return "";
+		return '';
 
-	$rip = "";
+	$rip = '';
 	for ( $y=0; $y < $h; $y++ )
 	{
 		$sxx = ($sy + $y) * $sw + $sx;
@@ -791,8 +809,8 @@ function COPYPIX_DEF( $w, $h, $c = PIX_ALPHA )
 		'src' => array(
 			'w'    => 0,
 			'h'    => 0,
-			'pix'  => "",
-			'pal'  => "",
+			'pix'  => '',
+			'pal'  => '',
 			'quad' => array(), // replaces sx,sy for copyquad
 		),
 		'dx' => 0,
@@ -802,14 +820,14 @@ function COPYPIX_DEF( $w, $h, $c = PIX_ALPHA )
 		'hflip'  => false,
 		'rotate' => array(0,0,0),
 		'quad'   => array(), // replaces dx,dy for copyquad
-		'alpha'  => "", // callback
+		'alpha'  => '', // callback
 	);
 	return $php56;
 }
 //////////////////////////////
 function alpha_none( $fg, $bg )
 {
-	if ( $fg[3] == ZERO )  return $bg;
+	if ( $fg[3] === ZERO )  return $bg;
 	return $fg;
 }
 
@@ -823,7 +841,7 @@ function alpha_add( $fg, $bg )
 	{
 		// blend w/normal pixels
 		case BYTE:
-			$pix = "";
+			$pix = '';
 			for ( $i=0; $i < 4; $i++ )
 			{
 				$p1 = ord( $fg[$i] );
@@ -843,7 +861,7 @@ function alpha_add( $fg, $bg )
 
 			$a = ( $r > $g ) ? $r : $g;
 			$a = ( $b > $a ) ? $b : $a;
-			if ( $a == 0 )
+			if ( $a === 0 )
 				return $bg;
 
 			$r = int_clamp($r / $a * BIT8, 0, BIT8);
@@ -874,10 +892,7 @@ function alpha_add( $fg, $bg )
 
 function scalepix( &$pix, $fact_x, $fact_y, $byte=1 )
 {
-	if ( defined("DRY_RUN") )
-		return;
-	// ~1.00 == no scaling needed
-	if ( $fact_x == 1.0 && $fact_y == 1.0 )
+	if ( defined('DRY_RUN') )
 		return;
 
 	$nw = (int)ceil( $pix['src']['w'] * $fact_x );
@@ -953,7 +968,7 @@ function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
 	//   byte 4 bgzero RGBA = cmp c1, bgzero
 	// Xenogears Lucca = 0th and 15th color are both #000
 	//                   ignore 0th #000 , but not 15th #000
-	if ( $byte == 1 )
+	if ( $byte === 1 )
 	{
 		$c1 = ord($c1);
 		if ( $c1 === $pix['bgzero'] )
@@ -984,7 +999,7 @@ function updatepix( &$pix, $byte, $sx, $sy, $dx, $dy )
 
 function copypix_errs( &$pix )
 {
-	$err = "";
+	$err = '';
 	if ( $pix['dx'] < 0 )
 		$err .= sprintf("copypix() dx = %d\n", $pix['dx']);
 	if ( $pix['dy'] < 0 )
@@ -1010,7 +1025,7 @@ function copypix( &$pix, $byte=1 )
 		return;
 	if ( copypix_errs($pix) )
 		return;
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	flippix($pix, $byte);
@@ -1080,7 +1095,7 @@ function copypix_fast( &$pix, $byte=1 )
 		return;
 	if ( copypix_errs($pix) )
 		return;
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	flippix($pix, $byte);
@@ -1093,7 +1108,7 @@ function copypix_fast( &$pix, $byte=1 )
 	for ( $y=0; $y < $pix['src']['h']; $y++ )
 	{
 		$row = '';
-		if ( $byte == 1 )
+		if ( $byte === 1 )
 		{
 			$syy = $y * $pix['src']['w'];
 			for ( $x=0; $x < $pix['src']['w']; $x++ )
@@ -1103,7 +1118,7 @@ function copypix_fast( &$pix, $byte=1 )
 			}
 		}
 		else
-		if ( $byte == 4 )
+		if ( $byte === 4 )
 		{
 			$syy = $y * $pix['src']['w'] * 4;
 			$row = substr($pix['src']['pix'], $syy, $pix['src']['w']*4);
@@ -1130,7 +1145,7 @@ function trimpix( &$pix )
 	while (1)
 	{
 		$row = $pix['rgba']['w'] * 4;
-		$b = "";
+		$b = '';
 
 		// trim height
 		$p = $y1 * $row;
@@ -1162,7 +1177,7 @@ function trimpix( &$pix )
 
 	$w = $x2 - $x1;
 	$h = $y2 - $y1;
-	$canv = "";
+	$canv = '';
 	for ( $y=$y1; $y < $y2; $y++ )
 	{
 		$p = $y * $pix['rgba']['w'] + $x1;
@@ -1178,16 +1193,16 @@ function trimpix( &$pix )
 
 function savepix( $fn, &$pix, $trim = false )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	if ( is_blank( $pix['rgba']['pix'] ) )
-		return php_warning("%s [pix] blank", $fn);
+		return php_warning('%s [pix] blank', $fn);
 	if ( $trim )
 		trimpix($pix);
 
 	$clpal = array();
-	$clpix = "";
+	$clpix = '';
 	$pos = 0;
 	for ( $y=0; $y < $pix['rgba']['h']; $y++ )
 	{
@@ -1225,7 +1240,7 @@ function psx_patch( $dir, $pfx )
 		if ( stripos($sys, 'boot') === false )
 			continue;
 		preg_match('|[a-z]{4}_[0-9]{3}\.[0-9]{2}|i', $sys, $m);
-		if ( $m[0] == '' )
+		if ( $m[0] === '' )
 			return array();
 		return patchfile("{$pfx}_{$m[0]}.txt");
 	} // foreach( file("$dir/system.cnf") as $sys )
@@ -1235,7 +1250,7 @@ function psx_patch( $dir, $pfx )
 function psx_exe( &$psxram, $psxexe )
 {
 	if ( empty($psxram) )
-		return "";
+		return '';
 
 	$bin = load_file($psxexe);
 	if ( empty($bin) || substr($bin, 0, 8) != 'PS-X EXE' )
@@ -1298,7 +1313,7 @@ function psxtim( &$file )
 			bpp4to8( $tim['pix'] );
 			$pos += $siz;
 
-			$tim['t'] = "CLUT";
+			$tim['t'] = 'CLUT';
 			$tim['cc'] = 0x10;
 			break;
 		//////////////////////////////
@@ -1328,7 +1343,7 @@ function psxtim( &$file )
 			$tim['pix'] = substr($file, $pos+12, $siz-12);
 				$pos += $siz;
 
-			$tim['t'] = "CLUT";
+			$tim['t'] = 'CLUT';
 			$tim['cc'] = 0x100;
 			break;
 		//////////////////////////////
@@ -1345,7 +1360,7 @@ function psxtim( &$file )
 			$tim['pix'] = pal555($sub);
 				$pos += $siz;
 
-			$tim['t'] = "RGBA";
+			$tim['t'] = 'RGBA';
 			break;
 		case 3:
 			// Legend of Mana /ana/zukan_p/z00/zukan1p.dat
@@ -1360,7 +1375,7 @@ function psxtim( &$file )
 				$tim['pix'] .= $sub[$i+0] . $sub[$i+1] . $sub[$i+2] . BYTE;
 			$pos += $siz;
 
-			$tim['t'] = "RGBA";
+			$tim['t'] = 'RGBA';
 			break;
 		//////////////////////////////
 		default:
@@ -1429,7 +1444,7 @@ function load_text( $fname )
 {
 	$txt = load_file($fname);
 	if ( empty($txt) )
-		return "";
+		return '';
 	$txt = str_replace( array("\r\n","\r"), "\n", $txt);
 	return explode("\n", $txt);
 }
@@ -1437,7 +1452,7 @@ function load_text( $fname )
 function load_sect( &$file, $sect )
 {
 	// sect = array(
-	//   array( 'p' => 0 , 'k' => 0, 'o' => 0, 'd' => "" ),
+	//   array( 'p' => 0 , 'k' => 0, 'o' => 0, 'd' => '' ),
 	// );
 	// p = position
 	// k = block
@@ -1460,7 +1475,7 @@ function load_sect( &$file, $sect )
 			continue;
 		$id = array_search($v['o'], $offs);
 		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);
-		if ( $sz == 0 )
+		if ( $sz === 0 )
 			continue;
 
 		$dat = substr($file, $v['o'], $sz);
@@ -1477,7 +1492,7 @@ function save_sect( &$sect, $pfx )
 	{
 		if ( ! isset($v['d']) || $v['k'] < 1 )
 			continue;
-		$fn  = sprintf("%s/%04d.txt", $pfx, $k);
+		$fn  = sprintf('%s/%04d.txt', $pfx, $k);
 		$buf = debug_block( $v['d'], $v['k'] );
 		save_file($fn, $buf);
 	} // foreach ( $sect as $k => $v )
@@ -1486,7 +1501,7 @@ function save_sect( &$sect, $pfx )
 
 function sect_sum( &$sect, $name, $off )
 {
-	if ( defined("NO_TRACE") )
+	if ( defined('NO_TRACE') )
 		return;
 
 	$pos = 0;
@@ -1525,22 +1540,22 @@ function arrayhex( &$array )
 	return;
 }
 
-function patchfile( $fname, $val_callback="" )
+function patchfile( $fname, $val_callback='' )
 {
 	$fn = __DIR__ . "/patch/$fname";
 	if ( ! file_exists($fn) )
 		return array();
 
 	$data = array();
-	$sect = "";
+	$sect = '';
 	foreach ( file($fn) as $v )
 	{
-		$v = preg_replace("|[\s]+|", '', $v);
+		$v = preg_replace('|[\s]+|', '', $v);
 		if ( empty($v) )
 			continue;
-		if ( $v[0] == '#' ) // comments
+		if ( $v[0] === '#' ) // comments
 			continue;
-		if ( $v[0] == '[' ) // section header
+		if ( $v[0] === '[' ) // section header
 		{
 			$sect = trim($v, '[]');
 			continue;

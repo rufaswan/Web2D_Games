@@ -28,8 +28,7 @@ define("BIT256", (1 << 256)-1);
 
 function sint64( $s )
 {
-	if ( PHP_INT_SIZE < 8 )
-		return php_error("required 64-bit support");
+	php_req_bytes(8);
 	$int = ( (int)$s === $s ) ? $s : ordint($s);
 	$sra = (PHP_INT_SIZE - 8) * 8; // shift right arithmetic
 	return ( ($int << $sra) >> $sra );
@@ -37,8 +36,7 @@ function sint64( $s )
 
 function sint128( $s )
 {
-	if ( PHP_INT_SIZE < 16 )
-		return php_error("required 128-bit support");
+	php_req_bytes(16);
 	$int = ( (int)$s === $s ) ? $s : ordint($s);
 	$sra = (PHP_INT_SIZE - 16) * 8; // shift right arithmetic
 	return ( ($int << $sra) >> $sra );
@@ -46,8 +44,7 @@ function sint128( $s )
 
 function sint256( $s )
 {
-	if ( PHP_INT_SIZE < 32 )
-		return php_error("required 256-bit support");
+	php_req_bytes(32);
 	$int = ( (int)$s === $s ) ? $s : ordint($s);
 	$sra = (PHP_INT_SIZE - 32) * 8; // shift right arithmetic
 	return ( ($int << $sra) >> $sra );
@@ -55,8 +52,7 @@ function sint256( $s )
 
 function float64( $int )
 {
-	if ( PHP_INT_SIZE < 8 )
-		return php_error("required 64-bit support");
+	php_req_bytes(8);
 	// IEEE 754 double precision
 	//   signed   bit  = 1
 	//   exponent bits = 11
@@ -67,8 +63,7 @@ function float64( $int )
 
 function float128( $int )
 {
-	if ( PHP_INT_SIZE < 16 )
-		return php_error("required 128-bit support");
+	php_req_bytes(16);
 	// IEEE 754 quadruple precision
 	//   signed   bit  = 1
 	//   exponent bits = 15
@@ -79,8 +74,7 @@ function float128( $int )
 
 function float256( $int )
 {
-	if ( PHP_INT_SIZE < 32 )
-		return php_error("required 256-bit support");
+	php_req_bytes(32);
 	// IEEE 754 octuple precision
 	//   signed   bit  = 1
 	//   exponent bits = 19

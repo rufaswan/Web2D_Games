@@ -22,41 +22,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
-require "common-quad.inc";
 require "quad.inc";
+require "quad_vanillaware.inc";
 
-define("METAFILE", true);
-
-function colorquad( &$mbs, $pos )
-{
-	return '';
-}
-
-function sectquad( &$mbs, $pos )
-{
-	$float = array();
-	for ( $i=0; $i < $mbs['k']; $i += 4 )
-	{
-		$b = substr($mbs['d'], $pos+$i, 4);
-		$float[] = float32($b);
-	}
-
-	//  0  1  center
-	//  2  3  c1
-	//  4  5  c2
-	//  6  7  c3
-	//  8  9  c4
-	// 10 11  c1
-	$bcde = array(
-		$float[2] , $float[3] ,
-		$float[4] , $float[5] ,
-		$float[6] , $float[7] ,
-		$float[8] , $float[9] ,
-	);
-	return $bcde;
-}
-//////////////////////////////
-function sectspr( &$json, &$mbs, $pfx )
+function sectspr( &$json, &$mbs )
 {
 	// s6-s4-s0/s1/s2 [18-c-18/30/30]
 	$len6 = strlen( $mbs[6]['d'] );
@@ -119,80 +88,62 @@ function sectspr( &$json, &$mbs, $pfx )
 	return;
 }
 //////////////////////////////
-function sectanim( &$json, &$mbs, $pfx )
+function sectanim( &$json, &$mbs )
 {
-	// s9-sa-s8 [30-8-20]
-	$len9 = strlen( $mbs[9]['d'] );
-	for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
+	$no9 = strlen($mbs[9]['d']) / $mbs[9]['k'];
+	for ( $i9=0; $i9 < $no9; $i9++ )
 	{
-		// 0 4 8 c  10    28 29  2a  2b   2c 2d 2e 2f
-		// - - - -  name  id     no  tr   -  -  -  -
-		//   sa[tr] == longest fps sum
-		$name = substr0($mbs[9]['d'], $i9+0x10);
-		$id9  = str2int($mbs[9]['d'], $i9+0x28, 2);
-		$no9  = str2int($mbs[9]['d'], $i9+0x2a, 1);
+		$pos9 = $i9 * $mbs[9]['k'];
+		printf("%x : ", $i9);
 
-		for ( $ia=0; $ia < $no9; $ia++ )
+		// 0  4  8  c   10    28   2a   2b    2c   2d 2e 2f [30]
+		// x1 y1 x2 y2  anim  said sano sabg  dum  -  -  -
+		for ( $i=0; $i < 16; $i += 4 )
 		{
-			$pa = ($id9 + $ia) * $mbs[10]['k'];
+			$b = substr($mbs[9]['d'], $pos9+$i, 4);
+			$b = float32($b);
+			printf("%.2f  ", $b);
+		}
+		$anim = substr0($mbs[9]['d'], $pos9+16);
+		$ida = str2int($mbs[9]['d'], $pos9+0x28, 2);
+		$noa = str2int($mbs[9]['d'], $pos9+0x2a, 1);
+		$bga = str2int($mbs[9]['d'], $pos9+0x2b, 1);
+		$dum = str2int($mbs[9]['d'], $pos9+0x2c, 1);
+		printf("%s  %x %x %x  %x\n", $anim, $ida, $noa, $bga, $dum);
 
-			// 01  23  4567  89ab cdef
-			// s8  no  fps   -    -
-			$ida = str2int($mbs[10]['d'], $pa+0, 2);
-			$noa = str2int($mbs[10]['d'], $pa+2, 2);
+		for ( $ia=0; $ia < $noa; $ia++ )
+		{
+			$posa = ($ida + $ia) * $mbs[10]['k'];
+			printf("  %x : ", $ida+$ia);
 
-			$ent = array(
-				'FID' => array(),
-				'POS' => array(),
-				'FPS' => array(),
-			);
-			$is_mov = false;
-			for ( $i8=0; $i8 < $noa; $i8++ )
+			// 0    2    4     6 8 c [10]
+			// s8id s8no s8bg  - - -
+			$id8 = str2int($mbs[10]['d'], $posa+0, 2);
+			$no8 = str2int($mbs[10]['d'], $posa+2, 2);
+			$bg8 = str2int($mbs[10]['d'], $posa+4, 2);
+			printf("%x  %x  %x\n", $id8, $no8, $bg8);
+
+			for ( $i8=0; $i8 < $no8; $i8++ )
 			{
-				$p8 = ($ida + $i8) * $mbs[8]['k'];
+				$pos8 = ($id8 + $i8) * $mbs[8]['k'];
+				printf("    %x : ", $id8+$i8);
 
-				// 01  23  45  67  89ab  cd  ef 0123 4567 89ab cdef
-				// s6  -   s7  no  bt    nx  -  -    -    -    -
-				$id8 = str2int($mbs[8]['d'], $p8+0, 2);
-				$id7 = str2int($mbs[8]['d'], $p8+4, 2);
-				$no8 = str2int($mbs[8]['d'], $p8+6, 2);
+				// 0     2 3  4     6    8     c d e f 10 11 12 13 14 18 1a 1c [20]
+				// s6id  - -  s7id  fps  flag  ? - ? - -  ?  ?  ?  ?  ?  ?  ?
+				$id6 = str2int($mbs[8]['d'], $pos8+0, 2);
+				$id7 = str2int($mbs[8]['d'], $pos8+4, 2);
+				$fps = str2int($mbs[8]['d'], $pos8+6, 2);
+				$flg = str2int($mbs[8]['d'], $pos8+8, 4);
+				printf("%x  %x  %x  %x\n", $id6, $id7, $fps, $flg);
 
-				$p7 = $id7 * $mbs[7]['k'];
-				$x7 = str2int($mbs[7]['d'], $p7+0, 4, true);
-				$y7 = str2int($mbs[7]['d'], $p7+4, 4, true);
 
-				$ent['FID'][] = $id8;
-				$ent['FPS'][] = $no8;
-				$ent['POS'][] = array($x7,$y7);
-
-				if ( $x7 != 0 || $y7 != 0 )
-					$is_mov = true;
-			} // for ( $i8=0; $i8 < $noa; $i8++ )
-
-			// skip all zero Pos
-			if ( ! $is_mov )
-				unset( $ent['POS'] );
-			$json['Animation'][$name][$ia] = $ent;
-		} // for ( $ia=0; $ia < $no9; $ia++ )
-
-	} // for ( $i9=0; $i9 < $len9; $i9 += $mbs[9]['k'] )
+			} // for ( $i8=0; $i8 < $no8; $i8++ )
+		} // for ( $ia=0; $ia < $noa; $ia++ )
+	} // for ( $id9=0; $id9 < $cnt9; $id9++ )
 
 	return;
 }
 //////////////////////////////
-function sect_addoff( &$file, &$sect )
-{
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset($v['p']) )
-			continue;
-		$off = str2int($file, $v['p'], 4);
-		if ( $off !== 0 )
-			$sect[$k]['o'] = $off;
-	}
-	return;
-}
-
 function kuma( $fname )
 {
 	$mbs = load_file($fname);
@@ -204,60 +155,15 @@ function kuma( $fname )
 	if ( str2int($mbs, 8, 4) != 0xa0 )
 		return printf("DIFF not 0xa0  %s\n", $fname);
 
-	// $siz = str2int($mbs, 4, 3);
-	// $hdz = str2int($mbs, 8, 3);
-	// $len = 0x10 + $hdz + $siz;
+	global $gp_data;
+	load_mbsfile($mbs, $gp_data['nds kuma']['sect'], false);
+	$json = load_idtagfile( $gp_data['nds kuma']['idtag'] );
+
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
+	//save_sect($mbs, $pfx);
 
-	//   0 1 2 |     1-0 2-1 3-2
-	// 3 4 5 6 | 6-3 5-4 9-5 7-6
-	// 7 8 9 a | 8-7 4-8 a-9 s-a
-	// reform01b.mbs
-	//        a0  d0 100 |  -   2*18 1*30 2*30
-	//     - 1bc   - 160 |  -   2*c   -   1*18
-	//   178 19c 1d4 204 | 1*24 1*20 1*30 1*10
-	// kuma01.mbs
-	//            a0   268  5de8 |    -     13*18 1e8*30 67e*30
-	//   19588 59b8c 663c0 195d8 |   1*50 10af*c    3*8  2d4*18
-	//   1d9b8 22ecc 663d8 6a878 | 25d*24 1b66*20 16e*30 4e8*10
-	// s9[+28] =  4e5+3 => sa
-	// sa[+ 0] = 1b64+2 => s8
-	// s8[+ 0] =  2d3   => s6 , [+ 4] = 25c   => s7
-	// s6[+10] = 10a6+9 => s4
-	// s4[+ 4] =  1e7   => s1 , [+ 8] =  12   => s0 , [+ a] = 67d => s2
-	// s2
-	// s0
-	// s1
-	// s3
-	// s7
-	$sect = array(
-		array('p' => 0x54 , 'k' => 0x18), // 0
-		array('p' => 0x58 , 'k' => 0x30), // 1
-		array('p' => 0x5c , 'k' => 0x30), // 2
-		array('p' => 0x60 , 'k' => 0x50), // 3 reform=0
-		array('p' => 0x64 , 'k' => 0xc ), // 4
-		array('p' => 0x68 , 'k' => 0x8 ), // 5 reform=0
-		array('p' => 0x6c , 'k' => 0x18), // 6
-		array('p' => 0x70 , 'k' => 0x24), // 7
-		array('p' => 0x74 , 'k' => 0x20), // 8
-		array('p' => 0x78 , 'k' => 0x30), // 9
-		array('p' => 0x7c , 'k' => 0x10), // a
-		array('o' => strrpos($mbs, "FEOC")),
-	);
-	sect_addoff($mbs, $sect);
-	load_sect($mbs, $sect);
-	save_sect($mbs, "$pfx/meta");
-	if ( METAFILE )
-	{
-		sect_sum($mbs[4], 'mbs[4][0]', 0); //
-		sect_sum($mbs[4], 'mbs[4][1]', 1); // = 0
-		sect_sum($mbs[4], 'mbs[4][2]', 2); //
-	}
-
-	$json = load_idtagfile('nds_kuma');
-
-	sectanim($json, $mbs, $pfx);
-	sectspr ($json, $mbs, $pfx);
+	sectanim($json, $mbs);
+	//sectspr ($json, $mbs);
 
 	save_quadfile($pfx, $json);
 	return;
@@ -527,6 +433,21 @@ kuma02.mbs
 		-0    1   0
 //////////////////////////////
 RAM 218a2a0 = YEN
-	206bb04  str  r0[YEN], 1c(r2[ 218a284])
+	206bb04  str   r0[YEN ], 1c(r2[ 218a284])
+RAM 218a2ae = LIKE
+	203f224  strh  r0[LIKE], 2a(r5[ 218a284])
 
+RAM 218a2c0 = DRAMA [bitflags]
+	c0-c5  [ff ff ff ff ff 07]     rabbi-tan   [43]
+	c5-ca  [f8 ff ff ff ff 3f]     tora-onesan [43]
+	ca-d0  [c0 ff ff ff ff 01]     ushi-onesan [43]
+	d0-d5  [fe ff ff ff ff 0f]     neko-kun    [43]
+	d5-db  [f0 ff ff ff ff ff 07]  saru-jii    [47]
+	db-de  [f8 ff ff 07]           maguro      [24]
+	ea-ed  [c0 ff ff 7f]           sumomo      [25]
+	ef     [38]                    prologue    [ 3]
+	ef-f0  [c0 03]                 epilogue    [ 4]
+
+http://kumatan.half-moon.org/53.html
+https://box-sentence.net/data/bikou/ds_note/ds_st/kumatan_st.html
  */

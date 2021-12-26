@@ -7,9 +7,10 @@ Kumatanchi
 [Copyright]
 2008 Vanillaware/dimple
 
-[???]
-[Illustrator]
-Ashinaga Oji-san
+[Character Design]
+Shigatake
+
+[Graphic]
 Shigatake
 
 [Ripped by]
@@ -20,3 +21,4 @@ Rufas Wan
 
 [Comment]
 Vanillaware Ripping Project
+2 weeks Real-life Pet Simulator

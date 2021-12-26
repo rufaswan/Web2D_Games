@@ -63,3 +63,10 @@ Nintendo DS ROM header
 	NONE
 	???
 
+== MAME ==
+	neogeo.c    0.68  - 0.172
+	neogeo.cpp  0.174 -
+	cps2.c      0.68  - 0.156
+	cps2.cpp    0.169 -
+	cps3.c      0.119 - 0.154
+	cps3.cpp    0.203 -
