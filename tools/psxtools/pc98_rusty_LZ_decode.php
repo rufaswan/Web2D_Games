@@ -88,22 +88,15 @@ function rusty_decode( &$file, $st )
 //////////////////////////////
 function rusty( $fname )
 {
-	$bak = file_exists("$fname.bak");
-	if ( $bak )
-		$file = file_get_contents("$fname.bak");
-	else
-		$file = file_get_contents($fname);
-
+	$file = load_bakfile($fname);
 	if ( empty($file) )
 		return;
+
 	if ( substr($file, 0, 2) != "LZ" )
 		return;
 
-	if ( ! $bak )
-		file_put_contents("$fname.bak", $file);
-
 	$dec = rusty_decode( $file, 7 );
-	file_put_contents($fname, $dec);
+	save_file($fname, $dec);
 	return;
 }
 

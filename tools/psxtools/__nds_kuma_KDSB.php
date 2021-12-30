@@ -39,9 +39,13 @@ function kuma( $fname )
 	echo "== $fname : opcode ==\n";
 	for ( $i=0; $i < $op_cnt; $i++ )
 	{
-		$op = str2int($file, $op_off, 4);
+		$op = str2int($file, $op_off+0, 2);
+		$ar = str2int($file, $op_off+2, 2);
 			$op_off += 4;
-		printf("%3d : %8x\n", $i, $op);
+		printf("%3d : %4x,%4x\n", $i, $op, $ar);
+
+		global $gp_op;
+		$gp_op[$op] = 1;
 	} // for ( $i=0; $i < $op_cnt; $i++ )
 
 	echo "== $fname : sjis ==\n";
@@ -54,22 +58,27 @@ function kuma( $fname )
 	return;
 }
 
+$gp_op = array();
 for ( $i=1; $i < $argc; $i++ )
 	kuma( $argv[$i] );
 
+ksort($gp_op);
+echo "== op_list ==\n";
+foreach ( $gp_op as $k=>$v )
+	printf("  %4x\n", $k);
 /*
 iconv -f cp932 -t utf8
 
 drama momo 24 == eve_sumo_b24.kds
 == eve_sumo_b24.kds : opcode ==
-  0 :    90611
-  1 :   800a11
-  2 :   180711
+  0 :    90611  // char  set   9
+  1 :   800a11  // pos   set  80,0
+  2 :   180711  // anim  set  18
   3 :      911
-  4 :    60711
+  4 :    60711  // anim  set   6
   5 :      911
-  6 :   150711
-  7 :  1691200
+  6 :   150711  // anim  set   6
+  7 :  1691200  // voice set 169
   8 :      911
   9 : 414e0100
 == eve_sumo_b24.kds : sjis ==
@@ -79,7 +88,7 @@ drama momo 24 == eve_sumo_b24.kds
 歌ってたの
   2 : かわいいよね～
 
-RAM 2359790  KDSB eve_sumo_b24.kds
+RAM 2359790  KDSB eve_sumo_b24.kds [jp 23597c8]
 RAM 21ced80  FMBS momo01.mbs
 RAM 22e28b0  FMBS momo01.mbs
 
@@ -89,7 +98,15 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c3c  ldrh  r2[ 611], 0(r5[ 23597a0])
 	2026c40  ldrh  r1[   9], 2(r5[ 23597a0])
 	2026750  ldrb  r0[   6], 1(r4[ 23597a0])
-		if ( r0 == 1b )
+		1  rabbi-tan
+		2  neko-kun
+		3  tora-neesan
+		4  ushi-neesan
+		5  saru-jii
+		6  maguro
+		7  twin monkey
+		8  owner
+		9  sumomo
 
 	[MOMO LOADED]
 
@@ -98,14 +115,12 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c3c  ldrh  r2[ a11], 0(r5[ 23597a4])
 	2026c40  ldrh  r1[  80], 2(r5[ 23597a4])
 	2026750  ldrb  r0[   a], 1(r4[ 23597a4])
-		if ( r0 == 1b )
 
 	2026428  ldrb  r0[  11], 0(r4[ 23597a8])
 	2026434  ldrb  r0[   7], 1(r4[ 23597a8])
 	2026c3c  ldrh  r2[ 711], 0(r5[ 23597a8])
 	2026c40  ldrh  r1[  18], 2(r5[ 23597a8])
 	2026750  ldrb  r0[   7], 1(r4[ 23597a8])
-		if ( r0 == 1b )
 
 	2026428  ldrb  r0[  11], 0(r4[ 23597ac])
 	2026434  ldrb  r0[   9], 1(r4[ 23597ac])
@@ -113,7 +128,6 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c40  ldrh  r1[   0], 2(r5[ 23597ac])
 	20264d8  ldrb  r0[  11], 0(r4[ 23597ac])
 	2026750  ldrb  r0[   9], 1(r4[ 23597ac])
-		if ( r0 == 1b )
 
 	2027bac  ldrsbne  r0[82], 0(r7[ 23597c8])
 	20110b0  ldrb     r3[82], 0(r1[ 23597c8])
@@ -125,22 +139,66 @@ RAM 22e28b0  FMBS momo01.mbs
 	JP=0
 [INPUT WAIT]
 	2026428  ldrb  r0[  11], 0(r4[ 23597b0])
-		(r0 << 1c ) >> 1c // r0 & BIT4; sint4(r0)
+		(r0 << 1c ) >> 1c // N=0 Z=0 C=0 -V
 	2026434  ldrb  r0[   7], 1(r4[ 23597b0])
-		r8 = (ZF == 0) ? 0 : 1;
-		r0 -=  9
-		r0 == 11 // +NF +CF
+		r8  =  Z // (r0 & f) != 0
+		// r0 -=  9
+		// cmp r0, 0x11
+		// -2 = N=1 Z=0 C=1 V=0
+		// ls = (c==0 | Z==1)
+		case r0 (slt 11)
+			def:
+			a-e 12-14: // command
+				# 6498
+				bl  2026b84(r9, r4, 0, 94(r9))
+				break
+			9 f-10:
+				# 64b0
+				bl  2026b84(r9, r4, a0(r7)+70(r9)*4, 94(r9))
+				break
+			15:
+				# 64fc
+				break
+			16:
+				# 651c
+				break
+			17:
+				# 6560
+				break
+			18:
+				# 65e0
+				break
+			19:
+				# 6640
+				break
+			1a:
+				# 6704
+				break
+			11:
+				# 6748
+				ldrsh  r0,  2(r4)
+				str    r0, 94(r9)
+				break
+		esac
 	2026c3c  ldrh  r2[ 711], 0(r5[ 23597b0])
 	2026c40  ldrh  r2[   6], 2(r5[ 23597b0])
 	2026750  ldrb  r0[   7], 1(r4[ 23597b0])
-		if ( r0 == 1b )
+		case r0 (slt 1b)
+			7-8 d 11-12 15-16 18-1b:
+				# 67d0
+				r8 = 0
+			def:
+			0-6 9-c e-10 13-14 17:
+				break
+		esac
+		# 67d4
+		if ( r8 == 0 )
 
 	2026428  ldrb  r0[  11], 0(r4[ 23597b4])
 	2026c3c  ldrh  r2[ 911], 0(r5[ 23597b4])
 	2026c40  ldrh  r1[   0], 2(r5[ 23597b4])
 	20264d8  ldrb  r0[  11], 0(r4[ 23597b4])
 	2026750  ldrb  r0[   9], 1(r4[ 23597b4])
-		if ( r0 == 1b )
 
 	2027bac  ldrsbne  r0[82], 0(r7[ 23597d7])
 	20110b0  ldrb     r3[82], 0(r1[ 23597d7])
@@ -156,14 +214,12 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c3c  ldrh  r2[ 711], 0(r5[ 23597b8])
 	2026c40  ldrh  r1[  15], 2(r5[ 23597b8])
 	2026750  ldrb  r0[   7], 1(r4[ 23597b8])
-		if ( r0 == 1b )
 
 	2026428  ldrb  r0[   0], 0(r4[ 23597bc])
 	2026434  ldrb  r0[  12], 1(r4[ 23597bc])
 	2026c3c  ldrh  r2[1200], 0(r5[ 23597bc])
 	2026c40  ldrh  r1[ 169], 2(r5[ 23597bc])
 	2026750  ldrb  r0[  12], 1(r4[ 23597bc])
-		if ( r0 == 1b )
 
 	2026428  ldrb  r0[  11], 0(r4[ 23597c0])
 	2026434  ldrb  r0[   9], 1(r4[ 23597c0])
@@ -171,7 +227,6 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c40  ldrh  r1[   0], 2(r5[ 23597c0])
 	20264d8  ldrb  r0[  11], 0(r4[ 23597c0])
 	2026750  ldrb  r0[   9], 1(r4[ 23597c0])
-		if ( r0 == 1b )
 
 	2027bac  ldrsbne  r0[82], 0(r7[ 23597fc])
 	20110b0  ldrb     r3[82], 0(r1[ 23597fc])
@@ -187,7 +242,6 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c3c  ldrh  r2[ 100], 0(r5[ 23597c4])
 	2026c40  ldrh  r1[414e], 2(r5[ 23597c4])
 	2026750  ldrb  r0[   1], 1(r4[ 23597c4])
-		if ( r0 == 1b )
 [END]
 
 21cedf8 => 21e543c
@@ -197,4 +251,85 @@ RAM 22e28b0  FMBS momo01.mbs
 		r1 = 19 * 30 + 21e543c
 	20333cc  ldrsh  r12[19], c4(r0[ 21935f0])
 		=> 21936b4
+
+
+
+op list
+	1   00 10        // end
+	-
+	3   01           // title subtext
+	4   01           //
+	5   00           // screen shake
+	6   10 11 21     // char  set
+	7   10 11 20 21  // anim  set
+	8   10 11 20 21  //
+	9   11 21        // talk  text [11=c1 21=c2]
+	a   10 11 20 21  // pos   set
+	b   10 11 21     //
+	-
+	d   10 11 20 21  // face  set  1=right -1=left
+	e   01           // bg    set
+	f   11 21        // think text [11=c1 21=c2]
+	10  11 21        //
+	-
+	12  00           // voice set
+	13  00           // music set
+	14  00 20        // title card bg
+	15  10           //
+	16  10 20        //
+	17  11 21        //
+	18  10 20        //
+	19  00           //
+	1a  00           //
+	1b  00           // *bath*
+
+
+
+drama saru 38 == eve_saru_l06.kds
+== eve_saru_l06.kds : opcode ==
+  0 :    d1300  // bgm
+  1 :    71400
+  2 :     1510
+  3 :   5a0401
+  4 : ffff0e01
+  5 :    50610  // char 1
+  6 :      621  // char 2
+  7 :   440a10  // pos  1
+  8 :   bc0a21  // pos  2
+  9 :   190710  // anim 1
+ 10 :   df0721  // anim 2
+ 11 :    10d10  // face 1
+ 12 : ffff0d21  // face 2
+ 13 :   1e0301  // title
+ 14 :    a0710  // anim 1
+ 15 :  11b0721  // anim 2
+ 16 : 414e0500  // screen shake
+ 17 :  1131200  // voice
+ 18 :      911
+ 19 :   190710  // anim 1
+ 20 :   eb0721  // anim 2
+ 21 :  1231200  // voice
+ 22 :      911
+ 23 :      911
+ 24 :   220710  // anim 1
+ 25 :  1090721  // anim 2
+ 26 :   271200  // voice
+ 27 :      921
+ 28 :   2b0711  // anim 1
+ 29 :  10d1200  // voice
+ 30 :      911
+ 31 :   5a0401
+ 32 : 414e0100
+== eve_saru_l06.kds : sjis ==
+  0 : 持ちネタなんですね
+  1 : ゴフッ！
+  2 : 持病のコプルニコス症候群が
+発症したようじゃ…
+  3 : 体内の活力が失われて次第に…
+  4 : それは　まえにやったでしょ
+  5 : …そうじゃったかの？
+
+RAM 2384380  KDSB eve_saru_l06.kds [jp 2384414]
+RAM 2  FMBS .mbs
+RAM 2  FMBS .mbs
  */

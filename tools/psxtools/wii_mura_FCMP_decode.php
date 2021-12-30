@@ -88,22 +88,15 @@ function mura_decode( &$file, $st )
 //////////////////////////////
 function mura( $fname )
 {
-	$bak = file_exists("$fname.bak");
-	if ( $bak )
-		$file = file_get_contents("$fname.bak");
-	else
-		$file = file_get_contents($fname);
-
+	$file = load_bakfile($fname);
 	if ( empty($file) )
 		return;
+
 	if ( substr($file, 0, 4) != "FCMP" )
 		return;
 
-	if ( ! $bak )
-		file_put_contents("$fname.bak", $file);
-
 	$dec = mura_decode( $file, 12 );
-	file_put_contents($fname, $dec);
+	save_file($fname, $dec);
 	return;
 }
 

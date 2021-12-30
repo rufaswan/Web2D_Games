@@ -219,12 +219,12 @@ Order / bitflag
 	00 01 00  Seibzehn
 	00 02 00  Crescens
 	00 04 00  El-Regurus
-	00 08 00  Heimdal/Sword
+	00 08 00  El-Fenrir
 	00 10 00  El-Andvari
 	00 20 00  El-Renmazuo
 	00 40 00  El-Stier
 	00 80 00  Xenogears
-	00 00 01  El-Fenrir
+	00 00 01  Heimdal/Sword
 ==============================
 Items
 2594.bin/0.bin (BLOCK = 0x10 or 16 bytes)
@@ -507,12 +507,12 @@ Gear Skill + Spells
 	30  24  Seibzehn
 	31  25  Crescens
 	32  26  El-Regurus
-	33  27  Heimdal/Sword
+	33  27  El-Fenrir
 	34  28  El-Andvari
 	35  29  El-Renmazuo
 	36  30  El-Stier
 	37  31  Xenogears
-	38  32  El-Fenrir
+	38  32  Heimdal/Sword
 	--  33  ?xenogear hyper/weltall-2 id?
 	--  34  ?xenogear hyper/weltall-2 id?
 BLOCK 0x0   / Deathblow Area
@@ -1000,4 +1000,1481 @@ c8
 6a4
 708
 76c
+==============================
+Xenogears ROM map/ISO list
+SLPS 011.60 JP disc 1 [3771]
+	0  Movie [17]
+		1-17  .STR
+	19  [OVER] movie playback
+	21  SYSTEM.CNF
+	22  SLPS_011.60
+	23  [6]
+		24-27  wds
+		28
+		29
+	34  Overlay [6]
+		35  [LZ][OVER] Battling
+		36  [LZ][OVER] event loop
+		37  [LZ][OVER]
+		38  [LZ][OVER] language
+		39  [LZ][OVER] memory card
+		40  [LZ][OVER] movie cdrom disk
+	45
+	46
+	47
+	48
+	49
+	50  Battling Gear Icons
+	51  [49]
+		52
+		...
+		100
+	116  [7]
+		117-123  wds
+	133  Music [146] [73 pairs]
+		# ID+1 is the midi data
+		134
+		...
+		278
+	390  [11]
+		391-401  seds
+	423  [2]
+		424
+		425  [PAK]
+	426  Field [33]
+		427  [LZ] Fei
+		428  [LZ] Elly
+		429  [LZ] Citan
+		430  [LZ] Bart
+		431  [LZ] Billy
+		432  [LZ] Rico
+		433  [LZ] Emeralda
+		434  [LZ] Chu-chu
+		435  [LZ] Maria
+		436  [LZ] Citan/Sword
+		437  [LZ] Emeralda/Adult
+		438  [LZ] Margie
+		439  [LZ] *fei*
+		440  [LZ] *fei*
+		441  [LZ] *fei*
+		442  [LZ] *fei*
+		443  [LZ] Weltall
+		444  [LZ] Weltall-2
+		445  [LZ] Vierge
+		446  [LZ] Heimdal
+		447  [LZ] Brigandier
+		448  [LZ] Renmazuo
+		449  [LZ] Stier
+		450  [LZ] Chu-chu
+		451  [LZ] Siebzehn
+		452  [LZ] Crescens
+		453  [LZ] *vierge*
+		454  [LZ] El-Fenrir
+		455  [LZ] El-Andvari
+		456  [LZ] El-Renmazuo
+		457  [LZ] El-Stier
+		458  [LZ] Xenogears
+		459  [LZ] Heimdal/Sword
+	491  Face [91]
+		492-582  PS1 TIM 64x64
+	588  [7]
+		589  [PAK ] compass , PS1 TIM
+		590  seds
+		591  [OVER] movie playback
+		592  PS1 TIM
+		593  [SJIS] Credits
+		594  PS1 TIM
+		595  [OVER] encount
+	605  Maps [1460] [730 pairs]
+		# ID+1 is the texture data
+		606  debug map
+		608  Lahan
+		610  [DRM] Lahan evacuate
+		612  [DRM] Lahan end
+		614  [DRM] Lahan opening
+		616  Lahan - Lucca house
+		618  Lahan - Shop
+		620  Lahan - Rock-Paper-Scissor house
+		622  Lahan - 120G Grandma
+		624  Lahan - Bar
+		626
+		628  Lahan - Alice house
+		630  Lahan - Alice room
+		632  Lahan - Timothy + Chef house
+		634  Lahan - Fei room
+		636  Path to Citan house
+		638
+		640  Citan house - workshop
+		642
+		644  Citan house - kitchen
+		646
+		648  Citan house - Musicbox room
+		650  [DRM] Blackmoon Forest - Elly before attacked
+		652  Blackmoon Forest
+		654  [DRM] Blackmoon Forest - After Ranker
+		656  [DRM] Blackmoon Forest - Elly after attacked
+		658  [DRM] Blackmoon Forest - Camp - Citan kick out Elly
+		660  [DRM] Lahan - Elly landing
+		662
+		664  Dazil - waterworks
+		666  Dazil - warehouse
+		668
+		670
+		672
+		674
+		676  Dazil
+		678  Dazil
+		680  Dazil - Treasure Hunter Assoc
+		682  Dazil - Aveh Army Guards
+		684
+		686  Dazil - Big Joe
+		688
+		690
+		692
+		694
+		696  Dazil - Ethos workshop
+		698
+		700  Duneman Isle - ride
+		702
+		704  [DRM] Desert
+		706  [DRM] Desert
+		708
+		710  Duneman Isle - Yamato Sword
+		712
+		714
+		716
+		718
+		720
+		722
+		724
+		726
+		728
+		730
+		732  [DRM] Desert - Bart intro
+		734
+		736
+		738
+		740
+		742
+		744
+		746
+		748
+		750
+		752
+		754
+		756
+		758
+		760
+		762
+		764
+		766
+		768
+		770
+		772
+		774
+		776
+		778  Nisan
+		780
+		782
+		784
+		786
+		788
+		790
+		792
+		794
+		796
+		798
+		800
+		802
+		804
+		806
+		808
+		810  Aveh - Bledavik - before tournament
+		812  Aveh - Bledavik - after tournament
+		814
+		816
+		818
+		820
+		822
+		824
+		826
+		828
+		830
+		832
+		834  armor shop
+		836
+		838
+		840
+		842
+		844
+		846  weapon shop
+		848
+		850
+		852
+		854
+		856
+		858  Aveh - Square
+		860
+		862
+		864  Aveh - Square - Tent - mirror
+		866
+		868
+		870
+		872
+		874
+		876
+		878
+		880
+		882  door peak
+		884  door peak
+		886  door peak
+		888  door peak
+		890  door peak
+		892  door peak
+		894  door peak
+		896  door peak
+		898  door peak
+		900
+		902  Aveh - Tournament tent
+		904  Aveh - Tournament tent
+		906
+		908
+		910
+		912
+		914
+		916
+		918
+		920
+		922
+		924
+		926
+		928
+		930
+		932
+		934
+		936
+		938
+		940
+		942
+		944
+		946
+		948
+		950
+		952
+		954
+		956
+		958
+		960
+		962
+		964
+		966  Desert - Dora
+		968  Desert - Dora
+		970
+		972  [DRM] Desert - Dora
+		974  [DRM] Desert - Dora
+		976  [DRM] Desert - Dora
+		978  [DRM] Desert - Dora
+		980  [DRM] Desert - Bart vs Id
+		982
+		984  [DRM] Desert - Bart vs Id
+		986  [DRM] Desert - Bart vs Id
+		988
+		990  [DRM] Desert - Bart vs Id
+		992  [DRM] Desert - Dora
+		994
+		996  Kislev - A Block
+		998  Kislev - D Block
+		1000
+		1002
+		1004
+		1006
+		1008
+		1010
+		1012
+		1014
+		1016
+		1018
+		1020
+		1022
+		1024
+		1026
+		1028  Kislev - D Block - Dorm - Dining hall
+		1030
+		1032  Kislev - D Block - Dorm - Rank X Beds
+		1034
+		1036
+		1038
+		1040  Kislev - D Block - Bar
+		1042
+		1044
+		1046
+		1048  Kislev - Battling Arena - first time
+		1050  Kislev - Battling Arena
+		1052  Kislev - Battling Arena - tutorial
+		1054
+		1056
+		1058
+		1060
+		1062
+		1064
+		1066
+		1068
+		1070
+		1072
+		1074
+		1076
+		1078
+		1080
+		1082
+		1084
+		1086
+		1088
+		1090
+		1092
+		1094
+		1096
+		1098
+		1100
+		1102
+		1104
+		1106
+		1108
+		1110
+		1112
+		1114
+		1116
+		1118
+		1120
+		1122
+		1124  door peak
+		1126
+		1128
+		1130
+		1132
+		1134
+		1136
+		1138
+		1140
+		1142
+		1144
+		1146
+		1148  [DRM] Yggdrasil - Bridge - Bart Missile
+		1150
+		1152  [DRM] Krelian kill Gazel Ministers
+		1154
+		1156  [DRM] Yggdrasil - Bridge - after Id
+		1158
+		1160
+		1162
+		1164
+		1166
+		1168
+		1170
+		1172
+		1174
+		1176
+		1178
+		1180  [DRM] Yggdrasil - Bridge - Bart Missile
+		1182  Yggdrasil - Bar / Dining Hall
+		1184
+		1186  Yggdrasil - Bridge
+		1188
+		1190
+		1192
+		1194
+		1196
+		1198
+		1200
+		1202
+		1204
+		1206
+		1208
+		1210
+		1212
+		1214
+		1216
+		1218
+		1220
+		1222
+		1224
+		1226
+		1228
+		1230
+		1232
+		1234  Thames - Bridge
+		1236
+		1238
+		1240
+		1242
+		1244
+		1246
+		1248
+		1250
+		1252
+		1254
+		1256
+		1258
+		1260
+		1262
+		1264
+		1266
+		1268
+		1270
+		1272
+		1274
+		1276
+		1278
+		1280
+		1282
+		1284
+		1286
+		1288
+		1290
+		1292
+		1294
+		1296
+		1298
+		1300
+		1302
+		1304
+		1306
+		1308
+		1310
+		1312
+		1314
+		1316
+		1318
+		1320
+		1322
+		1324  Ethos - basement - data bank
+		1326
+		1328
+		1330
+		1332
+		1334
+		1336
+		1338
+		1340
+		1342
+		1344
+		1346
+		1348
+		1350
+		1352
+		1354
+		1356
+		1358
+		1360
+		1362
+		1364
+		1366
+		1368
+		1370
+		1372
+		1374
+		1376
+		1378
+		1380
+		1382
+		1384
+		1386
+		1388
+		1390
+		1392
+		1394
+		1396
+		1398
+		1400
+		1402
+		1404
+		1406
+		1408
+		1410  [DRM] Lighthouse - entrance
+		1412
+		1414
+		1416
+		1418
+		1420
+		1422  replay station control room
+		1424
+		1426
+		1428
+		1430
+		1432
+		1434
+		1436
+		1438
+		1440
+		1442
+		1444
+		1446
+		1448  shevat
+		1450
+		1452
+		1454
+		1456
+		1458
+		1460
+		1462
+		1464
+		1466
+		1468
+		1470
+		1472
+		1474
+		1476
+		1478
+		1480
+		1482
+		1484
+		1486
+		1488
+		1490
+		1492
+		1494
+		1496
+		1498
+		1500
+		1502
+		1504
+		1506
+		1508
+		1510
+		1512  Shevat - Palace - Queen's throne
+		1514
+		1516
+		1518
+		1520
+		1522
+		1524
+		1526
+		1528
+		1530
+		1532
+		1534
+		1536
+		1538
+		1540
+		1542
+		1544
+		1546
+		1548
+		1550
+		1552  [DRM] Shevat - Palace - Queen's throne - during invasion
+		1554
+		1556
+		1558
+		1560
+		1562
+		1564
+		1566
+		1568
+		1570
+		1572
+		1574
+		1576
+		1578
+		1580
+		1582
+		1584
+		1586
+		1588
+		1590
+		1592
+		1594
+		1596
+		1598
+		1600
+		1602
+		1604
+		1606
+		1608
+		1610
+		1612
+		1614
+		1616
+		1618
+		1620
+		1622
+		1624
+		1626
+		1628
+		1630
+		1632
+		1634
+		1636
+		1638
+		1640
+		1642
+		1644
+		1646
+		1648
+		1650
+		1652
+		1654
+		1656
+		1658
+		1660
+		1662
+		1664
+		1666
+		1668
+		1670
+		1672
+		1674  Solaris - Save room
+		1676
+		1678
+		1680
+		1682
+		1684
+		1686
+		1688
+		1690  [DRM] Solaris - Elly room
+		1692
+		1694
+		1696
+		1698
+		1700  [DRM] Solaris - eating Food cans
+		1702
+		1704
+		1706
+		1708
+		1710
+		1712
+		1714
+		1716
+		1718
+		1720
+		1722
+		1724
+		1726
+		1728
+		1730
+		1732
+		1734
+		1736
+		1738
+		1740
+		1742
+		1744
+		1746
+		1748
+		1750
+		1752
+		1754
+		1756
+		1758
+		1760
+		1762
+		1764
+		1766
+		1768
+		1770
+		1772
+		1774
+		1776
+		1778
+		1780
+		1782
+		1784
+		1786
+		1788
+		1790
+		1792
+		1794
+		1796
+		1798
+		1800
+		1802
+		1804
+		1806
+		1808
+		1810
+		1812
+		1814
+		1816
+		1818
+		1820
+		1822
+		1824
+		1826
+		1828  [DRM] Yggdrasil - Bridge
+		1830
+		1832
+		1834
+		1836
+		1838
+		1840  [DRM] DISC 2 chair room
+		1842  [DRM] DISC 2 chair room
+		1844  [DRM] DISC 2 chair room
+		1846  [DRM] DISC 2 chair room
+		1848
+		1850
+		1852
+		1854
+		1856  [DRM] DISC 2 chair room
+		1858
+		1860
+		1862
+		1864
+		1866
+		1868  Anima Dungeon - ABCD code
+		1870  [DRM] Anima Dungeon - Elements
+		1872
+		1874
+		1876  Anima Dungeon - ABCD code
+		1878
+		1880
+		1882  [DRM] Anima Dungeo - Relic - Billy
+		1884
+		1886  [DRM] Anima Dungeo - Relic - Rico
+		1888  Anima Dungeon
+		1890  shopkeep johnny
+		1892
+		1894
+		1896
+		1898
+		1900  Anima Dungeon - Ceiling Drop room
+		1902
+		1904
+		1906
+		1908
+		1910
+		1912
+		1914
+		1916
+		1918
+		1920
+		1922
+		1924
+		1926
+		1928
+		1930
+		1932
+		1934
+		1936
+		1938
+		1940
+		1942
+		1944
+		1946
+		1948
+		1950
+		1952
+		1954
+		1956  [DRM] old Nisan - Portrait room
+		1958
+		1960
+		1962
+		1964
+		1966
+		1968
+		1970
+		1972
+		1974
+		1976
+		1978
+		1980
+		1982
+		1984
+		1986
+		1988
+		1990
+		1992
+		1994
+		1996
+		1998
+		2000
+		2002
+		2004
+		2006
+		2008
+		2010
+		2012
+		2014
+		2016
+		2018
+		2020
+		2022
+		2024
+		2026
+		2028
+		2030
+		2032
+		2034
+		2036
+		2038
+		2040
+		2042
+		2044
+		2046  debug
+		2048  debug
+		2050  debug
+		2052  debug
+		2054  debug
+		2056
+		2058  debug
+		2060  debug
+		2062  debug - movie view , music mode
+		2064  debug
+	2142  [145]
+		2143  [OVER]
+		2144-2287
+	2335  Char Cutscene [121]
+		2336-2341  Fei
+		2342-2347  Elly
+		2348-2353  Citan
+		2354-2359  Bart
+		2360-2365  Billy
+		2366-2371  Rico
+		2372-2377  Emeralda
+		2378-2383  Chu-chu
+		2384-2389  Maria
+		2390-2395  Emeralda/Adult
+		2396-2402  Fei
+		2403-2405  Elly
+		2406-2407  *dummy*
+		2408       Elly
+		2409       Fei
+		2410       Brigandier
+		2411-2412  Fei
+		2413-2422  Citan
+		2423-2425  Emeralda
+		2426       Bart
+		2427-2428  Fei
+		2429-2434  Elly
+		2435       Rico
+		2436-2438  Elly
+		2439       Billy
+		2440-2441  Bart
+		2442-2450  Fei
+		2451-2454  Elly
+		2455-2456  Fei
+	2464  Events [88]
+		2465-2467  BG   , PS1 TIM 320x224
+		2468-2476  Map  , PS1 TIM 320x240
+		2477-2481  Deus , PS1 TIM 256x192
+		2482-2525  BG   , PS1 TIM 320x224
+			2488  dummy 320x240
+			2494  dummy 320x240
+			2512  dummy 320x240
+		2526-2528  Deus , PS1 TIM 256x192
+		2529-2531  Cain , PS1 TIM 320x256
+		2532-2539  BG   , PS1 TIM 320x224
+		2540-2545  Deus , PS1 TIM 256x192
+		2546       Deus , PS1 TIM 256x156
+		2547-2550  BG   , PS1 TIM 320x224
+		2551-2552  End  , PS1 TIM 640x224
+	2593  [PAK-LZ] Data
+	2594  [PAK-LZ] Data
+	2595  Base Stats
+	2596
+	2597
+	2598
+	2599
+	2600
+	2601
+	2602
+	2603
+	2604
+	2605
+	2606
+	2607
+	2608
+	2609
+	2610
+	2611
+	2612  [4]
+		2613
+		2614  [PAK-LZ] Data
+		2615
+		2616
+	2617  Enemies [152] [76 pairs]
+		# ID+1 is the texture/animation data
+		2618  *dummy*
+		2620  Jackal, Hobgob, Lucre Bug, Nolucre Bug, Hobgob, Armor Grub, Hobgob
+		2622  [GEAR] Gigafoot, Gigafoot, Trooper, Trooper
+		2624  Forest Elf, Dive Bomber, Gonzalez, Leonardo, Heinrich, Vargas, Dwarf, Forest Elf
+		2626  Aveh Corporal, Aveh Soldier, Aveh Corporal, Aveh Soldier, Aveh Guard, Aveh Guard, ShakhanGuard
+		2628  [MIX ] Sand Man, Tin Robo, Dune Man, Neo Tin Robo, Super Tin Robo
+		2630  Shellbelle, Hammerhead, Shellbell F1, Hammerhead F1
+		2632  Carrier, Shade, Suzarn, Carrier F1
+		2634  Dan, Wiseman, Wiseman
+		2636  [GEAR] Alpha Weltall, Musha Mk100, NeoMushaMk100
+		2638  Assassin, Assassin
+		2640  [MIX ] Rankar Dragon, Rankar R, WM Rankar 1, WM Rankar 2
+			+Elly
+		2642  Armor Grub, Armor Wasp, Acid Frog, Sand Shark, Mullet, Rain Frog, Sand Shark
+		2644  [GEAR] Vierge, Alpha Weltall, True Weltall
+		2646  [GEAR] Clawknight, Swordknight, Aegisknight, Wandknight, Clawknight R, Swordknight R, Aegisknight R, Wandknight R
+		2648  [GEAR] Alkanshel, Schpariel, Alkanshel
+		2650  [MIX ] HarquebusMk10, Hatamoto Mk3, Mechanic
+		2652  Neo Wels, Wels
+		2654  [GEAR] Wyvern, Miang's Gear, Haishao, Haishao
+		2656  [GEAR] Calamity, Dora
+		2658  [GEAR] Amphysvena, Opiomorph
+		2660  [GEAR] Nomad Fix Bot, Salvager
+		2662  [GEAR] Twin Burner, Spear Trooper
+		2664  Rotten Sod, Slugger, Abandon, Orphan
+		2666  Croaker Tribe, Forbidden, Forbidden, Forbidden, Forbidden, Croaker Tribe
+		2668  Margie, Shakhan Guard, Guard Machine, Shakhan Monk, Freelancer, Defencer
+		2670  [GEAR] Traffic Jam, Traffic Jam
+		2672  [GEAR] Medusoid, May Fly, Medusoid
+		2674  Rico
+		2676  [GEAR] Hecht, Super Aerod
+		2678  Ripper, Phobia, Dorothy, Death Eater
+		2680  [GEAR] Brigandier, Crescens
+		2682  Edelweiss, Planter
+		2684  Littlefoot, Solaris Guard, Security Cube
+		2686  [GEAR] Eagle Gunner, Eagle Armor, Eagle Blade
+		2688  [GEAR] White Knight, Citadel, Avalanche
+		2690  [GEAR] Shinobi Mk0, Mammoth
+		2692  [GEAR] Conjurer, Edin, Gun Drone
+		2694  [MIX ] Fis-6, Fis-6Mechanic
+		2696  [GEAR] Wyrm, Death Scythe, Wyrm, Death Scythe
+		2698  Hopper, Lol' Kobold
+		2700  Tears, Gimmick, Neo Tears, Neo Gimmick
+		2702  [GEAR] Seibzehn, Achtzehn, Achtzehn, Achtzehn
+		2704  [GEAR] Sand Tripper, Quadrafoot
+		2706  [MIX ] Sufal, Sufal Gear, Sufal Gear, Sufal, Sufal Mass
+		2708  Miang, Ramsus, Miang
+			+Margie
+			+Id (1 frame)
+			+Fei
+		2710  [GEAR] Main Gun, Small Gun
+		2712  Big Joe, Scud
+		2714  [GEAR] Giant Wels, Haishao
+		2716  Rhino, Batrat
+		2718  Gebler Guard, Swordsman, Swordsman
+		2720  Id
+		2722  [GEAR] Id
+		2724  [GEAR] Shakhan, Vendetta
+		2726  [GEAR] Bladegash, Skyghene, Marinebasher, Grandgrowl, Bladegash
+		2728  [GEAR] G Elements, Hammer
+		2730  Grahf, Grahf, Executioner
+		2732  Dominia, Tolone, Seraphita, Kelvina, Tolone, Seraphita
+		2734  [GEAR] Snow Bot, Bot
+		2736  [GEAR] Rapid Fire, Breaker, Fuel Tank
+		2738  [GEAR] Aragonite, Merman
+		2740  [GEAR] Etone, Etone, Twin Burner, Neo Etone, Neo Etone
+		2742  [GEAR] Metatron, Sundel, Harlute, Marlute
+		2744  [GEAR] Deus, Deus, Deus
+		2746  [GEAR] Deus, Ft.Hurricane
+		2748  [GEAR] Pedestal, Airwalk, Eagle Wing
+		2750  [GEAR] Golem, Griffon, Griffon
+		2752  Redrum, Bloody, Bloody Bros
+		2754  ? (Demon of Elru)
+			+Ramsus
+		2756  Pecking Duck, Lil'Allemange
+		2758  [GEAR] Id (Gear)
+		2760  [GEAR] Tusk-Tusk, Dragon, Dragon, Dragon, Tusk-Tusk, Dragon, Dragon, Dragon
+		2762  [GEAR] Wind Seraph, Earth Seraph, Power Seraph
+		2764  [GEAR] Sword Seraph, Heal Seraph, Fire Seraph, Water Seraph
+		2766  [GEAR] Sword Seraph, Heal Seraph, Fire Seraph, Water Seraph
+		2768  [GEAR] Urobolus
+	2770
+	2771  [2]
+		2772
+		2773
+	2774  [150] [75 pairs]
+		# ID+1 is the model data
+		2775
+		...
+		2923
+	2925  [62]
+		2926-2987
+	2988  Fei
+	2989  Elly
+	2990  Bart
+	2991  Citan
+	2992  Billy
+	2993  Rico
+	2994  Emeralda
+	2995  Chu-chu
+	2996  Maria
+	2997  Citan/Sword
+	2998  Emeralda/Adult
+	2999  *elly*
+	3000  *elly*
+	3001  *elly*
+	3002  *elly*
+	3003  *elly*
+	3004  *elly*
+	3005  Fei            Deathblow
+	3006  Elly           Deathblow
+	3007  Bart           Deathblow
+	3008  Citan          Deathblow
+	3009  Billy          Deathblow
+	3010  Rico           Deathblow
+	3011  Emeralda       Deathblow
+	3012  Chu-chu        Deathblow
+	3013  Maria          Deathblow
+	3014  Citan/Sword    Deathblow
+	3015  Emeralda/Adult Deathblow
+	3016  *elly/db*
+	3017  *elly/db*
+	3018  seds
+	3019-3024  wds
+	3025  seds
+	3026-3033  wds
+	3034  seds
+	3035-3040  wds
+	3041  seds
+	3042-3048  wds
+	3049  seds
+	3050-3054  wds
+	3055  seds
+	3056-3060  wds
+	3061  seds
+	3062-3066  wds
+	3067  seds
+	3068-3073  wds
+	3074  seds
+	3075-3079  wds
+	3080
+	3081
+	3082  seds
+	3083-3086  wds
+	3087
+	3088
+	3089
+	3090  seds
+	3091
+	3092-3093  wds
+	3094  seds
+	3095  smds
+	3096
+	3097
+	3098
+	3099
+	3100
+	3101
+	3102
+	3103
+	3104
+	3105
+	3106
+	3107
+	3108
+	3109
+	3110
+	3111
+	3112
+	3113
+	3114
+	3115
+	3116
+	3117
+	3118
+	3119
+	3120
+	3121
+	3122
+	3123
+	3124
+	3125
+	3126
+	3127
+	3128
+	3129
+	3130
+	3131
+	3132
+	3133
+	3134
+	3135
+	3136
+	3137
+	3138
+	3139
+	3140
+	3141
+	3142
+	3143
+	3144
+	3145
+	3146
+	3147
+	3148  [231]
+		3147-3379
+	3380  Spells [534]
+		# 245 spr+tex PAIR + 3891 stray spr
+		#  43 BIN
+		3381-3412  BIN
+		3413  Fei
+		3415  Fei earth   deathblow
+		3417  Fei fire    deathblow
+		3419  Fei ice     deathblow
+		3421  Fei thunder deathblow
+		3423  Fei
+		3425  [ANIM]
+		3427  [ANIM]
+		3429  [ANIM]
+		3431  [ANIM]
+		3433  [ANIM]
+		3435  [ANIM]
+		3437  [ANIM]
+		3439  [ANIM]
+		3441  [ANIM]
+		3443  [ANIM]
+		3445  [ANIM]
+		3447  [ANIM]
+		3449  [ANIM]
+		3451  [ANIM]
+		3453  [ANIM]
+		3455  [ANIM]
+		3457  Elly
+		3459  Elly
+		3461  Elly
+		3463  Elly
+		3465  [ANIM]
+		3467  [ANIM]
+		3469  [ANIM]
+		3471  [ANIM]
+		3473  [ANIM]
+		3475  [ANIM]
+		3477  [ANIM]
+		3479  [ANIM]
+		3481  [ANIM]
+		3483  [ANIM]
+		3485  [ANIM]
+		3487  [ANIM]
+		3489  [ANIM]
+		3491  [ANIM]
+		3493  [ANIM]
+		3495  [ANIM]
+		3497  [ANIM]
+		3499  [ANIM]
+		3501  [ANIM]
+		3503  [ANIM]
+		3505  [ANIM]
+		3507  Citan
+		3509  Citan
+		3511  Citan
+		3513  Citan
+		3515  Citan/Sword
+		3517  Citan/Sword
+		3519  Citan/Sword
+		3521  Citan/Sword
+		3523  [ANIM]
+		3525  [ANIM]
+		3527  [ANIM] wind
+		3529  [ANIM] earth
+		3531  [ANIM] fire
+		3533  [ANIM] water
+		3535  [ANIM]
+		3537  [ANIM]
+		3539  [ANIM] light
+		3541  [ANIM] dark
+		3543  [ANIM]
+		3545  [ANIM]
+		3547  [ANIM]
+		3549  [ANIM]
+		3551  [ANIM]
+		3553  [ANIM]
+		3555  [ANIM]
+		3557  [ANIM]
+		3559  [ANIM]
+		3561  Bart
+		3563  Bart
+		3565  Bart
+		3567  Bart
+		3569  [ANIM]
+		3571  [ANIM]
+		3573  [ANIM]
+		3575  [ANIM]
+		3577  [ANIM] dex eva-up
+		3579  [ANIM]
+		3581  [ANIM]
+		3583  [ANIM]
+		3585  [ANIM]
+		3587  [ANIM]
+		3589  [ANIM]
+		3591  [ANIM]
+		3593  [ANIM]
+		3595  [ANIM]
+		3597  [ANIM]
+		3599  [ANIM]
+		3601  Billy
+		3603  Billy
+		3605  Billy
+		3607  [ANIM]
+		3609  [ANIM]
+		3611  [ANIM]
+		3613  [ANIM]
+		3615  [ANIM]
+		3617  [ANIM]
+		3619  [ANIM]
+		3621  [ANIM]
+		3623  [ANIM]
+		3625  [ANIM]
+		3627  [ANIM]
+		3629  [ANIM]
+		3631  [ANIM]
+		3633  [ANIM]
+		3635  [ANIM]
+		3637  [ANIM]
+		3639  Rico
+		3641  Rico
+		3643  Rico
+		3645  [ANIM]
+		3647  [ANIM]
+		3649  [ANIM]
+		3651  Rico
+		3653  [ANIM]
+		3655  [ANIM]
+		3657  [ANIM]
+		3659  [ANIM]
+		3661  Emeralda
+		3663  Emeralda
+		3665  Emeralda
+		3667  Emeralda/Adult
+		3669  Emeralda/Adult
+		3671  Emeralda/Adult
+		3673  Emeralda/Adult
+		3675  [ANIM]
+		3677  [ANIM]
+		3679  [ANIM]
+		3681  [ANIM]
+		3683  [ANIM]
+		3685  [ANIM]
+		3687  [ANIM]
+		3689  [ANIM]
+		3691  [ANIM]
+		3693  [ANIM]
+		3695  [ANIM]
+		3697  [ANIM]
+		3699  [ANIM]
+		3701  Chu-chu
+		3703  Chu-chu
+		3705  Chu-chu
+		3707  Chu-chu
+		3709  Chu-chu
+		3711  [ANIM]
+		3713  [ANIM]
+		3715  [ANIM]
+		3717  [ANIM]
+		3719  [ANIM]
+		3721  [ANIM]
+		3723  [ANIM]
+		3725  [ANIM]
+		3727  [ANIM]
+		3729  [ANIM]
+		3731  [ANIM]
+		3733  [ANIM]
+		3735  [ANIM]
+		3737  [ANIM]
+		3739  [ANIM]
+		3741  [ANIM]
+		3743  [ANIM]
+		3745  [ANIM]
+		3747  [ANIM]
+		3749  [ANIM]
+		3751  [ANIM]
+		3753  [ANIM]
+		3755  [ANIM]
+		3757  [ANIM]
+		3759  [ANIM]
+		3761  [ANIM]
+		3763  [ANIM]
+		3765  [ANIM] wind
+		3767  [ANIM] earth
+		3769  [ANIM] fire
+		3771  [ANIM] water
+		3773  [ANIM]
+		3775  [ANIM]
+		3777  [ANIM]
+		3779  [ANIM]
+		3781  [ANIM]
+		3783  [ANIM]
+		3785  [ANIM]
+		3787  [ANIM]
+		3789  [ANIM]
+		3791  [ANIM]
+		3793  [ANIM]
+		3795  [ANIM]
+		3797  [ANIM]
+		3799  [ANIM]
+		3801  [ANIM]
+		3803  [ANIM]
+		3805  [ANIM]
+		3807  [ANIM]
+		3809  [ANIM]
+		3811  [ANIM]
+		3813  [ANIM]
+		3815  [ANIM]
+		3817  [ANIM]
+		3819  [ANIM] fire
+		3821  [ANIM] water
+		3823  [ANIM]
+		3825  [ANIM]
+		3827  [ANIM]
+		3829  [ANIM]
+		3831  [ANIM]
+		3833  Id
+		3835  [ANIM]
+		3837  Tolone Thunder
+		3839  [ANIM]
+		3841  [ANIM]
+		3843  [ANIM]
+		3845  [ANIM]
+		3847  [ANIM] Grahf Deathblow
+		3849  [ANIM]
+		3851  [ANIM]
+		3853  [ANIM]
+		3855  [ANIM]
+		3857  BIN
+		3858  BIN
+		3859  [ANIM]
+		3861  [ANIM]
+		3863  [ANIM]
+		3865  [ANIM]
+		3867  [ANIM]
+		3869  [ANIM]
+		3871  [ANIM]
+		3873  BIN
+		3874  BIN
+		3875  BIN
+		3876  BIN
+		3877  [ANIM]
+		3879  [ANIM]
+		3881  BIN
+		3882  BIN
+		3883  [ANIM]
+		3885  BIN
+		3886  BIN
+		3887  [ANIM]
+		3889  [ANIM]
+		3891  [ANIM] stray pair
+		3892  It's CDMAKE Dummy !
+		3893  [ANIM]
+		3895  [ANIM]
+		3897  [ANIM]
+		3899  [ANIM] Etone
+		3901  [ANIM]
+		3903  [ANIM]
+		3905  [ANIM]
+		3907  [ANIM]
+		3909  [ANIM]
+		3911  [ANIM]
+		3913  [ANIM]
+	3915
+	3916
+	3917
+	3918
+	3919
+	3920
+	3921  Char Overworld [16]
+		3922  Fei
+		3923  Elly
+		3924  Citan
+		3925  Bart
+		3926  Billy
+		3927  Rico
+		3928  Emeralda
+		3929  Chu-chu
+		3930  Maria
+		3931  Citan/Sword
+		3932  Emeralda/Adult
+		3933  *fei*
+		3934  *fei*
+		3935  *fei*
+		3936  *fei*
+		3937  *fei*
+	3938  Gear/2D Overworld [17]
+		3939  Weltall
+		3940  Weltall-2
+		3941  Virge
+		3942  Heimdal
+		3943  Brigandier
+		3944  Renmazuo
+		3945  Stier
+		3946  Chu-chu
+		3947  Siebzehn
+		3948  Crescens
+		3949  *weltall*
+		3950  El-Fenrir
+		3951  El-Andvari
+		3952  El-Renmazuo
+		3953  El-Stier
+		3954  Xenogears
+		3955  Heimdal/Sword
+	3956  [2]
+		3957
+		3958  [PAK-LZ] Data
+	3959  [3]
+		3960
+		3961
+		3962
+	3963  [10]
+		3964  [LZ-PAK] data
+		3965  [LZ-PAK] PS1 TIM
+		3966  [LZ-PAK] PS1 TIM
+		3967  wds
+		3968  smds
+		3969  seds
+		3970  smds
+		3971  smds
+		3972
+		3973
+	3974  [10]
+		3975-3984  *REFER ABOVE*
+	3985  [10]
+		3986-3995  *REFER ABOVE*
+	3996  [10]
+		3997-4006  *REFER ABOVE*
+	4007  [10]
+		4008-4017  *REFER ABOVE*
+	4018  [10]
+		4019-4028  *REFER ABOVE*
+	4029  [10]
+		4030-4039  *REFER ABOVE*
+	4040  [10]
+		4041-4050  *REFER ABOVE*
+	4051  [10]
+		4052-4061  *REFER ABOVE*
+	4062  [10]
+		4063-4072  *REFER ABOVE*
+	4073  [10]
+		4074-4083  *REFER ABOVE*
+	4084  [10]
+		4085-4094  *REFER ABOVE*
+	4095  [10]
+		4096-4105  *REFER ABOVE*
+	4106  [10]
+		4107-4116  *REFER ABOVE*
+	4117  [10]
+		4118-4127  *REFER ABOVE*
+	4128  [10]
+		4129-4138  *REFER ABOVE*
+	4139  [10]
+		4140-4149  *REFER ABOVE*
+	4150  *PADDING*
+
+SLPS 011.61 JP disc 2 [3762]
+	0  Movie [8]
+		1-8  .STR
+	10  [OVER] movie playback
+	12  SYSTEM.CNF
+	13  SLPS_011.61
+	15  == 24 disc 1
+	16  == 25 disc 1
+	...
+	id + 9 == disc 1
+
+SLUS 006.64 US disc 1 [3771]
+	same as JP disc 1
+	except
+		22  SLUS_006.64
+
+SLUS 006.69 US disc 2 [3766]
+	0  Movie [12]
+		1-12  .STR
+	14  [OVER] movie playback
+	16  SYSTEM.CNF
+	17  SLUS_006.69
+	19  == 24 disc 1
+	20  == 25 disc 1
+	...
+	id + 5 == disc 1
 ==============================

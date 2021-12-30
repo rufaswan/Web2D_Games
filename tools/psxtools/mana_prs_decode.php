@@ -280,24 +280,17 @@ function mana( $fname )
 	// for /map/*/*.prs
 	// for /wm/wmap/*.pim
 	// for /wm/wmtim/wmapt*/wm_*.pim
-	$bak = file_exists("$fname.bak");
-	if ( $bak )
-		$file = file_get_contents("$fname.bak");
-	else
-		$file = file_get_contents($fname);
-
+	$file = load_bakfile($fname);
 	if ( empty($file) )
 		return;
+
 	// file must starts with 01 and ends with FF
 	$ed = strlen($file);
 	if ( $file[0] != chr(1) || $file[$ed-1] != BYTE )
 		return;
 
-	if ( ! $bak )
-		file_put_contents("$fname.bak", $file);
-
 	$dec = mana_decode($file, 1);
-	file_put_contents($fname, $dec);
+	save_file($fname, $dec);
 	return;
 }
 
