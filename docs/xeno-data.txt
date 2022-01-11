@@ -642,9 +642,9 @@ Item ID
 2c *weapon*      Iron Mail     EXP Ball      *weapon*      Def Circuit -
 2d *weapon*      Knight Mail   Combo Ball10  *weapon*      A Circuit   -
 2e *weapon*      Dark Armor    Omni          *weapon*      B Circuit   -
-2f *weapon*      Rose Tabard   option        *weapon*      C Circuit   -
+2f *weapon*      Rose Tabard   *option*      *weapon*      C Circuit   -
 
-30 *weapon*      Slayer Robe   option        *weapon*      D Circuit   -
+30 *weapon*      Slayer Robe   *option*      *weapon*      D Circuit   -
 31 *weapon*      Manly Mantle  Omegasol      *weapon*      E Circuit   -
 32 B&JM10A Ammo  Hero Costume  SurvivalTent  G-M10A Ammo   F Circuit   -
 33 B&JM10S Ammo  LegendaryRob  STR Drive     G-M10S Ammo   G Circuit   -
@@ -673,41 +673,41 @@ Item ID
 49                             Anoret Fruit                Wind Stone  -
 4a                             Bulimy Seed                 Earth Stone -
 4b                             Bulimy Fruit                Fire Stone  -
-4c                             Gold Nugget                 Water Stone -
-4d                             Gold Bullion                Energy Saver-
-4e                             Ivory                                   -
-4f                                                         Power Magic -
+4c                             RPS Badge                   Water Stone -
+4d                             H&S Badge                   Energy Saver-
+4e                             Tag Badge                               -
+4f                             Mermaid Tear                Power Magic -
 
-50                                                         Lens Cover  -
-51                                                         Veil Doubler-
-52                                                         Sword Veil  -
-53                                                         Magic Guard -
-54                                                         Engine Guard-
-55                                                         Pilot Shield-
-56                                                         Tank Guard  -
-57                                                         Ar Repairer -
-58                                                         Motion Guard-
-59                                                         Ar Guard    -
-5a               Power Ring                                Frame HP10  -
-5b               Power Ring S                              Frame HP30  -
-5c               StaminaRing                               Frame HP50  -
-5d               StaminaRingS                              Frame HP70  -
-5e               Glasses                                   Frame HP90  -
-5f               SuperGoggles                              FX Cleaner  -
+50                             UFO Photo                   Lens Cover  -
+51                             Master Key                  Veil Doubler-
+52                             Sewer Keys                  Sword Veil  -
+53                             Bell Amulet                 Magic Guard -
+54                             Book 1                      Engine Guard-
+55                             Book 2                      Pilot Shield-
+56                             Book 3                      Tank Guard  -
+57                             Spider                      Ar Repairer -
+58                             Bird Egg                    Motion Guard-
+59                             Dog Food                    Ar Guard    -
+5a               Power Ring    Gold Nugget                 Frame HP10  -
+5b               Power Ring S  Spider Web                  Frame HP30  -
+5c               StaminaRing   M Disk                      Frame HP50  -
+5d               StaminaRingS  Chu-chu Doll                Frame HP70  -
+5e               Glasses       Tickets                     Frame HP90  -
+5f               SuperGoggles  Chu-chu Idol                FX Cleaner  -
 
-60               Step Shoes                                DeathBlower1-
-61               PremierShoes                              DeathBlower2-
-62               EtherStone                                DeathBlower3-
-63               EtherStoneL                               GNRS20      -
-64               AntiEthStone                              GNRS50      -
-65               AntiEthRockL                              A Charger   -
-66               Speed Ring                                S Charger   -
-67               Speed Ring S                              X Charger   -
-68               Gallant Belt                              Z Charger   -
-69               Yamato Belt                                           -
-6a               Economether                                           -
-6b               WizardryRing                                          -
-6c               HerculesRing                                          -
+60               Step Shoes    Cabin Key                   DeathBlower1-
+61               PremierShoes  Kislev Map                  DeathBlower2-
+62               EtherStone    Merkava Map                 DeathBlower3-
+63               EtherStoneL   Shevat Map                  GNRS20      -
+64               AntiEthStone  Rock                        GNRS50      -
+65               AntiEthRockL  Dawn Rock                   A Charger   -
+66               Speed Ring    Dusk Rock                   S Charger   -
+67               Speed Ring S  Dark Rock                   X Charger   -
+68               Gallant Belt  Gold Bullion                Z Charger   -
+69               Yamato Belt   Ivory                                   -
+6a               Economether   Army Cardkey                            -
+6b               WizardryRing  Work Permit                             -
+6c               HerculesRing  Dirty Badge                             -
 6d               Trader Card                                           -
 6e               Holy Pendant                                          -
 6f               Coin of Fate                                          -
@@ -1032,7 +1032,8 @@ SLPS 011.60 JP disc 1 [3771]
 	116  [7]
 		117-123  wds
 	133  Music [146] [73 pairs]
-		# ID+1 is the midi data
+		# ID+0 is the  wds/sample data
+		# ID+1 is the smds/midi data
 		134
 		...
 		278
@@ -1086,6 +1087,7 @@ SLPS 011.60 JP disc 1 [3771]
 		594  PS1 TIM
 		595  [OVER] encount
 	605  Maps [1460] [730 pairs]
+		# ID+0 is the packed map data
 		# ID+1 is the texture data
 		606  debug map
 		608  Lahan
@@ -1890,6 +1892,7 @@ SLPS 011.60 JP disc 1 [3771]
 		2615
 		2616
 	2617  Enemies [152] [76 pairs]
+		# ID+0 is the stats/name
 		# ID+1 is the texture/animation data
 		2618  *dummy*
 		2620  Jackal, Hobgob, Lucre Bug, Nolucre Bug, Hobgob, Armor Grub, Hobgob
@@ -2098,7 +2101,7 @@ SLPS 011.60 JP disc 1 [3771]
 	3148  [231]
 		3147-3379
 	3380  Spells [534]
-		# 245 spr+tex PAIR + 3891 stray spr
+		# 245 spr+tex PAIR + stray 3891 spr
 		#  43 BIN
 		3381-3412  BIN
 		3413  Fei
@@ -2410,11 +2413,11 @@ SLPS 011.60 JP disc 1 [3771]
 		3964  [LZ-PAK] data
 		3965  [LZ-PAK] PS1 TIM
 		3966  [LZ-PAK] PS1 TIM
-		3967  wds
-		3968  smds
+		3967   wds/sample data
+		3968  smds/midi data
 		3969  seds
-		3970  smds
-		3971  smds
+		3970  smds/midi data
+		3971  smds/midi data
 		3972
 		3973
 	3974  [10]

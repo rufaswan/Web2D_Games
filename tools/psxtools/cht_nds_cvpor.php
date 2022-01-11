@@ -170,4 +170,25 @@ function smt_sj_demon( $fp, $pos )
 	// if +0x6c == '0' SKIP dummy
 	return;
 }
+
+function rockzx
+	// RAM 214f86c  lives
+	//   201c660  ldrb  r0[ 8], 164(r2[ 214f708])
+	//   20212dc  ldrb  r0[ 8], 164(r0[ 214f708])
+	//   2044602  ldrb  r2[ 8], 164(r0[ 214f708])
+	//   2044616  strb  r3[ 8], 164(r0[ 214f708])
+	//     d0 1a -> c0 46
+	//   20441e0  ldr   r0[ 8], 0(r5[ 216008c])
+	//   20441e4  str   r0[ 8], 0(r2[ 214f86c])
+	// RAM 214f870  energy crystal (need max=1000)
+
+	// RAM 214f879  sub-tank 1 energy (max=1e)
+	// RAM 214f87a  sub-tank 2 energy (max=1e)
+	// RAM 214f87b  sub-tank 3 energy (max=1e)
+	// RAM 214f87c  sub-tank 4 energy (max=1e)
+
+function rockzxa
+	// RAM 2168b58  lives
+	// RAM 2168b5c  energy crystal (need max=500)
+	// RAM 2168b68  sub-tank 1 energy (max=1e)
  */

@@ -47,14 +47,36 @@ Nintendo DS ROM header
 	84   4  header.bin size
 	# RAM 2000000-24000000 (4 MB)
 
-== Layering ==
-	Top-to-Bottom  PSX  NDS
-	Bottom-to-Top  SATURN  PS2  WII
-	???  PC98  VITA  PSP  PS3
+== NOP ==
+	NDS
+		ARM A32 T16
+	3DS , Vita
+		ARM A32 T32
+	Switch
+		ARM A64 T32
 
-	# NOTE
-		Painter's Algorithm is Bottom-to-Top order
-		so we'll need to loop Top-to-Bottom order in reverse
+	ARM
+		00 00 00 00  A32  andeq  r0 , r0, r0
+		00 00 a0 e1  A32  mov    r0 , r0
+		1f 20 03 df  A64  nop
+		00 b0        T16  add    r13, #0
+		c0 46        T16  mov    r8 , r8
+		00 80 af f3  T32  nop
+
+	Gamecube , Wii , Wii-U , PS3
+		PowerPC
+	PC , PC98 , PS4 , PS5
+		x86
+	PS1 , PS2 , PSP
+		MIPS
+	Saturn
+		SuperH
+
+	// https://en.wikipedia.org/wiki/NOP_(code)
+	x86      90           xchg  eax, eax
+	MIPS     00 00 00 00  sll   r0 , r0, #0
+	PowerPC  00 00 00 60  ori   r0 , r0, #0
+	SuperH   00 09        [BE] nop
 
 == Endian ==
 	Little  PSX  PS2  PSP  VITA  NDS  PC98

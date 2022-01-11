@@ -52,9 +52,9 @@ function sectspr( &$json, &$mbs )
 			$s0  = str2int($mbs[4]['d'], $p4+ 8, 2);
 			$s2  = str2int($mbs[4]['d'], $p4+10, 2); // dx,dy
 
-			$sqd = sectquad ($mbs[1], $s1*$mbs[1]['k']);
-			$cqd = colorquad($mbs[0], $s0*$mbs[0]['k']);
-			$dqd = sectquad ($mbs[2], $s2*$mbs[2]['k']);
+			nds_quad30p($mbs[1], $s1, $sqd);
+			nds_quad18c($mbs[0], $s0, $cqd);
+			nds_quad30p($mbs[2], $s2, $dqd);
 
 			$s1 = str2int($sub, 0, 2); // ???
 			$s3 = ord( $sub[2] ); // mask = 0
@@ -79,7 +79,7 @@ function sectspr( &$json, &$mbs )
 				$data[$i4]['TexID']   = $s4;
 				$data[$i4]['SrcQuad'] = $sqd;
 			}
-			quad_convexfix($data[$i4]);
+			//quad_convexfix($data[$i4]);
 
 		} // for ( $i4=0; $i4 < $no6; $i4++ )
 
@@ -111,6 +111,7 @@ function sectanim( &$json, &$mbs )
 		$dum = str2int($mbs[9]['d'], $pos9+0x2c, 1);
 		printf("%s  %x %x %x  %x\n", $anim, $ida, $noa, $bga, $dum);
 
+		$data = array();
 		for ( $ia=0; $ia < $noa; $ia++ )
 		{
 			$posa = ($ida + $ia) * $mbs[10]['k'];
@@ -139,6 +140,8 @@ function sectanim( &$json, &$mbs )
 
 			} // for ( $i8=0; $i8 < $no8; $i8++ )
 		} // for ( $ia=0; $ia < $noa; $ia++ )
+
+		$json['Animation'][$anim] = $data;
 	} // for ( $id9=0; $id9 < $cnt9; $id9++ )
 
 	return;
@@ -160,10 +163,10 @@ function kuma( $fname )
 	$json = load_idtagfile( $gp_data['nds kuma']['idtag'] );
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	//save_sect($mbs, $pfx);
+	save_sect($mbs, $pfx);
 
 	sectanim($json, $mbs);
-	//sectspr ($json, $mbs);
+	sectspr ($json, $mbs);
 
 	save_quadfile($pfx, $json);
 	return;

@@ -252,36 +252,72 @@ RAM 22e28b0  FMBS momo01.mbs
 	20333cc  ldrsh  r12[19], c4(r0[ 21935f0])
 		=> 21936b4
 
+RAM 21936a4  ANIM ID
+	2033020  strh     r1[   6], c4(r5[ 21935e0])
+	20331f4  ldrsh    r3[   6], c4(r8[ 21935e0])
+	2033284  ldrsh    r1[   6], c4(r6[ 21935e0])
+	20333cc  ldrsh    rc[   6], c4(r0[ 21935e0])
+	2033368  ldrsh    rc[   6], c4(r0[ 21935e0])
+	20335dc  ldrsh    r1[   6], c4(r6[ 21935e0])
+	203374c  ldrshne  r1[   6], c4(ra[ 21935e0])
+	2033020  strh     r1[   8], c4(r5[ 21935e0])
+
 
 
 op list
-	1   00 10        // end
+	1   00 10        // end        [arg 414e]
 	-
-	3   01           // title subtext
-	4   01           //
-	5   00           // screen shake
-	6   10 11 21     // char  set
-	7   10 11 20 21  // anim  set
-	8   10 11 20 21  //
-	9   11 21        // talk  text [11=c1 21=c2]
-	a   10 11 20 21  // pos   set
-	b   10 11 21     //
+	3   01           // loading slide out [arg ??? 1e/3c/5a]
+	4   01           // loading slide in  [arg 5a]
+	5   00           // screen  shake     [arg 414e]
+	6   10 11 21     // char  set  [arg ID]
+	7   10 11 20 21  // talk  anim [arg ID]
+	8   10 11 20 21  // walk  anim [arg ID]
+	9   11 21        // talk  text [arg -]
+	a   10 11 20 21  // pos   set  [arg pixel]
+	b   10 11 21     // walk  pos  [arg pixel]
 	-
-	d   10 11 20 21  // face  set  1=right -1=left
-	e   01           // bg    set
-	f   11 21        // think text [11=c1 21=c2]
-	10  11 21        //
+	d   10 11 20 21  // face  set  [arg 1=right -1=left]
+	e   01           // bg    set  [arg ID]
+	f   11 21        // think text [arg -]
+	10  11 21        // navi  text [arg -]
 	-
-	12  00           // voice set
-	13  00           // music set
-	14  00 20        // title card bg
-	15  10           //
-	16  10 20        //
-	17  11 21        //
-	18  10 20        //
-	19  00           //
-	1a  00           //
-	1b  00           // *bath*
+	12  00           // voice set  [arg ID]
+	13  00           // music set  [arg ID]
+	14  00 20        // title bg   [arg ID]
+	15  10           // title text [arg -]
+	16  10 20        // bath  text [arg -] *bath*
+	17  11 21        // sound set  [arg ID] *bath*
+	18  10 20        // var value  [arg value] *bath*
+	19  00           // var ID     [arg ID] *bath*
+	1a  00           // bg scroll  [arg 0=L2R 1=R2L] *prol_a01 epil_a02*
+	1b  00           // [arg 38] *bath*
+		xy
+			x  0=bg     1=obj_left  2=obj_right
+			y  0=cache  1=exec
+		pixel  0=left edge  100=right edge
+		char ID
+			0  kuma-tan
+			1  rabbi-tan
+			2  neko-kun
+			3  tora-neesan
+			4  ushi-neesan
+			5  saru-jii
+			6  maguro
+			7  twin monkey
+			8  owner
+			9  sumomo
+		var ID
+			1  popularity         [75-72-6f-6c-69-47-44-41-3e-3b]
+			2  will               [75-72-6f-6c-69]
+			3  talent music       [7e-7b-78-75]
+			4  talent strenght    [81-7e-7b-75]
+			5  talent skill       [7e-7b-78-75]
+			6  talent show art    [81-7e-7b-78-75]
+			7  kuma-player like   [a5-a2-9f-9c-99-5b-58-55-52]
+			8  show performance   [5b-58-55-52]
+			9  hunger             [47-44-41-3e-3b]
+			a  sumomo-player like [56-50]
 
 
 

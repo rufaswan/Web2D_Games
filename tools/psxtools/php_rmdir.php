@@ -20,29 +20,33 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
-
-function hexfloat( $str )
+function rm_empty_dir( $dir )
 {
-	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
-	$bit = strlen($str) * 4;
+	if ( empty($dir) || is_link($dir) || is_file($dir) )
+		return 1;
 
-	$func = "float{$bit}";
-	if ( ! function_exists($func) )
-		return printf("NOT float %s\n", $str);
+	$func = __FUNCTION__;
+	$has_file = 0;
+	foreach ( scandir($dir) as $en )
+	{
+		if ( $en === '.' || $en === '..' )
+			continue;
+		$fn = "$dir/$en";
 
-	$fl = $func( hexdec($str) );
-	printf("%s( %s ) = %f\n", $func, $str, $fl);
-	return;
+		if ( is_file($fn) )
+			$has_file = 1;
+		else
+			$has_file |= $func($fn);
+	} // foreach ( scandir($dir) as $en )
+
+	if ( ! $has_file )
+	{
+		echo "rmdir $dir\n";
+		rmdir($dir);
+	}
+	return $has_file;
 }
 
-echo "float(IEE 754) <-> hex convert\n";
+printf("%s  DIR...\n", $argv[0]);
 for ( $i=1; $i < $argc; $i++ )
-	hexfloat( $argv[$i] );
-
-/*
-1.0 = float32( 3f800000 )
-2.0 = float32( 40000000 )
- */
+	rm_empty_dir( $argv[$i] );
