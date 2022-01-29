@@ -225,6 +225,32 @@ function str_update( &$file, $pos, $str )
 	return;
 }
 
+function strpos_all( &$str, $term, $pos=0, $igCASE=false )
+{
+	if ( empty($term) || empty($str) )
+		return '';
+	if ( $pos < 0 )
+		$pos = 0;
+	$strpos = ( $igCASE ) ? 'stripos' : 'strpos';
+
+	$tlen = strlen($term);
+	$ret  = array();
+	while (1)
+	{
+		$p = $strpos($str, $term, $pos);
+		if ( $p === false )
+			return $ret;
+		$ret[] = $p;
+		$pos   = $p + $tlen;
+	}
+	return $ret;
+}
+
+function stripos_all( &$str, $term, $pos=0 )
+{
+	return strpos_all($str, $term, $pos, true);
+}
+
 function int_clamp( $int, $min, $max )
 {
 	$int = (int)$int;
@@ -641,7 +667,7 @@ function canvpix( $w, $h, $c = PIX_ALPHA )
 	return str_repeat($c, $s);
 }
 
-function rgb555( $str )
+function rgb555( $str, $solid=true )
 {
 	// 15-bit ABGR
 	// RGB = c6         52         52
@@ -655,18 +681,38 @@ function rgb555( $str )
 	$b = ($pal >> 7) & 0xf8; // <<  1 >> 8 == >> 7
 	$g = ($pal >> 2) & 0xf8; // <<  6 >> 8 == >> 2
 	$r = ($pal << 3) & 0xf8; // << 11 >> 8 == << 3
-	$a = BYTE;
 
-	$str = chr($r) . chr($g) . chr($b) . $a;
+	// STP = semi-transparent FLAG
+	//   STP  RGB
+	//   0    0    transparent
+	//   0    any  opaque
+	//   1    any  semi-transparent
+	if ( $solid )
+		$a = BIT8;
+	else
+	{
+		$stp = ($pal & 0x8000);
+		if ( $stp )
+			$a = BIT8 >> 1;
+		else
+			$a = ( $pal === 0 ) ? 0 : BIT8;
+	}
+
+	// Semi-Transparent Rates
+	// (FG.rgb *  0.5 ) + (BG.rgb * 0.5)  average
+	// (FG.rgb *  1   ) + (BG.rgb * 1  )  add
+	// (FG.rgb * -1   ) + (BG.rgb * 1  )  subtract
+	// (FG.rgb *  0.25) + (BG.rgb * 1  )  partial add
+	$str = chr($r) . chr($g) . chr($b) . chr($a);
 	return $str;
 }
 
-function pal555( $str )
+function pal555( $str, $solid=true )
 {
 	$clut = '';
 	$siz = strlen($str);
 	for ( $i=0; $i < $siz; $i += 2 )
-		$clut .= rgb555( $str[$i+0] . $str[$i+1] );
+		$clut .= rgb555($str[$i+0] . $str[$i+1], $solid);
 	return $clut;
 }
 
@@ -855,18 +901,16 @@ function alpha_add( $fg, $bg )
 		// #202020 + #00000000 = #ffffff20
 		// #204080 + #00000000 = #4080ff80
 		case ZERO:
-			$r = ord($fg[0]);
-			$g = ord($fg[1]);
-			$b = ord($fg[2]);
-
-			$a = ( $r > $g ) ? $r : $g;
-			$a = ( $b > $a ) ? $b : $a;
+			$r = ord( $fg[0] );
+			$g = ord( $fg[1] );
+			$b = ord( $fg[2] );
+			$a = var_max($r, $g, $b);
 			if ( $a === 0 )
 				return $bg;
 
-			$r = int_clamp($r / $a * BIT8, 0, BIT8);
-			$g = int_clamp($g / $a * BIT8, 0, BIT8);
-			$b = int_clamp($b / $a * BIT8, 0, BIT8);
+			$r = int_clamp($r * BIT8 / $a, 0, BIT8);
+			$g = int_clamp($g * BIT8 / $a, 0, BIT8);
+			$b = int_clamp($b * BIT8 / $a, 0, BIT8);
 			return chr($r) . chr($g) . chr($b) . chr($a);
 
 		// blend w/semi-transparent pixel

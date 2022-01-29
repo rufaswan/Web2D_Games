@@ -21,50 +21,38 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "class-atlas.inc";
 
-function tsr( $dir )
+function tentacle( $fname )
 {
-	if ( ! is_dir($dir) )
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
+
+	$dir = str_replace('.', '_', $fname);
+	$len = strlen($file);
+
+	$ppos = strpos($file, 'Creative Voice File', 0);
+	if ( $ppos === false )
 		return;
 
-	$dir = rtrim($dir, '/\\');
-
-	$list = array();
-	lsfile_r($dir, $list);
-
-	$files = array();
-	foreach ( $list as $fname )
+	$id = 0;
+	while ( $ppos < $len )
 	{
-		$img = load_clutfile($fname);
-		if ( empty($img) )
-			continue;
+		$cpos = strpos($file, 'Creative Voice File', $ppos+0x1f);
+		if ( $cpos === false )
+			$cpos = $len;
 
-		printf("add image %x x %x = %s\n", $img['w'], $img['h'], $fname);
-		$img['id'] = $fname;
-		$files[] = $img;
-	} // foreach ( $list as $fname )
+		$siz = $cpos - $ppos;
+		$voc = substr($file, $ppos, $siz);
 
-	$atlas = new AtlasTex;
-	list($ind, $cw, $ch) = $atlas->atlasmap($files);
+		$fn = sprintf("%s/%08d.voc", $dir, $id);
+			$id++;
+		printf("%8x  %8x  %s\n", $ppos, $siz, $fn);
 
-	$pix = COPYPIX_DEF($cw,$ch);
-
-	foreach ( $files as $img )
-	{
-		$pix['src'] = $img;
-		$pix['dx'] = $img['x'];
-		$pix['dy'] = $img['y'];
-
-		if ( isset($img['cc']) )
-			copypix_fast($pix, 1);
-		else
-			copypix_fast($pix, 4);
-	} // foreach ( $files as $img )
-
-	savepix("$dir.atlas", $pix);
+		save_file($fn, $voc);
+		$ppos = $cpos;
+	} // while ( $ppos < $len )
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	tsr( $argv[$i] );
+	tentacle( $argv[$i] );

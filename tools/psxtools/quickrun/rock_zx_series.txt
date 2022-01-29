@@ -1,0 +1,200 @@
+==================
+=== Rockman ZX ===
+==================
+A-1  E01  E31  O09
+A-2  B03  E27  E29
+	SubTank
+A-3  E46
+A-4  E20
+B-1  E24
+B-2  B01  E17  E28
+B-3
+B-4  E11
+C-1
+	Frog (after Quest [7F-5F-7F-B1F-Entrance])
+	[Vent] Ice Boos/Quest
+C-2  E30  O17  O18
+	Absorber
+	[Aile] Ice Boos/Quest
+C-3  E49
+D-1  E12  E19
+	LifeUp
+D-2  B04  M04  E40  O12
+D-3  E06
+D-4  B05
+D-5  B06
+E-1  E04
+E-2
+E-3
+E-4  E08  E21
+	SubTank
+E-5  M05  E37
+E-6
+E-7
+E-8  B08
+F-1  E39
+F-2  E15  E44
+	LifeUp
+F-3  E02  E48
+F-4  B15  E45
+G-1  E38
+G-2  E16
+G-3  E09
+G-4
+G-5  B11  E32
+H-1  E47
+H-2
+H-3  M08  E10
+H-4  B07
+I-1  E03
+I-2  E33  E34
+I-3  B09
+I-4  M01  E14
+I-5  M06  E13  E23
+	LifeUp
+J-1
+	LifeUp
+J-2  E07
+J-3  M07  E36
+J-4
+J-5  B16
+K-1  E22
+	SubTank
+K-2
+K-3  M09  E35  E43
+K-4  B12  E26
+K-5  E25
+L-1  E18
+L-2  E41
+L-3  E05
+L-4  B13
+M-1  M02  E50
+M-2
+M-3  B10
+N-1  B02
+O-1  M03  E42
+O-2  B14
+X-1  O01  O02  O04  O05  O06  O07  O08  O10  O13  O14  O15  O19  O20
+	SubTank/Quest*6
+	Eraser
+	Featherweight
+	Wind Boots/Quest
+	Extender/Quest
+	Quick Charge
+X-2  O03  O16
+X-3  O11
+
+Secret Disk = 16+9+50+20 = 95
+Chips   = 8
+SubTank = 4
+LifeUp  = 4
+
+=========================
+=== Rockman ZX Advent ===
+=========================
+Hunter Camp
+	1  B06
+	2  O04  O05
+	3  O06
+		Absorber
+		Eraser/Quest [Lily]
+		Ice Boots/Quest
+	4
+		Frog/Quest
+Train
+	1
+	2  B10
+	3  E37  E44  O02  O07
+		Wind Boots/Quest
+- Tower of Vendure
+	1  E16  E29  E34
+	2
+	3  M08  E15  E32
+		LifeUp
+		[Lily]
+	4  B18
+- Arctic Ice Floe
+	1  E22  E25
+	2  M07  E21
+		SubTank
+	3
+	4  B07
+Oil Field
+	1  E08
+	2  M10  E19  E28
+		BioUp
+		Featherweight/Quest
+		[Chabanos]*2
+	3  E10  E24
+	4  B01  O01
+Legion HQ
+	1  B09  E13
+		[Chabanos]
+	2  M04  E09  E38  E42
+		SubTank
+	3  O03
+	4  E43  E48
+- Floating Ruins
+	1  E17  E36
+	2  E02
+	3  E31
+		SubTank/Quest
+		[Lily]
+		[Chabanos]*2
+	4  B16
+- Highway
+	1  E07  E49
+		BioUp
+		[Chabanos]*2
+	2  M01
+	3  M06
+	4  B12
+- Scrapyard
+	1  E18
+	2  E39
+		LifeUp
+		[Chabanos]
+	3  E20  E50
+	4  B08
+- Control Center
+	1  E33
+		LifeUp
+	2  M02  E06  E26
+	3  E40
+	4  B05
+Quarry
+	1
+	2  B17
+	3  M05  E03  E35  E45
+		BioUp
+	4  M09
+- Bio Lab
+	1  E27  E41
+	2  E04  E11  E14
+		BioUp
+	3  B13
+	4  E23
+- Mysterious Lab
+	1
+	2
+	3  B14  B15  E12
+		SubTank
+	4  B11
+- Waterfall Ruins
+	1  B04  E05
+	2  E46  E47
+		LifeUp
+		[Lily]
+	3  E01  E30
+		Extender/Quest [Chabanos]
+	4  M03
+Ouroboros
+	1
+	2
+	3  B02  B03
+
+Secret Disk = 18+10+50+7 = 85
+Chips   = 7
+SubTank = 4
+LifeUp  = 4
+BioUp   = 4

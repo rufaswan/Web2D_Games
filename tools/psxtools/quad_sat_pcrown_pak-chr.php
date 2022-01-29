@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require "common.inc";
 require "common-guest.inc";
-require "common-atlas.inc";
+require "class-atlas.inc";
 require "common-quad.inc";
 require "quad.inc";
 
@@ -108,7 +108,8 @@ function save_texx( &$json, $pfx )
 	global $gp_pix;
 
 	// atlas map texture
-	list($ind, $cw, $ch) = atlasmap($gp_pix);
+	$atlas = new AtlasTex;
+	list($ind, $cw, $ch) = $atlas->atlasmap($gp_pix);
 
 	$pix = COPYPIX_DEF($cw,$ch);
 

@@ -31,7 +31,7 @@ function prefix( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	//if ( substr($file, 0, 4) != "FILE" )
+	//if ( substr($file, 0, 4) !== "FILE" )
 		//return;
 
 	$dir = str_replace('.', '_', $fname);

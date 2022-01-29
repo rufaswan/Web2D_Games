@@ -36,10 +36,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //   dot(x,y) = |x||y| cos Q
 // cross(x,y) = |x||y| sin Q
 
-function cross_product( $vb, $vc )
+function cross_product( $v3b, $v3c )
 {
-	list($bx,$by,$bz) = $vb;
-	list($cx,$cy,$cz) = $vc;
+	list($bx,$by,$bz) = $v3b;
+	list($cx,$cy,$cz) = $v3c;
 
 	// | ax bx cx |
 	// | ay by cy |
@@ -51,11 +51,11 @@ function cross_product( $vb, $vc )
 }
 
 // v2 = x.y
-function triad_area( $va, $vb, $vc )
+function triad_area( $v2a, $v2b, $v2c )
 {
-	list($ax,$ay) = $va;
-	list($bx,$by) = $vb;
-	list($cx,$cy) = $vc;
+	list($ax,$ay) = $v2a;
+	list($bx,$by) = $v2b;
+	list($cx,$cy) = $v2c;
 
 	// https://www.mathopenref.com/coordtrianglearea.html
 	// | ax bx cx |

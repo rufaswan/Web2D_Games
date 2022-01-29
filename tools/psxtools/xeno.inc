@@ -137,11 +137,13 @@ battle vierge data
 //////////////////////////////
 https://ffhacktics.com/smf/index.php?msg=219487
 Fast text mod
-	68 00 02 92 = lbu v0, 0x68(s0)
-	ff 00 02 34 = li  v0, 0xff
+	68 -- 02 92 = lbu v0, 0x68(s0)
+	ff -- 02 34 = li  v0, 0xff
 
-	XENO-JP-1  RAM 80034788
-	XENO-US-1  RAM 80034964
+	XENO-JP-1  RAM 80034788 , +24f88
+	XENO-US-1  RAM 80034964 , +25164
+
+	21 10 43 --  68 -- 02 92  -- -- -- --
 //////////////////////////////
 Debug mode
 # title screen == 01ea

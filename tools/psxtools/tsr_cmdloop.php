@@ -54,7 +54,7 @@ foreach ( $list as $f )
 
 	// double-quote filename to handle spaces
 	// single-quote in cmd.exe have no special meaning
-	$c = "$cmd \"$f\"";
+	$c = escapeshellcmd("$cmd \"$f\"");
 	echo "$c\n";
 
 	exec($c, $out, $exit);

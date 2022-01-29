@@ -35,6 +35,7 @@ function pz_alpha0( $fg, $bg )
 }
 function pz_alpha2( $fg, $bg )
 {
+	if ( $fg[3] === BYTE )  return $fg;
 	// FG + BG
 	return alpha_add($fg, $bg);
 }
@@ -58,6 +59,39 @@ function pz_alpha6( $fg, $bg )
 		$fg[$i] = chr($c);
 	}
 	return alpha_add($fg, $bg);
+}
+//////////////////////////////
+function clr_stp_on( &$clr )
+{
+	for ( $i=0; $i < 0x40; $i += 4 )
+	{
+		if ( $clr[$i+3] !== "\x7f" )
+			continue;
+
+		$r = ord( $clr[$i+0] );
+		$g = ord( $clr[$i+1] );
+		$b = ord( $clr[$i+2] );
+		$a = var_max($r, $g, $b);
+
+		$r = int_clamp($r * BIT8 / $a, 0, BIT8);
+		$g = int_clamp($g * BIT8 / $a, 0, BIT8);
+		$b = int_clamp($b * BIT8 / $a, 0, BIT8);
+
+		$c = chr($r) . chr($g) . chr($b) . chr($a);
+		str_update($clr, $i, $c);
+	}
+	return;
+}
+
+function clr_stp_off( &$clr )
+{
+	for ( $i=0; $i < 0x40; $i += 4 )
+	{
+		if ( $clr[$i+3] !== "\x7f" )
+			continue;
+		$clr[$i+3] = BYTE;
+	}
+	return;
 }
 //////////////////////////////
 function sect_part( &$file, $off, $fn, &$pal, &$src )
@@ -105,18 +139,23 @@ function sect_part( &$file, $off, $fn, &$pal, &$src )
 		$b428 = $b4 >> 28;
 			$tsz = ($b428 == 2) ? 0x10 : 0x20;
 
+		$clr = substr($pal, $cid*0x40, 0x40);
 		$pix['alpha'] = '';
 		if ( ($b4 >> 15) & 1 )
 		{
-			$ty = sprintf("pz_alpha%d", ($b4 >> 20) & 6);
+			clr_stp_on($clr);
+			//$ty = sprintf("pz_alpha%d", ($b4 >> 20) & 6);
+			//echo "$ty\n";
 			//$pix['alpha'] = $ty;
 		}
+		else
+			clr_stp_off($clr);
 
 		$pix['src']['w'] = $tsz;
 		$pix['src']['h'] = $tsz;
 		$pix['dx'] = $dx;
 		$pix['dy'] = $dy;
-		$pix['src']['pal'] = substr($pal, $cid*0x40, 0x40);
+		$pix['src']['pal'] = $clr;
 		$pix['src']['pix'] = rippix8($src, $sx, $sy, $tsz, $tsz, 0x400, 0x200);
 
 		//printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $tsz, $tsz);
@@ -197,7 +236,7 @@ function spfile( &$file, $dir )
 
 		$pal = substr($sub, 0, 0x200);
 		$pix = substr($sub, 0x200);
-			$pal = pal555($pal);
+			$pal = pal555($pal, false);
 			pixtex($pix);
 
 	$meta[3] = array($pal, $pix);
