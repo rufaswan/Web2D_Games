@@ -1010,7 +1010,7 @@ SLPS 011.60 JP disc 1 [3771]
 	22  SLPS_011.60
 	23  [6]
 		24-27  wds
-		28
+		28  [LZ] Font 1-bpp 16x3297
 		29
 	34  Overlay [6]
 		35  [LZ][OVER] Battling
