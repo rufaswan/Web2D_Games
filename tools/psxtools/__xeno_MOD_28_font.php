@@ -21,50 +21,40 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
-require "class-atlas.inc";
 
-function atlasdir( $dir )
+function xeno( $fname )
 {
-	if ( ! is_dir($dir) )
-		return;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	$dir = rtrim($dir, '/\\');
-
-	$list = array();
-	lsfile_r($dir, $list);
-
-	$files = array();
-	foreach ( $list as $fname )
+	$len = strlen($file);
+	$pix = '';
+	$p = array(ZERO, "\x01");
+	for ( $i=0; $i < $len; $i++ )
 	{
-		$img = load_clutfile($fname);
-		if ( empty($img) )
-			continue;
+		$c = ord( $file[$i] );
+		$j = 8;
+		while ( $j > 0 )
+		{
+			$j--;
+			$b = ($c >> $j) & 1;
+			$pix .= $p[$b];
+		}
+	} // for ( $i=0; $i < $len; $i++ )
 
-		printf("add image %x x %x = %s\n", $img['w'], $img['h'], $fname);
-		$img['id'] = $fname;
-		$files[] = $img;
-	} // foreach ( $list as $fname )
+	$w = 16;
+	$h = strlen($pix) >> 4;
 
-	$atlas = new AtlasTex;
-	list($ind, $cw, $ch) = $atlas->atlasmap($files);
-
-	$pix = COPYPIX_DEF($cw,$ch);
-
-	foreach ( $files as $img )
-	{
-		$pix['src'] = $img;
-		$pix['dx'] = $img['x'];
-		$pix['dy'] = $img['y'];
-
-		if ( isset($img['cc']) )
-			copypix_fast($pix, 1);
-		else
-			copypix_fast($pix, 4);
-	} // foreach ( $files as $img )
-
-	savepix("$dir.atlas", $pix, false, false);
+	$img = array(
+		'cc' => 2,
+		'w' => $w,
+		'h' => $h,
+		'pal' => grayclut(2),
+		'pix' => $pix,
+	);
+	save_clutfile("$fname.clut", $img);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	atlasdir( $argv[$i] );
+	xeno( $argv[$i] );

@@ -331,6 +331,14 @@ function var_max()
 	return $max;
 }
 
+function var_div( $num, $fact )
+{
+	$mod = $num % $fact;
+		$num -= $mod;
+	$div = $num / $fact;
+	return array($div, $mod);
+}
+
 function count_bits( $int )
 {
 	$bits = array(0,0);
@@ -1235,7 +1243,7 @@ function trimpix( &$pix )
 	return;
 }
 
-function savepix( $fn, &$pix, $trim = false )
+function savepix( $fn, &$pix, $trim=false, $clut=true )
 {
 	if ( defined('DRY_RUN') )
 		return;
@@ -1244,6 +1252,8 @@ function savepix( $fn, &$pix, $trim = false )
 		return php_warning('%s [pix] blank', $fn);
 	if ( $trim )
 		trimpix($pix);
+	if ( ! $clut )
+		goto rgba;
 
 	$clpal = array();
 	$clpix = '';

@@ -34,20 +34,15 @@ function sect_TAGS( &$file, $dir, $st, $ed )
 
 		switch ( $tag )
 		{
-			case 'AWIZ':
-			case 'DEFA':
-			case 'DIGI':
+			case 'AKAX': case 'AKOS': case 'AUXD': case 'AWIZ':
+			case 'DEFA': case 'DIGI':
 			case 'IMAG':
-			case 'LECF':
-			case 'LFLF':
+			case 'LECF': case 'LFLF':
 			case 'MULT':
-			case 'OBCD':
-			case 'OBIM':
+			case 'OBCD': case 'OBIM':
 			case 'PALS':
-			case 'RMDA':
-			case 'RMIM':
-			case 'RMSC':
-			case 'ROOM':
+			case 'RMDA': case 'RMIM': case 'RMSC': case 'ROOM':
+			case 'SEQI': case 'SQDB':
 			case 'TALK':
 			case 'WRAP':
 
@@ -78,6 +73,7 @@ function spyfox( $fname )
 		case "\x3b\x27\x28\x24": // RNAM  .0
 		case "\x25\x2c\x2a\x2f": // LECF  .1  .(a)  .he1
 		case "\x24\x28\x31\x3a": // MAXS  .he0
+		case "\x3d\x25\x22\x2b": // TLKB  .he2
 			printf("[^69] %s\n", $fname);
 			$len = strlen($file);
 			for ( $i=0; $i < $len; $i++ )
@@ -139,6 +135,8 @@ V      Game
 7      The Dig
 8      The Curse of Monkey Island
 
+
+
 LFLF/ROOM/CLUT
 	atlantis
 	monkey
@@ -162,6 +160,12 @@ LFLF/ROOM/IMAG/WRAP/SMAP
 	comi
 
 LFLF/RMDA/PALS/WRAP/APAL
+	puttputt
+	puttmoon
+	puttzoo
+	putttime
+	puttrace
+	puttcircus
 	freddi
 	freddi2
 	freddi3
@@ -174,7 +178,15 @@ LFLF/RMDA/PALS/WRAP/APAL
 	spyfox2
 	spyozon
 
+LFLF/RMIM/IM00/SMAP
+	puttputt
+	puttmoon
+
 LFLF/RMIM/IM00/BMAP
+	puttzoo
+	putttime
+	puttrace
+	puttcircus
 	freddi
 	freddi2
 	freddi3

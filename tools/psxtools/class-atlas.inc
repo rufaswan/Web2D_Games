@@ -75,18 +75,19 @@ class AtlasTex
 		return array(-1,-1);
 	}
 
-	private function usort($a, $b)
+	static private function usort($a, $b)
 	{
-			// sort height DESC , then width DESC
-			if ( $a['h'] == $b['h'] )
-				return ( $a['w'] < $b['w'] );
-			else
-				return ( $a['h'] < $b['h'] );
+		// sort height DESC , then width DESC
+		if ( $a['h'] !== $b['h'] )
+			return ( $a['h'] < $b['h'] ) ? 1 : -1;
+		if ( $a['w'] !== $b['w'] )
+			return ( $a['w'] < $b['w'] ) ? 1 : -1;
+		return 0;
 	}
 	//////////////////////////////
 	public function atlasmap( &$list )
 	{
-		usort($list, $this->usort);
+		usort($list, array(__CLASS__,'usort'));
 		$cw = 1;
 		$ch = 1;
 
