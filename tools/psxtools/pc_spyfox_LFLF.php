@@ -922,14 +922,17 @@ function trim_LFLF( &$lflf )
 		{
 			case 'SCRP': // script
 			case 'RMSC': // room script
-			case 'LSCR': // local script
-			case 'LSC2': // local script
+			case 'LSCR': case 'LSC2': // local script
 			case 'OBCD': // object code
-			case 'TALK':
-			case 'TLKE':
+			case 'ENCD': case 'EXCD':
+
+			case 'TALK': case 'TLKE': // talkie
 			case 'SOUN': // sound
 			case 'DIGI':
+
+			case 'BOXD': case 'BOXM':
 			case 'CHAR':
+			case 'POLD':
 				break;
 
 			case 'ROOM':
@@ -938,6 +941,9 @@ function trim_LFLF( &$lflf )
 				$func($sub);
 				$new .= $sub;
 				break;
+
+			case "\x00\x00\x00\x00": // full throttle fix
+				break 2;
 
 			default:
 				$sub = substr($lflf, $st, $siz);

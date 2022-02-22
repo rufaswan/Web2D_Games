@@ -1,5 +1,7 @@
 1997  SAT   Princess Crown
 2005  PSP   Princess Crown
+2020  PS4   Princess Crown
+
 2007  PS2   Grim Grimoire
 2007  PS2   Odin Sphere
 2008  NDS   Kumatanchi
@@ -14,7 +16,7 @@
 2016  PS4   Odin Sphere Leifthsar HD
 2018  PS4   Dragon's Crown Pro
 2019  PS4   13 Sentinels: Aegis Rim
-2020  PS4   Princess Crown
+-     SWIT  13 Sentinels: Aegis Rim
 ==============================
 ps2 grim/cat00.mbp
 	- 0 1 2 |    -   a0  1a0  3e0 |  -    8*20 12*20 70*20
@@ -98,6 +100,7 @@ ps3 odin  BE flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30
 ps4 drag  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
 ps4 odin  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
 ps4 sent  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3 s5 sb
+swo sent
 ==============================
 COUNT
 	0 1 2 4 3 5 7 8 6 9 a x

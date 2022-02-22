@@ -25,12 +25,18 @@ require "common-guest.inc";
 
 function sect_TAGS( &$file, $dir, $st, $ed )
 {
+	global $gp_tags;
 	$func = __FUNCTION__;
+
 	while ( $st < $ed )
 	{
 		$tag = substr ($file, $st+0, 4);
 		$siz = str2big($file, $st+4, 4);
 		printf("%8x  %8x  %s/%s\n", $st, $siz, $dir, $tag);
+
+		if ( ! isset($gp_tags[$tag]) )
+			$gp_tags[$tag] = 0;
+		$gp_tags[$tag] += $siz;
 
 		switch ( $tag )
 		{
@@ -54,11 +60,13 @@ function sect_TAGS( &$file, $dir, $st, $ed )
 				$func($file, "$dir/$tag", $st+8, $st+$siz);
 				break;
 
-			case ZERO.ZERO.ZERO.ZERO: // ft.la1 0x2ba41c8
+			case "\x00\x00\x00\x00": // ft.la1 0x2ba41c8
 				return;
 		} // switch ( $tag )
+
 		$st += $siz;
 	} // while ( $st < $ed )
+
 	return;
 }
 
@@ -89,11 +97,17 @@ function spyfox( $fname )
 	echo "== $fname\n";
 	$len = strlen($file);
 	sect_TAGS($file, $fname, 0, $len);
+
 	return;
 }
 
+$gp_tags = array();
 for ( $i=1; $i < $argc; $i++ )
 	spyfox( $argv[$i] );
+
+asort($gp_tags);
+foreach ( $gp_tags as $k => $v )
+	printf("%4s  %8x\n", $k, $v);
 
 /*
 V      Game
@@ -115,7 +129,6 @@ V      Game
 		1997  Travels Through Time
 		1998  Enters the Race
 		2000  Joins the Circus
-		2003  Pep's Birthday Surprise
 	Freddi Fish
 		1994  The Case of the Missing Kelp Seeds
 		1996  The Case of the Haunted Schoolhouse
@@ -126,7 +139,6 @@ V      Game
 		1996  No Need to Hide When It's Dark Outside
 		1998  Thunder and Lightning Aren't so Frightening
 		2000  You Are What You Eat from Your Head to Your Feet
-		2003  Life Is Rough When You Lose Your Stuff!
 	Spy Fox
 		1997  Dry Cereal
 		1999  Some Assembly Required

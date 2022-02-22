@@ -25,6 +25,17 @@ require "common-guest.inc";
 require "common-quad.inc";
 require "quad.inc";
 
+function adjsrc( &$src, $c )
+{
+	if ( (int)$src & 1 )
+		return;
+	if ( $src < $c )
+		$src++;
+	else
+		$src--;
+	return;
+}
+
 function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 {
 	$float =array();
@@ -53,44 +64,23 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 		$float[14]*$w , $float[15]*$h ,
 	);
 
+	$scx = ($sqd[0] + $sqd[2] + $sqd[4] + $sqd[6]) / 4;
+	$scy = ($sqd[1] + $sqd[3] + $sqd[5] + $sqd[7]) / 4;
+
 	// auto-shrink quad
 	// 0,0           32,0  <- even number , need 1 pixel padding
 	//     1,1  31,1       <-  odd number , all OK
 	//     1,31 31,31
 	// 0,32          32,32
+	adjsrc($sqd[0], $scx);
+	adjsrc($sqd[2], $scx);
+	adjsrc($sqd[4], $scx);
+	adjsrc($sqd[6], $scx);
 
-	// even x
-	if ( ((int)$sqd[0] & 1) === 0 )
-	{
-		$cx = ($sqd[0] + $sqd[4]) / 2;
-		if ( $sqd[0] < $cx )
-		{
-			$sqd[0]++;  $sqd[6]--;
-			$sqd[2]++;  $sqd[4]--;
-		}
-		else
-		{
-			$sqd[0]--;  $sqd[6]++;
-			$sqd[2]--;  $sqd[4]++;
-		}
-	} // if ( ((int)$sqd[0] & 1) === 0 )
-
-	// even y
-	if ( ((int)$sqd[1] & 1) === 0 )
-	{
-		$cy = ($sqd[1] + $sqd[5]) / 2;
-		if ( $sqd[1] < $cy )
-		{
-			$sqd[1]++;  $sqd[7]++;
-			$sqd[3]--;  $sqd[5]--;
-		}
-		else
-		{
-			$sqd[1]--;  $sqd[7]--;
-			$sqd[3]++;  $sqd[5]++;
-		}
-	} // if ( ((int)$sqd[1] & 1) === 0 )
-
+	adjsrc($sqd[1], $scy);
+	adjsrc($sqd[3], $scy);
+	adjsrc($sqd[5], $scy);
+	adjsrc($sqd[7], $scy);
 	return;
 }
 
@@ -271,7 +261,7 @@ function sect_TLPI( &$sect, &$img, $pfx )
 	return;
 }
 
-function sect_IOBJ( &$json, &$sect, $pfx, $idtag )
+function sect_IOBJ( &$json, &$sect, $pfx )
 {
 	if ( ! isset($sect['IOBJ']) )
 		return;
@@ -297,14 +287,14 @@ function sect_IOBJ( &$json, &$sect, $pfx, $idtag )
 	sect_anim($json, $sect['IOBJ'], $anim_off, $ptgt_off);
 	sect_spr ($json, $sect['IOBJ'], $ptgt_off, $img);
 
-	save_quadfile("$pfx/$idtag", $json);
+	save_quadfile("$pfx/data", $json);
 
 	foreach ( $img as $k => $v )
 	{
 		if ( isset( $sect['TLPI'] ) )
-			$fn = sprintf("%s/%s-%d.0.rgba", $pfx, $idtag, $k);
+			$fn = sprintf("%s/img-%d.0.rgba", $pfx, $k);
 		else
-			$fn = sprintf("%s/%s.%d.rgba", $pfx, $idtag, $k);
+			$fn = sprintf("%s/img.%d.rgba", $pfx, $k);
 		save_clutfile($fn, $v);
 	}
 	return;
@@ -316,7 +306,7 @@ function gunvolt( $fname, $idtag )
 	if ( empty($file) )  return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
-	$len = strlen ($file);
+	$len = strlen($file);
 
 	if ( $idtag == '' )
 		return php_error('NO TAG %s', $fname);
@@ -349,7 +339,7 @@ function gunvolt( $fname, $idtag )
 				{
 					$type = "pix ";
 					$img = gv_pixd($sub, 0);
-					save_clutfile("$pfx/$idtag.$i.rgba", $img);
+					save_clutfile("$pfx/img.$i.rgba", $img);
 				}
 				else
 					$type = "????";
@@ -359,21 +349,22 @@ function gunvolt( $fname, $idtag )
 		printf("%8x , %8x , %s , %s.%d\n", $pos, $siz, $type, $pfx, $i);
 	} // for ( $i=0; $i < $cnt; $i++ )
 
-	sect_IOBJ($json, $sect, $pfx, $idtag);
+	sect_IOBJ($json, $sect, $pfx);
 	return;
 }
 
-printf("%s  -bsm/-gv/-gv2/-gva/-mgv  FILE...\n", $argv[0]);
-$idtag = "";
+printf("%s  -bmz/-gv/-gv2/-gva/-mgv  FILE...\n", $argv[0]);
+$idtag = '';
 for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case '-bsm':  $idtag = 'pc_bsm'; break;
-		case '-gv' :  $idtag = 'pc_gv' ; break;
-		case '-gv2':  $idtag = 'pc_gv2'; break;
-		case '-gva':  $idtag = 'pc_gva'; break;
-		case '-mgv':  $idtag = 'pc_mgv'; break;
+		case '-bsm':
+		case '-bmz':  $idtag = 'pc blast master zero'; break;
+		case '-gv' :  $idtag = 'pc gunvolt' ;          break;
+		case '-gv2':  $idtag = 'pc gunvolt 2';         break;
+		case '-gva':  $idtag = 'pc gunvolt laix';      break;
+		case '-mgv':  $idtag = 'pc mighty gunvolt';    break;
 		default:
 			gunvolt( $argv[$i], $idtag );
 			break;

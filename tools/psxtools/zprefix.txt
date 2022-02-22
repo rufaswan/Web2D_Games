@@ -127,7 +127,7 @@ mkr     SLPM 861.34  Mitsumete Knight R
 	disc2   ALL DONE
 	disc3   ALL DONE
 	mana    ALL DONE
-	saga2   ALL DONE , SLUS not supported
+	saga2   ALL DONE , for SLPS only
 	tm2sub  ALL DONE
 	xeno    ALL DONE
 	yuna    *.ss1 only
@@ -144,43 +144,49 @@ mkr     SLPM 861.34  Mitsumete Knight R
 	tome2   --upcoming--
 
 ==============================
+== Vanillaware Games ==
+pcrown  SATURN  T-14418G     Princess Crown
+pcrown  PSP     ULJM 050.40  Princess Crown
+pcrown  PS4                  Princess Crown
+
+	pcrown  --upcoming--
+		+PSP  *.tmx
+
+odin  PS2   SLUS 215.77  Odin Sphere
+odin  PS2   SLUS 216.04  GrimGrimoire
+kuma  NDS   CKUJ         Kumatanchi
+mura  WII   RSFE7U       Muramasa The Demon Blade
+gran  PSP   ULJS 003.94  Grand Knights History
+mura  VITA  PCSE 002.40  Muramasa Rebirth + DLC
+drag  VITA  PCSE 000.19  Dragon Crown
+odin  VITA  PCSE 008.99  Odin Sphere Leifthrasir
+drag  PS3                Dragon Crown
+odin  PS3                Odin Sphere Leifthrasir HD
+odin  PS4                Odin Sphere Leifthrasir HD
+drag  PS4                Dragon Crown Pro
+sent  PS4   CUSA 196.20  13 Sentinels: Aegis Rim
+sent  SWIT               13 Sentinels: Aegis Rim
+
+	*all*  FTEX only
+		+kuma  RGCN/RLCN/RCSN
+
+==============================
 == PlayStation System Games ==
-odin  PS2  SLUS 215.77  Odin Sphere
-odin  PS2  SLUS 216.04  GrimGrimoire
-
-	odin  *.mbp/*.ftp only
-
-???    PS4  Odin Sphere Leifthrasir
-???    PS4  Dragon Crown Pro
-13sen  PS4  CUSA 196.20  13 Sentinels Aegis Rim
-
-	13sen  --upcoming--
 
 lunar   PSP  NPJH_500.54  Lunar Harmony of Silver Star
-pcrown  PSP  ULJM 050.40  Princess Crown
 ???     PSP  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
-grand   PSP  ULJS_003.94  Grand Knights History
 
-	pcrown  *.chb/.mcb , *.pak/chr only (+PSP *.tmx)
 	lunar   --upcoming--
-	grand   *.mbs/*.ftx only
 
-mura  VITA  PCSE00240  Muramasa Rebirth + DLC
-mura  VITA  PCSE00019  Dragon Crown
-mura  VITA  PCSE00899  Odin Sphere Leifthrasir
-
-	mura  *.mbs/*.ftx only
 ==============================
 == Guest System Games ==
 
 cvpor  NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
 cvpor  NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor  NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
-kuma   NDS  CKUJ  Kumatanchi
 ???    NDS  AVCJ  Magical Vacation 2
 ???    NDS  YW7E  Commando Steel Disaster
 
-	kuma   ALL DONE
 	cvpor  all maps only , *.so/.sc (non-quad) only
 
 cotton  SATURN  T-9904G   Magical Night Dreams Cotton 2
@@ -190,22 +196,16 @@ sotn    SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
 yuna    SATURN  T-14307G  Galaxy Fraulein Yuna REMIX
 mika1   SATURN  T-14308G  Galaxy Fraulein Yuna Mika Akitaka Illustration
 yuna    SATURN  T-14311G  Galaxy Fraulein Yuna 3
-pcrown  SATURN  T-14418G  Princess Crown
 mujin   SATURN  T-28901G  Mujintou Monogatari R
-vfcg    SATURN  Virtua Fighter CG Potrait Series
+vfcg    SATURN  -         Virtua Fighter CG Potrait Series
 
 	cotton   ALL DONE
 	mika1    ALL DONE
 	vfcg     ALL DONE
 	yuna     *.ss1 only
 	mujin    *.vd1 , *.vd2 only
-	pcrown   *.chb/.mcb , *.pak/chr only
 	mika2    --upcoming--
 	sotn     --upcoming--
-
-mura  WII  RSFE7U  Muramasa The Demon Blade
-
-	mura  *.mbs/*.ftx only
 
 rusty    PC98  Rusty
 rusty    PC98  Totsugeki Mix
@@ -214,6 +214,35 @@ galpani  PC98  Galpani 2
 
 	rusty    *.map/.tbl/.dat , *.mag/.ani , *.mgx only
 	galpani  *.bgi/.bgs/.msk only
+
+spyfox    SCUMM HE  Spy Fox 1
+spyfox    SCUMM HE  Spy Fox 2
+spyfox    SCUMM HE  Spy Fox 3
+spyfox    SCUMM HE  Pajama Sam 1
+spyfox    SCUMM HE  Pajama Sam 2
+spyfox    SCUMM HE  Pajama Sam 3
+spyfox    SCUMM HE  Freddi Fish 1 Missing Kelp Seeds
+spyfox    SCUMM HE  Freddi Fish 2 Haunted Schoolhouse
+spyfox    SCUMM HE  Freddi Fish 3 Stolen Conch Shell
+spyfox    SCUMM HE  Freddi Fish 4 Hogfish Rustlers of Briny Gulch
+spyfox    SCUMM HE  Freddi Fish 5 Creature of Coral Cove
+spyfox    SCUMM HE  Putt-putt 1 Joins the Parade
+spyfox    SCUMM HE  Putt-putt 2 Goes to the Moon
+spyfox    SCUMM HE  Putt-putt 3 Saves the Zoo
+spyfox    SCUMM HE  Putt-putt 4 Travels Through Time
+spyfox    SCUMM HE  Putt-putt 5 Enters the Race
+spyfox    SCUMM HE  Putt-putt 6 Joins the Circus
+tentacle  SCUMM     Monkey Island 1 The Secret of
+tentacle  SCUMM     Monkey Island 2 LeChuck's Revenge
+tentacle  SCUMM     Monkey Island 3 The Curse of
+tentacle  SCUMM     Indiana Jones and the Fate of Atlantis
+tentacle  SCUMM     Sam and Max Hit the Road
+tentacle  SCUMM     The Days of Tentacles
+tentacle  SCUMM     Full Throttle
+tentacle  SCUMM     The Dig
+
+	spyfox    RMIM , OBIM , AWIZ , AKCD only
+	tentacle  monster.sou only
 
 disc     PC  Discworld
 disc     PC  Discworld 2

@@ -66,6 +66,7 @@ ksort($gp_op);
 echo "== op_list ==\n";
 foreach ( $gp_op as $k=>$v )
 	printf("  %4x\n", $k);
+
 /*
 iconv -f cp932 -t utf8
 
@@ -98,15 +99,6 @@ RAM 22e28b0  FMBS momo01.mbs
 	2026c3c  ldrh  r2[ 611], 0(r5[ 23597a0])
 	2026c40  ldrh  r1[   9], 2(r5[ 23597a0])
 	2026750  ldrb  r0[   6], 1(r4[ 23597a0])
-		1  rabbi-tan
-		2  neko-kun
-		3  tora-neesan
-		4  ushi-neesan
-		5  saru-jii
-		6  maguro
-		7  twin monkey
-		8  owner
-		9  sumomo
 
 	[MOMO LOADED]
 
@@ -135,7 +127,7 @@ RAM 22e28b0  FMBS momo01.mbs
 	202819c  ldrsbne  r0[82], 0(r5[ 23597c8])
 	2010fb8  ldr      r5[6081ad82], 0(r1[ 23597c8])
 
-	ANIM=19
+	ANIM=18,19
 	JP=0
 [INPUT WAIT]
 	2026428  ldrb  r0[  11], 0(r4[ 23597b0])

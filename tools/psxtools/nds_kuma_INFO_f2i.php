@@ -21,25 +21,19 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require "common.inc";
+require "common-guest.inc";
 
-$img = array(
-	'cc' => 0x10,
-	'w' => 0,
-	'h' => 0,
-	'pal' => grayclut(0x10),
-	'pix' => str_repeat(ZERO, 0x100*0x100),
-);
-for ( $i=0; $i < 0x10; $i++ )
-	$img['pix'][$i] = chr($i*0x11);
-save_clutfile("gray-16.clut", $img);
+function kuma( $str )
+{
+	$str = preg_replace('|[^0-9a-fA-F]|', '', $str);
+	if ( strlen($str) !== 8 )
+		return;
 
-$img = array(
-	'cc' => 0x100,
-	'w' => 0,
-	'h' => 0,
-	'pal' => grayclut(0x100),
-	'pix' => str_repeat(ZERO, 0x100*0x100*4),
-);
-for ( $i=0; $i < 0x100; $i++ )
-	$img['pix'][$i] = chr($i);
-save_clutfile("gray-256.clut", $img);
+	$f = float32( hexdec($str) );
+	$i = (int)($f * 0x1000) & BIT32;
+	printf("%s = (int) %8x , (float) %f\n", $str, $i, $f);
+	return;
+}
+
+for ( $i=1; $i < $argc; $i++ )
+	kuma( $argv[$i] );
