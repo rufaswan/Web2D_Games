@@ -1,11 +1,11 @@
-/*
-https://stackoverflow.com/questions/7951019/how-to-convert-string-to-float
-https://stackoverflow.com/questions/7245817/converting-float-to-32-bit-hexadecimal-c
-https://stackoverflow.com/questions/21323099/convert-a-hexadecimal-to-a-float-and-viceversa-in-c/21387804
-*/
+// https://stackoverflow.com/questions/7951019/how-to-convert-string-to-float
+// https://stackoverflow.com/questions/7245817/converting-float-to-32-bit-hexadecimal-c
+// https://stackoverflow.com/questions/21323099/convert-a-hexadecimal-to-a-float-and-viceversa-in-c/21387804
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+// strtof REQUIRES c99
 union float_bits {
 	unsigned int i;
 	float f;
@@ -14,7 +14,8 @@ union float_bits {
 void float2hex( char str[] )
 {
 	union float_bits  bits;
-	bits.f = atof(str);
+	// atof return double/float64
+	bits.f = strtof(str, NULL);
 	printf("f2h : %f -> %x\n", bits.f, bits.i);
 	return;
 }

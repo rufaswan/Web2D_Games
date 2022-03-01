@@ -100,12 +100,21 @@ ps3 odin  BE flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30
 ps4 drag  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
 ps4 odin  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
 ps4 sent  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3 s5 sb
-swo sent
+swi sent
 ==============================
-COUNT
-	0 1 2 4 3 5 7 8 6 9 a x
-	4+ 0 1 2 3 5 7 8 6 9 a x b
-	1+ - - - 0 2 4 5 - 3 6 7 x - 8
-	1+ - - - 0 2 4 5 3 6 7 x 8 - 9
-	1 0 2 4 5 3 6 7 x - 8
+COUNT     pos  int16
+ps2 grim  3c   0 1  2 4 3 5 7 8 6 9  a
+ps2 odin  3c   0 1  2 4 3 5 7 8 6 9  a
+nds kuma  3c   0 1  2 4 3 5 7 8 6 9  a
+wii mura  3c   0 1  2 4 3 5 7 8 6 9  a
+psp gran  56   1 0 2 4 5  3 6 7 - 8
+vit mura  56   1 0 2 4 5  3 6 7 - - 8
+vit drag  50   1+ - - - 0 2 4  5 - 3 6 7 - 8
+vit odin  50   1+ - - - 0 2 4  5 3 6 7 - 8 - 9
+ps3 drag  50   4+ 0 1 2 3 5 7  8 - 6 9 a
+ps3 odin  50   4+ 0 1 2 3 5 7  8 6 9 a - b
+ps4 drag  50   4+ 0 1 2 3 5 7  8 6 9 a - b
+ps4 odin  50   4+ 0 1 2 3 5 7  8 6 9 a - b
+ps4 sent  50   4+ 0 1 2 3 5 7  8 6 9 a - b
+swi sent
 ==============================

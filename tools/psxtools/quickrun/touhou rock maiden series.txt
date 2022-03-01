@@ -1,0 +1,331 @@
+===================
+=== Rock Maiden ===
+===================
+CHAR
+	TH06-s2 Cirno
+	TH06-s6 Remilia Scarlet
+	TH06-s4 Patchouli Knowledge
+	TH09p   Shameimaru Aya
+	TH08-ex Huziwara No Makou
+	TH07-s5 Konpaku Youmu
+	TH11-s6 Reiuzi Utsuho
+	FIG     Hinanawi Tenshi
+CLEAR = EXTRA mode
+	key.txt line 33 = 0 -> 69
+------------------------------
+REIMU
+password
+	potion
+		+blue 0 be2          +red 0 -
+		+blue 1     be4      +red 1 rc3
+		+blue 2 re2 re4      +red 2     bd2
+		+blue 3 re2          +red 3 rc3     ba5
+		+blue 4         rc5  +red 4     rd2 ra5
+	intro
+		ra1
+	extra potion
+		+blue 0 re3          +red 0 bd3
+		+blue 1 be3          +red 1     rb4
+		+blue 2 re3 be4      +red 2 rd3 rb4
+		+blue 3         rd4  +red 3     bb4 rb5
+		+blue 4 re3     bd4  +red 4 rd3     bb5
+	extra intro
+		ra4
+
+cirno (icicle) -> aya (tornado)
+-> mokou (wheel) -> patchouli (ball)
+-> utsuho (pharaoh) -> remilia (spear)
+-> youmu (slash) -> tenshi (funnel) ->
+
+kaguya 1 <- slash , 2 <- tornado
+       3 <- spear , 4/re <- pharaoh
+------------------------------
+item/shot
+	mouse = SP+BLOCK+PIT utsuho + icicle + funnel/wheel (just before laser area)
+	broom = 4 boss
+	doll  = BLOCK+SLIDE+TOP patchouli + broom
+	shot:laser  = TOP cirno + tornado + broom
+	shot:5ways  = TOP makou + broom
+	item:heal+  = DIG tenshi + broom/tornado + mouse
+	item:pierce = PIT remilia (+mudeki)
+	item:mudeki = SP+BLOCK+PIT utsuho + icicle + funnel/wheel
+	item:charge = SLIDE aya (+mudeki)
+------------------------------
+Cheat Engine
+	+ 0 int32 Lives
+	+ 4 int32 Blue Potion (E-tank)
+	+ 8 int32 Red  Potion (W-tank)
+	+12 int32 Shanghai    (Beat)
+
+=====================
+=== Rock Maiden 2 ===
+=====================
+CHAR
+	TH07-s6 Saigyouji Yuyuko
+	FIG     Ibuki Suika
+	TH09p   Onaduka Komachi
+	TH11-s2 Mizuhashi Parsee
+	TH06-ex Flandre Scarlet
+	FIG     Nagae Iku
+	TH10-ex Moriya Suwako
+	TH08-s5 Reisen Udongein Inaba
+CLEAR = EXTRA mode + Player KAGUYA
+	key.txt line 33 = 0 -> 69
+------------------------------
+REIMU
+password
+	potion
+		+blue 0 -            +red 0 rb4
+		+blue 1 rf6          +red 1 bb4
+		+blue 2     ye5      +red 2 rb4 rf1
+		+blue 3 rf6     rd5  +red 3         bb1
+		+blue 4 rf6 be5      +red 4     yf1 bb1
+	intro
+		ra6 rc3
+	extra potion
+		+blue 0 -            +red 0 -
+		+blue 1 rc3 re5      +red 1 ba1
+		+blue 2     be5 ra4  +red 2     ra3 rf1
+		+blue 3 yc3     ra4  +red 3 ya1     rf1
+		+blue 4     re5 ra4  +red 4         bf1 rb6
+	extra intro
+		rf3  yd2
+
+yuyuko (wood) -> parsee (love3)
+-> suwako (rain) -> flandre (gemini)
+-> iku (spark) -> inaba (missile)
+-> suika (stone) -> komachi (slide) ->
+
+kaguya 1 <- spark , 2 <- spark
+       3 <- stone , 4/re <- missile
+       5 <- love3
+------------------------------
+YOUMU
+password
+	potion
+		+blue 0 -            +red 0 re2
+		+blue 1 yf5          +red 1     re4 bf4
+		+blue 2 rf5 rc6      +red 2     ye4     bb5
+		+blue 3 bf5     rb4  +red 3 be2
+		+blue 4 yf5     yb4  +red 4 be2         rb5
+	intro
+		ra4  be5
+	extra potion
+		+blue 0 yc5              +red 0 -
+		+blue 1     ra6 re3      +red 1 ra4 rd1
+		+blue 2 bc5     re3      +red 2 ba4
+		+blue 3 rc5         ba2  +red 3 ra4     rd6
+		+blue 4 bc5     re3      +red 4     yd1 rd6
+	extra intro
+		re1
+
+UP+ATK -> iku (DN+ATK)
+DN+ATK -> inaba (hit-bullet)
+DN+ATK -> suwako (AIR+DN+ATK)
+AIR+DN+ATK -> flandre (UP+ATK)
+AIR+DN+ATK -> suika (giga)
+giga -> komachi (coin)
+coin -> yuyuko (spear)
+spear -> parsee (greenvoid)
+
+kaguya 1 <- UP+ATK , 2 <- DN+ATK
+       3 <- UP+ATK , 4/re <- AIR+DN+ATK
+       5 <- UP+ATK
+------------------------------
+KAGUYA
+password
+	potion
+		+blue 0 -            +red 0 -
+		+blue 1 rc3 bf6      +red 1 ra2
+		+blue 2 yc3     ra4  +red 2     rd3 rf1
+		+blue 3 rc3 rf6      +red 3         rf1 yf4
+		+blue 4     rf6 ba4  +red 4 ba2     rf1
+	intro
+		rb6 rc4  bd2  yd1 yd4
+	extra potion
+		+blue 0 rc5 re5          +red 0 -
+		+blue 1 rc5              +red 1 yb1
+		+blue 2     be5 ra4      +red 2     rb6 re2
+		+blue 3 rc5     ya4      +red 3     bb6
+		+blue 4     re5     be1  +red 4     yb6 re2
+	extra intro
+		ya2 ye4
+
+*SAME AS REIMU*
+- removed after boss dialog
+- get BROOM after intro
+------------------------------
+item/shot
+	mouse = TOP komachi + broom (waterfall w/pits area)
+	broom = 4 boss
+	doll  = BOTTOM suika + broom
+	shot:laser  = TOP iku + broom
+	shot:5ways  = TOP suwako + broom
+	item:heal+  = BLOCK parsee + laser + broom
+	item:pierce = SLIDE yuyuko + broom
+	item:mudeki = TOP reisen + broom
+	item:charge = BOTTOM suika + broom
+	item:energy = BLOCK+DIG flandre + laser + mouse
+------------------------------
+Cheat Engine
+	+ 0 int32 Lives
+	+ 4 int32 Blue Potion (E-tank)
+	+ 8 int32 Red  Potion (W-tank)
+	+12 int32 Shanghai    (Beat)
+
+=====================
+=== Rock Maiden 3 ===
+=====================
+CHAR
+	TH06-s5 Izayoi Sakuya
+	TH11-ex Komeiji Koishi
+	TH10-s2 Kagiyama Hina
+	TH04-s5 Kazami Yuka
+	TH08-s1 Wriggle Nightbug
+	TH12-s6 Hijiri Byakuren
+	TH12-s3 Kumoi Ichirin
+	TH12-s5 Toramaru Syou
+CLEAR = EXTRA mode + Player ALICE + options
+	key.txt line 33 = 0 -> 69
+------------------------------
+REIMU
+password
+	potion
+		+blue 0 -            +red 0 -
+		+blue 1 rb4 rc6      +red 1 yd4
+		+blue 2 bb4     re4  +red 2 rd4 rc4
+		+blue 3 rb4     ye4  +red 3 bd4 yc4
+		+blue 4     rc6 ye4  +red 4 yd4     rf5
+	intro
+		rb2  yb6
+	extra potion
+		+blue 0 -            +red 0 -
+		+blue 1 bb3          +red 1 ya4
+		+blue 2     rc4      +red 2 ra4 rf1
+		+blue 3         rb6  +red 3     bf1
+		+blue 4     rc4 bb6  +red 4         ye6
+	extra intro
+		rf4  yd4
+
+sakuya (timestop) -> syou (dart)
+-> yuka (petal) -> byakuren (boomerang)
+-> nightbug (bug) -> ichirin (punch)
+-> hina (top) -> koishi (heart) ->
+
+sakuya.yuyuko <- boomerang , suika  <- heart
+hina.komachi <- top , parsee <- petal
+byaku.flandre <- dart , iku <- boomerang
+syou.suwako <- heart , inaba <- firefly
+
+kaguya 1 <- heart , 2 <- boomerang
+       3 <- punch , 4/re <- punch
+       5 <- boomerang/top
+------------------------------
+MARISA
+password
+	potion
+		+blue 0 -        +red 0 -
+		+blue 1 rd1      +red 1 yd3
+		+blue 2     yb4  +red 2 rd3 rf3
+		+blue 3 rd1 rb4  +red 3     rf3 rd6
+		+blue 4 bd1      +red 4         yd6
+	intro
+		rb1 rb6  bc3
+	extra potion
+		+blue 0 -            +red 0 -
+		+blue 1 rc1          +red 1 rd5
+		+blue 2     ye2      +red 2     rf6
+		+blue 3     re2 bc5  +red 3     rf6 ra2
+		+blue 4 yc1          +red 4     bf6
+	extra intro
+		bd2
+
+sakuya (clock) -> syou (shockwave)
+-> hina (ch-fire) -> yuka (spike)
+-> byakuren (counter) -> ichirin (tri-thunder)
+-> nightbug (firefly) -> koishi (needle) ->
+
+sakuya.yuyuko <- ch-fire , suika <- firefly
+hina.komachi <- spike , parsee <- counter
+byaku.flandre <- needle , iku <- ch-fire
+syou.suwako <- firefly , inaba <- tri-thunder
+
+kaguya 1 <- firefly , 2 <- counter
+       3 <- tri-thunder , 4/re <- shockwave/firefly
+       5 <- tri-thunder/spike
+------------------------------
+ALICE
+password
+	potion
+		+blue 0 -            +red 0 -
+		+blue 1 rf3          +red 1 rb5 be1
+		+blue 2 rf3 rc1      +red 2 yb5 re1
+		+blue 3     yc1      +red 3     re1 rb2
+		+blue 4     bc1 yf4  +red 4         bb2
+	intro
+		rd4
+	extra potion
+		+blue 0 -            +red 0 -
+		+blue 1 yf6          +red 1 rd2
+		+blue 2 rf6 rb5      +red 2 yd2 rd5
+		+blue 3 rf6     re3  +red 3 bd2     bc3
+		+blue 4     rb5 ye3  +red 4     rd5 rc3
+	extra intro
+		rc2 rc3
+
+sakuya.cirno <- punch , remilia <- x
+hina.patchouli <- heart/boomerang , aya <- bug
+byaku.makou <- top , youmu <- dart
+syou.utsuho <- top , tenshi <- heart/boomerang
+
+*SAME AS REIMU*
+------------------------------
+item/shot
+	mouse = SLIDE syou (laser area , search w/timestop)
+	broom = 4 boss
+	doll  = BLOCK+PIT sakuya + laser
+	shot:laser  = TOP nightbug
+	shot:5ways  = SLIDE ichirin
+	item:heal+  = TOP byakuren
+	item:pierce = BLOCK+SLIDE sakuya + laser
+	item:mudeki = TOP koishi + broom
+	item:charge = TOP hina + broom
+	item:energy = yuka + broom
+------------------------------
+Cheat Engine
+	+ 0 int32 Lives
+	+ 4 int32 Blue Potion (E-tank)
+	+ 8 int32 Red  Potion (W-tank)
+	+12 int32 Shanghai    (Beat)
+
+======================
+=== Rock Maiden FC ===
+======================
+CHAR
+	TH06-s1 Rumia
+	TH05-s3 Alice Margatroid
+	TH06-s2 Cirno
+	TH02-s4 Kirisame Marisa
+	TH06-s3 Hong Meirin
+	TH06-s5 Izayoi Sakuya
+	TH06-s6 Remilia Scarlet
+	TH06-s4 Patchouli Knowledge
+------------------------------
+REIMU
+password
+
+========================
+=== Rock Maiden FC 2 ===
+========================
+CHAR
+	TH12-s2 Tatara Kogasa
+	TH10-s5 Kotiya Sanae
+	TH02-s4 Kirisame Marisa
+	TH12-s1 Nazrin
+	TH12-s4 Murasa Minamitsu
+	TH12-s5 Toramaru Syou
+	TH09p   Shameimaru Aya
+	TH12-s3 Kumoi Ichirin
+------------------------------
+BYAKUREN
+password

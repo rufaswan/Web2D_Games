@@ -1,0 +1,99 @@
+
+BROWSER VERSION
+	Latest stable version available on January 1st
+
+https://en.wikipedia.org/wiki/Firefox_version_history
+https://en.wikipedia.org/wiki/History_of_the_Opera_web_browser
+https://en.wikipedia.org/wiki/Google_Chrome_version_history
+https://en.wikipedia.org/wiki/Safari_version_history
+
+-     Firefox    Opera          Safari
+2004   -          -              1
+2005   1.0        -              1
+2006   1.5        -              2
+2007   2.0.0.1    -              2
+2008   2.0.0.11   -              3
+2009   3.0.5      -              3
+2010   3.5.6      -              4
+2011   3.6.13     -              5
+2012   9.0.1      -              5
+2013  17.0.1      -              6
+2014  26.0.1     18.0.1284.68    7
+2015  34.0.5     26.0.1656.60    8
+2016  43.0.3     34.0.2036.25    9
+2017  50.1.0     42.0.2393.94   10
+2018  57.0.3     49.0.2725.64   11
+2019  64.0.1     57.0.3098.91   12
+2020  71.0       65.0.3467.78   13
+2021  84.0.1     73.0.3856.284  14
+2022  95.0.2     82.0.4227.43   15
+2023
+
+Chrome based
+	Opera   20 is based on Chrome 33 (+13)
+	MS Edge 79 is based on Chrome 79 (same)
+
+Engine Changes
+	Opera   13 skipped
+	Opera   14 skipped
+	Opera   15 = Presto   -> Blink engine
+	Chrome  28 = WebCore  -> Blink engine
+	MS Edge 79 = EdgeHTML -> Blink engine
+
+Desktop vs Mobile
+	https://developer.chrome.com/docs/multidevice/faq/
+	Chrome for Android is derived from Chromium.
+	They share the same release cycle and release numbering. Not2 all features in desktop Chrome are available in the corresponding version of Chrome for Android, however.
+
+	https://wiki.mozilla.org/Mobile/Platforms
+	Firefox for Android is built on the same engine as Firefox desktop, with extensive changes to optimize performance and user experience on mobile devices.
+
+Can I Use?
+	-                     Firefox  Opera  Safari
+	HTML  canvas           3.6+    10+     4+
+	HTML  video           20+      11.5+   4+
+	HTML  audio           20+      11.5+   4+
+	HTML  ruby            38+       -      -
+	CSS   animation       16+      30+     9+
+	CSS   vw/vh           19+      15+     8+
+	CSS   flex            28+      17+     9+
+	CSS   grid            54+      44+    10.3+
+	JS    Worker()         3.5+    11.5    5+
+	JS    FileReader()     3.6+    11.5+   6+
+	JS    File()          28+      25+    10+
+	JS    SharedWorker()  29+      11.5+   -
+	JS    Promise()       29+      20+     8+
+	JS    import()        67+      50+    11.1+
+	JS    data:base64,     2.0+    11.5+   3.2+
+	JS    localStorage     3.5+    11.5+   4+
+	JS    "strict"         4+      12.1+   6+
+	JS    AJAX            12+      18+     8+
+	JS    Notification    22+      25+     -
+	JS    webgl           24+      19+     8+
+	JS    Generator       26+      26+    10+
+	JS    serviceWorkers  44+      32+     -
+	JS    webgl2          51+      43+    15.1+
+	JS    async/await     52+      42+    10.3+
+	JS    pointer         59+      42+    13.2+
+	JS    export          60+      48+    10.3+
+	JS    type=module     60+      48+    11+
+	FILE  apng             3.0+    46+     8+
+	FILE  ttf/otf          3.5+    10+     4.2+
+	FILE  ogg              3.5+    11.5+   -
+	FILE  wav              3.5+    11.5+   4+
+	FILE  woff             3.6+    11.5+   5.1+
+	FILE  mp3             22+      15+     4+
+	FILE  webm            28+      16+     -
+	FILE  mp4/h264        35+      25+     3.2+
+	FILE  woff2           39+      23+    12+
+	FILE  wasm            53+      44+    11+
+	FILE  webp            65+      19+     -
+
+Support Comparison
+	https://wiki.ubuntu.com/LTS
+		In previous releases, a Long Term Support (LTS) version had three years support on Ubuntu (Desktop) and five years on Ubuntu Server.
+		Starting with Ubuntu 12.04 LTS, both versions received five years support.
+
+	https://access.redhat.com/support/policy/updates/errata
+		Red Hat Enterprise Linux versions 6, and 7 each deliver ten years of support (unless otherwise noted below under Exceptions) in Full Support, Maintenance Support 1 and Maintenance Support 2 Phases followed by an Extended Life Phase.
+		Red Hat Enterprise Linux Version 8 delivers a ten year life cycle in Full Support and Maintenance Support Phases followed by an Extended Life Phase.

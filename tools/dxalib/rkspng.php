@@ -40,6 +40,7 @@ function newext( $fname )
 	} // while ( $st < $ed )
 
 	file_put_contents( $fname, $file );
+	return;
 }
 
 if ( $argc == 1 )   exit();

@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 $gp_data = array(
-	'ps2 odin' => array(
+	'ps2_odin' => array(
 		'idtag' => 'ps2 odin sphere',
 		'sect' => array(
 			// oswald.mbp
@@ -41,8 +41,9 @@ $gp_data = array(
 			array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x4e,2)), // s9
 			array('p'=>0x7c , 'k'=>0x8  , 'c'=>array(0x50,2)), // sa
 		),
-	),
-	'vit odin' => array(
+	), // 'ps2_odin'
+
+	'vit_odin' => array(
 		'idtag' => 'vita odin sphere resd',
 		'sect' => array(
 			// RESD_Oswald.mbs
@@ -63,8 +64,9 @@ $gp_data = array(
 			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // s8 bg=0
 			array('p'=>0x118 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s9
 		),
-	),
-	'ps3 odin' => array(
+	), // 'vit_odin'
+
+	'ps3_odin' => array(
 		'idtag' => 'ps3 odin sphere rehd',
 		'sect' => array(
 			// REHD_Oswald.mbs
@@ -87,8 +89,9 @@ $gp_data = array(
 			array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // sa
 			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
 		),
-	),
-	'ps4 odin' => array(
+	), // 'ps3_odin'
+
+	'ps4_odin' => array(
 		'idtag' => 'ps4 odin sphere rehd',
 		'sect' => array(
 			// REHD_Oswald.mbs
@@ -111,9 +114,9 @@ $gp_data = array(
 			array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // sa
 			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
 		),
-	),
+	), // 'ps4_odin'
 	//////////////////////////////
-	'wii mura' => array(
+	'wii_mura' => array(
 		'idtag' => 'wii muramasa',
 		'sect' => array(
 			// torahime00.mbs
@@ -132,8 +135,9 @@ $gp_data = array(
 			array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x4e,2)), // s9
 			array('p'=>0x7c , 'k'=>0x10 , 'c'=>array(0x50,2)), // sa
 		),
-	),
-	'vit mura' => array(
+	), // 'wii_mura'
+
+	'vit_mura' => array(
 		'idtag' => 'vita muramasa rebirth',
 		'sect' => array(
 			// torahime00.mbs
@@ -151,9 +155,9 @@ $gp_data = array(
 			array('p'=>0x98 , 'k'=>0x14 , 'c'=>array(0x64,2)), // s7
 			array('p'=>0xa0 , 'k'=>0x78 , 'c'=>array(0x6a,2)), // s8
 		),
-	),
+	), // 'vit_mura'
 	//////////////////////////////
-	'vit drag' => array(
+	'vit_drag' => array(
 		'idtag' => 'vita dragon crown',
 		'sect' => array(
 			// Fighter00.mbs
@@ -170,8 +174,9 @@ $gp_data = array(
 			array('p'=>0x9c , 'k'=>0x14 , 'c'=>array(0x68,2)), // s7
 			array('p'=>0xa4 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s8
 		),
-	),
-	'ps3 drag' => array(
+	), // 'vit_drag'
+
+	'ps3_drag' => array(
 		'idtag' => 'ps3 dragon crown',
 		'sect' => array(
 			// Fighter00.mbs
@@ -190,8 +195,9 @@ $gp_data = array(
 			array('p'=>0x98 , 'k'=>0x30 , 'c'=>array(0x66,2)), // s9
 			array('p'=>0x9c , 'k'=>0x14 , 'c'=>array(0x68,2)), // sa
 		),
-	),
-	'ps4 drag' => array(
+	), // 'ps3_drag'
+
+	'ps4_drag' => array(
 		'idtag' => 'ps4 dragon crown pro',
 		'sect' => array(
 			// Fighter00.mbs
@@ -214,9 +220,9 @@ $gp_data = array(
 			array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // sa
 			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
 		),
-	),
+	), // 'ps4_drag'
 	//////////////////////////////
-	'ps2 grim' => array(
+	'ps2_grim' => array(
 		'idtag' => 'ps2 grim grimoire',
 		'sect' => array(
 			// opalnera00.mbp
@@ -235,9 +241,9 @@ $gp_data = array(
 			array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x4e,2)), // s9
 			array('p'=>0x7c , 'k'=>0x8  , 'c'=>array(0x50,2)), // sa
 		),
-	),
+	), // 'ps2_grim'
 
-	'nds kuma' => array(
+	'nds_kuma' => array(
 		'idtag' => 'nds kumatanchi',
 		'sect' => array(
 			// k_item00.mbs
@@ -256,9 +262,9 @@ $gp_data = array(
 			array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x4e,2)), // s9
 			array('p'=>0x7c , 'k'=>0x10 , 'c'=>array(0x50,2)), // sa
 		),
-	),
+	), // 'nds_kuma'
 
-	'psp gran' => array(
+	'psp_gran' => array(
 		'idtag' => 'psp grand knights history',
 		'sect' => array(
 			// Golem01.mbs
@@ -275,9 +281,9 @@ $gp_data = array(
 			array('p'=>0xa0 , 'k'=>0x14 , 'c'=>array(0x64,2)), // s7
 			array('p'=>0xa4 , 'k'=>0x60 , 'c'=>array(0x68,2)), // s8
 		),
-	),
+	), // 'psp_gran'
 
-	'ps4 sent' => array(
+	'ps4_sent' => array(
 		'idtag' => 'ps4 13 sentinels',
 		'sect' => array(
 			// Miura00.mbs
@@ -300,7 +306,7 @@ $gp_data = array(
 			array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // sa
 			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
 		),
-	),
+	), // 'ps4_sent'
 );
 //////////////////////////////
 function colorhex32( $c, $order='0123', $sll=false )
@@ -562,4 +568,14 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr )
 	return;
 }
 //////////////////////////////
+function vanilla_sect( $php )
+{
+	$php = substr($php, strrpos($php, 'quad_')+5);
+	$php = substr($php, 0, strrpos($php, '_FMBS'));
 
+	global $gp_data;
+	if ( ! isset( $gp_data[$php] ) )
+		return php_error('gp_data[ %s ] not found', $php);
+	return $gp_data[$php];
+}
+//////////////////////////////
