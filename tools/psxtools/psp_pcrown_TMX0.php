@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 function tmxpal( &$pal )
 {
@@ -58,7 +58,7 @@ function pcrown( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 8, 4) != "TMX0" )
+	if ( substr($file, 8, 4) !== 'TMX0' )
 		return;
 
 	$siz = str2int($file, 4, 4);
@@ -82,10 +82,10 @@ function pcrown( $fname )
 		bpp4to8($pix);
 	}
 	else
-		php_error("UNKNOWN bpp %s", $fname);
+		php_error('UNKNOWN bpp %s', $fname);
 
 	printf("TMX0-%d  %4d x %4d  %s\n", $cc, $w, $h, $fname);
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint($cc, 4);
 	$clut .= chrint($w, 4);
 	$clut .= chrint($h, 4);

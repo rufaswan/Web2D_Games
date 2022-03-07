@@ -57,7 +57,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 01   =  10c in map%03x.tex (size = 0x100)
  * 10   = 100c in map%03x.tex (size = 0x100)
  */
-require "common.inc";
+require 'common.inc';
 
 function savechr( &$img, $dir )
 {
@@ -66,7 +66,7 @@ function savechr( &$img, $dir )
 	$no = 1;
 	while ( $st < $ed )
 	{
-		$fn = sprintf("$dir/chr%03d.chr", $no);
+		$fn = sprintf('%s/chr%03d.chr', $dir, $no);
 		$sz = str2int($img, $st, 4);
 		if ( $sz == 0 )
 			return;

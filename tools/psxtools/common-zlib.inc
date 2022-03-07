@@ -21,12 +21,12 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 // PHP 5.4.0+
-php_req_extension("zlib_decode", "zlib");
-//php_req_extension("zlib_encode", "zlib");
+php_req_extension('zlib_decode', 'zlib');
+//php_req_extension('zlib_encode', 'zlib');
 
 // PHP 7+
-//php_req_extension("inflate_init", "zlib"); // for custom dictionary
-//php_req_extension("deflate_init", "zlib"); // for custom dictionary
+//php_req_extension('inflate_init', 'zlib'); // for custom dictionary
+//php_req_extension('deflate_init', 'zlib'); // for custom dictionary
 
 // enum
 //   ZLIB_ENCODING_RAW     = -15

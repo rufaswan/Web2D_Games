@@ -23,9 +23,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 /*
  * has AKAO sound data
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x200);
+define('CANV_S', 0x200);
 
 function sectparts( &$file, &$canv, $off, $dir )
 {
@@ -41,9 +41,9 @@ function sectparts( &$file, &$canv, $off, $dir )
 
 		printf("%6x , %3d , %3d , %3d , %3d\n", $off-8, $dx, $dy, $w, $h);
 		if ( ($dx + $w*2) > CANV_S )
-			php_error("OVER dx [%d,%d]", $dx, $w);
+			php_error('OVER dx [%d,%d]', $dx, $w);
 		if ( ($dy + $h  ) > CANV_S )
-			php_error("OVER dy [%d,%d]", $dy, $h);
+			php_error('OVER dy [%d,%d]', $dy, $h);
 
 		$pix = substr($file, $off, $w*$h);
 			$off += ($w * $h);
@@ -63,7 +63,7 @@ function sectparts( &$file, &$canv, $off, $dir )
 function saga2( $fname )
 {
 	// only EFF????.BIN files
-	if ( ! preg_match("|EFF[0-9]+\.BIN|i", $fname) )
+	if ( ! preg_match('|EFF[0-9]+\.BIN|i', $fname) )
 		return;
 
 	$file = file_get_contents($fname);
@@ -79,17 +79,17 @@ function saga2( $fname )
 	// FIXME : unknown cid , pair all pal with pix
 	foreach ( $clut as $k => $c )
 	{
-		if ( trim($c, ZERO.BYTE) == "" )
+		if ( trim($c, ZERO.BYTE) == '' )
 			continue;
 
-		$data = "CLUT";
+		$data = 'CLUT';
 		$data .= chrint(0x10, 4); // no clut
 		$data .= chrint(CANV_S, 4); // width
 		$data .= chrint(CANV_S, 4); // height
 		$data .= $c;
 		$data .= $canv;
 
-		$fn = sprintf("$dir/%04d.clut", $k);
+		$fn = sprintf('%s/%04d.clut', $dir, $k);
 		save_file($fn, $data);
 	} // foreach ( $clut as $k => $c )
 	return;

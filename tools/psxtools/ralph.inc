@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-define("CANV_S", 0x400);
-//define("DRY_RUN", true);
+define('CANV_S', 0x400);
+//define('DRY_RUN', true);
 
 function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 {
@@ -76,7 +76,7 @@ function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 		} // foreach ( $data as $v )
 
 		$id6 = $i6 / $sect[6];
-		$fn6 = sprintf("%s/%04d", $pfx, $id6);
+		$fn6 = sprintf('%s/%04d', $pfx, $id6);
 
 		trace("== %s %x\n", $pfx, $id6);
 		savepix($fn6, $pix, true);
@@ -88,7 +88,7 @@ function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 function ralph_tbl_cex( &$cex, $pfx, &$sect )
 {
 	if ( str2int($cex,0,4) != 0x38 )
-		return php_error("TBL-CEX not 0x38 [%s]", $pfx);
+		return php_error('TBL-CEX not 0x38 [%s]', $pfx);
 
 	$off = array();
 	$off[] = strlen($cex);
@@ -176,13 +176,13 @@ function load_tbltim( $fname, $pfx )
 			if ( ! isset($v['pal']) || empty($v['pal']) )
 				$v['pal'] = ( isset($data[2]) ) ? $data[2] : $data[1];
 
-			$fn = sprintf("%s/%04d.clut", $pfx, $k);
+			$fn = sprintf('%s/%04d.clut', $pfx, $k);
 			save_clutfile($fn, $v);
 		}
 		else
 		if ( $v['t'] == 'RGBA' )
 		{
-			$fn = sprintf("%s/%04d.rgba", $pfx, $k);
+			$fn = sprintf('%s/%04d.rgba', $pfx, $k);
 			save_clutfile($fn, $v);
 		}
 	} // foreach ( $data[0] as $k => $v )

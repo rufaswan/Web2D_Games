@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 //////////////////////////////
 function sect4( &$pak, $pfx )
@@ -98,7 +98,7 @@ function pcrown( $fname )
 	$pak = load_file("$pfx.pak");
 	if ( empty($pak) )  return;
 
-	if ( substr($pak,0,4) != "unkn" )
+	if ( substr($pak,0,4) !== 'unkn' )
 		return;
 
 	pakchr($pak, $pfx);

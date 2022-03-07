@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "nds.inc";
+require 'common.inc';
+require 'nds.inc';
 
 function ndsov( $dsram, $dsdir )
 {
@@ -30,7 +30,7 @@ function ndsov( $dsram, $dsdir )
 
 	$len = strlen($file);
 	if ( $len != NDS_RAM && $len != NDSI_RAM )
-		return php_error("%s not NDS/DSi size", $dsram);
+		return php_error('%s not NDS/DSi size', $dsram);
 
 	$buf = nds_ram($dsdir);
 	$bin = load_file("$dsdir/arm9/overlay.bin");

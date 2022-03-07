@@ -24,12 +24,12 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   GFD Studio
  *   https://github.com/TGEnigma/GFD-Studio/blob/master/GFDLibrary/Textures/GNF/GNFTexture.cs
  */
-require "common.inc";
-require "common-guest.inc";
-require "class-bptc.inc";
-require "class-s3tc.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'class-bptc.inc';
+require 'class-s3tc.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 function morton_swizzle( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 {
@@ -122,7 +122,7 @@ function ps4gnf( &$file, $base, $pfx, $id )
 	//$ver = ord( $file[$base+0] );
 	$cnt = ord( $file[$base+1] );
 	if ( $cnt != 1 )
-		return php_error("%s/%04d is multi-GNF [%d]", $pfx, $id, $cnt);
+		return php_error('%s/%04d is multi-GNF [%d]', $pfx, $id, $cnt);
 
 	// fedcba98 76543210 fedcba98 76543210
 	// -------- -------- -------- --------
@@ -189,13 +189,13 @@ function ps4gnf( &$file, $base, $pfx, $id )
 		0x29 => 'im_bc7',
 	);
 	if ( ! isset($list_fmt[$fmt]) )
-		return php_error("UNKNOWN im fmt  %x", $fmt);
+		return php_error('UNKNOWN im fmt  %x', $fmt);
 	printf("DETECT  fmt %s , %x x %x \n", $list_fmt[$fmt], $w, $h);
 
 	if ( defined("DRY_RUN") )
 		return;
 
-	$fn = sprintf("%s.%d.gnf", $pfx, $id);
+	$fn = sprintf('%s.%d.gnf', $pfx, $id);
 	printf("%4x x %4x , %s\n", $w, $h, $fn);
 
 	$func = $list_fmt[$fmt];
@@ -213,7 +213,7 @@ function aegis( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -227,8 +227,8 @@ function aegis( $fname )
 		$fn = substr($file, $p1, 0x20);
 			$fn = rtrim($fn, ZERO);
 
-		if ( substr($file, $st, 4) != "FTX0" )
-			return php_error("%s 0x%x not FTX0\n", $fname, $st);
+		if ( substr($file, $st, 4) !== 'FTX0' )
+			return php_error('%s 0x%x not FTX0', $fname, $st);
 
 		$sz1 = str2int($file, $st+4, 4);
 		$sz2 = str2int($file, $st+8, 4);

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function pak_pack( $dir )
 {
@@ -33,8 +33,8 @@ function pak_pack( $dir )
 	if ( empty($list) )
 		return;
 
-	$file = "PACK" . ZERO . ZERO . ZERO . ZERO;
-	$toc  = "";
+	$file = 'PACK' . ZERO . ZERO . ZERO . ZERO;
+	$toc  = '';
 	foreach ( $list as $k => $v )
 	{
 		$fdt = file_get_contents($v);
@@ -66,7 +66,7 @@ function pak_unpack( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "PACK" )
+	if ( substr($file, 0, 4) !== 'PACK' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);

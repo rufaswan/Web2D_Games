@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-define("SHA1FILE", '2bfb39f9824c7efe01304498ef1a905bdd5904f0');
+require 'common.inc';
+define('SHA1FILE', '2bfb39f9824c7efe01304498ef1a905bdd5904f0');
 
 function dec_gethalf( &$file, &$st, &$hfcod, &$hflen )
 {
@@ -168,10 +168,10 @@ function kenshin( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 8) != "PS-X EXE" )
+	if ( substr($file, 0, 8) !== 'PS-X EXE' )
 		return;
 	if ( sha1($file) != SHA1FILE )
-		return php_error("sha1sum not match [%s]\n", sha1($file));
+		return php_error('sha1sum not match [%s]', sha1($file));
 
 	$dec = kenshin_decode($file, 0xa48);
 	save_file("$fname.dec", $dec);

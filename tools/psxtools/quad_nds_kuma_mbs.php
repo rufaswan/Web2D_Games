@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "quad.inc";
-require "quad_vanillaware.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'quad.inc';
+require 'quad_vanillaware.inc';
 
 function sectspr( &$json, &$mbs )
 {
@@ -152,15 +152,15 @@ function kuma( $fname )
 	$mbs = load_file($fname);
 	if ( empty($mbs) )  return;
 
-	if ( substr($mbs,0,4) != "FMBS" )
+	if ( substr($mbs,0,4) !== 'FMBS' )
 		return;
 
 	if ( str2int($mbs, 8, 4) != 0xa0 )
 		return printf("DIFF not 0xa0  %s\n", $fname);
 
 	global $gp_data;
-	load_mbsfile($mbs, $gp_data['nds kuma']['sect'], false);
-	$json = load_idtagfile( $gp_data['nds kuma']['idtag'] );
+	load_mbsfile($mbs, $gp_data['nds_kuma']['sect'], false);
+	$json = load_idtagfile( $gp_data['nds_kuma']['idtag'] );
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	save_sect($mbs, $pfx);
@@ -181,277 +181,222 @@ mbs 4-01 valids
 mbs 4-2 valids
 	0
 //////////////////////////////
-MBS file
-	s0*18 clr (18 done)
-		00  // center RGB
-		04  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 1
-			20308d4  ldrb  r1, 0(r0)
-		05  20308dc  ldrb  r1, 1(r0)
-		06  20308e4  ldrb  r0, 2(r0)
-		08  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 2
-			20308d4  ldrb  r1, 0(r0)
-		09  20308dc  ldrb  r1, 1(r0)
-		0a  20308e4  ldrb  r0, 2(r0)
-		0c  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 3
-			20308d4  ldrb  r1, 0(r0)
-		0d  20308dc  ldrb  r1, 1(r0)
-		0e  20308e4  ldrb  r0, 2(r0)
-		10  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 4
-			20308d4  ldrb  r1, 0(r0)
-		11  20308dc  ldrb  r1, 1(r0)
-		12  20308e4  ldrb  r0, 2(r0)
-		14  // RGB 5 == RGB 1
-	s1*30 src (30 done)
-		00  // center x
-		04  // center y
-		08  2030578  ldr  r2,  0(r0)  // x1
-			20306b8  ldr  r7   8(r5)
-		0c  2030574  ldr  r1,  4(r0)  // y1
-			20306d0  ldr  r7   c(r5)
-		10  2030578  ldr  r2,  0(r0)  // x2
-		14  2030574  ldr  r1,  4(r0)  // y2
-		18  2030578  ldr  r2,  0(r0)  // x3
-			20306bc  ldr  r3, 18(r5)
-		1c  2030574  ldr  r1,  4(r0)  // y3
-			20306d4  ldr  r3, 1c(r5)
-		20  2030578  ldr  r2,  0(r0)  // x4
-		24  2030574  ldr  r1,  4(r0)  // y4
-		28  // x5 == x1
-		2c  // y5 == y1
-	s2*30 dst (30 done)
-		00  // center x
-		04  // center y
-		08  2030538  ldrh   r3,  0(r0) // x1
-			2030688  ldrsh  r1,  8(rb)
-		0a  2030690  ldrsh  r0,  a(rb)
-		0c  // y1
-		10  2030538  ldrh   r3,  0(r0) // x2
-		14  // y2
-		18  2030538  ldrh   r3,  0(r0) // x3
-			203068c  ldrsh  r2, 18(rb)
-		1a  2030694  ldrsh  r3, 1a(rb)
-		1c  // y3
-		20  2030538  ldrh   r3,  0(r0) // x4
-		24  // y4
-		28  // x5 == x1
-		2c  // y5 == y1
-	s3 bg skip
-	s4*c  part (9 done)
-		00  2030ad0  ldrh  r0, 0(r9) //
-		02  //
-		03  2030af0  ldrb  r1, 3(r9) // [kuma02] tex ID
-		04  2030b94  ldrh  r2, 4(r9) // s1 ID
-		06  //
-		07
-		08  2030b8c  ldrh  r1, 8(r9) // s0 ID
-		0a  2030ba8  ldrh  r3, a(r9) // s2 ID
-	s5 bg skip
-	s6*18 key (14 done)
-		00  2032080  ldr     r3, r0(r1)  // x1
-			20320a8  ldr     r0, r0(r1)
-		04  203208c  ldr     r3,  4(r5)  // y1
-			20320b4  ldr     r0,  4(r5)
-		08  2032098  ldr     r3,  8(r5)  // x2
-			20320c0  ldr     r0,  8(r5)
-		0c  20320a0  ldr     r3,  c(r5)  // y2
-			20320c8  ldr     r0,  c(r5)
-		10  2030a48  ldrh    r2, 10(r5)  // s4 ID
-		12  // [kuma02] s5 ID
-		13
-		14  2030ab8  ldrb    r0, 14(r5)  // s4 count
-			2030bc4  ldrb    r0, 14(r5)
-			203221c  ldrbne  r0, 14(r5)
-		15  2031f38  ldrb    r3, 15(r5) // [kuma02] s5 count
-		16  //
-		17
-	s7*24 meta (14 done)
-		00  // + x
-		04  // + y
-		08
-		0c  203211c  ldr  r3,  c(r6)
-		10  2032104  ldr  r1, 10(r6)
-		14  2032110  ldr  r1, 14(r6)
-		18  2032100  ldr  r2, 18(r6) // * scale x
-		1c  // * scale y
-		20  2032394  ldrb  r6, 20(r6) // red
-		21  2032398  ldrb  r0, 21(r6) // green
-		22  2032364  ldrb  r7, 22(r6) // blue
-		23  2032360  ldrb  rc, 23(r6) // alpha
-	s8*20 frame (1a done)
-		00  2032028  ldrh  r1, 0(r9)  // s6 ID
-			203203c  ldrh  rc, 0(r5)
-		02
-		03
-		04  2032058  ldrh  rb, 4(r9)  // s7 ID
-		06  20328b8  ldrh  r0, 6(r0)  // frames
-		08  2032128  ldr   r0, 8(r9)  tst  r0,   01  // flip x
-			203215c  ldr   r0, 8(r9)  tst  r0,   02  // flip y
-			203222c  ldr   r0, 8(r9)  tst  r0, 0400  // skip
-			20324b0  ldr   r0, 8(r9)  tst  r0,   20
-			20326c4  ldr   r1, 8(r3)  tst  r1,   40  // skip
-			20327bc  ldr   r0, 8(r8)  tst  r0,   80
-			2032864  ldr   r0, 8(r8)  tst  r0, 0100  // skip
-			2032944  ldr   r0, 8(r8)  tst  r0, 2000
-		0c  2032884  ldrh  r0, c(r8)  // loop s8 ID
-		0d
-		0e  20320e0  ldrb  r0, e(r9)
-		0f
-		10
-		11  20325c0  ldrb    r9, 11(r9)
-		12  203258c  ldrbeq  r0, 12(r9)
-		13  2032008  ldrsb   r1, 13(r9)
-		14  2032834  ldr     r1, 14(r8)
-		18  203282c  ldrh    r2, 18(r8)
-		1a  2032830  ldrh    r3, 1a(r8)
-		1c  2032824  ldr     r1, 1c(r8)
-	s9*30 anim (2d done)
-		00  // x1
-		04  // y1
-		08  // x2
-		0c  // y2
-		10  // name[17] + NULL
-		28  203317c  ldrh  r0, 28(r7)  // sa ID
-		2a  203304c  ldrb  r1, 2a(r7)  // sa count
-			2033168  ldrb  r0, 2a(r7)
-			203319c  ldrb  r0, 2a(r7)
-		2b  // sa ID+n with highest sum of s8 frames
-		2c  203300c  ldrb  r0, 2c(r7)  tst r0, 01  // dummied
-		2d
-		2e
-		2f
-	sa*10 track (5 done)
-		00  20326a8  ldrh  r3, 0(r0) // s8 ID
-			2032784  ldrh  r0, 0(r6)
-		02  20326d4  ldrh  re, 2(r0) // s8 count
-		04  // sum of s8 frames
-		06
-		07
-		08  //
-		09
-		0a
-		0b
-		0c  //
-		0d
-		0e
-		0f
+s4 0
+	LOOP 2030ad0-2030bcc
+	r5 = s6
+	r6 = s6
+	r9 = s4
+	rb = s0
+	rd = GPU
+	sub_2030640 =
+	sub_2034834 =
+
+	tst  r0, 2 // ( r0 == 0 ) ? ZF=1 : ZF=0
+	beq  xxx   // if ( ZF == 1 ) b xxx , run if r0=not &2
+	bne  xxx   // if ( ZF == 0 ) b xxx , run if r0=&2
+
+	cmp  r0, 2 // ( r0 == 0 ) ? ZF=0 : ZF=1
+	beq  xxx   // if ( ZF == 1 )  b xxx , run if r0=2
+	bne  xxx   // if ( ZF == 0 )  b xxx , run if r0=not 2
+
+2030ad0
+	ldrh  r0, 0(r9) // s4 flags
+	if ( r0 & 2 )
+		goto END
+	else
+		// 4=ZF 0  ~4=ZF 1
+		if ( (r0 & 4) == 0 )
+			//goto 2030b20
+			//2030b20
+			r0 = 040004a8
+			r1 = 0
+			ldr  r4, 14(rd)
+			str  r1,  0(r0)
+		else
+			ldrb  r1, 3(r9) // tex id
+			if ( r4 == r1 )
+			else
+				ldr  r0,  8(rd)
+				ldr  r3, a0(r0)
+				r0 = r1 * 28 + r3
+				r4 = r1
+
+				r2 = ra + r1
+				ldrb  r1, af(r2)
+				sub_2034834
+
+		//2030b30
+		if ( r7 == 1 )
+			//goto 2030b44
+			//2030b44
+			ldrb  r0, 14(r6) // s4 cnt
+			if ( r0 < r8 )
+				r7 = 0
+			//goto 2030b78
+			goto END
+
+		if ( r7 == 2 )
+			//goto 2030b54
+			//2030b54
+			ldr   r0, 10(rd) //
+			ldrb  r0, 14(r0)
+			if ( r0 > r8 )
+				ldrb  r0, 14(r6) // s4 cnt
+				if ( r0 > r8 )
+					ldr   r0,  c(rd) //
+					ldrb  r0, 14(r0)
+			if ( r0 < r8 )
+				r7 = 0
+			//goto 2030b78
+			goto END
+
+		//2030b78
+		//goto 2030b8c
+		//2030b8c
+		ldrh  r1, 8(r9) // s0 id
+		ldrh  r2, 4(r9) // s1 id
+		r0 = r1 * 18 + rb
+
+		ldr  r1, 4(rd)
+		r1 = r2 * 30 + r1
+
+		ldrh  r3, a(r9) // s2 id
+		ldr   r2, 0(rd) // fmbs s2
+		r2 = r3 * 30 + r2
+		r3 = ra + 58
+		sub_2030640
+
+		goto END
+
+END/2030bbc
+	r9 += c
+	r8 += 1
+	ldrb  r0, 14(r5) // s4 cnt
+	if ( r8 < r0 )
+		goto 2030ad0
+
+rd
+	00 s2 // + s2 id*30
+	04 s1 // + s1 id*30
+	08 // + tex id*28
+	0c s6 // r0 > r8
+	10 s6 // r0 > r8
+	14 -1 // r4 == r1/tex id
 //////////////////////////////
-WORK RAM s8 [BLOCK 0x74]
-	// 4x4 transformation matrix?
-	00  200113c  ldr  r5,  0(r0)
-		200116c  str  r6,  0(ra)
-	04  2001134  ldr  r4,  4(r0)
-		2001198  str  r6,  4(ra)
-	08  2001148  ldr  r3,  8(r0)
-		20011f4  str  r2,  8(ra)
-	0c  2001154  ldr  r2,  c(r0)
-		20011c4  str  r6,  c(ra)
-	10  2001214  ldr  r7, 10(r0)
-		2001340  str  r4, 10(ra)
-	14  2001210  ldr  r6, 14(r0)
-		20012e8  str  r3, 14(ra)
-	18  2001224  ldr  r5, 18(r0)
-		20012bc  str  r3, 18(ra)
-	1c  2001230  ldr  r4, 1c(r0)
-		2001314  str  r3, 1c(ra)
-	20  2001364  ldr  r8, 20(r0)
-		2001414  str  r3, 20(ra)
-	24  2001358  ldr  r7, 24(r0)
-		2001458  str  r2, 24(ra)
-	28  2001368  ldr  r6, 28(r0)
-		20014e0  str  r4, 28(ra)
-	2c  200136c  ldr  r5, 2c(r0)
-		200149c  str  r2, 2c(ra)
-	30  20014e8  ldr  r3, 30(r0)
-		200169c  str  r6, 30(ra)
-	34  20014e4  ldr  r4, 34(r0)
-		20015e8  str  r6, 34(ra)
-	38  2001504  ldr  r2, 38(r0)
-		2001520  str  r0, 38(ra)
-	3c  2001508  ldr  rc, 3c(r0)
-		2001740  str  r1, 3c(ra)
-	40  2032088  str  r3, 40(ra)  // from s6 0 x1
-	44  2032094  str  r3, 44(ra)  // from s6 4 y1
-	48  203209c  str  r3, 48(ra)  // from s6 8 x2
-	4c  20320a4  str  r3, 44(ra)  // from s6 c y2
-	50
-	54
-	58
-	5c
-	60  *pointer*
-		2031f40  ldr  rb, 60(r8)
-		2031ff4  ldr  r4, 60(ra)
-		203265c  ldr  r1, 60(r0)
-		2032698  ldr  r1, 60(r5)
-		2032734  ldr  r4, 60(ra)
-	64  // from s8 6 frames
-		203283c  ldr   r0, 64(ra)  r0 -= r9
-		203284c  str   r0, 64(ra)
-		20328b8  ldrh  r0,  6(r0) // r0 = s8
-		20328c0  str   r0, 64(ra)
-		2032920  ldrh  r0,  6(r0) // r0 = s8
-		2032928  str   r0, 64(ra)
-	68  // from s8 6 frames
-		20328b8  ldrh  r0,  6(r0) // r0 = s8
-		20328bc  strh  r0, 68(ra)
-		2032920  ldrh  r0,  6(r0) // r0 = s8
-		2032924  strh  r0, 68(ra)
-	6a  // sa ID
-		2032660  ldrh  r0, 6a(r0)
+WORK RAM s8 70
+	2032684  ldrb  r2, 70(r5)
+	if ( r2 & 8 )
+		return
 
-		ldr  r1, 60(r0)     // ^pointer
-		ldr  r1, bc(r1)
-		ldr  r1, 98(r1)
-		ldr  r1, 7c(r1)     // r1 = FMBS
-		r0 = r1 + (r0 << 4) // r0 = sa
-	6c  // from s8 c loop s8 ID
-		20326b0  ldrsh  r2, 6c(r5)
-		2032798  ldrsh  r1, 6c(ra)
-		2032884  ldrh   r0,  c(r8) // r8 = s8
-		2032888  strh   r0, 6c(ra)
+2032744
+	2032744  ldrb  r0, 70(ra)
+	if ( r0 & 4 )
+		return
+	if ( r0 & 2 )
+		return
+	if ( r0 & 1 )
+		ldrb  r0, 70(ra)
+		r0 &= ~1
+		strb  r0, 70(ra)
 
-		203288c  ldrsh  r2, 6c(ra)
-		2032904  ldrsh  r0, 6c(ra)  r0 += 1
-		203290c  strh   r0, 6c(ra)
+	2032780  ldrb  r2, 70(ra)
+	if ( r0 & 2 )
+		goto END
 
-		2032910  ldrsh  r1, 6c(ra)
-	6e  // loop s8 ID adjust
-		20326b4  ldrsb  r1, 6e(r5)
-		203279c  ldrsb  r0, 6e(ra)
-		2032890  ldrsb  r1, 6e(ra)
-		2032914  ldrsb  r0, 6e(ra)
-	6f
-	70  // flags
-		20320ac  ldrb  r1, 70(ra)  r0 |= 20  // always
-		20320d0  strb  r1, 70(ra)
+	if ( r0 & 10 )
+	else
+		goto 203283c
 
-		2032684  ldrb  r2, 70(r5)  tst  r2, 08  // skip draw
-		2032744  ldrb  r0, 70(ra)
-			tst  r0, 04
-			tst  r0, 02
-			tst  r0, 01
-		2032764  ldrbne  r0, 70(ra)  r0 &= ~1
-		203276c  strbne  r0, 70(ra)
+	20327b0  ldrb  r0, 70(ra)
+	r0 &= ~10
+	strb  r0, 70(ra)
 
-		2032780  ldrb    r2, 70(ra)
-			tst  r0, 02
-			tst  r0, 10
-		20327b0  ldrb  r0, 70(ra)  r0 &= ~10
-		20327b8  strb  r0, 70(ra)
-		20328a4  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
-		20328ac  strb  r0, 70(ra)
-		20328c4  ldrb  r0, 70(ra)  r0 |= 1  // load loop s8 ID
-		20328cc  strb  r0, 70(ra)
-		20328dc  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
-		20328e4  strb  r0, 70(ra)
-		20328f4  ldrb  r0, 70(ra)  r0 |= 5  // skip frames
-		20328fc  strb  r0, 70(ra)
-		203292c  ldrb  r0, 70(ra)  r0 |= 10  // load s8 frames
-		2032934  strb  r0, 70(ra)
+	ldr  r0, 8(r8)
+	if ( r0 & 80 )
+	else
+		goto 203283c
 
-		2033230  ldrb  r1, 70(r0)  tst  r1, 02
-	71
-	72
-	73
+	ldr  r0, b0(r4)
+	if ( r0 & 200 )
+		goto 203283c
+	if ( r0 & 20000 )
+		goto 203283c
+
+	ldr  r0, f4(r4)
+	if ( r0 == 0 )
+		//goto 2032814
+		//2032814
+		ldr  r0, 60(ra)
+		ldr  rc, f0(r0)
+		if ( rc == 0 )
+			goto 203283c
+
+	goto 203283c
+
+203283c
+	ldr  r0, 8(r8)
+	if ( r0 & 100 )
+		r0 = r4
+		sub_203347c
+		goto 203292c
+	else
+		//goto 203287c
+		//203287c
+		if ( r0 & 4 )
+		else
+			//goto 20328d4
+			//20328d4
+			if ( r0 & 8 )
+			else
+				//goto 20328ec
+				//20328ec
+				if ( r0 & 1800 )
+				else
+					goto 2032904
+
+				20328f4  ldrb  r0, 70(ra)
+				r0 |= 5
+				strb  r0, 70(ra)
+				goto 203292c
+
+			20328dc  ldrb  r0, 70(ra)
+			r0 |= 3
+			strb  r0, 70(ra)
+			goto 203292c
+
+		20328a4  ldrb  r0, 70(ra)
+		r0 |= 3
+		strb  r0, 70(ra)
+		goto 203292c
+
+		20328c4  ldrb  r0, 70(ra)
+		r0 |= 1
+		strb  r0, 70(ra)
+		goto 203292c
+
+2032904
+203292c
+	203292c  ldrb  r0, 70(ra)
+	r0 |= 10
+	strb  r0, 70(ra)
+
+	ldr  r0, b0(r4)
+	r0 |= 1
+	str  r0, b0(r4)
+
+	ldr  r0, 8(r8)
+	if ( r0 & 2000 )
+		ldr  r0, b0(r4)
+		r0 |= 6000
+		str  r0, b0(r4)
+
+END/2032958
+	if ( r9 > 0 )
+		goto 2032744
+
+
+
+2033230  ldrb  r1, 70(r0)  tst  r1, 02
 //////////////////////////////
 ^ 70
 	00  has draw , has countdown
@@ -462,137 +407,36 @@ WORK RAM s8 [BLOCK 0x74]
 	10  NEW
 	20  *always*
 //////////////////////////////
-WORK RAM s9 [BLOCK 0x]
-	00  *pointer*
-	04
-	08
-	0c
-	10
-	14
-	18
-	1c
-	20
-	24
-	28
-	2c
-	30
-	34
-	38
-	3c
-	40
-	44
-	48
-	4c
-	50
-	54
-	58
-	5c
-	60
-	64
-	68
-	6c
-	70
-	74
-	78
-	7c
-	80
-	84
-	88
-	8c
-	90
-	94
-	98
-	9c
-	a0
-	a4
-	a8
-	ac
-	b0
-		2032018  ldr  r1, b0(r4)
-		2033024  ldr  r1, b0(r5)  r1 |= 1
-		203302c  str  r1, b0(r5)
-		2033038  ldr  r1, b0(r5)  r1 &= ~6000
-		2033044  str  r1, b0(r5)
-		2033274  ldr  r1, b0(r6)  r1 &= ~1
-		2033280  str  r1, b0(r6)
-		2033290  ldr  r0, b0(r6)  r0 &= ~2000
-		2033298  str  r0, b0(r6)
-
-		2033744  ldr  r2, b0(ra)  tst r2, 1000
-	b4
-	b8
-	bc  *pointer*
-		2032018  ldr  r2, bc(r4)
-		203337c  ldr  r1, bc(r0)
-		20333e0  ldr  r1, bc(r0)
-	c0  *pointer*
-	c4  // s9 ID
-		2033020  strh     r1, c4(r5)
-		20331f4  ldrsh    r3, c4(r8)
-		2033284  ldrsh    r1, c4(r6)
-		2033368  ldrsh    rc, c4(r0)
-		20333cc  ldrsh    rc, c4(r0)
-		20335dc  ldrsh    r1, c4(r6)
-		203374c  ldrshne  r1, c4(ra)
-	c6
-		2032004  ldrsh  r2, c6(r4)
-	c8
-		2033030  str  r0, c8(r5)
-		20332e8  ldr  r0, c8(r6)  r0 += r5
-		20332f0  str  r0, c8(r6)
-
-		2033310  strne  0, c8(r6)
-	cc
-		2033034  str  r0, cc(r5)
-		20332f4  ldr  r0, cc(r6)  r0 += r5
-		20332fc  str  r0, cc(r6)
-	d0
-		20332a4  ldr  r5, d0(r6)
-	d4  *pointer*
-		2033090  str   0, d4(r5)
-		2033094  ldr  r0, d4(r5)
-		20332b4  ldr  r0, d4(r6)
-		2033338  ldr  r3, d4(r0)
-		2033408  ldr  r3, d4(r0)
-	d8
-		2033048  ldrh  r2, d8(r5)  r1 = 2a(r7)
-		2033050  strh  r1, d8(r5)
-		2033054  ldrh  r1, d8(r5)
-		20330a0  ldrh  r6, d8(r5)
-		20332a0  ldrh  r0, d8(r6)
-		20332c4  ldrh  r0, d8(r6)
-		203334c  ldrh  r1, d8(r0)
-	da
-	db
-	dc
-//////////////////////////////
-SHOPPING
+DRAMA momo 24
 	momo01.mbs = RAM 21ced80
-		// 0  54  21cee20 +   0*18 = 21cee20
-		// 1  58  21cee68 +  64*30 = 21d0128
-		// 2  5c  21d08a8 +  8f*30 = 21d2378
-		// 3  60  -
-		// 4  64  21e372c + 229*c  = 21e5118
-		// 5  68  -
-		// 6  6c  21d2cd8 +  8c*18 = 21d39f8
-		// 7  70  21d3b60 +   0*24 = 21d3b60
-		// 8  74  21d404c + 6be*20 = 21e180c
-		// 9  78  21e543c +  28*30 = 21e5bbc
-		// a  7c  21e5d0c +  c7*10 = 21e697c
+		s0  54  21cee20 + *18
+		s1  58  21cee68 + *30
+		s2  5c  21d08a8 + *30
+		s3  60  -
+		s4  64  21e372c + *c
+		s5  68  -
+		s6  6c  21d2cd8 + *18
+		s7  70  21d3b60 + *24
+		s8  74  21d404c + *20
+		s9  78  21e543c + *30
+		sa  7c  21e5d0c + *10
+
+	21ced80 + 78 -> [21cedf8]? -> rc=19 , r0=21935e0
+	[21e64dc]? -> r3=3f8 , r5=219e7e0
 
 	eve_sumo_b24.kds
-	ANIM 19 , 7d-5 , 21935e0
+	ANIM 19 , 7d-5 , 21e64dc
 		3f8-12  21dbf4c  219e7e0
 		40a-15  21dc18c  219e854
 		41f-12  21dc42c  219e8c8
 		431-12  21dc66c  219e93c
 		443-12  21dc8ac  219e9b0
-	ANIM 7 , 20-4
+	ANIM 7 , 20-4 , 21e5f0c
 		 f4-12  21d5ecc
 		106-15  21d610c
 		11b-12  21d63ac
 		12d-12  21d65ec
-	ANIM 16 , 6d-6
+	ANIM 16 , 6d-6 , 21e63dc
 		364-16  21daccc
 		37a-16  21daf8c
 		390-16  21db24c
@@ -646,6 +490,31 @@ SHOPPING
 	219e9a8  d   e   f     10     11             0 1 2 3 4   5     6     7     8             9 a b c d   e   f     10     11               0
 	219ea1c  1 2   3   4 5    6 7    8 9 a b c d           1   2 3   4 5   6 7   8 9 a b c d           1   2   3 4    5 6    7 8 9 a b c d
 //////////////////////////////
+DRAMA saru 38
+	kuma01.mbs = RAM 2206f90  22e28b0
+		s0  54  2207030 + *18
+		s1  58  22071f8 + *30
+		s2  5c  220cd78 + *30
+		s3  60  2220518 + *50
+		s4  64  2260b1c + *c
+		s5  68  226d350 + *8
+		s6  6c  2220568 + *18
+		s7  70  2224948 + *24
+		s8  74  2229e5c + *20
+		s9  78  226d368 + *30
+		sa  7c  2271808 + *10
+
+	2206f90 + 78 -> [2207008]? -> rc=11c , r0=21941b0
+	[2275248]? -> r3=14f4 , r5=219eef0
+
+	eve_saru_l06.kds
+	ANIM 11c , 3a4-5 , 2275248
+		14f4-8  2253cdc  219eef0
+		14fc-e  2253ddc  219ef64
+		150a-b  2253f9c  219efd8
+		1515-e  22540fc  219f04c
+		1523-1  22542bc  219f0c0
+//////////////////////////////
 kuma02.mbs
 	s3 [50]
 		-22   -31
@@ -656,15 +525,6 @@ kuma02.mbs
 		-0   -1   0
 		-1   -0   0
 		-0    1   0
-//////////////////////////////
-float32 -> int32
-	(float) 1.0 == (int) 0x1000
-
-	0.333 = 3eaaaaab -> 0x0555
-	3eaaaaab = sign 0  exp 7d/-2  man 2aaaab
-
-	123.456 = 42f6e979 -> 0x07b74b
-	42f6e979 = sign 0  exp 85/+6  man 76e979
 //////////////////////////////
 RAM 218a2a0 = YEN
 	206bb04  str   r0[YEN ], 1c(r2[ 218a284])
@@ -683,5 +543,5 @@ RAM 218a2c0 = DRAMA [bitflags]
 	ef-f0  [c0 03]                 epilogue    [ 4]
 
 http://kumatan.half-moon.org/53.html
-https://box-sentence.net/data/bikou/ds_note/ds_st/kumatan_st.html
+http://box-sentence.net/data/bikou/ds_note/ds_st/kumatan_st.html
  */

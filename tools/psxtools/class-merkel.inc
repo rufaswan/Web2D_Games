@@ -121,7 +121,7 @@ class Merkel_Damgard
 		// chunk = 512-bit/64-byte
 		$len = strlen($str) * 8; // in bits
 		if ( $len < 0 )
-			return php_error("PADLEN_64 < 0");
+			return php_error('PADLEN_64 < 0');
 		$pad = $this->CHR($len, 8, $big);
 
 		// pad str to chunk size
@@ -139,7 +139,7 @@ class Merkel_Damgard
 		// chunk = 1024-bit/128-byte
 		$len = strlen($str) * 8; // in bits
 		if ( $len < 0 )
-			return php_error("PADLEN_128 < 0");
+			return php_error('PADLEN_128 < 0');
 		$pad = $this->CHR($len, 16, $big);
 
 		// pad str to chunk size

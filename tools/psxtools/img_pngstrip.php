@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 function png_chunk( &$png )
 {
@@ -43,7 +43,7 @@ function png_chunk( &$png )
 
 		$dat = substr($png, $st+8, $len);
 		if ( ! isset( $chunk[$mgc] ) )
-			$chunk[$mgc] = "";
+			$chunk[$mgc] = '';
 		$chunk[$mgc] .= $dat;
 
 		$st += (8 + $len + 4);
@@ -58,13 +58,13 @@ function pngstrip( $fname )
 	$png = file_get_contents($fname);
 	if ( empty($png) )  return;
 
-	if ( substr($png, 1, 3) != "PNG" )
+	if ( substr($png, 1, 3) !== 'PNG' )
 		return;
 
 	$chunk = png_chunk($png);
 
 	// chunks to keep
-	$tag = array("IHDR", "PLTE", "tRNS", "IDAT", "IEND");
+	$tag = array('IHDR', 'PLTE', 'tRNS', 'IDAT', 'IEND');
 	$strip = $chunk['PNG'];
 	foreach ( $tag as $t )
 	{

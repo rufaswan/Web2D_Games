@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("XASTRH", "x60x01x01x80");
-//define("DRY_RUN", true);
+define('XASTRH', "x60x01x01x80");
+//define('DRY_RUN', true);
 
 function chrbase10( $chr )
 {
@@ -51,7 +51,7 @@ function cdpos2int( $min , $sec , $frame )
 function valkyrie_decrypt( &$str, &$dic, $key )
 {
 	printf("valkyrie TOC key : %8x\n", $key);
-	$toc = "";
+	$toc = '';
 	$ed = strlen($dic);
 	$st = 0;
 	$k = $key;
@@ -85,7 +85,7 @@ function valkyrie_toc( $fp, $dir, &$toc )
 			$list[] = array($no, $lba);
 	}
 
-	$txt = "";
+	$txt = '';
 	$ed = count($list);
 	$st = 0;
 	while ( $st < $ed )
@@ -93,7 +93,7 @@ function valkyrie_toc( $fp, $dir, &$toc )
 		list($no,$lba) = $list[$st];
 		$txt .= sprintf("%4x , %8x\n", $no, $lba);
 
-		$fn = sprintf("$dir/%06d.bin", $no);
+		$fn = sprintf('%s/%06d.bin', $dir, $no);
 		if ( isset( $list[$st+1] ) )
 			$sz = $list[$st+1][1] - $lba;
 		else
@@ -103,7 +103,7 @@ function valkyrie_toc( $fp, $dir, &$toc )
 		}
 
 		$sub = fp2str($fp, $lba, $sz);
-		if ( substr($sub, 0, 4) == XASTRH )
+		if ( substr($sub, 0, 4) === XASTRH )
 			$sub = ZERO;
 		save_file($fn, $sub);
 		$st++;
@@ -149,8 +149,8 @@ function iso_xenogears($fp, $dir)
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 	$str = fp2str($fp, 0xc000, 0x8000);
 
-	$txt = "";
-	$dn = "";
+	$txt = '';
+	$dn = '';
 	for ( $i=0; $i < 0x8000; $i += 7 )
 	{
 		$no = $i / 7;
@@ -170,11 +170,11 @@ function iso_xenogears($fp, $dir)
 		}
 		else
 		{
-			$fn = sprintf("$dn/%06d.bin", $no);
+			$fn = sprintf('%s/%06d.bin', $dn, $no);
 			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba*0x800, $siz, $fn);
 
 			$sub = fp2str($fp, $lba*0x800, $siz);
-			if ( substr($sub, 0, 4) == XASTRH )
+			if ( substr($sub, 0, 4) === XASTRH )
 				$sub = ZERO;
 			save_file("$dir/$fn", $sub);
 		}
@@ -191,10 +191,10 @@ function iso_dewprism($fp, $dir)
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 	$str = fp2str($fp, 0xc000, 0x4cd8);
 
-	$txt = "";
+	$txt = '';
 	$ed = strlen($str) - 4;
 	$st = 0;
-	$dn = "";
+	$dn = '';
 	while ( $st < $ed )
 	{
 		$no = $st / 4;
@@ -205,11 +205,11 @@ function iso_dewprism($fp, $dir)
 		$sz = $lba2 - $lba1;
 		if ( $sz > 0 )
 		{
-			$fn = sprintf("$dn/%06d.bin", $no);
+			$fn = sprintf('%s/%06d.bin', $dn, $no);
 			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba1*0x800, $sz*0x800, $fn);
 
 			$sub = fp2str($fp, $lba1*0x800, $sz*0x800);
-			if ( substr($sub, 0, 4) == XASTRH )
+			if ( substr($sub, 0, 4) === XASTRH )
 				$sub = ZERO;
 			save_file("$dir/$fn", $sub);
 		}
@@ -232,7 +232,7 @@ function isofile( $fname )
 	if ( ! $fp )  return;
 
 	$root = fp2str($fp, 0x8000, 0x800);
-	if ( substr($root, 1, 5) != "CD001" )
+	if ( substr($root, 1, 5) !== 'CD001' )
 		return printf("%s is not an ISO 2048/sector file\n", $fname);
 
 	$dir = str_replace('.', '_', $fname);

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function panzer( $fname )
 {
@@ -53,7 +53,7 @@ function panzer( $fname )
 			continue;
 
 		$sub = substr($file, $off, $siz);
-		$fn = sprintf("%s/%04d.bin", $dir, $id);
+		$fn = sprintf('%s/%04d.bin', $dir, $id);
 		save_file($fn, $sub);
 	} // while ( $st < $ed )
 	return;

@@ -24,7 +24,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   GBATEK v2.8f (no$gba)
  *     Martin Korth
  */
-require "common.inc";
+require 'common.inc';
 
 function save_nfsfile( $fp, $fn, $off, $ram, $siz )
 {
@@ -54,7 +54,7 @@ function sect_overlay( $fp, $pfx, $off, $siz, &$fat )
 
 		$ov_off = str2int($fat, $ov_fid*8, 4);
 
-		$fn = sprintf("%s/%06x/%04d_%x.overlay", $pfx, $ov_ram, $ov_id, $ov_id);
+		$fn = sprintf('%s/%06x/%04d_%x.overlay', $pfx, $ov_ram, $ov_id, $ov_id);
 		printf("%4x , %8x , %8x , %s\n", $ov_fid, $ov_off, $ov_siz, $fn);
 
 		save_nfsfile($fp, $fn, $ov_off, $ov_ram, $ov_siz);
@@ -120,10 +120,10 @@ function ndsrom( $fname )
 	$head = fp2str($fp, 0, 0x180);
 
 	// RAM address check
-	if ( $head[0x27] != "\x02" )  return;
-	if ( $head[0x2b] != "\x02" )  return;
-	if ( $head[0x37] != "\x02" )  return;
-	if ( $head[0x3b] != "\x02" )  return;
+	if ( $head[0x27] !== "\x02" )  return;
+	if ( $head[0x2b] !== "\x02" )  return;
+	if ( $head[0x37] !== "\x02" )  return;
+	if ( $head[0x3b] !== "\x02" )  return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 		save_file("$pfx/head.bin", $head);

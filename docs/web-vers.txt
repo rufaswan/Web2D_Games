@@ -1,4 +1,3 @@
-
 BROWSER VERSION
 	Latest stable version available on January 1st
 
@@ -6,6 +5,15 @@ https://en.wikipedia.org/wiki/Firefox_version_history
 https://en.wikipedia.org/wiki/History_of_the_Opera_web_browser
 https://en.wikipedia.org/wiki/Google_Chrome_version_history
 https://en.wikipedia.org/wiki/Safari_version_history
+
+Chrome based
+	Opera   20 is based on Chrome 33 (+13)
+	MS Edge 79 is based on Chrome 79 (same)
+
+Engine Changes
+	Opera   12 (Presto)   -> 15 (Blink)
+	Chrome  27 (WebKit)   -> 28 (Blink)
+	MS Edge 44 (EdgeHTML) -> 79 (Blink)
 
 -     Firefox    Opera          Safari
 2004   -          -              1
@@ -29,65 +37,132 @@ https://en.wikipedia.org/wiki/Safari_version_history
 2022  95.0.2     82.0.4227.43   15
 2023
 
-Chrome based
-	Opera   20 is based on Chrome 33 (+13)
-	MS Edge 79 is based on Chrome 79 (same)
+Can I Use?
+	Ffox  Oper  Safa
+	 3     9     3.2  CSS Table display
+	 3.5  10.5   3.2  CSS3 2D Transforms
+	 2    11.6   3.2  CSS outline properties
+	 3.6  15     4    CSS pointer-events (for HTML)
+	10    15     4    CSS3 3D Transforms
+	 -    15     4    CSS zoom
+	28    17     9    CSS Flexible Box Layout Module
+	16    30     9    CSS Animation
+	52    44    10.3  CSS Grid Layout (level 1)
+	62    76     -    CSS display: contents
+	71     -     -    CSS Subgrid
+	89     -     -    CSS image-set
 
-Engine Changes
-	Opera   13 skipped
-	Opera   14 skipped
-	Opera   15 = Presto   -> Blink engine
-	Chrome  28 = WebCore  -> Blink engine
-	MS Edge 79 = EdgeHTML -> Blink engine
+	 3.6  11.6   6    rem (root em) units
+	 2    15     7    ch (character) unit
+	16    15     7    calc() as CSS unit value
+	19    15     8    Viewport units: vw/vh/vmin/vmax
+
+	 3.5  11.5   -    Ogg Vorbis audio format
+	 3.5  11.5   4    Wav audio format
+	22    15     4    MP3 audio format
+	 -    15     4    AAC audio file format
+	51    42    13    FLAC audio format
+
+	 3.5  10.5   -    Ogg/Theora video format
+	28    16     -    WebM video format
+	35    25     3.2  MPEG-4/H.264 video format
+
+	 3.5  10     4.2  TTF/OTF - TrueType and OpenType font support
+	 3.6  11.1   5.1  WOFF - Web Open Font Format
+	65    19     -    WebP image format
+	39    23    12    WOFF 2.0 - Web Open Font Format
+	 3.0  46     8    Animated PNG (APNG)
+
+	 2    10     3.2  HTMLCanvasElement API: getContext: `2d` context
+	24    19     8    HTMLCanvasElement API: getContext: WebGL context
+	46    43     -    HTMLCanvasElement API: getContext: `bitmaprenderer` context
+	51    43    15.1  HTMLCanvasElement API: getContext: WebGL2 context
+
+	 2     9     3.2  Data URIs
+	 2    10.6   3.2  Base64 encoding and decoding
+	 3.6  10.6   6    Multiple file selection
+	 3.6  11.1   6    FileReader API
+	 8    11.6   6    FileReaderSync
+	37    15     -    accept attribute for file input
+	50    17     -    Directory selection from file input
+	28    25    10    File API
+
+	12    18     8    XMLHttpRequest advanced features
+	29    20     8    Promises
+	52    42    10.3  JavaScript operator: await
+	52    42    11    Async functions
+	89    75    15    JavaScript operator: await: Use at module top level
+
+	20    10.5   4    Audio element
+	20    10.5   4    Video element
+	25    22    14.5  Web Audio API
+	36    40    11    getUserMedia/Stream API
+
+
+
+	 4    11.6   6    Typed Arrays
+	 4    11.6   6    ECMAScript 5 Strict Mode
+	 3.5  15     5    defer attribute for external scripts
+	 3.6  15     5.1  async attribute for external scripts
+	21    15     6    ECMAScript 5
+	32    21     9    ES6 Number
+	26    26    10    ES6 Generators
+	34    29    12.2  ES6 Template Literals (Template Strings)
+	36    36    11    const
+	44    36    11    let
+	45    36     9    ES6 classes
+	54    38    10    ECMAScript 2015 (ES6)
+	60    48    11    JavaScript modules via script tag
+	67    50    11.1  JavaScript modules: dynamic import()
+
+	 4     9.5  10.3  Pattern attribute for input fields
+	 4    10     6    disabled attribute of the fieldset element
+	 2    10.5   -    Spellcheck attribute
+	 4    11.5   5    input placeholder attribute
+	 4    15     7    readonly attribute of input and textarea elements
+	 4    15     9    maxlength attribute for input and textarea elements
+	51    27    10.3  Minimum length attribute for input fields
+
+	25    15     6    srcdoc attribute for iframes
+	28    15     5    sandbox attribute for iframes
+	 -    64     -    Lazy loading via attribute for images & iframes
+
+	 3.5  10.6   5    Web Workers
+	29    10.6   -    Shared Web Workers
+	44    32    11.3  Service Workers
+
+	 2     9     3.2  naturalWidth & naturalHeight image properties
+	18    11.6   3.2  Window.devicePixelRatio
+	11    15     6    requestAnimationFrame
+	65    28    10    Crisp edges/pixelated images
+	 -    64     -    OffscreenCanvas
+	75    71    13.4  Web Animations API
+
+	 4     9.5   5.1  tabindex global attribute
+	 4     9.5   5.1  Form attribute
+	 4    11.1   5.1  hidden attribute
+	 6    11.1   5.1  dataset & data-* attributes
+	20    15    13    Download attribute
+
+	 3.5  10.5   4    Web Storage - name/value pairs
+	22    25     -    Web Notifications
+	44    42     -    Push API
+	59    42    13.2  Pointer events
+	52    44    11    WebAssembly
+	38     -     -    Ruby annotation
 
 Desktop vs Mobile
-	https://developer.chrome.com/docs/multidevice/faq/
-	Chrome for Android is derived from Chromium.
-	They share the same release cycle and release numbering. Not2 all features in desktop Chrome are available in the corresponding version of Chrome for Android, however.
-
 	https://wiki.mozilla.org/Mobile/Platforms
 	Firefox for Android is built on the same engine as Firefox desktop, with extensive changes to optimize performance and user experience on mobile devices.
 
-Can I Use?
-	-                     Firefox  Opera  Safari
-	HTML  canvas           3.6+    10+     4+
-	HTML  video           20+      11.5+   4+
-	HTML  audio           20+      11.5+   4+
-	HTML  ruby            38+       -      -
-	CSS   animation       16+      30+     9+
-	CSS   vw/vh           19+      15+     8+
-	CSS   flex            28+      17+     9+
-	CSS   grid            54+      44+    10.3+
-	JS    Worker()         3.5+    11.5    5+
-	JS    FileReader()     3.6+    11.5+   6+
-	JS    File()          28+      25+    10+
-	JS    SharedWorker()  29+      11.5+   -
-	JS    Promise()       29+      20+     8+
-	JS    import()        67+      50+    11.1+
-	JS    data:base64,     2.0+    11.5+   3.2+
-	JS    localStorage     3.5+    11.5+   4+
-	JS    "strict"         4+      12.1+   6+
-	JS    AJAX            12+      18+     8+
-	JS    Notification    22+      25+     -
-	JS    webgl           24+      19+     8+
-	JS    Generator       26+      26+    10+
-	JS    serviceWorkers  44+      32+     -
-	JS    webgl2          51+      43+    15.1+
-	JS    async/await     52+      42+    10.3+
-	JS    pointer         59+      42+    13.2+
-	JS    export          60+      48+    10.3+
-	JS    type=module     60+      48+    11+
-	FILE  apng             3.0+    46+     8+
-	FILE  ttf/otf          3.5+    10+     4.2+
-	FILE  ogg              3.5+    11.5+   -
-	FILE  wav              3.5+    11.5+   4+
-	FILE  woff             3.6+    11.5+   5.1+
-	FILE  mp3             22+      15+     4+
-	FILE  webm            28+      16+     -
-	FILE  mp4/h264        35+      25+     3.2+
-	FILE  woff2           39+      23+    12+
-	FILE  wasm            53+      44+    11+
-	FILE  webp            65+      19+     -
+	https://developer.chrome.com/docs/multidevice/faq/
+	Chrome for Android is derived from Chromium.
+	They share the same release cycle and release numbering.
+	Not2 all features in desktop Chrome are available in the corresponding version of Chrome for Android, however.
+
+	https://developer.apple.com/documentation/safari-release-notes
+	Safari is a web browser app and web technology platform available on iOS and macOS.
+	It’s built on WebKit, a fast, open-source web rendering engine that implements web standards.
 
 Support Comparison
 	https://wiki.ubuntu.com/LTS

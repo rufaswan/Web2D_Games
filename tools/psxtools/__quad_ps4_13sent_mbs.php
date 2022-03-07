@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-quad.inc";
-require "quad.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-quad.inc';
+require 'quad.inc';
 
-define("METAFILE", true);
+define('METAFILE', true);
 
 function sectspr( &$json, &$mbs, $pfx )
 {
@@ -120,7 +120,7 @@ function aegis( $fname, $idtag )
 	$mbs = file_get_contents($fname);
 	if ( empty($mbs) )  return;
 
-	if ( substr($mbs, 0, 4) != "FMBS" )
+	if ( substr($mbs, 0, 4) !== 'FMBS' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));

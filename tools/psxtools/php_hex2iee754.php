@@ -20,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-64bit.inc';
 
 function hex2float( $str )
 {

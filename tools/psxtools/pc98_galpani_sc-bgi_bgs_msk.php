@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "pc98_galpani.inc";
+require 'common.inc';
+require 'pc98_galpani.inc';
 
-//define("NO_TRACE", true);
+//define('NO_TRACE', true);
 
 function sectsc( &$file, $fname )
 {
@@ -38,7 +38,7 @@ function sectsc( &$file, $fname )
 	$b2 = str2int($file, 0xb8, 4); // data
 	$b3 = str2int($file, 0xbc, 4); // size
 
-	$pal = "";
+	$pal = '';
 	if ( $b1 == 0 )
 	{
 		$cc = 0x100;
@@ -92,7 +92,7 @@ function sectmsk( &$file, $fname )
 	echo "TYPE : $ty\n";
 
 	$len = strlen($pix);
-	$dat = "";
+	$dat = '';
 	for ( $i=0; $i < $len; $i++ )
 	{
 		$b = ord( $pix[$i] );

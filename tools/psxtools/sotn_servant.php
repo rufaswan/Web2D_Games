@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x200);
-//define("DRY_RUN", true);
+define('CANV_S', 0x200);
+//define('DRY_RUN', true);
 
 // servant/tt_xxx.bin are loaded to RAM 80170000
 // servant/ft_xxx.bin are loaded to RAM 8007efec
@@ -107,7 +107,7 @@ function sectmeta( &$meta, &$src, $dir, $ram )
 	$clut_pos = 0;
 	while (1)
 	{
-		if ( $meta[$st+3] != "\x80" )
+		if ( $meta[$st+3] !== "\x80" )
 			break;
 		$pos = ramint($meta, $st, $ram);
 			$st += 4;
@@ -126,7 +126,7 @@ function sectmeta( &$meta, &$src, $dir, $ram )
 
 	foreach ( $addr as $ak => $av )
 	{
-		$fn = sprintf("$dir/%04d", $ak);
+		$fn = sprintf('%s/%04d', $dir, $ak);
 		sectparts( $meta, $src, $clut, $av, $fn );
 	}
 	return;

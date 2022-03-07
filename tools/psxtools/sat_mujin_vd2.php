@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 function sect_map32( &$src, &$tile, &$pal, $fn )
 {
@@ -154,7 +154,7 @@ function mujin( $fname )
 	$id = 0;
 	while (1)
 	{
-		$fn = sprintf("%s/%04d", $dir, $id);
+		$fn = sprintf('%s/%04d', $dir, $id);
 			$id++;
 		$sub = substr($file, $off1, 0x24);
 			$off1 += 0x24;

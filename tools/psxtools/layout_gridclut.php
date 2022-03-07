@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function drawline( &$pix, $c, $x1, $y1, $x2, $y2, $w, $h )
 {
@@ -90,7 +90,7 @@ function gridclut( $tile, $map, $fname )
 	$pix = str_repeat(ZERO, $tile[0]*$map[0]*$tile[1]*$map[1]);
 	gridline($pix, $tile, $map);
 
-	$img = "CLUT";
+	$img = 'CLUT';
 	$img .= chrint(9, 4);
 	$img .= chrint($tile[0]*$map[0], 4);
 	$img .= chrint($tile[1]*$map[1], 4);

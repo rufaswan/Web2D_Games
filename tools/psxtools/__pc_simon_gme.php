@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function simon( $fname )
 {
@@ -40,7 +40,7 @@ function simon( $fname )
 		$of2 = str2int($file, $i+4, 4);
 		$siz = $of2 - $of1;
 
-		$fn = sprintf("%s/%06d.bin", $dir, $i >> 2);
+		$fn = sprintf('%s/%06d.bin', $dir, $i >> 2);
 		printf("%8x  %8x  %s\n", $of1, $siz, $fn);
 
 		$sub = substr($file, $of1, $siz);

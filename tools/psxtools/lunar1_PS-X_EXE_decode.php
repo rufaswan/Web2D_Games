@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function dec_getflag( &$file, &$st, &$bycod, &$bylen )
 {
@@ -114,9 +114,9 @@ function lunar1( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 8) != "PS-X EXE" )
+	if ( substr($file, 0, 8) !== 'PS-X EXE' )
 		return;
-	if ( substr($file, 0x1001, 8) != "PS-X EXE" )
+	if ( substr($file, 0x1001, 8) !== 'PS-X EXE' )
 		return;
 
 	lunar1_decode($file, 0x1000);

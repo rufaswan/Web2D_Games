@@ -20,11 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "class-s3tc.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'class-s3tc.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 function im_dxt3( &$file, $pos, $w, $h )
 {
@@ -149,7 +149,7 @@ function ps3gtf( &$file, $base, $pfx, $id )
 	//$ver = str2big($file, $base+0, 4);
 	$cnt = str2big($file, $base+8, 4);
 	if ( $cnt != 1 )
-		return php_error("%s/%04d is multi-GTF [%d]", $pfx, $id, $cnt);
+		return php_error('%s/%04d is multi-GTF [%d]', $pfx, $id, $cnt);
 
 	$off = str2big($file, $base+0x10, 4);
 	$fmt = str2big($file, $base+0x18, 1);
@@ -164,10 +164,10 @@ function ps3gtf( &$file, $base, $pfx, $id )
 		0xa8 => 'im_dxt5p2',
 	);
 	if ( ! isset($list_fmt[$fmt]) )
-		return php_error("UNKNOWN im fmt  %x", $fmt);
+		return php_error('UNKNOWN im fmt  %x', $fmt);
 	printf("DETECT fmt %s\n", $list_fmt[$fmt]);
 
-	$fn = sprintf("%s.%d.gtf", $pfx, $id);
+	$fn = sprintf('%s.%d.gtf', $pfx, $id);
 	printf("%4x x %4x , %s\n", $w, $h, $fn);
 
 	if ( defined("DRY_RUN") )
@@ -188,7 +188,7 @@ function odin( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -202,8 +202,8 @@ function odin( $fname )
 		$fn = substr($file, $p1, 0x20);
 			$fn = rtrim($fn, ZERO);
 
-		if ( substr($file, $st, 4) != "gtf\x00" )
-			return php_error("%s 0x%x not gtf\n", $fname, $st);
+		if ( substr($file, $st, 4) !== "gtf\x00" )
+			return php_error('%s 0x%x not gtf', $fname, $st);
 
 		$sz1 = str2int($file, $st+4, 4);
 		$sz2 = str2int($file, $st+8, 4);

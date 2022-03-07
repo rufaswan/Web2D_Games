@@ -26,8 +26,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   https://github.com/scummvm/scummvm/tree/master/engines/scumm/gfx.cpp
  *   https://github.com/scummvm/scummvm/tree/master/engines/scumm/he/wiz_he.cpp
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 //define('DRY_RUN', 1);
 
@@ -57,7 +57,7 @@ function check_one_tag( &$err, &$file, $name )
 	if ( count($file) !== 1 )
 	{
 		$err = true;
-		return php_notice("%s > 1 [%x]", $name, count($file));
+		return php_notice('%s > 1 [%x]', $name, count($file));
 	}
 	return;
 }
@@ -607,7 +607,7 @@ function decode_AKCD( &$akcd, $pos, $w, $h, $t, $c1sz )
 			return $pix;
 
 		default:
-			return php_error("AKCD  UNKNOWN [%x]", $t);
+			return php_error('AKCD  UNKNOWN [%x]', $t);
 /*
 		case 5:
 			return $pix;
@@ -719,7 +719,7 @@ function sect_AWIZ( &$file, $dir, $pal=array() )
 			return;
 
 		default:
-			return php_error("WIZD  UNKNOWN [%x]", $t);
+			return php_error('WIZD  UNKNOWN [%x]', $t);
 	} // switch ( $t )
 	return;
 }
@@ -791,7 +791,7 @@ function sect_AKOS( &$akos, $dir, $pal=array() )
 		case 256:
 			//$c1sz = array(0,8);
 			if ( $comp === 1 ) // basically just remap , no decompression
-				return php_error("comp 1 + akpl 256");
+				return php_error('comp 1 + akpl 256');
 			break;
 		//case 256:  $c1sz = array(4,4); break;
 	} // switch ( $plsz )

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function xeno( $fname )
 {
@@ -43,7 +43,7 @@ function xeno( $fname )
 			'pix' => $pix,
 		);
 
-		$fn = sprintf("$dir/%04d.clut", $i/0x1000);
+		$fn = sprintf('%s/%04d.clut', $dir, $i/0x1000);
 		save_clutfile($fn, $img);
 	} // for ( $i=0; $i < $len; $i += 0x1000 )
 

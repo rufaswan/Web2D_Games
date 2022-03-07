@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function gimpix( &$pix, $w, $h )
 {
@@ -92,7 +92,7 @@ function pspgim_pix( &$file, $base )
 			return $data;
 
 		default:
-			return php_error("TYPE %x UNKNOWN", $type);
+			return php_error('TYPE %x UNKNOWN', $type);
 	} // switch ( $type )
 	return 0;
 }
@@ -100,8 +100,8 @@ function pspgim_pix( &$file, $base )
 function pspgim( &$file, $base, $pfx, $id )
 {
 	printf("== pspgim( %x , $pfx , $id )\n", $base);
-	if ( substr($file, $base, 11) !== "MIG.00.1PSP" )
-		return php_error("not GIM");
+	if ( substr($file, $base, 11) !== 'MIG.00.1PSP' )
+		return php_error('not GIM');
 
 	$pix = '';
 	$pal = '';
@@ -126,7 +126,7 @@ function pspgim( &$file, $base, $pfx, $id )
 			case 4:
 				printf("%8x , %s/%d/image\n", $pos, $pfx, $id);
 				if ( ! empty($pix) )
-					return php_error("multiple image blocks");
+					return php_error('multiple image blocks');
 
 				$pix = pspgim_pix($file, $pos+$bdata);
 				$pos += $bnext;
@@ -134,7 +134,7 @@ function pspgim( &$file, $base, $pfx, $id )
 			case 5:
 				printf("%8x , %s/%d/palette\n", $pos, $pfx, $id);
 				if ( ! empty($pal) )
-					return php_error("multiple palette blocks");
+					return php_error('multiple palette blocks');
 
 				$pal = pspgim_pix($file, $pos+$bdata);
 				$pos += $bnext;
@@ -142,14 +142,14 @@ function pspgim( &$file, $base, $pfx, $id )
 			case 0:
 				break 2;
 			default:
-				return php_error("%8x UNKNOWN", $pos);
+				return php_error('%8x UNKNOWN', $pos);
 		}
 	} // while (1)
 
 	if ( empty($pix) )
-		return php_error("empty pix");
+		return php_error('empty pix');
 
-	$fn = sprintf("%s.%d.gim", $pfx, $id);
+	$fn = sprintf('%s.%d.gim', $pfx, $id);
 	if ( ! empty($pal) )
 	{
 		$pix['pal'] = $pal['pix'];
@@ -164,7 +164,7 @@ function grand( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -178,8 +178,8 @@ function grand( $fname )
 		$fn = substr($file, $p1, 0x20);
 			$fn = rtrim($fn, ZERO);
 
-		if ( substr($file, $st, 4) != "FTX0" )
-			return php_error("%s 0x%x not FTX0\n", $fname, $st);
+		if ( substr($file, $st, 4) !== 'FTX0' )
+			return php_error('%s 0x%x not FTX0', $fname, $st);
 
 		$sz1 = str2int($file, $st+4, 4);
 		$sz2 = str2int($file, $st+8, 4);

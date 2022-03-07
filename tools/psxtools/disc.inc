@@ -64,7 +64,7 @@ function save_txt( &$file, &$sect, $dir )
 			$txt .= "$s\n";
 		} // while ( $pos < $siz )
 
-		$fn = sprintf("$dir/%04d.txt", $k);
+		$fn = sprintf('%s/%04d.txt', $dir, $k);
 		trace("save text = %s\n", $fn);
 		save_file($fn, $txt);
 	} // foreach ( $sect[1] as $k => $v )
@@ -92,7 +92,7 @@ function scnsect( &$file )
 		else
 		{
 			if ( isset( $sect[$id] ) )
-				return php_error("DUP 43 @ %x = %x", $pos, $id);
+				return php_error('DUP 43 @ %x = %x', $pos, $id);
 			$sect[$id] = $pos + 8;
 		}
 
@@ -120,7 +120,7 @@ function dw2_syspal( $file, $st5, $st6 )
 	// TWO+ palette = manual fixing  = grayscale
 	if ( $cn !== 1 )
 	{
-		php_notice("s[5] has ZERO or TWO+ palettes [%d]", $cn);
+		php_notice('s[5] has ZERO or TWO+ palettes [%d]', $cn);
 		return grayclut(0x100);
 	}
 

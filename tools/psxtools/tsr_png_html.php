@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 echo "<style>* { margin:0;padding:0; } img { border:3px #f00 solid; max-width:100%; }</style>\n";
 $list = array();

@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-quad.inc";
-require "quad.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-quad.inc';
+require 'quad.inc';
 
-define("METAFILE", true);
+define('METAFILE', true);
 
 function colorquad( &$mbs, $pos )
 {
@@ -230,7 +230,7 @@ function mura( $fname )
 	$mbs = load_file($fname);
 	if ( empty($mbs) )  return;
 
-	if ( substr($mbs,0,4) != "FMBS" )
+	if ( substr($mbs,0,4) !== 'FMBS' )
 		return;
 
 	if ( str2int($mbs, 8, 4) != 0xa0 )

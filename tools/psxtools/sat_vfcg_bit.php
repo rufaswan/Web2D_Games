@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function vfcg( $fname )
 {
@@ -56,7 +56,7 @@ function vfcg( $fname )
 		case 0x16000:  $w = 0x400; $h = 0x1c;  break;
 		case 0x2d3f0:  $w = 0x4e;  $h = 0x4a4; break;
 		default:
-			return php_error("%x = %s", $len, $fname);
+			return php_error('%x = %s', $len, $fname);
 	} // switch ( $len )
 
 	printf("%3x x %3x = %s\n", $w, $h, $fname);

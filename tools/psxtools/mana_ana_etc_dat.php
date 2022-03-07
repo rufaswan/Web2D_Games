@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function mana( $fname )
 {
@@ -52,7 +52,7 @@ function mana( $fname )
 				'pix' => $pix,
 			);
 
-			$fn = sprintf("$dir/%04d.clut", $i);
+			$fn = sprintf('%s/%04d.clut', $dir, $i);
 			save_clutfile($fn, $img);
 			continue;
 		}
@@ -69,16 +69,16 @@ function mana( $fname )
 			// FIXME : unknown cid , pair all pal with pix
 			foreach ( $tim['pal'] as $k => $v )
 			{
-				if ( trim($v, ZERO.BYTE) == "" )
+				if ( trim($v, ZERO.BYTE) == '' )
 					continue;
-				$clut = "CLUT";
+				$clut = 'CLUT';
 				$clut .= chrint($tim['cc'], 4); // no clut
 				$clut .= chrint($tim['w'], 4); // width
 				$clut .= chrint($tim['h'], 4); // height
 				$clut .= $v;
 				$clut .= $tim['pix'];
 
-				$fn = sprintf("$dir/%04d_%d.clut", $i, $k);
+				$fn = sprintf('%s/%04d_%d.clut', $dir, $i, $k);
 				save_file($fn, $clut);
 			} // foreach ( $tim['pal'] as $k => $v )
 			continue;
@@ -89,14 +89,14 @@ function mana( $fname )
 		$h = str2int($file, $ps+0x12, 2);
 			$ps += 0x14;
 
-		$rgba = "RGBA";
+		$rgba = 'RGBA';
 		$rgba .= chrint($w, 4); // width
 		$rgba .= chrint($h, 4); // height
 
 		$b = substr($file, $ps, $w*$h*2);
 		$rgba .= pal555($b);
 
-		$fn = sprintf("$dir/%04d.rgba", $i);
+		$fn = sprintf('%s/%04d.rgba', $dir, $i);
 		save_file($fn, $rgba);
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;

@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "quad.inc";
+require 'common.inc';
+require 'quad.inc';
 
 function grid_addcolor( &$pal )
 {
@@ -140,7 +140,7 @@ function quad_frame( &$quad, $pfx )
 			'pal' => implode('', $pal),
 			'pix' => $pix,
 		);
-		$fn = sprintf("%s/dot/%04d.clut", $pfx, $fk);
+		$fn = sprintf('%s/dot/%04d.clut', $pfx, $fk);
 		save_clutfile($fn, $img);
 	} // foreach ( $file['Frame'] as $fk => $fv )
 	return;

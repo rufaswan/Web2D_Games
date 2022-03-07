@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-iso.inc";
+require 'common.inc';
+require 'common-iso.inc';
 
 function isoloc( &$list, $hex )
 {

@@ -127,7 +127,7 @@ class ECC
 	function fix930( $sect )
 	{
 		if ( substr($sect,0x10,4) !== substr($sect,0x14,4) )
-			return php_error("XA subheader not identical");
+			return php_error('XA subheader not identical');
 
 		// 00 00 08 00  PS-X EXE
 		// 00 00 09 00  \x01CD001
@@ -193,7 +193,7 @@ class ECC
 			case 0x930:
 				break;
 			default:
-				return php_error("sector is not 800 or 930");
+				return php_error('sector is not 800 or 930');
 		} // switch ( $len )
 
 		return $this->fix930($h.$sect.$f , $lba);

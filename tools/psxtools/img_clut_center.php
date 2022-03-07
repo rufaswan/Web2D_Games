@@ -20,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("TRIM_SZ", 4);
+define('TRIM_SZ', 4);
 $gp_adj = array(0,0);
 
 function canvas_rect( &$pix, $byte )
@@ -82,7 +82,7 @@ function trim_rect( &$pix, $byte, $ZERO )
 	// trim height
 	while (1)
 	{
-		$b = "";
+		$b = '';
 		$p = $y1 * $row;
 		$b .= substr($pix['pix'], $p, $row*TRIM_SZ);
 
@@ -102,7 +102,7 @@ function trim_rect( &$pix, $byte, $ZERO )
 	// trim width
 	while (1)
 	{
-		$b = "";
+		$b = '';
 		for ( $y=$y1; $y < $y2; $y++ )
 		{
 			$p = ($y * $row) + ($x1 * $byte);
@@ -126,7 +126,7 @@ function trim_rect( &$pix, $byte, $ZERO )
 
 	$w = $x2 - $x1;
 	$h = $y2 - $y1;
-	$canv = "";
+	$canv = '';
 	for ( $y=$y1; $y < $y2; $y++ )
 	{
 		$p = $y * $pix['w'] + $x1;

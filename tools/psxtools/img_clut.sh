@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
 ////
 
-php=""
+php=''
 png=''
 if [ -f "/tmp/img_clut2png.php" ]; then
 	php="/tmp/img_clut2png.php"

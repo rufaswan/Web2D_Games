@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 //////////////////////////////
 function cvnds_dos_mon( $fp, $pos )
@@ -125,15 +125,15 @@ function cvnds( $fname )
 	$head = fp2str($fp, 0, 0x180);
 
 	// RAM address check
-	if ( $head[0x27] != "\x02" )  return;
-	if ( $head[0x2b] != "\x02" )  return;
-	if ( $head[0x37] != "\x02" )  return;
-	if ( $head[0x3b] != "\x02" )  return;
+	if ( $head[0x27] !== "\x02" )  return;
+	if ( $head[0x2b] !== "\x02" )  return;
+	if ( $head[0x37] !== "\x02" )  return;
+	if ( $head[0x3b] !== "\x02" )  return;
 
 	$code = substr($head, 0x0c, 4);
 	$vers = ord( $head[0x1e] );
 
-	$mgc = sprintf("%s_%d", $code, $vers);
+	$mgc = sprintf('%s_%d', $code, $vers);
 	switch ( $mgc )
 	{
 		case 'ACVJ_1':  return cvnds_dos_mon($fp, 0x7cca8);

@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-//define("NO_TRACE", true);
+//define('NO_TRACE', true);
 
 function yuna_decode( &$file, $fname )
 {
@@ -32,7 +32,7 @@ function yuna_decode( &$file, $fname )
 		return;
 
 	trace("=== begin sub_6005058() ===\n");
-	$dec = "";
+	$dec = '';
 	$bylen = 0;
 	$bycod = 0;
 

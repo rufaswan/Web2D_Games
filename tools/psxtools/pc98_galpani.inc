@@ -155,7 +155,7 @@ function galpani_dectype( &$sub, $type )
 		3 => array(0xfff , 2 , 0x1c , 0xfff , 4 , 0x3ff , 0x0a , 4 , 0x07), // sub_24b78
 	);
 	if ( ! isset($bits[$type]) )
-		return php_error("UNKNOWN bits type = %x", $type);
+		return php_error('UNKNOWN bits type = %x', $type);
 
 	return galpani_decode($sub, $bits[$type]);;
 }

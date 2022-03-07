@@ -28,16 +28,16 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *     esperknight
  *     yjulian
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-64bit.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-64bit.inc';
 
-define("NO_TRACE", true);
+define('NO_TRACE', true);
 
 //////////////////////////////
 function cpk_decrypt( &$str )
 {
-	if ( substr($str, 0, 4) == "@UTF" )
+	if ( substr($str, 0, 4) === '@UTF' )
 		return;
 
 	// CriPakTools-20190920/LibCPK/CPK.cs
@@ -57,7 +57,7 @@ function cpk_decrypt( &$str )
 function cpklist( &$meta )
 {
 	$list = array();
-	if ( substr($meta, 0, 4) != "@UTF" )
+	if ( substr($meta, 0, 4) !== '@UTF' )
 		return $list;
 
 	$off1 = str2big($meta,  8, 4) + 8; // row
@@ -143,11 +143,11 @@ function cpklist( &$meta )
 							$list[$r][$cnam] = substr($meta, $off3+$v1, $v2);
 							break;
 						default:
-							return php_error("unknown cflg %x", $cflg);
+							return php_error('unknown cflg %x', $cflg);
 					} // switch ( $type )
 					break;
 				default:
-					return php_error("unknown cflg %x", $cflg);
+					return php_error('unknown cflg %x', $cflg);
 			} // switch ( $stor )
 
 		} // for ( $c=0; $c < $tbl2; $c++ )
@@ -217,7 +217,7 @@ done:
 function crilayla_decode( &$file )
 {
 	//return;
-	if ( substr($file, 0, 8) !== "CRILAYLA" )
+	if ( substr($file, 0, 8) !== 'CRILAYLA' )
 		return;
 
 	$len  = str2int($file,  8, 4);
@@ -286,7 +286,7 @@ function sect_toc( $type, $fp, $dir, $off, $siz )
 		if ( ! isset( $lv['FileName'] ) )
 			continue;
 
-		$fn = sprintf("%s/%s", $lv['DirName'], $lv['FileName']);
+		$fn = sprintf('%s/%s', $lv['DirName'], $lv['FileName']);
 		$v = array( $lv['FileSize'], $fn );
 		$k = $lv['FileOffset'] + $off;
 		$data[$k] = $v;
@@ -335,7 +335,7 @@ function cpkfile( $fname )
 
 	$head = fp2str($fp, 0, 0x10);
 	$siz = str2int($head, 8, 4);
-	if ( substr($head, 0, 4) != 'CPK ' )
+	if ( substr($head, 0, 4) !== 'CPK ' )
 		return;
 
 	$meta = fp2str($fp, 0x10, $siz);

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function tentacle( $fname )
 {
@@ -44,7 +44,7 @@ function tentacle( $fname )
 		$siz = $cpos - $ppos;
 		$voc = substr($file, $ppos, $siz);
 
-		$fn = sprintf("%s/%08d.voc", $dir, $id);
+		$fn = sprintf('%s/%08d.voc', $dir, $id);
 			$id++;
 		printf("%8x  %8x  %s\n", $ppos, $siz, $fn);
 

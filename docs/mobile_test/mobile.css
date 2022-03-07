@@ -1,0 +1,14 @@
+body {
+	background-color : #000;
+	color            : #fff;
+}
+
+#canvas {
+	width  : 20em;
+	height : 20em;
+	border : #ff0 0.5em solid;
+}
+
+#filereader {
+	border : #ff0 0.5em solid;
+}

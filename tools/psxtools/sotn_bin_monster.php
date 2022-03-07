@@ -20,14 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 function sotn( $fname )
 {
 	// for /bin/monster.bin
-	if ( stripos($fname, "monster.bin") === false )
+	if ( stripos($fname, 'monster.bin') === false )
 		return;
 
 	$file = file_get_contents($fname);
@@ -46,7 +46,7 @@ function sotn( $fname )
 			'h' => 112,
 			'pix' => pal555($pix),
 		);
-		$fn = sprintf("$dir/%04d.rgba", $id);
+		$fn = sprintf('%s/%04d.rgba', $dir, $id);
 		save_clutfile($fn, $img);
 
 		printf("%4x , %8x\n", $id, $st);

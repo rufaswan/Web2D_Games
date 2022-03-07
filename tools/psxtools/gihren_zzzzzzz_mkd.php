@@ -20,16 +20,16 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-//define("NO_TRACE", true);
+//define('NO_TRACE', true);
 
 function gihren_decode( &$file )
 {
 	// SLPS 025.70 , Earth Federation   , sub_80016f28
 	// SLPS 028.20 , Kouryaku Shireisho , sub_80017144
 	trace("== begin sub_80016f28\n");
-	$dec = "";
+	$dec = '';
 	$bycod = 0;
 	$bylen = 0;
 
@@ -136,9 +136,9 @@ function gihren( $fname )
 		$b1 = substr ($file, $pos+0, 4);
 		$b2 = str2int($file, $pos+4, 4);
 		if ( $b1 !== "SD0\x00" )
-			return php_error("%6x not SD0", $pos);
+			return php_error('%6x not SD0', $pos);
 
-		$fn = sprintf("%s/%04d.sd0", $dir, $id);
+		$fn = sprintf('%s/%04d.sd0', $dir, $id);
 		printf("%4x , %8x , %8x , %s\n", $pos>>11, $pos, $b2, $fn);
 
 		$b1 = substr($file, $pos, $b2);

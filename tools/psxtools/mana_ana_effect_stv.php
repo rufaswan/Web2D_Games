@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x200);
-//define("DRY_RUN", true);
+define('CANV_S', 0x200);
+//define('DRY_RUN', true);
 
 $gp_tim = array();
 
@@ -38,7 +38,7 @@ function sectanim( &$meta, $id, $pos, $flg )
 	$num = ord($meta[$pos]);
 		$pos++;
 	if ( $num == 0 )
-		return "";
+		return '';
 
 	$ret = array();
 	for ( $i=0; $i < $num; $i++ )
@@ -49,7 +49,7 @@ function sectanim( &$meta, $id, $pos, $flg )
 		$ret[] = "$b1-$b2";
 	}
 	if ( $flg )
-		$ret[] = "flag";
+		$ret[] = 'flag';
 
 	$buf = "anim_{$id} = ";
 	$buf .= implode(' , ', $ret);
@@ -109,9 +109,9 @@ function sectparts( &$meta, $pos, $fn )
 		$p7 = ord( $v[7] );
 		$pix['vflip'] = $p7 & 0x80;
 		$pix['hflip'] = $p7 & 0x40;
-		$pix['alpha'] = "";
+		$pix['alpha'] = '';
 		if ( $p7 & 2 ) // mask
-			$pix['alpha'] = "stv_alp";
+			$pix['alpha'] = 'stv_alp';
 		flag_watch('v7', $p7 & 0x3c);
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
@@ -153,14 +153,14 @@ function mana( $fname )
 	{
 		$p = $off + 2 + ($i * 2);
 		$p = str2int($meta, $p, 2);
-		$fn = sprintf("$dir/%04d", $i);
+		$fn = sprintf('%s/%04d', $dir, $i);
 		sectparts($meta, $p, $fn, $i);
 	}
 
 	// sprite animation sequence
 	$ed = $off;
 	$st = 6;
-	$buf = "";
+	$buf = '';
 	$m = 0;
 	while ( $st < $ed )
 	{

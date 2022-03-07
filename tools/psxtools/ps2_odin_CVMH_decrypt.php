@@ -26,8 +26,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   https://amicitia.miraheze.org/wiki/CVM
  *     roxfan
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 function calchash( $key, $mask, $val )
 {

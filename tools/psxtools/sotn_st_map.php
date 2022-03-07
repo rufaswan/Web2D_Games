@@ -25,10 +25,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   http://romhacking.net/documents/528/
  *     Nyxojaele
  */
-require "common.inc";
+require 'common.inc';
 
+//define('DRY_RUN', true);
 $gp_clut = array();
-//define("DRY_RUN", true);
 
 // map files are loaded to RAM 80180000
 // offsets here are RAM pointers
@@ -114,7 +114,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 
 	global $gp_clut;
 	$pos = $b1;
-	$map = "";
+	$map = '';
 	for ( $y=0; $y < $map_h; $y += 0x10 )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x10 )
@@ -128,7 +128,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 			$c4 = ord( $meta[$d4+$id] );
 
 			$c = ($c1 << 24) | ($c2 << 16) | ($c3 << 8) | $c4;
-			$map .= sprintf("%8x ", $c);
+			$map .= sprintf('%8x ', $c);
 
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;

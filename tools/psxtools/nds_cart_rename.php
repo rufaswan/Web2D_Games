@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function ndsren( $fname )
 {
@@ -35,17 +35,17 @@ function ndsren( $fname )
 	fclose($fp);
 
 	// RAM address check
-	if ( $head[0x27] != "\x02" )  return;
-	if ( $head[0x2b] != "\x02" )  return;
-	if ( $head[0x37] != "\x02" )  return;
-	if ( $head[0x3b] != "\x02" )  return;
+	if ( $head[0x27] !== "\x02" )  return;
+	if ( $head[0x2b] !== "\x02" )  return;
+	if ( $head[0x37] !== "\x02" )  return;
+	if ( $head[0x3b] !== "\x02" )  return;
 
 	$name = substr($head,  0, 12);
 	$code = substr($head, 12,  4);
 	$vers = ord( $head[0x1e] );
 		$name = rtrim($name, ZERO);
 
-	$new = sprintf("%s-%d_%s.nds", $code, $vers, $name);
+	$new = sprintf('%s-%d_%s.nds', $code, $vers, $name);
 		$new = strtolower($new);
 		//$new = preg_replace('|[^0-9a-z._-]|', '_', $new);
 

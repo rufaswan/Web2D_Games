@@ -32,7 +32,7 @@ function animtxt( $dir )
 
 	foreach ( file($anim) as $line )
 	{
-		$line = preg_replace("|[\s]+|", '', $line);
+		$line = preg_replace('|[\s]+|', '', $line);
 		if ( empty($line) )
 			continue;
 
@@ -45,8 +45,8 @@ function animtxt( $dir )
 			if ( $fps == 0 )
 				continue;
 
-			$frn = sprintf("$dir/%04d.png", $no);
-			$ton = sprintf("$dir/$sub/%04d.png", $k);
+			$frn = sprintf('%s/%04d.png', $dir, $no);
+			$ton = sprintf('%s/%s/%04d.png', $dir, $sub, $k);
 			echo "COPY $frn -> $ton\n";
 			copy($frn, $ton);
 		} // foreach ( explode(',', $seq) as $k => $v )

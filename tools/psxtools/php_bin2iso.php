@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // cache 80 MB
-define("WRITE_S", 80 << 20);
+define('WRITE_S', 80 << 20);
 
 function expiso( $fp, $fname, $bksz, $bkhd, $skip )
 {
@@ -32,7 +32,7 @@ function expiso( $fp, $fname, $bksz, $bkhd, $skip )
 
 	$size = filesize($fname);
 	$isop = fopen("$fname.iso", 'wb');
-	$cache = "";
+	$cache = '';
 	for ( $i=$skip; $i < $size; $i += $bksz )
 	{
 		fseek($fp, $i + $bkhd, SEEK_SET);
@@ -40,7 +40,7 @@ function expiso( $fp, $fname, $bksz, $bkhd, $skip )
 		if ( strlen($cache) >= WRITE_S )
 		{
 			fwrite($isop, $cache);
-			$cache = "";
+			$cache = '';
 		}
 	}
 	if ( strlen($cache) > 0 )

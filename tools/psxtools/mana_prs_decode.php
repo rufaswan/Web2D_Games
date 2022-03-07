@@ -20,16 +20,16 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-//define("NO_TRACE", true);
+//define('NO_TRACE', true);
 
 function mana_decode( &$file , $st )
 {
 	// sub_80014448-80014888 , SLPS_021.70
 	// data loaded to 8001dc003 , decode to 8004fdd8
 	trace("=== begin sub_80014448 ===\n");
-	$dec = "";
+	$dec = '';
 	$ed = strlen($file);
 	while ( $st < $ed )
 	{

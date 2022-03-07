@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 $gp_pix  = array();
-$gp_clut = "";
+$gp_clut = '';
 
 function loadsc( $pfx, $id, $sx, $sy, $w, $h )
 {
@@ -35,7 +35,7 @@ function loadsc( $pfx, $id, $sx, $sy, $w, $h )
 		$scfn = "$pfx.$id.sc";
 		$file = load_file($scfn);
 		if ( empty($file) )
-			return php_error("NOT FOUND %s", $scfn);
+			return php_error('NOT FOUND %s', $scfn);
 
 		$len = strlen($file);
 		switch ( $len )
@@ -49,7 +49,7 @@ function loadsc( $pfx, $id, $sx, $sy, $w, $h )
 				$gp_pix[$id] = $file;
 				break;
 			default:
-				return php_error("UNKNOWN LEN %s = %x", $scfn, $len);
+				return php_error('UNKNOWN LEN %s = %x', $scfn, $len);
 		} // switch ( $len )
 		echo "add TEXX $id\n";
 	}
@@ -60,7 +60,7 @@ function loadsc( $pfx, $id, $sx, $sy, $w, $h )
 	else
 	if ( $len == 0x10000 ) // 256x256
 		return rippix8($gp_pix[$id], $sx, $sy, $w, $h, 0x100, 0x100);
-	return "";
+	return '';
 }
 //////////////////////////////
 function abs_canv( &$CANV_S, $int )
@@ -147,7 +147,7 @@ function sectpart( &$meta, $pfx, $id, $blk )
 		copypix_fast($pix);
 	} // for ( $i=0; $i < $num; $i++ )
 
-	$fn = sprintf("$pfx/%04d", $id);
+	$fn = sprintf('%s/%04d', $pfx, $id);
 	savepix($fn, $pix, false);
 	return;
 }
@@ -174,7 +174,7 @@ function sectspr( &$so, $pfx )
 function sectanim( &$so, $pfx )
 {
 	if ( ! isset( $so[3]['o'] ) || ! isset( $so[4]['o'] ) )
-		return php_warning("no anim data on %s.so", $pfx);
+		return php_warning('no anim data on %s.so', $pfx);
 
 	$anim = '';
 	$len4 = strlen( $so[4]['d'] );

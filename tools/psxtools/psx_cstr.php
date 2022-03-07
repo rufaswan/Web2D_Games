@@ -20,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CLEN", 4);
+define('CLEN', 4);
 
 function sjisstr( &$str, $siz, $fname, $pos )
 {

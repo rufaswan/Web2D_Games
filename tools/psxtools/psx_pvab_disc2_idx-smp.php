@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "psx_pvab.inc";
+require 'common.inc';
+require 'psx_pvab.inc';
 
 function disc2( $idx, $smp )
 {
@@ -61,7 +61,7 @@ function disc2( $idx, $smp )
 		if ( $size > 0xfffff )
 			continue;
 
-		$fn = sprintf("%s/%06d.wav", $dir, $k);
+		$fn = sprintf('%s/%06d.wav', $dir, $k);
 		printf("%8x , %8x , %s\n", $v, $size, $fn);
 
 		$b = fp2str($smpp, $v+$skip, $size);

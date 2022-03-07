@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function cvpor( $fname )
 {
@@ -68,7 +68,7 @@ function cvpor( $fname )
 					$h = strlen($pix) >> 7; // div 0x80
 					foreach ( $clut as $k => $v )
 					{
-						$clut = "CLUT";
+						$clut = 'CLUT';
 						$clut .= chrint(0x10, 4);
 						$clut .= chrint(0x80, 4);
 						$clut .= chrint($h, 4);
@@ -87,7 +87,7 @@ function cvpor( $fname )
 					$h = strlen($pix) >> 7; // div 0x80
 					foreach ( $clut as $k => $v )
 					{
-						$clut = "CLUT";
+						$clut = 'CLUT';
 						$clut .= chrint(0x100, 4);
 						$clut .= chrint(0x80, 4);
 						$clut .= chrint($h, 4);

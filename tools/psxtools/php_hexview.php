@@ -104,7 +104,7 @@ function hexread( $fname )
 				if ( $b == 0 )
 					$buf .= '-- ';
 				else
-					$buf .= sprintf("%2x ", $b);
+					$buf .= sprintf('%2x ', $b);
 
 				$x += 3;
 				$sep = ($sep + 1) & 0x03;

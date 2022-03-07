@@ -23,7 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 function rgb555( $clut )
 {
-	if ( preg_match("|[g-zG-Z]|", $clut) )
+	if ( preg_match('|[g-zG-Z]|', $clut) )
 		return printf("UNKNOWN %s\n", $clut);;
 
 	$func = __FUNCTION__;

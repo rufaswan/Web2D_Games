@@ -20,14 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function galpani( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "LBRG" )
+	if ( substr($file, 0, 4) !== 'LBRG' )
 		return;
 	$dir = str_replace('.', '_', $fname);
 

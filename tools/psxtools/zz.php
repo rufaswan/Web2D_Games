@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function prefix( $fname )
 {
@@ -31,7 +31,7 @@ function prefix( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	//if ( substr($file, 0, 4) !== "FILE" )
+	//if ( substr($file, 0, 4) !== 'FILE' )
 		//return;
 
 	$dir = str_replace('.', '_', $fname);

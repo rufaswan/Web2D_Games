@@ -20,16 +20,16 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-//define("NO_TRACE", true);
+//define('NO_TRACE', true);
 
 function mura_decode( &$file, $st )
 {
 	$dicz = 0xfff;
 	$dicp = 0xfee;
 	$dict = str_repeat(ZERO, $dicz+1);
-	$dec = "";
+	$dec = '';
 
 	$ed = strlen($file);
 	$bylen = 0;
@@ -92,7 +92,7 @@ function mura( $fname )
 	if ( empty($file) )
 		return;
 
-	if ( substr($file, 0, 4) != "FCMP" )
+	if ( substr($file, 0, 4) !== 'FCMP' )
 		return;
 
 	$dec = mura_decode( $file, 12 );

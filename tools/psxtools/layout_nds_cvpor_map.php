@@ -20,17 +20,17 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "nds.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'nds.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 $gp_patch = array();
 $gp_pix_a = array();
 $gp_pix_r = array();
 $gp_clut = array();
-$gp_game = "";
+$gp_game = '';
 // MARL = Map Area Room Layer
 
 function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
@@ -53,24 +53,24 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 
 	global $gp_pix_r, $gp_clut;
 	$pos = $off3;
-	$map4  = "";
-	$map8a = "";
-	//$map8b = "";
+	$map4  = '';
+	$map8a = '';
+	//$map8b = '';
 	for ( $y=0; $y < $map_h; $y += 0x10 )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x10 )
 		{
 			$dat = str2int($ram, $pos, 2);
 				$pos += 2;
-			$map4 .= sprintf("%4x ", $dat);
+			$map4 .= sprintf('%4x ', $dat);
 
 			$b1 = ($dat & 0x3ff) - 1;
 
 			$b2 = ( $b1 < 0 ) ? 0 : str2int($ram, $off1 + ($b1*4), 4);;
-			$map8a .= sprintf("%8x ", $b2);
+			$map8a .= sprintf('%8x ', $b2);
 
 			//$b3 = ( $b1 < 0 ) ? 0 : str2int($ram, $off2 + ($b1*4), 4);;
-			//$map8b .= sprintf("%8x ", $b3);
+			//$map8b .= sprintf('%8x ', $b3);
 
 			if ( $b1 < 0 )
 				continue;
@@ -95,8 +95,8 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 			//$flg3 = $b2 & 0x80000;
 			flag_watch("b2", $b2 & 0x80f00);
 
-			$pix['src']['pix'] = "";
-			$pix['src']['pal'] = "";
+			$pix['src']['pix'] = '';
+			$pix['src']['pal'] = '';
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
 			if ( $gp_pix_r[$tid][1] == 4 )
@@ -122,7 +122,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	echo "$map4 \n";
 	echo "$map8a\n";
 	//echo "$map8b\n";
-	$fn = sprintf("$dir/cvnds_map/ma_%04d/l_%04d", $MA, $RL);
+	$fn = sprintf('%s/cvnds_map/ma_%04d/l_%04d', $dir, $MA, $RL);
 	savepix($fn, $pix);
 	return;
 }
@@ -195,7 +195,7 @@ function monobj( &$ram, &$room, $off)
 		// 7  secret/ooe
 		// 8  events/por , always +0+0
 		// 9  events/por , always +0+0
-		$room[] = sprintf("en%d/%d_%d_%d+%d+%d", $ty, $id, $v1, $v2, $x, $y);
+		$room[] = sprintf('en%d/%d_%d_%d+%d+%d', $ty, $id, $v1, $v2, $x, $y);
 	}
 	return;
 }
@@ -204,7 +204,7 @@ function roomloop( &$ram, $dir, $MA, $off )
 {
 	global $gp_clut, $gp_pix_a, $gp_pix_r;
 	$id = 0;
-	$layout = "";
+	$layout = '';
 	$rlst = array();
 	// rooms , hallways ...
 	while (1)
@@ -272,18 +272,18 @@ function roomloop( &$ram, $dir, $MA, $off )
 			if ( $cps == 0 || $ram[$p+3] != chr(2) )
 				continue;
 			$RL = ($R * 10) + $L;
-			$room[] = sprintf("l_%04d+0+0", $RL);
+			$room[] = sprintf('l_%04d+0+0', $RL);
 			layerloop($ram, $dir, $MA, $RL, $cps, $mappos[3]);
 		}
 		// layer on top of bg + fg
 		monobj($ram, $room, $off4);
 
-		$rlst[] = sprintf("r_%04d+%d+%d", $R, $mappos[1], $mappos[2]);
+		$rlst[] = sprintf('r_%04d+%d+%d', $R, $mappos[1], $mappos[2]);
 		$layout .= sprintf("r_%04d = %s\n", $R, implode(' , ', $room));
 		//return;
 	}
 	$layout .= sprintf("main = %s\n", implode(' , ', $rlst));
-	$fn = sprintf("$dir/cvnds_map/ma_%04d/layout.txt", $MA);
+	$fn = sprintf('%s/cvnds_map/ma_%04d/layout.txt', $dir, $MA);
 	save_file($fn, $layout);
 	return;
 }

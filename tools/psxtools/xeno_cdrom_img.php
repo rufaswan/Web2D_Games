@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-iso.inc";
+require 'common.inc';
+require 'common-iso.inc';
 
 function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
 {
@@ -45,7 +45,7 @@ function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
 		$siz = str2int($sub, $pos+$ez[0], 4, true);
 			$pos += $ez[1];
 
-		$fn = sprintf("%s/%04d", $dir, $id);
+		$fn = sprintf('%s/%04d', $dir, $id);
 			$id++;
 
 		if ( $lba == 0 || $siz == 0 )
@@ -66,7 +66,7 @@ function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
 			$b1 = substr($s, 0, 4);
 			$b2 = ordint($b1);
 			if ( $b2 > 0 && $b2 < 0x1000 )
-				$e = sprintf(".%x", $b2);
+				$e = sprintf('.%x', $b2);
 			else
 			{
 				$b2 = bin2hex($b1);

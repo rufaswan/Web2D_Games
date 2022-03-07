@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function disc3( $fname )
 {
@@ -67,7 +67,7 @@ function disc3( $fname )
 			} // while ( $b1 > 0 )
 		}
 
-		$fn  = sprintf("%s/%04d.%x", $dir, $i, $sct);
+		$fn  = sprintf('%s/%04d.%x', $dir, $i, $sct);
 		printf("%6x , %8x , %8x , %s\n", $lba, $lba*0x800, $siz, $fn);
 		save_file($fn, $sub);
 	} // for ( $i=0; $i < $cnt; $i++ )

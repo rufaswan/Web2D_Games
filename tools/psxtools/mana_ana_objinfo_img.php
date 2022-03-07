@@ -20,11 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x300);
-define("SCALE", 1.0);
-//define("DRY_RUN", true);
+define('CANV_S', 0x300);
+define('SCALE', 1.0);
+//define('DRY_RUN', true);
 
 $gp_pix  = array();
 $gp_clut = array();
@@ -94,7 +94,7 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		if ( $p7 & 0x20 )
 		{
 			if ( $m == 0 && $meta[$off+1] == BYTE && $meta[$off+3] == BYTE )
-				$big = "BIG";
+				$big = 'BIG';
 			$n = ( $big ) ? 17 : 9;
 			$off += $n;
 		}
@@ -103,7 +103,7 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 			if ( ! isset( $ids[ $p7 & 0x0f ] ) )
 				return;
 			if ( $m == 0 && $meta[$off+9] == BYTE && $meta[$off+10] == BYTE )
-				$big = "BIG";
+				$big = 'BIG';
 			$n = ( $big ) ? 11 : 9;
 			$s = substr($meta, $off, $n);
 			array_unshift($data, $s);
@@ -147,10 +147,10 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 			$tid = $ids[$tid];
 		$pix['vflip'] = $p7 & 0x80;
 		$pix['hflip'] = $p7 & 0x40;
-		$pix['alpha'] = "";
+		$pix['alpha'] = '';
 		//if ( $tid == 2 && $cid == 1 )
 		if ( $cid == 11 ) // mask + image
-			$pix['alpha'] = "ana_alp";
+			$pix['alpha'] = 'ana_alp';
 
 		$rippix8 = rippix8($gp_pix[$tid], $sx, $sy, $w, $h, 0x100, 0x100);
 
@@ -177,7 +177,7 @@ function sectanim( &$meta, $id, $pos, $flg )
 	$num = ord($meta[$pos]);
 		$pos++;
 	if ( $num == 0 )
-		return "";
+		return '';
 
 	$ret = array();
 	for ( $i=0; $i < $num; $i++ )
@@ -188,7 +188,7 @@ function sectanim( &$meta, $id, $pos, $flg )
 		$ret[] = "$b1-$b2";
 	}
 	if ( $flg )
-		$ret[] = "flag";
+		$ret[] = 'flag';
 
 	$buf = "anim_{$id} = ";
 	$buf .= implode(' , ', $ret);
@@ -202,20 +202,20 @@ function sectmeta( &$meta, $dir, $ids )
 
 	// sprite parts data
 	$cnt = str2int($meta, $off, 2);
-	$big = "";
+	$big = '';
 
 	for ( $m=0; $m < $cnt; $m++ )
 	{
 		$pos = $off + 2 + ($m * 2);
 		$pos = str2int($meta, $pos, 2);
-		$fn  = sprintf("$dir/%04d", $m);
+		$fn  = sprintf('%s/%04d', $dir, $m);
 		sectparts($meta, $pos, $fn, $ids, $m, $big);
 	}
 
 	// sprite animation sequence
 	$ed = $off;
 	$st = 6;
-	$buf = "";
+	$buf = '';
 	$m = 0;
 	while ( $st < $ed )
 	{

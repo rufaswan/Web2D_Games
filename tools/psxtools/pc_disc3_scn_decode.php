@@ -20,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("NO_TRACE", true);
+define('NO_TRACE', true);
 
 function getbit( &$file, &$pos, &$bycod, $byte)
 {
@@ -102,7 +102,7 @@ function dwn( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "\x81\x40\x26\x93" )
+	if ( substr($file, 0, 4) !== "\x81\x40\x26\x93" )
 		return;
 
 	$dec = dwn_decode($file);

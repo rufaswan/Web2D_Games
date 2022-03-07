@@ -680,7 +680,7 @@ class BPTC_Texture
 		$b1 = strlen($data);
 		$b2 = $w * $h * 4;
 		if ( $b1 != $b2 )
-			return php_error("data size [%x] != w x h [%x]", $b1, $b2);
+			return php_error('data size [%x] != w x h [%x]', $b1, $b2);
 
 		// BPTC blocks are always 4x4 pixels
 		$canvas = str_repeat(ZERO, $b1);

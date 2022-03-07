@@ -25,29 +25,29 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   http://wiki.tockdom.com/w/index.php?title=TPL_%28File_Format%29
  *   http://wiki.tockdom.com/w/index.php?title=Image_Formats
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 $gp_ifmt = array(
-	0x6 => "im_rgba32", // 32-bit , 10*4 = 40
-	0x8 => "im_c4",     //  4-bit ,  4*8 = 20
-	0x9 => "im_c8",     //  8-bit ,  8*4 = 20
-	0xa => "im_c14x2",  // 16-bit ,  8*4 = 20
-	0xe => "im_cmpr",   //  4-bit ,  4*8 = 20
+	0x6 => 'im_rgba32', // 32-bit , 10*4 = 40
+	0x8 => 'im_c4',     //  4-bit ,  4*8 = 20
+	0x9 => 'im_c8',     //  8-bit ,  8*4 = 20
+	0xa => 'im_c14x2',  // 16-bit ,  8*4 = 20
+	0xe => 'im_cmpr',   //  4-bit ,  4*8 = 20
 );
 $gp_pfmt = array(
-	0 => "cl_ia8",
-	1 => "cl_rgb565",
-	2 => "cl_rgb5a3",
+	0 => 'cl_ia8',
+	1 => 'cl_rgb565',
+	2 => 'cl_rgb5a3',
 );
 
 //////////////////////////////
 function cl_ia8( $str )
 {
 	if ( strlen($str) != 2 )
-		php_error("cl_ia8() is not 2 [%x]", strlen($str));
+		php_error('cl_ia8() is not 2 [%x]', strlen($str));
 
 	// fedc ba98 7654 3210
 	// aaaa aaaa cccc cccc
@@ -58,7 +58,7 @@ function cl_ia8( $str )
 function cl_rgb565( $str )
 {
 	if ( strlen($str) != 2 )
-		php_error("cl_rgb565() is not 2 [%x]", strlen($str));
+		php_error('cl_rgb565() is not 2 [%x]', strlen($str));
 
 	// fedc ba98  7654 3210
 	// rrrr rggg  gggb bbbb
@@ -72,7 +72,7 @@ function cl_rgb565( $str )
 function cl_rgb5a3( $str )
 {
 	if ( strlen($str) != 2 )
-		php_error("cl_rgb5a3() is not 2 [%x]", strlen($str));
+		php_error('cl_rgb5a3() is not 2 [%x]', strlen($str));
 
 	$pal = ordint($str);
 	if ( $pal & 0x8000 )
@@ -99,9 +99,9 @@ function cl_rgb5a3( $str )
 function cl_rgba32( $block )
 {
 	if ( strlen($block) != 0x40 )
-		php_error("cl_rgba32() is not 0x40 [%x]", strlen($block));
+		php_error('cl_rgba32() is not 0x40 [%x]', strlen($block));
 
-	$pix = "";
+	$pix = '';
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
 		// planar
@@ -139,7 +139,7 @@ function tpl_dxt1( $str )
 	$dxt = array();
 	for ( $i=0; $i < 0x20; $i += 8 )
 	{
-		$bk = "";
+		$bk = '';
 
 		// https://en.wikipedia.org/wiki/S3_Texture_Compression#DXT1
 		$c0 = substr($str, $i+0, 2);
@@ -186,7 +186,7 @@ function tpl_dxt1( $str )
 	} // for ( $i=0; $i < 0x20; $i += 8 )
 
 	// forming 2x2 CMPR block
-	$pix = "";
+	$pix = '';
 	for ( $i=0; $i < 4; $i++ )
 	{
 		$pix .= substr($dxt[0], $i*0x10, 0x10);
@@ -211,7 +211,7 @@ function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 	$row_sz = $bw * $bh * $cw * $byte;
 
 	// untile pix into normal image
-	$res = "";
+	$res = '';
 	$ed = strlen($pix);
 	$st = 0;
 	while ( $st < $ed )
@@ -222,7 +222,7 @@ function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 			for ( $y=0; $y < $bh; $y++ )
 			{
 				if ( ! isset( $buf[$y] ) )
-					$buf[$y] = "";
+					$buf[$y] = '';
 				$buf[$y] .= substr($pix, $st, $bw*$byte);
 				$st += ($bw * $byte);
 			}
@@ -236,7 +236,7 @@ function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 function tplformat( &$file, $pos, $fmt, $iw, $ih, &$wiipal )
 {
 	printf("== tplformat( %x , $fmt , %x , %x )\n", $pos, $iw, $ih);
-	$pix = "";
+	$pix = '';
 	switch ( $fmt )
 	{
 		case  6: // im_rgba32
@@ -322,7 +322,7 @@ function tplformat( &$file, $pos, $fmt, $iw, $ih, &$wiipal )
 			}
 			break;
 		default:
-			return php_error("UNKNOWN tpl im_fmt %d", $fmt);
+			return php_error('UNKNOWN tpl im_fmt %d', $fmt);
 	}
 
 	printf("POS %x\n", $pos);
@@ -344,12 +344,12 @@ function wiitpl_pal( &$file, $base, $pos )
 	$ph4 = str2big($file, $p+8, 4); // palette data
 
 	if ( ! isset( $gp_pfmt[$ph3] ) )
-		php_error("UNKNOWN tpl cl_fmt %d", $ph3);
+		php_error('UNKNOWN tpl cl_fmt %d', $ph3);
 	$c = $gp_pfmt[$ph3];
 	printf("DETECT PAL = %s\n", $c);
 
 	$p = $base + $ph4;
-	$wiipal = "";
+	$wiipal = '';
 	for ( $j=0; $j < $ph1; $j++ )
 	{
 		$wiipal .= $c( $file[$p+1] . $file[$p+0] );
@@ -380,7 +380,7 @@ function wiitpl_pix( &$file, $base, $pos, &$wiipal )
 	//$iha = str2big($file, $p+35, 1); // unpacked
 
 	if ( ! isset( $gp_ifmt[$ih1] ) )
-		php_error("UNKNOWN tpl im_fmt %d", $ih1);
+		php_error('UNKNOWN tpl im_fmt %d', $ih1);
 	$c = $gp_ifmt[$ih1];
 	printf("DETECT PIX = %s\n", $c);
 
@@ -391,11 +391,11 @@ function wiitpl( &$file, $base, $pfx, $id )
 {
 	printf("== wiitpl( %x , $pfx , $id )\n", $base);
 	if ( str2big($file, $base+0, 4) != 0x20af30 )
-		return php_error("not TPL");
+		return php_error('not TPL');
 
 	$cnt = str2big($file, $base+4, 4);
 	if ( $cnt != 1 )
-		return php_error("%s/%04d is multi-TPL [%d]", $pfx, $id, $cnt);
+		return php_error('%s/%04d is multi-TPL [%d]', $pfx, $id, $cnt);
 
 	$p = $base + 12;
 	$p1 = str2big($file, $p+0, 4); // image
@@ -407,7 +407,7 @@ function wiitpl( &$file, $base, $pfx, $id )
 	$img = '';
 	if ( $byte == 1 )
 	{
-		$img = "CLUT";
+		$img = 'CLUT';
 		$img .= chrint( strlen($wiipal)/4, 4 );
 		$img .= chrint( $iw, 4 );
 		$img .= chrint( $ih, 4 );
@@ -417,13 +417,13 @@ function wiitpl( &$file, $base, $pfx, $id )
 	else
 	if ( $byte == 4 )
 	{
-		$img = "RGBA";
+		$img = 'RGBA';
 		$img .= chrint( $iw, 4 );
 		$img .= chrint( $ih, 4 );
 		$img .= $wiipix;
 	}
 
-	$fn = sprintf("%s.%d.tpl", $pfx, $id);
+	$fn = sprintf('%s.%d.tpl', $pfx, $id);
 	save_file($fn, $img);
 	return;
 }
@@ -433,7 +433,7 @@ function mura( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -447,8 +447,8 @@ function mura( $fname )
 		$fn = substr($file, $p1, 0x20);
 			$fn = rtrim($fn, ZERO);
 
-		if ( substr($file, $st, 4) != "FTX0" )
-			return php_error("%s 0x%x not FTX0\n", $fname, $st);
+		if ( substr($file, $st, 4) !== 'FTX0' )
+			return php_error('%s 0x%x not FTX0', $fname, $st);
 
 		$sz1 = str2int($file, $st+4, 4);
 		$sz2 = str2int($file, $st+8, 4);

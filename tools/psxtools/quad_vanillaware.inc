@@ -24,6 +24,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 $gp_data = array(
 	'ps2_odin' => array(
 		'idtag' => 'ps2 odin sphere',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// oswald.mbp
 			//    -    4b8*20  fc*20 9bd0*20
@@ -45,6 +46,7 @@ $gp_data = array(
 
 	'vit_odin' => array(
 		'idtag' => 'vita odin sphere resd',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// RESD_Oswald.mbs
 			//      -   -   88*50 -
@@ -68,6 +70,7 @@ $gp_data = array(
 
 	'ps3_odin' => array(
 		'idtag' => 'ps3 odin sphere rehd',
+		'ord'  => 'str2big',
 		'sect' => array(
 			// REHD_Oswald.mbs
 			//   984*18 -  157*30 -
@@ -93,6 +96,7 @@ $gp_data = array(
 
 	'ps4_odin' => array(
 		'idtag' => 'ps4 odin sphere rehd',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// REHD_Oswald.mbs
 			//   984*18 -  157*30 -
@@ -118,6 +122,7 @@ $gp_data = array(
 	//////////////////////////////
 	'wii_mura' => array(
 		'idtag' => 'wii muramasa',
+		'ord'  => 'str2big',
 		'sect' => array(
 			// torahime00.mbs
 			//   -     63*18  f6*30 413a*30
@@ -139,6 +144,7 @@ $gp_data = array(
 
 	'vit_mura' => array(
 		'idtag' => 'vita muramasa rebirth',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// torahime00.mbs
 			//     -      -     -   65*50
@@ -159,6 +165,7 @@ $gp_data = array(
 	//////////////////////////////
 	'vit_drag' => array(
 		'idtag' => 'vita dragon crown',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// Fighter00.mbs
 			//  49*50 11479*c  5d0*8  b05*1c
@@ -178,6 +185,7 @@ $gp_data = array(
 
 	'ps3_drag' => array(
 		'idtag' => 'ps3 dragon crown',
+		'ord'  => 'str2big',
 		'sect' => array(
 			// Fighter00.mbs
 			//    -    1819*18 200*30 8329*30
@@ -199,6 +207,7 @@ $gp_data = array(
 
 	'ps4_drag' => array(
 		'idtag' => 'ps4 dragon crown pro',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// Fighter00.mbs
 			//  181c*18 - 200*30 -
@@ -224,6 +233,7 @@ $gp_data = array(
 	//////////////////////////////
 	'ps2_grim' => array(
 		'idtag' => 'ps2 grim grimoire',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// opalnera00.mbp
 			//    -     c4*20 11b*20 3ce8*20
@@ -245,6 +255,7 @@ $gp_data = array(
 
 	'nds_kuma' => array(
 		'idtag' => 'nds kumatanchi',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// k_item00.mbs
 			//    -     1d*18 1ee*30 857*30
@@ -266,6 +277,7 @@ $gp_data = array(
 
 	'psp_gran' => array(
 		'idtag' => 'psp grand knights history',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// Golem01.mbs
 			//    -      6*50 3597*c  31*8
@@ -285,6 +297,7 @@ $gp_data = array(
 
 	'ps4_sent' => array(
 		'idtag' => 'ps4 13 sentinels',
+		'ord'  => 'str2int',
 		'sect' => array(
 			// Miura00.mbs
 			//   46a*18 - 197*30 -
@@ -327,7 +340,7 @@ function colorhex32( $c, $order='0123', $sll=false )
 	if ( $r === $g && $g === $b && $b === $a )
 		return $r;
 	else
-		return sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+		return sprintf('#%02x%02x%02x%02x', $r, $g, $b, $a);
 }
 
 function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
@@ -349,9 +362,8 @@ function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
 	return $c;
 }
 
-function load_mbsfile( &$file, $sect, $big=false )
+function load_mbsfile( &$file, $sect, $ord )
 {
-	$ord = ( $big ) ? 'str2big' : 'str2int';
 	foreach ( $sect as $sk => $sv )
 	{
 		$c = $ord($file, $sv['c'][0], $sv['c'][1]);
@@ -568,14 +580,13 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr )
 	return;
 }
 //////////////////////////////
-function vanilla_sect( $php )
+function vanilla_sect( $php, &$data )
 {
 	$php = substr($php, strrpos($php, 'quad_')+5);
 	$php = substr($php, 0, strrpos($php, '_FMBS'));
 
-	global $gp_data;
-	if ( ! isset( $gp_data[$php] ) )
-		return php_error('gp_data[ %s ] not found', $php);
-	return $gp_data[$php];
+	if ( ! isset( $data[$php] ) )
+		return php_error('data[ %s ] not found', $php);
+	return $data[$php];
 }
 //////////////////////////////

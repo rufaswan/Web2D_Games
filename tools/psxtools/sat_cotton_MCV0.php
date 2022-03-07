@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 function mcvstack( &$stack, &$sub, $base )
 {
@@ -86,7 +86,7 @@ function mcvstack( &$stack, &$sub, $base )
 	if ( ! empty($sub) )
 	{
 		if ( strlen($sub) !== 0x200 )
-			php_warning("palette not 0x200");
+			php_warning('palette not 0x200');
 		$stack[$mid]['pal'] .= pal555( big2little16($sub) );
 	}
 	return;
@@ -138,7 +138,7 @@ function cotton( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "MCV0" )
+	if ( substr($file, 0, 4) !== 'MCV0' )
 		return;
 
 	$stack = array();
@@ -161,7 +161,7 @@ function cotton( $fname )
 		foreach ( $sv['ent'] as $skk => $svv )
 		{
 			$b1 = str2big($svv['head'], 6, 2);
-			$fn = sprintf("%s/%x/%04d", $dir, $b1, $skk);
+			$fn = sprintf('%s/%x/%04d', $dir, $b1, $skk);
 			mvcmap( $svv, $sv['pix'], $sv['pal'], $fn);
 		} // foreach ( $sv['ent'] as $svv )
 	} // foreach ( $stack as $sk => $sv )

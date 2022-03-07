@@ -20,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-zlib.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-zlib.inc';
 
 function png_chunk( &$png )
 {
@@ -44,7 +44,7 @@ function png_chunk( &$png )
 
 		$dat = substr($png, $st+8, $len);
 		if ( ! isset( $chunk[$mgc] ) )
-			$chunk[$mgc] = "";
+			$chunk[$mgc] = '';
 		$chunk[$mgc] .= $dat;
 
 		$st += (8 + $len + 4);
@@ -67,7 +67,7 @@ function png_unfilter( &$idat, $w, $h, $byte )
 	// dp PLTE = 1 2 4 8 , true = 8 16
 	// for PLTE , left is left byte regardless bit depth
 	// for true , left is left.RGB(A) byte correspond to filtered RGB(A)
-	$prv = "";
+	$prv = '';
 	for ( $y=0; $y < $h; $y++ )
 	{
 		$fil = ord( $rows[$y][0] );
@@ -202,12 +202,12 @@ function png_8bpp( &$idat, $dp )
 function png_plte( &$chunk )
 {
 	if ( ! isset( $chunk['PLTE'] ) )
-		return "";
+		return '';
 	echo "== png_plte()\n";
 
 	$len = strlen($chunk['PLTE']);
 	$num = (int)($len / 3);
-	$pal = "";
+	$pal = '';
 	for ( $i=0; $i < $num; $i++ )
 	{
 		$pal .= substr($chunk['PLTE'], $i*3, 3);
@@ -224,7 +224,7 @@ function png2clut( &$chunk, $w, $h, $dp, $cl, $fname )
 	echo "== png2clut( $w , $h , $dp , $cl , $fname )\n";
 
 	// cl 3 valid dp = 1 2 4 8
-	$pix = "";
+	$pix = '';
 	switch ( $dp )
 	{
 		case 1:
@@ -307,7 +307,7 @@ function pngfile( $fname )
 	$png = file_get_contents($fname);
 	if ( empty($png) )  return;
 
-	if ( substr($png, 1, 3) != "PNG" )
+	if ( substr($png, 1, 3) !== 'PNG' )
 		return;
 
 	$chunk = png_chunk($png);

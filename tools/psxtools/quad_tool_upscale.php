@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "quad.inc";
+require 'common.inc';
+require 'quad.inc';
 
 function quadscale( &$quad, $scale )
 {
@@ -69,7 +69,7 @@ function quadfile( $fname, $scale )
 	if ( $is_mod )
 	{
 		$pfx = substr($fname, 0, strrpos($fname, '.'));
-		$fn  = sprintf("%s-%.2f", $pfx, $scale);
+		$fn  = sprintf('%s-%.2f', $pfx, $scale);
 		save_quadfile($fn, $json);
 	}
 	return;

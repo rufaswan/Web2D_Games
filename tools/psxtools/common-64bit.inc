@@ -22,9 +22,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 // PlayStation One is a 32-bit system
 // anything 64-bit and above is here
-define("BIT64",  (1 <<  64)-1);
-define("BIT128", (1 << 128)-1);
-define("BIT256", (1 << 256)-1);
+define('BIT64',  (1 <<  64)-1);
+define('BIT128', (1 << 128)-1);
+define('BIT256', (1 << 256)-1);
 
 function sint64( $s )
 {

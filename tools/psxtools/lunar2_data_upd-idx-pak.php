@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function lunar2( $dir )
 {
@@ -37,7 +37,7 @@ function lunar2( $dir )
 	$b5 = str2int($upd, 16, 4); // fname base
 	$b6 = str2int($upd, 20, 4);
 
-	$buf = "";
+	$buf = '';
 	for ( $i=0; $i < $b2; $i++ )
 	{
 		$p1 = $b1 + ($i * 0x14);

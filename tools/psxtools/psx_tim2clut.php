@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function psxtimfile( $fname )
 {
@@ -39,7 +39,7 @@ function psxtimfile( $fname )
 
 	if ( $tim['t'] == 'RGBA' )
 	{
-		$data = "RGBA";
+		$data = 'RGBA';
 		$data .= chrint($tim['w'], 4);
 		$data .= chrint($tim['h'], 4);
 		$data .= $tim['pix'];
@@ -55,7 +55,7 @@ function psxtimfile( $fname )
 		else
 			$pal[] = grayclut( $tim['cc'] );
 
-		$data = "CLUT";
+		$data = 'CLUT';
 		$data .= chrint($tim['cc'], 4);
 		$data .= chrint($tim['w'], 4);
 		$data .= chrint($tim['h'], 4);
@@ -64,7 +64,7 @@ function psxtimfile( $fname )
 		foreach ( $pal as $ck => $cv )
 		{
 			// skip black/white only background
-			if ( trim($cv, ZERO.BYTE) == "" )
+			if ( trim($cv, ZERO.BYTE) === '' )
 				continue;
 
 			$clut = $data;

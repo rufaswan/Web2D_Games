@@ -20,11 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x200);
-define("SCALE", 1.0);
-//define("DRY_RUN", true);
+define('CANV_S', 0x200);
+define('SCALE', 1.0);
+//define('DRY_RUN', true);
 
 $gp_pix  = array();
 $gp_clut = array();
@@ -333,7 +333,7 @@ function sect1( &$file, $dir, $mp, $pp )
 			{
 				$p = 2 + ($i * 2);
 				$off = str2int($s2, $p, 2);
-				$fn = sprintf("$dir/%04d", $i);
+				$fn = sprintf('%s/%04d', $dir, $i);
 				sectparts( $s2, $off, $fn, $p256, $phdz, $pofz );
 			}
 

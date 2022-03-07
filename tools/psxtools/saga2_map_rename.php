@@ -43,7 +43,7 @@ function saga2( $fname )
 	$hex = substr($fname, 3, 3);
 		$hex = hexdec($hex);
 
-	$new = sprintf("map%04d%s", $hex, $suf);
+	$new = sprintf('map%04d%s', $hex, $suf);
 	echo "$fname -> $new\n";
 	rename("$dir/$fname", "$dir/$new");
 

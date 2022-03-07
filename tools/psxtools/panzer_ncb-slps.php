@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-define("SHA1_EXE", 'b4dbf191d529510cd8e45c57999312f8ef63b8cb');
+require 'common.inc';
+define('SHA1_EXE', 'b4dbf191d529510cd8e45c57999312f8ef63b8cb');
 
 function panzer( $dir )
 {
@@ -35,7 +35,7 @@ function panzer( $dir )
 
 	$b1 = sha1($exe);
 	if ( $b1 != SHA1_EXE )
-		return php_error("PSX EXE sha1 not match = %s", $b1);
+		return php_error('PSX EXE sha1 not match = %s', $b1);
 
 	$ed = 0x7434c;
 	$st = 0x7242c;
@@ -63,7 +63,7 @@ function panzer( $dir )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	//if ( substr($file, 0, 4) != "FILE" )
+	//if ( substr($file, 0, 4) !== 'FILE' )
 		//return;
 
 	$dir = str_replace('.', '_', $fname);

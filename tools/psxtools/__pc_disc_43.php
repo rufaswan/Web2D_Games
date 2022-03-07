@@ -24,8 +24,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   ScummVM
  *   https://github.com/scummvm/scummvm/tree/master/engines/tinsel/graphics.cpp
  */
-require "common.inc";
-require "pc_disc.inc";
+require 'common.inc';
+require 'pc_disc.inc';
 
 //////////////////////////////
 function dwn_pal565( &$pal )
@@ -55,7 +55,7 @@ function dwn_scn( &$file, &$sect, $dir )
 	$id6 = 0;
 	while ( $st6 < $ed6 )
 	{
-		$fn = sprintf("%s/%04d", $dir, $id6);
+		$fn = sprintf('%s/%04d', $dir, $id6);
 			$id6++;
 
 		$sub6 = substr($file, $st6, 0x10);
@@ -97,7 +97,7 @@ function dw2_scn( &$file, &$sect, $dir )
 	$id6 = 0;
 	while ( $st6 < $ed6 )
 	{
-		$fn = sprintf("%s/%04d", $dir, $id6);
+		$fn = sprintf('%s/%04d', $dir, $id6);
 			$id6++;
 
 		$sub6 = substr($file, $st6, 0x10);
@@ -147,7 +147,7 @@ function dw1_scn( &$file, &$sect, $dir )
 	$id6 = 0;
 	while ( $st6 < $ed6 )
 	{
-		$fn = sprintf("%s/%04d", $dir, $id6);
+		$fn = sprintf('%s/%04d', $dir, $id6);
 			$id6++;
 
 		$sub6 = substr($file, $st6, 0x10);

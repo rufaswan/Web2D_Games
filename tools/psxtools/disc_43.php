@@ -24,8 +24,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   ScummVM
  *   https://github.com/scummvm/scummvm/tree/master/engines/tinsel/graphics.cpp
  */
-require "common.inc";
-require "disc.inc";
+require 'common.inc';
+require 'disc.inc';
 
 //////////////////////////////
 function dwn_rle2( &$file, $pos, $siz )
@@ -152,7 +152,7 @@ function dwn_scn( &$file, &$sect, $dir )
 	$id6 = 0;
 	while ( $st6 < $ed6 )
 	{
-		$fn = sprintf("%s/%04d", $dir, $id6);
+		$fn = sprintf('%s/%04d', $dir, $id6);
 			$id6++;
 
 		$sub6 = substr($file, $st6, 0x14);
@@ -194,7 +194,7 @@ function dwn_scn( &$file, &$sect, $dir )
 				$img['pix'] = dwn_rle2($file, $st19p, $w*$h*2);
 				break;
 			default:
-				return php_error("UNKNOWN st19h %x", $st19h);
+				return php_error('UNKNOWN st19h %x', $st19h);
 		} // switch ( $st19h )
 
 		save_clutfile("$fn.clut", $img);
@@ -293,7 +293,7 @@ function dw2_scn( &$file, &$sect, $dir )
 	$id6 = 0;
 	while ( $st6 < $ed6 )
 	{
-		$fn = sprintf("%s/%04d", $dir, $id6);
+		$fn = sprintf('%s/%04d', $dir, $id6);
 			$id6++;
 
 		$sub6 = substr($file, $st6, 0x10);
@@ -311,7 +311,7 @@ function dw2_scn( &$file, &$sect, $dir )
 			$st19 = $b1;
 			$st5  = $b2;
 
-		$fn = sprintf("%s/%d_%d/%04d.clut", $dir, ($st5 !== 0), $pak >> 12, $id6-1);
+		$fn = sprintf('%s/%d_%d/%04d.clut', $dir, ($st5 !== 0), $pak >> 12, $id6-1);
 		$img = array(
 			'cc' => 0x100,
 			'w'  => $w,
@@ -357,7 +357,7 @@ function dw2_scn( &$file, &$sect, $dir )
 				break;
 
 			default:
-				return php_error("UNKNOWN pak %x", $pak);
+				return php_error('UNKNOWN pak %x', $pak);
 		} // switch ( $pak )
 
 		save_clutfile($fn, $img);
@@ -475,7 +475,7 @@ function dw1_scn( &$file, &$sect, $dir )
 	$id6 = 0;
 	while ( $st6 < $ed6 )
 	{
-		$fn = sprintf("%s/%04d", $dir, $id6);
+		$fn = sprintf('%s/%04d', $dir, $id6);
 			$id6++;
 
 		$sub6 = substr($file, $st6, 0x10);
@@ -494,15 +494,15 @@ function dw1_scn( &$file, &$sect, $dir )
 
 		// from SCUS_946.00 , sub_8001588c
 		$bpp = -1;
-		if ( $file[$st3+0] == "\x88" )  $bpp = 8;
-		if ( $file[$st3+0] == "\x44" )  $bpp = 4;
+		if ( $file[$st3+0] === "\x88" )  $bpp = 8;
+		if ( $file[$st3+0] === "\x44" )  $bpp = 4;
 
 		$rle = -1;
-		if ( $file[$st3+1] == "\xcc" )  $rle = 1;
-		if ( $file[$st3+1] == "\xdd" )  $rle = 0;
+		if ( $file[$st3+1] === "\xcc" )  $rle = 1;
+		if ( $file[$st3+1] === "\xdd" )  $rle = 0;
 
 		if ( $bpp < 0 || $rle < 0 )
-			return php_error("UNKNOWN st3 type %d , %d", $bpp, $rle);
+			return php_error('UNKNOWN st3 type %d , %d', $bpp, $rle);
 
 		if ( $bpp == 8 )
 		{
@@ -524,7 +524,7 @@ function dw1_scn( &$file, &$sect, $dir )
 function disc( $tag, $fname )
 {
 	if ( empty($tag) )
-		return php_error("NO TAG");
+		return php_error('NO TAG');
 
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;

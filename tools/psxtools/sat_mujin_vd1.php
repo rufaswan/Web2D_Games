@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 function mujin( $fname )
 {
@@ -48,7 +48,7 @@ function mujin( $fname )
 	$id = 0;
 	while ( $off11 < $off12 )
 	{
-		$fn = sprintf("%s/%04d.clut", $dir, $id);
+		$fn = sprintf('%s/%04d.clut', $dir, $id);
 			$id++;
 
 		$w   = str2big($file, $off11+ 0, 2, true);

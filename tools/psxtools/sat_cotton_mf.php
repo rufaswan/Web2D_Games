@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-define("NO_TRACE", true);
+define('NO_TRACE', true);
 
 function LZ00_decode( &$sub )
 {
@@ -82,7 +82,7 @@ function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid, $bpp )
 			$b1 = str2big($spt, $pos+0, 2);
 			$b2 = str2big($spt, $pos+2, 2);
 				$pos += 4;
-			$map .= sprintf("%4x ", $b2);
+			$map .= sprintf('%4x ', $b2);
 
 			$pix['dx'] = $x;
 			$pix['dy'] = $y;
@@ -161,7 +161,7 @@ function sch_spt_scp( &$file, $dir )
 		$sptps = str2big($sch, $b1+0, 4);
 		$cid   = str2big($sch, $b1+4, 2);
 
-		$fn = sprintf("%s/%04d", $dir, $schid);
+		$fn = sprintf('%s/%04d', $dir, $schid);
 			$schid++;
 		printf("%8x , %8x , %4x , %s\n", $b1, $sptps, $cid, $fn);
 
@@ -175,7 +175,7 @@ function sch_spt_scp( &$file, $dir )
 
 		$body = substr($spt, $sptps+0x20, $sptsz);
 
-		if ( substr($body,0,4) == 'LZ00' ) // full image
+		if ( substr($body,0,4) === 'LZ00' ) // full image
 		{
 			$sptsz = str2big($body, 4, 4);
 			LZ00_decode($body);
@@ -221,7 +221,7 @@ function sch_spt_scp( &$file, $dir )
 				sect_map($body, $scp, $spl, $fn, $sptw, $spth, $cid, 8);
 				break;
 			default:
-				php_error("UNKNOWN type %x", $type);
+				php_error('UNKNOWN type %x', $type);
 				break;
 		} // switch ( $type )
 

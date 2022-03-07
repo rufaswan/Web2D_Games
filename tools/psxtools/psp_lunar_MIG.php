@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function swizrgba( &$pix, $w, $h )
 {
@@ -153,7 +153,7 @@ function pspgim( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 11) !== "MIG.00.1PSP" )
+	if ( substr($file, 0, 11) !== 'MIG.00.1PSP' )
 		return;
 
 	$pix = array();
@@ -182,7 +182,7 @@ function pspgim( $fname )
 			case 4:
 				printf("%8x , %s/image\n", $pos, $fname);
 				if ( ! empty($pix) )
-					return php_error("multiple image blocks");
+					return php_error('multiple image blocks');
 
 				$pix = pspgim_pix($file, $pos+$bdata);
 				$pos += $bnext;
@@ -190,7 +190,7 @@ function pspgim( $fname )
 			case 5:
 				printf("%8x , %s/palette\n", $pos, $fname);
 				if ( ! empty($pal) )
-					return php_error("multiple palette blocks");
+					return php_error('multiple palette blocks');
 
 				$pal = pspgim_pix($file, $pos+$bdata);
 				$pos += $bnext;

@@ -20,13 +20,13 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "class-atlas.inc";
-require "common-quad.inc";
-require "quad.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'class-atlas.inc';
+require 'common-quad.inc';
+require 'quad.inc';
 
-define("METAFILE", false);
+define('METAFILE', false);
 
 $gp_pix  = array();
 $gp_clut = '';
@@ -227,7 +227,7 @@ function sectanim( &$json, &$pak, $pfx )
 			'FID' => array(),
 			'FPS' => array(),
 		);
-		$name = sprintf("anim_%d", $k4);
+		$name = sprintf('anim_%d', $k4);
 		while (1)
 		{
 			$bak = $st;
@@ -325,7 +325,7 @@ function pcrown( $fname )
 	$pak = load_file("$pfx.pak");
 	if ( empty($pak) )  return;
 
-	if ( substr($pak,0,4) != "unkn" )
+	if ( substr($pak,0,4) !== 'unkn' )
 		return;
 
 	global $gp_clut, $gp_pix;

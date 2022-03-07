@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "psx_pvab.inc";
+require 'common.inc';
+require 'psx_pvab.inc';
 
 function discnoir( $idx, $smp )
 {
@@ -58,7 +58,7 @@ function discnoir( $idx, $smp )
 		$of = $ids[$i][1] << 11;
 		$sz = ($ids[$i+1][1] - $ids[$i][1]) << 11;
 
-		$fn = sprintf("%s/%06d.wav", $dir, $id);
+		$fn = sprintf('%s/%06d.wav', $dir, $id);
 		printf("%8x , %8x , %s\n", $of, $sz, $fn);
 
 		$b = fp2str($smpp, $of, $sz);

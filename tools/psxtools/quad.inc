@@ -20,13 +20,13 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-php_req_extension("json_encode", "json");
+php_req_extension('json_encode', 'json');
 
 // .quad file
 function load_idtagfile( $pfx )
 {
 	$list = array();
-	lsfile_r(__DIR__ . "/idtag/", $list);
+	lsfile_r(__DIR__ . '/idtag/', $list);
 
 	$fn = '';
 	foreach ( $list as $v )
@@ -76,7 +76,7 @@ function save_quadfile( $pfx, &$json, $pretty=false )
 	else
 		$json = json_encode($json);
 
-	save_file("$pfx.quad", $json);
+	save_file("$pfx.quad.txt", $json);
 	return;
 }
 //////////////////////////////

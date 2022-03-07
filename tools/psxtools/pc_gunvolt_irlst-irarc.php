@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 define('NO_TRACE', true);
 
@@ -97,7 +97,7 @@ function gunvolt( $fname )
 		$un = str2int($lst, $p+12, 4);
 
 		if ( isset( $done[$id] ) )
-			return php_error("DUPL ID %x = %s", $id, $pfx);
+			return php_error('DUPL ID %x = %s', $id, $pfx);
 		$done[$id] = 1;
 
 		// 07 IOBJ
@@ -109,7 +109,7 @@ function gunvolt( $fname )
 		if ( $un == 0x17 || $un == 0x12 )
 			gv_decode($s);
 
-		$fn = sprintf("%s/gv_%04d.%x", $pfx, $id, $un);
+		$fn = sprintf('%s/gv_%04d.%x', $pfx, $id, $un);
 		printf("%8x , %8x , %s\n", $of, $sz, $fn);
 
 		save_file($fn, $s);

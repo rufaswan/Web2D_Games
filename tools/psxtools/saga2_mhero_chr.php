@@ -54,7 +54,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 8e 86 = 32 * 56 (700/2 +380)
  * => y++ = 8+(i*8)
  */
-require "common.inc";
+require 'common.inc';
 
 function spr_wh( &$file, $st )
 {
@@ -110,7 +110,7 @@ function saga2( $fname )
 			'pix' => $pix,
 		);
 
-		$out = sprintf("$dir/%04d.clut", $k);
+		$out = sprintf('%s/%04d.clut', $dir, $k);
 		save_clutfile($out, $img);
 	} // foreach ( $spr_wh as $k => $wh )
 	return;

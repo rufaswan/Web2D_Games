@@ -20,14 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function disc2( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 8) != "0VMBOFNI" ) // BMV 0 INFO
+	if ( substr($file, 0, 8) !== '0VMBOFNI' ) // BMV 0 INFO
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -42,14 +42,14 @@ function disc2( $fname )
 		$bak = $pos;
 		$mgc = substr ($file, $pos, 4);
 			$pos += 4;
-		if ( $mgc == "MARF" )
+		if ( $mgc === 'MARF' )
 			continue;
 
 		$siz = str2int($file, $pos, 4);
 			$pos += 4;
 		$sub = substr($file, $pos, $siz);
 			$pos += $siz;
-		$fn  = sprintf("%s/%04d.%s", $dir, $id, $mgc);
+		$fn  = sprintf('%s/%04d.%s', $dir, $id, $mgc);
 			$id++;
 
 		printf("%6x , %6x , %s\n", $bak, $siz, $fn);

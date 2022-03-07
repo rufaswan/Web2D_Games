@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function tim2clut( &$file, $pos, $out )
 {
@@ -48,7 +48,7 @@ function tim2clut( &$file, $pos, $out )
 function saga2( $fname )
 {
 	// only MDL???.MDL files
-	if ( ! preg_match("|MDL[0-9]+\.MDL|i", $fname) )
+	if ( ! preg_match('|MDL[0-9]+\.MDL|i', $fname) )
 		return;
 
 	$file = file_get_contents($fname);
@@ -61,8 +61,8 @@ function saga2( $fname )
 	$ed = strlen($file);
 	while ( $st < $ed )
 	{
-		$out = sprintf("$dir/%04d.clut", $n);
-		$sz = tim2clut( $file, $st, $out );
+		$out = sprintf('%s/%04d.clut', $dir, $n);
+		$sz = tim2clut($file, $st, $out);
 		if ( $sz == 0 )
 			return;
 

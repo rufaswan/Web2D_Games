@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-zlib.inc";
+require 'common.inc';
+require 'common-zlib.inc';
 
 function unFCHN($dir, &$sub)
 {
@@ -36,7 +36,7 @@ function unFCHN($dir, &$sub)
 		$siz = str2int($sub, $p+0, 4);
 		$off = str2int($sub, $p+4, 4);
 
-		$fn = sprintf("%s/%04d.bin", $dir, $i);
+		$fn = sprintf('%s/%04d.bin', $dir, $i);
 		$s = substr($sub, $hds+$off, $siz);
 		save_file($fn, $s);
 	}
@@ -48,7 +48,7 @@ function lunar( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FPAC" )
+	if ( substr($file, 0, 4) !== 'FPAC' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -65,7 +65,7 @@ function lunar( $fname )
 		if ( ($siz|$lba) == 0 )
 			break;
 
-		$fn = sprintf("%s/%04d", $dir, $id);
+		$fn = sprintf('%s/%04d', $dir, $id);
 			$id++;
 		$lba += $hdz;
 		printf("%4x , %8x , %8x , %s\n", $lba, $lba*0x800, $siz, $fn);

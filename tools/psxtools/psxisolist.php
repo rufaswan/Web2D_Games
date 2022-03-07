@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-iso.inc";
+require 'common.inc';
+require 'common-iso.inc';
 
 $gp_list = array();
 
@@ -48,7 +48,7 @@ function sectent( &$str, $fp, $pos, $par )
 
 	$ln = ( $ln & 1 ) ? $ln - 1 : $ln;
 	// has XA flags
-	if ( substr($ent, 0x28+$ln, 2) != 'XA' )
+	if ( substr($ent, 0x28+$ln, 2) !== 'XA' )
 		return $ensz;
 
 	$lba = str2int($ent, 0x02, 4);
@@ -96,7 +96,7 @@ function isofile( $fname )
 	if ( ! $fp )  return;
 
 	$cd = fp2str($fp, 0x8000, 0x800);
-	if ( substr($cd, 1, 5) != 'CD001' )
+	if ( substr($cd, 1, 5) !== 'CD001' )
 		return printf("%s is not an ISO 2048/sector file\n", $fname);
 
 	global $gp_list;
@@ -105,10 +105,10 @@ function isofile( $fname )
 
 	$st = str2int($cd, 0x9e, 4);
 	$sz = str2int($cd, 0xa6, 4);
-	sectdir($fp, $st, $sz, "");
+	sectdir($fp, $st, $sz, '');
 
 	ksort($gp_list);
-	$buf = "";
+	$buf = '';
 	foreach ( $gp_list as $k => $v )
 	{
 		$min = lba2min($k);

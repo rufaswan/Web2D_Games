@@ -20,11 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "nds.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'nds.inc';
 
-define("ZERO24", "\x00\x00\x00");
+define('ZERO24', "\x00\x00\x00");
 
 $gp_files = array();
 
@@ -36,7 +36,7 @@ function findptr( &$file, $name, $ram, $fst, $fed )
 	for ( $i=0; $i < $ed; $i += 4 )
 	{
 		// NDS ram is 02xxxxxx range
-		if ( $file[$i+3] != "\x02" )
+		if ( $file[$i+3] !== "\x02" )
 			continue;
 		$p = $ram + $i;
 		if ( $p >= $fst && $p < $fed )
@@ -91,7 +91,7 @@ function cvpor( $dir )
 	{
 		$ov_id  = str2int($bin, $i+0, 4);
 		$ov_ram = str2int($bin, $i+4, 3);
-		$ov_fn  = sprintf("%s/arm9/%06x/%04d_%x.overlay", $dir, $ov_ram, $ov_id, $ov_id);
+		$ov_fn  = sprintf('%s/arm9/%06x/%04d_%x.overlay', $dir, $ov_ram, $ov_id, $ov_id);
 
 		$file = load_file($ov_fn);
 		findptr($file, "OVERLAY_{$ov_id}", $ov_ram, $fst, $fed);

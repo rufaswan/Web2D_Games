@@ -21,8 +21,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
-define("NDS_RAM" ,  4 << 20);
-define("NDSI_RAM", 16 << 20);
+define('NDS_RAM' ,  4 << 20);
+define('NDSI_RAM', 16 << 20);
 
 function nds_ramload( &$ram, $fname, $off )
 {
@@ -38,7 +38,7 @@ function nds_ram( $dir, $dsi=false )
 {
 	$head = load_file("$dir/head.bin");
 	if ( empty($head) )
-		return php_error("NDS_RAM %s/head.bin not found", $dir);
+		return php_error('NDS_RAM %s/head.bin not found', $dir);
 
 	$siz = ( $dsi ) ? NDSI_RAM : NDS_RAM;
 	$ram = str_repeat(ZERO, $siz);
@@ -58,7 +58,7 @@ function nds_patch( $dir, $pfx )
 	$NTR = substr($head, 12, 4);
 	$ver = ord( $head[0x1e] );
 
-	$txt = sprintf("%s_%s_%d.txt", $pfx, $NTR, $ver);
+	$txt = sprintf('%s_%s_%d.txt', $pfx, $NTR, $ver);
 	return patchfile($txt);
 }
 
@@ -73,7 +73,7 @@ function nds_overlay( &$ram, $dir, $id )
 		return -1;
 	$ov_ram = str2int($bin, 4, 3);
 
-	$over = sprintf("%s/arm9/%06x/%04d_%x.overlay", $dir, $ov_ram, $id, $id);
+	$over = sprintf('%s/arm9/%06x/%04d_%x.overlay', $dir, $ov_ram, $id, $id);
 	nds_ramload($ram, $over, $ov_ram);
 	trace("load OVERLAY %x @ %s\n", $ov_ram, $over);
 	return $ov_ram;

@@ -27,10 +27,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *     Lionel Lemarie
  */
 
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 //////////////////////////////
 function unswizz8( &$sub, $inv, &$upper, &$lower )
@@ -359,7 +359,7 @@ function sect_fgst( &$file, $pos, $pfx )
 	// SLUS 215.77 , sub_177370
 	$ver = str2int($file, $pos+0x10, 4); // lw
 	if ( $ver < 0x66 )
-		return php_error("Loaded data is not lower version");
+		return php_error('Loaded data is not lower version');
 
 	$dp = ord( $file[$pos+0x18] );
 	$a0 = ord( $file[$pos+0x19] ); // ???
@@ -394,17 +394,17 @@ function sect_fgst( &$file, $pos, $pfx )
 			$pix = substr($file, $pos+0x400, $ow*$oh*4);
 			ps2_alpha2x($pix);
 
-			$img = "RGBA";
+			$img = 'RGBA';
 			$img .= chrint($ow, 4);
 			$img .= chrint($oh, 4);
 			$img .= $pix;
 			break;
 
 		case 24:
-			return php_warning("24-bpp %s", $pfx);
+			return php_warning('24-bpp %s', $pfx);
 			break;
 		case 16:
-			return php_warning("16-bpp %s", $pfx);
+			return php_warning('16-bpp %s', $pfx);
 			break;
 
 		// if ( $zw*2 == $ow && $zh*2 == $oh )
@@ -418,7 +418,7 @@ function sect_fgst( &$file, $pos, $pfx )
 			if ( $swizzle )
 				tm2pix8($pix, $ow, $oh);
 
-			$img = "CLUT";
+			$img = 'CLUT';
 			$img .= chrint(0x100, 4);
 			$img .= chrint($ow, 4);
 			$img .= chrint($oh, 4);
@@ -440,7 +440,7 @@ function sect_fgst( &$file, $pos, $pfx )
 				tm2pix4($pix, $ow, $oh);
 			//save_file("$pfx.swz", $pix);
 
-			$img = "CLUT";
+			$img = 'CLUT';
 			$img .= chrint(0x10, 4);
 			$img .= chrint($ow, 4);
 			$img .= chrint($oh, 4);
@@ -449,7 +449,7 @@ function sect_fgst( &$file, $pos, $pfx )
 			break;
 
 		default:
-			return php_error("Unknown texture depth");
+			return php_error('Unknown texture depth');
 	}
 
 	save_file("$pfx.tm2", $img);
@@ -461,7 +461,7 @@ function odin( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -473,7 +473,7 @@ function odin( $fname )
 	while ( $st < $ed )
 	{
 		$mgc = substr($file, $st, 4);
-		$fn = sprintf("%s.%d", $pfx, $id);
+		$fn = sprintf('%s.%d', $pfx, $id);
 		switch ( $mgc )
 		{
 			case "FGST":
@@ -486,7 +486,7 @@ function odin( $fname )
 			case "FEOC":
 				return;
 			default:
-				php_error("UNKNOWN mgc @ %x", $st);
+				php_error('UNKNOWN mgc @ %x', $st);
 				return;
 		} // switch ( $mgc )
 	} // while ( $st < $ed )

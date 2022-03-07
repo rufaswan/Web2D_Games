@@ -20,14 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function bmp_header( $cw , $ch )
 {
 	$data_of = 0x7a;
 	$data_sz = $cw * $ch * 4;
 
-	$head  = "BM"; // magic
+	$head  = 'BM'; // magic
 	$head .= chrint( $data_of + $data_sz , 4 ); // filesize
 	$head .= chrint( 0 , 2 ); // unused
 	$head .= chrint( 0 , 2 ); // unused
@@ -54,7 +54,7 @@ function bmp_header( $cw , $ch )
 	$head .= ZERO . ZERO . BYTE . ZERO; // bitmask blue
 	$head .= ZERO . ZERO . ZERO . BYTE; // bitmask alpha
 
-	$head .= "RGBs";
+	$head .= 'RGBs';
 	for ($i=0; $i < 0x24; $i++)
 		$head .= ZERO; // colorspace - unused
 
@@ -82,7 +82,7 @@ function clut2bmp( &$clut, $fname )
 		$pos += 4;
 	} // for ($i=0; $i < $cc; $i++)
 
-	$data = "";
+	$data = '';
 	while ( $h > 0 )
 	{
 		$h--;
@@ -107,7 +107,7 @@ function rgba2bmp( &$rgba, $fname )
 
 	$head = bmp_header( $w , $h );
 
-	$data = "";
+	$data = '';
 	while ( $h > 0 )
 	{
 		$h--;
@@ -125,9 +125,9 @@ function img2bmp( $fname )
 	if ( empty($file) )  return;
 
 	$mgc = substr($file, 0, 4);
-	if ( $mgc == "CLUT" )
+	if ( $mgc === 'CLUT' )
 		return clut2bmp( $file, $fname );
-	if ( $mgc == "RGBA" )
+	if ( $mgc === 'RGBA' )
 		return rgba2bmp( $file, $fname );
 
 	return;

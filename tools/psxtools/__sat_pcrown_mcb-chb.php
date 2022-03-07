@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
 $gp_pix  = array();
 $gp_clut = array();
@@ -34,7 +34,7 @@ function loadclut( &$mcb, $st )
 	$len = strlen($mcb);
 	while ( $st < $len )
 	{
-		$pal = "";
+		$pal = '';
 		for ( $i=0; $i < 0x200; $i += 2 )
 			$pal .= rgb555( $mcb[$st+$i+1] . $mcb[$st+$i+0] );
 		$gp_clut[] = $pal;
@@ -57,14 +57,14 @@ function sectmap( &$mcb, &$chb, $w, $dir, $st, $id )
 	echo "map : $map_w x $map_h\n";
 
 	global $gp_clut;
-	$map = "";
+	$map = '';
 	for ( $y=0; $y < $map_h; $y += 8 )
 	{
 		for ( $x=0; $x < $map_w; $x += 8 )
 		{
 			$dat = str2big($mcb, $st, 4);
 				$st += 4;
-			$map .= sprintf("%8x ", $dat);
+			$map .= sprintf('%8x ', $dat);
 
 			$tid = ($dat & BIT16) >> 1;
 

@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "xeno.inc";
+require 'common.inc';
+require 'xeno.inc';
 
-define("VRAM_W", 0x400);
-define("VRAM_H", 0x200);
-//define("NO_TRACE", true);
+define('VRAM_W', 0x400);
+define('VRAM_H', 0x200);
+//define('NO_TRACE', true);
 
 function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 {
@@ -103,7 +103,7 @@ function sectfile1( &$file )
 //////////////////////////////
 function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 {
-	$pix = "";
+	$pix = '';
 	$ty = ord( $str[6] );
 	printf("$dir/3.dec = %d\n", $ty);
 
@@ -163,7 +163,7 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 
 			return $pix;
 		default:
-			php_error("UNKNOWN");
+			php_error('UNKNOWN');
 			return $pix;
 	}
 	return $pix;
@@ -186,7 +186,7 @@ function xeno( $fname1, $fname2 )
 	$cnt = str2int($dec[3], 0, 3);
 
 	$dec_no = 0;
-	$pix = "";
+	$pix = '';
 	$w = 0;
 	$h = 0;
 

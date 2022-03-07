@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function psxvram2clut( &$vram, $base )
 {
@@ -59,7 +59,7 @@ function psxvram2clut( &$vram, $base )
 function subram( &$file, $base )
 {
 	// ePSXe PlayStation emulator (Windows + Linux)
-	if ( substr($file, 0, 5) == 'ePSXe' )
+	if ( substr($file, 0, 5) === 'ePSXe' )
 	{
 		echo "DETECT emulator = ePSXe\n";
 		$sub = substr($file, 0x2733df, 0x100000);
@@ -69,7 +69,7 @@ function subram( &$file, $base )
 	}
 
 	// pSXfin PlayStation emulator (Windows + Linux)
-	if ( substr($file, 0, 7) == 'ARS2CPU' || substr($file, 0, 6) == 'ARSCPU' )
+	if ( substr($file, 0, 7) === 'ARS2CPU' || substr($file, 0, 6) === 'ARSCPU' )
 	{
 		echo "DETECT emulator = pSXfin\n";
 		$pos = strpos($file, "\xff\x00UPG\xbb\x00\x10");
@@ -81,7 +81,7 @@ function subram( &$file, $base )
 	}
 
 	// no$psx PlayStation emulator (Windows)
-	if ( substr($file, 0, 15) == 'NO$PSX SNAPSHOT' )
+	if ( substr($file, 0, 15) === 'NO$PSX SNAPSHOT' )
 	{
 		echo "DETECT emulator = nocash PSX\n";
 		$ed = strlen($file);
@@ -100,11 +100,11 @@ function subram( &$file, $base )
 			if ( $mgc == 'VRAM' )
 				psxvram2clut($sub, $base);
 		} // while ( $st < $ed )
-		return "";
+		return '';
 	}
 
 	// no$gba Gameboy Advance + Nintendo DS emulator (Windows)
-	if ( substr($file, 0, 15) == 'NO$GBA SNAPSHOT' )
+	if ( substr($file, 0, 15) === 'NO$GBA SNAPSHOT' )
 	{
 		echo "DETECT emulator = nocash GBA\n";
 		$ed = strlen($file);
@@ -120,11 +120,11 @@ function subram( &$file, $base )
 			$sub = substr($file, $bak+12, $len);
 			save_file("$base/$mgc", $sub);
 		} // while ( $st < $ed )
-		return "";
+		return '';
 	}
 
 	// Yabause Saturn emulator (Linux)
-	if ( substr($file, 0, 3) == 'YSS' )
+	if ( substr($file, 0, 3) === 'YSS' )
 	{
 		echo "DETECT emulator = Yabause\n";
 		$ed = strlen($file);
@@ -144,17 +144,17 @@ function subram( &$file, $base )
 			{
 				$sub = substr($sub, 0x10000);
 				$len = strlen($sub);
-				$ram = "";
+				$ram = '';
 				for ( $i=0; $i < $len; $i += 2 )
 					$ram .= $sub[$i+1] . $sub[$i+0];
 				return $ram;
 			}
 		} // while ( $st < $ed )
-		return "";
+		return '';
 	}
 
 	// Neko Project II PC98 emulator (Linux)
-	if ( substr($file, 0, 15) == 'Neko Project II' )
+	if ( substr($file, 0, 15) === 'Neko Project II' )
 	{
 		echo "DETECT emulator = Neko Project II\n";
 		$ed = strlen($file);
@@ -170,10 +170,10 @@ function subram( &$file, $base )
 			$sub = substr($file, $bak+16, $len);
 			save_file("$base/$mgc", $sub);
 		} // while ( $st < $ed )
-		return "";
+		return '';
 	}
 
-	return "";
+	return '';
 }
 
 function psxram( $fname )
@@ -181,7 +181,7 @@ function psxram( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$base = preg_replace("|[^a-zA-Z0-9]|", '_', $fname);
+	$base = preg_replace('|[^a-zA-Z0-9]|', '_', $fname);
 	$ram = subram($file, $base);
 
 	if ( ! empty($ram) )

@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x300);
+define('CANV_S', 0x300);
 
 $gp_pix  = array();
-$gp_clut = "";
+$gp_clut = '';
 
 function loadsrc( &$tml, $id, $pos )
 {
@@ -121,19 +121,19 @@ function sectparts( &$tml, &$anim, &$layout, $dir, $id, $name, $cnt, $data)
 
 			$fps = str2int($tml, $p+10, 2);
 			$an[] = "$pid-$fps";
-			$lay[$pid] = sprintf("$name/%04d+%d+%d", $pid, $dx, $dy);
+			$lay[$pid] = sprintf('%s/%04d+%d+%d', $name, $pid, $dx, $dy);
 
 			printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 			printf(" , $tid , $pid , $fps\n");
 
-			$clut = "CLUT";
+			$clut = 'CLUT';
 			$clut .= chrint(0x100, 4);
 			$clut .= chrint($w, 4);
 			$clut .= chrint($h, 4);
 			$clut .= $gp_clut;
 			$clut .= rippix8($gp_pix[$tid][0], $sx, $sy, $w, $h, $gp_pix[$tid][1], $gp_pix[$tid][2]);
 
-			$fn = sprintf("$dir/$name/%04d.clut", $pid);
+			$fn = sprintf('%s/%s/%04d.clut', $dir, $name, $pid);
 			save_file($fn, $clut);
 		} // for ( $i=0; $i < $cnt; $i++ )
 
@@ -149,7 +149,7 @@ function tm2s( $fname )
 	$tml = file_get_contents($fname);
 	if ( empty($tml) )  return;
 
-	if ( substr($tml, 0, 4) != "TML0" )
+	if ( substr($tml, 0, 4) !== 'TML0' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -161,7 +161,7 @@ function tm2s( $fname )
 
 	global $gp_clut, $gp_pix;
 	$gp_pix  = array();
-	$gp_clut = "";
+	$gp_clut = '';
 	for ( $i=0; $i < $tmno; $i++ )
 	{
 		$p = 0x20 + ($i * 4);
@@ -169,8 +169,8 @@ function tm2s( $fname )
 		loadsrc($tml, $i, $p);
 	}
 
-	$anim   = "";
-	$layout = "";
+	$anim   = '';
+	$layout = '';
 	for ( $i=0; $i < $dtno; $i++ )
 	{
 		$p = $dtst + ($i * 4);

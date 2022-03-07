@@ -32,12 +32,12 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 452-460 boss
  * 466-471 final boss
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x200);
-$gp_pix = "";
-$gp_clut = "";
-$gp_dir  = "";
+define('CANV_S', 0x200);
+$gp_pix = '';
+$gp_clut = '';
+$gp_dir  = '';
 
 function sectpart( &$file, $nid, $st, $ed )
 {
@@ -130,7 +130,7 @@ function sect1( &$meta, $dir )
 	printf("while ( %x < %x )\n", $st, $ed);
 	while ( $st < $ed )
 	{
-		$fn = sprintf("$dir/%04d", $nid);
+		$fn = sprintf('%s/%04d', $dir, $nid);
 
 		$off1 = str2int($meta, $st+0, 3);
 		$off2 = str2int($meta, $st+4, 3);
@@ -143,7 +143,7 @@ function sect1( &$meta, $dir )
 	}
 
 	// final entry without $off2
-	$fn = sprintf("$dir/%04d", $nid);
+	$fn = sprintf('%s/%04d', $dir, $nid);
 	$off2 = str2int($meta, $st+0, 3);
 	if ( ! isset( $done[$off2] ) )
 		sectpart($meta, $fn, $off2, $pix_st);
@@ -153,7 +153,7 @@ function sect1( &$meta, $dir )
 function saga2( $fname )
 {
 	// only CHR???.BIN files
-	if ( ! preg_match("|CHR[0-9]+\.BIN|i", $fname) )
+	if ( ! preg_match('|CHR[0-9]+\.BIN|i', $fname) )
 		return;
 
 	$file = file_get_contents($fname);

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 $gp_pix = array();
 
@@ -56,7 +56,7 @@ function kuma( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -82,7 +82,7 @@ function kuma( $fname )
 			bpp4to8($sub);
 			$gp_pix[$id]['pix'] = $sub;
 
-			$fn = sprintf("%s.%d.tpl", $pfx, $id);
+			$fn = sprintf('%s.%d.tpl', $pfx, $id);
 			save_clutfile($fn, $gp_pix[$id]);
 		}
 

@@ -20,11 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "quad.inc";
-require "quad_lunar2.inc";
+require 'common.inc';
+require 'quad.inc';
+require 'quad_lunar2.inc';
 
-define("METAFILE", true);
+define('METAFILE', true);
 
 $gp_clut = array();
 

@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 // callback for copypix()
 function pz_alpha0( $fg, $bg )
@@ -144,7 +144,7 @@ function sect_part( &$file, $off, $fn, &$pal, &$src )
 		if ( ($b4 >> 15) & 1 )
 		{
 			clr_stp_on($clr);
-			//$ty = sprintf("pz_alpha%d", ($b4 >> 20) & 6);
+			//$ty = sprintf('pz_alpha%d', ($b4 >> 20) & 6);
 			//echo "$ty\n";
 			//$pix['alpha'] = $ty;
 		}
@@ -171,7 +171,7 @@ function pixtex( &$pix )
 {
 	$len  = strlen($pix);
 	if ( $len & 0x7fff )
-		return php_error("pix not in 0x8000 [%x]", $len);
+		return php_error('pix not in 0x8000 [%x]', $len);
 
 	// 1 page = 80*100
 	$page = $len / 0x8000;
@@ -268,7 +268,7 @@ function panzer( $fname )
 		$p = 0x10 + ($i * 4);
 		$of = str2int($file[2], $p, 4);
 
-		$fn = sprintf("%s/%04d", $dir, $i);
+		$fn = sprintf('%s/%04d', $dir, $i);
 		sect_part($file[2], $of, $fn, $file[3][0], $file[3][1]);
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;

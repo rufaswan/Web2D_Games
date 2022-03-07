@@ -20,14 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("TILE_S", 16);
+define('TILE_S', 16);
 
 function palfile( $cc, $fname )
 {
 	if ( $cc < 1 )
-		return php_error("ERROR cc", $cc);
+		return php_error('ERROR cc', $cc);
 
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -39,7 +39,7 @@ function palfile( $cc, $fname )
 	$w = $cc;
 	$h = $ceil / ($cc*4);
 
-	$img  = "RGBA";
+	$img  = 'RGBA';
 	$img .= chrint($w * TILE_S, 4);
 	$img .= chrint($h * TILE_S, 4);
 

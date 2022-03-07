@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 printf("%s  EXTENSION  \"COMMAND\"\n", $argv[0]);
 echo "  note : remember to double-quote COMMAND\n";
@@ -44,8 +44,6 @@ if ( empty($ext) || empty($cmd) )
 
 $list = array();
 lsfile_r('.', $list);
-$exit = -1;
-$out  = '';
 foreach ( $list as $f )
 {
 	$e = substr($f, strrpos($f, '.'));
@@ -57,8 +55,10 @@ foreach ( $list as $f )
 	$c = escapeshellcmd("$cmd \"$f\"");
 	echo "$c\n";
 
+	$exit = -1;
+	$out  = '';
 	exec($c, $out, $exit);
-	echo "$out\n";
+	echo implode(PHP_EOL, $out);
 
 	// Stop the script when error!
 	// - when invalid COMMAND

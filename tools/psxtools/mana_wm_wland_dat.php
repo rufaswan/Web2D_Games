@@ -20,17 +20,17 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x100);
+define('CANV_S', 0x100);
 
-$gp_pix  = "";
+$gp_pix  = '';
 $gp_clut = array();
 
 // callback for copypix()
 function wm_alp3( $fg, $bg )
 {
-	$nfg = "";
+	$nfg = '';
 	for ( $i=0; $i < 4; $i++ )
 	{
 		$p1 = ord( $fg[$i] );
@@ -98,11 +98,11 @@ function sect1( &$file, $base, $fn )
 		$pix['bgzero'] = 0;
 
 		$p9 = ord($v[9]);
-		$pix['alpha'] = "";
+		$pix['alpha'] = '';
 		if ( $p9 == 1 ) // mask / 1 + image
-			$pix['alpha'] = "wm_alp1";
+			$pix['alpha'] = 'wm_alp1';
 		if ( $p9 == 3 ) // mask / 5 + image
-			$pix['alpha'] = "wm_alp3";
+			$pix['alpha'] = 'wm_alp3';
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $cn , $p9\n");
@@ -132,7 +132,7 @@ function landdata( &$file, $dir )
 		$p1 = str2int($file, $st, 2);
 		if ( $p1 == 0 )
 			return;
-		$fn = sprintf("$dir/%04d", $id);
+		$fn = sprintf('%s/%04d', $dir, $id);
 		sect1($file, $p1+0x2004, $fn);
 
 		$st += 2;

@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-$gp_clut = "";
+$gp_clut = '';
 $gp_h = 1;
 
 function sectpart( &$dat, $pfx, $pos, $id, $w, $h )
@@ -34,12 +34,12 @@ function sectpart( &$dat, $pfx, $pos, $id, $w, $h )
 	global $gp_clut, $gp_h;
 	$pal = ( empty($gp_clut) ) ? grayclut(16) : $gp_clut;
 
-	$rgba = "RGBA";
+	$rgba = 'RGBA';
 	$rgba .= chrint($w, 4);
 	$rgba .= chrint($h*$gp_h, 4);
 	for ( $y=0; $y < $h; $y++ )
 	{
-		$line = "";
+		$line = '';
 		for ( $x=0; $x < $w; $x += 8 )
 		{
 			$b0 = ord( $dat[$pos + 0*$bk] ); // mask
@@ -68,7 +68,7 @@ function sectpart( &$dat, $pfx, $pos, $id, $w, $h )
 		$rgba .= str_repeat($line, $gp_h);
 	} // for ( $y=0; $y < $h; $y++ )
 
-	$fn = sprintf("$pfx/%04d.rgba", $id);
+	$fn = sprintf('%s/%04d.rgba', $pfx, $id);
 	save_file($fn, $rgba);
 	return;
 }
@@ -100,14 +100,14 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 
 	$canvas = str_repeat(ZERO, $map_w*$map_h*2);
 	$pos = 4;
-	$mdt = "";
+	$mdt = '';
 	for ( $y=0; $y < $map_h; $y += 0x20 )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x20 )
 		{
 			$b1 = ord( $map[$pos] );
 				$pos++;
-			$mdt .= sprintf("%2x ", $b1);
+			$mdt .= sprintf('%2x ', $b1);
 
 			$src = substr($dat, $b1*0x200, 0x200);
 			for ( $sy=0; $sy < 0x10; $sy++ )
@@ -129,7 +129,7 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 	global $gp_clut;
 	$cc = strlen($gp_clut) / 4;
 
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint($cc   , 4);
 	$clut .= chrint($map_w, 4);
 	$clut .= chrint($map_h, 4);
@@ -137,7 +137,7 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 	$clut .= $canvas;
 	file_put_contents("$pfx.clut", $clut);
 
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(0x100, 4);
 	$clut .= chrint($map_w / 0x20, 4);
 	$clut .= chrint($map_h / 0x20, 4);
@@ -150,10 +150,10 @@ function sectmap( &$map, &$dat, $pfx, $map_w, $map_h )
 function loadtexx( &$dat )
 {
 	if ( strlen($dat) != 0x10000 )
-		return "";
+		return '';
 	printf("== loadtexx() = 256\n");
 
-	$pix = "";
+	$pix = '';
 	for ( $i=0; $i < 0x4000; $i++ )
 	{
 		$b0 = ord( $dat[$i+0     ] );
@@ -198,7 +198,7 @@ function loadclut( $fname )
 
 	global $gp_clut, $gp_h;
 	$gp_h = 2;
-	$gp_clut = "";
+	$gp_clut = '';
 	for ( $i=0; $i < 0x30; $i += 3 )
 	{
 		$r = ord( $rgb[$i+0] );
@@ -219,12 +219,12 @@ function magclut( $fname )
 	printf("== magclut( $fname ) = 16\n");
 
 	$mgc = substr0($mag, 0, chr(0x1a));
-	if ( substr($mgc, 0, 6) != "MAKI02" )
+	if ( substr($mgc, 0, 6) !== 'MAKI02' )
 		return;
 
 	global $gp_clut, $gp_h;
 	$gp_h = 1;
-	$gp_clut = "";
+	$gp_clut = '';
 
 	$pos = strlen($mgc) + 1 + 0x20;
 	for ( $i=0; $i < 0x30; $i += 3 )

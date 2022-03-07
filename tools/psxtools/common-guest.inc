@@ -128,7 +128,7 @@ function cmp_float( $fl1, $fl2, $near=1.0 )
 //////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
 {
-	$rgba = "";
+	$rgba = '';
 	$len = strlen($pix);
 	for ( $i=0; $i < $len; $i++ )
 	{
@@ -151,7 +151,7 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 	$clut = array();
 	if ( ! empty($bg) )
 		$clut[] = $bg;
-	$pix  = "";
+	$pix  = '';
 	$siz  = strlen($rgba);
 	for ( $i=0; $i < $siz; $i += 4 )
 	{
@@ -162,7 +162,7 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 
 		if ( $p > BIT8 )
 		{
-			php_warning("rgba2clut() clut over 256 colors");
+			php_warning('rgba2clut() clut over 256 colors');
 			return -1;
 		}
 		$pix .= chr($p);
@@ -174,9 +174,9 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 {
 	if ( defined("DRY_RUN") )
-		return "";
+		return '';
 
-	$rip = "";
+	$rip = '';
 	for ( $y=0; $y < $h; $y++ )
 	{
 		$sxx = ($sy + $y) * $sw + $sx;

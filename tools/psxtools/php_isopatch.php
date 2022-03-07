@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-iso.inc";
+require 'common.inc';
+require 'common-iso.inc';
 
 function findlist( &$list, $key, $val )
 {
@@ -61,7 +61,7 @@ foreach ( file($argv[2]) as $line )
 			case 'FILE':
 				$k = findlist($list, 'file', $v);
 				if ( empty($k) )
-					php_error("FILE = %s not found", $v);
+					php_error('FILE = %s not found', $v);
 				$data['FILE'] = $k;
 				$data['OFF' ] = $k['lba'] * 0x800;
 				printf("SET FILE %s @ %x\n", $v, $data['OFF']);

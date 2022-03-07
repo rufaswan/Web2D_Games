@@ -20,11 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-define("NONE_PNG", "data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURQAAAP8AAP///2cZZB4AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+QGGgEMCSVOLPAAAAA4SURBVAjXYwhgYGBlCGFgEAVCIM3qwBjAwBjA6gDkAAUYRIFSDKwBMALMBUmAlYAVg7WBDQAZBQAWAQb1CwbkAwAAAABJRU5ErkJggg==");
+require 'common.inc';
+define('NONE_PNG', 'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURQAAAP8AAP///2cZZB4AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+QGGgEMCSVOLPAAAAA4SURBVAjXYwhgYGBlCGFgEAVCIM3qwBjAwBjA6gDkAAUYRIFSDKwBMALMBUmAlYAVg7WBDQAZBQAWAQb1CwbkAwAAAABJRU5ErkJggg==');
 
 // MARL ( Map - Area - Room - Layer )
-$gp_grid = "";
+$gp_grid = '';
 
 function bggrid()
 {
@@ -32,7 +32,7 @@ function bggrid()
 	if ( empty($gp_grid) )
 		return '';
 
-	$png = sprintf("%s/patch/%s.png", __DIR__, $gp_grid);
+	$png = sprintf('%s/patch/%s.png', __DIR__, $gp_grid);
 	if ( is_file($png) )
 		$gp_grid = $png;
 
@@ -157,7 +157,7 @@ function htmldiv( &$layout, $dir, $room, $tab_no = 0 )
 	# layers , monsters , objects , items ...
 	$z = str_replace('_', '/', $room);
 
-	$img = "";
+	$img = '';
 	imghtml($img, "$dir/$room/center.png", $tab, true);
 	imghtml($img, "$dir/$room/0000.png"  , $tab, true);
 	imghtml($img, "$dir/$room.png"       , $tab, false);
@@ -187,7 +187,7 @@ function layouttxt( $dir )
 	$layout = array();
 	foreach ( file($fname) as $line )
 	{
-		$line = preg_replace("|[\s]+|", '', $line);
+		$line = preg_replace('|[\s]+|', '', $line);
 		if ( empty($line) )
 			continue;
 		list($id,$data) = explode('=', $line);
@@ -200,7 +200,7 @@ function layouttxt( $dir )
 }
 
 printf("usage : %s  [16x15]  [title]  DIR...\n", $argv[0]);
-$title = "Layout txt2html";
+$title = 'Layout txt2html';
 
 ob_start();
 	for ( $i=1; $i < $argc; $i++ )

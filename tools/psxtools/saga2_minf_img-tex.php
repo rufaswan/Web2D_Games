@@ -57,8 +57,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 01   =  10c in map%03x.tex (size = 0x100)
  * 10   = 100c in map%03x.tex (size = 0x100)
  */
-require "common.inc";
-$gp_pix  = "";
+require 'common.inc';
+$gp_pix  = '';
 $gp_clut = array();
 
 function sectmap( &$img, $dir, $id, $meta, $base )
@@ -68,7 +68,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 	$map_h = ord( $meta[0x27] ) * 0x10;
 	echo "map : $map_w x $map_h\n";
 
-	$fn = sprintf("$dir/%04d", $id);
+	$fn = sprintf('%s/%04d', $dir, $id);
 
 	$pix = COPYPIX_DEF($map_w,$map_h,PIX_BLACK);
 	$pix['src']['w'] = 16;
@@ -80,7 +80,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 
 	$pos = $base + ($id * 4);
 	$pos = $base + str2int($img, $pos, 4);
-	$map = "";
+	$map = '';
 	for ( $y=0; $y < $map_h; $y += 0x10 )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x10 )
@@ -94,7 +94,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 				continue;
 			}
 			else
-				$map .= sprintf("%4x ", $dat);
+				$map .= sprintf('%4x ', $dat);
 
 			$pix['src']['pix'] = substr($gp_pix, $dat*0x100, 0x100);
 			$pix['dx'] = $x;
@@ -150,7 +150,7 @@ function saga2( $fname )
 	$pal = substr($tex, $off+4, $cc*$cn*2);
 	$gp_clut = pal555($pal);
 
-	$tex = "";
+	$tex = '';
 	savemap($img, $dir);
 	return;
 }

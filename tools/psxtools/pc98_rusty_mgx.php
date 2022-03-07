@@ -25,13 +25,13 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   http://46okumen.com/projects/rusty/
  *     46 Okumen
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-//define("DRY_RUN", true);
-//define("NO_TRACE", true);
+//define('DRY_RUN', true);
+//define('NO_TRACE', true);
 
-$gp_clut = "";
+$gp_clut = '';
 
 function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 {
@@ -129,7 +129,7 @@ function sectmgx( &$file, $fname, $pos )
 	$b5 = str2int($file, $pos+28, 4); // size
 
 	global $gp_clut;
-	$gp_clut = "";
+	$gp_clut = '';
 	for ( $i=0; $i < 0x30; $i += 3 )
 	{
 		$p = $pos + 32 + $i;
@@ -143,7 +143,7 @@ function sectmgx( &$file, $fname, $pos )
 	while ( strlen($pix) % 2 )
 		$pix .= ZERO;
 
-	$data = "CLUT";
+	$data = 'CLUT';
 	$data .= chrint(16, 4);
 	$data .= chrint($w, 4);
 	$data .= chrint($h, 4);
@@ -179,7 +179,7 @@ function rusty( $fname )
 
 	// for *.mgx
 	$mgc = substr0($file, 0, chr(0x1a));
-	if ( substr($mgc, 0, 6) == "MAKI02" )
+	if ( substr($mgc, 0, 6) === 'MAKI02' )
 		return sectmgx($file, $fname, strlen($mgc)+1);
 
 	return;

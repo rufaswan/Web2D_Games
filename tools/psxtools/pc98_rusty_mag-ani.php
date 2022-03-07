@@ -25,12 +25,12 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   http://46okumen.com/projects/rusty/
  *     46 Okumen
  */
-require "common.inc";
+require 'common.inc';
 
-//define("DRY_RUN", true);
-//define("NO_TRACE", true);
+//define('DRY_RUN', true);
+//define('NO_TRACE', true);
 
-$gp_clut = "";
+$gp_clut = '';
 
 function mag_decode( &$file, $w, $h, $pb1, $pb4, $pc )
 {
@@ -128,7 +128,7 @@ function sectmag( &$file, $fname, $pos )
 	$b5 = str2int($file, $pos+28, 4); // size
 
 	global $gp_clut;
-	$gp_clut = "";
+	$gp_clut = '';
 	for ( $i=0; $i < 0x30; $i += 3 )
 	{
 		$p = $pos + 32 + $i;
@@ -143,7 +143,7 @@ function sectmag( &$file, $fname, $pos )
 	while ( strlen($pix) < $sz )
 		$pix .= ZERO;
 
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(16, 4);
 	$clut .= chrint($w, 4);
 	$clut .= chrint($h, 4);
@@ -171,7 +171,7 @@ function ani_part( &$file, $dir, $id, $pos )
 	$bk = $w * $h / 8;
 	printf("size %x x %x = %x\n", $w, $h, $bk);
 
-	$pix = "";
+	$pix = '';
 	for ( $i=0; $i < $bk; $i++ )
 	{
 		$b1 = ord( $file[$pos + 0*$bk] );
@@ -194,14 +194,14 @@ function ani_part( &$file, $dir, $id, $pos )
 	} // for ( $i=0; $i < $bk; $i++ )
 
 	global $gp_clut;
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(16, 4);
 	$clut .= chrint($w, 4);
 	$clut .= chrint($h, 4);
 	$clut .= ( empty($gp_clut) ) ? grayclut(16) : $gp_clut;
 	$clut .= $pix;
 
-	$fn = sprintf("$dir/%04d.clut", $id);
+	$fn = sprintf('%s/%04d.clut', $dir, $id);
 	save_file($fn, $clut);
 	return;
 }
@@ -231,7 +231,7 @@ function rusty( $fname )
 
 	// for *.mag
 	$mgc = substr0($file, 0, chr(0x1a));
-	if ( substr($mgc, 0, 6) == "MAKI02" )
+	if ( substr($mgc, 0, 6) === 'MAKI02' )
 		return sectmag($file, $fname, strlen($mgc)+1);
 
 	return;

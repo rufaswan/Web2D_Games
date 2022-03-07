@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "pc98_galpani.inc";
+require 'common.inc';
+require 'pc98_galpani.inc';
 
-define("NO_TRACE", true);
+define('NO_TRACE', true);
 
 /*
 function sectsprt( &$file, $fname )
@@ -39,7 +39,7 @@ function sectsprt( &$file, $fname )
 	$b5 = str2int($file, 0x28, 4); // data
 	$b6 = str2int($file, 0x2c, 4); // size
 
-	$pal = "";
+	$pal = '';
 	for ( $i=0; $i < $b2; $i += 3 )
 		$pal .= substr($file, $b1+$i, 3) . BYTE;
 
@@ -70,14 +70,14 @@ function sectsprt( &$file, $fname )
 		$sz = str2int($pix, $p+0x3c, 4);
 		$h  = $sz / $w;
 
-		$clut = "CLUT";
+		$clut = 'CLUT';
 		$clut .= chrint(0x100, 4);
 		$clut .= chrint($w, 4);
 		$clut .= chrint($h, 4);
 		$clut .= grayclut(0x100);
 		$clut .= substr($pix, $p+0x40, $sz);
 
-		$fn = sprintf("$dir/%04d.clut", $i);
+		$fn = sprintf('%s/%04d.clut', $dir, $i);
 		save_file($fn, $clut);
 	}
 	return;
@@ -127,7 +127,7 @@ function galpani( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "sprt" )
+	if ( substr($file, 0, 4) !== 'sprt' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -169,7 +169,7 @@ function galpani( $fname )
 		$len = strlen($ind);
 		for ( $i=0; $i < $len; $i += 4 )
 		{
-			$fn  = sprintf("%s/%04d.clut", $dir, $i>>2);
+			$fn  = sprintf('%s/%04d.clut', $dir, $i>>2);
 			$off = str2int($ind, $i, 4);
 			//printf("%8x , %s\n", $off, $fn);
 

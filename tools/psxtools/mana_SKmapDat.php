@@ -49,9 +49,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *  wd1  White Forest (Dragons arc)
  *  wst  Luon Highway
  */
-require "common.inc";
+require 'common.inc';
 
-$gp_pixd = "";
+$gp_pixd = '';
 $gp_clut = array();
 
 // map files are loaded to RAM 80180000
@@ -190,14 +190,14 @@ function sectmap( &$file, $nid, $base )
 	$pix['src']['h'] = 16;
 
 	$pos = $map_off;
-	$map = "";
+	$map = '';
 	for ( $y=0; $y < $map_h; $y += 0x10 )
 	{
 		for ( $x=0; $x < $map_w; $x += 0x10 )
 		{
 			$dat = str2int($file, $pos, 4);
 				$pos += 4;
-			$map .= sprintf("%8x ", $dat);
+			$map .= sprintf('%8x ', $dat);
 
 			if ( $dat == 0 )
 				continue;
@@ -281,7 +281,7 @@ function srcpix( &$pix, $dir )
 	$h = $len / 0x20;
 
 	// 8-bpp
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(0x100, 4);
 	$clut .= chrint($w, 4);
 	$clut .= chrint($h, 4);
@@ -293,7 +293,7 @@ function srcpix( &$pix, $dir )
 	$b = $pix;
 	bpp4to8($b);
 
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(0x10, 4);
 	$clut .= chrint($w*2, 4);
 	$clut .= chrint($h,   4);
@@ -308,7 +308,7 @@ function mana( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 8) != "SKmapDat" )
+	if ( substr($file, 0, 8) !== 'SKmapDat' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);

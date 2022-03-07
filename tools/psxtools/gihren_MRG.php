@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function cmp0_decode( &$file )
 {
@@ -150,7 +150,7 @@ function TX_TX_TX_TX_TX_PL( &$sect, $dir )
 			'pal' => $pal,
 			'pix' => $src,
 		);
-		$fn = sprintf("%s/%04d.clut", $dir, $i);
+		$fn = sprintf('%s/%04d.clut', $dir, $i);
 		save_clutfile($fn, $img);
 	} // for ( $i=0; $i < 5; $i++ )
 	return;
@@ -173,7 +173,7 @@ function mrgfile( &$file, $dir )
 		$sz2 = str2int($file, $off+4, 4);
 			$mgc = rtrim($mgc, ZERO);
 
-		if ( $mgc == "PTN" )
+		if ( $mgc === 'PTN' )
 			$sz2 = str2int($file, $off+8, 4);
 
 		printf("%8x , %8x , %s\n", $off, $sz1, $mgc);
@@ -202,7 +202,7 @@ function gihren( $fname )
 
 	$dir = str_replace('.', '_', $fname);
 
-	if ( substr($file, 0, 4) == "MRG\x00" )
+	if ( substr($file, 0, 4) === "MRG\x00" )
 		return mrgfile($file, $dir);
 	return;
 }

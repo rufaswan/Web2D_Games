@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-define("CANV_S", 0x200);
-define("SCALE", 1.0);
+define('CANV_S', 0x200);
+define('SCALE', 1.0);
 $gp_tim = array();
 
 function loadtim( $tim_fn )
@@ -39,7 +39,7 @@ function loadtim( $tim_fn )
 // callback for copypix()
 function wm_alp3( $fg, $bg )
 {
-	$nfg = "";
+	$nfg = '';
 	for ( $i=0; $i < 4; $i++ )
 	{
 		$p1 = ord( $fg[$i] );
@@ -120,11 +120,11 @@ function sect1( &$file, $off, $fn )
 		$pix['rotate'] = array(ord($v[8]), 0, 0);
 
 		$p9 = ord($v[9]);
-		$pix['alpha'] = "";
+		$pix['alpha'] = '';
 		if ( $p9 == 1 ) // mask / 1 + image
-			$pix['alpha'] = "wm_alp1";
+			$pix['alpha'] = 'wm_alp1';
 		if ( $p9 == 3 ) // mask / 5 + image
-			$pix['alpha'] = "wm_alp3";
+			$pix['alpha'] = 'wm_alp3';
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf(" , $cn , %d , $p9\n", $pix['rotate'][0]);
@@ -160,7 +160,7 @@ function mana( $fname )
 		if ( $off < $prv )
 			return;
 
-		$fn = sprintf("$dir/%04d", $id);
+		$fn = sprintf('%s/%04d', $dir, $id);
 		sect1( $file, $off, $fn );
 
 		$prv = $off;

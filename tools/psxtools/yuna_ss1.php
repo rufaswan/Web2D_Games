@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function saturn_yuna( &$file, $fname )
 {
@@ -31,7 +31,7 @@ function saturn_yuna( &$file, $fname )
 	$ed = strlen($file);
 	$st = 4;
 
-	$rgba = "RGBA";
+	$rgba = 'RGBA';
 	$rgba .= chrint($w, 4);
 	$rgba .= chrint($h, 4);
 	while ( $st < $ed )
@@ -71,7 +71,7 @@ function psx_yuna( &$file, $fname )
 	$ed = strlen($file);
 	$st = 0x14;
 
-	$rgba = "RGBA";
+	$rgba = 'RGBA';
 	$rgba .= chrint($w, 4);
 	$rgba .= chrint($h, 4);
 	while ( $st < $ed )

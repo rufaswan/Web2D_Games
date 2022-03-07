@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
+require 'common.inc';
+require 'common-guest.inc';
 
-define("SHA1SUM", 'd549facf31c89627d43aa645fa0727411d9c544e');
-define("PAL_ST_OFF", 0x98a8e); // 0x9ca8e - 0x4000
-define("PAL_ED_OFF", 0x9da8e); // 0xa1a8e - 0x4000
+define('SHA1SUM', 'd549facf31c89627d43aa645fa0727411d9c544e');
+define('PAL_ST_OFF', 0x98a8e); // 0x9ca8e - 0x4000
+define('PAL_ED_OFF', 0x9da8e); // 0xa1a8e - 0x4000
 
 //////////////////////////////
 // got these from *.prg files
@@ -219,7 +219,7 @@ function exp_pal( &$file )
 	global $gp_index;
 	foreach ( $gp_index as $name => $id )
 	{
-		$pal = "";
+		$pal = '';
 		foreach ( $id as $v )
 		{
 			if ( $v < 0 )
@@ -243,9 +243,9 @@ function pcrown( $fname )
 	if ( empty($file) )  return;
 
 	if ( sha1($file) !== SHA1SUM )
-		return php_error("checksum not matched %s", sha1($file));
+		return php_error('checksum not matched %s', sha1($file));
 
-	$pal = "";
+	$pal = '';
 	for ( $i = PAL_ST_OFF; $i < PAL_ED_OFF; $i += 2 )
 		$pal .= $file[$i+1] . $file[$i+0];
 

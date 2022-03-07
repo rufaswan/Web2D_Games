@@ -20,10 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-quad.inc";
-require "quad.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-quad.inc';
+require 'quad.inc';
 
 function adjsrc( &$src, $c )
 {
@@ -141,7 +141,7 @@ function sect_anim( &$json, &$file, $off1, $off2 )
 			'FID' => array(),
 			'FPS' => array(),
 		);
-		$name = sprintf("anim_%d", $i);
+		$name = sprintf('anim_%d', $i);
 		for ( $i2=0; $i2 < $len; $i2 += 4 )
 		{
 			// 1 2  3 4
@@ -172,7 +172,7 @@ function gv_pixd( &$file, $pos )
 		$pos += 0x80;
 
 	if ( ! isset( $file[$siz-1] ) )
-		return php_error("gv_pixd not enough data");
+		return php_error('gv_pixd not enough data');
 
 	$img = array(
 		'w' => $w,
@@ -209,7 +209,7 @@ function gv_pixd( &$file, $pos )
 			}
 			break;
 		default:
-			return php_error("UNKNONW pixd type %x", $typ);
+			return php_error('UNKNONW pixd type %x', $typ);
 	} // switch ( $typ )
 	return $img;
 }
@@ -225,7 +225,7 @@ function sect_TLPI( &$sect, &$img, $pfx )
 	$cn = str2int($sect['TLPI'], 4, 2);
 	$cc = str2int($sect['TLPI'], 6, 2);
 	if ( $cc !== 0x100 )
-		return php_error("TPLI not 256 colors = %x", $cc);
+		return php_error('TPLI not 256 colors = %x', $cc);
 
 	$buf = '';
 	$len = strlen($pix);
@@ -272,8 +272,8 @@ function sect_IOBJ( &$json, &$sect, $pfx )
 	$pixd_off = 0x10;
 	printf("== sect_IOBJ( %s ) = %d\n", $pfx, $pixd_cnt);
 
-	if ( substr($sect['IOBJ'],$ptgt_off,4) != 'PTGT' )
-		php_warning("IOBJ-PTGT not found = %x", $ptgt_off);
+	if ( substr($sect['IOBJ'],$ptgt_off,4) !== 'PTGT' )
+		php_warning('IOBJ-PTGT not found = %x', $ptgt_off);
 
 	$img = array();
 	for ( $i=0; $i < $pixd_cnt; $i++ )
@@ -292,9 +292,9 @@ function sect_IOBJ( &$json, &$sect, $pfx )
 	foreach ( $img as $k => $v )
 	{
 		if ( isset( $sect['TLPI'] ) )
-			$fn = sprintf("%s/img-%d.0.rgba", $pfx, $k);
+			$fn = sprintf('%s/img-%d.0.rgba', $pfx, $k);
 		else
-			$fn = sprintf("%s/img.%d.rgba", $pfx, $k);
+			$fn = sprintf('%s/img.%d.rgba', $pfx, $k);
 		save_clutfile($fn, $v);
 	}
 	return;
@@ -337,12 +337,12 @@ function gunvolt( $fname, $idtag )
 				$mgc = ordint($mgc);
 				if ( ($mgc+0x80) == $siz )
 				{
-					$type = "pix ";
+					$type = 'pix ';
 					$img = gv_pixd($sub, 0);
 					save_clutfile("$pfx/img.$i.rgba", $img);
 				}
 				else
-					$type = "????";
+					$type = '????';
 				break;
 		} // switch ( $mgc )
 

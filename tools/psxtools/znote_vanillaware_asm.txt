@@ -1,0 +1,508 @@
+NDS Kumatanchi
+//////////////////////////////
+MBS file
+	s0*18 clr (18 done)
+		00  // center RGB
+		04  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 1
+			20308d4  ldrb  r1, 0(r0)
+		05  20308dc  ldrb  r1, 1(r0)
+		06  20308e4  ldrb  r0, 2(r0)
+		08  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 2
+			20308d4  ldrb  r1, 0(r0)
+		09  20308dc  ldrb  r1, 1(r0)
+		0a  20308e4  ldrb  r0, 2(r0)
+		0c  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 3
+			20308d4  ldrb  r1, 0(r0)
+		0d  20308dc  ldrb  r1, 1(r0)
+		0e  20308e4  ldrb  r0, 2(r0)
+		10  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 4
+			20308d4  ldrb  r1, 0(r0)
+		11  20308dc  ldrb  r1, 1(r0)
+		12  20308e4  ldrb  r0, 2(r0)
+		14  // RGB 5 == RGB 1
+	s1*30 src (30 done)
+		00  // center x
+		04  // center y
+		08  2030578  ldr  r2,  0(r0)  // x1
+			20306b8  ldr  r7   8(r5)
+		0c  2030574  ldr  r1,  4(r0)  // y1
+			20306d0  ldr  r7   c(r5)
+		10  2030578  ldr  r2,  0(r0)  // x2
+		14  2030574  ldr  r1,  4(r0)  // y2
+		18  2030578  ldr  r2,  0(r0)  // x3
+			20306bc  ldr  r3, 18(r5)
+		1c  2030574  ldr  r1,  4(r0)  // y3
+			20306d4  ldr  r3, 1c(r5)
+		20  2030578  ldr  r2,  0(r0)  // x4
+		24  2030574  ldr  r1,  4(r0)  // y4
+		28  // x5 == x1
+		2c  // y5 == y1
+	s2*30 dst (30 done)
+		00  // center x
+		04  // center y
+		08  2030538  ldrh   r3,  0(r0) // x1
+			2030688  ldrsh  r1,  8(rb)
+		0a  2030690  ldrsh  r0,  a(rb)
+		0c  // y1
+		10  2030538  ldrh   r3,  0(r0) // x2
+		14  // y2
+		18  2030538  ldrh   r3,  0(r0) // x3
+			203068c  ldrsh  r2, 18(rb)
+		1a  2030694  ldrsh  r3, 1a(rb)
+		1c  // y3
+		20  2030538  ldrh   r3,  0(r0) // x4
+		24  // y4
+		28  // x5 == x1
+		2c  // y5 == y1
+	s3*50 ? ( done) (bg skip)
+		00
+		04
+		08
+		0c
+		10
+		14
+		18
+		1c
+		20
+		24
+		28
+		2c
+		30
+		34
+		38
+		3c
+		40
+		44
+		48
+		4c
+	s4*c  part (9 done)
+		00  2030ad0  ldrh  r0, 0(r9) // flags
+			tst r0, 02
+			tst r0, 04
+		02  //
+		03  2030af0  ldrb  r1, 3(r9) // [kuma02] tex ID
+		04  2030b94  ldrh  r2, 4(r9) // s1 ID
+		06  //
+		07
+		08  2030b8c  ldrh  r1, 8(r9) // s0 ID
+		0a  2030ba8  ldrh  r3, a(r9) // s2 ID
+	s5*8  ? ( done) (bg skip)
+		00
+		01
+		02
+		03
+		04
+		05
+		06
+		07
+	s6*18 key (14 done)
+		00  2032080  ldr     r3, r0(r1)  // x1
+			20320a8  ldr     r0, r0(r1)
+		04  203208c  ldr     r3,  4(r5)  // y1
+			20320b4  ldr     r0,  4(r5)
+		08  2032098  ldr     r3,  8(r5)  // x2
+			20320c0  ldr     r0,  8(r5)
+		0c  20320a0  ldr     r3,  c(r5)  // y2
+			20320c8  ldr     r0,  c(r5)
+		10  2030a48  ldrh    r2, 10(r5)  // s4 ID
+		12  // [kuma02] s5 ID
+		13
+		14  2030ab8  ldrb    r0, 14(r5)  // s4 count
+			2030bc4  ldrb    r0, 14(r5)
+			203221c  ldrbne  r0, 14(r5)
+		15  2031f38  ldrb    r3, 15(r5) // [kuma02] s5 count
+		16  //
+		17
+	s7*24 meta (14 done)
+		00  // + x
+		04  // + y
+		08  // ??? all 0
+		0c  203211c  ldr  r3,  c(r6) // ??? all 0
+		10  2032104  ldr  r1, 10(r6) // ??? all 0
+		14  2032110  ldr  r1, 14(r6) // ??? all 0
+		18  2032100  ldr  r2, 18(r6) // * scale x
+		1c  // * scale y
+		20  2032394  ldrb  r6, 20(r6) // red
+		21  2032398  ldrb  r0, 21(r6) // green
+		22  2032364  ldrb  r7, 22(r6) // blue
+		23  2032360  ldrb  rc, 23(r6) // alpha
+	s8*20 frame (1a done)
+		00  2032028  ldrh  r1, 0(r9)  // s6 ID
+			203203c  ldrh  rc, 0(r5)
+		02
+		03
+		04  2032058  ldrh  rb, 4(r9)  // s7 ID
+		06  20328b8  ldrh  r0, 6(r0)  // frames
+		08  // flags
+			2032128  ldr   r0, 8(r9)  tst  r0,   01  // flip x
+			203215c  ldr   r0, 8(r9)  tst  r0,   02  // flip y
+			203222c  ldr   r0, 8(r9)  tst  r0, 0400  // skip
+			20324b0  ldr   r0, 8(r9)  tst  r0,   20
+			20326c4  ldr   r1, 8(r3)  tst  r1,   40  // skip
+			20327bc  ldr   r0, 8(r8)  tst  r0,   80
+			2032864  ldr   r0, 8(r8)  tst  r0, 0100  // skip
+			2032944  ldr   r0, 8(r8)  tst  r0, 2000
+		0c  2032884  ldrh  r0, c(r8)  // loop s8 ID
+		0e  20320e0  ldrb  r0, e(r9) // ??? all 0
+		0f
+		10
+		11  20325c0  ldrb    r9, 11(r9) // ??? all 0
+		12  203258c  ldrbeq  r0, 12(r9) // ??? all 0
+		13  2032008  ldrsb   r1, 13(r9) // ??? all 0
+		14  2032834  ldr     r1, 14(r8) // ??? all 0
+		18  203282c  ldrh    r2, 18(r8) // ??? all 0
+		1a  2032830  ldrh    r3, 1a(r8)
+		1c  2032824  ldr     r1, 1c(r8)
+	s9*30 anim (2d done)
+		00  // x1
+		04  // y1
+		08  // x2
+		0c  // y2
+		10  // name[17] + NULL
+		28  203317c  ldrh  r0, 28(r7)  // sa ID
+		2a  203304c  ldrb  r1, 2a(r7)  // sa count
+			2033168  ldrb  r0, 2a(r7)
+			203319c  ldrb  r0, 2a(r7)
+		2b  // sa ID+n with highest sum of s8 frames
+		2c  203300c  ldrb  r0, 2c(r7)  tst r0, 01  // dummied
+		2d
+		2e
+		2f
+	sa*10 track (5 done)
+		00  20326a8  ldrh  r3, 0(r0) // s8 ID
+			2032784  ldrh  r0, 0(r6)
+		02  20326d4  ldrh  re, 2(r0) // s8 count
+		04  // sum of s8 frames
+		06
+		07
+		08  //
+		09
+		0a
+		0b
+		0c  //
+		0d
+		0e
+		0f
+//////////////////////////////
+WORK RAM s8 [BLOCK 0x74]
+
+	// 4x4 transformation matrix?
+	00  200113c  ldr  r5,  0(r0)
+		200116c  str  r6,  0(ra)
+	04  2001134  ldr  r4,  4(r0)
+		2001198  str  r6,  4(ra)
+	08  2001148  ldr  r3,  8(r0)
+		20011f4  str  r2,  8(ra)
+	0c  2001154  ldr  r2,  c(r0)
+		20011c4  str  r6,  c(ra)
+	10  2001214  ldr  r7, 10(r0)
+		2001340  str  r4, 10(ra)
+	14  2001210  ldr  r6, 14(r0)
+		20012e8  str  r3, 14(ra)
+	18  2001224  ldr  r5, 18(r0)
+		20012bc  str  r3, 18(ra)
+	1c  2001230  ldr  r4, 1c(r0)
+		2001314  str  r3, 1c(ra)
+	20  2001364  ldr  r8, 20(r0)
+		2001414  str  r3, 20(ra)
+	24  2001358  ldr  r7, 24(r0)
+		2001458  str  r2, 24(ra)
+	28  2001368  ldr  r6, 28(r0)
+		20014e0  str  r4, 28(ra)
+	2c  200136c  ldr  r5, 2c(r0)
+		200149c  str  r2, 2c(ra)
+	30  20014e8  ldr  r3, 30(r0)
+		200169c  str  r6, 30(ra)
+	34  20014e4  ldr  r4, 34(r0)
+		20015e8  str  r6, 34(ra)
+	38  2001504  ldr  r2, 38(r0)
+		2001520  str  r0, 38(ra)
+	3c  2001508  ldr  rc, 3c(r0)
+		2001740  str  r1, 3c(ra)
+
+	40  2032088  str  r3, 40(ra)  // from s6 0 x1
+	44  2032094  str  r3, 44(ra)  // from s6 4 y1
+	48  203209c  str  r3, 48(ra)  // from s6 8 x2
+	4c  20320a4  str  r3, 44(ra)  // from s6 c y2
+	50
+	54
+	58
+	5c
+	60  *pointer*
+		2031f40  ldr  rb, 60(r8)
+		2031ff4  ldr  r4, 60(ra)
+		203265c  ldr  r1, 60(r0)
+		2032698  ldr  r1, 60(r5)
+		2032734  ldr  r4, 60(ra)
+	64  // from s8 6 frames
+		203283c  ldr   r0, 64(ra)  r0 -= r9
+		203284c  str   r0, 64(ra)
+		20328b8  ldrh  r0,  6(r0) // r0 = s8
+		20328c0  str   r0, 64(ra)
+		2032920  ldrh  r0,  6(r0) // r0 = s8
+		2032928  str   r0, 64(ra)
+	68  // from s8 6 frames
+		20328b8  ldrh  r0,  6(r0) // r0 = s8
+		20328bc  strh  r0, 68(ra)
+		2032920  ldrh  r0,  6(r0) // r0 = s8
+		2032924  strh  r0, 68(ra)
+	6a  // sa ID
+		2032660  ldrh  r0, 6a(r0)
+
+		ldr  r1, 60(r0)     // ^pointer
+		ldr  r1, bc(r1)
+		ldr  r1, 98(r1)
+		ldr  r1, 7c(r1)     // r1 = FMBS
+		r0 = r1 + (r0 << 4) // r0 = sa
+	6c  // from s8 c loop s8 ID
+		20326b0  ldrsh  r2, 6c(r5)
+		2032798  ldrsh  r1, 6c(ra)
+		2032884  ldrh   r0,  c(r8) // r8 = s8
+		2032888  strh   r0, 6c(ra)
+
+		203288c  ldrsh  r2, 6c(ra)
+		2032904  ldrsh  r0, 6c(ra)  r0 += 1
+		203290c  strh   r0, 6c(ra)
+
+		2032910  ldrsh  r1, 6c(ra)
+	6e  // loop s8 ID adjust
+		20326b4  ldrsb  r1, 6e(r5)
+		203279c  ldrsb  r0, 6e(ra)
+		2032890  ldrsb  r1, 6e(ra)
+		2032914  ldrsb  r0, 6e(ra)
+	6f
+	70  // flags
+		20320ac  ldrb  r1, 70(ra)  r0 |= 20  // always
+		20320d0  strb  r1, 70(ra)
+
+		2032684  ldrb  r2, 70(r5)  tst  r2, 08  // skip draw
+		2032744  ldrb  r0, 70(ra)
+			tst  r0, 04
+			tst  r0, 02
+			tst  r0, 01
+		2032764  ldrbne  r0, 70(ra)  r0 &= ~1
+		203276c  strbne  r0, 70(ra)
+
+		2032780  ldrb    r2, 70(ra)
+			tst  r0, 02
+			tst  r0, 10
+		20327b0  ldrb  r0, 70(ra)  r0 &= ~10
+		20327b8  strb  r0, 70(ra)
+		20328a4  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
+		20328ac  strb  r0, 70(ra)
+		20328c4  ldrb  r0, 70(ra)  r0 |= 1  // load loop s8 ID
+		20328cc  strb  r0, 70(ra)
+		20328dc  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
+		20328e4  strb  r0, 70(ra)
+		20328f4  ldrb  r0, 70(ra)  r0 |= 5  // skip frames
+		20328fc  strb  r0, 70(ra)
+		203292c  ldrb  r0, 70(ra)  r0 |= 10  // load s8 frames
+		2032934  strb  r0, 70(ra)
+
+		2033230  ldrb  r1, 70(r0)  tst  r1, 02
+	71
+	72
+	73
+//////////////////////////////
+WORK RAM s9 [BLOCK 0x]
+	00  *pointer*
+		20335c8  ldr  r3, 0(r0)
+
+	// 4x4 transformation matrix?
+	//   0,4,c,8,  4,c,0,  4,c,8,  4,0,c
+	// r1 = off+4
+	04  2001144  ldr  r2,  0(r1)
+		2001324  ldr  r3,  0(r1)
+		20015f8  ldr  r7,  0(r1)
+	08  2001174  ldr  r7,  4(r1)
+		20012c4  ldr  r3,  4(r1)
+		200141c  ldr  re,  4(r1)
+		2001538  ldr  r7,  4(r1)
+	0c  20011cc  ldr  rc,  8(r1)
+		20014bc  ldr  r2,  8(r1)
+	10  20011a0  ldr  r7,  c(r1)
+		20012f0  ldr  r3,  c(r1)
+		2001460  ldr  re,  c(r1)
+		20016a4  ldr  r6,  c(r1)
+	14  2001138  ldr  r2, 10(r1)
+		2001318  ldr  r9, 10(r1)
+		2001604  ldr  r6, 10(r1)
+	18  2001170  ldr  r6, 14(r1)
+		20012c0  ldr  r2, 14(r1)
+		2001418  ldr  r2, 14(r1)
+		200154c  ldr  r6, 14(r1)
+	1c  20011c8  ldr  rb, 18(r1)
+		20014a0  ldr  rb, 18(r1)
+	20  200119c  ldr  r6, 1c(r1)
+		20012ec  ldr  r2, 1c(r1)
+		200145c  ldr  r2, 1c(r1)
+		20016c0  ldr  r0, 1c(r1)
+	24  2001150  ldr  r2, 20(r1)
+		2001328  ldr  r2, 20(r1)
+		20015ec  ldr  r8, 20(r1)
+	28  2001180  ldr  r6, 24(r1)
+		20012d0  ldr  r8, 24(r1)
+		2001438  ldr  r4, 24(r1)
+		2001534  ldr  r8, 24(r1)
+	2c  20011dc  ldr  r9, 28(r1)
+		20014c8  ldr  r9, 28(r1)
+	30  20011ac  ldr  r6, 2c(r1)
+		20012fc  ldr  r8, 2c(r1)
+		200147c  ldr  r4, 2c(r1)
+		20016b0  ldr  r7, 2c(r1)
+	34  200115c  ldr  r2, 30(r1)
+		200131c  ldr  rb, 30(r1)
+		20015f0  ldr  r9, 30(r1)
+	38  2001184  ldr  r7, 34(r1)
+		20012d4  ldr  r9, 34(r1)
+		2001448  ldr  r9, 34(r1)
+		2001540  ldr  r9, 34(r1)
+	3c  20011d4  ldr  r8, 38(r1)
+		20014a4  ldr  r3, 38(r1)
+	40  20011b0  ldr  r7, 3c(r1)
+		2001300  ldr  r9, 3c(r1)
+		200148c  ldr  r9, 3c(r1)
+		20016a0  ldr  r8, 3c(r1)
+
+	44
+	48
+	4c
+	50
+	54
+	58
+	5c
+	60
+	64
+		?? 2021344  ldr    r1, c4(r4)
+		?? 2021414  ldr    r1, c4(r4)
+		?? 20217a0  ldr    r1, c4(r5)
+		?? 20217a8  strne  r4, c4(r5)
+		20337c8  ldr  r8, 64(ra)
+	68
+		?? 20217ac  ldr    r1, c8(r5)
+		?? 20217b4  strne  r0, c8(r5)
+		20337b8  ldr  r5, 68(ra)
+	6c  20337c4  ldr  r7, 6c(ra)
+	70  20337b4  ldr  r4, 70(ra)
+	74  20337a8  ldr  r0, 74(ra)
+	78  2032464  ldr  r0, 78(r4)
+		20337ac  ldr  rb, 78(ra)
+	7c  203379c  ldr  r0, 7c(ra)
+	80  2033790  ldr  r0, 80(ra)
+	84
+	88  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	89  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	8a  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	8b  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	8c  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	8d  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	8e  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	8f  20316a4  ldrb  r3, 0(r1), 1 // r1++
+	90  203223c  ldrb  rb, 90(r4)
+	91  2032240  ldrb  r7, 91(r4)
+	92  203224c  ldrb  r0, 92(r4)
+	93  203223c  ldrb  r1, 93(r4)
+	94  2032254  ldrb  r3, 94(r4)
+	95  2032248  ldrb  r2, 95(r4)
+	96  2032258  ldrb  rc, 96(r4)
+	97  2032274  ldrb  r2, 97(r4)
+	98  2032278  ldrb  r7, 98(r4)
+	99  2032290  ldrb  r7, 99(r4)
+	9a  2032294  ldrb  rb, 9a(r4)
+	9b  20322a0  ldrb  rc, 9b(r4)
+	9c
+	a0
+	a4
+	a8  203368c  ldrsh  r1, a8(r0) // r0 = off+0
+	aa  203368c  ldrsh  r1, a8(r0) // r0 = off+2
+	ac  203368c  ldrsh  r1, a8(r0) // r0 = off+4
+	ae
+	b0
+		2032018  ldr  r1, b0(r4)
+		2033024  ldr  r1, b0(r5)  r1 |= 1
+		203302c  str  r1, b0(r5)
+		2033038  ldr  r1, b0(r5)  r1 &= ~6000
+		2033044  str  r1, b0(r5)
+		2033274  ldr  r1, b0(r6)  r1 &= ~1
+		2033280  str  r1, b0(r6)
+		2033290  ldr  r0, b0(r6)  r0 &= ~2000
+		2033298  str  r0, b0(r6)
+
+		2033744  ldr  r2, b0(ra)  tst r2, 1000
+	b4
+	b8
+	bc  *pointer*
+		2032018  ldr  r2, bc(r4)
+		203337c  ldr  r1, bc(r0)
+		20333e0  ldr  r1, bc(r0)
+	c0  *pointer*
+	c4  // s9 ID
+		2033020  strh     r1, c4(r5)
+		20331f4  ldrsh    r3, c4(r8)
+		2033284  ldrsh    r1, c4(r6)
+		2033368  ldrsh    rc, c4(r0)
+		20333cc  ldrsh    rc, c4(r0)
+		20335dc  ldrsh    r1, c4(r6)
+		203374c  ldrshne  r1, c4(ra)
+	c6
+		2032004  ldrsh  r2, c6(r4)
+	c8
+		2033030  str  r0, c8(r5)
+		20332e8  ldr  r0, c8(r6)  r0 += r5
+		20332f0  str  r0, c8(r6)
+
+		2033310  strne  0, c8(r6)
+	cc
+		2033034  str  r0, cc(r5)
+		20332f4  ldr  r0, cc(r6)  r0 += r5
+		20332fc  str  r0, cc(r6)
+	d0
+		20332a4  ldr  r5, d0(r6)
+	d4  *pointer*
+		2033090  str   0, d4(r5)
+		2033094  ldr  r0, d4(r5)
+		20332b4  ldr  r0, d4(r6)
+		2033338  ldr  r3, d4(r0)
+		2033408  ldr  r3, d4(r0)
+	d8
+		2033048  ldrh  r2, d8(r5)  r1 = 2a(r7)
+		2033050  strh  r1, d8(r5)
+		2033054  ldrh  r1, d8(r5)
+		20330a0  ldrh  r6, d8(r5)
+		20332a0  ldrh  r0, d8(r6)
+		20332c4  ldrh  r0, d8(r6)
+		203334c  ldrh  r1, d8(r0)
+	da
+	db
+	dc
+//////////////////////////////
+PS2 odin vs NDS kuma
+	b=byte/int8 , h=half/int16 , w=word/int32
+	f=float32 , c=char[]
+
+	s3 s5 == 0
+
+	s9       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+	odin*30  f       f       f       f       c                                               h   b b b ? ? ?-
+	kuma*30  f       f       f       f       c                                               h   b b b ? ? ?-
+
+	sa       0 1 2 3 4 5 6 7 8 9 a b c d e f
+	odin*8   h   h   h   h   ----------------
+	kuma*10  h   h   w?      w       w      -
+
+	s8       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+	odin*20  h   ? ? h   h   w       h   b ? ? b b b w       h   h   w      -
+	kuma*20  h   ? ? h   h   w       h   b ? ? b b b w       h   h   w      -
+
+	s7       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+	odin*30  f       f       f       f       f       f       w       w       w       w       f       f      -
+	kuma*24  f       f       w?      w       w       w       f       f       b b b b-------------------------
+
+	s6       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
+	odin*18  f       f       f       f       h   h   b b b ?-
+	kuma*18  f       f       f       f       h   h   b b b ?-
+
+	s4       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
+	odin*18  h   b b h   ? ? h   h   h   h   h   h   h   h  -
+	kuma*c   h   b b h   ? ? h   h   ------------------------
+//////////////////////////////

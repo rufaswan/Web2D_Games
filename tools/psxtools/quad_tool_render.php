@@ -20,16 +20,16 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-quad.inc";
-require "quad.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-quad.inc';
+require 'quad.inc';
 
 $gp_pix = array();
 
 function copyquad_errs( &$pix )
 {
-	$err = "";
+	$err = '';
 	for ( $i=0; $i < 8; $i += 2 ) // A B C D
 	{
 		// x y
@@ -86,7 +86,7 @@ function copyquad( &$pix, $byte=1 )
 	// h1 = cross( cross(B,A) , cross(C,D) ) // cross( top    , bottom )
 	// h2 = cross( cross(A,D) , cross(B,C) ) // cross( left   , right )
 	// h3 = cross( cross(A,C) , cross(B,D) ) // cross( center , center )
-	$crx = "cross_product";
+	$crx = 'cross_product';
 	$H1 = $crx( $crx( $qsrc['quad'][1],$qsrc['quad'][0] ) , $crx( $qsrc['quad'][2],$qsrc['quad'][3] ) );
 	$H2 = $crx( $crx( $qsrc['quad'][0],$qsrc['quad'][3] ) , $crx( $qsrc['quad'][1],$qsrc['quad'][2] ) );
 	$H3 = $crx( $crx( $qsrc['quad'][0],$qsrc['quad'][2] ) , $crx( $qsrc['quad'][1],$qsrc['quad'][3] ) );
@@ -180,10 +180,10 @@ function qtexture( &$pix, $pfx, $tid )
 	global $gp_pix;
 	if ( ! isset($gp_pix[$tid]) )
 	{
-		$fn = sprintf("%s.%d.", $pfx, $tid);
+		$fn = sprintf('%s.%d.', $pfx, $tid);
 		$img = load_clutfile($fn);
 		if ( $img === 0 )
-			return php_error("NOT FOUND %s", $fn);
+			return php_error('NOT FOUND %s', $fn);
 
 		$gp_pix[$tid] = array('w'=>0,'h'=>0,'d'=>'');
 		if ( isset( $img['cc'] ) )
@@ -204,7 +204,7 @@ function qtexture( &$pix, $pfx, $tid )
 	$pix['src']['w'] = $gp_pix[$tid]['w'];
 	$pix['src']['h'] = $gp_pix[$tid]['h'];
 	$pix['src']['pix'] = &$gp_pix[$tid]['d'];
-	$pix['src']['pal'] = "";
+	$pix['src']['pal'] = '';
 	return;
 }
 
@@ -239,7 +239,7 @@ function qrender( &$frame, $pfx, $id )
 	$origin = ( $is_mid ) ? $ceil / 2 : 0;
 
 	$pix = COPYPIX_DEF($ceil,$ceil);
-	$pix['alpha'] = "alpha_normal";
+	$pix['alpha'] = 'alpha_normal';
 
 	foreach ( $frame as $pk => $pv )
 	{
@@ -273,7 +273,7 @@ function qrender( &$frame, $pfx, $id )
 		copyquad($pix, 4);
 	} // foreach ( $fv as $pk => $pv )
 
-	$fn = sprintf("%s/%04d", $pfx, $id);
+	$fn = sprintf('%s/%04d', $pfx, $id);
 	savepix($fn, $pix, false);
 	return;
 }

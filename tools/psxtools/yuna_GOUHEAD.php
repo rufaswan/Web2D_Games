@@ -20,14 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function yuna( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 7) != "GOUHEAD" )
+	if ( substr($file, 0, 7) !== 'GOUHEAD' )
 		return;
 	$dir = str_replace('.', '_', $fname);
 

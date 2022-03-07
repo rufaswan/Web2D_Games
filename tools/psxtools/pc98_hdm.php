@@ -20,19 +20,19 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function pc98toc( &$file, $pos, $base )
 {
 	$toc = array();
 	$fn = substr($file, $pos+0, 8);
 		$fn = rtrim($fn, ' .');
-	if ( preg_match("|[^A-Z0-9_.]|", $fn) )
+	if ( preg_match('|[^A-Z0-9_.]|', $fn) )
 		return $toc;
 
 	$ex = substr($file, $pos+8, 3);
 		$ex = rtrim($ex, ' ');
-	if ( preg_match("|[^A-Z0-9_.]|", $ex) )
+	if ( preg_match('|[^A-Z0-9_.]|', $ex) )
 		return $toc;
 
 	$ty = ord( $file[$pos+11] );
@@ -50,7 +50,7 @@ function pc98toc( &$file, $pos, $base )
 function scanpc98( &$file, $st, $ed, $base, $par )
 {
 	$func = __FUNCTION__;
-	$txt = "";
+	$txt = '';
 	for ( $i=$st; $i < $ed; $i += 0x20 )
 	{
 		if ( $file[$i] == ZERO )
@@ -64,7 +64,7 @@ function scanpc98( &$file, $st, $ed, $base, $par )
 		if ( $fn[0] == '.' )
 			continue;
 
-		if ( $dir == "FILE" )
+		if ( $dir === 'FILE' )
 		{
 			$log = sprintf("%6x , %s , %6x , %s/%s.%s\n", $off, $dir, $sz, $par, $fn, $ex);
 			save_file("$par/$fn.$ex", substr($file, $off, $sz));

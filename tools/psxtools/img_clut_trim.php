@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function img_rgba( &$img )
 {
@@ -154,7 +154,7 @@ function cluttrim( $trim, $clut, $fname )
 
 	img_rgba($img);
 	if ( trim($img['pix'], ZERO) === '' )
-		return php_warning("%s is all 00 / FF", $fname);
+		return php_warning('%s is all 00 / FF', $fname);
 
 	$diff = false;
 	if ( $trim )  img_trim($diff, $img);

@@ -20,9 +20,9 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-zlib.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-zlib.inc';
 
 function pngfilter( &$pix, $w, $h, $byte )
 {
@@ -32,7 +32,7 @@ function pngfilter( &$pix, $w, $h, $byte )
 	// 2 = Up(x) + Prior(x)
 	// 3 = Average(x) + floor((Raw(x-bpp)+Prior(x))/2)
 	// 4 = Paeth(x) + PaethPredictor(Raw(x-bpp), Prior(x), Prior(x-bpp))
-	$idat = "";
+	$idat = '';
 	for ( $y=0; $y < $h; $y++ )
 		$idat .= ZERO . substr($pix, $y*$w*$byte, $w*$byte);
 	$pix = $idat;
@@ -94,7 +94,7 @@ function clut2png( &$file, $fname )
 	if ( ! empty($trns) )
 		$png .= pngchunk("tRNS", $trns);
 	$png .= pngchunk("IDAT", $idat, true);
-	$png .= pngchunk("IEND", "");
+	$png .= pngchunk("IEND", '');
 
 	file_put_contents("$fname.png", $png);
 	return;
@@ -119,10 +119,11 @@ function rgba2png( &$file, $fname )
 	$ihdr .= ZERO; // filter , 0=adaptive/5 type
 	$ihdr .= ZERO; // interlace , 0=none , 1=adam7
 
-	$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+	//$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+	$png = "\x89PNG\x0d\x0a\x1a\x0a";
 	$png .= pngchunk("IHDR", $ihdr);
 	$png .= pngchunk("IDAT", $idat, true);
-	$png .= pngchunk("IEND", "");
+	$png .= pngchunk("IEND", '');
 
 	file_put_contents("$fname.png", $png);
 	return;
@@ -134,9 +135,9 @@ function img2png( $fname )
 	if ( empty($file) )  return;
 
 	$mgc = substr($file, 0, 4);
-	if ( $mgc == "CLUT" )
+	if ( $mgc === 'CLUT' )
 		return clut2png($file, $fname);
-	if ( $mgc == "RGBA" )
+	if ( $mgc === 'RGBA' )
 		return rgba2png($file, $fname);
 
 	return;

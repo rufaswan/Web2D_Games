@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-guest.inc";
-require "common-quad.inc";
-require "quad.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'common-quad.inc';
+require 'quad.inc';
 
-define("METAFILE", true);
+define('METAFILE', true);
 
 function colorquad( &$mbp, $pos )
 {
@@ -38,7 +38,7 @@ function colorquad( &$mbp, $pos )
 		$g = int_clamp( ord($s[1]) << 1, 0, BIT8);
 		$b = int_clamp( ord($s[2]) << 1, 0, BIT8);
 		$a = int_clamp( ord($s[3]) << 1, 0, BIT8);
-		$rgba = sprintf("#%02x%02x%02x%02x", $r, $g, $b, $a);
+		$rgba = sprintf('#%02x%02x%02x%02x', $r, $g, $b, $a);
 
 		if ( $rgba == '#ffffffff' )
 			$color[] = '1';
@@ -234,7 +234,7 @@ function odin( $fname, $idtag )
 	$mbp = load_file($fname);
 	if ( empty($mbp) )  return;
 
-	if ( substr($mbp,0,4) != "FMBP" )
+	if ( substr($mbp,0,4) !== 'FMBP' )
 		return;
 
 	if ( str2int($mbp, 8, 4) != 0xa0 )

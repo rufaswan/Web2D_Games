@@ -60,15 +60,15 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //   - *.inc MUST NOT include *.php
 //   - *.inc MUST NOT use echo/printf , only trace()
 // - global variables are prefixed "gp_" (global pointer)
-define("ZERO", "\x00");
-define("BYTE", "\xff");
-define("BIT4",  (1 <<  4)-1);
-define("BIT8",  (1 <<  8)-1);
-define("BIT16", (1 << 16)-1);
-define("BIT24", (1 << 24)-1);
-define("BIT32", (1 << 32)-1);
-//define("DRY_RUN", true);  // per script
-//define("NO_TRACE", true); // per script
+define('ZERO', "\x00");
+define('BYTE', "\xff");
+define('BIT4',  (1 <<  4)-1);
+define('BIT8',  (1 <<  8)-1);
+define('BIT16', (1 << 16)-1);
+define('BIT24', (1 << 24)-1);
+define('BIT32', (1 << 32)-1);
+//define('DRY_RUN', true);  // per script
+//define('NO_TRACE', true); // per script
 //if ( defined('DRY_RUN') )
 //if ( defined('NO_TRACE') )
 
@@ -139,7 +139,7 @@ function str2int( &$str, $pos, $byte, $sign=false )
 	return $int;
 }
 
-function substr0( &$str, $pos, $end="" )
+function substr0( &$str, $pos, $end='' )
 {
 	if ( empty($end) )
 		$end = ZERO;
@@ -665,9 +665,9 @@ function rmfile_r( $dir )
 	return;
 }
 //////////////////////////////
-define("PIX_BLACK", ZERO . ZERO . ZERO . BYTE);
-define("PIX_WHITE", BYTE . BYTE . BYTE . BYTE);
-define("PIX_ALPHA", ZERO . ZERO . ZERO . ZERO);
+define('PIX_BLACK', ZERO . ZERO . ZERO . BYTE);
+define('PIX_WHITE', BYTE . BYTE . BYTE . BYTE);
+define('PIX_ALPHA', ZERO . ZERO . ZERO . ZERO);
 
 function canvpix( $w, $h, $c = PIX_ALPHA )
 {

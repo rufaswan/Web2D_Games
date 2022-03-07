@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "xeno.inc";
+require 'common.inc';
+require 'xeno.inc';
 
 function xeno( $fname, $dec )
 {
@@ -47,7 +47,7 @@ function xeno( $fname, $dec )
 		if ( $dec )
 			xeno_decode($sub);
 
-		$fn = sprintf("%s/%04d.bin", $dir, $i);
+		$fn = sprintf('%s/%04d.bin', $dir, $i);
 		save_file($fn, $sub);
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;

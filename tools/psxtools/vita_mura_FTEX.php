@@ -24,11 +24,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   http://playstationdev.wiki/psvitadevwiki/index.php?title=GXT
  *   http://forum.xentax.com/viewtopic.php?f=18&t=16171&sid=00e26d4f119d2985bbc8137c42e3a10d
  */
-require "common.inc";
-require "common-guest.inc";
-require "class-s3tc.inc";
+require 'common.inc';
+require 'common-guest.inc';
+require 'class-s3tc.inc';
 
-//define("DRY_RUN", true);
+//define('DRY_RUN', true);
 
 function morton_swizzle4( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
 {
@@ -182,12 +182,12 @@ function im_bgra8888( &$file, $pos, $w, $h )
 function vitagxt( &$file, $base, $pfx, $id )
 {
 	printf("== vitagxt( %x , $pfx , $id )\n", $base);
-	if ( substr($file, $base+0, 4) != "GXT\x00" )
+	if ( substr($file, $base+0, 4) !== "GXT\x00" )
 		return;
 
 	$cnt = str2int($file, $base+8, 4);
 	if ( $cnt != 1 )
-		return php_error("%s/%04d is multi-GXT [%d]", $pfx, $id, $cnt);
+		return php_error('%s/%04d is multi-GXT [%d]', $pfx, $id, $cnt);
 
 	$fmt = substr ($file, $base+0x34, 4);
 	$w   = str2int($file, $base+0x38, 2);
@@ -202,12 +202,12 @@ function vitagxt( &$file, $base, $pfx, $id )
 		"\x00\x00\x00\x87" => 'im_dxt5',
 	);
 	if ( ! isset( $list_fmt [$fmt] ) )
-		return php_error("UNKNOWN im fmt  %s", debug($fmt));
+		return php_error('UNKNOWN im fmt  %s', debug($fmt));
 	printf("DETECT  fmt %s\n", $list_fmt[$fmt]);
 
 	$off = str2int($file, $base+0x20, 4);
 	$siz = str2int($file, $base+0x24, 4);
-	$fn  = sprintf("%s.%d.gxt", $pfx, $id);
+	$fn  = sprintf('%s.%d.gxt', $pfx, $id);
 	printf("%4x x %4x  %s\n", $w, $h, $fn);
 
 	if ( defined("DRY_RUN") )
@@ -228,7 +228,7 @@ function mura( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	if ( substr($file, 0, 4) != "FTEX" )
+	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
@@ -242,8 +242,8 @@ function mura( $fname )
 		$fn = substr($file, $p1, 0x20);
 			$fn = rtrim($fn, ZERO);
 
-		if ( substr($file, $st, 4) != "FTX0" )
-			return php_error("%s 0x%x not FTX0\n", $fname, $st);
+		if ( substr($file, $st, 4) !== 'FTX0' )
+			return php_error('%s 0x%x not FTX0', $fname, $st);
 
 		$sz1 = str2int($file, $st+4, 4);
 		$sz2 = str2int($file, $st+8, 4);

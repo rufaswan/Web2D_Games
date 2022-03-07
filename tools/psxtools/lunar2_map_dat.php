@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function updmap( &$canvas, &$src, $dx, $dy, $w, $h )
 {
@@ -44,14 +44,14 @@ function sectmap( &$file, &$pix, &$pal, $pos, $dir, $mw, $mh)
 
 	$canv1 = str_repeat(ZERO, $map_w*$map_h);
 	$canv2 = str_repeat(ZERO, $map_w*$map_h);
-	$buf = "";
+	$buf = '';
 	for ( $y=0; $y < $map_h; $y += 8 )
 	{
 		for ( $x=0; $x < $map_w; $x += 8 )
 		{
 			$dat = str2int($file, $pos, 4);
 				$pos += 4;
-			$buf .= sprintf("%8x ", $dat);
+			$buf .= sprintf('%8x ', $dat);
 
 			$tid = ($dat >> 0) & 0xfff;
 			$c = $tid % 0x10;
@@ -75,7 +75,7 @@ function sectmap( &$file, &$pix, &$pal, $pos, $dir, $mw, $mh)
 	} // for ( $y=0; $y < $map_h; $y++ )
 	echo "$buf\n";
 
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(0x100, 4);
 	$clut .= chrint($map_w, 4);
 	$clut .= chrint($map_h, 4);
@@ -83,7 +83,7 @@ function sectmap( &$file, &$pix, &$pal, $pos, $dir, $mw, $mh)
 	$clut .= $canv1;
 	save_file("{$dir}-1.clut", $clut);
 
-	$clut = "CLUT";
+	$clut = 'CLUT';
 	$clut .= chrint(0x100, 4);
 	$clut .= chrint($map_w, 4);
 	$clut .= chrint($map_h, 4);
@@ -122,7 +122,7 @@ function lunar2( $fname )
 		$w = 0x80;
 		$h = strlen($pix) / 0x80;
 
-		$clut = "CLUT";
+		$clut = 'CLUT';
 		$clut .= chrint(0x100, 4);
 		$clut .= chrint($w, 4);
 		$clut .= chrint($h, 4);

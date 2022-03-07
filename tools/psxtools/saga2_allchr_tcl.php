@@ -20,12 +20,12 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function saga2( $fname )
 {
 	// only allchr.tcl
-	if ( stripos($fname, "allchr.tcl") === false )
+	if ( stripos($fname, 'allchr.tcl') === false )
 		return;
 
 	$file = file_get_contents($fname);
@@ -52,7 +52,7 @@ function saga2( $fname )
 			'pix' => rippix8($px2, $x, 0, 0x10, 0x10, 0x100, 0x10),
 		);
 
-		$fn = sprintf("%s/%04d.clut", $dir, $cid);
+		$fn = sprintf('%s/%04d.clut', $dir, $cid);
 			$cid++;
 		save_clutfile($fn, $img);
 	} // for ( $x=0; $x < 0x100; $x += 0x20 )
@@ -69,7 +69,7 @@ function saga2( $fname )
 				'pix' => rippix8($px1, $x, $y, 0x20, 0x38, 0x100, 0x150),
 			);
 
-			$fn = sprintf("%s/%04d.clut", $dir, $cid);
+			$fn = sprintf('%s/%04d.clut', $dir, $cid);
 				$cid++;
 			save_clutfile($fn, $img);
 		} // for ( $x=0; $x < 0x100; $x += 0x20 )

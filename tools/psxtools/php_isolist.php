@@ -20,8 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-require "common-iso.inc";
+require 'common.inc';
+require 'common-iso.inc';
 
 function isolist( $fname )
 {
@@ -51,7 +51,7 @@ function isolist( $fname )
 				$txt .= $buf;
 
 				$sub = fp2str($fp, $skip+$ent['lba']*0x800, $ent['size']);
-				$fn  = sprintf("%s/%s", $dir, $ent['file']);
+				$fn  = sprintf('%s/%s', $dir, $ent['file']);
 				save_file($fn, $sub);
 			} // foreach ( $list as $ent )
 

@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 $gp_nscr = array();
 $gp_nclr = '';
@@ -29,7 +29,7 @@ $gp_ncgr = array();
 function sect_RCSN( &$file, $fname )
 {
 	echo "== sect_RCSN( $fname )\n";
-	if ( substr($file, 16, 4) != "NRCS" )
+	if ( substr($file, 16, 4) !== 'NRCS' )
 		return;
 
 	$sw = str2int($file, 0x18, 2, true);
@@ -101,7 +101,7 @@ function sect_RLCN( &$file, $fname )
 	echo "== sect_RLCN( $fname )\n";
 	global $gp_nclr;
 	$gp_nclr = '';
-	if ( substr($file, 16, 4) != "TTLP" )
+	if ( substr($file, 16, 4) !== 'TTLP' )
 		return;
 
 	$file = substr($file, 0x28);
@@ -116,7 +116,7 @@ function sect_RGCN( &$file, $fname )
 	echo "== sect_RGCN( $fname )\n";
 	global $gp_ncgr;
 	$gp_ncgr = array();
-	if ( substr($file, 16, 4) != "RAHC" )
+	if ( substr($file, 16, 4) !== 'RAHC' )
 		return;
 
 	$w = str2int($file, 0x1a, 2, true);
@@ -150,11 +150,11 @@ function kuma( $fname )
 	if ( empty($file) )  return;
 
 	$mgc = substr($file, 0, 4);
-	if ( $mgc === "RCSN" )
+	if ( $mgc === 'RCSN' )
 		return sect_RCSN($file, $fname);
-	if ( $mgc === "RLCN" )
+	if ( $mgc === 'RLCN' )
 		return sect_RLCN($file, $fname);
-	if ( $mgc === "RGCN" )
+	if ( $mgc === 'RGCN' )
 		return sect_RGCN($file, $fname);
 
 	return;

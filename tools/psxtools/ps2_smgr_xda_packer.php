@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 function xda_pack( $dir )
 {
@@ -66,7 +66,7 @@ function xda_unpack_ent($xda, &$head, &$off1, &$off2, $ed, $dir)
 			//save_file($fname, $sub);
 			return;
 		default:
-			return php_error("UNKNOWN %x , %x , %x", $type, $off1, $off2);
+			return php_error('UNKNOWN %x , %x , %x', $type, $off1, $off2);
 	}
 	return;
 }
