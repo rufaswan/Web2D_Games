@@ -361,7 +361,8 @@ for ( $i=1; $i < $argc; $i++ )
 	{
 		case '-bsm':
 		case '-bmz':  $idtag = 'pc blast master zero'; break;
-		case '-gv' :  $idtag = 'pc gunvolt' ;          break;
+		case '-gv' :
+		case '-gv1':  $idtag = 'pc gunvolt' ;          break;
 		case '-gv2':  $idtag = 'pc gunvolt 2';         break;
 		case '-gva':  $idtag = 'pc gunvolt laix';      break;
 		case '-mgv':  $idtag = 'pc mighty gunvolt';    break;

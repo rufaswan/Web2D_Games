@@ -143,7 +143,7 @@ var QUAD = QUAD || {};
 		for ( var i=0; i < list.length; i++ ){
 			(function(file){
 
-				if ( file.name.match(/.*\.quad$/i) ){
+				if ( file.name.match(/.*\.quad.txt$/i) ){
 					var reader = new FileReader;
 					reader.onload = function(){
 						QUAD.files.prefix = file.name.substr(0, file.name.lastIndexOf('.'));
