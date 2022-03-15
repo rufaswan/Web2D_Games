@@ -15,41 +15,58 @@ Engine Changes
 	Chrome  27 (WebKit)   -> 28 (Blink)
 	MS Edge 44 (EdgeHTML) -> 79 (Blink)
 
--     Firefox    Opera          Safari
-2004   -          -              1
-2005   1.0        -              1
-2006   1.5        -              2
-2007   2.0.0.1    -              2
-2008   2.0.0.11   -              3
-2009   3.0.5      -              3
-2010   3.5.6      -              4
-2011   3.6.13     -              5
-2012   9.0.1      -              5
-2013  17.0.1      -              6
-2014  26.0.1     18.0.1284.68    7
-2015  34.0.5     26.0.1656.60    8
-2016  43.0.3     34.0.2036.25    9
-2017  50.1.0     42.0.2393.94   10
-2018  57.0.3     49.0.2725.64   11
-2019  64.0.1     57.0.3098.91   12
-2020  71.0       65.0.3467.78   13
-2021  84.0.1     73.0.3856.284  14
-2022  95.0.2     82.0.4227.43   15
+-     Firefox        Opera       Safari
+-     pc/apk         pc   apk    OSX/iOS
+2004    -      -       -          1
+2005    1.0    -       -          1
+2006    1.5    -       -          2
+2007    2.0    -       -          2
+2008    2.0    -       -          3
+2009    3.0    -       -          3
+2010    3.5    -       -          4
+2011    3.6    -       -          5
+2012    9      -       -          5
+2013   17     17esr    -          6
+2014   26     24esr   18   18     7
+2015   34     31esr   26   26     8
+2016   43     38esr   34   34     9
+2017   50     45esr   42   37.1  10
+2018   57     52esr   49   44    11
+2019   64     60esr   57   49    12
+2020   71     68esr   65   55    13
+2021   84     78esr   73   61    14
+2022   95     91esr   82   65    15
 2023
 
 Can I Use?
 	Ffox  Oper  Safa
 	 3     9     3.2  CSS Table display
+	 3.5  10     7    CSS3 Media Queries
 	 3.5  10.5   3.2  CSS3 2D Transforms
+	 2    11.5   5    CSS at-rule: @media: orientation media feature
 	 2    11.6   3.2  CSS outline properties
+	11    12.1   7    CSS at-rule: @media: Nested media queries
 	 3.6  15     4    CSS pointer-events (for HTML)
+	 5    15     -    CSS resize property
 	10    15     4    CSS3 3D Transforms
 	 -    15     4    CSS zoom
 	28    17     9    CSS Flexible Box Layout Module
+	57    23     -    CSS touch-action property
 	16    30     9    CSS Animation
+	41    35    11    CSS writing-mode property
+	31    36     9.3  CSS property: --*: var()
+	72    42     -    CSS property: offset
 	52    44    10.3  CSS Grid Layout (level 1)
+	59    53    12    CSS at-rule: @media: calc() expressions
+	75    66    13.4  CSS math functions min(), max() and clamp()
+	69    69    14.5  CSS at-rule: @supports: selector()
+	 -    71     -    CSS at-rule: @page: page-orientation descriptor
+	66    73    14.5  CSS property: inset
 	62    76     -    CSS display: contents
+	63     -     -    CSS at-rule: @media: Range syntax from Media Queries Level 4
 	71     -     -    CSS Subgrid
+	72     -    14.5  CSS property: rotate
+	72     -    14.5  CSS property: scale
 	89     -     -    CSS image-set
 
 	 3.6  11.6   6    rem (root em) units
@@ -131,12 +148,18 @@ Can I Use?
 	29    10.6   -    Shared Web Workers
 	44    32    11.3  Service Workers
 
+	16    12.1   -    Media Queries: resolution feature
+	64    28     9    Media Queries: interaction media features
+
 	 2     9     3.2  naturalWidth & naturalHeight image properties
 	18    11.6   3.2  Window.devicePixelRatio
 	11    15     6    requestAnimationFrame
+	16    15     7    calc() as CSS unit value
+	55    15     9    CSS.supports() API
 	65    28    10    Crisp edges/pixelated images
 	 -    64     -    OffscreenCanvas
 	75    71    13.4  Web Animations API
+	63    73    14.5  gap property for Flexbox
 
 	 4     9.5   5.1  tabindex global attribute
 	 4     9.5   5.1  Form attribute
@@ -165,6 +188,10 @@ Desktop vs Mobile
 	It’s built on WebKit, a fast, open-source web rendering engine that implements web standards.
 
 Support Comparison
+	https://support.mozilla.org/en-US/kb/firefox-esr-release-cycle
+		ESR releases are maintained for more than a year with point releases that coincide with regular Firefox releases.
+		These point releases contain security upgrades.
+
 	https://wiki.ubuntu.com/LTS
 		In previous releases, a Long Term Support (LTS) version had three years support on Ubuntu (Desktop) and five years on Ubuntu Server.
 		Starting with Ubuntu 12.04 LTS, both versions received five years support.

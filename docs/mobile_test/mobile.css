@@ -1,14 +1,29 @@
+
 body {
 	background-color : #000;
 	color            : #fff;
+	font-size        : 1.0em;
+	margin           : 0;
+	padding          : 0;
+	overflow         : auto;
 }
 
-#canvas {
-	width  : 20em;
-	height : 20em;
-	border : #ff0 0.5em solid;
+main {
+	display        : flex;
+	flex-direction : row;
+	flex-wrap      : wrap;
+	align-items    : stretch;
+	padding        : 0.5em;
 }
 
-#filereader {
-	border : #ff0 0.5em solid;
+.section {
+	margin : 0.5em;
+	border : #ff0 0.2em solid;
+}
+
+.ok {
+	color : #0f0;
+}
+.err {
+	color : #f00;
 }

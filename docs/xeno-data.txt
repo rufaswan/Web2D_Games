@@ -1009,9 +1009,9 @@ SLPS 011.60 JP disc 1 [3771]
 	21  SYSTEM.CNF
 	22  SLPS_011.60
 	23  [6]
-		24-27  wds
+		24-27  wds/sample data
 		28  [LZ] Font 1-bpp 16x3297
-		29
+		29  [LZ-PAK]
 	34  Overlay [6]
 		35  [LZ][OVER] Battling
 		36  [LZ][OVER] event loop
@@ -1019,18 +1019,18 @@ SLPS 011.60 JP disc 1 [3771]
 		38  [LZ][OVER] language
 		39  [LZ][OVER] memory card
 		40  [LZ][OVER] movie cdrom disk
-	45
-	46
-	47
-	48
-	49
+	45 smds/midi data
+	46 seds
+	47 [LZ]
+	48 [LZ]
+	49 [LZ-PAK] PS1 TIM
 	50  Battling Gear Icons
 	51  [49]
-		52
+		52 [LZ]
 		...
-		100
+		100 [LZ]
 	116  [7]
-		117-123  wds
+		117-123  wds/sample data
 	133  Music [146] [73 pairs]
 		# ID+0 is the  wds/sample data
 		# ID+1 is the smds/midi data
@@ -1871,27 +1871,27 @@ SLPS 011.60 JP disc 1 [3771]
 	2593  [PAK-LZ] Data
 	2594  [PAK-LZ] Data
 	2595  Base Stats
-	2596
-	2597
-	2598
-	2599
-	2600
-	2601
-	2602
-	2603
-	2604
-	2605
-	2606
-	2607
+	2596  [OVER]
+	2597  [OVER]
+	2598  [OVER]
+	2599  [OVER]
+	2600  [OVER]
+	2601  [OVER]
+	2602  [OVER]
+	2603  [OVER]
+	2604  [OVER]
+	2605  [SJIS] Save Data Message
+	2606  [OVER] Start to Battle
+	2607  [PAK-LZ]
 	2608
-	2609
-	2610
-	2611
+	2609  [PAK]
+	2610  seds
+	2611  [OVER]
 	2612  [4]
-		2613
+		2613  seds
 		2614  [PAK-LZ] Data
-		2615
-		2616
+		2615  [OVER]
+		2616  smds/midi data
 	2617  Enemies [152] [76 pairs]
 		# ID+0 is the stats/name
 		# ID+1 is the texture/animation data
@@ -1976,11 +1976,12 @@ SLPS 011.60 JP disc 1 [3771]
 		2764  [GEAR] Sword Seraph, Heal Seraph, Fire Seraph, Water Seraph
 		2766  [GEAR] Sword Seraph, Heal Seraph, Fire Seraph, Water Seraph
 		2768  [GEAR] Urobolus
-	2770
+	2770  texture data
 	2771  [2]
 		2772
 		2773
 	2774  [150] [75 pairs]
+		# ID+0 is
 		# ID+1 is the model data
 		2775
 		...
@@ -2018,35 +2019,35 @@ SLPS 011.60 JP disc 1 [3771]
 	3016  *elly/db*
 	3017  *elly/db*
 	3018  seds
-	3019-3024  wds
+	3019-3024  wds/sample data
 	3025  seds
-	3026-3033  wds
+	3026-3033  wds/sample data
 	3034  seds
-	3035-3040  wds
+	3035-3040  wds/sample data
 	3041  seds
-	3042-3048  wds
+	3042-3048  wds/sample data
 	3049  seds
-	3050-3054  wds
+	3050-3054  wds/sample data
 	3055  seds
-	3056-3060  wds
+	3056-3060  wds/sample data
 	3061  seds
-	3062-3066  wds
+	3062-3066  wds/sample data
 	3067  seds
-	3068-3073  wds
+	3068-3073  wds/sample data
 	3074  seds
-	3075-3079  wds
-	3080
-	3081
+	3075-3079  wds/sample data
+	3080  [PAK]
+	3081  [PAK]
 	3082  seds
-	3083-3086  wds
-	3087
-	3088
-	3089
+	3083-3086  wds/sample data
+	3087  [OVER]
+	3088  [PAK-LZ]
+	3089  [PAK-LZ]
 	3090  seds
 	3091
-	3092-3093  wds
+	3092-3093  wds/sample data
 	3094  seds
-	3095  smds
+	3095  smds/midi data
 	3096
 	3097
 	3098
@@ -2102,9 +2103,11 @@ SLPS 011.60 JP disc 1 [3771]
 	3148  [231]
 		3147-3379
 	3380  Spells [534]
-		# 245 spr+tex PAIR + stray 3891 spr
-		#  43 BIN
-		3381-3412  BIN
+		# 245 sprite+texture PAIR
+		#   1 sprite+dummy PAIR
+		#  10 dummy
+		#  32 Overlays
+		3381-3412  [OVER]
 		3413  Fei
 		3415  Fei earth   deathblow
 		3417  Fei fire    deathblow
@@ -2327,8 +2330,8 @@ SLPS 011.60 JP disc 1 [3771]
 		3851  [ANIM]
 		3853  [ANIM]
 		3855  [ANIM]
-		3857  BIN
-		3858  BIN
+		3857  It's CDMAKE Dummy !
+		3858  It's CDMAKE Dummy !
 		3859  [ANIM]
 		3861  [ANIM]
 		3863  [ANIM]
@@ -2336,17 +2339,17 @@ SLPS 011.60 JP disc 1 [3771]
 		3867  [ANIM]
 		3869  [ANIM]
 		3871  [ANIM]
-		3873  BIN
-		3874  BIN
-		3875  BIN
-		3876  BIN
+		3873  It's CDMAKE Dummy !
+		3874  It's CDMAKE Dummy !
+		3875  It's CDMAKE Dummy !
+		3876  It's CDMAKE Dummy !
 		3877  [ANIM]
 		3879  [ANIM]
-		3881  BIN
-		3882  BIN
+		3881  It's CDMAKE Dummy !
+		3882  It's CDMAKE Dummy !
 		3883  [ANIM]
-		3885  BIN
-		3886  BIN
+		3885  It's CDMAKE Dummy !
+		3886  It's CDMAKE Dummy !
 		3887  [ANIM]
 		3889  [ANIM]
 		3891  [ANIM] stray pair
@@ -2453,7 +2456,7 @@ SLPS 011.60 JP disc 1 [3771]
 		4129-4138  *REFER ABOVE*
 	4139  [10]
 		4140-4149  *REFER ABOVE*
-	4150  *PADDING*
+	4150  *PADDING* CD LEAD-OUT
 
 SLPS 011.61 JP disc 2 [3762]
 	0  Movie [8]

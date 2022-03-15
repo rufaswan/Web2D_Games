@@ -2,19 +2,31 @@
 <html>
 <head>
 	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
 	<title>Mobile Test</title>
 	<link rel='stylesheet' href='mobile.css'>
 </head>
 <body>
-	<canvas id='canvas'>Canvas not supported</canvas>
-	<hr>
+<main>
+	<div id='outjs' class='section'>
+		test JS
+	</div>
+
+	<div id='outcss' class='section'>
+		test CSS
+	</div>
+
+	<canvas id='canvas' class='section'>Canvas not supported</canvas>
+	<div id='outgl' class='section'>
+		test WebGL
+	</div>
 
 	<input type='file' id='upload' multiple>
-	<div id='filereader'>
+	<div id='filereader' class='section'>
 		test
 	</div>
-	<hr>
 
 	<script src='mobile.js'></script>
+</main>
 </body>
 </html>
