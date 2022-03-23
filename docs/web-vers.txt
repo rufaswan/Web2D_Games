@@ -1,42 +1,60 @@
 BROWSER VERSION
-	Latest stable version available on January 1st
 
 https://en.wikipedia.org/wiki/Firefox_version_history
 https://en.wikipedia.org/wiki/History_of_the_Opera_web_browser
 https://en.wikipedia.org/wiki/Google_Chrome_version_history
 https://en.wikipedia.org/wiki/Safari_version_history
 
+https://user-agents.net/browsers/opera-mobile/versions/%s
+/lib/arm*/libopera.so -> 'Chrome/' 'OPR/'
+
 Chrome based
-	Opera   20 is based on Chrome 33 (+13)
-	MS Edge 79 is based on Chrome 79 (same)
+	Desktop
+		OPR /20-68 Chrome/33-81 (+13)
+		OPR /69-   Chrome/83-   (+14)
+		Edge/79-   Chrome/79-   (same)
+	Mobile
+		OPR/37-42 Chrome/50-55 (+13)
+		OPR/43-45 Chrome/59-61 (+16)
+		OPR/46    Chrome/63    (+17)
+		OPR/47    Chrome/66    (+19)
+		OPR/48-53 Chrome/69-74 (+21)
+		OPR/54-56 Chrome/76-78 (+22)
+		OPR/57-58 Chrome/80-81 (+23)
+		OPR/59    Chrome/83    (+24)
+		OPR/60-62 Chrome/85-87 (+25)
+		OPR/63    Chrome/89    (+26)
+		OPR/64-65 Chrome/91-92 (+27)
+		OPR/67-   Chrome/96-   (+29)
 
 Engine Changes
+	Chrome  27 (WebKit)   -> 28 (Blink) (WebKit/537.36)
 	Opera   12 (Presto)   -> 15 (Blink)
-	Chrome  27 (WebKit)   -> 28 (Blink)
 	MS Edge 44 (EdgeHTML) -> 79 (Blink)
 
--     Firefox        Opera       Safari
--     pc/apk         pc   apk    OSX/iOS
-2004    -      -       -          1
-2005    1.0    -       -          1
-2006    1.5    -       -          2
-2007    2.0    -       -          2
-2008    2.0    -       -          3
-2009    3.0    -       -          3
-2010    3.5    -       -          4
-2011    3.6    -       -          5
-2012    9      -       -          5
-2013   17     17esr    -          6
-2014   26     24esr   18   18     7
-2015   34     31esr   26   26     8
-2016   43     38esr   34   34     9
-2017   50     45esr   42   37.1  10
-2018   57     52esr   49   44    11
-2019   64     60esr   57   49    12
-2020   71     68esr   65   55    13
-2021   84     78esr   73   61    14
-2022   95     91esr   82   65    15
-2023
+Latest stable version available on January 1st
+	-     Firefox        Opera               Safari
+	-     pc/apk         pc        apk       OSX/iOS
+	2004    -      -       -         -        1
+	2005    1.0    -       -         -        1
+	2006    1.5    -       -         -        2
+	2007    2.0    -       -         -        2
+	2008    2.0    -       -         -        3
+	2009    3.0    -       -         -        3
+	2010    3.5    -       -         -        4
+	2011    3.6    -       -         -        5
+	2012    9      -       -         -        5
+	2013   17     17esr    -         -        6
+	2014   26     24esr   18( 31)   18( 31)   7
+	2015   34     31esr   26( 39)   26( 39)   8
+	2016   43     38esr   34( 47)   34( 47)   9
+	2017   50     45esr   42( 55)   37( 50)  10
+	2018   57     52esr   49( 62)   44( 60)  11
+	2019   64     60esr   57( 70)   49( 70)  12
+	2020   71     68esr   65( 78)   55( 77)  13
+	2021   84     78esr   73( 87)   61( 86)  14
+	2022   95     91esr   82( 96)   65( 92)  15
+	2023
 
 Can I Use?
 	Ffox  Oper  Safa
@@ -187,6 +205,74 @@ Desktop vs Mobile
 	Safari is a web browser app and web technology platform available on iOS and macOS.
 	It’s built on WebKit, a fast, open-source web rendering engine that implements web standards.
 
+	https://developer.chrome.com/docs/multidevice/webview/
+	Chrome for Android is separate from WebView.
+	They're both based on the same code, including a common JavaScript engine and rendering engine.
+
+Last stable version by Android OS
+	https://en.wikipedia.org/wiki/Android_version_history
+	https://en.wikipedia.org/wiki/Android_Go
+	https://developer.android.com/studio/releases/platforms
+
+	https://en.wikipedia.org/wiki/Firefox_for_Android
+	https://www.opera.com/mobile/download/versions
+	https://dev.opera.com/articles/browsers-modes-engines/
+
+	Android
+	1   1.0
+	2   1.1
+	3   1.5    Cupcake
+	4   1.6    Donut
+	5   2.0    Eclair
+	6   2.0.1  Eclair
+	7   2.1    Eclair
+	8   2.2    Froyo
+	9   2.3    Gingerbread
+		9+   Firefox 37-47
+	10  2.3.3  Gingerbread
+	11  3.0    Honeycomb
+		11+  Firefox 37-45
+	12  3.1    Honeycomb
+	13  3.2    Honeycomb
+	14  4.0    Ice Cream Sandwich
+	15  4.0.3  Ice Cream Sandwich
+		15+  Chrome  18-42
+		15+  Opera   15-29
+		15+  Firefox 46-55
+	16  4.1    Jelly Bean
+		16+  Chrome  43-71
+		16+  Opera   30-50
+		16+  Firefox 56-68
+	17  4.2    Jelly Bean
+	18  4.3    Jelly Bean
+	19  4.4    Kitkat
+		19+  Chrome  72-82
+		19+  Opera   51-58
+	20  4.4W   Kitkat
+	21  5.0    Lollipop
+		21+  Chrome  83-95
+		21+  Opera   59-65
+		21+  Firefox 79-now
+	22  5.1    Lollipop
+	23  6.0    Marshmallow
+		23+  Chrome  96-now
+		23+  Opera   67-now
+	24  7.0    Nougat
+	25  7.1    Nougat
+	26  8.0    Oreo
+	27  8.1    Oreo
+		+Android Go Edition
+	28  9      Pie
+	29  10     Q
+	30  11     R
+	31  12     S
+	32  12L    S
+	33  13     T
+
+	https://web.archive.org/web/20141010074412/http://source.android.com/devices/graphics.html
+	Beginning in Android 4.0, hardware-accelerated Canvas is enabled by default.
+	Consequently, a hardware GPU that supports OpenGL ES 2.0 is mandatory for Android 4.0 and later devices.
+
 Support Comparison
 	https://support.mozilla.org/en-US/kb/firefox-esr-release-cycle
 		ESR releases are maintained for more than a year with point releases that coincide with regular Firefox releases.
@@ -199,3 +285,8 @@ Support Comparison
 	https://access.redhat.com/support/policy/updates/errata
 		Red Hat Enterprise Linux versions 6, and 7 each deliver ten years of support (unless otherwise noted below under Exceptions) in Full Support, Maintenance Support 1 and Maintenance Support 2 Phases followed by an Extended Life Phase.
 		Red Hat Enterprise Linux Version 8 delivers a ten year life cycle in Full Support and Maintenance Support Phases followed by an Extended Life Phase.
+
+https://amp.thehackernews.com/thn/2019/07/firefox-same-origin-policy-hacking.html
+https://bugzilla.mozilla.org/show_bug.cgi?id=1558299
+	file: URIs SOP Bypass: local HTML file can lead to file stealing
+	Fenix is unaffected as it uses a whitelist of protocols it registers. It only accepts http and https:

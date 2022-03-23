@@ -17,8 +17,9 @@ main {
 }
 
 .section {
-	margin : 0.5em;
-	border : #ff0 0.2em solid;
+	margin   : 0.5em;
+	border   : #ff0 0.2em solid;
+	overflow : auto;
 }
 
 .ok {
