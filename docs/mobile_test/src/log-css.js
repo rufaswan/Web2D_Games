@@ -19,6 +19,9 @@
 	//logCSS('display', 'contents');
 	//logCSS('display', 'grid');
 	logCSS('width'  , '1vw');
+	logCSS('width'  , '1em');
+	logCSS('width'  , '1rem');
+	logCSS('width'  , 'calc(50% - 200px)');
 
 	DOM_MAIN.appendChild(DIV);
 })();

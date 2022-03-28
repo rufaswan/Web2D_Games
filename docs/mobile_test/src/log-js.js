@@ -35,8 +35,25 @@
 	e = ( window['CSS']['supports'] !== undefined );
 	logJS('CSS.supports()', e);
 
+	//   mousedown    mousemove    mouseup   mouseuout
+	//  touchstart    touchmove   touchend           -
+	// pointerdown  pointermove  pointerup  pointerout
+	e = ( window['onmousedown'] !== undefined );
+	logJS('addEventListener("onmousedown")', e);
+
+	e = ( window['ontouchstart'] !== undefined );
+	logJS('addEventListener("ontouchstart")', e);
+
+	e = ( window['onpointerdown'] !== undefined );
+	logJS('addEventListener("onpointerdown")', e);
+
 	e = ( window['atob'] !== undefined );
 	logJS('base64 atob()/btoa()', e);
+
+	// https://stackoverflow.com/questions/36312150/mousedown-event-not-firing-on-tablet-mobile-html5-canvas
+	// mouse          touch
+	// event.clientX  (event.targetTouches[0] ? event.targetTouches[0].pageX : event.changedTouches[event.changedTouches.length-1].pageX)
+	// event.clientY  (event.targetTouches[0] ? event.targetTouches[0].pageY : event.changedTouches[event.changedTouches.length-1].pageY)
 
 	//e = ( window['WebAssembly']['validate'] !== undefined );
 	//logJS('WebAssembly.validate()', e);

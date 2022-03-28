@@ -139,6 +139,12 @@ e = ( window['JSON']['parse'] !== undefined );
 logJS('JSON.parse()', e);
 e = ( window['CSS']['supports'] !== undefined );
 logJS('CSS.supports()', e);
+e = ( window['onmousedown'] !== undefined );
+logJS('addEventListener("onmousedown")', e);
+e = ( window['ontouchstart'] !== undefined );
+logJS('addEventListener("ontouchstart")', e);
+e = ( window['onpointerdown'] !== undefined );
+logJS('addEventListener("onpointerdown")', e);
 e = ( window['atob'] !== undefined );
 logJS('base64 atob()/btoa()', e);
 DOM_MAIN.appendChild(DIV);
@@ -160,6 +166,9 @@ return;
 }
 logCSS('display', 'flex');
 logCSS('width' , '1vw');
+logCSS('width' , '1em');
+logCSS('width' , '1rem');
+logCSS('width' , 'calc(50% - 200px)');
 DOM_MAIN.appendChild(DIV);
 })();
 </script>

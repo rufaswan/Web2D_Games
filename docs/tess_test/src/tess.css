@@ -1,0 +1,42 @@
+
+body {
+	position         : relative;
+	background-color : #000;
+	color            : #fff;
+	margin           : 0;
+	padding          : 0;
+	width            : 100vw;
+	height           : 100vh;
+	overflow         : hidden;
+}
+
+canvas {
+	position         : absolute;
+	top              : 25%;
+	left             : 25%;
+	width            : 50%;
+	height           : 50%;
+	background-color : #fff;
+	z-index          : -1;
+}
+
+#Mona_Lisa_png {
+	position : absolute;
+	top      : -999px;
+	left     : -999px;
+}
+
+.clickable {
+	position    : absolute;
+	color       : #f00;
+	border      : 0.1em #f00 solid;
+	font-weight : bold;
+	width       : 2em;
+	height      : 2em;
+	line-height : 2em;
+	text-align  : center;
+}
+
+.activebox {
+	background-color : #ff0;
+}

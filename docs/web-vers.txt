@@ -34,11 +34,10 @@ Engine Changes
 
 Latest stable version available on January 1st
 	-     Firefox        Opera               Safari
-	-     pc/apk         pc        apk       OSX/iOS
-	2004    -      -       -         -        1
-	2005    1.0    -       -         -        1
-	2006    1.5    -       -         -        2
-	2007    2.0    -       -         -        2
+	-     pc/apk         pc        apk       iOS
+	2005    1.0    -       -         -        -
+	2006    1.5    -       -         -        -
+	2007    2.0    -       -         -        -
 	2008    2.0    -       -         -        3
 	2009    3.0    -       -         -        3
 	2010    3.5    -       -         -        4
@@ -209,6 +208,8 @@ Desktop vs Mobile
 	Chrome for Android is separate from WebView.
 	They're both based on the same code, including a common JavaScript engine and rendering engine.
 
+
+
 Last stable version by Android OS
 	https://en.wikipedia.org/wiki/Android_version_history
 	https://en.wikipedia.org/wiki/Android_Go
@@ -272,6 +273,59 @@ Last stable version by Android OS
 	https://web.archive.org/web/20141010074412/http://source.android.com/devices/graphics.html
 	Beginning in Android 4.0, hardware-accelerated Canvas is enabled by default.
 	Consequently, a hardware GPU that supports OpenGL ES 2.0 is mandatory for Android 4.0 and later devices.
+
+	https://developer.android.com/topic/libraries/support-library#api-versions
+	Starting with Support Library version 26.0.0 (released in July 2017),
+	the minimum supported API level has changed to Android 4.0 (API level 14) for all support library packages.
+
+	https://en.wikipedia.org/wiki/MacOS
+	https://en.wikipedia.org/wiki/MacOS_version_history
+	https://en.wikipedia.org/wiki/IOS
+
+	Darwin
+	6   macOS   10.2   Jaguar
+	7   macOS   10.3   Panther
+	8   macOS   10.4   Tiger
+	9   macOS   10.5   Leopard
+		iOS      1.0-2.2
+	10  macOS   10.6   Snow Leopard
+		iOS      3.0-4.2
+	11  macOS   10.7   Lion
+		iOS      4.3-5
+	12  macOS   10.8   Mountain Lion
+	13  macOS   10.9   Mavericks
+		iOS 6
+	14  macOS   10.10  Yosemite
+		iOS      7-8
+		watchOS  1
+	15  macOS   10.11  El Capitan
+		iOS      9
+		watchOS  2
+	16  macOS   10.12  Sierra
+		iOS     10
+		watchOS  3
+	17  macOS   10.13  High Sierra
+		iOS     11
+		watchOS  4
+	18  macOS   10.14  Mojave
+		iOS     12
+		watchOS  5
+	19  macOS   10.15  Catalina
+		iOS     13
+		watchOS  6
+	20  macOS   11     Big Sur
+		iOS     14
+		watchOS  7
+	21  macOS   12     Monterey
+		iOS     15
+		watchOS  8
+
+	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand573714/playstation-3
+	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand575321/playstation-4
+	PS3  Chrome 27-46
+	PS4  Chrome 59-72
+
+
 
 Support Comparison
 	https://support.mozilla.org/en-US/kb/firefox-esr-release-cycle

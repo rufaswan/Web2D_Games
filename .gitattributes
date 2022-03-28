@@ -14,6 +14,7 @@
 *.php    text diff=php
 *.css    text diff=css
 *.html   text diff=html
+*.tpl    text diff=html
 *.xml    text diff=html
 
 # os-specific
