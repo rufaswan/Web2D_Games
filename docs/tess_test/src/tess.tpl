@@ -14,15 +14,18 @@
 <canvas id='canvas'>Canvas not supported</canvas>
 
 <div id='corner0' class='clickable'>A</div>
-<div id='corner2' class='clickable'>B</div>
-<div id='corner4' class='clickable'>C</div>
-<div id='corner6' class='clickable'>D</div>
+<div id='corner1' class='clickable'>B</div>
+<div id='corner2' class='clickable'>C</div>
+<div id='corner3' class='clickable'>D</div>
 
 <script>
-	var CANVAS = document.getElementById('canvas');
+	var CANVAS  = document.getElementById('canvas');
+	var IS_CLICK = true;
 </script>
 
 @@click.js@@
+
+@@qdfn.js@@
 @@webgl.js@@
 
 </body>

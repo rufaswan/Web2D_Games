@@ -51,12 +51,13 @@ background-color : #ff0;
 <canvas id='canvas'>Canvas not supported</canvas>
 
 <div id='corner0' class='clickable'>A</div>
-<div id='corner2' class='clickable'>B</div>
-<div id='corner4' class='clickable'>C</div>
-<div id='corner6' class='clickable'>D</div>
+<div id='corner1' class='clickable'>B</div>
+<div id='corner2' class='clickable'>C</div>
+<div id='corner3' class='clickable'>D</div>
 
 <script>
-	var CANVAS = document.getElementById('canvas');
+	var CANVAS  = document.getElementById('canvas');
+	var IS_CLICK = true;
 </script>
 
 <script>'use strict';
@@ -81,11 +82,11 @@ var rect = CANVAS.getBoundingClientRect();
 var box;
 box = document.getElementById('corner0');
 divLeftTop(box, rect.left, rect.top);
-box = document.getElementById('corner2');
+box = document.getElementById('corner1');
 divLeftTop(box, rect.right, rect.top);
-box = document.getElementById('corner4');
+box = document.getElementById('corner2');
 divLeftTop(box, rect.right, rect.bottom);
-box = document.getElementById('corner6');
+box = document.getElementById('corner3');
 divLeftTop(box, rect.left, rect.bottom);
 return;
 };
@@ -112,34 +113,42 @@ else
 divLeftTop(CORNER, e.pageX, e.pageY);
 CORNER.classList.remove('activebox');
 CORNER = undefined;
+IS_CLICK = true;
 return;
 }
 });
 })();
 </script>
+
 <script>'use strict';
-var GL = CANVAS.getContext('webgl');
-(function(){
-if ( ! GL ) return;
-var vert_src = `
-precision highp float;
-attribute vec2 a_uv;
-attribute vec3 a_xyz;
-varying vec2 v_uv;
-void main(void){
-v_uv = a_uv;
-gl_Position = vec4(a_xyz, 1.0);
+var QDFN = QDFN || {};
+(function($){
+$.webGLContextById = function( id ){
+var opt = {
+alpha : true,
+antialias : true,
+preserveDrawingBuffer : true,
+depth : false,
+stencil : false,
+premultipliedAlpha : false,
+};
+return document.getElementById(id).getContext('webgl', opt);
 }
-`;
-var frag_src = `
-precision highp float;
-uniform sampler2D u_tex;
-varying vec2 v_uv;
-void main(void){
-gl_FragColor = texture2D(u_tex, v_uv);
+$.shaderProgram = function( GL, vert_src, frag_src ){
+var vert_shader = GL.createShader(GL.VERTEX_SHADER);
+GL.shaderSource (vert_shader, vert_src);
+GL.compileShader(vert_shader);
+var frag_shader = GL.createShader(GL.FRAGMENT_SHADER);
+GL.shaderSource (frag_shader, frag_src);
+GL.compileShader(frag_shader);
+var prog = GL.createProgram();
+GL.attachShader(prog, vert_shader);
+GL.attachShader(prog, frag_shader);
+GL.linkProgram (prog);
+GL.useProgram (prog);
+return prog;
 }
-`;
-function createTexById(id){
+$.tex2DById = function( GL, id ){
 var img = document.getElementById(id);
 var tex = GL.createTexture();
 GL.bindTexture (GL.TEXTURE_2D, tex);
@@ -150,52 +159,76 @@ GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
 GL.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
 return tex;
 }
-function getDstCorner(){
-var box = CANVAS.getBoundingClientRect();
-var hw = box.width / 2;
-var hh = box.height / 2;
-for ( var i=0; i < 8; i += 2 )
+$.splitUV = function( v2 ){
+if ( (v2.length % 2) !== 0 )
+return -1;
+var uv = new Array( v2.length / 2 );
+var i = 0;
+for ( var j=0; j < v2.length; j += 2 )
 {
-var cnr = document.getElementById('corner'+i).getBoundingClientRect();
-var x = cnr.left - box.left - hw;
-var y = cnr.top - box.top - hh;
-DST[i+0] = x / hw;
-DST[i+1] = y / -hh;
+uv[i] = [ v2[j+0] , v2[j+1] ];
+i++;
+}
+return uv;
+}
+$.splitXYZ = function( v3 ){
+if ( (v3.length % 3) !== 0 )
+return -1;
+var xyz = new Array( v3.length / 3 );
+var i = 0;
+for ( var j=0; j < v3.length; j += 3 )
+{
+xyz[i] = [ v3[j+0] , v3[j+1] , v3[j+2] ];
+i++;
+}
+return xyz;
+}
+$.joinUV = function(){
+for ( var i=1; i < arguments.length; i++ )
+{
+arguments[0].push( arguments[i][0] );
+arguments[0].push( arguments[i][1] );
 }
 return;
 }
-var DST = [0,0 , 0,0 , 0,0 , 0,0];
-var SRC = [0,0 , 1,0 , 1,1 , 0,1];
-(function(){
-var vert_shader = GL.createShader(GL.VERTEX_SHADER);
-GL.shaderSource (vert_shader, vert_src);
-GL.compileShader(vert_shader);
-var frag_shader = GL.createShader(GL.FRAGMENT_SHADER);
-GL.shaderSource (frag_shader, frag_src);
-GL.compileShader(frag_shader);
-var SHADER = GL.createProgram();
-GL.attachShader(SHADER, vert_shader);
-GL.attachShader(SHADER, frag_shader);
-GL.linkProgram (SHADER);
-GL.useProgram (SHADER);
-function glattr( attr, data, cnt ){
-var loc = GL.getAttribLocation(SHADER, attr);
-var buf = GL.createBuffer();
-GL.bindBuffer(GL.ARRAY_BUFFER, buf);
-GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
-GL.enableVertexAttribArray(loc);
-GL.vertexAttribPointer(loc, cnt, GL.FLOAT, false, 0, 0);
+$.joinXYZ = function(){
+for ( var i=1; i < arguments.length; i++ )
+{
+var z = arguments[i][2] || 1;
+arguments[0].push( arguments[i][0] );
+arguments[0].push( arguments[i][1] );
+arguments[0].push( z );
+}
 return;
 }
-var TEX = createTexById('Mona_Lisa_png');
-var u_tex = GL.getUniformLocation(SHADER, "u_tex");
-GL.uniform1i(u_tex, 0);
-GL.activeTexture(GL.TEXTURE0);
-GL.bindTexture(GL.TEXTURE_2D, TEX);
-function tessTest()
+$.avgUV = function(){
+var avg = [0,0];
+for ( var i=0; i < arguments.length; i++ )
 {
-function cross( v1, v2 )
+avg[0] += arguments[i][0];
+avg[1] += arguments[i][1];
+}
+avg[0] /= arguments.length;
+avg[1] /= arguments.length;
+return avg;
+}
+$.avgXYZ = function(){
+var avg = [0,0];
+for ( var i=0; i < arguments.length; i++ )
 {
+var z = arguments[i][2] || 1;
+avg[0] += arguments[i][0];
+avg[1] += arguments[i][1];
+avg[2] += z;
+}
+avg[0] /= arguments.length;
+avg[1] /= arguments.length;
+avg[2] /= arguments.length;
+return avg;
+}
+$.cross3D = function( v1, v2 ){
+v1.push(1);
+v2.push(1);
 var crx = [
 v1[1]*v2[2] - v2[1]*v1[2], 
 v1[2]*v2[0] - v2[2]*v1[0], 
@@ -203,8 +236,18 @@ v1[0]*v2[1] - v2[0]*v1[1],
 ];
 return crx;
 }
-function isPointInLine( pt, v1, v2 )
-{
+$.cross2D = function( v1, v2 ){
+v1.push(1);
+v2.push(1);
+var crx = $.cross3D(v1, v2);
+var z = crx.pop();
+if ( z === 0 )
+return -1;
+crx[0] /= z;
+crx[1] /= z;
+return crx;
+}
+$.isPointInLine = function( pt, v1, v2 ){
 var x1 = Math.min(v1[0], v2[0]);
 var y1 = Math.min(v1[1], v2[1]);
 var x2 = Math.max(v1[0], v2[0]);
@@ -215,157 +258,302 @@ if ( pt[1] < y1 || pt[1] > y2 )
 return false;
 return true;
 }
-function isLinesIntersect(quad, c1a, c1b, c2a, c2b)
-{
-var v1a = [ quad[c1a*2+0] , quad[c1a*2+1] , 1 ];
-var v1b = [ quad[c1b*2+0] , quad[c1b*2+1] , 1 ];
-var v2a = [ quad[c2a*2+0] , quad[c2a*2+1] , 1 ];
-var v2b = [ quad[c2b*2+0] , quad[c2b*2+1] , 1 ];
-var crx = cross( cross(v1a,v1b) , cross(v2a,v2b) );
+$.pointIntersect = function( v1a, v1b, v2a, v2b ){
+var crx = $.cross3D( $.cross3D(v1a,v1b) , $.cross3D(v2a,v2b) );
 var z = crx.pop();
 if ( z === 0 )
 return -1;
 crx[0] /= z;
 crx[1] /= z;
-if ( isPointInLine(crx,v1a,v1b) && isPointInLine(crx,v2a,v2b) )
+if ( ! $.isPointInLine(crx,v1a,v1b) ) return -1;
+if ( ! $.isPointInLine(crx,v2a,v2b) ) return -1;
 return crx;
-return -1;
 }
-function quadArea( quad, c0, c1, c2, c3 )
-{
+$.distIntersect = function( v1a, v1b, v2a, v2b ){
+var pt = $.pointIntersect(v1a, v1b, v2a, v2b);
+if ( pt === -1 )
+return -1;
+var d1 = [ v1a[0]-v1b[0] , v1a[1]-v1b[1] ];
+var d2 = [ v2a[0]-v2b[0] , v2a[1]-v2b[1] ];
+return [
+[ Math.abs( (v1a[0]-x)/d1[0] ) , Math.abs( (v1a[1]-y)/d1[1] ) ],
+[ Math.abs( (v1b[0]-x)/d1[0] ) , Math.abs( (v1b[1]-y)/d1[1] ) ],
+[ Math.abs( (v2a[0]-x)/d2[0] ) , Math.abs( (v2a[1]-y)/d2[1] ) ],
+[ Math.abs( (v2b[0]-x)/d2[0] ) , Math.abs( (v2b[1]-y)/d2[1] ) ],
+];
+}
+$.quadArea = function( v0, v1, v2, v3 ){
 var r1, r2, r3;
-r1 = quad[c0*2+0] * (quad[c1*2+1] - quad[c2*2+1])
-r2 = quad[c1*2+0] * (quad[c2*2+1] - quad[c0*2+1])
-r3 = quad[c2*2+0] * (quad[c0*2+1] - quad[c1*2+1])
+r1 = v0[0] * (v1[1] - v2[1])
+r2 = v1[0] * (v2[1] - v0[1])
+r3 = v2[0] * (v0[1] - v1[1])
 var t1 = 0.5 * (r1 + r2 + r3);
-r1 = quad[c0*2+0] * (quad[c2*2+1] - quad[c3*2+1])
-r2 = quad[c2*2+0] * (quad[c3*2+1] - quad[c0*2+1])
-r3 = quad[c3*2+0] * (quad[c0*2+1] - quad[c2*2+1])
+r1 = v0[0] * (v2[1] - v3[1])
+r2 = v2[0] * (v3[1] - v0[1])
+r3 = v3[0] * (v0[1] - v2[1])
 var t2 = 0.5 * (r1 + r2 + r3);
 return Math.abs(t1) + Math.abs(t2);
 }
-var intr = isLinesIntersect(DST, 0, 2, 1, 3);
+$.matrix_multi31 = function( M, V ){
+var MV = [
+M[0]*V[0] + M[1]*V[1] + M[2]*V[2] ,
+M[3]*V[0] + M[4]*V[1] + M[5]*V[2] ,
+M[6]*V[0] + M[7]*V[1] + M[8]*V[2] ,
+];
+return MV;
+}
+$.matrix_multi33 = function( M1, M2 ){
+var M = [
+M1[0]*M2[0] + M1[1]*M2[3] + M1[2]*M2[6],
+M1[0]*M2[1] + M1[1]*M2[4] + M1[2]*M2[7],
+M1[0]*M2[2] + M1[1]*M2[5] + M1[2]*M2[8],
+M1[3]*M2[0] + M1[4]*M2[3] + M1[5]*M2[6],
+M1[3]*M2[1] + M1[4]*M2[4] + M1[5]*M2[7],
+M1[3]*M2[2] + M1[4]*M2[5] + M1[5]*M2[8],
+M1[6]*M2[0] + M1[7]*M2[3] + M1[8]*M2[6],
+M1[6]*M2[1] + M1[7]*M2[4] + M1[8]*M2[7],
+M1[6]*M2[2] + M1[7]*M2[5] + M1[8]*M2[8],
+];
+return M;
+}
+$.matrix_det2 = function( M ){
+var d = M[0]*M[3] - M[1]*M[2];
+return d;
+}
+$.matrix_inv3 = function( M ){
+var Mdet = [
+$.matrix_det2( [ M[4],M[5] , M[7],M[8] ] ) ,
+$.matrix_det2( [ M[3],M[5] , M[6],M[8] ] ) ,
+$.matrix_det2( [ M[3],M[4] , M[6],M[7] ] ) ,
+$.matrix_det2( [ M[1],M[2] , M[7],M[8] ] ) ,
+$.matrix_det2( [ M[0],M[2] , M[6],M[8] ] ) ,
+$.matrix_det2( [ M[0],M[1] , M[6],M[7] ] ) ,
+$.matrix_det2( [ M[1],M[2] , M[4],M[5] ] ) ,
+$.matrix_det2( [ M[0],M[2] , M[3],M[5] ] ) ,
+$.matrix_det2( [ M[0],M[1] , M[3],M[4] ] ) ,
+];
+var Mco = [
+Mdet[0] , -Mdet[3] , Mdet[6] ,
+-Mdet[1] , Mdet[4] , -Mdet[7] ,
+Mdet[2] , -Mdet[5] , Mdet[8] ,
+];
+var d = M[0]*Mco[0] + M[1]*Mco[3] + M[2]*Mco[6];
+var dinv = 1 / d;
+for ( var i=0; i < 9; i++ )
+Mco[i] *= dinv;
+return Mco;
+}
+$.quad2tri = function( quad ){
+var tri = [
+$.cross3D( $.cross3D(quad[0],quad[2]) , $.cross3D(quad[1],quad[3]) ), 
+$.cross3D( $.cross3D(quad[0],quad[1]) , $.cross3D(quad[3],quad[2]) ), 
+$.cross3D( $.cross3D(quad[0],quad[3]) , $.cross3D(quad[1],quad[2]) ), 
+];
+return tri;
+}
+$.matrix3_transform = function( tri1, tri2 ){
+var H = [
+tri1[0][0] , tri1[1][0] , tri1[2][0] ,
+tri1[0][1] , tri1[1][1] , tri1[2][1] ,
+tri1[0][2] , tri1[1][2] , tri1[2][2] ,
+];
+var h = [
+tri2[0][0] , tri2[1][0] , tri2[2][0] ,
+tri2[0][1] , tri2[1][1] , tri2[2][1] ,
+tri2[0][2] , tri2[1][2] , tri2[2][2] ,
+];
+var Hinv = $.matrix_inv3(H);
+var M = $.matrix_multi33(h, Hinv);
+var Minv = $.matrix_inv3(M);
+return [
+Minv[0] , Minv[3] , Minv[6] ,
+Minv[1] , Minv[4] , Minv[7] ,
+Minv[2] , Minv[5] , Minv[8] ,
+];
+}
+})(QDFN);
+</script>
+<script>'use strict';
+var GL = CANVAS.getContext('webgl');
+(function(){
+if ( ! GL ) return;
+var vert_src = `
+precision highp float;
+precision highp int;
+attribute vec3 a_xyz;
+varying vec3 v_xyz;
+void main(void){
+v_xyz = a_xyz;
+gl_Position = vec4(a_xyz, 1.0);
+}
+`;
+var frag_src = `
+precision highp float;
+precision highp int;
+uniform sampler2D u_tex;
+uniform mat3 u_mat3;
+varying vec3 v_xyz;
+void main(void){
+vec3 off = u_mat3 * v_xyz;
+vec2 uv = off.xy / off.z;
+gl_FragColor = texture2D(u_tex, uv);
+}
+`;
+function getDstCorner(){
+var box = CANVAS.getBoundingClientRect();
+var hw = box.width / 2;
+var hh = box.height / 2;
+DST = new Array(4);
+for ( var i=0; i < 4; i++ )
+{
+var cnr = document.getElementById('corner'+i).getBoundingClientRect();
+var x = cnr.left - box.left - hw;
+var y = cnr.top - box.top - hh;
+DST[i] = [ x / hw, y / -hh , 1];
+}
+return;
+}
+var DST = [[-1,1,1] , [1,1,1] , [1,-1,1] , [-1,-1,1]];
+var SRC = [[ 0,0 ] , [1,0 ] , [1, 1 ] , [ 0, 1 ]];
+(function(){
+var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
+function glattr( attr, data, cnt ){
+var loc = GL.getAttribLocation(SHADER, attr);
+var buf = GL.createBuffer();
+GL.bindBuffer(GL.ARRAY_BUFFER, buf);
+GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
+GL.enableVertexAttribArray(loc);
+GL.vertexAttribPointer(loc, cnt, GL.FLOAT, false, 0, 0);
+return;
+}
+var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
+var u_tex = GL.getUniformLocation(SHADER, "u_tex");
+GL.uniform1i(u_tex, 0);
+GL.activeTexture(GL.TEXTURE0);
+GL.bindTexture(GL.TEXTURE_2D, TEX);
+var u_mat3 = GL.getUniformLocation(SHADER, "u_mat3");
+function drawtri( stri, dtri )
+{
+var mat3 = QDFN.matrix3_transform(stri, dtri);
+GL.uniformMatrix3fv(u_mat3, false, mat3);
+var xyz = [];
+QDFN.joinXYZ(xyz, dtri[0], dtri[1], dtri[2]);
+glattr('a_xyz', xyz, 3);
+GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
+GL.drawArrays(GL.TRIANGLES, 0, 3);
+return;
+}
+function tessTest()
+{
+var intr = QDFN.pointIntersect(DST[0], DST[2], DST[1], DST[3]);
 if ( intr !== -1 )
 {
-var uv = [
-SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5],
-SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7],
-];
-var xyz = [
-DST[0],DST[1],1 , DST[2],DST[3],1 , DST[4],DST[5],1,
-DST[0],DST[1],1 , DST[4],DST[5],1 , DST[6],DST[7],1,
-];
-glattr('a_uv' , uv , 2);
+var stri = QDFN.quad2tri(SRC);
+var dtri = QDFN.quad2tri(DST);
+var mat3 = QDFN.matrix3_transform(stri, dtri);
+GL.uniformMatrix3fv(u_mat3, false, mat3);
+var xyz = [];
+QDFN.joinXYZ(xyz, DST[0], DST[1], DST[2]);
+QDFN.joinXYZ(xyz, DST[0], DST[2], DST[3]);
 glattr('a_xyz', xyz, 3);
 GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
 GL.drawArrays(GL.TRIANGLES, 0, 6);
 return;
 }
-var intr = isLinesIntersect(DST, 0, 3, 1, 2);
+var intr = QDFN.pointIntersect(DST[0], DST[3], DST[1], DST[2]);
 if ( intr !== -1 )
 {
-var sc0123 = [
-(SRC[0] + SRC[2] + SRC[4] + SRC[6]) / 4,
-(SRC[1] + SRC[3] + SRC[5] + SRC[7]) / 4,
-];
-var sc03 = [ (SRC[0] + SRC[6])/2 , (SRC[1] + SRC[7])/2 ];
-var sc12 = [ (SRC[2] + SRC[4])/2 , (SRC[3] + SRC[5])/2 ];
-var dc03 = [ (DST[0] + DST[6])/2 , (DST[1] + DST[7])/2 ];
-var dc12 = [ (DST[2] + DST[4])/2 , (DST[3] + DST[5])/2 ];
-var uv = [
-sc0123[0],sc0123[1] , SRC[0], SRC[1] , SRC[2], SRC[3],
-sc0123[0],sc0123[1] , SRC[2], SRC[3] , sc12[0],sc12[1],
-sc0123[0],sc0123[1] , sc12[0],sc12[1] , SRC[4], SRC[5],
-sc0123[0],sc0123[1] , SRC[4], SRC[5] , SRC[6], SRC[7],
-sc0123[0],sc0123[1] , SRC[6], SRC[7] , sc03[0],sc03[1],
-sc0123[0],sc0123[1] , sc03[0],sc03[1] , SRC[0], SRC[1],
-];
-var xyz = [
-intr[0],intr[1],0 , DST[0], DST[1],1 , DST[2], DST[3],1,
-intr[0],intr[1],0 , DST[2], DST[3],1 , dc12[0],dc12[1],1,
-intr[0],intr[1],0 , dc12[0],dc12[1],1 , DST[4], DST[5],1,
-intr[0],intr[1],0 , DST[4], DST[5],1 , DST[6], DST[7],1,
-intr[0],intr[1],0 , DST[6], DST[7],1 , dc03[0],dc03[1],1,
-intr[0],intr[1],0 , dc03[0],dc03[1],1 , DST[0], DST[1],1,
-];
-glattr('a_uv' , uv , 2);
-glattr('a_xyz', xyz, 3);
-GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-GL.drawArrays(GL.TRIANGLES, 0, 18);
+intr[2] = 1;
+var scx = QDFN.avgUV(SRC[0], SRC[1], SRC[2], SRC[3]);
+var s12 = QDFN.avgUV(SRC[1], SRC[2]);
+var s30 = QDFN.avgUV(SRC[3], SRC[0]);
+scx[2] = 1;
+s12[2] = 1;
+s30[2] = 1;
+var d12 = QDFN.avgXYZ(DST[1], DST[2]);
+var d30 = QDFN.avgXYZ(DST[3], DST[0]);
+stri = [ scx, SRC[0], SRC[1] ];
+dtri = [ intr, DST[0], DST[1] ];
+drawtri(stri, dtri);
+stri = [ scx, SRC[2], SRC[3] ];
+dtri = [ intr, DST[2], DST[3] ];
+drawtri(stri, dtri);
+stri = [ scx, SRC[1], s12 ];
+dtri = [ intr, DST[1], d12 ];
+drawtri(stri, dtri);
+stri = [ scx, s12, SRC[2] ];
+dtri = [ intr, d12, DST[2] ];
+drawtri(stri, dtri);
+stri = [ scx, SRC[3], s30 ];
+dtri = [ intr, DST[3], d30 ];
+drawtri(stri, dtri);
+stri = [ scx, s30, SRC[0] ];
+dtri = [ intr, d30, DST[0] ];
+drawtri(stri, dtri);
 return;
 }
-var intr = isLinesIntersect(DST, 0, 1, 3, 2);
+var intr = QDFN.pointIntersect(DST[0], DST[1], DST[3], DST[2]);
 if ( intr !== -1 )
 {
-var sc0123 = [
-(SRC[0] + SRC[2] + SRC[4] + SRC[6]) / 4,
-(SRC[1] + SRC[3] + SRC[5] + SRC[7]) / 4,
-];
-var sc01 = [ (SRC[0] + SRC[2])/2 , (SRC[1] + SRC[3])/2 ];
-var sc23 = [ (SRC[4] + SRC[6])/2 , (SRC[5] + SRC[7])/2 ];
-var dc01 = [ (DST[0] + DST[2])/2 , (DST[1] + DST[3])/2 ];
-var dc23 = [ (DST[4] + DST[6])/2 , (DST[5] + DST[7])/2 ];
-var uv = [
-sc0123[0],sc0123[1] , SRC[0], SRC[1] , sc01[0],sc01[1],
-sc0123[0],sc0123[1] , sc01[0],sc01[1] , SRC[2], SRC[3],
-sc0123[0],sc0123[1] , SRC[2], SRC[3] , SRC[4], SRC[5],
-sc0123[0],sc0123[1] , SRC[4], SRC[5] , sc23[0],sc23[1],
-sc0123[0],sc0123[1] , sc23[0],sc23[1] , SRC[6], SRC[7],
-sc0123[0],sc0123[1] , SRC[6], SRC[7] , SRC[0], SRC[1],
-];
-var xyz = [
-intr[0],intr[1],0 , DST[0], DST[1],1 , dc01[0],dc01[1],1,
-intr[0],intr[1],0 , dc01[0],dc01[1],1 , DST[2], DST[3],1,
-intr[0],intr[1],0 , DST[2], DST[3],1 , DST[4], DST[5],1,
-intr[0],intr[1],0 , DST[4], DST[5],1 , dc23[0],dc23[1],1,
-intr[0],intr[1],0 , dc23[0],dc23[1],1 , DST[6], DST[7],1,
-intr[0],intr[1],0 , DST[6], DST[7],1 , DST[0], DST[1],1,
-];
-glattr('a_uv' , uv , 2);
-glattr('a_xyz', xyz, 3);
-GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-GL.drawArrays(GL.TRIANGLES, 0, 18);
+intr[2] = 1;
+var scx = QDFN.avgUV(SRC[0], SRC[1], SRC[2], SRC[3]);
+var s01 = QDFN.avgUV(SRC[0], SRC[1]);
+var s23 = QDFN.avgUV(SRC[2], SRC[3]);
+scx[2] = 1;
+s01[2] = 1;
+s23[2] = 1;
+var d01 = QDFN.avgXYZ(DST[0], DST[1]);
+var d23 = QDFN.avgXYZ(DST[2], DST[3]);
+stri = [ scx, SRC[1], SRC[2] ];
+dtri = [ intr, DST[1], DST[2] ];
+drawtri(stri, dtri);
+stri = [ scx, SRC[3], SRC[0] ];
+dtri = [ intr, DST[3], DST[0] ];
+drawtri(stri, dtri);
+stri = [ scx, SRC[0], s01 ];
+dtri = [ intr, DST[0], d01 ];
+drawtri(stri, dtri);
+stri = [ scx, s01, SRC[1] ];
+dtri = [ intr, d01, DST[1] ];
+drawtri(stri, dtri);
+stri = [ scx, SRC[2], s23 ];
+dtri = [ intr, DST[2], d23 ];
+drawtri(stri, dtri);
+stri = [ scx, s23, SRC[3] ];
+dtri = [ intr, d23, DST[3] ];
+drawtri(stri, dtri);
 return;
 }
-var area1 = quadArea(DST, 0, 1, 2, 3);
-var area2 = quadArea(DST, 1, 2, 3, 0);
+var area1 = QDFN.quadArea(DST[0], DST[1], DST[2], DST[3]);
+var area2 = QDFN.quadArea(DST[1], DST[2], DST[3], DST[0]);
 if ( area1 < area2 )
 {
-var uv = [
-SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5],
-SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7],
-];
-var xyz = [
-DST[0],DST[1],1 , DST[2],DST[3],1 , DST[4],DST[5],1,
-DST[0],DST[1],1 , DST[4],DST[5],1 , DST[6],DST[7],1,
-];
-glattr('a_uv' , uv , 2);
-glattr('a_xyz', xyz, 3);
-GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-GL.drawArrays(GL.TRIANGLES, 0, 6);
+stri = [ SRC[0], SRC[1], SRC[2] ];
+dtri = [ DST[0], DST[1], DST[2] ];
+drawtri(stri, dtri);
+stri = [ SRC[0], SRC[2], SRC[3] ];
+dtri = [ DST[0], DST[2], DST[3] ];
+drawtri(stri, dtri);
 return;
 }
 else
 {
-var uv = [
-SRC[2],SRC[3] , SRC[4],SRC[5] , SRC[6],SRC[7],
-SRC[2],SRC[3] , SRC[6],SRC[7] , SRC[0],SRC[1],
-];
-var xyz = [
-DST[2],DST[3],1 , DST[4],DST[5],1 , DST[6],DST[7],1,
-DST[2],DST[3],1 , DST[6],DST[7],1 , DST[0],DST[1],1,
-];
-glattr('a_uv' , uv , 2);
-glattr('a_xyz', xyz, 3);
-GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-GL.drawArrays(GL.TRIANGLES, 0, 6);
+stri = [ SRC[1], SRC[2], SRC[3] ];
+dtri = [ DST[1], DST[2], DST[3] ];
+drawtri(stri, dtri);
+stri = [ SRC[1], SRC[3], SRC[0] ];
+dtri = [ DST[1], DST[3], DST[0] ];
+drawtri(stri, dtri);
 return;
 }
 } 
 setInterval(function(){
+if ( ! IS_CLICK )
+return;
 getDstCorner();
 tessTest()
-}, 500);
+IS_CLICK = false;
+}, 100);
 })();
 })();
 </script>

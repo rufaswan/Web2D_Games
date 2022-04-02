@@ -26,13 +26,13 @@
 		box = document.getElementById('corner0');
 		divLeftTop(box, rect.left, rect.top);
 
-		box = document.getElementById('corner2');
+		box = document.getElementById('corner1');
 		divLeftTop(box, rect.right, rect.top);
 
-		box = document.getElementById('corner4');
+		box = document.getElementById('corner2');
 		divLeftTop(box, rect.right, rect.bottom);
 
-		box = document.getElementById('corner6');
+		box = document.getElementById('corner3');
 		divLeftTop(box, rect.left, rect.bottom);
 		return;
 	};
@@ -60,6 +60,7 @@
 			divLeftTop(CORNER, e.pageX, e.pageY);
 			CORNER.classList.remove('activebox');
 			CORNER = undefined;
+			IS_CLICK = true;
 			return;
 		}
 	});
