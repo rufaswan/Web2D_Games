@@ -4,8 +4,8 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Tessellation Test</title>
-@@tess.css@@
+<title>Quad Perspective Transformation Test</title>
+@@quad.css@@
 
 </head>
 <body>
@@ -26,7 +26,7 @@
 @@click.js@@
 
 @@qdfn.js@@
-@@webgl.js@@
+@@webgl-perspective.js@@
 
 </body>
 </html>

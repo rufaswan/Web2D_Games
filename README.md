@@ -52,7 +52,8 @@
     * http://rufaswan.github.io/Web2D_Games/quad_player/quad-anim.html
   * Dev Test
     * http://rufaswan.github.io/Web2D_Games/mobile_test/mobile.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/tess_test/tess.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-affine.tpl.html
 
 ## Game Status
 
