@@ -39,13 +39,13 @@
 	//  touchstart    touchmove   touchend           -
 	// pointerdown  pointermove  pointerup  pointerout
 	e = ( window['onmousedown'] !== undefined );
-	logJS('addEventListener("onmousedown")', e);
+	logJS('addEventListener("mousedown")', e);
 
 	e = ( window['ontouchstart'] !== undefined );
-	logJS('addEventListener("ontouchstart")', e);
+	logJS('addEventListener("touchstart")', e);
 
 	e = ( window['onpointerdown'] !== undefined );
-	logJS('addEventListener("onpointerdown")', e);
+	logJS('addEventListener("pointerdown")', e);
 
 	e = ( window['atob'] !== undefined );
 	logJS('base64 atob()/btoa()', e);

@@ -1,16 +1,14 @@
 <!doctype html>
-<html>
-<head>
+<html><head>
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Quad Test</title>
-@@quad.css@@
+@@<quad.css>@@
 
-</head>
-<body>
+</head><body>
 
-@@Mona_Lisa.png@@
+@@<Mona_Lisa.png>@@
 <canvas id='canvas'>Canvas not supported</canvas>
 
 <div id='corner0' class='clickable'>A</div>
@@ -23,11 +21,10 @@
 	var IS_CLICK = true;
 </script>
 
-@@click.js@@
+@@<click.js>@@
 
-@@qdfn.js@@
-@@webgl.js@@
+@@<qdfn.js>@@
+@@<webgl.js>@@
 
-</body>
-</html>
+</body></html>
 
