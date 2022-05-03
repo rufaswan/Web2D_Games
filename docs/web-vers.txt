@@ -130,7 +130,9 @@ Can I Use?
 	20    10.5   4    Audio element
 	20    10.5   4    Video element
 	25    22    14.5  Web Audio API
+	29    36    14.5  MediaRecorder API
 	36    40    11    getUserMedia/Stream API
+	66    60     -    MediaDevices API: getDisplayMedia()
 
 
 
@@ -320,10 +322,13 @@ Last stable version by Android OS
 		iOS     15
 		watchOS  8
 
+	http://m.webapps-online.com/page52094
 	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand573714/playstation-3
 	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand575321/playstation-4
-	PS3  Chrome 27-46
-	PS4  Chrome 59-72
+	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand728810/playstation-vita
+	PS3   Chrome 27-46
+	PS4   Chrome 59-72
+	Vita  Chrome 53
 
 
 

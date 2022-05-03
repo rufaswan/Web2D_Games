@@ -3,7 +3,7 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Test</title>
+<title>Quad Lines Test</title>
 @@<quad.css>@@
 
 </head><body>
@@ -17,14 +17,14 @@
 <div id='corner3' class='clickable'>D</div>
 
 <script>
-	var CANVAS  = document.getElementById('canvas');
+	var CANVAS = document.getElementById('canvas');
 	var IS_CLICK = true;
 </script>
 
 @@<click.js>@@
 
 @@<qdfn.js>@@
-@@<webgl.js>@@
+@@<webgl-line.js>@@
 
 </body></html>
 

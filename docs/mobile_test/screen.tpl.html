@@ -1,0 +1,95 @@
+<!doctype html>
+<html><head>
+
+<meta charset='utf-8'>
+<title>Screencast Test</title>
+<style id="screen_css">
+body {
+	position         : relative;
+	background-color : #000;
+	color            : #fff;
+	margin           : 0;
+	padding          : 0;
+	width            : 100vw;
+	height           : 100vh;
+	overflow         : hidden;
+	text-align       : center;
+}
+
+canvas {
+	position         : absolute;
+	top              : 10%;
+	left             : 10%;
+	width            : 80%;
+	height           : 80%;
+	background-color : #fff;
+	z-index          : -1;
+}
+
+video {
+	position : absolute;
+	top      : -9999px;
+	left     : -9999px;
+	z-index  : -9999;
+}
+</style>
+
+</head><body>
+
+<br>
+<button id='screencast'>START</button>
+<canvas id='canvas'>Canvas not supported</canvas>
+<video  id='video'></video>
+
+<script id="screen_js">'use strict';
+
+(function(){
+
+	var CANVAS = document.getElementById('canvas');
+	var VIDEO  = document.getElementById('video');
+	var opt = {
+		audio : false,
+		video : {
+			frameRate      : 5,
+			cursor         : 'always',
+			displaySurface : 'monitor',
+		},
+	};
+	var isCapture = false;
+	var timer;
+
+	document.getElementById('screencast').addEventListener('click', function(){
+
+		if ( isCapture )
+		{
+			VIDEO.srcObject.getTracks().forEach(function(t){
+				t.stop();
+			});
+			VIDEO.srcObject = null;
+
+			clearInterval(timer);
+			isCapture = ! isCapture;
+		}
+		else
+		{
+			navigator.mediaDevices.getDisplayMedia(opt).then(function(stream){
+				VIDEO.srcObject = stream;
+				VIDEO.play();
+
+			}).catch(function(error){
+				console.log('getDisplayMedia', error);
+			});
+
+			timer = setInterval(function(){
+				CANVAS.width  = VIDEO.videoWidth;
+				CANVAS.height = VIDEO.videoHeight;
+				CANVAS.getContext('2d').drawImage(VIDEO, 0, 0, CANVAS.width, CANVAS.height);
+			}, 1000);
+			isCapture = ! isCapture;
+		}
+	});
+
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,29 @@
+
+body {
+	position         : relative;
+	background-color : #000;
+	color            : #fff;
+	margin           : 0;
+	padding          : 0;
+	width            : 100vw;
+	height           : 100vh;
+	overflow         : hidden;
+	text-align       : center;
+}
+
+canvas {
+	position         : absolute;
+	top              : 10%;
+	left             : 10%;
+	width            : 80%;
+	height           : 80%;
+	background-color : #fff;
+	z-index          : -1;
+}
+
+video {
+	position : absolute;
+	top      : -9999px;
+	left     : -9999px;
+	z-index  : -9999;
+}

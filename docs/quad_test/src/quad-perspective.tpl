@@ -17,7 +17,7 @@
 <div id='corner3' class='clickable'>D</div>
 
 <script>
-	var CANVAS  = document.getElementById('canvas');
+	var CANVAS = document.getElementById('canvas');
 	var IS_CLICK = true;
 </script>
 

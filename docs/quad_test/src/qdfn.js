@@ -13,7 +13,8 @@ var QDFN = QDFN || {};
 			stencil               : false,
 			premultipliedAlpha    : false,
 		};
-		return document.getElementById(id).getContext('webgl', opt);
+		var cnvs = document.getElementById(id);
+		return cnvs.getContext('webgl', opt) || cnvs.getContext('experiment-webgl', opt);
 	}
 
 	$.shaderProgram = function( GL, vert_src, frag_src ){
@@ -44,15 +45,20 @@ var QDFN = QDFN || {};
 	}
 
 	$.tex2DById = function( GL, id ){
-		var img = document.getElementById(id);
-		var tex = GL.createTexture();
-		GL.bindTexture  (GL.TEXTURE_2D, tex);
-		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
-		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
-		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
-		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-		GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
-		return tex;
+		var p1 = new Promise(function(resolve,reject){
+			var img = document.getElementById(id);
+			img.onload = function(){
+				var tex = GL.createTexture();
+				GL.bindTexture  (GL.TEXTURE_2D, tex);
+				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
+				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
+				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+				GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
+				resolve(tex);
+			}
+		});
+		return p1;
 	}
 
 	$.quad2vec3 = function( q ){

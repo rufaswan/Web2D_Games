@@ -47,12 +47,9 @@ var GL = CANVAS.getContext('webgl');
 
 	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
 	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
 
-	(function(){
-		// compile shader
-		var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
-
-		var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
+	QDFN.tex2DById(GL, 'Mona_Lisa_png').then(function(TEX){
 		var u_tex = GL.getUniformLocation(SHADER, 'u_tex');
 		GL.uniform1i(u_tex, 0);
 		GL.activeTexture(GL.TEXTURE0);
@@ -159,5 +156,5 @@ var GL = CANVAS.getContext('webgl');
 			IS_CLICK = false;
 			//console.log(DST, SRC);
 		}, 100);
-	})();
+	});
 })();

@@ -1,0 +1,39 @@
+<!doctype>
+<html><head>
+
+<meta charset='utf-8'>
+<title>Button Test - Viewport 1x</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<style id="button_css">
+body {
+	background : #000;
+	color      : #fff;
+}
+</style>
+
+</head><body>
+
+<main id='main'></main>
+
+<script id="button_js">'use strict';
+
+(function(){
+	var MAIN = document.getElementById('main');
+
+	['px','mm'].forEach(function(unit){
+		[70, 60, 50, 40, 30, 20, 10].forEach(function(size){
+
+			var div = document.createElement('div');
+			div.style.width      = size + unit;
+			div.style.height     = size + unit;
+			div.style.background = '#800';
+			div.style.margin     = '1em';
+			div.innerHTML        = size + unit;
+			MAIN.appendChild(div);
+
+		});
+	});
+})();
+</script>
+
+</body></html>

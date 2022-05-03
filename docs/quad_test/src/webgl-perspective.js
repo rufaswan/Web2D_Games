@@ -28,9 +28,6 @@ var GL = CANVAS.getContext('webgl');
 			vec3 v3 = vec3(v_xy.x, v_xy.y, 1.0) * u_mat3;
 			v3.x = v3.x / v3.z;
 			v3.y = v3.y / v3.z;
-
-			//if ( v3.x > 1.0 )  discard;
-			//if ( v3.y > 1.0 )  discard;
 			gl_FragColor = texture2D(u_tex, v3.xy);
 		}
 	`;
@@ -53,12 +50,9 @@ var GL = CANVAS.getContext('webgl');
 
 	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
 	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
 
-	(function(){
-		// compile shader
-		var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
-
-		var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
+	QDFN.tex2DById(GL, 'Mona_Lisa_png').then(function(TEX){
 		var u_tex = GL.getUniformLocation(SHADER, 'u_tex');
 		GL.uniform1i(u_tex, 0);
 		GL.activeTexture(GL.TEXTURE0);
@@ -141,5 +135,5 @@ var GL = CANVAS.getContext('webgl');
 			IS_CLICK = false;
 			//console.log(DST, SRC);
 		}, 100);
-	})();
+	});
 })();

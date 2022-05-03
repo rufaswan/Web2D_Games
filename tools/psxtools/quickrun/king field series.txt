@@ -1,0 +1,176 @@
+====================
+=== King's Field ===
+====================
+B1F
+	MAP Commoner
+	Wright Key
+	Deceased Key  Priest , Golden Cross
+	Golden Cross  Gil's Shop , 1800 G
+B2F
+	Jail Key      drop/Plant
+	Truth Mirror
+	Harp
+B3F
+	Truth Mirror
+B4F
+	MAP Magician  chest
+	Magician Key  chest
+B5F
+
+======================
+=== King's Field 2 ===
+======================
+  6/7-8
+  |
+  5
+  |
+1-2-3-4
+
+Map 1 west seaside
+	Crystal Fire
+	Crystal Wind
+	Crystal Water  Skull Key
+	GATE Star      body
+	MAP Pirate     chest
+	Shrine Key
+	Skull Key      chest , Pirate Key
+	Dragon Stone   chest
+
+Map 2 jail
+	Crystal Earth  (need gate)
+	Crystal Earth  chest
+	Crystal Light  (hidden door , Guard Room)
+	Crystal Light  Priest , exchanged GATE Moon/Wind Flute/MAP Lord , gift
+	KEY Star       chest
+	KEY Moon
+	GATE Moon      Priest , exchange Seth Statue
+	MAP Digger     Fatty Shop , 6300 G
+	MAP Lord       Priest , exchange 3 Crystal Bottle
+	Jail Key       drop/Guard
+	Silver Key     Key Smith Shop ,  1530 G
+	Magician Key   Key Smith Shop ,  8350 G
+	Gold Key       Key Smith Shop , 13500 G
+	Wind Flute     Priest , exchange 3 Crystal Bottle
+	Dragon Stone   Man , Jail Key
+	*duplicate 20x Guard Key (580 G) if lazy
+
+Map 3
+	Crystal Earth  drop/Termite Queen
+	Crystal Wind
+	Crystal Wind
+	Crystal Water  (need gate)
+	KEY Sun        chest , Wind Flute
+	Shrine Key
+	Pirate Key     Kid , after Termite Queen
+
+Map 4 east seaside
+	Crystal Fire
+	Crystal Water  (need gate)
+
+Map 5 minecart
+	Crystal Earth  drop/Dinosaur
+	Crystal Light  *mid-minecart ride*
+	King Key
+	Elf Key
+
+Map 6
+	Crystal Fire   (torches)
+	Crystal Wind   chest , King Key
+	Crystal Water  Shrine Key*2
+	GATE Sun       chest , King Key
+	[DS]           Dark Crystal , Shrine Key*2 + Elf Key
+	[DS]           Leon , Jail Key
+
+Map 7 colosseum
+	Crystal Fire
+	Crystal Light
+
+Map 8 cyber-space
+
+======================
+=== King's Field 3 ===
+======================
+     K
+     |
+ J - I -[H]- G -[E]-[F]
+                 |
+         5      [D] [C]
+         |       | /
+[2]- 3 -[4]      A
+ |       |       | \
+[1]  7 -[6]- 8 -[9] [B]
+
+Map 1 quist
+
+Map 2 battlefield
+	Spell Fire
+	Verdite Map    Sonia
+
+Map 3 barrack
+	Jail Key       body (hidden door , Captain Room)
+	Copper Key     drop/Tree
+
+Map 4 forest
+	Icarius Eye    Aude
+	Pixie Map
+	INT Fruit      barrel
+	*all tree stump removed after puzzle (North-West corner)
+
+Map 5 wind mansion
+	Spell Wind
+	*use 1 wind crystal to enter (WIND > 0)
+
+Map 6 ralugo
+	*Silver Key     (hidden wall , gate to 8/Poison Path)
+	INT Fruit      barrel
+	Bloody Herb
+	*to access 8/Poison Path , help Gill by giving Bloody Herb
+	*to access 7/Cave        , help Gill by giving Bloody Herb , then talk to Bruno
+
+Map 7 cave
+	Spell Earth
+	Promeus
+	Promeus        drop/Golem
+	Magician Key   skull
+
+Map 8 poison path
+	*Jail Key      barrel
+
+Map 9 lake
+	Spell Water
+	*Magician Key
+	*no item payment require after puzzle (South West Island)
+
+Map A thieve path
+	Silver Key     chest (hidden door , North East corner)
+
+Map B blacksmith
+	Dwarf Key      drop/Slime
+
+Map C wind gates
+	*all wind gate remain active after Icarius Armor set
+
+Map D cason
+	Icarius Wing
+	INT Fruit      barrel
+
+Map E snow field
+	Mina's Key
+	Promeus
+
+Map F garan
+	Icarius Crown  drop/Lizard Man
+	INT Fruit
+	Promeus        drop/Golem
+	Promeus        drop/Golem
+
+Map G death path
+	Royal Key      chest (hidden door , South West Corner)
+
+Map H prayer hill
+
+Map I fountain
+
+Map J KF1 cementary
+
+Map K castle

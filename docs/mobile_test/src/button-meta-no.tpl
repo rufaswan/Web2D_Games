@@ -3,14 +3,12 @@
 
 <meta charset='utf-8'>
 <title>Button Test - No Meta</title>
-<style>
-body {
-	background : #000;
-	color      : #fff;
-}
-</style>
+
+@@<button.css>@@
 
 </head><body>
+
+<main id='main'></main>
 
 @@<button.js>@@
 

@@ -217,6 +217,14 @@ function sint32( $s )
 	return ( ($int << $sra) >> $sra );
 }
 
+function neghex( $int )
+{
+	if ( $int < 0 )
+		return sprintf('-%x', -$int);
+	else
+		return sprintf('%x', $int);
+}
+
 function str_update( &$file, $pos, $str )
 {
 	$len = strlen($str);
@@ -1218,7 +1226,7 @@ function trimpix( &$pix )
 			$b .= substr($pix['rgba']['pix'], $p, 4*$TRIM_SZ);
 		}
 
-		if ( trim($b, ZERO) != '' )
+		if ( trim($b, ZERO) !== '' )
 			break;
 
 		$y1 += $TRIM_SZ;
@@ -1320,10 +1328,9 @@ function psx_exe( &$psxram, $psxexe )
 	return;
 }
 
-function psxtim( &$file )
+function psxtim( &$file, $pos=0 )
 {
-	$tim = array();
-	$pos = 0;
+	$bak = $pos;
 
 	// TIM header
 	//   0 = 4-bpp grayscale
@@ -1332,73 +1339,65 @@ function psxtim( &$file )
 	//   3 = rgb888 true color
 	//   8 = 4-bpp pseudo-color
 	//   9 = 8-bpp pseudo-color
-	$type = str2int( $file, $pos+4, 1 );
+	$type = str2int($file, $pos+4, 1);
 		$pos += 8;
 
-	$tim['pix'] = '';
+	$pix = '';
+	$pal = '';
+	$cc  = 0;
+	$w   = 0;
+	$h   = 0;
 	switch ( $type )
 	{
 		//////////////////////////////
 		case 8:
 			// VERY COMMON
 			// palette header
-			$siz = str2int($file, $pos, 4);
-				$pos += 12;
-				$siz -= 12;
-			$tim['cn']  = 0;
-			$tim['pal'] = array();
-			while ( $siz > 0 )
-			{
-				$rsz = ($siz > 0x20) ? 0x20 : $siz;
-				$tim['pal'][] = pal555( substr($file,$pos,$rsz) );
-				$tim['cn']++;
-
-				$pos += $rsz;
-				$siz -= $rsz;
-			} // while ( $siz > 0 )
+			$siz = str2int($file, $pos+ 0, 4);
+			$cc  = str2int($file, $pos+ 8, 2);
+			$sub = substr ($file, $pos+12, $siz-12);
+				$pos += $siz;
+			$pal = pal555($sub);
+			if ( $cc > 16 )
+				$cc = 16;
 		case 0:
 			// pixel header
-			$siz = str2int($file, $pos, 4);
-			$tim['w'] = str2int($file, $pos+ 8, 2) * 4;
-			$tim['h'] = str2int($file, $pos+10, 2);
+			$siz = str2int($file, $pos+ 0, 4);
+			$w   = str2int($file, $pos+ 8, 2) * 4;
+			$h   = str2int($file, $pos+10, 2);
+			$sub = substr ($file, $pos+12, $siz-12);
+				$pos += $siz;
 
-			$psz = $siz - 12;
-			$tim['pix'] = substr($file, $pos+12, $psz);
-			bpp4to8( $tim['pix'] );
-			$pos += $siz;
-
-			$tim['t'] = 'CLUT';
-			$tim['cc'] = 0x10;
+			bpp4to8($sub);
+			$pix = $sub;
+			if ( $cc === 0 )
+				$cc = 0x10;
+			$type = 'CLUT';
 			break;
 		//////////////////////////////
 		case 9:
 			// VERY COMMON
 			// palette header
-			$siz = str2int($file, $pos, 4);
-				$pos += 12;
-				$siz -= 12;
-			$tim['cn']  = 0;
-			$tim['pal'] = array();
-			while ( $siz > 0 )
-			{
-				$rsz = ($siz > 0x200) ? 0x200 : $siz;
-				$tim['pal'][] = pal555( substr($file,$pos,$rsz) );
-				$tim['cn']++;
-
-				$pos += $rsz;
-				$siz -= $rsz;
-			} // while ( $siz > 0 )
+			$siz = str2int($file, $pos+ 0, 4);
+			$cc  = str2int($file, $pos+ 8, 2);
+			$sub = substr ($file, $pos+12, $siz-12);
+				$pos += $siz;
+			$pal = pal555($sub);
+			if ( $cc > 256 )
+				$cc = 256;
 		case 1:
 			// TokiMemo 2 substories *.tml
 			// pixel header
-			$siz = str2int($file, $pos, 4);
-			$tim['w'] = str2int($file, $pos+ 8, 2) * 2;
-			$tim['h'] = str2int($file, $pos+10, 2);
-			$tim['pix'] = substr($file, $pos+12, $siz-12);
+			$siz = str2int($file, $pos+ 0, 4);
+			$w   = str2int($file, $pos+ 8, 2) * 2;
+			$h   = str2int($file, $pos+10, 2);
+			$sub = substr ($file, $pos+12, $siz-12);
 				$pos += $siz;
 
-			$tim['t'] = 'CLUT';
-			$tim['cc'] = 0x100;
+			$pix = $sub;
+			if ( $cc === 0 )
+				$cc = 0x100;
+			$type = 'CLUT';
 			break;
 		//////////////////////////////
 		case 2:
@@ -1406,35 +1405,51 @@ function psxtim( &$file )
 			// Xenogears 2464/*.tim
 			// Lunar 2 Eternal Blue data/isok/*.tim
 			// pixel header
-			$siz = str2int($file, $pos, 4);
-			$tim['w'] = str2int($file, $pos+ 8, 2);
-			$tim['h'] = str2int($file, $pos+10, 2);
-
-			$sub = substr($file, $pos+12, $siz-12);
-			$tim['pix'] = pal555($sub);
+			$siz = str2int($file, $pos+ 0, 4);
+			$w   = str2int($file, $pos+ 8, 2);
+			$h   = str2int($file, $pos+10, 2);
+			$sub = substr ($file, $pos+12, $siz-12);
 				$pos += $siz;
 
-			$tim['t'] = 'RGBA';
+			$pix = pal555($sub);
+			$type = 'RGBA';
 			break;
 		case 3:
 			// Legend of Mana /ana/zukan_p/z00/zukan1p.dat
 			// pixel header
-			$siz = str2int($file, $pos, 4);
-			$tim['w'] = str2int($file, $pos+ 8, 2);
-			$tim['h'] = str2int($file, $pos+10, 2);
+			$siz = str2int($file, $pos+ 0, 4);
+			$w   = str2int($file, $pos+ 8, 2);
+			$h   = str2int($file, $pos+10, 2);
+			$sub = substr ($file, $pos+12, $siz-12);
+				$pos += $siz;
 
-			$psz = $siz - 12;
-			$sub = substr($file, $pos+12, $psz);
-			for ( $i=0; $i < $psz; $i += 3 )
-				$tim['pix'] .= $sub[$i+0] . $sub[$i+1] . $sub[$i+2] . BYTE;
-			$pos += $siz;
-
-			$tim['t'] = 'RGBA';
+			$siz -= 12;
+			for ( $i=0; $i < $siz; $i += 3 )
+				$pix .= $sub[$i+0] . $sub[$i+1] . $sub[$i+2] . BYTE;
+			$type = 'RGBA';
 			break;
 		//////////////////////////////
 		default:
-			return $tim;
-	} // switch ( $tim['t'] )
+			return -1;
+	} // switch ( $type )
+
+	// VRAM size = 0x400 x 0x200
+	if ( $w > 0x400 || $w < 1 )  return -1;
+	if ( $h > 0x200 || $h < 1 )  return -1;
+
+	$tim = array(
+		'w'   => $w,
+		'h'   => $h,
+		'pix' => $pix,
+		'siz' => $pos - $bak,
+		't'   => $type,
+	);
+
+	if ( $cc > 0 )
+	{
+		$tim['pal'] = $pal;
+		$tim['cc' ] = $cc;
+	}
 
 	trace("psxtim() %s @ %d x %d\n", $tim['t'], $tim['w'], $tim['h']);
 	return $tim;

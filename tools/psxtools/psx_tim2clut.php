@@ -31,11 +31,53 @@ function psxtimfile( $fname )
 	//$mgc = str2int($file, 0, 4);
 	//if ( $mgc != 0x10 )  return;
 
+	$dir = str_replace('.', '_', $fname);
+	$pos = 0;
+	$id  = 0;
+	$len = strlen($file);
+
+	while ( $pos < $len )
+	{
+		$tim = psxtim($file, $pos);
+		if ( $tim === -1 )
+			return;
+
+		$pos += $tim['siz'];
+		if ( $tim['t'] === 'RGBA' )
+		{
+			$fn = sprintf('%s/%04d.rgba', $dir, $id);
+				$id++;
+			save_clutfile($fn, $tim);
+		}
+
+		if ( $tim['t'] === 'CLUT' )
+		{
+			$pal = $tim['pal'];
+			$cc  = $tim['cc'] * 4;
+			$p   = 0;
+			while (1)
+			{
+				$s = substr($pal, $p, $cc);
+					$p += $cc;
+
+				if ( empty($s) )
+					break;
+				if ( trim($s, BYTE.ZERO) === '' )
+					continue;
+				$tim['pal'] = $s;
+
+				$fn = sprintf('%s/%04d.clut', $dir, $id);
+					$id++;
+				save_clutfile($fn, $tim);
+			} // while (1)
+		}
+	} // while ( $pos < $len )
+
+/*
 	$tim = psxtim($file);
 	if ( empty( $tim['pix'] ) )
 		return;
 
-	$dir = str_replace('.', '_', $fname);
 
 	if ( $tim['t'] == 'RGBA' )
 	{
@@ -79,6 +121,7 @@ function psxtimfile( $fname )
 
 		return;
 	}
+*/
 	return;
 }
 
