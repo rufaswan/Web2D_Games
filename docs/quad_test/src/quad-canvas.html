@@ -1,0 +1,55 @@
+@@<Mona_Lisa.png>@@
+<canvas id='canvas'>Canvas not supported</canvas>
+
+<div id='corner0' class='clickable'>A</div>
+<div id='corner1' class='clickable'>B</div>
+<div id='corner2' class='clickable'>C</div>
+<div id='corner3' class='clickable'>D</div>
+
+<script>
+	'use strict';
+
+	var CANVAS = document.getElementById('canvas');
+	var IS_CLICK = true;
+	var GL = CANVAS.getContext('webgl');
+
+	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
+	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+	var RECT = { x:0 , y:0 , w:1 , h:1 };
+
+	function getDstCorner()
+	{
+		var box = CANVAS.getBoundingClientRect();
+		var hw  = box.width  * 0.5;
+		var hh  = box.height * 0.5;
+		DST = [];
+		for ( var i=0; i < 4; i++ )
+		{
+			var cnr = document.getElementById('corner'+i).getBoundingClientRect();
+			var x = cnr.left - box.left - hw;
+			var y = cnr.top  - box.top  - hh;
+			DST.push( x /  hw );
+			DST.push( y / -hh );
+		}
+		return DST;
+	}
+
+	function RectQuadCoefficient()
+	{
+		var co = {
+			a0 : DST[0],
+			a1 : (DST[2] - DST[0]),
+			a2 : (DST[4] - DST[0]),
+			a3 : (DST[6] - DST[4] - DST[2] + DST[0]),
+
+			b0 : DST[1],
+			b1 : (DST[3] - DST[1]),
+			b2 : (DST[5] - DST[1]),
+			b3 : (DST[7] - DST[5] - DST[3] + DST[1]),
+		};
+		return co;
+	}
+</script>
+
+@@<qdfn.js>@@
+@@<quad-click.js>@@

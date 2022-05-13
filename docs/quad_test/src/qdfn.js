@@ -45,20 +45,39 @@ var QDFN = QDFN || {};
 	}
 
 	$.tex2DById = function( GL, id ){
-		var p1 = new Promise(function(resolve,reject){
-			var img = document.getElementById(id);
-			img.onload = function(){
-				var tex = GL.createTexture();
-				GL.bindTexture  (GL.TEXTURE_2D, tex);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-				GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
-				resolve(tex);
+		var img = document.getElementById(id);
+		//img.onload = function(){}
+
+		var tex = GL.createTexture();
+		GL.bindTexture  (GL.TEXTURE_2D, tex);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
+		return tex;
+	}
+
+	$.shaderLoc = function(){
+		if ( arguments.length < 2 )
+			return;
+		var gl     = arguments[0];
+		var shader = arguments[1];
+		var loc    = {};
+		for ( var i=2; i < arguments.length; i++ )
+		{
+			var v = arguments[i];
+			switch ( v.charAt(0) )
+			{
+				case 'a':
+					loc[v] = gl.getAttribLocation(shader, v);
+					break;
+				case 'u':
+					loc[v] = gl.getUniformLocation(shader, v);
+					break;
 			}
-		});
-		return p1;
+		} // for ( var i=3; i < arguments.length; i++ )
+		return loc;
 	}
 
 	$.quad2vec3 = function( q ){
@@ -164,15 +183,17 @@ var QDFN = QDFN || {};
 		];
 
 		var Hinv = $.matrix_inv3(H);
-		var M    = $.matrix_multi33(h, Hinv);
-		var Minv = $.matrix_inv3(M);
-		return Minv;
+		return $.matrix_multi33(h, Hinv);
 	}
 
-	$.quadMat3 = function( src, dst ){
+	$.quadMat3 = function( src, dst, inv=true ){
 		var stri = $.quad2tri(src);
 		var dtri = $.quad2tri(dst);
-		return $.triMat3(stri, dtri);
+		var M    = $.triMat3(stri, dtri);
+		if ( inv )
+			return $.matrix_inv3(M);
+		else
+			return M;
 	}
 
 	$.isPointInLine = function( pt, v1, v2 ){
@@ -201,7 +222,7 @@ var QDFN = QDFN || {};
 		return crx;
 	}
 
-	$.triadArea = function( v0, v1, v2 )
+	$.triArea = function( v0, v1, v2 )
 	{
 		var r1 = v0[0] * (v1[1] - v2[1]); // ax * (by-cy)
 		var r2 = v1[0] * (v2[1] - v0[1]); // bx * (cy-ay)
@@ -212,132 +233,18 @@ var QDFN = QDFN || {};
 
 	$.quadArea = function( v0, v1, v2, v3 ){
 		// 0,1,2  0,2,3
-		var t1 = $.triadArea(v0, v1, v2);
-		var t2 = $.triadArea(v0, v2, v3);
+		var t1 = $.triArea(v0, v1, v2);
+		var t2 = $.triArea(v0, v2, v3);
 		return t1 + t2;
 	}
 
-/*
-	$.cross2D = function( v1, v2 ){
-		if ( v1.length < 3 )  v1.push(1);
-		if ( v2.length < 3 )  v2.push(1);
-		var crx = $.cross3D(v1, v2);
-		var z = crx.pop();
-		if ( z === 0 )
-			return -1;
-		crx[0] /= z;
-		crx[1] /= z;
-		return crx;
-	}
-
-	$.splitUV = function( v2 ){
-		if ( (v2.length % 2) !== 0 )
-			return -1;
-		var uv = new Array( v2.length / 2 );
-
-		var i = 0;
-		for ( var j=0; j < v2.length; j += 2 )
-		{
-			uv[i] = [ v2[j+0] , v2[j+1] ];
-			i++;
-		}
-		return uv;
-	}
-
-	$.splitXYZ = function( v3 ){
-		if ( (v3.length % 3) !== 0 )
-			return -1;
-		var xyz = new Array( v3.length / 3 );
-
-		var i = 0;
-		for ( var j=0; j < v3.length; j += 3 )
-		{
-			xyz[i] = [ v3[j+0] , v3[j+1] , v3[j+2] ];
-			i++;
-		}
-		return xyz;
-	}
-
-	$.joinUV = function(){
-		for ( var i=1; i < arguments.length; i++ )
-		{
-			arguments[0].push( arguments[i][0] );
-			arguments[0].push( arguments[i][1] );
-		}
+	$.v2AttrBuf = function( GL, loc, data ){
+		var buf = GL.createBuffer();
+		GL.bindBuffer(GL.ARRAY_BUFFER, buf);
+		GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
+		GL.enableVertexAttribArray(loc);
+		GL.vertexAttribPointer(loc, 2, GL.FLOAT, false, 0, 0);
 		return;
-	}
-
-	$.joinXYZ = function(){
-		for ( var i=1; i < arguments.length; i++ )
-		{
-			var z = arguments[i][2] || 1;
-			arguments[0].push( arguments[i][0] );
-			arguments[0].push( arguments[i][1] );
-			arguments[0].push( z );
-		}
-		return;
-	}
-
-	$.avgUV = function(){
-		var avg = [0,0];
-		for ( var i=0; i < arguments.length; i++ )
-		{
-			avg[0] += arguments[i][0];
-			avg[1] += arguments[i][1];
-		}
-		avg[0] /= arguments.length;
-		avg[1] /= arguments.length;
-		return avg;
-	}
-
-	$.avgXYZ = function(){
-		var avg = [0,0];
-		for ( var i=0; i < arguments.length; i++ )
-		{
-			var z = arguments[i][2] || 1;
-			avg[0] += arguments[i][0];
-			avg[1] += arguments[i][1];
-			avg[2] += z;
-		}
-		avg[0] /= arguments.length;
-		avg[1] /= arguments.length;
-		avg[2] /= arguments.length;
-		return avg;
-	}
-
-	$.distIntersect = function( v1a, v1b, v2a, v2b ){
-		var pt = $.pointIntersect(v1a, v1b, v2a, v2b);
-		if ( pt === -1 )
-			return -1;
-
-		// return distance
-		var d1 = [ v1a[0]-v1b[0] , v1a[1]-v1b[1] ];
-		var d2 = [ v2a[0]-v2b[0] , v2a[1]-v2b[1] ];
-		return [
-			[ Math.abs( (v1a[0]-x)/d1[0] ) , Math.abs( (v1a[1]-y)/d1[1] ) ],
-			[ Math.abs( (v1b[0]-x)/d1[0] ) , Math.abs( (v1b[1]-y)/d1[1] ) ],
-			[ Math.abs( (v2a[0]-x)/d2[0] ) , Math.abs( (v2a[1]-y)/d2[1] ) ],
-			[ Math.abs( (v2b[0]-x)/d2[0] ) , Math.abs( (v2b[1]-y)/d2[1] ) ],
-		];
-	}
-*/
-
-	$.matrix_multi13 = function( V, M ){
-		var VM = [
-			V[0]*M[0] + V[1]*M[3] + V[2]*M[6] ,
-			V[0]*M[1] + V[1]*M[4] + V[2]*M[7] ,
-			V[0]*M[2] + V[1]*M[5] + V[2]*M[8] ,
-		];
-		return VM;
-	}
-
-	$.matrix_multi31 = function( M, V ){
-		var MV = [
-			M[0]*V[0] + M[1]*V[1] + M[2]*V[2] ,
-			M[3]*V[0] + M[4]*V[1] + M[5]*V[2] ,
-			M[6]*V[0] + M[7]*V[1] + M[8]*V[2] ,
-		];
-		return MV;
 	}
 
 })(QDFN);

@@ -59,77 +59,48 @@ canvas {
 <div id='corner3' class='clickable'>D</div>
 
 <script>
+	'use strict';
+
 	var CANVAS = document.getElementById('canvas');
 	var IS_CLICK = true;
-</script>
+	var GL = CANVAS.getContext('webgl');
 
-<script id="click_js">'use strict';
+	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
+	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+	var RECT = { x:0 , y:0 , w:1 , h:1 };
 
-(function(){
-	function divLeftTop( div, left, top )
+	function getDstCorner()
 	{
-		div.style.left = (left|0) + 'px';
-		div.style.top  = (top |0) + 'px';
-		return;
+		var box = CANVAS.getBoundingClientRect();
+		var hw  = box.width  * 0.5;
+		var hh  = box.height * 0.5;
+		DST = [];
+		for ( var i=0; i < 4; i++ )
+		{
+			var cnr = document.getElementById('corner'+i).getBoundingClientRect();
+			var x = cnr.left - box.left - hw;
+			var y = cnr.top  - box.top  - hh;
+			DST.push( x /  hw );
+			DST.push( y / -hh );
+		}
+		return DST;
 	}
 
-	function xyRect( x, y, rect )
+	function RectQuadCoefficient()
 	{
-		if ( x < rect.left   )  return false;
-		if ( y < rect.top    )  return false;
-		if ( x > rect.right  )  return false;
-		if ( y > rect.bottom )  return false;
-		return true;
+		var co = {
+			a0 : DST[0],
+			a1 : (DST[2] - DST[0]),
+			a2 : (DST[4] - DST[0]),
+			a3 : (DST[6] - DST[4] - DST[2] + DST[0]),
+
+			b0 : DST[1],
+			b1 : (DST[3] - DST[1]),
+			b2 : (DST[5] - DST[1]),
+			b3 : (DST[7] - DST[5] - DST[3] + DST[1]),
+		};
+		return co;
 	}
-
-	function initCorners()
-	{
-		var rect = CANVAS.getBoundingClientRect();
-		var box;
-		//console.log(rect);
-
-		box = document.getElementById('corner0');
-		divLeftTop(box, rect.left, rect.top);
-
-		box = document.getElementById('corner1');
-		divLeftTop(box, rect.right, rect.top);
-
-		box = document.getElementById('corner2');
-		divLeftTop(box, rect.right, rect.bottom);
-
-		box = document.getElementById('corner3');
-		divLeftTop(box, rect.left, rect.bottom);
-		return;
-	};
-	initCorners();
-
-	var CORNER = undefined;
-	var CLICK  = document.getElementsByClassName('clickable');
-	window.addEventListener('click', function(e){
-		if ( CORNER === undefined )
-		{
-			for ( var i=0; i < CLICK.length; i++ )
-			{
-				var rect = CLICK[i].getBoundingClientRect();
-				if ( xyRect(e.pageX, e.pageY, rect) )
-				{
-					CORNER = CLICK[i];
-					CORNER.classList.add('activebox');
-					return;
-				}
-			}
-			return;
-		}
-		else
-		{
-			divLeftTop(CORNER, e.pageX, e.pageY);
-			CORNER.classList.remove('activebox');
-			CORNER = undefined;
-			IS_CLICK = true;
-			return;
-		}
-	});
-})();
 </script>
 
 <script id="qdfn_js">'use strict';
@@ -179,20 +150,39 @@ var QDFN = QDFN || {};
 	}
 
 	$.tex2DById = function( GL, id ){
-		var p1 = new Promise(function(resolve,reject){
-			var img = document.getElementById(id);
-			img.onload = function(){
-				var tex = GL.createTexture();
-				GL.bindTexture  (GL.TEXTURE_2D, tex);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-				GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
-				resolve(tex);
+		var img = document.getElementById(id);
+		//img.onload = function(){}
+
+		var tex = GL.createTexture();
+		GL.bindTexture  (GL.TEXTURE_2D, tex);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
+		return tex;
+	}
+
+	$.shaderLoc = function(){
+		if ( arguments.length < 2 )
+			return;
+		var gl     = arguments[0];
+		var shader = arguments[1];
+		var loc    = {};
+		for ( var i=2; i < arguments.length; i++ )
+		{
+			var v = arguments[i];
+			switch ( v.charAt(0) )
+			{
+				case 'a':
+					loc[v] = gl.getAttribLocation(shader, v);
+					break;
+				case 'u':
+					loc[v] = gl.getUniformLocation(shader, v);
+					break;
 			}
-		});
-		return p1;
+		} // for ( var i=3; i < arguments.length; i++ )
+		return loc;
 	}
 
 	$.quad2vec3 = function( q ){
@@ -298,15 +288,17 @@ var QDFN = QDFN || {};
 		];
 
 		var Hinv = $.matrix_inv3(H);
-		var M    = $.matrix_multi33(h, Hinv);
-		var Minv = $.matrix_inv3(M);
-		return Minv;
+		return $.matrix_multi33(h, Hinv);
 	}
 
-	$.quadMat3 = function( src, dst ){
+	$.quadMat3 = function( src, dst, inv=true ){
 		var stri = $.quad2tri(src);
 		var dtri = $.quad2tri(dst);
-		return $.triMat3(stri, dtri);
+		var M    = $.triMat3(stri, dtri);
+		if ( inv )
+			return $.matrix_inv3(M);
+		else
+			return M;
 	}
 
 	$.isPointInLine = function( pt, v1, v2 ){
@@ -335,7 +327,7 @@ var QDFN = QDFN || {};
 		return crx;
 	}
 
-	$.triadArea = function( v0, v1, v2 )
+	$.triArea = function( v0, v1, v2 )
 	{
 		var r1 = v0[0] * (v1[1] - v2[1]); // ax * (by-cy)
 		var r2 = v1[0] * (v2[1] - v0[1]); // bx * (cy-ay)
@@ -346,37 +338,94 @@ var QDFN = QDFN || {};
 
 	$.quadArea = function( v0, v1, v2, v3 ){
 		// 0,1,2  0,2,3
-		var t1 = $.triadArea(v0, v1, v2);
-		var t2 = $.triadArea(v0, v2, v3);
+		var t1 = $.triArea(v0, v1, v2);
+		var t2 = $.triArea(v0, v2, v3);
 		return t1 + t2;
 	}
 
-
-
-
-	$.matrix_multi13 = function( V, M ){
-		var VM = [
-			V[0]*M[0] + V[1]*M[3] + V[2]*M[6] ,
-			V[0]*M[1] + V[1]*M[4] + V[2]*M[7] ,
-			V[0]*M[2] + V[1]*M[5] + V[2]*M[8] ,
-		];
-		return VM;
-	}
-
-	$.matrix_multi31 = function( M, V ){
-		var MV = [
-			M[0]*V[0] + M[1]*V[1] + M[2]*V[2] ,
-			M[3]*V[0] + M[4]*V[1] + M[5]*V[2] ,
-			M[6]*V[0] + M[7]*V[1] + M[8]*V[2] ,
-		];
-		return MV;
+	$.v2AttrBuf = function( GL, loc, data ){
+		var buf = GL.createBuffer();
+		GL.bindBuffer(GL.ARRAY_BUFFER, buf);
+		GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
+		GL.enableVertexAttribArray(loc);
+		GL.vertexAttribPointer(loc, 2, GL.FLOAT, false, 0, 0);
+		return;
 	}
 
 })(QDFN);
 </script>
-<script id="webgl_affine_js">'use strict';
+<script id="quad_click_js">'use strict';
 
-var GL = CANVAS.getContext('webgl');
+(function(){
+	function divLeftTop( div, left, top )
+	{
+		div.style.left = (left|0) + 'px';
+		div.style.top  = (top |0) + 'px';
+		return;
+	}
+
+	function xyRect( x, y, rect )
+	{
+		if ( x < rect.left   )  return false;
+		if ( y < rect.top    )  return false;
+		if ( x > rect.right  )  return false;
+		if ( y > rect.bottom )  return false;
+		return true;
+	}
+
+	function initCorners()
+	{
+		var rect = CANVAS.getBoundingClientRect();
+		var box;
+		//console.log(rect);
+
+		box = document.getElementById('corner0');
+		divLeftTop(box, rect.left, rect.top);
+
+		box = document.getElementById('corner1');
+		divLeftTop(box, rect.right, rect.top);
+
+		box = document.getElementById('corner2');
+		divLeftTop(box, rect.right, rect.bottom);
+
+		box = document.getElementById('corner3');
+		divLeftTop(box, rect.left, rect.bottom);
+		return;
+	};
+	initCorners();
+
+	var CORNER = undefined;
+	var CLICK  = document.getElementsByClassName('clickable');
+	window.addEventListener('click', function(e){
+		if ( CORNER === undefined )
+		{
+			for ( var i=0; i < CLICK.length; i++ )
+			{
+				var rect = CLICK[i].getBoundingClientRect();
+				if ( xyRect(e.pageX, e.pageY, rect) )
+				{
+					CORNER = CLICK[i];
+					CORNER.classList.add('activebox');
+					return;
+				}
+			}
+			return;
+		}
+		else
+		{
+			divLeftTop(CORNER, e.pageX, e.pageY);
+			CORNER.classList.remove('activebox');
+			CORNER = undefined;
+			IS_CLICK = true;
+			return;
+		}
+	});
+})();
+</script>
+
+
+<script>
+'use strict';
 
 (function(){
 	if ( ! GL )  return;
@@ -384,9 +433,11 @@ var GL = CANVAS.getContext('webgl');
 	var vert_src = `
 		precision highp float;
 		precision highp int;
-		attribute vec2 a_xy;
-		attribute vec2 a_uv;
-		varying   vec2 v_uv;
+		attribute vec2  a_xy;
+		attribute vec2  a_uv;
+		uniform   vec2  u_half_xy;
+		uniform   vec2  u_size_uv;
+		varying   vec2  v_uv;
 
 		void main(void){
 			v_uv = a_uv;
@@ -397,144 +448,112 @@ var GL = CANVAS.getContext('webgl');
 	var frag_src = `
 		precision highp float;
 		precision highp int;
-		uniform sampler2D u_tex;
-		varying vec2      v_uv;
+		varying   vec2  v_uv;
+		uniform   sampler2D u_tex;
 
 		void main(void){
 			gl_FragColor = texture2D(u_tex, v_uv);
 		}
 	`;
 
-	function getDstCorner(){
-		var box = CANVAS.getBoundingClientRect();
-		var hw  = box.width  * 0.5;
-		var hh  = box.height * 0.5;
-		DST = [];
-		for ( var i=0; i < 4; i++ )
+	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
+	var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
+	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'a_uv', 'u_half_xy', 'u_size_uv', 'u_tex');
+
+	GL.uniform1i(LOC.u_tex, 0);
+	GL.activeTexture(GL.TEXTURE0);
+	GL.bindTexture(GL.TEXTURE_2D, TEX);
+
+	function getcx( v3 )
+	{
+		var intr = QDFN.pointIntersect(v3[0], v3[2], v3[1], v3[3]);
+		if ( intr !== -1 ) // is simple
+			return intr;
+		var intr = QDFN.pointIntersect(v3[0], v3[3], v3[1], v3[2]);
+		if ( intr !== -1 ) // is twisted left-right
+			return intr;
+		var intr = QDFN.pointIntersect(v3[0], v3[1], v3[3], v3[2]);
+		if ( intr !== -1 ) // is twisted top-bottom
+			return intr;
+
+		return -1;
+	}
+
+	function addBuffer()
+	{
+		for ( var i=1; i < arguments.length; i++ )
 		{
-			var cnr = document.getElementById('corner'+i).getBoundingClientRect();
-			var x = cnr.left - box.left - hw;
-			var y = cnr.top  - box.top  - hh;
-			DST.push( x /  hw );
-			DST.push( y / -hh );
+			arguments[0].push( arguments[i][0] );
+			arguments[0].push( arguments[i][1] );
 		}
 		return;
 	}
 
-	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
-	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
-	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
+	function quadDraw()
+	{
+		var sqd = QDFN.quad2vec3(SRC);
+		var dqd = QDFN.quad2vec3(DST);
+		var scx = getcx(sqd);
+		var dcx = getcx(dqd);
 
-	QDFN.tex2DById(GL, 'Mona_Lisa_png').then(function(TEX){
-		var u_tex = GL.getUniformLocation(SHADER, 'u_tex');
-		GL.uniform1i(u_tex, 0);
-		GL.activeTexture(GL.TEXTURE0);
-		GL.bindTexture(GL.TEXTURE_2D, TEX);
-
-		var a_xy = GL.getAttribLocation(SHADER, 'a_xy');
-		var a_uv = GL.getAttribLocation(SHADER, 'a_uv');
-
-		function getcx( v3 )
+		// for simple and twisted
+		if ( dcx !== -1 && scx !== -1 )
 		{
-			var intr = QDFN.pointIntersect(v3[0], v3[2], v3[1], v3[3]);
-			if ( intr !== -1 )
-				return intr;
-			var intr = QDFN.pointIntersect(v3[0], v3[3], v3[1], v3[2]);
-			if ( intr !== -1 )
-				return intr;
-			var intr = QDFN.pointIntersect(v3[0], v3[1], v3[3], v3[2]);
-			if ( intr !== -1 )
-				return intr;
-
-			return -1;
-		}
-
-		function addBuffer()
-		{
-			for ( var i=1; i < arguments.length; i++ )
-			{
-				arguments[0].push( arguments[i][0] );
-				arguments[0].push( arguments[i][1] );
-			}
-			return;
-		}
-
-		function xyBuf( loc, norm )
-		{
-			var buf = GL.createBuffer();
-			GL.bindBuffer(GL.ARRAY_BUFFER, buf);
-			GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(norm), GL.STATIC_DRAW);
-			GL.enableVertexAttribArray(loc);
-			GL.vertexAttribPointer(loc, 2, GL.FLOAT, false, 0, 0);
-			//console.log(norm);
-			return;
-		}
-
-		function quadDraw()
-		{
-			var sqd = QDFN.quad2vec3(SRC);
-			var dqd = QDFN.quad2vec3(DST);
-			var scx = getcx(sqd);
-			var dcx = getcx(dqd);
-
-			if ( dcx !== -1 && scx !== -1 )
-			{
-				var uv = [];
-				addBuffer(uv, scx, sqd[0], sqd[1]);
-				addBuffer(uv, scx, sqd[1], sqd[2]);
-				addBuffer(uv, scx, sqd[2], sqd[3]);
-				addBuffer(uv, scx, sqd[3], sqd[0]);
-				xyBuf(a_uv, uv);
-
-				var xy = [];
-				addBuffer(xy, dcx, dqd[0], dqd[1]);
-				addBuffer(xy, dcx, dqd[1], dqd[2]);
-				addBuffer(xy, dcx, dqd[2], dqd[3]);
-				addBuffer(xy, dcx, dqd[3], dqd[0]);
-				xyBuf(a_xy, xy);
-
-				GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-				GL.drawArrays(GL.TRIANGLES, 0, 12);
-				return;
-			}
-
-			var area1 = QDFN.quadArea(dqd[0], dqd[1], dqd[2], dqd[3]);
-			var area2 = QDFN.quadArea(dqd[1], dqd[2], dqd[3], dqd[0]);
 			var uv = [];
-			var xy = [];
+			addBuffer(uv, scx, sqd[0], sqd[1]);
+			addBuffer(uv, scx, sqd[1], sqd[2]);
+			addBuffer(uv, scx, sqd[2], sqd[3]);
+			addBuffer(uv, scx, sqd[3], sqd[0]);
+			QDFN.v2AttrBuf(GL, LOC.a_uv, uv);
 
-			if ( area1 < area2 )
-			{
-				addBuffer(uv, sqd[0], sqd[1], sqd[2]);
-				addBuffer(uv, sqd[0], sqd[2], sqd[3]);
-				addBuffer(xy, dqd[0], dqd[1], dqd[2]);
-				addBuffer(xy, dqd[0], dqd[2], dqd[3]);
-			}
-			else
-			{
-				addBuffer(uv, sqd[1], sqd[2], sqd[3]);
-				addBuffer(uv, sqd[1], sqd[3], sqd[0]);
-				addBuffer(xy, dqd[1], dqd[2], dqd[3]);
-				addBuffer(xy, dqd[1], dqd[3], dqd[0]);
-			}
-			xyBuf(a_uv, uv);
-			xyBuf(a_xy, xy);
+			var xy = [];
+			addBuffer(xy, dcx, dqd[0], dqd[1]);
+			addBuffer(xy, dcx, dqd[1], dqd[2]);
+			addBuffer(xy, dcx, dqd[2], dqd[3]);
+			addBuffer(xy, dcx, dqd[3], dqd[0]);
+			QDFN.v2AttrBuf(GL, LOC.a_xy, xy);
 
 			GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-			GL.drawArrays(GL.TRIANGLES, 0, 6);
-		} // quadDraw()
+			GL.drawArrays(GL.TRIANGLES, 0, 12);
+			return;
+		}
 
-		setInterval(function(){
-			if ( ! IS_CLICK )
-				return;
-			getDstCorner();
-			quadDraw()
-			IS_CLICK = false;
-			//console.log(DST, SRC);
-		}, 100);
-	});
+		// bended
+		var area1 = QDFN.quadArea(dqd[0], dqd[1], dqd[2], dqd[3]);
+		var area2 = QDFN.quadArea(dqd[1], dqd[2], dqd[3], dqd[0]);
+		var uv = [];
+		var xy = [];
+
+		if ( area1 < area2 )
+		{
+			addBuffer(uv, sqd[0], sqd[1], sqd[2]);
+			addBuffer(uv, sqd[0], sqd[2], sqd[3]);
+			addBuffer(xy, dqd[0], dqd[1], dqd[2]);
+			addBuffer(xy, dqd[0], dqd[2], dqd[3]);
+		}
+		else
+		{
+			addBuffer(uv, sqd[1], sqd[2], sqd[3]);
+			addBuffer(uv, sqd[1], sqd[3], sqd[0]);
+			addBuffer(xy, dqd[1], dqd[2], dqd[3]);
+			addBuffer(xy, dqd[1], dqd[3], dqd[0]);
+		}
+		QDFN.v2AttrBuf(GL, LOC.a_uv, uv);
+		QDFN.v2AttrBuf(GL, LOC.a_xy, xy);
+
+		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
+		GL.drawArrays(GL.TRIANGLES, 0, 6);
+	} // quadDraw()
+
+	setInterval(function(){
+		if ( ! IS_CLICK )
+			return;
+		getDstCorner();
+		quadDraw()
+		IS_CLICK = false;
+		//console.log(DST, SRC);
+	}, 100);
 })();
 </script>
 
 </body></html>
-

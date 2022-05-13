@@ -3,7 +3,7 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Perspective Transformation Test</title>
+<title>Quad Perspective Corrected Test (DST * Minv)</title>
 <style id="quad_css">
 body {
 	position         : relative;
@@ -59,77 +59,48 @@ canvas {
 <div id='corner3' class='clickable'>D</div>
 
 <script>
+	'use strict';
+
 	var CANVAS = document.getElementById('canvas');
 	var IS_CLICK = true;
-</script>
+	var GL = CANVAS.getContext('webgl');
 
-<script id="click_js">'use strict';
+	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
+	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+	var RECT = { x:0 , y:0 , w:1 , h:1 };
 
-(function(){
-	function divLeftTop( div, left, top )
+	function getDstCorner()
 	{
-		div.style.left = (left|0) + 'px';
-		div.style.top  = (top |0) + 'px';
-		return;
+		var box = CANVAS.getBoundingClientRect();
+		var hw  = box.width  * 0.5;
+		var hh  = box.height * 0.5;
+		DST = [];
+		for ( var i=0; i < 4; i++ )
+		{
+			var cnr = document.getElementById('corner'+i).getBoundingClientRect();
+			var x = cnr.left - box.left - hw;
+			var y = cnr.top  - box.top  - hh;
+			DST.push( x /  hw );
+			DST.push( y / -hh );
+		}
+		return DST;
 	}
 
-	function xyRect( x, y, rect )
+	function RectQuadCoefficient()
 	{
-		if ( x < rect.left   )  return false;
-		if ( y < rect.top    )  return false;
-		if ( x > rect.right  )  return false;
-		if ( y > rect.bottom )  return false;
-		return true;
+		var co = {
+			a0 : DST[0],
+			a1 : (DST[2] - DST[0]),
+			a2 : (DST[4] - DST[0]),
+			a3 : (DST[6] - DST[4] - DST[2] + DST[0]),
+
+			b0 : DST[1],
+			b1 : (DST[3] - DST[1]),
+			b2 : (DST[5] - DST[1]),
+			b3 : (DST[7] - DST[5] - DST[3] + DST[1]),
+		};
+		return co;
 	}
-
-	function initCorners()
-	{
-		var rect = CANVAS.getBoundingClientRect();
-		var box;
-		//console.log(rect);
-
-		box = document.getElementById('corner0');
-		divLeftTop(box, rect.left, rect.top);
-
-		box = document.getElementById('corner1');
-		divLeftTop(box, rect.right, rect.top);
-
-		box = document.getElementById('corner2');
-		divLeftTop(box, rect.right, rect.bottom);
-
-		box = document.getElementById('corner3');
-		divLeftTop(box, rect.left, rect.bottom);
-		return;
-	};
-	initCorners();
-
-	var CORNER = undefined;
-	var CLICK  = document.getElementsByClassName('clickable');
-	window.addEventListener('click', function(e){
-		if ( CORNER === undefined )
-		{
-			for ( var i=0; i < CLICK.length; i++ )
-			{
-				var rect = CLICK[i].getBoundingClientRect();
-				if ( xyRect(e.pageX, e.pageY, rect) )
-				{
-					CORNER = CLICK[i];
-					CORNER.classList.add('activebox');
-					return;
-				}
-			}
-			return;
-		}
-		else
-		{
-			divLeftTop(CORNER, e.pageX, e.pageY);
-			CORNER.classList.remove('activebox');
-			CORNER = undefined;
-			IS_CLICK = true;
-			return;
-		}
-	});
-})();
 </script>
 
 <script id="qdfn_js">'use strict';
@@ -179,20 +150,39 @@ var QDFN = QDFN || {};
 	}
 
 	$.tex2DById = function( GL, id ){
-		var p1 = new Promise(function(resolve,reject){
-			var img = document.getElementById(id);
-			img.onload = function(){
-				var tex = GL.createTexture();
-				GL.bindTexture  (GL.TEXTURE_2D, tex);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
-				GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-				GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
-				resolve(tex);
+		var img = document.getElementById(id);
+		//img.onload = function(){}
+
+		var tex = GL.createTexture();
+		GL.bindTexture  (GL.TEXTURE_2D, tex);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T    , GL.CLAMP_TO_EDGE);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		GL.texImage2D   (GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, img);
+		return tex;
+	}
+
+	$.shaderLoc = function(){
+		if ( arguments.length < 2 )
+			return;
+		var gl     = arguments[0];
+		var shader = arguments[1];
+		var loc    = {};
+		for ( var i=2; i < arguments.length; i++ )
+		{
+			var v = arguments[i];
+			switch ( v.charAt(0) )
+			{
+				case 'a':
+					loc[v] = gl.getAttribLocation(shader, v);
+					break;
+				case 'u':
+					loc[v] = gl.getUniformLocation(shader, v);
+					break;
 			}
-		});
-		return p1;
+		} // for ( var i=3; i < arguments.length; i++ )
+		return loc;
 	}
 
 	$.quad2vec3 = function( q ){
@@ -298,15 +288,17 @@ var QDFN = QDFN || {};
 		];
 
 		var Hinv = $.matrix_inv3(H);
-		var M    = $.matrix_multi33(h, Hinv);
-		var Minv = $.matrix_inv3(M);
-		return Minv;
+		return $.matrix_multi33(h, Hinv);
 	}
 
-	$.quadMat3 = function( src, dst ){
+	$.quadMat3 = function( src, dst, inv=true ){
 		var stri = $.quad2tri(src);
 		var dtri = $.quad2tri(dst);
-		return $.triMat3(stri, dtri);
+		var M    = $.triMat3(stri, dtri);
+		if ( inv )
+			return $.matrix_inv3(M);
+		else
+			return M;
 	}
 
 	$.isPointInLine = function( pt, v1, v2 ){
@@ -335,7 +327,7 @@ var QDFN = QDFN || {};
 		return crx;
 	}
 
-	$.triadArea = function( v0, v1, v2 )
+	$.triArea = function( v0, v1, v2 )
 	{
 		var r1 = v0[0] * (v1[1] - v2[1]); // ax * (by-cy)
 		var r2 = v1[0] * (v2[1] - v0[1]); // bx * (cy-ay)
@@ -346,37 +338,94 @@ var QDFN = QDFN || {};
 
 	$.quadArea = function( v0, v1, v2, v3 ){
 		// 0,1,2  0,2,3
-		var t1 = $.triadArea(v0, v1, v2);
-		var t2 = $.triadArea(v0, v2, v3);
+		var t1 = $.triArea(v0, v1, v2);
+		var t2 = $.triArea(v0, v2, v3);
 		return t1 + t2;
 	}
 
-
-
-
-	$.matrix_multi13 = function( V, M ){
-		var VM = [
-			V[0]*M[0] + V[1]*M[3] + V[2]*M[6] ,
-			V[0]*M[1] + V[1]*M[4] + V[2]*M[7] ,
-			V[0]*M[2] + V[1]*M[5] + V[2]*M[8] ,
-		];
-		return VM;
-	}
-
-	$.matrix_multi31 = function( M, V ){
-		var MV = [
-			M[0]*V[0] + M[1]*V[1] + M[2]*V[2] ,
-			M[3]*V[0] + M[4]*V[1] + M[5]*V[2] ,
-			M[6]*V[0] + M[7]*V[1] + M[8]*V[2] ,
-		];
-		return MV;
+	$.v2AttrBuf = function( GL, loc, data ){
+		var buf = GL.createBuffer();
+		GL.bindBuffer(GL.ARRAY_BUFFER, buf);
+		GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
+		GL.enableVertexAttribArray(loc);
+		GL.vertexAttribPointer(loc, 2, GL.FLOAT, false, 0, 0);
+		return;
 	}
 
 })(QDFN);
 </script>
-<script id="webgl_perspective_js">'use strict';
+<script id="quad_click_js">'use strict';
 
-var GL = CANVAS.getContext('webgl');
+(function(){
+	function divLeftTop( div, left, top )
+	{
+		div.style.left = (left|0) + 'px';
+		div.style.top  = (top |0) + 'px';
+		return;
+	}
+
+	function xyRect( x, y, rect )
+	{
+		if ( x < rect.left   )  return false;
+		if ( y < rect.top    )  return false;
+		if ( x > rect.right  )  return false;
+		if ( y > rect.bottom )  return false;
+		return true;
+	}
+
+	function initCorners()
+	{
+		var rect = CANVAS.getBoundingClientRect();
+		var box;
+		//console.log(rect);
+
+		box = document.getElementById('corner0');
+		divLeftTop(box, rect.left, rect.top);
+
+		box = document.getElementById('corner1');
+		divLeftTop(box, rect.right, rect.top);
+
+		box = document.getElementById('corner2');
+		divLeftTop(box, rect.right, rect.bottom);
+
+		box = document.getElementById('corner3');
+		divLeftTop(box, rect.left, rect.bottom);
+		return;
+	};
+	initCorners();
+
+	var CORNER = undefined;
+	var CLICK  = document.getElementsByClassName('clickable');
+	window.addEventListener('click', function(e){
+		if ( CORNER === undefined )
+		{
+			for ( var i=0; i < CLICK.length; i++ )
+			{
+				var rect = CLICK[i].getBoundingClientRect();
+				if ( xyRect(e.pageX, e.pageY, rect) )
+				{
+					CORNER = CLICK[i];
+					CORNER.classList.add('activebox');
+					return;
+				}
+			}
+			return;
+		}
+		else
+		{
+			divLeftTop(CORNER, e.pageX, e.pageY);
+			CORNER.classList.remove('activebox');
+			CORNER = undefined;
+			IS_CLICK = true;
+			return;
+		}
+	});
+})();
+</script>
+
+
+<script>
+'use strict';
 
 (function(){
 	if ( ! GL )  return;
@@ -384,8 +433,10 @@ var GL = CANVAS.getContext('webgl');
 	var vert_src = `
 		precision highp float;
 		precision highp int;
-		attribute vec2 a_xy;
-		varying   vec2 v_xy;
+		attribute vec2  a_xy;
+		uniform   vec2  u_half_xy;
+		uniform   vec2  u_size_uv;
+		varying   vec2  v_xy;
 
 		void main(void){
 			v_xy = a_xy;
@@ -396,124 +447,91 @@ var GL = CANVAS.getContext('webgl');
 	var frag_src = `
 		precision highp float;
 		precision highp int;
-		uniform sampler2D u_tex;
-		uniform mat3      u_mat3;
-		varying vec2      v_xy;
+		uniform   mat3  u_mat3;
+		varying   vec2  v_xy;
+		uniform   sampler2D u_tex;
 
 		void main(void){
 			vec3 v3 = vec3(v_xy.x, v_xy.y, 1.0) * u_mat3;
-			v3.x = v3.x / v3.z;
-			v3.y = v3.y / v3.z;
+
+			v3.xyz /= v3.z;
 			gl_FragColor = texture2D(u_tex, v3.xy);
 		}
 	`;
 
-	function getDstCorner(){
-		var box = CANVAS.getBoundingClientRect();
-		var hw  = box.width  * 0.5;
-		var hh  = box.height * 0.5;
-		DST = [];
-		for ( var i=0; i < 4; i++ )
-		{
-			var cnr = document.getElementById('corner'+i).getBoundingClientRect();
-			var x = cnr.left - box.left - hw;
-			var y = cnr.top  - box.top  - hh;
-			DST.push( x /  hw );
-			DST.push( y / -hh );
-		}
-		return;
+	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
+	var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
+	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'u_half_xy', 'u_size_uv', 'u_mat3', 'u_tex');
+
+	GL.uniform1i(LOC.u_tex, 0);
+	GL.activeTexture(GL.TEXTURE0);
+	GL.bindTexture(GL.TEXTURE_2D, TEX);
+
+	function xyBuffer( dst )
+	{
+		// normal rect
+		// 0-1
+		// | |
+		// 3-2
+		var intr = QDFN.pointIntersect(dst[0], dst[2], dst[1], dst[3]);
+		if ( intr !== -1 )
+			return [ dst[0],dst[1],dst[2] , dst[0],dst[2],dst[3] ];
+
+		// twisted top-bottom
+		//  0-1
+		//   X
+		//  2-3
+		var intr = QDFN.pointIntersect(dst[0], dst[3], dst[1], dst[2]);
+		if ( intr !== -1 )
+			return [ intr,dst[0],dst[1] , intr,dst[3],dst[2] ];
+
+		// twisted left-right
+		//  0 2
+		//  |X|
+		//  3 1
+		var intr = QDFN.pointIntersect(dst[0], dst[1], dst[3], dst[2]);
+		if ( intr !== -1 )
+			return [ intr,dst[0],dst[3] , intr,dst[1],dst[2] ];
+
+		// bended
+		var area1 = QDFN.quadArea(dst[0], dst[1], dst[2], dst[3]);
+		var area2 = QDFN.quadArea(dst[1], dst[2], dst[3], dst[0]);
+		// 0,1,2  0,2,3
+		if ( area1 < area2 )
+			return [ dst[0],dst[1],dst[2] , dst[0],dst[2],dst[3] ];
+		// 1,2,3  1,3,0
+		else
+			return [ dst[1],dst[2],dst[3] , dst[1],dst[3],dst[0] ];
 	}
 
-	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
-	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
-	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
+	function quadDraw()
+	{
+		var svec = QDFN.quad2vec3(SRC);
+		var dvec = QDFN.quad2vec3(DST);
 
-	QDFN.tex2DById(GL, 'Mona_Lisa_png').then(function(TEX){
-		var u_tex = GL.getUniformLocation(SHADER, 'u_tex');
-		GL.uniform1i(u_tex, 0);
-		GL.activeTexture(GL.TEXTURE0);
-		GL.bindTexture(GL.TEXTURE_2D, TEX);
+		var mat3 = QDFN.quadMat3(svec, dvec, true);
+		GL.uniformMatrix3fv(LOC.u_mat3, false, mat3);
 
-		var u_mat3 = GL.getUniformLocation(SHADER, 'u_mat3');
-		var a_xy   = GL.getAttribLocation (SHADER, 'a_xy');
+		var xy = xyBuffer(dvec);
+		var t = [
+			xy[0][0],xy[0][1] , xy[1][0],xy[1][1] , xy[2][0],xy[2][1] ,
+			xy[3][0],xy[3][1] , xy[4][0],xy[4][1] , xy[5][0],xy[5][1] ,
+		];
+		QDFN.v2AttrBuf(GL, LOC.a_xy, t);
 
-		function xyBuffer( dst )
-		{
-			var cnt = [
-				(dst[0][0] + dst[1][0] + dst[2][0] + dst[3][0]) * 0.25,
-				(dst[0][1] + dst[1][1] + dst[2][1] + dst[3][1]) * 0.25,
-				1
-			];
-			// normal rect
-			// 0-1
-			// | |
-			// 3-2
-			var intr = QDFN.pointIntersect(dst[0], dst[2], dst[1], dst[3]);
-			if ( intr !== -1 )
-				return [ dst[0],dst[1],dst[2] , dst[0],dst[2],dst[3] ];
+		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
+		GL.drawArrays(GL.TRIANGLES, 0, 6);
+	} // quadDraw()
 
-			// twisted top-bottom
-			//  0-1
-			//   X
-			//  2-3
-			var intr = QDFN.pointIntersect(dst[0], dst[3], dst[1], dst[2]);
-			if ( intr !== -1 )
-				return [ intr,dst[0],dst[1] , intr,dst[3],dst[2] ];
-
-			// twisted left-right
-			//  0 2
-			//  |X|
-			//  3 1
-			var intr = QDFN.pointIntersect(dst[0], dst[1], dst[3], dst[2]);
-			if ( intr !== -1 )
-				return [ intr,dst[0],dst[3] , intr,dst[1],dst[2] ];
-
-			// folded back
-			var area1 = QDFN.quadArea(dst[0], dst[1], dst[2], dst[3]);
-			var area2 = QDFN.quadArea(dst[1], dst[2], dst[3], dst[0]);
-			// 0,1,2  0,2,3
-			if ( area1 < area2 )
-				return [ dst[0],dst[1],dst[2] , dst[0],dst[2],dst[3] ];
-			// 1,2,3  1,3,0
-			else
-				return [ dst[1],dst[2],dst[3] , dst[1],dst[3],dst[0] ];
-		}
-
-		function quadDraw()
-		{
-			var svec = QDFN.quad2vec3(SRC);
-			var dvec = QDFN.quad2vec3(DST);
-
-			var mat3 = QDFN.quadMat3(svec, dvec);
-			GL.uniformMatrix3fv(u_mat3, false, mat3);
-
-			var xy = xyBuffer(dvec);
-			var t = [
-				xy[0][0],xy[0][1] , xy[1][0],xy[1][1] , xy[2][0],xy[2][1] ,
-				xy[3][0],xy[3][1] , xy[4][0],xy[4][1] , xy[5][0],xy[5][1] ,
-			];
-
-			var buf = GL.createBuffer();
-			GL.bindBuffer(GL.ARRAY_BUFFER, buf);
-			GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(t), GL.STATIC_DRAW);
-			GL.enableVertexAttribArray(a_xy);
-			GL.vertexAttribPointer(a_xy, 2, GL.FLOAT, false, 0, 0);
-
-			GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-			GL.drawArrays(GL.TRIANGLES, 0, 6);
-		} // quadDraw()
-
-		setInterval(function(){
-			if ( ! IS_CLICK )
-				return;
-			getDstCorner();
-			quadDraw()
-			IS_CLICK = false;
-			//console.log(DST, SRC);
-		}, 100);
-	});
+	setInterval(function(){
+		if ( ! IS_CLICK )
+			return;
+		getDstCorner();
+		quadDraw()
+		IS_CLICK = false;
+		//console.log(DST, SRC);
+	}, 100);
 })();
 </script>
 
 </body></html>
-

@@ -8,23 +8,58 @@
 
 </head><body>
 
-@@<Mona_Lisa.png>@@
-<canvas id='canvas'>Canvas not supported</canvas>
-
-<div id='corner0' class='clickable'>A</div>
-<div id='corner1' class='clickable'>B</div>
-<div id='corner2' class='clickable'>C</div>
-<div id='corner3' class='clickable'>D</div>
+@@<quad-canvas.html>@@
 
 <script>
-	var CANVAS = document.getElementById('canvas');
-	var IS_CLICK = true;
+'use strict';
+
+(function(){
+	if ( ! GL )  return;
+
+	var vert_src = `
+		precision highp float;
+		precision highp int;
+		attribute vec2  a_xy;
+		uniform   vec2  u_half_xy;
+
+		void main(void){
+			gl_Position = vec4(a_xy.x, a_xy.y, 1.0, 1.0);
+		}
+	`;
+
+	var frag_src = `
+		precision highp float;
+		precision highp int;
+		uniform   vec4  u_color;
+
+		void main(void){
+			gl_FragColor = u_color;
+		}
+	`;
+
+	var COLOR = [0.0 , 1.0 , 0.0 , 1.0];
+	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
+	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'u_half_xy', 'u_color');
+
+	function quadDraw()
+	{
+		GL.uniform4fv(LOC.u_color, COLOR);
+
+		QDFN.v2AttrBuf(GL, LOC.a_xy, DST);
+
+		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
+		GL.drawArrays(GL.LINE_LOOP, 0, 4);
+	} // quadDraw()
+
+	setInterval(function(){
+		if ( ! IS_CLICK )
+			return;
+		getDstCorner();
+		quadDraw()
+		IS_CLICK = false;
+		//console.log(DST, SRC);
+	}, 100);
+})();
 </script>
 
-@@<click.js>@@
-
-@@<qdfn.js>@@
-@@<webgl-line.js>@@
-
 </body></html>
-

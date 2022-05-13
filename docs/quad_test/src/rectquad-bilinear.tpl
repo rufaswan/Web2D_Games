@@ -3,7 +3,7 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Affine Transformation Test</title>
+<title>Rect-Quad Bilinear Transformation Test</title>
 @@<quad.css>@@
 
 </head><body>
@@ -19,15 +19,21 @@
 	var vert_src = `
 		precision highp float;
 		precision highp int;
-		attribute vec2  a_xy;
 		attribute vec2  a_uv;
+		uniform   float u_cof[8];
 		uniform   vec2  u_half_xy;
 		uniform   vec2  u_size_uv;
 		varying   vec2  v_uv;
 
 		void main(void){
 			v_uv = a_uv;
-			gl_Position = vec4(a_xy.x, a_xy.y, 1.0, 1.0);
+			vec4 xy = vec4(
+				u_cof[0] + u_cof[1]*a_uv[0] + u_cof[2]*a_uv[1] + u_cof[3]*a_uv[0]*a_uv[1],
+				u_cof[4] + u_cof[5]*a_uv[0] + u_cof[6]*a_uv[1] + u_cof[7]*a_uv[0]*a_uv[1],
+				1.0,
+				1.0
+			);
+			gl_Position = xy;
 		}
 	`;
 
@@ -42,13 +48,12 @@
 		}
 	`;
 
+	// X = a0 + a1U + a2V + a3UV
+	// Y = b0 + b1U + b2V + b3UV
+
 	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
 	var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
-	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'a_uv', 'u_half_xy', 'u_size_uv', 'u_tex');
-
-	GL.uniform1i(LOC.u_tex, 0);
-	GL.activeTexture(GL.TEXTURE0);
-	GL.bindTexture(GL.TEXTURE_2D, TEX);
+	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_uv', 'u_cof', 'u_half_xy', 'u_size_uv', 'u_tex');
 
 	function getcx( v3 )
 	{
@@ -77,6 +82,9 @@
 
 	function quadDraw()
 	{
+		var co = RectQuadCoefficient();
+		GL.uniform1f(LOC.u_cof, co);
+
 		var sqd = QDFN.quad2vec3(SRC);
 		var dqd = QDFN.quad2vec3(DST);
 		var scx = getcx(sqd);
@@ -92,13 +100,6 @@
 			addBuffer(uv, scx, sqd[3], sqd[0]);
 			QDFN.v2AttrBuf(GL, LOC.a_uv, uv);
 
-			var xy = [];
-			addBuffer(xy, dcx, dqd[0], dqd[1]);
-			addBuffer(xy, dcx, dqd[1], dqd[2]);
-			addBuffer(xy, dcx, dqd[2], dqd[3]);
-			addBuffer(xy, dcx, dqd[3], dqd[0]);
-			QDFN.v2AttrBuf(GL, LOC.a_xy, xy);
-
 			GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
 			GL.drawArrays(GL.TRIANGLES, 0, 12);
 			return;
@@ -108,28 +109,22 @@
 		var area1 = QDFN.quadArea(dqd[0], dqd[1], dqd[2], dqd[3]);
 		var area2 = QDFN.quadArea(dqd[1], dqd[2], dqd[3], dqd[0]);
 		var uv = [];
-		var xy = [];
 
 		if ( area1 < area2 )
 		{
 			addBuffer(uv, sqd[0], sqd[1], sqd[2]);
 			addBuffer(uv, sqd[0], sqd[2], sqd[3]);
-			addBuffer(xy, dqd[0], dqd[1], dqd[2]);
-			addBuffer(xy, dqd[0], dqd[2], dqd[3]);
 		}
 		else
 		{
 			addBuffer(uv, sqd[1], sqd[2], sqd[3]);
 			addBuffer(uv, sqd[1], sqd[3], sqd[0]);
-			addBuffer(xy, dqd[1], dqd[2], dqd[3]);
-			addBuffer(xy, dqd[1], dqd[3], dqd[0]);
 		}
 		QDFN.v2AttrBuf(GL, LOC.a_uv, uv);
-		QDFN.v2AttrBuf(GL, LOC.a_xy, xy);
 
 		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
 		GL.drawArrays(GL.TRIANGLES, 0, 6);
-	} // quadDraw()
+	}
 
 	setInterval(function(){
 		if ( ! IS_CLICK )

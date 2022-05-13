@@ -53,8 +53,12 @@
   * Dev Test
     * http://rufaswan.github.io/Web2D_Games/mobile_test/mobile.tpl.html
     * http://rufaswan.github.io/Web2D_Games/mobile_test/screen.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/fps-setdraw.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/fps-reqdraw.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/fps-gldraw.tpl.html
     * http://rufaswan.github.io/Web2D_Games/quad_test/quad-line.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective-uv.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective-xy.tpl.html
     * http://rufaswan.github.io/Web2D_Games/quad_test/quad-affine.tpl.html
 
 ## Game Status
