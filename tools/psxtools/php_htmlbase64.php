@@ -170,7 +170,7 @@ function html64( $fname )
 						$mime = 'text/html';
 						break;
 					case 'js':
-						$mime = 'application/javascrip';
+						$mime = 'application/javascript';
 						break;
 					case 'css':
 						$mime = 'text/css';

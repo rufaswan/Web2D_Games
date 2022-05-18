@@ -1,0 +1,185 @@
+=====================
+== Crash Bandicoot ==
+=====================
+1 N. Sanity Beach
+2 Jungle Rollers
+	NEED gem Green
+3 The Great Gate
+	NEED gem Yellow
+4 Boulders
+5 Upstream
+	NEED gem Orange
+6 Papu Papu
+	BOSS
+7 Rolling Stones
+	NEED gem Blue
+8 Hog Wild
+9 Native Fortress
+	NEED gem Red
+
+10 Up the Creek
+11 Ripper Roo
+	BOSS
+12 The Lost City
+	GEM Green
+13 Temple Ruins
+14 Road to Nowhere
+	NEED gem Red
+15 Boulder Dash
+	NEED gem Purple
+16 Sunset Vista
+	KEY -> e1
+17 Koala Kong
+	BOSS
+
+18 Heavy Machinery
+19 Cortex Power
+	NEED gem Blue
+20 Generator Room
+	GEM Orange
+21 Toxic Waste
+	GEM Blue
+22 Pinstripe Potoroo
+	BOSS
+23 The High Road
+24 Slippery Climb
+	GEM Red
+25 Lights Out
+	NEED gem Yellow
+	GEM Purple
+26 Jaws of Darkness
+	NEED gem Blue
+	KEY -> e2
+27 Castle Machinery
+	NEED gem Green
+28 Dr. Nitrus Brio
+	BOSS
+29 The Lab
+	GEM Yellow
+30 The Great Hall
+	NEED gem *all*
+31 Dr. Neo Cortex
+	BOSS
+
+SECRET
+	e1 Whole Hog
+		[16->]
+	e2 Fumbling in the Dark
+		[26->]
+
+==========================================
+== Crash Bandicoot 2 Cortex Strike Back ==
+==========================================
+1 Turtle Woods
+	GEM Blue
+2 Snow Go
+	[7->] GEM Red
+3 Hang Eight
+	NEED gem Blue
+4 The Pits
+5 Crash Dash
+
+6 Snow Biz
+	NEED gem Red
+7 Air Crash
+	-> 2
+	[13->]
+8 Bear It
+9 Crash Crush
+10 The Eel Deal
+	GEM Green
+
+11 Plant Food
+	GEM Yellow
+12 Sewer or Later
+	NEED gem Yellow
+13 Bear Down
+	-> 7
+14 Road to Ruin
+	[17->]
+15 Un-Bearable
+	-> 26
+
+16 Hangin' Out
+	-> 27
+17 Diggin' It
+	-> 14
+18 Cold Hard Crash
+19 Ruination
+	NEED gem Green
+20 Bee-Having
+	GEM Purple
+
+21 Piston It Away
+22 Rock It
+23 Night Fight
+24 Pack Attack
+25 Spaced Out
+	NEED gem Blue Red Green Yellow Purple
+
+SECRET
+	26 Totally Bear
+		[15->]
+	27 Totally Fly
+		[16->]
+
+==============================
+== Crash Bandicoot 3 Wraped ==
+==============================
+1 Toad Village
+2 Under Pressure
+3 Orient Express
+4 Bone Yard
+	NEED gem Red/SKULL
+5 Makin' Waves
+
+6 Gee Wiz
+7 Hang'em High
+	[27->] GEM Yellow/SKULL
+8 Hog Ride
+9 Tomb Time
+	NEED gem Purple/BONUS
+10 Midnight Run
+
+11 Dino Might!
+	NEED gem Yellow/BONUS
+	^ -> 32
+12 Deep Trouble
+	GEM Red
+13 High Time
+	GEM Purple
+14 Road Crash
+	-> 31
+15 Double Header
+
+16 Sphynxinator
+	NEED gem Blue/SKULL
+17 Bye Bye Blimps
+18 Tell No Tales
+19 Future Frenzy
+	[29->] /BONUS
+20 Tomb Wader
+	GEM Blue
+
+21 Gone Tomorrow
+	NEED gem Green/BONUS
+22 Orange Asphalt
+23 Flaming Passion
+	GEM Green
+24 Mad Bombers
+25 Bug Lite
+	NEED gem Yellow Red Purple Blue Green/SKULL
+
+SECRET
+	26 Ski Crazed
+	27 Hang'em High
+		-> 7
+	28 Area 51?
+	29 Future Frenzy
+		-> 19
+	30 Rings of Power
+
+	31 Hot Coco
+		[14->]
+	32 Eggipus Rex
+		[11 yellow gem path->]

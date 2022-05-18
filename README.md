@@ -60,6 +60,9 @@
     * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective-uv.tpl.html
     * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective-xy.tpl.html
     * http://rufaswan.github.io/Web2D_Games/quad_test/quad-affine.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/rectpx-bilinear-uv.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/rectpx-bilinear-xy.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/quad_test/rectpx-perspective.tpl.html
 
 ## Game Status
 

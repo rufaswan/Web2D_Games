@@ -17,7 +17,7 @@
 	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
 	var RECT = { x:0 , y:0 , w:1 , h:1 };
 
-	function getDstCorner()
+	function getDstCorner( inpx=false )
 	{
 		var box = CANVAS.getBoundingClientRect();
 		var hw  = box.width  * 0.5;
@@ -28,26 +28,15 @@
 			var cnr = document.getElementById('corner'+i).getBoundingClientRect();
 			var x = cnr.left - box.left - hw;
 			var y = cnr.top  - box.top  - hh;
-			DST.push( x /  hw );
-			DST.push( y / -hh );
+			if ( inpx ){
+				DST.push( x );
+				DST.push( y );
+			} else {
+				DST.push( x /  hw );
+				DST.push( y / -hh );
+			}
 		}
 		return DST;
-	}
-
-	function RectQuadCoefficient()
-	{
-		var co = {
-			a0 : DST[0],
-			a1 : (DST[2] - DST[0]),
-			a2 : (DST[4] - DST[0]),
-			a3 : (DST[6] - DST[4] - DST[2] + DST[0]),
-
-			b0 : DST[1],
-			b1 : (DST[3] - DST[1]),
-			b2 : (DST[5] - DST[1]),
-			b3 : (DST[7] - DST[5] - DST[3] + DST[1]),
-		};
-		return co;
 	}
 </script>
 
