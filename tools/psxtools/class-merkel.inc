@@ -36,140 +36,208 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 // https://datatracker.ietf.org/doc/html/rfc6234
 class Merkel_Damgard
 {
-	private $chunk;
-	private $K; // constant
-	private $h; // hash
-	private $mask;
+	private $mLen;
 
-	// BUG : 32-bit PHP.exe
-	//   right shift will copy the negative bit
-	// BUG : ROTR ^ 1
-	//   mask = (1 << 63) - 1 = 80 00 00 00 00 00 00 00 (expect 7f ff ff ff ff ff ff ff)
-	//   -0      to -0x400  = 80 00 00 00 00 00 00 00
-	//   -0x401  to -0xbff  = 7f ff ff ff ff ff f8 00
-	//   -0xc00  to -0x1400 = 7f ff ff ff ff ff f0 00
-	//   -0x1401 to         = 7f ff ff ff ff ff e8 00
-	//   ...
-	private function MASK($n)
+	private function c_rotate_left( $a, $bit )
 	{
-		$m = 0;
-		while ( $n > 0 )
+		$l = $this->c_shift_left ($a, $bit);
+		$r = $this->c_shift_right($a, $this->mLen*8-$bit);
+		return $this->c_or($l, $r);
+	}
+
+	private function c_rotate_right( $a, $bit )
+	{
+		$l = $this->c_shift_left ($a, $this->mLen*8-$bit);
+		$r = $this->c_shift_right($a, $bit);
+		return $this->c_or($l, $r);
+	}
+
+	private function c_shift_left( $a, $bit )
+	{
+		while ( $bit >= 8 )
 		{
-			$m <<= 1;
-			$m  |= 1;
-			$n--;
+			$bit -= 8;
+			array_unshift($a, 0);
 		}
-		return $m;
-	}
-	private function LEFT_SHIFT($a,$n,$b)
-	{
-		$mask = $this->MASK($b);
-		return ($a << $n) & $mask;
-	}
-	private function RIGHT_SHIFT($a,$n,$b)
-	{
-		$mask = $this->MASK($b-$n);
-		return ($a >> $n) & $mask;
-	}
-	private function  LEFT_ROTATE($a,$n,$b) { return ($this->LEFT_SHIFT ($a,$n,$b) | $this->RIGHT_SHIFT($a,$b-$n,$b)); }
-	private function RIGHT_ROTATE($a,$n,$b) { return ($this->RIGHT_SHIFT($a,$n,$b) | $this->LEFT_SHIFT ($a,$b-$n,$b)); }
+		foreach ( $a as $k => $v )
+			$a[$k] <<= $bit;
 
-	private function ADDU()
+		$this->c_norm($a);
+		return $a;
+	}
+
+	private function c_shift_right( $a, $bit )
 	{
-		$arg = func_get_args();
-		$int = 0;
-		foreach ( $arg as $a )
+		while ( $bit >= 8 )
 		{
-			$a  &= $this->mask;
-			$int = ($int + $a) & $this->mask;
+			$bit -= 8;
+			array_shift($a);
 		}
-		return $int;
-	}
-
-	private function ORD( &$str, $pos, $byte, $big )
-	{
-		$s = substr($str, $pos, $byte);
-		if ( ! $big )
-			$s = strrev($s);
-
-		$int = 0;
-		for ( $i=0; $i < $byte; $i++ )
+		$mask = (1 << $bit) - 1;
+		foreach ( $a as $k => $v )
 		{
-			$b = ord( $s[$i] );
-			$int = ($int << 8) | $b;
+			$carry = $v & $mask;
+			$a[$k] >>= $bit;
+			if ( $k > 0 )
+				$a[$k-1] |= ($carry << (8-$bit));
 		}
-		return $int;
+
+		$this->c_norm($a);
+		return $a;
 	}
 
-	private function CHR( $int, $byte, $big )
+	private function c_not( $a )
 	{
-		$str = '';
-		for ( $i=0; $i < $byte; $i++ )
+		foreach ( $a as $k => $v )
+			$a[$k] = (~$v) & BIT8;
+		$this->c_norm($a);
+		return $a;
+	}
+
+	private function c_and( $a, $b )
+	{
+		foreach ( $a as $k => $v )
+			$a[$k] &= $b[$k];
+		$this->c_norm($a);
+		return $a;
+	}
+
+	private function c_add()
+	{
+		$all = func_get_args();
+		$a   = array_shift($all);
+
+		foreach ( $all as $arg )
 		{
-			$b = $int & BIT8;
-			$str .= chr($b);
-			$int >>= 8;
+			for ( $i=0; $i < $this->mLen; $i++ )
+				$a[$i] += $arg[$i];
 		}
-		if ( $big )
-			$str = strrev($str);
-		return $str;
+		$this->c_norm($a);
+		return $a;
 	}
 
-	private function PADLEN_64( &$str, $big )
+	private function c_xor()
 	{
-		// len   =  64-bit/ 8-byte
-		// chunk = 512-bit/64-byte
-		$len = strlen($str) * 8; // in bits
-		if ( $len < 0 )
-			return php_error('PADLEN_64 < 0');
-		$pad = $this->CHR($len, 8, $big);
+		$all = func_get_args();
+		$a   = array_shift($all);
 
-		// pad str to chunk size
-		$str .= "\x80";
-		while ( (strlen($str)+8) & 0x3f ) // mod 64
-			$str .= ZERO;
-
-		$str .= $pad;
-		return;
+		foreach ( $all as $arg )
+		{
+			for ( $i=0; $i < $this->mLen; $i++ )
+				$a[$i] ^= $arg[$i];
+		}
+		$this->c_norm($a);
+		return $a;
 	}
 
-	private function PADLEN_128( &$str, $big )
+	private function c_or()
 	{
-		// len   =  128-bit/ 16-byte
-		// chunk = 1024-bit/128-byte
-		$len = strlen($str) * 8; // in bits
-		if ( $len < 0 )
-			return php_error('PADLEN_128 < 0');
-		$pad = $this->CHR($len, 16, $big);
+		$all = func_get_args();
+		$a   = array_shift($all);
 
-		// pad str to chunk size
-		$str .= "\x80";
-		while ( (strlen($str)+16) & 0x7f ) // mod 128
-			$str .= ZERO;
+		foreach ( $all as $arg )
+		{
+			for ( $i=0; $i < $this->mLen; $i++ )
+				$a[$i] |= $arg[$i];
+		}
+		$this->c_norm($a);
+		return $a;
+	}
 
-		$str .= $pad;
+	private function c_norm( &$array )
+	{
+		while ( count($array) < $this->mLen )
+			$array[] = 0;
+
+		$carry = 0;
+		foreach ( $array as $ak => $av )
+		{
+			$array[$ak] += $carry;
+			$carry = $array[$ak] >> 8;
+			$array[$ak] &= BIT8;
+		}
+		if ( $carry !== 0 )
+			$array[] = $carry;
+
+		array_splice($array, $this->mLen);
 		return;
 	}
 	//////////////////////////////
-	private function md5_calc( &$str )
-	{
-		$this->mask = $this->MASK(32);
-		$this->PADLEN_64($str, false);
-		//echo debug($str);
+	private $mBig;
 
+	private function ord_const( $const )
+	{
+		foreach ( $const as $k => $v )
+		{
+			$v = hex2bin($v);
+			$v = strrev($v);
+
+			$a = array();
+			for ( $i=0; $i < $this->mLen; $i++ )
+				$a[$i] = ord($v[$i]);
+			$const[$k] = $a;
+		}
+		return $const;
+	}
+
+	private function ord_chunk( &$str, $pos )
+	{
+		$s = substr($str, $pos, $this->mLen);
+		if ( $this->mBig )
+			$s = strrev($s);
+
+		$a = array();
+		for ( $i=0; $i < $this->mLen; $i++ )
+			$a[$i] = ord( $s[$i] );
+		return $a;
+	}
+
+	private function chr_chunk( &$array )
+	{
+		$s = '';
+		foreach ( $array as $v )
+			$s .= chr($v);
+		if ( $this->mBig )
+			$s = strrev($s);
+		return $s;
+	}
+
+	private function padchunk( &$str, $plen, $clen )
+	{
+		$len = strlen($str) * 8; // in bits
+		$siz = '';
+		for ( $i=0; $i < $plen; $i++ )
+		{
+			$s = $len & BIT8;
+			$siz .= chr($s);
+			$len >>= 8;
+		}
+		if ( $this->mBig )
+			$siz = strrev($siz);
+
+		$str .= "\x80";
+		while ( (strlen($str)+$plen) % $clen )
+			$str .= ZERO;
+
+		$str .= $siz;
+		return;
+	}
+	//////////////////////////////
+	private function md5_calc( &$str, &$h )
+	{
 		// K[64]
 		// Use binary integer part of the sines of integers (Radians) as constants
 		// K[i] := floor( 2^32 * abs( sin(i+1) ) )
-		$this->K = array(
-			0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
-			0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be, 0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
-			0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
-			0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,
-			0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c, 0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,
-			0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
-			0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
-			0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391,
-		);
+		$K = $this->ord_const(array(
+			'd76aa478', 'e8c7b756', '242070db', 'c1bdceee', 'f57c0faf', '4787c62a', 'a8304613', 'fd469501',
+			'698098d8', '8b44f7af', 'ffff5bb1', '895cd7be', '6b901122', 'fd987193', 'a679438e', '49b40821',
+			'f61e2562', 'c040b340', '265e5a51', 'e9b6c7aa', 'd62f105d', '02441453', 'd8a1e681', 'e7d3fbc8',
+			'21e1cde6', 'c33707d6', 'f4d50d87', '455a14ed', 'a9e3e905', 'fcefa3f8', '676f02d9', '8d2a4c8a',
+			'fffa3942', '8771f681', '6d9d6122', 'fde5380c', 'a4beea44', '4bdecfa9', 'f6bb4b60', 'bebfbc70',
+			'289b7ec6', 'eaa127fa', 'd4ef3085', '04881d05', 'd9d4d039', 'e6db99e5', '1fa27cf8', 'c4ac5665',
+			'f4292244', '432aff97', 'ab9423a7', 'fc93a039', '655b59c3', '8f0ccc92', 'ffeff47d', '85845dd1',
+			'6fa87e4f', 'fe2ce6e0', 'a3014314', '4e0811a1', 'f7537e82', 'bd3af235', '2ad7d2bb', 'eb86d391',
+		));
 
 		// s specifies the per-round shift amounts
 		$sh = array(
@@ -183,185 +251,213 @@ class Merkel_Damgard
 		for ( $i=0; $i < $len; $i += 0x40 )
 		{
 			// break into 512-bit/64-byte/16-int chunks
-			$this->chunk = array();
+			$chunk = array();
 			for ( $j=0; $j < 0x40; $j += 4 )
-				$this->chunk[] = $this->ORD($str, $i+$j, 4, false);
+				$chunk[] = $this->ord_chunk($str, $i+$j);
 
 			// main compress loop
-			list($A,$B,$C,$D) = $this->h;
+			list($A,$B,$C,$D) = $h;
 			for ( $j=0; $j < 64; $j++ )
 			{
 				switch ( $j >> 4 )
 				{
 					case 0: // 0-15
-						$F = ($B & $C) | (~$B & $D);
+						//$F = ($B & $C) | (~$B & $D);
+						$xB  = $this->c_not($B);
+						$BC  = $this->c_and($B, $C);
+						$xBD = $this->c_and($xB, $D);
+
+						$F = $this->c_or($BC, $xBD);
 						$G = $j & BIT4;
 						break;
 					case 1: // 16-31
-						$F = ($D & $B) | (~$D & $C);
+						//$F = ($D & $B) | (~$D & $C);
+						$xD  = $this->c_not($D);
+						$DB  = $this->c_and($D, $B);
+						$xDC = $this->c_and($xD, $C);
+
+						$F = $this->c_or($DB, $xDC);
 						$G = ($j * 5 + 1) & BIT4;
 						break;
 					case 2: // 32-47
-						$F = ($B ^ $C ^ $D);
+						//$F = ($B ^ $C ^ $D);
+						$F = $this->c_xor($B, $C, $D);
 						$G = ($j * 3 + 5) & BIT4;
 						break;
 					case 3: // 48-63
-						$F = $C ^ ($B | ~$D);
+						//$F = $C ^ ($B | ~$D);
+						$xD  = $this->c_not($D);
+						$BxD = $this->c_or($B, $xD);
+						$F = $this->c_xor($C, $BxD);
 						$G = ($j * 7) & BIT4;
 						break;
 				} // switch ( $j >> 4 )
 
-				$F  = $this->ADDU($F, $A, $this->K[$j], $this->chunk[$G]);
-				$b1 = $this->LEFT_ROTATE($F, $sh[$j], 32);
+				$F  = $this->c_add($F, $A, $K[$j], $chunk[$G]);
+				$b1 = $this->c_rotate_left($F, $sh[$j]);
 
 				$A = $D;
 				$D = $C;
 				$C = $B;
-				$B = $this->ADDU($B, $b1);
+				$B = $this->c_add($B, $b1);
 			} // for ( $j=0; $j < 64; $j++ )
 
-			$this->h[0] = $this->ADDU($this->h[0], $A);
-			$this->h[1] = $this->ADDU($this->h[1], $B);
-			$this->h[2] = $this->ADDU($this->h[2], $C);
-			$this->h[3] = $this->ADDU($this->h[3], $D);
+			$h[0] = $this->c_add($h[0], $A);
+			$h[1] = $this->c_add($h[1], $B);
+			$h[2] = $this->c_add($h[2], $C);
+			$h[3] = $this->c_add($h[3], $D);
 		} // for ( $i=0; $i < $len; $i += 0x40 )
 		return;
 	}
-	function md5( $str )
-	{
-		// h[4]
-		$this->h = array(
-			0x67452301,
-			0xefcdab89,
-			0x98badcfe,
-			0x10325476,
-		);
 
-		$this->md5_calc($str);
-		$h  = '';
-		$h .= $this->CHR( $this->h[0] , 4 , false );
-		$h .= $this->CHR( $this->h[1] , 4 , false );
-		$h .= $this->CHR( $this->h[2] , 4 , false );
-		$h .= $this->CHR( $this->h[3] , 4 , false );
-		return $h;
+	public function md5( $str )
+	{
+		$this->mLen = 4; // 32-bit
+		$this->mBig = false; // little-endian
+
+		// len   =  64-bit/ 8-byte
+		// chunk = 512-bit/64-byte
+		$this->padchunk($str, 8, 64);
+
+		// h[4]
+		$h = $this->ord_const(array(
+			'67452301',
+			'efcdab89',
+			'98badcfe',
+			'10325476',
+		));
+
+		$this->md5_calc($str, $h);
+		$sum  = '';
+		$sum .= $this->chr_chunk( $h[0] );
+		$sum .= $this->chr_chunk( $h[1] );
+		$sum .= $this->chr_chunk( $h[2] );
+		$sum .= $this->chr_chunk( $h[3] );
+		return $sum;
 	}
 	//////////////////////////////
-	private function sha1_calc( &$str )
+	private function sha1_calc( &$str, &$h )
 	{
-		$this->mask = $this->MASK(32);
-		$this->PADLEN_64($str, true);
-		//echo debug($str);
-
 		// K[4]
-		$this->K = array(
-			0x5a827999,
-			0x6ed9eba1,
-			0x8f1bbcdc,
-			0xca62c1d6,
-		);
+		$K = $this->ord_const(array(
+			'5a827999',
+			'6ed9eba1',
+			'8f1bbcdc',
+			'ca62c1d6',
+		));
 
 		$len = strlen($str);
 		for ( $i=0; $i < $len; $i += 0x40 )
 		{
 			// break into 512-bit/64-byte/16-int chunks
-			$this->chunk = array();
+			$chunk = array();
 			for ( $j=0; $j < 0x40; $j += 4 )
-				$this->chunk[] = $this->ORD($str, $i+$j, 4, true);
+				$chunk[] = $this->ord_chunk($str, $i+$j);
 
 			// Message schedule: extend the sixteen 32-bit words into eighty 32-bit words
 			for ( $j = 16; $j < 80; $j++ )
 			{
-				$b  = $this->chunk[$j- 3];
-				$b ^= $this->chunk[$j- 8];
-				$b ^= $this->chunk[$j-14];
-				$b ^= $this->chunk[$j-16];
-				$this->chunk[$j] = $this->LEFT_ROTATE($b, 1, 32);
+				$b = $this->c_xor($chunk[$j-3], $chunk[$j- 8], $chunk[$j-14], $chunk[$j-16]);
+				$chunk[$j] = $this->c_rotate_left($b, 1);
 			} // for ( $j = 16; $j < 80; $j++ )
 
 			// main compress loop
-			list($A,$B,$C,$D,$E) = $this->h;
+			list($A,$B,$C,$D,$E) = $h;
 			for ( $j=0; $j < 80; $j++ )
 			{
 				$ah = (int)($j / 20);
 				switch ( $ah )
 				{
 					case 0:
-						$F = ($B & $C) | (~$B & $D);
+						//$F = ($B & $C) | (~$B & $D);
+						$xB  = $this->c_not($B);
+						$BC  = $this->c_and($B, $C);
+						$xBD = $this->c_and($xB, $D);
+						$F = $this->c_or($BC, $xBD);
 						break;
 					case 1:
 					case 3:
-						$F = ($B ^ $C ^ $D);
+						//$F = ($B ^ $C ^ $D);
+						$F = $this->c_xor($B, $C, $D);
 						break;
 					case 2:
-						$F = ($B & $C) | ($B & $D) | ($C & $D);
+						//$F = ($B & $C) | ($B & $D) | ($C & $D);
+						$BC = $this->c_and($B, $C);
+						$BD = $this->c_and($B, $D);
+						$CD = $this->c_and($C, $D);
+						$F = $this->c_or($BC, $BD, $CD);
 						break;
 				} // switch ( $ah )
 
-				$b1 = $this->LEFT_ROTATE($A, 5, 32);
-				$b1 = $this->ADDU($b1, $F, $E, $this->K[$ah], $this->chunk[$j]);
+				$b1 = $this->c_rotate_left($A, 5);
+				$b1 = $this->c_add($b1, $F, $E, $K[$ah], $chunk[$j]);
 
 				$E = $D;
 				$D = $C;
-				$C = $this->LEFT_ROTATE($B, 30, 32);
+				$C = $this->c_rotate_left($B, 30);
 				$B = $A;
 				$A = $b1;
 			} // for ( $j=0; $j < 80; $j++ )
 
-			$this->h[0] = $this->ADDU($this->h[0], $A);
-			$this->h[1] = $this->ADDU($this->h[1], $B);
-			$this->h[2] = $this->ADDU($this->h[2], $C);
-			$this->h[3] = $this->ADDU($this->h[3], $D);
-			$this->h[4] = $this->ADDU($this->h[4], $E);
+			$h[0] = $this->c_add($h[0], $A);
+			$h[1] = $this->c_add($h[1], $B);
+			$h[2] = $this->c_add($h[2], $C);
+			$h[3] = $this->c_add($h[3], $D);
+			$h[4] = $this->c_add($h[4], $E);
 		} // for ( $i=0; $i < $len; $i += 0x40 )
 		return;
 	}
-	function sha1( $str )
-	{
-		// h[5]
-		$this->h = array(
-			0x67452301,
-			0xefcdab89,
-			0x98badcfe,
-			0x10325476,
-			0xc3d2e1f0,
-		);
 
-		$this->sha1_calc($str);
-		$h  = '';
-		$h .= $this->CHR( $this->h[0] , 4 , true );
-		$h .= $this->CHR( $this->h[1] , 4 , true );
-		$h .= $this->CHR( $this->h[2] , 4 , true );
-		$h .= $this->CHR( $this->h[3] , 4 , true );
-		$h .= $this->CHR( $this->h[4] , 4 , true );
-		return $h;
+	public function sha1( $str )
+	{
+		$this->mLen = 4; // 32-bit
+		$this->mBig = true; // big-endian
+
+		// len   =  64-bit/ 8-byte
+		// chunk = 512-bit/64-byte
+		$this->padchunk($str, 8, 64);
+
+		// h[5]
+		$h = $this->ord_const(array(
+			'67452301',
+			'efcdab89',
+			'98badcfe',
+			'10325476',
+			'c3d2e1f0',
+		));
+
+		$this->sha1_calc($str, $h);
+		$sum  = '';
+		$sum .= $this->chr_chunk( $h[0] );
+		$sum .= $this->chr_chunk( $h[1] );
+		$sum .= $this->chr_chunk( $h[2] );
+		$sum .= $this->chr_chunk( $h[3] );
+		$sum .= $this->chr_chunk( $h[4] );
+		return $sum;
 	}
 	//////////////////////////////
-	private function sha2_calc32( &$str )
+	private function sha2_calc32( &$str, &$h )
 	{
-		$this->mask = $this->MASK(32);
-		$this->PADLEN_64($str, true);
-		//echo debug($str);
-
 		// K[64]
 		// first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311
-		$this->K = array(
-			0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-			0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-			0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-			0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-			0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-			0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-			0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-			0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
-		);
+		$K = $this->ord_const(array(
+			'428a2f98', '71374491', 'b5c0fbcf', 'e9b5dba5', '3956c25b', '59f111f1', '923f82a4', 'ab1c5ed5',
+			'd807aa98', '12835b01', '243185be', '550c7dc3', '72be5d74', '80deb1fe', '9bdc06a7', 'c19bf174',
+			'e49b69c1', 'efbe4786', '0fc19dc6', '240ca1cc', '2de92c6f', '4a7484aa', '5cb0a9dc', '76f988da',
+			'983e5152', 'a831c66d', 'b00327c8', 'bf597fc7', 'c6e00bf3', 'd5a79147', '06ca6351', '14292967',
+			'27b70a85', '2e1b2138', '4d2c6dfc', '53380d13', '650a7354', '766a0abb', '81c2c92e', '92722c85',
+			'a2bfe8a1', 'a81a664b', 'c24b8b70', 'c76c51a3', 'd192e819', 'd6990624', 'f40e3585', '106aa070',
+			'19a4c116', '1e376c08', '2748774c', '34b0bcb5', '391c0cb3', '4ed8aa4a', '5b9cca4f', '682e6ff3',
+			'748f82ee', '78a5636f', '84c87814', '8cc70208', '90befffa', 'a4506ceb', 'bef9a3f7', 'c67178f2',
+		));
 
 		$len = strlen($str);
 		for ( $i=0; $i < $len; $i += 0x40 )
 		{
 			// break into 512-bit/64-byte/16-int chunks
-			$this->chunk = array();
+			$chunk = array();
 			for ( $j=0; $j < 0x40; $j += 4 )
-				$this->chunk[] = $this->ORD($str, $i+$j, 4, true);
+				$chunk[] = $this->ord_chunk($str, $i+$j);
 
 			// Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array
 			for ( $j = 16; $j < 64; $j++ )
@@ -369,158 +465,182 @@ class Merkel_Damgard
 				// Wt = SSIG1(W(t-2)) + W(t-7) + SSIG0(w(t-15)) + W(t-16)
 				// SSIG1(x) = ROTR^17(x) XOR ROTR^19(x) XOR SHR^10(x)
 				// SSIG0(x) = ROTR^ 7(x) XOR ROTR^18(x) XOR SHR^ 3(x)
-				$s1  = $this->RIGHT_ROTATE($this->chunk[$j- 2], 17, 32);
-				$s1 ^= $this->RIGHT_ROTATE($this->chunk[$j- 2], 19, 32);
-				$s1 ^= $this->RIGHT_SHIFT ($this->chunk[$j- 2], 10, 32);
+				$s1a = $this->c_rotate_right($chunk[$j- 2], 17);
+				$s1b = $this->c_rotate_right($chunk[$j- 2], 19);
+				$s1c = $this->c_shift_right ($chunk[$j- 2], 10);
 
-				$s0  = $this->RIGHT_ROTATE($this->chunk[$j-15],  7, 32);
-				$s0 ^= $this->RIGHT_ROTATE($this->chunk[$j-15], 18, 32);
-				$s0 ^= $this->RIGHT_SHIFT ($this->chunk[$j-15],  3, 32);
+				$s0a = $this->c_rotate_right($chunk[$j-15],  7);
+				$s0b = $this->c_rotate_right($chunk[$j-15], 18);
+				$s0c = $this->c_shift_right ($chunk[$j-15],  3);
 
-				$this->chunk[$j] = $this->ADDU($s1, $this->chunk[$j-7], $s0, $this->chunk[$j-16]);
+				$s1 = $this->c_xor($s1a, $s1b, $s1c);
+				$s0 = $this->c_xor($s0a, $s0b, $s0c);
+
+				$chunk[$j] = $this->c_add($s1, $chunk[$j-7], $s0, $chunk[$j-16]);
 			} // for ( $j = 16; $j < 64; $j++ )
 
 			// main compress loop
-			list($A,$B,$C,$D,$E,$F,$G,$H) = $this->h;
+			list($A,$B,$C,$D,$E,$F,$G,$H) = $h;
 			for ( $j=0; $j < 64; $j++ )
 			{
 				// T1 = h + BSIG1(e) + CH(e,f,g) + Kt + Wt
 				// BSIG1(x) = ROTR^6(x) XOR ROTR^11(x) XOR ROTR^25(x)
 				// CH( x, y, z) = (x AND y) XOR ( (NOT x) AND z)
+				$s1a = $this->c_rotate_right($E,  6);
+				$s1b = $this->c_rotate_right($E, 11);
+				$s1c = $this->c_rotate_right($E, 25);
+
+				$xE  = $this->c_not($E);
+				$EF  = $this->c_and($E, $F);
+				$xEG = $this->c_and($xE, $G);
+
+				$s1 = $this->c_xor($s1a, $s1b, $s1c);
+				$ch = $this->c_xor($EF, $xEG);
+
+				$b1 = $this->c_add($H, $s1, $ch, $K[$j], $chunk[$j]);
 
 				// T2 = BSIG0(a) + MAJ(a,b,c)
 				// BSIG0(x) = ROTR^2(x) XOR ROTR^13(x) XOR ROTR^22(x)
 				// MAJ( x, y, z) = (x AND y) XOR (x AND z) XOR (y AND z)
-				$s1  = $this->RIGHT_ROTATE($E,  6, 32);
-				$s1 ^= $this->RIGHT_ROTATE($E, 11, 32);
-				$s1 ^= $this->RIGHT_ROTATE($E, 25, 32);
+				$s0a = $this->c_rotate_right($A,  2);
+				$s0b = $this->c_rotate_right($A, 13);
+				$s0c = $this->c_rotate_right($A, 22);
 
-				$ch  = ($E & $F) ^ (~$E & $G);
-				$b1  = $this->ADDU($H, $s1, $ch, $this->K[$j], $this->chunk[$j]);
+				$AB = $this->c_and($A, $B);
+				$AC = $this->c_and($A, $C);
+				$BC = $this->c_and($B, $C);
 
-				$s0  = $this->RIGHT_ROTATE($A,  2, 32);
-				$s0 ^= $this->RIGHT_ROTATE($A, 13, 32);
-				$s0 ^= $this->RIGHT_ROTATE($A, 22, 32);
+				$s0  = $this->c_xor($s0a, $s0b, $s0c);
+				$maj = $this->c_xor($AB , $AC , $BC );
 
-				$maj = ($A & $B) ^ ($A & $C) ^ ($B & $C);
-				$b2  = $this->ADDU($s0, $maj);
+				$b2 = $this->c_add($s0, $maj);
+
 
 				$H = $G;
 				$G = $F;
 				$F = $E;
-				$E = $this->ADDU($D, $b1);
+				$E = $this->c_add($D, $b1);
 				$D = $C;
 				$C = $B;
 				$B = $A;
-				$A = $this->ADDU($b1, $b2);
+				$A = $this->c_add($b1, $b2);
 			} // for ( $j=0; $j < 64; $j++ )
 
-			$this->h[0] = $this->ADDU($this->h[0], $A);
-			$this->h[1] = $this->ADDU($this->h[1], $B);
-			$this->h[2] = $this->ADDU($this->h[2], $C);
-			$this->h[3] = $this->ADDU($this->h[3], $D);
-			$this->h[4] = $this->ADDU($this->h[4], $E);
-			$this->h[5] = $this->ADDU($this->h[5], $F);
-			$this->h[6] = $this->ADDU($this->h[6], $G);
-			$this->h[7] = $this->ADDU($this->h[7], $H);
+			$h[0] = $this->c_add($h[0], $A);
+			$h[1] = $this->c_add($h[1], $B);
+			$h[2] = $this->c_add($h[2], $C);
+			$h[3] = $this->c_add($h[3], $D);
+			$h[4] = $this->c_add($h[4], $E);
+			$h[5] = $this->c_add($h[5], $F);
+			$h[6] = $this->c_add($h[6], $G);
+			$h[7] = $this->c_add($h[7], $H);
 		} // for ( $i=0; $i < $len; $i += 0x40 )
 		return;
 	}
 
-	function sha256( $str )
+	public function sha256( $str )
 	{
+		$this->mLen = 4; // 32-bit
+		$this->mBig = true; // big-endian
+
+		// len   =  64-bit/ 8-byte
+		// chunk = 512-bit/64-byte
+		$this->padchunk($str, 8, 64);
+
 		// h[8]
 		// first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19
-		$this->h = array(
-			0x6a09e667,
-			0xbb67ae85,
-			0x3c6ef372,
-			0xa54ff53a,
-			0x510e527f,
-			0x9b05688c,
-			0x1f83d9ab,
-			0x5be0cd19,
-		);
+		$h = $this->ord_const(array(
+			'6a09e667',
+			'bb67ae85',
+			'3c6ef372',
+			'a54ff53a',
+			'510e527f',
+			'9b05688c',
+			'1f83d9ab',
+			'5be0cd19',
+		));
 
-		$this->sha2_calc32($str);
-		$h  = '';
-		$h .= $this->CHR( $this->h[0] , 4 , true );
-		$h .= $this->CHR( $this->h[1] , 4 , true );
-		$h .= $this->CHR( $this->h[2] , 4 , true );
-		$h .= $this->CHR( $this->h[3] , 4 , true );
-		$h .= $this->CHR( $this->h[4] , 4 , true );
-		$h .= $this->CHR( $this->h[5] , 4 , true );
-		$h .= $this->CHR( $this->h[6] , 4 , true );
-		$h .= $this->CHR( $this->h[7] , 4 , true );
-		return $h;
+		$this->sha2_calc32($str, $h);
+		$sum  = '';
+		$sum .= $this->chr_chunk( $h[0] );
+		$sum .= $this->chr_chunk( $h[1] );
+		$sum .= $this->chr_chunk( $h[2] );
+		$sum .= $this->chr_chunk( $h[3] );
+		$sum .= $this->chr_chunk( $h[4] );
+		$sum .= $this->chr_chunk( $h[5] );
+		$sum .= $this->chr_chunk( $h[6] );
+		$sum .= $this->chr_chunk( $h[7] );
+		return $sum;
 	}
 
-	function sha224( $str )
+	public function sha224( $str )
 	{
+		$this->mLen = 4; // 32-bit
+		$this->mBig = true; // big-endian
+
+		// len   =  64-bit/ 8-byte
+		// chunk = 512-bit/64-byte
+		$this->padchunk($str, 8, 64);
+
 		// h[8]
 		// second 32 bits of the fractional parts of the square roots of the 9th through 16th primes 23..53
-		$this->h = array(
-			0xc1059ed8,
-			0x367cd507,
-			0x3070dd17,
-			0xf70e5939,
-			0xffc00b31,
-			0x68581511,
-			0x64f98fa7,
-			0xbefa4fa4,
-		);
+		$h = $this->ord_const(array(
+			'c1059ed8',
+			'367cd507',
+			'3070dd17',
+			'f70e5939',
+			'ffc00b31',
+			'68581511',
+			'64f98fa7',
+			'befa4fa4',
+		));
 
-		$this->sha2_calc32($str);
-		$h  = '';
-		$h .= $this->CHR( $this->h[0] , 4 , true );
-		$h .= $this->CHR( $this->h[1] , 4 , true );
-		$h .= $this->CHR( $this->h[2] , 4 , true );
-		$h .= $this->CHR( $this->h[3] , 4 , true );
-		$h .= $this->CHR( $this->h[4] , 4 , true );
-		$h .= $this->CHR( $this->h[5] , 4 , true );
-		$h .= $this->CHR( $this->h[6] , 4 , true );
-		return $h;
+		$this->sha2_calc32($str, $h);
+		$sum  = '';
+		$sum .= $this->chr_chunk( $h[0] );
+		$sum .= $this->chr_chunk( $h[1] );
+		$sum .= $this->chr_chunk( $h[2] );
+		$sum .= $this->chr_chunk( $h[3] );
+		$sum .= $this->chr_chunk( $h[4] );
+		$sum .= $this->chr_chunk( $h[5] );
+		$sum .= $this->chr_chunk( $h[6] );
+		return $sum;
 	}
 	//////////////////////////////
-	private function sha2_calc64( &$str )
+	private function sha2_calc64( &$str, &$h )
 	{
-		php_req_bytes(8);
-		$this->mask = $this->MASK(64);
-		$this->PADLEN_128($str, true);
-		//echo debug($str);
-
 		// K[80]
 		// first 64 bits of the fractional parts of the cube roots of the first 80 primes 2..409
-		$this->K = array(
-			0x428a2f98d728ae22, 0x7137449123ef65cd, 0xb5c0fbcfec4d3b2f, 0xe9b5dba58189dbbc,
-			0x3956c25bf348b538, 0x59f111f1b605d019, 0x923f82a4af194f9b, 0xab1c5ed5da6d8118,
-			0xd807aa98a3030242, 0x12835b0145706fbe, 0x243185be4ee4b28c, 0x550c7dc3d5ffb4e2,
-			0x72be5d74f27b896f, 0x80deb1fe3b1696b1, 0x9bdc06a725c71235, 0xc19bf174cf692694,
-			0xe49b69c19ef14ad2, 0xefbe4786384f25e3, 0x0fc19dc68b8cd5b5, 0x240ca1cc77ac9c65,
-			0x2de92c6f592b0275, 0x4a7484aa6ea6e483, 0x5cb0a9dcbd41fbd4, 0x76f988da831153b5,
-			0x983e5152ee66dfab, 0xa831c66d2db43210, 0xb00327c898fb213f, 0xbf597fc7beef0ee4,
-			0xc6e00bf33da88fc2, 0xd5a79147930aa725, 0x06ca6351e003826f, 0x142929670a0e6e70,
-			0x27b70a8546d22ffc, 0x2e1b21385c26c926, 0x4d2c6dfc5ac42aed, 0x53380d139d95b3df,
-			0x650a73548baf63de, 0x766a0abb3c77b2a8, 0x81c2c92e47edaee6, 0x92722c851482353b,
-			0xa2bfe8a14cf10364, 0xa81a664bbc423001, 0xc24b8b70d0f89791, 0xc76c51a30654be30,
-			0xd192e819d6ef5218, 0xd69906245565a910, 0xf40e35855771202a, 0x106aa07032bbd1b8,
-			0x19a4c116b8d2d0c8, 0x1e376c085141ab53, 0x2748774cdf8eeb99, 0x34b0bcb5e19b48a8,
-			0x391c0cb3c5c95a63, 0x4ed8aa4ae3418acb, 0x5b9cca4f7763e373, 0x682e6ff3d6b2b8a3,
-			0x748f82ee5defb2fc, 0x78a5636f43172f60, 0x84c87814a1f0ab72, 0x8cc702081a6439ec,
-			0x90befffa23631e28, 0xa4506cebde82bde9, 0xbef9a3f7b2c67915, 0xc67178f2e372532b,
-			0xca273eceea26619c, 0xd186b8c721c0c207, 0xeada7dd6cde0eb1e, 0xf57d4f7fee6ed178,
-			0x06f067aa72176fba, 0x0a637dc5a2c898a6, 0x113f9804bef90dae, 0x1b710b35131c471b,
-			0x28db77f523047d84, 0x32caab7b40c72493, 0x3c9ebe0a15c9bebc, 0x431d67c49c100d4c,
-			0x4cc5d4becb3e42b6, 0x597f299cfc657e2a, 0x5fcb6fab3ad6faec, 0x6c44198c4a475817,
-		);
+		$K = $this->ord_const(array(
+			'428a2f98d728ae22', '7137449123ef65cd', 'b5c0fbcfec4d3b2f', 'e9b5dba58189dbbc',
+			'3956c25bf348b538', '59f111f1b605d019', '923f82a4af194f9b', 'ab1c5ed5da6d8118',
+			'd807aa98a3030242', '12835b0145706fbe', '243185be4ee4b28c', '550c7dc3d5ffb4e2',
+			'72be5d74f27b896f', '80deb1fe3b1696b1', '9bdc06a725c71235', 'c19bf174cf692694',
+			'e49b69c19ef14ad2', 'efbe4786384f25e3', '0fc19dc68b8cd5b5', '240ca1cc77ac9c65',
+			'2de92c6f592b0275', '4a7484aa6ea6e483', '5cb0a9dcbd41fbd4', '76f988da831153b5',
+			'983e5152ee66dfab', 'a831c66d2db43210', 'b00327c898fb213f', 'bf597fc7beef0ee4',
+			'c6e00bf33da88fc2', 'd5a79147930aa725', '06ca6351e003826f', '142929670a0e6e70',
+			'27b70a8546d22ffc', '2e1b21385c26c926', '4d2c6dfc5ac42aed', '53380d139d95b3df',
+			'650a73548baf63de', '766a0abb3c77b2a8', '81c2c92e47edaee6', '92722c851482353b',
+			'a2bfe8a14cf10364', 'a81a664bbc423001', 'c24b8b70d0f89791', 'c76c51a30654be30',
+			'd192e819d6ef5218', 'd69906245565a910', 'f40e35855771202a', '106aa07032bbd1b8',
+			'19a4c116b8d2d0c8', '1e376c085141ab53', '2748774cdf8eeb99', '34b0bcb5e19b48a8',
+			'391c0cb3c5c95a63', '4ed8aa4ae3418acb', '5b9cca4f7763e373', '682e6ff3d6b2b8a3',
+			'748f82ee5defb2fc', '78a5636f43172f60', '84c87814a1f0ab72', '8cc702081a6439ec',
+			'90befffa23631e28', 'a4506cebde82bde9', 'bef9a3f7b2c67915', 'c67178f2e372532b',
+			'ca273eceea26619c', 'd186b8c721c0c207', 'eada7dd6cde0eb1e', 'f57d4f7fee6ed178',
+			'06f067aa72176fba', '0a637dc5a2c898a6', '113f9804bef90dae', '1b710b35131c471b',
+			'28db77f523047d84', '32caab7b40c72493', '3c9ebe0a15c9bebc', '431d67c49c100d4c',
+			'4cc5d4becb3e42b6', '597f299cfc657e2a', '5fcb6fab3ad6faec', '6c44198c4a475817',
+		));
 
 		$len = strlen($str);
 		for ( $i=0; $i < $len; $i += 0x80 )
 		{
 			// break into 1024-bit/128-byte/16-int chunks
-			$this->chunk = array();
+			$chunk = array();
 			for ( $j=0; $j < 0x80; $j += 8 )
-				$this->chunk[] = $this->ORD($str, $i+$j, 8, true);
+				$chunk[] = $this->ord_chunk($str, $i+$j);
 
 			// Extend the first 16 words into the remaining 64 words w[16..79] of the message schedule array
 			for ( $j = 16; $j < 80; $j++ )
@@ -528,115 +648,143 @@ class Merkel_Damgard
 				// Wt = SSIG1(W(t-2)) + W(t-7) + SSIG0(W(t-15)) + W(t-16)
 				// SSIG1(x) = ROTR^19(x) XOR ROTR^61(x) XOR SHR^6(x)
 				// SSIG0(x) = ROTR^ 1(x) XOR ROTR^ 8(x) XOR SHR^7(x)
-				$s1  = $this->RIGHT_ROTATE($this->chunk[$j- 2], 19, 64);
-				$s1 ^= $this->RIGHT_ROTATE($this->chunk[$j- 2], 61, 64);
-				$s1 ^= $this->RIGHT_SHIFT ($this->chunk[$j- 2],  6, 64);
+				$s1a = $this->c_rotate_right($chunk[$j- 2], 19);
+				$s1b = $this->c_rotate_right($chunk[$j- 2], 61);
+				$s1c = $this->c_shift_right ($chunk[$j- 2],  6);
 
-				$s0  = $this->RIGHT_ROTATE($this->chunk[$j-15],  1, 64);
-				$s0 ^= $this->RIGHT_ROTATE($this->chunk[$j-15],  8, 64);
-				$s0 ^= $this->RIGHT_SHIFT ($this->chunk[$j-15],  7, 64);
+				$s0a = $this->c_rotate_right($chunk[$j-15],  1);
+				$s0b = $this->c_rotate_right($chunk[$j-15],  8);
+				$s0c = $this->c_shift_right ($chunk[$j-15],  7);
 
-				$this->chunk[$j] = $this->ADDU($s1, $this->chunk[$j-7], $s0, $this->chunk[$j-16]);
+				$s1 = $this->c_xor($s1a, $s1b, $s1c);
+				$s0 = $this->c_xor($s0a, $s0b, $s0c);
+
+				$chunk[$j] = $this->c_add($s1, $chunk[$j-7], $s0, $chunk[$j-16]);
 			} // for ( $j = 16; $j < 80; $j++ )
 
 			// main compress loop
-			list($A,$B,$C,$D,$E,$F,$G,$H) = $this->h;
+			list($A,$B,$C,$D,$E,$F,$G,$H) = $h;
 			for ( $j=0; $j < 80; $j++ )
 			{
 				// T1 = h + BSIG1(e) + CH(e,f,g) + Kt + Wt
 				// BSIG1(x) = ROTR^14(x) XOR ROTR^18(x) XOR ROTR^41(x)
 				// CH( x, y, z) = (x AND y) XOR ( (NOT x) AND z)
-				$s1  = $this->RIGHT_ROTATE($E, 14, 64);
-				$s1 ^= $this->RIGHT_ROTATE($E, 18, 64);
-				$s1 ^= $this->RIGHT_ROTATE($E, 41, 64);
+				$s1a = $this->c_rotate_right($E, 14);
+				$s1b = $this->c_rotate_right($E, 18);
+				$s1c = $this->c_rotate_right($E, 41);
 
-				$ch  = ($E & $F) ^ (~$E & $G);
-				$b1  = $this->ADDU($H, $s1, $ch, $this->K[$j], $this->chunk[$j]);
+				$xE  = $this->c_not($E);
+				$EF  = $this->c_and($E, $F);
+				$xEG = $this->c_and($xE, $G);
+
+				$s1 = $this->c_xor($s1a, $s1b, $s1c);
+				$ch = $this->c_xor($EF, $xEG);
+				$b1 = $this->c_add($H, $s1, $ch, $K[$j], $chunk[$j]);
 
 				// T2 = BSIG0(a) + MAJ(a,b,c)
-				// MAJ( x, y, z) = (x AND y) XOR (x AND z) XOR (y AND z)
 				// BSIG0(x) = ROTR^28(x) XOR ROTR^34(x) XOR ROTR^39(x)
-				$s0  = $this->RIGHT_ROTATE($A, 28, 64);
-				$s0 ^= $this->RIGHT_ROTATE($A, 34, 64);
-				$s0 ^= $this->RIGHT_ROTATE($A, 39, 64);
+				// MAJ( x, y, z) = (x AND y) XOR (x AND z) XOR (y AND z)
+				$s0a = $this->c_rotate_right($A, 28);
+				$s0b = $this->c_rotate_right($A, 34);
+				$s0c = $this->c_rotate_right($A, 39);
 
-				$maj = ($A & $B) ^ ($A & $C) ^ ($B & $C);
-				$b2  = $this->ADDU($s0, $maj);
+				$AB = $this->c_and($A, $B);
+				$AC = $this->c_and($A, $C);
+				$BC = $this->c_and($B, $C);
+
+				$s0  = $this->c_xor($s0a, $s0b, $s0c);
+				$maj = $this->c_xor($AB , $AC , $BC );
+				$b2  = $this->c_add($s0, $maj);
+
 
 				$H = $G;
 				$G = $F;
 				$F = $E;
-				$E = $this->ADDU($D, $b1);
+				$E = $this->c_add($D, $b1);
 				$D = $C;
 				$C = $B;
 				$B = $A;
-				$A = $this->ADDU($b1, $b2);
+				$A = $this->c_add($b1, $b2);
 			} // for ( $j=0; $j < 80; $j++ )
 
-			$this->h[0] = $this->ADDU($this->h[0], $A);
-			$this->h[1] = $this->ADDU($this->h[1], $B);
-			$this->h[2] = $this->ADDU($this->h[2], $C);
-			$this->h[3] = $this->ADDU($this->h[3], $D);
-			$this->h[4] = $this->ADDU($this->h[4], $E);
-			$this->h[5] = $this->ADDU($this->h[5], $F);
-			$this->h[6] = $this->ADDU($this->h[6], $G);
-			$this->h[7] = $this->ADDU($this->h[7], $H);
+			$h[0] = $this->c_add($h[0], $A);
+			$h[1] = $this->c_add($h[1], $B);
+			$h[2] = $this->c_add($h[2], $C);
+			$h[3] = $this->c_add($h[3], $D);
+			$h[4] = $this->c_add($h[4], $E);
+			$h[5] = $this->c_add($h[5], $F);
+			$h[6] = $this->c_add($h[6], $G);
+			$h[7] = $this->c_add($h[7], $H);
 		} // for ( $i=0; $i < $len; $i += 0x80 )
 		return;
 	}
 
-	function sha512( $str )
+	public function sha512( $str )
 	{
+		$this->mLen = 8; // 64-bit
+		$this->mBig = true; // big-endian
+
+		// len   =  128-bit/ 16-byte
+		// chunk = 1024-bit/128-byte
+		$this->padchunk($str, 16, 128);
+
 		// h[8]
 		// first 64 bits of the fractional parts of the square roots of the first 8 primes 2..19
-		$this->h = array(
-			0x6a09e667f3bcc908,
-			0xbb67ae8584caa73b,
-			0x3c6ef372fe94f82b,
-			0xa54ff53a5f1d36f1,
-			0x510e527fade682d1,
-			0x9b05688c2b3e6c1f,
-			0x1f83d9abfb41bd6b,
-			0x5be0cd19137e2179,
-		);
+		$h = $this->ord_const(array(
+			'6a09e667f3bcc908',
+			'bb67ae8584caa73b',
+			'3c6ef372fe94f82b',
+			'a54ff53a5f1d36f1',
+			'510e527fade682d1',
+			'9b05688c2b3e6c1f',
+			'1f83d9abfb41bd6b',
+			'5be0cd19137e2179',
+		));
 
-		$this->sha2_calc64($str);
-		$h  = '';
-		$h .= $this->CHR( $this->h[0] , 8 , true );
-		$h .= $this->CHR( $this->h[1] , 8 , true );
-		$h .= $this->CHR( $this->h[2] , 8 , true );
-		$h .= $this->CHR( $this->h[3] , 8 , true );
-		$h .= $this->CHR( $this->h[4] , 8 , true );
-		$h .= $this->CHR( $this->h[5] , 8 , true );
-		$h .= $this->CHR( $this->h[6] , 8 , true );
-		$h .= $this->CHR( $this->h[7] , 8 , true );
-		return $h;
+		$this->sha2_calc64($str, $h);
+		$sum  = '';
+		$sum .= $this->chr_chunk( $h[0] );
+		$sum .= $this->chr_chunk( $h[1] );
+		$sum .= $this->chr_chunk( $h[2] );
+		$sum .= $this->chr_chunk( $h[3] );
+		$sum .= $this->chr_chunk( $h[4] );
+		$sum .= $this->chr_chunk( $h[5] );
+		$sum .= $this->chr_chunk( $h[6] );
+		$sum .= $this->chr_chunk( $h[7] );
+		return $sum;
 	}
 
-	function sha384( $str )
+	public function sha384( $str )
 	{
+		$this->mLen = 8; // 64-bit
+		$this->mBig = true; // big-endian
+
+		// len   =  128-bit/ 16-byte
+		// chunk = 1024-bit/128-byte
+		$this->padchunk($str, 16, 128);
+
 		// h[8]
 		// second 64 bits of the fractional parts of the square roots of the 9th through 16th primes 23..53
-		$this->h = array(
-			0xcbbb9d5dc1059ed8,
-			0x629a292a367cd507,
-			0x9159015a3070dd17,
-			0x152fecd8f70e5939,
-			0x67332667ffc00b31,
-			0x8eb44a8768581511,
-			0xdb0c2e0d64f98fa7,
-			0x47b5481dbefa4fa4,
-		);
+		$h = $this->ord_const(array(
+			'cbbb9d5dc1059ed8',
+			'629a292a367cd507',
+			'9159015a3070dd17',
+			'152fecd8f70e5939',
+			'67332667ffc00b31',
+			'8eb44a8768581511',
+			'db0c2e0d64f98fa7',
+			'47b5481dbefa4fa4',
+		));
 
-		$this->sha2_calc64($str);
-		$h  = '';
-		$h .= $this->CHR( $this->h[0] , 8 , true );
-		$h .= $this->CHR( $this->h[1] , 8 , true );
-		$h .= $this->CHR( $this->h[2] , 8 , true );
-		$h .= $this->CHR( $this->h[3] , 8 , true );
-		$h .= $this->CHR( $this->h[4] , 8 , true );
-		$h .= $this->CHR( $this->h[5] , 8 , true );
-		return $h;
+		$this->sha2_calc64($str, $h);
+		$sum  = '';
+		$sum .= $this->chr_chunk( $h[0] );
+		$sum .= $this->chr_chunk( $h[1] );
+		$sum .= $this->chr_chunk( $h[2] );
+		$sum .= $this->chr_chunk( $h[3] );
+		$sum .= $this->chr_chunk( $h[4] );
+		$sum .= $this->chr_chunk( $h[5] );
+		return $sum;
 	}
 	//////////////////////////////
 } // class Merkel_Damgard
