@@ -20,7 +20,6 @@
 		precision highp float;
 		precision highp int;
 		attribute vec2  a_xy;
-		uniform   vec2  u_half_xy;
 
 		void main(void){
 			gl_Position = vec4(a_xy.x, a_xy.y, 1.0, 1.0);
@@ -39,7 +38,7 @@
 
 	var COLOR = [0.0 , 1.0 , 0.0 , 1.0];
 	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
-	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'u_half_xy', 'u_color');
+	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'u_color');
 
 	function quadDraw()
 	{

@@ -27,8 +27,8 @@
 		void main(void){
 			v_xyz = vec3(a_xy.x, a_xy.y, 1.0) * u_mat3;
 			gl_Position = vec4(
-				a_xy.x /  u_half_xy.x,
-				a_xy.y / -u_half_xy.y,
+				a_xy.x *  u_half_xy.x,
+				a_xy.y * -u_half_xy.y,
 			1.0 , 1.0);
 		}
 	`;
@@ -48,8 +48,8 @@
 
 			// get texel
 			vec2 uv = vec2(
-				v3.x / u_size_uv.x,
-				v3.y / u_size_uv.y
+				v3.x * u_size_uv.x,
+				v3.y * u_size_uv.y
 			);
 			if ( uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 )
 				discard;
@@ -65,9 +65,12 @@
 	GL.activeTexture(GL.TEXTURE0);
 	GL.bindTexture(GL.TEXTURE_2D, TEX);
 
+	var NX = 360;
+	var NY = 640;
+
 	function quadDraw()
 	{
-		var svec = [[0,0,1] , [360,0,1] , [360,640,1], [0,640,1]];
+		var svec = [[0,0,1] , [NX,0,1] , [NX,NY,1], [0,NY,1]];
 		var dvec = QDFN.quad2vec3(DST);
 
 		var mat3 = QDFN.quadMat3(svec, dvec, true);
@@ -77,8 +80,8 @@
 		var hw  = box.width  * 0.5;
 		var hh  = box.height * 0.5;
 
-		GL.uniform2fv(LOC.u_size_uv, [360,640]);
-		GL.uniform2fv(LOC.u_half_xy, [hw,hh]);
+		GL.uniform2fv(LOC.u_size_uv, [1/NX,1/NY]);
+		GL.uniform2fv(LOC.u_half_xy, [1/hw,1/hh]);
 
 		var xy = [
 			-hw,hh , hw, hh ,  hw,-hh ,

@@ -26,8 +26,8 @@
 		void main(void){
 			v_xy = a_xy;
 			gl_Position = vec4(
-				a_xy.x /  u_half_xy.x,
-				a_xy.y / -u_half_xy.y,
+				a_xy.x *  u_half_xy.x,
+				a_xy.y * -u_half_xy.y,
 			1.0, 1.0);
 		}
 	`;
@@ -58,25 +58,28 @@
 
 			float rt = sqrt( (B * B) - (4.0 * A * C) );
 
-			float tv, tu, iv, iu;
+			float tv, tu;
+			vec2 uv;
 			tv = (-B + rt) / (2.0 * A);
 			tu = (v_xy.x - a0 - (a2 * tv)) / (a1 + (a3 * tv));
+			uv = vec2(
+				tu * u_size_uv.x,
+				tv * u_size_uv.y
+			);
 
 			// no texel matched
 			// probably hflip/vflip with opposite direction
-			iv = floor(tv);
-			iu = floor(tu);
-			if ( iv < 0.0 || iv > u_size_uv.y || iu < 0.0 || iu > u_size_uv.x )
+			if ( uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 )
 			{
 				tv = (-B - rt) / (2.0 * A);
 				tu = (v_xy.x - a0 - (a2 * tv)) / (a1 + (a3 * tv));
+				uv = vec2(
+					tu * u_size_uv.x,
+					tv * u_size_uv.y
+				);
 			}
 
 			// get texel
-			vec2 uv = vec2(
-				tu / u_size_uv.x,
-				tv / u_size_uv.y
-			);
 			if ( uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 )
 				discard;
 			gl_FragColor = texture2D(u_tex, uv);
@@ -145,8 +148,8 @@
 		GL.uniform1fv(LOC.u_cof, co);
 		//console.log(co);
 
-		GL.uniform2fv(LOC.u_size_uv, [NX,NY]);
-		GL.uniform2fv(LOC.u_half_xy, [hw,hh]);
+		GL.uniform2fv(LOC.u_size_uv, [1/NX,1/NY]);
+		GL.uniform2fv(LOC.u_half_xy, [1/hw,1/hh]);
 
 		var xy = [
 			-hw,hh , hw, hh ,  hw,-hh ,

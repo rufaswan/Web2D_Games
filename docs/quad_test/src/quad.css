@@ -20,6 +20,8 @@ canvas {
 	z-index          : -1;
 }
 
+#mona_0_png,
+#mona_1_png,
 #Mona_Lisa_png {
 	position : absolute;
 	top      : -999px;

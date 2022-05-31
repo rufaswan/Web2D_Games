@@ -41,8 +41,8 @@
 				b0 + b1*a_uv.x + b2*a_uv.y + b3*a_uv.x*a_uv.y
 			);
 			gl_Position = vec4(
-				xy.x /  u_half_xy.x,
-				xy.y / -u_half_xy.y,
+				xy.x *  u_half_xy.x,
+				xy.y * -u_half_xy.y,
 			1.0, 1.0);
 		}
 	`;
@@ -56,8 +56,8 @@
 
 		void main(void){
 			vec2 uv = vec2(
-				v_uv.x / u_size_uv.x,
-				v_uv.y / u_size_uv.y
+				v_uv.x * u_size_uv.x,
+				v_uv.y * u_size_uv.y
 			);
 			gl_FragColor = texture2D(u_tex, uv);
 		}
@@ -122,8 +122,8 @@
 		GL.uniform1fv(LOC.u_cof, co);
 		//console.log(co);
 
-		GL.uniform2fv(LOC.u_size_uv, [NX,NY]);
-		GL.uniform2fv(LOC.u_half_xy, [hw,hh]);
+		GL.uniform2fv(LOC.u_size_uv, [1/NX,1/NY]);
+		GL.uniform2fv(LOC.u_half_xy, [1/hw,1/hh]);
 
 		var uv = [
 			0,0 , NX,0  , NX,NY,

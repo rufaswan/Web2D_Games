@@ -20,8 +20,6 @@
 		precision highp float;
 		precision highp int;
 		attribute vec2  a_xy;
-		uniform   vec2  u_half_xy;
-		uniform   vec2  u_size_uv;
 		varying   vec2  v_xy;
 
 		void main(void){
@@ -47,7 +45,7 @@
 
 	var SHADER = QDFN.shaderProgram(GL, vert_src, frag_src);
 	var TEX = QDFN.tex2DById(GL, 'Mona_Lisa_png');
-	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'u_half_xy', 'u_size_uv', 'u_mat3', 'u_tex');
+	var LOC = QDFN.shaderLoc(GL, SHADER, 'a_xy', 'u_mat3', 'u_tex');
 
 	GL.uniform1i(LOC.u_tex, 0);
 	GL.activeTexture(GL.TEXTURE0);

@@ -2,6 +2,7 @@
 <html><head>
 
 <meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Screencast Test</title>
 <style id="screen_css">
 body {
@@ -75,7 +76,6 @@ video {
 			navigator.mediaDevices.getDisplayMedia(opt).then(function(stream){
 				VIDEO.srcObject = stream;
 				VIDEO.play();
-
 			}).catch(function(error){
 				console.log('getDisplayMedia', error);
 			});
