@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+require 'common.inc';
+
 function loadfile( $fn )
 {
 	$p = strrpos($fn, '+');
@@ -39,7 +41,7 @@ function loadfile( $fn )
 	}
 	return array($file, $off);
 }
-
+//////////////////////////////
 function diffsort( $a, $b )
 {
 	if ( $a['d'] === $b['d'] )
@@ -48,6 +50,48 @@ function diffsort( $a, $b )
 		return ( $a['d'] > $b['d'] );
 }
 
+function listbyte( &$list, $pos, $fname )
+{
+	usort($list, 'diffsort');
+
+	$txt = '';
+	$txt .= sprintf("  %-8s  %2s  %2s  %3s\n", 'OFF', 'F1', 'F2', 'DIF');
+	foreach ( $list as $v )
+	{
+		if ( $v['d'] < 0 )
+			$txt .= sprintf("  %8x  %2x  %2x  -%2x\n", $v['p'], $v['f1'], $v['f2'], -$v['d']);
+		else
+			$txt .= sprintf("  %8x  %2x  %2x   %2x\n", $v['p'], $v['f1'], $v['f2'],  $v['d'] );
+	}
+	$txt .= sprintf("  found %d bytes different\n", count($list));
+
+	save_file($fname, $txt);
+	return;
+}
+
+function clutbyte( &$list, $size, $fname )
+{
+	$size = int_ceil($size, 0x100);
+	$pix  = str_repeat(ZERO, $size);
+
+	foreach ( $list as $v )
+	{
+		$d = abs($v['d']);
+		$p = $v['p'];
+		$pix[$p] = chr($d);
+	}
+
+	$img = array(
+		'cc'  => 0x100,
+		'w'   => 0x100,
+		'h'   => $size >> 8,
+		'pal' => grayclut(0x100),
+		'pix' => $pix,
+	);
+	save_clutfile($fname, $img);
+	return;
+}
+//////////////////////////////
 function cmpbyte( $fn1, $fn2 )
 {
 	list($file1,$off1) = loadfile($fn1);
@@ -75,17 +119,10 @@ function cmpbyte( $fn1, $fn2 )
 		}
 		$pos++;
 	} // while (1)
-	usort($list, 'diffsort');
 
-	printf("  %-8s  %2s  %2s  %3s\n", 'OFF', 'F1', 'F2', 'DIF');
-	foreach ( $list as $v )
-	{
-		if ( $v['d'] < 0 )
-			printf("  %8x  %2x  %2x  -%2x\n", $v['p'], $v['f1'], $v['f2'], -$v['d']);
-		else
-			printf("  %8x  %2x  %2x   %2x\n", $v['p'], $v['f1'], $v['f2'],  $v['d'] );
-	}
-	printf("  found %d bytes different\n", count($list));
+	$pfx = preg_replace('|[^0-9A-Za-z]|', '_', "$fn1.$fn2");
+	clutbyte($list, $pos, "$pfx.clut");
+	listbyte($list, $pos, "$pfx.txt" );
 	return;
 }
 

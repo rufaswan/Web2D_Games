@@ -189,33 +189,22 @@ function chrint( $int, $byte = 0 )
 	return $str;
 }
 
-function sint8( $s )
+function sint_bit( $s, $bit )
 {
 	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 1) * 8; // shift right arithmetic
+	$bit = (int)abs($bit);
+
+	$sra = (PHP_INT_SIZE * 8) - $bit; // shift right arithmetic
+	if ( $sra < 0 )
+		return php_error('required at least %d-bit support', $bit);
+
 	return ( ($int << $sra) >> $sra );
 }
 
-function sint16( $s )
-{
-	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 2) * 8; // shift right arithmetic
-	return ( ($int << $sra) >> $sra );
-}
-
-function sint24( $s )
-{
-	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 3) * 8; // shift right arithmetic
-	return ( ($int << $sra) >> $sra );
-}
-
-function sint32( $s )
-{
-	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 4) * 8; // shift right arithmetic
-	return ( ($int << $sra) >> $sra );
-}
+function sint8 ( $s )  { return sint_bit($s,  8); }
+function sint16( $s )  { return sint_bit($s, 16); }
+function sint24( $s )  { return sint_bit($s, 24); }
+function sint32( $s )  { return sint_bit($s, 32); }
 
 function neghex( $int )
 {

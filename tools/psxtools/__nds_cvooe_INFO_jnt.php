@@ -80,13 +80,10 @@ function parse_jntfile( &$file )
 	for ( $i=0; $i < $cjnt; $i++ )
 	{
 		$s = strsub($file, $pos, 4);
-		if ( $s[1] === BYTE )
-		{
-			printf("  %2x  %s [INV]\n", $i, str2hex($s));
-			$inv[$i] = 1;
-		}
-		else
-			printf("  %2x  %s\n", $i, str2hex($s));
+
+		$id = sint8( $s[1] );
+		$inv[$i] = shex($id);
+		printf("  %2x  %s [%s]\n", $i, str2hex($s), $inv[$i]);
 	} // for ( $i=0; $i < $cjnt; $i++ )
 	echo "\n";
 
@@ -100,10 +97,7 @@ function parse_jntfile( &$file )
 		for ( $j=0; $j < $cjnt; $j++ )
 		{
 			$s = strsub($file, $pos, 4);
-			if ( isset($inv[$j]) )
-				printf("    %02x-%02x  %s [INV]\n", $i, $j, str2hex($s));
-			else
-				printf("    %02x-%02x  %s\n", $i, $j, str2hex($s));
+			printf("    %02x-%02x  %s [%s]\n", $i, $j, str2hex($s), $inv[$j]);
 		} // for ( $j=0; $j < $cjnt; $j++ )
 	} // for ( $i=0; $i < $cpss; $i++ )
 	echo "\n";

@@ -26,29 +26,9 @@ define('BIT64',  (1 <<  64)-1);
 define('BIT128', (1 << 128)-1);
 define('BIT256', (1 << 256)-1);
 
-function sint64( $s )
-{
-	php_req_bytes(8);
-	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 8) * 8; // shift right arithmetic
-	return ( ($int << $sra) >> $sra );
-}
-
-function sint128( $s )
-{
-	php_req_bytes(16);
-	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 16) * 8; // shift right arithmetic
-	return ( ($int << $sra) >> $sra );
-}
-
-function sint256( $s )
-{
-	php_req_bytes(32);
-	$int = ( (int)$s === $s ) ? $s : ordint($s);
-	$sra = (PHP_INT_SIZE - 32) * 8; // shift right arithmetic
-	return ( ($int << $sra) >> $sra );
-}
+function sint64 ( $s )  { return sint_bit($s, 0x40); }
+function sint128( $s )  { return sint_bit($s, 0x80); }
+function sint256( $s )  { return sint_bit($s, 0x100); }
 
 function float64( $int )
 {
