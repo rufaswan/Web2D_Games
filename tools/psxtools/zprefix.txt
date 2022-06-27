@@ -133,10 +133,10 @@ mkr     SLPM 861.34  Mitsumete Knight R
 	yuna    *.ss1 only
 	sotn    all maps only
 	lunar2  isok/*.pck , map/*.dat only
+	mitsukr merge.mrg (Mitsumete Mode) only
 	panzer  --upcoming--
 	lomax   --upcoming--
 	ralph   --upcoming--
-	mkr     --upcoming--
 	valky   --upcoming--
 	star2   --upcoming--
 	gihren  --upcoming--
@@ -252,9 +252,11 @@ gunvolt  PC  Azure Striker Gunvolt
 gunvolt  PC  Azure Striker Gunvolt 2
 gunvolt  PC  Gunvolt Chronicles Luminous Avenger iX
 gunvolt  PC  Mighty Gunvolt
+shou     PC  Shoukansha (MBS Truse)
 ???      PC  The Vagrant
 
 	gunvolt  IOBJ only
+	shou     *.fcg only
 	disc     --upcoming--
 
 ???  APK  Egglia

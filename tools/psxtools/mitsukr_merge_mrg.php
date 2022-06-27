@@ -287,37 +287,59 @@ define('SHA1FILE', '83098573fa7479044c11180de28f03402ed8996a');
 // la  $a2, word_8016E000
 // li  $a3, 0x85 // 42800
 
-// sub_800577bc+40      0/0         -/-
-// sub_8006425c+3c     85/42800     -/-
-// sub_8006393c+1fc    ad/56800    31/18800  []
-// sub_8005a458+6c    4e3/271800   22/11000  [talk ] npc
-// sub_80054d54+10    6bf/35f800   8c/46000  []
-// sub_80059930+194  1123/891800   7c/3e000  [dress] meta + bg*6
-// sub_80059930+510  1123/891800   7c/3e000
-// sub_80059930+570  1123/891800   7c/3e000
-// sub_80059930+420  114d/8a6800   7c/3e000  [dress] weapon*4 + girl
-// sub_8005934c+c0   1fbe/fdf000   ae/57000  [talk ] girl/side
-// sub_8005934c+118  1fd6/feb000   ae/57000  [talk ] girl/back
-// sub_8005934c+68   1fee/ff7000   ae/57000  [talk ] girl/front + [map] sprite
-// sub_8005934c+1a0  1fee/ff7000   ae/57000
-// sub_8005934c+23c  1fee/ff7000   ae/57000
-// sub_800596bc+ac   2311/1188800  51/28800  [talk ] dress/side
-// sub_800596bc+1c0  2311/1188800  51/28800
-// sub_800596bc+f0   231b/118d800  51/28800  [talk ] dress/back
-// sub_800596bc+7c   2325/1192800  51/28800  [talk ] dress/front
-// sub_800596bc+168  2325/1192800  51/28800
-// sub_80059930+5d8  2331/1198800  51/28800  [dress] fullset/upper
-// sub_80059930+2d8  40cf/2067800  19/c800   [dress] lower
-// sub_80059930+6e0  40cf/2067800  19/c800
-// sub_80059930+380  42f5/217a800  1a/d000   [dress] shoes
-// sub_80059930+758  42f5/217a800  1a/d000
-// sub_80059930+488  42fe/217f000  1a/d000   [dress] shield
+// sub_800577bc+40        0/0         -/-
+// sub_8006425c+3c       85/42800     -/-
+// ad/56800 + 16 * 31/18800
+//   sub_8006393c+1fc    ad/56800    31/18800  []
+// 4e3/271800 + e * 22/11000
+//   sub_8005a458+6c    4e3/271800   22/11000  [talk ] npc
+// 6bf/35f800 + 13 * 8c/46000
+//   sub_80054d54+10    6bf/35f800   8c/46000  []
+// 1123/891800 + 1e * 7c/3e000
+//   sub_80059930+194  1123/891800   7c/3e000  [dress] meta + bg*6
+//   sub_80059930+510  1123/891800   7c/3e000
+//   sub_80059930+570  1123/891800   7c/3e000
+//   sub_80059930+420  114d/8a6800   7c/3e000  [dress] weapon*4 + girl
+// 1fab/fd5800 + 5 * ae/5700
+//   sub_8005934c+c0   1fbe/fdf000   ae/57000  [talk ] girl/side
+//   sub_8005934c+118  1fd6/feb000   ae/57000  [talk ] girl/back
+//   sub_8005934c+68   1fee/ff7000   ae/57000  [talk ] girl/front + [map] sprite
+//   sub_8005934c+1a0  1fee/ff7000   ae/57000
+//   sub_8005934c+23c  1fee/ff7000   ae/57000
+// 2311/1188800 + 5e * 51/28800
+//   sub_800596bc+ac   2311/1188800  51/28800  [talk ] dress/side
+//   sub_800596bc+1c0  2311/1188800  51/28800
+//   sub_800596bc+f0   231b/118d800  51/28800  [talk ] dress/back
+//   sub_800596bc+7c   2325/1192800  51/28800  [talk ] dress/front
+//   sub_800596bc+168  2325/1192800  51/28800
+//   sub_80059930+5d8  2331/1198800  51/28800  [dress] fullset/upper
+// 40cf/2067800 + 16 * 19/c800
+//   sub_80059930+2d8  40cf/2067800  19/c800   [dress] lower
+//   sub_80059930+6e0  40cf/2067800  19/c800
+// 42f5/217a800 + 138 * 1a/d000
+//   sub_80059930+380  42f5/217a800  1a/d000   [dress] shoes
+//   sub_80059930+758  42f5/217a800  1a/d000
+//   sub_80059930+488  42fe/217f000  1a/d000   [dress] shield
+//////////////////////////////
+function merge_src( $fn, &$src, &$pal )
+{
+	$img = array(
+		'w'   => 0x80,
+		'h'   => strlen($src) / 0x80,
+		'cc'  => strlen($pal) / 4,
+		'pal' => $pal,
+		'pix' => $src,
+	);
+	save_clutfile($fn, $img);
+	return;
+}
 //////////////////////////////
 function xywh1123( &$meta, $pos )
 {
 	$cnt = str2int($meta, $pos+0, 1);
+	$b0  = str2int($meta, $pos+1, 3);
 		$pos += 4;
-	printf("== xywh1123( %x ) = %x\n", $pos-4, $cnt);
+	printf("== xywh1123( %x ) = %x , %06x\n", $pos-4, $cnt, $b0);
 	if ( $cnt === 0 )
 		return;
 
@@ -335,7 +357,7 @@ function xywh1123( &$meta, $pos )
 		$sx =  ($b23 >>  0) & 0x1f; // sx
 		$sy =  ($b23 >>  5) & 0xff; // sy
 		$dx = (($b23 >> 14) << 8) | $b0; // dx
-		$fx =  ($b23 >> 13) & 1;
+		$fx =  ($b23 >> 13) & 1; // horizontal flip
 
 		// fedc ba98 7654 3210
 		// 66-a aaa8 888- ----
@@ -353,8 +375,11 @@ function xywh1123( &$meta, $pos )
 			'fx' => $fx,
 		);
 
-		printf("  %3x , %3x , %3x , %3x , %3x , %3x", $dx, $dy, $xywh['w'], $xywh['h'], $xywh['sx'], $xywh['sy']);
-		printf(" , %04x , %04x\n", $b23 & 0x2000, $b45 & 0x201f);
+		trace('  %3x , %3x , %3x , %3x , %3x , %3x', $dx, $dy, $xywh['w'], $xywh['h'], $xywh['sx'], $xywh['sy']);
+		$t = sprintf(' , %04x  %04x', $b23 & 0x2000, $b45 & 0x201f);
+		$t = str_replace('0', '-', $t);
+		trace("$t\n");
+
 		$data[] = $xywh;
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return $data;
@@ -362,23 +387,17 @@ function xywh1123( &$meta, $pos )
 
 function data1123( &$meta, $st )
 {
-	$ed = str2int($meta, $st, 2);
 	$data = array();
-	while ( $st < $ed )
+	while (1)
 	{
 		if ( $meta[$st] === ZERO )
-		{
-			$b1 = str2int($meta, $st+1, 2);
-				$st += 3;
-		}
-		else
-		{
-			$b0 = str2int($meta, $st+0, 2);
-				$st += 2;
-			$b1 = str2int($meta, $b0+1, 2);
-		}
+			break;
+
+		$b0 = str2int($meta, $st+0, 2);
+			$st += 2;
+		$b1 = str2int($meta, $b0+1, 2);
 		$data[] = xywh1123($meta, $b1);
-	} // while ( $st < $ed )
+	} // while (1)
 	return $data;
 }
 
@@ -452,6 +471,9 @@ function merge_1123_bg( &$meta, &$file, $dir )
 			$pal = substr($file, $pal_off, 0x200);
 				$pal = pal555($pal);
 
+			$fn = sprintf('%s/%04d-%d-src.clut', $dir, $i, $pk);
+			merge_src($fn, $src, $pal);
+
 			$data = data1123($meta, $p1);
 			foreach ( $data as $dk => $dv )
 			{
@@ -477,6 +499,9 @@ function merge_1123_upper( &$meta, &$file, $dir )
 		$pal = substr($file, $pos+0x18000, 0x200);
 			$pal = pal555($pal);
 
+		$fn = sprintf('%s/%04d-src.clut', $dir, $i);
+		merge_src($fn, $src, $pal);
+
 		$data = data1123($meta, $p1);
 		foreach ( $data as $dk => $dv )
 		{
@@ -490,23 +515,12 @@ function merge_1123_upper( &$meta, &$file, $dir )
 				$flg = ($f1 << 4) | $f2;
 				switch ( $flg )
 				{
-					case 0x00:
-						break;
-					case 0x01:
-						$dv[$k]['sy'] += 0x80;
-						break;
-					case 0x10:
-						$dv[$k]['sy'] += 0x100;
-						break;
-					case 0x11:
-						$dv[$k]['sy'] += 0x180;
-						break;
-					case 0x02:
-						$dv[$k]['sy'] += 0x200;
-						break;
-					case 0x03:
-						$dv[$k]['sy'] += 0x280;
-						break;
+					case 0x00: break;
+					case 0x01: $dv[$k]['sy'] += 0x80 ; break;
+					case 0x10: $dv[$k]['sy'] += 0x100; break;
+					case 0x11: $dv[$k]['sy'] += 0x180; break;
+					case 0x02: $dv[$k]['sy'] += 0x200; break;
+					case 0x03: $dv[$k]['sy'] += 0x280; break;
 					default: // not exists
 						php_error('sx sy flg = %x', $flg);
 						break;
@@ -514,7 +528,6 @@ function merge_1123_upper( &$meta, &$file, $dir )
 			} // foreach( $dv as $k => $v )
 
 			$fn = sprintf('%s/%04d-%d', $dir, $i, $dk);
-			//save_file("$fn.src", $src);
 			save1123($fn, $dv, $src, 0x80, 0x300, $pal, true);
 		} // foreach ( $data as $dk => $dv )
 	} // for ( $i=0; $i < 94; $i++ )
@@ -535,6 +548,9 @@ function merge_1123_lower( &$meta, &$file, $dir )
 		$pal = substr($file, $pos+0xc000, 0x200);
 			$pal = pal555($pal);
 
+		$fn = sprintf('%s/%04d-src.clut', $dir, $i);
+		merge_src($fn, $src, $pal);
+
 		$data = data1123($meta, $p1);
 		foreach( $data as $dk => $dv )
 		{
@@ -548,11 +564,8 @@ function merge_1123_lower( &$meta, &$file, $dir )
 				$flg = ($f1 << 4) | $f2;
 				switch ( $flg )
 				{
-					case 0x01:
-						break;
-					case 0x10:
-						$dv[$k]['sy'] += 0x80;
-						break;
+					case 0x01: break;
+					case 0x10: $dv[$k]['sy'] += 0x80; break;
 					default: // not exists
 						php_error('sx sy flg = %x', $flg);
 						break;
@@ -560,7 +573,6 @@ function merge_1123_lower( &$meta, &$file, $dir )
 			} // foreach( $dv as $k => $v )
 
 			$fn = sprintf('%s/%04d-%d', $dir, $i, $dk);
-			//save_file("$fn.src", $src);
 			save1123($fn, $dv, $src, 0x80, 0x180, $pal, true);
 		} // foreach( $data as $dk => $dv )
 	} // for ( $i=0; $i < 22; $i++ )
@@ -582,6 +594,9 @@ function merge_1123_shoes( &$meta, &$file, $dir )
 		$pal = substr($file, $pos+0x4000, 0x200);
 			$pal = pal555($pal);
 
+		$fn = sprintf('%s/%04d-src.clut', $dir, $i);
+		merge_src($fn, $src, $pal);
+
 		$data = data1123($meta, $p1);
 		foreach ( $data as $dk => $dv )
 		{
@@ -595,8 +610,7 @@ function merge_1123_shoes( &$meta, &$file, $dir )
 				$flg = ($f1 << 4) | $f2;
 				switch ( $flg )
 				{
-					case 0x01:
-						break;
+					case 0x01: break;
 					default: // not exists
 						php_error('sx sy flg = %x', $flg);
 						break;
@@ -604,7 +618,6 @@ function merge_1123_shoes( &$meta, &$file, $dir )
 			} // foreach( $dv as $k => $v )
 
 			$fn = sprintf('%s/%04d-%d', $dir, $i, $dk);
-			//save_file("$fn.src", $src);
 			save1123($fn, $dv, $src, 0x80, 0x80, $pal, true);
 		} // foreach ( $data as $dk => $dv )
 	} // for ( $i=0; $i < 27; $i++ )
@@ -626,11 +639,13 @@ function merge_1123_shield( &$meta, &$file, $dir )
 		$pal = substr($file, $pos+0x8000, 0x200);
 			$pal = pal555($pal);
 
+		$fn = sprintf('%s/%04d-src.clut', $dir, $i);
+		merge_src($fn, $src, $pal);
+
 		$data = data1123($meta, $p1);
 		foreach ( $data as $dk => $dv )
 		{
 			$fn = sprintf('%s/%04d-%d', $dir, $i, $dk);
-			//save_file("$fn.src", $src);
 			save1123($fn, $dv, $src, 0x80, 0xc0, $pal, true);
 		} // foreach ( $data as $dk => $dv )
 	} // for ( $i=0; $i < 12; $i++ )
@@ -660,8 +675,10 @@ function merge_1123_weapon( &$meta, &$file, $dir )
 				$pal = substr($file, $p2, 0x200);
 					$pal = pal555($pal);
 
+				$fn = sprintf('%s/%04d-%d-%d-src.clut', $dir, $i, $dk, $j);
+				merge_src($fn, $src, $pal);
+
 				$fn = sprintf('%s/%04d-%d-%d', $dir, $i, $dk, $j);
-				//save_file("$fn.src", $src);
 				save1123($fn, $dv, $src, 0x80, 0x80, $pal, true);
 			} // for ( $j=0; $j < 4; $j++ )
 		} // foreach ( $data as $dk => $dv )
@@ -669,7 +686,7 @@ function merge_1123_weapon( &$meta, &$file, $dir )
 	return;
 }
 
-function merge1123( &$file, $dir )
+function merge_1123( &$file, $dir )
 {
 	// all 30 meta files are the same
 	//
@@ -703,6 +720,7 @@ function merge1123( &$file, $dir )
 	//   v0 = v0 + (a0 << 1) + 801dc000 + (v1 << 8)
 	//
 	// end/3e62
+	// -> RAM 801dc000
 	$meta = substr($file, 0x1123*0x800, 0x3e62);
 	save_file("$dir/meta.bin", $meta);
 
@@ -719,6 +737,295 @@ function merge1123( &$file, $dir )
 	return;
 }
 //////////////////////////////
+function merge_a9_card( &$meta, &$file, $dir )
+{
+	$off = str2int($meta, 2, 2);
+	printf("== merge_a9_card( %s ) = %x\n", $dir, $off);
+
+	for ( $i=0; $i < 22; $i++ )
+	{
+		$p1 = str2int($meta, $off+$i*2, 2);
+
+		$pos = (0xad + ($i * 0x31)) * 0x800;
+		$src = substr($file, $pos       , 0x18000);
+		$pal = substr($file, $pos+0x18000, 0x800);
+			$pal = pal555($pal);
+
+		$fn = sprintf('%s/%04d-src.clut', $dir, $i);
+		merge_src($fn, $src, $pal);
+
+		$data = data1123($meta, $p1);
+		foreach ( $data as $dk => $dv )
+		{
+			if ( $dk === 2 )
+				$p = substr($pal, 0, 0x400);
+			else
+			if ( $dk === 3 )
+				$p = substr($pal, 0x400, 0x400);
+			else
+				continue;
+
+			foreach( $dv as $k => $v )
+			{
+				$f1 = $dv[$k]['sx'] >> 7;
+				$f2 = $dv[$k]['sy'] >> 7;
+				$dv[$k]['sx'] &= 0x7f;
+				$dv[$k]['sy'] &= 0x7f;
+
+				$flg = ($f1 << 4) | $f2;
+				switch ( $flg )
+				{
+					case 0x00: break;
+					case 0x01: $dv[$k]['sy'] += 0x80 ; break;
+					case 0x10: $dv[$k]['sy'] += 0x100; break;
+					case 0x11: $dv[$k]['sy'] += 0x180; break;
+					case 0x02: $dv[$k]['sy'] += 0x200; break;
+					case 0x03: $dv[$k]['sy'] += 0x280; break;
+					default: // not exists
+						php_error('sx sy flg = %x', $flg);
+						break;
+				} // switch ( $flg )
+			} // foreach( $dv as $k => $v )
+
+			$fn = sprintf('%s/%04d-%d', $dir, $i, $dk);
+			save1123($fn, $dv, $src, 0x80, 0x300, $p, true);
+		} // foreach ( $data as $dk => $dv )
+	} // for ( $i=0; $i < 22; $i++ )
+	return;
+}
+
+function merge_a9( &$file, $dir )
+{
+	// 0/c=album/card  80018e44
+	// 2/e=album/card/booth  80018e44
+	// 4/3a=album  80018e44
+	// 6/46=booth  80018e44
+	// 8/48=booth  80018e44
+	// a/4a=booth  80018e44
+	//
+	// end/1be4
+	// -> RAM 80144a08
+	$meta = substr($file, 0xa9*0x800, 0x1be4);
+	save_file("$dir/meta.bin", $meta);
+
+	// 0=1
+	merge_a9_card($meta, $file, "$dir/card"); // 1=22,[3,4]
+	// 2=6
+	// 3=1
+	// 4=1
+	// 5=
+	return;
+}
+//////////////////////////////
+function data1fbe( &$meta, $st, &$list, &$txt, $no )
+{
+	$tmp = array();
+	while (1)
+	{
+		if ( $meta[$st] === ZERO )
+			break;
+
+		$b0 = str2int($meta, $st+0, 2);
+			$st += 2;
+
+		$b1 = str2int($meta, $b0+1, 2);
+		if ( array_search($b1, $list) === false )
+			$list[] = $b1;
+
+		$id = array_search($b1, $list);
+		$tmp[] = "$id-1";
+	} // while (1)
+
+	$txt .= sprintf('anim_%d = ', $no);
+	$txt .= implode(' , ', $tmp);
+	$txt .= "\n";
+	return;
+}
+
+function save1fbe( &$list, &$meta, $dir, &$src, &$pal )
+{
+	$fn = sprintf('%s/src.clut', $dir);
+	merge_src($fn, $src, $pal);
+
+	foreach ( $list as $lk => $lv )
+	{
+		$data = xywh1123($meta, $lv);
+		foreach ( $data as $k => $v )
+		{
+			$f1 = $data[$k]['sx'] >> 7;
+			$f2 = $data[$k]['sy'] >> 7;
+			$data[$k]['sx'] &= 0x7f;
+			$data[$k]['sy'] &= 0x7f;
+
+			$flg = ($f1 << 4) | $f2;
+			switch ( $flg )
+			{
+				case 0x01: break;
+				case 0x10: $data[$k]['sy'] += 0x80;  break;
+				case 0x11: $data[$k]['sy'] += 0x100; break;
+				default: // not exists
+					php_error('sx sy flg = %x', $flg);
+					break;
+			} // switch ( $flg )
+		} // foreach ( $data as $k => $v )
+
+		$fn = sprintf('%s/%04d', $dir, $lk);
+		save1123($fn, $data, $src, 0x80, 0x180, $pal, true);
+	} // foreach ( $list as $lk => $lv )
+	return;
+}
+
+function merge_1fbe_front( &$meta, &$file, $mrgp, $dir )
+{
+	$off = str2int($meta, 0, 2);
+	printf("== merge_1fbe_front( %x , %s ) = %x\n", $mrgp, $dir, $off);
+
+	$list = array();
+	$txt = '';
+	for ( $i=0; $i < 16; $i++ )
+	{
+		$p1 = str2int($meta, $off+$i*2, 2);
+		data1fbe($meta, $p1, $list, $txt, $i);
+	} // for ( $i=0; $i < 16; $i++ )
+
+	save_file("$dir/anim.txt", $txt);
+
+	$src = substr($file, $mrgp+0x17000, 0xc000);
+	$pal = substr($file, $mrgp+0x23000, 0x200);
+		$pal = pal555($pal);
+
+	save1fbe($list, $meta, $dir, $src, $pal);
+	return;
+}
+
+function merge_1fbe_side( &$meta, &$file, $mrgp, $dir )
+{
+	$off = str2int($meta, 2, 2);
+	printf("== merge_1fbe_side( %x , %s ) = %x\n", $mrgp, $dir, $off);
+
+	$list = array();
+	$txt = '';
+	for ( $i=0; $i < 9; $i++ )
+	{
+		$p1 = str2int($meta, $off+$i*2, 2);
+		data1fbe($meta, $p1, $list, $txt, $i);
+	} // for ( $i=0; $i < 9; $i++ )
+
+	save_file("$dir/anim.txt", $txt);
+
+	$src = substr($file, $mrgp-0x1000 , 0xc000);
+	$pal = substr($file, $mrgp+0x23000, 0x200);
+		$pal = pal555($pal);
+
+	save1fbe($list, $meta, $dir, $src, $pal);
+	return;
+}
+
+function merge_1fbe_back( &$meta, &$file, $mrgp, $dir )
+{
+	$off = str2int($meta, 4, 2);
+	printf("== merge_1fbe_back( %x , %s ) = %x\n", $mrgp, $dir, $off);
+
+	$list = array();
+	$txt = '';
+	for ( $i=0; $i < 1; $i++ )
+	{
+		$p1 = str2int($meta, $off+$i*2, 2);
+		data1fbe($meta, $p1, $list, $txt, $i);
+	} // for ( $i=0; $i < 1; $i++ )
+
+	save_file("$dir/anim.txt", $txt);
+
+	$src = substr($file, $mrgp+0xb000 , 0xc000);
+	$pal = substr($file, $mrgp+0x23000, 0x200);
+		$pal = pal555($pal);
+
+	save1fbe($list, $meta, $dir, $src, $pal);
+	return;
+}
+
+function merge_1fbe_dress( &$meta, &$file, $id, $dir )
+{
+	$st = str2int($meta,  6, 2);
+	$ed = str2int($meta, 10, 2);
+	printf("== merge_1fbe_dress( %x , %s ) = %x - %x\n", $id, $dir, $st, $ed);
+
+	$list = array();
+	$txt = '';
+	$no = 0;
+	while ( $st < $ed )
+	{
+		$p1 = str2int($meta, $st, 2);
+			$st += 2;
+		data1fbe($meta, $p1, $list, $txt, $no);
+			$no++;
+	} // while ( $st < $ed )
+
+	save_file("$dir/anim.txt", $txt);
+
+	$pos = (0x114d + ($id * 6 * 0x7c)) * 0x800;
+	$src = substr($file, $pos+0x10800, 0x18000);
+	$pal = substr($file, $pos+0x28800, 0x200);
+		$pal = pal555($pal);
+
+	$fn = sprintf('%s/src.clut', $dir);
+	merge_src($fn, $src, $pal);
+
+	foreach ( $list as $lk => $lv )
+	{
+		$data = xywh1123($meta, $lv);
+		foreach ( $data as $k => $v )
+		{
+			$f1 = $data[$k]['sx'] >> 7;
+			$f2 = $data[$k]['sy'] >> 7;
+			$data[$k]['sx'] &= 0x7f;
+			$data[$k]['sy'] &= 0x7f;
+
+			$flg = ($f1 << 4) | $f2;
+			switch ( $flg )
+			{
+				case 0x00: break;
+				case 0x01: $data[$k]['sy'] += 0x80;  break;
+				case 0x10: $data[$k]['sy'] += 0x100; break;
+				case 0x11: $data[$k]['sy'] += 0x180; break;
+				case 0x02: $data[$k]['sy'] += 0x200; break;
+				case 0x03: $data[$k]['sy'] += 0x280; break;
+				default: // not exists
+					php_error('sx sy flg = %x', $flg);
+					break;
+			} // switch ( $flg )
+		} // foreach ( $data as $k => $v )
+
+		$fn = sprintf('%s/%04d', $dir, $lk);
+		save1123($fn, $data, $src, 0x80, 0x300, $pal, true);
+	} // foreach ( $list as $lk => $lv )
+	return;
+}
+
+function merge_1fbe( &$file, $id, $dir )
+{
+	// 0/a=front  80018e44
+	// 2/2a=side  80018e44
+	// 4/3c=back  80018e44
+	// 6/3e=body  80018e44
+	// 8/6d3,6b7,5c2,6c0,6c0=map  80018e44
+	//
+	// end/2e58,3382,35c6,3602,352c
+	// -> RAM 801d4800 , 801d8000
+	$ed = array(0x2e58,0x3382,0x35c6,0x3602,0x352c);
+
+	$off = (0x1fbe + ($id * 0xae)) * 0x800;
+	$meta = substr($file, $off+0x23800, $ed[$id]);
+	save_file("$dir/meta.bin", $meta);
+
+	merge_1fbe_front($meta, $file, $off, "$dir/front"); // 0=16
+	merge_1fbe_side ($meta, $file, $off, "$dir/side" ); // 1=9
+	merge_1fbe_back ($meta, $file, $off, "$dir/back" ); // 2=1
+	merge_1fbe_dress($meta, $file, $id , "$dir/dress"); // 3=12,9,9,9,9
+	// 4=
+	return;
+}
+//////////////////////////////
 function mkrmerge( $fname )
 {
 	$file = file_get_contents($fname);
@@ -728,9 +1035,36 @@ function mkrmerge( $fname )
 		return php_error('sha1sum not match [%s]', sha1($file));
 
 	$dir = str_replace('.', '_', $fname);
-	merge1123($file, "$dir/1123");
+	merge_1123($file, "$dir/1123");
+	merge_a9  ($file, "$dir/a9"  );
+
+	merge_1fbe($file, 0, "$dir/1fbe-0");
+	merge_1fbe($file, 1, "$dir/1fbe-1");
+	merge_1fbe($file, 2, "$dir/1fbe-2");
+	merge_1fbe($file, 3, "$dir/1fbe-3");
+	merge_1fbe($file, 4, "$dir/1fbe-4");
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
 	mkrmerge( $argv[$i] );
+
+/*
+80162e0
+	switch ( v1 )
+		case 0: ram=801d0000; break;
+		case 1: ram=801dc000; break;
+		case 2: ram=801d4800; break;
+		case 3: ram=801db800; break;
+		case 4: ram=801d8000; break;
+		case 5: ram=801dbc00; break;
+		case 6: ram=801df800; break;
+		case 7: ram=80164000; break;
+
+NPC
+	graphic + palette @ merge.mrg
+	data @ mapdat.mrg
+Ramias
+	 merge.mrg @ 4e3 + 7*22
+	mapdat.mrg @ 3b66+298  3bb0+7c8  3bfb+4f8
+ */

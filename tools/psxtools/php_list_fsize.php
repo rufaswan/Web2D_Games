@@ -44,8 +44,9 @@ foreach ( $list as $f )
 	if ( $e[0] === '/' )
 		$e = ' ';
 	if ( ! isset($ext[$e]) )
-		$ext[$e] = 0;
-	$ext[$e] += $sz;
+		$ext[$e] = array(0,0);
+	$ext[$e][0] += $sz;
+	$ext[$e][1] += 1;
 } // foreach ( $list as $f )
 
 if ( empty($fsz) )
@@ -55,8 +56,8 @@ ksort($fsz);
 foreach ( $fsz as $fz => $list )
 {
 	foreach ( $list as $f )
-		printf("[%4.1f%%]  %8x  %s\n", $fz/$all*100, $fz, $f);
+		printf("[%4.1f%%]  %8x  %s\n", $fz*100/$all, $fz, $f);
 } // foreach ( $fsz as $fz => $list )
 
 foreach ( $ext as $e => $sz )
-	printf("[%4.1f%%]  %8x  EXT %s\n", $sz/$all*100, $sz, $e);
+	printf("[%4.1f%%]  %8x/%-4x  EXT %s\n", $sz[0]*100/$all, $sz[0], $sz[1], $e);
