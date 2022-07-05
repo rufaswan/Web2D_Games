@@ -1,0 +1,98 @@
+================
+== Dark Souls ==
+================
+    Vitality
+  Attunement
+   Endurance
+    Strength  58/Smough's Hammer
+   Dexterity  24/Dragonslayer Spear
+              25/Gold Tracer/DLC , 25/Dark Silver Tracer/DLC
+  Resistance
+Intelligence  50/White Dragon Breath
+       Faith  50/Sunlight Spear
+    Humanity
+
+Pyromancer LEVEL 1 = 10 + 12 + 11 + 12 + 9 + (12) + 10 + 8 = 72 + 12
+  Deprived LEVEL 6 = 7 * 11 + (11) = 77 + 11
+# Starting LEVEL ignored (RESIST) stat
+
+==================
+== Dark Souls 2 ==
+==================
+       Vigor
+   Endurance
+    Vitality
+Adaptability
+    Strength  60/Giant Warrior Club
+              70/Smelter Hammer/DLC
+   Dexterity  28/Darkdrift
+              40/Ivory Straight Sword/DLC , 40/Possessed Armor Greatbow/DLC
+Intelligence  64/Soul Geyser
+       Faith  65/Blinding Bolt
+  Attunement
+
+Deprived LEVEL 1 = 9 * 6 = 54
+
+==================
+== Dark Souls 3 ==
+==================
+       Vigor
+  Attunement
+   Endurance
+    Vitality
+    Strength  50/Fume Ultra Greatsword
+              60/Ledo's Great Hammer/DLC
+   Dexterity  40/Frayed Blade
+Intelligence  50/White Dragon Breath
+       Faith  45/Lightning Storm
+              45/Soothing Sunlight
+        Luck
+
+Deprived LEVEL 1 = 9 * 10 = 90
+
+=================
+== Demon Souls ==
+=================
+    Vitality
+Intelligence
+   Endurance
+    Strength  36/Bramd
+   Dexterity  24/Blind , 24/White Bow
+       Magic  24/Epee Rapier
+       Faith  24/Large Sword of Moonlight , 24/Istarelle
+        Luck
+
+Royalty LEVEL 1 = 8 + 12 + 8 + 9 + 12 + 13 + 12 + 7 = 81
+
+================
+== Bloodborne ==
+================
+  Vitality
+ Endurance
+  Strength  TW/20/Logarius' Wheel
+            FA/30/Cannon
+     Skill  TW/14/Chikage
+            TW/20/Rakuyo/DLC
+            FA/13/Cannon
+Bloodtinge  TW/12/Chikage
+            TW/16/Bloodletter/DLC
+            FA/18/Evelyn
+    Arcane  TW/10/Logarius' Wheel
+            TW/20/Kos Parasite/DLC
+            FA/8/Rosmarinus , FA/8/Flamesprayer
+
+Waste of Skin LEVEL 4 = 10 + 9 + 10 + 9 + 7 + 9 = 54
+
+================
+== Elden Ring ==
+================
+       Vigor
+        Mind
+   Endurance
+    Strength  60/Giant-Crusher
+   Dexterity  48/Hand of Malenia
+Intelligence  70/Rennala's Full Moon
+       Faith  50/Elden Stars
+      Arcane  27/Mohgwyn's Sacred Spear
+
+Wretch LEVEL 1 = 8 * 10 = 80

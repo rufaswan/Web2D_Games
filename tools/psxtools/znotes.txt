@@ -315,3 +315,8 @@ sites.google.com/site/misbullah/posts/howtocreatesilenceaudiousingsox
 		-c : channel (1 for mono, 2 for stereo)
 
 	The above command will create a silence audio with the length is 0.4 seconds.
+
+android.stackexchange.com/questions/96914/using-adb-without-mtp-support
+
+	You should be able to use ADB as far as it is just a tunnel to the Android device's shell.
+	MTP (Media Transfer Protocol) is not connected to ADB apart from the fact that they share the USB connection.

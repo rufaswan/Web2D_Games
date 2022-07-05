@@ -1,25 +1,73 @@
-NDS Kumatanchi
+RAM 219e7e0
+	[60] -> 21935e0
+		[bc] -> 2193840
+			[98] -> 21ced80 // FMBS
 //////////////////////////////
-MBS file
+RAM 21ced80 = momo01.mbs
+	00  // FMBS
+	04  // s0-sa size
+	08  // header size
+	0c
+	10
+	14
+	18
+	1c
+	20
+	24
+	28
+	2c
+	30
+	34
+	38
+	3c  // count s0
+	3e  // count s1
+	40  2031b3c  ldrh  rb, 40(r0) // count s2
+	42  // count s4
+	44  2031d78  ldrh  rb, 44(r0) // count s3
+	46  // count s5
+	48  2031c4c  ldrh  r9, 48(r0) // count s7
+	4a  // count s8
+	4c  2031dfc  ldrh  r6, 4c(r0)// count s6
+	4e  // count s9
+	50  // count sa
+	52
+	54  2030a68  ldr  rb, 54(r1) // ptr s0
+	58  2030a7c  ldr  r2, 58(r1) // ptr s1
+	5c  2030a80  ldr  r1, 5c(r1) // ptr s2
+		2031b40  ldr  r9, 5c(r0)
+	60  2031d7c  ldr  r7, 60(r0) // ptr s3
+		20320dc  ldr  r2, 60(r2)
+	64  2030a4c  ldr  r3, 64(r1) // ptr s4
+	68  20320d8  ldr  r1, 68(r2) // ptr s5
+	6c  2031e00  ldr  r5, 6c(r0) // ptr s6
+		2032044  ldr  r1, 6c(r2)
+	70  2031c50  ldr  r8, 70(r0) // ptr s7
+		2032074  ldr  r6, 70(r2)
+	74  20326ac  ldr  rc, 74(r6) // ptr s8
+	78  2033394  ldr  r3, 78(r2) // ptr s9
+		20333f8  ldr  r3, 78(r2)
+	7c  203266c  ldr  r1, 7c(r1) // ptr sa
+	80  // mbs filename
+
 	s0*18 clr (18 done)
 		00  // center RGB
-		04  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 1
+		04  2030834  ldr   r1, 0(r1 + r3 << 2) // RGBA 1
 			20308d4  ldrb  r1, 0(r0)
 		05  20308dc  ldrb  r1, 1(r0)
 		06  20308e4  ldrb  r0, 2(r0)
-		08  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 2
+		08  2030834  ldr   r1, 0(r1 + r3 << 2) // RGBA 2
 			20308d4  ldrb  r1, 0(r0)
 		09  20308dc  ldrb  r1, 1(r0)
 		0a  20308e4  ldrb  r0, 2(r0)
-		0c  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 3
+		0c  2030834  ldr   r1, 0(r1 + r3 << 2) // RGBA 3
 			20308d4  ldrb  r1, 0(r0)
 		0d  20308dc  ldrb  r1, 1(r0)
 		0e  20308e4  ldrb  r0, 2(r0)
-		10  2030834  ldr   r1, 0(r1 + r3 << 2) // RGB 4
+		10  2030834  ldr   r1, 0(r1 + r3 << 2) // RGBA 4
 			20308d4  ldrb  r1, 0(r0)
 		11  20308dc  ldrb  r1, 1(r0)
 		12  20308e4  ldrb  r0, 2(r0)
-		14  // RGB 5 == RGB 1
+		14  // RGBA 5 == RGBA 1
 	s1*30 src (30 done)
 		00  // center x
 		04  // center y
@@ -75,10 +123,10 @@ MBS file
 		44
 		48
 		4c
-	s4*c  part (9 done)
+	s4*c  layer (9 done)
 		00  2030ad0  ldrh  r0, 0(r9) // flags
-			tst r0, 02
-			tst r0, 04
+			tst r0, 02  // skip
+			tst r0, 04  // vertex color only
 		02  //
 		03  2030af0  ldrb  r1, 3(r9) // [kuma02] tex ID
 		04  2030b94  ldrh  r2, 4(r9) // s1 ID
@@ -114,14 +162,17 @@ MBS file
 		16  //
 		17
 	s7*24 meta (14 done)
-		00  // + x
-		04  // + y
+		00  // + x px
+		04  // + y px
 		08  // ??? all 0
-		0c  203211c  ldr  r3,  c(r6) // ??? all 0
-		10  2032104  ldr  r1, 10(r6) // ??? all 0
-		14  2032110  ldr  r1, 14(r6) // ??? all 0
-		18  2032100  ldr  r2, 18(r6) // * scale x
-		1c  // * scale y
+		0c  203211c  ldr  r3,  c(r6) // ??? % all 0
+		10  2032104  ldr  r1, 10(r6) // ??? % all 0
+		14  2032110  ldr  r1, 14(r6) // rotate all 0
+			// RAM 00 40 = 90 cclock
+			// RAM 00 80 = 180
+			// RAM 00 c0 = 90 clock
+		18  2032100  ldr  r2, 18(r6) // * scale x %
+		1c  // * scale y % (merged w/x , y not used)
 		20  2032394  ldrb  r6, 20(r6) // red
 		21  2032398  ldrb  r0, 21(r6) // green
 		22  2032364  ldrb  r7, 22(r6) // blue
@@ -183,128 +234,69 @@ MBS file
 		0d
 		0e
 		0f
+
+loop order
+	40/5c - 48/70 - 44/60 - 4c/6c
+	[78]-[7c-74]-[6c-70-68-60]-[64-54-58-5c]
+	[s9]-[sa-s8]-[s6-s7-s5-s3]-[s4-s0-s1-s2]
 //////////////////////////////
-WORK RAM s8 [BLOCK 0x74]
-
-	// 4x4 transformation matrix?
-	00  200113c  ldr  r5,  0(r0)
-		200116c  str  r6,  0(ra)
-	04  2001134  ldr  r4,  4(r0)
-		2001198  str  r6,  4(ra)
-	08  2001148  ldr  r3,  8(r0)
-		20011f4  str  r2,  8(ra)
-	0c  2001154  ldr  r2,  c(r0)
-		20011c4  str  r6,  c(ra)
-	10  2001214  ldr  r7, 10(r0)
-		2001340  str  r4, 10(ra)
-	14  2001210  ldr  r6, 14(r0)
-		20012e8  str  r3, 14(ra)
-	18  2001224  ldr  r5, 18(r0)
-		20012bc  str  r3, 18(ra)
-	1c  2001230  ldr  r4, 1c(r0)
-		2001314  str  r3, 1c(ra)
-	20  2001364  ldr  r8, 20(r0)
-		2001414  str  r3, 20(ra)
-	24  2001358  ldr  r7, 24(r0)
-		2001458  str  r2, 24(ra)
-	28  2001368  ldr  r6, 28(r0)
-		20014e0  str  r4, 28(ra)
-	2c  200136c  ldr  r5, 2c(r0)
-		200149c  str  r2, 2c(ra)
-	30  20014e8  ldr  r3, 30(r0)
-		200169c  str  r6, 30(ra)
-	34  20014e4  ldr  r4, 34(r0)
-		20015e8  str  r6, 34(ra)
-	38  2001504  ldr  r2, 38(r0)
-		2001520  str  r0, 38(ra)
-	3c  2001508  ldr  rc, 3c(r0)
-		2001740  str  r1, 3c(ra)
-
-	40  2032088  str  r3, 40(ra)  // from s6 0 x1
-	44  2032094  str  r3, 44(ra)  // from s6 4 y1
-	48  203209c  str  r3, 48(ra)  // from s6 8 x2
-	4c  20320a4  str  r3, 44(ra)  // from s6 c y2
+RAM 2193840
+	00
+	04
+	08
+	0c
+	10
+	14
+	18
+	1c
+	20
+	24
+	28
+	2c
+	30
+	34
+	38
+	3c
+	40
+	44
+	48
+	4c
 	50
 	54
 	58
 	5c
-	60  *pointer*
-		2031f40  ldr  rb, 60(r8)
-		2031ff4  ldr  r4, 60(ra)
-		203265c  ldr  r1, 60(r0)
-		2032698  ldr  r1, 60(r5)
-		2032734  ldr  r4, 60(ra)
-	64  // from s8 6 frames
-		203283c  ldr   r0, 64(ra)  r0 -= r9
-		203284c  str   r0, 64(ra)
-		20328b8  ldrh  r0,  6(r0) // r0 = s8
-		20328c0  str   r0, 64(ra)
-		2032920  ldrh  r0,  6(r0) // r0 = s8
-		2032928  str   r0, 64(ra)
-	68  // from s8 6 frames
-		20328b8  ldrh  r0,  6(r0) // r0 = s8
-		20328bc  strh  r0, 68(ra)
-		2032920  ldrh  r0,  6(r0) // r0 = s8
-		2032924  strh  r0, 68(ra)
-	6a  // sa ID
-		2032660  ldrh  r0, 6a(r0)
-
-		ldr  r1, 60(r0)     // ^pointer
-		ldr  r1, bc(r1)
-		ldr  r1, 98(r1)
-		ldr  r1, 7c(r1)     // r1 = FMBS
-		r0 = r1 + (r0 << 4) // r0 = sa
-	6c  // from s8 c loop s8 ID
-		20326b0  ldrsh  r2, 6c(r5)
-		2032798  ldrsh  r1, 6c(ra)
-		2032884  ldrh   r0,  c(r8) // r8 = s8
-		2032888  strh   r0, 6c(ra)
-
-		203288c  ldrsh  r2, 6c(ra)
-		2032904  ldrsh  r0, 6c(ra)  r0 += 1
-		203290c  strh   r0, 6c(ra)
-
-		2032910  ldrsh  r1, 6c(ra)
-	6e  // loop s8 ID adjust
-		20326b4  ldrsb  r1, 6e(r5)
-		203279c  ldrsb  r0, 6e(ra)
-		2032890  ldrsb  r1, 6e(ra)
-		2032914  ldrsb  r0, 6e(ra)
-	6f
-	70  // flags
-		20320ac  ldrb  r1, 70(ra)  r0 |= 20  // always
-		20320d0  strb  r1, 70(ra)
-
-		2032684  ldrb  r2, 70(r5)  tst  r2, 08  // skip draw
-		2032744  ldrb  r0, 70(ra)
-			tst  r0, 04
-			tst  r0, 02
-			tst  r0, 01
-		2032764  ldrbne  r0, 70(ra)  r0 &= ~1
-		203276c  strbne  r0, 70(ra)
-
-		2032780  ldrb    r2, 70(ra)
-			tst  r0, 02
-			tst  r0, 10
-		20327b0  ldrb  r0, 70(ra)  r0 &= ~10
-		20327b8  strb  r0, 70(ra)
-		20328a4  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
-		20328ac  strb  r0, 70(ra)
-		20328c4  ldrb  r0, 70(ra)  r0 |= 1  // load loop s8 ID
-		20328cc  strb  r0, 70(ra)
-		20328dc  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
-		20328e4  strb  r0, 70(ra)
-		20328f4  ldrb  r0, 70(ra)  r0 |= 5  // skip frames
-		20328fc  strb  r0, 70(ra)
-		203292c  ldrb  r0, 70(ra)  r0 |= 10  // load s8 frames
-		2032934  strb  r0, 70(ra)
-
-		2033230  ldrb  r1, 70(r0)  tst  r1, 02
-	71
-	72
-	73
+	60
+	64
+	68
+	6c
+	70
+	74
+	78
+	7c
+	80
+	84
+	88
+	8c
+	90  // ptr FMBS original
+	94
+	98  2031ac8  str  r0, 98(r4) // ptr FMBS
+		2031ae8  ldr  r0, 98(r4)
+		2031b2c  ldr  r0, 98(r4)
+		2031b34  ldr  r0, 98(r4)
+		2031bb8  ldr  r0, 98(r4)
+		2031c44  ldr  r0, 98(r4)
+		2031d70  ldr  r0, 98(r4)
+		2031df4  ldr  r0, 98(r4)
+		2031f04  ldr  r4, 98(r3)
+		203202c  ldr  r2, 98(r2)
+		2032668  ldr  r1, 98(r1)
+		20326a0  ldr  r6, 98(r1)
+		2032774  ldr  r7, 98(r5)
+		2032f60  ldr  r8, 98(r0)
+		203338c  ldr  r2, 98(r1)
+		20333f0  ldr  r2, 98(r1)
 //////////////////////////////
-WORK RAM s9 [BLOCK 0x]
+RAM 21935e0 / s9 [BLOCK 0x]
 	00  *pointer*
 		20335c8  ldr  r3, 0(r0)
 
@@ -476,33 +468,123 @@ WORK RAM s9 [BLOCK 0x]
 	db
 	dc
 //////////////////////////////
-PS2 odin vs NDS kuma
-	b=byte/int8 , h=half/int16 , w=word/int32
-	f=float32 , c=char[]
+RAM 219e7e0 / s8 [BLOCK 0x74]
 
-	s3 s5 == 0
+	// 4x4 transformation matrix?
+	00  200113c  ldr  r5,  0(r0)
+		200116c  str  r6,  0(ra)
+	04  2001134  ldr  r4,  4(r0)
+		2001198  str  r6,  4(ra)
+	08  2001148  ldr  r3,  8(r0)
+		20011f4  str  r2,  8(ra)
+	0c  2001154  ldr  r2,  c(r0)
+		20011c4  str  r6,  c(ra)
+	10  2001214  ldr  r7, 10(r0)
+		2001340  str  r4, 10(ra)
+	14  2001210  ldr  r6, 14(r0)
+		20012e8  str  r3, 14(ra)
+	18  2001224  ldr  r5, 18(r0)
+		20012bc  str  r3, 18(ra)
+	1c  2001230  ldr  r4, 1c(r0)
+		2001314  str  r3, 1c(ra)
+	20  2001364  ldr  r8, 20(r0)
+		2001414  str  r3, 20(ra)
+	24  2001358  ldr  r7, 24(r0)
+		2001458  str  r2, 24(ra)
+	28  2001368  ldr  r6, 28(r0)
+		20014e0  str  r4, 28(ra)
+	2c  200136c  ldr  r5, 2c(r0)
+		200149c  str  r2, 2c(ra)
+	30  20014e8  ldr  r3, 30(r0)
+		200169c  str  r6, 30(ra)
+	34  20014e4  ldr  r4, 34(r0)
+		20015e8  str  r6, 34(ra)
+	38  2001504  ldr  r2, 38(r0)
+		2001520  str  r0, 38(ra)
+	3c  2001508  ldr  rc, 3c(r0)
+		2001740  str  r1, 3c(ra)
 
-	s9       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
-	odin*30  f       f       f       f       c                                               h   b b b ? ? ?-
-	kuma*30  f       f       f       f       c                                               h   b b b ? ? ?-
+	40  2032088  str  r3, 40(ra)  // from s6 0 x1
+	44  2032094  str  r3, 44(ra)  // from s6 4 y1
+	48  203209c  str  r3, 48(ra)  // from s6 8 x2
+	4c  20320a4  str  r3, 44(ra)  // from s6 c y2
+	50
+	54
+	58
+	5c
+	60  *pointer*
+		2031f40  ldr  rb, 60(r8)
+		2031ff4  ldr  r4, 60(ra)
+		203265c  ldr  r1, 60(r0)
+		2032698  ldr  r1, 60(r5)
+		2032734  ldr  r4, 60(ra)
+	64  // from s8 6 frames
+		203283c  ldr   r0, 64(ra)  r0 -= r9
+		203284c  str   r0, 64(ra)
+		20328b8  ldrh  r0,  6(r0) // r0 = s8
+		20328c0  str   r0, 64(ra)
+		2032920  ldrh  r0,  6(r0) // r0 = s8
+		2032928  str   r0, 64(ra)
+	68  // from s8 6 frames
+		20328b8  ldrh  r0,  6(r0) // r0 = s8
+		20328bc  strh  r0, 68(ra)
+		2032920  ldrh  r0,  6(r0) // r0 = s8
+		2032924  strh  r0, 68(ra)
+	6a  // sa ID
+		2032660  ldrh  r0, 6a(r0)
 
-	sa       0 1 2 3 4 5 6 7 8 9 a b c d e f
-	odin*8   h   h   h   h   ----------------
-	kuma*10  h   h   w?      w       w      -
+		ldr  r1, 60(r0)     // ^pointer
+		ldr  r1, bc(r1)
+		ldr  r1, 98(r1)
+		ldr  r1, 7c(r1)     // r1 = FMBS
+		r0 = r1 + (r0 << 4) // r0 = sa
+	6c  // from s8 c loop s8 ID
+		20326b0  ldrsh  r2, 6c(r5)
+		2032798  ldrsh  r1, 6c(ra)
+		2032884  ldrh   r0,  c(r8) // r8 = s8
+		2032888  strh   r0, 6c(ra)
 
-	s8       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
-	odin*20  h   ? ? h   h   w       h   b ? ? b b b w       h   h   w      -
-	kuma*20  h   ? ? h   h   w       h   b ? ? b b b w       h   h   w      -
+		203288c  ldrsh  r2, 6c(ra)
+		2032904  ldrsh  r0, 6c(ra)  r0 += 1
+		203290c  strh   r0, 6c(ra)
 
-	s7       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
-	odin*30  f       f       f       f       f       f       w       w       w       w       f       f      -
-	kuma*24  f       f       w?      w       w       w       f       f       b b b b-------------------------
+		2032910  ldrsh  r1, 6c(ra)
+	6e  // loop s8 ID adjust
+		20326b4  ldrsb  r1, 6e(r5)
+		203279c  ldrsb  r0, 6e(ra)
+		2032890  ldrsb  r1, 6e(ra)
+		2032914  ldrsb  r0, 6e(ra)
+	6f
+	70  // flags
+		20320ac  ldrb  r1, 70(ra)  r0 |= 20  // always
+		20320d0  strb  r1, 70(ra)
 
-	s6       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
-	odin*18  f       f       f       f       h   h   b b b ?-
-	kuma*18  f       f       f       f       h   h   b b b ?-
+		2032684  ldrb  r2, 70(r5)  tst  r2, 08  // skip draw
+		2032744  ldrb  r0, 70(ra)
+			tst  r0, 04
+			tst  r0, 02
+			tst  r0, 01
+		2032764  ldrbne  r0, 70(ra)  r0 &= ~1
+		203276c  strbne  r0, 70(ra)
 
-	s4       0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
-	odin*18  h   b b h   ? ? h   h   h   h   h   h   h   h  -
-	kuma*c   h   b b h   ? ? h   h   ------------------------
+		2032780  ldrb    r2, 70(ra)
+			tst  r0, 02
+			tst  r0, 10
+		20327b0  ldrb  r0, 70(ra)  r0 &= ~10
+		20327b8  strb  r0, 70(ra)
+		20328a4  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
+		20328ac  strb  r0, 70(ra)
+		20328c4  ldrb  r0, 70(ra)  r0 |= 1  // load loop s8 ID
+		20328cc  strb  r0, 70(ra)
+		20328dc  ldrb  r0, 70(ra)  r0 |= 3  // skip draw + frames
+		20328e4  strb  r0, 70(ra)
+		20328f4  ldrb  r0, 70(ra)  r0 |= 5  // skip frames
+		20328fc  strb  r0, 70(ra)
+		203292c  ldrb  r0, 70(ra)  r0 |= 10  // load s8 frames
+		2032934  strb  r0, 70(ra)
+
+		2033230  ldrb  r1, 70(r0)  tst  r1, 02
+	71
+	72
+	73
 //////////////////////////////

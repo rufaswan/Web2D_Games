@@ -340,7 +340,7 @@ function colorhex32( $c, $order='0123', $sll=false )
 	if ( $r === $g && $g === $b && $b === $a )
 		return $r;
 	else
-		return sprintf('#%02x%02x%02x%02x', $r, $g, $b, $a);
+		return sprintf('%d,%d,%d,%d', $r, $g, $b, $a);
 }
 
 function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
@@ -357,29 +357,38 @@ function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
 	if ( $quad[1] !== $quad[2] )  return $quad;
 	if ( $quad[2] !== $quad[3] )  return $quad;
 
-	// skip default white pixels
+	// all white pixels , skipped
 	$c = ( $quad[0] === BIT8 ) ? '' : $quad[0];
 	return $c;
 }
 
 function load_mbsfile( &$file, $sect, $ord )
 {
+	$off = array();
 	foreach ( $sect as $sk => $sv )
 	{
 		$c = $ord($file, $sv['c'][0], $sv['c'][1]);
-		$o = $ord($file, $sv['p'], 4);
-		if ( $c === 0 || $o === 0 )
+		$p = $ord($file, $sv['p'], 4);
+		if ( $c === 0 || $p === 0 )
 			continue;
 
-		$sect[$sk]['o'] = $o;
-		$sect[$sk]['d'] = substr($file, $o, $c*$sv['k']);
+		$off[] = $p;
+		$sect[$sk]['h'] = $c;
+		$sect[$sk]['o'] = $p;
+		$sect[$sk]['d'] = substr($file, $p, $c*$sv['k']);
 	} // foreach ( $sect as $sk => $sv )
+
+	sort($off);
+	$p1 = str2int($file, 8, 4);
+	$p2 = array_shift($off);
+	if ( $p1 !== $p2 )
+		return php_error('FMBS head %x != %x', $p1, $p2);
 
 	$file = $sect;
 	return;
 }
 //////////////////////////////
-function ps2_quad20p( &$mbp, $id, &$quad )
+function ps2_quad20p( &$mbp, $id, &$quad, $ord )
 {
 	if ( $mbp['k'] !== 0x20 )
 		return;
@@ -387,7 +396,7 @@ function ps2_quad20p( &$mbp, $id, &$quad )
 	$float = array();
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
-		$b = str2int($mbp['d'], $pos+$i, 2, true);
+		$b = $ord($mbp['d'], $pos+$i, 2, true);
 		$float[] = $b / 0x10;
 	}
 
@@ -405,6 +414,7 @@ function ps2_quad20p( &$mbp, $id, &$quad )
 		$float[ 8] , $float[ 9] ,
 		$float[10] , $float[11] ,
 	);
+	quad_int_px($quad);
 	return;
 }
 
@@ -423,20 +433,19 @@ function ps2_quad20c( &$mbp, $id, &$quad )
 	// 18  c1
 	// 1c  padding
 	$quad = colorquad(
-		substr($mbs['d'], $pos+0x8 , 4),
-		substr($mbs['d'], $pos+0xc , 4),
-		substr($mbs['d'], $pos+0x10, 4),
-		substr($mbs['d'], $pos+0x14, 4),
+		substr($mbp['d'], $pos+0x8 , 4),
+		substr($mbp['d'], $pos+0xc , 4),
+		substr($mbp['d'], $pos+0x10, 4),
+		substr($mbp['d'], $pos+0x14, 4),
 		'0123', true
 	);
 	return;
 }
 
-function nds_quad30p( &$mbs, $id, &$quad, $big=false ) // +wii,ps3,ps4
+function nds_quad30p( &$mbs, $id, &$quad, $ord ) // +wii,ps3,ps4
 {
 	if ( $mbs['k'] !== 0x30 )
 		return;
-	$ord = ( $big ) ? 'str2big' : 'str2int';
 	$pos = $id * 0x30;
 	$float = array();
 	for ( $i=0; $i < 0x30; $i += 4 )
@@ -457,10 +466,11 @@ function nds_quad30p( &$mbs, $id, &$quad, $big=false ) // +wii,ps3,ps4
 		$float[6] , $float[7] ,
 		$float[8] , $float[9] ,
 	);
+	quad_int_px($quad);
 	return;
 }
 
-function nds_quad18c( &$mbs, $id, &$quad, $big=false ) // +wii,ps3,ps4
+function nds_quad18c( &$mbs, $id, &$quad ) // +wii,ps3,ps4
 {
 	if ( $mbs['k'] !== 0x18 )
 		return;
@@ -482,7 +492,7 @@ function nds_quad18c( &$mbs, $id, &$quad, $big=false ) // +wii,ps3,ps4
 	return;
 }
 
-function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr )
+function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
 {
 	if ( $mbs['k'] !== 0x60 )
 		return;
@@ -490,7 +500,7 @@ function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr )
 	$float = array();
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
-		$b = str2int($mbs['d'], $pos+$i, 2, true);
+		$b = $ord($mbs['d'], $pos+$i, 2, true);
 		$float[] = $b / 0x10;
 	}
 
@@ -513,6 +523,8 @@ function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr )
 		$float[28] , $float[29] ,
 		$float[36] , $float[37] ,
 	);
+	quad_int_px($src);
+	quad_int_px($dst);
 
 	//        clr
 	//  0  2   4   8  a   c  e  center
@@ -531,7 +543,7 @@ function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr )
 	return;
 }
 
-function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr )
+function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
 {
 	if ( $mbs['k'] !== 0x78 )
 		return;
@@ -539,7 +551,7 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr )
 	$float = array();
 	for ( $i=0; $i < 0x78; $i += 4 )
 	{
-		$b = str2int($mbs['d'], $pos+$i, 4);
+		$b = $ord($mbs['d'], $pos+$i, 4);
 		$float[] = float32($b);
 	}
 
@@ -562,6 +574,8 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr )
 		$float[18] , $float[19] ,
 		$float[23] , $float[24] ,
 	);
+	quad_int_px($src);
+	quad_int_px($dst);
 
 	//        clr
 	//  0  4   8   c 10  center
@@ -580,13 +594,33 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr )
 	return;
 }
 //////////////////////////////
-function vanilla_sect( $php, &$data )
+function subtrace()
 {
-	$php = substr($php, strrpos($php, 'quad_')+5);
-	$php = substr($php, 0, strrpos($php, '_FMBS'));
-
-	if ( ! isset( $data[$php] ) )
-		return php_error('data[ %s ] not found', $php);
-	return $data[$php];
+	if ( defined('NO_TRACE') )
+		return;
+	$args = func_get_args();
+	$id   = array_shift($args);
+	$log  = sprintf("%x%s ", $id, str_repeat(' ', $id));
+	foreach ( $args as $a )
+	{
+		// var type detect
+		if ( "$a" === $a ) // is_string
+			$log .= sprintf('"%s"  ', $a);
+		else
+		if ( $a == 0 )
+			$log .= '-  ';
+		else
+		if ( (int)$a === $a ) // is_int
+		{
+			if ( $a < 0 )
+				$log .= sprintf('-%x  ', -$a);
+			else
+				$log .= sprintf('%x  ', $a);
+		}
+		else // is_float
+			$log .= sprintf('%.2f  ', $a);
+	}
+	trace("$log\n");
+	return $log;
 }
 //////////////////////////////
