@@ -76,32 +76,6 @@ RAM 23d5060 = j_fk.opd / mon 102 final knight
 
 	(RAM 23d5f56)
 //////////////////////////////
-RAM 2108028
-	00  // ptr .jnt/.opd file
-	04  // ptr sect joint
-	08  // ptr sect pose
-	0c  // ptr sect hitbox
-	10  // ptr sect point
-	14  // ptr sect draw
-	18  // ptr sect anim
-	1c  // ptr
-	20  // ptr arm9 func() list
-	24
-	28
-	2c
-	30
-	34
-	38
-	3c
-	40
-	44
-	48
-	4c
-	50
-	54
-	58
-	5c  2090a18  ldrh  r1, 5c(r1)
-//////////////////////////////
 RAM 21080a0
 		00  208ce40  ldr  r1, 0(r0)
 		04  208fd64  str  r0, 4(r6) // x << 12
@@ -115,18 +89,189 @@ RAM 21080a0
 			2090a20  ldrsheq  r1, c(r0)
 			2090a2c  ldrsh    r1, c(r0)
 		0e  208fd80  ldrsh  r1, e(r6) // rotate
+			20901ac  strh   r1, e(r4)
 			20906d8  strh   r0, e(r5)
 		10  2090694  ldrsh  ra, 10(r5) // rotate
 		12  20906fc  strb   r0, 12(r5) // distance
 		13  20906bc  ldrsb  r2, 13(r5) // distance
 			20906f0  ldrsb  r1, 13(r5)
 		14
-		18  208cd50  ldrh  r1, 18(r0)  r1 & 2
-			208cd7c  ldrh  r1, 18(r0)  r1 & 85
-			208cdcc  ldrh  r1, 18(r0)  r1 & 20
-			208cfbc  ldrh  r0, 18(r0)  r1 & 10
-			208fd38  ldrh  r0, 18(r6)  r0 & 5
-			208fe78  ldrh  r0, 18(r6)  r0 & 8
-			2090a40  ldrh  r1, 18(r0)  r1 & 85
+		16  20901a0  ldrsh  r1, 16(r4)
+		18  208cd50  ldrh   r1, 18(r0)  r1 & 2
+			208cd7c  ldrh   r1, 18(r0)  r1 & 85
+			208cdcc  ldrh   r1, 18(r0)  r1 & 20
+			208cfbc  ldrh   r0, 18(r0)  r1 & 10
+			208fd38  ldrh   r0, 18(r6)  r0 & 5
+			208fe78  ldrh   r0, 18(r6)  r0 & 8
+			2090a40  ldrh   r1, 18(r0)  r1 & 85
 		1a
+//////////////////////////////
+RAM 2108028 = BLOCK 78
+	00  209149c  ldr  r1,  0(r2) // ptr .jnt/.opd file
+	04  20914b8  ldr  r1,  4(r1) // ptr sect joint
+	08  // ptr sect pose
+		20914d4  ldr  r2,  8(r2)
+		20914f0  ldr  r2,  8(r2)
+		2091510  ldr  r3,  8(r3)
+	0c  2091580  ldr  r1,  c(r1) // ptr sect hitbox
+	10  2091568  ldr  r1, 10(r1) // ptr sect point
+	14  // ptr sect draw
+	18  // ptr sect anim
+	1c  2091550  ldr  r1, 1c(r1) // ptr
+	20  // ptr arm9 func() list
+		208f378  ldr  r1, 20(r1)
+		208fbc0  ldr  r2, 20(r3)
+	24
+	28
+	2c
+	30
+	34
+	38
+	3c
+		208fb0c  ldr  r0, 3c(r1)
+		208fdd4  ldr  r1, 3c(r1)
+		208fe18  ldr  r2, 3c(r2)
+		2090ad4  ldr  ra, 3c(r9)
+		2090b0c  ldr  r3, 3c(r9)
+		2090b48  ldr  r2, 3c(r0)
+	40
+	44
+	46
+		20914d0  ldrh  r1, 46(r2)
+		20914ec  ldrh  r1, 46(r2)
+		209150c  ldrh  r2, 46(r3)
+	48  // <- 49
+		208f968  ldrb  r0, 48(r2)
+		2090190  ldrb  r0, 48(r1)
+		20904f4  strb  r1, 48(r2)
+	49
+		208f97c  ldrb  r0, 49(r0)
+		2090468  ldrb  r0, 49(r1)
+		20904dc  ldrb  r1, 49(r1)
+		20904f0  ldrb  r1, 49(r2)
+		2090560  strb  r2, 49(r0)
+	4a
+	4b
+	4c
+	4d
+		20904fc  ldrb  r2, 4d(r3)
+		2090510  strb   0, 4d(r3)
+		2090530  ldrb  r1, 4d(r2)
+	4e
+		2090500  ldrb  r1, 4e(r3)
+		209052c  ldrb  r0, 4e(r2)
+	4f
+	50
+	54
+		209042c  ldrh  r1, 54(r2)  r1++
+		2090434  strh  r1, 54(r2)
+		209043c  ldrh  r0, 54(r1)
+	56
+		208f940  ldrh  r1, 56(r2)  r1 & 800
+		208f994  ldrh  r2, 56(r3)  r2 & 10
+		2090448  ldrh  r0, 56(r1)  r0 & 20  r0 & 10
+		2090540  ldrh  r0, 56(r2)  r0 & 2
+	58
+		208f94c  ldrh  r1, 58(r2)  r1 & 3
+		208f9a0  ldrh  r0, 58(r3)  r2 & 10
+		208f9ac  ldrh  r0, 58(r3)  r2 & 3
+		208fc40  ldrhne  r0, 58(r1)  r0 |= 40
+		208fc48  strhne  r0, 58(r1)
+		209040c  ldrh  r1, 58(r5)  r2 &= ~3ec
+		209045c  ldrh  r0, 58(r1)  r2 & 10
+		20904cc  ldrh  r3, 58(r4)  r3 |= 8
+		20904d4  strh  r3, 58(r4)
+		2090518  ldrh  r0, 58(r1)  r0 |= 4
+		2090520  strh  r0, 58(r1)
+		2090568  ldrh  r0, 58(r2)  r0 |= 2
+		2090570  strh  r0, 58(r2)
+	5c
+		208cf6c  ldrh  r0, 5c(r0)  r1 & 20  r0 & 4
+		208ff80  ldrh  r0, 5c(r0)  r1 & 2
+		2090a18  ldrh  r1, 5c(r1)  r1 & 2
+		20915a4  ldrh  r1, 5c(r2)  r1 |= 2
+		20915b8  ldrh  r1, 5c(r2)  r1 &= ~2
+		20915c4  strh  r1, 5c(r2)
+		20915e8  ldrh  r1, 5c(r1)  r1 & 8
+	5e  208fa70  ldrsh  r2, 5e(r2)
+	60
+	64
+	68
+	6c
+	70
+		208fc38  ldr  r0, 70(r1)  r0 & 4
+		208fc54  ldr  r0, 70(r0)  r0 & 8
+		208fc88  ldr  r0, 70(r1)  r0 & 1
+		208fcb8  ldr  r0, 70(r1)  r0 & 2
+	74  208fa58  ldr  rb, 74(r2)
+//////////////////////////////
+RAM 23d5060
+	0  23d5090  1  23d5114  2  23d5eb0
+	3  23d5f18  4  23d5f20  5  23d5f32
+	6  23d5f3b
+RAM 2108028
+RAM 21080a0 + n*1c
+
+pose 0 jount e frame 1 = start 23d514e
+	209019c  ldrsh  r2[2ddd],  0(r0[ 23d514e]) // [1]+2+e*4
+	20901a0  ldrsh  r1[   0], 16(r4[ 2108228]) // [w]+e*1c
+	r1 += r2
+	20901ac  strh   r1[2ddd],  e(r4[ 2108228]) // [w]+e*1c
+	20901b0  ldrsb  r0[1a],  2(r0[ 23d514e])
+	20901b4  strb   r0[1a], 12(r4[ 2108228])
+	20901b8  ldrsh  r0[2ddd],  e(r4[ 2108228]) // [w]+e*1c
+	20901bc  strh   r0[2ddd], 10(r4[ 2108228]) // [w]+e*1c
+	20901c0  ldrsb  r0[1a], 12(r4[ 2108228])
+	20901c4  strb   r0[1a], 13(r4[ 2108228])
+
+		(int16)ram[e][ e] = jnt[pose][e][0] + ram[e][16]
+		(int8 )ram[e][12] = jnt[pose][e][2]
+		(int16)ram[e][10] = ram[e][ e]
+		(int8 )ram[e][13] = ram[e][12]
+
+	208fd48  ldrsh  r9[2ddd],  c(r6[ 2108228])
+	208fdac  ldrsb  r2[1a], 12(r6[ 2108228])
+	208fe08  str    r1[fffdda78], 4(r6[ 2108228])
+	208fe14  ldrsb  r3[1a], 12(r6[ 2108228])
+	208fe40  str    r0[fffd0128], 8(r6[ 2108228])
+
+	208fe68  ldrsh  r1[2ddd],  e(r6[ 2108228]) // [w]+e*1c
+	208fe6c  ldrsh  r0[   0], 5e(r0[ 2108028]) // head
+	r0 += r1
+	2090174  strh   r0[2ddd],  c(r6[ 2108228]) // [w]+e*1c
+
+	209022c  ldrsh  r1[2ddd],  e(r0[ 2108228])
+	2090234  strh   r1[2ddd], 10(r0[ 2108228])
+	2090238  ldrsb  r1[1a], 12(r0[ 2108228])
+	209023c  strb   r1[1a], 13(r0[ 2108228])
+
+	2090a18  ldrh   r1[], 5c(r1[])
+	if ( r1 & 2 )
+		2090a20  ldrsheq  r1[2ddd], c(r0[ 2108228])
+		r1 += r2
+	else
+		2090a2c  ldrsh    r1[2ddd], c(r0[ 2108228])
+		r1 = r2 - r1
+		r1 = r1 - 0x8000
+	r2 = (r1 << 16) >> 16 // uint to sint
+
+	2090ac0  ldr  ra[  140000], 30(r8[ 2114420])
+	2090ac8  ldr  r1[fffdda78],  4(r0[ 2108228])
+	re = ra + r1
+	2090ad4  ldr  ra[    1000], 3c(r9[ 2108028]) // head
+	r3 = re + ra // 11da78 + fffd4f62
+	2090b08  str  r3[   f29da], r7*8(r4[ 21581cc])
+	2090b10  ldr  r0[fffd0128],  8(r0[ 2108228])
+	2090b14  ldr  ra[   9f3e1], 34(r8[ 2114420])
+	r0 = ra + r0
+	r0 = r0 + r3 // 6f509 + fffcdf3c
+	2090b3c  str  r0[   3d445], 4(r1[ 21581cc])
+
+	208cdf0  ldrsh  r1[2ddd],  c(r0[ 2108228])
+	208cdf4  strh   r1[2ddd], 64(ra[ 2114420])
+
+	208dbcc  strh   r6[   0], 16(r0[ 2108228]) // [w]+e*1c
+
+
+
 //////////////////////////////
