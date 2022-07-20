@@ -46,10 +46,42 @@ function dwn_pal565( &$pal )
 	return $clr;
 }
 
+function dwn_pak( &$file, $pos, $w, $h )
+{
+	$pix = '';
+	for ( $y=0; $y < $h; $y++ )
+	{
+		$x = $w;
+		while ( $x > 0 )
+		{
+			$b0 = str2int($file, $pos, 2);
+				$pos += 2;
+
+			if ( $b0 & 0x8000 )
+			{
+				$c = substr($file, $pos, 2);
+					$pos += 2;
+				$c = dwn_pal565($c);
+
+				$b0 &= 0x7fff;
+				$pix .= str_repeat($c, $b0);
+			}
+			else
+			{
+				$c = substr($file, $pos, $b0*2);
+					$pos += ($b0*2);
+				$pix .= dwn_pal565($c);
+			}
+			$x -= $b0;
+		} // while ( $x > 0 )
+	} // for ( $y=0; $y < $h; $y++ )
+	return $pix;
+}
+
 function dwn_scn( &$file, &$sect, $dir )
 {
 	if ( ! isset($sect[0x19]) )  return; //
-	if ( ! isset($sect[   6]) )  return; // sprite data -> 19 , 5 optional
+	if ( ! isset($sect[   6]) )  return; // sprite data -> 19
 	echo "== dwn_scn( $dir )\n";
 
 	$ed6 = str2int($file, $sect[6]-4, 4);
@@ -66,25 +98,27 @@ function dwn_scn( &$file, &$sect, $dir )
 
 		$b1 = str2int($sub6, 0, 2);
 		$b2 = str2int($sub6, 2, 2);
-			$w = int_ceil($b1, 4);
-			$h = int_ceil($b2, 4);
+			$w = $b1;
+			$h = $b2;
 
 		$b1 = str2int($sub6,  8, 4);
 		$b2 = str2int($sub6, 12, 4);
 			$st19 = $b1 & 0x01ffffff;
 			$rle  = ( $b2 & 1 ); // 0 raw , 1 rle , 40000 raw+locale
 
+		$img = array(
+			'w' => $w,
+			'h' => $h,
+		);
 		if ( $rle === 0 )
 		{
 			$src = substr($file, $st19, $w*$h*2);
-			$img = array(
-				'w' => $w,
-				'h' => $h,
-				'pix' => dwn_pal565($src),
-			);
-			save_clutfile("$fn.rgba", $img);
-			continue;
+			$img['pix'] = dwn_pal565($src);
 		}
+		else
+			$img['pix'] = dwn_pak($file, $st19, $w, $h);
+
+		save_clutfile("$fn.rgba", $img);
 	} // while ( $st6 < $ed6 )
 
 	return;
@@ -116,36 +150,65 @@ function dw2_pak( &$file, $pos, $w, $h, $ref )
 		$crlf = false;
 		while ( ! $crlf )
 		{
-			$b0 = ord( $file[$pos] );
+			$b0 = ord( $file[$pos+0] );
+			$b1 = ord( $file[$pos+1] );
+
+			if ( $b0 === 0 && $b1 === 0 )
+			{
+				$pos += 2;
+				$crlf = true;
+				continue;
+			}
+
+			$b0a = ($b0 >> 4) & BIT4;
+			$b0b = ($b0 >> 0) & BIT4;
+			if ( $b0b !== 0 )
+			{
+				$row .= str_repeat($clr[$b0a], $b0b);
 				$pos++;
-			if ( $b0 === 0 )
-			{
-				$b0 = ord( $file[$pos] );
-					$pos++;
-				printf("%8x  -- %x\n", $pos-2, $b0);
-				if ( $b0 === 0 )
-					$crlf = true;
-				else
-					$row .= str_repeat(ZERO, $b0);
+				continue;
 			}
+
+			if ( $b1 < 0x10 )
+				$row .= str_repeat(ZERO, $b0+$b1);
 			else
-			{
-				$b1 = ($b0 >> 4) & BIT4;
-				$b2 = ($b0 >> 0) & BIT4;
-				if ( $b2 === 0 )
-				{
-					$b2 = ord( $file[$pos] );
-						$pos++;
-				}
-				$row .= str_repeat($clr[$b1], $b2);
-				printf("%8x  %x %x [%2x]\n", $pos-1, $b1, $b2, ord($clr[$b1]));
-			}
+				$row .= str_repeat($clr[$b0a], $b1);
+			$pos += 2;
 		} // while ( ! $crlf )
 
 		while ( strlen($row) < $w )
 			$row .= ZERO;
 
 		$pix .= $row;
+	} // for ( $y=0; $y < $h; $y++ )
+	return $pix;
+}
+
+function dw2_rle( &$file, $pos, $w, $h )
+{
+	$pix = '';
+	for ( $y=0; $y < $h; $y++ )
+	{
+		$x = $w;
+		while ( $x > 0 )
+		{
+			$b0 = ord( $file[$pos+0] );
+				$pos++;
+
+			if ( $b0 & 0x80 )
+			{
+				$b0 &= 0x7f;
+				$b1 = $file[$pos];
+					$pos++;
+				$pix .= str_repeat($b1, $b0);
+			}
+			else
+			{
+				$pix .= substr($file, $pos, $b0);
+					$pos += $b0;
+			}
+			$x -= $b0;
+		} // while ( $x > 0 )
 	} // for ( $y=0; $y < $h; $y++ )
 	return $pix;
 }
@@ -177,10 +240,10 @@ function dw2_scn( &$file, &$sect, $dir )
 
 		$b1 = str2int($sub6,  8, 3);
 		$b2 = str2int($sub6, 12, 3);
-			$st19 = $b1;
-			$st5  = $b2;
+			$st19 = $b1 & 0x3fffff;
+			$st5  = $b2 & 0x3fffff;
 
-		$fn = sprintf('%s/%d_%d/%04d.clut', $dir, ($st5 !== 0), $pak >> 12, $id6-1);
+		$fn = sprintf('%s/%d_%d/%04d.clut', $dir, ($st5 !== 0), $pak, $id6-1);
 		$img = array('w' => $w , 'h' => $h);
 
 		if ( $st5 !== 0 )
@@ -198,19 +261,20 @@ function dw2_scn( &$file, &$sect, $dir )
 		switch ( $pak )
 		{
 			case 0: // 00
-				$img['pix'] = substr($file, $st19, $w*$h);
+				if ( $st5 !== 0 )
+					$img['pix'] = substr($file, $st19, $w*$h);
+				else
+					$img['pix'] = dw2_rle($file, $st19, $w, $h);
 				break;
 
-			//case 1: // 40
-				//break;
-
-			case 2: // 80
+			case 1: // 40 , rincewind
+			case 2: // 80 , luggage
 				$img['cc' ] = 0x10;
 				$img['pal'] = grayclut(0x10);
 				$img['pix'] = dw2_pak($file, $st19, $w, $h, false);
 				break;
 
-			case 3: // c0
+			case 3: // c0 , map shared - defer
 				$img['pix'] = dw2_pak($file, $st19, $w, $h, true);
 				break;
 
@@ -295,6 +359,9 @@ function dw1_scn( &$file, &$sect, $dir )
 //////////////////////////////
 function disc( $tag, $fname )
 {
+	if ( empty($tag) )
+		return php_error('NO TAG');
+
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
@@ -339,7 +406,7 @@ for ( $i=1; $i < $argc; $i++ )
 }
 
 /*
-dw2_scn/3 = 3 x 3  4e6
+dw2/dw2.scn/3 = 3 x 3  4e6
 	= 09 -- 09
 	= -- d4 --
 	= 09 -- 09
@@ -348,7 +415,7 @@ dw2_scn/3 = 3 x 3  4e6
 		01  11 [-- --]
 		--  01  -- 01  01 [-- --]
 
-dw2_scn/4 = 3 x 3  4d5
+dw2/dw2.scn/4 = 3 x 3  4d5
 	= -- 09 --
 	= 09 d4 09
 	= -- 09 --
@@ -357,12 +424,12 @@ dw2_scn/4 = 3 x 3  4d5
 		--  01  11  01 [-- --]
 		01  01 [-- --]
 
-dw2_scn/5 = 1 x 1  4fb
+dw2/dw2.scn/5 = 1 x 1  4fb
 	= 09
 	01 09
 		-- 01 [-- --]
 
-dw2_scn/6 = 5 x 5  47e
+dw2/dw2.scn/6 = 5 x 5  47e
 	= -- -- 07 -- --
 	= -- -- d3 -- --
 	= 07 d3 0b d3 07
@@ -376,33 +443,23 @@ dw2_scn/6 = 5 x 5  47e
 		02  01 [-- --]
 
 
+dwn/unseobse.scn/296 = 1 x 1  1468041-1468045
+	01 -- c1 79
 
-dwn_scn/62 = 4 x 4  b1aade5-b1aadf5  rle
-	02 -- 21 --  1f f8
+dwn/unseobse.scn/126 = 1 x 4  89008f-89009f
+	01 -- 20 --
+	01 -- -- --
+	01 -- -- --
+	01 -- -- --
+
+dwn/title.scn/62 = 2 x 3  11aade5-b1aadf5
+	02 -- 21 -- 1f f8
 	02 80 1f f8
-	02 -- 1f f8  21 --
-		80 = 2
-		00 = 4
-		-= 10
-dwn_scn/55 = 8 x 8  b1bf1c3-b1bf211  rle
-	02 --  1f f8  20 --
-	03 80  1f f8
-	02 80  20 --
-	03 80  1f f8
-	03 80  20 --
-	02 80  1f f8
-	02 80  20 --
-	01 --  21 --
-	02 80  1f f8
-	02 80  20 --
-	03 --  21 --  42 --  1f f8
-	02 80  1f f8
-	03 --  41 --  42 --  1f f8
-	03 80  1f f8
-	02 80  42 --
-	03 80  1f f8
-	02 80  42 --
-		80 = 31
-		00 =  9
-		-= 24
+	02 -- 1f f8 21 --
+
+dwn/unseplea.scn/0 = 2 x 4  6043d8-6043ea
+	02 -- -- -- 1f f8
+	02 80 -- --
+	02 80 -- --
+	02 80 -- --
  */

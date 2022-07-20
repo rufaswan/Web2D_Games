@@ -320,3 +320,10 @@ android.stackexchange.com/questions/96914/using-adb-without-mtp-support
 
 	You should be able to use ADB as far as it is just a tunnel to the Android device's shell.
 	MTP (Media Transfer Protocol) is not connected to ADB apart from the fact that they share the USB connection.
+
+stackoverflow.com/questions/2475843/pipe-ffmpeg-to-oggenc2-with-net
+
+	ffmpeg -i audio.mp3 -f flac - | oggenc2.exe - -o audio.ogg
+
+	This command converts an input mp3 file (I didn't find other audio files on my PC) to flac and sends it to stdout,
+	which goes to stdin of oggenc2 by using pipe(|).
