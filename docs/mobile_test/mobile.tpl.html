@@ -223,6 +223,7 @@ main {
 (function(){
 	var vert_src = `
 		precision highp float;
+		precision highp int;
 		attribute vec3 a_xyz;
 		attribute vec4 a_color;
 		varying   vec4 v_color;
@@ -233,8 +234,15 @@ main {
 		}
 	`;
 	var frag_src = `
-		precision highp float;
-		varying   vec4 v_color;
+		#ifdef GL_FRAGMENT_PRECISION_HIGH
+			precision highp float;
+			precision highp int;
+		#else
+			precision mediump float;
+			precision mediump int;
+		#endif
+
+		varying vec4 v_color;
 
 		void main(void){
 			gl_FragColor = v_color;
@@ -257,6 +265,29 @@ main {
 
 	var DIV = document.createElement('div');
 	DIV.classList.add('section');
+
+	var PREC = document.createElement('div');
+	PREC.classList.add('section');
+
+	function glprecision( GL )
+	{
+		['VERTEX_SHADER','FRAGMENT_SHADER'].forEach(function(sh){
+			['LOW','MEDIUM','HIGH'].forEach(function(pr){
+				['INT','FLOAT'].forEach(function(ty){
+					var type = pr + '_' + ty;
+					var form = GL.getShaderPrecisionFormat(GL[sh], GL[type]);
+					//console.log(sh, type, form);
+
+					var p = document.createElement('p');
+					p.innerHTML  = 'GL.getShaderPrecisionFormat';
+					p.innerHTML += '[ ' + sh + ' ][ ' + type + ' ] = ';
+					p.innerHTML += 'range '+ form.rangeMin +'-'+ form.rangeMax +' , precision '+ form.precision;
+					PREC.appendChild(p);
+				});
+			});
+		});
+		return;
+	}
 
 	(function(){
 		var GL = CANVAS.getContext('webgl');
@@ -284,6 +315,8 @@ main {
 		logGL('MAX_VERTEX_UNIFORM_VECTORS'      , '128');
 		logGL('MAX_FRAGMENT_UNIFORM_VECTORS'    , '64');
 		logGL('ALIASED_POINT_SIZE_RANGE'        , '[1,100]');
+
+		glprecision(GL);
 
 		// compile shader
 		var vert_shader = GL.createShader(GL.VERTEX_SHADER);
@@ -315,10 +348,12 @@ main {
 
 		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
 		GL.drawArrays(GL.TRIANGLES, 0, gl_data.cnt);
+
 	})();
 
 	DOM_MAIN.appendChild(CANVAS);
 	DOM_MAIN.appendChild(DIV);
+	DOM_MAIN.appendChild(PREC);
 })();
 </script>
 

@@ -17,8 +17,6 @@
 	if ( ! GL )  return;
 
 	var vert_src = `
-		precision highp float;
-		precision highp int;
 		attribute vec2  a_xy;
 
 		void main(void){
@@ -27,9 +25,7 @@
 	`;
 
 	var frag_src = `
-		precision highp float;
-		precision highp int;
-		uniform   vec4  u_color;
+		uniform vec4  u_color;
 
 		void main(void){
 			gl_FragColor = u_color;

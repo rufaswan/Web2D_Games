@@ -17,8 +17,6 @@
 	if ( ! GL )  return;
 
 	var vert_src = `
-		precision highp float;
-		precision highp int;
 		attribute vec2  a_uv;
 		uniform   vec2  u_half_xy;
 		uniform   float u_cof[8];
@@ -48,11 +46,9 @@
 	`;
 
 	var frag_src = `
-		precision highp float;
-		precision highp int;
-		varying   vec2  v_uv;
-		uniform   vec2  u_size_uv;
-		uniform   sampler2D u_tex;
+		varying vec2  v_uv;
+		uniform vec2  u_size_uv;
+		uniform sampler2D u_tex;
 
 		void main(void){
 			vec2 uv = vec2(

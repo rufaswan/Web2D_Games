@@ -17,8 +17,6 @@
 	if ( ! GL )  return;
 
 	var vert_src = `
-		precision highp float;
-		precision highp int;
 		attribute vec2  a_xy;
 		varying   vec2  v_xy;
 
@@ -29,11 +27,9 @@
 	`;
 
 	var frag_src = `
-		precision highp float;
-		precision highp int;
-		uniform   mat3  u_mat3;
-		varying   vec2  v_xy;
-		uniform   sampler2D u_tex;
+		uniform mat3  u_mat3;
+		varying vec2  v_xy;
+		uniform sampler2D u_tex;
 
 		void main(void){
 			vec3 v3 = vec3(v_xy.x, v_xy.y, 1.0) * u_mat3;

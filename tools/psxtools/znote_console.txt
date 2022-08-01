@@ -48,7 +48,7 @@ Nintendo DS ROM header
 	# RAM 2000000-24000000 (4 MB)
 
 == NOP ==
-	NDS
+	GBA , NDS
 		ARM A32 T16
 	3DS , Vita
 		ARM A32 T32
@@ -79,7 +79,7 @@ Nintendo DS ROM header
 	SuperH   00 09        [BE] nop
 
 == Endian ==
-	Little  PSX  PS2  PSP  VITA  NDS  PC98
+	Little  PSX  PS2  PSP  VITA  GBA  NDS  PC98
 	Big     SATURN
 	BOTH    WII
 	NONE

@@ -20,8 +20,6 @@
 	var GL = QDFN.webGLContextById('canvas');
 
 	var vert_src = `
-		precision highp float;
-		precision highp int;
 		attribute vec2  a_xy;
 		attribute vec2  a_uv;
 		attribute float a_tid;
@@ -36,11 +34,9 @@
 	`;
 
 	var frag_src = `
-		precision highp float;
-		precision highp int;
-		varying   vec2  v_uv;
-		varying   float v_tid;
-		uniform   sampler2D u_tex[2];
+		varying vec2  v_uv;
+		varying float v_tid;
+		uniform sampler2D u_tex[2];
 
 		void main(void){
 			vec4  c;

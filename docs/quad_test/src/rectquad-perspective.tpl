@@ -17,8 +17,6 @@
 	if ( ! GL )  return;
 
 	var vert_src = `
-		precision highp float;
-		precision highp int;
 		attribute vec2  a_xy;
 		uniform   mat3  u_mat3;
 		varying   vec3  v_xyz;
@@ -30,10 +28,8 @@
 	`;
 
 	var frag_src = `
-		precision highp float;
-		precision highp int;
-		varying   vec3  v_xyz;
-		uniform   sampler2D u_tex;
+		varying vec3  v_xyz;
+		uniform sampler2D u_tex;
 
 		void main(void){
 			if ( v_xyz.z == 0.0 )  discard;

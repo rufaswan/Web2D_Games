@@ -17,8 +17,6 @@
 	if ( ! GL )  return;
 
 	var vert_src = `
-		precision highp float;
-		precision highp int;
 		attribute vec2  a_xy;
 		uniform   mat3  u_mat3;
 		uniform   vec2  u_half_xy;
@@ -34,11 +32,9 @@
 	`;
 
 	var frag_src = `
-		precision highp float;
-		precision highp int;
-		varying   vec3  v_xyz;
-		uniform   vec2  u_size_uv;
-		uniform   sampler2D u_tex;
+		varying vec3  v_xyz;
+		uniform vec2  u_size_uv;
+		uniform sampler2D u_tex;
 
 		void main(void){
 			// divide-by-zero check
