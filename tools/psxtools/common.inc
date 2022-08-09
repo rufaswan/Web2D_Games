@@ -621,6 +621,34 @@ function save_clutfile( $fname, &$data )
 	return;
 }
 
+function lsfile_bysize_r( $dir, &$list )
+{
+	if ( empty($dir) || ! is_dir($dir) )
+		return;
+	if ( is_link($dir) ) // DO NOT follow symlinks
+		return;
+
+	$func = __FUNCTION__;
+	foreach ( scandir($dir) as $en )
+	{
+		if ( $en[0] === '.' )
+			continue;
+		$fn = "$dir/$en";
+
+		if ( is_file($fn) ) // allow FILE Symlinks
+		{
+			$sz = filesize($fn);
+			if ( ! isset($list[$sz]) )
+				$list[$sz] = array();
+			$list[$sz][] = $fn;
+		}
+		else
+		if ( is_dir($fn) )
+			$func($fn, $list);
+	} // foreach ( scandir($dir) as $en )
+	return;
+}
+
 function lsfile_r( $dir, &$list )
 {
 	if ( empty($dir) || ! is_dir($dir) )

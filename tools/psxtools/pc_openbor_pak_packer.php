@@ -29,9 +29,10 @@ function pak_pack( $dir )
 	$len = strlen($dir);
 
 	$list = array();
-	lsfile_r($dir, $list);
+	lsfile_bysize_r($dir, $list);
 	if ( empty($list) )
 		return;
+	ksort($list);
 
 	$file = 'PACK' . ZERO . ZERO . ZERO . ZERO;
 	$toc  = '';

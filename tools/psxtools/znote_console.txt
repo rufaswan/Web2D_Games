@@ -5,7 +5,7 @@ PlayStation ONE EXE header
 	18  4  mips ram
 	1c  4  mips size
 	30  4  init stack
-	# RAM 80000000-80200000 (2 MB , first 10000 = bios)
+	# RAM 8000 0000-8020 0000 (2 MB , first 10000 = bios)
 
 Saturn ISO boot header
 	00   16  "SEGA SEGASATURN"
@@ -22,30 +22,55 @@ Saturn ISO boot header
 	ec    4  init stack slave
 	f0    4  sh-4 ram
 	f4    4  sh-4 size
-	# RAM 6002000-6100000 (~1 MB)
+	# RAM 600 2000-610 0000 (~1 MB)
+
+Nintendo Gameboy/Color ROM header
+	100   4  start()
+	104  30  BITMAP Nintendo logo
+	134  10  Game Title
+	143   1  CGB flag (80=support , c0=CGB only)
+	146   1  SGB flag (03=support , 00=GB/CGB only)
+	14c   1  ROM version
+	14d   1  checksum 134-14c
+	14e   2  checksum ROM
+	# ROMx:xxxx
+	# RAMx:xxxx
+
+Nintendo GBA ROM header
+	00   4  start()
+	04  9c  BITMAP Nintendo logo
+	a0   c  Game Title
+	ac   4  Game ID (AGB-xxxx)
+	bc   1  ROM Version
+	bd   1  checksum a0-bc
+	# RAM 200 0000-204 0000 (256 KB)
 
 Nintendo DS ROM header
-	00  12  Game Title
-	0c   4  Game ID (NTR-xxxx)
-	20   4  arm9.bin offset
-	24   4  arm9 start()
-	28   4  arm9 ram
-	2c   4  arm9.bin size
-	30   4  arm7.bin offset
-	34   4  arm7 start()
-	38   4  arm7 ram
-	3c   4  arm7.bin size
-	40   4  file name table offset
-	44   4  file name table size
-	48   4  file allocation table offset
-	4c   4  file allocation table size
-	50   4  y9.bin offset
-	54   4  y9.bin size
-	58   4  y7.bin offset
-	5c   4  y7.bin size
-	80   4  ROM size
-	84   4  header.bin size
-	# RAM 2000000-24000000 (4 MB)
+	00   12  Game Title
+	0c    4  Game ID (NTR-xxxx)
+	1e    1  ROM Version
+	20    4  arm9.bin offset
+	24    4  arm9 start()
+	28    4  arm9 ram
+	2c    4  arm9.bin size
+	30    4  arm7.bin offset
+	34    4  arm7 start()
+	38    4  arm7 ram
+	3c    4  arm7.bin size
+	40    4  file name table offset
+	44    4  file name table size
+	48    4  file allocation table offset
+	4c    4  file allocation table size
+	50    4  y9.bin offset
+	54    4  y9.bin size
+	58    4  y7.bin offset
+	5c    4  y7.bin size
+	80    4  ROM size
+	84    4  header.bin size
+	c0   9c  BITMAP Nintendo logo
+	15c   2  checksum c0-15b (=cf56)
+	15e   2  checksum  0-15d
+	# RAM 200 0000-240 0000 (4 MB)
 
 == NOP ==
 	GBA , NDS
@@ -77,6 +102,8 @@ Nintendo DS ROM header
 	MIPS     00 00 00 00  sll   r0 , r0, #0
 	PowerPC  00 00 00 60  ori   r0 , r0, #0
 	SuperH   00 09        [BE] nop
+
+	Gameboy  00
 
 == Endian ==
 	Little  PSX  PS2  PSP  VITA  GBA  NDS  PC98

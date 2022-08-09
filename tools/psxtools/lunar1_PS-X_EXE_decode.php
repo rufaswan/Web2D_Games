@@ -63,9 +63,10 @@ function lunar1_decode( &$file, $st )
 			{
 				$b = ord( $file[$st] );
 					$st++;
+
 				// 76 543210
 				// ll pppppp
-				$dpos = $b - 0x40;
+				$dpos = ($b & 0x3f) - 0x40;
 				$dlen = ($b >> 6) + 2;
 				trace("REF  POS %d  LEN %d\n", $dpos, $dlen);
 
@@ -82,8 +83,10 @@ function lunar1_decode( &$file, $st )
 					$st += 2;
 				$b = ($b1 << 8) | $b2;
 
-				$dpos = $b - 0x1000;
-				$dlen = $b >> 12;
+				// fedc ba9876543210
+				// llll pppppppppppp
+				$dpos = ($b & 0xfff) - 0x1000;
+				$dlen = ($b >> 12);
 				if ( $dlen == 0 )
 				{
 					$dlen = ord( $file[$st] );
