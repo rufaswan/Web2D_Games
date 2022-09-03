@@ -25,7 +25,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   https://github.com/scummvm/scummvm/tree/master/engines/tinsel/graphics.cpp
  */
 require 'common.inc';
-require 'pc_disc.inc';
+require 'dworld.inc';
 
 //////////////////////////////
 function dwn_pal565( &$pal )
@@ -357,7 +357,7 @@ function dw1_scn( &$file, &$sect, $dir )
 	return;
 }
 //////////////////////////////
-function disc( $tag, $fname )
+function dworld( $tag, $fname )
 {
 	if ( empty($tag) )
 		return php_error('NO TAG');
@@ -400,7 +400,7 @@ for ( $i=1; $i < $argc; $i++ )
 		case '-dw3':
 		case '-dwn':  $tag = 'dwn'; break;
 		default:
-			disc( $tag, $argv[$i] );
+			dworld( $tag, $argv[$i] );
 			break;
 	} // switch ( $argv[$i] )
 }

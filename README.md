@@ -2,6 +2,8 @@
 
 ## 2D games playable on the web!
 
+**on-hold for a rewrite**
+
 * Play your favorite 2D games on web browsers, using HTML5 + CSS + JS.
 * For slower-pace games with 5 to 10 FPS, or 0 FPS (Wait for input) games.
 * Optimized to work on smart phones, tablets, and other touch screen devices.

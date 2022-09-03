@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 
-function disc3( $fname )
+function dworld3( $fname )
 {
 	// for cdimage.elf only
 	if ( stripos($fname, 'cdimage.elf') === false )
@@ -76,4 +76,4 @@ function disc3( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	disc3( $argv[$i] );
+	dworld3( $argv[$i] );

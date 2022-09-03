@@ -23,26 +23,40 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-guest.inc';
 
-function sect2( &$file, $pos, $fn, &$pal )
+function tm4dec4( &$sub, $pos, $siz )
 {
-	$b1 = str2big($file, $pos+ 0, 2);
-	//$b2 = str2big($file, $pos+ 2, 2);
-	//$b3 = str2big($file, $pos+ 4, 2);
-	printf("== sect2( %x , %s ) = %x\n", $pos, $fn, $b1);
-	if ( ($b1 & 0x8000) === 0 )
-		return;
-
-	$no = str2big($file, $pos+ 6, 2);
-	$w  = str2big($file, $pos+ 8, 2);
-	$h  = str2big($file, $pos+10, 2);
-	printf("size = %x x %x\n", $w, $h);
-		$pos += 12;
-
-	$siz = $w * $h;
 	$pix = '';
 	while ( $siz > 0 )
 	{
-		$b1 = ord( $file[$pos] );
+		if ( ! isset($sub[$pos]) )
+			break;
+
+		$b1 = $sub[$pos+0];
+		$b2 = $sub[$pos+1];
+			$pos += 2;
+
+		if ( $b2 === ZERO )
+		{
+			$c = ord($b1);
+			$pix .= str_repeat(ZERO, $c);
+				$siz -= $c;
+		}
+		else
+		{
+			$c = ord($b2);
+			$pix .= str_repeat($b1, $c);
+				$siz -= $c;
+		}
+	} // while ( $siz > 0 )
+	return $pix;
+}
+
+function tm4dec1( &$sub, $pos, $siz )
+{
+	$pix = '';
+	while ( $siz > 0 )
+	{
+		$b1 = ord( $sub[$pos] );
 			$pos++;
 
 		$flg = $b1 &  1;
@@ -50,16 +64,41 @@ function sect2( &$file, $pos, $fn, &$pal )
 		if ( $flg )
 		{
 			$pix .= chr($clr);
-			$siz--;
+				$siz -= 1;
 		}
 		else
 		{
-			$b2 = ord( $file[$pos] );
+			$b2 = ord( $sub[$pos] );
 				$pos++;
 			$pix .= str_repeat(chr($clr), $b2);
 				$siz -= $b2;
 		}
 	} // while ( $siz > 0 )
+	return $pix;
+}
+
+function sect2( &$sub, $fn, &$pal )
+{
+	$b1 = str2big($sub, 0, 2);
+	$x  = str2big($sub, 2, 2);
+	$y  = str2big($sub, 4, 2);
+
+	$len = strlen($sub);
+	if ( $len < 12 )
+		return printf("%x , %x %x\n", $b1, $x, $y);;
+
+	$no = str2big($sub,  6, 2);
+	$w  = str2big($sub,  8, 2);
+	$h  = str2big($sub, 10, 2);
+	printf("%x , %x %x , %x , %x %x \n", $b1, $x, $y, $no, $w, $h);
+
+	switch ( $no )
+	{
+		case 1:  $pix = tm4dec1($sub, 12, $w*$h); break;
+		case 4:  $pix = tm4dec4($sub, 12, $w*$h); break;
+		default:
+			return php_warning('UNKNOWN no %x', $no);
+	} // switch ( $no )
 
 	$img = array(
 		'cc'  => strlen($pal) >> 2,
@@ -68,6 +107,11 @@ function sect2( &$file, $pos, $fn, &$pal )
 		'pal' => $pal,
 		'pix' => $pix,
 	);
+
+	// saturn is 320x240
+	$cx = -160 + $x;
+	$cy = -120 + $y;
+	center_clutfile($img, $cx, $cy);
 	save_clutfile($fn, $img);
 	return;
 }
@@ -80,10 +124,13 @@ function sect1( &$file, $pos, $dir, $id1, &$pal )
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$p = $pos + 2 + ($i * 4);
-		$b1 = str2big($file, $p, 4);
+		$b1 = str2big($file, $p+0, 4);
+		$b2 = str2big($file, $p+4, 4);
+		$s  = substr ($file, $b1, $b2-$b1);
 
 		$fn = sprintf('%s/%02d-%04d.clut', $dir, $id1, $i);
-		sect2($file, $b1, $fn, $pal);
+		printf("%8x  %8x  %s\n", $b1, $b2-$b1, $fn);
+		sect2($s, $fn, $pal);
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }

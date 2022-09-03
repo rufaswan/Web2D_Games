@@ -33,7 +33,7 @@ function xorsum( &$sub )
 	return ( $sum == $crc ) ? 0x7fc : 0x800;
 }
 
-function disc2( $fname )
+function dworld2( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
 	$lfi =  load_file("$pfx.lfi");
@@ -85,7 +85,7 @@ function disc2( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	disc2( $argv[$i] );
+	dworld2( $argv[$i] );
 
 /*
 0x7fc

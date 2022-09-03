@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 
-function loadfile( $fn )
+function loadfile_byoff( $fn )
 {
 	$p = strrpos($fn, '+');
 	if ( $p === false )
@@ -94,8 +94,8 @@ function clutbyte( &$list, $size, $fname )
 //////////////////////////////
 function cmpbyte( $fn1, $fn2 )
 {
-	list($file1,$off1) = loadfile($fn1);
-	list($file2,$off2) = loadfile($fn2);
+	list($file1,$off1) = loadfile_byoff($fn1);
+	list($file2,$off2) = loadfile_byoff($fn2);
 	if ( empty($file1) || empty($file2) )
 		return;
 

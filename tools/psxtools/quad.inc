@@ -37,7 +37,7 @@ function load_idtagfile( $pfx )
 	if ( empty($fn) )
 		return array();
 
-	$data = array('TAG' => array());
+	$data = array('Tag' => array());
 	$head = '';
 	foreach ( file($fn) as $line )
 	{
@@ -50,37 +50,53 @@ function load_idtagfile( $pfx )
 			$head = trim($line, '[]');
 		else
 		{
-			if ( ! isset( $data['TAG'][$head] ) )
-				$data['TAG'][$head] = array();
-			$data['TAG'][$head][] = $line;
+			if ( ! isset( $data['Tag'][$head] ) )
+				$data['Tag'][$head] = array();
+			$data['Tag'][$head][] = $line;
 		}
 	} // foreach ( file($fn) as $line )
 
-	foreach ( $data['TAG'] as $head => $line )
+	foreach ( $data['Tag'] as $head => $line )
 	{
 		if ( count($line) == 1 )
-			$data['TAG'][$head] = $line[0];
+			$data['Tag'][$head] = $line[0];
 	}
 	return $data;
 }
 
-function save_quadfile( $pfx, &$json, $pretty=false )
+function save_quadfile( $pfx, &$json )
 {
 	if ( empty($json) )
 		return;
 
-	// JSON_PRETTY_PRINT
-	// JSON_FORCE_OBJECT
-	if ( $pretty )
-		$json = json_encode($json, JSON_PRETTY_PRINT);
-	else
-		$json = json_encode($json);
+	$json = json_encode($json);
+	$json = str_replace("\"Animatio", "\n\t\t\t\"Animatio", $json);
+	$json = str_replace("\"KeyFrame", "\n\t\t\t\"KeyFrame", $json);
+
+	$json = str_replace("\"SrcQu", "\n\t\t\t\t\"SrcQu", $json);
+	$json = str_replace("\"DstQu", "\n\t\t\t\t\"DstQu", $json);
+	$json = str_replace("\"TexID", "\n\t\t\t\t\"TexID", $json);
 
 	save_file("$pfx.quad.txt", $json);
 	return;
 }
 //////////////////////////////
 // debug + fix
+function quad_int_px( &$quad )
+{
+	$cx = ($quad[0] + $quad[2] + $quad[4] + $quad[6]) / 4;
+	$cy = ($quad[1] + $quad[3] + $quad[5] + $quad[7]) / 4;
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		if ( $quad[$i+0] < $cx )  $quad[$i+0] = (int)floor($quad[$i+0]);
+		if ( $quad[$i+1] < $cy )  $quad[$i+1] = (int)floor($quad[$i+1]);
+
+		if ( $quad[$i+0] > $cx )  $quad[$i+0] = (int) ceil($quad[$i+0]);
+		if ( $quad[$i+1] > $cy )  $quad[$i+1] = (int) ceil($quad[$i+1]);
+	} // for ( $i=0; $i < 8; $i += 2 )
+	return;
+}
+
 function quad_ext1px( &$quad )
 {
 	// To fix Lunar 2 EB 1px gap between quads
@@ -94,16 +110,18 @@ function quad_ext1px( &$quad )
 	// -18,0  - 0,0  - 18,0
 	//          |
 	// -18,-c - 0,-c - 18,-c
+	$cx = ($quad[0] + $quad[2] + $quad[4] + $quad[6]) / 4;
+	$cy = ($quad[1] + $quad[3] + $quad[5] + $quad[7]) / 4;
 
-	// x1 y1  x2 y2  x3 y3  x4 y4
-	// 0  1   2  3   4  5   6  7
-	( $quad[0] > $quad[4] ) ? $quad[0]++ : $quad[4]++;
-	( $quad[1] > $quad[5] ) ? $quad[1]++ : $quad[5]++;
-	( $quad[2] > $quad[6] ) ? $quad[2]++ : $quad[6]++;
-	( $quad[3] > $quad[7] ) ? $quad[3]++ : $quad[7]++;
+	// extend bottom right
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		if ( $quad[$i+0] > $cx )  $quad[$i+0]++;
+		if ( $quad[$i+1] > $cy )  $quad[$i+1]++;
+	}
 	return;
 }
-
+//////////////////////////////
 function quad_move( &$quad, $opt )
 {
 	foreach ( $opt as $k => $v )
@@ -148,7 +166,7 @@ function quad_move( &$quad, $opt )
 	} // foreach ( $opt as $k => $v )
 	return;
 }
-//////////////////////////////
+
 function quad_convexfix( &$quad )
 {
 	//          0          0--\

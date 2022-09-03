@@ -287,14 +287,14 @@ function sect_IOBJ( &$json, &$sect, $pfx )
 	sect_anim($json, $sect['IOBJ'], $anim_off, $ptgt_off);
 	sect_spr ($json, $sect['IOBJ'], $ptgt_off, $img);
 
-	save_quadfile("$pfx/data", $json);
+	save_quadfile("$pfx/gv", $json);
 
 	foreach ( $img as $k => $v )
 	{
 		if ( isset( $sect['TLPI'] ) )
-			$fn = sprintf('%s/img-%d.0.rgba', $pfx, $k);
+			$fn = sprintf('%s/gv-%d.0.rgba', $pfx, $k);
 		else
-			$fn = sprintf('%s/img.%d.rgba', $pfx, $k);
+			$fn = sprintf('%s/gv.%d.rgba', $pfx, $k);
 		save_clutfile($fn, $v);
 	}
 	return;
@@ -359,13 +359,24 @@ for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case '-bsm':
-		case '-bmz':  $idtag = 'pc blast master zero'; break;
-		case '-gv' :
-		case '-gv1':  $idtag = 'pc gunvolt' ;          break;
-		case '-gv2':  $idtag = 'pc gunvolt 2';         break;
-		case '-gva':  $idtag = 'pc gunvolt laix';      break;
-		case '-mgv':  $idtag = 'pc mighty gunvolt';    break;
+		case '-bsm' :
+		case '-bmz' :
+			$idtag = 'pc blast master zero';
+			break;
+		case '-gv'  :
+		case '-gv1' :
+			$idtag = 'pc gunvolt 1';
+			break;
+		case '-gv2' :
+			$idtag = 'pc gunvolt 2';
+			break;
+		case '-gva' :
+		case '-laix':
+			$idtag = 'pc gunvolt laix';
+			break;
+		case '-mgv' :
+			$idtag = 'pc mighty gunvolt';
+			break;
 		default:
 			gunvolt( $argv[$i], $idtag );
 			break;

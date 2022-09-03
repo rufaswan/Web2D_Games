@@ -21,9 +21,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
-require 'disc.inc';
+require 'dworld.inc';
 
-function disc( $tag, $fname )
+function dworld( $tag, $fname )
 {
 	if ( empty($tag) )
 		return php_error('NO TAG');
@@ -115,7 +115,7 @@ for ( $i=1; $i < $argc; $i++ )
 		case '-dw3pc':
 		case '-dwnpc':  $tag = 'dwnpc'; break;
 		default:
-			disc( $tag, $argv[$i] );
+			dworld( $tag, $argv[$i] );
 			break;
 	} // switch ( $argv[$i] )
 }

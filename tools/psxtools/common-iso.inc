@@ -77,7 +77,7 @@ endp:
 function lsiso_r( $iso, $skip=0 )
 {
 	$s = fp2str($iso, $skip+0x8000, 0x800);
-	if ( substr($s,1,5) !== 'CD001' )
+	if ( substr($s,0,6) !== "\x01CD001" )
 		return '';
 
 	$s = substr($s, 0x9c); // root dir

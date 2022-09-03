@@ -327,3 +327,50 @@ stackoverflow.com/questions/2475843/pipe-ffmpeg-to-oggenc2-with-net
 
 	This command converts an input mp3 file (I didn't find other audio files on my PC) to flac and sends it to stdout,
 	which goes to stdin of oggenc2 by using pipe(|).
+
+stackoverflow.com/questions/20858338/how-to-draw-text-and-shadow-it-in-imagemagick
+
+	convert logo:                  \
+		-resize 40%x40             \
+		\(                         \
+			-size "80x40"          \
+			-background none       \
+			-gravity west          \
+			-fill green            \
+			caption:"Caption text" \
+			\(                     \
+				+clone             \
+				-background navy   \
+				-shadow 80x3+5+5   \
+			\)                     \
+			+swap                  \
+			-background none       \
+			-layers merge          \
+			+repage                \
+		\)                         \
+		-composite                 \
+		\(                         \
+			-size "80x40"          \
+			-background none       \
+			-gravity east          \
+			-fill green            \
+			caption:"Caption text" \
+			\(                     \
+				+clone             \
+				-background red    \
+				-shadow 80x3+5+5   \
+			\)                     \
+			+swap                  \
+			-background none       \
+			-layers merge          \
+			+repage                \
+		\)                         \
+		-composite                 \
+		out.png
+
+stackoverflow.com/questions/749544/pipe-to-from-the-clipboard-in-a-bash-script
+
+	In the case of X, there's xclip (and others).
+		xclip -selection c
+	will send data to the clipboard that works with Ctrl + C,
+	Ctrl + V in most applications.

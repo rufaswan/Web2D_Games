@@ -290,7 +290,7 @@ function quad( $fname )
 	$file = json_decode($file, true);
 	if ( empty($file) )  return;
 
-	$pfx = substr($fname, 0, strrpos($fname, '.'));
+	$pfx = substr($fname, 0, strrpos($fname, '.quad'));
 
 	global $gp_pix;
 	$gp_pix = array();

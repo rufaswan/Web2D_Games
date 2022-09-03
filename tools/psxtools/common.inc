@@ -621,6 +621,38 @@ function save_clutfile( $fname, &$data )
 	return;
 }
 
+function center_clutfile( &$data, $x1, $y1 )
+{
+	if ( ! isset($data['pix']) )
+		return;
+	if ( $x1 === 0 && $y1 === 0 )
+		return;
+	$by = ( isset($data['pal']) ) ? 1 : 4;
+
+	$x2 = $x1 + $data['w'];
+	$y2 = $y1 + $data['h'];
+	$hw = ( abs($x1) > abs($x2) ) ? abs($x1) : abs($x2);
+	$hh = ( abs($y1) > abs($y2) ) ? abs($y1) : abs($y2);
+
+	$nw = $hw * 2;
+	$nh = $hh * 2;
+	$npix = str_repeat(ZERO, $nw*$nh*$by);
+
+	$row = $data['w'] * $by;
+	for ( $y=0; $y < $data['h']; $y++ )
+	{
+		$sub = substr($data['pix'], $y*$row, $row);
+		$dyy = ($y1 + $hh) + $y;
+		$dxx = ($dyy * $nw) + ($x1 + $hw);
+		str_update($npix, $dxx*$by, $sub);
+	} // for ( $y=0; $y < $data['h']; $y++ )
+
+	$data['w'] = $nw;
+	$data['h'] = $nh;
+	$data['pix'] = $npix;
+	return;
+}
+
 function lsfile_bysize_r( $dir, &$list )
 {
 	if ( empty($dir) || ! is_dir($dir) )
