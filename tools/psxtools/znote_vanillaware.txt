@@ -2,7 +2,7 @@
 2005  PSP   Princess Crown
 2020  PS4   Princess Crown
 
-2007  PS2   Grim Grimoire
+2007  PS2   GrimGrimoire
 2007  PS2   Odin Sphere
 2008  NDS   Kumatanchi
 2009  WII   Muramasa - The Demon Blade
@@ -12,11 +12,13 @@
 2013  PS3   Dragon's Crown
 2014  VITA  Muramasa Rebirth DLC
 2016  VITA  Odin Sphere Leifthsar
-2016  PS3   Odin Sphere Leifthsar HD
-2016  PS4   Odin Sphere Leifthsar HD
+2016  PS3   Odin Sphere Leifthsar
+2016  PS4   Odin Sphere Leifthsar
 2018  PS4   Dragon's Crown Pro
 2019  PS4   13 Sentinels: Aegis Rim
--     SWIT  13 Sentinels: Aegis Rim
+2022  SWIT  13 Sentinels: Aegis Rim
+2022  SWIT  GrimGrimoire OnceMore
+2022  PS4   GrimGrimoire OnceMore
 ==============================
 ps2 grim/cat00.mbp
 	- 0 1 2 |    -   a0  1a0  3e0 |  -    8*20 12*20 70*20
@@ -86,7 +88,7 @@ ps4 13sent/cutin_EnemyDamage.mbs
 	8 - 9 - | 1d8 - 20c - | 1*20 1*30
 	a - b - | 23c -   - - | 1*18  -
 ==============================
-FMBP      bit     pos  toc  cnt  anim   track  frame  meta   key    part   src    dst    clr    0
+FMBP      bit     pos  toc  cnt  anim   track  frame  meta   key    limb   src    dst    clr    0
 ps2 grim  le int   a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3 s5
 ps2 odin  le int   a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3 s5
 nds kuma  le flt   a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3 s5
@@ -101,6 +103,8 @@ ps4 drag  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30
 ps4 odin  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
 ps4 sent  le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3 s5 sb
 swi sent
+swi grim
+ps4 grim
 ==============================
 COUNT     pos  int16
 ps2 grim  3c   0 1  2 4 3 5 7 8 6 9  a
@@ -117,4 +121,26 @@ ps4 drag  50   4+ 0 1 2 3 5 7  8 6 9 a - b
 ps4 odin  50   4+ 0 1 2 3 5 7  8 6 9 a - b
 ps4 sent  50   4+ 0 1 2 3 5 7  8 6 9 a - b
 swi sent
+swi grim
+ps4 grim
+==============================
+grim
+	ps2  *base* , 256 color
+	swi
+	ps4
+odin
+	ps2  *base* , 256 color
+	vit  size=1x ps2 , DXT 1/3/5 , remastered
+	ps3  size=2x ps2 , DXT 3/5
+	ps4  size=2x ps2 , DXT 5 + BC7
+mura
+	wii  *base* , 256 color + DXT 1
+	vit  size=1x wii , DXT 5
+drag
+	vit  *base* , DXT 3/5
+	ps3  size=1x vita , DXT 3/5
+	ps4  size=2x vita , BC7
+sent
+	ps4  *base* , BC7
+	swi
 ==============================

@@ -1123,6 +1123,32 @@ function vanilla( $fname )
 	return;
 }
 
+$err = <<<_ERR
+{$argv[0]}  TAG  MBP/MBS_FILE...
+TAG
+  ps2_grim  2007  PS2   GrimGrimoire
+  ps2_odin  2007  PS2   Odin Sphere
+  nds_kuma  2008  NDS   Kumatanchi
+  wii_mura  2009  Wii   Muramasa - The Demon Blade
+  ps3_drag  2013  PS3   Dragon's Crown
+  ps3_odin  2016  PS3   Odin Sphere Leifthsar
+  ps4_odin  2016  PS4   Odin Sphere Leifthsar
+  ps4_drag  2018  PS4   Dragon's Crown Pro
+  ps4_sent  2019  PS4   13 Sentinels: Aegis Rim
+
+  psp_gran  2011  PSP   Gran Knights History
+  vit_mura  2013  Vita  Muramasa Rebirth + DLC
+  vit_drag  2013  Vita  Dragon's Crown
+  vit_odin  2016  Vita  Odin Sphere Leifthsar
+
+  Upcoming
+  swi_sent  2022  Swit  13 Sentinels: Aegis Rim
+  swi_grim  2022  Swit  GrimGrimoire OnceMore
+  swi_grim  2022  PS4   GrimGrimoire OnceMore
+
+_ERR;
+
+if ( $argc == 1 )  exit($err);
 for ( $i=1; $i < $argc; $i++ )
 {
 	if ( is_file($argv[$i]) )
@@ -1141,8 +1167,8 @@ for ( $i=1; $i < $argc; $i++ )
 			case 'wii_mura':
 			case 'ps3_drag':
 			case 'ps3_odin':
-			case 'ps4_drag':
 			case 'ps4_odin':
+			case 'ps4_drag':
 			case 'ps4_sent':
 
 			case 'psp_gran':

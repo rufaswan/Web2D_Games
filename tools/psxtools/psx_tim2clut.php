@@ -22,6 +22,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 
+$gp_clut = '';
+
 function psxtimfile( $fname )
 {
 	$file = file_get_contents($fname);
@@ -31,97 +33,86 @@ function psxtimfile( $fname )
 	//$mgc = str2int($file, 0, 4);
 	//if ( $mgc != 0x10 )  return;
 
-	$dir = str_replace('.', '_', $fname);
-	$pos = 0;
-	$id  = 0;
-	$len = strlen($file);
+	$count = array();
 
+	// support converting multiple continous TIM file
+	global $gp_clut;
+	$pos = 0;
+	$len = strlen($file);
 	while ( $pos < $len )
 	{
 		$tim = psxtim($file, $pos);
 		if ( $tim === -1 )
-			return;
+			goto savetim;
 
 		$pos += $tim['siz'];
-		if ( $tim['t'] === 'RGBA' )
+		switch ( $tim['t'] )
 		{
-			$fn = sprintf('%s/%04d.rgba', $dir, $id);
-				$id++;
-			save_clutfile($fn, $tim);
-		}
+			case 'RGBA':
+				$count[] = $tim;
+				break;
 
-		if ( $tim['t'] === 'CLUT' )
-		{
-			$pal = $tim['pal'];
-			$cc  = $tim['cc'] * 4;
-			$p   = 0;
-			while (1)
-			{
-				$s = substr($pal, $p, $cc);
-					$p += $cc;
+			case 'CLUT':
+				// for TIM missing palette
+				// reusing palette from previous TIM file
+				if ( ! isset($tim['pal']) )
+				{
+					$tim['pal'] = $gp_clut;
+					$tim['cc' ] = strlen($gp_clut) >> 2;
+				}
 
-				if ( empty($s) )
-					break;
-				if ( trim($s, BYTE.ZERO) === '' )
-					continue;
-				$tim['pal'] = $s;
+				// detected one CLUT in one TIM
+				$cc = strlen($tim['pal']) >> 2;
+				if ( $cc === $tim['cc'] )
+					$count[] = $tim;
+				else // detected multiple CLUT in one TIM
+				{
+					$pal = $tim['pal'];
+					$cc  = $tim['cc'] << 2;
+					$p   = 0;
+					while (1)
+					{
+						$s = substr($pal, $p, $cc);
+							$p += $cc;
 
-				$fn = sprintf('%s/%04d.clut', $dir, $id);
-					$id++;
-				save_clutfile($fn, $tim);
-			} // while (1)
-		}
+						if ( empty($s) )
+							break;
+						if ( trim($s, BYTE.ZERO) === '' )
+							continue;
+						$tim['pal'] = $s;
+
+						$count[] = $tim;
+					} // while (1)
+				}
+
+				$gp_clut = $tim['pal'];
+				break;
+		} // switch ( $tim['t'] )
 	} // while ( $pos < $len )
 
-/*
-	$tim = psxtim($file);
-	if ( empty( $tim['pix'] ) )
+savetim:
+	$cnt = count($count);
+	if ( $cnt === 0 )
 		return;
 
-
-	if ( $tim['t'] == 'RGBA' )
+	if ( $cnt === 1 )
 	{
-		$data = 'RGBA';
-		$data .= chrint($tim['w'], 4);
-		$data .= chrint($tim['h'], 4);
-		$data .= $tim['pix'];
-		save_file("$dir.rgba", $data);
-		return;
+		if ( $count[0]['t'] === 'RGBA' )
+			return save_clutfile("$fname.rgba", $count[0]);
+		if ( $count[0]['t'] === 'CLUT' )
+			return save_clutfile("$fname.clut", $count[0]);
 	}
 
-	if ( $tim['t'] == 'CLUT' )
+	$dir = str_replace('.', '_', $fname);
+	for ( $i=0; $i < $cnt; $i++ )
 	{
-		$pal = array();
-		if ( isset( $tim['pal'] ) )
-			$pal = $tim['pal'];
-		else
-			$pal[] = grayclut( $tim['cc'] );
+		if ( $count[$i]['t'] === 'RGBA' )
+			$fn = sprintf('%s/%04d.rgba', $dir, $i);
+		if ( $count[$i]['t'] === 'CLUT' )
+			$fn = sprintf('%s/%04d.clut', $dir, $i);
 
-		$data = 'CLUT';
-		$data .= chrint($tim['cc'], 4);
-		$data .= chrint($tim['w'], 4);
-		$data .= chrint($tim['h'], 4);
-
-		$cnt = count($pal);
-		foreach ( $pal as $ck => $cv )
-		{
-			// skip black/white only background
-			if ( trim($cv, ZERO.BYTE) === '' )
-				continue;
-
-			$clut = $data;
-			$clut .= $cv;
-			$clut .= $tim['pix'];
-
-			if ( $cnt == 1 )
-				save_file("$dir.clut", $clut);
-			else
-				save_file("$dir/$ck.clut", $clut);
-		} // foreach ( $pal as $ck => $cv )
-
-		return;
-	}
-*/
+		save_clutfile($fn, $count[$i]);
+	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }
 

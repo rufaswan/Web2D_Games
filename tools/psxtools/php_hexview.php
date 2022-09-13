@@ -24,12 +24,13 @@ Linux ONLY , required exec() command
 	- stty
 	- tput
  */
-$gp_opts = array(
-	'termx' => 1,
-	'termy' => 1,
-	'pos'   => 0,
-	'col'   => 0x20,
-	'block' => 0x2000,
+require 'common.inc';
+
+$gp_fps = array();
+$gp_opt = array(
+	'pos'  => 0,
+	'col'  => 0x10,
+	'size' => 1,
 );
 
 function hexdigit( $int )
@@ -42,77 +43,75 @@ function hexdigit( $int )
 	}
 	return $hx;
 }
-
-function upd_blk( &$opt )
-{
-	$opt['block'] = $opt['col'] << 8;
-	return;
-}
 //////////////////////////////
-function hexread( $fname )
+function term_opt( $hx, $cnt_fps )
 {
-	global $gp_opts;
-	$fp = fopen($fname, 'rb');
-	if ( ! $fp )  return;
+	$tx = exec('tput cols');
+	$ty = exec('tput lines');
 
-	$done = false;
-	$size = filesize($fname);
-	$hx = hexdigit($size);
+	$fps_area = (int)(($tx - $hx) / $cnt_fps);
+	$byread = (int)(($fps_area - 2) / 3);
 
-	// bash title bar
-	printf("\033]0;[READ] %s (%x)\007", $fname, $size);
-	while ( ! $done )
+	// STDIN on newline
+	return array($tx, $ty-1, $byread);
+}
+
+function fp_read_hex( $fp, $off, $len )
+{
+	$txt = ' |';
+	fseek($fp, $off, SEEK_SET);
+	$sub = fread($fp, $len);
+
+	for ( $i=0; $i < $len; $i++ )
 	{
-		$gp_opts['termx'] = exec('tput cols');
-		$gp_opts['termy'] = exec('tput lines') - 2;
+		if ( ! isset( $sub[$i] ) )
+		{
+			$txt .= '   ';
+			continue;
+		}
+
+		if ( $sub[$i] === ZERO )
+		{
+			$txt .= ' --';
+			continue;
+		}
+
+		$txt .= sprintf(' %2x', ord($sub[$i]));
+	} // for ( $i=0; $i < $len; $i++ )
+	return $txt;
+}
+
+function hexview()
+{
+	global $gp_fps, $gp_opt;
+
+	$cnt_fps = count($gp_fps);
+	if ( $cnt_fps < 1 )
+		return;
+	system('stty cbreak -echo');
+
+	$hx = hexdigit($gp_opt['size']);
+	$is_done = false;
+
+	// xxxx | aa bb cc | aa bb cc | aa bb cc
+	// xxxx | aa bb cc | aa bb cc | aa bb cc
+	while ( ! $is_done )
+	{
+		list($tx,$ty,$byread) = term_opt($hx, $cnt_fps);
+		if ( $byread > $gp_opt['col'] )
+			$byread = $gp_opt['col'];
 
 		ob_start();
-		printf("======== %s [%{$hx}x/%{$hx}x] (%d%%) ========\n",
-			$fname, $gp_opts['pos'], $size, $gp_opts['pos']*100/($size-1));
-
-		fseek($fp, $gp_opts['pos'], SEEK_SET);
-		$sub = fread($fp, $gp_opts['col']*$gp_opts['termy']);
-
-		for ( $y=0; $y < $gp_opts['termy']; $y++ )
+		for ( $y=0; $y < $ty; $y++ )
 		{
-			$sy = $y * $gp_opts['col'];
-			//if ( ! isset($sub[$sy]) )
-				//break;
-			printf("%{$hx}x :", $gp_opts['pos'] + $sy);
+			$sy = $gp_opt['pos'] + ($y * $gp_opt['col']);
+			printf("%{$hx}x", $sy);
 
-			$x   = $hx + 2 + 3;
-			$sep = 0;
-			$sx  = 0;
-			$buf = '';
-			while ( $x < $gp_opts['termx'] )
-			{
-				// column seperator
-				if ( $sep == 0 )
-				{
-					$buf .= ' ';
-					$x++;
-				}
+			foreach ( $gp_fps as $fp )
+				echo fp_read_hex($fp[1], $sy, $byread);
 
-				// error check
-				if ( ! isset($sub[$sy+$sx]) )
-					break;
-				if ( $sx >= $gp_opts['col'] )
-					break;
-
-				// display a char
-				$b = ord( $sub[$sy+$sx] );
-				if ( $b == 0 )
-					$buf .= '-- ';
-				else
-					$buf .= sprintf('%2x ', $b);
-
-				$x += 3;
-				$sep = ($sep + 1) & 0x03;
-				$sx++;
-			} // while ( $x < $gp_opts['termx'] )
-
-			echo "$buf\n";
-		} // for ( $y=0; $y < $gp_opts['termy']; $y++ )
+			echo "\n";
+		} // for ( $y=0; $y < $ty; $y++ )
 
 		echo ob_get_clean();
 
@@ -122,69 +121,72 @@ function hexread( $fname )
 		switch ( $in )
 		{
 			case  '':  break;
-			case '+':  $gp_opts['col']++; upd_blk($gp_opts); break;
-			case '-':  $gp_opts['col']--; upd_blk($gp_opts); break;
+			case '+':  $gp_opt['col']++; break;
+			case '-':  $gp_opt['col']--; break;
 
-			case '/':  $gp_opts['pos'] -= $gp_opts['block']; break;
-			case '*':  $gp_opts['pos'] += $gp_opts['block']; break;
+			case 'w':  $gp_opt['pos'] -= $gp_opt['col']; break;
+			case 's':  $gp_opt['pos'] += $gp_opt['col']; break;
 
-			case 'w':  $gp_opts['pos'] -= $gp_opts['col']; break;
-			case 's':  $gp_opts['pos'] += $gp_opts['col']; break;
+			case '/':  $gp_opt['pos'] -= ($gp_opt['col'] << 8); break;
+			case '*':  $gp_opt['pos'] += ($gp_opt['col'] << 8); break;
 
-			case 'a':  $gp_opts['pos']--; break;
-			case 'd':  $gp_opts['pos']++; break;
+			case 'a':  $gp_opt['pos']--; break;
+			case 'd':  $gp_opt['pos']++; break;
 
-			case 'q':
-				$done = true;
-				break;
-			default:
-				printf("get %s\n", $in);
-				break;
+			case 'q':  $is_done = true; break;
 		} // switch ( $in )
 
 		// sanity check
-		if ( $gp_opts['col'] < 1 )  $gp_opts['col'] = 1;
-		if ( $gp_opts['pos'] < 0 )  $gp_opts['pos'] = 0;
-		if ( $gp_opts['pos'] >= $size )  $gp_opts['pos'] = $size - 1;
+		if ( $gp_opt['col'] < 1 )  $gp_opt['col'] = 1;
+		if ( $gp_opt['pos'] < 0 )  $gp_opt['pos'] = 0;
+		if ( $gp_opt['pos'] >= $gp_opt['size'] )
+			$gp_opt['pos'] = $gp_opt['size'] - 1;
+	} // while ( ! $is_done )
 
-		//sleep(1);
-	} // while ( ! $done )
-
-	fclose($fp);
+	system('stty -cbreak echo');
+	foreach ( $gp_fps as $fp )
+		fclose( $fp[1] );
 	return;
 }
 //////////////////////////////
-function get_opt( $argv, $i )
+function parse_options( $argv, $i )
 {
-	global $gp_opts;
+	global $gp_fps, $gp_opt;
 	switch ( $argv[$i] )
 	{
-		case '--':
-			return 1;
 		case '-p':
-		case '-pos':
-			$gp_opts['pos'] = hexdec( $argv[$i+1] );
-			//printf("gp_pos = %x\n", $gp_opts['pos']);
+		case '--pos':
+			$gp_opt['pos'] = hexdec($argv[$i+1]);
 			return 2;
+
 		case '-c':
-		case '-col':
-			$gp_opts['col'] = hexdec( $argv[$i+1] );
-			upd_blk($gp_opts);
-			//printf("gp_col = %x\n", $gp_opts['col']);
+		case '--col':
+			$gp_opt['col'] = hexdec($argv[$i+1]);
 			return 2;
+
 		default:
-			hexread($argv[$i]);
-			return 999;
-	}
+			if ( ! is_file( $argv[$i] ) )
+				break;
+			$fsz = filesize($argv[$i]);
+			if ( $fsz < 1 )
+				break;
+			$fp = fopen($argv[$i], 'rb');
+			if ( ! $fp )
+				break;
+
+			$gp_fps[] = array($argv[$i], $fp);
+			if ( $gp_opt['size'] < $fsz )
+				$gp_opt['size'] = $fsz;
+			return 1;
+	} // switch ( $argv[$i] )
 	return 1;
 }
 
-system('stty cbreak -echo');
 $i = 1;
 while ( $i < $argc )
-	$i += get_opt( $argv, $i );
-system('stty -cbreak echo');
+	$i += parse_options($argv, $i);
 
+hexview();
 /*
 stty
 	 cbreak == -icanon

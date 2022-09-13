@@ -120,19 +120,23 @@ yuna      SLPS 014.51  Galaxy Fraulein Yuna Final Edition
 ralph     SLPS 018.53  Adventure of Little Ralph
 saga2     SLPS 019.90  SaGa Frontier 2
 mana      SLPS 021.70  Seiken Densetsu
+silhstry  SLPS 003.74  Silhouette Stories
 
 sotn      SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
 mitsukr   SLPM 861.34  Mitsumete Knight R
+Silhouette Stories
 
 	dworld1   ALL DONE
 	dworld2   ALL DONE
 	dworld3   ALL DONE
 	mana      ALL DONE
 	saga2     ALL DONE , for SLPS only
+	silhstry  ALL DONE
 	tkmk2sub  ALL DONE
 	xeno      sprites only
 	yuna      *.ss1 only
 	sotn      all maps only
+	lunar1    *.bmp , face_*.tiz/bin only
 	lunar2    isok/*.pck , map/*.dat only
 	mitsukr   merge.mrg (Mitsumete Mode) only
 	panzer    --upcoming--
@@ -141,7 +145,6 @@ mitsukr   SLPM 861.34  Mitsumete Knight R
 	valky     --upcoming--
 	star2     --upcoming--
 	gihren    --upcoming--
-	lunar1    --upcoming--
 	tkmk2     --upcoming--
 
 ==============================
@@ -189,6 +192,8 @@ cvpor     NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
 
 	cvpor     all maps only , *.so/.sc (non-quad) only
 
+???       SATURN  T-1521G   Astra Superstars
+???       SATURN  T-6607G   Madoh Monogatari
 cotton    SATURN  T-9904G   Magical Night Dreams Cotton 2
 cotton    SATURN  T-9906G   Magical Night Dreams Cotton Boomerang
 sotn      SATURN  T-9527G   Akumajou Dracula X Gekka no Yasoukyoku
