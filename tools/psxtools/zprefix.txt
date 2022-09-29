@@ -213,6 +213,15 @@ vfcg      SATURN  -         Virtua Fighter CG Potrait Series
 	mika2     --upcoming--
 	sotn      --upcoming--
 
+rockx     SNES  Rockman X
+rockx     SNES  Rockman X 2
+rockx     SNES  Rockman X 3
+???       SNES  Magical Pop'n
+???       SNES  Majuu Ou
+???       SNES  Zennihon GT Senshuken
+
+	rockx     --upcoming--
+
 rusty     PC98  Rusty
 rusty     PC98  Totsugeki Mix
 galpani   PC98  Galpani

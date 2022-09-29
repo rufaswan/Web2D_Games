@@ -653,34 +653,6 @@ function center_clutfile( &$data, $x1, $y1 )
 	return;
 }
 
-function lsfile_bysize_r( $dir, &$list )
-{
-	if ( empty($dir) || ! is_dir($dir) )
-		return;
-	if ( is_link($dir) ) // DO NOT follow symlinks
-		return;
-
-	$func = __FUNCTION__;
-	foreach ( scandir($dir) as $en )
-	{
-		if ( $en[0] === '.' )
-			continue;
-		$fn = "$dir/$en";
-
-		if ( is_file($fn) ) // allow FILE Symlinks
-		{
-			$sz = filesize($fn);
-			if ( ! isset($list[$sz]) )
-				$list[$sz] = array();
-			$list[$sz][] = $fn;
-		}
-		else
-		if ( is_dir($fn) )
-			$func($fn, $list);
-	} // foreach ( scandir($dir) as $en )
-	return;
-}
-
 function lsfile_r( $dir, &$list )
 {
 	if ( empty($dir) || ! is_dir($dir) )
@@ -702,6 +674,23 @@ function lsfile_r( $dir, &$list )
 			$func($fn, $list);
 	} // foreach ( scandir($dir) as $en )
 	return;
+}
+
+function lsfile_bysize_r( $dir )
+{
+	$list = array();
+	lsfile_r($dir, $list);
+	if ( empty($list) )
+		return '';
+
+	$list2 = array();
+	foreach ( $list as $fn )
+		$list2[] = array(filesize($fn), $fn);
+
+	usort($list2, function($a,$b){
+		return ($a[0] > $b[0]);
+	});
+	return $list2;
 }
 
 function rmfile_r( $dir )

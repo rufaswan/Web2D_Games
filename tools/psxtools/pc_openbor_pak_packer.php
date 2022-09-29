@@ -28,34 +28,34 @@ function pak_pack( $dir )
 	$dir = rtrim($dir, '/\\');
 	$len = strlen($dir);
 
-	$list = array();
-	lsfile_bysize_r($dir, $list);
+	$list = lsfile_bysize_r($dir);
 	if ( empty($list) )
 		return;
-	ksort($list);
 
 	$file = 'PACK' . ZERO . ZERO . ZERO . ZERO;
 	$toc  = '';
 	foreach ( $list as $k => $v )
 	{
-		$fdt = file_get_contents($v);
-		$fsz = strlen($fdt);
-		$fnm = substr($v, $len+1);
-			$b1 = strlen($fnm);
-			$b2 = strlen($file);
-			$fnm = str_replace('/', '\\', $fnm);
-		printf("%8x , %8x , %s\n", $b2, $fsz, $fnm);
+		list($fsize,$fname) = $v;
 
-		$toc .= chrint($b1+13, 4); // header 3*4 + str NULL
-		$toc .= chrint($b2   , 4);
-		$toc .= chrint($fsz  , 4);
+		$fdt = file_get_contents($fname);
+		$fnm = substr($fname, $len+1);
+			$fnm_len = strlen($fnm);
+			$fdt_off = strlen($file);
+			$fnm = str_replace('/', '\\', $fnm);
+		printf("%8x , %8x , %s.pak @ %s\n", $fdt_off, $fsize, $dir, $fnm);
+
+		$toc .= chrint($fnm_len+13, 4); // toc entry size = header 3*4 + fname + NULL
+		$toc .= chrint($fdt_off   , 4); // file data offset
+		$toc .= chrint($fsize     , 4); // file size
 		$toc .= $fnm . ZERO;
 
 		$file .= $fdt;
-	}
+	} // foreach ( $list as $k => $v )
 
-	$b2 = strlen($file);
-	$file .= $toc . chrint($b2, 4);
+	$toc_off = strlen($file);
+	$file .= $toc;
+	$file .= chrint($toc_off, 4);
 
 	save_file("$dir.pak", $file);
 	return;

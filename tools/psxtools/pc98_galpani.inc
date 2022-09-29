@@ -114,7 +114,7 @@ function galpani_decode( &$file, $bits )
 			if ( $b1 == 0 )
 			{
 				trace("3f 00  end\n");
-				$pos = $end + 1;
+				goto done;
 			}
 			else
 			{
@@ -141,6 +141,7 @@ function galpani_decode( &$file, $bits )
 		$pos++;
 	} // while ( $pos < $end )
 
+done:
 	trace("=== end sub_2436c() ===\n");
 	return substr($dec, 0x1000);
 }

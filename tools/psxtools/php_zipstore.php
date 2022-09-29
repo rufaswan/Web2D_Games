@@ -24,72 +24,62 @@ require 'common.inc';
 
 $gp_unpack = true;
 
-function zip_pack( $dir )
+function save_zipfile( $zipn, $list, $skip )
 {
-	printf("== zip_pack( %s )\n", $dir);
-	$dir = rtrim($dir, '/\\');
-	$len = strlen($dir);
-
-	$list = array();
-	lsfile_bysize_r($dir, $list);
-	if ( empty($list) )
-		return;
-	ksort($list);
-
-	$fp = fopen("$dir.zip", 'wb');
+	$fp = fopen($zipn, 'wb');
 	if ( ! $fp )  return;
 
 	$cent = '';
 	$pos  = 0;
 	$cnt  = 0;
-	foreach ( $list as $fsize => $flist )
+	foreach ( $list as $k => $v )
 	{
-		foreach ( $flist as $fname )
-		{
-			$fnm = substr($fname, $len+1);
-			$fdt = file_get_contents($fname);
-			$crc = crc32($fdt);
-			//$crc = 0;
+		list($fsize,$fname) = $v;
 
-			$pk3  = "PK\x03\x04";            // 00  magic
-			$pk3 .= chrint(10, 2);           // 04  ver 1.0
-			$pk3 .= ZERO . ZERO;             // 06  flags
-			$pk3 .= ZERO . ZERO;             // 08  compression
-			$pk3 .= ZERO . ZERO;             // 0a  mod time
-			$pk3 .= ZERO . ZERO;             // 0c  mod date
-			$pk3 .= chrint($crc, 4);         // 0e  crc 32
-			$pk3 .= chrint($fsize, 4);       // 12  fsize compressed
-			$pk3 .= chrint($fsize, 4);       // 16  fsize uncompressed
-			$pk3 .= chrint(strlen($fnm), 2); // 1a  fname len
-			$pk3 .= ZERO . ZERO;             // 1c  extra field size
-			$pk3 .= $fnm;
-			$pk3 .= $fdt;
-				fwrite($fp, $pk3);
+		$fnm = substr($fname, $skip);
+		$fdt = file_get_contents($fname);
+		$crc = crc32($fdt);
+		//$crc = 0;
 
-			$pk1  = "PK\x01\x02";              // 00  magic
-			$pk1 .= chr(10);                   // 04  made by ver 1.0
-			$pk1 .= ZERO;                      // 05  made by host (msdos)
-			$pk1 .= chrint(10, 2);             // 06  ver 1.0
-			$pk1 .= ZERO . ZERO;               // 08  flags
-			$pk1 .= ZERO . ZERO;               // 0a  compression
-			$pk1 .= ZERO . ZERO;               // 0c  mod time
-			$pk1 .= ZERO . ZERO;               // 0e  mod date
-			$pk1 .= chrint($crc, 4);           // 10  crc 32
-			$pk1 .= chrint($fsize, 4);         // 14  fsize compressed
-			$pk1 .= chrint($fsize, 4);         // 18  fsize uncompressed
-			$pk1 .= chrint(strlen($fnm), 2);   // 1c  fname len
-			$pk1 .= ZERO . ZERO;               // 1e  extra field size
-			$pk1 .= ZERO . ZERO;               // 20  comment len
-			$pk1 .= ZERO . ZERO;               // 22  disk .z01 .z02 ...
-			$pk1 .= ZERO . ZERO;               // 24  internal attr
-			$pk1 .= ZERO . ZERO . ZERO . ZERO; // 26  external attr (made by host)
-			$pk1 .= chrint($pos, 4);           // 2a  PK34 offset
-			$pk1 .= $fnm;
-				$cent .= $pk1;
+		$pk3  = "PK\x03\x04";            // 00  magic
+		$pk3 .= chrint(10, 2);           // 04  ver 1.0
+		$pk3 .= ZERO . ZERO;             // 06  flags
+		$pk3 .= ZERO . ZERO;             // 08  compression
+		$pk3 .= ZERO . ZERO;             // 0a  mod time
+		$pk3 .= ZERO . ZERO;             // 0c  mod date
+		$pk3 .= chrint($crc, 4);         // 0e  crc 32
+		$pk3 .= chrint($fsize, 4);       // 12  fsize compressed
+		$pk3 .= chrint($fsize, 4);       // 16  fsize uncompressed
+		$pk3 .= chrint(strlen($fnm), 2); // 1a  fname len
+		$pk3 .= ZERO . ZERO;             // 1c  extra field size
+		$pk3 .= $fnm;
+		$pk3 .= $fdt;
+			fwrite($fp, $pk3);
 
-			$pos += strlen($pk3);
-			$cnt++;
-		} // foreach ( $flist as $fname )
+		$pk1  = "PK\x01\x02";              // 00  magic
+		$pk1 .= chr(10);                   // 04  made by ver 1.0
+		$pk1 .= ZERO;                      // 05  made by host (msdos)
+		$pk1 .= chrint(10, 2);             // 06  ver 1.0
+		$pk1 .= ZERO . ZERO;               // 08  flags
+		$pk1 .= ZERO . ZERO;               // 0a  compression
+		$pk1 .= ZERO . ZERO;               // 0c  mod time
+		$pk1 .= ZERO . ZERO;               // 0e  mod date
+		$pk1 .= chrint($crc, 4);           // 10  crc 32
+		$pk1 .= chrint($fsize, 4);         // 14  fsize compressed
+		$pk1 .= chrint($fsize, 4);         // 18  fsize uncompressed
+		$pk1 .= chrint(strlen($fnm), 2);   // 1c  fname len
+		$pk1 .= ZERO . ZERO;               // 1e  extra field size
+		$pk1 .= ZERO . ZERO;               // 20  comment len
+		$pk1 .= ZERO . ZERO;               // 22  disk .z01 .z02 ...
+		$pk1 .= ZERO . ZERO;               // 24  internal attr
+		$pk1 .= ZERO . ZERO . ZERO . ZERO; // 26  external attr (made by host)
+		$pk1 .= chrint($pos, 4);           // 2a  PK34 offset
+		$pk1 .= $fnm;
+			$cent .= $pk1;
+
+		printf("%8x , %8x , %s @ %s\n", $pos, $fsize, $zipn, $fnm);
+		$pos += strlen($pk3);
+		$cnt++;
 	} // foreach ( $list as $fsize => $flist )
 
 	fwrite($fp, $cent);
@@ -109,6 +99,35 @@ function zip_pack( $dir )
 	return;
 }
 
+function zip_pack( $dir )
+{
+	printf("== zip_pack( %s )\n", $dir);
+	$dir = rtrim($dir, '/\\');
+	$len = strlen($dir);
+
+	$list = lsfile_bysize_r($dir);
+	if ( empty($list) )
+		return;
+
+	if ( count($list) < 0xfff0 )
+	{
+		$fn = sprintf('%s.zip', $dir);
+		save_zipfile($fn, $list, $len+1);
+	}
+	else
+	{
+		$id = 0;
+		while ( ! empty($list) )
+		{
+			$part = array_splice($list, 0, 0xfff0);
+			$fn = sprintf('%s.%02d.zip', $dir, $id);
+				$id++;
+			save_zipfile($fn, $part, $len+1);
+		} // while ( ! empty($list) )
+	}
+	return;
+}
+//////////////////////////////
 function zip_unpack( $fname )
 {
 	$dir = str_replace('.', '_', $fname);
