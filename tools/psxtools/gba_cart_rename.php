@@ -24,34 +24,28 @@ require 'common.inc';
 
 define('LOGO_MD5', 'e0434707845307679464ae1c22f0ec2d');
 
-function ndsren( $fname )
+function gbaren( $fname )
 {
-	// for *.nds only
-	if ( stripos($fname, '.nds') === false )
+	// for *.gba only
+	if ( stripos($fname, '.gba') === false )
 		return;
 
 	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
-	$head = fp2str($fp, 0, 0x180);
+	$head = fp2str($fp, 0, 0xc0);
 	fclose($fp);
 
-	// RAM address check
-	if ( $head[0x27] !== "\x02" )  return;
-	if ( $head[0x2b] !== "\x02" )  return;
-	if ( $head[0x37] !== "\x02" )  return;
-	if ( $head[0x3b] !== "\x02" )  return;
-
-	$logo = substr($head, 0xc0, 0x9c);
+	$logo = substr($head, 4, 0x9c);
 	if ( md5($logo) !== LOGO_MD5 )
 		return;
 
-	$name = substr($head,  0, 12);
-	$code = substr($head, 12,  4);
-	$vers = ord( $head[0x1e] );
+	$name = substr($head, 0xa0, 12);
+	$code = substr($head, 0xac,  4);
+	$vers = ord( $head[0xbc] );
 		$name = rtrim($name, ZERO);
 
-	$new = sprintf('%s-%d_%s.nds', $code, $vers, $name);
+	$new = sprintf('%s-%d_%s.gba', $code, $vers, $name);
 		$new = strtolower($new);
 
 	if ( $fname === $new )
@@ -63,4 +57,4 @@ function ndsren( $fname )
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	ndsren( $argv[$i] );
+	gbaren( $argv[$i] );
