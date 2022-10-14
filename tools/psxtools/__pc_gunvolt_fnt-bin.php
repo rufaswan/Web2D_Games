@@ -268,7 +268,7 @@ function load_tileset( $pfx, &$map )
 		// 1 tile = 16x16 pixel = 4 * 8x8 pixel
 		//        = 4 * 4 byte
 		// 1 meta = 4 byte
-		printf("DETECT %s = gv1 8x8 tile\n", $pfx);
+		printf("DETECT %s.fnt = gv1 8x8 tile\n", $pfx);
 		if ( count($fnt) > 1 )
 		{
 			foreach ( $fnt as $fk => $fv )
@@ -292,7 +292,7 @@ function load_tileset( $pfx, &$map )
 		// 1 tile = 16x16 pixel
 		//        = 4 byte
 		// 1 meta = 4 byte
-		printf("DETECT %s = gv1 16x16 tile\n", $pfx);
+		printf("DETECT %s.fnt = gv1 16x16 tile\n", $pfx);
 		$pix = fnt16pix($fnt[0], $map['tile'][0], $len1 >> 2);
 		save_clutfile("$pfx.tileset", $pix);
 		return $pix;
@@ -304,7 +304,7 @@ function load_tileset( $pfx, &$map )
 		// 1 tile = 16x16 pixel
 		//        = 4 byte
 		// 1 meta = 2 byte
-		printf("DETECT %s = mgv 16x16 tile\n", $pfx);
+		printf("DETECT %s.fnt = mgv 16x16 tile\n", $pfx);
 		$pix = fnt16pix($fnt[0], $map['tile'][0], $len1 >> 2);
 		save_clutfile("$pfx.tileset", $pix);
 		return $pix;
@@ -400,73 +400,81 @@ function mapdata_loop( &$file, $st, $ed, $sz )
 	return $map;
 }
 
-function load_mapdata( $pfx, $tag )
+function load_mapdata( $pfx )
 {
 	$bin = load_file("$pfx.bin");
 	if ( empty($bin) )
 		return '';
-	printf("== load_mapdata( %s , %s )\n", $pfx, $tag);
+	printf("== load_mapdata( %s )\n", $pfx);
 
 	$data = array();
-	switch ( $tag )
+
+	$mgc = $bin[0] . $bin[4] . $bin[0x18] . $bin[0x1c];
+	if ( $mgc === "\x04\x18\x01\x10" )
 	{
-		case 'mgv':
-			$data['room'] = array(16,15);
-			$p1 = str2int($bin,  4, 3);
-			$p2 = str2int($bin,  8, 3);
-			$p3 = str2int($bin, 12, 3);
+		printf("DETECT %s.bin = mgv 32-bit\n", $pfx);
+		$data['room'] = array(16,15);
+		$p1 = str2int($bin,  4, 3);
+		$p2 = str2int($bin,  8, 3);
+		$p3 = str2int($bin, 12, 3);
 
-			$s1 = substr($bin, $p1, $p2-$p1);
-			$s2 = substr($bin, $p2, $p3-$p2);
+		$s1 = substr($bin, $p1, $p2-$p1);
+		$s2 = substr($bin, $p2, $p3-$p2);
 
-			// tile data
-			$p1 = str2int($s1,  4, 3);
-			$p2 = str2int($s1,  8, 3);
-			$p3 = str2int($s1, 12, 3);
-			$data['tile'][0] = substr($s1, $p1, $p2-$p1);
-			$data['tile'][1] = substr($s1, $p2, $p3-$p2);
-			$data['tile'][2] = substr($s1, $p3);
-			break;
+		// tile data
+		$p1 = str2int($s1,  4, 3);
+		$p2 = str2int($s1,  8, 3);
+		$p3 = str2int($s1, 12, 3);
+		$data['tile'][0] = substr($s1, $p1, $p2-$p1);
+		$data['tile'][1] = substr($s1, $p2, $p3-$p2);
+		$data['tile'][2] = substr($s1, $p3);
+	}
 
-		case 'gv1':
-			$data['room'] = array(25,15);
-			$p1 = str2int($bin,  4, 3);
-			$p2 = str2int($bin,  8, 3);
-			$p3 = str2int($bin, 12, 3);
+	$mgc = $bin[0] . $bin[4] . $bin[0x18];
+	if ( $mgc === "\x04\x18\x0c" )
+	{
+		printf("DETECT %s.bin = gv1 32-bit\n", $pfx);
+		$data['room'] = array(25,15);
+		$p1 = str2int($bin,  4, 3);
+		$p2 = str2int($bin,  8, 3);
+		$p3 = str2int($bin, 12, 3);
 
-			$s1 = substr($bin, $p1, $p2-$p1);
-			$s2 = substr($bin, $p2, $p3-$p2);
+		$s1 = substr($bin, $p1, $p2-$p1);
+		$s2 = substr($bin, $p2, $p3-$p2);
 
-			// tile data
-			$p1 = str2int($s1, 0, 3);
-			$p2 = str2int($s1, 4, 3);
-			$p3 = str2int($s1, 8, 3);
-			$data['tile'][0] = substr($s1, $p1, $p2-$p1);
-			$data['tile'][1] = substr($s1, $p2, $p3-$p2);
-			$data['tile'][2] = substr($s1, $p3);
-			break;
+		// tile data
+		$p1 = str2int($s1, 0, 3);
+		$p2 = str2int($s1, 4, 3);
+		$p3 = str2int($s1, 8, 3);
+		$data['tile'][0] = substr($s1, $p1, $p2-$p1);
+		$data['tile'][1] = substr($s1, $p2, $p3-$p2);
+		$data['tile'][2] = substr($s1, $p3);
+	}
 
-		case 'laix':
-			$data['room'] = array(27,15);
-			$p1 = str2int($bin,  8, 3);
-			$p2 = str2int($bin, 16, 3);
-			$p3 = str2int($bin, 24, 3);
+	$mgc = $bin[0] . $bin[8] . $bin[0x30];
+	if ( $mgc === "\x04\x30\x0c" )
+	{
+		printf("DETECT %s.bin = laix 64-bit\n", $pfx);
+		$data['room'] = array(27,15);
+		$p1 = str2int($bin,  8, 3);
+		$p2 = str2int($bin, 16, 3);
+		$p3 = str2int($bin, 24, 3);
 
-			$s1 = substr($bin, $p1, $p2-$p1);
-			$s2 = substr($bin, $p2, $p3-$p2);
+		$s1 = substr($bin, $p1, $p2-$p1);
+		$s2 = substr($bin, $p2, $p3-$p2);
 
-			// tile data
-			$p1 = str2int($s1, 0, 3);
-			$p2 = str2int($s1, 4, 3);
-			$p3 = str2int($s1, 8, 3);
-			$data['tile'][0] = substr($s1, $p1, $p2-$p1);
-			$data['tile'][1] = substr($s1, $p2, $p3-$p2);
-			$data['tile'][2] = substr($s1, $p3);
-			break;
+		// tile data
+		$p1 = str2int($s1, 0, 3);
+		$p2 = str2int($s1, 4, 3);
+		$p3 = str2int($s1, 8, 3);
+		$data['tile'][0] = substr($s1, $p1, $p2-$p1);
+		$data['tile'][1] = substr($s1, $p2, $p3-$p2);
+		$data['tile'][2] = substr($s1, $p3);
+	}
 
-		default:
-			return php_error('UNKNOWN tag [%s]', $tag);
-	} // switch ( $tag )
+	// no match
+	if ( empty($data) )
+		return '';
 
 	// map data
 	$sz1 = str2int($s2,  0, 3);
@@ -494,47 +502,25 @@ function load_mapdata( $pfx, $tag )
 	return $data;
 }
 //////////////////////////////
-function gunvolt( $tag, $fname )
+function gunvolt( $fname )
 {
 	$pfx = substr($fname, 0, strrpos($fname,'.'));
-	$map = load_mapdata($pfx, $tag);
+	$map = load_mapdata($pfx);
 	if ( empty($map) )
-		return;
+		return php_notice('ERROR load_mapdata()');
 	info_maplayer($map);
 
 	$set = load_tileset($pfx, $map);
 	if ( empty($set) )
-		return;
+		return php_notice('ERROR load_tileset()');
 
 	save_layers($map, $set, $pfx);
 	save_layout($map, $pfx);
 	return;
 }
 
-$tag = '';
 for ( $i=1; $i < $argc; $i++ )
-{
-	switch ( $argv[$i] )
-	{
-		case '-mgv':
-			$tag = 'mgv';
-			break;
-		case '-bsm':
-		case '-bmz':
-		case '-gv':
-		case '-gv1':
-		case '-gv2':
-			$tag = 'gv1';
-			break;
-		case '-gva':
-		case '-laix':
-			$tag = 'laix';
-			break;
-		default:
-			gunvolt( $tag, $argv[$i] );
-			break;
-	} // switch ( $argv[$i] )
-} // for ( $i=1; $i < $argc; $i++ )
+	gunvolt( $argv[$i] );
 
 /*
 bin

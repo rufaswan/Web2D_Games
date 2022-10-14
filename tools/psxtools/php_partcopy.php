@@ -70,7 +70,7 @@ function partcopy( $fname, $txt, $range )
 	return;
 }
 
-echo <<<_ECHO
+$MSG = <<<_MSG
 {$argv[0]}  [option]  FILE [range...]  [FILE [range...]]...
 
 option:
@@ -81,8 +81,7 @@ range
   10-80 : copy bytes from offset 0x10 to 0x80 , length 0x70
   10=70 : copy 0x70 bytes starting from offset 0x10
 
-
-_ECHO;
+_MSG;
 
 $txt   = false;
 $fname = '';
@@ -90,6 +89,10 @@ for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
+		case '-h':
+		case '-help':
+			echo "$MSG\n";
+			exit();
 		case '-txt':  $txt = true ; break;
 		case '-bin':  $txt = false; break;
 		default:

@@ -3,9 +3,9 @@
 
 	avi
 		*blank*
-			= standard ripping/hacking tool for PlayStation
+			= standard ripping/hacking tool
 		quad
-			= related *.quad files
+			= related *.quad.txt files
 			for use with WebGL Quad Player
 		layout
 			= related layout.txt
@@ -40,7 +40,7 @@
 
 	prefix
 		* limited to 8 ASCII chars only
-		*see below*
+		*refer list below*
 
 	identifier
 		priority in order
@@ -111,24 +111,16 @@ star2     SLPM 861.06  Star Ocean 2 / Disc 2
 valky     SLPM 863.79  Valkyrie Profile / Disc 1
 valky     SLPM 863.80  Valkyrie Profile / Disc 2
 
-dworld1   SCES 000.12  Discworld 1
-dworld2   SLES 007.93  Discworld 2 Missing Presumed
-dworld3   SLES 015.49  Discworld Noir
-
+silhstry  SLPS 003.74  Silhouette Stories
 panzer    SLPS 008.99  Panzer Bandit
 yuna      SLPS 014.51  Galaxy Fraulein Yuna Final Edition
 ralph     SLPS 018.53  Adventure of Little Ralph
 saga2     SLPS 019.90  SaGa Frontier 2
 mana      SLPS 021.70  Seiken Densetsu
-silhstry  SLPS 003.74  Silhouette Stories
 
 sotn      SLPM 860.23  Akumajou Dracula X Gekka no Yasoukyoku
 mitsukr   SLPM 861.34  Mitsumete Knight R
-Silhouette Stories
 
-	dworld1   ALL DONE
-	dworld2   ALL DONE
-	dworld3   ALL DONE
 	mana      ALL DONE
 	saga2     ALL DONE , for SLPS only
 	silhstry  ALL DONE
@@ -140,12 +132,20 @@ Silhouette Stories
 	lunar2    isok/*.pck , map/*.dat only
 	mitsukr   merge.mrg (Mitsumete Mode) only
 	panzer    --upcoming--
-	lomax     --upcoming--
 	ralph     --upcoming--
 	valky     --upcoming--
 	star2     --upcoming--
 	gihren    --upcoming--
 	tkmk2     --upcoming--
+
+dworld1   SCES 000.12  Discworld 1
+dworld2   SLES 007.93  Discworld 2 Missing Presumed
+dworld3   SLES 015.49  Discworld Noir
+
+	dworld1   ALL DONE
+	dworld2   ALL DONE
+	dworld3   ALL DONE
+	lomax     --upcoming--
 
 ==============================
 == Vanillaware Games ==
@@ -156,34 +156,36 @@ pcrown    PS4                  Princess Crown
 	pcrown    --upcoming--
 		+PSP  *.tmx
 
-odin      PS2   SLUS 215.77  Odin Sphere
-odin      PS2   SLUS 216.04  GrimGrimoire
+odin      PS2   SLPM 664.74  Odin Sphere
+odin      PS2   SLPS 257.71  GrimGrimoire
 kuma      NDS   CKUJ         Kumatanchi
-mura      WII   RSFE7U       Muramasa The Demon Blade
+mura      WII   RSFJ99       Muramasa The Demon Blade
 gran      PSP   ULJS 003.94  Grand Knights History
-mura      VITA  PCSE 002.40  Muramasa Rebirth + DLC
-drag      VITA  PCSE 000.19  Dragon Crown
-odin      VITA  PCSE 008.99  Odin Sphere Leifthrasir
-drag      PS3                Dragon Crown
-odin      PS3                Odin Sphere Leifthrasir HD
-odin      PS4                Odin Sphere Leifthrasir HD
-drag      PS4                Dragon Crown Pro
-sent      PS4   CUSA 196.20  13 Sentinels: Aegis Rim
-sent      SWIT               13 Sentinels: Aegis Rim
 
 	*all*     FTEX only
 		+kuma  RGCN/RLCN/RCSN
 
-==============================
-== PlayStation System Games ==
+mura      VITA  PCSG 001.50  Muramasa Rebirth + DLC
+mura      VITA  PCSG 001.87  Dragon Crown
+mura      VITA               Odin Sphere Leifthrasir
+odin      PS3                Dragon Crown
+odin      PS3                Odin Sphere Leifthrasir HD
+13sent    PS4                Odin Sphere Leifthrasir HD
+13sent    PS4                Dragon Crown Pro
+13sent    PS4                13 Sentinels: Aegis Rim
+13sent    PS4                GrimGrimoire OnceMore
+???       SWIT               13 Sentinels: Aegis Rim
+???       SWIT               GrimGrimoire OnceMore
 
+	*all*     FTEX only
+
+==============================
+== Guest System Games ==
 lunar     PSP  NPJH_500.54  Lunar Harmony of Silver Star
 ???       PSP  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
 
 	lunar     --upcoming--
 
-==============================
-== Guest System Games ==
 cvpor     NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
 cvpor     NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor     NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
@@ -228,40 +230,41 @@ galpani   PC98  Galpani
 galpani   PC98  Galpani 2
 
 	rusty     *.map/.tbl/.dat , *.mag/.ani , *.mgx only
-	galpani   *.bgi/.bgs/.msk only
+	galpani   ALL DONE
 
-spyfox    SCUMM HE  Spy Fox 1
-spyfox    SCUMM HE  Spy Fox 2
-spyfox    SCUMM HE  Spy Fox 3
-spyfox    SCUMM HE  Pajama Sam 1
-spyfox    SCUMM HE  Pajama Sam 2
-spyfox    SCUMM HE  Pajama Sam 3
-spyfox    SCUMM HE  Freddi Fish 1 Missing Kelp Seeds
-spyfox    SCUMM HE  Freddi Fish 2 Haunted Schoolhouse
-spyfox    SCUMM HE  Freddi Fish 3 Stolen Conch Shell
-spyfox    SCUMM HE  Freddi Fish 4 Hogfish Rustlers of Briny Gulch
-spyfox    SCUMM HE  Freddi Fish 5 Creature of Coral Cove
-spyfox    SCUMM HE  Putt-putt 1 Joins the Parade
-spyfox    SCUMM HE  Putt-putt 2 Goes to the Moon
-spyfox    SCUMM HE  Putt-putt 3 Saves the Zoo
-spyfox    SCUMM HE  Putt-putt 4 Travels Through Time
-spyfox    SCUMM HE  Putt-putt 5 Enters the Race
-spyfox    SCUMM HE  Putt-putt 6 Joins the Circus
-tentacle  SCUMM     Monkey Island 1 The Secret of
-tentacle  SCUMM     Monkey Island 2 LeChuck's Revenge
-tentacle  SCUMM     Monkey Island 3 The Curse of
-tentacle  SCUMM     Indiana Jones and the Fate of Atlantis
-tentacle  SCUMM     Sam and Max Hit the Road
-tentacle  SCUMM     The Days of Tentacles
-tentacle  SCUMM     Full Throttle
-tentacle  SCUMM     The Dig
+spyfox    HE      Spy Fox 1 Dry Cereal
+spyfox    HE      Spy Fox 2 Some Assembly Required
+spyfox    HE      Spy Fox 3 Operation Ozone
+spyfox    HE      Pajama Sam 1
+spyfox    HE      Pajama Sam 2
+spyfox    HE      Pajama Sam 3
+spyfox    HE      Freddi Fish 1 Missing Kelp Seeds
+spyfox    HE      Freddi Fish 2 Haunted Schoolhouse
+spyfox    HE      Freddi Fish 3 Stolen Conch Shell
+spyfox    HE      Freddi Fish 4 Hogfish Rustlers of Briny Gulch
+spyfox    HE      Freddi Fish 5 Creature of Coral Cove
+spyfox    HE      Putt-putt 1 Joins the Parade
+spyfox    HE      Putt-putt 2 Goes to the Moon
+spyfox    HE      Putt-putt 3 Saves the Zoo
+spyfox    HE      Putt-putt 4 Travels Through Time
+spyfox    HE      Putt-putt 5 Enters the Race
+spyfox    HE      Putt-putt 6 Joins the Circus
+tentacle  SCUMM   Monkey Island 1 The Secret of
+tentacle  SCUMM   Monkey Island 2 LeChuck's Revenge
+tentacle  SCUMM   Monkey Island 3 The Curse of
+tentacle  SCUMM   Indiana Jones and the Fate of Atlantis
+tentacle  SCUMM   Sam and Max Hit the Road
+tentacle  SCUMM   The Days of Tentacles
+tentacle  SCUMM   Full Throttle
+tentacle  SCUMM   The Dig
+dworld    Tinsel  Discworld
+dworld    Tinsel  Discworld 2
+dworld    Tinsel  Discworld Noir
 
 	spyfox    RMIM , OBIM , AWIZ , AKCD only
 	tentacle  monster.sou only
+	dworld    ALL DONE
 
-dworld    PC  Discworld
-dworld    PC  Discworld 2
-dworld    PC  Discworld Noir
 gunvolt   PC  Blaster Master Zero
 gunvolt   PC  Azure Striker Gunvolt
 gunvolt   PC  Azure Striker Gunvolt 2
@@ -270,9 +273,8 @@ gunvolt   PC  Mighty Gunvolt
 shoukan   PC  Shoukansha (MBS Truse)
 ???       PC  The Vagrant
 
-	gunvolt   IOBJ only
-	shou      *.fcg only
-	dworld    --upcoming--
+	gunvolt   IOBJ only , map 16x16 tile only
+	shoukan   ALL DONE
 
 ???       APK  Egglia
 ???       APK  Smurfs

@@ -374,3 +374,8 @@ stackoverflow.com/questions/749544/pipe-to-from-the-clipboard-in-a-bash-script
 		xclip -selection c
 	will send data to the clipboard that works with Ctrl + C,
 	Ctrl + V in most applications.
+
+https://gbatemp.net/threads/wwt-wit-wiimms-wbfs-iso-tools.182236/page-69
+
+	wit  extract  OLD.iso  workdir
+	wit  copy     workdir  NEW.iso  --links
