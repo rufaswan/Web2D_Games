@@ -81,9 +81,11 @@ function sect_pose( &$file, $pos, &$inv, $cpss, $cjnt )
 				$pos += 4;
 			//printf("    %02x-%02x  %s [%s]\n", $i, $j, str2hex($s), $inv[$j]);
 
-			$deg = str2int($s, 0, 2, true) * 360 / 0x10000;
+			$ang = str2int($s, 0, 2, true) / 0x10000;
 			$dis = str2int($s, 2, 1, true);
 			$rep = str2int($s, 3, 1, true);
+
+			$deg = $ang * 360;
 			printf("    %02x-%02x  %6.1f  %4d  %4d  [%3s]\n", $i, $j, $deg, $dis, $rep, $inv[$j]);
 		} // for ( $j=0; $j < $cjnt; $j++ )
 	} // for ( $i=0; $i < $cpss; $i++ )

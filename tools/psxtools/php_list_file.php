@@ -119,7 +119,15 @@ function listfiles( &$list, $func )
 
 	foreach ( $data as $dv )
 		printf("[%4.1f%%]  %8x  %s\n", $dv[1]*100/$sum, $dv[1], $dv[0]);
-	printf("SUM  %x\n", $sum);
+
+	$b1 = $sum;
+	$b2 = 0;
+	while ( $b1 > 1 )
+	{
+		$b1 >>= 1;
+		$b2++;
+	}
+	printf("SUM  %x  (1 << %d)\n", $sum, $b2);
 	return;
 }
 //////////////////////////////

@@ -375,7 +375,40 @@ stackoverflow.com/questions/749544/pipe-to-from-the-clipboard-in-a-bash-script
 	will send data to the clipboard that works with Ctrl + C,
 	Ctrl + V in most applications.
 
-https://gbatemp.net/threads/wwt-wit-wiimms-wbfs-iso-tools.182236/page-69
+gbatemp.net/threads/wwt-wit-wiimms-wbfs-iso-tools.182236/page-69
 
 	wit  extract  OLD.iso  workdir
 	wit  copy     workdir  NEW.iso  --links
+
+mugenguild.com/forum/topics/grab-problem-184803.0.html
+
+	You'll create a state for the "attempt".
+	In this case, state 800.
+	If you succeed grabbing the opponent,
+	your character will go to state 810,
+	and the opponent grabbed will be sent to a custom state
+	(custom state means you have to create a state for the opponent to use,
+	instead of having the opponent use his own hurt states),
+	in your case, opponent will be sent to state 820.
+
+	The same way you have to create a custom state,
+	now you need to create a custom animation that the opponent will use.
+	That's why the hurt sprites have universal group numbers,
+	they are always group 5000, 5001, 5002, 5010, 5011, 5012, etc.,
+	and that's why they are required.
+	Keep in mind that you will use your own hurt sprites to make the anim 820,
+	but the opponent will use their own sprites.
+	What you're doing is telling them what sprites they should use in the animation.
+	Take KFM's anim 820 as an example,
+	it's all KFM's own hurt sprites,
+	but when he uses the throw/grab in a different opponent,
+	they will use their own sprites while being thrown/grabbed.
+
+	If you use a number that is not present in the opponent sprites,
+	say number 7032, for example,
+	they will "vanish" because there are no sprites with this number.
+
+blender.stackexchange.com/questions/2050/any-video-formats-that-render-with-alpha-channel
+
+	If .mov file is okay for you, here are the setting to get a transparent background (alpha channel) video output form Blender.
+	Just tried this with Blender 2.80 RC1 and you can use quicktime RLE

@@ -1,0 +1,53 @@
+=============================
+== Rockman Command Mission ==
+=============================
+Lagrano Ruins
+	deployment/Lagrano Key
+		[Deerball]
+
+Central Tower
+
+Tianna Camp
+	[Blowfish/Mini Battery]
+	deployment/Tianna Key
+		[Radar Killer]
+
+Gaudile Laboratory
+	[Big Monkey]
+	[Preon]
+	[Dober Man/Bone Key]
+	[Mettaur]
+	eternal forest/Bone Key
+
+Ulfat Factory
+	[Einhammer/Ball & Chain Hammer]
+	[Killer Mantis]
+	[Rush Loader]
+	Mini Battery
+
+Gimialla Mine
+	[Mega Mantor/Mini Battery]
+	[Degraver]
+	[Bat Bone]
+	Mini Motor
+	deployment/Gimialla Key
+		[Gold Blader/Heavy Motor]
+
+Vanallia Desert
+	[Liquid Glob/Cyber Liquid]
+	[Mega Tortoise/Mini Battery]
+	[Pararoid/Mini Motor]
+	Mini Battery
+	Ball & Chain Hammer
+	Cyber Liquid
+
+Melda Ore Plant
+	[Wolfloid]
+	[Rabbid]
+	Mini Battery
+	Heavy Motor
+	deployment/Melda Key
+		[Meltdown]
+
+Grave Ruins Base
+	[Bladey]
