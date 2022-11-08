@@ -49,21 +49,23 @@ function sectmap( &$file, &$pix, &$pal, $pos, $dir, $mw, $mh)
 	{
 		for ( $x=0; $x < $map_w; $x += 8 )
 		{
+			// fedcba98 76543210 fedcba98 76543210
+			// -------- r2       c2  r1       c1
 			$dat = str2int($file, $pos, 4);
 				$pos += 4;
 			$buf .= sprintf('%8x ', $dat);
 
 			$tid = ($dat >> 0) & 0xfff;
-			$c = $tid % 0x10;
-			$r = (int)($tid / 0x10);
+			$c = $tid & BIT4;
+			$r = $tid >> 4;
 			$sx = $c * 8;
 			$sy = $r * 8;
 			$src = rippix8($pix, $sx, $sy, 8, 8, 0x80, 0x2000);
 			updmap($canv1, $src, $x, $y, $map_w, $map_h);
 
 			$tid = ($dat >> 12) & 0xfff;
-			$c = $tid % 0x10;
-			$r = (int)($tid / 0x10);
+			$c = $tid & BIT4;
+			$r = $tid >> 4;
 			$sx = $c * 8;
 			$sy = $r * 8;
 			$src = rippix8($pix, $sx, $sy, 8, 8, 0x80, 0x2000);
@@ -111,7 +113,9 @@ function lunar2( $fname )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
-	$pal = pal555( substr($file, $b5, 0x200) );
+	$pal = substr($file, $b5, 0x200);
+		$pal = pal555($pal);
+		$pal[3] = ZERO; // first color removed
 	$pix = substr($file, $b2);
 
 	// tbl/pp*.dat reuse palette from map/mp*.dat
