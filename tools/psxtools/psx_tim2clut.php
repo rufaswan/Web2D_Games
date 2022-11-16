@@ -55,8 +55,9 @@ function psxtimfile( $fname )
 			case 'CLUT':
 				// for TIM missing palette
 				// reusing palette from previous TIM file
-				if ( ! isset($tim['pal']) )
+				if ( ! isset($tim['pal']) || empty($tim['pal']) )
 				{
+					printf("passing palette from last TIM\n");
 					$tim['pal'] = $gp_clut;
 					$tim['cc' ] = strlen($gp_clut) >> 2;
 				}

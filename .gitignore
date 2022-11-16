@@ -1,39 +1,40 @@
 # Deny  All , Allow Known (Whitelist)
 # Allow All , Deny  Known (Blacklist)
 
-# This is a whitelist
+# This is a blacklist
+# to ignore files without extension
 
 *
 !.gitattributes
 !.gitignore
 !*/
 
-!*.c
-!*.h
-!*.cpp
-!*.hpp
-!*.php
-!*.css
-!*.html
-!*.xml
+!*.git
+!*.md
 
 !*.sh
-!*.bat
+!*.php
+!*.inc
 
+!*.tpl
+!*.html
+!*.css
 !*.js
-!*.json
-!*.lua
 
 !*.txt
-!*.ini
-!*.conf
-!*.md
-!*.def
-!*.cfg
+!*.json
+!*.quad
 
-!*.inc
-!*.tpl
-!*.ttf
-!*.png
 !*.ogg
-!*.key
+!*.mp3
+!*.aac
+!*.m4a
+
+!*.png
+
+!*.zip
+!*.iso
+
+!*.bak
+!*.c
+!*.ttf

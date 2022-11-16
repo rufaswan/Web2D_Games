@@ -6,29 +6,19 @@
 .gitattributes   text
 .gitignore       text
 
-# source code
-*.c      text diff=cpp
-*.h      text diff=cpp
-*.cpp    text diff=cpp
-*.hpp    text diff=cpp
-*.php    text diff=php
-*.css    text diff=css
-*.html   text diff=html
-*.tpl    text diff=html
-*.xml    text diff=html
+!*.md    text
 
-# os-specific
-*.sh     text eol=lf
-*.bat    text eol=crlf
+!*.sh    text eol=lf
+!*.php   text diff=php
+!*.inc   text diff=php
 
-# generic
-*.js     text
-*.json   text
-*.lua    text
+!*.tpl   text diff=html
+!*.html  text diff=html
+!*.css   text diff=css
+!*.js    text
 
-*.txt    text
-*.ini    text
-*.conf   text
-*.md     text
-*.def    text
-*.cfg    text
+!*.txt   text
+!*.json  text
+!*.quad  text
+
+!*.c     text diff=cpp

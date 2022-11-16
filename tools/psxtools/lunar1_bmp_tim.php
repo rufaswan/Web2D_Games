@@ -23,7 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'lunar1.inc';
 
-define('NO_TRACE', 1);
+//define('NO_TRACE', 1);
 
 function lunar( $fname )
 {
@@ -38,6 +38,9 @@ function lunar( $fname )
 	while ( $st < $ed )
 	{
 		$siz = str2int($file, $st+4, 4);
+		if ( $siz < 1 )
+			break;
+
 		$fn  = sprintf('%s/%04d', $dir, $id);
 			$id++;
 		printf("%8x  %8x  %s\n", $st+8, $siz, $fn);

@@ -26,8 +26,12 @@ require 'quad.inc';
 require 'quad_vanillaware.inc';
 
 //define('NO_TRACE', true);
-define('FLAG_SKIP'        , 1 << 0);
-define('FLAG_VERTEX_COLOR', 1 << 1);
+define('FLAG_SKIP'        , 1 <<  0);
+define('FLAG_VERTEX_COLOR', 1 <<  1);
+
+define('BLEND_RGBA'   , 0);
+define('BLEND_RGB_ADD', 1 << 0);
+define('BLEND_RGB_SUB', 1 << 1);
 
 $gp_tag  = '';
 $gp_file = '';
@@ -58,6 +62,7 @@ function key_layers( $layer_s, $layer_id, $layer_no )
 		$dst = array();
 		$clr = array();
 		$flag = 0;
+		$blend = BLEND_RGBA;
 		$DEBUG = '';
 
 		switch ( $gp_tag )
@@ -87,6 +92,12 @@ function key_layers( $layer_s, $layer_id, $layer_no )
 				ps2_quad20p($gp_file[1], $b04, $src, $gp_ord);
 				ps2_quad20p($gp_file[2], $b10, $dst, $gp_ord);
 				ps2_quad20c($gp_file[0], $b08, $clr);
+
+				if ( $b00 & 2 )  $flag |= FLAG_SKIP;
+				if ( $b00 & 4 )  $flag |= FLAG_VERTEX_COLOR;
+
+				if ( $b02 == 1 )  $blend = BLEND_RGB_ADD;
+				if ( $b02 == 2 )  $blend = BLEND_RGB_SUB;
 				break;
 			case 'nds_kuma': // c
 				// 0 1 2 3 4 5 6 7 8 9 a b

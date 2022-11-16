@@ -721,6 +721,31 @@ function canvpix( $w, $h, $c = PIX_ALPHA )
 	return str_repeat($c, $s);
 }
 
+function webpal16()
+{
+	// https://en.wikipedia.org/wiki/Web_color
+	// Basic colors
+	$clr  = '---f  --8f  -8-f  -88f'; // K   8B  8G  8C
+	$clr .= '8--f  8-8f  88-f  cccf'; // 8R  8M  8Y  cW
+	$clr .= '888f  --ff  -f-f  -fff'; // 8W  B   G   C
+	$clr .= 'f--f  f-ff  ff-f  ffff'; // R   M   Y   W
+
+	$len = strlen($clr);
+	$pal = '';
+	for ( $i=0; $i < $len; $i++ )
+	{
+		switch ( $clr[$i] )
+		{
+			case '-':  $pal .= "\x00"; break;
+			case '8':  $pal .= "\x80"; break;
+			case 'c':  $pal .= "\xc0"; break;
+			case 'f':  $pal .= "\xff"; break;
+		} // switch ( $clr[$i] )
+	} // for ( $i=0; $i < 16; $i++ )
+
+	return $pal;
+}
+
 function rgb555( $str, $solid=true )
 {
 	// 15-bit ABGR

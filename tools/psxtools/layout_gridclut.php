@@ -42,31 +42,31 @@ function gridline( &$pix, $tile, $map )
 	$w = $tile[0] * $map[0];
 	$h = $tile[1] * $map[1];
 
-	// green lines for tile size
+	// half green lines for tile size
 	for ( $x=0; $x < $w; $x += $tw )
 	{
 		$tx = $x + $tw - 1;
-		drawline($pix, "\x03", $tx, 0, $tx, $h-1, $w, $h);
+		drawline($pix, "\x02", $tx, 0, $tx, $h-1, $w, $h);
 	}
 	for ( $y=0; $y < $h; $y += $th )
 	{
 		$ty = $y + $th - 1;
-		drawline($pix, "\x03", 0, $ty, $w-1, $ty, $w, $h);
+		drawline($pix, "\x02", 0, $ty, $w-1, $ty, $w, $h);
 	}
 
-	// yellow lines for room size
-	drawline($pix, "\x05",    0,    0, $w-1,    0, $w, $h);
-	drawline($pix, "\x05",    0,    0,    0, $h-1, $w, $h);
-	drawline($pix, "\x05",    0, $h-1, $w-1, $h-1, $w, $h);
-	drawline($pix, "\x05", $w-1,    0, $w-1, $h-1, $w, $h);
+	// half yellow lines for room size
+	drawline($pix, "\x06",    0,    0, $w-1,    0, $w, $h);
+	drawline($pix, "\x06",    0,    0,    0, $h-1, $w, $h);
+	drawline($pix, "\x06",    0, $h-1, $w-1, $h-1, $w, $h);
+	drawline($pix, "\x06", $w-1,    0, $w-1, $h-1, $w, $h);
 
-	// magenta cross for center of the room (for symmetry)
+	// half magenta cross for center of the room (for symmetry)
 	$cx = $w >> 1;
 	$cy = $h >> 1;
 	$ctw = $tw >> 1;
 	$cth = $tw >> 1;
-	drawline($pix, "\x06", $cx-1   , $cy-$cth, $cx     , $cy+$cth, $w, $h);
-	drawline($pix, "\x06", $cx-$ctw, $cy-1   , $cx+$ctw, $cy     , $w, $h);
+	drawline($pix, "\x05", $cx-1   , $cy-$cth, $cx     , $cy+$cth, $w, $h);
+	drawline($pix, "\x05", $cx-$ctw, $cy-1   , $cx+$ctw, $cy     , $w, $h);
 	return;
 }
 
@@ -77,30 +77,23 @@ function gridclut( $tile, $map, $fname )
 	if ( ($tile[0]|$tile[1]) == 0 )  return;
 	if ( ($map [0]|$map [1]) == 0 )  return;
 
-	$bin = '0000 0001 1001 0101 0011 1101 1011 0111 1111';
-	$len = strlen($bin);
-	$clr = '';
-	for ( $i=0; $i < $len; $i++ )
-	{
-		if ( $bin[$i] == ' ' )  continue;
-		if ( $bin[$i] == '0' )  $clr .= ZERO;
-		if ( $bin[$i] == '1' )  $clr .= BYTE;
-	}
-
 	$pix = str_repeat(ZERO, $tile[0]*$map[0]*$tile[1]*$map[1]);
 	gridline($pix, $tile, $map);
 
-	$img = 'CLUT';
-	$img .= chrint(9, 4);
-	$img .= chrint($tile[0]*$map[0], 4);
-	$img .= chrint($tile[1]*$map[1], 4);
-	$img .= $clr;
-	$img .= $pix;
-	save_file($fname, $img);
+	$img = array(
+		'cc'  => 16,
+		'pal' => webpal16(),
+		'w'   => $tile[0] * $map[0],
+		'h'   => $tile[1] * $map[1],
+		'pix' => $pix,
+	);
+	save_clutfile($fname, $img);
 	return;
 }
 
 printf("%s  TWxTH  MWxMH\n", $argv[0]);
+printf("  Tile 16x16  Map 16x14 = 256x224 grid image\n");
+
 if ( $argc !== 3 )  exit();
 if ( strpos($argv[1], 'x') === false )  exit();
 if ( strpos($argv[2], 'x') === false )  exit();

@@ -1,0 +1,321 @@
+<!doctype html>
+<html><head>
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Audio Player</title>
+<style id="main_css">body {
+	background-color : #000;
+	color            : #fff;
+	line-height      : 50px;
+}
+
+main * {
+	display : block;
+}
+
+li {
+	border-top : 1px #fff solid;
+}
+
+</style>
+
+</head><body>
+<main>
+	<input id='pfile'  type='file'>
+	<audio id='player' controls loop></audio>
+</main>
+
+<ol id='plist' class='block'>
+</ol>
+
+<footer>
+
+<script>
+	var PLAYER = document.getElementById('player');
+	var PLIST  = document.getElementById('plist');
+</script>
+
+<script id="uint8base64_js">'use strict';
+
+function Uint8Base64( uint ){
+	var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+	var BIT6  = 0x3f; // 6-bits = 0011 1111
+
+	var len = uint.byteLength;
+	var pos = 0;
+	var b64 = '';
+	while ( len >= 3 )
+	{
+		// MSB to LSB
+		// 24-bits == 3 * 8-bits
+		//         == 4 * 6-bits
+		var b = (uint[pos+0] << 16) | (uint[pos+1] << 8) | uint[pos+2];
+			len -= 3;
+			pos += 3;
+
+		var b1 = (b >> 18) & BIT6;
+		var b2 = (b >> 12) & BIT6;
+		var b3 = (b >>  6) & BIT6;
+		var b4 = (b >>  0) & BIT6;
+		b64 += token[b1] + token[b2] + token[b3] + token[b4];
+	} // while ( len >= 3 )
+
+	if ( len == 2 )
+	{
+		// 18-bits == 2 * 8-bits + 2 padding
+		//         == 3 * 6-bits
+		var b = (uint[pos+0] << 8) | uint[pos+1];
+			b <<= 2;
+
+		var b1 = (b >> 12) & BIT6;
+		var b2 = (b >>  6) & BIT6;
+		var b3 = (b >>  0) & BIT6;
+		b64 += token[b1] + token[b2] + token[b3] + '=';
+	}
+	if ( len == 1 )
+	{
+		// 12-bits == 1 * 8-bits + 4 padding
+		//         == 2 * 6-bits
+		var b = uint[pos+0];
+			b <<= 4;
+
+		var b1 = (b >> 6) & BIT6;
+		var b2 = (b >> 0) & BIT6;
+		b64 += token[b1] + token[b2] + '==';
+	}
+	// no need len == 0
+	return b64;
+}
+
+// base64 'abcd' == 'YWJjZA=='
+//console.log('Uint8Base64', Uint8Base64( new Uint8Array([0x61,0x62,0x63,0x64]) ));
+</script>
+<script id="unpackfile_js">'use strict';
+
+function buf2int( buffer, pos, byte )
+{
+	var int = 0;
+	for ( var i=0; i < byte; i++ )
+		int |= (buffer[pos+i] << (i*8));
+	return int;
+}
+
+function buf2str( buffer, pos, byte )
+{
+	var str = '';
+	for ( var i=0; i < byte; i++ )
+		str += String.fromCharCode( buffer[pos+i] );
+	return str;
+}
+
+function bufpart( buffer, pos, byte )
+{
+	var part = new Uint8Array(byte);
+	for ( var i=0; i < byte; i++ )
+		part[i] = buffer[pos+i];
+	return part;
+}
+
+function isolist( uint8 )
+{
+	// list['fname'] = binary data
+	var list = {};
+
+	if ( buf2str(uint8,0x8001,5) !== 'CD001' )
+		return list;
+	if ( buf2str(uint8,0x8801,5) !== 'CD001' )
+		return list;
+
+	function loopdir_lba( lba, siz, par )
+	{
+		for ( var i=0; i < siz; i += 0x800 )
+		{
+			var j = 0;
+			while ( j < 0x800 )
+			{
+				var pos = lba + i + j;
+				if ( uint8[pos+0] === 0 )
+				{
+					j += 0x800;
+					continue;
+				}
+
+				if ( uint8[pos+32] === 1 )
+				{
+					j += uint8[pos+0];
+					continue;
+				}
+
+				var flba = buf2int(uint8, pos +  2, 4);
+				var fsiz = buf2int(uint8, pos + 10, 4);
+				var fnam = buf2str(uint8, pos + 33, uint8[pos+32]);
+					flba *= 0x800;
+					fnam  = par + '/' + fnam;
+
+				if ( uint8[pos+25] & 2 )
+					loopdir_lba(flba, fsiz, fnam);
+				else
+				{
+					fnam = fnam.split(';')[0].toLowerCase().replace(/_/g, ' ');
+					list[fnam] = bufpart(uint8, flba, fsiz);
+				}
+
+				j += uint8[pos+0];
+			} // while ( j < 0x800 )
+		} // for ( var i=0; i < siz; i += 0x800 )
+	}
+
+	var root_lba = buf2int(uint8, 0x809c +  2, 4);
+	var root_siz = buf2int(uint8, 0x809c + 10, 4);
+	loopdir_lba(root_lba * 0x800, root_siz, '.');
+
+	return list;
+}
+
+function ziplist( uint8 )
+{
+	// list['fname'] = binary data
+	var list = {};
+	var pos = 0;
+	while (1)
+	{
+		// PK\x03\x04
+		if ( uint8[pos+0] !== 0x50 || uint8[pos+1] !== 0x4b || uint8[pos+2] !== 3 || uint8[pos+3] !== 4 )
+			break;
+
+		var sz1 = buf2int(uint8, pos+0x12, 4); // data size
+		var sz2 = buf2int(uint8, pos+0x1a, 2); // fname len
+		var sz3 = buf2int(uint8, pos+0x1c, 2); // extra len
+
+		// store only
+		if ( uint8[pos+8] === 0 )
+		{
+			var fn = buf2str(uint8, pos + 0x1e, sz2);
+			var dt = bufpart(uint8, pos + 0x1e + sz2 + sz3, sz1);
+			list[fn] = dt;
+		}
+
+		pos += (0x1e + sz1 + sz2 + sz3);
+	} // while (1)
+	return list;
+}
+</script>
+
+<script id="audio_player_js">'use strict';
+
+function playaudio( elem )
+{
+	//console.log(elem);
+	document.title = '[AUDIO] ' + elem.innerHTML;
+	PLAYER.src = elem.getAttribute('data-src');
+	PLAYER.play();
+}
+
+function PackListAddAudio( list )
+{
+	//console.log(list);
+	var key = Object.keys(list).sort();
+	for ( var i=0; i < key.length; i++ )
+	{
+		var fn  = key[i];
+		var ext = fn.toLowerCase().split('.').pop();
+
+		var dat = '';
+		switch ( ext )
+		{
+			case 'ogg':  dat = 'data:audio/ogg;base64,'; break;
+			case 'm4a':  dat = 'data:audio/mp4;base64,'; break;
+			case 'aac':  dat = 'data:audio/aac;base64,'; break;
+			case 'wav':  dat = 'data:audio/wav;base64,'; break;
+			case 'mp3':  dat = 'data:audio/mpeg;base64,'; break;
+
+			default:  continue;
+		} // switch ( ext )
+
+		listAddAudio(fn, dat + Uint8Base64( list[fn] ), i);
+	} // for ( var i=0; i < key.length; i++ )
+}
+
+function listAddAudio( fname, fdata, index )
+{
+	var li = document.createElement('li');
+
+	li.innerHTML = fname;
+	li.setAttribute('class'    , 'psrc');
+	li.setAttribute('data-src' , fdata);
+	li.setAttribute('data-idx' , index);
+	li.setAttribute('onclick', 'playaudio(this);');
+
+	PLIST.appendChild(li);
+}
+
+document.getElementById('pfile').addEventListener('change', function(e){
+	var elem = this;
+	elem.disabled = true;
+	PLIST.innerHTML = '';
+
+	var promises = [];
+	for ( var up of this.files )
+	{
+		console.log(up.type, up.name);
+		var ext = up.name.toLowerCase().split('.').pop();
+		var p1 = new Promise(function(resolve,reject){
+			switch ( ext )
+			{
+				case 'ogg':
+				case 'm4a':
+				case 'aac':
+				case 'wav':
+				case 'mp3':
+					var reader = new FileReader;
+					reader.onload = function(){
+						listAddAudio(up.name, reader.result, 0);
+						resolve(1);
+					}
+					reader.onerror = reject;
+					reader.readAsDataURL(up);
+					break;
+
+				case 'zip':
+					var reader = new FileReader;
+					reader.onload = function(){
+						var list = ziplist( new Uint8Array(reader.result) );
+						PackListAddAudio(list);
+						resolve(1);
+					}
+					reader.onerror = reject;
+					reader.readAsArrayBuffer(up);
+					break;
+
+				case 'iso':
+					var reader = new FileReader;
+					reader.onload = function(){
+						var list = isolist( new Uint8Array(reader.result) );
+						PackListAddAudio(list);
+						resolve(1);
+					}
+					reader.onerror = reject;
+					reader.readAsArrayBuffer(up);
+					break;
+
+				default:
+					resolve(-1);
+					break;
+			} // switch ( ext )
+		});
+		promises.push(p1);
+	} // for ( var up of this.files )
+
+	Promise.all(promises).then(function(resolve){
+		elem.disabled = false;
+		console.log('promise then', resolve);
+	}).catch(function(reject){
+		elem.disabled = false;
+		console.log('promise catch', reject);
+	});
+});
+</script>
+
+</footer>
+</body></html>

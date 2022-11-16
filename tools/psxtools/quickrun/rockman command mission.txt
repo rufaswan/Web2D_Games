@@ -4,26 +4,36 @@
 Lagrano Ruins
 	deployment/Lagrano Key
 		[Deerball]
+	Figure Token = box 2 + deploy 2 = 4
 
 Central Tower
+	clear/Central Key
+		Axl/Ninetails
+	Figure Token = box 3 + deploy 3 + boss 11 = 17
 
 Tianna Camp
 	[Blowfish/Mini Battery]
 	deployment/Tianna Key
 		[Radar Killer]
+		Axl/Rafflesian
+		X/Ultimate Armor
+	Figure Token = box 10 + boss 1 = 11
 
 Gaudile Laboratory
 	[Big Monkey]
 	[Preon]
 	[Dober Man/Bone Key]
 	[Mettaur]
-	eternal forest/Bone Key
+	eternal forest
+		Bone Key
+	Figure Token = box 19 = 19
 
 Ulfat Factory
 	[Einhammer/Ball & Chain Hammer]
 	[Killer Mantis]
 	[Rush Loader]
 	Mini Battery
+	Figure Token = box 12 + deploy 2 = 14
 
 Gimialla Mine
 	[Mega Mantor/Mini Battery]
@@ -32,6 +42,7 @@ Gimialla Mine
 	Mini Motor
 	deployment/Gimialla Key
 		[Gold Blader/Heavy Motor]
+	Figure Token = box 11 + deploy 1 + boss 1 = 12
 
 Vanallia Desert
 	[Liquid Glob/Cyber Liquid]
@@ -40,6 +51,7 @@ Vanallia Desert
 	Mini Battery
 	Ball & Chain Hammer
 	Cyber Liquid
+	Figure Token = box 8 + deploy 3 + npc 3 = 14
 
 Melda Ore Plant
 	[Wolfloid]
@@ -48,6 +60,22 @@ Melda Ore Plant
 	Heavy Motor
 	deployment/Melda Key
 		[Meltdown]
+		Zero/Absolute Zero
+	Figure Token = box 10 + deploy 1 + boss 2 = 13
 
 Grave Ruins Base
 	[Bladey]
+	Figure Token = box 10 = 10
+
+Far East HQ
+Orbital Elevator: Babel
+	Figure Token = box 4+1 = 5
+
+
+Figure Token
+	need 10 set * 6 figurine * 2 token
+	= 120 total
+	box     2  3 10 19 12 11 8 10 10 4+1 = 90
+	deploy  2  3  -  -  2  1 3  1  - -   = 12
+	npc     -  -  -  -  -  - 3  -  - -   =  3
+	boss    - 11  1  -  -  1 -  2  - -   = 15

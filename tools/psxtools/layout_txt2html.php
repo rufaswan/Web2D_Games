@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
-define('NONE_PNG', 'data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURQAAAP8AAP///2cZZB4AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+QGGgEMCSVOLPAAAAA4SURBVAjXYwhgYGBlCGFgEAVCIM3qwBjAwBjA6gDkAAUYRIFSDKwBMALMBUmAlYAVg7WBDQAZBQAWAQb1CwbkAwAAAABJRU5ErkJggg==');
+define('NONE_PNG', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURQAAAP8AAP///2cZZB4AAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+QGGgEMCSVOLPAAAAA4SURBVAjXYwhgYGBlCGFgEAVCIM3qwBjAwBjA6gDkAAUYRIFSDKwBMALMBUmAlYAVg7WBDQAZBQAWAQb1CwbkAwAAAABJRU5ErkJggg==');
 
 // MARL ( Map - Area - Room - Layer )
 $gp_grid = '';
@@ -41,7 +41,7 @@ function bggrid()
 
 	$f   = file_get_contents($gp_grid);
 	$bg  = "background :";
-	$bg .= sprintf(" url('data:image/png;charset=utf-8;base64,%s')", base64_encode($f));
+	$bg .= sprintf(" url('data:image/png;base64,%s')", base64_encode($f));
 	$bg .= " top left;";
 	return $bg;
 }
@@ -53,35 +53,36 @@ function htmlhead( $title )
 
 	$html = <<<_HTML
 <!DOCTYPE html>
-<html>
-<head>
-	<title>$title</title>
-	<meta charset='utf-8'>
-	<style>
-		* {
-			margin   : 0;
-			padding  : 0;
-			position : absolute;
-			left     : 0;
-			top      : 0;
-		}
-		body {
-			$grid
-			background-color : #000;
-		}
-		img:hover {
-			background-color : #fff;
-		}
-		.none {
-			width       : 16px;
-			height      : 16px;
-			margin-top  : -8px;
-			margin-left : -8px;
-			background  : url('$none') no-repeat center center;
-		}
-	</style>
-</head>
-<body>
+<html><head>
+
+<title>$title</title>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<style>
+* {
+	margin   : 0;
+	padding  : 0;
+	position : absolute;
+	left     : 0;
+	top      : 0;
+}
+body {
+	$grid
+	background-color : #000;
+}
+img:hover {
+	background-color : #fff;
+}
+.none {
+	width       : 16px;
+	height      : 16px;
+	margin-top  : -8px;
+	margin-left : -8px;
+	background  : url('$none') no-repeat center center;
+}
+</style>
+
+</head><body>
 
 _HTML;
 	echo $html;
@@ -199,7 +200,7 @@ function layouttxt( $dir )
 	return;
 }
 
-printf("usage : %s  [16x15]  [title]  DIR...\n", $argv[0]);
+printf("usage : %s  [title]  DIR...\n", $argv[0]);
 $title = 'Layout txt2html';
 
 ob_start();

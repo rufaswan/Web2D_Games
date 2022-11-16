@@ -28,7 +28,7 @@ class PixLines
 	private $line;
 	private $point;
 
-	private function drawquad($x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4, $clr="\x0e")
+	private function drawquad( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4, $clr="\x0e" )
 	{
 		$this->drawline($x1, $y1, $x2, $y2, $clr);
 		$this->drawline($x2, $y2, $x3, $y3, $clr);
@@ -37,7 +37,7 @@ class PixLines
 		return;
 	}
 
-	private function drawline($x1, $y1, $x2, $y2, $clr="\x0d")
+	private function drawline( $x1, $y1, $x2, $y2, $clr="\x0d" )
 	{
 		if ( abs($x1-$x2) > abs($y1-$y2) )
 		{
@@ -51,7 +51,7 @@ class PixLines
 
 			$x2 -= $x1;
 			$y2 -= $y1;
-			$slope = ( $x2 != 0 ) ? $y2 / $x2 : 0;
+			$slope = ( $x2 > 0 ) ? $y2 / $x2 : 0;
 			for ( $x=0; $x <= $x2; $x++ )
 			{
 				$y = $x * $slope;
@@ -70,7 +70,7 @@ class PixLines
 
 			$x2 -= $x1;
 			$y2 -= $y1;
-			$slope = ( $y2 != 0 ) ? $x2 / $y2 : 0;
+			$slope = ( $y2 > 0 ) ? $x2 / $y2 : 0;
 			for ( $y=0; $y <= $y2; $y++ )
 			{
 				$x = $y * $slope;
@@ -80,7 +80,7 @@ class PixLines
 		return;
 	}
 
-	private function drawpoint($x1, $y1, $clr="\x0c")
+	private function drawpoint( $x1, $y1, $clr="\x0c" )
 	{
 		// center 0,0
 		$x = (int)($this->canvas['hw'] + $x1);
@@ -110,28 +110,9 @@ class PixLines
 			'hw'  => $sz,
 			'hh'  => $sz,
 			'pix' => str_repeat(ZERO, $sz*$sz*4),
-			'pal' => '',
 			'cc'  => 16,
+			'pal' => webpal16(),
 		);
-
-		// https://en.m.wikipedia.org/wiki/Web_color
-		// Basic colors
-		$pal  = '---f  --8f  -8-f  -88f';
-		$pal .= '8--f  8-8f  88-f  cccf';
-		$pal .= '888f  --ff  -f-f  -fff';
-		$pal .= 'f--f  f-ff  ff-f  ffff';
-
-		$len = strlen($pal);
-		for ( $i=0; $i < $len; $i++ )
-		{
-			switch ( $pal[$i] )
-			{
-				case '-':  $this->canvas['pal'] .= "\x00"; break;
-				case '8':  $this->canvas['pal'] .= "\x80"; break;
-				case 'c':  $this->canvas['pal'] .= "\xc0"; break;
-				case 'f':  $this->canvas['pal'] .= "\xff"; break;
-			} // switch ( $pal[$i] )
-		} // for ( $i=0; $i < $len; $i++ )
 
 		// all coordinates are from -sz to +sz
 		// draw 16x16 tile
@@ -141,7 +122,7 @@ class PixLines
 			$p = ($i - 1) - $sz;
 			$this->drawline(  $p, -$sz,  $p, $sz, "\x01"); // | edge
 			$this->drawline(-$sz,   $p, $sz,  $p, "\x01"); // - edge
-		} // for ( $i=0; $i < ($sz<<1); $i += 16 )
+		} // for ( $i=0; $i < $f; $i += 16 )
 
 		// draw center lines
 		$this->drawline(   0, -$sz,   0, $sz, "\x02"); // half | line

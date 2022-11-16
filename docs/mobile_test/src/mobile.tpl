@@ -7,13 +7,8 @@
 @@<mobile.css>@@
 
 </head><body>
-<main>
+<main></main>
 
-<input type='file' id='upload' multiple>
-<div id='filereader' class='section'>test</div>
-@@<mobile-filereader.js>@@
-
-</main>
 <script>var DOM_MAIN = document.getElementsByTagName('main')[0];</script>
 
 @@<mobile-user-agent.js>@@
