@@ -196,7 +196,7 @@ function monobj( &$ram, &$room, $off)
 		// 8  events/por , always +0+0
 		// 9  events/por , always +0+0
 		$room[] = sprintf('en%d/%d_%d_%d+%d+%d', $ty, $id, $v1, $v2, $x, $y);
-	}
+	} // while (1)
 	return;
 }
 
@@ -206,6 +206,7 @@ function roomloop( &$ram, $dir, $MA, $off )
 	$id = 0;
 	$layout = '';
 	$rlst = array();
+
 	// rooms , hallways ...
 	while (1)
 	{
@@ -260,7 +261,7 @@ function roomloop( &$ram, $dir, $MA, $off )
 			$pal = substr($ram, $cps+4, $b2*0x20);
 			$gp_clut[] = pal555($pal);
 			$off3 += 8;
-		}
+		} // while (1)
 
 		// room set = fg , bg1 , bg2 , bg3
 		$L = 4;
@@ -274,14 +275,16 @@ function roomloop( &$ram, $dir, $MA, $off )
 			$RL = ($R * 10) + $L;
 			$room[] = sprintf('l_%04d+0+0', $RL);
 			layerloop($ram, $dir, $MA, $RL, $cps, $mappos[3]);
-		}
+		} // while ( $L > 0 )
+
 		// layer on top of bg + fg
 		monobj($ram, $room, $off4);
 
 		$rlst[] = sprintf('r_%04d+%d+%d', $R, $mappos[1], $mappos[2]);
 		$layout .= sprintf("r_%04d = %s\n", $R, implode(' , ', $room));
 		//return;
-	}
+	} // while (1)
+
 	$layout .= sprintf("main = %s\n", implode(' , ', $rlst));
 	$fn = sprintf('%s/cvnds_map/ma_%04d/layout.txt', $dir, $MA);
 	save_file($fn, $layout);
@@ -294,6 +297,7 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 	$id = 0;
 	$fst = $gp_patch['ndsram']['files'][0];
 	$fbk = $gp_patch['ndsram']['files'][2];
+
 	// entrance , library , clock tower ...
 	while (1)
 	{
@@ -324,12 +328,12 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 			$fn = substr0($ram, $fps+6);
 			printf("add PIX %6x @ %s\n", $fp, $fn);
 			$gp_pix_a[$fp] = "$dir/data/$fn";
-		}
+		} // while (1)
 
 		$MA = ($M * 100) + $A;
 		roomloop( $ram, $dir, $MA, $off3 );
 		//return;
-	}
+	} // while (1)
 	return;
 }
 
@@ -350,7 +354,7 @@ function maploop( &$ram, $dir, $ovid, $bc, $data )
 			break;
 		arealoop( $ram, $dir, $M, $off1, $off2, $off3 );
 		//return;
-	}
+	} // while (1)
 	return;
 }
 //////////////////////////////

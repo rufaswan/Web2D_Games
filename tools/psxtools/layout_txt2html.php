@@ -73,6 +73,9 @@ body {
 img:hover {
 	background-color : #fff;
 }
+img.sprite:hover {
+	z-index : 99;
+}
 .none {
 	width       : 16px;
 	height      : 16px;
@@ -100,12 +103,11 @@ function htmlfoot()
 		var tags = document.querySelectorAll("img.sprite");
 		for ( var i=0; i < tags.length; i++ )
 		{
-			var x1 = ( tags[i].width  / 2 ) | 0;
-			var y1 = ( tags[i].height / 2 ) | 0;
+			var x1 = tags[i].width  >> 1;
+			var y1 = tags[i].height >> 1;
 			tags[i].style.left = -x1 + "px";
 			tags[i].style.top  = -y1 + "px";
 		}
-		return;
 	};
 	</script>
 </body>
@@ -159,12 +161,13 @@ function htmldiv( &$layout, $dir, $room, $tab_no = 0 )
 	$z = str_replace('_', '/', $room);
 
 	$img = '';
-	imghtml($img, "$dir/$room/center.png", $tab, true);
-	imghtml($img, "$dir/$room/0000.png"  , $tab, true);
+	imghtml($img, "$dir/pcen/$room.png"  , $tab, true);
+	imghtml($img, "$dir/ptop/$room.png"  , $tab, false);
+	imghtml($img, "pcen/$room.png"       , $tab, true);
+	imghtml($img, "ptop/$room.png"       , $tab, false);
+
 	imghtml($img, "$dir/$room.png"       , $tab, false);
 	imghtml($img, "$dir/$z.png"          , $tab, false);
-	imghtml($img, "$room/center.png"     , $tab, true);
-	imghtml($img, "$room/0000.png"       , $tab, true);
 	imghtml($img, "$room.png"            , $tab, false);
 	imghtml($img, "$z.png"               , $tab, false);
 	if ( ! empty($img) )

@@ -322,6 +322,15 @@ var QDFN = QDFN || {};
 		return;
 	}
 
+	$.v4AttrBuf = function( GL, loc, data ){
+		var buf = GL.createBuffer();
+		GL.bindBuffer(GL.ARRAY_BUFFER, buf);
+		GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
+		GL.enableVertexAttribArray(loc);
+		GL.vertexAttribPointer(loc, 4, GL.FLOAT, false, 0, 0);
+		return;
+	}
+
 })(QDFN);
 </script>
 

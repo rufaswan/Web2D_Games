@@ -3,7 +3,12 @@
 function playaudio( elem )
 {
 	//console.log(elem);
+	for ( var i=0; i < PLIST.childNodes.length; i++ )
+		PLIST.childNodes[i].classList.remove('current');
+
 	document.title = '[AUDIO] ' + elem.innerHTML;
+	elem.classList.add('current');
+
 	PLAYER.src = elem.getAttribute('data-src');
 	PLAYER.play();
 }

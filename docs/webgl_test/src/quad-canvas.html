@@ -1,5 +1,5 @@
+@@<canvas.html>@@
 @@<Mona_Lisa.png>@@
-<canvas id='canvas'>Canvas not supported</canvas>
 
 <div id='corner0' class='clickable'>A</div>
 <div id='corner1' class='clickable'>B</div>
@@ -9,9 +9,7 @@
 <script>
 	'use strict';
 
-	var CANVAS = document.getElementById('canvas');
 	var IS_CLICK = true;
-	var GL = CANVAS.getContext('webgl');
 
 	var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
 	var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
@@ -40,5 +38,4 @@
 	}
 </script>
 
-@@<qdfn.js>@@
 @@<quad-click.js>@@

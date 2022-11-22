@@ -70,12 +70,12 @@ function save_quadfile( $pfx, &$json )
 		return;
 
 	$json = json_encode($json);
-	$json = str_replace("\"Animatio", "\n\t\t\t\"Animatio", $json);
-	$json = str_replace("\"KeyFrame", "\n\t\t\t\"KeyFrame", $json);
+	//$json = str_replace("\"Animatio", "\n\t\t\t\"Animatio", $json);
+	//$json = str_replace("\"KeyFrame", "\n\t\t\t\"KeyFrame", $json);
 
-	$json = str_replace("\"SrcQu", "\n\t\t\t\t\"SrcQu", $json);
-	$json = str_replace("\"DstQu", "\n\t\t\t\t\"DstQu", $json);
-	$json = str_replace("\"TexID", "\n\t\t\t\t\"TexID", $json);
+	//$json = str_replace("\"SrcQu", "\n\t\t\t\t\"SrcQu", $json);
+	//$json = str_replace("\"DstQu", "\n\t\t\t\t\"DstQu", $json);
+	//$json = str_replace("\"TexID", "\n\t\t\t\t\"TexID", $json);
 
 	save_file("$pfx.quad.txt", $json);
 	return;

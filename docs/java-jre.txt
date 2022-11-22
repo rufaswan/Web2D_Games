@@ -1,0 +1,40 @@
+# https://www.oracle.com/java/technologies/javase/11-relnote-issues.html
+
+	In this release, the JRE or Server JRE is no longer offered.
+	Only the JDK is offered.
+	Users can use jlink to create smaller custom runtimes.
+
+# https://access.redhat.com/documentation/en-us/openjdk/11/html-single/using_jlink_to_customize_java_runtime_environment/index
+
+# https://docs.oracle.com/javase/9/tools/jdeps.htm
+# https://docs.oracle.com/javase/9/tools/jlink.htm
+
+	./bin/jdeps  \
+		-summary \
+		JAR_FILE
+
+	./bin/jlink               \
+		--module-path ./lib   \
+		--add-modules  MODULE \
+		-output  JRE_PATH
+
+# http://esotericsoftware.com/spine-skeleton-viewer
+Spine 2D Skeleton Viewer
+
+	java.base          2.1-3.7  3.8-4.1
+	java.desktop       2.1-3.7  3.8-4.1
+	java.datatransfer  2.1-3.7
+	jdk.unsupported    2.1-3.7  4.1
+
+# https://www.yworks.com/products/yed/download
+yEd Graph Editor
+
+	java.base          3.15-3.21
+	java.desktop       3.15-3.21
+	java.datatransfer  3.15-3.21
+	java.sql           3.15-3.21
+	java.logging       3.15-3.21
+	java.prefs         3.15-3.21
+	java.xml           3.15-3.21
+	java.xml.crypto    3.15-3.21
+	jdk.javadoc        3.15-3.21
