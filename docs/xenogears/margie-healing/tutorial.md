@@ -30,7 +30,7 @@ v0 += v1
 at = 10000 + s4 - 717c
    = 10000 + c3eb0 - 717c
    = ccd34
-*RAM + c4078 = (int16)v0
+*RAM + ccd34 = (int16)v0
 ```
 
 So `v0` is Bart's HP, and `v1` is Margie's +40 HP healing we are looking for. It is loaded from `s3`. Put a WRITE breakpoint on RAM 800c4078 to see where it came from.
