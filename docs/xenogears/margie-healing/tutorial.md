@@ -2,7 +2,7 @@
 
 This is a simple tutorial to look for Margie's Healing Spell Value.
 
-For a start, we have no idea what value to look for, but we *DO know* what the spell do:
+For a start, we have no idea what value to look for, but we **DO know** what the spell do:
 
 1. It heals 40 HP.
 2. The target gains +40 HP as a result.
@@ -11,7 +11,7 @@ So we'll use Bart vs Ramsus battle at Aveh Palace. There is only one playable ch
 
 There are many ways to locate Bart's HP. If you emulator has "cheat search" function (e.g. mednafen), you can use that.
 
-You can also find it by opening *uncompressed* save states with any hex editor. You'll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.
+You can also find it by opening **uncompressed** save states with any hex editor. You'll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.
 
 Or you can export the RAM part to a new file, if you don't want the trouble to use a calculator everytime.
 
@@ -51,7 +51,7 @@ Let scroll upward to discover how `a1` is calculated.
 
 As you scrolling up, you'll keep seeing `a1` is from `v1` and `v0`, but then `v1` is from `a1`, and `v0` is from `v1`. So it's a bunch of nothing.
 
-Eventually, you'll reach this part, where `a1` is `v1 * v0`, and `v1` and `v0` are values loaded from somewhere else. *BOOKMARK THIS*
+Eventually, you'll reach this part, where `a1` is `v1 * v0`, and `v1` and `v0` are values loaded from somewhere else. **BOOKMARK THIS**
 
 Following `v1`, we follow the pointer at `a0`, and reached RAM 800cd138 + 5b, we get the value 2. Looking at the data struct, it seems like character stats. Margie has Ether = 2.
 
@@ -59,7 +59,7 @@ Following `v1`, we follow the pointer at `a0`, and reached RAM 800cd138 + 5b, we
 
 Following `v0`, we follow the pointer at `v0`, and reached RAM 800d0388 + 11, we get the value 0x14.
 
-*IT FITS!* 2 * 0x14 = 0x28. So the formula is Margie's Ether 2 * Spell Power 0x14 = 0x28 HP Heal!
+**IT FITS!** 2 * 0x14 = 0x28. So the formula is Margie's Ether 2 * Spell Power 0x14 = 0x28 HP Heal!
 
 Now we are getting somewhere! Put a WRITE breakpoint here to see where 0x14 came from!
 
