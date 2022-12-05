@@ -412,3 +412,14 @@ blender.stackexchange.com/questions/2050/any-video-formats-that-render-with-alph
 
 	If .mov file is okay for you, here are the setting to get a transparent background (alpha channel) video output form Blender.
 	Just tried this with Blender 2.80 RC1 and you can use quicktime RLE
+
+mariokartwii.com/showthread.php?tid=13
+
+	Change the file type (ex: ISO to WBFS), original file gets copied so it remains unmodified
+	wit copy example.iso example.wbfs
+
+	Extract game to manipulate its contents
+	wit extract example.wbfs /home/yourusername/newfolder (dont create newfolder before-hand)
+
+	Rebuild extracted game
+	wit copy ./newfolder /home/yourusername/newexample.wbfs

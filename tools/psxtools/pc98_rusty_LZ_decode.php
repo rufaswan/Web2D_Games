@@ -21,8 +21,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'class-bakfile.inc';
 
-//define('NO_TRACE', true);
+define('NO_TRACE', true);
 
 function rusty_decode( &$file, $st )
 {
@@ -83,20 +84,23 @@ function rusty_decode( &$file, $st )
 		}
 	} // while ( $st < $ed )
 
-	return $dec;
+	$file = $dec;
+	return;
 }
 //////////////////////////////
 function rusty( $fname )
 {
-	$file = load_bakfile($fname);
-	if ( empty($file) )
+	$bak = new BakFile;
+	$bak->load($fname);
+	if ( $bak->is_empty() )
 		return;
 
-	if ( substr($file, 0, 2) !== 'LZ' )
+	if ( substr($bak->file, 0, 2) !== 'LZ' )
 		return;
+	rusty_decode( $bak->file, 7 );
 
-	$dec = rusty_decode( $file, 7 );
-	save_file($fname, $dec);
+	printf("%8x -> %8x  %s\n", $bak->filesize(0), $bak->filesize(1), $fname);
+	$bak->save();
 	return;
 }
 

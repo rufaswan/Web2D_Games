@@ -501,21 +501,6 @@ function save_file( $fname, $str )
 	return;
 }
 
-function load_bakfile( $fname, $scan=true )
-{
-	$file = load_file("$fname.bak", $scan);
-	if ( ! empty($file) )
-		return $file;
-
-	$file = load_file($fname, $scan);
-	if ( ! empty($file) )
-	{
-		save_file("$fname.bak", $file);
-		return $file;
-	}
-	return '';
-}
-
 function load_clutfile( $fname )
 {
 	if ( is_file($fname) )

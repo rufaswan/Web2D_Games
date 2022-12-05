@@ -1,8 +1,9 @@
 <?php
 require 'common.inc';
+require 'class-bakfile.inc';
 require 'quad_vanillaware.inc';
 
-function loop_FMBP( &$c_mod, &$file, &$pos )
+function loop_FMBP( &$file, &$pos )
 {
 	$b1 = str2int($file, $pos+4, 4);
 	$b2 = str2int($file, $pos+8, 4);
@@ -14,7 +15,7 @@ function loop_FMBP( &$c_mod, &$file, &$pos )
 
 	$size = $b1 + 0xa0 + 0x10; // b1 + FMBS header + FEOC
 	$fn = substr0($file, $pos + 0x80);
-	printf("%8x  %8x  %8x  %s\n", $c_mod, $pos, $size, $fn);
+	printf("%8x  %8x  %s\n", $pos, $size, $fn);
 
 	global $gp_data;
 	$sect = $gp_data['nds_kuma']['sect'];
@@ -29,7 +30,6 @@ function loop_FMBP( &$c_mod, &$file, &$pos )
 		$p = $pos + $sp + ($i * $sk);
 
 		$file[$p+0] = ZERO;
-		$c_mod++;
 	} // for ( $i=0; $i < $sc; $i++ )
 	//////////////////////////////
 
@@ -39,19 +39,20 @@ function loop_FMBP( &$c_mod, &$file, &$pos )
 
 function ndskuma( $fname )
 {
-	$file = load_bakfile($fname);
-	if ( empty($file) )  return;
+	$bak = new BakFile;
+	$bak->load($fname);
+	if ( $bak->is_empty() )
+		return;
 
-	$t = substr($file, 0, 18);
+	$t = substr($bak->file, 0, 18);
 		$t = str_replace(ZERO, '', $t);
 	if ( $t !== 'KUMATANCHICKUJMP' )
 		return;
 
-	$c_mod = 0;
-	$pos   = 0;
+	$pos = 0;
 	while (1)
 	{
-		$pos = strpos($file, 'FMBS', $pos);
+		$pos = strpos($bak->file, 'FMBS', $pos);
 		if ( $pos === false )
 			break;
 
@@ -61,11 +62,10 @@ function ndskuma( $fname )
 			continue;
 		}
 
-		loop_FMBS($c_mod, $file, $pos);
+		loop_FMBS($bak->file, $pos);
 	} // while (1)
 
-	if ( $c_mod > 0 )
-		save_file($fname, $file);
+	$bak->save();
 	return;
 }
 

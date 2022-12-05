@@ -21,8 +21,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'class-bakfile.inc';
 
-//define('NO_TRACE', true);
+define('NO_TRACE', true);
 
 function mana_decode( &$file , $st )
 {
@@ -270,7 +271,8 @@ function mana_decode( &$file , $st )
 	} // while ( $st < $ed )
 
 	trace("=== end sub_80014448 ===\n");
-	return $dec;
+	$file = $dec;
+	return;
 }
 
 function mana( $fname )
@@ -280,17 +282,19 @@ function mana( $fname )
 	// for /map/*/*.prs
 	// for /wm/wmap/*.pim
 	// for /wm/wmtim/wmapt*/wm_*.pim
-	$file = load_bakfile($fname);
-	if ( empty($file) )
+	$bak = new BakFile;
+	$bak->load($fname);
+	if ( $bak->is_empty() )
 		return;
 
 	// file must starts with 01 and ends with FF
-	$ed = strlen($file);
-	if ( $file[0] != chr(1) || $file[$ed-1] != BYTE )
+	$ed = $bak->filesize(1);
+	if ( $bak->file[0] !== "\x01" || $bak->file[$ed-1] !== BYTE )
 		return;
+	mana_decode($bak->file, 1);
 
-	$dec = mana_decode($file, 1);
-	save_file($fname, $dec);
+	printf("%8x -> %8x  %s\n", $bak->filesize(0), $bak->filesize(1), $fname);
+	$bak->save();
 	return;
 }
 

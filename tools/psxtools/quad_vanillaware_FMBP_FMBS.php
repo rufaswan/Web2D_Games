@@ -352,10 +352,10 @@ function key_list( &$json, $key_s )
 				$b04 = float32( $gp_ord($s6p, 0x04, 4) ); // y1
 				$b08 = float32( $gp_ord($s6p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s6p, 0x0c, 4) ); // y2
-				$b10 = $gp_ord($s6p, 0x10, 2); // s4 id
-				$b12 = $gp_ord($s6p, 0x12, 2); // s5 id
-				$b14 = $gp_ord($s6p, 0x14, 1); // s4 no
-				$b15 = $gp_ord($s6p, 0x15, 1); // s5 no
+				$b10 = $gp_ord($s6p, 0x10, 2); // s4 set id
+				$b12 = $gp_ord($s6p, 0x12, 2); // s5 set id
+				$b14 = $gp_ord($s6p, 0x14, 1); // s4 set no
+				$b15 = $gp_ord($s6p, 0x15, 1); // s5 set no
 				$b16 = $gp_ord($s6p, 0x16, 2);
 				$DEBUG = subtrace(6, $b00, $b04, $b08, $b0c, $b10, $b12, $b14, $b15, $b16);
 
@@ -382,10 +382,10 @@ function key_list( &$json, $key_s )
 				$b04 = float32( $gp_ord($s6p, 0x04, 4) ); // y1
 				$b08 = float32( $gp_ord($s6p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s6p, 0x0c, 4) ); // y2
-				$b10 = $gp_ord($s6p, 0x10, 4); // s4 id
-				$b14 = $gp_ord($s6p, 0x14, 2); // s5 id
-				$b16 = $gp_ord($s6p, 0x16, 2); // s4 no
-				$b18 = $gp_ord($s6p, 0x18, 1); // s5 no
+				$b10 = $gp_ord($s6p, 0x10, 4); // s4 set id
+				$b14 = $gp_ord($s6p, 0x14, 2); // s5 set id
+				$b16 = $gp_ord($s6p, 0x16, 2); // s4 set no
+				$b18 = $gp_ord($s6p, 0x18, 1); // s5 set no
 				$b19 = $gp_ord($s6p, 0x19, 1);
 				$DEBUG = subtrace(6, $b00, $b04, $b08, $b0c, $b10, $b14, $b16, $b18, $b19);
 
@@ -405,10 +405,10 @@ function key_list( &$json, $key_s )
 				$b04 = float32( $gp_ord($s3p, 0x04, 4) ); // y1
 				$b08 = float32( $gp_ord($s3p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s3p, 0x0c, 4) ); // y2
-				$b10 = $gp_ord($s3p, 0x10, 2); // s1 id
-				$b12 = $gp_ord($s3p, 0x12, 2); // s2 id
-				$b14 = $gp_ord($s3p, 0x14, 1); // s1 no
-				$b16 = $gp_ord($s3p, 0x16, 1); // s2 no
+				$b10 = $gp_ord($s3p, 0x10, 2); // s1 set id
+				$b12 = $gp_ord($s3p, 0x12, 2); // s2 set id
+				$b14 = $gp_ord($s3p, 0x14, 1); // s1 set no
+				$b16 = $gp_ord($s3p, 0x16, 1); // s2 set no
 				$b17 = $gp_ord($s3p, 0x17, 1);
 				$DEBUG = subtrace(3, $b00, $b04, $b08, $b0c, $b10, $b12, $b14, $b16, $b17);
 
@@ -426,10 +426,10 @@ function key_list( &$json, $key_s )
 				$b04 = float32( $gp_ord($s3p, 0x04, 4) ); // y1
 				$b08 = float32( $gp_ord($s3p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s3p, 0x0c, 4) ); // y2
-				$b10 = $gp_ord($s3p, 0x10, 4); // s1 id
-				$b14 = $gp_ord($s3p, 0x14, 2); // s2 id
-				$b16 = $gp_ord($s3p, 0x16, 1); // s1 no
-				$b18 = $gp_ord($s3p, 0x18, 1); // s2 no
+				$b10 = $gp_ord($s3p, 0x10, 4); // s1 set id
+				$b14 = $gp_ord($s3p, 0x14, 2); // s2 set id
+				$b16 = $gp_ord($s3p, 0x16, 1); // s1 set no
+				$b18 = $gp_ord($s3p, 0x18, 1); // s2 set no
 				$b19 = $gp_ord($s3p, 0x19, 1);
 				$DEBUG = subtrace(3, $b00, $b04, $b08, $b0c, $b10, $b14, $b16, $b18, $b19);
 
@@ -614,6 +614,12 @@ function anim_frames( $frame_s, $frame_id, $frame_no )
 				$b04 = $gp_ord($s8p, 0x04, 2); // s7 id
 				$b06 = $gp_ord($s8p, 0x06, 2); // fps
 				$b08 = $gp_ord($s8p, 0x08, 2);
+				$b0e = $gp_ord($s8p, 0x0e, 1); // 0 1 2  s5s3 interpolation
+				$b0f = $gp_ord($s8p, 0x0f, 1);
+				$b10 = $gp_ord($s8p, 0x10, 1); // 0 1 2  s7 interpolation
+				$b11 = $gp_ord($s8p, 0x11, 1); // 0 1 2  s6 interpolation
+				$b12 = $gp_ord($s8p, 0x12, 1); // 0 1 2
+				$b13 = $gp_ord($s8p, 0x13, 1);
 				$DEBUG = subtrace(8, $b00, $b04, $b06, $b08);
 
 				$meta_s  = 7;
@@ -791,9 +797,9 @@ function anim_tracks( $track_s, $track_id, $track_no )
 			case 'ps2_odin': // 8
 				// 0 1 2 3 4 5 6 7
 				// 2   2   2   1 -
-				$b00 = $gp_ord($sap, 0x00, 2); // s8 id
-				$b02 = $gp_ord($sap, 0x02, 2); // s8 no
-				$b04 = $gp_ord($sap, 0x04, 2); // sum s8[6]
+				$b00 = $gp_ord($sap, 0x00, 2); // s8 set id
+				$b02 = $gp_ord($sap, 0x02, 2); // s8 set no
+				$b04 = $gp_ord($sap, 0x04, 2); // s8 set sum[6]
 				$b06 = $gp_ord($sap, 0x06, 1); // 0 1
 				$DEBUG = subtrace(10, $b00, $b02, $b04, $b06);
 
@@ -807,9 +813,9 @@ function anim_tracks( $track_s, $track_id, $track_no )
 			case 'wii_mura': // 10
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// 2   - 1 - - 2   4       1 - - -
-				$b00 = $gp_ord($sap, 0x00, 2); // s8 id
-				$b02 = $gp_ord($sap, 0x02, 2); // s8 no
-				$b04 = $gp_ord($sap, 0x04, 4); // sum s8[6]
+				$b00 = $gp_ord($sap, 0x00, 2); // s8 set id
+				$b02 = $gp_ord($sap, 0x02, 2); // s8 set no
+				$b04 = $gp_ord($sap, 0x04, 4); // s8 set sum[6]
 				$b08 = $gp_ord($sap, 0x08, 4);
 				$b0c = $gp_ord($sap, 0x0c, 1); // 0 1
 					$b08 = sint32($b08);
@@ -822,9 +828,9 @@ function anim_tracks( $track_s, $track_id, $track_no )
 			case 'ps3_drag': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// 2   2   - - 2   4       4       1 - - -
-				$b00 = $gp_ord($sap, 0x00, 2); // s8 id
-				$b02 = $gp_ord($sap, 0x02, 2); // s8 no
-				$b04 = $gp_ord($sap, 0x06, 2); // sum s8[6]
+				$b00 = $gp_ord($sap, 0x00, 2); // s8 set id
+				$b02 = $gp_ord($sap, 0x02, 2); // s8 set no
+				$b04 = $gp_ord($sap, 0x06, 2); // s8 set sum[6]
 				$b08 = $gp_ord($sap, 0x08, 4);
 				$b0c = $gp_ord($sap, 0x0c, 4);
 				$b10 = $gp_ord($sap, 0x10, 1); // 0 1
@@ -848,13 +854,13 @@ function anim_tracks( $track_s, $track_id, $track_no )
 			case 'ps4_sent': // 18
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
 				// 2   2   3     - 4       4       1 - 1 1 1 - - -
-				$b00 = $gp_ord($sap, 0x00, 2); // s8 id
-				$b02 = $gp_ord($sap, 0x02, 2); // s8 no
-				$b04 = $gp_ord($sap, 0x04, 4); // sum s8[6]
+				$b00 = $gp_ord($sap, 0x00, 2); // s8 set id
+				$b02 = $gp_ord($sap, 0x02, 2); // s8 set no
+				$b04 = $gp_ord($sap, 0x04, 4); // s8 set sum[6]
 				$b08 = $gp_ord($sap, 0x08, 4);
 				$b0c = $gp_ord($sap, 0x0c, 4);
-				$b10 = $gp_ord($sap, 0x10, 2); // sb id
-				$b12 = $gp_ord($sap, 0x12, 1); // sb no
+				$b10 = $gp_ord($sap, 0x10, 2); // sb set id
+				$b12 = $gp_ord($sap, 0x12, 1); // sb set no
 				$b13 = $gp_ord($sap, 0x13, 1); // 0 1
 				$b14 = $gp_ord($sap, 0x14, 1);
 					$b08 = sint32($b08);
@@ -876,9 +882,9 @@ function anim_tracks( $track_s, $track_id, $track_no )
 			case 'vit_drag': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// 2   2   2   - - 4       4       1 - - -
-				$b00 = $gp_ord($s7p, 0x00, 2); // s5 id
-				$b02 = $gp_ord($s7p, 0x02, 2); // s5 no
-				$b04 = $gp_ord($s7p, 0x04, 2); // sum s5[6]
+				$b00 = $gp_ord($s7p, 0x00, 2); // s5 set id
+				$b02 = $gp_ord($s7p, 0x02, 2); // s5 set no
+				$b04 = $gp_ord($s7p, 0x04, 2); // s5 set sum[6]
 				$b08 = $gp_ord($s7p, 0x08, 4);
 				$b0c = $gp_ord($s7p, 0x0c, 4);
 				$b10 = $gp_ord($s7p, 0x10, 1); // 0 1
@@ -893,13 +899,13 @@ function anim_tracks( $track_s, $track_id, $track_no )
 			case 'vit_odin': // 18
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
 				// 2   2   3     - 4       4       1 - 1 1 1 - - -
-				$b00 = $gp_ord($s7p, 0x00, 2); // s5 id
-				$b02 = $gp_ord($s7p, 0x02, 2); // s5 no
-				$b04 = $gp_ord($s7p, 0x04, 3); // sum s5[6]
+				$b00 = $gp_ord($s7p, 0x00, 2); // s5 set id
+				$b02 = $gp_ord($s7p, 0x02, 2); // s5 set no
+				$b04 = $gp_ord($s7p, 0x04, 3); // s5 set sum[6]
 				$b08 = $gp_ord($s7p, 0x08, 4);
 				$b0c = $gp_ord($s7p, 0x0c, 4);
-				$b10 = $gp_ord($s7p, 0x10, 1); // s8 id
-				$b12 = $gp_ord($s7p, 0x12, 1); // s8 no
+				$b10 = $gp_ord($s7p, 0x10, 1); // s8 set id
+				$b12 = $gp_ord($s7p, 0x12, 1); // s8 set no
 				$b13 = $gp_ord($s7p, 0x13, 1); // 0 1
 				$b14 = $gp_ord($s7p, 0x14, 1);
 					$b08 = sint32($b08);
@@ -962,9 +968,9 @@ function anim_list( &$json, $anim_s )
 				$b08 = float32( $gp_ord($s9p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s9p, 0x0c, 4) ); // y2
 				$b10 = substr ($s9p, 0x10, 0x18);
-				$b28 = $gp_ord($s9p, 0x28, 2); // sa id
-				$b2a = $gp_ord($s9p, 0x2a, 1); // sa no
-				$b2b = $gp_ord($s9p, 0x2b, 1); // max sa[4]
+				$b28 = $gp_ord($s9p, 0x28, 2); // sa set id
+				$b2a = $gp_ord($s9p, 0x2a, 1); // sa set no
+				$b2b = $gp_ord($s9p, 0x2b, 1); // sa set max[4]
 				$b2c = $gp_ord($s9p, 0x2c, 1); // 0 1
 					$b10 = rtrim($b10, ZERO);
 				$DEBUG = subtrace(9, $b00, $b04, $b08, $b0c, $b10, $b28, $b2a, $b2b, $b2c);
@@ -994,11 +1000,11 @@ function anim_list( &$json, $anim_s )
 				$b08 = float32( $gp_ord($s9p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s9p, 0x0c, 4) ); // y2
 				$b10 = substr ($s9p, 0x10, 0x18);
-				$b28 = $gp_ord($s9p, 0x28, 2); // sa id
-				$b2a = $gp_ord($s9p, 0x2a, 1); // sa no
-				$b2b = $gp_ord($s9p, 0x2b, 1); // max sa[4]
-				$b2c = $gp_ord($s9p, 0x2c, 2); // sb id
-				$b2e = $gp_ord($s9p, 0x2e, 1); // sb no
+				$b28 = $gp_ord($s9p, 0x28, 2); // sa set id
+				$b2a = $gp_ord($s9p, 0x2a, 1); // sa set no
+				$b2b = $gp_ord($s9p, 0x2b, 1); // sa set max[4]
+				$b2c = $gp_ord($s9p, 0x2c, 2); // sb set id
+				$b2e = $gp_ord($s9p, 0x2e, 1); // sb set no
 				$b2f = $gp_ord($s9p, 0x2f, 1); // 0 1
 					$b10 = rtrim($b10, ZERO);
 				$DEBUG = subtrace(9, $b00, $b04, $b08, $b0c, $b10, $b28, $b2a, $b2b, $b2c, $b2e, $b2f);
@@ -1027,9 +1033,9 @@ function anim_list( &$json, $anim_s )
 				$b08 = float32( $gp_ord($s6p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s6p, 0x0c, 4) ); // y2
 				$b10 = substr ($s6p, 0x10, 0x18);
-				$b28 = $gp_ord($s6p, 0x28, 2); // s7 id
-				$b2a = $gp_ord($s6p, 0x2a, 1); // s7 no
-				$b2b = $gp_ord($s6p, 0x2b, 1); // max s7[4]
+				$b28 = $gp_ord($s6p, 0x28, 2); // s7 set id
+				$b2a = $gp_ord($s6p, 0x2a, 1); // s7 set no
+				$b2b = $gp_ord($s6p, 0x2b, 1); // s7 set max[4]
 				$b2c = $gp_ord($s6p, 0x2c, 1); // 0 1
 					$b10 = rtrim($b10, ZERO);
 				$DEBUG = subtrace(6, $b00, $b04, $b08, $b0c, $b10, $b28, $b2a, $b2b, $b2c);
@@ -1050,11 +1056,11 @@ function anim_list( &$json, $anim_s )
 				$b08 = float32( $gp_ord($s6p, 0x08, 4) ); // x2
 				$b0c = float32( $gp_ord($s6p, 0x0c, 4) ); // y2
 				$b10 = substr ($s6p, 0x10, 0x18);
-				$b28 = $gp_ord($s6p, 0x28, 2); // s7 id
-				$b2a = $gp_ord($s6p, 0x2a, 1); // s7 no
-				$b2b = $gp_ord($s6p, 0x2b, 1); // max s7[4]
-				$b2c = $gp_ord($s6p, 0x2c, 2); // s8 id
-				$b2e = $gp_ord($s6p, 0x2e, 1); // s8 no
+				$b28 = $gp_ord($s6p, 0x28, 2); // s7 set id
+				$b2a = $gp_ord($s6p, 0x2a, 1); // s7 set no
+				$b2b = $gp_ord($s6p, 0x2b, 1); // s7 set max[4]
+				$b2c = $gp_ord($s6p, 0x2c, 2); // s8 set id
+				$b2e = $gp_ord($s6p, 0x2e, 1); // s8 set no
 				$b2f = $gp_ord($s6p, 0x2f, 1); // 0 1
 					$b10 = rtrim($b10, ZERO);
 				$DEBUG = subtrace(6, $b00, $b04, $b08, $b0c, $b10, $b28, $b2a, $b2b, $b2c, $b2e, $b2f);

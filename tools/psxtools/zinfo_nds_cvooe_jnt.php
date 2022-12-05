@@ -1,32 +1,142 @@
 <?php
-/*
-[license]
-Copyright (C) 2019 by Rufas Wan
-
-This file is part of Web2D Games.
-    <https://github.com/rufaswan/Web2D_Games>
-
-Web2D Games is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Web2D Games is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
-[/license]
- *
- * Special Thanks
- *   DSVania Editor
- *   https://github.com/LagoLunatic/DSVEdit/blob/master/docs/formats/Skeleton%20File%20Format.txt
- *     LagoLunatic
- */
 require 'common.inc';
+require 'class-pixlines.inc';
 
+function jntfile( &$file )
+{
+	$jnt = array();
+
+	$len = ord( $file[2] );
+	$jnt['opd'] = substr ($file, 3, $len);
+
+	$dx = str2int($file, 0x22, 2, true);
+	$dy = str2int($file, 0x24, 2, true);
+	$jnt['base'] = array($dx,$dy);
+
+	$cjnt = ord( $file[0x26] );
+	$cjnt_inv = ord( $file[0x27] );
+	$cjnt_vis = ord( $file[0x28] );
+	$chit = ord( $file[0x29] );
+	$cpss = ord( $file[0x2a] );
+	$cpnt = ord( $file[0x2b] );
+	$canm = ord( $file[0x2c] );
+
+	$pos = 0x30;
+	printf("  %8x  joint\n", $pos);
+	for ( $i=0; $i < $cjnt; $i++ )
+	{
+		$b1 = str2int($file, $pos+0, 1);
+		$b2 = str2int($file, $pos+1, 1);
+		$b3 = str2int($file, $pos+2, 1);
+		$b4 = str2int($file, $pos+3, 1);
+			$pos += 4;
+		$jnt['joint'][$i] = array($b1,$b2,$b3,$b4);
+	} // for ( $i=0; $i < $cjnt; $i++ )
+
+	printf("  %8x  pose\n", $pos);
+	for ( $i=0; $i < $cpss; $i++ )
+	{
+		$s1 = array();
+		$s1[] = str2int($file, $pos+0, 1);
+		$s1[] = str2int($file, $pos+1, 1);
+			$pos += 2;
+
+		$s2 = array();
+		for ( $j=0; $j < $cjnt; $j++ )
+		{
+			$b1 = str2int($file, $pos+0, 2, true);
+			$b2 = str2int($file, $pos+2, 1, true);
+			$b3 = str2int($file, $pos+3, 1);
+				$pos += 4;
+			$s2[$j] = array($b1,$b2,$b3);
+		} // for ( $i=0; $i < $cjnt; $i++ )
+
+		$jnt['pose'][$i] = array($s1,$s2);
+	} // for ( $i=0; $i < $cpss; $i++ )
+
+	printf("  %8x  hitbox\n", $pos);
+	for ( $i=0; $i < $chit; $i++ )
+	{
+		$b1 = str2int($file, $pos+0, 2, true);
+		$b2 = str2int($file, $pos+2, 1);
+		$b3 = str2int($file, $pos+3, 1);
+		$b4 = str2int($file, $pos+4, 1);
+		$b5 = str2int($file, $pos+5, 1);
+		$b6 = str2int($file, $pos+6, 1);
+			$pos += 8;
+		$jnt['hitbox'][$i] = array($b1,$b2,$b3,$b4,$b5,$b6);
+	} // for ( $i=0; $i < $chit; $i++ )
+
+	printf("  %8x  point\n", $pos);
+	for ( $i=0; $i < $cpnt; $i++ )
+	{
+		$b1 = str2int($file, $pos+0, 2, true);
+		$b2 = str2int($file, $pos+2, 1);
+			$pos += 4;
+		$jnt['point'][$i] = array($b1,$b2,$b3,$b4,$b5,$b6);
+	} // for ( $i=0; $i < $cpnt; $i++ )
+
+	printf("  %8x  draw\n", $pos);
+	for ( $i=0; $i < $cjnt_vis; $i++ )
+	{
+		$b1 = ord( $file[$pos] );
+			$pos++;
+		$jnt['draw'][$i] = $b1;
+	} // for ( $i=0; $i < $cjnt_vis; $i++ )
+
+	printf("  %8x  anim\n", $pos);
+	for ( $i=0; $i < $canm; $i++ )
+	{
+		$len = ord( $file[$pos] );
+			$pos++;
+
+		$s1 = array();
+		for ( $j=0; $j < $len; $j++ )
+		{
+			$b1 = str2int($file, $pos+0, 1);
+			$b2 = str2int($file, $pos+1, 1);
+			$b3 = str2int($file, $pos+2, 1);
+				$pos += 3;
+			$s1[$j] = array($b1,$b2,$b3);
+		} // for ( $j=0; $j < $len; $j++ )
+
+		$jnt['anim'][$i] = $s1;
+	} // for ( $i=0; $i < $canm; $i++ )
+
+	printf("  %8x  EOF\n", $pos);
+	$file = $jnt;
+	return;
+}
+
+function cvooe( $fname )
+{
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
+
+	$p1 = strpos($file, '.opd');
+	if ( $p1 === false )
+		return;
+
+	$p1 += 4;
+	$p2  = 3 + ord($file[2]);
+	if ( $p1 !== $p2 )
+		return;
+
+	jntfile($file);
+	$dir = str_replace('.', '_', $fname);
+
+	ob_start();
+		print_r($file);
+		$txt = ob_get_clean();
+	save_file("$dir/opd.txt", $txt);
+
+	return;
+}
+
+for ( $i=1; $i < $argc; $i++ )
+	cvooe( $argv[$i] );
+
+/*
 function str2hex( &$str )
 {
 	$len = strlen($str);
@@ -208,7 +318,6 @@ function jntfile( $fname )
 for ( $i=1; $i < $argc; $i++ )
 	jntfile( $argv[$i] );
 
-/*
 joint 3
 	00 01 02 03 04 05 06 07
 

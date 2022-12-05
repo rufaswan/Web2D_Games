@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'class-bakfile.inc';
 require 'cheat_psx_MC.inc';
 
 function int_update( &$file, $pos, $int, $byte )
@@ -60,14 +61,16 @@ function lbu_sum_xor( &$file, $st, $ed )
 
 function mcrfile( $fname )
 {
-	$file = load_bakfile($fname);
-	if ( empty($file) )  return;
+	$bak = new BakFile;
+	$bak->load($fname);
+	if ( $bak->is_empty() )
+		return;
 
-	if ( strlen($file) !== 0x20000 ) // 128 KB
+	if ( $bak->filesize(1) !== 0x20000 ) // 128 KB
 		return;
-	if ( substr($file,0,2) !== 'MC' )
+	if ( substr($bak->file,0,2) !== 'MC' )
 		return;
-	if ( substr($file,0x1f80,2) !== 'MC' )
+	if ( substr($bak->file,0x1f80,2) !== 'MC' )
 		return;
 
 	// 1 + 15 blocks
@@ -78,22 +81,22 @@ function mcrfile( $fname )
 		// -        dummy  first  middle  last
 		// in use   -      51     52      53
 		// deleted  a0     a1     a2      a3
-		$flag = ord( $file[$p+0] );
+		$flag = ord( $bak->file[$p+0] );
 		if ( $flag !== 0x51 )
 			continue;
 
-		$size = str2int($file, $p+ 4,  3);
-		$func = substr ($file, $p+10, 12);
+		$size = str2int($bak->file, $p+ 4,  3);
+		$func = substr ($bak->file, $p+10, 12);
 			$func = str_replace('-', '_', $func);
 
 		if ( function_exists($func) )
 		{
 			printf("%2x  %4x  %6x  %s\n", $i, $p, $i*0x2000, $func);
-			$func($file, $i*0x2000);
+			$func($bak->file, $i*0x2000);
 		}
 	} // for ( $i=1; $i < 16; $i++ )
 
-	save_file($fname, $file);
+	$bak->save();
 	return;
 }
 

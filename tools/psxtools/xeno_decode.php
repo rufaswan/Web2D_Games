@@ -21,18 +21,22 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'class-bakfile.inc';
 require 'xeno.inc';
 
 define('NO_TRACE', true);
 
 function xeno( $fname )
 {
-	$file = load_bakfile($fname);
-	if ( empty($file) )
+	$bak = new BakFile;
+	$bak->load($fname);
+	if ( $bak->is_empty() )
 		return;
 
 	xeno_decode($file);
-	save_file($fname, $file);
+
+	printf("%8x -> %8x  %s\n", $bak->filesize(0), $bak->filesize(1), $fname);
+	$bak->save();
 	return;
 }
 

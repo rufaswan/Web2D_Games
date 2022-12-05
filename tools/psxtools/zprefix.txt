@@ -23,6 +23,11 @@
 		php
 			= PHP helper script for hacking
 			*skip console, prefix, identifier*
+		zinfo / zmod / ztest
+			= testing script for WIP
+			*to test ideas
+			*to verify *.inc works correctly
+			*to be deleted in future, if no longer needed
 
 	console
 		* only used for guest consoles
@@ -59,7 +64,6 @@
 
 	function
 		*blank* = output .CLUT/.RGBA sprites
-		INFO    = display information for data hunting
 		SETUP   = output self-contained file sets
 		decode  = decompress/decrypt the files
 			* always load its *.bak
@@ -224,10 +228,12 @@ rockx     SNES  Rockman X 3
 
 	rockx     --upcoming--
 
-rusty     PC98  Rusty
-rusty     PC98  Totsugeki Mix
-galpani   PC98  Galpani
-galpani   PC98  Galpani 2
+rusty     PC98  C-Lab                    Rusty
+rusty     PC98  C-Lab                    Totsugeki Mix
+???       PC98  Forest                   Ningyou Tsukai
+???       PC98  Forest                   Ningyou Tsukai 2
+galpani   PC98  Creo i                   Galpani
+galpani   PC98  Mainichi Communications  Galpani 2
 
 	rusty     *.map/.tbl/.dat , *.mag/.ani , *.mgx only
 	galpani   ALL DONE

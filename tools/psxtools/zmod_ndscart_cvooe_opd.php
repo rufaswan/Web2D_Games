@@ -6,15 +6,16 @@
  *     LagoLunatic
  */
 require 'common.inc';
+require 'class-bakfile.inc';
 
-function loop_opd( &$c_mod, &$file, &$pos )
+function loop_opd( &$file, &$pos )
 {
 	$sz = str2int($file, $pos+2, 1);
 	$fn = substr ($file, $pos+3, $sz);
 
 	$dx = str2int($file, $pos+0x22, 2, true);
 	$dy = str2int($file, $pos+0x24, 2, true);
-	printf("%8x  %8x  %d,%d  %s\n", $c_mod, $pos, $dx, $dy, $fn);
+	printf("%8x  %d,%d  %s\n", $pos, $dx, $dy, $fn);
 
 	$cjnt = str2int($file, $pos+0x26, 1);
 	$cjnt_inv = str2int($file, $pos+0x27, 1);
@@ -40,7 +41,6 @@ function loop_opd( &$c_mod, &$file, &$pos )
 		$file[$p+1] = "\x00";
 		$file[$p+2] = "\x00";
 		$file[$p+3] = "\x00";
-		$c_mod++;
 	} // for ( $i=0; $i < $camn; $i++ )
 	//////////////////////////////
 
@@ -50,29 +50,28 @@ function loop_opd( &$c_mod, &$file, &$pos )
 
 function ndsooe( $fname )
 {
-	$file = load_bakfile($fname);
-	if ( empty($file) )  return;
+	$bak = new BakFile;
+	$bak->load($fname);
+	if ( $bak->is_empty() )
+		return;
 
-	$t = substr($file, 0, 18);
+	$t = substr($bak->file, 0, 18);
 		$t = str_replace(ZERO, '', $t);
 	if ( $t !== 'CASTLEVANIA3YR9JA4' )
 		return;
 
-	$c_mod = 0;
-	$pos   = 0;
+	$pos = 0;
 	while (1)
 	{
-		$pos = strpos($file, '.opd', $pos);
+		$pos = strpos($bak->file, '.opd', $pos);
 		if ( $pos === false )
 			break;
 
 		$pos -= ($pos & 0xff);
-		loop_opd($c_mod, $file, $pos);
+		loop_opd($bak->file, $pos);
 	} // while (1)
 
-	if ( $c_mod > 0 )
-		save_file($fname, $file);
-
+	$bak->save();
 	return;
 }
 
