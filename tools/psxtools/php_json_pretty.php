@@ -60,15 +60,17 @@ function jval_str( &$val )
 {
 	if ( "$val" === $val )
 	{
-		// windows path , escape char cause decode failed
-		$val = str_replace('\\', '/', $val);
-		return "\"$val\"";
+		// decode failed
+		//   escape the escape char
+		$val = str_replace('\\', '\\\\', $val);
+		return sprintf('"%s"', $val);
 	}
 
 	if ( (int)$val === $val )
-		return sprintf("%d", $val);
+		return sprintf('%d', $val);
 
-	return sprintf("%.6f", $val);
+	//return sprintf('%.e', $val);
+	return sprintf('%.f', $val);
 }
 //////////////////////////////
 function json_pretty( &$json, $tab )
@@ -96,14 +98,14 @@ function json_pretty( &$json, $tab )
 		foreach ( $json as $jv )
 		{
 			$jv = $func($jv, $pad);
-			$txt .= sprintf("\n%s%s", $pad, $jv);
+			$txt .= sprintf("\r\n%s%s", $pad, $jv);
 
 			$cnt--;
 			if ( $cnt > 0 )
 				$txt .= ' ,';
 		} // foreach ( $json as $jv )
 
-		$txt .= sprintf("\n%s%s", $tab, ']');
+		$txt .= sprintf("\r\n%s%s", $tab, ']');
 		return $txt;
 	}
 	else
@@ -115,14 +117,14 @@ function json_pretty( &$json, $tab )
 		{
 			$jk = "\"$jk\"";
 			$jv = $func($jv, $pad);
-			$txt .= sprintf("\n%s%-{$len}s : %s", $pad, $jk, $jv);
+			$txt .= sprintf("\r\n%s%-{$len}s : %s", $pad, $jk, $jv);
 
 			$cnt--;
 			if ( $cnt > 0 )
 				$txt .= ' ,';
 		} // foreach ( $json as $jk => $jv )
 
-		$txt .= sprintf("\n%s%s", $tab, '}');
+		$txt .= sprintf("\r\n%s%s", $tab, '}');
 		return $txt;
 	}
 }

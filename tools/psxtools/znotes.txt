@@ -423,3 +423,20 @@ mariokartwii.com/showthread.php?tid=13
 
 	Rebuild extracted game
 	wit copy ./newfolder /home/yourusername/newexample.wbfs
+
+mikekohn.net/software/playstation2.php
+
+	In Java Grinder this defaults to
+
+	((RGB_SRC - RGB_FB) * ALPHA_SRC) >> 7 + RGB_FB
+
+	This means if the primitive's alpha channel and texture controls are set to alpha mode,
+	the GS will take the RGB value of the texture and subtract it from what's currently drawn on the screen,
+	multiplied by the texture's alpha value,
+	divided by 128 and added back into the pixel currently in the frame buffer.
+
+	Everything is pixel for pixel and R, G, B.
+
+	Without textures only the alpha bit in the PRIM register should be needed to be set to turn on alpha channels.
+
+	Each pixel can of course have it's own alpha value.

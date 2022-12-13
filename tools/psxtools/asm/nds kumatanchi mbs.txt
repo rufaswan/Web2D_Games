@@ -3,6 +3,10 @@ RAM 219e7e0
 		[bc] -> 2193840
 			[98] -> 21ced80 // FMBS
 //////////////////////////////
+s4.flags   0 ldrh  2 4
+s6.flags  16 ?     1 2 4 8  10
+s8.flags   8 ldr   1 2 4 8  20 80  400 800  2000
+
 RAM 21ced80 = momo01.mbs
 	00  // FMBS
 	04  // s0-sa size
@@ -33,18 +37,23 @@ RAM 21ced80 = momo01.mbs
 	52
 	54  2030a68  ldr  rb, 54(r1) // ptr s0
 	58  2030a7c  ldr  r2, 58(r1) // ptr s1
-	5c  2030a80  ldr  r1, 5c(r1) // ptr s2
+	5c  // ptr s2
+		2030a80  ldr  r1, 5c(r1)
 		2031b40  ldr  r9, 5c(r0)
-	60  2031d7c  ldr  r7, 60(r0) // ptr s3
+	60  // ptr s3
+		2031d7c  ldr  r7, 60(r0)
 		20320dc  ldr  r2, 60(r2)
 	64  2030a4c  ldr  r3, 64(r1) // ptr s4
 	68  20320d8  ldr  r1, 68(r2) // ptr s5
-	6c  2031e00  ldr  r5, 6c(r0) // ptr s6
+	6c  // ptr s6
+		2031e00  ldr  r5, 6c(r0)
 		2032044  ldr  r1, 6c(r2)
-	70  2031c50  ldr  r8, 70(r0) // ptr s7
+	70  // ptr s7
+		2031c50  ldr  r8, 70(r0)
 		2032074  ldr  r6, 70(r2)
 	74  20326ac  ldr  rc, 74(r6) // ptr s8
-	78  2033394  ldr  r3, 78(r2) // ptr s9
+	78  // ptr s9
+		2033394  ldr  r3, 78(r2)
 		20333f8  ldr  r3, 78(r2)
 	7c  203266c  ldr  r1, 7c(r1) // ptr sa
 	80  // mbs filename
@@ -142,19 +151,15 @@ RAM 21ced80 = momo01.mbs
 	s4*c  layer (9 done)
 		00  // flags
 			2030ad0  ldrh  r0, 0(r9)
-				tst r0, 02  // skip
-				tst r0, 04  // vertex color only
+				tst  2  // skip
+				tst  4  // vertex color only
 		02
-		03  // [kuma02] tex id
-			2030af0  ldrb  r1, 3(r9)
-		04  // s1 id
-			2030b94  ldrh  r2, 4(r9)
-		06  //
+		03  2030af0  ldrb  r1, 3(r9)  // [kuma02] tex id
+		04  2030b94  ldrh  r2, 4(r9)  // s1 id
+		06
 		07
-		08  // s0 id
-			2030b8c  ldrh  r1, 8(r9)
-		0a  // s2 id
-			2030ba8  ldrh  r3, a(r9)
+		08  2030b8c  ldrh  r1, 8(r9)  // s0 id
+		0a  2030ba8  ldrh  r3, a(r9)  // s2 id
 	s5*8  ? ( done) (bg skip)
 		00
 		01
@@ -177,16 +182,14 @@ RAM 21ced80 = momo01.mbs
 		0c  // y2
 			20320a0  ldr     r3,  c(r5)
 			20320c8  ldr     r0,  c(r5)
-		10  // s4 set id
-			2030a48  ldrh    r2, 10(r5)
+		10  2030a48  ldrh    r2, 10(r5)  // s4 set id
 		12  // [kuma02] s5 set id
 		13
 		14  // s4 set no
 			2030ab8  ldrb    r0, 14(r5)
 			2030bc4  ldrb    r0, 14(r5)
 			203221c  ldrbne  r0, 14(r5)
-		15  // [kuma02] s5 set no
-			2031f38  ldrb    r3, 15(r5)
+		15  2031f38  ldrb    r3, 15(r5)  // [kuma02] s5 set no
 		16  //
 		17
 	s7*24 meta (14 done)
@@ -216,19 +219,17 @@ RAM 21ced80 = momo01.mbs
 			203203c  ldrh  rc, 0(r5)
 		02
 		03
-		04  // s7 id
-			2032058  ldrh  rb, 4(r9)
-		06  // frames
-			20328b8  ldrh  r0, 6(r0)
+		04  2032058  ldrh  rb, 4(r9)  // s7 id
+		06  20328b8  ldrh  r0, 6(r0)  // frames
 		08  // flags
-			2032128  ldr   r0, 8(r9)  tst  r0,   01  // flip x
-			203215c  ldr   r0, 8(r9)  tst  r0,   02  // flip y
-			203222c  ldr   r0, 8(r9)  tst  r0, 0400  // skip
-			20324b0  ldr   r0, 8(r9)  tst  r0,   20
-			20326c4  ldr   r1, 8(r3)  tst  r1,   40  // skip
-			20327bc  ldr   r0, 8(r8)  tst  r0,   80
-			2032864  ldr   r0, 8(r8)  tst  r0, 0100  // skip
-			2032944  ldr   r0, 8(r8)  tst  r0, 2000
+			2032128  ldr   r0, 8(r9)  tst     1  // flip x
+			203215c  ldr   r0, 8(r9)  tst     2  // flip y
+			203222c  ldr   r0, 8(r9)  tst   400  // skip
+			20324b0  ldr   r0, 8(r9)  tst    20
+			20326c4  ldr   r1, 8(r3)  tst    40  // skip
+			20327bc  ldr   r0, 8(r8)  tst    80
+			2032864  ldr   r0, 8(r8)  tst   100  // skip
+			2032944  ldr   r0, 8(r8)  tst  2000
 		0c  // loop s8 id
 			2032884  ldrh  r0, c(r8)
 		0e  20320e0  ldrb  r0, e(r9) // ??? all 0
@@ -247,14 +248,13 @@ RAM 21ced80 = momo01.mbs
 		08  // x2
 		0c  // y2
 		10  // name[17] + NULL
-		28  // sa set id
-			203317c  ldrh  r0, 28(r7)
+		28  203317c  ldrh  r0, 28(r7)  // sa set id
 		2a  // sa set no
 			203304c  ldrb  r1, 2a(r7)
 			2033168  ldrb  r0, 2a(r7)
 			203319c  ldrb  r0, 2a(r7)
 		2b  // sa set max[4]
-		2c  203300c  ldrb  r0, 2c(r7)  tst r0, 01  // dummied
+		2c  203300c  ldrb  r0, 2c(r7)  tst  1  // dummied
 		2d
 		2e
 		2f

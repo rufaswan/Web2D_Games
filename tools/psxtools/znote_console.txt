@@ -17,11 +17,11 @@ Saturn ISO boot header
 	40   16  "J"
 	50   16  "J"
 	60  128  Game Title
-	e0    4  sh-4 start()
+	e0    4  sh-2 start()
 	e8    4  init stack master
 	ec    4  init stack slave
-	f0    4  sh-4 ram
-	f4    4  sh-4 size
+	f0    4  sh-2 ram
+	f4    4  sh-2 size
 	# RAM 600 2000-610 0000 (~1 MB)
 
 Nintendo Gameboy/Color ROM header
@@ -127,3 +127,18 @@ Nintendo DS ROM header
 	63   4536c/283,500  229b6000/580,608,000
 	74   514c8/333,000  28a64000/681,984,000
 	80   57e40/360,000  2bf20000/737,280,000
+
+== IEEE 754 Int Precision ==
+	max value for mantissa
+		1 << (mantissa_bits + 1) = normalized
+		1 <<  mantissa_bits      = denormalized
+	max exp while remain precise
+		bias + mantissa_bits
+
+	float  exp  man  bias    hex              float          int
+	16      5    10      15     19/ 7{ff, 1}      67{ff, 1}    2 * (1 <<  10) - 1 =     2047.0
+	32      8    23     127     96/ff{ff, 2}    4b7f{ff, 2}   16 * (1 <<  20) - 1 = 16777215.0
+	64     11    52    1023    433/1f{ff, 6}    433f{ff, 6}    8 * (1 <<  50) - 1
+	128    15   112   16383   406f/ 1{ff,14}    406f{ff,14}    8 * (1 << 110) - 1
+	256    19   236  262143  400eb/1f{ff,29}  400ebf{ff,29}  128 * (1 << 230) - 1
+

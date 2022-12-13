@@ -20,28 +20,41 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
 ////
-
-echo "${0##*/}  PNG_FILE";
 [ $# = 0 ] && exit
 
-function thumbnail()
-{
-	# game  icon = 240x125
-	# sheet icon = 148x125 = 74x62 * 200%
-	sc='-scale 200%'
-	(( $1 > 74 )) && sc=''
-	(( $2 > 62 )) && sc=''
-	mogrify -verbose                        \
-		$sc                                 \
-		-define png:include-chunk=none,trns \
-		-strip                              \
-		-background transparent             \
-		-gravity center                     \
-		-extent 148x125                     \
-		thumb.png
-}
+ext='zip'
+while [ "$1" ]; do
+	t1="${1%/}"
+	tit="${t1%.*}"
+	#ext="${t1##*.}"
+	shift
 
-png=$1
-[ -f "$png" ] || exit
-convert -verbose  "$png"  -trim -strip  thumb.png
-thumbnail $(identify -format "%w %h %i"  thumb.png)
+	loc="$PWD"
+
+	# unpack zip file -> dir
+	if [ -f "$t1" ]; then
+		[ -d "$tit" ] && rm -vfr "$tit"
+		unzip  -o  "$t1" -d "$tit"
+	fi
+
+	# pack dir -> zip file
+	if [ -d "$t1" ]; then
+		fn="$t1.$ext"
+		[ -f "$fn" ] && rm -vf "$fn"
+
+		zip  -j -0  "$fn"  "$t1"/*
+		#cd "$tit"
+		#zip  ../"$fn"  *
+		#cd "$loc"
+	fi
+
+	case "$t1" in
+		'-e')  ext="$1"; shift;;
+	esac
+
+done
+
+<<'////'
+.p2s  pcsx2 save state
+
+////

@@ -41,22 +41,22 @@ function diricon
 		case "$t1" in
 			*'.rgba' | *'.clut')
 				php.sh  "$php"  "$t1"
-				convert  "$t1.png" \
+				convert  "$t1.png"                      \
 					-define png:include-chunk=none,trns \
-					-define png:compression-filter=0 \
-					-define png:compression-level=9 \
-					-trim -strip \
+					-define png:compression-filter=0    \
+					-define png:compression-level=9     \
+					-trim -strip                        \
 					"$tmp" &> /dev/null
 				mv -f  "$tmp"  '.DirIcon'
 				rm "$t1.png"
 				return;;
 
 			*'.bmp'  | *'.png' )
-				convert  "$t1" \
+				convert  "$t1"                          \
 					-define png:include-chunk=none,trns \
-					-define png:compression-filter=0 \
-					-define png:compression-level=9 \
-					-trim -strip \
+					-define png:compression-filter=0    \
+					-define png:compression-level=9     \
+					-trim -strip                        \
 					"$tmp" &> /dev/null
 				mv -f  "$tmp"  '.DirIcon'
 				return;;

@@ -4,13 +4,18 @@ CMNR + 3c = FMBP
 + 60 = CMNR
 
 //////////////////////////////
+s4.flags   0 lhu  1 2 4 8  10 20
+s6.flags  16 lhu  1 2 4 8  10
+s8.flags   8 lw   1 2 4 8  10 20 40 80  100 400 800  1000 2000
+
 FMBP  ab5b00  gwendlyn.mbp
-	00  // FMBP
-	04  // s0-sa size
-	08  // header size
+	00  173b54  lw  a3, 0(a1) // FMBP
+	04  173bd8  lw  a1, 4(s0) // s0-sa size
+	08  173be0  lw  a0, 8(s0) // header size
 	0c
 	10
-	14
+	14  173b90  lhu  a1, 14(s0) // mbp ver == 55
+	16
 	18
 	1c
 	20
@@ -29,11 +34,12 @@ FMBP  ab5b00  gwendlyn.mbp
 	48  // count s7
 	4a  // count s8
 	4c  // count s6
-	4e  // count s9
+	4e  170db8  lhu  s0, 4e(v0) // count s9
 	50  // count sa
 	52
 	54  16c5f8  lw  s3, 54(s5) // ptr s0
-	58  16c5e0  lw  v1, 58(s5) // ptr s1
+	58  // ptr s1
+		16c5e0  lw  v1, 58(s5)
 		16c5f4  lw  v1, 58(s5)
 	5c  16c600  lw  s5, 5c(s5) // ptr s2
 	60  172824  lw  fp, 60(s4) // ptr s3
@@ -41,46 +47,49 @@ FMBP  ab5b00  gwendlyn.mbp
 	68  17282c  lw  s5, 68(s4) // ptr s5
 	6c  1724c0  lw  v0, 6c(s4) // ptr s6
 	70  1724cc  lw  v1, 70(s4) // ptr s7
-	74	172028  lw  a1, 74(s3) // ptr s8
+	74	// ptr s8
+		172028  lw  a1, 74(s3)
 		172310  lw  a2, 74(a2)
-	78  171268  lw  v1, 78(a1) // ptr s9
+	78  // ptr s9
+		171268  lw  v1, 78(a1)
 		171338  lw  a0, 78(a2)
 		1713bc  lw  a0, 78(a2)
 		17187c  lw  v1, 78(a2)
-	7c  172020  lw  a2, 7c(a2) // ptr sa
+	7c  // ptr sa
+		172020  lw  a2, 7c(a2)
 		172304  lw  a3, 7c(a3)
-	80  // mbp filename
+	80  // mbp name[1f] + NULL
 
-	s0*20 clr
+	s0*20 color
 		00
 		01
 		02
 		03
-		04
+		04  // rgba center
 		05
 		06
 		07
-		08
+		08  // rgba 1
 		09
 		0a
 		0b
-		0c
+		0c  // rgba 2
 		0d
 		0e
 		0f
-		10
+		10  // rgba 3
 		11
 		12
 		13
-		14
+		14  // rgba 4
 		15
 		16
 		17
-		18
+		18  // rgba 5 === rgba1
 		19
 		1a
 		1b
-		1c
+		1c  // pad
 		1d
 		1e
 		1f
@@ -89,31 +98,31 @@ FMBP  ab5b00  gwendlyn.mbp
 		01
 		02
 		03
-		04
+		04  // cx
 		05
-		06
+		06  // cy
 		07
-		08
+		08  // x1
 		09
-		0a
+		0a  // y1
 		0b
-		0c
+		0c  // x2
 		0d
-		0e
+		0e  // y2
 		0f
-		10
+		10  // x3
 		11
-		12
+		12  // y3
 		13
-		14
+		14  // x4
 		15
-		16
+		16  // y4
 		17
-		18
+		18  // x5 == x1
 		19
-		1a
+		1a  // y5 == y1
 		1b
-		1c
+		1c  // pad
 		1d
 		1e
 		1f
@@ -122,70 +131,114 @@ FMBP  ab5b00  gwendlyn.mbp
 		01
 		02
 		03
-		04
+		04  // cx
 		05
-		06
+		06  // cy
 		07
-		08
+		08  // x1
 		09
-		0a
+		0a  // y1
 		0b
-		0c
+		0c  // x2
 		0d
-		0e
+		0e  // y2
 		0f
-		10
+		10  // x3
 		11
-		12
+		12  // y3
 		13
-		14
+		14  // x4
 		15
-		16
+		16  // y4
 		17
-		18
+		18  // x5 == x1
 		19
-		1a
+		1a  // y5 == y1
 		1b
-		1c
+		1c  // pad
 		1d
 		1e
 		1f
 	s3*50 (bg skip)
-		00  172904  lwc1  f03,  0(v1) -> 10(a1)
-		04  172908  lwc1  f02,  4(v1) -> 14(a1)
-		08  17290c  lwc1  f01,  8(v1) -> 18(a1)
-		0c  172910  lwc1  f00,  c(v1) -> 1c(a1)
-		10  172924  lwc1  f03, 10(v1) -> 20(a1)
-		14  172928  lwc1  f02, 14(v1) -> 24(a1)
-		18  17292c  lwc1  f01, 18(v1) -> 28(a1)
-		1c  172930  lwc1  f00, 1c(v1) -> 2c(a1)
-		20  172944  lwc1  f03, 20(v1) -> 30(a1)
-		24  172948  lwc1  f02, 24(v1) -> 34(a1)
-		28  17294c  lwc1  f01, 28(v1) -> 38(a1)
-		2c  172950  lwc1  f00, 2c(v1) -> 3c(a1)
-		30  172964  lwc1  f03, 30(v1) -> 40(a1)
-		34  172968  lwc1  f02, 34(v1) -> 44(a1)
-		38  17296c  lwc1  f01, 38(v1) -> 48(a1)
-		3c  172970  lwc1  f00, 3c(v1) -> 4c(a1)
-		40  172984  lwc1  f03, 40(v1) -> 50(a1)
-		44  172988  lwc1  f02, 44(v1) -> 54(a1)
-		48  17298c  lwc1  f01, 48(v1) -> 58(a1)
-		4c  172990  lwc1  f00, 4c(v1) -> 5c(a1)
-		*a1 = RAM 1d62260
+		00
+			172904  lwc1  f3,  0(v1) -> 10(a1)
+			17358c  lwc1  f0,  0(t1)
+			173594  lwc1  f1,  0(v1)
+			173618  lwc1  f3,  0(v1) -> 10(a0)
+		04
+			172908  lwc1  f2,  4(v1) -> 14(a1)
+			1735a4  lwc1  f0,  4(t1)
+			1735a8  lwc1  f1,  4(v1)
+			17361c  lwc1  f2,  4(v1) -> 14(a0)
+		08
+			17290c  lwc1  f1,  8(v1) -> 18(a1)
+			173620  lwc1  f1,  8(v1) -> 18(a0)
+		0c
+			172910  lwc1  f0,  c(v1) -> 1c(a1)
+			173624  lwc1  f0,  c(v1) -> 1c(a0)
+		10
+			172924  lwc1  f3, 10(v1) -> 20(a1)
+			173638  lwc1  f3, 10(v1) -> 20(a0)
+		14
+			172928  lwc1  f2, 14(v1) -> 24(a1)
+			17363c  lwc1  f2, 14(v1) -> 24(a0)
+		18
+			17292c  lwc1  f1, 18(v1) -> 28(a1)
+			173640  lwc1  f1, 18(v1) -> 28(a0)
+		1c
+			172930  lwc1  f0, 1c(v1) -> 2c(a1)
+			173644  lwc1  f0, 1c(v1) -> 2c(a0)
+		20
+			172944  lwc1  f3, 20(v1) -> 30(a1)
+			173658  lwc1  f3, 20(v1) -> 30(a0)
+		24
+			172948  lwc1  f2, 24(v1) -> 34(a1)
+			17365c  lwc1  f2, 24(v1) -> 34(a0)
+		28
+			17294c  lwc1  f1, 28(v1) -> 38(a1)
+			173660  lwc1  f1, 28(v1) -> 38(a0)
+		2c
+			172950  lwc1  f0, 2c(v1) -> 3c(a1)
+			173664  lwc1  f0, 2c(v1) -> 3c(a0)
+		30
+			172964  lwc1  f3, 30(v1) -> 40(a1)
+			173678  lwc1  f3, 30(v1) -> 40(a0)
+		34
+			172968  lwc1  f2, 34(v1) -> 44(a1)
+			17367c  lwc1  f2, 34(v1) -> 44(a0)
+		38
+			17296c  lwc1  f1, 38(v1) -> 48(a1)
+			173680  lwc1  f1, 38(v1) -> 48(a0)
+		3c
+			172970  lwc1  f0, 3c(v1) -> 4c(a1)
+			173684  lwc1  f0, 3c(v1) -> 4c(a0)
+		40
+			172984  lwc1  f3, 40(v1) -> 50(a1)
+			173698  lwc1  f3, 40(v1) -> 50(a0)
+		44
+			172988  lwc1  f2, 44(v1) -> 54(a1)
+			17369c  lwc1  f2, 44(v1) -> 54(a0)
+		48
+			17298c  lwc1  f1, 48(v1) -> 58(a1)
+			1736a0  lwc1  f1, 48(v1) -> 58(a0)
+		4c
+			172990  lwc1  f0, 4c(v1) -> 5c(a1)
+			1736a4  lwc1  f0, 4c(v1) -> 5c(a0)
 	s4*18 layer
 		00  // flags
 			16c658  lhu  a0, 0(s4)
-				andi  2 // skip
-				andi  8
-				andi  4 // vertex color
+				andi  2 // disable draw = skip all
+				andi  8 //
+				andi  4 // disable tex2d
+			16c6d0  lhu  v0, 0(s4)
+				andi  1 // s4.flags[ 4] -> s6.flags[ 2] ->
+			16c870  lhu  v0, 0(s4)
+				andi 10 // s6.flags[ 8] ->
 			16c990  lhu  v0, 0(s4)
-				andi 20
-		02  // case 0-5
-			16c718  lbu  v0, 2(s4)
-		03  // tex id
-			16c690  lbu  a2, 3(s4)
-		04  // s1 id
-			16cb94  lhu  v0, 4(s4)  v0 <<= 5
+				andi 20 // s6.flags[10] ->
+		02  16c718  lbu  v0, 2(s4)  // blending , case 0-5
+		03  16c690  lbu  a2, 3(s4)  // tex id
+		04  16cb94  lhu  v0, 4(s4)  v0 <<= 5  // s1 id
 		06
 		07
 		08  16cb74  lhu  v0,  8(v0)  v0 <<= 5 // s0 id
@@ -203,7 +256,6 @@ FMBP  ab5b00  gwendlyn.mbp
 		02  1728ec  lbu  v0, 2(a0) -> 6(a1)
 		03  1728f4  lbu  v0, 3(a0) -> 7(a1)
 		04  1728fc  lw   v0, 4(a0) -> 8(a1)
-		*a1 = RAM 1d62260
 	s6*18 key
 		00  // x1
 			17271c  lwc1  f3,  0(v0)
@@ -238,8 +290,7 @@ FMBP  ab5b00  gwendlyn.mbp
 			16c550  lhu  t1, 10(a0)  t1 *= 18
 			16c560  lhu  a2, 10(a0)  a2 *= 18
 			16c568  lhu  a1, 10(a0)  a1 *= 18
-		12  // s5 set id
-		13
+		12  1728b8  lhu  v0, 12(s1)  // s5 set id
 		14  // s4 set no
 			16c610  lbu  v1, 14(fp)
 			16ca34  lbu  v0, 14(v0)
@@ -249,20 +300,21 @@ FMBP  ab5b00  gwendlyn.mbp
 			172ac0  lbu  v1, 14(s1)
 			172c1c  lbu  v1, 14(s1)
 		15  // s5 set no
-			17283c  lbu  v0, 15(s1)
+			172840  lbu  v0, 15(s1)
 			1729a4  lbu  v0, 15(s1)
 		16  // flags
 			16c5b4  lhu  v1, 16(fp)  andi  2
 			16c5d4  lhu  v1, 16(fp)  andi  4
-			16c6c0  lhu  v0, 16(fp)  andi  2
-			16c708  lhu  v0, 16(fp)  andi  4
+			16c6c0  lhu  v0, 16(fp)  andi  2 // s4.flags[4] ->
+			16c708  lhu  v0, 16(fp)  andi  4 // disable blend
 			16c860  lhu  v0, 16(fp)  andi  8
 			16c980  lhu  v0, 16(fp)  andi 10
+			//andi  1
 	s7*30 meta
-		00  172c80  lwc1  f1,   0(s6) // under s8.flag &= 400
-		04  172c78  lwc1  f2,   4(s6) // under s8.flag &= 400
-		08  172c5c  lwc1  f2,   8(s6) // under s8.flag &= 400
-		0c  172c40  lwc1  f2,   c(s6) // under s8.flag &= 400
+		00  172c80  lwc1  f1,   0(s6) // s8.flags[400] -> red
+		04  172c78  lwc1  f2,   4(s6) // s8.flags[400] -> green
+		08  172c5c  lwc1  f2,   8(s6) // s8.flags[400] -> blue
+		0c  172c40  lwc1  f2,   c(s6) // s8.flags[400] -> alpha
 		10  172a30  lwc1  f12, 10(s6) // move x
 		14  172a34  lwc1  f13, 14(s6) // move y
 		18  172a38  lwc1  f14, 18(s6) // move z
@@ -283,21 +335,30 @@ FMBP  ab5b00  gwendlyn.mbp
 			172500  lhu  a2, 4(s5)  a0 *= 30
 			172504  lhu  a0, 4(s7)  a0 *= 30
 		06  // frames
+			172278  lhu  v1, 6(a2)  -> 6c(s4) , 6e(s4)
 			172394  lhu  t2, 6(a2)
 		08  // flags
-			17232c  lw   v1, 8(a2)  andi  40 // 1 = no update
-			172a44  lw   v0, 8(s7)  andi   1 // flip x
-			172a50  lw   v0, 8(s7)  andi   2 // flip y
-			172c28  lw   v1, 8(s7)  andi 400
-			172ecc  lw   v1, 8(s7)  andi  20 // under flag &= 400
-		0c
-		0d
+			172060  lw  v1, 8(s0)  andi   80 // skip callback
+			1720f0  lw  a0, 8(s0)
+				andi  100
+				andi    4 // s8.flags[100] ->
+				andi    8 // s8.flags[100] -> s8.flags[4] ->
+			17232c  lw  v1, 8(a2)  andi   40 // skip
+			172a44  lw  v0, 8(s7)  andi    1 // flip x
+			172a50  lw  v0, 8(s7)  andi    2 // flip y
+			172a64  lw  v0, 8(s7)  andi    2
+			172c28  lw  v1, 8(s7)  andi  400 // skip s7.rgba
+			172ecc  lw  v1, 8(s7)  andi   20 // s8.flags[400] ->
+			//andi   10
+			//andi  800
+			//andi 1000
+			//andi 2000
+		0c  172160  lhu  a0, c(s0) -> 72(s4)
 		0e  // s5s3 interpolation
 			172820  lbu  v1,  e(s7)
 				if == 2
 				if == 1
-		0f  // interpolation rate
-			17239c  lbu  v1,  f(a2)
+		0f  17239c  lbu  v1,  f(a2)  // interpolation rate
 		10  // s7 interpolation
 			1724c4  lbu  a2, 10(s7)
 				if == 2
@@ -306,110 +367,135 @@ FMBP  ab5b00  gwendlyn.mbp
 			1725bc  lbu  v1, 11(s7)
 				if == 2
 				if == 1
-			172f7c  lbu  a2, 11(s7)
-		12  // under flag &= 400
+			172f7c  lbu  a2, 11(s7) -> c8(v0)
+		12  // s8.flags[400] -> s7.rgba
 			172f74  lbu  v1, 12(s7)
-		13  // n * 180 block
-			17246c  lb   v0, 13(s7)
-		14
-		15
-		16
-		17
-		18
-		19
-		1a
-		1b
-		1c
-		1d
-		1e
-		1f
+		13  17246c  lb   v0, 13(s7)  // n * 180 block
+		14  // callback args
+			// s8.flags[80] ->
+			172084  lw   a1, 14(s0)
+			17209c  lw   a2, 14(s0)
+		18  // callback args
+			// s8.flags[80] ->
+			172088  lhu  a2, 18(s0)
+			1720a8  lhu  a3, 18(s0)
+		1a  // callback args
+			// s8.flags[80] ->
+			17208c  lhu  a3, 1a(s0)
+			1720ac  lhu  t0, 1a(s0)
+		1c  // callback args
+			// s8.flags[80] ->
+			172080  lw   t0, 1c(s0)
+			1720b8  lw   t1, 1c(s0)
 	s9*30 anim
-		00  // x1
-			171884  lwc1  f0, 0(v1) -> 0(a1)
-		04  // y1
-			17188c  lwc1  f0, 4(v1) -> 4(a1)
-		08  // x2
-			171894  lwc1  f0, 8(v1) -> 8(a1)
-		0c  // y2
-			17189c  lwc1  f0, c(v1) -> c(a1)
+		00  171884  lwc1  f0, 0(v1) -> 0(a1)  // x1
+		04  17188c  lwc1  f0, 4(v1) -> 4(a1)  // y1
+		08  171894  lwc1  f0, 8(v1) -> 8(a1)  // x2
+		0c  17189c  lwc1  f0, c(v1) -> c(a1)  // y2
 		10  // name[17] + NULL
 		28  // sa set id
-		29
+			1715fc  lhu  v0, 28(s0)
 		2a  // sa set no
+			1715d8  lbu  v0, 2a(s0) -> 90(s4) -> dc(s4)
+			1715ec  lbu  v0, 2a(s0)
+			171620  lbu  v0, 2a(s0)
+				if  s2++ < v0
 		2b  // sa set max[4]
-			171270  lbu  v1, 2b(v1)  a0 <<= 7
+			171270  lbu  v1, 2b(v1)  v1 <<= 7
 			171340  lbu  a0, 2b(a0)  a0 <<= 7
 			1713c4  lbu  a0, 2b(a0)  a0 <<= 7
 		2c
-		2d
+		2d  // pad
 		2e
 		2f
-		*a1 = RAM 1fffaa0
 	sa*8 track
 		00  // s8 set id
 			172030  lhu  a2, 0(s2)  a2 <<= 5
 			172318  lhu  a1, 0(a3)  a1 <<= 5
+			173abc  lhu  a1, 0(a1)  (a1+a2+a3) <<= 5
 		02  // s8 set no
 			17218c  lhu  v1, 2(s2)
 			172354  lhu  t0, 2(a3)
-		04
-		05
+		04  173a58  lh   v1, 6(a1) -> 74(a0) // s8 set sum[6] frames
 		06
 		07
 //////////////////////////////
-CMNR 1b81a6c
-	00  // CMNR
-	...
-	3c  // ptr FMBP
-		16c518  lw  s5, 3c(a0)
-		17124c  lw  a1, 3c(v0)
-		17131c  lw  a2, 3c(v1)
-		1713a0  lw  a2, 3c(v1)
-		17186c  lw  a2, 3c(v1)
-		172014  lw  a2, 3c(a0)
-		172018  lw  s3, 3c(a1)
-		1722f4  lw  a3, 3c(a2)
-		172300  lw  a2, 3c(v1)
-		172490  lw  s4, 3c(v0)
-	40
-	...
-	60  171ff8  lw  a0, 60(s4)
-		172008  lw  a0, 60(s4)
-		17200c  lw  a1, 60(s4)
-	...
-	68  1720d4  lw  v1, 68(s4)
-		172290  lw  a0, 68(s4)
-	6c  1720c8  lh  a0, 6c(s4)
-		1720d0  lh  v1, 6c(s4)
-		1720e4  lh  v1, 6c(s4)
-	6e
-	6f
-	70  172010  lhu  v1, 70(s4)  v1 <<= 3
-	72  172048  lh   a1, 72(s4)
-		172164  lh   s0, 72(s4)
-		172184  lh   a1, 72(s4)
-	74  17204c  lb   a0, 74(s4)
-		172188  lb   a0, 74(s4)
-	75  171fe0  lbu  a0, 75(a0)
-		171ffc  lbu  v1, 75(s4)
-			andi fe -> sb
-		172024  lbu  a0, 75(s4)
-			andi  2
-			andi  8
-		17206c  lbu  v1, 75(s4)
-			andi f7 -> sb
-		172214  lbu  v1, 75(s4)
-			ori   1 -> sb
-		172284  lbu  v1, 75(s4)
-			ori   8 -> sb
-		171350  lbu  v1, 75(v1)
-			andi  2
-		1713d4  lbu  v1, 75(v1)
-			andi  1
-	76
-	77
+505046  FPP   44  4c415043  CPAL
+444c5a  ZLD   90
+545854  TXT   84
+42444f  ODB   44
+425353  SSB   40
+474643  CFG  1f0
+445241  ARD   40  5352414f  OARS
+50424d  MBP   44  524e4d43  CMNR
+505446  FTP   44  58455443  CTEX
+
+sections
+	00 // ptr to last section
+	04 // ptr to next section
+	08 // jal ra
+	0c // section size
+
+	CMNR * 44
+		00  173e34  sw  v0, 0(s1) // CMNR
+		...
+		0c  // ptr to next CMNR/CTEX data
+		10  // ptr to CTEX
+		14  173e28  sw  v0, 14(s1) // DAT_3e1c38
+		...
+		1a  // fname[1d] + NULL
+		38  173e1c  sw  v0, 38(s1) // DAT_3e1c30
+		3c  // ptr FMBP
+			16c518  lw  s5, 3c(a0)
+			17124c  lw  a1, 3c(v0)
+			17131c  lw  a2, 3c(v1)
+			1713a0  lw  a2, 3c(v1)
+			17186c  lw  a2, 3c(v1)
+			172014  lw  a2, 3c(a0)
+			172018  lw  s3, 3c(a1)
+			1722f4  lw  a3, 3c(a2)
+			172300  lw  a2, 3c(v1)
+			172490  lw  s4, 3c(v0)
+			173e38  sw   0, 3c(s1)
+		40  173e40  sw   0, 40(s1)
+		...
+		60  171ff8  lw  a0, 60(s4)
+			172008  lw  a0, 60(s4)
+			17200c  lw  a1, 60(s4)
+		...
+		68  1720d4  lw  v1, 68(s4)
+			172290  lw  a0, 68(s4)
+		6c  1720c8  lh  a0, 6c(s4)
+			1720d0  lh  v1, 6c(s4)
+			1720e4  lh  v1, 6c(s4)
+		6e
+		6f
+		70  172010  lhu  v1, 70(s4)  v1 <<= 3
+		72  172048  lh   a1, 72(s4)
+			172164  lh   s0, 72(s4)
+			172184  lh   a1, 72(s4)
+		74  17204c  lb   a0, 74(s4)
+			172188  lb   a0, 74(s4)
+		75  171fe0  lbu  a0, 75(a0)
+			171ffc  lbu  v1, 75(s4)
+				andi fe -> sb
+			172024  lbu  a0, 75(s4)
+				andi  2
+				andi  8
+			17206c  lbu  v1, 75(s4)
+				andi f7 -> sb
+			172214  lbu  v1, 75(s4)
+				ori   1 -> sb
+			172284  lbu  v1, 75(s4)
+				ori   8 -> sb
+			171350  lbu  v1, 75(v1)
+				andi  2
+			1713d4  lbu  v1, 75(v1)
+				andi  1
+		76
+		77
 //////////////////////////////
-1d58a90
+work * 80
 	00
 	...
 	40  // x1
@@ -428,19 +514,190 @@ CMNR 1b81a6c
 		1725f4  swc1  f0, 4c(s3)
 		172664  swc1  f0, 4c(s3)
 		1727cc  swc1  f0, 4c(s3)
-	...
+	50  swc1  // x1t
+		172b4c  swcl  f0, 50(s3)
+		172b70  swcl  f0, 50(s3)
+		172bbc  lwcl  f0, 50(s3)
+		172bc4  swcl  f0, 50(s3)
+	54  swc1  // y1t
+		172b54  swcl  f0, 54(s3)
+		172b84  swcl  f0, 54(s3)
+		172bcc  lwcl  f0, 54(s3)
+		172bd4  swcl  f0, 54(s3)
+	58  swc1  // x2t
+		172b5c  swcl  f0, 58(s3)
+		172b94  swcl  f0, 58(s3)
+		172bdc  lwcl  f0, 58(s3)
+		172be4  swcl  f0, 58(s3)
+	5c  swc1  // y2t
+		172b64  swcl  f0, 5c(s3)
+		172bb4  swcl  f0, 5c(s3)
+		172bec  lwcl  f0, 5c(s3)
+		172bf4  swcl  f0, 5c(s3)
 	60  // ptr CMNR
 		172480  lw  v0, 60(s3)
+		172f84  lw  v1, 60(s3)
 	64  // ptr
 	68  // ptr
 		172458  lw  s2, 68(a0)
-	...
-	74
+	6c  // s8.frame6
+		171184  sh  a0, 6c(v1)
+		17220c  sh  v1, 6c(s4)
+		1720c8  lh  a0, 6c(s4)
+		1720d0  lh  v1, 6c(s4)  -= 84(v1)
+			1720e0  sh  v1, 6c(s4)
+		1720e4  lh  v1, 6c(s4)
+		17227c  sh  v1, 6c(s4)
+		172398  lh  v0, 6c(a0)
+	6e  // s8.frame6
+		171188  sh  a0, 6e(v1)
+		172210  sh  v1, 6e(s4)
+		172280  sh  v1, 6e(s4)
+	70  // sa set id
+		1710e0  lhu  a0, 70(v1)
+		17114c  lhu  a2, 70(v1)
+	72  //
+		// (fmbp->sa_off + [72] + [74]) * 20
+		170ff8  lh  v1, 72(v0)
+		1710d8  sh  0,  72(v1)
+		171140  sh  a2, 72(v1)
+		172048  lh  a1, 72(s4)
+		172164  lh  s0, 72(s4)
+		172174  sh  a0, 72(s4)
+		172184  lh  a1, 72(s4)
+		172228  lh  v1, 72(s4)  v1++
+			172260  sh  v1, 72(s4)
+		1722fc  lh  a1, 72(a0)
+	74  //
+		170ffc  lb  v0, 74(v0)
+		171114  lb  a0, 74(v1)
+		17204c  lb  a0, 74(s4)
+		172188  lb  a0, 74(s4)
+		172264  lb  v1, 74(s4)
+		172308  lb  v1, 74(a0)
 	75  // flags
 		172810  lbu  v1, 75(s3)
-			ori  10 <- sb
+			ori   10 <- sb
+		172ac8  lbu  , 75(s3)
+			andi  df <- sb
 		172bf8  lbu  , 75(s3)
-			ori  20 <- sb
+			ori   20 <- sb
 	76
 	77
 
+//////////////////////////////
+NONE * d0
+	00  16d334  sw  v0, 0(s0) // NONE
+	04  16d33c  sw  0,  4(a0)
+	...
+	14  // ptr
+		16d364  sw  v0, 14(s0)
+		16d380  sw  v0, 14(s0)
+	...
+	64  // ptr
+		16d358  sw  v1, 64(s0)
+		16d378  sw  v1, 64(s0)
+	...
+	70  // red
+		16d398  sw    0,   70(s0)
+		16d3a0  swc1  f1,  70(s0)
+		16d3b4  swc1  f1,  70(s0)
+		172dc4  swc1  f24, 70(v0)
+		172dd8  lwc1  f0,  70(v0)
+		172df4  swc1  f1,  70(v0)
+		172e0c  swc1  f1,  70(v0)
+	74  // green
+		16d3d0  sw    0,   74(s0)
+		16d3d8  swc1  f1,  74(s0)
+		16d3ec  swc1  f1,  74(s0)
+		172dcc  swc1  f28, 74(v0)
+		172e14  lwc1  f0,  74(v0)
+		172e30  swc1  f1,  74(v0)
+		172e48  swc1  f1,  74(v0)
+	78  // blue
+		16d408  sw    0,   78(s0)
+		16d410  swc1  f1,  78(s0)
+		16d424  swc1  f1,  78(s0)
+		172dd0  swc1  f27, 78(v0)
+		172e50  lwc1  f0,  78(v0)
+		172e6c  swc1  f1,  78(v0)
+		172e84  swc1  f1,  78(v0)
+	7c  // alpha
+		16d43c  sw    0,   7c(s0)
+		16d444  swc1  f1,  7c(s0)
+		16d460  swc1  f1,  7c(s0)
+		172dd4  swc1  f26, 7c(v0)
+		172e8c  lwc1  f0,  7c(v0)
+		172ea8  swc1  f1,  7c(v0)
+		172ec0  swc1  f1,  7c(v0)
+	80  172ec8  sw    v1,  80(v0)
+	84  172f8c  sw    v1,  84(v0) // ptr CMNR
+	88  172f90  swc1  f20, 88(v0) // s6 x1
+	8c  172f98  swc1  f21, 8c(v0) // s6 y1
+	90  172f9c  swc1  f22, 90(v0) // s6 x2
+	94  172fa0  swc1  f23, 94(v0) // s6 y2
+	98  172fa4  sw    v1,  98(v0) // s6 prev
+	9c  172fa8  sw    s1,  9c(v0) // s6 cur
+	a0  172fb0  sw    s0,  a0(v0) // s6 next1
+	a4  172fb4  sw    v1,  a4(v0) // s6 next2
+	a8  172fb8  swc1  f25, a8(v0) // inter rate
+	ac  172ef8  sw    v1, ac(v0)
+	b0  172f04  sw    v1, b0(v0)
+	b4  172f14  swc1  f0, b4(v0)
+	b8
+		16d468  sb    0,  b8(s0)
+		172f1c  sb    v1, b8(v0)
+	b9
+		16d470  sb    0,  b9(s0)
+		172f24  sb    v1, b9(v0)
+	ba
+		16d474  sb    0,  ba(s0)
+		172f2c  sb    v1, ba(v0)
+	bb
+		16d478  sb    v1, bb(s0)
+		172f34  sb    v1, bb(v0)
+	bc  172f3c  swc1  f0, bc(v0)
+	c0
+		16d47c  sb    0,  c0(s0)
+		172f44  sb    v1, c0(v0)
+	c1
+		16d480  sb    0,  c1(s0)
+		172f4c  sb    v1, c1(v0)
+	c2
+		16d484  sb    0,  c2(s0)
+		172f54  sb    v1, c2(v0)
+	c3
+		16d488  sb    v1, c3(s0)
+		172f5c  sb    v1, c3(v0)
+	c4  172f64  swc1  f0, c4(v0)
+	c8  172fc0  sb  a2, c8(v0) // s8 inter11
+	c9  172f0c  sb  v1, c9(v0)
+	ca
+		172f70  sb  v1, ca(v0)
+		172f78  sb  v1, ca(v0)
+	cb  // flags
+		172edc  sb  v1, cb(v0)
+		172eec  sb  v1, cb(v0)
+//////////////////////////////
+Char Data *
+	00  3214d4  lw  t0,  0(s0) // HP
+	04  3214dc  lw  t1,  4(s0) // Max HP
+	08  321568  lh  t0,  8(s0) // Psypher
+	0a  321570  lh  t1,  a(s0) // Max Psypher
+	0c  // HP total exp (max=181532)
+		32151c  lw  v0,  c(s0)
+		32153c  lw  t0,  c(s0)
+	10  3214f8  lw  v1, 10(s0) // HP total + next exp
+	14  // Psypher total exp (max=181532)
+		3215b0  lw  t0, 14(s0)
+		3215b8  lw  v0, 14(s0)
+		3215d0  lw  t0, 14(s0)
+	18  321594  lw  v1, 18(s0) // Psypher total + next exp
+	...
+	44  3214ec  lbu  v1, 44(s0) // HP Level (max=62)
+	45  // Psypher Level (max=62)
+		32154c  lbu  v0, 45(s0)
+		321588  lbu  v1, 45(s0)
+
+* 4ac == 44 , 468 == 0
+= 2*234  3*178  4*11a  6*bc  8*8d  c*5e  18*2f

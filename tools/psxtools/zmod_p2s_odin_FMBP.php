@@ -1,6 +1,5 @@
 <?php
 require 'common.inc';
-require 'class-bakfile.inc';
 require 'quad_vanillaware.inc';
 
 function loop_FMBP( &$file, &$pos )
@@ -29,11 +28,13 @@ function loop_FMBP( &$file, &$pos )
 	{
 		$p = $pos + $sp + ($i * $sk);
 
-		$file[$p+6] = "\x01";
-		$file[$p+7] = "\x00";
+		$file[$p+ 8] = "\x00";
+		$file[$p+ 9] = "\x00";
+		$file[$p+10] = "\x00";
+		$file[$p+11] = "\x00";
 	} // for ( $i=0; $i < $sc; $i++ )
 
-	$id = 9;
+	$id = 6;
 	$sp = str2int($file, $pos + $sect[$id]['p']   , 4);
 	$sc = str2int($file, $pos + $sect[$id]['c'][0], $sect[$id]['c'][1]);
 	$sk = $sect[$id]['k'];
@@ -41,7 +42,20 @@ function loop_FMBP( &$file, &$pos )
 	{
 		$p = $pos + $sp + ($i * $sk);
 
-		$file[$p+0x2a] = "\x01";
+		$file[$p+0x16] = "\x00";
+		$file[$p+0x17] = "\x00";
+	} // for ( $i=0; $i < $sc; $i++ )
+
+	$id = 4;
+	$sp = str2int($file, $pos + $sect[$id]['p']   , 4);
+	$sc = str2int($file, $pos + $sect[$id]['c'][0], $sect[$id]['c'][1]);
+	$sk = $sect[$id]['k'];
+	for ( $i=0; $i < $sc; $i++ )
+	{
+		$p = $pos + $sp + ($i * $sk);
+
+		$file[$p+0] = "\x00";
+		$file[$p+1] = "\x00";
 	} // for ( $i=0; $i < $sc; $i++ )
 	//////////////////////////////
 
@@ -51,33 +65,24 @@ function loop_FMBP( &$file, &$pos )
 
 function ps2grim( $fname )
 {
-	$bak = new BakFile;
-	$bak->load($fname);
-	if ( $bak->is_empty() )
+	// for pcsx2 save state.p2s
+	if ( stripos($fname, 'eememory.bin') === false )
 		return;
 
-	$t  = substr($bak->file, 0x8001, 5);
-	$t .= substr($bak->file, 0x8801, 5);
-	if ( $t !== 'CD001CD001' )
-		return;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
 	$pos = 0;
 	while (1)
 	{
-		$pos = strpos($bak->file, 'FMBP', $pos);
+		$pos = strpos($file, 'FMBP', $pos);
 		if ( $pos === false )
 			break;
 
-		if ( $pos & 0x7ff )
-		{
-			$pos += 4;
-			continue;
-		}
-
-		loop_FMBP($bak->file, $pos);
+		loop_FMBP($file, $pos);
 	} // while (1)
 
-	$bak->save();
+	file_put_contents($fname, $file);
 	return;
 }
 

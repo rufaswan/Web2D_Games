@@ -39,11 +39,11 @@ function clut2png
 	php.sh  "$php"  "$1"
 
 	if [ ! "$png" ]; then
-		convert "$1.bmp" \
+		convert "$1.bmp"                        \
 			-define png:include-chunk=none,trns \
-			-define png:compression-filter=0 \
-			-define png:compression-level=9 \
-			-strip \
+			-define png:compression-filter=0    \
+			-define png:compression-level=9     \
+			-strip                              \
 			"$1".png &> /dev/null
 		rm "$1".bmp
 	fi

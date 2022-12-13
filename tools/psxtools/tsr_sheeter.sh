@@ -31,31 +31,32 @@ function thumbnail()
 	sc='-scale 200%'
 	(( $1 > 74 )) && sc=''
 	(( $2 > 62 )) && sc=''
-	mogrify -verbose \
-		$sc \
-		-define png:include-chunk=none,trns -strip \
-		-background transparent \
-		-gravity center \
-		-extent 148x125 \
+	mogrify -verbose                        \
+		$sc                                 \
+		-define png:include-chunk=none,trns \
+		-strip                              \
+		-background transparent             \
+		-gravity center                     \
+		-extent 148x125                     \
 		thumb.png
 }
 
 if [ "$(ls -1 *.clut | tail)" ]; then
-	rename  .clut  .rgba  *.clut  *.clut.bmp
+	rename  .clut  .rgba  *.clut  *.clut.png
 fi
 
-png=$(printf "%04d.rgba.bmp"  $1)
+png=$(printf "%04d.rgba.png"  $1)
 [ -f "$png" ] || exit
 convert -verbose  "$png"  -trim -strip  thumb.png
 thumbnail $(identify -format "%w %h %i"  thumb.png)
 
 montage -verbose -strip \
-	-tile 10x20 \
-	-geometry '1x1<' \
-	-background  none \
-	-bordercolor none \
-	-gravity center \
-	[0123456789]*.rgba.bmp  sheet.png
+	-tile 10x20         \
+	-geometry '1x1<'    \
+	-background  none   \
+	-bordercolor none   \
+	-gravity center     \
+	[0123456789]*.rgba.png  sheet.png
 
 <<'////'
 #mogrify -verbose -strip -trim +repage  0*.png

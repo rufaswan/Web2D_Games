@@ -70,12 +70,12 @@ function save_quadfile( $pfx, &$json )
 		return;
 
 	$json = json_encode($json);
-	//$json = str_replace("\"Animatio", "\n\t\t\t\"Animatio", $json);
-	//$json = str_replace("\"KeyFrame", "\n\t\t\t\"KeyFrame", $json);
+	$json = str_replace("\"Animatio", "\n\t\t\t\"Animatio", $json);
+	$json = str_replace("\"KeyFrame", "\n\t\t\t\"KeyFrame", $json);
 
-	//$json = str_replace("\"SrcQu", "\n\t\t\t\t\"SrcQu", $json);
-	//$json = str_replace("\"DstQu", "\n\t\t\t\t\"DstQu", $json);
-	//$json = str_replace("\"TexID", "\n\t\t\t\t\"TexID", $json);
+	$json = str_replace("\"SrcQu", "\n\t\t\t\t\"SrcQu", $json);
+	$json = str_replace("\"DstQu", "\n\t\t\t\t\"DstQu", $json);
+	$json = str_replace("\"TexID", "\n\t\t\t\t\"TexID", $json);
 
 	save_file("$pfx.quad.txt", $json);
 	return;
@@ -122,6 +122,7 @@ function quad_ext1px( &$quad )
 	return;
 }
 //////////////////////////////
+/*
 function quad_move( &$quad, $opt )
 {
 	foreach ( $opt as $k => $v )
@@ -166,6 +167,7 @@ function quad_move( &$quad, $opt )
 	} // foreach ( $opt as $k => $v )
 	return;
 }
+*/
 
 function quad_convexfix( &$quad )
 {
@@ -203,3 +205,47 @@ function quad_convexfix( &$quad )
 	return;
 }
 //////////////////////////////
+function glsl_blend_psx( $t )
+{
+	// FG.rgb * s0 + BG.rgb * s1
+	switch ( $t )
+	{
+		case 'addition':  $s = array( 1.0  , 1.0); break;
+		case 'average' :  $s = array( 0.5  , 0.5); break;
+		case 'subtract':  $s = array(-1.0  , 1.0); break;
+		case 'quarter' :  $s = array( 0.25 , 1.0); break;
+		default:
+			return php_error('unknown = glsl_blend_psx( $t )');
+	}
+	$glsl  = sprintf('pixel.rgb = (FG.rgb * %.1f) + (BG.rgb * %.1f); ', $s[0], $s[1]);
+	$glsl .= sprintf('pixel.a = 1.0; ');
+	return $glsl;
+}
+
+function glsl_blend_ps2( $a, $b, $c, $d )
+{
+	// ((A.rgb - B.rgb) * C.a) + D.rgb
+	$glsl  = sprintf('pixel.rgb = ((%s.rgb - %s.rgb) * %s.a) + %s.rgb; ', $a, $b, $c, $d);
+	$glsl .= sprintf('pixel.a = 1.0; ');
+	return $glsl;
+}
+
+function glsl_blend_wii( $a, $b, $c, $d )
+{
+	// TEV
+	// ( D + ( ((1-C) * A) + (C*B) ) + bias ) * scale
+	// ( D + ( ( 1    * A)         )        ) * 1 = (BC=0) Addition
+	// ( D - ( ( 1    * A)         )        ) * 1 = (BC=0) Subtraction
+	// (     (               (C*B) )        ) * 1 = (AD=0) Multiplication
+	// ( D + (               (C*B) )        ) * 1 = ( A=0) Addition + Multiplication
+	// (     ( ((1-C) * A) + (C*B) )        ) * 1 = ( D=0) Decal
+	// ( D + ( ((1-C) * A)         )        ) * 1 = ( B=0) Proportional
+
+	// ( D + ( ( 1    * A)         )        ) * 1 = ( C=0)
+	// ( D                                  ) * 1 = (AB=0)
+	// (     ( ( 1    * A)         )        ) * 1 = (CD=0)
+
+	$glsl  = sprintf('pixel.rgb = (FG.rgb * %s) + (BG.rgb * %s); ', $a, $b);
+	$glsl .= sprintf('pixel.a = 1.0; ');
+	return $glsl;
+}

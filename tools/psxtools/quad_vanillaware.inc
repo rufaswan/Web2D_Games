@@ -324,6 +324,7 @@ $gp_data = array(
 //////////////////////////////
 function colorhex32( $c, $order='0123', $sll=false )
 {
+	// order = re-order BGRA to RGBA
 	$r = ord( $c[ $order[0] ] );
 	$g = ord( $c[ $order[1] ] );
 	$b = ord( $c[ $order[2] ] );
@@ -338,9 +339,9 @@ function colorhex32( $c, $order='0123', $sll=false )
 
 	// shortcut
 	if ( $r === $g && $g === $b && $b === $a )
-		return $r;
+		return sprintf('#%02x', $r);
 	else
-		return sprintf('%d,%d,%d,%d', $r, $g, $b, $a);
+		return sprintf('#%02x%02x%02x%02x', $r, $g, $b, $a);
 }
 
 function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
@@ -357,9 +358,11 @@ function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
 	if ( $quad[1] !== $quad[2] )  return $quad;
 	if ( $quad[2] !== $quad[3] )  return $quad;
 
-	// all white pixels , skipped
-	$c = ( $quad[0] === BIT8 ) ? '' : $quad[0];
-	return $c;
+	// all same color, return string instead array()
+	if ( $quad[0] !== '#ff' )
+		return $quad[0];
+	else
+		return '';
 }
 
 function load_mbsfile( &$file, $sect, $ord )
@@ -414,7 +417,6 @@ function ps2_quad20p( &$mbp, $id, &$quad, $ord )
 		$float[ 8] , $float[ 9] ,
 		$float[10] , $float[11] ,
 	);
-	quad_int_px($quad);
 	return;
 }
 
@@ -466,7 +468,6 @@ function nds_quad30p( &$mbs, $id, &$quad, $ord ) // +wii,ps3,ps4
 		$float[6] , $float[7] ,
 		$float[8] , $float[9] ,
 	);
-	quad_int_px($quad);
 	return;
 }
 
@@ -523,8 +524,6 @@ function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
 		$float[28] , $float[29] ,
 		$float[36] , $float[37] ,
 	);
-	quad_int_px($src);
-	quad_int_px($dst);
 
 	//        clr
 	//  0  2   4   8  a   c  e  center
@@ -574,8 +573,6 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
 		$float[18] , $float[19] ,
 		$float[23] , $float[24] ,
 	);
-	quad_int_px($src);
-	quad_int_px($dst);
 
 	//        clr
 	//  0  4   8   c 10  center
