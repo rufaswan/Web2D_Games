@@ -43,6 +43,7 @@ class BakFile
 
 		if ( is_file("$fname.bak") )
 		{
+			trace("BakFile->load( %s.bak )\n", $fname);
 			$this->has_bak = true;
 			$this->file    = file_get_contents("$fname.bak");
 			$this->fsize   = strlen($this->file);
@@ -52,6 +53,7 @@ class BakFile
 
 		if ( is_file($fname) )
 		{
+			trace("BakFile->load( %s )\n", $fname);
 			$this->has_bak = false;
 			$this->file    = file_get_contents($fname);
 			$this->fsize   = strlen($this->file);
@@ -72,8 +74,12 @@ class BakFile
 
 		// make a .BAK copy
 		if ( ! $this->has_bak )
+		{
+			trace("BakFile create %s.bak\n", $this->fname);
 			rename($this->fname, $this->fname . '.bak');
+		}
 
+		trace("BakFile->save( %s )\n", $this->fname);
 		file_put_contents($this->fname, $this->file);
 		return;
 	}

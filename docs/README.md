@@ -8,14 +8,11 @@
   * Dev Test
     * http://rufaswan.github.io/Web2D_Games/mobile_test/mobile.tpl.html
     * http://rufaswan.github.io/Web2D_Games/mobile_test/screen.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/fps-setdraw.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/fps-reqdraw.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/fps-gldraw.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-line.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective-uv.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-perspective-xy.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/quad-affine.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/rectpx-bilinear-uv.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/rectpx-bilinear-xy.tpl.html
-    * http://rufaswan.github.io/Web2D_Games/quad_test/rectpx-perspective.tpl.html
-
+    * http://rufaswan.github.io/Web2D_Games/filetype_test/input-file.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/filetype_test/audio-player.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-affine.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-perspective-uv.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-perspective-xy.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-perspective-screen.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-bilinear-screen.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/gl-drawload.tpl.html

@@ -142,3 +142,30 @@ Nintendo DS ROM header
 	128    15   112   16383   406f/ 1{ff,14}    406f{ff,14}    8 * (1 << 110) - 1
 	256    19   236  262143  400eb/1f{ff,29}  400ebf{ff,29}  128 * (1 << 230) - 1
 
+	WebGL
+	lowp      8    ff    255.0
+	mediump  10   3ff   1023.0
+	highp    16  ffff  65535.0
+
+=== Matrix ===
+	3x3 Affine Matrix
+	column major - by hand
+		| cos  -sin  tx |
+		| sin  cos   ty |
+		| 0    0     1  |
+	row major - by OpenGL/WebGL
+		| cos   sin  0 |
+		| -sin  cos  0 |
+		| tx    ty   1 |
+
+	4x4 Affine Matrix
+	column major - by hand
+		| cos   -sin  sin   tx |
+		| sin   cos   -sin  ty |
+		| -sin  sin   cos   tz |
+		| 0     0     0     1  |
+	row major - by OpenGL/WebGL
+		| cos   sin   -sin  0 |
+		| -sin  cos   sin   0 |
+		| sin   -sin  cos   0 |
+		| tx    ty    tz    1 |

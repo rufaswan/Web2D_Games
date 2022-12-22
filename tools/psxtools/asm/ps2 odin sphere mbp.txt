@@ -238,17 +238,39 @@ FMBP  ab5b00  gwendlyn.mbp
 				andi 20 // s6.flags[10] ->
 		02  16c718  lbu  v0, 2(s4)  // blending , case 0-5
 		03  16c690  lbu  a2, 3(s4)  // tex id
-		04  16cb94  lhu  v0, 4(s4)  v0 <<= 5  // s1 id
+		04  // s1 id
+			16cab8  lhu  v0, 4(s4)  v0 <<= 5 // inter 0
+			16cb10  lhu  v0, 4(s4)  v0 <<= 5 // inter 1
+			16cb94  lhu  v0, 4(s4)  v0 <<= 5 // inter 2
 		06
 		07
-		08  16cb74  lhu  v0,  8(v0)  v0 <<= 5 // s0 id
-		0a  16cbbc  lhu  v0,  a(s4)  v0 <<= 5 // s0 id
-		0c  16cbdc  lhu  v0,  c(s7)  v0 <<= 5 // s0 id
-		0e  16cc00  lhu  v0,  e(v0)  v0 <<= 5 // s0 id
-		10  16cbac  lhu  v0, 10(v0)  v0 <<= 5 // s2 id
-		12  16cbcc  lhu  v0, 12(s4)  v0 <<= 5 // s2 id
-		14  16cbec  lhu  v0, 14(s7)  v0 <<= 5 // s2 id
-		16  16cc14  lhu  v0, 16(v0)  v0 <<= 5 // s2 id
+		// s0 id
+			08
+				16ca98  lhu  v0,  8(s4)  v0 <<= 5 // inter 0
+				16cae8  lhu  v0,  8(s4)  v0 <<= 5 // inter 1 cur
+				16cb74  lhu  v0,  8(v0)  v0 <<= 5 // inter 2 prev
+			0a
+				16cbbc  lhu  v0,  a(s4)  v0 <<= 5 // inter 2 cur
+			0c
+				16cb34  lhu  v0,  c(s7)  v0 <<= 5 // inter 1 next
+				16cbdc  lhu  v0,  c(s7)  v0 <<= 5 // inter 2 next1
+			0e
+				16cc00  lhu  v0,  e(v0)  v0 <<= 5 // inter 2 next2
+		// s2 id
+			10
+				16cacc  lhu  v0, 10(s4)  v0 <<= 5 // inter 0
+				16cb24  lhu  v0, 10(s4)  v0 <<= 5 // inter 1 cur
+				16cbac  lhu  v0, 10(v0)  v0 <<= 5 // inter 2 prev
+			12
+				16cbcc  lhu  v0, 12(s4)  v0 <<= 5 // inter 2 cur
+			14
+				16cb44  lhu  v0, 14(s7)  v0 <<= 5 // inter 1 next
+				16cbec  lhu  v0, 14(s7)  v0 <<= 5 // inter 2 next1
+			16
+				16cc14  lhu  v0, 16(v0)  v0 <<= 5 // inter 2 next2
+		// inter 0  08           04  10
+		// inter 1  08,0c        04  10,14
+		// inter 2  08,0a,0c,0e  04  10,12,14,16
 	s5*8 (bg skip)
 		00  // s3 id
 			172bcc  lhu  v1, 0(a0)  v1 *= 50
@@ -309,7 +331,7 @@ FMBP  ab5b00  gwendlyn.mbp
 			16c708  lhu  v0, 16(fp)  andi  4 // disable blend
 			16c860  lhu  v0, 16(fp)  andi  8
 			16c980  lhu  v0, 16(fp)  andi 10
-			//andi  1
+			//?s6.flags[8] ->? andi  1
 	s7*30 meta
 		00  172c80  lwc1  f1,   0(s6) // s8.flags[400] -> red
 		04  172c78  lwc1  f2,   4(s6) // s8.flags[400] -> green
@@ -338,22 +360,20 @@ FMBP  ab5b00  gwendlyn.mbp
 			172278  lhu  v1, 6(a2)  -> 6c(s4) , 6e(s4)
 			172394  lhu  t2, 6(a2)
 		08  // flags
-			172060  lw  v1, 8(s0)  andi   80 // skip callback
+			172060  lw  v1, 8(s0)  andi   80 // sfx playback
 			1720f0  lw  a0, 8(s0)
-				andi  100
-				andi    4 // s8.flags[100] ->
-				andi    8 // s8.flags[100] -> s8.flags[4] ->
+				andi  100 // end all anim
+				andi    4 // s8.flags[100] -> anim loop
+				andi    8 // s8.flags[100] -> s8.flags[4] -> anim end + cleared
 			17232c  lw  v1, 8(a2)  andi   40 // skip
 			172a44  lw  v0, 8(s7)  andi    1 // flip x
 			172a50  lw  v0, 8(s7)  andi    2 // flip y
 			172a64  lw  v0, 8(s7)  andi    2
-			172c28  lw  v1, 8(s7)  andi  400 // skip s7.rgba
+			172c28  lw  v1, 8(s7)  andi  400 // is attachment
 			172ecc  lw  v1, 8(s7)  andi   20 // s8.flags[400] ->
 			//andi   10
-			//andi  800
-			//andi 1000
-			//andi 2000
-		0c  172160  lhu  a0, c(s0) -> 72(s4)
+		0c  // loop s8 sub-id
+			172160  lhu  a0, c(s0) -> 72(s4)
 		0e  // s5s3 interpolation
 			172820  lbu  v1,  e(s7)
 				if == 2
@@ -380,11 +400,11 @@ FMBP  ab5b00  gwendlyn.mbp
 			172088  lhu  a2, 18(s0)
 			1720a8  lhu  a3, 18(s0)
 		1a  // callback args
-			// s8.flags[80] ->
+			// s8.flags[80] -> mute sfx
 			17208c  lhu  a3, 1a(s0)
 			1720ac  lhu  t0, 1a(s0)
 		1c  // callback args
-			// s8.flags[80] ->
+			// s8.flags[80] -> sound effect/voice id
 			172080  lw   t0, 1c(s0)
 			1720b8  lw   t1, 1c(s0)
 	s9*30 anim
@@ -393,6 +413,7 @@ FMBP  ab5b00  gwendlyn.mbp
 		08  171894  lwc1  f0, 8(v1) -> 8(a1)  // x2
 		0c  17189c  lwc1  f0, c(v1) -> c(a1)  // y2
 		10  // name[17] + NULL
+			strcmp(170e1c  addiu  a0, 10(v0));
 		28  // sa set id
 			1715fc  lhu  v0, 28(s0)
 		2a  // sa set no
@@ -416,19 +437,20 @@ FMBP  ab5b00  gwendlyn.mbp
 		02  // s8 set no
 			17218c  lhu  v1, 2(s2)
 			172354  lhu  t0, 2(a3)
-		04  173a58  lh   v1, 6(a1) -> 74(a0) // s8 set sum[6] frames
-		06
-		07
+		04  // s8 frames sum[6]
+		05
+		06  // skip s8.id , loop = 0 dummy
+			173a58  lh   v1, 6(a1) -> 74(a0)
 //////////////////////////////
-505046  FPP   44  4c415043  CPAL
+505046  FPP   44  4c415043  (NONE*)CPAL
 444c5a  ZLD   90
 545854  TXT   84
 42444f  ODB   44
 425353  SSB   40
 474643  CFG  1f0
-445241  ARD   40  5352414f  OARS
-50424d  MBP   44  524e4d43  CMNR
-505446  FTP   44  58455443  CTEX
+445241  ARD   40  5352414f  (NONE*)OARS
+50424d  MBP   44  524e4d43  (NONE*)CMNR
+505446  FTP   44  58455443  (NONE*)CTEX
 
 sections
 	00 // ptr to last section
@@ -436,10 +458,10 @@ sections
 	08 // jal ra
 	0c // section size
 
-	CMNR * 44
+	(NONE*)CMNR * 44
 		00  173e34  sw  v0, 0(s1) // CMNR
 		...
-		0c  // ptr to next CMNR/CTEX data
+		0c  // ptr to next section data
 		10  // ptr to CTEX
 		14  173e28  sw  v0, 14(s1) // DAT_3e1c38
 		...
@@ -496,8 +518,40 @@ sections
 		77
 //////////////////////////////
 work * 80
+	//////////////////////////////
+	// 4x4 transformation matrix
+	// row major = in [xyzw , xyzw , xyzw , xyzw]
+	//  | cos   sin   -sin  0 |
+	//  | -sin  cos   sin   0 |
+	//  | sin   -sin  cos   0 |
+	//  | tx    ty    tz    1 |
 	00
-	...
+		171784  lwc1  f0, 0(v1) -> 0(t0)
+		1717b0  lwc1  f1, 0(v1) -> 0(t0)
+		175c80  lwc1  f2, 0(a1)
+	04
+		171790  lwc1  f0, 4(v1) -> 4(t0)
+		1717c8  lwc1  f1, 4(v1) -> 4(t0)
+		175c70  lwc1  f3, 4(a1)
+	08
+		171798  lwc1  f0, 8(v1) -> 8(t0)
+		1717e0  lwc1  f1, 8(v1) -> 8(t0)
+	0c
+		1717a0  lwc1  f0, c(v1) -> c(t0)
+		1717f8  lwc1  f1, c(v1) -> c(t0)
+	10  175c88  lwc1  f1, 10(a1)
+	14  175c68  lwc1  f1, 14(a1)
+	18
+	1c
+	20
+	24
+	28
+	2c
+	30  175c8c  lwc1  f0, 30(a1) // move x
+	34  175c78  lwc1  f0, 34(a1) // move y
+	38  // move z
+	3c
+	//////////////////////////////
 	40  // x1
 		1725dc  swc1  f0, 40(s3)
 		172628  swc1  f0, 40(s3)
@@ -535,12 +589,16 @@ work * 80
 		172bec  lwcl  f0, 5c(s3)
 		172bf4  swcl  f0, 5c(s3)
 	60  // ptr CMNR
+		1722e8  lw  a2, 60(a0)
+		1722f0  lw  v1, 60(a0)
 		172480  lw  v0, 60(s3)
 		172f84  lw  v1, 60(s3)
-	64  // ptr
+	64  // ptr CTEX
 	68  // ptr
 		172458  lw  s2, 68(a0)
+		172854  lw  a1, 68(s3)
 	6c  // s8.frame6
+		// countdown
 		171184  sh  a0, 6c(v1)
 		17220c  sh  v1, 6c(s4)
 		1720c8  lh  a0, 6c(s4)
@@ -556,7 +614,8 @@ work * 80
 	70  // sa set id
 		1710e0  lhu  a0, 70(v1)
 		17114c  lhu  a2, 70(v1)
-	72  //
+		1722ec  lhu  a1, 70(a0)
+	72  // s8 id counter , s8[c]
 		// (fmbp->sa_off + [72] + [74]) * 20
 		170ff8  lh  v1, 72(v0)
 		1710d8  sh  0,  72(v1)
@@ -568,23 +627,128 @@ work * 80
 		172228  lh  v1, 72(s4)  v1++
 			172260  sh  v1, 72(s4)
 		1722fc  lh  a1, 72(a0)
-	74  //
+	74  // s8 skip id , sa[6]
 		170ffc  lb  v0, 74(v0)
 		171114  lb  a0, 74(v1)
 		17204c  lb  a0, 74(s4)
 		172188  lb  a0, 74(s4)
 		172264  lb  v1, 74(s4)
 		172308  lb  v1, 74(a0)
+		173a5c  sb  v1, 74(a0)
 	75  // flags
+		171280  lbu  v0, 75(v0)  andi  1
+		171454  lbu  a1, 75(a0)
+			andi   2
+			andi  40
+		171760  lbu  a2, 75(a3)
+			andi   2
+			andi  20
+		1722d8  lbu  v1, 75(a0)  andi  4
 		172810  lbu  v1, 75(s3)
 			ori   10 <- sb
 		172ac8  lbu  , 75(s3)
 			andi  df <- sb
 		172bf8  lbu  , 75(s3)
 			ori   20 <- sb
-	76
-	77
-
+//////////////////////////////
+control
+	00
+		17178c  swc1  f0, 0(t0)
+		1717b4  lwc1  f0, 0(t0)
+		1717c4  swc1  f0, 0(t0)
+		171828  lwc1  f0, 0(t0)
+	04
+		171794  swc1  f0, 4(t0)
+		1717cc  lwc1  f0, 4(t0)
+		1717dc  swc1  f0, 4(t0)
+		171830  lwc1  f0, 4(t0)
+	08
+		17179c  swc1  f0, 8(t0)
+		1717e4  lwc1  f0, 8(t0)
+		1717f4  swc1  f0, 8(t0)
+		171838  lwc1  f0, 8(t0)
+	0c
+		1717a8  swc1  f0, c(t0)
+		1717fc  lwc1  f0, c(t0)
+		17180c  swc1  f0, c(t0)
+		171840  lwc1  f0, c(t0)
+	...
+	50
+		1883b0  swc1  f0, 50(s2)
+		1883d0  sw    v0, 50(s2)
+	54
+		1883b8  swc1  f0, 54(s2)
+		1883d4  sw    v0, 54(s2)
+	58
+		1883c0  swc1  f0, 58(s2)
+		1883d8  sw    v0, 58(s2)
+	5c
+		1883cc  swc1  f0, 5c(s2)
+		1883e0  sw    v0, 5c(s2)
+	60  1881f8  swc1  f0, 60(v0)
+	64  188200  swc1  f0, 64(v0)
+	68  188208  swc1  f0, 68(v0)
+	6c  188210  swc1  f0, 6c(v0)
+	...
+	78  17123c  lw  v0, 78(a0)
+	...
+	80  171230  lh  v1, 80(a0) // s9.id
+	82  // ([82] += s8[13]) * 180
+		172468  lh  v1, 82(s2)
+	...
+	8c
+		171260  lw  v0, 8c(a0)
+		171758  lw  v1, 8c(a0)
+	90
+		171740  lhu  v1, 90(a0)
+		171810  lhu  v1, 90(a0)
+	92
+		1882e8  sb  0,  92(s2)
+		18847c  sb  0,  92(s2)
+		188318  sb  v0, 92(s2)
+		1883a8  sb  v0, 92(s2)
+		1883ec  sb  0,  92(s2)
+		188434  sb  v0, 92(s2)
+		18847c  sb  0,  92(s2)
+		188494  sb  v0, 92(s2)
+	...
+	98
+		1882f4  swc1  f0, 98(s2)
+		188490  sw    v0, 98(s2)
+	9c
+		188384  swc1  f0, 9c(s2)
+		188468  swc1  f0, 9c(s2)
+	a0  1882fc  sb  v1, a0(s2)
+	a1  188304  sb  v1, a1(s2)
+	a2  18830c  sb  v1, a2(s2)
+	a3  188314  sb  v1, a3(s2)
+	a4
+		18838c  sb  v1, a4(s2)
+		188450  sb  v1, a4(s2)
+	a5
+		188394  sb  v1, a5(s2)
+		188458  sb  v1, a5(s2)
+	a6
+		18839c  sb  v1, a6(s2)
+		18845c  sb  v1, a6(s2)
+	a7
+		1883a4  sb  v1, a7(s2)
+		188460  sb  v0, a7(s2)
+	...
+	d2
+		170c1c  lh  v0, d2(a0)
+		170c38  sh  v0, d2(a0)
+		170cb8  sh  0,  d2(a0)
+		170cdc  lh  a0, d2(a0)
+	d4
+		170c50  lw  a0, d4(a0)
+		170cc4  lw  a2, d4(a0)
+	...
+	da
+		170c10  lh  v1, da(a0)
+		170c40  lh  v1, da(a0)
+		170cb0  lh  v0, da(a0)
+		170ccc  lh  v0, da(a0)
 //////////////////////////////
 NONE * d0
 	00  16d334  sw  v0, 0(s0) // NONE

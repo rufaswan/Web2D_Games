@@ -440,3 +440,25 @@ mikekohn.net/software/playstation2.php
 	Without textures only the alpha bit in the PRIM register should be needed to be set to turn on alpha channels.
 
 	Each pixel can of course have it's own alpha value.
+
+khronos.org/opengl/wiki/GLSL_:_common_mistakes
+
+	Normally, you should not sample a texture and render to that same texture at the same time.
+	This would give you undefined behavior.
+	[...]
+	You still don't get to read and write to the same location in a texture at the same time
+	unless there is only a single read and write of each texel,
+	and the read is in a fragment shader invocation that covers the same sample as the texel it is writing.
+
+khronos.org/opengl/wiki/Primitive
+
+	Quad from center = 4 points
+		GL_LINES       [0,1 , 1,2 , 2,3 , 3,0] = 8 indices
+		GL_LINE_STRIP  [0,1 ,   2 ,   3 ,   0] = 5 indices
+		GL_LINE_LOOP   [0,1 ,   2 ,   3      ] = 4 indices
+
+	Quad from center = 5 points
+		GL_TRIANGLES       [    0,1,2 , 0,2,3 , 0,3,4 , 0,4,1] = 12 indices
+		GL_TRIANGLE_FAN    [0 ,   1,2 ,   2,3 ,   3,4 ,   4,1] =  9 indices
+		GL_TRIANGLE_STRIP  impossible
+			ABCDEF = ABC , BCD , CDE , DEF

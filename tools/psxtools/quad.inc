@@ -20,7 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-php_req_extension('json_encode', 'json');
+if ( ! function_exists('json_pretty') )
+	exit("no json_pretty() [from class-json.inc]\n");
 
 // .quad file
 function load_idtagfile( $pfx )
@@ -69,15 +70,8 @@ function save_quadfile( $pfx, &$json )
 	if ( empty($json) )
 		return;
 
-	$json = json_encode($json);
-	$json = str_replace("\"Animatio", "\n\t\t\t\"Animatio", $json);
-	$json = str_replace("\"KeyFrame", "\n\t\t\t\"KeyFrame", $json);
-
-	$json = str_replace("\"SrcQu", "\n\t\t\t\t\"SrcQu", $json);
-	$json = str_replace("\"DstQu", "\n\t\t\t\t\"DstQu", $json);
-	$json = str_replace("\"TexID", "\n\t\t\t\t\"TexID", $json);
-
-	save_file("$pfx.quad.txt", $json);
+	$json = json_pretty($json);
+	save_file("$pfx.quad", $json);
 	return;
 }
 //////////////////////////////

@@ -36,6 +36,20 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //   dot(x,y) = |x||y| cos Q
 // cross(x,y) = |x||y| sin Q
 
+function vec3( &$vec )
+{
+	while ( count($vec) < 3 )
+		$vec[] = 1;
+	return;
+}
+
+function vec4( &$vec )
+{
+	while ( count($vec) < 4 )
+		$vec[] = 1;
+	return;
+}
+
 function cross_product( $v3b, $v3c )
 {
 	list($bx,$by,$bz) = $v3b;
@@ -48,6 +62,23 @@ function cross_product( $v3b, $v3c )
 	$ay = ($bz * $cx) - ($cz * $bx);
 	$az = ($bx * $cy) - ($cx * $by);
 	return array($ax, $ay, $az);
+}
+
+function cross_product_2d( $v2b, $v2c )
+{
+	// extend x,y (2d) to x,y,z (3d)
+	vec3($v2b);
+	vec3($v2c);
+
+	list($x,$y,$z) = cross_product($v2b, $v2c);
+	if ( $z == 0 )
+		return array(0,0);
+
+	// convert x,y,z (3d) to x,y (2d)
+	$x /= $z;
+	$y /= $z;
+	//$z /= $z; // $z == 1
+	return array($x, $y);
 }
 
 // v2 = x.y
@@ -427,6 +458,31 @@ function quad_rebase( $V4 )
 	return $quad;
 }
 
+function quad2xywh( $V4 )
+{
+	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
+	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
+	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
+	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+		$x1 = (int)floor($x1);
+		$y1 = (int)floor($y1);
+		$x2 = (int)ceil($x2);
+		$y2 = (int)ceil($y2);
+
+	$xywh = array(
+		'xy' => array($x1, $y1),
+		'wh' => array($x2-$x1, $y2-$y1),
+		'quad' => array(
+			$V4[0]-$x1, $V4[1]-$y1,
+			$V4[2]-$x1, $V4[3]-$y1,
+			$V4[4]-$x1, $V4[5]-$y1,
+			$V4[6]-$x1, $V4[7]-$y1,
+		),
+	);
+	quad_dump($xywh['quad'], 'xywh quad');
+	return $xywh;
+}
+
 function quad_dump( $V4, $name )
 {
 	if ( defined("NO_TRACE") )
@@ -446,26 +502,45 @@ function quad_dump( $V4, $name )
 	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
 	return;
 }
-//////////////////////////////
-// sum of all interior angles
-//   side  degree  radian
-//   3     180     pi      // tri
-//   4     360     2 pi    // quad
-//   5     540     3 pi    // penta
-//   6     720     4 pi    // hex
-//   ...
-//
-// https://en.m.wikipedia.org/wiki/Trigonometric_functions
-//       90
-//     Q2 | Q1    Qref = Q1         sin Q rel Y value
-// 180 ------- 0  Qref = 180 - Q2   cos Q rel X value
-//     Q3 | Q4    Qref = Q3  - 180  tan Q is Y/X value
-//       270      Qref = 360 - Q4
-//
-// SOH  sine    = opposite / hypotenuse , cosecant  = hypotenuse / opposite
-// CAH  cosine  = adjacent / hypotenuse , secant    = hypotenuse / adjacent
-// TOA  tangent = opposite / adjacent   , cotangent = adjacent   / opposite
-//
+/*
+	sum of all interior angles
+		side  degree  radian
+		3     180     pi      // tri
+		4     360     2 pi    // quad
+		5     540     3 pi    // penta
+		6     720     4 pi    // hex
+		...
 
-//////////////////////////////
+	https://en.m.wikipedia.org/wiki/Trigonometric_functions
+	-       90
+	-     Q2 | Q1    Qref = Q1         sin Q rel Y value
+	- 180 ------- 0  Qref = 180 - Q2   cos Q rel X value
+	-     Q3 | Q4    Qref = Q3  - 180  tan Q is Y/X value
+	-       270      Qref = 360 - Q4
 
+	SOH  sine    = opposite / hypotenuse , cosecant  = hypotenuse / opposite
+	CAH  cosine  = adjacent / hypotenuse , secant    = hypotenuse / adjacent
+	TOA  tangent = opposite / adjacent   , cotangent = adjacent   / opposite
+//////////////////////////////
+	2D Rotation
+		| cos  -sin  0 |
+		| sin   cos  0 |
+		| 0     0    1 |
+//////////////////////////////
+	3D Rotation
+	X axis
+		| 1  0    0     0 |
+		| 0  cos  -sin  0 |
+		| 0  sin  cos   0 |
+		| 0  0    0     1 |
+	Y axis
+		| cos   0  sin  0 |
+		| 0     1  0    0 |
+		| -sin  0  cos  0 |
+		| 0     0  0    1 |
+	Z axis
+		| cos  -sin  0  0 |
+		| sin  cos   0  0 |
+		| 0    0     1  0 |
+		| 0    0     0  1 |
+ */

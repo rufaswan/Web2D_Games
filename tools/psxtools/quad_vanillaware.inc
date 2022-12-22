@@ -322,84 +322,12 @@ $gp_data = array(
 	), // 'ps4_sent'
 );
 //////////////////////////////
-function colorhex32( $c, $order='0123', $sll=false )
+function ps2_quad20p( &$mbp, $ord )
 {
-	// order = re-order BGRA to RGBA
-	$r = ord( $c[ $order[0] ] );
-	$g = ord( $c[ $order[1] ] );
-	$b = ord( $c[ $order[2] ] );
-	$a = ord( $c[ $order[3] ] );
-	if ( $sll )
-	{
-		$r = int_clamp($r<<1, 0, BIT8);
-		$g = int_clamp($g<<1, 0, BIT8);
-		$b = int_clamp($b<<1, 0, BIT8);
-		$a = int_clamp($a<<1, 0, BIT8);
-	}
-
-	// shortcut
-	if ( $r === $g && $g === $b && $b === $a )
-		return sprintf('#%02x', $r);
-	else
-		return sprintf('#%02x%02x%02x%02x', $r, $g, $b, $a);
-}
-
-function colorquad( $c0, $c1, $c2, $c3, $order='0123', $sll=false )
-{
-	$quad = array(
-		colorhex32($c0, $order, $sll), // 0
-		colorhex32($c1, $order, $sll), // 1
-		colorhex32($c2, $order, $sll), // 2
-		colorhex32($c3, $order, $sll), // 3
-	);
-
-	// attempt to fold all same colors into one
-	if ( $quad[0] !== $quad[1] )  return $quad;
-	if ( $quad[1] !== $quad[2] )  return $quad;
-	if ( $quad[2] !== $quad[3] )  return $quad;
-
-	// all same color, return string instead array()
-	if ( $quad[0] !== '#ff' )
-		return $quad[0];
-	else
-		return '';
-}
-
-function load_mbsfile( &$file, $sect, $ord )
-{
-	$off = array();
-	foreach ( $sect as $sk => $sv )
-	{
-		$c = $ord($file, $sv['c'][0], $sv['c'][1]);
-		$p = $ord($file, $sv['p'], 4);
-		if ( $c === 0 || $p === 0 )
-			continue;
-
-		$off[] = $p;
-		$sect[$sk]['h'] = $c;
-		$sect[$sk]['o'] = $p;
-		$sect[$sk]['d'] = substr($file, $p, $c*$sv['k']);
-	} // foreach ( $sect as $sk => $sv )
-
-	sort($off);
-	$p1 = str2int($file, 8, 4);
-	$p2 = array_shift($off);
-	if ( $p1 !== $p2 )
-		return php_error('FMBS head %x != %x', $p1, $p2);
-
-	$file = $sect;
-	return;
-}
-//////////////////////////////
-function ps2_quad20p( &$mbp, $id, &$quad, $ord )
-{
-	if ( $mbp['k'] !== 0x20 )
-		return;
-	$pos   = $id * 0x20;
 	$float = array();
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
-		$b = $ord($mbp['d'], $pos+$i, 2, true);
+		$b = $ord($mbp, $i, 2, true);
 		$float[] = $b / 0x10;
 	}
 
@@ -417,14 +345,17 @@ function ps2_quad20p( &$mbp, $id, &$quad, $ord )
 		$float[ 8] , $float[ 9] ,
 		$float[10] , $float[11] ,
 	);
-	return;
+	return $quad;
 }
 
-function ps2_quad20c( &$mbp, $id, &$quad )
+function ps2_quad20c( &$mbp )
 {
-	if ( $mbp['k'] !== 0x20 )
-		return;
-	$pos  = $id * 0x20;
+	for ( $i=0; $i < 0x20; $i++ )
+	{
+		$b = ord($mbp[$i]);
+		$b = int_clamp($b << 1, 0, BIT8);
+		$mbp[$i] = chr($b);
+	}
 
 	//  0
 	//  4  center
@@ -434,25 +365,21 @@ function ps2_quad20c( &$mbp, $id, &$quad )
 	// 14  c3
 	// 18  c1
 	// 1c  padding
-	$quad = colorquad(
-		substr($mbp['d'], $pos+0x8 , 4),
-		substr($mbp['d'], $pos+0xc , 4),
-		substr($mbp['d'], $pos+0x10, 4),
-		substr($mbp['d'], $pos+0x14, 4),
-		'0123', true
+	$quad = array(
+		'#' . bin2hex( substr($mbp,0x08,4) ),
+		'#' . bin2hex( substr($mbp,0x0c,4) ),
+		'#' . bin2hex( substr($mbp,0x10,4) ),
+		'#' . bin2hex( substr($mbp,0x14,4) ),
 	);
-	return;
+	return $quad;
 }
 
-function nds_quad30p( &$mbs, $id, &$quad, $ord ) // +wii,ps3,ps4
+function nds_quad30p( &$mbs, $ord ) // +wii,ps3,ps4
 {
-	if ( $mbs['k'] !== 0x30 )
-		return;
-	$pos = $id * 0x30;
 	$float = array();
 	for ( $i=0; $i < 0x30; $i += 4 )
 	{
-		$b = $ord($mbs['d'], $pos+$i, 4);
+		$b = $ord($mbs, $i, 4);
 		$float[] = float32($b);
 	}
 
@@ -468,40 +395,32 @@ function nds_quad30p( &$mbs, $id, &$quad, $ord ) // +wii,ps3,ps4
 		$float[6] , $float[7] ,
 		$float[8] , $float[9] ,
 	);
-	return;
+	return $quad;
 }
 
-function nds_quad18c( &$mbs, $id, &$quad ) // +wii,ps3,ps4
+function nds_quad18c( &$mbs ) // +wii,ps3,ps4
 {
-	if ( $mbs['k'] !== 0x18 )
-		return;
-	$pos = $id * 0x18;
-
 	//  0  center
 	//  4  c0
 	//  8  c1
 	//  c  c2
 	// 10  c3
 	// 14  c0
-	$quad = colorquad(
-		substr($mbs['d'], $pos+0x4 , 4),
-		substr($mbs['d'], $pos+0x8 , 4),
-		substr($mbs['d'], $pos+0xc , 4),
-		substr($mbs['d'], $pos+0x10, 4),
-		'0123', false
+	$quad = array(
+		'#' . bin2hex( substr($mbs,0x04,4) ),
+		'#' . bin2hex( substr($mbs,0x08,4) ),
+		'#' . bin2hex( substr($mbs,0x0c,4) ),
+		'#' . bin2hex( substr($mbs,0x10,4) ),
 	);
-	return;
+	return $quad;
 }
 
-function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
+function psp_quad60pc( &$mbs, $ord )
 {
-	if ( $mbs['k'] !== 0x60 )
-		return;
-	$pos   = $id * 0x60;
 	$float = array();
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
-		$b = $ord($mbs['d'], $pos+$i, 2, true);
+		$b = $ord($mbs, $i, 2, true);
 		$float[] = $b / 0x10;
 	}
 
@@ -532,25 +451,21 @@ function psp_quad60pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
 	// 30 32  34  38 3a  3c 3e  c2
 	// 40 42  44  48 4a  4c 4e  c3
 	// 50 52  54  58 5a  5c 5e  c0
-	$clr = colorquad(
-		substr($mbs['d'], $pos+0x14, 4),
-		substr($mbs['d'], $pos+0x24, 4),
-		substr($mbs['d'], $pos+0x34, 4),
-		substr($mbs['d'], $pos+0x44, 4),
-		'0123', false
+	$clr = array(
+		'#' . bin2hex( substr($mbs,0x14,4) ),
+		'#' . bin2hex( substr($mbs,0x24,4) ),
+		'#' . bin2hex( substr($mbs,0x34,4) ),
+		'#' . bin2hex( substr($mbs,0x44,4) ),
 	);
-	return;
+	return array($clr, $src, $dst);
 }
 
-function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
+function vit_quad78pc( &$mbs, $ord )
 {
-	if ( $mbs['k'] !== 0x78 )
-		return;
-	$pos   = $id * 0x78;
 	$float = array();
 	for ( $i=0; $i < 0x78; $i += 4 )
 	{
-		$b = $ord($mbs['d'], $pos+$i, 4);
+		$b = $ord($mbs, $i, 4);
 		$float[] = float32($b);
 	}
 
@@ -581,43 +496,51 @@ function vit_quad78pc( &$mbs, $id, &$src, &$dst, &$clr, $ord )
 	// 3c 40  44  48 4c  c2
 	// 50 54  58  5c 60  c3
 	// 64 68  6c  70 74  c0
-	$clr = colorquad(
-		substr($mbs['d'], $pos+0x1c, 4),
-		substr($mbs['d'], $pos+0x30, 4),
-		substr($mbs['d'], $pos+0x44, 4),
-		substr($mbs['d'], $pos+0x58, 4),
-		'0123', false
+	$clr = array(
+		'#' . bin2hex( substr($mbs,0x1c,4) ),
+		'#' . bin2hex( substr($mbs,0x30,4) ),
+		'#' . bin2hex( substr($mbs,0x44,4) ),
+		'#' . bin2hex( substr($mbs,0x58,4) ),
 	);
-	return;
+	return array($clr, $src, $dst);
 }
 //////////////////////////////
-function subtrace()
+function sect_head( $id )
 {
-	if ( defined('NO_TRACE') )
-		return;
-	$args = func_get_args();
-	$id   = array_shift($args);
-	$log  = sprintf("%x%s ", $id, str_repeat(' ', $id));
-	foreach ( $args as $a )
+	global $gp_share;
+	$ord = $gp_share['data']['ord'];
+
+	$sp = $ord($gp_share['file'], $gp_share['data']['sect'][$id]['p']   , 4);
+	$sc = $ord($gp_share['file'], $gp_share['data']['sect'][$id]['c'][0], $gp_share['data']['sect'][$id]['c'][1]);
+	$sk = $gp_share['data']['sect'][$id]['k'];
+
+	$idx = $sc;
+	$gp_share['idx'] = 0;
+	while ( $idx > 0 )
 	{
-		// var type detect
-		if ( "$a" === $a ) // is_string
-			$log .= sprintf('"%s"  ', $a);
-		else
-		if ( $a == 0 )
-			$log .= '-  ';
-		else
-		if ( (int)$a === $a ) // is_int
-		{
-			if ( $a < 0 )
-				$log .= sprintf('-%x  ', -$a);
-			else
-				$log .= sprintf('%x  ', $a);
-		}
-		else // is_float
-			$log .= sprintf('%.2f  ', $a);
+		$gp_share['idx']++;
+		$idx >>= 4;
 	}
-	trace("$log\n");
-	return $log;
+	return array($sp,$sc,$sk);
+}
+
+function sect_data_txt( $i, $data )
+{
+	global $gp_share;
+
+	$txt = sprintf("%{$gp_share['idx']}x :", $i);
+	$len = strlen($data);
+	for ( $i=0; $i < $len; $i++ )
+	{
+		if ( ($i & 3) === 0 )
+			$txt .= ' ';
+
+		if ( $data[$i] === ZERO )
+			$txt .= '-- ';
+		else
+			$txt .= sprintf('%2x ', ord($data[$i]));
+	}
+	$txt .= "\n";
+	return $txt;
 }
 //////////////////////////////

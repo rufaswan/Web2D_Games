@@ -1,0 +1,83 @@
+Desktop
+Intel(R) Celeron G5900 CPU @ 3.4 GHz
+	Firefox 78 drawload()
+		233240 draw()/sec , 3887 draw()/60 fps
+		144665 draw()/sec , 2411 draw()/60 fps
+		134349 draw()/sec , 2239 draw()/60 fps
+		139507 draw()/sec , 2325 draw()/60 fps
+		139507 draw()/sec , 2325 draw()/60 fps
+		139507 draw()/sec , 2325 draw()/60 fps
+		139507 draw()/sec , 2325 draw()/60 fps
+		139507 draw()/sec , 2325 draw()/60 fps
+		139507 draw()/sec , 2325 draw()/60 fps
+		141794 draw()/sec , 2363 draw()/60 fps
+	Opera 90 drawload()
+		186682 draw()/sec , 3111 draw()/60 fps
+		139510 draw()/sec , 2325 draw()/60 fps
+		179540 draw()/sec , 2992 draw()/60 fps
+		127931 draw()/sec , 2132 draw()/60 fps
+		151729 draw()/sec , 2528 draw()/60 fps
+		148940 draw()/sec , 2482 draw()/60 fps
+		179080 draw()/sec , 2984 draw()/60 fps
+		115560 draw()/sec , 1926 draw()/60 fps
+		142720 draw()/sec , 2378 draw()/60 fps
+		147920 draw()/sec , 2465 draw()/60 fps
+
+	Firefox 78 drawload() + canvas copy
+		1998 draw()/sec , 33 draw()/60 fps
+		2312 draw()/sec , 38 draw()/60 fps
+		2440 draw()/sec , 40 draw()/60 fps
+		2445 draw()/sec , 40 draw()/60 fps
+		2383 draw()/sec , 39 draw()/60 fps
+		2439 draw()/sec , 40 draw()/60 fps
+		2446 draw()/sec , 40 draw()/60 fps
+		2464 draw()/sec , 41 draw()/60 fps
+		2475 draw()/sec , 41 draw()/60 fps
+		2361 draw()/sec , 39 draw()/60 fps
+
+Mobile
+Qualcomm MSM8916 Snapdragon 410 (28 nm)
+Android 5.1  360x640
+	Opera 50 drawload()
+		74635 draw()/sec , 1243 draw()/60 fps
+		59764 draw()/sec ,  996 draw()/60 fps
+		56742 draw()/sec ,  945 draw()/60 fps
+		58253 draw()/sec ,  970 draw()/60 fps
+		58253 draw()/sec ,  970 draw()/60 fps
+		58253 draw()/sec ,  970 draw()/60 fps
+		58253 draw()/sec ,  970 draw()/60 fps
+		29126 draw()/sec ,  485 draw()/60 fps
+		29127 draw()/sec ,  485 draw()/60 fps
+		14563 draw()/sec ,  242 draw()/60 fps
+
+Qualcomm MSM8996 Snapdragon 820 (14 nm) - G9350
+Android 8.0  360x640
+	Chrome 108 drawload()
+		165398 draw()/sec , 2756 draw()/60 fps
+		159167 draw()/sec , 2652 draw()/60 fps
+		128714 draw()/sec , 2145 draw()/60 fps
+		134612 draw()/sec , 2243 draw()/60 fps
+		 69274 draw()/sec , 1154 draw()/60 fps
+		167325 draw()/sec , 2788 draw()/60 fps
+		 51123 draw()/sec ,  852 draw()/60 fps
+		171605 draw()/sec , 2860 draw()/60 fps
+		 46844 draw()/sec ,  780 draw()/60 fps
+		176799 draw()/sec , 2946 draw()/60 fps
+
+	Samsung Internet 19 drawload()
+		103761 draw()/sec , 1729 draw()/60 fps
+		 80847 draw()/sec , 1347 draw()/60 fps
+		 79348 draw()/sec , 1322 draw()/60 fps
+		 43690 draw()/sec ,  728 draw()/60 fps
+		106128 draw()/sec , 1768 draw()/60 fps
+		 39505 draw()/sec ,  658 draw()/60 fps
+		116506 draw()/sec , 1941 draw()/60 fps
+		 43689 draw()/sec ,  728 draw()/60 fps
+		116506 draw()/sec , 1941 draw()/60 fps
+		 29127 draw()/sec ,  485 draw()/60 fps
+
+
+	drawload()
+		 draw()/sec ,  draw()/60 fps
+		 draw()/sec ,  draw()/60 fps
+

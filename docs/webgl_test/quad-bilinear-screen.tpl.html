@@ -3,7 +3,7 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Affine Test</title>
+<title>Quad Bilinear Test (Fullscreen)</title>
 <style id="quad_inc_css">body {
 	position         : relative;
 	background-color : #000;
@@ -564,12 +564,11 @@ function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 <script>
 var vert_src = `
 	attribute vec2  a_xy;
-	attribute vec2  a_uv;
 	uniform   vec4  u_pxsize;
-	varying   vec2  v_uv;
+	varying   vec2  v_xy;
 
 	void main(void){
-		v_uv = vec2(a_uv.x * u_pxsize.z , a_uv.y * u_pxsize.w);
+		v_xy = a_xy;
 		gl_Position = vec4(
 			a_xy.x * u_pxsize.x ,
 			a_xy.y * u_pxsize.y ,
@@ -578,16 +577,54 @@ var vert_src = `
 `;
 
 var frag_src = `
+	uniform vec4  u_pxsize;
+	uniform mat4  u_mat4;
 	uniform sampler2D u_tex;
-	varying vec2  v_uv;
+	varying vec2  v_xy;
 
+	vec2   v2;
+	float  tv, tu;
 	void main(void){
-		gl_FragColor = texture2D(u_tex, v_uv);
+		float a0 = u_mat4[0][0];
+		float a1 = u_mat4[0][1];
+		float a2 = u_mat4[0][2];
+		float a3 = u_mat4[0][3];
+		float b0 = u_mat4[1][0];
+		float b1 = u_mat4[1][1];
+		float b2 = u_mat4[1][2];
+		float b3 = u_mat4[1][3];
+		float A  = u_mat4[2][0];
+		float B1 = u_mat4[2][1];
+		float C1 = u_mat4[2][2];
+
+		float B  = B1 + (b3 * v_xy.x) - (a3 * v_xy.y);
+		float C  = C1 + (b1 * v_xy.x) - (a1 * v_xy.y);
+
+		float rt = sqrt( (B * B) - (4.0 * A * C) );
+
+		tv = (-B + rt) / (2.0 * A);
+		tu = (v_xy.x - a0 - (a2 * tv)) / (a1 + (a3 * tv));
+			v2.x = tu * u_pxsize.z;
+			v2.y = tv * u_pxsize.w;
+
+		// no texel matched
+		// probably hflip/vflip with opposite direction
+		if ( v2.x < 0.0 || v2.x > 1.0 || v2.y < 0.0 || v2.y > 1.0 )
+		{
+			tv = (-B - rt) / (2.0 * A);
+			tu = (v_xy.x - a0 - (a2 * tv)) / (a1 + (a3 * tv));
+				v2.x = tu * u_pxsize.z;
+				v2.y = tv * u_pxsize.w;
+		}
+
+		if ( v2.x < 0.0 || v2.x > 1.0 || v2.y < 0.0 || v2.y > 1.0 )
+			discard;
+		gl_FragColor = texture2D(u_tex, v2);
 	}
 `;
 
 var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_xy', 'a_uv', 'u_pxsize', 'u_tex');
+QDFN.setShaderLoc('a_xy', 'u_pxsize', 'u_mat4', 'u_tex');
 
 QDFN.setTexCount('u_tex', 1);
 QDFN.bindTex2DById(0, 'mona_lisa_png');
@@ -598,62 +635,18 @@ function quadDraw()
 {
 	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 
-	var scx = findIntersectPoint(SRC);
-	var dcx = findIntersectPoint(DST);
+	var mat4 = bilinearwarp(DST, TEX_SIZE[0], TEX_SIZE[1]);
+	QDFN.setMatrix4fv('u_mat4', mat4);
 
-	// for simple and twisted
-	if ( dcx !== -1 )
-	{
-		var xy = [
-			dcx[0],dcx[1] , DST[0],DST[1] , DST[2],DST[3] ,
-			dcx[0],dcx[1] , DST[2],DST[3] , DST[4],DST[5] ,
-			dcx[0],dcx[1] , DST[4],DST[5] , DST[6],DST[7] ,
-			dcx[0],dcx[1] , DST[6],DST[7] , DST[0],DST[1] ,
-		];
-		QDFN.v2Attrib('a_xy', xy);
+	var box = QDFN.getBoundingClientRect();
+	var hw  = box.width  * 0.5;
+	var hh  = box.height * 0.5;
 
-		var uv = [
-			scx[0],scx[1] , SRC[0],SRC[1] , SRC[2],SRC[3] ,
-			scx[0],scx[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-			scx[0],scx[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-			scx[0],scx[1] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
-		];
-		QDFN.v2Attrib('a_uv', uv);
-
-		console.log('simple and twisted', dcx);
-		return QDFN.draw(12);
-	}
-
-	// bended
-	var area1 = quadArea(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
-	var area2 = quadArea(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
-
-	if ( area1 < area2 )
-	{
-		var xy = [
-			DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] ,
-			DST[0],DST[1] , DST[4],DST[5] , DST[6],DST[7] ,
-		];
-		var uv = [
-			SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-			SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-		];
-	}
-	else
-	{
-		var xy = [
-			DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] ,
-			DST[2],DST[3] , DST[6],DST[7] , DST[0],DST[1] ,
-		];
-		var uv = [
-			SRC[2],SRC[3] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-			SRC[2],SRC[3] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
-		];
-	}
+	var xy = [
+		-hw,-hh , hw,-hh ,  hw,hh ,
+		-hw,-hh , hw,hh  , -hw,hh ,
+	];
 	QDFN.v2Attrib('a_xy', xy);
-	QDFN.v2Attrib('a_uv', uv);
-
-	console.log('bended', dcx);
 	return QDFN.draw(6);
 }
 
@@ -666,6 +659,10 @@ function render(){
 	requestAnimationFrame(render);
 }
 requestAnimationFrame(render);
+/*
+	uniform float u_cof[11];
+	GL.uniform1fv(LOC.u_cof, co);
+*/
 </script>
 
 </body></html>

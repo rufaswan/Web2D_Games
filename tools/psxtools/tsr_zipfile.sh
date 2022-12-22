@@ -42,10 +42,7 @@ while [ "$1" ]; do
 		fn="$t1.$ext"
 		[ -f "$fn" ] && rm -vf "$fn"
 
-		zip  -j -0  "$fn"  "$t1"/*
-		#cd "$tit"
-		#zip  ../"$fn"  *
-		#cd "$loc"
+		zip  -j -0  "$fn"  "$t1"/*  -x '*.bak'
 	fi
 
 	case "$t1" in

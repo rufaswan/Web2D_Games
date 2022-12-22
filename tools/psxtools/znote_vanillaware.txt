@@ -88,20 +88,20 @@ ps4 13sent/cutin_EnemyDamage.mbs
 	8 - 9 - | 1d8 - 20c - | 1*20 1*30
 	a - b - | 23c -   - - | 1*18  -
 ==============================
-FMBP      ver  bit     pos  toc  cnt  anim   track  frame  meta   key    limb   src    dst    clr    0
-ps2 grim  c9   le int   a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3 s5
-ps2 odin  55   le int   a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3 s5
-nds kuma  66   le flt   a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3 s5
-wii mura  66   BE flt   a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3 s5
-psp gran  6b   le int   e8  84    9   s6*30  s7*14  s5*20  s4*24  s3*18  s1*c   s8*60  <-     <-     s0 s2
-vit mura  6d   le flt   e0  7c    9   s6*30  s7*14  s5*20  s4*24  s3*18  s1*c   s8*78  <-     <-     s0 s2
-vit drag  6e   le flt   e4  80    9   s6*30  s7*14  s5*20  s4*24  s3*1c  s1*c   s8*78  <-     <-     s0 s2
-vit odin  72   le flt  120  c8   10   s6*30  s7*18  s5*20  s4*24  s3*1c  s1*10  s9*78  <-     <-     s0 s2 s8
-ps3 drag  6e   BE flt   e4  74   11   s9*30  sa*14  s8*20  s7*24  s6*1c  s4*c   s1*30  s2*30  s0*18  s3 s5
-ps3 odin  72   BE flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
-ps4 drag  72   le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
-ps4 odin  72   le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3 s5 sb
-ps4 sent  76   le flt  120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3 s5 sb
+FMBP      ver  bit  pos  toc  cnt  anim   track  frame  mat4   key    limb   src    dst    clr    bg=0
+ps2 grim  c9   le    a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3*50 s5*8
+ps2 odin  55   le    a0  54   11   s9*30  sa*8   s8*20  s7*30  s6*18  s4*18  s1*20  s2*20  s0*20  s3*50 s5*8
+nds kuma  66   le    a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3*50 s5*8
+wii mura  66   BE    a0  54   11   s9*30  sa*10  s8*20  s7*24  s6*18  s4*c   s1*30  s2*30  s0*18  s3*50 s5*8
+psp gran  6b   le    e8  84    9   s6*30  s7*14  s5*20  s4*24  s3*18  s1*c   s8*60  <-     <-     s0*50 s2*8
+vit mura  6d   le    e0  7c    9   s6*30  s7*14  s5*20  s4*24  s3*18  s1*c   s8*78  <-     <-     s0*50 s2*8
+vit drag  6e   le    e4  80    9   s6*30  s7*14  s5*20  s4*24  s3*1c  s1*c   s8*78  <-     <-     s0*50 s2*8
+vit odin  72   le   120  c8   10   s6*30  s7*18  s5*20  s4*24  s3*1c  s1*10  s9*78  <-     <-     s0*50 s2*8 s8*14
+ps3 drag  6e   BE    e4  74   11   s9*30  sa*14  s8*20  s7*24  s6*1c  s4*c   s1*30  s2*30  s0*18  s3*50 s5*8
+ps3 odin  72   BE   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
+ps4 drag  72   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
+ps4 odin  72   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
+ps4 sent  76   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
 swi sent
 swi grim
 ps4 grim

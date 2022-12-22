@@ -3,7 +3,7 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Perspective Test (DST * Minv)</title>
+<title>Quad Perspective Test (Fullscreen * Minv)</title>
 @@<quad-inc.css>@@
 @@<qdfn.js>@@
 
@@ -25,8 +25,8 @@ var vert_src = `
 		v3 = vec3(a_xy, 1.0) * u_mat3;
 			v3.x *= u_pxsize.z;
 			v3.y *= u_pxsize.w;
-		v_tuv = v3;
 
+		v_tuv = v3;
 		gl_Position = vec4(
 			a_xy.x * u_pxsize.x ,
 			a_xy.y * u_pxsize.y ,
@@ -40,8 +40,13 @@ var frag_src = `
 
 	vec2  v2;
 	void main(void){
+		if ( v_tuv.z == 0.0 )
+			discard;
+
 		v2.x = v_tuv.x / v_tuv.z;
 		v2.y = v_tuv.y / v_tuv.z;
+		if ( v2.x < 0.0 || v2.x > 1.0 )  discard;
+		if ( v2.y < 0.0 || v2.y > 1.0 )  discard;
 		gl_FragColor = texture2D(u_tex, v2);
 	}
 `;
@@ -60,45 +65,15 @@ function quadDraw()
 	var mat3 = getTransMat3(SRC, DST, true);
 	QDFN.setMatrix3fv('u_mat3', mat3);
 
-	var scx = findIntersectPoint(SRC);
-	var dcx = findIntersectPoint(DST);
+	var box = QDFN.getBoundingClientRect();
+	var hw  = box.width  * 0.5;
+	var hh  = box.height * 0.5;
 
-	// for simple and twisted
-	if ( dcx !== -1 )
-	{
-		var xy = [
-			dcx[0],dcx[1] , DST[0],DST[1] , DST[2],DST[3] ,
-			dcx[0],dcx[1] , DST[2],DST[3] , DST[4],DST[5] ,
-			dcx[0],dcx[1] , DST[4],DST[5] , DST[6],DST[7] ,
-			dcx[0],dcx[1] , DST[6],DST[7] , DST[0],DST[1] ,
-		];
-		QDFN.v2Attrib('a_xy', xy);
-
-		console.log('simple and twisted', dcx);
-		return QDFN.draw(12);
-	}
-
-	// bended
-	var area1 = quadArea(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
-	var area2 = quadArea(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
-
-	if ( area1 < area2 )
-	{
-		var xy = [
-			DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] ,
-			DST[0],DST[1] , DST[4],DST[5] , DST[6],DST[7] ,
-		];
-	}
-	else
-	{
-		var xy = [
-			DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] ,
-			DST[2],DST[3] , DST[6],DST[7] , DST[0],DST[1] ,
-		];
-	}
+	var xy = [
+		-hw,-hh , hw,-hh ,  hw,hh ,
+		-hw,-hh , hw,hh  , -hw,hh ,
+	];
 	QDFN.v2Attrib('a_xy', xy);
-
-	console.log('bended', dcx);
 	return QDFN.draw(6);
 }
 
