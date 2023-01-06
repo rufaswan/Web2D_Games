@@ -462,3 +462,36 @@ khronos.org/opengl/wiki/Primitive
 		GL_TRIANGLE_FAN    [0 ,   1,2 ,   2,3 ,   3,4 ,   4,1] =  9 indices
 		GL_TRIANGLE_STRIP  impossible
 			ABCDEF = ABC , BCD , CDE , DEF
+
+wiki.gbl.gg/w/Vampire_Savior/Hitbox
+
+	Box colors:
+		Blue  : Hittable area
+		Red   : Attack area
+		Green : Push box. Physical collision/existence box
+
+	Note about green boxes:
+	Two green boxes can not overlap,
+	this prevents characters from walking through one another.
+
+	With the absence of a green box a character can move through another character
+	(the characters do not collide, hence "collision box"),
+	such as with Lei-Lei or Felicia's forward dashes or when tech rolling from a knockdown.
+
+	When a character has no blue box they are invulnerable (can not be hit),
+	though they may (or may not) still posses a green box and be able to push characters or objects around.
+
+askubuntu.com/questions/167088/keyboard-shortcut-equivalent-to-right-clicking
+
+	The keysym to trigger the context menu is called Menu.
+	It can be bound to an arbitrary keycode like this:
+		xmodmap -e 'keycode 68 = Menu'
+
+	Can be manually triggered from the command line like:
+		xdotool key Menu
+
+	And to find out the keycode it is currently bound to one can do:
+		xmodmap -pke | grep Menu
+
+	To figure out what keycode a key emits one can use:
+		xev

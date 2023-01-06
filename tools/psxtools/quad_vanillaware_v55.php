@@ -22,9 +22,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-json.inc';
+require 'class-pixlines.inc';
 require 'quad.inc';
 
-php_req_extension('json_dncode', 'json');
+php_req_extension('json_decode', 'json');
 
 define('S4_0', 1 << 0); // 1
 define('S4_DISABLE_DSTQUAD', 1 << 1);
@@ -71,17 +72,71 @@ define('S8_21', 1 << 21);
 define('S8_22', 1 << 22);
 define('S8_23', 1 << 23);
 //////////////////////////////
+function list_pad( &$list, $id )
+{
+	$id = (int)$id;
+	while ( ! isset($list[$id]) )
+		$list[] = array();
+	return;
+}
+//////////////////////////////
 function s9sas8_loop( &$quad, &$json )
 {
 	return;
 }
 //////////////////////////////
-function s6s4_loop( &$quad, &$json )
+function s6s4_loop( &$quad, &$json, $dir, $line )
 {
+	$grid = new PixLines;
+	foreach ( $json['s6'] as $s6k => $s6v )
+	{
+		if ( empty($s6v) )
+			continue;
+		printf("s6[%d].flags  %s\n", $s6k, $s6v['bits']);
+
+		$fn = sprintf('%s/%04d.clut', $dir, $s6k);
+		$grid->new();
+
+		if ( $s6v['s4'][1] > 0 )
+		{
+			for ( $i=0; $i < $s6v['s4'][1]; $i++ )
+			{
+				$s4k = $s6v['s4'][0] + $i;
+				$s4v = $json['s4'][$s4k];
+				printf("  s4[%d].flags  %s\n", $s4k, $s4v['bits']);
+
+				$s2k = $s4v['s0s1s2'][2];
+				$s2v = $json['s2'][$s2k];
+
+				$grid->addquad($s2v, "\x0e");
+			} // for ( $i=0; $i < $s6v['s4'][1]; $i++ )
+		}
+
+		if ( $s6v['s5'][1] > 0 )
+		{
+			for ( $i=0; $i < $s6v['s5'][1]; $i++ )
+			{
+				$s5k = $s6v['s5'][0] + $i;
+				$s5v = $json['s5'][$s5k];
+				printf("  s5[%d].flags  %s\n", $s5k, $s5v['bits']);
+
+				$s3k = $s5v['s3'];
+				$s3v = $json['s3'][$s3k];
+
+				$grid->addquad($s3v['rect'], "\x0d");
+			} // for ( $i=0; $i < $s6v['s5'][1]; $i++ )
+		}
+
+		if ( $line )
+		{
+			$img = $grid->draw();
+			save_clutfile($fn, $img);
+		}
+	} // foreach ( $json['s6'] as $s6k => $s6v )
 	return;
 }
 //////////////////////////////
-function vanilla( $fname )
+function vanilla( $line, $fname )
 {
 	$json = file_get_contents($fname);
 	if ( empty($json) )  return;
@@ -89,8 +144,10 @@ function vanilla( $fname )
 	$json = json_decode($json, true);
 	if ( empty($json) )  return;
 
-	$quad = load_idtagfile( $json['tag'] );
-	s6s4_loop($quad, $json);
+	$dir = str_replace('.', '_', $fname);
+
+	$quad = load_idtagfile( $json['id3'] );
+	s6s4_loop($quad, $json, $dir, $line);
 	s9sas8_loop($quad, $json);
 
 	$quad = json_pretty($quad, '');
@@ -98,5 +155,11 @@ function vanilla( $fname )
 	return;
 }
 
+$line = false;
 for ( $i=1; $i < $argc; $i++ )
-	vanilla( $argv[$i] );
+{
+	if ( is_file($argv[$i]) )
+		vanilla( $line, $argv[$i] );
+	else
+		$line = $argv[$i];
+}

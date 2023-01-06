@@ -12,6 +12,7 @@
 <script>var DOM_MAIN = document.getElementsByTagName('main')[0];</script>
 
 @@<mobile-user-agent.js>@@
+@@<mobile-log-screen.js>@@
 @@<mobile-log-js.js>@@
 @@<mobile-log-css.js>@@
 @@<mobile-webgl.js>@@

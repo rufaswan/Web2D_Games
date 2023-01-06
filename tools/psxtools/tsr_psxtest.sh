@@ -1,5 +1,5 @@
-<?php
-/*
+#!/bin/bash
+<<'////'
 [license]
 Copyright (C) 2019 by Rufas Wan
 
@@ -19,27 +19,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
- */
-require 'common.inc';
+////
+tmp='/tmp/psxtest'
 
-$img = array(
-	'cc' => 0x10,
-	'w' => 0,
-	'h' => 0,
-	'pal' => grayclut(0x10),
-	'pix' => str_repeat(ZERO, 0x100*0x100),
-);
-for ( $i=0; $i < 0x10; $i++ )
-	$img['pix'][$i] = chr($i*0x11);
-save_clutfile("gray-16.clut", $img);
+mkdir -p "$tmp"
+find "$tmp" -xtype l -delete -print
 
-$img = array(
-	'cc' => 0x100,
-	'w' => 0,
-	'h' => 0,
-	'pal' => grayclut(0x100),
-	'pix' => str_repeat(ZERO, 0x100*0x100*4),
-);
-for ( $i=0; $i < 0x100; $i++ )
-	$img['pix'][$i] = chr($i);
-save_clutfile("gray-256.clut", $img);
+ln -s "$PWD"/*.inc  "$tmp"

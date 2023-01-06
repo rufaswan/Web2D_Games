@@ -25,6 +25,15 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 //   GNU GPL v2 or later
 require "common.inc";
 
+function get_4bit( $bit, $b0, $b1, $b2, $b3 )
+{
+	$t0 = ($b0 >> $bit) & 1;
+	$t1 = ($b1 >> $bit) & 1;
+	$t2 = ($b2 >> $bit) & 1;
+	$t3 = ($b3 >> $bit) & 1;
+	return ($t0 | ($t1 << 1) | ($t2 << 2) | ($t3 << 3));
+}
+
 function swapval( &$n1, &$n2 )
 {
 	$t1 = $n1;
@@ -34,6 +43,10 @@ function swapval( &$n1, &$n2 )
 //////////////////////////////////////////////////
 function data_vsp0( &$file, &$vsp , $st )
 {
+	// image is in 8-pixel width blocks
+	// data is column-based , from top to bottom , then left-to-right
+	// one column is 4-bit
+	// one loop is 4*h
 	$data = array();
 	$bc   = array();
 	$bp   = array();
@@ -151,14 +164,14 @@ function data_vsp0( &$file, &$vsp , $st )
 			// b1 = 01234567
 			// b2 = 01234567
 			// b3 = 01234567
-			$data[ $loc + 0 ] = (($b0>>7) & 1) | (($b1>>6) & 2) | (($b2>>5) & 4) | (($b3>>4) & 8);
-			$data[ $loc + 1 ] = (($b0>>6) & 1) | (($b1>>5) & 2) | (($b2>>4) & 4) | (($b3>>3) & 8);
-			$data[ $loc + 2 ] = (($b0>>5) & 1) | (($b1>>4) & 2) | (($b2>>3) & 4) | (($b3>>2) & 8);
-			$data[ $loc + 3 ] = (($b0>>4) & 1) | (($b1>>3) & 2) | (($b2>>2) & 4) | (($b3>>1) & 8);
-			$data[ $loc + 4 ] = (($b0>>3) & 1) | (($b1>>2) & 2) | (($b2>>1) & 4) | (($b3   ) & 8);
-			$data[ $loc + 5 ] = (($b0>>2) & 1) | (($b1>>1) & 2) | (($b2   ) & 4) | (($b3<<1) & 8);
-			$data[ $loc + 6 ] = (($b0>>1) & 1) | (($b1   ) & 2) | (($b2<<1) & 4) | (($b3<<2) & 8);
-			$data[ $loc + 7 ] = (($b0   ) & 1) | (($b1<<1) & 2) | (($b2<<2) & 4) | (($b3<<3) & 8);
+			$data[ $loc + 0 ] = get_4bit(7, $b0, $b1, $b2, $b3);
+			$data[ $loc + 1 ] = get_4bit(6, $b0, $b1, $b2, $b3);
+			$data[ $loc + 2 ] = get_4bit(5, $b0, $b1, $b2, $b3);
+			$data[ $loc + 3 ] = get_4bit(4, $b0, $b1, $b2, $b3);
+			$data[ $loc + 4 ] = get_4bit(3, $b0, $b1, $b2, $b3);
+			$data[ $loc + 5 ] = get_4bit(2, $b0, $b1, $b2, $b3);
+			$data[ $loc + 6 ] = get_4bit(1, $b0, $b1, $b2, $b3);
+			$data[ $loc + 7 ] = get_4bit(0, $b0, $b1, $b2, $b3);
 		}
 
 		swapval( $bc[0], $bp[0] );
@@ -177,17 +190,17 @@ function data_vsp0( &$file, &$vsp , $st )
 
 function clut_vsp0( &$file , $st )
 {
-	$clut = "";
+	$clut = '';
 	for ( $i=0; $i < 0x30; $i += 3 )
 	{
 		$cb = ord( $file[$st+$i+0] );
 		$cr = ord( $file[$st+$i+1] );
 		$cg = ord( $file[$st+$i+2] );
 
-		$clut .= int_clamp($cr * 0x11, 0, BIT8);
-		$clut .= int_clamp($cg * 0x11, 0, BIT8);
-		$clut .= int_clamp($cb * 0x11, 0, BIT8);
-		$clut .= BYTE; // alpha , 0 = trans , 255 = solid
+		$r = int_clamp($cr * 0x11, 0, BIT8);
+		$g = int_clamp($cg * 0x11, 0, BIT8);
+		$b = int_clamp($cb * 0x11, 0, BIT8);
+		$clut .= chr($r) . chr($g) . chr($b) . BYTE;
 	}
 	return $clut;
 }

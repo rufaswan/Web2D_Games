@@ -39,11 +39,13 @@ function pc98toc( &$file, $pos, $base )
 	$of = str2int($file, $pos+0x1a, 2);
 	$sz = str2int($file, $pos+0x1c, 3);
 
-	$dir = ( $ty & 0x10 ) ? "DIR " : "FILE";
+	$dir = ( $ty & 0x10 ) ? 'DIR ' : 'FILE';
 	$off = $base + $of * 0x400;
 
+	if ( ! empty($ex) )
+		$fn .= ".$ex";
 	$fn = strtolower($fn);
-	$toc = array($fn, $ex, $dir, $off, $sz);
+	$toc = array($fn, $dir, $off, $sz);
 	return $toc;
 }
 
@@ -60,20 +62,16 @@ function scanpc98( &$file, $st, $ed, $base, $par )
 		if ( empty($toc) )
 			continue;
 
-		list($fn,$ex,$dir,$off,$sz) = $toc;
+		list($fn,$dir,$off,$sz) = $toc;
 		if ( $fn[0] == '.' )
 			continue;
 
+		$log = sprintf("%6x , %s , %6x , %s/%s\n", $off, $dir, $sz, $par, $fn);
 		if ( $dir === 'FILE' )
-		{
-			$log = sprintf("%6x , %s , %6x , %s/%s.%s\n", $off, $dir, $sz, $par, $fn, $ex);
-			save_file("$par/$fn.$ex", substr($file, $off, $sz));
-		}
+			save_file("$par/$fn", substr($file, $off, $sz));
 		else
-		{
-			$log = sprintf("%6x , %s , %6x , %s/%s\n", $off, $dir, $sz, $par, $fn);
 			$log .= $func($file, $off, $off+0x400, $base, "$par/$fn");
-		}
+
 		echo $log;
 		$txt .= $log;
 
@@ -93,10 +91,12 @@ function pc98( $fname )
 	if ( strlen($file) != 0x134000 )
 		return;
 
+	$dir = str_replace('.', '_', $fname);
+
 	$st = 0x1400;
 	$ed = 0x2400;
-	$txt = scanpc98( $file, 0x1400, 0x2400, 0x2400, '.' );
-	save_file("$fname.txt", $txt);
+	$txt = scanpc98( $file, 0x1400, 0x2400, 0x2400, $dir );
+	save_file("$dir/hdmlist.txt", $txt);
 	return;
 }
 

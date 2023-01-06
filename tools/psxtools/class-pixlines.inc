@@ -28,7 +28,7 @@ class PixLines
 	private $line;
 	private $point;
 
-	private function drawquad( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4, $clr="\x0e" )
+	private function drawquad( $x1, $y1, $x2, $y2, $x3, $y3, $x4, $y4, $clr )
 	{
 		$this->drawline($x1, $y1, $x2, $y2, $clr);
 		$this->drawline($x2, $y2, $x3, $y3, $clr);
@@ -37,7 +37,7 @@ class PixLines
 		return;
 	}
 
-	private function drawline( $x1, $y1, $x2, $y2, $clr="\x0d" )
+	private function drawline( $x1, $y1, $x2, $y2, $clr )
 	{
 		if ( abs($x1-$x2) > abs($y1-$y2) )
 		{
@@ -80,7 +80,7 @@ class PixLines
 		return;
 	}
 
-	private function drawpoint( $x1, $y1, $clr="\x0c" )
+	private function drawpoint( $x1, $y1, $clr )
 	{
 		// center 0,0
 		$x = (int)($this->canvas['hw'] + $x1);
@@ -134,16 +134,16 @@ class PixLines
 	{
 		foreach ( $this->quad as $qd )
 		{
-			$this->addpoint($qd[0], $qd[1]);
-			$this->addpoint($qd[2], $qd[3]);
-			$this->addpoint($qd[4], $qd[5]);
-			$this->addpoint($qd[6], $qd[7]);
+			$this->addpoint($qd[0], $qd[1], "\x0c");
+			$this->addpoint($qd[2], $qd[3], "\x0c");
+			$this->addpoint($qd[4], $qd[5], "\x0c");
+			$this->addpoint($qd[6], $qd[7], "\x0c");
 		}
 
 		foreach ( $this->line as $ln )
 		{
-			$this->addpoint($ln[0], $ln[1]);
-			$this->addpoint($ln[2], $ln[3]);
+			$this->addpoint($ln[0], $ln[1], "\x0c");
+			$this->addpoint($ln[2], $ln[3], "\x0c");
 		}
 		return;
 	}
@@ -153,9 +153,12 @@ class PixLines
 		$qd = '';
 		$arg = func_get_args();
 
-		if ( count($arg) === 1 && count($arg[0]) === 8 )
-			$qd = $arg[0];
-		if ( count($arg) === 8 )
+		if ( count($arg) === 2 && count($arg[0]) === 8 )
+		{
+			$qd   = $arg[0];
+			$qd[] = $arg[1];
+		}
+		if ( count($arg) === 9 )
 			$qd = $arg;
 
 		if ( empty($qd) )
@@ -172,9 +175,12 @@ class PixLines
 		$ln = '';
 		$arg = func_get_args();
 
-		if ( count($arg) === 1 && count($arg[0]) === 4 )
-			$ln = $arg[0];
-		if ( count($arg) === 4 )
+		if ( count($arg) === 2 && count($arg[0]) === 4 )
+		{
+			$ln   = $arg[0];
+			$ln[] = $arg[1];
+		}
+		if ( count($arg) === 5 )
 			$ln = $arg;
 
 		if ( empty($ln) )
@@ -191,9 +197,12 @@ class PixLines
 		$pt = '';
 		$arg = func_get_args();
 
-		if ( count($arg) === 1 && count($arg[0]) === 2 )
-			$pt = $arg[0];
-		if ( count($arg) === 2 )
+		if ( count($arg) === 2 && count($arg[0]) === 2 )
+		{
+			$pt   = $arg[0];
+			$pt[] = $arg[1];
+		}
+		if ( count($arg) === 3 )
 			$pt = $arg;
 
 		if ( empty($pt) )
@@ -220,13 +229,13 @@ class PixLines
 		$this->canvas_grid();
 
 		foreach( $this->quad as $qd )
-			$this->drawquad ($qd[0] , $qd[1] , $qd[2] , $qd[3] , $qd[4] , $qd[5] , $qd[6] , $qd[7]);
+			$this->drawquad ($qd[0] , $qd[1] , $qd[2] , $qd[3] , $qd[4] , $qd[5] , $qd[6] , $qd[7], $qd[8]);
 
 		foreach( $this->line as $ln )
-			$this->drawline ($ln[0] , $ln[1] , $ln[2] , $ln[3]);
+			$this->drawline ($ln[0] , $ln[1] , $ln[2] , $ln[3], $ln[4]);
 
 		foreach( $this->point as $pt )
-			$this->drawpoint($pt[0] , $pt[1]);
+			$this->drawpoint($pt[0] , $pt[1] , $pt[2]);
 
 		return $this->canvas;
 	}

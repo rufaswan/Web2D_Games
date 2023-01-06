@@ -5,6 +5,7 @@ CMNR + 3c = FMBP
 
 //////////////////////////////
 s4.flags   0 lhu  1 2 4 8  10 20
+s5.flags   4 lw   1 2 4 8  10 20 40 80  200
 s6.flags  16 lhu  1 2 4 8  10
 s8.flags   8 lw   1 2 4 8  10 20 40 80  100 400 800  1000 2000
 
@@ -60,7 +61,7 @@ FMBP  ab5b00  gwendlyn.mbp
 		172304  lw  a3, 7c(a3)
 	80  // mbp name[1f] + NULL
 
-	s0*20 color
+	s0*20  keyframes layer fog data
 		00
 		01
 		02
@@ -93,7 +94,7 @@ FMBP  ab5b00  gwendlyn.mbp
 		1d
 		1e
 		1f
-	s1*20 src
+	s1*20  keyframes layer src data
 		00
 		01
 		02
@@ -126,7 +127,7 @@ FMBP  ab5b00  gwendlyn.mbp
 		1d
 		1e
 		1f
-	s2*20 dst
+	s2*20  keyframes layer dst data
 		00
 		01
 		02
@@ -159,72 +160,72 @@ FMBP  ab5b00  gwendlyn.mbp
 		1d
 		1e
 		1f
-	s3*50 (bg skip)
-		00
+	s3*50  keyframes hitbox data (bg skip)
+		00  // x1
 			172904  lwc1  f3,  0(v1) -> 10(a1)
 			17358c  lwc1  f0,  0(t1)
 			173594  lwc1  f1,  0(v1)
 			173618  lwc1  f3,  0(v1) -> 10(a0)
-		04
+		04  // y1
 			172908  lwc1  f2,  4(v1) -> 14(a1)
 			1735a4  lwc1  f0,  4(t1)
 			1735a8  lwc1  f1,  4(v1)
 			17361c  lwc1  f2,  4(v1) -> 14(a0)
-		08
+		08  // x2
 			17290c  lwc1  f1,  8(v1) -> 18(a1)
 			173620  lwc1  f1,  8(v1) -> 18(a0)
-		0c
+		0c  // y2
 			172910  lwc1  f0,  c(v1) -> 1c(a1)
 			173624  lwc1  f0,  c(v1) -> 1c(a0)
-		10
+		10  // x3
 			172924  lwc1  f3, 10(v1) -> 20(a1)
 			173638  lwc1  f3, 10(v1) -> 20(a0)
-		14
+		14  // y3
 			172928  lwc1  f2, 14(v1) -> 24(a1)
 			17363c  lwc1  f2, 14(v1) -> 24(a0)
-		18
+		18  // x4
 			17292c  lwc1  f1, 18(v1) -> 28(a1)
 			173640  lwc1  f1, 18(v1) -> 28(a0)
-		1c
+		1c  // y4
 			172930  lwc1  f0, 1c(v1) -> 2c(a1)
 			173644  lwc1  f0, 1c(v1) -> 2c(a0)
-		20
+		20  // ?1x
 			172944  lwc1  f3, 20(v1) -> 30(a1)
 			173658  lwc1  f3, 20(v1) -> 30(a0)
-		24
+		24  // ?1y
 			172948  lwc1  f2, 24(v1) -> 34(a1)
 			17365c  lwc1  f2, 24(v1) -> 34(a0)
-		28
+		28  // ?1z
 			17294c  lwc1  f1, 28(v1) -> 38(a1)
 			173660  lwc1  f1, 28(v1) -> 38(a0)
-		2c
+		2c  // ?2x
 			172950  lwc1  f0, 2c(v1) -> 3c(a1)
 			173664  lwc1  f0, 2c(v1) -> 3c(a0)
-		30
+		30  // ?2y
 			172964  lwc1  f3, 30(v1) -> 40(a1)
 			173678  lwc1  f3, 30(v1) -> 40(a0)
-		34
+		34  // ?2z
 			172968  lwc1  f2, 34(v1) -> 44(a1)
 			17367c  lwc1  f2, 34(v1) -> 44(a0)
-		38
+		38  // ?3x
 			17296c  lwc1  f1, 38(v1) -> 48(a1)
 			173680  lwc1  f1, 38(v1) -> 48(a0)
-		3c
+		3c  // ?3y
 			172970  lwc1  f0, 3c(v1) -> 4c(a1)
 			173684  lwc1  f0, 3c(v1) -> 4c(a0)
-		40
+		40  // ?3z
 			172984  lwc1  f3, 40(v1) -> 50(a1)
 			173698  lwc1  f3, 40(v1) -> 50(a0)
-		44
+		44  // ?4x
 			172988  lwc1  f2, 44(v1) -> 54(a1)
 			17369c  lwc1  f2, 44(v1) -> 54(a0)
-		48
+		48  // ?4y
 			17298c  lwc1  f1, 48(v1) -> 58(a1)
 			1736a0  lwc1  f1, 48(v1) -> 58(a0)
-		4c
+		4c  // ?4z
 			172990  lwc1  f0, 4c(v1) -> 5c(a1)
 			1736a4  lwc1  f0, 4c(v1) -> 5c(a0)
-	s4*18 layer
+	s4*18  keyframes layer set
 		00  // flags
 			16c658  lhu  a0, 0(s4)
 				andi  2 // disable draw = skip all
@@ -268,17 +269,17 @@ FMBP  ab5b00  gwendlyn.mbp
 				16cbec  lhu  v0, 14(s7)  v0 <<= 5 // inter 2 next1
 			16
 				16cc14  lhu  v0, 16(v0)  v0 <<= 5 // inter 2 next2
-		// inter 0  08           04  10
-		// inter 1  08,0c        04  10,14
-		// inter 2  08,0a,0c,0e  04  10,12,14,16
-	s5*8 (bg skip)
+		// inter 0 = 08           04  10          = curr
+		// inter 1 = 08,0c        04  10,14       = curr  nxt1
+		// inter 2 = 08,0a,0c,0e  04  10,12,14,16 = prev  curr  nxt1  nxt2
+	s5*8  keyframes hitbox set (bg skip)
 		00  // s3 id
 			172bcc  lhu  v1, 0(a0)  v1 *= 50
-			1728dc  lhu  v0, 0(a0)
-		02  1728ec  lbu  v0, 2(a0) -> 6(a1)
-		03  1728f4  lbu  v0, 3(a0) -> 7(a1)
-		04  1728fc  lw   v0, 4(a0) -> 8(a1)
-	s6*18 key
+			1728dc  lhu  v0, 0(a0)  -> 4(a1)
+		02  1728ec  lbu  v0, 2(a0)  -> 6(a1)
+		03  1728f4  lbu  v0, 3(a0)  -> 7(a1)
+		04  1728fc  lw   v0, 4(a0)  -> 8(a1) // flags
+	s6*18  keyframes data
 		00  // x1
 			17271c  lwc1  f3,  0(v0)
 			17272c  lwc1  f0,  0(s1)
@@ -332,7 +333,7 @@ FMBP  ab5b00  gwendlyn.mbp
 			16c860  lhu  v0, 16(fp)  andi  8
 			16c980  lhu  v0, 16(fp)  andi 10
 			//?s6.flags[8] ->? andi  1
-	s7*30 meta
+	s7*30  matrix 4x4
 		00  172c80  lwc1  f1,   0(s6) // s8.flags[400] -> red
 		04  172c78  lwc1  f2,   4(s6) // s8.flags[400] -> green
 		08  172c5c  lwc1  f2,   8(s6) // s8.flags[400] -> blue
@@ -345,7 +346,7 @@ FMBP  ab5b00  gwendlyn.mbp
 		24  172a24  lwc1  f14, 24(s6) // rotate z
 		28  172a0c  lwc1  f12, 28(s6) // scale x
 		2c  172a10  lwc1  f13, 2c(s6) // scale y
-	s8*20 frame
+	s8*20  anim track fps set
 		00  // s6 id
 			172488  lhu  a0, 0(fp)  a0 *= 18
 			17248c  lhu  a2, 0(s5)  a2 *= 18
@@ -407,7 +408,7 @@ FMBP  ab5b00  gwendlyn.mbp
 			// s8.flags[80] -> sound effect/voice id
 			172080  lw   t0, 1c(s0)
 			1720b8  lw   t1, 1c(s0)
-	s9*30 anim
+	s9*30  anim data
 		00  171884  lwc1  f0, 0(v1) -> 0(a1)  // x1
 		04  17188c  lwc1  f0, 4(v1) -> 4(a1)  // y1
 		08  171894  lwc1  f0, 8(v1) -> 8(a1)  // x2
@@ -429,7 +430,7 @@ FMBP  ab5b00  gwendlyn.mbp
 		2d  // pad
 		2e
 		2f
-	sa*8 track
+	sa*8  anim track sets
 		00  // s8 set id
 			172030  lhu  a2, 0(s2)  a2 <<= 5
 			172318  lhu  a1, 0(a3)  a1 <<= 5
@@ -835,13 +836,29 @@ NONE * d0
 		172f5c  sb    v1, c3(v0)
 	c4  172f64  swc1  f0, c4(v0)
 	c8  172fc0  sb  a2, c8(v0) // s8 inter11
-	c9  172f0c  sb  v1, c9(v0)
+	c9  172f0c  sb  v1, c9(v0) // has alpha
 	ca
 		172f70  sb  v1, ca(v0)
 		172f78  sb  v1, ca(v0)
 	cb  // flags
 		172edc  sb  v1, cb(v0)
 		172eec  sb  v1, cb(v0)
+//////////////////////////////
+hitboxes
+	00  // ptr work80
+
+	s5s3
+		00  // s5 data/+8
+		02
+		03
+		04
+			1832bc  lw  v1, 4(v1)  == 2
+			1843d4  lw  v0, 4(v0)  and  s6
+			184c34  lw  v1, 4(v1)  == 2
+			185334  lw  s7, 4(v1)  == 1
+			187ad4  lw  v0, 4(v0)  andi 200 // loop all object
+		08  // s3 data/+50
+		...
 //////////////////////////////
 Char Data *
 	00  3214d4  lw  t0,  0(s0) // HP

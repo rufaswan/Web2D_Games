@@ -169,7 +169,7 @@ alpha blending
 	4  58  -1 -1 1- --  (FG.rgb - 0     ) * BG.a + BG.rgb , 0
 	5  52  -1 -1 -- 1-  (0      - FG.rgb) * BG.a + BG.rgb , 0
 //////////////////////////////
-func 16c550
+func 16bc5c
 	s6-2 == 1
 		TEX1_1 = 60
 	s6-4 == 0
@@ -179,7 +179,7 @@ func 16c550
 		stack[120] = (stack[150] << 10) | (stack[140] << 8) | stack[130]
 		s4-2 == 0
 			s4-8 == 1
-				fog = 0
+				fade = 0
 			s4-4 == 0
 				s6-2 == 0
 					s4-1 == 0
@@ -188,15 +188,15 @@ func 16c550
 						TEX1_1 = 60
 			s6-4 == 0
 				switch s4.blend
-					0  ALPHA_1 = 44 , (fog) FOGCOL = stack[120]
-					1  ALPHA_1 = 48 , (fog) FOGCOL = 0
-					2  ALPHA_1 = 42 , (fog) FOGCOL = 0
-					3  ALPHA_1 = 54 , (fog) FOGCOL = stack[120]
-					4  ALPHA_1 = 58 , (fog) FOGCOL = 0
-					5  ALPHA_1 = 52 , (fog) FOGCOL = 0
+					0  ALPHA_1 = 44 , (fade) FOGCOL = stack[120]
+					1  ALPHA_1 = 48 , (fade) FOGCOL = 0
+					2  ALPHA_1 = 42 , (fade) FOGCOL = 0
+					3  ALPHA_1 = 54 , (fade) FOGCOL = stack[120]
+					4  ALPHA_1 = 58 , (fade) FOGCOL = 0
+					5  ALPHA_1 = 52 , (fade) FOGCOL = 0
 			s6-8 == 0
 				s4-10 == 0
-					(fog) switch s4.blend
+					(fade) switch s4.blend
 						0  FOGCOL = stack[120]
 						1  FOGCOL = 0
 						2  FOGCOL = 0
@@ -211,7 +211,7 @@ func 16c550
 				else
 					( FB == 0 )  FB = 1
 	endloop
-ret 16c550
+ret 16bc5c
 //////////////////////////////
 func 171fc0
 	w80-2 == 1
@@ -287,44 +287,48 @@ func 1722d0
 ret 1722d0
 //////////////////////////////
 s4.flags
-	1  ???
-	2  skip
-	4  disable texture
-	8  ???
-	10  ???
-	20  front->back buffer
+	1  filter , 0=nearest , 1=reduced texture
+	2  0=render , 1=skip , hitbox/after effect
+	4  1=no texture/vertex color only
+	8  1=no fade/alpha
+	10  1=white fog , 0=fade fog
+	20  0=render to NONE , 1=render to gp
 	40  *not used*
 	80  *not used*
-	s4-10 == 1 , pcsx2 crash
+s5.flags
+	1  *6b4-200*  attack
+	2  *6b4-2000*  hittable
+	4  *6b4-10000*
+	8
+	10  (item)
+	20  (head)
+	40  *6b4-10000* (dragon body) block/push
+	80  *6b4-10000*
+	200  (critical strike)  dust
 s6.flags
 	1
-	2  disable all texture
-	4  disable s4.blend
-	8  disable all fog
-	10  disable front/back buffer
+	2  1=reduced texture , 0=refer s4-1
+	4  1=disable s4.blend
+	8  1=disable fade
+	10  1=disable persistence effect/motion blur
 	20  *not used*
 	40  *not used*
 	80  *not used*
 s8.flags
-	1  flip x
-	2  flip y
-	4  anim loop
-	8  anim end + cleared
+	1  1=flip x
+	2  1=flip y
+	4  1=anim loop
+	8  1=anim end + cleared
 	10  (odin)
 	20  ???
-	40  skip
-	80  sound effect playback
-	100  end all anim (odin)
+	40  1=skip
+	80  1=sound effect playback
+	100  1=end all anim (odin)
 	200  *not used*
-	400  is attachment
+	400  1=no s4,only s5
 	800  (grim)
 	1000  (grim)
 	2000  (grim)
 	4000  *not used*
 	8000  *not used*
-gs_reg
-	14  TEX1_1
-	3d  FOGCOL
-	42  ALPHA_1
-
  */

@@ -58,6 +58,16 @@ Latest stable version available on January 1st
 Can I Use?
 	Ffox  Oper  Safa
 	 3     9     3.2  CSS Table display
+	 2    10     3.2  CSS at-rule: @media
+	 2    10     3.2  CSS at-rule: @media: width media feature
+	 2    10     3.2  CSS at-rule: @media: height media feature
+	 2    10     3.2  CSS at-rule: @media: color media feature
+	 3.5  10     5    CSS at-rule: @media: aspect-ratio media feature
+	 3.5  10     3.2  CSS selector: :nth-child()
+	 3.5  10     3.2  CSS selector: :nth-of-type()
+	 3.5  10     3.2  CSS selector: :nth-last-child()
+	 3.5  10     3.2  CSS selector: :nth-last-of-type()
+	 3.5  10     3.2  CSS3 selectors
 	 3.5  10     7    CSS3 Media Queries
 	 3.5  10.5   3.2  CSS3 2D Transforms
 	 2    11.5   5    CSS at-rule: @media: orientation media feature
@@ -67,14 +77,17 @@ Can I Use?
 	 5    15     -    CSS resize property
 	10    15     4    CSS3 3D Transforms
 	 -    15     4    CSS zoom
+	 8    16     -    CSS at-rule: @media: resolution media feature
 	28    17     9    CSS Flexible Box Layout Module
 	57    23     -    CSS touch-action property
 	16    30     9    CSS Animation
 	41    35    11    CSS writing-mode property
 	31    36     9.3  CSS property: --*: var()
 	72    42     -    CSS property: offset
+	51    44    10.3  ::placeholder CSS pseudo-element
 	52    44    10.3  CSS Grid Layout (level 1)
 	59    53    12    CSS at-rule: @media: calc() expressions
+	62    55    16    Media Queries: resolution feature
 	75    66    13.4  CSS math functions min(), max() and clamp()
 	69    69    14.5  CSS at-rule: @supports: selector()
 	 -    71     -    CSS at-rule: @page: page-orientation descriptor
@@ -171,11 +184,14 @@ Can I Use?
 	64    28     9    Media Queries: interaction media features
 
 	 2     9     3.2  naturalWidth & naturalHeight image properties
+	 3.5  10     3.2  querySelector/querySelectorAll
 	18    11.6   3.2  Window.devicePixelRatio
+	 2    12.1   3.2  Element API: scrollIntoView
 	11    15     6    requestAnimationFrame
 	16    15     7    calc() as CSS unit value
 	55    15     9    CSS.supports() API
 	65    28    10    Crisp edges/pixelated images
+	64    58     -    Element API: requestFullscreen
 	 -    64     -    OffscreenCanvas
 	75    71    13.4  Web Animations API
 	63    73    14.5  gap property for Flexbox
@@ -384,3 +400,37 @@ var            typeof  console.log
 13.25          number
 [1,2,3]        object  Array
 {a:1,b:2,c:3}  object  Object
+
+
+https://upload.wikimedia.org/wikipedia/commons/6/63/Vector_Video_Standards.svg
+
+	4:3 -> (x3 = 12:9)
+		  45x   180x135
+		  80x   320x240   quarter Video Graphics Array
+		  90x   360x270
+		 160x   640x480   Video Graphics Array
+		 180x   720x540
+		 200x   800x600   Super Video Graphics Array
+		 256x  1024x768   eXtended Graphics Array
+		 360x  1440x1080
+		 400x  1600x1200  Ultra eXtended Graphics Array
+		 512x  2048x1536  Quad eXtended Graphics Array
+		 720x  2880x2160
+		1440x  5760x4320
+	16:9
+		 15x   240x135
+		 30x   480x270
+		 60x   960x540   quarter High Definition
+		 80x  1280x720   High Definition
+		120x  1920x1080  Full High Definition
+		160x  2560x1440  Wide Quad High Definition
+		240x  3840x2160  Ultra High Definition-1
+		320x  5120x2880  5K Ultra High Definition
+		480x  7680x4320  Ultra High Definition-2
+	17:9
+		 15x   256x135
+		 30x   512x270
+		 60x  1024x540
+		120x  2048x1080  2K Ultra High Definition
+		240x  4096x2160  4K Ultra High Definition
+		480x  8192x4320  8K Ultra High Definition

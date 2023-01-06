@@ -1,5 +1,5 @@
 <?php
-require "../psxtools/common.inc";
+require __DIR__ . '/../psxtools/common.inc';
 
 function intv( &$file, &$st )
 {

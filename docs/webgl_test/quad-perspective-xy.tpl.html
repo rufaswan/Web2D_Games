@@ -386,6 +386,32 @@ function matrix_inv3( M ){
 	return Mco;
 }
 
+function matrix_multi13( V, M )
+{
+	//            | a b c |
+	// | 0 1 2 |  | d e f | = | 0a+1d+2g  0b+1e+2h  0c+1f+2i |
+	//            | g h i |
+	var VM = [
+		V[0]*M[0] + V[1]*M[3] + V[2]*M[6] ,
+		V[0]*M[1] + V[1]*M[4] + V[2]*M[7] ,
+		V[0]*M[2] + V[1]*M[5] + V[2]*M[8] ,
+	];
+	return VM;
+}
+
+function matrix_multi31( M, V )
+{
+	// | 0 1 2 |  | a |   | 0a+1b+2c |
+	// | 3 4 5 |  | b | = | 3a+4b+5c |
+	// | 6 7 8 |  | c |   | 6a+7b+8c |
+	var MV = [
+		M[0]*V[0] + M[1]*V[1] + M[2]*V[2] ,
+		M[3]*V[0] + M[4]*V[1] + M[5]*V[2] ,
+		M[6]*V[0] + M[7]*V[1] + M[8]*V[2] ,
+	];
+	return MV;
+}
+
 function matrix_multi33( M1, M2 ){
 	//            | 1 0 0 |
 	// M * Minv = | 0 1 0 | or identify matrix

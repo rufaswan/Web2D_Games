@@ -19,92 +19,69 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
-$gp_dat = array(
-	"adisk.dat" => array("disk", 1),
-	"amus.dat"  => array("mus",  1),
-	"amse.dat"  => array("mse",  1),
-	"awav.dat"  => array("wav",  1),
-
-	"amap.dat"  => array("map",  1),
-	"agame.dat" => array("game", 1),
-	"asnd.dat"  => array("snd",  1),
-
-	"acg.dat"   => array("cg",   1),
-	"bcg.dat"   => array("cg",   2),
-	"ccg.dat"   => array("cg",   3),
-	"dcg.dat"   => array("cg",   4),
-	"ecg.dat"   => array("cg",   5),
-	"fcg.dat"   => array("cg",   6),
-	"gcg.dat"   => array("cg",   7),
-	"hcg.dat"   => array("cg",   8),
-
-	// gaiji.dat
-	// ag00.dat
-	// amus_[al3|all|amb|aym|bee|mgn|otm|oy|psg|r41|r42|rg2].dat
-);
-//////////////////////////////
-function datmeta( $fname )
-{
-	global $gp_dat;
-	foreach ( $gp_dat as $dat => $meta )
-	{
-		if ( stripos($fname, $dat) !== FALSE )
-			return $meta;
-	}
-	return array(0,0,0);
-}
-//////////////////////////////
 function datfile( $fname )
 {
-	list($dir,$ind) = datmeta($fname);
-	if ( $ind == 0 )  return;
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	$fp = fopen($fname, "rb");
-	if ( ! $fp )  return;
+	$fname = strtolower($fname);
+	$mat = array();
+	preg_match('|([a-z])([a-z]+)\.([a-z]+)|', $fname, $mat);
 
-	@mkdir( $dir, 0755, true );
+	// 0=adisk.dat  1=a  2=disk  3=dat
+	//print_r($mat);
 
-	$st = fp2int($fp, 0, 2) * 0x100 - 0x100;
-	$ed = fp2int($fp, 2, 2) * 0x100 - 0x100;
+	if ( $mat[3] !== 'dat' )
+		return;
+
+	$als = '-abcdefghijklmnopqrstuvwxyz';
+	$fid = strpos($als, $mat[1]);
+
+	$txt = '';
+	$dir = $mat[2];
+
+	$st = str2int($file, 0, 2);
+	$ed = str2int($file, 2, 2);
+		$st = ($st - 1) << 8;
+		$ed = ($ed - 1) << 8;
 
 	$id = 0;
-	$hed = "";
 	while ( $st < $ed )
 	{
-		$arc = fp2int($fp, $st+0, 1);
-		$aid = fp2int($fp, $st+1, 1);
+		$fdi_i = ord( $file[$st+0] );
+		$fdi_d = ord( $file[$st+1] );
 			$id++;
 			$st += 2;
 
-		if ( $arc != $ind )
+		// not on this disk
+		if ( $fdi_i !== $fid )
 			continue;
 
-		// dat header
-		$cur = fp2int( $fp, ($aid+0)*2, 2 ) * 0x100 - 0x100;
-		$nxt = fp2int( $fp, ($aid+1)*2, 2 ) * 0x100 - 0x100;
-		$fsz = $nxt - $cur;
+		// File EOC
+		if ( $fdi_i === 0x1a )
+			break;
 
-		// extract file
-		$dn = $dir;
-		$fn = sprintf("%03d.dat", $id);
-		@mkdir( $dn, 0755, true );
+		// get offset than calculate size
+		$off1 = str2int($file, ($fdi_d + 0) * 2, 2);
+		$off2 = str2int($file, ($fdi_d + 1) * 2, 2);
+			$off1 = ($off1 - 1) << 8;
+			$off2 = ($off2 - 1) << 8;
+			$size = $off2 - $off1;
 
-		fseek( $fp, $cur, SEEK_SET );
-		file_put_contents( "$dn/$fn", fread($fp, $fsz) );
+		$fn  = sprintf('%s/%04d.bin', $dir, $id-1);
+		$log = sprintf("%8x , %8x , %s , %s\n", $off1, $size, $fn, $fname);
 
-		// logging
-		$ent = sprintf("%8x , %8x , %8x , %s\n", $st , $cur , $fsz , $fn);
-		echo $ent;
-		$hed .= $ent;
-	}
+		$txt .= $log;
+		echo $log;
 
-	file_put_contents("{$dir}_dat.txt", $hed, FILE_APPEND);
-	fclose($fp);
+		save_file($fn, substr($file, $off1, $size));
+	} // while ( $st < $ed )
+
+	save_file("$dir/{$mat[1]}.txt", $txt);
 	return;
 }
 
-if ( $argc == 1 )  exit();
 for ( $i=1; $i < $argc; $i++ )
 	datfile( $argv[$i] );

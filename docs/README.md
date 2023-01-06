@@ -3,8 +3,8 @@
 * WebGL Quad Player is one-page web app, using only Javascript and HTML5
   * updates is located at `docs/quad_player`
   * Online version :
-    * http://rufaswan.github.io/Web2D_Games/quad_player/quad-frame.html
-    * http://rufaswan.github.io/Web2D_Games/quad_player/quad-anim.html
+    * http://rufaswan.github.io/Web2D_Games/__quad_player_old/quad-frame.html
+    * http://rufaswan.github.io/Web2D_Games/__quad_player_old/quad-anim.html
   * Dev Test
     * http://rufaswan.github.io/Web2D_Games/mobile_test/mobile.tpl.html
     * http://rufaswan.github.io/Web2D_Games/mobile_test/screen.tpl.html
