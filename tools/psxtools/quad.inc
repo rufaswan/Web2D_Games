@@ -38,7 +38,7 @@ function load_idtagfile( $pfx )
 	if ( empty($fn) )
 		return array();
 
-	$data = array('Tag' => array());
+	$tag  = array();
 	$head = '';
 	foreach ( file($fn) as $line )
 	{
@@ -51,18 +51,34 @@ function load_idtagfile( $pfx )
 			$head = trim($line, '[]');
 		else
 		{
-			if ( ! isset( $data['Tag'][$head] ) )
-				$data['Tag'][$head] = array();
-			$data['Tag'][$head][] = $line;
+			if ( ! isset( $tag[$head] ) )
+				$tag[$head] = array();
+			$tag[$head][] = $line;
 		}
 	} // foreach ( file($fn) as $line )
 
-	foreach ( $data['Tag'] as $head => $line )
+	foreach ( $tag as $head => $line )
 	{
 		if ( count($line) == 1 )
-			$data['Tag'][$head] = $line[0];
+			$tag[$head] = $line[0];
 	}
+
+	$data = array(
+		'tag' => $tag ,
+		'blend' => array(
+			'if ( FG.a === 0.0 )  discard;  pixel.rgb = FG.rgb;' ,
+		),
+	);
 	return $data;
+}
+
+function list_add( &$list, $k, &$v )
+{
+	$k = (int)$k;
+	while ( ! isset($list[$k]) )
+		$list[] = '';
+	$list[$k] = $v;
+	return;
 }
 
 function save_quadfile( $pfx, &$json )
@@ -116,52 +132,97 @@ function quad_ext1px( &$quad )
 	return;
 }
 //////////////////////////////
-/*
-function quad_move( &$quad, $opt )
+function quad_center( $V4 )
 {
-	foreach ( $opt as $k => $v )
-	{
-		switch ( $k )
-		{
-			case 'hflip':
-				for ( $i=0; $i < 8; $i += 2 )
-					$quad[$i+0] = -$quad[$i+0];
-				break;
-			case 'vflip':
-				for ( $i=0; $i < 8; $i += 2 )
-					$quad[$i+1] = -$quad[$i+1];
-				break;
-			case 'move':
-				list($x,$y) = $v;
-				for ( $i=0; $i < 8; $i += 2 )
-				{
-					$quad[$i+0] += $x;
-					$quad[$i+1] += $y;
-				} // for ( $i=0; $i < 8; $i += 2 )
-				break;
-			case 'rotate':
-				list($degree,$rx,$ry) = $v;
+	$cx = ($V4[0] + $V4[2] + $V4[4] + $V4[6]) / 4;
+	$cy = ($V4[1] + $V4[3] + $V4[5] + $V4[7]) / 4;
+	trace("== center : %.2f , %.2f\n", $cx, $cy);
+	return array($cx,$cy);
+}
 
-				// 360 degree = 2 * pi() radian
-				// 180 degree = pi() radian
-				$radian = $degree / 180 * pi();
-				$sin = sin($radian);
-				$cos = cos($radian);
-				for ( $i=0; $i < 8; $i += 2 )
-				{
-					$quad[$i+0] += $rx;
-					$quad[$i+1] += $ry;
-					$x = $quad[$i+0] * $cos - $quad[$i+1] * $sin;
-					$y = $quad[$i+0] * $sin + $quad[$i+1] * $cos;
-					$quad[$i+0] = $x;
-					$quad[$i+1] = $y;
-				} // for ( $i=0; $i < 8; $i += 2 )
-				break;
-		} // switch ( $k )
-	} // foreach ( $opt as $k => $v )
+function quad_rebase( $V4 )
+{
+	// rebase $V4 to 0,0
+	$base = array(
+		(int)$V4[0] ,
+		(int)$V4[1] ,
+	);
+	for ( $i=0; $i < 8; $i += 2 ) // A B C D
+	{
+		$V4[$i+0] -= $base[0];
+		$V4[$i+1] -= $base[1];
+	}
+
+	// get box size
+	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
+	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
+	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
+	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+		$x1 = (int)floor($x1);
+		$y1 = (int)floor($y1);
+		$x2 = (int)ceil ($x2);
+		$y2 = (int)ceil ($y2);
+
+	$quad = array(
+		'quad' => array(
+			array( $V4[0] , $V4[1] , 1 ),
+			array( $V4[2] , $V4[3] , 1 ),
+			array( $V4[4] , $V4[5] , 1 ),
+			array( $V4[6] , $V4[7] , 1 ),
+		),
+		'base' => $base,
+		'box'  => array($x1, $y1, $x2, $y2),
+	);
+	trace("== quad_rebase() = %.2f , %.2f\n", $base[0], $base[1]);
+	trace("   box x = %.2f - %.2f  y = %.2f - %.2f\n", $x1, $x2, $y1, $y2);
+	quad_dump($V4, 'rebase');
+	return $quad;
+}
+
+function quad2xywh( $V4 )
+{
+	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
+	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
+	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
+	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+		$x1 = (int)floor($x1);
+		$y1 = (int)floor($y1);
+		$x2 = (int)ceil($x2);
+		$y2 = (int)ceil($y2);
+
+	$xywh = array(
+		'xy' => array($x1, $y1),
+		'wh' => array($x2-$x1, $y2-$y1),
+		'quad' => array(
+			$V4[0]-$x1, $V4[1]-$y1,
+			$V4[2]-$x1, $V4[3]-$y1,
+			$V4[4]-$x1, $V4[5]-$y1,
+			$V4[6]-$x1, $V4[7]-$y1,
+		),
+	);
+	quad_dump($xywh['quad'], 'xywh quad');
+	return $xywh;
+}
+
+function quad_dump( $V4, $name )
+{
+	if ( defined("NO_TRACE") )
+		return;
+
+	$minx = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
+	$miny = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
+	$maxx = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
+	$maxy = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+
+	trace("quad( %s )\n", $name);
+	trace("  %10.2f,%10.2f\n", $V4[0], $V4[1]);
+	trace("  %10.2f,%10.2f\n", $V4[2], $V4[3]);
+	trace("  %10.2f,%10.2f\n", $V4[4], $V4[5]);
+	trace("  %10.2f,%10.2f\n", $V4[6], $V4[7]);
+	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx);
+	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
 	return;
 }
-*/
 
 function quad_convexfix( &$quad )
 {

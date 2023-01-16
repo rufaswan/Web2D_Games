@@ -214,23 +214,103 @@ function FMBS_s3( $id )
 		$s = substr($gp_share['file'], $p, $sk);
 		$text .= sect_data_txt($i, $s);
 
+		$rect = array(0,0   , 0,0   , 0,0   , 0,0  );
+		$xyz  = array(0,0,0 , 0,0,0 , 0,0,0 , 0,0,0);
+
 		switch ( $gp_share['tag'] )
 		{
-			case 'ps2_grim':
-			case 'ps2_odin':
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
+			case 'ps2_grim': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'ps2_odin': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'nds_kuma': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'wii_mura': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'psp_gran': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'vit_mura': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'vit_drag': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'vit_odin': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'ps3_drag': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'ps3_odin': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'ps4_odin': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'ps4_drag': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'ps4_sent': // 50
+				//                                 1                               2                               3                               4
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
+				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+				$b00 = float32( $ord($s,0x00,4) ); // x1
+				$b04 = float32( $ord($s,0x04,4) ); // y1
+				$b08 = float32( $ord($s,0x08,4) ); // x2
+				$b0c = float32( $ord($s,0x0c,4) ); // y2
+				$b10 = float32( $ord($s,0x10,4) ); // x3
+				$b14 = float32( $ord($s,0x14,4) ); // y3
+				$b18 = float32( $ord($s,0x18,4) ); // x4
+				$b1c = float32( $ord($s,0x1c,4) ); // y4
+				$b20 = float32( $ord($s,0x20,4) ); // nx1
+				$b24 = float32( $ord($s,0x24,4) ); // ny1
+				$b28 = float32( $ord($s,0x28,4) ); // nz1 = 0
+				$b2c = float32( $ord($s,0x2c,4) ); // nx2
+				$b30 = float32( $ord($s,0x30,4) ); // ny2
+				$b34 = float32( $ord($s,0x34,4) ); // nz2 = 0
+				$b38 = float32( $ord($s,0x38,4) ); // nx3
+				$b3c = float32( $ord($s,0x3c,4) ); // ny3
+				$b40 = float32( $ord($s,0x40,4) ); // nz3 = 0
+				$b44 = float32( $ord($s,0x44,4) ); // nx4
+				$b48 = float32( $ord($s,0x48,4) ); // ny4
+				$b4c = float32( $ord($s,0x4c,4) ); // nz4 = 0
+
+				$rect = array(
+					$b00,$b04 ,
+					$b08,$b0c ,
+					$b10,$b14 ,
+					$b18,$b1c ,
+				);
+				$xyz = array(
+					$b20,$b24,$b28 ,
+					$b2c,$b30,$b34 ,
+					$b38,$b3c,$b40 ,
+					$b44,$b48,$b4c ,
+				);
 				break;
 		} // switch ( $gp_share['tag'] )
+
+		$data[$i] = array(
+			'rect' => $rect,
+			'xyz'  => $xyz,
+		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
 	$fn = sprintf('%s/s3.txt', $gp_share['dir']);
@@ -253,12 +333,10 @@ function FMBS_s4( $id )
 		$s = substr($gp_share['file'], $p, $sk);
 		$text .= sect_data_txt($i, $s);
 
-		$flags    = '';
+		$flags    = 0;
 		$blend_id = 0;
 		$tex_id   = 0;
-		$s0_id = 0;
-		$s1_id = 0;
-		$s2_id = 0;
+		$s0s1s2   = array(0,0,0);
 
 		// c , v66+
 		// 10 , v72+
@@ -277,21 +355,19 @@ function FMBS_s4( $id )
 				$b03 = $ord($s, 0x03, 1); // tex id
 				$b04 = $ord($s, 0x04, 2); // s1 id
 				// 00 00
-				$b08 = $ord($s, 0x08, 2); // s0 id
-				$b0a = $ord($s, 0x0a, 2);
-				$b0c = $ord($s, 0x0c, 2);
-				$b0e = $ord($s, 0x0e, 2);
-				$b10 = $ord($s, 0x10, 2); // s2 id
-				$b12 = $ord($s, 0x12, 2);
-				$b14 = $ord($s, 0x14, 2);
-				$b16 = $ord($s, 0x16, 2);
+				$b08 = $ord($s, 0x08, 2); // s0 id *inter 0 1 2*
+				$b0a = $ord($s, 0x0a, 2); // s0 id *inter     2*
+				$b0c = $ord($s, 0x0c, 2); // s0 id *inter   1 2*
+				$b0e = $ord($s, 0x0e, 2); // s0 id *inter     2*
+				$b10 = $ord($s, 0x10, 2); // s2 id *inter 0 1 2*
+				$b12 = $ord($s, 0x12, 2); // s2 id *inter     2*
+				$b14 = $ord($s, 0x14, 2); // s2 id *inter   1 2*
+				$b16 = $ord($s, 0x16, 2); // s2 id *inter     2*
 
-				$flags    = sprintf('#%04x', $b00);
+				$flags    = $b00;
 				$blend_id = $b02;
 				$tex_id   = $b03;
-				$s0_id = $b08;
-				$s1_id = $b04;
-				$s2_id = $b10;
+				$s0s1s2   = array($b08,$b04,$b10);
 				break;
 
 			case 'nds_kuma': // c
@@ -308,12 +384,10 @@ function FMBS_s4( $id )
 				$b08 = $ord($s, 0x08, 2); // s0 id
 				$b0a = $ord($s, 0x0a, 2); // s2 id
 
-				$flags    = sprintf('#%04x', $b00);
+				$flags    = $b00;
 				$blend_id = $b02;
 				$tex_id   = $b03;
-				$s0_id = $b08;
-				$s1_id = $b04;
-				$s2_id = $b0a;
+				$s0s1s2   = array($b08,$b04,$b0a);
 				break;
 
 			case 'psp_gran': // c
@@ -333,12 +407,10 @@ function FMBS_s4( $id )
 				$b08 = $ord($s, 0x08, 2); // s0 id *unused*
 				$b0a = $ord($s, 0x0a, 2); // s2 id
 
-				$flags    = sprintf('#%04x', $b00);
+				$flags    = $b00;
 				$blend_id = $b02;
 				$tex_id   = $b03;
-				$s0_id = $b0a;
-				$s1_id = $b0a;
-				$s2_id = $b0a;
+				$s0s1s2   = array($b0a,$b0a,$b0a);
 				break;
 
 			case 'vit_odin': // 10
@@ -354,12 +426,10 @@ function FMBS_s4( $id )
 				$b0c = $ord($s, 0x0c, 2); // s0 id *unused*
 				$b0e = $ord($s, 0x0e, 2); // s2 id
 
-				$flags    = sprintf('#%04x', $b05);
+				$flags    = $b05;
 				$blend_id = $b06;
 				$tex_id   = $b07;
-				$s0_id = $b0e;
-				$s1_id = $b0e;
-				$s2_id = $b0e;
+				$s0s1s2   = array($b0e,$b0e,$b0e);
 				break;
 
 			case 'ps3_drag': // c
@@ -373,12 +443,10 @@ function FMBS_s4( $id )
 				$b08 = $ord($s, 0x08, 2); // s0 id
 				$b0a = $ord($s, 0x0a, 2); // s2 id
 
-				$flags    = sprintf('#%04x', $b00);
+				$flags    = $b00;
 				$blend_id = $b02;
 				$tex_id   = $b03;
-				$s0_id = $b08;
-				$s1_id = $b06;
-				$s2_id = $b0a;
+				$s0s1s2   = array($b08,$b06,$b0a);
 				break;
 
 			case 'ps3_odin': // 10
@@ -400,12 +468,10 @@ function FMBS_s4( $id )
 				$b0c = $ord($s, 0x0c, 2); // s0 id
 				$b0e = $ord($s, 0x0e, 2); // s2 id
 
-				$flags    = sprintf('#%04x', $b05);
+				$flags    = $b05;
 				$blend_id = $b06;
 				$tex_id   = $b07;
-				$s0_id = $b0c;
-				$s1_id = $b0a;
-				$s2_id = $b0e;
+				$s0s1s2   = array($b0c,$b0a,$b0e);
 				break;
 
 			case 'ps4_sent': // 14
@@ -421,19 +487,18 @@ function FMBS_s4( $id )
 				$b0e = $ord($s, 0x0e, 2); // s0 id
 				$b10 = $ord($s, 0x10, 2); // s2 id
 
-				$flags    = sprintf('#%04x', $b05);
+				$flags    = $b05;
 				$blend_id = $b06;
 				$tex_id   = $b07;
-				$s0_id = $b0e;
-				$s1_id = $b0c;
-				$s2_id = $b10;
+				$s0s1s2   = array($b0e,$b0c,$b10);
 				break;
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			$blend_id,$tex_id ,
-			$s0_id,$s1_id,$s2_id ,
-			$flags ,
+			'blend'  => $blend_id ,
+			'tex'    => $tex_id ,
+			's0s1s2' => $s0s1s2,
+			'bits'   => '0x' . dechex($flags),
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -457,23 +522,64 @@ function FMBS_s5( $id )
 		$s = substr($gp_share['file'], $p, $sk);
 		$text .= sect_data_txt($i, $s);
 
+		$s3_id = 0;
+		$flags = 0;
+
 		switch ( $gp_share['tag'] )
 		{
-			case 'ps2_grim':
-			case 'ps2_odin':
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
+			case 'ps2_grim': // 8
+				// 0 1 2 3 4 5 6 7
+				// 1 - 1 - - - - -
+			case 'ps2_odin': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 - 2   - -
+			case 'nds_kuma': // 8
+				// 0 1 2 3 4 5 6 7
+				// - - - - 1 - - -
+			case 'wii_mura': // 8
+				// 0 1 2 3 4 5 6 7
+				// - 1 1 - - - - 1
+			case 'psp_gran': // 8
+				// 0 1 2 3 4 5 6 7
+				// 1 - - 1 2   - -
+			case 'vit_mura': // 8
+				// 0 1 2 3 4 5 6 7
+				// 1 - 1 - 1 - - -
+			case 'vit_drag': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 - 1 - - -
+			case 'vit_odin': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 1 2   - -
+			case 'ps3_drag': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 - - - - 1
+			case 'ps3_odin': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 1 - - 2
+			case 'ps4_odin': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 1 2   - -
+			case 'ps4_drag': // 8
+				// 0 1 2 3 4 5 6 7
+				// 2   1 - 1 - - -
+			case 'ps4_sent': // 8
+				// 0 1 2 3 4 5 6 7
+				// 1 - 1 - 1 - - -
+				$b00 = $ord($s, 0x00, 2); // s3 id
+				$b02 = $ord($s, 0x02, 1);
+				$b03 = $ord($s, 0x03, 1);
+				$b04 = $ord($s, 0x04, 4); // flags
+
+				$s3_id = $b00;
+				$flags = $b04;
 				break;
 		} // switch ( $gp_share['tag'] )
+
+		$data[$i] = array(
+			's3'   => $s3_id ,
+			'bits' => '0x' . dechex($flags),
+		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
 	$fn = sprintf('%s/s5.txt', $gp_share['dir']);
@@ -496,15 +602,10 @@ function FMBS_s6( $id )
 		$s = substr($gp_share['file'], $p, $sk);
 		$text .= sect_data_txt($i, $s);
 
-		$x1 = 0;
-		$y1 = 0;
-		$x2 = 0;
-		$y2 = 0;
-		$s4_set_id = 0;
-		$s4_set_no = 0;
-		$s5_set_id = 0;
-		$s5_set_no = 0;
-		$flags     = '';
+		$rect = array(0,0,0,0);
+		$s4   = array(0,0);
+		$s5   = array(0,0);
+		$flags = 0;
 
 		// 18 , s4 set no++ , flags-- , v6b+
 		// 1c , v6e+
@@ -533,15 +634,10 @@ function FMBS_s6( $id )
 				$b15 = $ord($s, 0x15, 1); // s5 set no
 				$b16 = $ord($s, 0x16, 2); // flags
 
-				$x1 = $b00;
-				$y1 = $b04;
-				$x2 = $b08;
-				$y2 = $b0c;
-				$s4_set_id = $b10;
-				$s4_set_no = $b14;
-				$s5_set_id = $b12;
-				$s5_set_no = $b15;
-				$flags     = sprintf('#%04x', $b16);
+				$rect = array($b00,$b04,$b08,$b0c);
+				$s4   = array($b10,$b14);
+				$s5   = array($b12,$b15);
+				$flags = $b16;
 				break;
 
 			case 'psp_gran': // 18
@@ -560,15 +656,10 @@ function FMBS_s6( $id )
 				$b16 = $ord($s, 0x16, 1); // s5 set no
 				$b17 = $ord($s, 0x17, 1); // flags
 
-				$x1 = $b00;
-				$y1 = $b04;
-				$x2 = $b08;
-				$y2 = $b0c;
-				$s4_set_id = $b10;
-				$s4_set_no = $b14;
-				$s5_set_id = $b12;
-				$s5_set_no = $b16;
-				$flags     = sprintf('#%04x', $b17);
+				$rect = array($b00,$b04,$b08,$b0c);
+				$s4   = array($b10,$b14);
+				$s5   = array($b12,$b16);
+				$flags = $b17;
 				break;
 
 			case 'vit_drag': // 1c
@@ -602,23 +693,18 @@ function FMBS_s6( $id )
 				$b18 = $ord($s, 0x18, 1); // s5 set no
 				$b19 = $ord($s, 0x19, 1); // flags
 
-				$x1 = $b00;
-				$y1 = $b04;
-				$x2 = $b08;
-				$y2 = $b0c;
-				$s4_set_id = $b10;
-				$s4_set_no = $b16;
-				$s5_set_id = $b14;
-				$s5_set_no = $b18;
-				$flags     = sprintf('#%04x', $b19);
+				$rect = array($b00,$b04,$b08,$b0c);
+				$s4   = array($b10,$b16);
+				$s5   = array($b14,$b18);
+				$flags = $b19;
 				break;
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			$x1,$y1,$x2,$y2 ,
-			$s4_set_id,$s4_set_no ,
-			$s5_set_id,$s5_set_no ,
-			$flags ,
+			'rect' => $rect,
+			's4'   => $s4,
+			's5'   => $s5,
+			'bits' => '0x' . dechex($flags),
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -642,15 +728,10 @@ function FMBS_s7( $id )
 		$s = substr($gp_share['file'], $p, $sk);
 		$text .= sect_data_txt($i, $s);
 
-		$fog      = '';
-		$move_x   = 0;
-		$move_y   = 0;
-		$move_z   = 0;
-		$rotate_x = 0;
-		$rotate_y = 0;
-		$rotate_z = 0;
-		$scale_x  = 0;
-		$scale_y  = 0;
+		$fog    = '';
+		$move   = array(0,0,0);
+		$rotate = array(0,0,0);
+		$scale  = array(0,0);
 
 		// 24 , v66+
 
@@ -675,15 +756,10 @@ function FMBS_s7( $id )
 				$b28 = float32( $ord($s,0x28,4) ); // scale x
 				$b2c = float32( $ord($s,0x2c,4) ); // scale y
 
-				$move_x   = $b10;
-				$move_y   = $b14;
-				$move_z   = $b18;
-				$rotate_x = $b1c;
-				$rotate_y = $b20;
-				$rotate_z = $b24;
-				$scale_x  = $b28;
-				$scale_y  = $b2c;
-				$fog      = sprintf('#%02x%02x%02x%02x',
+				$move   = array($b10,$b14,$b18);
+				$rotate = array($b1c,$b20,$b24);
+				$scale  = array($b28,$b2c);
+				$fog    = sprintf('#%02x%02x%02x%02x',
 					($b00 * 255) & BIT8,
 					($b04 * 255) & BIT8,
 					($b08 * 255) & BIT8,
@@ -733,23 +809,18 @@ function FMBS_s7( $id )
 				$b1c = float32( $ord($s,0x1c,4) ); // scale y
 				$b20 = substr($s,0x20,4);
 
-				$move_x   = $b00;
-				$move_y   = $b04;
-				$move_z   = $b08;
-				$rotate_x = $b0c;
-				$rotate_y = $b10;
-				$rotate_z = $b14;
-				$scale_x  = $b18;
-				$scale_y  = $b1c;
-				$fog      = '#' . bin2hex($b20);
+				$move   = array($b00,$b04,$b08);
+				$rotate = array($b0c,$b10,$b14);
+				$scale  = array($b18,$b1c);
+				$fog    = '#' . bin2hex($b20);
 				break;
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			$move_x,$move_y,$move_z ,
-			$rotate_x,$rotate_y,$rotate_z ,
-			$scale_x , $scale_y ,
-			$fog ,
+			'move'   => $move,
+			'rotate' => $rotate,
+			'scale'  => $scale,
+			'fog'    => $fog,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -776,8 +847,10 @@ function FMBS_s8( $id )
 		$s6_id = 0;
 		$s7_id = 0;
 		$fps   = 0;
-		$flags = '';
+		$flags = 0;
 		$loop  = 0;
+		$sfx   = 0;
+
 		switch ( $gp_share['tag'] )
 		{
 			case 'ps2_grim': // 20
@@ -839,15 +912,18 @@ function FMBS_s8( $id )
 				$s6_id = $b00;
 				$s7_id = $b04;
 				$fps   = $b06;
-				$flags = sprintf('#%08x', $b08);
+				$flags = $b08;
 				$loop  = $b0c;
+				$sfx   = $b1c;
 				break;
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			$s6_id,$s7_id ,
-			$fps,$loop ,
-			$flags ,
+			's6'   => $s6_id,
+			's7'   => $s7_id,
+			'anim' => array($fps , $loop),
+			'bits' => '0x' . dechex($flags),
+			'sfx'  => $sfx,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -871,14 +947,9 @@ function FMBS_s9( $id )
 		$s = substr($gp_share['file'], $p, $sk);
 		$text .= sect_data_txt($i, $s);
 
-		$x1 = 0;
-		$y1 = 0;
-		$x2 = 0;
-		$y2 = 0;
+		$rect = array(0,0,0,0);
 		$name = '';
-		$sa_set_id = 0;
-		$sa_set_no = 0;
-		$sa_main   = 0;
+		$sa   = array(0,0,0);
 
 		// 30 , v72+
 
@@ -918,14 +989,9 @@ function FMBS_s9( $id )
 				$b2b = $ord($s, 0x2b, 1); // sa_set_main
 				$b2c = $ord($s, 0x2c, 1); // 0 1
 
-				$x1 = $b00;
-				$y1 = $b04;
-				$x2 = $b08;
-				$y2 = $b0c;
+				$rect = array($b00 , $b04 , $b08 , $b0c);
 				$name = $b10;
-				$sa_set_id = $b28;
-				$sa_set_no = $b2a;
-				$sa_main   = $b2b;
+				$sa   = array($b28 , $b2a);
 				break;
 
 			case 'vit_odin': // 30
@@ -955,21 +1021,16 @@ function FMBS_s9( $id )
 				$b2e = $ord($s, 0x2e, 1);
 				$b2f = $ord($s, 0x2f, 1); // 0 1
 
-				$x1 = $b00;
-				$y1 = $b04;
-				$x2 = $b08;
-				$y2 = $b0c;
+				$rect = array($b00 , $b04 , $b08 , $b0c);
 				$name = $b10;
-				$sa_set_id = $b28;
-				$sa_set_no = $b2a;
-				$sa_main   = $b2b;
+				$sa   = array($b28 , $b2a);
 				break;
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			$x1,$y1,$x2,$y2 ,
-			$name ,
-			$sa_set_id,$sa_set_no,$sa_main ,
+			'rect' => $rect,
+			'name' => $name,
+			'sa'   => $sa,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -1097,7 +1158,7 @@ function FMBS_sa( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			$s8_set_id,$s8_set_no,$s8_set_sum,$s8_set_st ,
+			's8' => array($s8_set_id, $s8_set_no, $s8_set_sum, $s8_set_st),
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -1129,13 +1190,34 @@ function FMBS_sb( $id )
 
 		switch ( $gp_share['tag'] )
 		{
-			case 'vit_odin':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
+			case 'vit_odin': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - 1 - - - 1 - - - 1 - 1 - 2   - -
+			case 'ps3_odin': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// - - 2   - 1 - - - - - 1 - 1 - 1 - - 2
+			case 'ps4_odin': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - 1 - - - 1 - - - 1 - 1 - 2   - -
+			case 'ps4_drag': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - 1 - - - 1 - - - 1 - - - - - - -
+			case 'ps4_sent': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - 1 - - - 1 - - - 1 - - - - - - -
+				$b00 = $ord($s, 0x00, 4);
+				$b04 = $ord($s, 0x04, 2);
+				// 00 00
+				$b08 = $ord($s, 0x08, 4);
+				$b0c = $ord($s, 0x0c, 2);
+				$b0e = $ord($s, 0x0e, 2);
+				$b10 = $ord($s, 0x10, 4);
+
 				break;
 		} // switch ( $gp_share['tag'] )
+
+		$data[$i] = array(
+		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
 	$fn = sprintf('%s/sb.txt', $gp_share['dir']);
@@ -1179,7 +1261,8 @@ function vanilla( $tag, $fname )
 		case 'ps4_drag':
 		case 'ps4_sent':
 			$json = array(
-				'tag' => $gp_share['data']['idtag'],
+				'tag' => $tag,
+				'id3' => $gp_share['data']['idtag'],
 				'ver' => '55',
 				's0' => FMBS_s0(0),
 				's1' => FMBS_s1(1),
@@ -1201,7 +1284,8 @@ function vanilla( $tag, $fname )
 		case 'vit_drag':
 			$s012 = FMBS_s0s1s2(8);
 			$json = array(
-				'tag' => $gp_share['data']['idtag'],
+				'tag' => $tag,
+				'id3' => $gp_share['data']['idtag'],
 				'ver' => '55',
 				's0' => $s012[0],
 				's1' => $s012[1],
@@ -1221,7 +1305,8 @@ function vanilla( $tag, $fname )
 		case 'vit_odin':
 			$s012 = FMBS_s0s1s2(9);
 			$json = array(
-				'tag' => $gp_share['data']['idtag'],
+				'tag' => $tag,
+				'id3' => $gp_share['data']['idtag'],
 				'ver' => '55',
 				's0' => $s012[0],
 				's1' => $s012[1],

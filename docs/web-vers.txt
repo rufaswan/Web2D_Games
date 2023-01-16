@@ -14,18 +14,14 @@ Chrome based
 		OPR /69-   Chrome/83-   (+14)
 		Edge/79-   Chrome/79-   (same)
 	Mobile
-		OPR/37-42 Chrome/50-55 (+13)
-		OPR/43-45 Chrome/59-61 (+16)
-		OPR/46    Chrome/63    (+17)
-		OPR/47    Chrome/66    (+19)
-		OPR/48-53 Chrome/69-74 (+21)
-		OPR/54-56 Chrome/76-78 (+22)
-		OPR/57-58 Chrome/80-81 (+23)
-		OPR/59    Chrome/83    (+24)
-		OPR/60-62 Chrome/85-87 (+25)
-		OPR/63    Chrome/89    (+26)
-		OPR/64-65 Chrome/91-92 (+27)
-		OPR/67-   Chrome/96-   (+29)
+		OPR/Chrome
+		-         -        -        -        14/26    15/28    16/29    -        18/31    19/32
+		 20/33    21/34    22/35    -        24/37    25/38    26/39    27/40    28/41    29/42
+		 30/43    -        32/45    33/46    34/47    35/48    36/49    37/50    -        -
+		-         -        42/55    43/59    44/60    45/61    46/63    47/66    48/69    49/70
+		 50/71    51/72    52/73    53/74    54/76    55/77    56/78    57/80    58/81    59/83
+		 60/85    61/86    62/87    63/89    64/91    65/92    -        67/96    68/99    69/100
+		 70/102   71/104   72/106
 
 Engine Changes
 	Chrome  27 (WebKit)   -> 28 (Blink) (WebKit/537.36)
@@ -53,7 +49,9 @@ Latest stable version available on January 1st
 	2020   71     68esr   65( 78)   55( 77)  13
 	2021   84     78esr   73( 87)   61( 86)  14
 	2022   95     91esr   82( 96)   65( 92)  15
-	2023
+	2023  108    102esr   94(108)   72(106)  16
+	2024    -      -esr    -(  -)    -(  -)   -
+	2025    -      -esr    -(  -)    -(  -)   -
 
 Can I Use?
 	Ffox  Oper  Safa
@@ -211,7 +209,8 @@ Can I Use?
 
 Desktop vs Mobile
 	https://wiki.mozilla.org/Mobile/Platforms
-	Firefox for Android is built on the same engine as Firefox desktop, with extensive changes to optimize performance and user experience on mobile devices.
+	Firefox for Android is built on the same engine as Firefox desktop,
+	with extensive changes to optimize performance and user experience on mobile devices.
 
 	https://developer.chrome.com/docs/multidevice/faq/
 	Chrome for Android is derived from Chromium.
@@ -300,7 +299,7 @@ Last stable version by Android OS
 	Memory  = RAM
 	Storage = ROM , /data partition
 	-     Memory                    Storage
-	-     32 bit/64 bit/low         low/normal
+	-     32 bit/64 bit/low         normal/low
 	 2.1   92 MB+                   150 MB+
 	 2.2   92 MB+                   150 MB+
 	 2.3  128 MB+                   150 MB+
@@ -315,12 +314,12 @@ Last stable version by Android OS
 	 7.0  512 MB+/816 MB+/512 MB    3.0 GB+
 	 7.1  512 MB+/816 MB+/512 MB    3.0 GB+
 	 8.0  512 MB+/816 MB+/1.0 GB    4.0 GB+
-	 8.1  416 MB+/816 MB+/1.0 GB    1.1 GB+/4.0 GB+
-	 9    416 MB+/816 MB+/1.0 GB    1.1 GB+/4.0 GB+
-	10    416 MB+/816 MB+/1.0 GB    1.1 GB+/4.0 GB+
-	11    416 MB+/816 MB+/1.0 GB    1.1 GB+/4.0 GB+
-	12    416 MB+/816 MB+/1.0 GB    1.1 GB+/4.0 GB+
-	13    416 MB+/816 MB+/1.0 GB    1.1 GB+/4.0 GB+
+	 8.1  416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
+	 9    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
+	10    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
+	11    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
+	12    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
+	13    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
 
 	https://en.wikipedia.org/wiki/MacOS
 	https://en.wikipedia.org/wiki/MacOS_version_history
@@ -393,17 +392,19 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=1558299
 	Fenix is unaffected as it uses a whitelist of protocols it registers. It only accepts http and https:
 
 
-var            typeof  console.log
-'abc'          string
-'123'          string
-13             number
-13.25          number
-[1,2,3]        object  Array
-{a:1,b:2,c:3}  object  Object
+
+var            typeof       console.log
+               "undefined"  ReferenceError: var is not defined
+'abc'          "string"     abc
+'123'          "string"     123
+13             "number"     13
+13.25          "number"     13.25
+[1,2,3]        "object"     Array[ 1,2,3 ]
+{a:1,b:2,c:3}  "object"     Object{ a:1,b:2,c:3 }
+
 
 
 https://upload.wikimedia.org/wikipedia/commons/6/63/Vector_Video_Standards.svg
-
 	4:3 -> (x3 = 12:9)
 		  45x   180x135
 		  80x   320x240   quarter Video Graphics Array

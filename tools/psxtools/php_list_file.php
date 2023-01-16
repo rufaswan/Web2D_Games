@@ -138,7 +138,7 @@ option
   e  : list files by extension
   fs : list files by file size
   fn : list files by file name length
-  ds : list dirs  by dir size
+  dn : list dirs  by dir size
 
 _MSG;
 
@@ -159,3 +159,4 @@ for ( $i=1; $i < $argc; $i++ )
 } // for ( $i=1; $i < $argc; $i++ )
 
 listfiles($list, $func);
+echo "type h for help\n";

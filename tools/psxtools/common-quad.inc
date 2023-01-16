@@ -36,24 +36,22 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //   dot(x,y) = |x||y| cos Q
 // cross(x,y) = |x||y| sin Q
 
-function vec3( &$vec )
+function cross_product()
 {
-	while ( count($vec) < 3 )
-		$vec[] = 1;
-	return;
-}
-
-function vec4( &$vec )
-{
-	while ( count($vec) < 4 )
-		$vec[] = 1;
-	return;
-}
-
-function cross_product( $v3b, $v3c )
-{
-	list($bx,$by,$bz) = $v3b;
-	list($cx,$cy,$cz) = $v3c;
+	$args = func_get_args();
+	switch ( count($args) )
+	{
+		case 4: // x1,y1 , x2,y2
+			$bx = $args[0];  $by = $args[1];  $bz = 1;
+			$cx = $args[2];  $cy = $args[3];  $cz = 1;
+			break;
+		case 2: // [x1,y1,1] , [x2,y2,1]
+			list($bx,$by,$bz) = $args[0];
+			list($cx,$cy,$cz) = $args[1];
+			break;
+		default:
+			return -1;
+	} // switch ( count($args) )
 
 	// | ax bx cx |
 	// | ay by cy |
@@ -64,15 +62,24 @@ function cross_product( $v3b, $v3c )
 	return array($ax, $ay, $az);
 }
 
-function cross_product_2d( $v2b, $v2c )
+function cross_product_2d()
 {
-	// extend x,y (2d) to x,y,z (3d)
-	vec3($v2b);
-	vec3($v2c);
+	$args = func_get_args();
+	switch ( count($args) )
+	{
+		case 4: // x1,y1 , x2,y2
+			$crx = cross_product($args[0],$args[1],$args[2],$args[3]);
+			break;
+		case 2: // [x1,y1,1] , [x2,y2,1]
+			$crx = cross_product($args[0],$args[1]);
+			break;
+		default:
+			return -1;
+	} // switch ( count($args) )
 
-	list($x,$y,$z) = cross_product($v2b, $v2c);
+	list($x,$y,$z) = $crx;
 	if ( $z == 0 )
-		return array(0,0);
+		return -1;
 
 	// convert x,y,z (3d) to x,y (2d)
 	$x /= $z;
@@ -81,12 +88,24 @@ function cross_product_2d( $v2b, $v2c )
 	return array($x, $y);
 }
 
-// v2 = x.y
-function triad_area( $v2a, $v2b, $v2c )
+function triad_area()
 {
-	list($ax,$ay) = $v2a;
-	list($bx,$by) = $v2b;
-	list($cx,$cy) = $v2c;
+	$args = func_get_args();
+	switch ( count($args) )
+	{
+		case 6: // x1,y1 , x2,y2 , x3,y3
+			$ax = $args[0];  $ay = $args[1];
+			$bx = $args[2];  $by = $args[3];
+			$cx = $args[4];  $cy = $args[5];
+			break;
+		case 3: // [x1,y1] , [x2,y2] , [x3,y3]
+			list($ax,$ay) = $args[0];
+			list($bx,$by) = $args[1];
+			list($cx,$cy) = $args[2];
+			break;
+		default:
+			return -1;
+	} // switch ( count($args) )
 
 	// https://www.mathopenref.com/coordtrianglearea.html
 	// | ax bx cx |
@@ -411,97 +430,99 @@ function matrix_inv4( $M )
 }
 
 //////////////////////////////
-function quad_center( $V4 )
+function matrix( $c )
 {
-	$cx = ($V4[0] + $V4[2] + $V4[4] + $V4[6]) / 4;
-	$cy = ($V4[1] + $V4[3] + $V4[5] + $V4[7]) / 4;
-	trace("== center : %.2f , %.2f\n", $cx, $cy);
-	return array($cx,$cy);
-}
-
-function quad_rebase( $V4 )
-{
-	// rebase $V4 to 0,0
-	$base = array(
-		(int)$V4[0] ,
-		(int)$V4[1] ,
-	);
-	for ( $i=0; $i < 8; $i += 2 ) // A B C D
+	$c = (int)$c;
+	$m = array();
+	for ( $y=0; $y < $c; $y++ )
 	{
-		$V4[$i+0] -= $base[0];
-		$V4[$i+1] -= $base[1];
+		for ( $x=0; $x < $c; $x++ )
+			$m[] = ( $x === $y ) ? 1 : 0;
 	}
-
-	// get box size
-	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
-	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
-		$x1 = (int)floor($x1);
-		$y1 = (int)floor($y1);
-		$x2 = (int)ceil ($x2);
-		$y2 = (int)ceil ($y2);
-
-	$quad = array(
-		'quad' => array(
-			array( $V4[0] , $V4[1] , 1 ),
-			array( $V4[2] , $V4[3] , 1 ),
-			array( $V4[4] , $V4[5] , 1 ),
-			array( $V4[6] , $V4[7] , 1 ),
-		),
-		'base' => $base,
-		'box'  => array($x1, $y1, $x2, $y2),
-	);
-	trace("== quad_rebase() = %.2f , %.2f\n", $base[0], $base[1]);
-	trace("   box x = %.2f - %.2f  y = %.2f - %.2f\n", $x1, $x2, $y1, $y2);
-	quad_dump($V4, 'rebase');
-	return $quad;
+	return $m;
 }
 
-function quad2xywh( $V4 )
+function matrix_rotate_z( $c, $radian )
 {
-	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
-	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
-		$x1 = (int)floor($x1);
-		$y1 = (int)floor($y1);
-		$x2 = (int)ceil($x2);
-		$y2 = (int)ceil($y2);
+	if ( $radian == 0 )
+		return -1;
 
-	$xywh = array(
-		'xy' => array($x1, $y1),
-		'wh' => array($x2-$x1, $y2-$y1),
-		'quad' => array(
-			$V4[0]-$x1, $V4[1]-$y1,
-			$V4[2]-$x1, $V4[3]-$y1,
-			$V4[4]-$x1, $V4[5]-$y1,
-			$V4[6]-$x1, $V4[7]-$y1,
-		),
-	);
-	quad_dump($xywh['quad'], 'xywh quad');
-	return $xywh;
+	// | cos  -sin |
+	// | sin  cos  |
+	$c = (int)$c;
+	if ( $c < 2 ) // mat2+
+		return -1;
+	$sin = sin($radian);
+	$cos = cos($radian);
+
+	$m = matrix($c);
+	$m[0*$c+0] =  $cos;
+	$m[0*$c+1] = -$sin;
+	$m[1*$c+0] =  $sin;
+	$m[1*$c+1] =  $cos;
+	return $m;
 }
 
-function quad_dump( $V4, $name )
+function matrix_rotate_y( $c, $radian )
 {
-	if ( defined("NO_TRACE") )
-		return;
+	if ( $radian == 0 )
+		return -1;
 
-	$minx = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
-	$miny = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
-	$maxx = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
-	$maxy = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+	// | cos   0  sin  |
+	// | 0     1  0    |
+	// | -sin  0  cos  |
+	$c = (int)$c;
+	if ( $c < 3 ) // mat3+
+		return -1;
+	$sin = sin($radian);
+	$cos = cos($radian);
 
-	trace("quad( %s )\n", $name);
-	trace("  %10.2f,%10.2f\n", $V4[0], $V4[1]);
-	trace("  %10.2f,%10.2f\n", $V4[2], $V4[3]);
-	trace("  %10.2f,%10.2f\n", $V4[4], $V4[5]);
-	trace("  %10.2f,%10.2f\n", $V4[6], $V4[7]);
-	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx);
-	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
-	return;
+	$m = matrix($c);
+	$m[0*$c+0] =  $cos;
+	$m[0*$c+2] =  $sin;
+	$m[2*$c+0] = -$sin;
+	$m[2*$c+2] =  $cos;
+	return $m;
 }
+
+function matrix_rotate_x( $c, $radian )
+{
+	if ( $radian == 0 )
+		return -1;
+
+	// | 1  0    0    |
+	// | 0  cos  -sin |
+	// | 0  sin  cos  |
+	$c = (int)$c;
+	if ( $c < 3 ) // mat3+
+		return -1;
+	$sin = sin($radian);
+	$cos = cos($radian);
+
+	$m = matrix($c);
+	$m[1*$c+1] =  $cos;
+	$m[1*$c+2] = -$sin;
+	$m[2*$c+1] =  $sin;
+	$m[2*$c+2] =  $cos;
+	return $m;
+}
+
+function matrix_scale( $c, $sx=1, $sy=1, $sz=1 )
+{
+	// | sx  0   0  |
+	// | 0   sy  0  |
+	// | 0   0   sz |
+	$c = (int)$c;
+	if ( $c < 2 ) // mat2+
+		return -1;
+
+	$m = matrix($c);
+	$m[0*$c+0] = $sx;
+	$m[1*$c+1] = $sy;
+	if ( $c >= 3 )  $m[2*$c+2] = $sz;
+	return $m;
+}
+//////////////////////////////
 /*
 	sum of all interior angles
 		side  degree  radian
@@ -522,25 +543,41 @@ function quad_dump( $V4, $name )
 	CAH  cosine  = adjacent / hypotenuse , secant    = hypotenuse / adjacent
 	TOA  tangent = opposite / adjacent   , cotangent = adjacent   / opposite
 //////////////////////////////
+	Move
+		| 1  0  mx |  | 1  0  0  mx |
+		| 0  1  my |  | 0  1  0  my |
+		| 0  0  1  |  | 0  0  1  mz |
+		-             | 0  0  0  1  |
+//////////////////////////////
 	2D Rotation
 		| cos  -sin  0 |
 		| sin   cos  0 |
 		| 0     0    1 |
 //////////////////////////////
 	3D Rotation
-	X axis
+	X axis (horizontal , x flip effect)
 		| 1  0    0     0 |
 		| 0  cos  -sin  0 |
 		| 0  sin  cos   0 |
 		| 0  0    0     1 |
-	Y axis
+	Y axis (vertical , y flip effect)
 		| cos   0  sin  0 |
 		| 0     1  0    0 |
 		| -sin  0  cos  0 |
 		| 0     0  0    1 |
-	Z axis
+	Z axis (depth , screen rotate)
 		| cos  -sin  0  0 |
 		| sin  cos   0  0 |
 		| 0    0     1  0 |
 		| 0    0     0  1 |
+//////////////////////////////
+	| x1  y1  z1  w1 |   | cos   sin   -sin  0 |
+	| x2  y2  z2  w2 | * | -sin  cos   sin   0 |
+	| x3  y3  z3  w3 |   | sin   -sin  cos   0 |
+	| x4  y4  z4  w4 |   | mx    my    mz    1 |
+//////////////////////////////
+	| cos   -sin  sin   mx |   | x1  x2  x3  x4 |
+	| sin   cos   -sin  my | * | y1  y2  y3  y4 |
+	| -sin  sin   cos   mz |   | z1  z2  z3  z4 |
+	| 0     0     0     1  |   | w1  w2  w3  w4 |
  */

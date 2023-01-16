@@ -55,6 +55,7 @@ function jval_has_array( &$val )
 
 function jval_str( &$val )
 {
+	// is string
 	if ( "$val" === $val )
 	{
 		// decode failed
@@ -63,16 +64,16 @@ function jval_str( &$val )
 		return sprintf('"%s"', $val);
 	}
 
-	if ( (int)$val === $val )
-		return sprintf('%d', $val);
-
+	// is int/float
 	$b1 = (int)($val * 1000000);
 	$b2 =  (int)$val * 1000000;
-	if ( $b1 === $b2 )
+	if ( $b1 === $b2 ) // is .000000 , whole number = int
 		return sprintf('%d', $val);
-	else
-		return sprintf('%.6f', $val);
-		//return sprintf('%.e', $val);
+	else // has decimals = float
+	{
+		$b1 = sprintf('%.6f', $val);
+		return rtrim($b1, '0');
+	}
 }
 //////////////////////////////
 function json_pretty( &$json, $tab )
