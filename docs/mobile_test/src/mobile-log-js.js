@@ -20,34 +20,37 @@
 	e = document.createElement('canvas').getContext('webgl');
 	logJS('CANVAS.getContext("webgl")', e);
 
-	e = ( window.Promise !== undefined );
+	e = ( window.Promise );
 	logJS('new Promise', e);
 
-	e = ( window.FileReader !== undefined );
-	logJS('new FileReader', e);
-
-	e = ( window.Promise.all !== undefined );
+	e = ( window.Promise.all );
 	logJS('Promise.all()', e);
 
-	e = ( window.JSON.parse !== undefined );
+	e = ( window.FileReader );
+	logJS('new FileReader', e);
+
+	e = ( window.MediaRecorder );
+	logJS('new MediaRecorder', e);
+
+	e = ( window.JSON.parse );
 	logJS('JSON.parse()', e);
 
-	e = ( window.CSS.supports !== undefined );
+	e = ( window.CSS.supports );
 	logJS('CSS.supports()', e);
 
 	//   mousedown    mousemove    mouseup   mouseuout
 	//  touchstart    touchmove   touchend           -
 	// pointerdown  pointermove  pointerup  pointerout
-	e = ( window.onmousedown !== undefined );
+	e = ( window.onmousedown );
 	logJS('addEventListener("mousedown")', e);
 
-	e = ( window.ontouchstart !== undefined );
+	e = ( window.ontouchstart );
 	logJS('addEventListener("touchstart")', e);
 
-	e = ( window.onpointerdown !== undefined );
+	e = ( window.onpointerdown );
 	logJS('addEventListener("pointerdown")', e);
 
-	e = ( window.atob !== undefined );
+	e = ( window.atob );
 	logJS('base64 atob()/btoa()', e);
 
 	// https://stackoverflow.com/questions/36312150/mousedown-event-not-firing-on-tablet-mobile-html5-canvas
@@ -58,7 +61,7 @@
 	//e = ( window.WebAssembly.validate !== undefined );
 	//logJS('WebAssembly.validate()', e);
 
-	e = ( navigator.mediaDevices.getUserMedia !== undefined );
+	e = ( navigator.mediaDevices.getUserMedia );
 	logJS('navigator.mediaDevices.getUserMedia', e);
 
 	DOM_MAIN.appendChild(DIV);
