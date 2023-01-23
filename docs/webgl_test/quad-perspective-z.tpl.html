@@ -3,7 +3,7 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Affine Test</title>
+<title>Quad Perspective Test (no matrix)</title>
 <style id="quad_inc_css">body {
 	position         : relative;
 	background-color : #000;
@@ -585,96 +585,80 @@ function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 
 <script>
 var vert_src = `
-	attribute vec2  a_xy;
-	attribute vec2  a_uv;
-	uniform   vec4  u_pxsize;
-	varying   vec2  v_uv;
+	attribute vec3   a_xyz;
+	attribute vec2   a_uv;
+	uniform   vec4   u_pxsize;
+	varying   vec2   v_uv;
+	varying   float  v_z;
 
+	vec3   v3;
+	vec2   v2;
+	float  z;
 	void main(void){
-		v_uv = vec2(a_uv.x * u_pxsize.z , a_uv.y * u_pxsize.w);
-		gl_Position = vec4(
-			a_xy.x * u_pxsize.x ,
-			a_xy.y * u_pxsize.y ,
-			1.0 , 1.0);
+		z  = 1.0 / a_xyz.z;
+		v3 = a_xyz * z;
+		v2 = a_uv  * z;
+
+		v3.xy *= u_pxsize.xy;
+		v2.xy *= u_pxsize.zw;
+
+		v_z  = z;
+		v_uv = v2;
+		gl_Position = vec4(v3, 1.0);
 	}
 `;
 
 var frag_src = `
 	uniform sampler2D u_tex;
-	varying vec2  v_uv;
+	varying vec2   v_uv;
+	varying float  v_z;
 
+	float  z;
 	void main(void){
-		gl_FragColor = texture2D(u_tex, v_uv);
+		if ( v_z == 0.0 )
+			discard;
+		z = 1.0 / v_z;
+		gl_FragColor = texture2D(u_tex, v_uv * z);
 	}
 `;
 
 var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_xy', 'a_uv', 'u_pxsize', 'u_tex');
+QDFN.setShaderLoc('a_xyz', 'a_uv', 'u_pxsize', 'u_tex');
 
 QDFN.setTexCount('u_tex', 1);
 var TEX_SIZE = [360,640];
 
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
+
+function dst_perp( dst, src='' )
+{
+	if ( src === '' )
+		src = [10,10 , 20,10 , 20,20 , 10,20];
+	var mat3 = getTransMat3(src, dst, false);
+	var v0 = matrix_multi31(mat3, [ src[0],src[1],1 ]);
+	var v1 = matrix_multi31(mat3, [ src[2],src[3],1 ]);
+	var v2 = matrix_multi31(mat3, [ src[4],src[5],1 ]);
+	var v3 = matrix_multi31(mat3, [ src[6],src[7],1 ]);
+	console.log(dst, [v0,v1,v2,v3]);
+	return [v0,v1,v2,v3];
+}
+
 function quadDraw()
 {
 	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
+	var dst = dst_perp(DST);
 
-	var scx = findIntersectPoint(SRC);
-	var dcx = findIntersectPoint(DST);
+	var xyz = [
+		dst[0][0],dst[0][1],dst[0][2] , dst[1][0],dst[1][1],dst[1][2] , dst[2][0],dst[2][1],dst[2][2] ,
+		dst[0][0],dst[0][1],dst[0][2] , dst[2][0],dst[2][1],dst[2][2] , dst[3][0],dst[3][1],dst[3][2] ,
+	];
+	var uv = [
+		SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
+		SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
+	];
 
-	// for simple and twisted
-	if ( dcx !== -1 )
-	{
-		var xy = [
-			dcx[0],dcx[1] , DST[0],DST[1] , DST[2],DST[3] ,
-			dcx[0],dcx[1] , DST[2],DST[3] , DST[4],DST[5] ,
-			dcx[0],dcx[1] , DST[4],DST[5] , DST[6],DST[7] ,
-			dcx[0],dcx[1] , DST[6],DST[7] , DST[0],DST[1] ,
-		];
-		QDFN.v2Attrib('a_xy', xy);
-
-		var uv = [
-			scx[0],scx[1] , SRC[0],SRC[1] , SRC[2],SRC[3] ,
-			scx[0],scx[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-			scx[0],scx[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-			scx[0],scx[1] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
-		];
-		QDFN.v2Attrib('a_uv', uv);
-
-		console.log('simple and twisted', dcx);
-		return QDFN.draw(12);
-	}
-
-	// bended
-	var area1 = quadArea(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
-	var area2 = quadArea(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
-
-	if ( area1 < area2 )
-	{
-		var xy = [
-			DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] ,
-			DST[0],DST[1] , DST[4],DST[5] , DST[6],DST[7] ,
-		];
-		var uv = [
-			SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-			SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-		];
-	}
-	else
-	{
-		var xy = [
-			DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] ,
-			DST[2],DST[3] , DST[6],DST[7] , DST[0],DST[1] ,
-		];
-		var uv = [
-			SRC[2],SRC[3] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-			SRC[2],SRC[3] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
-		];
-	}
-	QDFN.v2Attrib('a_xy', xy);
-	QDFN.v2Attrib('a_uv', uv);
-
-	console.log('bended', dcx);
+	QDFN.v3Attrib('a_xyz', xyz);
+	QDFN.v2Attrib('a_uv' , uv);
 	return QDFN.draw(6);
 }
 

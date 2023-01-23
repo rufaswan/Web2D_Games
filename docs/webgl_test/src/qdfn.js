@@ -122,29 +122,25 @@ var QDFN = QDFN || {};
 	}
 
 	$.bindTex2DById = function( bind, id ){
-		var c = function(img){
+		var p1 = new Promise(function(resolve,reject){
+			var img = document.getElementById(id);
+			// img.onload wont fired when img.src is data-url
 			var tex = $.createTexture();
 			$.texImage2D(img);
 			$.GL.activeTexture( $.GL.TEXTURE0 + bind );
 			$.GL.bindTexture  ( $.GL.TEXTURE_2D, tex );
-		}
-		var f = function( callback ){
-			var img = document.getElementById(id);
-			img.onload = function(){
-				callback(img);
-			}
-		}
-
-		f(c);
+			resolve(id);
+		});
+		return p1;
 	}
 
 	$.setTexCount = function( loc, cnt )
 	{
 		if ( $.LOC[loc] === undefined )
 			console.log('QDFN LOC not found', loc);
-		if ( cnt < 0 )
+		if ( cnt < 1 )
 			return;
-		if ( cnt == 1 )
+		if ( cnt === 1 )
 			$.GL.uniform1i($.LOC[loc], 0);
 		else {
 			var iv = [];

@@ -42,7 +42,6 @@ var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
 QDFN.setShaderLoc('a_xy', 'a_uv', 'u_pxsize', 'u_tex');
 
 QDFN.setTexCount('u_tex', 1);
-QDFN.bindTex2DById(0, 'mona_lisa_png');
 var TEX_SIZE = [360,640];
 
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
@@ -112,12 +111,16 @@ function quadDraw()
 function render(){
 	if ( IS_CLICK ){
 		getDstCorner();
-		quadDraw()
+		quadDraw();
 		IS_CLICK = false;
 	}
 	requestAnimationFrame(render);
 }
-requestAnimationFrame(render);
+
+QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
+	IS_CLICK = true;
+	requestAnimationFrame(render);
+});
 </script>
 
 </body></html>

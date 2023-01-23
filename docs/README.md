@@ -15,4 +15,5 @@
     * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-perspective-xy.tpl.html
     * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-perspective-screen.tpl.html
     * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-bilinear-screen.tpl.html
+    * http://rufaswan.github.io/Web2D_Games/webgl_test/quad-perspective-z.tpl.html
     * http://rufaswan.github.io/Web2D_Games/webgl_test/gl-drawload.tpl.html

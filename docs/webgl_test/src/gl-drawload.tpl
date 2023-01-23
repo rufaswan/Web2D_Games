@@ -73,7 +73,6 @@ var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
 QDFN.setShaderLoc('a_pos', 'u_tex');
 
 QDFN.setTexCount('u_tex', 1);
-QDFN.bindTex2DById(0, 'mona_lisa_png');
 
 var pos = [
 	0,0 , 2,0 , 2,2 ,
@@ -83,7 +82,8 @@ QDFN.v2Attrib('a_pos', pos);
 
 var MESSAGE = document.getElementById('message');
 //var TEX = QDFN.createTexture();
-(function(){
+
+QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
 	function drawload(){
 		var prev = performance.now();
 		var count = 0;
@@ -106,7 +106,7 @@ var MESSAGE = document.getElementById('message');
 
 	for (var i=0; i < 10; i++ )
 		drawload();
-})();
+});
 </script>
 
 </body></html>

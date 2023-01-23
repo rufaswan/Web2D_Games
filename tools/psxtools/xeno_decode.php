@@ -33,7 +33,7 @@ function xeno( $fname )
 	if ( $bak->is_empty() )
 		return;
 
-	xeno_decode($file);
+	xeno_decode($bak->file);
 
 	printf("%8x -> %8x  %s\n", $bak->filesize(0), $bak->filesize(1), $fname);
 	$bak->save();
