@@ -21,6 +21,11 @@ var QDFN = QDFN || {};
 		console.log('QDFN webgl ready');
 	}
 
+	$.canvasSize = function(){
+		$.GL.canvas.width  = $.GL.canvas.clientWidth;
+		$.GL.canvas.height = $.GL.canvas.clientHeight;
+	}
+
 	$.getBoundingClientRect = function(){
 		return $.GL.canvas.getBoundingClientRect();
 	}
@@ -61,12 +66,8 @@ var QDFN = QDFN || {};
 			var v = arguments[i];
 			switch ( v.charAt(0) )
 			{
-				case 'a':
-					$.LOC[v] = $.GL.getAttribLocation ($.Shader, v);
-					break;
-				case 'u':
-					$.LOC[v] = $.GL.getUniformLocation($.Shader, v);
-					break;
+				case 'a':  $.LOC[v] = $.GL.getAttribLocation ($.Shader, v); break;
+				case 'u':  $.LOC[v] = $.GL.getUniformLocation($.Shader, v); break;
 			}
 		} // for ( var i=0; i < arguments.length; i++ )
 		return;
@@ -75,9 +76,8 @@ var QDFN = QDFN || {};
 	$.setVec4pxSize = function( loc, sw=1, sh=1 ){
 		if ( $.LOC[loc] === undefined )
 			console.log('QDFN LOC not found', loc);
-		var box = $.GL.canvas.getBoundingClientRect();
-		var hw  = box.width  * 0.5;
-		var hh  = box.height * 0.5;
+		var hw  = $.GL.drawingBufferWidth  * 0.5;
+		var hh  = $.GL.drawingBufferHeight * 0.5;
 		var px  = [ 1/hw, -1/hh , 1/sw , 1/sh ];
 		$.GL.uniform4fv($.LOC[loc], px);
 	}
@@ -134,8 +134,7 @@ var QDFN = QDFN || {};
 		return p1;
 	}
 
-	$.setTexCount = function( loc, cnt )
-	{
+	$.setTexCount = function( loc, cnt ){
 		if ( $.LOC[loc] === undefined )
 			console.log('QDFN LOC not found', loc);
 		if ( cnt < 1 )

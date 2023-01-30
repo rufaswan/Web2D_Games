@@ -20,185 +20,219 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
 
-function inc_type( &$s )
+function is_utf8( &$file )
 {
-	$t = trim($s, '<>');
-	if ( $t !== $s )
-	{
-		$s = $t;
-		return '<>';
-	}
+	$invalid = "\x00\x7f";
 
-	$t = trim($s, '[]');
-	if ( $t !== $s )
+	$len = strlen($invalid);
+	for ( $i=0; $i < $len; $i++ )
 	{
-		$s = $t;
-		return '[]';
+		if ( strpos($file, $invalid[$i]) !== false )
+			return false;
 	}
-
-	return '==';
+	return true;
 }
 
-function inc_tag( $s )
+function get_tag( $fname )
 {
-	$s = trim($s, '@');
-	$d = array(
-		't' => '', // type
-		'f' => '', // file content
-		'e' => '', // extension
-		's' => '', // ID
-	);
-	echo "@@ $s @@\n";
-	$d['t'] = inc_type($s);
+	$b = trim($fname, '<>');
+	if ( $fname !== $b )
+		return array('<>', $b);
 
-	$p = strrpos($s, '.');
-	$d['e'] = strtolower( substr($s, $p+1) );
-	$d['f'] = load_file($s);
-	$d['s'] = preg_replace('|[^a-zA-Z0-9]|', '_', $s);
-	return $d;
+	$b = trim($fname, '[]');
+	if ( $fname !== $b )
+		return array('[]', $b);
+
+	return array('', $fname);
 }
 
-function trim_js_css( &$css )
+function get_meta( $fname )
+{
+	// file    = data
+	// <file>  = <html>data</html>
+	// [file]  = var t = Uint8Array([data]);
+	$meta = array();
+	$t = get_tag($fname);
+
+	$meta['t'] = $t[0];
+	$meta['f'] = file_get_contents($t[1]);
+	$meta['s'] = preg_replace('|[^a-zA-Z0-9]|', '_', $t[1]);
+
+	$p = strrpos($t[1], '.');
+	$e = substr ($t[1], $p+1);
+	$meta['e'] = strtolower($e);
+	return $meta;
+}
+//////////////////////////////
+function strip_js_css( &$file )
 {
 	while (1)
 	{
-		$p1 = strpos($css, '/*');
+		$p1 = strpos($file, '/*');
 		if ( $p1 === false )
 			break;
-
-		$p2 = strpos($css, '*/', $p1+2);
+		$p2 = strpos($file, '*/', $p1+2);
 		if ( $p2 === false )
-			$t = substr($css, $p1);
-		else
-			$t = substr($css, $p1, $p2+2-$p1);
+			break;
+		$p2 += 2;
 
-		$css = str_replace($t, "\n", $css);
-	} // while (1)
+		$s = substr($file, $p1, $p2-$p1);
+		$file = str_replace($s, "\n", $file);
+	}
 	return;
-
-/*
-	$css = str_replace("\r", "\n", $css);
-	$t = explode("\n", $css);
-	$css = '';
-	foreach ( $t as $line )
-	{
-		$line = trim($line);
-		if ( empty($line) )
-			continue;
-
-		$cmt = strpos($line, '//');
-		if ( $cmt === 0 )
-			continue;
-		if ( $cmt > 0 )
-			$line = substr($line, 0, $cmt);
-
-		$css .= "$line\n";
-	} // foreach ( $t as $line )
-
-	$css = preg_replace('| +|', ' ', $css);
-	return;
-*/
 }
 
+function strip_html( &$file )
+{
+	// exclude <!doctype html>
+	// exclude <![CDDATA]>
+	while (1)
+	{
+		$p1 = strpos($file, '<!--');
+		if ( $p1 === false )
+			break;
+		$p2 = strpos($file, '-->', $p1+4);
+		if ( $p2 === false )
+			break;
+		$p2 += 3;
+
+		$s = substr($file, $p1, $p2-$p1);
+		$file = str_replace($s, "\n", $file);
+	}
+	return;
+}
+//////////////////////////////
 function html64( $fname )
 {
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
+	printf("== html64( %s )\n", $fname);
+	$meta = get_meta($fname);
 
-	$is_same = true;
+	// any = if ArrayBufferView
+	if ( $meta['t'] === '[]' )
+	{
+		$b = array();
+		$len = strlen($meta['f']);
+		for ( $i=0; $i < $len; $i++ )
+			$b[$i] = ord( $meta['f'][$i] );
+		return sprintf('var %s = Uint8Array([%s]);', $meta['s'], implode(',',$b));
+	}
+
+	// BINARY file = no recursice parsing
+	$is_txt = is_utf8($meta['f']);
+	$is_tag = ( $meta['t'] === '<>' );
+	if ( ! $is_txt )
+	{
+		$mime = 'application/octet-stream';
+		$elem = '';
+		switch ( $meta['e'] )
+		{
+			case 'bmp' :  $mime = 'image/bmp' ;  $elem = 'img'  ;  break;
+			case 'jpeg':
+			case 'jpg' :  $mime = 'image/jpeg';  $elem = 'img'  ;  break;
+			case 'gif' :  $mime = 'image/gif' ;  $elem = 'img'  ;  break;
+			case 'png' :  $mime = 'image/png' ;  $elem = 'img'  ;  break;
+
+			case 'mp4' :  $mime = 'video/mp4' ;  $elem = 'video';  break;
+			case 'm4v' :  $mime = 'video/mp4' ;  $elem = 'video';  break;
+			case 'webm':  $mime = 'video/webm';  $elem = 'video';  break;
+			case 'mov' :  $mime = 'video/quicktime';  $elem = 'video';  break;
+
+			case 'wav' :  $mime = 'audio/wav' ;  $elem = 'audio';  break;
+			case 'mp3' :  $mime = 'audio/mpeg';  $elem = 'audio';  break;
+			case 'ogg' :  $mime = 'audio/ogg' ;  $elem = 'audio';  break;
+			case 'm4a' :  $mime = 'audio/mp4' ;  $elem = 'audio';  break;
+			case 'aac' :  $mime = 'audio/aac' ;  $elem = 'audio';  break;
+			case 'flac':  $mime = 'audio/flac';  $elem = 'audio';  break;
+		} // switch ( $meta['e'] )
+
+		$data = sprintf('data:%s;base64,%s', $mime, base64_encode($meta['f']));
+		if ( $elem === '' || ! $is_tag )
+			return $data;
+
+		switch ( $elem )
+		{
+			case 'img':
+				return sprintf('<img id="%s" alt="%s" title="%s" src="%s">', $meta['s'], $meta['s'], $meta['s'], $data);
+			case 'video':
+				return sprintf('<video id="%s" src="%s" controls loop></video>', $meta['s'], $data);
+			case 'audio':
+				return sprintf('<audio id="%s" src="%s" controls loop></audio>', $meta['s'], $data);
+		} // switch ( $elem )
+	}
+
+	// TEXT files = recursive parsing
+	// remove comments
+	strip_js_css($meta['f']); // C-style /* ... */
+	strip_html  ($meta['f']); // HTML <!-- ... -->
+
+	$func = __FUNCTION__;
 	while (1)
 	{
-		$p1 = strpos($file, '@@');
+		$p1 = strpos($meta['f'], '@@');
 		if ( $p1 === false )
 			break;
-		$p2 = strpos($file, '@@', $p1+2);
+		$p2 = strpos($meta['f'], '@@', $p1+2);
 		if ( $p2 === false )
 			break;
+		$p2 += 2;
 
-		$s = substr($file, $p1,   $p2+2-$p1); // @@style.css@@
-		$d = inc_tag($s);
+		$s    = substr($meta['f'], $p1, $p2-$p1);
+		$file = $func( trim($s,'@') );
+		$meta['f'] = str_replace($s, $file, $meta['f']);
+	}
 
-		$rep = '';
-		switch ( $d['t'] )
-		{
-			case '<>': // <tag>%s</tag>
-				switch ( $d['e'] )
-				{
-					case 'tpl':
-					case 'htm':
-					case 'html':
-						$rep = $d['f'];
-						break;
-					case 'js':
-						trim_js_css($d['f']);
-						$rep = sprintf('<script id="%s">%s</script>', $d['s'], $d['f']);
-						break;
-					case 'css':
-						trim_js_css($d['f']);
-						$rep = sprintf('<style id="%s">%s</style>', $d['s'], $d['f']);
-						break;
-					case 'jpeg':
-					case 'jpg':
-						$rep = sprintf('<img id="%s" title="%s" alt="%s" src="data:image/jpeg;base64,%s">', $d['s'], $d['s'], $d['s'], base64_encode($d['f']));
-						break;
-					case 'png':
-						$rep = sprintf('<img id="%s" title="%s" alt="%s" src="data:image/png;base64,%s">' , $d['s'], $d['s'], $d['s'], base64_encode($d['f']));
-						break;
-					default:
-						$rep = $d['f'];
-						break;
-				} // switch ( $d['e'] )
+	switch ( $meta['e'] )
+	{
+		case 'js':
+			if ( $is_tag )
+				return sprintf('<script>%s</script>', $meta['f']);
+			else
+				return $meta['f'];
+		case 'css':
+			if ( $is_tag )
+				return sprintf('<style>%s</style>', $meta['f']);
+			else
+				return $meta['f'];
+		default:
+			return $meta['f'];
+	} // switch ( $meta['e'] )
+	return '';
+}
 
-				break;
+function html64file( $fname )
+{
+	$sha = file_get_contents($fname);
+	if ( empty($sha) )  return;
+	$sha = sha1($sha);
 
-			case '[]': // Uint8Array(%s)
-				$b = array();
-				$len = strlen($d['f']);
-				for ( $i=0; $i < $len; $i++ )
-					$b[$i] = ord( $d['f'][$i] );
-				$rep .= sprintf('Uint8Array([%s])', implode(',', $b));
-				break;
-
-			case '==': // data:base64,%s
-				switch ( $d['e'] )
-				{
-					case 'tpl':
-					case 'htm':
-					case 'html':
-						$mime = 'text/html';
-						break;
-					case 'js':
-						$mime = 'application/javascript';
-						break;
-					case 'css':
-						$mime = 'text/css';
-						break;
-					case 'jpeg':
-					case 'jpg':
-						$mime = 'image/jpeg';
-						break;
-					case 'png':
-						$mime = 'image/png';
-						break;
-					default:
-						$mime = 'application/octet-stream';
-						break;
-				} // switch ( $d['e'] )
-
-				$rep .= sprintf('data:%s;base64,%s', $mime, base64_encode($d['f']));
-				break;
-		} // switch ( $d['t'] )
-
-		$file = str_replace($s, $rep, $file);
-		$is_same = false;
-	} // while (1)
-
-	if ( ! $is_same )
-		file_put_contents("$fname.html", $file);
+	printf("%s  %s\n", $sha, $fname);
+	$file = html64($fname);
+	if ( sha1($file) === $sha )
+		return;
+	file_put_contents("$fname.html", $file);
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	html64( $argv[$i] );
+	html64file( $argv[$i] );
+
+/*
+func1.js
+func2.js
+
+script.js
+	@@func1.js@@  ->  ...
+	@@func2.js@@  ->  ...
+	@@file.zip@@  -> var file_zip = Uint8Array([...]);
+
+style.css
+	background : url('@@bg.png@@');  -> data:image/png;base64,...
+	background : url('@@bg.jpg@@');  -> data:image/jpeg;base64,...
+
+index.html
+	@@<script.js>@@  -> <script id=''>...</script>
+	@@<style.css>@@  -> <style  id=''>...</style>
+	@@<image.png>@@  -> <img id='' src='data:image/png;base64,...'  alt='' title=''>
+	@@<image.jpg>@@  -> <img id='' src='data:image/jpeg;base64,...' alt='' title=''>
+ */

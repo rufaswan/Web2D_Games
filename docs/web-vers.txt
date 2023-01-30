@@ -402,6 +402,16 @@ var            typeof       console.log
 [1,2,3]        "object"     Array[ 1,2,3 ]
 {a:1,b:2,c:3}  "object"     Object{ a:1,b:2,c:3 }
 
+webgl canvas  x,y = 86,61  size = 696x494
+
+	300,150  canvas.width           canvas.height
+	696,494  canvas.clientWidth     canvas.clientHeight
+	696,494  canvas.offsetWidth     canvas.offsetHeight
+	696,494  canvas.scrollWidth     canvas.scrollHeight
+	300,150  gl.drawingBufferWidth  gl.drawingBufferHeight
+		rect = canvas.getBoundingClientRect()
+	696,494  rect.width              rect.height
+
 
 
 https://upload.wikimedia.org/wikipedia/commons/6/63/Vector_Video_Standards.svg

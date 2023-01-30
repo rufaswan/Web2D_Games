@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Audio Player</title>
-<style id="main_css">body {
+<style>body {
 	background-color : #000;
 	color            : #fff;
 	line-height      : 50px;
@@ -43,7 +43,7 @@ li.current {
 	var PLIST  = document.getElementById('plist');
 </script>
 
-<script id="uint8base64_js">'use strict';
+<script>'use strict';
 
 function Uint8Base64( uint ){
 	var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -98,7 +98,7 @@ function Uint8Base64( uint ){
 // base64 'abcd' == 'YWJjZA=='
 //console.log('Uint8Base64', Uint8Base64( new Uint8Array([0x61,0x62,0x63,0x64]) ));
 </script>
-<script id="unpackfile_js">'use strict';
+<script>'use strict';
 
 function buf2int( buffer, pos, byte )
 {
@@ -209,7 +209,7 @@ function ziplist( uint8 )
 }
 </script>
 
-<script id="audio_player_js">'use strict';
+<script>'use strict';
 
 function playaudio( elem )
 {

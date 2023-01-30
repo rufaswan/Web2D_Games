@@ -142,3 +142,11 @@ function json_pretty( &$json, $tab )
 	- tabs = 4 spaces                 -> 2 spaces
 	- native LF or CRLF               -> always CRLF
  */
+
+if ( ! function_exists('json_encode') )
+{
+	function json_encode($value, $option='', $depth=512)
+	{
+		return json_pretty($value, '');
+	}
+}

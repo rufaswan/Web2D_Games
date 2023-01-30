@@ -50,6 +50,7 @@ var TEX_SIZE = [360,640];
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
 function quadDraw()
 {
+	QDFN.canvasSize();
 	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 	var mat3 = getTransMat3(SRC, DST, false);
 	QDFN.setMatrix3fv('u_mat3', mat3);

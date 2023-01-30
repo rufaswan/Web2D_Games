@@ -43,7 +43,8 @@ function pngchunk( $name, $data, $zlib=false )
 {
 	$sect = $name;
 	if ( $zlib )
-		$sect .= zlib_encode($data, ZLIB_ENCODING_DEFLATE, 9);
+		//$sect .= zlib_encode($data, ZLIB_ENCODING_DEFLATE, 9);
+		$sect .= zlib_deflate_store($data);
 	else
 		$sect .= $data;
 

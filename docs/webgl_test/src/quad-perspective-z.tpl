@@ -75,6 +75,7 @@ function dst_perp( dst, src='' )
 
 function quadDraw()
 {
+	QDFN.canvasSize();
 	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 	var dst = dst_perp(DST);
 

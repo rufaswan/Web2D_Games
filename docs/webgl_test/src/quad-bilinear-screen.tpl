@@ -84,14 +84,14 @@ var TEX_SIZE = [360,640];
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
 function quadDraw()
 {
+	QDFN.canvasSize();
 	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 
 	var mat4 = bilinearwarp(DST, TEX_SIZE[0], TEX_SIZE[1]);
 	QDFN.setMatrix4fv('u_mat4', mat4);
 
-	var box = QDFN.getBoundingClientRect();
-	var hw  = box.width  * 0.5;
-	var hh  = box.height * 0.5;
+	var hw  = QDFN.GL.drawingBufferWidth  * 0.5;
+	var hh  = QDFN.GL.drawingBufferHeight * 0.5;
 
 	var xy = [
 		-hw,-hh , hw,-hh ,  hw,hh ,

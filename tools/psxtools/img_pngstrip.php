@@ -22,6 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-guest.inc';
+require 'common-zlib.inc';
 
 function png_chunk( &$png )
 {
@@ -52,8 +53,20 @@ function png_chunk( &$png )
 	return $chunk;
 }
 
+function zlib_idat( $level, &$idat )
+{
+	if ( $level < 0 )  return;
+	if ( $level > 9 )  return;
+	$bin = zlib_decode($idat);
+	if ( $level === 0 )
+		$idat = zlib_deflate_store($bin);
+	else
+		$idat = zlib_encode($bin, ZLIB_ENCODING_DEFLATE, $level);
+	return;
+}
+
 // to strip off any optional PNG chunks (tIME,gAMA,iCCP,etc)
-function pngstrip( $fname )
+function pngstrip( $level, $fname )
 {
 	$png = file_get_contents($fname);
 	if ( empty($png) )  return;
@@ -62,6 +75,7 @@ function pngstrip( $fname )
 		return;
 
 	$chunk = png_chunk($png);
+	zlib_idat($level, $chunk['IDAT']);
 
 	// chunks to keep
 	$tag = array('IHDR', 'PLTE', 'tRNS', 'IDAT', 'IEND');
@@ -82,5 +96,11 @@ function pngstrip( $fname )
 	return;
 }
 
+$level = -1;
 for ( $i=0; $i < $argc; $i++ )
-	pngstrip( $argv[$i] );
+{
+	if ( is_file($argv[$i]) )
+		pngstrip( $level, $argv[$i] );
+	else
+		$level = (int)$argv[$i];
+}
