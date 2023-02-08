@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-php_req_extension("zlib_decode", "zlib");
+require 'common.inc';
+php_req_extension('zlib_decode', 'zlib');
 
 function ain_dec( $fname )
 {
@@ -29,13 +29,13 @@ function ain_dec( $fname )
 
 	$mgc = substr($file, 0, 3);
 	$valid = array(
-		"AI2", // *.ain
-		"ZLB", // *
-		"ACX", // Data/*.acx
+		'AI2', // *.ain
+		'ZLB', // *
+		'ACX', // Data/*.acx
 	);
 	if ( ! in_array($mgc, $valid) )
 		return;
-	printf("$mgc , $fname\n");
+	printf("%s , %s\n", $mgc, $fname);
 
 	$dec = zlib_decode( substr($file, 0x10) );
 	file_put_contents("$fname.dec", $dec);

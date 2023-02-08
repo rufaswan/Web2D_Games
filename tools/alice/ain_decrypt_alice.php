@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 // from System 4.0 SDK/Popolytan/DLL/Sys42VM.dll
 // sub_10001260
@@ -110,15 +110,15 @@ class gal_key
 //////////////////////////////
 function ain42( $rem, $fn )
 {
-	//$fn  = "Galzoo.ain";
-	//$fn  = "Popolytan.ain";
+	//$fn  = 'Galzoo.ain';
+	//$fn  = 'Popolytan.ain';
 	$ain = file_get_contents($fn);
 		if ( empty($ain) )  return;
 	echo "[$rem] $fn\n";
 
 	$gal = new gal_key();
 	$gal->init();
-	//$gal->debug("init()");
+	//$gal->debug('init()');
 
 	$ed = strlen($ain);
 	for ( $i=0; $i < $ed; $i++ )
@@ -128,7 +128,7 @@ function ain42( $rem, $fn )
 		{
 			//printf("%x => %x update()\n", $i, $k);
 			$gal->update();
-			//$gal->debug("update()");
+			//$gal->debug('update()');
 		}
 
 		$c = ord( $ain[$i] );

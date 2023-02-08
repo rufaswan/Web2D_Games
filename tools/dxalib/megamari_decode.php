@@ -1,10 +1,10 @@
 <?php
-require "common.inc";
+require 'common.inc';
 
 function mari_decode( &$file, $pos, $siz )
 {
 	printf("== mari_decode( %x )\n", $pos);
-	$dec = "";
+	$dec = '';
 
 	$key  = 100;
 	$step = 100;
@@ -42,7 +42,7 @@ function marisa( $fname )
 		$key = ( ($of >> 1) | 8 ) & BIT8;
 
 		printf("%8x , %8x , %2x , %s\n", $of, $sz, $key, $fn);
-		$dec = "";
+		$dec = '';
 		for ( $j=0; $j < $sz; $j++ )
 		{
 			$b  = ord( $file[$of+$j] );

@@ -7,11 +7,11 @@ function xtalc( $fname )
 	if ( empty($file) )
 		return;
 
-	if ( strpos($file, ".bmp") )
+	if ( strpos($file, '.bmp') )
 	{
 		echo "BMP $fname\n";
 		file_put_contents("$fname.bak", $file);
-		$file = str_replace(".bmp", ".png", $file);
+		$file = str_replace('.bmp', '.png', $file);
 		file_put_contents($fname, $file);
 	}
 	return;

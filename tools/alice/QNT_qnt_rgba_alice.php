@@ -23,16 +23,16 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 //   xsystem35/src/qnt.c
 // Original License:
 //   GNU GPL v2 or later
-require "common.inc";
-php_req_extension("zlib_decode", "zlib");
+require 'common.inc';
+php_req_extension('zlib_decode', 'zlib');
 
-define("DEBUG", false);
+define('DEBUG', false);
 //////////////////////////////
 function qnt_pixel( &$dec, &$qnt )
 {
 	$pix = array();
-	$w = $qnt["pw"];
-	$h = $qnt["ph"];
+	$w = $qnt['pw'];
+	$h = $qnt['ph'];
 	$j = 0;
 
 	// [BBBB]...[GGGG]...[RRRR]... blocks
@@ -105,7 +105,7 @@ function qnt_pixel( &$dec, &$qnt )
 			} // for ( $y=1; $y < $h; $y++ )
 		}
 
-		$pix[$i] = "";
+		$pix[$i] = '';
 		for ( $n=0; $n < ($w*$h); $n++ )
 			$pix[$i] .= chr( $data[$n] );
 
@@ -117,8 +117,8 @@ function qnt_pixel( &$dec, &$qnt )
 function qnt_alpha( &$dec, &$qnt )
 {
 	$data = array();
-	$w = $qnt["pw"];
-	$h = $qnt["ph"];
+	$w = $qnt['pw'];
+	$h = $qnt['ph'];
 
 	$data[0] = ord( $dec[0] );
 	$i = 1;
@@ -156,7 +156,7 @@ function qnt_alpha( &$dec, &$qnt )
 		} // for ( $y=1; $y < $h; $y++ )
 	}
 
-	$alp = "";
+	$alp = '';
 	for ( $n=0; $n < ($w*$h); $n++ )
 		$alp .= chr( $data[$n] );
 	return $alp;
@@ -164,33 +164,33 @@ function qnt_alpha( &$dec, &$qnt )
 
 function data_qnt( &$file, &$qnt, $fname )
 {
-	if ( $qnt['t'] > 2 )  return "";
+	if ( $qnt['t'] > 2 )  return '';
 
-	$w = $qnt["pw"];
-	$h = $qnt["ph"];
+	$w = $qnt['pw'];
+	$h = $qnt['ph'];
 	$siz = $w * $h;
 
-	$pix = "";
-	if ( $qnt["pix"] != 0 )
+	$pix = '';
+	if ( $qnt['pix'] != 0 )
 	{
-		$dec = substr($file, $qnt["hdr"]);
+		$dec = substr($file, $qnt['hdr']);
 		$dec = zlib_decode($dec);
 		if ( DEBUG )
 			file_put_contents("$fname.1", $dec);
 		$pix = qnt_pixel($dec, $qnt);
 	}
 
-	$alp = "";
-	if ( $qnt["alp"] != 0 )
+	$alp = '';
+	if ( $qnt['alp'] != 0 )
 	{
-		$dec = substr($file, $qnt["hdr"] + $qnt["pix"]);
+		$dec = substr($file, $qnt['hdr'] + $qnt['pix']);
 		$dec = zlib_decode($dec);
 		if ( DEBUG )
 			file_put_contents("$fname.2", $dec);
 		$alp = qnt_alpha($dec, $qnt);
 	}
 
-	$data = "";
+	$data = '';
 	for ( $n=0; $n < $siz; $n++ )
 	{
 			$r = ( empty($pix) ) ? ZERO : $pix[2][$n];
@@ -208,29 +208,29 @@ function qnt_header( &$file, $type )
 	switch ( $type )
 	{
 		case 0:
-			$qnt["t"]   = $type;
-			$qnt["hdr"] = 0x30;
-			$qnt["px"]  = str2int($file, 0x08, 4);
-			$qnt["py"]  = str2int($file, 0x0c, 4);
-			$qnt["pw"]  = str2int($file, 0x10, 4);
-			$qnt["ph"]  = str2int($file, 0x14, 4);
-			$qnt["bpp"] = str2int($file, 0x18, 4);
-			$qnt["rsv"] = str2int($file, 0x1c, 4);
-			$qnt["pix"] = str2int($file, 0x20, 4);
-			$qnt["alp"] = str2int($file, 0x24, 4);
+			$qnt['t']   = $type;
+			$qnt['hdr'] = 0x30;
+			$qnt['px']  = str2int($file, 0x08, 4);
+			$qnt['py']  = str2int($file, 0x0c, 4);
+			$qnt['pw']  = str2int($file, 0x10, 4);
+			$qnt['ph']  = str2int($file, 0x14, 4);
+			$qnt['bpp'] = str2int($file, 0x18, 4);
+			$qnt['rsv'] = str2int($file, 0x1c, 4);
+			$qnt['pix'] = str2int($file, 0x20, 4);
+			$qnt['alp'] = str2int($file, 0x24, 4);
 			return $qnt;
 		case 1:
 		case 2:
-			$qnt["t"]   = $type;
-			$qnt["hdr"] = str2int($file, 0x08, 4);
-			$qnt["px"]  = str2int($file, 0x0c, 4);
-			$qnt["py"]  = str2int($file, 0x10, 4);
-			$qnt["pw"]  = str2int($file, 0x14, 4);
-			$qnt["ph"]  = str2int($file, 0x18, 4);
-			$qnt["bpp"] = str2int($file, 0x1c, 4);
-			$qnt["rsv"] = str2int($file, 0x20, 4);
-			$qnt["pix"] = str2int($file, 0x24, 4);
-			$qnt["alp"] = str2int($file, 0x28, 4);
+			$qnt['t']   = $type;
+			$qnt['hdr'] = str2int($file, 0x08, 4);
+			$qnt['px']  = str2int($file, 0x0c, 4);
+			$qnt['py']  = str2int($file, 0x10, 4);
+			$qnt['pw']  = str2int($file, 0x14, 4);
+			$qnt['ph']  = str2int($file, 0x18, 4);
+			$qnt['bpp'] = str2int($file, 0x1c, 4);
+			$qnt['rsv'] = str2int($file, 0x20, 4);
+			$qnt['pix'] = str2int($file, 0x24, 4);
+			$qnt['alp'] = str2int($file, 0x28, 4);
 			return $qnt;
 		default:
 			return $qnt;
@@ -243,25 +243,25 @@ function qnt2rgba( $fname )
 		if ( empty($file) )   return;
 
 	$mgc = substr($file, 0, 3);
-		if ( $mgc != "QNT" )  return;
+		if ( $mgc !== 'QNT' )  return;
 
 	$type = str2int($file, 4, 4);
 	$qnt = qnt_header($file, $type);
 		if ( empty($qnt) )  return;
 
-	if ( $qnt["pix"] != 0 )  $type .= 'p';
-	if ( $qnt["alp"] != 0 )  $type .= 'a';
+	if ( $qnt['pix'] != 0 )  $type .= 'p';
+	if ( $qnt['alp'] != 0 )  $type .= 'a';
 	printf("QNT-$type , %4d , %4d , %4d , %4d , $fname\n",
-		$qnt["px"], $qnt["py"], $qnt["pw"], $qnt["ph"]
+		$qnt['px'], $qnt['py'], $qnt['pw'], $qnt['ph']
 	);
 
-	$rgba = "RGBA";
-	$rgba .= chrint($qnt["pw"], 4);
-	$rgba .= chrint($qnt["ph"], 4);
+	$rgba = 'RGBA';
+	$rgba .= chrint($qnt['pw'], 4);
+	$rgba .= chrint($qnt['ph'], 4);
 
 	$rgba .= data_qnt($file, $qnt, $fname);
 
-	file_put_contents("{$fname}.rgba", $rgba);
+	file_put_contents("$fname.rgba", $rgba);
 }
 
 if ( $argc == 1 )   exit();

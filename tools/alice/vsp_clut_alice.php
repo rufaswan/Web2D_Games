@@ -23,7 +23,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 //   xsystem35/src/vsp.c
 // Original License:
 //   GNU GPL v2 or later
-require "common.inc";
+require 'common.inc';
 
 function get_4bit( $bit, $b0, $b1, $b2, $b3 )
 {
@@ -51,12 +51,12 @@ function data_vsp0( &$file, &$vsp , $st )
 	$bc   = array();
 	$bp   = array();
 	$mask = 0;
-	for ( $x=0; $x < $vsp["pw"]; $x++ )
+	for ( $x=0; $x < $vsp['pw']; $x++ )
 	{
 		for ( $pl=0; $pl < 4; $pl++ )
 		{
 			$y = 0;
-			while ( $y < $vsp["ph"] )
+			while ( $y < $vsp['ph'] )
 			{
 				$c0 = ord( $file[$st] );
 				$st++;
@@ -152,9 +152,9 @@ function data_vsp0( &$file, &$vsp , $st )
 			} // while ( $y < $ph )
 		} // for ( $pl=0; $pl < 4; $pl++ )
 
-		for ( $y=0; $y < $vsp["ph"]; $y++ )
+		for ( $y=0; $y < $vsp['ph']; $y++ )
 		{
-			$loc = ( $y * $vsp["pw"] + $x ) * 8;
+			$loc = ( $y * $vsp['pw'] + $x ) * 8;
 			$b0 = $bc[0][$y];
 			$b1 = $bc[1][$y];
 			$b2 = $bc[2][$y];
@@ -179,10 +179,10 @@ function data_vsp0( &$file, &$vsp , $st )
 		swapval( $bc[2], $bp[2] );
 		swapval( $bc[3], $bp[3] );
 
-	} // for ( $x=0; $x < $vsp["pw"]; $x++ )
+	} // for ( $x=0; $x < $vsp['pw']; $x++ )
 	//////////////////////////
-	$len = $vsp["pw"]*8 * $vsp["ph"];
-	$img = "";
+	$len = $vsp['pw']*8 * $vsp['ph'];
+	$img = '';
 	for ( $i=0; $i < $len; $i++ )
 		$img .= chr( $data[$i] );
 	return $img;
@@ -213,8 +213,8 @@ function vsp2clut( $fname )
 	$vsp = array();
 	$vsp['px'] = str2int( $file, 0, 2 );
 	$vsp['py'] = str2int( $file, 2, 2 );
-	$vsp['pw'] = str2int( $file, 4, 2 ) - $vsp["px"];
-	$vsp['ph'] = str2int( $file, 6, 2 ) - $vsp["py"];
+	$vsp['pw'] = str2int( $file, 4, 2 ) - $vsp['px'];
+	$vsp['ph'] = str2int( $file, 6, 2 ) - $vsp['py'];
 
 	$res = ord( $file[8] );
 	if ( $res )
@@ -224,19 +224,19 @@ function vsp2clut( $fname )
 	}
 	else
 	{
-		printf("VSP-0 , %3d , %3d , %3d , %3d , $fname\n",
-			$vsp["px"]*8, $vsp["py"], $vsp["pw"]*8, $vsp["ph"]
+		printf("VSP-0 , %3d , %3d , %3d , %3d , %s\n",
+			$vsp['px']*8, $vsp['py'], $vsp['pw']*8, $vsp['ph'], $fname
 		);
 
-		$clut = "CLUT";
+		$clut = 'CLUT';
 		$clut .= chrint(16 , 4);
-		$clut .= chrint($vsp["pw"]*8 , 4);
-		$clut .= chrint($vsp["ph"]   , 4);
+		$clut .= chrint($vsp['pw']*8 , 4);
+		$clut .= chrint($vsp['ph']   , 4);
 
 		$clut .= clut_vsp0( $file , 0xa );
 		$clut .= data_vsp0( $file , $vsp , 0x3a );
 
-		file_put_contents("{$fname}.clut", $clut);
+		file_put_contents("$fname.clut", $clut);
 	}
 }
 

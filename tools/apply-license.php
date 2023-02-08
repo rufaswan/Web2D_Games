@@ -20,9 +20,9 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 //////////////////////////////
-$APP_NAME = "Web2D Games";
-$AUTHOR   = "Rufas Wan";
-$GITHUB   = "https://github.com/rufaswan/Web2D_Games";
+$APP_NAME = 'Web2D Games';
+$AUTHOR   = 'Rufas Wan';
+$GITHUB   = 'https://github.com/rufaswan/Web2D_Games';
 
 $LICENSE = <<<_TXT
 Copyright (C) 2019 by {$AUTHOR}
@@ -54,17 +54,17 @@ function set_license( $fname )
 	global $LICENSE;
 
 	$skip = false;
-	$text = "";
+	$text = '';
 	foreach ( file($fname) as $line )
 	{
 		$l = trim($line);
-		if ( $l == "[license]" )
+		if ( $l === '[license]' )
 		{
 			$skip  = true;
 			$text .= $line;
 		}
 		else
-		if ( $l == "[/license]" )
+		if ( $l === '[/license]' )
 		{
 			$skip  = false;
 			$text .= $LICENSE . $line;

@@ -59,10 +59,26 @@ function get_meta( $fname )
 	$meta['f'] = file_get_contents($t[1]);
 	$meta['s'] = preg_replace('|[^a-zA-Z0-9]|', '_', $t[1]);
 
-	$p = strrpos($t[1], '.');
-	$e = substr ($t[1], $p+1);
+	$e = substr($t[1], strrpos($t[1],'.')+1);
 	$meta['e'] = strtolower($e);
 	return $meta;
+}
+
+function get_mime( $ext )
+{
+	$image = array('bmp','gif','png','apng','avif','jpeg','tiff','webp',);
+	if ( array_search($ext, $image) !== false )
+		return 'image/' . $ext;
+
+	$video = array('mp4','webm',);
+	if ( array_search($ext, $video) !== false )
+		return 'video/' . $ext;
+
+	$audio = array('aac','ogg','flac','midi','opus','wave',);
+	if ( array_search($ext, $audio) !== false )
+		return 'audio/' . $ext;
+
+	return 'application/octet-stream';
 }
 //////////////////////////////
 function strip_js_css( &$file )
@@ -86,7 +102,7 @@ function strip_js_css( &$file )
 function strip_html( &$file )
 {
 	// exclude <!doctype html>
-	// exclude <![CDDATA]>
+	// exclude <![CDATA[character data]]>
 	while (1)
 	{
 		$p1 = strpos($file, '<!--');
@@ -123,42 +139,23 @@ function html64( $fname )
 	$is_tag = ( $meta['t'] === '<>' );
 	if ( ! $is_txt )
 	{
-		$mime = 'application/octet-stream';
-		$elem = '';
-		switch ( $meta['e'] )
-		{
-			case 'bmp' :  $mime = 'image/bmp' ;  $elem = 'img'  ;  break;
-			case 'jpeg':
-			case 'jpg' :  $mime = 'image/jpeg';  $elem = 'img'  ;  break;
-			case 'gif' :  $mime = 'image/gif' ;  $elem = 'img'  ;  break;
-			case 'png' :  $mime = 'image/png' ;  $elem = 'img'  ;  break;
-
-			case 'mp4' :  $mime = 'video/mp4' ;  $elem = 'video';  break;
-			case 'm4v' :  $mime = 'video/mp4' ;  $elem = 'video';  break;
-			case 'webm':  $mime = 'video/webm';  $elem = 'video';  break;
-			case 'mov' :  $mime = 'video/quicktime';  $elem = 'video';  break;
-
-			case 'wav' :  $mime = 'audio/wav' ;  $elem = 'audio';  break;
-			case 'mp3' :  $mime = 'audio/mpeg';  $elem = 'audio';  break;
-			case 'ogg' :  $mime = 'audio/ogg' ;  $elem = 'audio';  break;
-			case 'm4a' :  $mime = 'audio/mp4' ;  $elem = 'audio';  break;
-			case 'aac' :  $mime = 'audio/aac' ;  $elem = 'audio';  break;
-			case 'flac':  $mime = 'audio/flac';  $elem = 'audio';  break;
-		} // switch ( $meta['e'] )
-
+		$mime = get_mime($meta['e']);
 		$data = sprintf('data:%s;base64,%s', $mime, base64_encode($meta['f']));
-		if ( $elem === '' || ! $is_tag )
+		if ( ! $is_tag )
 			return $data;
 
-		switch ( $elem )
+		switch ( substr($mime,0,5) )
 		{
-			case 'img':
+			case 'image':
 				return sprintf('<img id="%s" alt="%s" title="%s" src="%s">', $meta['s'], $meta['s'], $meta['s'], $data);
 			case 'video':
 				return sprintf('<video id="%s" src="%s" controls loop></video>', $meta['s'], $data);
 			case 'audio':
 				return sprintf('<audio id="%s" src="%s" controls loop></audio>', $meta['s'], $data);
-		} // switch ( $elem )
+			default:
+				printf("BINARY : no <tag> for %s\n", $mime);
+				return $data;
+		} // switch ( substr($mime,0,5) )
 	}
 
 	// TEXT files = recursive parsing
@@ -181,20 +178,17 @@ function html64( $fname )
 		$file = $func( trim($s,'@') );
 		$meta['f'] = str_replace($s, $file, $meta['f']);
 	}
+	if ( ! $is_tag )
+		return $meta['f'];
 
 	switch ( $meta['e'] )
 	{
 		case 'js':
-			if ( $is_tag )
-				return sprintf('<script>%s</script>', $meta['f']);
-			else
-				return $meta['f'];
+			return sprintf('<script>%s</script>', $meta['f']);
 		case 'css':
-			if ( $is_tag )
-				return sprintf('<style>%s</style>', $meta['f']);
-			else
-				return $meta['f'];
+			return sprintf('<style>%s</style>', $meta['f']);
 		default:
+			printf("TEXT : no <tag> for %s\n", $meta['e']);
 			return $meta['f'];
 	} // switch ( $meta['e'] )
 	return '';

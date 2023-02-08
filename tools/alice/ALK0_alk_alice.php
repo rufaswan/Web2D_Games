@@ -19,15 +19,15 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 function rip_alk( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen($fname, 'rb');
 		if ( ! $fp )  return;
 
 	$mgc = fp2str($fp, 0, 4);
-	if ( $mgc != "ALK0" )
+	if ( $mgc !== 'ALK0' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -43,7 +43,7 @@ function rip_alk( $fname )
 		if ( $siz == 0 )
 			continue;
 
-		$fn = sprintf("$dir/%03d.dat", $i+1);
+		$fn = sprintf('%s/%03d.dat', $dir, $i+1);
 		fseek($fp, $off, SEEK_SET);
 		file_put_contents($fn, fread($fp, $siz));
 

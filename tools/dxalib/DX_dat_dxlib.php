@@ -1,5 +1,5 @@
 <?php
-require "common.inc";
+require 'common.inc';
 
 function dxarip($fp, &$gp_data, $gp_dir)
 {
@@ -15,10 +15,10 @@ function dxarip($fp, &$gp_data, $gp_dir)
 			if ( $data[1] == 0 ) // DIR
 			{
 				if ( $mkdir )
-					$dir .= "/{$data[3]}";
+					$dir .= sprintf('/%s', $data[3]);
 				else
 				{
-					$dir = "$gp_dir/{$data[3]}";
+					$dir .= sprintf('%s/%s', $gp_dir, $data[3]);
 					$mkdir = true;
 				}
 				@mkdir($dir, 0755, true);
@@ -42,11 +42,11 @@ function dxarip($fp, &$gp_data, $gp_dir)
 
 function dxalib( $fname )
 {
-	$fp = fopen( $fname, "rb" );
-		if ( ! $fp )   return;
+	$fp = fopen( $fname, 'rb' );
+	if ( ! $fp )   return;
 
 	$head = fread($fp, 0x80);
-	if ( substr($head, 0, 2) != "DX" )
+	if ( substr($head,0,2) !== 'DX' )
 		return;
 
 	$gp_dir = str_replace('.', '_', $fname);

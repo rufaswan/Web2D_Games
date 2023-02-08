@@ -1,5 +1,5 @@
 <?php
-require "common.inc";
+require 'common.inc';
 
 function xorkey( &$key, $pos, $enc, $dec, &$cnt )
 {
@@ -21,7 +21,7 @@ function cmpkey( &$key, $pos, &$head, $p1, $p2, &$cnt )
 // generate 12-byte XOR key based on pattern
 function dxkey( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
 	$fsz  = filesize($fname);

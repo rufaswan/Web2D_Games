@@ -21,15 +21,17 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 function php_check( $func )
 {
+	printf('check for %s() ... ', $func);
 	if ( function_exists($func) )
-		echo "check for $func() ... OK\n";
+		echo 'OK';
 	else
-		echo "check for $func() ... not found\n";
+		echo 'not found';
+	echo "\n";
 }
 
-php_check("zlib_decode");
-php_check("json_decode");
+php_check('zlib_decode');
+php_check('json_decode');
 
 echo "--> FreeBSD/MacOS : iconv() is defined as libiconv()\n";
-php_check("iconv");
-php_check("libiconv");
+php_check('iconv');
+php_check('libiconv');

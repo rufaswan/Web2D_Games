@@ -2,11 +2,12 @@
 # Allow All , Deny  Known (Blacklist)
 
 # This is a whitelist
-*        binary -text -diff
+* binary -text -diff
 .gitattributes   text
 .gitignore       text
 
 !*.md    text
+!*.adoc  text
 
 !*.sh    text eol=lf
 !*.php   text diff=php

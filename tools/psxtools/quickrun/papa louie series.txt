@@ -1,93 +1,108 @@
-Papa's Gameria
-http://www.flipline.com/freegames.html
-
--  TITLE         RELEASE     BOY      GIRL      FU FR
-1  Pizzeria      2007. 8. 7  Roy      -          - 31
-2  Burgeria      2010.12. 6  Marty    Rita       - 44  new UI, ADD SHOP
-3  Taco Mia      2011. 5.20  Mitch    Maggie    14 44  ADD BACKUP, CLOTH, BADGE, JOJO, WeekPay
-4  Freezeria     2011. 8. 5  Alberto  Penny     20 47  SHOP+, ADD Boosters, LOBBY
-5  Pancakeria    2012. 3. 5  Cooper   Prudence  21 43  ADD FOODINI
-6  Wingeria      2012. 6.13  Chuck    Mandi     20 59  CLOTH+, SHOP++, ADD CHAR
-7  Hot Doggeria  2012.11.19  Taylor   Peggy     37 59  CHAR+, LOBBY+
-8  Cupcakeria    2013. 8. 7  James    Willow    60 66  ADD Holidays
-9  Pastaria      2013.12. 9  Doan     Utah      60 66  ADD Ending, SERVER
-10 Donuteria     2014. 6.16  Tony     Scooter   60 66  CHAR++, BACKUP+, SHOP+++
-11 Cheeseria     2015. 6.10  Rudy     Scarlett  65 66  ADD RECIPE, SKIP
-12 Bakeria       2016. 3.14  Timm     Cecelia   65 66  BADGE+, ADD ContinueMenu
-13 Sushiria      2016.12.13  Matt     Clover    65 66  CLOTH++, ADD Coupon
-14 Scooperia     2018. 7.24  Carlo    Koilee    65 66  +
------------------------------------------------------  discontinued
-
-# FU = Final Ingredients Unlock (all Bases, Mixables, Toppings, Drinks, etc)
-# FR = Final Rank "Better than Papa!" / "Holidays all over again!"
-#
-# JOJO    = Food Critic + 6 Closers
-# SKIP    = Skip training & cutscenes
-# SERVER  = ADD Dining Room, can hire another worker
-# PHONE   = ADD Phone      , can hire another worker
-# FOODINI = Tickets  + Minigames      , Parade
-# RECIPE  = Cookbook + Today's Special, Customer w/Gold Envelop
-#
-# CHAR    = Custom Worker
-#         += Hat & Hair free pairing
-#         ++= Bang Style, Weight, Belt(EX-B), Arm(EX-C), Face(EX-D) [DEL Accessory(EX-A)]
-# LOBBY   = Decorate Lobby
-#         += Points, Freshness, Themes
-# BADGE   = Badges for 100%
-#         += Stickers, Customer Styles
-# BACKUP  = Save/Load on New Game
-#         += Save on EndDay/pre-FOODINI
-# CLOTH   = Hats
-#         += Shirt, Pants, Jacket, Shoes, Extra A-D
-#         ++= Custom-Colored clothing
-# SHOP    = Upgrades
-#         += Furnitures
-#         ++= Posters, Wall/Floor, Clothing
-#         +++= Show All by Any Themes
-
-# pizzeria = username "almostpapa"
-#          = Day 99, rank 30, all customer gold, SargeFan silver 3 stars
-# burgeria = depending on the site hosts the game, Papa Louie is a bonus chef
-
 Papa Louie
 -  TITLE               RELEASE
-1  When Pizza  Attack  2006.11. 9  Papa
-2  When Burger Attack  2013. 6. 5  Marty, Rita, ++
-3  When Sundae Attack  2015. 3. 4  Cori, ++
+1  When Pizza  Attack  2006.11. 9
+2  When Burger Attack  2013. 6. 5
+3  When Sundae Attack  2015. 3. 4
 
 ##############################
 
-Papa Gameria To Go! app
--  TITLE         RELEASE     FU FR
-1  Burgeria      2013. 2.21  18 55  ADD Booster, BADGE, JOJO, WeekPay
-2  Freezeria     2014. 2.27  58 67
-3  Pizzeria      2014.11.13  22 68  ADD LOBBY
-4  Cupcakeria    2015. 9.14  63 64  ADD Holidays, FOODINI, SKIP
-5  Taco Mia      2017. 3.21  65 66  ADD RECIPE
-6  Hot Doggeria  2017.11.20  65 66
-7  Scooperia     2018. 7.24  65 66  BADGE+, ADD CHAR, PHONE, Coupon
-----------------------------------  SWF/HD discontinued
-8  Pancakeria    2018.10.29  64 66
-9  Wingeria      2019. 2.22  65 66
-10 Donuteria     2019. 6. 7  65 66
-11 Cheeseria     2019.10.24  65 66
-12 Bakeria       2020. 1.16  65 66
-13 Sushiria      2020. 4.21  65 66
-14 Pastaria      2020. 7. 6  65 66
-15 Mocharia      2021. 3. 2  65 66
-16 Cluckeria     2022. 2.22  65 66  ADD Freeplay
-17
+# FU = Final Ingredients Unlock (all Bases, Mixables, Toppings, Drinks, etc)
+# FR = Final Rank "Better than Papa!" / "Holidays all over again!"
 
+Papa's Gameria
+http://www.flipline.com/freegames.html
+
+-  TITLE         RELEASE     FU FR  +++
+1  Pizzeria      2007. 8. 7   - 31  -
+2  Burgeria      2010.12. 6   - 44  SHOP
+3  Taco Mia      2011. 5.20  14 44  BACKUP   CLOTH     BADGE
+4  Freezeria     2011. 8. 5  20 47  SHOP+
+5  Pancakeria    2012. 3. 5  21 43  LOBBY    FOODINI+
+6  Wingeria      2012. 6.13  20 59  CLOTH+
+7  Hot Doggeria  2012.11.19  37 59  THEME
+8  Cupcakeria    2013. 8. 7  60 66  THEME+
+9  Pastaria      2013.12. 9  60 66  -
+10 Donuteria     2014. 6.16  60 66  SHOP++   BACKUP+
+11 Cheeseria     2015. 6.10  65 66  CLOTH++  COOKBOOK
+12 Bakeria       2016. 3.14  65 66  menu+    BADGE+
+13 Sushiria      2016.12.13  65 66  SHOP+++
+14 Scooperia     2018. 7.24  65 66  -
+----------------------------------  discontinued
 
 Papa Gameria HD app
--  TITLE         RELEASE     FU FR
-1  Burgeria      2012.12. 7  14 53  ADD CLOTH, JOJO, WeekPay, FOODINI
-2  Freezeria     2013.10.30  40 62  ADD CHAR
-3  Wingeria      2014. 8.28  27 69  ADD SERVER
-4  Cupcakeria    2015.11.19  63 64  ADD Holidays
-5  Taco Mia      2016. 6.27  65 66  BADGE+, ADD RECIPE
-6  Pancakeria    2017. 5.17  64 66  CLOTH++, ADD Coupon
-7  Pizzeria      2017. 8. 7  64 66  ADD PHONE
-8  Hot Doggeria  2017.11.20  65 66
-9  Scooperia     2018. 7.24  65 66  ADD SKIP
+-  TITLE         RELEASE     FU FR  +++
+1  Burgeria      2012.12. 7  14 53  -
+2  Freezeria     2013.10.30  40 62  -
+3  Wingeria      2014. 8.28  27 69  -
+4  Cupcakeria    2015.11.19  63 64  -
+5  Taco Mia      2016. 6.27  65 66  -
+6  Pancakeria    2017. 5.17  64 66  -
+7  Pizzeria      2017. 8. 7  64 66  -
+8  Hot Doggeria  2017.11.20  65 66  -
+9  Scooperia     2018. 7.24  65 66  -
 ----------------------------------  discontinued
+
+Papa Gameria To Go! app
+-  TITLE         RELEASE     FU FR  +++
+1  Burgeria      2013. 2.21  18 55  SHOP+    BADGE
+2  Freezeria     2014. 2.27  58 67  -
+3  Pizzeria      2014.11.13  22 68  -
+4  Cupcakeria    2015. 9.14  63 64  FOODINI  THEME+
+5  Taco Mia      2017. 3.21  65 66  menu+    COOKBOOK
+6  Hot Doggeria  2017.11.20  65 66
+7  Scooperia     2018. 7.24  65 66  SHOP+++  BADGE+  CLOTH++  FOODINI+  LOBBY
+----------------------------------  SWF/HD discontinued
+8  Pancakeria    2018.10.29  64 66  -
+9  Wingeria      2019. 2.22  65 66  ???
+10 Donuteria     2019. 6. 7  65 66  THEME++
+11 Cheeseria     2019.10.24  65 66  -
+12 Bakeria       2020. 1.16  65 66  ???
+13 Sushiria      2020. 4.21  65 66  ???
+14 Pastaria      2020. 7. 6  65 66  -
+15 Mocharia      2021. 3. 2  65 66  -
+16 Cluckeria     2022. 2.22  65 66  ???
+17
+
+NOTE
+
+# SHOP     = Upgrade Shop
+#          += Boosters
+#          ++= filter by Theme
+#          +++= Customer Coupon
+# BACKUP   = "Load Backup!" for New Game , "Save a Backup" for Save Slot
+#          += "Save a Backup" at the end of day/pre-Foodini Minigame
+# BADGE    = Badges Earned
+#            Jojo + 6 Closers
+#            PayDay / Weekly Pay
+#          += Stickers
+#             Customer Styles
+# CLOTH    = change Hat
+#          += Custom Worker
+#             Shirt, Pants, Jacket, Shoes, Hat, Extra A,B,C,D
+#               Extra A -> Extras
+#               Extra B -> Belts
+#               Extra C -> Arms
+#               Extra D -> Glasses
+#          ++= Choose Color
+# FOODINI  = Game Tickets + Mini Game Show
+#          += Parade
+# LOBBY    = Decorate Lobby
+#            1+ Owned Furniture
+# THEME    = Furniture by Theme
+#            Points + Freshness Lobby
+#          += Holiday Season
+#             Customer Favorite Holiday
+#          ++= Holiday Spirit
+# COOKBOOK = RECIPES + Today's Special
+#
+# menu+ = Start Game Menu can access Customers, Badges/Stickers, Cookbook
+#
+
+CHEAT
+
+# pizzeria
+#   username "almostpapa"
+#   = Day 99, rank 30, all customer gold, SargeFan silver 3 stars
+#
+
+##############################

@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 ////////////////////////////////////////
 // Rance6  Data/DungeonData_dlf/*.dtex
 // Pascha2/PaschaC++  Dungeon/field*.dtx
@@ -30,7 +30,7 @@ function dtex( $fname )
 		if ( empty($file) )   return;
 
 	$mgc = substr($file, 0, 4);
-	if ( $mgc != "DTEX" )
+	if ( $mgc !== 'DTEX' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -48,7 +48,7 @@ function dtex( $fname )
 		if ( $len == 0 || $len == $pad )
 			continue;
 
-		$fn  = sprintf("$dir/%03d.dat", $i);
+		$fn  = sprintf('%s/%03d.dat', $dir, $i);
 		printf("%8x , %8x , %s\n", $st, $len, $fn);
 
 		file_put_contents( $fn, substr($file, $st, $len) );

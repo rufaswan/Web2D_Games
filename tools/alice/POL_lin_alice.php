@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 ////////////////////////////////////////
 // Galzoo  Data/PolyObj.lin
 function polyobj( $fname )
@@ -28,7 +28,7 @@ function polyobj( $fname )
 		if ( empty($file) )   return;
 
 	$mgc = substr($file, 0, 3);
-	if ( $mgc != "POL" )
+	if ( $mgc !== 'POL' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -41,7 +41,7 @@ function polyobj( $fname )
 		$no = str2int( $file, $pos+0, 4 );
 		$sz = str2int( $file, $pos+4, 4 );
 
-		$fn = sprintf("$dir/%03d.dat", $pn);
+		$fn = sprintf('%s/%03d.dat', $dir, $pn);
 		printf("%8x , %8x , %s\n", $no, $sz, $fn);
 
 		file_put_contents( $fn, substr($file, $no, $sz) );

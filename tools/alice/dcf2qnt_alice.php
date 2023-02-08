@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 function dcf2qnt( $fname )
 {
@@ -33,21 +33,21 @@ function dcf2qnt( $fname )
 		$tag = substr($file, $st, 4);
 		switch ( $tag )
 		{
-			case "dcf ":
-			case "dfdl":
-				printf("%8x , $tag\n", $st);
+			case 'dcf ':
+			case 'dfdl':
+				printf("%8x , %s\n", $st, $tag);
 				$len = str2int($file, $st+4, 4);
 				$st += 8;
 				$st += $len;
 				break;
-			case "dcgd":
-				printf("%8x , $tag\n", $st);
+			case 'dcgd':
+				printf("%8x , %s\n", $st, $tag);
 				$len = str2int($file, $st+4, 4);
 				$st += 8;
 
 				$qnt = substr($file, $st, $len);
 				$mgc = substr($qnt, 0, 3);
-				if ( $mgc == "QNT" )
+				if ( $mgc === 'QNT' )
 					file_put_contents("$fname.qnt", $qnt);
 				else
 					file_put_contents("$fname.dat", $qnt);
@@ -55,8 +55,9 @@ function dcf2qnt( $fname )
 				break;
 			default:
 				return;
-		}
-	}
+		} // switch ( $tag )
+	} // while( $st < $ed )
+	return;
 }
 
 if ( $argc == 1 )   exit();

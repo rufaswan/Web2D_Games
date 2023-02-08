@@ -1,5 +1,5 @@
 <?php
-require "common.inc";
+require 'common.inc';
 
 // rfs_fs_trial.exe
 //   sub_5f9210 as rks_unpack
@@ -19,7 +19,7 @@ function undxa( $fname )
 
 	$ed = $insz;
 	$st = 9;
-	$data = "";
+	$data = '';
 	while ( $st < $ed )
 	{
 		if ( $file[$st] != $byco )

@@ -19,32 +19,32 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 
 $gp_ald = array(
-	"sa.ald"    => array("sa", 1, false),
-	"adisk.ald" => array("sa", 1, false),
-	"ma.ald"    => array("ma", 1, false),
-	"amidi.ald" => array("ma", 1, false),
-	"da.ald"    => array("da", 1, false),
-	"adata.ald" => array("da", 1, false),
-	"ra.ald"    => array("ra", 1, false),
-	"ares.ald"  => array("ra", 1, false),
-	"ba.ald"    => array("ba", 1, false),
-	"abgm.ald"  => array("ba", 1, false),
+	'sa.ald'    => array('sa', 1, false),
+	'adisk.ald' => array('sa', 1, false),
+	'ma.ald'    => array('ma', 1, false),
+	'amidi.ald' => array('ma', 1, false),
+	'da.ald'    => array('da', 1, false),
+	'adata.ald' => array('da', 1, false),
+	'ra.ald'    => array('ra', 1, false),
+	'ares.ald'  => array('ra', 1, false),
+	'ba.ald'    => array('ba', 1, false),
+	'abgm.ald'  => array('ba', 1, false),
 
-	"ga.ald"    => array("ga", 1, true),
-	"gb.ald"    => array("ga", 2, true),
-	"gc.ald"    => array("ga", 3, true),
-	"acg.ald"   => array("ga", 1, true),
-	"bcg.ald"   => array("ga", 2, true),
-	"ccg.ald"   => array("ga", 3, true),
-	"wa.ald"    => array("wa", 1, true),
-	"wb.ald"    => array("wa", 2, true),
-	"wc.ald"    => array("wa", 3, true),
-	"awave.ald" => array("wa", 1, true),
-	"bwave.ald" => array("wa", 2, true),
-	"cwave.ald" => array("wa", 3, true),
+	'ga.ald'    => array('ga', 1, true),
+	'gb.ald'    => array('ga', 2, true),
+	'gc.ald'    => array('ga', 3, true),
+	'acg.ald'   => array('ga', 1, true),
+	'bcg.ald'   => array('ga', 2, true),
+	'ccg.ald'   => array('ga', 3, true),
+	'wa.ald'    => array('wa', 1, true),
+	'wb.ald'    => array('wa', 2, true),
+	'wc.ald'    => array('wa', 3, true),
+	'awave.ald' => array('wa', 1, true),
+	'bwave.ald' => array('wa', 2, true),
+	'cwave.ald' => array('wa', 3, true),
 );
 //////////////////////////////
 function aldmeta( $fname )
@@ -63,7 +63,7 @@ function aldfile( $fname )
 	list($dir,$ind,$mul) = aldmeta($fname);
 	if ( $ind == 0 )  return;
 
-	$fp = fopen($fname, "rb");
+	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
 	@mkdir( $dir, 0755, true );
@@ -74,7 +74,7 @@ function aldfile( $fname )
 		$ed--;
 
 	$id = 0;
-	$hed = "";
+	$hed = '';
 	while ( $st < $ed )
 	{
 		$arc = fp2int($fp, $st+0, 1);
@@ -101,13 +101,13 @@ function aldfile( $fname )
 		$ext = strtolower($ext);
 		if ( $mul )
 		{
-			$dn = sprintf("$dir/%03d", ($id >> 8));
-			$fn = sprintf("%05d.%s", $id, $ext);
+			$dn = sprintf('$dir/%03d', ($id >> 8));
+			$fn = sprintf('%05d.%s', $id, $ext);
 		}
 		else
 		{
 			$dn = $dir;
-			$fn = sprintf("%03d.%s", $id, $ext);
+			$fn = sprintf('%03d.%s', $id, $ext);
 		}
 		@mkdir( $dn, 0755, true );
 

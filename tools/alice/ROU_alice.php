@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 // Pascha2/PaschaC++  Dungeon/field*_dtx/*.rou
 function rou2rgba( $fname )
@@ -28,7 +28,7 @@ function rou2rgba( $fname )
 		if ( empty($file) )  return;
 
 	$mgc = substr($file, 0, 3);
-	if ( $mgc != "ROU" )  return;
+	if ( $mgc !== 'ROU' )  return;
 
 	$hdz = str2int($file, 8, 4);
 	$w = str2int($file, 0x14, 4);
@@ -36,15 +36,15 @@ function rou2rgba( $fname )
 	$p = str2int($file, 0x24, 4);
 	$a = str2int($file, 0x28, 4);
 
-	$t = "ROU-";
-	if ( $p )  $t .= "p";
-	if ( $a )  $t .= "a";
+	$t = 'ROU-';
+	if ( $p )  $t .= 'p';
+	if ( $a )  $t .= 'a';
 	printf("$t , 0 , 0 , %4d , %4d , $fname\n", $w, $h);
 
 	$pix = substr($file, $hdz, $p);
 	$alp = substr($file, $hdz + $p, $a);
 
-	$rgb = "RGBA";
+	$rgb = 'RGBA';
 	$rgb .= chrint($w, 4);
 	$rgb .= chrint($h, 4);
 

@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 ////////////////////////////////////////
 // Pascha3  Data/*.mad
 function madrip( $fname )
@@ -28,7 +28,7 @@ function madrip( $fname )
 		if ( empty($file) )   return;
 
 	$mgc = substr($file, 0, 3);
-	if ( $mgc != "MAD" )
+	if ( $mgc !== 'MAD' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -40,7 +40,7 @@ function madrip( $fname )
 	while ( $st < $ed )
 	{
 		$len = str2int( $file, $st, 4 );
-		$fn  = sprintf("$dir/%03d.dat", $i);
+		$fn  = sprintf('%s/%03d.dat', $dir, $i);
 		printf("%8x , %8x , %s\n", $st, $len, $fn);
 
 		file_put_contents( $fn, substr($file, $st, $len) );

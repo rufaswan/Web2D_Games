@@ -16,7 +16,7 @@ for ( $i=0; $i < $len; $i++ )
 	$d = ord($dec[$i]);
 	$e = ord($enc[$i]);
 	$x = $d ^ $e;
-	$xor .= sprintf("%02x ", $x);
+	$xor .= sprintf('%02x ', $x);
 } // for ( $i=0; $i < $len; $i++ )
 
 echo "DEC $dec , XOR $xor\n";

@@ -19,11 +19,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 function sect($fp, $base, $ed, $dir, $id)
 {
-	printf("=== sect( %x , %x , $dir , $id )\n", $base, $ed);
+	printf("=== sect( %x , %x , %s , %d )\n", $base, $ed, $dir, $id);
 	if ( $ed == 0 )
 	{
 		fseek($fp, 0, SEEK_END);
@@ -38,8 +38,8 @@ function sect($fp, $base, $ed, $dir, $id)
 		for ( $i=0; $i < $num; $i++ )
 		{
 			$siz = fp2int( $fp, $base, 4 );
-			$fn = sprintf("$dir/%03d-%03d-%03d.dat", $id, $sid, $i);
-			printf("%8x , %8x , $fn\n", $base, $siz);
+			$fn = sprintf('%s/%03d-%03d-%03d.dat', $dir, $id, $sid, $i);
+			printf("%8x , %8x , %s\n", $base, $siz, $fn);
 
 			fseek($fp, $base + 4, SEEK_SET);
 			file_put_contents($fn, fread($fp, $siz));
@@ -53,11 +53,11 @@ function sect($fp, $base, $ed, $dir, $id)
 // Alice7/Dungeon&Dolls  Data/Texture.dtl
 function alice( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
 	$mgc = fread($fp, 3);
-	if ( $mgc != "DTL" )  return;
+	if ( $mgc !== 'DTL' )  return;
 
 	$dir = str_replace('.', '_', $fname);
 	@mkdir($dir, 0755, true);

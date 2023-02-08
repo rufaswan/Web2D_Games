@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 function vsp2pms( $fname )
 {
@@ -38,9 +38,9 @@ function vsp2pms( $fname )
 	if ( $w < 0 )  return;
 	if ( $h < 0 )  return;
 
-	printf("VSP-1 $fname\n");
+	printf("VSP-1 %s\n", $fname);
 
-	$head  = "PM";
+	$head  = 'PM';
 	$head .= chrint(1 , 2); // ver
 	$head .= chrint(0x2c , 2); // head
 	$head .= chrint(8 , 1); // bpp

@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 function kldrip( $fname )
 {
@@ -35,9 +35,9 @@ function kldrip( $fname )
 		$pos = 0x10 + ($i * 0x10);
 		$sz = str2int($file, $pos+4, 4);
 		$of = str2int($file, $pos+8, 4);
-		$fn = sprintf("$dir/%03d.dat", $i+1);
+		$fn = sprintf('%s/%03d.dat', $dir, $i+1);
 
-		printf("%8x , %8x , $fn\n", $sz, $of);
+		printf("%8x , %8x , %s\n", $sz, $of, $fn);
 		file_put_contents($fn, substr($file, $of, $sz));
 	}
 }

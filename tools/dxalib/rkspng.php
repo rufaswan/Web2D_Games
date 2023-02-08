@@ -1,5 +1,5 @@
 <?php
-require "common.inc";
+require 'common.inc';
 
 function replext( &$file, &$st, $src, $new )
 {
@@ -32,8 +32,8 @@ function newext( $fname )
 	{
 		if ( $file[$st] == '.' )
 		{
-			replext( $file, $st, "bmp", "png" );
-			replext( $file, $st, "BMP", "png" );
+			replext( $file, $st, 'bmp', 'png' );
+			replext( $file, $st, 'BMP', 'png' );
 		}
 		else
 			$st++;

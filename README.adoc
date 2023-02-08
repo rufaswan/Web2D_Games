@@ -15,25 +15,28 @@
 ## Prerequisites
 
 * PHP 7.0 or above
-  * http://windows.php.net/downloads
+** http://windows.php.net/downloads
+
 * Minimalistic PHP-cli (command-line interface) executable with
-  * zlib extension
-  * json extension
+** zlib extension
+** json extension
+
 * From PHP for Windows, you'll only need these 3 files from the zip file
-  * php.exe
-  * php7ts.dll or php7nts.dll
-  * php.ini (renamed from php.ini-development)
-    * edit the value for 'memory_limit' from `128M` to a higher value, e.g. `2048M`
+** php.exe
+** php7ts.dll or php7nts.dll
+** php.ini (renamed from php.ini-development)
+*** edit the value for 'memory_limit' from `128M` to a higher value, e.g. `2048M`
 
 ## Installation
 
 * Run php build-in web server
-  * `php.exe  -S ADDRESS:PORT  -t DIR`
-  * ADDRESS can be `localhost` or `127.0.0.1`
-  * PORT is optional. (default 80)
-  * -t is optional. (default DIR = current directory)
+** `php.exe  -S ADDRESS:PORT  -t DIR`
+** ADDRESS can be `localhost` or `127.0.0.1`
+** PORT is optional. (default 80)
+** -t is optional. (default DIR = current directory)
+
 * Start your web browser, and go to ADDRESS:PORT as configured above
-  * `chrome.exe  http://127.0.0.1:80/main.php`
+** `chrome.exe  http://127.0.0.1:80/main.php`
 
 ## Game Status
 

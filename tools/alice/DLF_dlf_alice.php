@@ -19,16 +19,16 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 // Rance 6  Data/DungeonData.dlf
 function dlf( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
 	$mgc = fp2str($fp, 0, 3);
-	if ( $mgc != "DLF" )  return;
+	if ( $mgc !== 'DLF' )  return;
 
 	$dir = str_replace('.', '_', $fname);
 	@mkdir($dir, 0755, true);
@@ -46,8 +46,8 @@ function dlf( $fname )
 		if ( $loc == 0 || $siz == 0 )
 			continue;
 
-		$fn = sprintf("$dir/%03d.dat", $id);
-		printf("%8x , %8x , $fn\n", $loc, $siz);
+		$fn = sprintf('%s/%03d.dat', $dir, $id);
+		printf("%8x , %8x , %s\n", $loc, $siz, $fn);
 
 		fseek($fp, $loc, SEEK_SET);
 		file_put_contents($fn, fread($fp, $siz));

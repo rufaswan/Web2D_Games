@@ -1,5 +1,5 @@
 <?php
-require "common.inc";
+require 'common.inc';
 
 function newext( $fname )
 {

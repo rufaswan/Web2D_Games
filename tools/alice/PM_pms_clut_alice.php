@@ -23,7 +23,7 @@ along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 //   xsystem35/src/pms.c
 // Original License:
 //   GNU GPL v2 or later
-require "common.inc";
+require 'common.inc';
 //////////////////////////////
 function data_pms16( &$file, &$pms, $st )
 {
@@ -254,7 +254,7 @@ function data_pms8( &$file, &$pms, $st )
 	} // for ( $y=0; $y < $pms['h']; $y++ )
 	//////////////////////////
 	$len = $pms['w'] * $pms['h'];
-	$img = "";
+	$img = '';
 	for ( $i=0; $i < $len; $i++ )
 		$img .= chr( $data[$i] );
 	return $img;
@@ -262,7 +262,7 @@ function data_pms8( &$file, &$pms, $st )
 
 function clut_pms8( &$file, &$pms, $st )
 {
-	$clut = "";
+	$clut = '';
 	for ( $i=0; $i < 0x100; $i++ )
 	{
 		$clut .= substr($file, $st, 3);
@@ -275,10 +275,10 @@ function clut_pms8( &$file, &$pms, $st )
 function pms2clut( $fname )
 {
 	$file = file_get_contents( $fname );
-		if ( empty($file) )  return;
+	if ( empty($file) )  return;
 
 	$mgc = substr($file , 0 , 2 );
-		if ( "PM" != $mgc )  return;
+	if ( 'PM' !== $mgc )  return;
 
 	$pms = array(
 		'ver'  => str2int( $file, 0x02, 2 ),
@@ -299,11 +299,11 @@ function pms2clut( $fname )
 	switch ( $pms['bpp'] )
 	{
 		case 8:
-			printf("PMS-8 , %3d , %3d , %3d , %3d , $fname\n",
-				$pms['x'], $pms['y'], $pms['w'], $pms['h']
+			printf("PMS-8 , %3d , %3d , %3d , %3d , %s\n",
+				$pms['x'], $pms['y'], $pms['w'], $pms['h'], $fname
 			);
 
-			$clut = "CLUT";
+			$clut = 'CLUT';
 			$clut .= chrint(256 , 4);
 			$clut .= chrint($pms['w'] , 4);
 			$clut .= chrint($pms['h'] , 4);
@@ -311,26 +311,26 @@ function pms2clut( $fname )
 			$clut .= clut_pms8($file , $pms, $pms['pal']);
 			$clut .= data_pms8($file , $pms, $pms['dat']);
 
-			file_put_contents("{$fname}.clut", $clut);
+			file_put_contents("$fname.clut", $clut);
 			return;
 
 		case 16:
-			$t = "PMS-16";
-			if ( $pms["dat"] )  $t .= "p";
-			if ( $pms["pal"] )  $t .= "a";
+			$t = 'PMS-16';
+			if ( $pms['dat'] )  $t .= 'p';
+			if ( $pms['pal'] )  $t .= 'a';
 
-			printf("$t , %3d , %3d , %3d , %3d , $fname\n",
-				$pms['x'], $pms['y'], $pms['w'], $pms['h']
+			printf("$t , %3d , %3d , %3d , %3d , %s\n",
+				$pms['x'], $pms['y'], $pms['w'], $pms['h'], $fname
 			);
 
-			$rgba = "RGBA";
+			$rgba = 'RGBA';
 			$rgba .= chrint($pms['w'] , 4);
 			$rgba .= chrint($pms['h'] , 4);
 
 			// some PMS have only RGB, no A
 			// some PMS have only A, no RGB (used with AJP/effects, KLD/video)
-			$pix = ( $pms['dat'] ) ? data_pms16($file , $pms, $pms['dat']) : "";
-			$alp = ( $pms['pal'] ) ? data_pms8 ($file , $pms, $pms['pal']) : "";
+			$pix = ( $pms['dat'] ) ? data_pms16($file , $pms, $pms['dat']) : '';
+			$alp = ( $pms['pal'] ) ? data_pms8 ($file , $pms, $pms['pal']) : '';
 
 			$len = $pms['w'] * $pms['h'];
 			for ( $i=0; $i < $len; $i++ )
@@ -342,11 +342,11 @@ function pms2clut( $fname )
 				$rgba .= $r . $g . $b . $a;
 			}
 
-			file_put_contents("{$fname}.rgba", $rgba);
+			file_put_contents("$fname.rgba", $rgba);
 			return;
 
 		default:
-			printf("UNK $fname : %d bpp\n", $pms['bpp']);
+			printf("UNK %s : %d bpp\n", $fname, $pms['bpp']);
 			return;
 	}
 	return;

@@ -19,17 +19,17 @@ You should have received a copy of the GNU General Public License
 along with Web2D_Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require "common.inc";
-php_req_extension("zlib_decode", "zlib");
+require 'common.inc';
+php_req_extension('zlib_decode', 'zlib');
 
 //////////////////////////////
 function moz1( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen($fname, 'rb');
 		if ( ! $fp )  return;
 
 	$mgc = fp2str($fp, 0, 4);
-	if ( $mgc != "MOZ1" )
+	if ( $mgc !== 'MOZ1' )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
@@ -43,7 +43,7 @@ function moz1( $fname )
 		$len = fp2int($fp, $p+4, 4);
 		printf("%8x , %8x , %8x , %05d.bin\n", $p, $off, $len, $i+1);
 
-		$fn = sprintf("$dir/%05d.bin", $i+1);
+		$fn = sprintf('%s/%05d.bin', $dir, $i+1);
 
 		$zip = fp2str($fp, $off, $len);
 		$zip = zlib_decode($zip);
@@ -53,7 +53,7 @@ function moz1( $fname )
 /*
 	$ed = fp2int($fp, 12, 4);
 	$st = 0x18;
-	$dn = "";
+	$dn = '';
 	$n = 0;
 	while ( $st < $ed )
 	{
@@ -61,7 +61,7 @@ function moz1( $fname )
 		if ( $type == 0x2322 )
 		{
 			$b1 = fp2int($fp, $st+0, 2);
-			$dn = "$dir/$b1";
+			$dn = sprintf('%s/%s', $dir, $b1);
 			@mkdir($dn, 0755, true);
 			$n = 1;
 			$st += 12;
@@ -70,8 +70,8 @@ function moz1( $fname )
 		{
 			$ps = fp2int($fp, $st+2, 4);
 			$sz = fp2int($fp, $st+6, 2);
-			$nn = sprintf("$dn/%05d.bin", $n);
-			printf("%8x , %8x , %8x , $nn\n", $st, $ps, $sz);
+			$nn = sprintf('%s/%05d.bin', $dn, $n);
+			printf("%8x , %8x , %8x , %s\n", $st, $ps, $sz, $nn);
 
 			fseek($fp, $ps, SEEK_SET);
 			$zip = fread($fp, $sz);

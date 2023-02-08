@@ -79,7 +79,8 @@ function datfile( $fname )
 		save_file($fn, substr($file, $off1, $size));
 	} // while ( $st < $ed )
 
-	save_file("$dir/{$mat[1]}.txt", $txt);
+	$fn = sprintf('%s/%s.txt', $dir, $mat[1]);
+	save_file($fn, $txt);
 	return;
 }
 
