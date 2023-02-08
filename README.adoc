@@ -10,7 +10,7 @@
 
 ## Demo Gameplay
 
-image::http://img.youtube.com/vi/Jumikw3BS7o/0.jpg[link:http://www.youtube.com/watch?v=Jumikw3BS7o]
+image::http://img.youtube.com/vi/Jumikw3BS7o/0.jpg[link:"http://www.youtube.com/watch?v=Jumikw3BS7o"]
 
 ## Prerequisites
 
