@@ -11,7 +11,7 @@
 ## Demo Gameplay
 
 :yttoushin: Jumikw3BS7o
-image::http://img.youtube.com/vi/{yttoushin}/maxresdefault.jpg[link=http://youtube.com/watch?v={yttoushin}]
+image::http://img.youtube.com/vi/{yttoushin}/0.jpg[link=http://youtube.com/watch?v={yttoushin}]
 video::{yttoushin}[youtube,start=111]
 
 ## Prerequisites
