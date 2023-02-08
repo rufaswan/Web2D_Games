@@ -10,7 +10,9 @@
 
 ## Demo Gameplay
 
-video::Jumikw3BS7o[youtube,start=111]
+:yttoushin: Jumikw3BS7o
+image::http://img.youtube.com/vi/{yttoushin}/maxresdefault.jpg[link=http://youtube.com/watch?v={yttoushin}]
+video::{yttoushin}[youtube,start=111]
 
 ## Prerequisites
 
