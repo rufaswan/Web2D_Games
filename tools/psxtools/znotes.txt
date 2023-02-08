@@ -495,3 +495,10 @@ askubuntu.com/questions/167088/keyboard-shortcut-equivalent-to-right-clicking
 
 	To figure out what keycode a key emits one can use:
 		xev
+
+stackoverflow.com/questions/4264447/can-gits-gitattributes-treat-all-files-as-binary-except-a-few-exceptions
+
+	From the 2009 commit b9d14ff, those rules should go:
+		from the more general ones
+		to the more specific ones.
+		("a later line overrides an earlier line")

@@ -2,24 +2,24 @@
 # Allow All , Deny  Known (Blacklist)
 
 # This is a whitelist
-* binary -text -diff
-.gitattributes   text
-.gitignore       text
+*  -text  -diff
+.gitattributes  diff
+.gitignore      diff
 
-!*.md    text
-!*.adoc  text
+*.md    diff=markdown
+*.adoc  diff
 
-!*.sh    text eol=lf
-!*.php   text diff=php
-!*.inc   text diff=php
+*.sh    diff=bash  eol=lf
+*.php   diff=php
+*.inc   diff=php
 
-!*.tpl   text diff=html
-!*.html  text diff=html
-!*.css   text diff=css
-!*.js    text
+*.tpl   diff=html
+*.html  diff=html
+*.css   diff=css
+*.js    diff
 
-!*.txt   text
-!*.json  text
-!*.quad  text
+*.txt   diff
+*.json  diff
+*.quad  diff
 
-!*.c     text diff=cpp
+*.c     diff=cpp
