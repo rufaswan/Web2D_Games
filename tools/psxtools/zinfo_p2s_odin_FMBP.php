@@ -161,13 +161,26 @@ sample comparison
 		x=0  1.0   0     1.0  = 1.0
 //////////////////////////////
 alpha blending
-	-      D  C  B  A   (A      - B     ) * C    + D      , fog
-	0  44  -1 -- -1 --  (FG.rgb - BG.rgb) * FG.a + BG.rgb , var3
-	1  48  -1 -- 1- --  (FG.rgb - 0     ) * FG.a + BG.rgb , 0
-	2  42  -1 -- -- 1-  (0      - FG.rgb) * FG.a + BG.rgb , 0
-	3  54  -1 -1 -1 --  (FG.rgb - BG.rgb) * BG.a + BG.rgb , var3
-	4  58  -1 -1 1- --  (FG.rgb - 0     ) * BG.a + BG.rgb , 0
-	5  52  -1 -1 -- 1-  (0      - FG.rgb) * BG.a + BG.rgb , 0
+	-      D  C  B  A         ( A.rgb  - B.rgb) *  C.a +  D.rgb , fog
+	0  44  -1 -- -1 --  0101  (FG.rgb - BG.rgb) * FG.a + BG.rgb , var3
+	1  48  -1 -- 1- --  0201  (FG.rgb -   0   ) * FG.a + BG.rgb , 0
+	2  42  -1 -- -- 1-  2001  (  0    - FG.rgb) * FG.a + BG.rgb , 0
+	3  54  -1 -1 -1 --  0111  (FG.rgb - BG.rgb) * BG.a + BG.rgb , var3
+	4  58  -1 -1 1- --  0211  (FG.rgb -   0   ) * BG.a + BG.rgb , 0
+	5  52  -1 -1 -- 1-  2011  (  0    - FG.rgb) * BG.a + BG.rgb , 0
+		0=FG  1=BG  2=0  3=unused
+
+	(FG.rgb - BG.rgb) * FG.a + BG.rgb
+	= FG.rgb*FG.a + (-BG.rgb*FG.a) + BG.rgb
+	= FG.rgb*FG.a + BG.rgb(-1*FG.a + 1)
+	= FG.rgb*FG.a + BG.rgb(1 - FG.a)
+
+	{ 0          , OP_ADD          , SRC1_ALPHA , INV_SRC1_ALPHA} , // 0101: (Cs - Cd)*As + Cd ==> Cs*As + Cd*(1 - As)
+	{ BLEND_ACCU , OP_ADD          , SRC1_ALPHA , CONST_ONE}      , //?0201: (Cs -  0)*As + Cd ==> Cs*As + Cd
+	{ BLEND_ACCU , OP_REV_SUBTRACT , SRC1_ALPHA , CONST_ONE}      , //?2001: (0  - Cs)*As + Cd ==> Cd - Cs*As
+	{ 0          , OP_ADD          , DST_ALPHA  , INV_DST_ALPHA}  , // 0111: (Cs - Cd)*Ad + Cd ==> Cs*Ad + Cd*(1 - Ad)
+	{ 0          , OP_ADD          , DST_ALPHA  , CONST_ONE}      , // 0211: (Cs -  0)*Ad + Cd ==> Cs*Ad + Cd
+	{ 0          , OP_REV_SUBTRACT , DST_ALPHA  , CONST_ONE}      , // 2011: (0  - Cs)*Ad + Cd ==> Cd - Cs*Ad
 //////////////////////////////
 func 16bc5c
 	s6-2 == 1

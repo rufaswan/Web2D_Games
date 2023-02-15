@@ -11,7 +11,7 @@ CHAR
 	TH11-s6 Reiuzi Utsuho
 	FIG     Hinanawi Tenshi
 CLEAR = EXTRA mode
-	key.txt line 33 = 0 -> 69
+	key.txt line 33/33 = 0 -> 69
 ------------------------------
 REIMU
 password
@@ -32,23 +32,23 @@ password
 	extra intro
 		ra4
 
-cirno (icicle) -> aya (tornado)
--> mokou (wheel) -> patchouli (ball)
--> utsuho (pharaoh) -> remilia (spear)
--> youmu (slash) -> tenshi (funnel) ->
+cirno (ice/screen) -> aya (tornado/jump+)
+-> makou (wheel) -> patchouli (ball)
+-> utsuho (charge) -> remilia (spear)
+-> youmu (slash) -> tenshi (barrier) ->
 
-kaguya 1 <- slash , 2 <- tornado
-       3 <- spear , 4/re <- pharaoh
+kaguya 1 <- youmu , 2 <- aya
+       3 <- remilia , 4/re <- utsuho
 ------------------------------
 item/shot
-	mouse = SP+BLOCK+PIT utsuho + icicle + funnel/wheel (just before laser area)
-	broom = 4 boss
-	doll  = BLOCK+SLIDE+TOP patchouli + broom
+	nazrin = SP+BLOCK+PIT utsuho + cirno + tenshi/makou (just before laser area)
+	broom  = 4 boss
+	doll   = BLOCK+SLIDE+TOP patchouli + broom
 	shot:laser  = TOP cirno + tornado + broom
 	shot:5ways  = TOP makou + broom
-	item:heal+  = DIG tenshi + broom/tornado + mouse
+	item:heal+  = DIG tenshi + broom/aya + nazrin
 	item:pierce = PIT remilia (+mudeki)
-	item:mudeki = SP+BLOCK+PIT utsuho + icicle + funnel/wheel
+	item:mudeki = SP+BLOCK+PIT utsuho + cirno + tenshi/makou
 	item:charge = SLIDE aya (+mudeki)
 ------------------------------
 Cheat Engine
@@ -70,7 +70,7 @@ CHAR
 	TH10-ex Moriya Suwako
 	TH08-s5 Reisen Udongein Inaba
 CLEAR = EXTRA mode + Player KAGUYA
-	key.txt line 33 = 0 -> 69
+	key.txt line 33/33 = 0 -> 69
 ------------------------------
 REIMU
 password
@@ -91,14 +91,14 @@ password
 	extra intro
 		rf3  yd2
 
-yuyuko (wood) -> parsee (love3)
--> suwako (rain) -> flandre (gemini)
--> iku (spark) -> inaba (missile)
--> suika (stone) -> komachi (slide) ->
+yuyuko (barrier) -> parsee (love3)
+-> suwako (rain/screen) -> flandre (laser)
+-> iku (spark) -> reisen (missile)
+-> suika (stone/screen) -> komachi (slide) ->
 
-kaguya 1 <- spark , 2 <- spark
-       3 <- stone , 4/re <- missile
-       5 <- love3
+kaguya 1 <- iku , 2 <- iku
+       3 <- suika , 4/re <- reisen
+       5 <- parsee
 ------------------------------
 YOUMU
 password
@@ -120,7 +120,7 @@ password
 		re1
 
 UP+ATK -> iku (DN+ATK)
-DN+ATK -> inaba (hit-bullet)
+DN+ATK -> reisen (hit-bullet)
 DN+ATK -> suwako (AIR+DN+ATK)
 AIR+DN+ATK -> flandre (UP+ATK)
 AIR+DN+ATK -> suika (giga)
@@ -156,16 +156,16 @@ password
 - get BROOM after intro
 ------------------------------
 item/shot
-	mouse = TOP komachi + broom (waterfall w/pits area)
-	broom = 4 boss
-	doll  = BOTTOM suika + broom
+	nazrin = TOP komachi + broom (waterfall w/pits area)
+	broom  = 4 boss
+	doll   = BOTTOM suika + broom
 	shot:laser  = TOP iku + broom
 	shot:5ways  = TOP suwako + broom
-	item:heal+  = BLOCK parsee + laser + broom
+	item:heal+  = SP+BLOCK parsee + laser + broom
 	item:pierce = SLIDE yuyuko + broom
 	item:mudeki = TOP reisen + broom
 	item:charge = BOTTOM suika + broom
-	item:energy = BLOCK+DIG flandre + laser + mouse
+	item:energy = SP+BLOCK+DIG flandre + laser + nazrin
 ------------------------------
 Cheat Engine
 	+ 0 int32 Lives
@@ -186,7 +186,7 @@ CHAR
 	TH12-s3 Kumoi Ichirin
 	TH12-s5 Toramaru Syou
 CLEAR = EXTRA mode + Player ALICE + options
-	key.txt line 33 = 0 -> 69
+	key.txt line 33/33 = 0 -> 69
 ------------------------------
 REIMU
 password
@@ -207,19 +207,19 @@ password
 	extra intro
 		rf4  yd4
 
-sakuya (timestop) -> syou (dart)
--> yuka (petal) -> byakuren (boomerang)
--> nightbug (bug) -> ichirin (punch)
--> hina (top) -> koishi (heart) ->
+sakuya (timestop/long) -> syou (dart)
+-> yuka (barrier) -> byakuren (boomerang)
+-> nightbug (homing) -> ichirin (rocket)
+-> hina (spin) -> koishi (bomb) ->
 
-sakuya.yuyuko <- boomerang , suika  <- heart
-hina.komachi <- top , parsee <- petal
-byaku.flandre <- dart , iku <- boomerang
-syou.suwako <- heart , inaba <- firefly
+sakuya2 yuyuko <- byakuren , suika  <- koishi
+hina2   komachi <- hina , parsee <- yuka
+byaku2  flandre <- syou , iku <- byakuren
+syou2   suwako <- koishi , inaba <- nightbug
 
-kaguya 1 <- heart , 2 <- boomerang
-       3 <- punch , 4/re <- punch
-       5 <- boomerang/top
+kaguya 1 <- koishi , 2 <- byakuren
+       3 <- ichirin , 4/re <- ichirin
+       5 <- byakuren/hina
 ------------------------------
 MARISA
 password
@@ -240,19 +240,19 @@ password
 	extra intro
 		bd2
 
-sakuya (clock) -> syou (shockwave)
--> hina (ch-fire) -> yuka (spike)
+sakuya (timestop/short) -> syou (shockwave/screen)
+-> hina (barrier+fire) -> yuka (spike)
 -> byakuren (counter) -> ichirin (tri-thunder)
 -> nightbug (firefly) -> koishi (needle) ->
 
-sakuya.yuyuko <- ch-fire , suika <- firefly
-hina.komachi <- spike , parsee <- counter
-byaku.flandre <- needle , iku <- ch-fire
-syou.suwako <- firefly , inaba <- tri-thunder
+sakuya2 yuyuko <- hina , suika <- nightbug
+hina2   komachi <- yuka , parsee <- byakuren
+byaku2  flandre <- koishi , iku <- hina
+syou2   suwako <- nightbug , inaba <- ichirin
 
-kaguya 1 <- firefly , 2 <- counter
-       3 <- tri-thunder , 4/re <- shockwave/firefly
-       5 <- tri-thunder/spike
+kaguya 1 <- nightbug , 2 <- byakuren
+       3 <- ichirin , 4/re <- syou/nightbug
+       5 <- ichirin/yuka
 ------------------------------
 ALICE
 password
@@ -273,21 +273,21 @@ password
 	extra intro
 		rc2 rc3
 
-sakuya.cirno <- punch , remilia <- x
-hina.patchouli <- heart/boomerang , aya <- bug
-byaku.makou <- top , youmu <- dart
-syou.utsuho <- top , tenshi <- heart/boomerang
+sakuya2 cirno <- ichirin , remilia <- x
+hina2   patchouli <- koishi/byakuren , aya <- nightbug
+byaku2  makou <- hina , youmu <- syou
+syou2   utsuho <- hina , tenshi <- koishi/byakuren
 
 *SAME AS REIMU*
 ------------------------------
 item/shot
-	mouse = SLIDE syou (laser area , search w/timestop)
-	broom = 4 boss
-	doll  = BLOCK+PIT sakuya + laser
+	nazrin = SLIDE syou (laser area , search w/timestop)
+	broom  = 4 boss
+	doll   = SP+BLOCK+PIT sakuya + laser
 	shot:laser  = TOP nightbug
 	shot:5ways  = SLIDE ichirin
 	item:heal+  = TOP byakuren
-	item:pierce = BLOCK+SLIDE sakuya + laser
+	item:pierce = SP+BLOCK+SLIDE sakuya + laser
 	item:mudeki = TOP koishi + broom
 	item:charge = TOP hina + broom
 	item:energy = yuka + broom
@@ -313,6 +313,36 @@ CHAR
 ------------------------------
 REIMU
 password
+	bottle
+		+E 0 rd3          +W 0 -
+		+E 1 rd3 rc4      +W 1 rf2
+		+E 2         rc2  +W 2     rf6
+		+E 3         bc2  +W 3         bb1
+		+E 4 bd3     rc2  +W 4         rb1
+	intro
+		ra2  be5
+	extra bottle
+		+E 0 -            +W 0 -
+		+E 1 rb4          +W 1 bd6
+		+E 2     be3      +W 2 rd6 rb1
+		+E 3     re3 rf1  +W 3     bb1
+		+E 4 rb4     rf1  +W 4 rd6     rb5
+	extra intro
+		ra5  bb2
+
+rumia (splash) -> remilia (spear)
+-> alice (homing) -> sakuya (timestop/long)
+-> marisa (star) -> patchouli (barrier)
+-> meirin (kick) -> cirno (ice) ->
+
+FLANDRE 1 <- marisa , 2 <- alice
+        3 <- cirno , 4/re <- marisa
+        5 <- alice
+------------------------------
+Cheat Engine
+	+ 0 int32 Lives
+	+ 4 int32 E-bottle
+	+ 8 int32 W-bottle
 
 ========================
 === Rock Maiden FC 2 ===
@@ -326,6 +356,124 @@ CHAR
 	TH12-s5 Toramaru Syou
 	TH09p   Shameimaru Aya
 	TH12-s3 Kumoi Ichirin
+CLEAR = EXTRA mode
+	key.txt line 33/37 = 0 -> 69
 ------------------------------
 BYAKUREN
 password
+	bottle
+		+E 0 -            +W 0 -
+		+E 1 rb2          +W 1 bb5
+		+E 2     re6 bb6  +W 2 rb5 rf6
+		+E 3         rb6  +W 3     bf6
+		+E 4 bb2     rb6  +W 4     rf6 rf2
+	intro
+		rd2  bf3
+	extra bottle
+		rc2
+	extra intro
+		+E 0 rb4          +W 0 -
+		+E 1     rb2 re3  +W 1 bb5
+		+E 2 rb4 bb2      +W 2 rb5
+		+E 3 rb4     be3  +W 3 rb5 rf3
+		+E 4 rb4     re3  +W 4     bf3 ra1
+
+kogasa (rain/screen) -> aya (tornado/jump+)
+-> marisa (beam) -> sanae (wave)
+-> nazrin (barrier) -> minamitsu (anchor)
+-> syou (beam/splash) -> ichirin (ring) ->
+
+NUE 1 <- nazrin , 2 <- sanae
+    3 <- nazrin
+REIMU 1 <- ichirin , 2 <- ichirin
+      3 <- kogasa , 4/re <- marisa
+      5 <- minamitsu/kogasa
+------------------------------
+Cheat Engine
+	+ 0 int32 Lives
+	+ 4 int32 E-bottle
+	+ 8 int32 W-bottle
+
+=================
+=== Rockmen R ===
+=================
+BOSS
+	Weasel  Waltz  Flare
+	Rapid          Puppet
+	Energy  Laser  Power
+------------------------------
+password
+	tank
+		+E 0  +W 0
+		+E 1  +W 1
+		+E 2  +W 2
+		+E 3  +W 3
+		+E 4  +W 4
+	intro
+
+weasel () -> ()
+-> () -> ()
+-> () -> ()
+-> () -> () ->
+
+------------------------------
+item/shot
+------------------------------
+
+==================
+=== Rockmen R2 ===
+==================
+BOSS
+	Hide    Penetrate  Eruption
+	Deluge             Hail
+	Vanish  Halo       Analysis
+CLEAR = HARD mode
+	key.txt line 33/34 = 0 -> 69
+------------------------------
+password
+	tank
+		+E 0 ra4      +W 0 -
+		+E 1 ra4 rd2  +W 1 rc2
+		+E 2     yd2  +W 2     bf4
+		+E 3 ba4 rd2  +W 3 yc2 yf4
+		+E 4     bd2  +W 4 bc2
+	intro
+		re2  bf2
+	hard tank
+		+E 0 -            +W 0 -
+		+E 1 rd6          +W 1 be3
+		+E 2 yd6          +W 2     re4
+		+E 3 rd6 rf1      +W 3 re3 re4
+		+E 4         ba5  +W 4         rc5
+	hard intro
+		rb4  bf2
+
+hide (slash) -> penetrate (dart)
+-> hail (ice/screen) -> eruption (wave)
+-> analysis (barrier) -> deluge (mine)
+-> vanish (spell) -> halo (timestop/short) ->
+
+hide2      spark <- hide , snake <- penetrate
+eruption2  top <- eruption/deluge , gemini <- x
+vanish2    needle <- vanish/hide , hard <- penetrate
+analysis2  magnet <- penetrate , shadow <- deluge
+
+WILY 1a <- analysis , 1b <- analysis , 2 <- hail
+     3a <- analysis , 3b <- analysis
+     4/re <- hail/penetrate , 5 <- mine
+------------------------------
+item/shot
+	rush search = BOSS vanish
+	rush jet    = BOSS halo
+	shot.laser  = SP+BLOCK eruption + penetrate
+	shot.search = vanish + rush search (just before spikes area)
+	shot.
+	item.heal+  = halo
+	item.
+	item.charge = SP+BLOCK+TOP deluge + rush jet
+	item.
+------------------------------
+Cheat Engine
+	+ 0 int32 Lives
+	+ 4 int32 E-tank
+	+ 8 int32 W-tank

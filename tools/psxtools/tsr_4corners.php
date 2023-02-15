@@ -22,8 +22,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 // https://en.m.wikipedia.org/wiki/Color_difference
 
-define('EUD_MAXD' , 1.0/195075);
-define('LAB_MAXD' , 1.0/10000);
+define('EUD_MAXD' , 1.0/442);
+define('LAB_MAXD' , 1.0/101);
 define('HEX_MAXD' , 1.0/2.55);
 
 function binbash( $cmd )
@@ -50,8 +50,9 @@ function rgb_dist( $name, $c1, $c2 )
 	$g = $c2[1] - $c1[1];
 	$b = $c2[2] - $c1[2];
 	$d1 = ($r*$r) + ($g*$g) + ($b*$b);
+		$d1 = sqrt($d1);
 	$d2 = $d1 * EUD_MAXD;
-	printf("%s  %9.6f  %6d\n", $name, $d2*100, $d1);
+	printf("%s  %6.2f  %6.2f\n", $name, $d2*100, $d1);
 	return ($d2 > 0.1) ? 1 : 0;
 }
 
@@ -118,8 +119,9 @@ function lab_dist( $name, $c1, $c2 )
 	$a = $c2[1] - $c1[1];
 	$b = $c2[2] - $c1[2];
 	$d1 = ($L*$L) + ($a*$a) + ($b*$b);
+		$d1 = sqrt($d1);
 	$d2 = $d1 * LAB_MAXD;
-	printf("%s  %9.6f  %11.6f\n", $name, $d2*100, $d1);
+	printf("%s  %6.2f  %6.2f\n", $name, $d2*100, $d1);
 	return ($d2 > 0.1) ? 1 : 0;
 }
 
@@ -151,18 +153,18 @@ function imgcorner( $rm, $fname )
 	if ( $w == 0 || $h == 0 )
 		return;
 
-	$qw = 16;
-	$qh = 16;
+	$qw = 48;
+	$qh = 48;
 	$rgb = array(
-		mean_rgb($fname, $qw, $qh, 0     , 0),
-		mean_rgb($fname, $qw, $qh, $w-$qw, 0),
-		mean_rgb($fname, $qw, $qh, 0     , $h-$qh),
-		mean_rgb($fname, $qw, $qh, $w-$qw, $h-$qh),
+		mean_rgb($fname, $qw, $qh, $qw     , $qh),
+		mean_rgb($fname, $qw, $qh, $w-$qw*2, $qh),
+		mean_rgb($fname, $qw, $qh, $qw     , $h-$qh*2),
+		mean_rgb($fname, $qw, $qh, $w-$qw*2, $h-$qh*2),
 	);
 
-	$d = euclidean_dist($rgb);
+	//$d = euclidean_dist($rgb);
 	$d = deltaE_76_dist($rgb);
-	if ( $rm && $d < 5 )
+	if ( $rm && $d < 6 )
 		unlink($fname);
 	return;
 }

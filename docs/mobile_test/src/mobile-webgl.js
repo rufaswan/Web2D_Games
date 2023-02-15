@@ -60,7 +60,7 @@
 
 					var p = document.createElement('p');
 					p.innerHTML  = 'GL.getShaderPrecisionFormat';
-					p.innerHTML += '[ ' + sh + ' ][ ' + type + ' ] = ';
+					p.innerHTML += '<span class="ok">[ ' + sh + ' ][ ' + type + ' ]</span> = ';
 					p.innerHTML += 'range '+ form.rangeMin +'-'+ form.rangeMax +' , precision '+ form.precision;
 					PREC.appendChild(p);
 				});
@@ -78,7 +78,7 @@
 			//console.log(key, GL[key]);
 
 			var p = document.createElement('p');
-			p.innerHTML  = name + ' = ' + JSON.stringify(GL[key]);
+			p.innerHTML  = name + ' = ' + JSON.stringify( GL.getParameter(GL[key]) );
 			p.innerHTML += ' (<span class="ok">' + min + '</span>)';
 			DIV.appendChild(p);
 			return;
@@ -95,6 +95,23 @@
 		logGL('MAX_VERTEX_UNIFORM_VECTORS'      , '128');
 		logGL('MAX_FRAGMENT_UNIFORM_VECTORS'    , '64');
 		logGL('ALIASED_POINT_SIZE_RANGE'        , '[1,100]');
+
+		logGL('MAX_VERTEX_ATTRIBS'              , '8');
+		logGL('MAX_VERTEX_UNIFORM_VECTORS'      , '128');
+		logGL('MAX_VARYING_VECTORS'             , '8');
+		logGL('MAX_VERTEX_TEXTURE_IMAGE_UNITS'  , '0');
+		logGL('MAX_COMBINED_TEXTURE_IMAGE_UNITS', '8');
+		logGL('MAX_TEXTURE_IMAGE_UNITS'         , '8');
+		logGL('MAX_FRAGMENT_UNIFORM_VECTORS'    , '16');
+		logGL('MAX_DRAW_BUFFERS'                , '1');
+
+		logGL('RED_BITS'     , '-');
+		logGL('GREEN_BITS'   , '-');
+		logGL('BLUE_BITS'    , '-');
+		logGL('ALPHA_BITS'   , '-');
+		logGL('SUBPIXEL_BITS', '-');
+		logGL('DEPTH_BITS'   , '-');
+		logGL('STENCIL_BITS' , '-');
 
 		glprecision(GL);
 

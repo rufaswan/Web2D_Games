@@ -1,0 +1,1099 @@
+PCSX-Reload v1.9.94
+http://github.com/mirror/pcsxr/
+
+	./plugins/peopsxgl/prim.c
+
+		typedef struct SEMITRANSTAG
+		{
+			GLenum  srcFac;
+			GLenum  dstFac;
+			GLubyte alpha;
+		} SemiTransParams;
+
+		SemiTransParams TransSets[4]=
+		{
+			{GL_SRC_ALPHA           , GL_SRC_ALPHA           , 127}, // 0.5 x B + 0.5 x F
+			{GL_ONE                 , GL_ONE                 , 255}, // 1.0 x B + 1.0 x F
+			{GL_ZERO                , GL_ONE_MINUS_SRC_COLOR , 255}, // 1.0 x B - 1.0 x F
+			{GL_ONE_MINUS_SRC_ALPHA , GL_ONE                 , 192}  // 1.0 x B +0.25 x F
+		};
+
+		void SetSemiTrans(void)
+		{
+			if ( ! DrawSemiTrans )                 // no semi trans at all?
+			{
+				if ( bBlendEnable )
+				{
+					glDisable(GL_BLEND);
+					bBlendEnable = FALSE;
+				}                                  // -> don't wanna blend
+				ubGloAlpha = ubGloColAlpha = 255;  // -> full alpha
+				return;                            // -> and bye
+			}
+
+			ubGloAlpha = ubGloColAlpha = TransSets[GlobalTextABR].alpha;
+
+			if( ! bBlendEnable )
+			{
+				glEnable(GL_BLEND);
+				bBlendEnable = TRUE;
+			}                                      // wanna blend
+
+			if ( TransSets[GlobalTextABR].srcFac != obm1 || TransSets[GlobalTextABR].dstFac != obm2 )
+			{
+				if ( glBlendEquationEXTEx == NULL )
+				{
+					obm1=TransSets[GlobalTextABR].srcFac;
+					obm2=TransSets[GlobalTextABR].dstFac;
+					glBlendFunc(obm1,obm2);                          // set blend func
+				}
+				else
+				if ( TransSets[GlobalTextABR].dstFac != GL_ONE_MINUS_SRC_COLOR )
+				{
+					if ( obm2 == GL_ONE_MINUS_SRC_COLOR )
+						glBlendEquationEXTEx(FUNC_ADD_EXT);
+					obm1=TransSets[GlobalTextABR].srcFac;
+					obm2=TransSets[GlobalTextABR].dstFac;
+					glBlendFunc(obm1,obm2);                          // set blend func
+				}
+				else
+				{
+					glBlendEquationEXTEx(FUNC_REVERSESUBTRACT_EXT);
+					obm1=TransSets[GlobalTextABR].srcFac;
+					obm2=TransSets[GlobalTextABR].dstFac;
+					glBlendFunc(GL_ONE,GL_ONE);                      // set blend func
+				}
+			}
+		}
+
+	##############################
+	# NOTE
+	if ( ! DrawSemiTrans )
+		alpha = 0xff
+		return toggleBlend(false)
+
+	alpha = blendmode.alpha
+	toggleBlend(true)
+	if ( curBlendMode != blendmode )
+		if ( ! curBlendMode )
+			curBlendMode = blendmode
+		else
+		if ( blendmode != SUBTRACT )
+			curBlendMode = ADD
+		else
+			curBlendMode = SUBTRACT
+	##############################
+
+==============================
+
+PCSX2 v1.6.0
+http://github.com/PCSX2/pcsx2/
+
+	./pcsx2/CDVD/InputIsoFile.cpp
+
+		bool InputIsoFile::tryIsoType(u32 _size, s32 _offset, s32 _blockofs)
+		{
+			...
+			if (strncmp((char*)(buf+25), "CD001", 5)) // Not ISO 9660 compliant
+				return false;
+
+			m_type = (*(u16*)(buf+190) == 2048) ? ISOTYPE_CD : ISOTYPE_DVD;
+			...
+		}
+
+	##############################
+	# NOTE
+	buf+25  = 0x19 = sector data + 1    (magic "CD001")
+	buf+190 = 0xbe = sector data + 0xa6 (RootDirSize)
+
+	if ( magic != "CD001" )
+		return false;
+	m_type = ( RootDirSize == 0x800 ) ? ISOTYPE_CD : ISOTYPE_DVD
+	return true;
+	##############################
+
+	------------------------------
+
+	./plugins/GSdx/Renderers/Common/GSDevice.h
+
+		enum HWBlendFlags
+		{
+			// A couple of flag to determine the blending behavior
+			BLEND_A_MAX  = 0x100, // Impossible blending uses coeff bigger than 1
+			BLEND_C_CLR  = 0x200, // Clear color blending (use directly the destination color as blending factor)
+			BLEND_NO_BAR = 0x400, // Doesn't require sampling of the RT as a texture
+			BLEND_ACCU   = 0x800, // Allow to use a mix of SW and HW blending to keep the best of the 2 worlds
+		};
+
+		// Determines the HW blend function for DX11/OGL
+		struct HWBlend { uint16 flags, op, src, dst; };
+
+	./plugins/GSdx/Renderers/Common/GSDevice.cpp
+
+		std::array<HWBlend, 3*3*3*3 + 1> GSDevice::m_blendMap =
+		{{
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 0000: (Cs - Cs)*As + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 0001: (Cs - Cs)*As + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 0002: (Cs - Cs)*As +  0 ==> 0
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 0010: (Cs - Cs)*Ad + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 0011: (Cs - Cs)*Ad + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 0012: (Cs - Cs)*Ad +  0 ==> 0
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 0020: (Cs - Cs)*F  + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 0021: (Cs - Cs)*F  + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 0022: (Cs - Cs)*F  +  0 ==> 0
+			{ BLEND_A_MAX                , OP_SUBTRACT     , CONST_ONE       , SRC1_ALPHA}      , //*0100: (Cs - Cd)*As + Cs ==> Cs*(As + 1) - Cd*As
+			{ 0                          , OP_ADD          , SRC1_ALPHA      , INV_SRC1_ALPHA}  , // 0101: (Cs - Cd)*As + Cd ==> Cs*As + Cd*(1 - As)
+			{ 0                          , OP_SUBTRACT     , SRC1_ALPHA      , SRC1_ALPHA}      , // 0102: (Cs - Cd)*As +  0 ==> Cs*As - Cd*As
+			{ BLEND_A_MAX                , OP_SUBTRACT     , CONST_ONE       , DST_ALPHA}       , //*0110: (Cs - Cd)*Ad + Cs ==> Cs*(Ad + 1) - Cd*Ad
+			{ 0                          , OP_ADD          , DST_ALPHA       , INV_DST_ALPHA}   , // 0111: (Cs - Cd)*Ad + Cd ==> Cs*Ad + Cd*(1 - Ad)
+			{ 0                          , OP_SUBTRACT     , DST_ALPHA       , DST_ALPHA}       , // 0112: (Cs - Cd)*Ad +  0 ==> Cs*Ad - Cd*Ad
+			{ BLEND_A_MAX                , OP_SUBTRACT     , CONST_ONE       , CONST_COLOR}     , //*0120: (Cs - Cd)*F  + Cs ==> Cs*(F + 1) - Cd*F
+			{ 0                          , OP_ADD          , CONST_COLOR     , INV_CONST_COLOR} , // 0121: (Cs - Cd)*F  + Cd ==> Cs*F + Cd*(1 - F)
+			{ 0                          , OP_SUBTRACT     , CONST_COLOR     , CONST_COLOR}     , // 0122: (Cs - Cd)*F  +  0 ==> Cs*F - Cd*F
+			{ BLEND_NO_BAR | BLEND_A_MAX , OP_ADD          , CONST_ONE       , CONST_ZERO}      , //*0200: (Cs -  0)*As + Cs ==> Cs*(As + 1)
+			{ BLEND_ACCU                 , OP_ADD          , SRC1_ALPHA      , CONST_ONE}       , //?0201: (Cs -  0)*As + Cd ==> Cs*As + Cd
+			{ BLEND_NO_BAR               , OP_ADD          , SRC1_ALPHA      , CONST_ZERO}      , // 0202: (Cs -  0)*As +  0 ==> Cs*As
+			{ BLEND_A_MAX                , OP_ADD          , CONST_ONE       , CONST_ZERO}      , //*0210: (Cs -  0)*Ad + Cs ==> Cs*(Ad + 1)
+			{ 0                          , OP_ADD          , DST_ALPHA       , CONST_ONE}       , // 0211: (Cs -  0)*Ad + Cd ==> Cs*Ad + Cd
+			{ 0                          , OP_ADD          , DST_ALPHA       , CONST_ZERO}      , // 0212: (Cs -  0)*Ad +  0 ==> Cs*Ad
+			{ BLEND_NO_BAR | BLEND_A_MAX , OP_ADD          , CONST_ONE       , CONST_ZERO}      , //*0220: (Cs -  0)*F  + Cs ==> Cs*(F + 1)
+			{ BLEND_ACCU                 , OP_ADD          , CONST_COLOR     , CONST_ONE}       , //?0221: (Cs -  0)*F  + Cd ==> Cs*F + Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_COLOR     , CONST_ZERO}      , // 0222: (Cs -  0)*F  +  0 ==> Cs*F
+			{ 0                          , OP_ADD          , INV_SRC1_ALPHA  , SRC1_ALPHA}      , // 1000: (Cd - Cs)*As + Cs ==> Cd*As + Cs*(1 - As)
+			{ BLEND_A_MAX                , OP_REV_SUBTRACT , SRC1_ALPHA      , CONST_ONE}       , //*1001: (Cd - Cs)*As + Cd ==> Cd*(As + 1) - Cs*As
+			{ 0                          , OP_REV_SUBTRACT , SRC1_ALPHA      , SRC1_ALPHA}      , // 1002: (Cd - Cs)*As +  0 ==> Cd*As - Cs*As
+			{ 0                          , OP_ADD          , INV_DST_ALPHA   , DST_ALPHA}       , // 1010: (Cd - Cs)*Ad + Cs ==> Cd*Ad + Cs*(1 - Ad)
+			{ BLEND_A_MAX                , OP_REV_SUBTRACT , DST_ALPHA       , CONST_ONE}       , //*1011: (Cd - Cs)*Ad + Cd ==> Cd*(Ad + 1) - Cs*Ad
+			{ 0                          , OP_REV_SUBTRACT , DST_ALPHA       , DST_ALPHA}       , // 1012: (Cd - Cs)*Ad +  0 ==> Cd*Ad - Cs*Ad
+			{ 0                          , OP_ADD          , INV_CONST_COLOR , CONST_COLOR}     , // 1020: (Cd - Cs)*F  + Cs ==> Cd*F + Cs*(1 - F)
+			{ BLEND_A_MAX                , OP_REV_SUBTRACT , CONST_COLOR     , CONST_ONE}       , //*1021: (Cd - Cs)*F  + Cd ==> Cd*(F + 1) - Cs*F
+			{ 0                          , OP_REV_SUBTRACT , CONST_COLOR     , CONST_COLOR}     , // 1022: (Cd - Cs)*F  +  0 ==> Cd*F - Cs*F
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 1100: (Cd - Cd)*As + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 1101: (Cd - Cd)*As + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 1102: (Cd - Cd)*As +  0 ==> 0
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 1110: (Cd - Cd)*Ad + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 1111: (Cd - Cd)*Ad + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 1112: (Cd - Cd)*Ad +  0 ==> 0
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 1120: (Cd - Cd)*F  + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 1121: (Cd - Cd)*F  + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 1122: (Cd - Cd)*F  +  0 ==> 0
+			{ 0                          , OP_ADD          , CONST_ONE       , SRC1_ALPHA}      , // 1200: (Cd -  0)*As + Cs ==> Cs + Cd*As
+			{ BLEND_C_CLR                , OP_ADD          , DST_COLOR       , SRC1_ALPHA}      , //#1201: (Cd -  0)*As + Cd ==> Cd*(1 + As) // ffxii main menu background
+			{ 0                          , OP_ADD          , CONST_ZERO      , SRC1_ALPHA}      , // 1202: (Cd -  0)*As +  0 ==> Cd*As
+			{ 0                          , OP_ADD          , CONST_ONE       , DST_ALPHA}       , // 1210: (Cd -  0)*Ad + Cs ==> Cs + Cd*Ad
+			{ BLEND_C_CLR                , OP_ADD          , DST_COLOR       , DST_ALPHA}       , //#1211: (Cd -  0)*Ad + Cd ==> Cd*(1 + Ad)
+			{ 0                          , OP_ADD          , CONST_ZERO      , DST_ALPHA}       , // 1212: (Cd -  0)*Ad +  0 ==> Cd*Ad
+			{ 0                          , OP_ADD          , CONST_ONE       , CONST_COLOR}     , // 1220: (Cd -  0)*F  + Cs ==> Cs + Cd*F
+			{ BLEND_C_CLR                , OP_ADD          , DST_COLOR       , CONST_COLOR}     , //#1221: (Cd -  0)*F  + Cd ==> Cd*(1 + F)
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_COLOR}     , // 1222: (Cd -  0)*F  +  0 ==> Cd*F
+			{ BLEND_NO_BAR               , OP_ADD          , INV_SRC1_ALPHA  , CONST_ZERO}      , // 2000: (0  - Cs)*As + Cs ==> Cs*(1 - As)
+			{ BLEND_ACCU                 , OP_REV_SUBTRACT , SRC1_ALPHA      , CONST_ONE}       , //?2001: (0  - Cs)*As + Cd ==> Cd - Cs*As
+			{ BLEND_NO_BAR               , OP_REV_SUBTRACT , SRC1_ALPHA      , CONST_ZERO}      , // 2002: (0  - Cs)*As +  0 ==> 0 - Cs*As
+			{ 0                          , OP_ADD          , INV_DST_ALPHA	 , CONST_ZERO}      , // 2010: (0  - Cs)*Ad + Cs ==> Cs*(1 - Ad)
+			{ 0                          , OP_REV_SUBTRACT , DST_ALPHA       , CONST_ONE}       , // 2011: (0  - Cs)*Ad + Cd ==> Cd - Cs*Ad
+			{ 0                          , OP_REV_SUBTRACT , DST_ALPHA       , CONST_ZERO}      , // 2012: (0  - Cs)*Ad +  0 ==> 0 - Cs*Ad
+			{ BLEND_NO_BAR               , OP_ADD          , INV_CONST_COLOR , CONST_ZERO}      , // 2020: (0  - Cs)*F  + Cs ==> Cs*(1 - F)
+			{ BLEND_ACCU                 , OP_REV_SUBTRACT , CONST_COLOR     , CONST_ONE}       , //?2021: (0  - Cs)*F  + Cd ==> Cd - Cs*F
+			{ BLEND_NO_BAR               , OP_REV_SUBTRACT , CONST_COLOR     , CONST_ZERO}      , // 2022: (0  - Cs)*F  +  0 ==> 0 - Cs*F
+			{ 0                          , OP_SUBTRACT     , CONST_ONE       , SRC1_ALPHA}      , // 2100: (0  - Cd)*As + Cs ==> Cs - Cd*As
+			{ 0                          , OP_ADD          , CONST_ZERO      , INV_SRC1_ALPHA}  , // 2101: (0  - Cd)*As + Cd ==> Cd*(1 - As)
+			{ 0                          , OP_SUBTRACT     , CONST_ZERO      , SRC1_ALPHA}      , // 2102: (0  - Cd)*As +  0 ==> 0 - Cd*As
+			{ 0                          , OP_SUBTRACT     , CONST_ONE       , DST_ALPHA}       , // 2110: (0  - Cd)*Ad + Cs ==> Cs - Cd*Ad
+			{ 0                          , OP_ADD          , CONST_ZERO      , INV_DST_ALPHA}   , // 2111: (0  - Cd)*Ad + Cd ==> Cd*(1 - Ad)
+			{ 0                          , OP_SUBTRACT     , CONST_ONE       , DST_ALPHA}       , // 2112: (0  - Cd)*Ad +  0 ==> 0 - Cd*Ad
+			{ 0                          , OP_SUBTRACT     , CONST_ONE       , CONST_COLOR}     , // 2120: (0  - Cd)*F  + Cs ==> Cs - Cd*F
+			{ 0                          , OP_ADD          , CONST_ZERO      , INV_CONST_COLOR} , // 2121: (0  - Cd)*F  + Cd ==> Cd*(1 - F)
+			{ 0                          , OP_SUBTRACT     , CONST_ONE       , CONST_COLOR}     , // 2122: (0  - Cd)*F  +  0 ==> 0 - Cd*F
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 2200: (0  -  0)*As + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 2201: (0  -  0)*As + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 2202: (0  -  0)*As +  0 ==> 0
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 2210: (0  -  0)*Ad + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 2211: (0  -  0)*Ad + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 2212: (0  -  0)*Ad +  0 ==> 0
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ONE       , CONST_ZERO}      , // 2220: (0  -  0)*F  + Cs ==> Cs
+			{ 0                          , OP_ADD          , CONST_ZERO      , CONST_ONE}       , // 2221: (0  -  0)*F  + Cd ==> Cd
+			{ BLEND_NO_BAR               , OP_ADD          , CONST_ZERO      , CONST_ZERO}      , // 2222: (0  -  0)*F  +  0 ==> 0
+			{ 0                          , OP_ADD          , SRC_ALPHA       , INV_SRC_ALPHA}   , // extra for merge operation
+		}};
+
+==============================
+
+RPCS3 v0.0.26
+http://github.com/RPCS3/rpcs3/tags
+
+	./rpcs3/Emu/RSX/GL/GLDraw.cpp
+
+		GLenum blend_equation(rsx::blend_equation op)
+		{
+			switch (op)
+			{
+				// Note : maybe add is signed on gl
+			case rsx::blend_equation::add_signed:
+				rsx_log.trace("blend equation add_signed used. Emulating using FUNC_ADD");
+				[[fallthrough]];
+			case rsx::blend_equation::add: return GL_FUNC_ADD;
+			case rsx::blend_equation::min: return GL_MIN;
+			case rsx::blend_equation::max: return GL_MAX;
+			case rsx::blend_equation::subtract: return GL_FUNC_SUBTRACT;
+			case rsx::blend_equation::reverse_subtract_signed:
+				rsx_log.trace("blend equation reverse_subtract_signed used. Emulating using FUNC_REVERSE_SUBTRACT");
+				[[fallthrough]];
+			case rsx::blend_equation::reverse_subtract: return GL_FUNC_REVERSE_SUBTRACT;
+			case rsx::blend_equation::reverse_add_signed:
+			default:
+				rsx_log.error("Blend equation 0x%X is unimplemented!", static_cast<u32>(op));
+				return GL_FUNC_ADD;
+			}
+		}
+
+		if (mrt_blend_enabled[0] || mrt_blend_enabled[1] || mrt_blend_enabled[2] || mrt_blend_enabled[3])
+		{
+			glBlendFuncSeparate(
+				gl::blend_factor(rsx::method_registers.blend_func_sfactor_rgb()),
+				gl::blend_factor(rsx::method_registers.blend_func_dfactor_rgb()),
+				gl::blend_factor(rsx::method_registers.blend_func_sfactor_a()),
+				gl::blend_factor(rsx::method_registers.blend_func_dfactor_a())
+			);
+
+			auto blend_colors = rsx::get_constant_blend_colors();
+			glBlendColor(blend_colors[0], blend_colors[1], blend_colors[2], blend_colors[3]);
+
+			glBlendEquationSeparate(
+				gl::blend_equation(rsx::method_registers.blend_equation_rgb()),
+				gl::blend_equation(rsx::method_registers.blend_equation_a())
+			);
+		}
+
+	./rpcs3/Emu/RSX/VK/VKGSRender.cpp
+
+		VkBlendOp get_blend_op(rsx::blend_equation op)
+		{
+			switch (op)
+			{
+			case rsx::blend_equation::add_signed:
+				rsx_log.trace("blend equation add_signed used. Emulating using FUNC_ADD");
+				[[fallthrough]];
+			case rsx::blend_equation::add:
+				return VK_BLEND_OP_ADD;
+			case rsx::blend_equation::subtract: return VK_BLEND_OP_SUBTRACT;
+			case rsx::blend_equation::reverse_subtract_signed:
+				rsx_log.trace("blend equation reverse_subtract_signed used. Emulating using FUNC_REVERSE_SUBTRACT");
+				[[fallthrough]];
+			case rsx::blend_equation::reverse_subtract: return VK_BLEND_OP_REVERSE_SUBTRACT;
+			case rsx::blend_equation::min: return VK_BLEND_OP_MIN;
+			case rsx::blend_equation::max: return VK_BLEND_OP_MAX;
+			default:
+				fmt::throw_exception("Unknown blend op: 0x%x", static_cast<u32>(op));
+			}
+		}
+
+		if (mrt_blend_enabled[0] || mrt_blend_enabled[1] || mrt_blend_enabled[2] || mrt_blend_enabled[3])
+		{
+			sfactor_rgb  = vk::get_blend_factor(rsx::method_registers.blend_func_sfactor_rgb());
+			sfactor_a    = vk::get_blend_factor(rsx::method_registers.blend_func_sfactor_a());
+			dfactor_rgb  = vk::get_blend_factor(rsx::method_registers.blend_func_dfactor_rgb());
+			dfactor_a    = vk::get_blend_factor(rsx::method_registers.blend_func_dfactor_a());
+			equation_rgb = vk::get_blend_op(rsx::method_registers.blend_equation_rgb());
+			equation_a   = vk::get_blend_op(rsx::method_registers.blend_equation_a());
+
+			for (u8 idx = 0; idx < m_draw_buffers.size(); ++idx)
+			{
+				if (mrt_blend_enabled[idx])
+					properties.state.enable_blend(idx, sfactor_rgb, sfactor_a, dfactor_rgb, dfactor_a, equation_rgb, equation_a);
+			}
+		}
+
+	------------------------------
+
+	./rpcs3/Emu/RSX/rsx_methods.h
+
+		bool blend_enabled() const
+		{
+			return decode<NV4097_SET_BLEND_ENABLE>().blend_enabled();
+		}
+
+		bool blend_enabled_surface_1() const
+		{
+			return decode<NV4097_SET_BLEND_ENABLE_MRT>().blend_surface_b();
+		}
+
+		bool blend_enabled_surface_2() const
+		{
+			return decode<NV4097_SET_BLEND_ENABLE_MRT>().blend_surface_c();
+		}
+
+		bool blend_enabled_surface_3() const
+		{
+			return decode<NV4097_SET_BLEND_ENABLE_MRT>().blend_surface_d();
+		}
+		...
+		u8 blend_color_8b_r() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR>().red8();
+		}
+
+		u8 blend_color_8b_g() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR>().green8();
+		}
+
+		u8 blend_color_8b_b() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR>().blue8();
+		}
+
+		u8 blend_color_8b_a() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR>().alpha8();
+		}
+
+		u16 blend_color_16b_r() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR>().red16();
+		}
+
+		u16 blend_color_16b_g() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR>().green16();
+		}
+
+		u16 blend_color_16b_b() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR2>().blue();
+		}
+
+		u16 blend_color_16b_a() const
+		{
+			return decode<NV4097_SET_BLEND_COLOR2>().alpha();
+		}
+
+		blend_equation blend_equation_rgb() const
+		{
+			return decode<NV4097_SET_BLEND_EQUATION>().blend_rgb();
+		}
+
+		blend_equation blend_equation_a() const
+		{
+			return decode<NV4097_SET_BLEND_EQUATION>().blend_a();
+		}
+
+		blend_factor blend_func_sfactor_rgb() const
+		{
+			return decode<NV4097_SET_BLEND_FUNC_SFACTOR>().src_blend_rgb();
+		}
+
+		blend_factor blend_func_sfactor_a() const
+		{
+			return decode<NV4097_SET_BLEND_FUNC_SFACTOR>().src_blend_a();
+		}
+
+		blend_factor blend_func_dfactor_rgb() const
+		{
+			return decode<NV4097_SET_BLEND_FUNC_DFACTOR>().dst_blend_rgb();
+		}
+
+		blend_factor blend_func_dfactor_a() const
+		{
+			return decode<NV4097_SET_BLEND_FUNC_DFACTOR>().dst_blend_a();
+		}
+
+==============================
+
+fpPS4 v0.0.1
+http://github.com/red-prig/fpPS4/tags
+
+	./chip/ps4_gpu_regs.pas
+
+		CB_BLEND_CONTROL:array[0..7] of TCB_BLEND0_CONTROL;
+
+		Function GetBlendOp(i:Byte):TVkBlendOp;
+		begin
+			Case i of
+				COMB_DST_PLUS_SRC :Result:=VK_BLEND_OP_ADD;
+				COMB_SRC_MINUS_DST:Result:=VK_BLEND_OP_SUBTRACT;
+				COMB_MIN_DST_SRC  :Result:=VK_BLEND_OP_MIN;
+				COMB_MAX_DST_SRC  :Result:=VK_BLEND_OP_MAX;
+				COMB_DST_MINUS_SRC:Result:=VK_BLEND_OP_REVERSE_SUBTRACT;
+				else
+					Assert(false);
+			end;
+		end;
+
+		Function TGPU_REGS.GET_RT_BLEND(i:Byte):TVkPipelineColorBlendAttachmentState; //0..7
+		var
+			m:Byte;
+			COMP_MAP:TCOMP_MAP;
+		begin
+			...
+			if (RENDER_TARGET[i].INFO.BLEND_BYPASS<>0) then
+			begin
+				Result.blendEnable:=VK_FALSE;
+			end else
+			if (CB_BLEND_CONTROL[i].ENABLE=0) then
+			begin
+				Result.blendEnable:=VK_FALSE;
+			end else
+			begin
+				Result.blendEnable:=VK_TRUE;
+
+				Result.srcColorBlendFactor:=GetBlendFactor(CB_BLEND_CONTROL[i].COLOR_SRCBLEND);
+				Result.dstColorBlendFactor:=GetBlendFactor(CB_BLEND_CONTROL[i].COLOR_DESTBLEND);
+				Result.colorBlendOp       :=GetBlendOp(CB_BLEND_CONTROL[i].COLOR_COMB_FCN);
+
+				if (CB_BLEND_CONTROL[i].SEPARATE_ALPHA_BLEND=0) then
+				begin
+					Result.srcAlphaBlendFactor:=Result.srcColorBlendFactor;
+					Result.dstAlphaBlendFactor:=Result.dstColorBlendFactor;
+					Result.alphaBlendOp       :=Result.colorBlendOp;
+				end else //VkPhysicalDeviceFeatures.independentBlend
+				begin
+					Result.srcAlphaBlendFactor:=GetBlendFactor(CB_BLEND_CONTROL[i].ALPHA_SRCBLEND);
+					Result.dstAlphaBlendFactor:=GetBlendFactor(CB_BLEND_CONTROL[i].ALPHA_DESTBLEND);
+					Result.alphaBlendOp       :=GetBlendOp(CB_BLEND_CONTROL[i].ALPHA_COMB_FCN);
+				end;
+
+				Assert(CB_BLEND_CONTROL[i].DISABLE_ROP3=0);
+			end;
+		end;
+
+	./chip/si_ci_vi_merged_registers.pas
+
+		TCB_BLEND0_CONTROL=bitpacked record
+			COLOR_SRCBLEND      :bit5;
+			COLOR_COMB_FCN      :bit3;
+			COLOR_DESTBLEND     :bit5;
+			RESERVED0           :bit3;
+			ALPHA_SRCBLEND      :bit5;
+			ALPHA_COMB_FCN      :bit3;
+			ALPHA_DESTBLEND     :bit5;
+			SEPARATE_ALPHA_BLEND:bit1;
+			ENABLE              :bit1;
+			DISABLE_ROP3        :bit1;
+		end;
+		# repeat for TCB_BLEND[1-7]_CONTROL
+
+==============================
+
+PPSSPP v1.14.4
+http://github.com/hrydgard/ppsspp
+
+	./Common/GPU/thin3d.h
+
+		enum class BlendOp : uint8_t {
+			ADD,
+			SUBTRACT,
+			REV_SUBTRACT,
+			MIN,
+			MAX,
+		};
+
+		struct BlendStateDesc {
+			bool enabled;
+			int colorMask;
+			BlendFactor srcCol;
+			BlendFactor dstCol;
+			BlendOp eqCol;
+			BlendFactor srcAlpha;
+			BlendFactor dstAlpha;
+			BlendOp eqAlpha;
+			bool logicEnabled;
+			LogicOp logicOp;
+		};
+
+	------------------------------
+
+	./Common/GPU/D3D9/thin3d_d3d9.cpp
+
+		// Could be declared as u8
+		static const D3DBLENDOP blendEqToD3D9[] = {
+			D3DBLENDOP_ADD,
+			D3DBLENDOP_SUBTRACT,
+			D3DBLENDOP_REVSUBTRACT,
+			D3DBLENDOP_MIN,
+			D3DBLENDOP_MAX,
+		};
+
+		class D3D9BlendState : public BlendState {
+		public:
+			bool enabled;
+			D3DBLENDOP eqCol, eqAlpha;
+			D3DBLEND srcCol, srcAlpha, dstCol, dstAlpha;
+			uint32_t colorMask;
+
+			void Apply(LPDIRECT3DDEVICE9 device) {
+				dxstate.blend.set(enabled);
+				dxstate.blendFunc.set(srcCol, dstCol, srcAlpha, dstAlpha);
+				dxstate.blendEquation.set(eqCol, eqAlpha);
+				dxstate.colorMask.set(colorMask);
+			}
+		};
+
+	------------------------------
+
+	./Common/GPU/D3D11/thin3d_d3d11.cpp
+
+		static const D3D11_BLEND_OP blendOpToD3D11[] = {
+			D3D11_BLEND_OP_ADD,
+			D3D11_BLEND_OP_SUBTRACT,
+			D3D11_BLEND_OP_REV_SUBTRACT,
+			D3D11_BLEND_OP_MIN,
+			D3D11_BLEND_OP_MAX,
+		};
+
+		BlendState *D3D11DrawContext::CreateBlendState(const BlendStateDesc &desc) {
+			D3D11BlendState *bs = new D3D11BlendState();
+			D3D11_BLEND_DESC d3ddesc{};
+			d3ddesc.AlphaToCoverageEnable = FALSE;
+			d3ddesc.IndependentBlendEnable = FALSE;
+			d3ddesc.RenderTarget[0].BlendEnable = desc.enabled;
+			d3ddesc.RenderTarget[0].RenderTargetWriteMask = desc.colorMask;
+			d3ddesc.RenderTarget[0].BlendOp = blendOpToD3D11[(int)desc.eqCol];
+			d3ddesc.RenderTarget[0].BlendOpAlpha = blendOpToD3D11[(int)desc.eqAlpha];
+			d3ddesc.RenderTarget[0].SrcBlend = blendToD3D11[(int)desc.srcCol];
+			d3ddesc.RenderTarget[0].SrcBlendAlpha = blendToD3D11[(int)desc.srcAlpha];
+			d3ddesc.RenderTarget[0].DestBlend = blendToD3D11[(int)desc.dstCol];
+			d3ddesc.RenderTarget[0].DestBlendAlpha = blendToD3D11[(int)desc.dstAlpha];
+			if (SUCCEEDED(device_->CreateBlendState(&d3ddesc, &bs->bs)))
+				return bs;
+			delete bs;
+			return nullptr;
+		}
+
+	------------------------------
+
+	./Common/GPU/OpenGL/thin3d_gl.cpp
+
+		static const unsigned short blendEqToGL[] = {
+			GL_FUNC_ADD,
+			GL_FUNC_SUBTRACT,
+			GL_FUNC_REVERSE_SUBTRACT,
+			GL_MIN,
+			GL_MAX,
+		};
+
+		class OpenGLBlendState : public BlendState {
+		public:
+			bool enabled;
+			GLuint eqCol, eqAlpha;
+			GLuint srcCol, srcAlpha, dstCol, dstAlpha;
+			int colorMask;
+
+			void Apply(GLRenderManager *render) {
+				render->SetBlendAndMask(colorMask, enabled, srcCol, dstCol, srcAlpha, dstAlpha, eqCol, eqAlpha);
+			}
+		};
+
+	./Common/GPU/OpenGL/GLRenderManager.h
+
+		class GLRenderManager {
+		public:
+			...
+			void SetBlendAndMask(int colorMask, bool blendEnabled, GLenum srcColor, GLenum dstColor, GLenum srcAlpha, GLenum dstAlpha, GLenum funcColor, GLenum funcAlpha) {
+				// Make this one only a non-debug _assert_, since it often comes first.
+				// Lets us collect info about this potential crash through assert extra data.
+				_assert_(curRenderStep_ && curRenderStep_->stepType == GLRStepType::RENDER);
+				GLRRenderData data{ GLRRenderCommand::BLEND };
+				data.blend.mask = colorMask;
+				data.blend.enabled = blendEnabled;
+				data.blend.srcColor = srcColor;
+				data.blend.dstColor = dstColor;
+				data.blend.srcAlpha = srcAlpha;
+				data.blend.dstAlpha = dstAlpha;
+				data.blend.funcColor = funcColor;
+				data.blend.funcAlpha = funcAlpha;
+				curRenderStep_->commands.push_back(data);
+			}
+			...
+		}
+
+	./Common/GPU/OpenGL/GLQueueRunner.cpp
+
+			case GLRRenderCommand::BLEND:
+				if (c.blend.enabled) {
+					if (!blendEnabled) {
+						glEnable(GL_BLEND);
+						blendEnabled = true;
+					}
+					if (blendEqColor != c.blend.funcColor || blendEqAlpha != c.blend.funcAlpha) {
+						glBlendEquationSeparate(c.blend.funcColor, c.blend.funcAlpha);
+						blendEqColor = c.blend.funcColor;
+						blendEqAlpha = c.blend.funcAlpha;
+					}
+					glBlendFuncSeparate(c.blend.srcColor, c.blend.dstColor, c.blend.srcAlpha, c.blend.dstAlpha);
+				} else if (!c.blend.enabled && blendEnabled) {
+					glDisable(GL_BLEND);
+					blendEnabled = false;
+				}
+				if (c.blend.mask != colorMask) {
+					glColorMask(c.blend.mask & 1, (c.blend.mask >> 1) & 1, (c.blend.mask >> 2) & 1, (c.blend.mask >> 3) & 1);
+					colorMask = c.blend.mask;
+				}
+				CHECK_GL_ERROR_IF_DEBUG();
+				break;
+
+	------------------------------
+
+	./Common/GPU/Vulkan/thin3d_vulkan.cpp
+
+		static const VkBlendOp blendEqToVk[] = {
+			VK_BLEND_OP_ADD,
+			VK_BLEND_OP_SUBTRACT,
+			VK_BLEND_OP_REVERSE_SUBTRACT,
+			VK_BLEND_OP_MIN,
+			VK_BLEND_OP_MAX,
+		};
+
+		BlendState *VKContext::CreateBlendState(const BlendStateDesc &desc) {
+			VKBlendState *bs = new VKBlendState();
+			bs->info.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+			bs->info.attachmentCount = 1;
+			bs->info.logicOp = logicOpToVK[(int)desc.logicOp];
+			bs->info.logicOpEnable = desc.logicEnabled;
+			bs->attachments.resize(1);
+			bs->attachments[0].blendEnable = desc.enabled;
+			bs->attachments[0].colorBlendOp = blendEqToVk[(int)desc.eqCol];
+			bs->attachments[0].alphaBlendOp = blendEqToVk[(int)desc.eqAlpha];
+			bs->attachments[0].colorWriteMask = desc.colorMask;
+			bs->attachments[0].dstAlphaBlendFactor = blendFactorToVk[(int)desc.dstAlpha];
+			bs->attachments[0].dstColorBlendFactor = blendFactorToVk[(int)desc.dstCol];
+			bs->attachments[0].srcAlphaBlendFactor = blendFactorToVk[(int)desc.srcAlpha];
+			bs->attachments[0].srcColorBlendFactor = blendFactorToVk[(int)desc.srcCol];
+			bs->info.pAttachments = bs->attachments.data();
+			return bs;
+		}
+
+==============================
+
+Vita3k v..
+http://github.com/Vita3K/Vita3K/
+
+	./vita3k/gxm/include/gxm/types.h
+
+		enum SceGxmBlendFunc : uint8_t {
+			SCE_GXM_BLEND_FUNC_NONE,
+			SCE_GXM_BLEND_FUNC_ADD,
+			SCE_GXM_BLEND_FUNC_SUBTRACT,
+			SCE_GXM_BLEND_FUNC_REVERSE_SUBTRACT,
+			SCE_GXM_BLEND_FUNC_MIN,
+			SCE_GXM_BLEND_FUNC_MAX
+		};
+
+		struct SceGxmBlendInfo {
+			SceGxmColorMask colorMask : 8;
+			SceGxmBlendFunc colorFunc : 4;
+			SceGxmBlendFunc alphaFunc : 4;
+			SceGxmBlendFactor colorSrc : 4;
+			SceGxmBlendFactor colorDst : 4;
+			SceGxmBlendFactor alphaSrc : 4;
+			SceGxmBlendFactor alphaDst : 4;
+		};
+
+	./vita3k/renderer/src/gl/renderer.cpp
+
+		static GLenum translate_blend_func(SceGxmBlendFunc src) {
+			R_PROFILE(__func__);
+
+			switch (src) {
+			case SCE_GXM_BLEND_FUNC_ADD:
+				return GL_FUNC_ADD;
+			case SCE_GXM_BLEND_FUNC_SUBTRACT:
+				return GL_FUNC_SUBTRACT;
+			case SCE_GXM_BLEND_FUNC_REVERSE_SUBTRACT:
+				return GL_FUNC_REVERSE_SUBTRACT;
+			case SCE_GXM_BLEND_FUNC_MIN:
+				return GL_MIN;
+			case SCE_GXM_BLEND_FUNC_MAX:
+				return GL_MAX;
+			default:
+				return GL_FUNC_ADD;
+			}
+		}
+
+		bool create(std::unique_ptr<FragmentProgram> &fp, GLState &state, const SceGxmProgram &program, const SceGxmBlendInfo *blend) {
+			R_PROFILE(__func__);
+
+			fp = std::make_unique<GLFragmentProgram>();
+			GLFragmentProgram *frag_program_gl = reinterpret_cast<GLFragmentProgram *>(fp.get());
+
+			// Translate blending.
+			if (blend != nullptr) {
+				frag_program_gl->color_mask_red = ((blend->colorMask & SCE_GXM_COLOR_MASK_R) != 0) ? GL_TRUE : GL_FALSE;
+				frag_program_gl->color_mask_green = ((blend->colorMask & SCE_GXM_COLOR_MASK_G) != 0) ? GL_TRUE : GL_FALSE;
+				frag_program_gl->color_mask_blue = ((blend->colorMask & SCE_GXM_COLOR_MASK_B) != 0) ? GL_TRUE : GL_FALSE;
+				frag_program_gl->color_mask_alpha = ((blend->colorMask & SCE_GXM_COLOR_MASK_A) != 0) ? GL_TRUE : GL_FALSE;
+				frag_program_gl->blend_enabled = (blend->colorFunc != SCE_GXM_BLEND_FUNC_NONE) || (blend->alphaFunc != SCE_GXM_BLEND_FUNC_NONE);
+				frag_program_gl->color_func = translate_blend_func(blend->colorFunc);
+				frag_program_gl->color_src = translate_blend_factor(blend->colorSrc);
+				frag_program_gl->color_dst = translate_blend_factor(blend->colorDst);
+				frag_program_gl->alpha_func = translate_blend_func(blend->alphaFunc);
+				frag_program_gl->alpha_src = translate_blend_factor(blend->alphaSrc);
+				frag_program_gl->alpha_dst = translate_blend_factor(blend->alphaDst);
+			}
+
+			return true;
+		}
+
+	./vita3k/renderer/include/renderer/gl/types.h
+
+		struct GLFragmentProgram : public renderer::FragmentProgram {
+			GLShaderStatics statics;
+			GLboolean color_mask_red = GL_TRUE;
+			GLboolean color_mask_green = GL_TRUE;
+			GLboolean color_mask_blue = GL_TRUE;
+			GLboolean color_mask_alpha = GL_TRUE;
+			bool blend_enabled = false;
+			GLenum color_func = GL_FUNC_ADD;
+			GLenum alpha_func = GL_FUNC_ADD;
+			GLenum color_src = GL_ONE;
+			GLenum color_dst = GL_ZERO;
+			GLenum alpha_src = GL_ONE;
+			GLenum alpha_dst = GL_ZERO;
+		};
+
+==============================
+
+Dolphin v5.0
+http://github.com/dolphin-emu/dolphin/
+
+	./Source/Core/VideoBackends/D3D/Render.cpp
+
+		void Renderer::SetBlendMode(bool forceUpdate)
+		{
+			// Our render target always uses an alpha channel, so we need to override the blend functions to assume a destination alpha of 1 if the render target isn't supposed to have an alpha channel
+			// Example: D3DBLEND_DESTALPHA needs to be D3DBLEND_ONE since the result without an alpha channel is assumed to always be 1.
+			bool target_has_alpha = bpmem.zcontrol.pixel_format == PEControl::RGBA6_Z24;
+
+			if (bpmem.blendmode.logicopenable && !bpmem.blendmode.blendenable && !forceUpdate)
+				return;
+
+			if (bpmem.blendmode.subtract)
+			{
+				gx_state.blend.blend_enable = true;
+				gx_state.blend.blend_op = D3D11_BLEND_OP_REV_SUBTRACT;
+				gx_state.blend.src_blend = D3D11_BLEND_ONE;
+				gx_state.blend.dst_blend = D3D11_BLEND_ONE;
+			}
+			else
+			{
+				gx_state.blend.blend_enable = (u32)bpmem.blendmode.blendenable;
+				if (bpmem.blendmode.blendenable)
+				{
+					gx_state.blend.blend_op = D3D11_BLEND_OP_ADD;
+					gx_state.blend.src_blend = d3dSrcFactors[bpmem.blendmode.srcfactor];
+					gx_state.blend.dst_blend = d3dDestFactors[bpmem.blendmode.dstfactor];
+				}
+			}
+		}
+
+	------------------------------
+
+	./Source/Core/VideoBackends/D3D12/Render.cpp
+
+		void Renderer::SetBlendMode(bool force_update)
+		{
+			// Our render target always uses an alpha channel, so we need to override the blend functions to assume a destination alpha of 1 if the render target isn't supposed to have an alpha channel
+			// Example: D3DBLEND_DESTALPHA needs to be D3DBLEND_ONE since the result without an alpha channel is assumed to always be 1.
+			bool target_has_alpha = bpmem.zcontrol.pixel_format == PEControl::RGBA6_Z24;
+
+			if (bpmem.blendmode.logicopenable && !bpmem.blendmode.blendenable && !force_update)
+				return;
+
+			if (bpmem.blendmode.subtract)
+			{
+				gx_state.blend.blend_enable = true;
+				gx_state.blend.blend_op = D3D12_BLEND_OP_REV_SUBTRACT;
+				gx_state.blend.src_blend = D3D12_BLEND_ONE;
+				gx_state.blend.dst_blend = D3D12_BLEND_ONE;
+			}
+			else
+			{
+				gx_state.blend.blend_enable = static_cast<u32>(bpmem.blendmode.blendenable);
+				if (bpmem.blendmode.blendenable)
+				{
+					gx_state.blend.blend_op = D3D12_BLEND_OP_ADD;
+					gx_state.blend.src_blend = d3d_src_factors[bpmem.blendmode.srcfactor];
+					gx_state.blend.dst_blend = d3d_dst_factors[bpmem.blendmode.dstfactor];
+				}
+			}
+
+			D3D::command_list_mgr->SetCommandListDirtyState(COMMAND_LIST_STATE_PSO, true);
+		}
+
+	------------------------------
+
+	./Source/Core/VideoBackends/OGL/Render.cpp
+
+		void Renderer::SetBlendMode(bool forceUpdate)
+		{
+			// Our render target always uses an alpha channel, so we need to override the blend functions to assume a destination alpha of 1 if the render target isn't supposed to have an alpha channel
+			// Example: D3DBLEND_DESTALPHA needs to be D3DBLEND_ONE since the result without an alpha channel is assumed to always be 1.
+			bool target_has_alpha = bpmem.zcontrol.pixel_format == PEControl::RGBA6_Z24;
+
+			// blend mode bit mask
+			// 0 - blend enable
+			// 1 - dst alpha enabled
+			// 2 - reverse subtract enable (else add)
+			// 3-5 - srcRGB function
+			// 6-8 - dstRGB function
+
+			u32 newval = useDualSource << 1;
+			newval |= bpmem.blendmode.subtract << 2;
+
+			if (bpmem.blendmode.subtract)
+			{
+				newval |= 0x0049;   // enable blending src 1 dst 1
+			}
+			else if (bpmem.blendmode.blendenable)
+			{
+				newval |= 1;    // enable blending
+				newval |= bpmem.blendmode.srcfactor << 3;
+				newval |= bpmem.blendmode.dstfactor << 6;
+			}
+
+			u32 changes = forceUpdate ? 0xFFFFFFFF : newval ^ s_blendMode;
+
+			if (changes & 1)
+			{
+				// blend enable change
+				(newval & 1) ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+			}
+
+			if (changes & 4)
+			{
+				// subtract enable change
+				GLenum equation = newval & 4 ? GL_FUNC_REVERSE_SUBTRACT : GL_FUNC_ADD;
+				GLenum equationAlpha = useDualSource ? GL_FUNC_ADD : equation;
+
+				glBlendEquationSeparate(equation, equationAlpha);
+			}
+
+			if (changes & 0x1FA)
+			{
+				u32 srcidx = (newval >> 3) & 7;
+				u32 dstidx = (newval >> 6) & 7;
+				GLenum srcFactor = glSrcFactors[srcidx];
+				GLenum dstFactor = glDestFactors[dstidx];
+
+				// adjust alpha factors
+				if (useDualSource)
+				{
+					srcidx = BlendMode::ONE;
+					dstidx = BlendMode::ZERO;
+				}
+				else
+				{
+					// we can't use GL_DST_COLOR or GL_ONE_MINUS_DST_COLOR for source in alpha channel so use their alpha equivalent instead
+					if (srcidx == BlendMode::DSTCLR)
+						srcidx = BlendMode::DSTALPHA;
+					else if (srcidx == BlendMode::INVDSTCLR)
+						srcidx = BlendMode::INVDSTALPHA;
+
+					// we can't use GL_SRC_COLOR or GL_ONE_MINUS_SRC_COLOR for destination in alpha channel so use their alpha equivalent instead
+					if (dstidx == BlendMode::SRCCLR)
+						dstidx = BlendMode::SRCALPHA;
+					else if (dstidx == BlendMode::INVSRCCLR)
+						dstidx = BlendMode::INVSRCALPHA;
+				}
+				GLenum srcFactorAlpha = glSrcFactors[srcidx];
+				GLenum dstFactorAlpha = glDestFactors[dstidx];
+				// blend RGB change
+				glBlendFuncSeparate(srcFactor, dstFactor, srcFactorAlpha, dstFactorAlpha);
+			}
+			s_blendMode = newval;
+		}
+
+	------------------------------
+
+	./Source/Core/VideoBackends/Software/EfbInterface.cpp
+
+		namespace EfbInterface
+		{
+			...
+			static void BlendColor(u8 *srcClr, u8 *dstClr)
+			{
+				u32 srcFactor = GetSourceFactor(srcClr, dstClr, bpmem.blendmode.srcfactor);
+				u32 dstFactor = GetDestinationFactor(srcClr, dstClr, bpmem.blendmode.dstfactor);
+
+				for (int i = 0; i < 4; i++)
+				{
+					// add MSB of factors to make their range 0 -> 256
+					u32 sf = (srcFactor & 0xff);
+					sf += sf >> 7;
+
+					u32 df = (dstFactor & 0xff);
+					df += df >> 7;
+
+					u32 color = (srcClr[i] * sf + dstClr[i] * df) >> 8;
+					dstClr[i] = (color>255)?255:color;
+
+					dstFactor >>= 8;
+					srcFactor >>= 8;
+				}
+			}
+			...
+		}
+
+==============================
+
+Yuzu v0.1335
+http://github.com/yuzu-emu/yuzu-mainline/
+
+	./src/video_core/engines/maxwell_3d.h
+
+		class Maxwell3D final : public EngineInterface {
+		public:
+				...
+				struct Blend {
+					enum class Equation : u32 {
+						Add_D3D = 1,
+						Subtract_D3D = 2,
+						ReverseSubtract_D3D = 3,
+						Min_D3D = 4,
+						Max_D3D = 5,
+
+						Add_GL = 0x8006,
+						Min_GL = 0x8007,
+						Max_GL = 0x8008,
+						Subtract_GL = 0x800A,
+						ReverseSubtract_GL = 0x800B
+					};
+
+					...
+
+					u32 separate_alpha;
+					Equation color_op;
+					Factor color_source;
+					Factor color_dest;
+					Equation alpha_op;
+					Factor alpha_source;
+					u32 enable_global_color_key;
+					Factor alpha_dest;
+
+					u32 single_rop_control_enable;
+					u32 enable[NumRenderTargets];
+				};
+				...
+		}
+
+	./src/video_core/engines/maxwell_3d.cpp
+
+		void Maxwell3D::InitializeRegisterDefaults() {
+			...
+			// Doom and Bomberman seems to use the uninitialized registers and just enable blend
+			// so initialize blend registers with sane values
+			regs.blend.color_op = Regs::Blend::Equation::Add_D3D;
+			regs.blend.color_source = Regs::Blend::Factor::One_D3D;
+			regs.blend.color_dest = Regs::Blend::Factor::Zero_D3D;
+			regs.blend.alpha_op = Regs::Blend::Equation::Add_D3D;
+			regs.blend.alpha_source = Regs::Blend::Factor::One_D3D;
+			regs.blend.alpha_dest = Regs::Blend::Factor::Zero_D3D;
+			for (auto& blend : regs.blend_per_target) {
+				blend.color_op = Regs::Blend::Equation::Add_D3D;
+				blend.color_source = Regs::Blend::Factor::One_D3D;
+				blend.color_dest = Regs::Blend::Factor::Zero_D3D;
+				blend.alpha_op = Regs::Blend::Equation::Add_D3D;
+				blend.alpha_source = Regs::Blend::Factor::One_D3D;
+				blend.alpha_dest = Regs::Blend::Factor::Zero_D3D;
+			}
+			...
+		}
+
+==============================
+
+MelonDS v0.9.5
+http://github.com/melonDS-emu/melonDS/
+
+	./src/GPU3D_OpenGL.cpp
+
+		bool GLRenderer::Init()
+		{
+			...
+			glEnable(GL_BLEND);
+			glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+			...
+		}
+
+		void GLRenderer::RenderSceneChunk(int y, int h)
+		{
+			...
+			// TODO: proper 'equal' depth test!
+			// (has margin of +-0x200 in Z-buffer mode, +-0xFF in W-buffer mode)
+			// for now we're using GL_LEQUAL to make it work to some extent
+
+			// pass 1: opaque pixels
+			UseRenderShader(flags);
+			glLineWidth(1.0);
+
+			glColorMaski(1, GL_TRUE, GL_TRUE, fogenable, GL_FALSE);
+			...
+			// if edge marking is enabled, mark all opaque edges
+			// TODO BETTER EDGE MARKING!!! THIS SUCKS
+
+			glEnable(GL_BLEND);
+			glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+
+			if (RenderDispCnt & (1<<3))
+				glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+			else
+				glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE);
+
+			glLineWidth(1.0);
+
+			if (NumOpaqueFinalPolys > -1)
+			{
+				// pass 2: if needed, render translucent pixels that are against background pixels
+				// when background alpha is zero, those need to be rendered with blending disabled
+				...
+
+				// pass 3: translucent pixels
+				...
+			}
+
+			if (RenderDispCnt & 0x00A0) // fog/edge enabled
+			{
+				glColorMaski(0, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+				glColorMaski(1, GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+				glEnable(GL_BLEND);
+				glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+
+				...
+				if (RenderDispCnt & (1<<5))
+				{
+					// edge marking
+					// TODO: depth/polyid values at screen edges
+					glUseProgram(FinalPassEdgeShader[2]);
+
+					glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE);
+
+					glDrawArrays(GL_TRIANGLES, 0, 2*3);
+				}
+
+				if (RenderDispCnt & (1<<7))
+				{
+					// fog
+					glUseProgram(FinalPassFogShader[2]);
+
+					if (RenderDispCnt & (1<<6))
+						glBlendFuncSeparate(GL_ZERO, GL_ONE, GL_CONSTANT_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+					else
+						glBlendFuncSeparate(GL_CONSTANT_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+
+					{
+						u32 c = RenderFogColor;
+						u32 r = c & 0x1F;
+						u32 g = (c >> 5) & 0x1F;
+						u32 b = (c >> 10) & 0x1F;
+						u32 a = (c >> 16) & 0x1F;
+
+						glBlendColor((float)b/31.0, (float)g/31.0, (float)r/31.0, (float)a/31.0);
+					}
+
+					glDrawArrays(GL_TRIANGLES, 0, 2*3);
+				}
+			}
+		}
+
+==============================
+
+==============================
