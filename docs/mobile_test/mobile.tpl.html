@@ -254,24 +254,22 @@ main {
 			//console.log(key, GL[key]);
 
 			var p = document.createElement('p');
-			p.innerHTML  = name + ' = ' + JSON.stringify( GL.getParameter(GL[key]) );
+			var v = GL.getParameter( GL[key] );
+			p.innerHTML  = name + ' = ' + JSON.stringify(v);
 			p.innerHTML += ' (<span class="ok">' + min + '</span>)';
 			DIV.appendChild(p);
 			return;
 		}
-		logGL('MAX_CUBE_MAP_TEXTURE_SIZE'       , '4096');
-		logGL('MAX_RENDERBUFFER_SIZE'           , '4096');
-		logGL('MAX_TEXTURE_SIZE'                , '4096');
-		logGL('MAX_VIEWPORT_DIMS'               , '[4096,4096]');
-		logGL('MAX_VERTEX_TEXTURE_IMAGE_UNITS'  , '4');
-		logGL('MAX_TEXTURE_IMAGE_UNITS'         , '8');
-		logGL('MAX_COMBINED_TEXTURE_IMAGE_UNITS', '8');
-		logGL('MAX_VERTEX_ATTRIBS'              , '16');
-		logGL('MAX_VARYING_VECTORS'             , '8');
-		logGL('MAX_VERTEX_UNIFORM_VECTORS'      , '128');
-		logGL('MAX_FRAGMENT_UNIFORM_VECTORS'    , '64');
-		logGL('ALIASED_POINT_SIZE_RANGE'        , '[1,100]');
+		// from https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf
+		logGL('RED_BITS'     , '8'); // page 3 : lowp
+		logGL('GREEN_BITS'   , '8'); // page 3 : lowp
+		logGL('BLUE_BITS'    , '8'); // page 3 : lowp
+		logGL('ALPHA_BITS'   , '8'); // page 3 : lowp
+		logGL('SUBPIXEL_BITS', '-');
+		logGL('DEPTH_BITS'   , '16'); // page 1 : webgl context attributes
+		logGL('STENCIL_BITS' , '8');  // page 1 : webgl context attributes
 
+		// page 4 : built-in constants with minimum values
 		logGL('MAX_VERTEX_ATTRIBS'              , '8');
 		logGL('MAX_VERTEX_UNIFORM_VECTORS'      , '128');
 		logGL('MAX_VARYING_VECTORS'             , '8');
@@ -281,13 +279,12 @@ main {
 		logGL('MAX_FRAGMENT_UNIFORM_VECTORS'    , '16');
 		logGL('MAX_DRAW_BUFFERS'                , '1');
 
-		logGL('RED_BITS'     , '-');
-		logGL('GREEN_BITS'   , '-');
-		logGL('BLUE_BITS'    , '-');
-		logGL('ALPHA_BITS'   , '-');
-		logGL('SUBPIXEL_BITS', '-');
-		logGL('DEPTH_BITS'   , '-');
-		logGL('STENCIL_BITS' , '-');
+		// from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices
+		logGL('MAX_CUBE_MAP_TEXTURE_SIZE', 'MDN 4096');
+		logGL('MAX_RENDERBUFFER_SIZE'    , 'MDN 4096');
+		logGL('MAX_TEXTURE_SIZE'         , 'MDN 4096');
+		logGL('MAX_VIEWPORT_DIMS'        , 'MDN [4096,4096]');
+		logGL('ALIASED_POINT_SIZE_RANGE' , 'MDN [1,100]');
 
 		glprecision(GL);
 

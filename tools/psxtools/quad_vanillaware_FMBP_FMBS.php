@@ -308,8 +308,9 @@ function FMBS_s3( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			'rect' => $rect,
-			'xyz'  => $xyz,
+			'i'    => "s3 $i" ,
+			'rect' => $rect   ,
+			'xyz'  => $xyz    ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -495,10 +496,11 @@ function FMBS_s4( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
+			'i'      => "s4 $i"   ,
 			'blend'  => $blend_id ,
-			'tex'    => $tex_id ,
-			's0s1s2' => $s0s1s2,
-			'bits'   => '0x' . dechex($flags),
+			'tex'    => $tex_id   ,
+			's0s1s2' => $s0s1s2   ,
+			'bits'   => '0x' . dechex($flags) ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -577,8 +579,9 @@ function FMBS_s5( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			's3'   => $s3_id ,
-			'bits' => '0x' . dechex($flags),
+			'i'    => "s5 $i" ,
+			's3'   => $s3_id  ,
+			'bits' => '0x' . dechex($flags) ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -701,10 +704,11 @@ function FMBS_s6( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			'rect' => $rect,
-			's4'   => $s4,
-			's5'   => $s5,
-			'bits' => '0x' . dechex($flags),
+			'i'    => "s6 $i" ,
+			'rect' => $rect   ,
+			's4'   => $s4     ,
+			's5'   => $s5     ,
+			'bits' => '0x' . dechex($flags) ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -817,10 +821,11 @@ function FMBS_s7( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			'move'   => $move,
-			'rotate' => $rotate,
-			'scale'  => $scale,
-			'fog'    => $fog,
+			'i'      => "s7 $i" ,
+			'move'   => $move   ,
+			'rotate' => $rotate ,
+			'scale'  => $scale  ,
+			'fog'    => $fog    ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -846,8 +851,8 @@ function FMBS_s8( $id )
 
 		$s6_id = 0;
 		$s7_id = 0;
-		$fps   = 0;
 		$flags = 0;
+		$time  = 0;
 		$loop  = 0;
 		$sfx   = 0;
 
@@ -911,19 +916,21 @@ function FMBS_s8( $id )
 
 				$s6_id = $b00;
 				$s7_id = $b04;
-				$fps   = $b06;
 				$flags = $b08;
+				$time  = $b06;
 				$loop  = $b0c;
 				$sfx   = $b1c;
 				break;
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			's6'   => $s6_id,
-			's7'   => $s7_id,
-			'anim' => array($fps , $loop),
+			'i'    => "s8 $i",
+			's6'   => $s6_id ,
+			's7'   => $s7_id ,
+			'time' => $time  ,
+			'loop' => $loop  ,
+			'sfx'  => $sfx   ,
 			'bits' => '0x' . dechex($flags),
-			'sfx'  => $sfx,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -1028,9 +1035,10 @@ function FMBS_s9( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			'rect' => $rect,
-			'name' => $name,
-			'sa'   => $sa,
+			'i'    => "s9 $i" ,
+			'rect' => $rect   ,
+			'name' => $name   ,
+			'sa'   => $sa     ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -1158,7 +1166,12 @@ function FMBS_sa( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
-			's8' => array($s8_set_id, $s8_set_no, $s8_set_sum, $s8_set_st),
+			'i'  => "sa $i" ,
+			's8' => array(
+				$s8_set_id + $s8_set_st ,
+				$s8_set_no - $s8_set_st ,
+				$s8_set_sum
+			) ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -1217,6 +1230,7 @@ function FMBS_sb( $id )
 		} // switch ( $gp_share['tag'] )
 
 		$data[$i] = array(
+			'i' => "sb $i" ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 
@@ -1261,9 +1275,6 @@ function vanilla( $tag, $fname )
 		case 'ps4_drag':
 		case 'ps4_sent':
 			$json = array(
-				'tag' => $tag,
-				'id3' => $gp_share['data']['idtag'],
-				'ver' => '55',
 				's0' => FMBS_s0(0),
 				's1' => FMBS_s1(1),
 				's2' => FMBS_s2(2),
@@ -1284,9 +1295,6 @@ function vanilla( $tag, $fname )
 		case 'vit_drag':
 			$s012 = FMBS_s0s1s2(8);
 			$json = array(
-				'tag' => $tag,
-				'id3' => $gp_share['data']['idtag'],
-				'ver' => '55',
 				's0' => $s012[0],
 				's1' => $s012[1],
 				's2' => $s012[2],
@@ -1305,9 +1313,6 @@ function vanilla( $tag, $fname )
 		case 'vit_odin':
 			$s012 = FMBS_s0s1s2(9);
 			$json = array(
-				'tag' => $tag,
-				'id3' => $gp_share['data']['idtag'],
-				'ver' => '55',
 				's0' => $s012[0],
 				's1' => $s012[1],
 				's2' => $s012[2],
@@ -1323,6 +1328,10 @@ function vanilla( $tag, $fname )
 			);
 			break;
 	} // switch ( $tag )
+
+	$json['tag'] = $tag;
+	$json['id3'] = $gp_share['data']['idtag'];
+	$json['ver'] = '55';
 
 	$txt = json_pretty($json, '');
 	save_file("$fname.v55", $txt);

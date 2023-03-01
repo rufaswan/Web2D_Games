@@ -104,6 +104,10 @@ function lsiso_r( $iso, $skip=0 )
 // NOTE : 4 byte lba starts from offset 0x800000000
 //        or (1 << (11+24))
 //        or 32 GB (not used in CD/DVD)
+//
+// mkisofs
+//   -full-iso9660-filenames = 31 char
+//   -max-iso9660-filenames  = 37 char (violates ISO9660)
 
 function lba2frame( $lba )
 {

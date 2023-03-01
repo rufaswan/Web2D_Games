@@ -33,29 +33,27 @@ password
 		ra4
 
 cirno (ice/screen) -> aya (tornado/jump+)
--> makou (wheel) -> patchouli (ball)
--> utsuho (charge) -> remilia (spear)
+-> makou (8-way) -> patchouli (ball)
+-> utsuho (charge) -> remilia (spear/rapid)
 -> youmu (slash) -> tenshi (barrier) ->
 
-kaguya 1 <- youmu , 2 <- aya
-       3 <- remilia , 4/re <- utsuho
+kaguya
+	1 <- youmu
+	2 <- makou
+	3 <- remilia
+	4/re <- youmu , youmu , utsuho
 ------------------------------
 item/shot
-	nazrin = SP+BLOCK+PIT utsuho + cirno + tenshi/makou (just before laser area)
-	broom  = 4 boss
-	doll   = BLOCK+SLIDE+TOP patchouli + broom
-	shot:laser  = TOP cirno + tornado + broom
-	shot:5ways  = TOP makou + broom
-	item:heal+  = DIG tenshi + broom/aya + nazrin
-	item:pierce = PIT remilia (+mudeki)
-	item:mudeki = SP+BLOCK+PIT utsuho + cirno + tenshi/makou
-	item:charge = SLIDE aya (+mudeki)
-------------------------------
-Cheat Engine
-	+ 0 int32 Lives
-	+ 4 int32 Blue Potion (E-tank)
-	+ 8 int32 Red  Potion (W-tank)
-	+12 int32 Shanghai    (Beat)
+	nazrin      = sp:cirno  BLOCK+FLOORGAP  utsuho  (before laser area)
+	broom       = any 4 BOSS
+	shanghai    = sp:broom  BLOCK+SLIDE+TOP-RIGHT  patchouli (vanish blocks room)
+	shot:laser  = sp:aya  sp:broom  TOP+LADDER  cirno  (mid spike pit)
+	shot:5ways  = LADDER+TOP  makou  jump+  (ceiling gap)
+	shot:
+	item:heal+  = sp:nazrin  tenshi  jump+  (after sliding gap)
+	item:pierce = item:mudeki  PIT  remilia  (walk on spikes)
+	item:mudeki = *same room as nazrin*
+	item:charge = item:mudeki  SLIDE  aya  (suika room , slide on spikes)
 
 =====================
 === Rock Maiden 2 ===
@@ -91,14 +89,17 @@ password
 	extra intro
 		rf3  yd2
 
-yuyuko (barrier) -> parsee (love3)
+yuyuko (barrier/still) -> parsee (balloon)
 -> suwako (rain/screen) -> flandre (laser)
--> iku (spark) -> reisen (missile)
--> suika (stone/screen) -> komachi (slide) ->
+-> iku (spark) -> reisen (missile/noblock)
+-> suika (stone/screen) -> komachi (kick/noblock) ->
 
-kaguya 1 <- iku , 2 <- iku
-       3 <- suika , 4/re <- reisen
-       5 <- parsee
+kaguya
+	1 <- iku
+	2 <- iku
+	3 <- suika
+	4/re <- reisen
+	5 <- parsee
 ------------------------------
 YOUMU
 password
@@ -128,9 +129,12 @@ giga -> komachi (coin)
 coin -> yuyuko (spear)
 spear -> parsee (greenvoid)
 
-kaguya 1 <- UP+ATK , 2 <- DN+ATK
-       3 <- UP+ATK , 4/re <- AIR+DN+ATK
-       5 <- UP+ATK
+kaguya
+	1 <- UP+ATK
+	2 <- DN+ATK
+	3 <- UP+ATK
+	4/re <- AIR+DN+ATK
+	5 <- UP+ATK
 ------------------------------
 KAGUYA
 password
@@ -156,22 +160,18 @@ password
 - get BROOM after intro
 ------------------------------
 item/shot
-	nazrin = TOP komachi + broom (waterfall w/pits area)
-	broom  = 4 boss
-	doll   = BOTTOM suika + broom
-	shot:laser  = TOP iku + broom
-	shot:5ways  = TOP suwako + broom
-	item:heal+  = SP+BLOCK parsee + laser + broom
-	item:pierce = SLIDE yuyuko + broom
-	item:mudeki = TOP reisen + broom
-	item:charge = BOTTOM suika + broom
-	item:energy = SP+BLOCK+DIG flandre + laser + nazrin
-------------------------------
-Cheat Engine
-	+ 0 int32 Lives
-	+ 4 int32 Blue Potion (E-tank)
-	+ 8 int32 Red  Potion (W-tank)
-	+12 int32 Shanghai    (Beat)
+	nazrin      = sp:broom  TOP+LADDER  komachi  (waterfall + bats)
+	broom       = any 4 BOSS
+	shanghai    = sp:broom  BOTTOM-RIGHT  suika
+		* stand in front of broom to trigger screen scroll
+	shot:laser  = sp:broom  TOP+LADDER  iku  (pre-boss room)
+	shot:5ways  = sp:broom  TOP  suwako  (5 logs waterfall)
+	shot:
+	item:heal+  = sp:broom  BLOCK*2  parsee  shot-noblock
+	item:pierce = sp:broom  SLIDE  yuyuko  (crows room)
+	item:mudeki = sp:broom  LADDER+TOP  reisen  (TOP hidden gap)
+	item:charge = *same room as doll*
+	item:energy = sp:nazrin  BLOCK  flandre  shot-noblock  (remilia portrait)
 
 =====================
 === Rock Maiden 3 ===
@@ -208,18 +208,21 @@ password
 		rf4  yd4
 
 sakuya (timestop/long) -> syou (dart)
--> yuka (barrier) -> byakuren (boomerang)
+-> yuka (barrier/1hit) -> byakuren (boomerang)
 -> nightbug (homing) -> ichirin (rocket)
--> hina (spin) -> koishi (bomb) ->
+-> hina (spin) -> koishi (bomb/unblock) ->
 
-sakuya2 yuyuko <- byakuren , suika  <- koishi
-hina2   komachi <- hina , parsee <- yuka
-byaku2  flandre <- syou , iku <- byakuren
-syou2   suwako <- koishi , inaba <- nightbug
+sakuya2    yuyuko  <- x12x1 21x , suika  <- x2211 11x
+hina2      komachi <- x12xx 112 , parsee <- xx221 111
+byakuren2  flandre <- xx211 122 , iku    <- x22xx 22x
+syou2      suwako  <- x22xx 112 , inaba  <- xx212 111
 
-kaguya 1 <- koishi , 2 <- byakuren
-       3 <- ichirin , 4/re <- ichirin
-       5 <- byakuren/hina
+kaguya
+	1 <- koishi
+	2 <- byakuren
+	3 <- ichirin
+	4/re <- ichirin
+	5 <- byakuren/hina
 ------------------------------
 MARISA
 password
@@ -250,9 +253,12 @@ hina2   komachi <- yuka , parsee <- byakuren
 byaku2  flandre <- koishi , iku <- hina
 syou2   suwako <- nightbug , inaba <- ichirin
 
-kaguya 1 <- nightbug , 2 <- byakuren
-       3 <- ichirin , 4/re <- syou/nightbug
-       5 <- ichirin/yuka
+kaguya
+	1 <- nightbug
+	2 <- byakuren
+	3 <- ichirin
+	4/re <- syou/nightbug
+	5 <- ichirin/yuka
 ------------------------------
 ALICE
 password
@@ -281,22 +287,17 @@ syou2   utsuho <- hina , tenshi <- koishi/byakuren
 *SAME AS REIMU*
 ------------------------------
 item/shot
-	nazrin = SLIDE syou (laser area , search w/timestop)
-	broom  = 4 boss
-	doll   = SP+BLOCK+PIT sakuya + laser
-	shot:laser  = TOP nightbug
-	shot:5ways  = SLIDE ichirin
-	item:heal+  = TOP byakuren
-	item:pierce = SP+BLOCK+SLIDE sakuya + laser
-	item:mudeki = TOP koishi + broom
-	item:charge = TOP hina + broom
-	item:energy = yuka + broom
-------------------------------
-Cheat Engine
-	+ 0 int32 Lives
-	+ 4 int32 Blue Potion (E-tank)
-	+ 8 int32 Red  Potion (W-tank)
-	+12 int32 Shanghai    (Beat)
+	nazrin      = SLIDE  syou  (laser area)
+	broom       = any 4 BOSS
+	shanghai    = BLOCK+FLOORGAP  sakuya  shot:unblock  (green block)
+	shot:laser  = TOP-RIGHT  nightbug  (2 branch pits)
+	shot:5ways  = SLIDE  ichirin  (balloon)
+	shot:
+	item:heal+  = LADDER+TOP  byakuren  (after delivery)
+	item:pierce = BLOCK+SLIDE  sakuya  shot:unblock  (shanghai exit room)
+	item:mudeki = sp:broom  TOP+LADDER  koishi  (mid vanish blocks pit)
+	item:charge = sp:broom  TOP-RIGHT  hina  (waterfall spike pit)
+	item:energy = sp:broom  LADDER+RIGHT  yuka
 
 ======================
 === Rock Maiden FC ===
@@ -335,14 +336,12 @@ rumia (splash) -> remilia (spear)
 -> marisa (star) -> patchouli (barrier)
 -> meirin (kick) -> cirno (ice) ->
 
-FLANDRE 1 <- marisa , 2 <- alice
-        3 <- cirno , 4/re <- marisa
-        5 <- alice
-------------------------------
-Cheat Engine
-	+ 0 int32 Lives
-	+ 4 int32 E-bottle
-	+ 8 int32 W-bottle
+flandre
+	1 <- marisa
+	2 <- alice
+	3 <- cirno
+	4/re <- marisa
+	5 <- alice
 
 ========================
 === Rock Maiden FC 2 ===
@@ -370,55 +369,29 @@ password
 	intro
 		rd2  bf3
 	extra bottle
-		rc2
-	extra intro
 		+E 0 rb4          +W 0 -
 		+E 1     rb2 re3  +W 1 bb5
 		+E 2 rb4 bb2      +W 2 rb5
 		+E 3 rb4     be3  +W 3 rb5 rf3
 		+E 4 rb4     re3  +W 4     bf3 ra1
+	extra intro
+		rc2
 
 kogasa (rain/screen) -> aya (tornado/jump+)
 -> marisa (beam) -> sanae (wave)
 -> nazrin (barrier) -> minamitsu (anchor)
 -> syou (beam/splash) -> ichirin (ring) ->
 
-NUE 1 <- nazrin , 2 <- sanae
-    3 <- nazrin
-REIMU 1 <- ichirin , 2 <- ichirin
-      3 <- kogasa , 4/re <- marisa
-      5 <- minamitsu/kogasa
-------------------------------
-Cheat Engine
-	+ 0 int32 Lives
-	+ 4 int32 E-bottle
-	+ 8 int32 W-bottle
-
-=================
-=== Rockmen R ===
-=================
-BOSS
-	Weasel  Waltz  Flare
-	Rapid          Puppet
-	Energy  Laser  Power
-------------------------------
-password
-	tank
-		+E 0  +W 0
-		+E 1  +W 1
-		+E 2  +W 2
-		+E 3  +W 3
-		+E 4  +W 4
-	intro
-
-weasel () -> ()
--> () -> ()
--> () -> ()
--> () -> () ->
-
-------------------------------
-item/shot
-------------------------------
+nue
+	1 <- nazrin
+	2 <- sanae
+	3 <- nazrin
+reimu
+	1 <- ichirin
+	2 <- ichirin
+	3 <- kogasa
+	4/re <- marisa
+	5 <- minamitsu/kogasa
 
 ==================
 === Rockmen R2 ===
@@ -448,32 +421,58 @@ password
 	hard intro
 		rb4  bf2
 
-hide (slash) -> penetrate (dart)
+hide (slash) -> penetrate (dart/noblock)
 -> hail (ice/screen) -> eruption (wave)
--> analysis (barrier) -> deluge (mine)
+-> analysis (barrier) -> deluge (mine/noblock)
 -> vanish (spell) -> halo (timestop/short) ->
 
-hide2      spark <- hide , snake <- penetrate
-eruption2  top <- eruption/deluge , gemini <- x
-vanish2    needle <- vanish/hide , hard <- penetrate
-analysis2  magnet <- penetrate , shadow <- deluge
+hide2      spark  <- 2xx11 xxx , snake  <- x2x22 xxx
+eruption2  needle <- 22xxx 2x2 , hard   <- x2xx1 1x1
+vanish2    top    <- xx221 xxx , gemini <- xxxx2 x1x
+analysis2  magnet <- x221x 112 , shadow <- 21x22 2xx
 
-WILY 1a <- analysis , 1b <- analysis , 2 <- hail
-     3a <- analysis , 3b <- analysis
-     4/re <- hail/penetrate , 5 <- mine
+wily
+	1 <- analysis , analysis
+	2 <- hail
+	3 <- analysis , analysis
+	4/re <- hail/penetrate
+	5 <- mine
 ------------------------------
 item/shot
-	rush search = BOSS vanish
-	rush jet    = BOSS halo
-	shot.laser  = SP+BLOCK eruption + penetrate
-	shot.search = vanish + rush search (just before spikes area)
-	shot.
-	item.heal+  = halo
-	item.
-	item.charge = SP+BLOCK+TOP deluge + rush jet
-	item.
-------------------------------
-Cheat Engine
+	rush search = BOSS  analysis
+	rush jet    = BOSS  halo
+	beat        = sp:rushjet  LADDER+TOP  hide  (tree before boss door)
+	shot:laser  = BLOCK+SLIDE  eruption  shot-unblock
+	shot:search = sp:rushsearch  vanish  (red marker before spike pit)
+	shot:
+	item:heal+  = halo
+	item:pierce = sp:rushcoil  TOP-RIGHT  penetrate
+	item:
+	item:charge = sp:rushjet  BLOCK+TOP+LADDER  deluge  (watergate room)
+	item:
+	item:shield = sp:rushjet  BOTTOM-RIGHT  analysis  (BOSS blues)
+		* stand in front of rush jet to trigger screen scroll
+
+====================
+=== Cheat Engine ===
+====================
 	+ 0 int32 Lives
-	+ 4 int32 E-tank
-	+ 8 int32 W-tank
+	+ 4 int32 Blue Potion / E-tank / E-bottle
+	+ 8 int32 Red  Potion / W-tank / W-bottle
+	+ c int32 Shanghai    / Beat
+
+TR
+	ra5 rb3 rb4 rc1 rc2 rc4 rc5 rd2
+	ba3 bd3 be5
+TR2
+	ra6 rb5 re1 rf2 rf4 rf6
+	bb1 bc1 bd6 be2 be5 be6
+	ya3 yf1
+TR3
+	rc3 rc6 rd1 re2 rf5         | rc3 rc6 rd1 re2 rf5
+	bd3                         | ba5 bd3 bf2 bf4
+	ya4 yb6 yc5 yd4 ye4 ye5 yf6 | ya4 yb6 yc5 yd4 ye4 ye5 yf6
+ROCKR2
+	ra5 rb1 re5     | ra5 rb1 re5
+	bc2 bd2 be2 bf2 | bc2 bd2 be2 be3 bf2
+	ya2             | ya2 ye1 yf5

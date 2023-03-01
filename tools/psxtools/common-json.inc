@@ -65,14 +65,22 @@ function jval_str( &$val )
 	}
 
 	// is int/float
+	//   19.0000001
+	// = 19.000000
+	// = 19
 	$b1 = (int)($val * 1000000);
 	$b2 =  (int)$val * 1000000;
 	if ( $b1 === $b2 ) // is .000000 , whole number = int
 		return sprintf('%d', $val);
 	else // has decimals = float
 	{
-		$b1 = sprintf('%.6f', $val);
-		return rtrim($b1, '0');
+		// ERROR
+		// bf7fffff = -0.99999994039536
+		// if -999999 === 0 , not int
+		// else
+		//   %.6f = -1.000000 , rtrim() = -1. error
+		$b2 = sprintf('%.6f', $b1 * 0.000001);
+		return rtrim($b2, '0');
 	}
 }
 //////////////////////////////

@@ -155,6 +155,7 @@ Can I Use?
 	32    21     9    ES6 Number
 	26    26    10    ES6 Generators
 	34    29    12.2  ES6 Template Literals (Template Strings)
+	31    32     8    JavaScript built-in: Array: fill
 	36    36    11    const
 	44    36    11    let
 	45    36     9    ES6 classes

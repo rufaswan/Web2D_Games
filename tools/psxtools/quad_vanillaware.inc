@@ -322,6 +322,20 @@ $gp_data = array(
 	), // 'ps4_sent'
 );
 //////////////////////////////
+function fog_quad( &$s, $p1, $p2, $p3, $p4 )
+{
+	$quad = array(
+		'#' . bin2hex( substr($s,$p1,4) ),
+		'#' . bin2hex( substr($s,$p2,4) ),
+		'#' . bin2hex( substr($s,$p3,4) ),
+		'#' . bin2hex( substr($s,$p4,4) ),
+	);
+	if ( $quad[0] !== $quad[1] )  return $quad;
+	if ( $quad[0] !== $quad[2] )  return $quad;
+	if ( $quad[0] !== $quad[3] )  return $quad;
+	return $quad[0];
+}
+
 function ps2_quad20p( &$mbp, $ord )
 {
 	$float = array();
@@ -365,12 +379,7 @@ function ps2_quad20c( &$mbp )
 	// 14  c3
 	// 18  c1
 	// 1c  padding
-	$quad = array(
-		'#' . bin2hex( substr($mbp,0x08,4) ),
-		'#' . bin2hex( substr($mbp,0x0c,4) ),
-		'#' . bin2hex( substr($mbp,0x10,4) ),
-		'#' . bin2hex( substr($mbp,0x14,4) ),
-	);
+	$quad = fog_quad($mbp, 0x08, 0x0c, 0x10, 0x14);
 	return $quad;
 }
 
@@ -406,12 +415,7 @@ function nds_quad18c( &$mbs ) // +wii,ps3,ps4
 	//  c  c2
 	// 10  c3
 	// 14  c0
-	$quad = array(
-		'#' . bin2hex( substr($mbs,0x04,4) ),
-		'#' . bin2hex( substr($mbs,0x08,4) ),
-		'#' . bin2hex( substr($mbs,0x0c,4) ),
-		'#' . bin2hex( substr($mbs,0x10,4) ),
-	);
+	$quad = fog_quad($mbs, 0x04, 0x08, 0x0c, 0x10);
 	return $quad;
 }
 
@@ -451,12 +455,7 @@ function psp_quad60pc( &$mbs, $ord )
 	// 30 32  34  38 3a  3c 3e  c2
 	// 40 42  44  48 4a  4c 4e  c3
 	// 50 52  54  58 5a  5c 5e  c0
-	$clr = array(
-		'#' . bin2hex( substr($mbs,0x14,4) ),
-		'#' . bin2hex( substr($mbs,0x24,4) ),
-		'#' . bin2hex( substr($mbs,0x34,4) ),
-		'#' . bin2hex( substr($mbs,0x44,4) ),
-	);
+	$clr = fog_quad($mbs, 0x14, 0x24, 0x34, 0x44);
 	return array($clr, $src, $dst);
 }
 
@@ -496,12 +495,7 @@ function vit_quad78pc( &$mbs, $ord )
 	// 3c 40  44  48 4c  c2
 	// 50 54  58  5c 60  c3
 	// 64 68  6c  70 74  c0
-	$clr = array(
-		'#' . bin2hex( substr($mbs,0x1c,4) ),
-		'#' . bin2hex( substr($mbs,0x30,4) ),
-		'#' . bin2hex( substr($mbs,0x44,4) ),
-		'#' . bin2hex( substr($mbs,0x58,4) ),
-	);
+	$clr = fog_quad($mbs, 0x1c, 0x30, 0x44, 0x58);
 	return array($clr, $src, $dst);
 }
 //////////////////////////////

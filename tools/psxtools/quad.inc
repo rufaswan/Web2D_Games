@@ -64,10 +64,7 @@ function load_idtagfile( $pfx )
 	}
 
 	$data = array(
-		'tag' => $tag ,
-		'blend' => array(
-			'if ( FG.a === 0.0 )  discard;  pixel.rgb = FG.rgb;' ,
-		),
+		'tag' => $tag
 	);
 	return $data;
 }
@@ -76,7 +73,7 @@ function list_add( &$list, $k, &$v )
 {
 	$k = (int)$k;
 	while ( ! isset($list[$k]) )
-		$list[] = '';
+		$list[] = 0;
 	$list[$k] = $v;
 	return;
 }
@@ -92,21 +89,6 @@ function save_quadfile( $pfx, &$json )
 }
 //////////////////////////////
 // debug + fix
-function quad_int_px( &$quad )
-{
-	$cx = ($quad[0] + $quad[2] + $quad[4] + $quad[6]) / 4;
-	$cy = ($quad[1] + $quad[3] + $quad[5] + $quad[7]) / 4;
-	for ( $i=0; $i < 8; $i += 2 )
-	{
-		if ( $quad[$i+0] < $cx )  $quad[$i+0] = (int)floor($quad[$i+0]);
-		if ( $quad[$i+1] < $cy )  $quad[$i+1] = (int)floor($quad[$i+1]);
-
-		if ( $quad[$i+0] > $cx )  $quad[$i+0] = (int) ceil($quad[$i+0]);
-		if ( $quad[$i+1] > $cy )  $quad[$i+1] = (int) ceil($quad[$i+1]);
-	} // for ( $i=0; $i < 8; $i += 2 )
-	return;
-}
-
 function quad_ext1px( &$quad )
 {
 	// To fix Lunar 2 EB 1px gap between quads
@@ -233,10 +215,10 @@ function quad_convexfix( &$quad )
 	//          2    2--1  2--/
 	//
 	$dst = array(
-		array($quad['DstQuad'][0] , $quad['DstQuad'][1] , 1),
-		array($quad['DstQuad'][2] , $quad['DstQuad'][3] , 1),
-		array($quad['DstQuad'][4] , $quad['DstQuad'][5] , 1),
-		array($quad['DstQuad'][6] , $quad['DstQuad'][7] , 1),
+		array($quad['dstquad'][0] , $quad['dstquad'][1] , 1),
+		array($quad['dstquad'][2] , $quad['dstquad'][3] , 1),
+		array($quad['dstquad'][4] , $quad['dstquad'][5] , 1),
+		array($quad['dstquad'][6] , $quad['dstquad'][7] , 1),
 	);
 
 	// normal quad
@@ -260,47 +242,38 @@ function quad_convexfix( &$quad )
 	return;
 }
 //////////////////////////////
-function glsl_blend_psx( $t )
+function blend_modes( $mode )
 {
-	// FG.rgb * s0 + BG.rgb * s1
-	switch ( $t )
+	switch ( $mode )
 	{
-		case 'addition':  $s = array( 1.0  , 1.0); break;
-		case 'average' :  $s = array( 0.5  , 0.5); break;
-		case 'subtract':  $s = array(-1.0  , 1.0); break;
-		case 'quarter' :  $s = array( 0.25 , 1.0); break;
-		default:
-			return php_error('unknown = glsl_blend_psx( $t )');
-	}
-	$glsl  = sprintf('pixel.rgb = (FG.rgb * %.1f) + (BG.rgb * %.1f); ', $s[0], $s[1]);
-	$glsl .= sprintf('pixel.a = 1.0; ');
-	return $glsl;
+		case 'normal':
+		case 'over':
+			$blend = array(
+				'name' => 'normal',
+				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
+				'_debug' => '(FG.rgb * FG.a) + ((BG.rgb * BG.a) * (1 - FG.a))',
+			);
+			return $blend;
+
+		case 'add':
+		case 'addition':
+			$blend = array(
+				'name' => 'add',
+				'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
+				'_debug' => 'FG.rgba + BG.rgba',
+			);
+			return $blend;
+
+		case 'sub':
+		case 'subtract':
+		case 'subtraction':
+			$blend = array(
+				'name' => 'subtract',
+				'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
+				'_debug' => 'BG.rgba - FG.rgba',
+			);
+			return $blend;
+	} // switch ( $mode )
+	return 0;
 }
-
-function glsl_blend_ps2( $a, $b, $c, $d )
-{
-	// ((A.rgb - B.rgb) * C.a) + D.rgb
-	$glsl  = sprintf('pixel.rgb = ((%s.rgb - %s.rgb) * %s.a) + %s.rgb; ', $a, $b, $c, $d);
-	$glsl .= sprintf('pixel.a = 1.0; ');
-	return $glsl;
-}
-
-function glsl_blend_wii( $a, $b, $c, $d )
-{
-	// TEV
-	// ( D + ( ((1-C) * A) + (C*B) ) + bias ) * scale
-	// ( D + ( ( 1    * A)         )        ) * 1 = (BC=0) Addition
-	// ( D - ( ( 1    * A)         )        ) * 1 = (BC=0) Subtraction
-	// (     (               (C*B) )        ) * 1 = (AD=0) Multiplication
-	// ( D + (               (C*B) )        ) * 1 = ( A=0) Addition + Multiplication
-	// (     ( ((1-C) * A) + (C*B) )        ) * 1 = ( D=0) Decal
-	// ( D + ( ((1-C) * A)         )        ) * 1 = ( B=0) Proportional
-
-	// ( D + ( ( 1    * A)         )        ) * 1 = ( C=0)
-	// ( D                                  ) * 1 = (AB=0)
-	// (     ( ( 1    * A)         )        ) * 1 = (CD=0)
-
-	$glsl  = sprintf('pixel.rgb = (FG.rgb * %s) + (BG.rgb * %s); ', $a, $b);
-	$glsl .= sprintf('pixel.a = 1.0; ');
-	return $glsl;
-}
+//////////////////////////////
