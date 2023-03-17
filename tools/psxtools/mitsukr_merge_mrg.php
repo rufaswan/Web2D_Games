@@ -426,7 +426,7 @@ function save1123( $fn, &$data, &$src, $sw, $sh, &$pal, $bgzero )
 		$ceil *= 2;
 	}
 
-	$pix  = COPYPIX_DEF($ceil, $ceil);
+	$pix  = copypix_def($ceil, $ceil);
 	printf("canvas = %d , half = %d\n", $ceil, $half);
 	$pix['bgzero'] = ( $bgzero ) ? 0 : -1;
 

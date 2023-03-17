@@ -2,11 +2,9 @@
 
 (function(){
 	var vert_src = `
-		precision highp float;
-		precision highp int;
-		attribute vec3 a_xyz;
-		attribute vec4 a_color;
-		varying   vec4 v_color;
+		attribute  highp  vec3  a_xyz;
+		attribute  highp  vec4  a_color;
+		varying    highp  vec4  v_color;
 
 		void main(void){
 			v_color = a_color;
@@ -14,15 +12,7 @@
 		}
 	`;
 	var frag_src = `
-		#ifdef GL_FRAGMENT_PRECISION_HIGH
-			precision highp float;
-			precision highp int;
-		#else
-			precision mediump float;
-			precision mediump int;
-		#endif
-
-		varying vec4 v_color;
+		varying  highp  vec4  v_color;
 
 		void main(void){
 			gl_FragColor = v_color;
@@ -149,3 +139,13 @@
 	DOM_MAIN.appendChild(DIV);
 	DOM_MAIN.appendChild(PREC);
 })();
+
+/*
+		#ifdef GL_FRAGMENT_PRECISION_HIGH
+			precision  highp  float;
+			precision  highp  int;
+		#else
+			precision  mediump  float;
+			precision  mediump  int;
+		#endif
+ */

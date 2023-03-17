@@ -44,7 +44,7 @@ function mana( $fname )
 		return;
 	}
 
-	$pix = COPYPIX_DEF(CANV_S,CANV_S);
+	$pix = copypix_def(CANV_S,CANV_S);
 
 	$cnt = ord( $file[0x14] );
 	$st = 0x18;

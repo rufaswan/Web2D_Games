@@ -108,7 +108,7 @@ function sectmap( &$meta, &$file, &$done, $off, $dir )
 	$d4 = ramint($meta, $b2+12); // collusion
 	printf("tiledef : %x , %x , %x , %x\n", $d1, $d2, $d3, $d4);
 
-	$pix = COPYPIX_DEF($map_w,$map_h);
+	$pix = copypix_def($map_w,$map_h);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 

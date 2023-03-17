@@ -185,7 +185,7 @@ function sectmap( &$file, $nid, $base )
 	printf("pix = %s\n", $bpp);
 	if ( ($b8 & 0x21) == 0x20 )  return;
 
-	$pix = COPYPIX_DEF($map_w,$map_h,PIX_BLACK);
+	$pix = copypix_def($map_w,$map_h,PIX_BLACK);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 

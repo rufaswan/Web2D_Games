@@ -15,9 +15,9 @@
 
 <script>
 var vert_src = `
-	attribute vec2  a_xy;
-	uniform   vec4  u_pxsize;
-	varying   vec2  v_xy;
+	attribute  highp  vec2  a_xy;
+	uniform    highp  vec4  u_pxsize;
+	varying    highp  vec2  v_xy;
 
 	void main(void){
 		v_xy = a_xy;
@@ -29,30 +29,31 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform vec4  u_pxsize;
-	uniform mat4  u_mat4;
-	uniform sampler2D u_tex;
-	varying vec2  v_xy;
+	uniform  sampler2D  u_tex;
+	uniform  highp  vec4  u_pxsize;
+	uniform  highp  mat4  u_mat4;
+	varying  highp  vec2  v_xy;
 
-	vec2   v2;
-	float  tv, tu;
+	highp  vec2   v2;
+	highp  float  tv;
+	highp  float  tu;
 	void main(void){
-		float a0 = u_mat4[0][0];
-		float a1 = u_mat4[0][1];
-		float a2 = u_mat4[0][2];
-		float a3 = u_mat4[0][3];
-		float b0 = u_mat4[1][0];
-		float b1 = u_mat4[1][1];
-		float b2 = u_mat4[1][2];
-		float b3 = u_mat4[1][3];
-		float A  = u_mat4[2][0];
-		float B1 = u_mat4[2][1];
-		float C1 = u_mat4[2][2];
+		highp  float  a0 = u_mat4[0][0];
+		highp  float  a1 = u_mat4[0][1];
+		highp  float  a2 = u_mat4[0][2];
+		highp  float  a3 = u_mat4[0][3];
+		highp  float  b0 = u_mat4[1][0];
+		highp  float  b1 = u_mat4[1][1];
+		highp  float  b2 = u_mat4[1][2];
+		highp  float  b3 = u_mat4[1][3];
+		highp  float  A  = u_mat4[2][0];
+		highp  float  B1 = u_mat4[2][1];
+		highp  float  C1 = u_mat4[2][2];
 
-		float B  = B1 + (b3 * v_xy.x) - (a3 * v_xy.y);
-		float C  = C1 + (b1 * v_xy.x) - (a1 * v_xy.y);
+		highp  float  B  = B1 + (b3 * v_xy.x) - (a3 * v_xy.y);
+		highp  float  C  = C1 + (b1 * v_xy.x) - (a1 * v_xy.y);
 
-		float rt = sqrt( (B * B) - (4.0 * A * C) );
+		highp  float  rt = sqrt( (B * B) - (4.0 * A * C) );
 
 		tv = (-B + rt) / (2.0 * A);
 		tu = (v_xy.x - a0 - (a2 * tv)) / (a1 + (a3 * tv));

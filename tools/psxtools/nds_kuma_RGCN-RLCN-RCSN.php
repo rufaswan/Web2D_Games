@@ -50,7 +50,7 @@ function sect_RCSN( &$file, $fname )
 	}
 
 	global $gp_ncgr, $gp_nclr;
-	$pix = COPYPIX_DEF($sw,$sh);
+	$pix = copypix_def($sw,$sh);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 

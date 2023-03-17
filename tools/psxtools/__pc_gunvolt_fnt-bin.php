@@ -30,7 +30,7 @@ function save_layers( &$map, &$set, $pfx )
 	$pos = 0;
 	while ( isset( $map['tile'][2][$pos] ) )
 	{
-		$pix = COPYPIX_DEF($map['room'][0]*0x10, $map['room'][1]*0x10);
+		$pix = copypix_def($map['room'][0]*0x10, $map['room'][1]*0x10);
 		$pix['src']['w'] = 16;
 		$pix['src']['h'] = 16;
 
@@ -169,7 +169,7 @@ function fnt8pix( &$fnt, &$map, $cnt )
 		array(0,8), array(8,8),
 	);
 
-	$pix = COPYPIX_DEF($col*0x10, $row*0x10);
+	$pix = copypix_def($col*0x10, $row*0x10);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 
@@ -216,7 +216,7 @@ function fnt16pix( &$fnt, &$map, $cnt )
 	$col = 0x10;
 	$row = $max >> 4;
 
-	$pix = COPYPIX_DEF($col*0x10, $row*0x10);
+	$pix = copypix_def($col*0x10, $row*0x10);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 

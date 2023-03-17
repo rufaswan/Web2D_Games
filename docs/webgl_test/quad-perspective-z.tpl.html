@@ -81,17 +81,15 @@ var QDFN = QDFN || {};
 	}
 
 	$.setShaderProgram = function( vert_src, frag_src ){
-		var highp = 'precision highp float; precision highp int;';
-
 		var vert_shader = $.GL.createShader($.GL.VERTEX_SHADER);
-		$.GL.shaderSource (vert_shader, highp + vert_src);
+		$.GL.shaderSource (vert_shader, vert_src);
 		$.GL.compileShader(vert_shader);
 		var t = $.GL.getShaderParameter(vert_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
 			console.error( $.GL.getShaderInfoLog(vert_shader) );
 
 		var frag_shader = $.GL.createShader($.GL.FRAGMENT_SHADER);
-		$.GL.shaderSource (frag_shader, highp + frag_src);
+		$.GL.shaderSource (frag_shader, frag_src);
 		$.GL.compileShader(frag_shader);
 		var t = $.GL.getShaderParameter(frag_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
@@ -584,15 +582,15 @@ function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 
 <script>
 var vert_src = `
-	attribute vec3   a_xyz;
-	attribute vec2   a_uv;
-	uniform   vec4   u_pxsize;
-	varying   vec2   v_uv;
-	varying   float  v_z;
+	attribute  highp  vec3   a_xyz;
+	attribute  highp  vec2   a_uv;
+	uniform    highp  vec4   u_pxsize;
+	varying    highp  vec2   v_uv;
+	varying    highp  float  v_z;
 
-	vec3   v3;
-	vec2   v2;
-	float  z;
+	highp  vec3   v3;
+	highp  vec2   v2;
+	highp  float  z;
 	void main(void){
 		z  = 1.0 / a_xyz.z;
 		v3 = a_xyz * z;
@@ -608,11 +606,11 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform sampler2D u_tex;
-	varying vec2   v_uv;
-	varying float  v_z;
+	uniform  sampler2D  u_tex;
+	varying  highp  vec2   v_uv;
+	varying  highp  float  v_z;
 
-	float  z;
+	highp  float  z;
 	void main(void){
 		if ( v_z == 0.0 )
 			discard;

@@ -81,17 +81,15 @@ var QDFN = QDFN || {};
 	}
 
 	$.setShaderProgram = function( vert_src, frag_src ){
-		var highp = 'precision highp float; precision highp int;';
-
 		var vert_shader = $.GL.createShader($.GL.VERTEX_SHADER);
-		$.GL.shaderSource (vert_shader, highp + vert_src);
+		$.GL.shaderSource (vert_shader, vert_src);
 		$.GL.compileShader(vert_shader);
 		var t = $.GL.getShaderParameter(vert_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
 			console.error( $.GL.getShaderInfoLog(vert_shader) );
 
 		var frag_shader = $.GL.createShader($.GL.FRAGMENT_SHADER);
-		$.GL.shaderSource (frag_shader, highp + frag_src);
+		$.GL.shaderSource (frag_shader, frag_src);
 		$.GL.compileShader(frag_shader);
 		var t = $.GL.getShaderParameter(frag_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
@@ -584,12 +582,12 @@ function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 
 <script>
 var vert_src = `
-	attribute vec2  a_uv;
-	uniform   vec4  u_pxsize;
-	uniform   mat3  u_mat3;
-	varying   vec2  v_uv;
+	attribute  highp  vec2  a_uv;
+	uniform    highp  vec4  u_pxsize;
+	uniform    highp  mat3  u_mat3;
+	varying    highp  vec2  v_uv;
 
-	vec3  v3;
+	highp  vec3  v3;
 	void main(void){
 		v_uv = vec2(a_uv.x * u_pxsize.z , a_uv.y * u_pxsize.w);
 
@@ -602,8 +600,8 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform sampler2D u_tex;
-	varying vec2  v_uv;
+	uniform  sampler2D  u_tex;
+	varying  highp  vec2  v_uv;
 
 	void main(void){
 		gl_FragColor = texture2D(u_tex, v_uv);

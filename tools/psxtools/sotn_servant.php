@@ -55,7 +55,7 @@ function sectparts( &$meta, &$src, &$clut, $pos, $dir )
 	if ( empty($data) )
 		return;
 
-	$pix = COPYPIX_DEF(CANV_S,CANV_S);
+	$pix = copypix_def(CANV_S,CANV_S);
 
 	foreach ( $data as $v )
 	{

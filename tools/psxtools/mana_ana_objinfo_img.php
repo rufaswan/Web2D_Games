@@ -114,7 +114,7 @@ function sectparts( &$meta, $off, $fn, $ids, $m, &$big )
 		return;
 
 	$ceil = int_ceil( CANV_S * SCALE, 2 );
-	$pix = COPYPIX_DEF($ceil,$ceil);
+	$pix = copypix_def($ceil,$ceil);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )

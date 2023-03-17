@@ -70,7 +70,7 @@ function sectmap( &$img, $dir, $id, $meta, $base )
 
 	$fn = sprintf('%s/%04d', $dir, $id);
 
-	$pix = COPYPIX_DEF($map_w,$map_h,PIX_BLACK);
+	$pix = copypix_def($map_w,$map_h,PIX_BLACK);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 

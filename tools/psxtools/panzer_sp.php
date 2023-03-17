@@ -108,7 +108,7 @@ function sect_part( &$file, $off, $fn, &$pal, &$src )
 		$data[] = $b1;
 	} // for ( $i=0; $i < $cnt; $i++ )
 
-	$pix = COPYPIX_DEF(0x200,0x200);
+	$pix = copypix_def(0x200,0x200);
 	$pix['bgzero'] = 0;
 
 	foreach ( $data as $v )

@@ -419,7 +419,7 @@ function fp2str( $fp, $pos, $byte )
 		return '';
 	fseek($fp, 0, SEEK_END);
 	$fsz = ftell($fp);
-	if ( ($pos+$byte) >= $fsz )
+	if ( ($pos+$byte) > $fsz )
 	{
 		php_warning('fp2str (%x + %x) >= %x', $pos, $byte, $fsz);
 		return ZERO;
@@ -906,7 +906,7 @@ function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
 	return $rip;
 }
 //////////////////////////////
-function COPYPIX_DEF( $w, $h, $c = PIX_ALPHA )
+function copypix_def( $w, $h, $c = PIX_ALPHA )
 {
 	// PHP 5.6 fix
 	// Warning: Constants may only evaluate to scalar values

@@ -15,12 +15,12 @@
 
 <script>
 var vert_src = `
-	attribute vec2  a_uv;
-	uniform   vec4  u_pxsize;
-	uniform   mat3  u_mat3;
-	varying   vec2  v_uv;
+	attribute  highp  vec2  a_uv;
+	uniform    highp  vec4  u_pxsize;
+	uniform    highp  mat3  u_mat3;
+	varying    highp  vec2  v_uv;
 
-	vec3  v3;
+	highp  vec3  v3;
 	void main(void){
 		v_uv = vec2(a_uv.x * u_pxsize.z , a_uv.y * u_pxsize.w);
 
@@ -33,8 +33,8 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform sampler2D u_tex;
-	varying vec2  v_uv;
+	uniform  sampler2D  u_tex;
+	varying  highp  vec2  v_uv;
 
 	void main(void){
 		gl_FragColor = texture2D(u_tex, v_uv);

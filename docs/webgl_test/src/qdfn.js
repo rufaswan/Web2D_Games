@@ -31,17 +31,15 @@ var QDFN = QDFN || {};
 	}
 
 	$.setShaderProgram = function( vert_src, frag_src ){
-		var highp = 'precision highp float; precision highp int;';
-
 		var vert_shader = $.GL.createShader($.GL.VERTEX_SHADER);
-		$.GL.shaderSource (vert_shader, highp + vert_src);
+		$.GL.shaderSource (vert_shader, vert_src);
 		$.GL.compileShader(vert_shader);
 		var t = $.GL.getShaderParameter(vert_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
 			console.error( $.GL.getShaderInfoLog(vert_shader) );
 
 		var frag_shader = $.GL.createShader($.GL.FRAGMENT_SHADER);
-		$.GL.shaderSource (frag_shader, highp + frag_src);
+		$.GL.shaderSource (frag_shader, frag_src);
 		$.GL.compileShader(frag_shader);
 		var t = $.GL.getShaderParameter(frag_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )

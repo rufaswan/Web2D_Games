@@ -15,15 +15,15 @@
 
 <script>
 var vert_src = `
-	attribute vec3   a_xyz;
-	attribute vec2   a_uv;
-	uniform   vec4   u_pxsize;
-	varying   vec2   v_uv;
-	varying   float  v_z;
+	attribute  highp  vec3   a_xyz;
+	attribute  highp  vec2   a_uv;
+	uniform    highp  vec4   u_pxsize;
+	varying    highp  vec2   v_uv;
+	varying    highp  float  v_z;
 
-	vec3   v3;
-	vec2   v2;
-	float  z;
+	highp  vec3   v3;
+	highp  vec2   v2;
+	highp  float  z;
 	void main(void){
 		z  = 1.0 / a_xyz.z;
 		v3 = a_xyz * z;
@@ -39,11 +39,11 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform sampler2D u_tex;
-	varying vec2   v_uv;
-	varying float  v_z;
+	uniform  sampler2D  u_tex;
+	varying  highp  vec2   v_uv;
+	varying  highp  float  v_z;
 
-	float  z;
+	highp  float  z;
 	void main(void){
 		if ( v_z == 0.0 )
 			discard;

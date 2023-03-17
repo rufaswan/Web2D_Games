@@ -70,17 +70,15 @@ var QDFN = QDFN || {};
 	}
 
 	$.setShaderProgram = function( vert_src, frag_src ){
-		var highp = 'precision highp float; precision highp int;';
-
 		var vert_shader = $.GL.createShader($.GL.VERTEX_SHADER);
-		$.GL.shaderSource (vert_shader, highp + vert_src);
+		$.GL.shaderSource (vert_shader, vert_src);
 		$.GL.compileShader(vert_shader);
 		var t = $.GL.getShaderParameter(vert_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
 			console.error( $.GL.getShaderInfoLog(vert_shader) );
 
 		var frag_shader = $.GL.createShader($.GL.FRAGMENT_SHADER);
-		$.GL.shaderSource (frag_shader, highp + frag_src);
+		$.GL.shaderSource (frag_shader, frag_src);
 		$.GL.compileShader(frag_shader);
 		var t = $.GL.getShaderParameter(frag_shader, $.GL.COMPILE_STATUS);
 		if ( ! t )
@@ -228,8 +226,8 @@ var QDFN = QDFN || {};
 QDFN.setWebGLCanvasById('canvas');
 
 var vert_src = `
-	attribute vec2  a_pos;
-	varying   vec2  v_uv;
+	attribute  highp  vec2  a_pos;
+	varying    highp  vec2  v_uv;
 
 	void main(void){
 		v_uv = vec2(a_pos.x * 0.5, a_pos.y * 0.5);
@@ -241,8 +239,8 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform sampler2D u_tex;
-	varying vec2  v_uv;
+	uniform  sampler2D  u_tex;
+	varying  highp  vec2  v_uv;
 
 	void main(void){
 		gl_FragColor = texture2D(u_tex, v_uv);

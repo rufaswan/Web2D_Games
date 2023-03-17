@@ -184,7 +184,7 @@ function FMBS_s0s1s2( $id )
 			case 'vit_mura':
 			case 'vit_drag':
 			case 'vit_odin':
-				list($s0,$s1,$s2) = psp_quad60pc($s, $ord);
+				list($s0,$s1,$s2) = vit_quad78pc($s, $ord);
 				break;
 		} // switch ( $gp_share['tag'] )
 
@@ -855,6 +855,10 @@ function FMBS_s8( $id )
 		$time  = 0;
 		$loop  = 0;
 		$sfx   = 0;
+		$in_s5s3   = -1;
+		$in_s7     = -1;
+		$in_s6     = -1;
+		$in_s0s1s2 = -1;
 
 		switch ( $gp_share['tag'] )
 		{
@@ -920,6 +924,11 @@ function FMBS_s8( $id )
 				$time  = $b06;
 				$loop  = $b0c;
 				$sfx   = $b1c;
+
+				$in_s5s3   = $b0e;
+				$in_s7     = $b10;
+				$in_s6     = $b11;
+				$in_s0s1s2 = $b12;
 				break;
 		} // switch ( $gp_share['tag'] )
 
@@ -931,6 +940,10 @@ function FMBS_s8( $id )
 			'loop' => $loop  ,
 			'sfx'  => $sfx   ,
 			'bits' => '0x' . dechex($flags),
+			'in_s5s3'   => $in_s5s3   ,
+			'in_s7'     => $in_s7     ,
+			'in_s6'     => $in_s6     ,
+			'in_s0s1s2' => $in_s0s1s2 ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 

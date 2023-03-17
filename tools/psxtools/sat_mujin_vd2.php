@@ -34,7 +34,7 @@ function sect_map32( &$src, &$tile, &$pal, $fn )
 	$w = $mw * 8;
 	$h = $mh * 8;
 
-	$pix = COPYPIX_DEF($w,$h);
+	$pix = copypix_def($w,$h);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 
@@ -74,7 +74,7 @@ function sect_map8( &$src, &$tile, &$pal, $fn )
 	$w = $mw * 8;
 	$h = $mh * 8;
 
-	$pix = COPYPIX_DEF($w,$h);
+	$pix = copypix_def($w,$h);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 	$pix['src']['pal'] = $pal;
@@ -112,7 +112,7 @@ function sect_map0( &$src, &$tile, $fn )
 	$w = $mw * 8;
 	$h = $mh * 8;
 
-	$pix = COPYPIX_DEF($w,$h);
+	$pix = copypix_def($w,$h);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 

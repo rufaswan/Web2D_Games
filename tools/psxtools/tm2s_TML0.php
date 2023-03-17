@@ -59,7 +59,7 @@ function sectparts( &$tml, &$anim, &$layout, $dir, $id, $name, $cnt, $data)
 	global $gp_clut, $gp_pix;
 	if ( $tml[$data] != ZERO )
 	{
-		$pix = COPYPIX_DEF(CANV_S,CANV_S);
+		$pix = copypix_def(CANV_S,CANV_S);
 
 		for ( $i=0; $i < $cnt; $i++ )
 		{

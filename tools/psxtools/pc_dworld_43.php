@@ -325,7 +325,7 @@ function dw1_scn( &$file, &$sect, $dir )
 		$pal = substr($file, $st5, 0x400);
 		palbyte($pal);
 
-		$pix = COPYPIX_DEF($w,$h);
+		$pix = copypix_def($w,$h);
 		$pix['src']['w'] = 4;
 		$pix['src']['h'] = 4;
 		$pix['src']['pal'] = $pal;

@@ -369,7 +369,7 @@ function dw1_rle( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle )
 {
 	printf("== dw1_rle( %s , %x , %x , %x , %x , %x , %d , %d )\n", $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle);
 
-	$pix = COPYPIX_DEF($w,$h);
+	$pix = copypix_def($w,$h);
 	$pix['src']['w'] = 4;
 	$pix['src']['h'] = 4;
 

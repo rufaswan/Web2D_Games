@@ -48,8 +48,8 @@ body {
 QDFN.setWebGLCanvasById('canvas');
 
 var vert_src = `
-	attribute vec2  a_pos;
-	varying   vec2  v_uv;
+	attribute  highp  vec2  a_pos;
+	varying    highp  vec2  v_uv;
 
 	void main(void){
 		v_uv = vec2(a_pos.x * 0.5, a_pos.y * 0.5);
@@ -61,8 +61,8 @@ var vert_src = `
 `;
 
 var frag_src = `
-	uniform sampler2D u_tex;
-	varying vec2  v_uv;
+	uniform  sampler2D  u_tex;
+	varying  highp  vec2  v_uv;
 
 	void main(void){
 		gl_FragColor = texture2D(u_tex, v_uv);

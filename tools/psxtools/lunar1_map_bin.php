@@ -79,7 +79,7 @@ function save_map5( &$data, $dir )
 	// map   = 10x10 blocks = 800x800 pixels
 	// block =  8x8  tiles  =  80x80  pixels
 	// tile  = 10x10 pixels
-	$pix = COPYPIX_DEF(0x800,0x800);
+	$pix = copypix_def(0x800,0x800);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 
@@ -141,7 +141,7 @@ function save_map7( &$data, $dir )
 {
 	// map   = 40x80 tiles = 200x400 pixels
 	// tile  =  8x8  pixels
-	$pix = COPYPIX_DEF(0x200,0x400);
+	$pix = copypix_def(0x200,0x400);
 	$pix['src']['w'] = 8;
 	$pix['src']['h'] = 8;
 

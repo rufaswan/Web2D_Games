@@ -85,7 +85,7 @@ function s_TX_PL_MP16( &$TX, &$PL, &$MP16, $dir )
 	$tw = $w / 16;
 	$th = $h / 16;
 
-	$pix = COPYPIX_DEF($mapw,$maph);
+	$pix = copypix_def($mapw,$maph);
 	$pix['src']['w'] = 16;
 	$pix['src']['h'] = 16;
 	$pix['src']['pal'] = $pal;

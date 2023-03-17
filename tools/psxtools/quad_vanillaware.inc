@@ -422,7 +422,7 @@ function nds_quad18c( &$mbs ) // +wii,ps3,ps4
 function psp_quad60pc( &$mbs, $ord )
 {
 	$float = array();
-	for ( $i=0; $i < 0x20; $i += 2 )
+	for ( $i=0; $i < 0x60; $i += 2 )
 	{
 		$b = $ord($mbs, $i, 2, true);
 		$float[] = $b / 0x10;

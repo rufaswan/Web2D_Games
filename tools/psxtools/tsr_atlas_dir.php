@@ -48,7 +48,7 @@ function atlasdir( $dir )
 	$atlas = new AtlasTex;
 	list($ind, $cw, $ch) = $atlas->atlasmap($files);
 
-	$pix = COPYPIX_DEF($cw,$ch);
+	$pix = copypix_def($cw,$ch);
 
 	foreach ( $files as $img )
 	{

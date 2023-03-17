@@ -65,7 +65,7 @@ function sect1( &$file, $base, $fn )
 	if ( empty($data) )
 		return;
 
-	$pix = COPYPIX_DEF(CANV_S,CANV_S);
+	$pix = copypix_def(CANV_S,CANV_S);
 
 	global $gp_pix, $gp_clut;
 	foreach ( $data as $v )
