@@ -26,35 +26,35 @@ SLPS 011.60 JP disc 1 [3771]
 		52 [LZ] Weltall
 		53 [LZ] Vierge
 		54 [LZ] Heimdal
-		55 [LZ] Brigander
+		55 [LZ] Brigandier
 		56 [LZ] Renmazuo
 		57 [LZ] Stier
-		58 [LZ]
+		58 [LZ] Bladegash
 		59 [LZ] Siebzehn
 		60 [LZ] Crescens
-		61 [LZ] Chu-chu
-		62 [LZ]
-		63 [LZ]
-		64 [LZ]
-		65 [LZ]
+		61 [LZ] Chu-Chu
+		62 [LZ] Weltall-2
+		63 [LZ] Xenogears
+		64 [LZ] El-Regulus
+		65 [LZ] El-Fenrir
 		66 [LZ] El-Andvari
-		67 [LZ]
-		68 [LZ]
+		67 [LZ] El-Renmazuo
+		68 [LZ] El-Stier
 		69 [LZ] Ganador
 		70 [LZ] Titan
-		71 [LZ] Wshaver
+		71 [LZ] WindShaver
 		72 [LZ] Firewheel
-		73 [LZ] Silverstar
-		74 [LZ]
-		75 [LZ] Musya
+		73 [LZ] SilverStar
+		74 [LZ] Argento
+		75 [LZ] Musha
 		76 [LZ] Hatamoto
 		77 [LZ] Blowback
-		78 [LZ] The Ninja
-		79 [LZ] Mimmy
-		80 [LZ] Burikirobo
+		78 [LZ] Shinobi
+		79 [LZ] Wyrm
+		80 [LZ] Tin Robo
 		81 [LZ] Ranker
-		82 [LZ] Church1
-		83 [LZ] Church2
+		82 [LZ] Etone
+		83 [LZ] NeoEtone
 		84 [LZ] Golem
 		85 [LZ] Repair
 		86 [LZ] Worker
@@ -66,12 +66,12 @@ SLPS 011.60 JP disc 1 [3771]
 		92 [LZ] Twinburner
 		93 [LZ] S-Trooper
 		94 [LZ] S-Tripper
-		95 [LZ]
-		96 [LZ]
-		97 [LZ]
-		98 [LZ]
-		99 [LZ]
-		100 [LZ]
+		95 [LZ] Sufal
+		96 [LZ] EG-Gunner
+		97 [LZ] EG-Armor
+		98 [LZ] Pedestal
+		99 [LZ] Edin
+		100 [LZ] EG-Blade
 	116  [7]
 		117-123  wds/sample data
 	133  Music [146] [73 pairs]
