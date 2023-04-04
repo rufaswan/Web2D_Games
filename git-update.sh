@@ -15,10 +15,11 @@ msg="
 usage: ${0##*/}  COMMAND  [files]...
 
 command
-  -push  COMMENT  commit + push updates to repo
-  -force CONFIRM  overwrite the repo
-  -pull    pull updates from repo
-  -push2   retry push updates to repo [SKIP commit]
+  -push   COMMENT  commit + push updates to repo
+  -pull   ID       accept pull request to repo
+  -force  CONFIRM  overwrite the repo
+  -repush  retry push updates to repo [SKIP commit]
+
   -update  fetch updates from upstream
   -last    view the last 5 commits
 
@@ -44,22 +45,24 @@ case "$cmd" in
 		git commit -m "$@"
 		git push origin master
 		;;
-	"-force")
-		[[ "$2" == "i_really_want_to_do_this" ]] || exit
+	'-pull')
+		[ "$1" ] || echo "pull request has no ID";
+		echo "git pull $git : # $1"
+		git pull origin pull/$1/head
+		git push origin master
+		;;
+
+	'-force')
+		[[ "$2" == 'i_really_want_to_do_this' ]] || exit
 		echo "git push --force $git : master"
 		git push --force origin master
 		;;
-
-	"-pull")
-		echo "git pull $git : master"
-		git pull origin master
-		;;
-	"-push2")
+	'-repush')
 		echo "git push/retry $git"
 		git push origin master
 		;;
 
-	"-update")
+	'-update')
 		if [ "$ups" ]; then
 			echo "git fetch $ups"
 			git fetch upstream
@@ -67,7 +70,7 @@ case "$cmd" in
 			git merge upstream/master
 		fi
 		;;
-	"-last")
+	'-last')
 		git log --pretty=oneline -5
 		;;
 	*)
