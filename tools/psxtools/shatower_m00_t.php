@@ -1,5 +1,5 @@
-#!/bin/bash
-<<'////'
+<?php
+/*
 [license]
 Copyright (C) 2019 by Rufas Wan
 
@@ -19,39 +19,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
-////
-[ $# = 0 ] && exit
+ */
+require 'common.inc';
 
-ext='zip'
-while [ "$1" ]; do
-	t1="${1%/}"
-	tit="${t1%.*}"
-	#ext="${t1##*.}"
-	shift
+function shatower( $fname )
+{
+	// for *.ext only
+	if ( stripos($fname, '.t') === false )
+		return;
 
-	loc="$PWD"
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
 
-	# unpack zip file -> dir
-	if [ -f "$t1" ]; then
-		[ -d "$tit" ] && rm -vfr "$tit"
-		unzip  -o  "$t1" -d "$tit"
-	fi
+	$dir = str_replace('.', '_', $fname);
+	$cnt = str2int($file, 0, 2);
 
-	# pack dir -> zip file
-	if [ -d "$t1" ]; then
-		fn="$t1.$ext"
-		[ -f "$fn" ] && rm -vf "$fn"
+	for ( $i=0; $i < $cnt; $i++ )
+	{
+		$p = 2 + ($i * 2);
+		$p1 = str2int($file, $p+0, 2);
+		$p2 = str2int($file, $p+2, 2);
 
-		zip  -j -0  "$fn"  "$t1"/*  -x '*.bak'
-	fi
+		$sz = $p2 - $p1;
+		if ( $sz < 1 )
+			continue;
 
-	case "$t1" in
-		'-e')  ext="$1"; shift;;
-	esac
+		$sub = substr($file, $p1*0x800, $sz*0x800);
+		$fn  = sprintf('%s/%04d.bin', $dir, $i);
+		save_file($fn, $sub);
+	} // for ( $i=0; $i < $cnt; $i++ )
+	return;
+}
 
-done
-
-<<'////'
-.p2s  pcsx2 save state
-
-////
+for ( $i=1; $i < $argc; $i++ )
+	shatower( $argv[$i] );

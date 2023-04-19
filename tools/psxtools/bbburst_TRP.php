@@ -21,41 +21,49 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'bbburst.inc';
 
-function extsize( &$all, $ext )
+function burst( $fname )
 {
-	$list = array();
-	$sum  = 0;
-	foreach ( $all as $fn )
+	$file = file_get_contents($fname);
+	if ( empty($file) )  return;
+
+	if ( substr($file, 0, 4) !== 'TRP ' )
+		return;
+
+	$dir = str_replace('.', '_', $fname);
+
+	$id  = 0;
+	$pos = 0x10;
+	while (1)
 	{
-		$e = substr($fn, strrpos($fn, '.'));
-		if ( stripos($e, $ext) !== false )
+		$siz = str2int($file, $pos, 3);
+			$pos += 0x10;
+		printf("%8x , %8x , %04d\n", $pos, $siz, $id);
+		if ( $siz === 0 )
+			return;
+
+		$s  = substr ($file, $pos, $siz);
+			$pos += $siz;
+		$fn = sprintf('%s/%04d', $dir, $id);
+			$id++;
+
+		$mgc = substr($s, 0, 4);
+		switch ( $mgc )
 		{
-			$siz = filesize($fn);
-			if ( ! isset($list[$siz]) )
-				$list[$siz] = array();
+			case "\x10".ZERO.ZERO.ZERO:
+				$fn .= '.tim' . bin2hex($s[4]);
+				break;
+			default:
+				$fn .= '.unk';
+				break;
+		} // switch ( $mgc )
 
-			$list[$siz][] = $fn;
-			$sum += $siz;
-		}
-	} // foreach ( $all as $fn )
+		save_file($fn, $s);
+	} // while (1)
 
-	ksort($list);
-	$perc = 100 / $sum;
-	foreach ( $list as $siz => $v )
-	{
-		foreach ( $v as $fn )
-			printf("[%4.1f%%]  %8x  %s\n", $siz*$perc, $siz, $fn);
-	} // foreach ( $list as $siz => $v )
-
-	printf("sum [%s] = %x\n", $ext, $sum);
 	return;
 }
 
-printf("%s  EXTENSION...\n", $argv[0]);
-if ( $argc == 1 )   exit();
-
-$all = array();
-lsfile_r('.', $all);
 for ( $i=1; $i < $argc; $i++ )
-	extsize( $all, $argv[$i] );
+	burst( $argv[$i] );
