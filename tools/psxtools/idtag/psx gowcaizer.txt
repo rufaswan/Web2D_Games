@@ -1,0 +1,15 @@
+[System]
+PlayStation
+
+[Game]
+Choujin Gakuen - Gowcaizer
+
+[Copyright]
+1996 URBAN PLANT LTD.
+1996 GAGA COMMUNICATIONS INC.
+
+[Character Design]
+Masami Ohberi
+
+[Comment]
+Ripped by Rufas Wan

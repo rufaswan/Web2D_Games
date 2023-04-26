@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation Vita
+PlayStation Vita
 
 [Game]
 Muramasa Rebirth
@@ -26,11 +26,6 @@ Yukitsuna Maeda
 (DLC) Ryo Kobayashi
 (DLC) Haruka Kawamura
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

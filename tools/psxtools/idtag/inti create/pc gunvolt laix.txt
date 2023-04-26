@@ -1,5 +1,5 @@
 [System]
-PC Steam
+PC game
 
 [Game]
 Gunvolt Chronicles Luminous Avenger iX
@@ -37,11 +37,5 @@ Munehiro Araki
 Miho Iijima
 Nana Itaya
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
--
+Ripped by Rufas Wan

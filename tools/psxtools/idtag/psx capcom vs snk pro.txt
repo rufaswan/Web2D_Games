@@ -1,0 +1,70 @@
+[System]
+PlayStation
+
+[Game]
+CAPCOM vs. SNK Millennium Fight 200 PRO
+
+[Copyright]
+CAPCOM CO., LTD. 2001, 2002
+PLAYMORE Corporation. 2002
+
+[Object Design]
+Ball Boy
+Chimorin Shogun
+ERI KIMO
+G.Kamina
+Hideya Takada
+Hirano=Daichi
+Hiro
+Hitoshi Igarashi
+Ikusan.Z
+Izumi-N
+Jun Ikawa
+Kaeru
+Kaname
+Kimo Kimo
+Nakamoto
+Narancia
+Nishimura Masaru
+mamagorou
+Masatsugu Sato
+Michiru Akizuki
+Miwa Sakaguchi
+Mizuho
+Peliko Fuzii
+Rin Boku
+Tagirin
+Tatsuya Oshima
+Tomo
+Tomohiko Ohsumi
+Tomomall
+Toshihiro Suzuki
+Tsuyoshi
+WHO
+YANO
+Yoshihiko Akita
+Yoshihiro Goda
+Yosimori Yamamoto
+Youhei Nakamura
+
+[Effect Design]
+ANZ
+D.Kurita
+Ainboku
+Takep
+
+[Background]
+Hiroyuki Imahori
+Yumiko Nakatsuka
+Chika Iwai
+Yoshio Mishimura
+Chie Morisaki
+Aya Saito
+Takako Nakamura
+Tanopu
+Yasuhiro Yamamoto
+Naoko Niiyama
+Masanori Kajita
+
+[Comment]
+Ripped by Rufas Wan

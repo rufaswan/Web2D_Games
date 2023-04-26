@@ -24,7 +24,7 @@ require 'common.inc';
 
 $gp_clut = '';
 
-function psxtimfile( $fname )
+function psxtimfile( $fname, $check )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -41,7 +41,7 @@ function psxtimfile( $fname )
 	$len = strlen($file);
 	while ( $pos < $len )
 	{
-		$tim = psxtim($file, $pos);
+		$tim = psxtim($file, $pos, $check);
 		if ( $tim === -1 )
 			goto savetim;
 
@@ -117,8 +117,16 @@ savetim:
 	return;
 }
 
+printf("%s  [-f]  TIM...\n", $argv[0]);
+printf("  -f : force convert TIM larger then VRAM size\n");
+$check = true;
 for ( $i=1; $i < $argc; $i++ )
-	psxtimfile( $argv[$i] );
+{
+	if ( $argv[$i] === '-f' )
+		$check = false;
+	else
+		psxtimfile( $argv[$i], $check );
+}
 
 /*
  * Weird TIM files

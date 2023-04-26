@@ -1,0 +1,169 @@
+c1/csik.bin
+c1/cusa.bin
+c1/cplay.bin = RAM 80058258-800863b4
+	   40  10e5c  1202c  1p blue
+	12edc  155d4      -  1p blue
+	15b50  26c2c  27dfc  1p red
+	28cac  2b678      -  1p red
+	2bbf4  2cd88      -  hand
+	2d5a4  2dad8      -  hand
+
+
+RAM 80058298-80058698  gfx header
+RAM 80083e4c-8008424c  gfx header
+	800b0724  lw  s1, 0(v0)
+		if ( (s1 >> 18) === 0 )  end
+		((s1 >> 14) & 3) << 2
+		((s1 >> 16) & 3) << 2
+			0 1 uint8
+			2   sint8
+			3   0 , ff00 | uint8
+		s1 & fffff
+			+ 2 = data
+
+
+RAM 80058698-800690b4  gfx data
+RAM 8008424c-80084fe0  gfx data
+	800b08fc  lbu  v0, 0(a0)
+		v0 & 80
+	800b0910  lbu  v0, 0(a1)
+	800b0914  lbu  v1, 1(a1)
+		v0 = (v0 << 8) | v1
+		(v0 & fff) << 4
+
+	800b11e8  lbu  v0, 0(v0) -> 58(s0)
+	800b11fc  lbu  v0, 0(v0)
+		v0 << 1
+	800b1238  lbu  v0, 1(v0)
+		v0 << 1
+	800b126c  lbu  v0, 2(v0)
+		(v0 &  f) + 1 -> 64(s0)
+	800b1288  lbu  v0, 2(v0)
+		(v0 >> 4) + 1
+
+
+RAM 800690b4-800692b4  anim header
+RAM 80084fe0-800851e0  anim header
+	800dd348  lhu  v1, 0(v1)
+
+
+RAM 800692b4-8006a284  anim data
+RAM 800851e0-800857fc  anim data
+	800dd358  lw  a1, 0(a3)
+		a1 &  80 ->  d(a2)
+		a1 &  10 ->  e(a2)
+		a1 &   3 -> 11(a2)
+		(a1 >> 8) & 17(a2) -> 16(a2)
+		a1 >> 10 ->  f(a2)
+		a1 >> 18 -> 10(a2)
+
+	800dd398  lw  a1, 8(a3)
+		(a1 << 8) | ((a1 >> 8) & ff)
+		-> 4(a2)
+		((a1 >> 8) & ff00) | (a1 >> 18)
+		-> 6(a2)
+
+	800dd3c4  lw  a1, 4(a3)
+		a1 >>  8 -> 13(a2)
+		a1 >> 10 -> 14(a2)
+		a1 >> 18 -> 15(a2)
+		a1 &  ff -> 12(a2)
+
+
+RAM 8006a284-8006a484  hitbox header
+RAM 80080054-80080254  hitbox header
+	800dd47c  lhu  v1, 0(v0)
+
+
+RAM 8006a484-8006b134  hitbox data
+RAM 80080254-80080f04  hitbox data
+	t4 = t1 + 8
+	800dd4b0  lbu  s4, 0(t1)
+	800dd4b4  lbu  v0, 1(t1)
+		t1 += 2
+		v0 -> c(a2)
+		s4 & 40
+		else
+			s4 & 20
+			else
+				s4 & 10
+				else
+					s4 & 8
+
+	loop
+		800dd9f4  lhu  a0, 0(t1)
+			a0 >> 8
+			a0 & 80
+		800dda3c  lhu  a0, -6(t4) // 2(t1)
+			a0 & ff
+			a0 >> 8
+		800dda74  lhu  v0, -4(t4) // 4(t1)
+			v1 = (v0 << 8) | (v0 >> 8)
+			(v1 << 10) >> 10
+		800dda9c  lhu  v0, -2(t4) // 6(t1)
+			v1 = (v0 << 8) | (v0 >> 8)
+			(v1 << 10) >> 10
+		800ddb58  lhu  v0,  0(t4) // 8(t1)
+			v1 = (v0 << 8) | (v0 >> 8)
+			v1 & ffff
+
+	a2 = t1 + 8
+	800ddc24  lhu  a0, 0(t1)
+		a0 >> 8
+		a0 & ff
+	800ddc64  lhu  a0, -6(a2) // 2(t1)
+		a0 & ff
+		a0 >> 8
+	800ddc98  lhu  v0, -4(a2) // 4(t1)
+		v1 = (v0 << 8) | (v0 >> 8)
+		(v1 << 10) >> 10
+	800ddcc0  lhu  v0, -2(a2) // 6(t1)
+		v1 = (v0 << 8) | (v0 >> 8)
+		(v1 << 10) >> 10
+	800ddd78  lhu  v0,  0(a2) // 8(t1)
+		v1 = (v0 << 8) | (v0 >> 8)
+		v1 & ffff
+
+//////////////////////////////
+
+RAM 80138724
+	00  // anim header
+		800dd320  lw   a3, 0(a2)
+	04  // x
+		anim[5] . anim[4]
+	06  // y
+		anim[7] . anim[6]
+	08  // anim timer
+	0a  // anim set id
+		800dd330  lbu  v1, a(a2)
+	0b  // anim id
+		800dd334  lbu  a0, b(a2)
+	0c
+	0d  anim[0] & 80
+	0e  anim[0] & 10
+	0f  anim[2] // hitbox set id
+		800dd454  lbu  v0, f(a1)
+	10  anim[3]
+	11  anim[0] & 3
+	12  anim[4]
+	13  anim[5]
+	14  anim[6]
+	15  anim[7]
+	16  anim[1] & [17]
+	17
+	18  // hitbox header
+
+	800dd320  lw   a3, 0(a2) // anim header
+	800dd330  lbu  v1, a(a2)
+	800dd334  lbu  a0, b(a2)
+		lhu  (v1 << 1) + a3
+		a3 += (v1 + a0 * c)
+
+	800dd444  lw   t1, 0(a2) // a1 + 18 , hitbox header
+	800dd454  lbu  v0, f(a1)
+		lhu  (v0 << 1) + t1
+
+1f800000
+	800b0714  lbu  v0,  2(s0)
+	800b0718  lw   v1, 18(s0) // gfx header
+		lw  (v0 << 2) + v1

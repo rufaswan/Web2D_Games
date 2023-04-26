@@ -1,5 +1,5 @@
 [System]
-PC Steam
+PC game
 
 [Game]
 Blast Master Zero
@@ -34,11 +34,5 @@ Masashi Yamaguchi
 [UI Designer]
 Ryota Nakayama
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
--
+Ripped by Rufas Wan

@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation Portable
+PlayStation Portable
 
 [Game]
 Grand Knights History
@@ -20,11 +20,6 @@ Tomoyo Shimabukuro
 Daichi Yamashita
 Ryo Kobayashi
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation 2
+PlayStation 2
 
 [Game]
 Odin Sphere
@@ -16,11 +16,6 @@ Takehiro Shiga
 Yasuo Shirai
 Daichi Yamashita
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

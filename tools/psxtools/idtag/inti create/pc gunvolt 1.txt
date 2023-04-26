@@ -1,5 +1,5 @@
 [System]
-PC Steam
+PC game
 
 [Game]
 Azure Striker Gunvolt
@@ -35,11 +35,5 @@ Masashi Yamaguchi
 [UI Designer]
 Tetsuya Enda
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
--
+Ripped by Rufas Wan

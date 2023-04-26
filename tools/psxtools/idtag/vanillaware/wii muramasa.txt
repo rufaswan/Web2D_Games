@@ -1,5 +1,5 @@
 [System]
-Nintendo Wii
+Wii
 
 [Game]
 Muramasa - The Demon Blade
@@ -19,11 +19,6 @@ Yoshio Nishimura
 Daichi Yamashita
 Yukitsuna Maeda
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

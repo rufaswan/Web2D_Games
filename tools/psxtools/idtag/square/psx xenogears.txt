@@ -1,0 +1,78 @@
+[System]
+PlayStation
+
+[Game]
+Xenogears
+
+[Copyright]
+SQUARE
+
+[Character Design]
+Kunihiko Tanaka
+
+[Mechanical Design]
+Junya Ishigaki
+
+[co-Character Design]
+Tsutomu Terada
+Tadahiro Usuda
+
+[co-Mechanical Design]
+Yoshinori Ogura
+
+[Art Director]
+Yasuyuki Honne
+
+[Chief Artistic Design]
+Koh Arai
+
+[Battle Character Graphics]
+Masanori Hoshino
+Masaya Suzuki
+Tsutomu Terada
+Tadahiro Usuda
+
+[Battle Motion Design]
+Tetsunobu Tsunoda
+
+[Character Digitization]
+Yuishiro Kojima
+Yoko Kaneko
+Jun Kusaka
+Yasuhiro Akiyama
+Ryoichi Kato
+Yasuhisa Izumisawa
+Kei Naruse
+Hiroyuki Nagamine
+Mika Nunokawa
+
+[Gear Digitization]
+Taizo Inukai
+Yoshinori Ogura
+Masahiro Kabe
+Hiroshi Uchiyama
+
+[Special Effects Graphics]
+Sentaro Hotta
+Hirokatsu Sasaki
+Taizo Inukai
+
+[Character CG Modeling]
+Tomoko Murakami
+Akinobu Yamakawa
+Yoshihiro Takeshita
+Hitoshi Oguchi
+Nobuaki Kayanuma
+Ichiro Mori
+Hikaru Anzai
+Yuko Karube
+
+[CG Animation]
+Takashi Kimura
+
+[World Map Graphics]
+Jisaku Hamada
+Tsuguharu Aoki
+
+[Comment]
+Ripped by Rufas Wan

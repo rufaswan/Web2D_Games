@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation 4
+PlayStation 4
 
 [Game]
 13 Sentinels: Aegis Rim
@@ -34,11 +34,6 @@ Haruka Kawamura
 Hiroshi Yamamori
 Yukitsuna Maeda
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

@@ -1,0 +1,40 @@
+[System]
+PlayStation
+
+[Game]
+Lunar 2 Eternal Blue
+
+[Copyright]
+Game Arts
+Kadokawa Shoten/ESP
+
+[Animation Director & Character Design]
+Toshiyuki Kubooka
+
+[Graphic Director]
+Masaharu Abe
+
+[Graphic]
+Miki Uchiyama
+Takaaki Umino
+Hideko Oshiro
+Ken Ogino
+Ippei Nakano
+Shintaro Shozu
+Kimiaki Mochida
+Ayumi Yano
+Hideyuki Yamashita
+Meiko Wada (Guild Entertainment)
+
+[Art Director]
+Masanori Kikuchi
+
+[CG Director]
+Akira Suzuki
+
+[VFX Oversight]
+Takanori Daino
+Jun Fukushi
+
+[Comment]
+Ripped by Rufas Wan

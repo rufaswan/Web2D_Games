@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation Portable
+PlayStation Portable
 
 [Game]
 Princess Crown
@@ -9,11 +9,6 @@ SEGA & ATLUS 1997,2005,2007
 
 [???]
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation Vita
+PlayStation Vita
 
 [Game]
 Dragon's Crown
@@ -26,11 +26,6 @@ Daichi Yamashita
 Yukitsuna Maeda
 Ryo Kobayashi
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

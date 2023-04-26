@@ -1,0 +1,69 @@
+[System]
+PlayStation
+
+[Game]
+Seiken Densetu - Legend of Mana
+
+[Copyright]
+SQUARESOFT
+
+[Art Director & Map BG Graphic Design Chief]
+Koji Tsuda
+
+[Battle Effect & Battle Design Chief]
+Hiroshi Takai
+
+[Character Illustration & Character Graphic Design Chief]
+Shinichi Kameoka
+
+[Artifact Design & CG Item Design]
+Masaki Takahashi
+
+[Character Graphic Design]
+Masaki Ohtani
+Gen Kadoi
+Yayoi Morisaka
+Yoko Tamai
+Nao Ikeda
+Rie Sato
+
+[Boss Monster Graphic Design Chief]
+Toshiaki Matsumoto
+
+[Boss Monster Graphic Design]
+Mika Anzai
+Mami Ikeuchi
+
+[Pet Monster Graphic Design Chief]
+Noriko Sasaki
+
+[Pet Monster Graphic Design]
+Konomi Ishizuka
+Takeshi Oda
+Makoto Takahashi
+Satoshi Matsuura
+Yutaka Watanabe
+
+[Map BG Graphic Design]
+Nobuhiro Imagawa
+Takashi Honjo
+Yukitomo Watanabe
+Kazuhito Takahashi
+Nobuko Hatayama
+Mayumi Kubota
+
+[World Map Graphic Design]
+Masahi Okutani
+
+[World Map Effect & Magic Effect]
+Shigeyuki Ohno
+
+[Menu Graphic Design & Icon Graphic Design]
+Takayuki Ohdachi
+
+[Summon Cards Illustration Design]
+Masayo Asano
+Sadako Nakamura
+
+[Comment]
+Ripped by Rufas Wan

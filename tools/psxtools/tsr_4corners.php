@@ -147,19 +147,21 @@ function deltaE_76_dist( &$rgb )
 function imgcorner( $rm, $fname )
 {
 	$dim = binbash('identify -format "%w,%h" "' .$fname. '"');
-	list($w,$h) = explode(',', $dim);
+	$d = explode(',', $dim);
+		$w = (int)$d[0];
+		$h = (int)$d[1];
 
 	printf("%4x x %4x = %s\n", $w, $h, $fname);
-	if ( $w == 0 || $h == 0 )
+	if ( $w < 16 || $h < 16 )
 		return;
 
-	$qw = 48;
-	$qh = 48;
+	$qw = $w >> 4;
+	$qh = $h >> 4;
 	$rgb = array(
-		mean_rgb($fname, $qw, $qh, $qw     , $qh),
-		mean_rgb($fname, $qw, $qh, $w-$qw*2, $qh),
-		mean_rgb($fname, $qw, $qh, $qw     , $h-$qh*2),
-		mean_rgb($fname, $qw, $qh, $w-$qw*2, $h-$qh*2),
+		mean_rgb($fname, $qw, $qh, 0     , 0     ), // top left
+		mean_rgb($fname, $qw, $qh, $w-$qw, 0     ), // top right
+		mean_rgb($fname, $qw, $qh, 0     , $h-$qh), // bottom left
+		mean_rgb($fname, $qw, $qh, $w-$qw, $h-$qh), // bottom right
 	);
 
 	//$d = euclidean_dist($rgb);

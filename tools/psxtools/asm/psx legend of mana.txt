@@ -1,0 +1,180 @@
+800cbb50-800ccbd8 = pf_w0.img/meta  [+1088]
+meta
+	8006be4c  lbu  v0,  1(a2)  a2 = bb54
+		t3 = v0 & 1
+		t2 = v0 >> 1
+		if ( t2 & 40 )
+			t2 -= 40
+
+	8006be70  lbu  v0,  4(t0)  t0 = bb50
+		if ( (a0 & 7f) < v0 )
+
+	8006be9c  lbu  v1,  0(a2)  a2 = bb5c
+	8006bea0  lbu  a0,  1(a2)  a2 = bb5c
+
+	8006bf20  lbu  v1,  0(a2)  a2 = bce5
+
+	8007f2b0  lbu  t0,  0(a1)  a1 = bf8d
+
+		a1++;
+		a3 = a1 + 8
+	8007f2c4  lbu  v1, -1(a3)  a3 = bf96,bf9f,bfa8
+		LOOP this
+
+	8007f3a0  lbu  v0,  0(a1)  a1 = bfa0
+
+	8007f3b4  lbu  v0, -7(a3)  a3 = bfa8
+	8007f3c8  lbu  v0, -6(a3)  a3 = bfa8
+	8007f3dc  lbu  v0, -5(a3)  a3 = bfa8
+	8007f3f0  lbu  v0, -4(a3)  a3 = bfa8
+	8007f404  lbu  v0, -3(a3)  a3 = bfa8
+	8007f418  lbu  v0, -2(a3)  a3 = bfa8
+	8007f42c  lbu  v0,  0(a3)  a3 = bfa8
+
+	80075c30  lbu  t1,  0(t1)  t1 = bf8d
+		t1++
+
+	LOOP
+		80075c5c  lbu  v1,  1(s5)  s5 = bf94
+			v0 = v1 & 20
+
+		if ( v0 === 0 )
+			80075d1c  lbu  s2, -2(s5)  s5 = bf94
+			80075d20  lb   s1, -5(s5)  s5 = bf94
+			80075d24  lbu  v1, -1(s5)  s5 = bf94
+
+			80075d44  lb   s0,  0(t1)  t1 = bf8e
+
+			8007d8b4  lbu  v0,  8(a3)  a3 = bf8e
+
+			80075da0  lbu  v0,  1(s5)  s5 = bf94
+				v0 = (v0 ^ (v1 >> 1)) & 40
+			80075dec  lbu  v0, -4(s5)  s5 = bf94
+			80075e1c  lbu  v0,  1(s5)  s5 = bf94
+				v0 &= 80
+			80075e64  lbu  v0, -3(s5)  s5 = bf94
+			80075e94  lbu  v0,  1(s5)  s5 = bf94
+				v0 &= 3
+			80075f78  lbu  v0,  1(s5)  s5 = bf94
+				v0 &= 3
+			80076238  lbu  v0,  1(s5)  s5 = bf94
+				v0 &= 3
+			80076274  lbu  v1,  0(s5)  s5 = bf94
+				v1 &= 3f
+			8007628c  lbu  v1,  0(s5)  s5 = bf94
+			LOOP 80075c5c
+
+		else
+			8007655c  lbu  v0,  1(s5)  s5 = bf9d
+
+			8007e210  lbu  v0,  0(a2)  a2 = bfa0
+			8007e224  lbu  v0,  1(a2)  a2 = bfa0
+			8007e238  lbu  v0,  2(a2)  a2 = bfa0
+			8007e24c  lbu  v0,  3(a2)  a2 = bfa0
+			8007e260  lbu  v0,  4(a2)  a2 = bfa0
+			8007e274  lbu  v0,  5(a2)  a2 = bfa0
+			8007e288  lbu  v0,  6(a2)  a2 = bfa0
+			8007e29c  lbu  v0,  8(a2)  a2 = bfa0
+
+			8007f63c  lbu  v0,  1(a2)  a2 = bf97
+			8007f650  lbu  v0,  0(a2)  a2 = bf97
+			8007f718  lbu  v0,  3(a2)  a2 = bf97
+			8007f72c  lbu  v0,  2(a2)  a2 = bf97
+			8007f7d0  lbu  v0,  5(a2)  a2 = bf97
+			8007f7e4  lbu  v0,  4(a2)  a2 = bf97
+			8007f8b0  lbu  v0,  8(a2)  a2 = bf97
+			8007f8c4  lbu  v0,  6(a2)  a2 = bf97
+			LOOP 80075c5c
+
+	LOOP 8006be4c
+
+sub_80074a34 / sectmeta()
+	sub_8006be20 // player
+	sub_8006c50c // npc / enemy
+		pos = 4
+		if [4+1] & 1
+			RAM &= 7fffffff
+		return RAM
+	if RAM == 0
+		end
+	if RAM > 0
+		sub_80077c6c / meta_11_b()
+		pos = e , -1=d  -2=c  -3=b  -4=a  -5=9  -6=8  -7=7  -8=6  -9=5  -a=4  -b=3  -c=2  -d=1
+
+		if [e-7] & 20
+			0 1  2 3  4 5  6 [7] 8  9 a  b c  d e  f 0
+			([e-b] << 8) | [e-c]
+			([e-d] << 8) | [0]
+			([e-6] << 8) | [e-8]
+			([e-9] << 8) | [e-a]
+			([e-2] << 8) | [e-3]
+			([e-4] << 8) | [e-5]
+			([e+2] << 8) | [e+1]
+			([e] << 8) | [e-1]
+			pos += 11
+		else
+			0 1  2 3 4 5 6 [7] 8  9 a
+			[e-a]
+			t0/dy = sign ([e-4] << 8) | [e-d]
+			s0/dx = sign ([e-5] << 8) | [0]
+			if [e-7] & 80
+			[e-c]
+			if [e-7] & 80
+			[e-b]
+			pos += b
+		fi
+	if RAM < 0
+		sub_80075940 / meta_9()
+			pos = 6 , -1=5  -2=4  -3=3  -4=2  -5=1
+
+			if [6+1] & 20
+				0 1 2 3 4 5 6 [7] 8
+				pos += 9
+			else
+				0 1 2 3 4 5 6 [7] 8
+				pos += 9
+			fi
+
+sub_8006c50c
+	a3 = metap + 4
+	flag = a3[1]
+		t2 = (flag >> 1)
+		if ( t2 & 40 )
+			t2 -= 40
+		keyblk = (flag & 1) + 1
+	if ( animcur < metap[4] )
+		animidp = (animcur << 1) + 2
+	else
+		animidp = metap + 6
+
+	v1 = animidp[0]
+	a0 = animidp[1]
+	animdatp = metap + ((a0 & 7f) << 8) + v1
+	animblk = (a0 >> 7) + 1
+
+	a1 = animdatp[0] // animcnt
+	animdatp += (animcur << animblk) + 1
+	v0 = animdatp[1]
+	if ( animblk == 2 )
+		a2[36] = animdatp[3]
+		a2[37] = animdatp[2]
+		a2[38] = ( animcur < animcnt ) ? animdatp[6] : 0
+	else
+		a2[36] = t2
+		a2[37] = 0
+		a2[38] = 0
+
+	a0 = metap[2]
+	v1 = metap[3]
+	keycur = animdatp[0]
+	keyidp = metap + (v1 << 8) + a0 + (keycur << 1) + 2
+	if ( keyblk == 0 )
+		v1 = keyidp[0]
+		v0 = keyidp[1]
+		keydatp = metap + (v0 << 8) + v1
+	else
+		v0 = keyidp[0]
+		v1 = keyidp[1]
+		keydatp = metap + (v1 << 8) + v0
+		keydatp &= 7fffffff
+

@@ -1,5 +1,5 @@
 [System]
-PC Steam
+PC game
 
 [Game]
 Mighty Gunvolt
@@ -17,11 +17,5 @@ Hatsumi
 Muransin
 TZG
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
--
+Ripped by Rufas Wan

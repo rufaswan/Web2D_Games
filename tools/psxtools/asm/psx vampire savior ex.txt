@@ -1,0 +1,150 @@
+TOC = RAM 801ca398-801cb398
+	801a0524  la    v1, 801ca398
+	801a052c  sll   a0, s0, 3
+	801a0530  addu  s0, a0, v1
+	801a0534  lw    a0, 0(s0)
+
+	reset
+		2
+	checking memory card
+		85c1  9d24  9dea
+	opening
+		9a63
+	title , menu
+		cb  143  1ba
+	char select
+		819c  228/mips overlay
+		824f  235/font
+		97cc  292/vab
+		97c9  291/pBAV
+		a00   35/stage ui
+		fd1   42/demitri
+		10df  44/demitri
+		2539  66/morrigan
+		2649  68/morrigan
+		5042  114/lilith
+		5273  117/lilith
+	quit -> arcade
+		696   22/stage bg
+		672   21/stage bg
+		97cc  292/vab
+		97c9  291/pBAV
+		a00   35/stage ui
+	quit
+
+	sp+20=ra  66=80162c70  68=80162320  35=80161ed8
+		22=80163458  21/801639e8
+
+//////////////////////////////
+
+char id set = 1p = 801c0f8a , 2p = 801c135e
+	a = SLPS_017.00 + 800
+	b = SLPS_017.00 + 61510
+
+	-   a      b
+	00  24 25  26 27 28 29  bulleta
+	01  2a 2b  2c 2d 2e 2f  demitri
+	02  30 31  32 33 34 35  gallon
+	03  36 37  38 39 3a 3b  victor
+	04  3c 3d  3e 3f 40 41  zabel
+	05  42 43  44 45 46 47  morrigan
+	06  48 49  4a 4b 4c 4d  anakaris
+	07  4e 4f  50 51 52 53  felicia
+	08  54 55  56 57 58 59  bishamon
+	09  5a 5b  5c 5d 5e 5f  aulbath
+	0a  60 61  62 63 64 65  sasquatch
+	0b  3c 3d  3e 3f 40 41  *dummy* zabel
+	0c  66 67  68 69 6a 6b  q-bee
+	0d  6c 6d  6e 6f 70 71  lei-lei
+	0e  72 73  74 75 76 77  lilith
+	0f  78 79  7a 7b 7c 7d  jedah
+
+	10  7e 7f  81 82 83 84  phobos
+	11  87 88  89 8a 8b 8c  pyron
+	12  8d 8e  8f 90 91 92  dark gallon (gallon + SELECT + 3P/3K)
+	13  93 94  96 97 98 99  donovan
+	14   -  -  26 27 28 29  *dummy* bulleta
+	15   -  -  26 27 28 29  *dummy* bulleta
+	16   -  -  26 27 28 29  *dummy* bulleta
+	17   -  -  26 27 28 29  *dummy* bulleta
+	18  9c 9d  9f a0 a1 a2  oboro bishamon (bishamon + SELECT + any)
+	19  9c 9d  9f a0 a1 a2  *dummy* oboro bishamon
+	1a   - 80        85 86
+	1b  ef f0        9a 9b
+
+stage = id * 2 + n
+	id = 0 1 2  3  4  5  6  7  8  9  a  b  c
+	+a = a c e 10 12 14 16 18 1a 1c 1e 20 22
+	+9 = 9 b d  f 11 13 15 17 19 1b 1d 1f 21
+	ui = 23
+
+//////////////////////////////
+
+68/morrigan
+cd loading area = 8003e000
+	00     3c
+	04  7aaf8
+	08  7a9f8
+	0c  7ce14
+	10  7cf70
+	14  7bb2c
+	18  7cf88
+	1c  7d058
+	20  7daec
+	24  7e5c0
+	28    144  RAM pointers
+	2c   4dcc  =22b  drawing coordinates
+	30   d540  =22b  sprite sets
+	34  1247c  =9b7  compressed GFX
+	38  799d8  pBAV
+
+RAM 8003e03c-8003e144  ???
+RAM 8003e144-80042dcc  ???
+
+RAM 80042dcc-8004b540  drawing coordinates
+	80165bb4  lh   v0, 0(t1)  t1 += 2
+	80165bd8  lhu  t4, 0(t1)
+	80165c6c  lbu  a0, 0(t1)  t1++
+	80165c78  lbu  v1, 0(t1)  t1++
+		t7 = a0 << 4
+		t9 = a0 & f0
+		t8 = (v1 << 4) & f0
+		v1 &= f0
+	80165d7c  lbu  v0, 0(t1)  t1++
+		int8(v0)
+	80165da8  lbu  v0, 0(t1)  t1++
+		int8(v0)
+
+RAM 8004b540-8005047c  sprite sets
+	80198a94  lw   a3, 0(v0) -> 10(s1)
+	80165a80  lh   v0, 0(s1)
+	8019867c  lw   a3, 0(v0) -> 10(s0)
+
+	80165aa8  lhu  v1, 0(s1)  (v1 << 2) & 3c
+	80165ac0  lhu  v0, 0(s1)  &= f0
+	80165ad4  lhu  v0, 0(s1)  (v0 >> 6) & 3c
+	80165ae8  lhu  v0, 0(s1)  (v0 >> 8) & f0
+		s1 += 2
+	80165afc  lhu  v0, 0(s1)  (v0 >> 8) & c0
+	80165b14  lhu  v0, 0(s1)  (v0 & 3fff) << 2
+	80165b2c  lw   a1, 0(v0)
+		s1 += 2
+
+RAM 8005047c-800b79d8  compressed GFX
+	80165b2c  lw   a1, 0(v0)
+	8019fa18  lbu  v0, 0(s2)
+		v1 = v0 & 70
+		s1 = v0 &  f
+		v0 &= 80
+	801a01c4  lbu  v0, 0(a0)
+	801a01c8  lbu  v1, 1(a0)
+	801a01cc  lbu  a1, 2(a0)
+	801a01e0  lbu  v1, 3(a0)
+		(v0 << 18) | (v1 << 10) | (a1 << 8) | v1
+	8019fc78  lbu  t4, 0(a1)
+		if t4 & 80
+			8019fc90  lbu  v0, 0(a1) -> 8001c000
+		else
+			8019fca8  lbu  v1, 0(a1)
+
+//////////////////////////////

@@ -1,0 +1,315 @@
+mai = /temp/pl10/pl14.dat
+p1 RAM 800ef7e0
+
+p1 meta.0 = RAM 800ef7f8-800feeec  keyframes
+	80085fd4  lhu  a0,  0(s5)
+		a0 <<= 2
+	80085ff0  lbu  v1, -8(s4)
+	80085ff4  lbu  v0, -7(s4)
+		v1 * v0
+	loop
+		80086024  lw   s0,  0(s3)
+			s0 & 3000 0000
+			s0 & cf00 0000
+			a0 = s0
+				a3 = a0 & ff00 0000
+				((a0 >> 10) & f) << 2
+				((a0 >>  c) & f) + 1
+				a0 &= f0
+				if ( (a3 & 0f00 0000) !== 0700 0000 )
+				a3 += fa00 0000
+
+	80083a7c  lwl  t2, 3(t1) -> 3(a3)
+	80083a80  lwr  t2, 0(t1) -> 0(a3)
+	80083a84  lwl  t3, 7(t1) -> 7(a3)
+	80083a88  lwr  t3, 4(t1) -> 4(a3)
+	80083a8c  lwl  t4, b(t1) -> b(a3)
+	80083a90  lwr  t4, 8(t1) -> 8(a3)
+
+	8008526c  lbu  a1, -8(s4)
+	80085270  lbu  a2, -7(s4)
+		(a1+1) * (a2+1)
+	800852a8  lhu  v0, -6(s4)  -v0 -> 0(s0)
+	800852b8  lbu  v0, -8(s4)
+		v0 + 1
+	loop
+		800852cc  lhu  v0, -4(s4)  -v0 -> 2(s0)
+		800852dc  lbu  v0, -7(s4)
+			v0 + 1
+		loop
+			8008531c  lbu  v0, -7(s4)
+				v0 + 1
+		80085344  lbu  v0, -8(s4)
+			v0 + 1
+	80085360  lbu  v0, -7(s4)
+	800853c4  lbu  v0, -8(s4)
+	loop
+		800853d8  lbu  v0, -7(s4)
+		loop
+			80085564  lbu  v0, -7(s4)
+		80085578  lbu  v0, -8(s4)
+	8008558c  lhu  v0, 0(s4)
+	8008631c  lhu  a0, 0(s4)
+	80086330  lbu  v1, -8(s3)
+	80086334  lbu  v0, -7(s3)
+		v0 * v1
+	loop
+		80086360  lw   v1, 0(s2)
+
+p1 meta.1 = RAM 800feeec-801589b4  gfx data
+	to RAM 800c77d8-800c7858
+	8001ea3c  lw  a3, 0(v1)
+	8001ea70  lw  a3, 0(v1)
+	8001ea94  lw  a3, 0(v1)
+
+p1 meta.2 = RAM 801589b4-8015b10c  hitbox
+	RAM 801589b4-80158a38  header
+		800acb94  lw  v0, 1c(a2) // 28
+		800acbac  lw  a3,  0(a1) // 6c
+		800acbbc  lw  v0,  0(v0) -> 1a4(a0)
+		800acbdc  lw  v0,  4(v0) -> 190(a0)
+		800acbfc  lw  v0,  8(v0) -> 1a0(a0)
+
+	RAM 80158a38-80158a50
+		80085bb8  lb  v0, 1(v0)
+
+	RAM 80158a50-80158c50
+		80095c44  lbu  a1, 3(v0)
+			a1 << 3
+		800aeedc  lbu  v0, 3(v1)
+			v0 << 3
+
+	RAM 80158c50-80158fac
+		80095c58  lwl  t2, 3(v0) -> 13(sp)
+		80095c5c  lwr  t2, 0(v0) -> 10(sp)
+		80095c60  lwl  t3, 7(v0) -> 17(sp)
+		80095c64  lwr  t3, 4(v0) -> 14(sp)
+
+		800aeef8  lwl  t1, 3(v0) -> 3(sp)
+		800aeefc  lwr  t1, 0(v0) -> 0(sp)
+		800aef00  lwl  t2, 7(v0) -> 7(sp)
+		800aef04  lwr  t2, 4(v0) -> 4(sp)
+
+	RAM 80158fac-801596d4  spmove
+		800ab2a8  lhu  a2, 0(t1)
+			8e(a0) - a2
+		800ab2f0  lhu  v1, 4(t1)
+		loop
+			80091d7c  lbu  v0, e(s4)
+			loop
+				80096040  lhu  a1, 0(a2)
+					8e(a0) - a1
+				80096090  lhu  v0, 4(a2)
+				800960b4  lhu  v1, 2(a2)
+					92(a0) + v1
+				800960e8  lhu  v1, 6(a2)
+			800940c4  lbu  v0, e(s2)
+				v0 &= 7f -> 1e5(s0)
+			800947c0  lbu  a1, 15(a1)
+				a1 & 1
+				a1 & 2
+			800943a8  lbu  v0,  a(s2) -> 1df(s0)
+			800943b8  lbu  v0, 1c(s2) -> 20a(s0)
+			800943c4  lbu  v0,  9(s2) -> 1d4(s0)
+			800943d0  lbu  a1, 19(s2) -> 4b2(s0)
+			8009466c  lbu  a1, 15(a1)
+				a1 & 1
+				a1 & 2
+			80093e4c  lb   a0,  c(s0)
+			800936e0  lb   v1, 13(s1)
+			80093718  lb   v0, 13(s1)
+			80093778  lb   v1,  d(s1)
+			80093900  lb   v1,  d(v1)
+			loop
+				80094900  lb   a2,  b(v0)
+				80095378  lb   v0, 13(v0)
+				80094a1c  lbu  v1,  8(s3)
+					(v1 & 7f) * 64
+				800952b0  lb   v0,  8(s2)
+				80093594  lb   a2, 10(v0)
+
+				80093370  lb   v0, 1b(s0)
+				800933e4  lb   v0, 14(s0)
+				800a237c  lb   v1, 13(a0)
+				800933fc  lb   a1,  f(s0)
+				800931b8  lbu  v0,  8(v0)
+					max(v0 & 7f, 1f) << 2
+				80092378  lb   v1, 13(a1)
+				800923fc  lb   v1, 13(a1)
+
+	RAM 801596d4-8015ac6e  throw
+		800abd48  lw   a0, 0(v0)
+		800abd64  lh   a1, 0(a0)
+		800abdb0  lbu  v1, 4(a0)
+		800abdc0  lb   v0, 7(a0)
+			v0 << 8 -> 304(a2) , f0(a2)
+		800abdd4  lb   v0, 5(a0)
+		800abdf0  lbu  a1, 6(a0)
+
+	RAM 8015ac6e-8015af8e
+		no break
+
+	RAM 8015af8e-8015afa8
+		no break
+
+	RAM 8015afa8-8015b10c
+		no break
+
+p1 meta.3 = RAM 8015b10c-80161e18  animation
+	RAM 8015b10c-8015b494  header
+		800ed5a0  lw  v1, c(a0)
+
+		8008689c  lw  a0, 0(v1)
+		800868b0  lw  v0, 0(v0)
+		800868c0  lw  s0, 0(s2)
+		800868f0  lw  v0, 0(s2)
+
+	RAM 8015b494-801606b8  data
+		80085bf8  lbu  v0,  1(v0)
+			v0 & 40
+		800aef84  lbu  v0,  9(v0)
+		80091ca0  lbu  v0,  9(v0)
+			v0 << 5
+		80091d58  lbu  v0,  9(v0)
+		80092074  lbu  v1,  8(v0)
+		80091d40  lbu  v1,  d(v0)
+		800920dc  lbu  v0,  9(v0) -> 14(sp)
+		800ed5a4  lbu  v0, 12(v0)
+		80084ffc  lw   v1,  4(v0)
+		800862f0  lh   v1,  4(v0)
+			v1 * c
+
+		80085c6c  lbu  v0, 1(a1)
+			v0 & 40
+		80086b4c  lbu  v1, 8(a1)
+			v1 << 3
+		80086b60  lbu  v1, a(a0)
+			v1 << 2
+		80086b74  lbu  v0, 2(a0) -> 121(a2)
+		80086b80  lbu  v0, 3(v1) -> 120(a2)
+		80086b8c  lbu  v0, 0(v1) -> 122(a2)
+		80086b98  lbu  v0, 1(v1) -> 123(a2)
+		80086ba4  lhu  v0, 4(v1) -> 124(a2)
+		80086bb0  lbu  v0, e(v1) -> 126(a2)
+		80085f60  lw   v1, 4(v0)
+		80085fac  lh   v1, 4(v0)
+			v1 * c
+
+	RAM 801606b8-80161644  special move
+		800869d8  lw   v0, 0(a2)
+		800869ec  lbu  v0, 2(v0) -> 121(s0)
+		800869fc  lbu  v0, 3(v1) -> 120(s0)
+		80086a08  lbu  v0, 0(v1) -> 122(s0)
+		80086a14  lbu  v0, 1(v1) -> 123(s0)
+		80086a20  lhu  v0, 4(v1) -> 124(s0)
+		80086a2c  lbu  v1, 8(v1)
+			v1 << 3
+		80086a40  lh   v1, 6(a0)
+
+		loop
+			loop
+				80095af4  lbu  v0, 9(v0)
+				80085920  lbu  v0, 1(v0)
+					v0 & 40
+			80085988  lbu  v0, 1(v1)
+			800859d4  lbu  v0, 2(v1) -> 121(s0)
+			800859e0  lbu  v0, 3(v1) -> 120(s0)
+			800859ec  lbu  v0, 0(v1) -> 122(s0)
+			800859f8  lbu  v0, 1(v1) -> 123(s0)
+			80085a04  lbu  v0, 4(v1) -> 124(s0)
+			80085a10  lbu  v0, 8(v1)
+				v1 << 3
+			80085a2c  lh   v1, 6(a0)
+
+	RAM 80161644-80161e18
+		no break
+
+p1 meta.4 = RAM 80161e18-801626cc
+	no break
+
+p1 meta.5 = RAM 801626cc-80162a8c  spmove
+	8002ff6c  lbu  v0, 1(v0)
+	800176e8  lbu  v0, 3(s1)
+		v0 & 8
+	800176fc  lbu  a0, 4(s1)
+		a0 & 1f
+	8001774c  lbu  v0, 3(s1)
+	80017750  lbu  a0, 4(s1)
+	80017754  lbu  a2, 2(s1)
+		(v0 >> 4) + 3c
+		a0 & 1f
+	8001776c  lbu  v1, 7(s1)
+	8001778c  lbu  v1, 4(s1)
+	80017790  lbu  v0, 3(s1)
+		v1 & 1f
+	800177a0  lbu  a0, 4(s1)
+		a0 & 20
+		a0 & 1f
+
+p2 meta.0 = RAM 8017a638
+p2 meta.1
+p2 meta.2
+p2 meta.3
+p2 meta.4
+p2 meta.5
+//////////////////////////////
+p1 data = RAM 8006d220-8006e1e0 (+fc0)
+p2 data = RAM 8006e1e0-8006f1a0 (+fc0)
+
+	06  // 0=idle  2=walk  3=jump  5=attack  7=spmove  9=dash
+	07
+
+	28
+	2a  // pos x
+	2c
+	2e  // pos y
+
+	80015948  lbu  a1, 116(a2)
+
+	120  // anim + 3
+		800ac970  lb   v0, 120(s0)
+	121  // anim + 2  move x + x updated
+		800ac9f0  lbu  v1, 121(a0)
+	122  // anim + 0  time
+		80085c0c  lbu  v0, 122(s0)
+			v0--
+			-> 122(s0)
+	123  // anim + 1  flag
+		80085c2c  lb   v0, 123(s0)
+			v0 & 80
+		80085ce4  lbu  v0, 123(s0)
+			v0 & 80
+			else
+				if [s0+14+1] & 40
+	124  // anim + 4  key id
+	126  // anim + e
+
+	128  // ptr anim data/14
+	12c  // anim id
+		80086894  sw  s2, 12c(s1)
+
+	3fc
+		8001593c  lhu  v0, 3fc(a2)
+		80015990  sh   v0, 3fc(a2)
+		80015994  sh   v1, 3fc(a2)
+	8001594c  sh   v0, 3fe(a2)
+	80015940  lhu  v1, 400(a2)
+	80015950  sh   v1, 402(a2)
+
+	416
+		8001595c  lhu  v1, 416(a2)
+		80015ec8  sh   a1, 416(s0)
+	80015ecc  sh   t3, 418(s0)
+	41a
+		80015998  lhu  v1, 41a(a2)
+		80015ed4  sh   a2, 41a(s0)
+	80015ed0  sh   v0, 41c(s0)
+	80015ed8  sh   a3, 41e(s0)
+	80015ef8  sh   a1, 420(s0)
+	422
+		80015944  lhu  a0, 422(a2)
+		80015efc  sh   a2, 422(s0)
+
+	80015958  sh   a0, 434(a2)
+
+//////////////////////////////

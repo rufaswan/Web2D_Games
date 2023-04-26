@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation 3
+PlayStation 3
 
 [Game]
 Odin Sphere Leifthsar
@@ -25,11 +25,6 @@ Haruka Kawamura
 Yoshio Nishimura
 Daichi Yamashita
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project

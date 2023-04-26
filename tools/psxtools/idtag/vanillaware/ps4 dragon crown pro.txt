@@ -1,5 +1,5 @@
 [System]
-Sony PlayStation 4
+PlayStation 4
 
 [Game]
 Dragon's Crown Pro
@@ -26,11 +26,6 @@ Yukitsuna Maeda
 Daichi Yamashita
 Ryo Kobayashi
 
-[Ripped by]
-Rufas Wan
-
-[Tagged by]
--
-
 [Comment]
+Ripped by Rufas Wan
 Vanillaware Ripping Project
