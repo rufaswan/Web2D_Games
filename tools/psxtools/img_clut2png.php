@@ -73,6 +73,12 @@ function clut2png( &$file, $fname )
 		$plte .= $file[$p+0] . $file[$p+1] . $file[$p+2];
 		$trns .= $file[$p+3];
 	}
+	if ( $cc > 0x100 )
+	{
+		php_notice('PLTE over 0x100 colors , TRIMMED');
+		$plte = substr($plte, 0, 0x300);
+		$trns = substr($trns, 0, 0x100);
+	}
 	$trns = rtrim($trns, BYTE);
 
 	$idat = substr($file, 0x10 + $cc*4, $w*$h);

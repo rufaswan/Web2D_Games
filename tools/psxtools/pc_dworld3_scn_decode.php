@@ -65,7 +65,6 @@ function dwn_decode( &$file )
 		if ( $flg )
 		{
 			$b1 = getbit($file, $pos, $bycod, 8);
-			trace("1 COPY %2x\n", $b1);
 
 			$b1 = chr($b1);
 			$dict[$dpos] = $b1;
@@ -81,7 +80,6 @@ function dwn_decode( &$file )
 
 			$b1 = ($b1 - 1) & 0xfff;
 			$b2 += 2;
-			trace("0 REF  POS -%x LEN %x\n", $b1, $b2);
 
 			for ( $i=0; $i < $b2; $i++ )
 			{

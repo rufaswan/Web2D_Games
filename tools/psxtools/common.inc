@@ -129,6 +129,9 @@ if ( PHP_VERSION_ID < 50600 )
 function str2int( &$str, $pos, $byte, $sign=false )
 {
 	php_req_bytes($byte);
+	if ( ! isset($str[$pos+$byte-1]) )
+		return php_error('[%x] substr %x > strlen %x', $pos, $byte, strlen($str));
+
 	$sub = substr($str, $pos, $byte);
 	$int = ordint($sub);
 	if ( $sign )
@@ -206,6 +209,20 @@ function sint16( $s )  { return sint_bit($s, 16); }
 function sint24( $s )  { return sint_bit($s, 24); }
 function sint32( $s )  { return sint_bit($s, 32); }
 
+function is_hexstr( $str )
+{
+	if ( "$str" !== $str )
+		return false;
+	$m = '0123456789abcdefABCDEF';
+	$l = strlen($str);
+	for ( $i=0; $i < $l; $i++ )
+	{
+		if ( strpos($m, $str[$i]) === false )
+			return false;
+	}
+	return hexdec($str);
+}
+
 function neghex( $int )
 {
 	if ( $int < 0 )
@@ -216,9 +233,16 @@ function neghex( $int )
 
 function str_update( &$file, $pos, $str )
 {
+	if ( "$str" !== $str )
+		return;
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
-		$file[$pos+$i] = $str[$i];
+	{
+		if ( ! isset($file[$pos]) )
+			return php_error('file[%x] not init', $pos);
+		$file[$pos] = $str[$i];
+			$pos++;
+	}
 	return;
 }
 
@@ -607,6 +631,73 @@ function save_clutfile( $fname, &$data )
 	return;
 }
 
+function load_patchfile( $game_id )
+{
+	$patch_dir = __DIR__ . '/patch';
+	$fname = '';
+	foreach ( scandir($patch_dir) as $f )
+	{
+		if ( $f[0] === '.' )
+			continue;
+		if ( stripos($f, $game_id) !== false )
+		{
+			$fname = $patch_dir . '/' . $f;
+			goto loadpatch;
+		}
+	} // foreach ( scandir($patch_dir) as $f )
+
+	return php_error('load_patchfile( %s ) not found', $game_id);
+
+loadpatch:
+	//trace("load_patchfile( %s )\n", $fname);
+	$file = file_get_contents($fname);
+	while (1)
+	{
+		$p1 = strpos($file, '/*');
+		if ( $p1 === false )
+			break;
+		$p2 = strpos($file, '*/', $p1);
+		if ( $p2 === false )
+			$p2 = strlen($file);
+		else
+			$p2 += 2;
+		$s = substr($file, $p1, $p2-$p1);
+		$file = str_replace($s, '', $file);
+	} // while(1)
+
+	$file = str_replace("\r", "\n", $file);
+
+	$data = array();
+	$sect = '';
+	foreach ( explode("\n", $file) as $line )
+	{
+		$line = trim($line);
+		if ( empty($line) )
+			continue;
+		if ( $line[0] === '#' ) // one line comments
+			continue;
+
+		if ( $line[0] === '[' ) // section header
+		{
+			$sect = trim($line, '][');
+			continue;
+		}
+
+		$val = preg_split('|[\s]+|', $line);
+		$key = array_shift($val);
+
+		foreach ( $val as $vk => $vv )
+		{
+			$vvh = is_hexstr($vv);
+			if ( $vvh !== false )
+				$val[$vk] = $vvh;
+		}
+
+		$data[$sect][$key] = $val;
+	} // foreach ( explode("\n", $file) as $line )
+	return $data;
+}
+
 function imgfile_size( $fname )
 {
 	$ext = substr($fname, strrpos($fname, '.')+1);
@@ -661,6 +752,7 @@ function center_clutfile( &$data, $x1, $y1 )
 	for ( $y=0; $y < $data['h']; $y++ )
 	{
 		$sub = substr($data['pix'], $y*$row, $row);
+
 		$dyy = ($y1 + $hh) + $y;
 		$dxx = ($dyy * $nw) + ($x1 + $hw);
 		str_update($npix, $dxx*$by, $sub);
@@ -793,7 +885,7 @@ function webpal16()
 	return $pal;
 }
 
-function rgb555( $str, $solid=true )
+function rgb555( $str )
 {
 	// 15-bit ABGR
 	// RGB = c6         52         52
@@ -808,62 +900,41 @@ function rgb555( $str, $solid=true )
 	$g = ($pal >> 2) & 0xf8; // <<  6 >> 8 == >> 2
 	$r = ($pal << 3) & 0xf8; // << 11 >> 8 == << 3
 
-	// STP = semi-transparent FLAG
-	//   STP  RGB
-	//   0    0    transparent
-	//   0    any  opaque
-	//   1    any  semi-transparent
-	if ( $solid )
-		$a = BIT8;
-	else
-	{
-		$stp = ($pal & 0x8000);
-		if ( $stp )
-			$a = BIT8 >> 1;
-		else
-			$a = ( $pal === 0 ) ? 0 : BIT8;
-	}
-
-	// Semi-Transparent Rates
-	// (FG.rgb *  0.5 ) + (BG.rgb * 0.5)  average
-	// (FG.rgb *  1   ) + (BG.rgb * 1  )  add
-	// (FG.rgb * -1   ) + (BG.rgb * 1  )  subtract
-	// (FG.rgb *  0.25) + (BG.rgb * 1  )  partial add
-	$str = chr($r) . chr($g) . chr($b) . chr($a);
+	$str = chr($r) . chr($g) . chr($b) . BYTE;
 	return $str;
 }
 
-function pal555( $str, $solid=true )
+function pal555( $str )
 {
 	$clut = '';
 	$siz = strlen($str);
 	for ( $i=0; $i < $siz; $i += 2 )
-		$clut .= rgb555($str[$i+0] . $str[$i+1], $solid);
+		$clut .= rgb555($str[$i+0] . $str[$i+1]);
 	return $clut;
 }
 
-function is_blank( &$pix )
+function is_blank( &$rgba )
 {
 	// TOFIX : GVA 0022.17
 	//         frame 0,3,4 are shadow sprite , have only alpha and black pixels
-	$len = strlen($pix);
+	$len = strlen($rgba);
 	for ( $i=0; $i < $len; $i += 4 )
 	{
-		if ( $pix[$i+0] !== ZERO )  return false;
-		if ( $pix[$i+1] !== ZERO )  return false;
-		if ( $pix[$i+2] !== ZERO )  return false;
-		if ( $pix[$i+3] !== ZERO && $pix[$i+3] !== BYTE )
+		if ( $rgba[$i+0] !== ZERO )  return false;
+		if ( $rgba[$i+1] !== ZERO )  return false;
+		if ( $rgba[$i+2] !== ZERO )  return false;
+		if ( $rgba[$i+3] !== ZERO && $rgba[$i+3] !== BYTE )
 			return false;
 	}
 	return true;
 }
 
-function is_gray( &$pix )
+function is_gray( &$rgba )
 {
-	$len = strlen($pix);
+	$len = strlen($rgba);
 	for ( $i=0; $i < $len; $i += 4 )
 	{
-		if ( $pix[$i+0] != $pix[$i+1] || $pix[$i+0] != $pix[$i+2] )
+		if ( $rgba[$i+0] !== $rgba[$i+1] || $rgba[$i+0] !== $rgba[$i+2] )
 			return false;
 	}
 	return true;
@@ -871,18 +942,18 @@ function is_gray( &$pix )
 
 function grayclut( $cc )
 {
-	$grad = gradient($cc, PIX_BLACK, PIX_WHITE);
-	return implode('', $grad);
+	return gradient_clut($cc, PIX_BLACK, PIX_WHITE);
 }
 
-function gradient( $cc, $src, $dst )
+function gradient_clut( $cc, $src, $dst )
 {
 	if ( $cc <= 1 )
-		return php_error('gradient() cc [%d]', $cc);
+		return php_error('gradient_clut() cc [%d]', $cc);
 	$r1 = ord( $src[0] );
 	$g1 = ord( $src[1] );
 	$b1 = ord( $src[2] );
 	$a1 = ord( $src[3] );
+
 	$r2 = ord( $dst[0] );
 	$g2 = ord( $dst[1] );
 	$b2 = ord( $dst[2] );
@@ -893,10 +964,10 @@ function gradient( $cc, $src, $dst )
 	$sb = ($b2 - $b1) / ($cc - 1);
 	$sa = ($a2 - $a1) / ($cc - 1);
 
-	$clut = array();
+	$clut = '';
 	for ( $i=0; $i < $cc; $i++ )
 	{
-		$clut[] = chr($r1) . chr($g1) . chr($b1) . chr($a1);
+		$clut .= chr($r1) . chr($g1) . chr($b1) . chr($a1);
 		$r1 = int_clamp($r1 + $sr, 0, BIT8);
 		$g1 = int_clamp($g1 + $sg, 0, BIT8);
 		$b1 = int_clamp($b1 + $sb, 0, BIT8);
@@ -938,18 +1009,6 @@ function rippix_errs( $sx, $sy, $w, $h, $sw, $sh )
 		return true;
 	}
 	return false;
-}
-
-function rippix4( &$pix, $sx, $sy, $w, $h, $sw, $sh )
-{
-	if ( defined('DRY_RUN') )
-		return '';
-	$sx >>= 1;
-	$w  >>= 1;
-	$sw >>= 1;
-	$rip = rippix8($pix, $sx, $sy, $w, $h, $sw, $sh);
-	bpp4to8($rip);
-	return $rip;
 }
 
 function rippix8( &$pix, $sx, $sy, $w, $h, $sw, $sh )
@@ -1089,105 +1148,18 @@ function copypix_fast( &$pix, $byte=1 )
 	return;
 }
 
-function savepix( $fn, &$pix, $trim=false, $clut=true )
+function savepix( $fn, &$pix )
 {
 	if ( defined('DRY_RUN') )
 		return;
 
 	if ( is_blank( $pix['rgba']['pix'] ) )
 		return php_warning('%s [pix] blank', $fn);
-	if ( ! $clut )
-		goto rgba;
 
-	$clpal = array();
-	$clpix = '';
-	$pos = 0;
-	for ( $y=0; $y < $pix['rgba']['h']; $y++ )
-	{
-		for ( $x=0; $x < $pix['rgba']['w']; $x++ )
-		{
-			$c1 = substr($pix['rgba']['pix'], $pos, 4);
-				$pos += 4;
-
-			if ( array_search($c1, $clpal) === false )
-				$clpal[] = $c1;
-			$c2 = array_search($c1, $clpal);
-			if ( count($clpal) > 0x100 )
-				goto rgba;
-
-			$clpix .= chr($c2);
-		} // for ( $x=0; $x < $pix['rgba']['w']; $x++ )
-	} // for ( $y=0; $y < $pix['rgba']['h']; $y++ )
-
-clut:
-	$pix['rgba']['cc']  = count($clpal);
-	$pix['rgba']['pal'] = implode('', $clpal);
-	$pix['rgba']['pix'] = $clpix;
-	trace("savepix() CLUT [%x]  %d x %d = %s\n", $pix['rgba']['cc'], $pix['rgba']['w'], $pix['rgba']['h'], $fn);
-	return save_clutfile("$fn.clut", $pix['rgba']);
-
-rgba:
 	trace("savepix() RGBA  %d x %d = %s\n", $pix['rgba']['w'], $pix['rgba']['h'], $fn);
 	return save_clutfile("$fn.rgba", $pix['rgba']);
 }
 //////////////////////////////
-function psx_patch( $dir, $pfx )
-{
-	foreach( file("$dir/system.cnf") as $sys )
-	{
-		if ( stripos($sys, 'boot') === false )
-			continue;
-		preg_match('|[a-z]{4}_[0-9]{3}\.[0-9]{2}|i', $sys, $m);
-		if ( $m[0] === '' )
-			return array();
-		return patchfile("{$pfx}_{$m[0]}.txt");
-	} // foreach( file("$dir/system.cnf") as $sys )
-	return array();
-}
-
-function psx_exe( &$psxram, $psxexe )
-{
-	if ( empty($psxram) )
-		return '';
-
-	$bin = load_file($psxexe);
-	if ( empty($bin) || substr($bin, 0, 8) != 'PS-X EXE' )
-		return;
-	$off1 = str2int($bin, 0x10, 3); // mips start()
-	$off2 = str2int($bin, 0x18, 3); // mips ram
-	$off3 = str2int($bin, 0x1c, 3); // mips size
-	$off4 = str2int($bin, 0x30, 3); // init stack
-
-	// Tokimemo 2 EVS series has garbage data at the end
-	$bin = substr($bin, 0x800, $off3);
-	str_update($psxram, $off2, $bin);
-	return;
-}
-
-function psxpal( $pal, $cfactor, $afactor=1 )
-{
-	// for psx blending = FG.rgb * 0.25 + BG.rgb
-	$len = strlen($pal);
-	for ( $i=0; $i < $len; $i += 4 )
-	{
-		$r = ord( $pal[$i+0] );
-		$g = ord( $pal[$i+1] );
-		$b = ord( $pal[$i+2] );
-		$a = ord( $pal[$i+3] );
-
-		$r = int_clamp($r * $cfactor, 0 , 255);
-		$g = int_clamp($g * $cfactor, 0 , 255);
-		$b = int_clamp($b * $cfactor, 0 , 255);
-		$a = int_clamp($a * $afactor, 0 , 255);
-
-		$pal[$i+0] = chr($r);
-		$pal[$i+1] = chr($g);
-		$pal[$i+2] = chr($b);
-		$pal[$i+3] = chr($a);
-	} // for ( $i=0; $i < $len; $i += 4 )
-	return $pal;
-}
-
 function psxtim( &$file, $pos=0, $check=true )
 {
 	$bak = $pos;
@@ -1319,54 +1291,17 @@ function psxtim( &$file, $pos=0, $check=true )
 	return $tim;
 }
 //////////////////////////////
-function load_sect( &$file, $sect )
+function array_nextid( &$array )
 {
-	// sect = array(
-	//   array( 'p' => 0 , 'k' => 0, 'o' => 0, 'd' => '' ),
-	// );
-	// p = position
-	// k = block
-	// o = offset
-	// d = data
-	$offs = array();
-	foreach ( $sect as $v )
+	if ( ! is_array($array) )
+		return -1;
+	$id = 0;
+	foreach ( $array as $k => $v )
 	{
-		if ( ! isset($v['o']) )
-			continue;
-		$offs[] = $v['o'];
-	} // foreach ( $sect as $v )
-	sort($offs);
-
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset( $v['o'] ) )
-			continue;
-		if ( ! isset( $v['k'] ) )
-			continue;
-		$id = array_search($v['o'], $offs);
-		$sz = int_ceil($offs[$id+1] - $v['o'], -$v['k']);
-		if ( $sz === 0 )
-			continue;
-
-		$dat = substr($file, $v['o'], $sz);
-		$sect[$k]['d'] = $dat;
-	} // foreach ( $sect as $k => $v )
-
-	$file = $sect;
-	return;
-}
-
-function save_sect( &$sect, $pfx )
-{
-	foreach ( $sect as $k => $v )
-	{
-		if ( ! isset($v['d']) || $v['k'] < 1 )
-			continue;
-		$fn  = sprintf('%s/%04d.txt', $pfx, $k);
-		$buf = debug_block( $v['d'], $v['k'] );
-		save_file($fn, $buf);
-	} // foreach ( $sect as $k => $v )
-	return;
+		if ( $id <= (int)$k )
+			$id = (int)$k + 1;
+	}
+	return $id;
 }
 
 function arrayint( &$array )
@@ -1381,40 +1316,6 @@ function arrayhex( &$array )
 	foreach ( $array as $k => $v )
 		$array[$k] = hexdec($v);
 	return;
-}
-
-function patchfile( $fname, $val_callback='' )
-{
-	$fn = __DIR__ . "/patch/$fname";
-	if ( ! file_exists($fn) )
-		return array();
-
-	$data = array();
-	$sect = '';
-	foreach ( file($fn) as $v )
-	{
-		$v = preg_replace('|[\s]+|', '', $v);
-		if ( empty($v) )
-			continue;
-		if ( $v[0] === '#' ) // comments
-			continue;
-		if ( $v[0] === '[' ) // section header
-		{
-			$sect = trim($v, '[]');
-			continue;
-		}
-
-		list($vk,$vv) = explode('=', $v);
-		if ( strpos($vv, ',') !== false )
-		{
-			$vv = explode(',', $vv);
-			if ( function_exists($val_callback) )
-				$val_callback($vv);
-		}
-		$data[$sect][$vk] = $vv;
-	} // foreach ( file($fn) as $v )
-
-	return $data;
 }
 
 function req_file( $fname )

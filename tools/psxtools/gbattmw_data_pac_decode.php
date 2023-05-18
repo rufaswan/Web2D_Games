@@ -49,7 +49,7 @@ function getbits( &$bits, &$file, &$pos, $bmax )
 function batmas_decode( &$file )
 {
 	$dec = '';
-	trace("== begin sub_8006f8b4\n");
+	trace("== begin sub_8006f8b4()\n");
 
 	$b24 = str2int($file, 0x24, 3); // 2dc(gp)
 	$b28 = str2int($file, 0x28, 2); // 8(v0) , v0 = 94(gp)
@@ -90,7 +90,7 @@ function batmas_decode( &$file )
 		}
 	} // while ( $size > 0 )
 
-	trace("== end sub_8006f8b4\n");
+	trace("== end sub_8006f8b4()\n");
 	$file = $dec;
 	return;
 }

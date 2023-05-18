@@ -21,8 +21,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
-// cache 80 MB
-define('WRITE_S', 80 << 20);
+// php.ini memory_limit = 128M
+define('WRITE_S', 0x80 << 20);
 
 function expiso( $fp, $fname, $bksz, $bkhd, $skip )
 {

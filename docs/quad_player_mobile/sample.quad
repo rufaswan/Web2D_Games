@@ -1,0 +1,115 @@
+{
+  "tag"       : {
+    "Author"  : "Rufas Wan" ,
+    "Comment" : "quad sample"
+  } ,
+  "keyframe"  : [
+    {
+      "name"  : "keyframe #0" ,
+      "layer" : [
+        {
+          "debug"    : "layer #0" ,
+          "dstquad"  : [ -100 , -250 , 150 , -200 , 200 , 150 , -250 , 100 ] ,
+          "fogquad"  : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#ffffffff" ] ,
+          "blend_id" : 0
+        }
+      ]
+    }
+  ] ,
+  "animation" : [
+    {
+      "name"     : "animation #0" ,
+      "timeline" : [
+        {
+          "debug" : "center" ,
+          "time"  : 30 ,
+          "mix"   : 1
+        } ,
+        {
+          "debug"  : "left" ,
+          "time"   : 30 ,
+          "mix"    : 1 ,
+          "matrix" : [ 1 , 0 , 0 , 0 , 0 , 1 , 0 , -200 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach" : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          }
+        } ,
+        {
+          "debug"  : "top" ,
+          "time"   : 30 ,
+          "mix"    : 1 ,
+          "matrix" : [ -1 , 0 , 0 , -200 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach" : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          }
+        } ,
+        {
+          "debug"  : "right" ,
+          "time"   : 30 ,
+          "mix"    : 1 ,
+          "matrix" : [ -1 , 0 , 0 , 0 , 0 , -1 , 0 , 200 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach" : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          }
+        } ,
+        {
+          "debug"  : "bottom" ,
+          "time"   : 30 ,
+          "mix"    : 1 ,
+          "matrix" : [ 1 , 0 , 0 , 200 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach" : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          }
+        }
+      ] ,
+      "loop_id"  : 1
+    } ,
+    {
+      "name"     : "animation #1" ,
+      "timeline" : [
+        {
+          "debug"  : "center" ,
+          "time"   : 60 ,
+          "matrix" : [ 0.5 , 0 , 0 , 0 , 0 , 0.5 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach" : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          }
+        }
+      ]
+    }
+  ] ,
+  "skeleton"  : [
+    {
+      "name" : "skeleton #0" ,
+      "bone" : [
+        {
+          "name"   : "bone #0" ,
+          "attach" : {
+            "type" : "animation" ,
+            "id"   : 0
+          } ,
+          "order"  : 1
+        } ,
+        {
+          "name"   : "bone #1" ,
+          "attach" : {
+            "type" : "animation" ,
+            "id"   : 1
+          } ,
+          "order"  : 0
+        }
+      ]
+    }
+  ] ,
+  "blend"     : [
+    {
+      "name" : "none" ,
+      "mode" : [ "FUNC_ADD" , "ONE" , "ONE" ]
+    }
+  ]
+}

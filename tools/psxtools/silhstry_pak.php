@@ -24,7 +24,7 @@ require 'common.inc';
 
 function silhstry_decode( &$file )
 {
-	trace("== begin sub_8002b5b4\n");
+	trace("== begin sub_8002b5b4()\n");
 	$dec = '';
 	$st = 0;
 	$ed = strlen($file);
@@ -39,6 +39,7 @@ function silhstry_decode( &$file )
 			$bycod = ord($file[$st]);
 				$st++;
 			$bylen = 8;
+			continue;
 		}
 
 		$flg = $bycod & 0x80;
@@ -67,7 +68,7 @@ function silhstry_decode( &$file )
 		}
 	} // while ( $st < $ed )
 
-	trace("== end sub_8002b5b4\n");
+	trace("== end sub_8002b5b4()\n");
 	$file = $dec;
 	return;
 }

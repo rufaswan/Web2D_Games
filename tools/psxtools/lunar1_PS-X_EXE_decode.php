@@ -24,12 +24,11 @@ require 'common.inc';
 
 function dec_getflag( &$file, &$st, &$bycod, &$bylen )
 {
-	if ( $bylen == 0 )
+	if ( $bylen === 0 )
 	{
 		$bycod = ord( $file[$st] );
 			$st++;
 		$bylen = 8;
-		trace("BYTECODE %2x\n", $bycod);
 	}
 
 	$flg = $bycod & 1;
@@ -40,27 +39,26 @@ function dec_getflag( &$file, &$st, &$bycod, &$bylen )
 
 function lunar1_decode( &$file, $st )
 {
-	echo "== begin sub_801000c4\n";
 	$dec = '';
+	echo "== begin sub_801000c4()\n";
 	$bycod = 0;
 	$bylen = 0;
 
 	$ed = strlen($file);
 	while ( $st < $ed )
 	{
-		trace("%6x  %6x  ", $st, strlen($dec));
-
 		if ( dec_getflag($file, $st, $bycod, $bylen) )
 		{
+			// 1
 			$b = $file[$st];
 				$st++;
-			trace("COPY %2x\n", ord($b));
 			$dec .= $b;
 		}
 		else
 		{
 			if ( dec_getflag($file, $st, $bycod, $bylen) )
 			{
+				// 01
 				$b = ord( $file[$st] );
 					$st++;
 
@@ -68,7 +66,6 @@ function lunar1_decode( &$file, $st )
 				// ll pppppp
 				$dpos = ($b & 0x3f) - 0x40;
 				$dlen = ($b >> 6) + 2;
-				trace("REF  POS %d  LEN %d\n", $dpos, $dlen);
 
 				for ( $i=0; $i < $dlen; $i++ )
 				{
@@ -78,6 +75,7 @@ function lunar1_decode( &$file, $st )
 			}
 			else
 			{
+				// 00
 				$b1 = ord( $file[$st+0] );
 				$b2 = ord( $file[$st+1] );
 					$st += 2;
@@ -91,11 +89,10 @@ function lunar1_decode( &$file, $st )
 				{
 					$dlen = ord( $file[$st] );
 						$st++;
-					if ( $dlen == 0 )
-						goto end;
+					if ( $dlen === 0 )
+						goto done;
 				}
 				$dlen += 2;
-				trace("REF  POS %d  LEN %d\n", $dpos, $dlen);
 
 				for ( $i=0; $i < $dlen; $i++ )
 				{
@@ -105,9 +102,8 @@ function lunar1_decode( &$file, $st )
 			}
 		}
 	} // while ( $st < $ed )
-
-end:
-	echo "== end sub_801000c4\n";
+done:
+	echo "== end sub_801000c4()\n";
 	$file = $dec;
 	return;
 }

@@ -106,6 +106,7 @@ function xeno( $fname )
 			case '/slps_011.61': // JP Disc 2
 			case '/slus_006.64': // US Disc 1
 			case '/slus_006.69': // US Disc 2
+			case '/omega___.__': // JP/chinese hack by Agemo, bluerabit, focus, wooddoo
 				$ez = array(3,7);
 				break;
 		} // switch ( $f['file'] )

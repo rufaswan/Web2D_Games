@@ -152,11 +152,11 @@ function imgcorner( $rm, $fname )
 		$h = (int)$d[1];
 
 	printf("%4x x %4x = %s\n", $w, $h, $fname);
-	if ( $w < 16 || $h < 16 )
+	$qw = $w >> 8;
+	$qh = $h >> 8;
+	if ( $qw < 1 || $qh < 1 )
 		return;
 
-	$qw = $w >> 4;
-	$qh = $h >> 4;
 	$rgb = array(
 		mean_rgb($fname, $qw, $qh, 0     , 0     ), // top left
 		mean_rgb($fname, $qw, $qh, $w-$qw, 0     ), // top right

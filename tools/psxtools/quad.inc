@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 if ( ! function_exists('json_pretty') )
-	exit("no json_pretty() [from class-json.inc]\n");
+	exit("no json_pretty() [from common-json.inc]\n");
 
 // .quad file
 function load_idtagfile( $pfx )
@@ -78,13 +78,76 @@ function list_add( &$list, $k, &$v )
 	return;
 }
 
-function save_quadfile( $pfx, &$json )
+function save_quadfile( $pfx, &$quad )
 {
-	if ( empty($json) )
+	if ( empty($quad) )
 		return;
 
-	$json = json_pretty($json);
-	save_file("$pfx.quad", $json);
+	$quad = json_pretty($quad, '');
+	save_file("$pfx.quad", $quad);
+	return;
+}
+//////////////////////////////
+function xywh_quad( $w, $h, $flipx=false, $flipy=false )
+{
+	$quad = array(
+		0  , 0  ,
+		$w , 0  ,
+		$w , $h ,
+		0  , $h ,
+	);
+
+	//  normal     flipx      flipy
+	//  0,1  2,3 | 2,3  0,1 | 6,7  4,5
+	//  6,7  4,5 | 4,5  6,7 | 0,1  2,3
+	if ( $flipx )
+	{
+		$n = array(
+			$quad[2] , $quad[3] ,
+			$quad[0] , $quad[1] ,
+			$quad[6] , $quad[7] ,
+			$quad[4] , $quad[5] ,
+		);
+		$quad = $n;
+	}
+	if ( $flipy )
+	{
+		$n = array(
+			$quad[6] , $quad[7] ,
+			$quad[4] , $quad[5] ,
+			$quad[2] , $quad[3] ,
+			$quad[0] , $quad[1] ,
+		);
+		$quad = $n;
+	}
+	return $quad;
+}
+
+function xywh_rotate( &$quad, $radian )
+{
+	if ( $radian == 0 )
+		return;
+	// rotate is based on top-left as 0,0
+	$sin = sin($radian);
+	$cos = cos($radian);
+
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		$x = $quad[$i+0];
+		$y = $quad[$i+1];
+		$quad[$i+0] = $x * $cos - $y * $sin;
+		$quad[$i+1] = $x * $sin + $y * $cos;
+	}
+	return;
+}
+
+function xywh_move( &$quad, $mx, $my )
+{
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		$quad[$i+0] += $mx;
+		$quad[$i+1] += $my;
+	}
 	return;
 }
 //////////////////////////////
@@ -112,6 +175,142 @@ function quad_ext1px( &$quad )
 		if ( $quad[$i+1] > $cy )  $quad[$i+1]++;
 	}
 	return;
+}
+//////////////////////////////
+function is_point_on_line( $pnt, $v2a, $v2b )
+{
+	$x1 = min($v2a[0], $v2b[0]);
+	$y1 = min($v2a[1], $v2b[1]);
+	$x2 = max($v2a[0], $v2b[0]);
+	$y2 = max($v2a[1], $v2b[1]);
+	if ( $pnt[0] < $x1 || $pnt[0] > $x2 )  return false;
+	if ( $pnt[1] < $y1 || $pnt[1] > $y2 )  return false;
+	return true;
+}
+
+function is_line_on_line( $v1a, $v1b, $v2a, $v2b )
+{
+	$crx = 'cross_product';
+	$pnt = $crx( $crx($v1a,$v1b) , $crx($v2a,$v2b));
+	$z = (int)($pnt[2] * 1000000);
+	if ( $z === 0 )
+		return -1;
+
+	$pnt[0] /= $pnt[2];
+	$pnt[1] /= $pnt[2];
+	$pnt[2] /= $pnt[2];
+	if ( is_point_on_line($pnt,$v1a,$v1b) && is_point_on_line($pnt,$v2a,$v2b) )
+		return $pnt;
+	return -1;
+}
+
+function quad_convexfix( &$quad )
+{
+	//          0          0--\
+	// 0 - 1   / \   0--3   \  \
+	// |   |  3   1   \/     3  1
+	// 3 - 2   \ /    /\    /  /
+	//          2    2--1  2--/
+	//
+	if ( ! isset( $quad['dstquad'] ) )
+		return;
+	$dstquad = $quad['dstquad'];
+
+	$dst = array(
+		array( $dstquad[0] , $dstquad[1] , 1),
+		array( $dstquad[2] , $dstquad[3] , 1),
+		array( $dstquad[4] , $dstquad[5] , 1),
+		array( $dstquad[6] , $dstquad[7] , 1),
+	);
+
+	// simple = OK
+	$pnt = is_line_on_line($dst[0],$dst[2] , $dst[1],$dst[3]);
+	if ( $pnt !== -1 ) // is simple
+		return;
+
+	// twisted = NOT SUPPORTED
+	$pnt = is_line_on_line($dst[0],$dst[1] , $dst[3],$dst[2]);
+	if ( $pnt !== -1 ) // is top-bottom twisted
+	{
+		$quad = array('_error' => 'is top-bottom twisted');
+		return;
+	}
+	$pnt = is_line_on_line($dst[0],$dst[3] , $dst[1],$dst[2]);
+	if ( $pnt !== -1 ) // is left-right twisted
+	{
+		$quad = array('_error' => 'is left-right twisted');
+		return;
+	}
+
+	// bended
+	$b1a = triad_area($dst[0] , $dst[1] , $dst[2]);
+	$b1b = triad_area($dst[0] , $dst[2] , $dst[3]);
+		$b1 = $b1a + $b1b;
+
+	$b2a = triad_area($dst[1] , $dst[2] , $dst[3]);
+	$b2b = triad_area($dst[1] , $dst[3] , $dst[0]);
+		$b2 = $b2a + $b2b;
+
+	if ( $b1 < $b2 ) // doesnt included concave area
+		return;
+
+	$quad['_error'] = 'is bended';
+	$b1 = array_shift($quad['dstquad']);
+	$b2 = array_shift($quad['dstquad']);
+		$quad['dstquad'][] = $b1;
+		$quad['dstquad'][] = $b2;
+
+	if ( isset( $quad['srcquad'] ) )
+	{
+		$b1 = array_shift($quad['srcquad']);
+		$b2 = array_shift($quad['srcquad']);
+			$quad['srcquad'][] = $b1;
+			$quad['srcquad'][] = $b2;
+	}
+
+	if ( isset( $quad['fogquad'] ) && is_array( $quad['fogquad'] ) )
+	{
+		$b1 = array_shift($quad['fogquad']);
+		$b2 = array_shift($quad['fogquad']);
+			$quad['fogquad'][] = $b1;
+			$quad['fogquad'][] = $b2;
+	}
+	return;
+}
+//////////////////////////////
+function blend_modes( $mode )
+{
+	switch ( $mode )
+	{
+		case 'normal':
+		case 'over':
+			$blend = array(
+				'name' => 'normal',
+				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
+				'_debug' => '(FG.rgb * FG.a) + ((BG.rgb * BG.a) * (1 - FG.a))',
+			);
+			return $blend;
+
+		case 'add':
+		case 'addition':
+			$blend = array(
+				'name' => 'add',
+				'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
+				'_debug' => 'FG.rgba + BG.rgba',
+			);
+			return $blend;
+
+		case 'sub':
+		case 'subtract':
+		case 'subtraction':
+			$blend = array(
+				'name' => 'subtract',
+				'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
+				'_debug' => 'BG.rgba - FG.rgba',
+			);
+			return $blend;
+	} // switch ( $mode )
+	return 0;
 }
 //////////////////////////////
 function quad_center( $V4 )
@@ -204,76 +403,5 @@ function quad_dump( $V4, $name )
 	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx);
 	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
 	return;
-}
-
-function quad_convexfix( &$quad )
-{
-	//          0          0--\
-	// 0 - 1   / \   0--3   \  \
-	// |   |  3   1   \/     3  1
-	// 3 - 2   \ /    /\    /  /
-	//          2    2--1  2--/
-	//
-	$dst = array(
-		array($quad['dstquad'][0] , $quad['dstquad'][1] , 1),
-		array($quad['dstquad'][2] , $quad['dstquad'][3] , 1),
-		array($quad['dstquad'][4] , $quad['dstquad'][5] , 1),
-		array($quad['dstquad'][6] , $quad['dstquad'][7] , 1),
-	);
-
-	// normal quad
-	//   0,1,2 + 0,3,2  ==  1,2,3 + 1,0,3
-	$q1 = triad_area($dst[0], $dst[1], $dst[2]);
-	$q2 = triad_area($dst[0], $dst[3], $dst[2]);
-	$qsz1 = $q1 + $q2;
-
-	$q1 = triad_area($dst[1], $dst[2], $dst[3]);
-	$q2 = triad_area($dst[1], $dst[0], $dst[3]);
-	$qsz2 = $q1 + $q2;
-
-	if ( $qsz1 == $qsz2 )
-		return; // simple
-
-	//   Saturn Princess Crown , e_ex.pak , frame 3
-	//     p0 = 116,-109 ,  77,-41 ,  86,-71  , 51,-136
-	//     p5 =  70,-49  , 254,-33 , 101,-116 , 95,-57
-
-
-	return;
-}
-//////////////////////////////
-function blend_modes( $mode )
-{
-	switch ( $mode )
-	{
-		case 'normal':
-		case 'over':
-			$blend = array(
-				'name' => 'normal',
-				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-				'_debug' => '(FG.rgb * FG.a) + ((BG.rgb * BG.a) * (1 - FG.a))',
-			);
-			return $blend;
-
-		case 'add':
-		case 'addition':
-			$blend = array(
-				'name' => 'add',
-				'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
-				'_debug' => 'FG.rgba + BG.rgba',
-			);
-			return $blend;
-
-		case 'sub':
-		case 'subtract':
-		case 'subtraction':
-			$blend = array(
-				'name' => 'subtract',
-				'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
-				'_debug' => 'BG.rgba - FG.rgba',
-			);
-			return $blend;
-	} // switch ( $mode )
-	return 0;
 }
 //////////////////////////////

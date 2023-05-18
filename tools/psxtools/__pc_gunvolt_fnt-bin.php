@@ -55,7 +55,7 @@ function save_layers( &$map, &$set, $pfx )
 
 		$fn = sprintf('%s/l_%04d', $pfx, $id);
 			$id++;
-		savepix($fn, $pix, false, false);
+		savepix($fn, $pix);
 	} // while ( isset( $map['tile'][2][$pos] ) )
 
 	return;

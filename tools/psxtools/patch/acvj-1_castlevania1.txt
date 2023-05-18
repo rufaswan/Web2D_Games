@@ -1,0 +1,358 @@
+# castlevania sougetsu no juujika jp
+# offsets are for nds.ram
+
+[info] /*
+	 96.8   2000000  arm9/main.bin
+	  0.2   2380000  arm7/main.bin
+	100.0   219e460  arm9/219e460/0000_0.overlay
+	100.0   222faa0  arm9/222faa0/0001_1.overlay
+	100.0   22999c0  arm9/22999c0/0002_2.overlay
+	100.0   229d6a0  arm9/229d6a0/0003_3.overlay
+	 99.7   22b89a0  arm9/22b89a0/0004_4.overlay
+	 99.3   22d5ec0  arm9/22d5ec0/0005_5.overlay
+
+	 25.2   22d94e0  arm9/22d94e0/0006_6.overlay
+	 23.7   22d94e0  arm9/22d94e0/0007_7.overlay
+	 22.5   22d94e0  arm9/22d94e0/0008_8.overlay
+	 26.1   22d94e0  arm9/22d94e0/0009_9.overlay
+	 25.7   22d94e0  arm9/22d94e0/0010_a.overlay
+	 26.7   22d94e0  arm9/22d94e0/0011_b.overlay
+	 13.9   22d94e0  arm9/22d94e0/0012_c.overlay
+	 16.0   22d94e0  arm9/22d94e0/0013_d.overlay
+	 24.1   22d94e0  arm9/22d94e0/0014_e.overlay
+	 19.7   22d94e0  arm9/22d94e0/0015_f.overlay
+	 22.8   22d94e0  arm9/22d94e0/0016_10.overlay
+	 22.4   22d94e0  arm9/22d94e0/0017_11.overlay
+	100.0   22d94e0  arm9/22d94e0/0018_12.overlay
+	 12.7   22d94e0  arm9/22d94e0/0019_13.overlay
+	 18.1   22d94e0  arm9/22d94e0/0020_14.overlay
+	 28.1   22d94e0  arm9/22d94e0/0021_15.overlay
+	 18.0   22d94e0  arm9/22d94e0/0022_16.overlay
+
+	  0.1   22fea00  arm9/22fea00/0023_17.overlay
+	  0.1   22fea00  arm9/22fea00/0024_18.overlay
+	  0.7   22fea00  arm9/22fea00/0025_19.overlay
+	  0.1   22fea00  arm9/22fea00/0026_1a.overlay
+	  0.6   22fea00  arm9/22fea00/0027_1b.overlay
+	100.0   22fea00  arm9/22fea00/0028_1c.overlay
+	  0.2   22fea00  arm9/22fea00/0029_1d.overlay
+	  0.1   22fea00  arm9/22fea00/0030_1e.overlay
+	  0.1   22fea00  arm9/22fea00/0031_1f.overlay
+	  0.2   22fea00  arm9/22fea00/0032_20.overlay
+	  0.3   22fea00  arm9/22fea00/0033_21.overlay
+	  0.2   22fea00  arm9/22fea00/0034_22.overlay
+	  0.4   22fea00  arm9/22fea00/0035_23.overlay
+	  1.0   22fea00  arm9/22fea00/0036_24.overlay
+	  0.0   22fea00  arm9/22fea00/0037_25.overlay
+	  0.8   22fea00  arm9/22fea00/0038_26.overlay
+	  0.2   22fea00  arm9/22fea00/0039_27.overlay
+	  0.1   22fea00  arm9/22fea00/0040_28.overlay
+	*/
+	game   nds castlevania dawn of sorrow
+	init   over  0  1  2  3  4  5  12  1c
+	filelist  208cc6c  2099fd4  28
+	stg_ovid  209a41c  209a460
+	stg_bc    209a3d4  209a418
+	stg_data  208ad44  208ad88
+
+	mon_ovid  222b6e4  222b7ac
+	mon_sc    208ca90  208cc68
+	mon_data  2078ca8  2079d40  24
+	mon_func  201c308  201c208
+
+	obj_sc    209b79c  209b974
+	item_sc   209a08c  209a098
+
+[monster]
+	mon_0000_0  so  /so/p_zombi.dat  sc  /sc/f_zombi.dat
+	mon_0001_1  so  /so/p_armc02.dat  sc  /sc/f_armc02.dat
+	mon_0002_2  so  /so/p_ghost.dat  sc  /sc/f_ghost.dat
+	mon_0003_3  so  /so/p_ya_skl.dat  sc  /sc/t_ya_skl.dat
+	mon_0004_4  so  /so/p_ttable.dat  sc  /sc/t_ttable.dat
+	mon_0005_5  so  /so/p_peep.dat  sc  /sc/f_peep0.dat  sc  /sc/f_peep1.dat
+	mon_0006_6  so  /so/p_axe00.dat  sc  /sc/f_axe00.dat  sc  /sc/f_axe01.dat
+	mon_0007_7  so  /so/p_fu_bsk.dat  sc  /sc/t_fu_bsk.dat
+	mon_0008_8  so  /so/p_fenrai.dat  sc  /sc/f_fenra0.dat  sc  /sc/f_fenra1.dat  sc  /sc/f_fenra2.dat  sc  /sc/f_fenra3.dat
+	mon_0009_9  so  /so/p_torn.dat  sc  /sc/f_torn.dat
+	mon_0010_a  so  /so/p_ya_ya0.dat  sc  /sc/t_ya_ya0.dat  sc  /sc/t_ya_ya1.dat
+	mon_0011_b  so  /so/p_majoko00.dat  sc  /sc/f_majoko00.dat  sc  /sc/f_majoko01.dat  sc  /sc/f_majoko02.dat
+	mon_0012_c  so  /so/p_fat_00.dat  sc  /sc/f_fat_00.dat  sc  /sc/f_fat_01.dat  sc  /sc/f_fat_02.dat
+	mon_0013_d  so  /so/p_bomb00.dat  sc  /sc/f_bomb00.dat  sc  /sc/f_bomb01.dat
+	mon_0014_e  over  1c  so  /so/p_gorem00.dat  sc  /sc/f_gorem00.dat
+	mon_0015_f  so  /so/p_slime.dat  sc  /sc/f_slime.dat  sc  /sc/f_slime1.dat
+	mon_0016_10  so  /so/p_sf_une.dat  sc  /sc/t_sf_une.dat
+	mon_0017_11  so  /so/p_fu_ska.dat  sc  /sc/t_fu_ska.dat
+	mon_0018_12  over  1b  so  /so/p_manti.dat  sc  /sc/f_manti1.dat  sc  /sc/f_manti2.dat  sc  /sc/f_manti3.dat  sc  /sc/f_manti4.dat  sc  /sc/f_manti5.dat  sc  /sc/f_manti6.dat
+	mon_0019_13  so  /so/p_giant_00.dat  sc  /sc/f_giant_00.dat
+	mon_0020_14  so  /so/p_thunder_00.dat  sc  /sc/f_thunder_00.dat  sc  /sc/f_thunder_01.dat
+	mon_0021_15  so  /so/p_mandra.dat  sc  /sc/f_mandra.dat
+	mon_0022_16  so  /so/p_succ.dat  sc  /sc/f_succ.dat
+	mon_0023_17  so  /so/p_farmer_00.dat  sc  /sc/f_farmer_00.dat
+	mon_0024_18  so  /so/p_franken_00.dat  sc  /sc/f_franken_00.dat  sc  /sc/f_franken_01.dat
+	mon_0025_19  over  20  so  /so/p_catoble_00.dat  sc  /sc/f_catoble_00.dat
+	mon_0026_1a  so  /so/p_zombi.dat  sc  /sc/f_zombi.dat
+	mon_0027_1b  so  /so/p_sf_une.dat  sc  /sc/t_sf_une.dat
+	mon_0028_1c  so  /so/p_yeti.dat  sc  /sc/f_yeti0.dat  sc  /sc/f_yeti1.dat
+	mon_0029_1d  so  /so/p_grave.dat  sc  /sc/f_grave.dat
+	mon_0030_1e  so  /so/p_dancer.dat  sc  /sc/f_dancer1.dat  sc  /sc/f_dancer2.dat
+	mon_0031_1f  so  /so/p_fhum.dat  sc  /sc/f_fhum.dat
+	mon_0032_20  so  /so/p_mini.dat  sc  /sc/f_mini.dat
+	mon_0033_21  so  /so/p_wdride.dat  sc  /sc/f_wdride.dat
+	mon_0034_22  over  1c  so  /so/p_ent00.dat  sc  /sc/f_ent00.dat
+	mon_0035_23  so  /so/p_amala.dat  sc  /sc/t_amala0.dat  sc  /sc/t_amala1.dat  sc  /sc/t_amala2.dat
+	mon_0036_24  so  /so/p_valkyrie_00.dat  sc  /sc/f_valkyrie_00.dat  sc  /sc/f_valkyrie_01.dat
+	mon_0037_25  over  18  so  /so/p_great00.dat  sc  /sc/f_great00.dat  sc  /sc/f_great01.dat
+	mon_0038_26  so  /so/p_ningyo.dat  sc  /sc/f_ningyo.dat
+	mon_0039_27  so  /so/p_ske_boy_00.dat  sc  /sc/f_ske_boy_00.dat
+	mon_0040_28  so  /so/p_pro.dat  sc  /sc/f_pro1.dat  sc  /sc/f_pro2.dat
+	mon_0041_29  so  /so/p_majo.dat  sc  /sc/f_majo.dat
+	mon_0042_2a  so  /so/p_buer.dat  sc  /sc/f_buer.dat
+	mon_0043_2b  so  /so/p_sakyu.dat  sc  /sc/f_sakyu.dat  sc  /sc/f_sakyu01.dat
+	mon_0044_2c  so  /so/p_clown_00.dat  sc  /sc/f_clown_00.dat  sc  /sc/f_clown_01.dat  sc  /sc/f_clown_02.dat
+	mon_0045_2d  so  /so/p_boosk.dat  sc  /sc/t_boosk0.dat  sc  /sc/t_boosk1.dat
+	mon_0046_2e  so  /so/p_nirus.dat  sc  /sc/t_nirus.dat
+	mon_0047_2f  over  1f  so  /so/p_devil_00.dat  sc  /sc/f_devil_00.dat  sc  /sc/f_devil_01.dat  sc  /sc/f_devil_02.dat
+	mon_0048_30  so  /so/p_guillo.dat  sc  /sc/f_guillo.dat
+	mon_0049_31  so  /so/p_oni.dat  sc  /sc/f_oni1.dat  sc  /sc/f_oni2.dat  sc  /sc/f_oni3.dat  sc  /sc/f_oni4.dat
+	mon_0050_32  so  /so/p_needle_00.dat  sc  /sc/f_needle_00.dat
+	mon_0051_33  so  /so/p_hell_00.dat  sc  /sc/f_hell_00.dat  sc  /sc/f_hell_01.dat  sc  /sc/f_hell_02.dat
+	mon_0052_34  so  /so/p_honeb.dat  sc  /sc/f_honeb.dat
+	mon_0053_35  so  /so/p_wdrag.dat  sc  /sc/f_wdrag.dat
+	mon_0054_36  so  /so/p_waku.dat  sc  /sc/f_waku1.dat  sc  /sc/f_waku2.dat
+	mon_0055_37  so  /so/p_imp.dat  sc  /sc/f_imp.dat
+	mon_0056_38  so  /so/p_harpy.dat  sc  /sc/f_harpy0.dat  sc  /sc/f_harpy1.dat
+	mon_0057_39  so  /so/p_oni.dat  sc  /sc/f_oni1.dat  sc  /sc/f_oni2.dat  sc  /sc/f_oni3.dat  sc  /sc/f_oni4.dat
+	mon_0058_3a  so  /so/p_evil.dat  sc  /sc/t_evil_0.dat  sc  /sc/t_evil_1.dat  sc  /sc/t_evil_2.dat  sc  /sc/t_evil_3.dat
+	mon_0059_3b  so  /so/p_cyupa.dat  sc  /sc/t_cyupa0.dat  sc  /sc/t_cyupa1.dat  sc  /sc/t_cyupa2.dat
+	mon_0060_3c  so  /so/p_larva.dat  sc  /sc/f_larva.dat
+	mon_0061_3d  so  /so/p_hearteater_00.dat  sc  /sc/f_hearteater_00.dat
+	mon_0062_3e  so  /so/p_fm68.dat  sc  /sc/t_fm68_0.dat  sc  /sc/t_fm68_1.dat
+	mon_0063_3f  so  /so/p_fmhb.dat  sc  /sc/t_fmhb.dat
+	mon_0064_40  so  /so/p_medusa.dat  sc  /sc/f_medus0.dat
+	mon_0065_41  so  /so/p_ukback.dat  sc  /sc/t_ukback.dat
+	mon_0066_42  so  /so/p_uo.dat  sc  /sc/f_uo0.dat
+	mon_0067_43  so  /so/p_mimic_00.dat  sc  /sc/f_mimic_00.dat
+	mon_0068_44  so  /so/p_pirate_00.dat  sc  /sc/f_pirate_00.dat  sc  /sc/f_pirate_01.dat
+	mon_0069_45  so  /so/p_oferia.dat  sc  /sc/f_oferia0.dat  sc  /sc/f_oferia1.dat
+	mon_0070_46  so  /so/p_homun_00.dat  sc  /sc/f_homun_00.dat  sc  /sc/f_homun_01.dat
+	mon_0071_47  so  /so/p_disk00.dat  sc  /sc/f_disk00.dat  sc  /sc/f_disk01.dat
+	mon_0072_48  so  /so/p_deca.dat  sc  /sc/f_deca.dat
+	mon_0073_49  so  /so/p_hakamo.dat  sc  /sc/f_hakamo1.dat  sc  /sc/f_hakamo2.dat
+	mon_0074_4a  so  /so/p_peep.dat  sc  /sc/f_peep0.dat  sc  /sc/f_peep1.dat
+	mon_0075_4b  so  /so/p_mzghost_00.dat  sc  /sc/f_mzghost_00.dat
+	mon_0076_4c  so  /so/p_honex.dat  sc  /sc/t_honex.dat
+	mon_0077_4d  over  20  so  /so/p_catoble_00.dat  sc  /sc/f_catoble_00.dat
+	mon_0078_4e  so  /so/p_arlau.dat  sc  /sc/t_arlau0.dat  sc  /sc/t_arlau1.dat
+	mon_0079_4f  so  /so/p_gaxe00.dat  sc  /sc/f_gaxe00.dat  sc  /sc/f_gaxe01.dat  sc  /sc/f_gaxe02.dat
+	mon_0080_50  so  /so/p_mosu.dat  sc  /sc/f_mosu0.dat  sc  /sc/f_mosu1.dat
+	mon_0081_51  over  1b  so  /so/p_manti.dat  sc  /sc/f_manti1.dat  sc  /sc/f_manti2.dat  sc  /sc/f_manti3.dat  sc  /sc/f_manti4.dat  sc  /sc/f_manti5.dat  sc  /sc/f_manti6.dat
+	mon_0082_52  so  /so/p_dead_00.dat  sc  /sc/f_dead_00.dat  sc  /sc/f_dead_01.dat
+	mon_0083_53  so  /so/p_halfh.dat  sc  /sc/t_halfh0.dat  sc  /sc/t_halfh1.dat  sc  /sc/t_halfh2.dat
+	mon_0084_54  so  /so/p_erinys_00.dat  sc  /sc/f_erinys_00.dat  sc  /sc/f_erinys_01.dat
+	mon_0085_55  so  /so/p_sakyu.dat  sc  /sc/f_sakyu.dat  sc  /sc/f_sakyu01.dat
+	mon_0086_56  so  /so/p_nirus.dat  sc  /sc/t_nirus.dat
+	mon_0087_57  so  /so/p_bp68k.dat  sc  /sc/t_bp68k.dat
+	mon_0088_58  so  /so/p_maddamon_00.dat  sc  /sc/f_maddamon_00.dat
+	mon_0089_59  so  /so/p_poison_00.dat  sc  /sc/f_poison_00.dat  sc  /sc/f_poison_01.dat
+	mon_0090_5a  so  /so/p_wwolf.dat  sc  /sc/f_wwolf0.dat  sc  /sc/f_wwolf1.dat  sc  /sc/f_wwolf2.dat  sc  /sc/f_wwolf3.dat  sc  /sc/f_wwolf4.dat  sc  /sc/f_wwolf5.dat
+	mon_0091_5b  over  1f  so  /so/p_flame_00.dat  sc  /sc/f_flame_00.dat  sc  /sc/f_flame_01.dat  sc  /sc/f_flame_02.dat  sc  /sc/f_flame_03.dat  sc  /sc/f_flame_04.dat
+	mon_0092_5c  so  /so/p_slime.dat  sc  /sc/f_slime.dat  sc  /sc/f_slime1.dat
+	mon_0093_5d  over  1f  so  /so/p_ark_00.dat  sc  /sc/f_ark_00.dat  sc  /sc/f_ark_01.dat  sc  /sc/f_ark_02.dat  sc  /sc/f_ark_03.dat
+	mon_0094_5e  so  /so/p_gyaibo.dat  sc  /sc/f_gyaibo1.dat  sc  /sc/f_gyaibo2.dat
+	mon_0095_5f  so  /so/p_beriga.dat  sc  /sc/f_beriga1.dat  sc  /sc/f_beriga2.dat  sc  /sc/f_beriga3.dat
+	mon_0096_60  so  /so/p_storas_00.dat  sc  /sc/f_storas_00.dat  sc  /sc/f_storas_01.dat  sc  /sc/f_storas_02.dat
+	mon_0097_61  over  18  so  /so/p_final00.dat  sc  /sc/f_final00.dat  sc  /sc/f_final01.dat
+	mon_0098_62  so  /so/p_oni.dat  sc  /sc/f_oni1.dat  sc  /sc/f_oni2.dat  sc  /sc/f_oni3.dat  sc  /sc/f_oni4.dat
+	mon_0099_63  so  /sm/alast00.nsbmd  so  /so/p_alast00.dat  sc  /sc/f_alast00.dat  sc  /sc/f_alast01.dat  sc  /sc/f_alast02.dat
+	mon_0100_64  over  1c  so  /so/p_iron00.dat  sc  /sc/f_iron00.dat
+	mon_0101_65  over  1e  so  /so/p_fly.dat  sc  /sc/f_fly0.dat  sc  /sc/f_fly1.dat  sc  /sc/f_fly2.dat  sc  /sc/f_fly3.dat
+	mon_0102_66  over  17  so  /so/p_baro_00.dat  sc  /sc/f_baro_00.dat  sc  /sc/f_baro_01.dat  sc  /sc/f_baro_02.dat  sc  /sc/f_baro_03.dat  sc  /sc/f_baro_04.dat  sc  /sc/f_baro_05.dat  sc  /sc/f_baro_06.dat
+	mon_0103_67  over  1d  so  /so/p_karaot.dat  sc  /sc/f_karaot0.dat  sc  /sc/f_karaot1.dat  sc  /sc/f_karaot2.dat  sc  /sc/f_karaot3.dat
+	mon_0104_68  over  28  so  /so/p_domi.dat  sc  /sc/f_domi0.dat  sc  /sc/f_domi1.dat  sc  /sc/f_domi2.dat  sc  /sc/f_domi3.dat  sc  /sc/f_domi4.dat
+	mon_0105_69  so  /so/p_dari.dat  sc  /sc/f_dari0.dat  sc  /sc/f_dari1.dat  sc  /sc/f_dari2.dat  sc  /sc/f_dari3.dat
+	mon_0106_6a  over  19  so  /so/p_puppet.dat  sc  /sc/f_puppet1.dat  sc  /sc/f_puppet2.dat  sc  /sc/f_puppet3.dat  sc  /sc/f_puppet4.dat  sc  /sc/f_puppet5.dat
+	mon_0107_6b  over  1a  so  /so/p_lahab_00.dat  sc  /sc/f_lahab_00.dat  sc  /sc/f_lahab_01.dat  sc  /sc/f_lahab_02.dat  sc  /sc/f_lahab_03.dat  sc  /sc/f_lahab_04.dat  sc  /sc/f_lahab_05.dat  sc  /sc/f_lahab_06.dat
+	mon_0108_6c  over  24  so  /so/p_fafni_00.dat  sc  /sc/f_fafni_00.dat  sc  /sc/f_fafni_01.dat  sc  /sc/f_fafni_02.dat  sc  /sc/f_fafni_03.dat  sc  /sc/f_fafni_04.dat  sc  /sc/f_fafni_05.dat  sc  /sc/f_fafni_06.dat  sc  /sc/f_fafni_07.dat  sc  /sc/f_fafni_08.dat
+	mon_0109_6d  over  21  so  /so/p_edward.dat  sc  /sc/f_edward1.dat  sc  /sc/f_edward2.dat  sc  /sc/f_edward3.dat  sc  /sc/f_edward4.dat  sc  /sc/f_edward5.dat  sc  /sc/f_edward6.dat  sc  /sc/f_edward7.dat
+	mon_0110_6e  over  25  so  /so/p_fake_00.dat  sc  /sc/f_fake_00.dat  sc  /sc/f_fake_01.dat  sc  /sc/f_fake_02.dat  sc  /sc/f_fake_03.dat  sc  /sc/f_fake_04.dat  sc  /sc/f_fake_05.dat  sc  /sc/f_fake_06.dat  sc  /sc/f_fake_07.dat  sc  /sc/f_fake_08.dat
+	mon_0111_6f  over  23  so  /sm/mirror00.nsbmd  so  /sm/mirror01.nsbmd  so  /so/p_mirror.dat  sc  /sc/f_mirror1.dat  sc  /sc/f_mirror2.dat  sc  /sc/f_mirror3.dat  sc  /sc/f_mirror4.dat  sc  /sc/f_mirror5.dat  sc  /sc/f_mirror6.dat  sc  /sc/f_mirror7.dat  sc  /sc/f_mirror8.dat
+	mon_0112_70  so  /so/p_aguni.dat  sc  /sc/f_aguni0.dat  sc  /sc/f_aguni1.dat  sc  /sc/f_aguni2.dat  sc  /sc/f_aguni3.dat  sc  /sc/f_aguni4.dat  sc  /sc/f_aguni5.dat  sc  /sc/f_aguni6.dat
+	mon_0113_71  over  22  so  /so/p_sini.dat  sc  /sc/f_sini00.dat  sc  /sc/f_sini01.dat  sc  /sc/f_sini02.dat  sc  /sc/f_sini03.dat  sc  /sc/f_sini04.dat  sc  /sc/f_sini05.dat  sc  /sc/f_sini06.dat  sc  /sc/f_sini07.dat  sc  /sc/f_sini08.dat  sc  /sc/f_sini09.dat  sc  /sc/f_sini0a.dat  sc  /sc/f_sini0b.dat
+	mon_0114_72  over  27  so  /so/p_abad.dat  sc  /sc/f_abad1.dat  sc  /sc/f_abad2.dat  sc  /sc/f_abad3.dat  sc  /sc/f_abad4.dat  sc  /sc/f_abad5.dat
+	mon_0115_73  over  26  so  /so/p_last.dat  sc  /sc/f_last1.dat  sc  /sc/f_last2.dat  sc  /sc/f_last3.dat  sc  /sc/f_last4.dat  sc  /sc/f_last5.dat  sc  /sc/f_last6.dat  sc  /sc/f_last7.dat  sc  /sc/f_last8.dat  sc  /sc/f_last9.dat  sc  /sc/f_last10.dat  sc  /sc/f_last11.dat  sc  /sc/f_last12.dat  sc  /sc/f_last13.dat  sc  /sc/f_last14.dat  sc  /sc/f_last15.dat
+	mon_0116_74  so  /so/p_urasom00.dat  sc  /sc/f_urasom00.dat  sc  /sc/f_urasom01.dat  sc  /sc/f_urasom02.dat  sc  /sc/f_urasom03.dat
+	mon_0117_75  so  /so/p_urasox00.dat  sc  /sc/f_urasox00.dat  sc  /sc/f_urasox01.dat  sc  /sc/f_urasox02.dat  sc  /sc/f_urasox03.dat  sc  /sc/f_urasox04.dat  sc  /sc/f_urasox05.dat  sc  /sc/f_urasox06.dat  sc  /sc/f_urasox07.dat
+
+/*
+[sosc]
+	# so = 163 files
+	# = ov- , so- , sc- , pal-
+
+	baro    = ov-23 , so-4b0 , sc-18d-193 , pal-2bb124
+	final   = ov-24 , so-4de , sc-248-249 , pal-2bdc8c
+	great   = ov-24 , so-4ec , sc-27e-27f , pal-2bdc28
+	puppet  = ov-25 , so-521 , sc-32c-330 , pal-2bdd54
+	ironma  = ov-25 , so-4fb , sc-2b1 , pal-2c15dc
+	lahab   = ov-26 , so-501 , sc-2d1-2d7 , pal-2be778
+	manti   = ov-27 , so-50a , sc-2f8-2fd , pal-2bb928
+	iron    = ov-28 , so-4fa , sc-2b0 , pal-2bba34
+	gorem   = ov-28 , so-4e9 , sc-277 , pal-2bb9f0
+	ent     = ov-28 , so-4d3 , sc-21a , pal-2bb9ac
+	karaot  = ov-29 , so-4fd , sc-2c8-2cb , pal-2bd298
+	fly     = ov-30 , so-4e0 , sc-252-255 , pal-2be024
+	devil   = ov-31 , so-4c7 , sc-1e5-1e7 , pal-2be5ec
+	flame   = ov-31 , so-4df , sc-24d-251 , pal-2be670
+	ark     = ov-31 , so-4aa , sc-184-187 , pal-2be6f4
+	catoble = ov-32 , so-4bb , sc-1b3 , pal-2bed3c
+	edward  = ov-33 , so-4cf , sc-20a-210 , pal-2beff0 , ???-1c5
+	sini    = ov-34 , so-529 , sc-367-372 , pal-2bf144
+	mirror  = ov-35 , so-50e , sc-303-30a , pal-2bbf3c
+	fafni   = ov-36 , so-4d7 , sc-21e-226 , pal-2bc704
+	fake    = ov-37 , so-4d8 , sc-227-22f , pal-2bf094
+	last    = ov-38 , so-503 , sc-2d9 , sc-2e0-2e7 , sc-2da-2df , pal-2be2a8
+	abad    = ov-39 , so-4a6 , sc-16d-171 , pal-2bb208
+	domi    = ov-40 , so-4cc , sc-1f8-1fc , pal-2bb510
+
+	dancer     = ov-1 , so-4bf , sc-1c6-1c7 , pal-2baf98
+	fenrai     = ov-1 , so-4db , sc-23f-242 , pal-2bae0c
+	zombi      = ov-1 , so-547 , sc-447 , pal-2baf10
+	armc02     = ov-1 , so-4ac , sc-188 , pal-2bade8
+	fmhb       = ov-1 , so-4e2 , sc-495 , pal-2bb080
+	honeb      = ov-1 , so-4f7 , sc-2ae , pal-2bb01c
+	honex      = ov-1 , so-4f8 , sc-49b , pal-2bb30c
+	ske_boy    = ov-1 , so-52a , sc-373 , pal-2bb694
+	urasox     = ov-1 , so-53c , sc-3de-3e5 , pal-2bb7dc
+	urasom     = ov-1 , so-53b , sc-3da-3dd , pal-2bb6b8
+	nirus      = ov-1 , so-516 , sc-49c , pal-2bc7a8
+	grave      = ov-1 , so-4eb , sc-27c , pal-2bc8ac
+	axe        = ov-1 , so-4ae , sc-189-18a , pal-2bc8d0
+	gaxe       = ov-1 , so-4e6 , sc-271-273 , pal-2bc914
+	disk       = ov-1 , so-4c9 , sc-1e9-1ea , pal-2bc978
+	bomb       = ov-1 , so-4b5 , sc-1ac-1ad , pal-2bcac0
+	mandra     = ov-1 , so-509 , sc-2f7 , pal-2bcb04
+	fm68       = ov-1 , so-4e1 , sc-493-494 , pal-2bcb68
+	harpy      = ov-1 , so-4f1 , sc-2a2-2a3 , pal-2bccec
+	aguni      = ov-1 , so-4a7 , sc-172-178 , pal-2bcdf0
+	arlau      = ov-1 , so-4ab , sc-44c-44d , pal-2bd5c0
+	sf_une     = ov-1 , so-528 , sc-49d , pal-2bdb24
+	ningyo     = ov-1 , so-515 , sc-319 , pal-2bdcf0
+	oferia     = ov-1 , so-518 , sc-31b-31c , pal-2bde98
+	beriga     = ov-1 , so-4b2 , sc-197-199 , pal-2be81c
+	gyaibo     = ov-1 , so-4ee , sc-29c-29d , pal-2be8c0
+	buer       = ov-1 , so-4b9 , sc-1af , pal-2beba8
+	deca       = ov-1 , so-4c6 , sc-1da , pal-2beac4
+	maddamon   = ov-1 , so-505 , sc-2ea , pal-2c9138
+	mzghost    = ov-1 , so-510 , sc-312 , pal-2d41f0
+	farmer     = ov-1 , so-4d9 , sc-233 , pal-2bf100
+	thunder    = ov-1 , so-532 , sc-3b2-3b3 , pal-2bf40c
+	clown      = ov-1 , so-4bc , sc-1b9-1bb , pal-2bf450
+	mimic      = ov-1 , so-50c , sc-300 , pal-2bf7b0
+	hakamo     = ov-1 , so-4ef , sc-29f-2a0 , pal-2bf7f4
+	larva      = ov-1 , so-502 , sc-2d8 , pal-2bf878
+	hearteater = ov-1 , so-4f3 , sc-2a5 , pal-2bf89c
+	dari       = ov-1 , so-4c0 , sc-1c8-1cb , pal-2bf8e0
+	waku       = ov-1 , so-53f , sc-3e9-3ea , pal-2bf964
+	ya_skl     = ov-1 , so-543 , sc-4a0 , pal-2bb8c0
+	medusa     = ov-1 , so-50b , sc-2ff , pal-2bb8e4
+	ttable     = ov-1 , so-537 , sc-49e , pal-2bba78
+	fu_bsk     = ov-1 , so-4e4 , sc-496 , pal-2bbadc
+	succ       = ov-1 , so-52e , sc-3ad , pal-2bbb40
+	sakyu      = ov-1 , so-527 , sc-362-363 , pal-2bbb64
+	peep       = ov-1 , so-51b , sc-322-323 , pal-2bd0d4
+	wwolf      = ov-1 , so-542 , sc-437-43c , pal-2bd35c
+	mosu       = ov-1 , so-50f , sc-30d-30e , pal-2bdf5c
+	yeti       = ov-1 , so-545 , sc-43d-43e , pal-2bdfe0
+	uo         = ov-1 , so-53a , sc-3d9 , pal-2bec2c
+	majoko     = ov-1 , so-508 , sc-2f4-2f6 , pal-2beec4
+	dead       = ov-1 , so-4c5 , sc-1d8-1d9 , pal-2bef08
+	pirate     = ov-1 , so-51d , sc-325-326 , pal-2bef6c
+	majo       = ov-1 , so-507 , sc-2f3 , pal-2bf59c
+	valkyrie   = ov-1 , so-53d , sc-3e6-3e7 , pal-2bf5e0
+	erinys     = ov-1 , so-4d4 , sc-21b-21c , pal-2bf664
+	pro        = ov-1 , so-520 , sc-32a-32b , pal-2bf6e8
+	storas     = ov-1 , so-52d , sc-3aa-3ac , pal-2bf72c
+	guillo     = ov-1 , so-4ed , sc-29b , pal-2bf9e8
+	torn       = ov-1 , so-536 , sc-3bb , pal-2bfa6c
+	fat        = ov-1 , so-4da , sc-234-236 , pal-2bfab0
+	hell       = ov-1 , so-4f4 , sc-2a6-2a8 , pal-2bfb34
+	ukback     = ov-1 , so-539 , sc-49f , pal-2bbc08
+	boosk      = ov-1 , so-4b6 , sc-484-485 , pal-2bbd0c
+	halfh      = ov-1 , so-4f0 , sc-498-49a , pal-2bbd90
+	fu_ska     = ov-1 , so-4e5 , sc-497 , pal-2bbe54
+	oni        = ov-1 , so-519 , sc-31d-320 , pal-2bc9fc
+	ghost      = ov-1 , so-4e7 , sc-275 , pal-2baf74
+	ya_ya      = ov-1 , so-544 , sc-4a1-4a2 , pal-2bbeb8
+	mini       = ov-1 , so-50d , sc-302 , pal-2bbfe0
+	amala      = ov-1 , so-4a9 , sc-449-44b , pal-2bc064
+	bp68k      = ov-1 , so-4b7 , sc-486 , pal-2bc128
+	cyupa      = ov-1 , so-4be , sc-487-489 , pal-2bc1ac
+	imp        = ov-1 , so-4f9 , sc-2af , pal-2bc230
+	evil       = ov-1 , so-4d6 , sc-48f-492 , pal-2bc2b4
+	slime      = ov-1 , so-52b , sc-374-375 , pal-2bc4d8
+	wdrag      = ov-1 , so-540 , sc-3eb , pal-2bc63c
+	wdride     = ov-1 , so-541 , sc-3ec , pal-2bc680
+	needle     = ov-1 , so-512 , sc-314 , pal-2becb0
+	alast      = ov-1 , so-4a8 , sc-179-17b , pal-2becd4
+	homun      = ov-1 , so-4f6 , sc-2ac-2ad , pal-2becf8
+	franken    = ov-1 , so-4e3 , sc-25c-25d , pal-2bf3c8
+	giant      = ov-1 , so-4e8 , sc-276 , pal-2bf4d4
+	poison     = ov-1 , so-51f , sc-328-329 , pal-2bf518
+	fhum       = ov-1 , so-4dd , sc-244 , pal-2bfbb8
+
+	b12ev    = ov-0 , so-4af , sc-18b-18c , pal-2c1474
+	bbyuka   = ov-0 , so-4b1 , sc-194-195 , pal-2c0d18
+	rumusi   = ov-0 , so-525 , sc-35f , pal-2c0268
+	bridge   = ov-0 , so-4b8 , sc-1ae , pal-2c102c
+	car      = ov-0 , so-4ba , sc-1b2 , pal-2c00d4
+	enoj     = ov-0 , so-4d2 , sc-216-219 , pal-2c14b8
+	kumo     = ov-0 , so-500 , sc-2ce-2d0 , pal-2c0c88
+	crowd    = ov-0 , so-4bd , sc-1c3-1c4 , pal-2c0c64
+	swdoor   = ov-0 , so-530 , sc-3b0 , pal-2c1a8c
+	suimon   = ov-0 , so-52f , sc-3ae , pal-2c1178
+	obj42    = ov-0 , so-517 , sc-31a , pal-2c1114
+	zorome   = ov-0 , so-548 , sc-448 , pal-2c0d7c
+	swfloo   = ov-0 , so-531 , sc-3b1 , pal-2c1240
+	uchan    = ov-0 , so-538 , sc-3d7 , pal-2c02ac
+	hewp     = ov-0 , so-4f5 , sc-2a9-2ab , pal-2c0354
+	light    = ov-0 , so-504 , sc-2e8-2e9 , pal-2c0458
+	magma    = ov-0 , so-506 , sc-2f1 , pal-2c208c
+	niku     = ov-0 , so-514 , sc-317-318 , pal-2c2048
+	piano    = ov-0 , so-51c , sc-324 , pal-2c0180
+	piston   = ov-0 , so-51e , sc-327 , pal-2c015c
+	puzz     = ov-0 , so-522 , sc-331-333 , pal-2bfff0
+	bgsv     = ov-0 , so-4b3 , sc-19c-1a3 , pal-2c1bb8
+	ruwall   = ov-0 , so-526 , sc-360-361 , pal-2c01a4
+	fens     = ov-0 , so-4dc , sc-243 , pal-2c0118
+	bgwp     = ov-0 , so-4b4 , sc-1a4-1ab , pal-2c1620
+	hawall   = ov-0 , so-4f2 , sc-2a4 , pal-2c1fe0
+	dmina    = ov-0 , so-4cb , sc-1f6-1f7 , pal-2bad38
+	darikado = ov-0 , so-4c1 , sc-1cc-1cd , pal-2bad80
+	dyoko    = ov-0 , so-4ce , sc-202-205 , pal-2bad14
+	dhammer  = ov-0 , so-4c8 , sc-1e8 , pal-2bad14
+	djuli    = ov-0 , so-4ca , sc-1eb-1ee , pal-2bacf0
+	dseri    = ov-0 , so-4cd , sc-1ff-201 , pal-2bada4
+	ddari    = ov-0 , so-4c3 , sc-1ce-1d1 , pal-2bf8e0
+	ddomi    = ov-0 , so-4c4 , sc-1d2-1d7 , pal-2bb510
+	daru     = ov-0 , so-4c2 , sc-48a-48e , pal-2ba9a0
+	soma     = ov-0 , so-52c , sc-376-3a9 , pal-2bac6c
+	juli     = ov-0 , so-4fc , sc-2b5-2bf , pal-2bacf0
+	yoko     = ov-0 , so-546 , sc-43f-446 , pal-2bad14
+	aru      = ov-0 , so-4ad , sc-44e-483 , pal-2ba9a0
+
+	konami = so-4ff , sc-2cd , pal-2c4c84
+	tiobj  = so-533 , sc-3b4-3b5 , pal-2c54b0
+	title  = so-534 , sc-3b6-3b8 , pal-2c4eac
+	roll   = so-524 , sc-355-35d , pal-2c0504
+	endch  = so-4d0 , sc-211 , pal-2c0568
+	endtx  = so-4d1 , sc-212-215 , pal-2c06cc
+	gover  = so-4ea , sc-278-27b , pal-2c4ca8
+	name   = so-511 , sc-313 , pal-2c3ff8
+	top    = so-535 , sc-3b9-3ba , pal-2c3df4
+	vssel  = so-53e , sc-3e8 , pal-2c4874
+	eset   = so-4d5 , sc-21d , pal-2c4afc
+	retry  = so-523 , sc-336 , pal-2c4bc0
+	net    = so-513 , sc-315 , pal-2c4524
+
+	# karit
+	# over
+*/

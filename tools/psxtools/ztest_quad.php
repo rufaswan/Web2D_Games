@@ -1,25 +1,4 @@
 <?php
-/*
-[license]
-Copyright (C) 2019 by Rufas Wan
-
-This file is part of Web2D Games.
-    <https://github.com/rufaswan/Web2D_Games>
-
-Web2D Games is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Web2D Games is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
-[/license]
- */
 require 'common.inc';
 require 'common-quad.inc';
 
@@ -54,9 +33,6 @@ function ascii_quad( $V4 )
 		array($V4[4],$V4[5],1),
 		array($V4[6],$V4[7],1),
 	);
-	list($cx,$cy) = quad_center($V4);
-	$cen = array( (int)$cx, (int)$cy, 1);
-
 	$q1 = triad_area($quad[0], $quad[1], $quad[2]); // ABC
 	$q2 = triad_area($quad[0], $quad[3], $quad[2]); // ADC
 	$qsz = $q1 + $q2;
@@ -81,9 +57,6 @@ function ascii_quad( $V4 )
 				continue;
 			}
 
-			if ( $xy == $cen )
-				echo 'X';
-			else
 			if ( $xy == $quad[0] )
 				echo 'A';
 			else
@@ -104,35 +77,36 @@ function ascii_quad( $V4 )
 	} // for ( $y=0; $y < 25; $y++ )
 	return;
 }
-	// Lunar 2 sysspr.pck 0365-0366
-	//   0, 0  10,13    0, 0  11,12
-	//  13,10  23,23   12,11  23,23
-	echo "== convex / normal ==\n";
-	ascii_quad(array(
-		23, 0,
-		17,17,
-		 0,23,
-		 7, 7,
-	));
 
-	echo "== complex / twist ==\n";
-	ascii_quad(array(
-		23, 0,
-		 0,23,
-		17,17,
-		 7, 7,
-	));
+// Lunar 2 sysspr.pck 0365-0366
+//   0, 0  10,13    0, 0  11,12
+//  13,10  23,23   12,11  23,23
+echo "== convex / normal ==\n";
+ascii_quad(array(
+	23, 0,
+	17,17,
+	 0,23,
+	 7, 7,
+));
 
-	// Saturn Princess Crown , e_ex.pak , frame 3
-	//   p0 = 116,-109 ,  77,-41 ,  86,-71  , 51,-136
-	//   p5 =  70,-49  , 254,-33 , 101,-116 , 95,-57
-	echo "== concave / arrow ==\n";
-	ascii_quad(array(
-		 7, 8,
-		25, 6,
-		10,22,
-		12,10,
-	));
+echo "== complex / twist ==\n";
+ascii_quad(array(
+	23, 0,
+	 0,23,
+	17,17,
+	 7, 7,
+));
+
+// Saturn Princess Crown , e_ex.pak , frame 3
+//   p0 = 116,-109 ,  77,-41 ,  86,-71  , 51,-136
+//   p5 =  70,-49  , 254,-33 , 101,-116 , 95,-57
+echo "== concave / arrow ==\n";
+ascii_quad(array(
+	 7, 8,
+	25, 6,
+	10,22,
+	12,10,
+));
 
 
 ///// x /////

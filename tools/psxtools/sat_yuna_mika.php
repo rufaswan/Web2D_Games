@@ -25,26 +25,24 @@ require 'common-guest.inc';
 
 //define('NO_TRACE', true);
 
-function yuna_decode( &$file, $fname )
+function yuna_decode( &$file )
 {
 	$siz = strlen($file);
 	if ( ($siz % 0xa00) == 0 )
 		return;
 
-	trace("=== begin sub_6005058() ===\n");
 	$dec = '';
+	trace("== begin sub_6005058()\n");
 	$bylen = 0;
 	$bycod = 0;
 
 	$st = 0;
 	while ( $st < $siz )
 	{
-		trace("%6x  %6x  ", $pos, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] );
 				$st++;
-			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
 			continue;
 		}
@@ -57,7 +55,6 @@ function yuna_decode( &$file, $fname )
 		{
 			$b1 = $file[$st];
 				$st++;
-			trace("COPY %2x\n", ord($b1));
 			$dec .= $b1;
 		}
 		else
@@ -67,7 +64,6 @@ function yuna_decode( &$file, $fname )
 				$st += 2;
 			$len = ($b2 >> 3) + 1;
 			$pos = (($b2 & 0x07) << 8) | $b1;
-			trace("POS  %3d LEN %2d\n", $pos, $len);
 
 			$pos -= 0x800;
 			while ( $len > 0 )
@@ -79,8 +75,7 @@ function yuna_decode( &$file, $fname )
 		}
 	} // while ( $st < $siz )
 
-	trace("=== end sub_6005058() ===\n");
-	file_put_contents("$fname.dec", $dec);
+	trace("== end sub_6005058()\n");
 	$file = $dec;
 	return;
 }
@@ -91,6 +86,7 @@ function yuna( $fname )
 	if ( empty($file) )  return;
 
 	yuna_decode( $file, $fname );
+	file_put_contents("$fname.dec", $file);
 
 	$rgba = pal555( big2little16($file) );
 

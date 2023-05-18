@@ -102,8 +102,16 @@ function save_zipfile( $zipn, $list, $skip )
 function zip_pack( $dir )
 {
 	printf("== zip_pack( %s )\n", $dir);
-	$dir = rtrim($dir, '/\\');
+	$dir = str_replace('\\', '/', $dir);
+		$dir = rtrim ($dir, '/');
 	$len = strlen($dir);
+
+	// create DIRNAME.zip on different dir
+	$p = strrpos($dir, '/');
+	if ( $p === false )
+		$base = $dir;
+	else
+		$base = substr($dir, $p + 1);
 
 	$list = lsfile_bysize_r($dir);
 	if ( empty($list) )
@@ -111,7 +119,7 @@ function zip_pack( $dir )
 
 	if ( count($list) < 0xfff0 )
 	{
-		$fn = sprintf('%s.zip', $dir);
+		$fn = sprintf('%s.zip', $base);
 		save_zipfile($fn, $list, $len+1);
 	}
 	else
@@ -120,7 +128,7 @@ function zip_pack( $dir )
 		while ( ! empty($list) )
 		{
 			$part = array_splice($list, 0, 0xfff0);
-			$fn = sprintf('%s.%02d.zip', $dir, $id);
+			$fn = sprintf('%s.%02d.zip', $base, $id);
 				$id++;
 			save_zipfile($fn, $part, $len+1);
 		} // while ( ! empty($list) )

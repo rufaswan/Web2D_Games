@@ -21,11 +21,14 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'common-json.inc';
 require 'common-quad.inc';
 require 'quad.inc';
 require 'quad_lunar2.inc';
 
 define('METAFILE', true);
+
+// TODO animation
 
 function efchaspr( $fname, $dir )
 {
@@ -49,9 +52,10 @@ function efchaspr( $fname, $dir )
 	);
 	save_clutfile("$dir/pck.0.clut", $img);
 
-	$json = load_idtagfile('lunar2');
-	sectspr($json, $spr[1]);
-	save_quadfile("$dir/pck", $json);
+	$quad = load_idtagfile('lunar2');
+	$quad['blend'] = array( blend_modes('normal') );
+	sectspr($quad, $spr[1]);
+	save_quadfile("$dir/pck", $quad);
 	return;
 }
 
@@ -82,16 +86,17 @@ function mnchaspr( $fname, $dir )
 		if ( ! isset($spr[$id]) )
 			break;
 
-		$json = load_idtagfile('lunar2');
-		sectspr($json, $spr[$id]);
+		$quad = load_idtagfile('lunar2');
+		$quad['blend'] = array( blend_modes('normal') );
+		sectspr($quad, $spr[$id]);
 			$id++;
 
-		if ( empty($json['Frame']) )
+		if ( empty($quad['keyframe']) )
 			continue;
 
 		$b1 = $id - 1;
 		save_clutfile("$dir/$b1/pck.0.clut", $img);
-		save_quadfile("$dir/$b1/pck", $json);
+		save_quadfile("$dir/$b1/pck", $quad);
 	} // while (1)
 
 	return;
@@ -116,9 +121,10 @@ function pckcont( $fname, $dir )
 	);
 	save_clutfile("$dir/pck.0.clut", $img);
 
-	$json = load_idtagfile('lunar2');
-	sectspr($json, $pck[2]);
-	save_quadfile("$dir/pck", $json);
+	$quad = load_idtagfile('lunar2');
+	$quad['blend'] = array( blend_modes('normal') );
+	sectspr($quad, $pck[2]);
+	save_quadfile("$dir/pck", $quad);
 	return;
 }
 
@@ -143,9 +149,10 @@ function pcktitle( $fname, $dir )
 		);
 		save_clutfile("$dir/$i/pck.0.clut", $img);
 
-		$json = load_idtagfile('lunar2');
-		sectspr($json, $pck[6+$i]);
-		save_quadfile("$dir/$i/pck", $json);
+		$quad = load_idtagfile('psx lunar 2 eb');
+		$quad['blend'] = array( blend_modes('normal') );
+		sectspr($quad, $pck[6+$i]);
+		save_quadfile("$dir/$i/pck", $quad);
 	} // for ( $i=0; $i < 3; $i++ )
 	return;
 }

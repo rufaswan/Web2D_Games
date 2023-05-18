@@ -106,7 +106,7 @@ function sectpart( &$file, $nid, $st, $ed )
 		copypix_fast($pix);
 	} // foreach ( $data as $k => $v )
 
-	savepix($nid, $pix, true);
+	savepix($nid, $pix);
 	return;
 }
 

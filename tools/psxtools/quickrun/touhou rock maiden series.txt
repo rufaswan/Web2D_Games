@@ -441,12 +441,12 @@ wily
 item/shot
 	rush search = BOSS  analysis
 	rush jet    = BOSS  halo
-	beat        = sp:rushjet  LADDER+TOP  hide  (tree before boss door)
-	shot:laser  = BLOCK+SLIDE  eruption  shot-unblock
+	beat        = sp:rushcoil  LADDER+TOP  hide  (tree before boss door)
+	shot:laser  = sp:penetrate  BLOCK+SLIDE  eruption
 	shot:search = sp:rushsearch  vanish  (red marker before spike pit)
 	shot:
 	item:heal+  = halo
-	item:pierce = sp:rushcoil  TOP-RIGHT  penetrate
+	item:pierce = sp:rushcoil  TOP-RIGHT  penetrate  (wire platforms)
 	item:
 	item:charge = sp:rushjet  BLOCK+TOP+LADDER  deluge  (watergate room)
 	item:

@@ -24,41 +24,35 @@ require 'common.inc';
 
 function cmp0_decode( &$file )
 {
-	// SLPS 028.20 , Kouryaku Shireisho , sub_80016fd0
-	trace("== begin sub_80016fd0\n");
 	$dec = '';
+	// SLPS 028.20 , Kouryaku Shireisho , sub_80016fd0
+	trace("== begin sub_80016fd0()\n");
 
 	$ed = strlen($file);
 	$st = 0;
 	$pad = true;
 	while ( $st < $ed )
 	{
-		trace("%8x  %8x  ", $st, strlen($dec));
 		$b1 = ord( $file[$st] );
 			$st++;
 
 		if ( $b1 > 0 )
 		{
 			if ( $pad )
-			{
-				trace("ZERO %x\n", $b1);
 				$dec .= str_repeat(ZERO, $b1);
-			}
 			else
 			{
 				$len = ord( $file[$st] );
-				$b1 = substr($file, $st+1, $len);
-					$st += ($len + 1);
-
-				trace("COPY %s\n", debug($b1));
-				$dec .= $b1;
+					$st++;
+				$dec .= substr($file, $st, $len);
+					$st += $len;
 			}
 		}
 
 		$pad = ! $pad;
 	} // while ( $st < $ed )
 
-	trace("== end sub_80016fd0\n");
+	trace("== end sub_80016fd0()\n");
 	return;
 }
 //////////////////////////////
@@ -107,7 +101,7 @@ function s_TX_PL_MP16( &$TX, &$PL, &$MP16, $dir )
 		} // for ( $y=0; $y < $maph; $y += 16 )
 	} // for ( $y=0; $y < $maph; $y += 16 )
 
-	savepix($dir, $pix, false);
+	savepix($dir, $pix);
 	return;
 }
 //////////////////////////////

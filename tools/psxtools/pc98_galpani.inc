@@ -23,7 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 function galpani_decode( &$file, $bits )
 {
-	trace("=== begin sub_2436c() ===\n");
+	trace("== begin sub_2436c()\n");
 	$pos = 0;
 	$end = strlen($file);
 
@@ -33,7 +33,6 @@ function galpani_decode( &$file, $bits )
 
 	while ( $pos < $end )
 	{
-		trace("%6x  %6x  ", $pos, strlen($dec)-0x1000);
 		$b1 = ord( $file[$pos+0] );
 
 		// 80-ff
@@ -57,7 +56,7 @@ function galpani_decode( &$file, $bits )
 				// 0 = 2, 4 = 3, 8 = 4 ... 7c = 33
 				$len = ($op / 4) + 2;
 				$p = strlen($dec) - 1 - $ref;
-				trace("80>3  REF -%d LEN %d\n", $ref, $len);
+				//trace("80>3  REF -%d LEN %d\n", $ref, $len);
 
 				for ( $i=0; $i < $len; $i++ )
 					$dec .= $dec[$p+$i];
@@ -72,7 +71,7 @@ function galpani_decode( &$file, $bits )
 					$len &= $bits[8];
 					$len += 2;
 				$p = strlen($dec) - 1 - $ref;
-				trace("80-3  REF -%d LEN %d\n", $ref, $len);
+				//trace("80-3  REF -%d LEN %d\n", $ref, $len);
 
 				for ( $i=0; $i < $len; $i++ )
 					$dec .= $dec[$p+$i];
@@ -98,7 +97,7 @@ function galpani_decode( &$file, $bits )
 				$len +=  $bits[6];
 
 			$p = strlen($dec) - 1 - $ref;
-			trace("40  REF -%d LEN %d\n", $ref, $len);
+			//trace("40  REF -%d LEN %d\n", $ref, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 				$dec .= $dec[$p+$i];
@@ -113,7 +112,7 @@ function galpani_decode( &$file, $bits )
 
 			if ( $b1 == 0 )
 			{
-				trace("3f 00  end\n");
+				//trace("3f 00  end\n");
 				goto done;
 			}
 			else
@@ -122,7 +121,7 @@ function galpani_decode( &$file, $bits )
 				$b2 = ord( $dec[$ed] );
 				$by = ($b1 + $b2) & BIT8;
 
-				trace("3f  DIFF %2x + %2x = %2x\n", $b1, $b2, $by);
+				//trace("3f  DIFF %2x + %2x = %2x\n", $b1, $b2, $by);
 				$dec .= chr($by);
 				$pos += 2;
 			}
@@ -136,11 +135,10 @@ function galpani_decode( &$file, $bits )
 		$b2 = ord( $dec[$ed] );
 		$by = ($b1 + $b2) & BIT8;
 
-		trace("1f  DIFF %2x + %2x = %2x\n", $b1&BIT8, $b2, $by);
+		//trace("1f  DIFF %2x + %2x = %2x\n", $b1&BIT8, $b2, $by);
 		$dec .= chr($by);
 		$pos++;
 	} // while ( $pos < $end )
-
 done:
 	trace("=== end sub_2436c() ===\n");
 	return substr($dec, 0x1000);

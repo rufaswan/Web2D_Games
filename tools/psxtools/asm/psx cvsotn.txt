@@ -1,0 +1,121 @@
+st/st0.bin
+
+00  mips func()
+04  mips func()
+08  mips func()
+0c  mips func()
+
+10  RAM 80182094-801
+		*room changed*
+		800f0f0c  lbu  v1, 0(a0)
+			if ( v1 == 40 )
+		800f0f24  lbu  v0, 1(a0)
+		800f0f38  lbu  v0, 2(a0)
+		800f0f4c  lbu  v0, 3(a0)
+		800f0f64  lbu  v1, 5(a0)
+			v1 * a
+		800f3724  lbu  v1, 1(a0)
+		800f3734  lbu  v0, 0(a0)
+		800f4088  lbu  v0, 0(v0)
+			v0 << 3
+		800f41b4  lbu  a0, 1(v0)
+			a0 + 7fff
+			a0 | 4000
+
+		[8003c78c] + (v0 << 3) + 4 -> [8013757c]
+		800f41d8  lbu  a0, 2(v0)
+			a0 + 7fff
+		800f4248  lbu  a0, 0(a0)
+		800f42a4  lbu  v0, -4(a1) // 0(a0)
+		800f42c0  lbu  v0, -3(a1) // 1(a0)
+		800f42dc  lbu  v0, -2(a1) // 2(a0)
+		800f4304  lbu  a1, -1(a1) // 3(a0)
+		800f46d4  lbu  a0,  3(a0)
+		800f479c  lbu  a0,  3(v0)
+
+14  RAM 80180040-80180060  ptr
+	800ec090  lw  v0, 0(v0)
+
+	RAM 801a6c84-801a6ce4  ptr-2
+		800ec09c  lw  t2, 0(v1)
+
+		data
+			800ec0a4  lh  v0, 0(t2) -> 1c(s0)
+				t2 += 2
+				v0 & 8000
+				v0 & 7fff
+
+			s7 = t2 + 14
+			800ec710  lhu  v0,  -8(s7) // c(t2) -> 1a(s0)
+			800ec714  lh   s2,   0(t2)
+				s2 &  4
+				s2 &  8
+				s2 &  2
+				s2 & 10
+				s2 &  1
+				s2 & 20
+			800ec740  lhu  v0, -12(s7) //  2(t2) ->  e(s0)
+			800ec74c  lhu  v0, -10(s7) //  4(t2) -> 10(s0)
+			800ec758  lhu  v0,  -e(s7) //  6(t2) ->  6(s0)
+			800ec764  lhu  v0,  -c(s7) //  8(t2) ->  8(s0)
+			800ec998  lh   v0,  -a(s7) //  a(t2)
+			800ec9bc  lbu  s6,  -6(s7) //  e(t2)
+				s6 -= 80
+				s6 += 1
+			800ec9c0  lbu  s4,  -4(s7) // 10(t2)
+				s4 -= 80
+				s4 += 1
+			800ec9c4  lbu  s3,  -2(s7) // 12(t2)
+				s3 -= 80
+				s3 -= 1
+			800ec9cc  lbu  s5,   0(s7) // 14(t2)
+				s5 -= 80
+				s5 -= 1
+
+18  RAM 80180120-80180124
+		*no break*
+
+1c  RAM 80180314-801803e8
+		*room changed*
+		801b35d4  lw  a1, 314(at)
+
+20  RAM 80180184-801801a4
+		*room changed*
+		800f409c  lw  a0, 0(v0)
+		800edd10  lw  a0, 0(v0)
+		800edd2c  lw  a1, 4(v0)
+
+		data
+			800f40a4  lbu  v1, b(a0)
+				v1 & 80
+				v1 & 7f
+			800eda84  lw   v0, 4(a1) -> [80073090]
+			800edaac  lw   v0, 0(a1) -> [8007308c]
+			800edab8  lhu  v0, c(a1) -> [800730a4]
+			800edac4  lbu  v0, b(a1)
+				v0 & 40
+			800edb04  lbu  v0, b(a1)
+				v0 & 20
+			800edb2c  lbu  v0, b(a1)
+				v0 & 10
+			800edb50  lhu  v0, e(a1) -> [800730a8]
+			800edb5c  lw   v1, 8(a1)
+				v1 & 3f -> [800730b8]
+			800edb70  lw   a0, 8(a1)
+				(a0 >> 6) & 3f -> [800730bc]
+			800edb88  lw   v0, 8(a1)
+				(v0 >> c) & 3f -> [800730c0]
+			800edba4  lw   v1, 8(a1)
+				(v1 >> 12) & 3f -> [800730c4]
+
+24  RAM 801802c4-80180314
+		*no break*
+		RAM 801801a4-801802c4
+			*no break*
+
+28  mips func()
+
+//////////////////////////////
+
+([1f800034+2] & 7fff) * 4 + [8003c790]
+== [80180040] + ptr-2

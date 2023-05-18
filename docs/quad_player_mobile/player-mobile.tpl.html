@@ -1,0 +1,2280 @@
+<!doctype html>
+<html><head>
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>Quad Player - Mobile</title>
+<style>body {
+	margin  : 0;
+	padding : 0;
+}
+
+body,
+a, a:hover, a:visited {
+	background-color : #404040;
+	color            : #c0c0c0;
+	font-family      : sans-serif;
+}
+
+button {
+	border-radius    : 75%;
+	background-color : rgba(255 , 255 , 255 , 0.5);
+	min-width        : 42px;
+	height           : 42px;
+	white-space      : nowrap;
+	text-transform   : uppercase;
+}
+
+textarea {
+	display          : block;
+	width            : 95%;
+	height           : 25em;
+	margin           : 0 auto 5em;
+	background-color : #fff;
+	color            : #000;
+	resize           : none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-transform : uppercase;
+	border-bottom  : 1px #808080 solid;
+}
+
+.hidden {
+	display : none;
+}
+
+#viewer {
+	position : absolute;
+	left     : 0;
+	top      : 0;
+	width    : 100vw;
+	height   : 100vh;
+	overflow : auto;
+	display  : none;
+}
+
+#viewer #canvas,
+#viewer img {
+	position : absolute;
+	top      : 0;
+	left     : 0;
+	width    : 100%;
+	height   : 100%;
+}
+
+#debugger {
+	position : absolute;
+	left     : 0;
+	top      : 0;
+	width    : 100vw;
+	height   : 100vh;
+	overflow : auto;
+	display  : block;
+}
+
+#debugger h1 {
+	margin-top : 45px;
+}
+
+#viewer_top_nav,
+#debugger_top_nav {
+	position        : absolute;
+	top             : 0;
+	left            : 0;
+	width           : 100vw;
+	display         : flex;
+	flex-direction  : row;
+	justify-content : space-between;
+	align-items     : center;
+}
+
+#viewer_bottom_nav {
+	position        : absolute;
+	bottom          : 0;
+	left            : 0;
+	width           : 100vw;
+	display         : flex;
+	flex-direction  : row;
+	justify-content : space-between;
+	align-items     : center;
+}
+
+#debugger_top_nav {
+	position         : fixed;
+	background-color : #404040;
+}
+
+#quad_data button {
+	margin : 0 18px;
+}
+
+#quad_data p {
+	margin  : 0;
+	padding : 1em;
+}
+
+#quad_data table {
+	width          : 100%;
+	border-spacing : 0 2em;
+}
+
+#quad_data td {
+	border : 1px #c0c0c0 solid;
+}
+
+#quad_data td.current {
+	background-color : #c0c0c0;
+	color            : #404040;
+}
+
+#quad_data td:nth-child(2) {
+	width       : 1px;
+	white-space : nowrap;
+	border      : 0;
+}
+
+#quad_data_tags td:nth-child(1) {
+	width       : 1px;
+	border      : 0;
+	white-space : break-spaces;
+}
+
+#quad_data_tags td:nth-child(2) {
+	width       : 100%;
+	border      : 1px #c0c0c0 solid;
+	white-space : break-spaces;
+}
+</style>
+<script>'use strict';
+
+function getHtmlIds(){
+	var html = {};
+	var eles = document.querySelectorAll('*[id]');
+	for ( var i=0; i < eles.length; i++ ) {
+		var id  = eles[i].id;
+		html[id] = eles[i];
+	}
+	return html;
+}
+
+function displayViewer( html, toggle ){
+	if ( toggle ){
+		html.viewer.style.display   = 'block';
+		html.debugger.style.display = 'none';
+	}
+	else {
+		html.viewer.style.display   = 'none';
+		html.debugger.style.display = 'block';
+	}
+}
+
+function btnPrevNext( qdata, adj ){
+	adj = adj | 0;
+	if ( ! qdata || adj === 0 )
+		return;
+	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
+		qdata.attach.id += adj;
+	else
+		qdata.anim_fps  += adj;
+}
+
+function qdata_tagtable( tag, parent ){
+	if ( ! tag )
+		return '';
+	parent.innerHTML = '<h2>tag</h2>';
+
+	function wikilink( tagkey, tagval ){
+		if ( tagkey.toLowerCase() === 'comment' || tagval === '-' )
+			return tagval;
+		var href = tagval.replace(/ /g, '_');
+		return '<a href="https://en.m.wikipedia.org/wiki/' +href+ '" target="_blank">' +tagval+ '</a>';
+	}
+
+	var table = '<table id="quad_data_tags">';
+	var keys = Object.keys(tag);
+	keys.forEach(function(k){
+		var t = {};
+		t.l = k;
+		if ( Array.isArray(tag[k]) ){
+			t.v = [];
+			tag[k].forEach(function(tv){
+				t.v.push( wikilink( k, tv ) );
+			});
+			t.r = t.v.join(' , ');
+		}
+		else {
+			t.r = wikilink( k, tag[k] );
+		}
+
+		table += '<tr><td><p>' + t.l + '</p></td><td><p>' + t.r + '</p></td></tr>';
+	});
+	table += '</table>';
+	parent.innerHTML += table;
+}
+
+function qdata_attach( qdata, type, id ){
+	qdata.attach.type = type;
+	qdata.attach.id   = id;
+	qdata.anim_fps    = 0;
+}
+
+
+
+</script>
+<script>'use strict';
+
+var QUAD = {};
+
+(function($){
+
+	function QuadGL(Q){
+	var $ = this;
+	var m = {};
+
+	//////////////////////////////
+
+	m.GL = '';
+	m.SHADER = {};
+	$.init = function( dom ){
+		var opt = {
+			alpha                 : true,
+			antialias             : true,
+			depth                 : false,
+			premultipliedAlpha    : false,
+			preserveDrawingBuffer : false,
+			stencil               : false,
+		};
+		m.GL = dom.getContext('webgl', opt);
+		if ( ! m.GL )
+			return Q.func.error('WebGL context failed');
+		var form = m.GL.getShaderPrecisionFormat(m.GL.FRAGMENT_SHADER, m.GL.HIGH_FLOAT);
+		if ( ! form )
+			return Q.func.error('Fragment Shader has no highp support');
+
+		var vert_src, frag_src;
+		Q.func.log('WebGL + highp init OK', ['precision',form.precision]);
+
+		//////////////////////////////
+
+		vert_src = `
+			attribute  highp  vec2  a_xy;
+			uniform    highp  vec2  u_pxsize;
+
+			void main(void){
+				gl_Position = vec4(
+					(a_xy.x + 0.5) * u_pxsize.x ,
+					(a_xy.y + 0.5) * u_pxsize.y ,
+				1.0 , 1.0);
+			}
+		`;
+		frag_src = `
+			uniform  highp  vec4  u_color;
+
+			void main(void){
+				gl_FragColor = u_color;
+			}
+		`;
+		m.SHADER.lines = m.createShader('draw lines', vert_src, frag_src);
+
+		//////////////////////////////
+
+		vert_src = `
+			attribute  highp  vec4   a_fog;
+			attribute  highp  vec3   a_xyz;
+			attribute  highp  vec2   a_uv;
+			attribute  lowp   float  a_tid;
+			uniform    highp  vec2   u_pxsize[5];
+			varying    highp  vec4   v_fog;
+			varying    highp  vec2   v_uv;
+			varying    highp  float  v_z;
+			varying    lowp   float  v_tid;
+
+			highp  vec4   FOG;
+			highp  vec3   POS;
+			highp  vec2   TEX;
+			highp  float  z;
+			void main(void){
+				z = 1.0 / a_xyz.z;
+				FOG = a_fog * z;
+				POS = a_xyz * z;
+				TEX = a_uv  * z;
+
+				POS.x = (POS.x + 0.5) * u_pxsize[0].x;
+				POS.y = (POS.y + 0.5) * u_pxsize[0].y;
+
+				v_fog = FOG;
+				v_uv  = TEX;
+				v_z   = z;
+				v_tid = a_tid;
+				gl_Position = vec4(POS.x, POS.y, 1.0, 1.0);
+			}
+		`;
+		frag_src = `
+			uniform  sampler2D  u_tex[4];
+			uniform  highp  vec2   u_pxsize[5];
+			varying  highp  vec4   v_fog;
+			varying  highp  vec2   v_uv;
+			varying  highp  float  v_z;
+			varying  lowp   float  v_tid;
+
+			highp  vec4   FOG;
+			highp  vec2   TEX;
+			highp  float  z;
+			lowp   int    tid;
+			void main(void){
+				z = 1.0 / v_z;
+				FOG = v_fog * z;
+				TEX = v_uv  * z;
+
+				tid = int(v_tid);
+				if ( tid == 0 ){
+					TEX *= u_pxsize[1];
+					gl_FragColor = texture2D(u_tex[0], TEX) * FOG;
+				}
+				else
+				if ( tid == 1 ){
+					TEX *= u_pxsize[2];
+					gl_FragColor = texture2D(u_tex[1], TEX) * FOG;
+				}
+				else
+				if ( tid == 2 ){
+					TEX *= u_pxsize[3];
+					gl_FragColor = texture2D(u_tex[2], TEX) * FOG;
+				}
+				else
+				if ( tid == 3 ){
+					TEX *= u_pxsize[4];
+					gl_FragColor = texture2D(u_tex[3], TEX) * FOG;
+				}
+				else
+					gl_FragColor = FOG;
+			}
+		`;
+		// Error: '[]' : Index expression must be constant
+		m.SHADER.keyframe = m.createShader('draw keyframe', vert_src, frag_src);
+
+		//////////////////////////////
+
+		vert_src = `
+			attribute  highp  vec2  a_xy;
+			attribute  highp  vec2  a_uv;
+			uniform    highp  vec4  u_pxsize;
+			varying    highp  vec2  v_uv;
+
+			highp  vec2 xy;
+			highp  vec2 uv;
+			void main(void){
+				xy.x = (a_xy.x + 0.5) * u_pxsize.x;
+				xy.y = (a_xy.y + 0.5) * u_pxsize.y;
+
+				uv.x = a_uv.x * u_pxsize.z;
+				uv.y = a_uv.y * u_pxsize.w;
+
+				v_uv = uv;
+				gl_Position = vec4(xy.x , xy.y , 1.0 , 1.0);
+			}
+		`;
+		frag_src = `
+			uniform  sampler2D  u_tex;
+			uniform  highp  vec4  u_color;
+			varying  highp  vec2  v_uv;
+
+			void main(void){
+				gl_FragColor = texture2D(u_tex, v_uv) * u_color;
+			}
+		`;
+		m.SHADER.image = m.createShader('draw image', vert_src, frag_src);
+
+		//////////////////////////////
+
+		return true;
+	}
+
+	m.createShader = function( name, vert_src, frag_src ){
+		var vert_shader = m.GL.createShader(m.GL.VERTEX_SHADER);
+		m.GL.shaderSource (vert_shader, vert_src);
+		m.GL.compileShader(vert_shader);
+		var t = m.GL.getShaderParameter(vert_shader, m.GL.COMPILE_STATUS);
+		if ( ! t )
+			return Q.func.error( m.GL.getShaderInfoLog(vert_shader) );
+
+		var frag_shader = m.GL.createShader(m.GL.FRAGMENT_SHADER);
+		m.GL.shaderSource (frag_shader, frag_src);
+		m.GL.compileShader(frag_shader);
+		var t = m.GL.getShaderParameter(frag_shader, m.GL.COMPILE_STATUS);
+		if ( ! t )
+			return Q.func.error( m.GL.getShaderInfoLog(frag_shader) );
+
+		var prog = m.GL.createProgram();
+		m.GL.attachShader(prog, vert_shader);
+		m.GL.attachShader(prog, frag_shader);
+		m.GL.linkProgram (prog);
+		var t = m.GL.getProgramParameter(prog, m.GL.LINK_STATUS);
+		if ( ! t )
+			return Q.func.error( m.GL.getProgramInfoLog(prog) );
+
+		Q.func.log('shader init', name);
+		return prog;
+	}
+
+	//////////////////////////////
+
+	$.drawLine = function( quads, color, view='' ){
+		m.GL.useProgram( m.SHADER.lines );
+		var loc = m.shaderLoc(m.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
+		if ( ! view )
+			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+
+		m.GL.lineWidth(2);
+		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
+
+		$.setVertexAttrib(loc.a_xy, quads, 2);
+		m.GL.uniform4fv  (loc.u_color , color);
+		m.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
+
+		var idxlen = quads.length / 2;  // number of x,y
+		m.indiceLine(idxlen);
+	}
+
+	$.drawKeyframe = function( dst, src, fog, tid, image, view='' ){
+		m.GL.useProgram( m.SHADER.keyframe );
+		var loc = m.shaderLoc(m.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_tid', 'u_pxsize', 'u_tex');
+		if ( ! view )
+			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+
+		// set up 4 textures
+		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
+		[0,1,2,3].forEach(function(v){
+			var img = image[v];
+			pxsz = pxsz.concat([ 1.0/img.w , 1.0/img.h ]);
+			m.GL.activeTexture(m.GL.TEXTURE0 + v);
+			m.GL.bindTexture  (m.GL.TEXTURE_2D, img.tex);
+		});
+
+		$.setVertexAttrib(loc.a_xyz, dst, 3);
+		$.setVertexAttrib(loc.a_uv , src, 2);
+		$.setVertexAttrib(loc.a_fog, fog, 4);
+		$.setVertexAttrib(loc.a_tid, tid, 1);
+		m.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		m.GL.uniform1iv  (loc.u_tex, [0,1,2,3]);
+		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
+
+		var dstlen = dst.length / 3; // number of x,y
+		m.indiceQuad(dstlen);
+	}
+
+	$.drawImage = function( dst, src, color, image, view='' ){
+		m.GL.useProgram( m.SHADER.image );
+		var loc = m.shaderLoc(m.SHADER.image, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex', 'u_color');
+		if ( ! view )
+			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+
+		// 1 texture per draw
+		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w ,  1.0/image.h ];
+		m.GL.activeTexture(m.GL.TEXTURE0);
+		m.GL.bindTexture  (m.GL.TEXTURE_2D, image.tex);
+
+		$.setVertexAttrib(loc.a_xy, dst, 2);
+		$.setVertexAttrib(loc.a_uv, src, 2);
+		m.GL.uniform4fv  (loc.u_color , color);
+		m.GL.uniform4fv  (loc.u_pxsize, pxsz);
+		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
+
+		var dstlen = dst.length / 2; // number of x,y
+		m.indiceQuad(dstlen);
+	}
+
+	m.indiceLine = function( len ){
+		var idx = [];
+		for ( var i=0; i < len; i += 4 )
+			idx.push(i+0,i+1 , i+1,i+2 , i+2,i+3 , i+3,i+0);
+
+		var buf = m.GL.createBuffer();
+		m.GL.bindBuffer(m.GL.ELEMENT_ARRAY_BUFFER, buf);
+		m.GL.bufferData(m.GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), m.GL.STATIC_DRAW);
+
+		// 1 quad = 4 x,y   = 8 numbers
+		//        = 4 lines = 8 points / indices
+		m.GL.drawElements(m.GL.LINES, len/4*8, m.GL.UNSIGNED_SHORT, 0);
+	}
+
+	m.indiceQuad = function( len ){
+		var idx = [];
+		for ( var i=0; i < len; i += 4 )
+			idx.push(i+0,i+1,i+2 , i+0,i+2,i+3);
+
+		var buf = m.GL.createBuffer();
+		m.GL.bindBuffer(m.GL.ELEMENT_ARRAY_BUFFER, buf);
+		m.GL.bufferData(m.GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), m.GL.STATIC_DRAW);
+
+		// 1 quad = 4 x,y       =  8 numbers
+		//        = 4 x,y,z     = 12 numbers
+		//        = 2 triangles =  6 points / indices
+		m.GL.drawElements(m.GL.TRIANGLES, len/4*6, m.GL.UNSIGNED_SHORT, 0);
+	}
+
+	m.shaderLoc = function(){
+		var shader = arguments[0];
+		var loc    = {};
+		for ( var i=1; i < arguments.length; i++ )
+		{
+			var v = arguments[i];
+			switch ( v.charAt(0) ){
+			case 'a':  loc[v] = m.GL.getAttribLocation (shader, v); break;
+			case 'u':  loc[v] = m.GL.getUniformLocation(shader, v); break;
+			}
+		} // for ( var i=1; i < arguments.length; i++ )
+		return loc;
+	}
+
+	$.setVertexAttrib = function( loc, data, v ){
+		var buf = m.GL.createBuffer();
+		m.GL.bindBuffer(m.GL.ARRAY_BUFFER, buf);
+		m.GL.bufferData(m.GL.ARRAY_BUFFER, new Float32Array(data), m.GL.STATIC_DRAW);
+		m.GL.enableVertexAttribArray(loc);
+		m.GL.vertexAttribPointer(loc, v, m.GL.FLOAT, false, 0, 0);
+	}
+
+	//////////////////////////////
+
+	$.createTexture = function(){
+		var tex = m.GL.createTexture();
+		m.GL.bindTexture  (m.GL.TEXTURE_2D, tex);
+		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_WRAP_S    , m.GL.CLAMP_TO_EDGE);
+		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_WRAP_T    , m.GL.CLAMP_TO_EDGE);
+		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_MIN_FILTER, m.GL.NEAREST);
+		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_MAG_FILTER, m.GL.NEAREST);
+		return tex;
+	}
+
+	$.updateTexture = function( tex, img ){
+		if ( ! tex )
+			tex = $.createTexture();
+		m.GL.bindTexture(m.GL.TEXTURE_2D, tex);
+		m.GL.texImage2D(
+			m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level , internalformat
+			m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+		img);
+	}
+
+	$.createPixel = function( hex, w=1, h=1 ){
+		hex = Q.math.clamp(hex, 0, 255) | 0;
+		var pix = {
+			w : w ,
+			h : h ,
+			tex : $.createTexture() ,
+		};
+		m.GL.bindTexture(m.GL.TEXTURE_2D, pix.tex);
+		m.GL.texImage2D(
+			m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
+			pix.w , pix.h   , 0                  , // width  , height , border
+			m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+			new Uint8Array( Q.func.arrayRepeat(hex, w*h*4) )
+		);
+		return pix;
+	}
+
+	$.canvasBuffer = function( canv ){
+		if ( canv ){
+			m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, null);
+			return 0;
+		}
+		else {
+			var framebuf = m.GL.createFramebuffer();
+			m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
+			return framebuf;
+		}
+	}
+
+	$.framebufferTexture2D = function( framebuf, tex ){
+		if ( ! framebuf || ! tex )
+			return Q.func.error('framebufferTexture2D() = no framebuf / tex');
+
+		m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
+		m.GL.bindTexture    (m.GL.TEXTURE_2D , tex);
+		m.GL.framebufferTexture2D(m.GL.FRAMEBUFFER, m.GL.COLOR_ATTACHMENT0, m.GL.TEXTURE_2D, tex, 0);
+	}
+
+	$.texture2DtoDataURL = function( tex, w, h ){
+		// use framebuffer to copy pixels to Uint8Array()
+		var pixels = new Uint8Array(w*h*4);
+		var framebuf = m.GL.createFramebuffer();
+		m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
+		m.GL.framebufferTexture2D(m.GL.FRAMEBUFFER, m.GL.COLOR_ATTACHMENT0, m.GL.TEXTURE_2D, tex, 0);
+		m.GL.readPixels(0, 0, w, h, m.GL.RGBA, m.GL.UNSIGNED_BYTE, pixels);
+
+		// use canvas 2D to save as png
+		var canv = document.createElement('canvas');
+		var c2d  = canv.getContext('2d');
+			canv.width  = w;
+			canv.height = h;
+		var image = c2d.createImageData(w, h);
+		image.data.set(pixels);
+		c2d.putImageData(image, 0, 0);
+		return canv.toDataURL('image/png');
+	}
+
+	//////////////////////////////
+
+	$.enableBlend = function( blend ){
+		if ( ! blend )
+			return m.GL.disable(m.GL.BLEND);
+
+		var c = blend.color;
+		m.GL.blendColor(c[0], c[1], c[2], c[3]);
+
+		var mode = blend.mode;
+		if ( ! Array.isArray(mode) )
+			return m.GL.disable(m.GL.BLEND);
+
+		if ( mode.length === 6 ){
+			m.GL.blendEquationSeperate(m.GL[ mode[0] ] , m.GL[ mode[1] ]);
+			m.GL.blendFuncSeperate    (m.GL[ mode[2] ] , m.GL[ mode[3] ] , m.GL[ mode[4] ] , m.GL[ mode[5] ]);
+			return m.GL.enable(m.GL.BLEND);
+		}
+		if ( mode.length === 3 ){
+			m.GL.blendEquation(m.GL[ mode[0] ]);
+			m.GL.blendFunc    (m.GL[ mode[1] ] , m.GL[ mode[2] ]);
+			return m.GL.enable(m.GL.BLEND);
+		}
+		return m.GL.disable(m.GL.BLEND);
+	}
+
+	$.clear = function(){
+		m.GL.clear( m.GL.COLOR_BUFFER_BIT );
+		m.GL.colorMask ( true , true , true , true );
+		m.GL.clearColor( 0 , 0 , 0 , 0 );
+	}
+
+	$.isValidConstant = function(){
+		for ( var i=0; i < arguments.length; i++ ){
+			if ( ! m.GL[ arguments[i] ] )
+				return false;
+		}
+		return true;
+	}
+
+	$.maxTextureSize = function(){
+		return m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+	}
+
+	$.isMaxTextureSize = function(w, h){
+		var max = m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+		if ( w > max )  return true;
+		if ( h > max )  return true;
+		return false;
+	}
+
+	//////////////////////////////
+
+	$.canvasSize = function(){
+		m.GL.canvas.width  = m.GL.canvas.clientWidth;
+		m.GL.canvas.height = m.GL.canvas.clientHeight;
+	}
+
+	$.canvasSpace = function(sx, sy, zoom=1){
+		m.GL.canvas.width  = m.GL.canvas.clientWidth;
+		m.GL.canvas.height = m.GL.canvas.clientHeight;
+
+		var m4 = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
+		var hw = m.GL.canvas.width  * 0.5;
+		var hh = m.GL.canvas.height * 0.5;
+		m4[0+3] = hw * sx;
+		m4[4+3] = hh * sy;
+
+		m4[0+0] = zoom;
+		m4[4+1] = zoom;
+		return m4;
+	}
+
+	//////////////////////////////
+
+} // function QuadGL
+
+	function QuadFunc(Q){
+	var $ = this;
+	var m = {};
+
+	//////////////////////////////
+
+	m.LOGS = [];
+	$.log = function(){
+		var arg = [].slice.call(arguments);
+		var txt = JSON.stringify(arg);
+		m.LOGS.unshift( txt );
+		while ( m.LOGS.length > 20 )
+			m.LOGS.pop();
+		return true;
+	}
+	$.error = function(){
+		var arg = [].slice.call(arguments);
+		var txt = JSON.stringify(arg);
+		m.LOGS.unshift( 'ERROR : ' + txt );
+		while ( m.LOGS.length > 20 )
+			m.LOGS.pop();
+		return false;
+	}
+	$.console = function(){
+		return m.LOGS.join("\n\n");
+	}
+
+	$.arrayRepeat = function( val, cnt ){
+		var res = [];
+		if ( Array.isArray(val) ){
+			for ( var i=0; i < cnt; i++ )
+				res = res.concat(val);
+		}
+		else {
+			for ( var i=0; i < cnt; i++ )
+				res.push(val);
+		}
+		return res;
+	}
+
+	$.intPad = function( int, len ){
+		var sign = false;
+		int |= 0;
+		if ( int < 0 ){
+			sign = true;
+			int  = -int;
+		}
+		var str = '00000000' + int.toString();
+		str = str.substring(str.length - len);
+		if ( sign )
+			return '-' + str;
+		else
+			return str;
+	}
+
+	//////////////////////////////
+
+	$.uploadPromise = function( up, qdata ){
+		var ext = $.fileExtension(up.name);
+		switch ( ext ){
+			case 'zip':
+				return new Promise(function(resolve, reject){
+					var reader = new FileReader;
+					reader.onload = function(){
+						var list = Q.binary.zipread( reader.result );
+						resolve(list);
+					}
+					reader.readAsArrayBuffer(up);
+				}).then(function(list){
+					var key = Object.keys(list);
+					var pro = [];
+
+					for ( var i=0; i < key.length; i++ ){
+						var ext = $.fileExtension( key[i] );
+						var dat = list[ key[i] ];
+						switch ( ext ){
+							case 'quad':
+								var p = new Promise(function(resolve, reject){
+									var src = Q.binary.uint2txt(dat);
+									resolve(src);
+								}).then(function(text){
+									return m.uploadHandler(qdata, 'quad', key[i], text);
+								});
+								pro.push(p);
+								break;
+							case 'png':
+								var p = new Promise(function(resolve, reject){
+									var src = 'data:image/png;base64,' + Q.binary.toBase64(dat);
+									resolve(src);
+								}).then(function(data){
+									return m.uploadHandler(qdata, 'image', key[i], src);
+								});
+								pro.push(p);
+								break;
+						} // switch ( ext )
+					} // for ( var i=0; i < key.length; i++ )
+
+					return Promise.all(pro);
+				});
+
+			case 'quad':
+				return new Promise(function(resolve, reject){
+					var reader = new FileReader;
+					reader.onload = function(){
+						resolve(reader.result);
+					}
+					reader.readAsText(up);
+				}).then(function(text){
+					return m.uploadHandler(qdata, 'quad', up.name, text);
+				});
+
+			case 'png':
+				return new Promise(function(resolve, reject){
+					var reader = new FileReader;
+					reader.onload = function(){
+						resolve(reader.result);
+					}
+					reader.readAsDataURL(up);
+				}).then(function(data){
+					return m.uploadHandler(qdata, 'image', up.name, data);
+				});
+		} // switch ( ext )
+		return 0;
+	}
+
+	m.uploadHandler = function( qdata, type, fname, data ){
+		switch( type ){
+			case 'quad':
+				var quad = JSON.parse(data);
+				qdata.QUAD = m.quadfileCheck(quad);
+				qdata.name = fname.replace(/[^A-Za-z0-9]/g, '_');
+				return $.log('UPLOAD quad = ' + fname);
+
+			case 'image':
+				return new Promise(function(resolve, reject){
+					var fnm = fname.match(/\.([0-9]+)\./);
+					var tid = fnm[1];
+					var tex = qdata.IMAGE[tid];
+					if ( ! tex )
+						return 0;
+
+					var img = new Image;
+					img.onload = function(){
+						resolve([tid,img]);
+					}
+					img.src = data;
+				}).then(function(res){
+					var tid = res[0];
+					var img = res[1];
+					if ( Q.gl.isMaxTextureSize(img.width, img.height) )
+						return $.error('OVER Image Max Texture Size = ' + fname);
+
+					var tex = qdata.IMAGE[tid];
+					tex.w = img.width;
+					tex.h = img.height;
+					tex.name = fname;
+					Q.gl.updateTexture(tex.tex, img);
+					return $.log('UPLOAD image = ' +tid+ ' , ' +tex.w+ 'x' +tex.h+ ' , ' +fname);
+				});
+
+			case 'video':
+				return new Promise(function(resolve, reject){
+					var fnm = fname.match(/\.([0-9]+)\./);
+					var tid = fnm[1];
+					if ( ! qdata.IMAGE[tid] )
+						return;
+
+					var video = document.createElement('video');
+					video.onload = function(){
+						resolve([tid,video]);
+					}
+					video.src = data;
+				}).then(function(res){
+					var tid   = res[0];
+					var video = res[1];
+					video.pause();
+					video.currentTime = 0; // in seconds
+					video.addEventListener('seeked', function(){
+						if ( Q.gl.isMaxTextureSize(video.videoWidth, video.videoHeight) )
+							return $.error('OVER Video Max Texture Size = ' + fname);
+
+						var tex = qdata.IMAGE[tid];
+						tex.w = video.videoWidth;
+						tex.h = video.videoHeight;
+						tex.name = fname;
+						Q.gl.updateTexture(tex.tex , video);
+					});
+
+					qdata.VIDEO[tid] = video;
+					return $.log('UPLOAD video = ' + tid + ' , ' + fname);
+				});
+		} // switch( type )
+		return 0;
+	}
+
+	m.keyFogQuad = function( fog ){
+		if ( typeof fog === 'string' ){
+			var c = Q.math.css_color(fog);
+			return [].concat(c, c, c, c);
+		}
+		if ( Array.isArray(fog) && fog.length === 4 ){
+			var c0 = Q.math.css_color( fog[0] );
+			var c1 = Q.math.css_color( fog[1] );
+			var c2 = Q.math.css_color( fog[2] );
+			var c3 = Q.math.css_color( fog[3] );
+			return [].concat(c0, c1, c2, c3);
+		}
+		// default solid white
+		return [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1];
+	}
+
+	m.quadfileCheck = function( quad ){
+		if ( quad.blend ){
+			quad.blend.forEach(function(bv,bk){
+				bv.debug = bv.debug || 0;
+				bv.color = Q.math.css_color( bv.color );
+
+				var valid = Q.gl.isValidConstant.apply(null, bv.mode);
+				if ( bv.mode.length === 6 && valid )
+					return;
+				if ( bv.mode.length === 3 && valid )
+					return;
+				quad.blend[bk] = 0;
+			});
+		} // if ( quad.blend )
+
+		if ( quad.keyframe ){
+			quad.keyframe.forEach(function(kv,kk){
+				if ( ! Array.isArray(kv.layer) || kv.layer.length < 1 ){
+					quad.keyframe[kk] = 0;
+					return;
+				}
+				kv.debug = kv.debug || 0;
+
+				kv.layer.forEach(function(lv,lk){
+					if ( ! Array.isArray(lv.dstquad) || lv.dstquad.length !== 8 ){
+						kv.layer[lk] = 0;
+						return;
+					}
+					lv.debug = lv.debug || 0;
+
+					lv.fogquad  = m.keyFogQuad( lv.fogquad );
+					lv.blend_id = ( lv.blend_id === undefined ) ? -1 : lv.blend_id; // 0 is valid
+					lv.tex_id   = ( lv.tex_id   === undefined ) ? -1 : lv.tex_id;   // 0 is valid
+					if ( ! Array.isArray(lv.srcquad) || lv.srcquad.length !== 8 )
+						lv.srcquad = [0,0 , 0,0 , 0,0 , 0,0];
+				});
+			});
+		} // if ( quad.keyframe )
+
+		if ( quad.hitbox ){
+			quad.hitbox.forEach(function(hv,hk){
+				if ( ! Array.isArray(hv.layer) || hv.layer.length < 1 ){
+					quad.hitbox[hk] = 0;
+					return;
+				}
+				hv.debug = hv.debug || 0;
+
+				hv.layer.forEach(function(lv,lk){
+					if ( ! Array.isArray(lv.hitquad) && lv.hitquad.length !== 8 ){
+						hv.layer[lk] = 0;
+						return;
+					}
+					lv.debug = lv.debug || 0;
+				});
+			});
+		} // if ( quad.hitbox )
+
+		if ( quad.animation ){
+			quad.animation.forEach(function(av,ak){
+				if ( ! Array.isArray(av.timeline) || av.timeline.length < 1 ){
+					quad.animation[ak] = 0;
+					return;
+				}
+				av.loop_id = ( av.loop_id === undefined ) ? -1 : av.loop_id; // 0 is valid
+				av.debug   = av.debug || 0;
+
+				av.timeline.forEach(function(tv,tk){
+					tv.debug = tv.debug || 0;
+					tv.time  = tv.time  || 0;
+						tv.time = Math.abs(tv.time);
+					tv.mix   = ( ! tv.mix ) ? 0 : 1; // -1 => 0
+					tv.color = Q.math.css_color(tv.color);
+
+					if ( ! Array.isArray(tv.matrix) || tv.matrix.length !== 16 ){
+						if ( tv.attach )
+							tv.matrix = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
+						else
+							tv.matrix = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
+					}
+				});
+			});
+		} // if ( quad.animation )
+
+		if ( quad.skeleton ){
+			quad.skeleton.forEach(function(sv,sk){
+				if ( ! Array.isArray(sv.bone) || sv.bone.length < 1 ){
+					quad.skeleton[sk] = 0;
+					return;
+				}
+				sv.debug = sv.debug || 0;
+
+				sv.bone.forEach(function(bv,bk){
+					if ( ! Array.isArray(bv.child) ){
+						bv.child = 0;
+					}
+					bv.debug = bv.debug || 0;
+
+					bv.order = ( bv.order === undefined ) ? bk : bv.order;  // 0 is valid
+					bv.parent_id = ( bv.parent_id === undefined ) ? -1 : bv.parent_id; // 0 is valid
+					if ( bv.parent_id === bk )
+						bv.parent_id = -1;
+				});
+			});
+		} // if ( quad.skeleton )
+
+		return quad;
+	}
+
+	$.fileExtension = function( fn ){
+		var ext = fn.split('.').pop();
+		return ext.toLowerCase();
+	}
+
+	//////////////////////////////
+
+	$.drawLines = function( qdata, layer, mat4, quad ){
+		var clines = [];
+
+		var debug = [];
+		var did, dbg;
+		layer.forEach(function(lv,lk){
+			if ( ! lv )
+				return;
+
+			dbg = JSON.stringify(lv.debug);
+			did = debug.indexOf(dbg);
+			if ( did < 0 ){
+				did = debug.length;
+				debug.push(dbg);
+				clines[did] = [];
+			}
+
+			var dst = Q.math.quad_multi4(mat4, lv[quad]);
+			clines[did] = clines[did].concat(dst);
+		});
+
+		var color = [
+			[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
+			[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
+			[0,0,0,1] , [1,1,1,1] ,             // black white
+			[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
+			[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
+			[0.5,0.5,0.5,1] , // gray
+		];
+
+		clines.forEach(function(cv,ck){
+			var cid = qdata.line_index % color.length;
+			Q.gl.drawLine(cv, color[cid]);
+
+			qdata.line_index++;
+			qdata.is_draw = true;
+		});
+	}
+
+	$.drawHitbox = function( qdata, hid, mat4 ){
+		var layer = qdata.QUAD.hitbox[hid].layer;
+		$.drawLines(qdata, layer, mat4, 'hitquad');
+	}
+
+	m.drawKeyframeLine = function( qdata, kid, mat4 ){
+		var layer = qdata.QUAD.keyframe[kid].layer;
+		$.drawLines(qdata, layer, mat4, 'dstquad');
+	}
+
+	//////////////////////////////
+
+	m.drawKeyframeTex = function( qdata, kid, mat4, color ){
+		var layer = qdata.QUAD.keyframe[kid].layer;
+		var ctexs = [];
+
+		layer.forEach(function(lv,lk){
+			if ( ! lv )
+				return;
+			var bid = lv.blend_id;
+			if ( ! ctexs[bid] )
+				ctexs[bid] = { dst:[] , src:[] , fog:[] , tid:[] };
+
+			var kv = ctexs[bid];
+
+			var dst = Q.math.quad_multi4(mat4, lv.dstquad);
+			var xyz = Q.math.perspective_quad(dst);
+			kv.dst = kv.dst.concat(xyz);
+
+			var clr = Q.math.fog_multi4(color, lv.fogquad);
+			kv.fog = kv.fog.concat(clr);
+
+			kv.src = kv.src.concat(lv.srcquad);
+			kv.tid = kv.tid.concat([lv.tex_id , lv.tex_id , lv.tex_id , lv.tex_id]);
+		});
+
+		qdata.QUAD.blend.forEach(function(bv,bk){
+			if ( ! ctexs[bk] )
+				return;
+			qdata.is_draw = true;
+			var kv = ctexs[bk];
+			Q.gl.enableBlend ( bv );
+			Q.gl.drawKeyframe( kv.dst, kv.src, kv.fog, kv.tid, qdata.IMAGE );
+		});
+	}
+
+	$.drawKeyframe = function( qdata, kid, mat4, color ){
+		if ( qdata.is_lines )
+			return m.drawKeyframeLine(qdata, kid, mat4);
+		else
+			return m.drawKeyframeTex(qdata, kid, mat4, color);
+	}
+
+	//////////////////////////////
+
+	m.animTimeIndex = function( fps, anim ){
+		var len = anim.timeline.length;
+		var cur = 0;
+		while (1){
+			fps -= anim.timeline[cur].time;
+			if ( fps < 0 )
+				return [cur,-fps];
+
+			cur++;
+			if ( cur >= len ){
+				if ( anim.loop_id < 0 )
+					return [-1,0];
+				cur = anim.loop_id;
+			}
+		} // while (1)
+	}
+
+	m.animCurrent = function( qdata, aid, mat4, color ){
+		var ret = {
+			attach : 0,
+			mat4   : mat4,
+			color  : color,
+		}
+		// check for valid range
+		if ( qdata.anim_fps < 0 )
+			return ret;
+		var anim = qdata.QUAD.animation[aid];
+
+		var t = m.animTimeIndex(qdata.anim_fps, anim);
+		var curid = t[0];
+		if ( curid < 0 )
+			return ret;
+
+		var cur = anim.timeline[curid];
+		ret.attach = cur.attach;
+		if ( ! cur.mix ){
+			ret.mat4  = Q.math.matrix_multi44( mat4 , cur.matrix );
+			ret.color = Q.math.vec4_multi    ( color, cur.color  );
+			return ret;
+		}
+
+		var nxtid = curid + 1;
+		if ( nxtid >= anim.timeline.length ){
+			if ( anim.loop_id < 0 )
+				nxtid = curid;
+			else
+				nxtid = anim.loop_id;
+		}
+
+		var nxt  = anim.timeline[nxtid];
+		var rate = t[1] / cur.time;
+		var m4 = Q.math.matrix_mix( rate, cur.matrix, nxt.matrix );
+		var c4 = Q.math.color_mix ( rate, cur.color , nxt.color  );
+			ret.mat4  = Q.math.matrix_multi44( mat4 , m4 );
+			ret.color = Q.math.vec4_multi    ( color, c4 );
+		return ret;
+	}
+
+	//////////////////////////////
+
+	m.skeletonTree = function( qdata, bone, bid, transform, mat4, color ){
+		if ( transform[bid] )
+			return true;
+
+		var bv  = bone[bid];
+		var cur = {
+			id     : bid,
+			attach : 0,
+			mat4   : mat4,
+			color  : color,
+			order  : bv.order,
+		};
+
+		// if has parent , calculate it first
+		// then inherit its mat4 and color
+		if ( bv.parent_id >= 0 ){
+			if ( ! transform[ bv.parent_id ] )
+				return false;
+			else {
+				var par = transform[ bv.parent_id ];
+				cur.mat4  = par.mat4;
+				cur.color = par.color;
+			}
+		}
+
+		// if dummy bone = done
+		if ( ! bv.attach ){
+			transform[bid] = cur;
+			return true;
+		}
+
+		// mat4 + color from 'animation' needs to be recalculated
+		// *any* is done
+		cur.attach = bv.attach;
+		if ( bv.attach.type !== 'animation' ){
+			transform[bid] = cur;
+			return true;
+		}
+
+		var t = m.animCurrent(qdata, bv.attach.id, cur.mat4, cur.color);
+		t.id    = bid;
+		t.order = bv.order;
+		transform[bid] = t;
+		return true;
+	}
+
+	$.drawSkeleton = function( qdata, sid, mat4, color ){
+		var bone = qdata.QUAD.skeleton[sid].bone;
+
+		// we want parent * current = nested matrix
+		// save pre-computed to transform array
+		// recursive function = out of memory
+		var transform = [];
+		var is_done = false;
+		while ( ! is_done ){
+			is_done = true;
+			bone.forEach(function(bv,bk){
+				var res = m.skeletonTree( qdata, bone, bk, transform, mat4, color );
+				if ( ! res )
+					is_done = false;
+			});
+		} // while ( ! is_done )
+
+		transform.sort(function(a,b){
+			return a.order - b.order;
+		});
+		transform.forEach(function(tv){
+			if ( ! tv.attach )
+				return;
+			$.drawAttach(qdata, tv.attach, tv.mat4, tv.color);
+		});
+
+		transform = null;
+	}
+
+	//////////////////////////////
+
+	$.drawAttach = function( qdata, attach, mat4, color ){
+		if ( ! Array.isArray( qdata.QUAD[ attach.type ] ) )
+			return;
+		if ( ! qdata.QUAD[ attach.type ][ attach.id ] )
+			return;
+		switch ( attach.type ){
+			case 'keyframe':
+				return $.drawKeyframe( qdata, attach.id, mat4, color );
+			case 'animation':
+				var t = m.animCurrent( qdata, attach.id, mat4, color );
+				if ( ! t.attach )
+					return;
+				return $.drawAttach( qdata, t.attach, t.mat4, t.color );
+			case 'slot':
+				qdata.QUAD.slot[ attach.id ].forEach(function(sv,sk){
+					$.drawAttach(qdata, sv, mat4, color);
+				});
+				return;
+			case 'hitbox':
+				if ( ! qdata.is_hits )
+					return;
+				return $.drawHitbox( qdata, attach.id, mat4 );
+			case 'skeleton':
+				return $.drawSkeleton( qdata, attach.id, mat4, color );
+			case 'quad':
+				var qid = qdata.QUAD.quad[ attach.id ];
+				if ( qid === undefined || qid < 0 )
+					return;
+				return $.qdata_draw( qdata.LIST[qid], mat4, color );
+		} // switch ( attach.type )
+	}
+
+	$.qdata_draw = function( qdata, mat4, color ){
+		if ( ! qdata.QUAD )
+			return;
+		var m4 = Q.math.matrix_multi44( mat4, qdata.matrix );
+		var c4 = Q.math.vec4_multi(color, qdata.color);
+		return $.drawAttach(qdata, qdata.attach, m4, c4);
+	}
+
+	$.qdata_clear = function( qdata ){
+		if ( ! qdata.QUAD )
+			return;
+		Q.gl.clear();
+		qdata.is_draw = false;
+		qdata.line_index = 0;
+	}
+
+	$.isChanged = function( qdata ){
+		var c = 0;
+		c += ( qdata.prev[0] === qdata.attach.type );
+		c += ( qdata.prev[1] === qdata.attach.id );
+		c += ( qdata.prev[2] === qdata.anim_fps );
+		c += ( qdata.prev[3] === qdata.is_lines );
+		c += ( qdata.prev[4] === qdata.is_hits );
+		if ( c === 5 )
+			return false;
+
+		qdata.prev = [
+			qdata.attach.type ,
+			qdata.attach.id   ,
+			qdata.anim_fps    ,
+			qdata.is_lines    ,
+			qdata.is_hits     ,
+		];
+		return true;
+	}
+
+	//////////////////////////////
+
+
+	//////////////////////////////
+
+} // function QuadFunc(Q)
+
+	function QuadMath(Q){
+	var $ = this;
+	//var m = {}; // all public
+
+	//////////////////////////////
+
+	$.clamp = function( n, min, max ){
+		if ( n < min )  return min;
+		if ( n > max )  return max;
+		return n;
+	}
+
+	$.pow2_ceil = function( n ){
+		var sign = false;
+		if ( n < 0 ){
+			sign = true;
+			n = -n;
+		}
+
+		var i = 1;
+		while ( n > i )
+			i <<= 1;
+		return ( sign ) ? -i : i;
+	}
+
+	//////////////////////////////
+
+	$.vec_resize = function( len, vec ){
+		if ( ! Array.isArray(vec) )
+			return;
+		while ( vec.length < len )
+			vec.push(1);
+		while ( vec.length > len ){
+			var last = vec.pop() || 0;
+			var z = ( last === 0 ) ? 0 : 1.0 / last;
+			for ( var i=0; i < vec.length; i++ )
+				vec[i] *= z;
+		}
+	}
+
+	$.vec_multi = function( v, f ){
+		if ( ! Array.isArray(v) )
+			return;
+		for ( var i=0; i < v.length; i++ )
+			v[i] *= f;
+	}
+
+	$.vec4_multi = function( v1, v2 ){
+		var v4 = [
+			v1[0] * v2[0],
+			v1[1] * v2[1],
+			v1[2] * v2[2],
+			v1[3] * v2[3],
+		];
+		return v4;
+	}
+
+	//////////////////////////////
+
+	$.matrix4 = function(){
+		var m4 = [
+			1,0,0,0,
+			0,1,0,0,
+			0,0,1,0,
+			0,0,0,1,
+		];
+		return m4;
+	}
+
+	$.matrix_multi13 = function( v, m ){
+		$.vec_resize(3,v);
+		var vm = [
+			v[0]*m[0] + v[1]*m[3] + v[2]*m[6] ,
+			v[0]*m[1] + v[1]*m[4] + v[2]*m[7] ,
+			v[0]*m[2] + v[1]*m[5] + v[2]*m[8] ,
+		];
+		return vm;
+	}
+
+	$.matrix_multi14 = function( v, m ){
+		$.vec_resize(4,v);
+		var vm = [
+			v[0]*m[0] + v[1]*m[4] + v[2]*m[ 8] + v[3]*m[12] ,
+			v[0]*m[1] + v[1]*m[5] + v[2]*m[ 9] + v[3]*m[13] ,
+			v[0]*m[2] + v[1]*m[6] + v[2]*m[10] + v[3]*m[14] ,
+			v[0]*m[3] + v[1]*m[7] + v[2]*m[11] + v[3]*m[15] ,
+		];
+		return vm;
+	}
+
+	$.matrix_multi31 = function( m, v ){
+		$.vec_resize(3,v);
+		var mv = [
+			m[0]*v[0] + m[1]*v[1] + m[2]*v[2] ,
+			m[3]*v[0] + m[4]*v[1] + m[5]*v[2] ,
+			m[6]*v[0] + m[7]*v[1] + m[8]*v[2] ,
+		];
+		return mv;
+	}
+
+	$.matrix_multi41 = function( m, v ){
+		$.vec_resize(4,v);
+		var mv = [
+			m[ 0]*v[0] + m[ 1]*v[1] + m[ 2]*v[2] + m[ 3]*v[3] ,
+			m[ 4]*v[0] + m[ 5]*v[1] + m[ 6]*v[2] + m[ 7]*v[3] ,
+			m[ 8]*v[0] + m[ 9]*v[1] + m[10]*v[2] + m[11]*v[3] ,
+			m[12]*v[0] + m[13]*v[1] + m[14]*v[2] + m[15]*v[3] ,
+		];
+		return mv;
+	}
+
+	$.matrix_multi33 = function( m1, m2 ){
+		var m3 = [
+			m1[0]*m2[0] + m1[1]*m2[3] + m1[2]*m2[6],
+			m1[0]*m2[1] + m1[1]*m2[4] + m1[2]*m2[7],
+			m1[0]*m2[2] + m1[1]*m2[5] + m1[2]*m2[8],
+
+			m1[3]*m2[0] + m1[4]*m2[3] + m1[5]*m2[6],
+			m1[3]*m2[1] + m1[4]*m2[4] + m1[5]*m2[7],
+			m1[3]*m2[2] + m1[4]*m2[5] + m1[5]*m2[8],
+
+			m1[6]*m2[0] + m1[7]*m2[3] + m1[8]*m2[6],
+			m1[6]*m2[1] + m1[7]*m2[4] + m1[8]*m2[7],
+			m1[6]*m2[2] + m1[7]*m2[5] + m1[8]*m2[8],
+		];
+		return m3;
+	}
+
+	$.matrix_multi44 = function( m1, m2 ){
+		var m4 = [
+			m1[ 0]*m2[0] + m1[ 1]*m2[4] + m1[ 2]*m2[ 8] + m1[ 3]*m2[12],
+			m1[ 0]*m2[1] + m1[ 1]*m2[5] + m1[ 2]*m2[ 9] + m1[ 3]*m2[13],
+			m1[ 0]*m2[2] + m1[ 1]*m2[6] + m1[ 2]*m2[10] + m1[ 3]*m2[14],
+			m1[ 0]*m2[3] + m1[ 1]*m2[7] + m1[ 2]*m2[11] + m1[ 3]*m2[15],
+
+			m1[ 4]*m2[0] + m1[ 5]*m2[4] + m1[ 6]*m2[ 8] + m1[ 7]*m2[12],
+			m1[ 4]*m2[1] + m1[ 5]*m2[5] + m1[ 6]*m2[ 9] + m1[ 7]*m2[13],
+			m1[ 4]*m2[2] + m1[ 5]*m2[6] + m1[ 6]*m2[10] + m1[ 7]*m2[14],
+			m1[ 4]*m2[3] + m1[ 5]*m2[7] + m1[ 6]*m2[11] + m1[ 7]*m2[15],
+
+			m1[ 8]*m2[0] + m1[ 9]*m2[4] + m1[10]*m2[ 8] + m1[11]*m2[12],
+			m1[ 8]*m2[1] + m1[ 9]*m2[5] + m1[10]*m2[ 9] + m1[11]*m2[13],
+			m1[ 8]*m2[2] + m1[ 9]*m2[6] + m1[10]*m2[10] + m1[11]*m2[14],
+			m1[ 8]*m2[3] + m1[ 9]*m2[7] + m1[10]*m2[11] + m1[11]*m2[15],
+
+			m1[12]*m2[0] + m1[13]*m2[4] + m1[14]*m2[ 8] + m1[15]*m2[12],
+			m1[12]*m2[1] + m1[13]*m2[5] + m1[14]*m2[ 9] + m1[15]*m2[13],
+			m1[12]*m2[2] + m1[13]*m2[6] + m1[14]*m2[10] + m1[15]*m2[14],
+			m1[12]*m2[3] + m1[13]*m2[7] + m1[14]*m2[11] + m1[15]*m2[15],
+		];
+		return m4;
+	}
+
+	//////////////////////////////
+
+	$.cross = function( a, b ){
+		$.vec_resize(3,a);
+		$.vec_resize(3,b);
+		// x = y1*z2 - y2*z1
+		// y = z1*x2 - z2*x1
+		// z = x1*y2 - x2*y1
+		var x = a[1]*b[2] - b[1]*a[2];
+		var y = a[2]*b[0] - b[2]*a[0];
+		var z = a[0]*b[1] - b[0]*a[1];
+		return [x,y,z];
+	}
+
+	$.perspective_quad = function( dst ){
+		var q = [
+			dst.slice(0,2),
+			dst.slice(2,4),
+			dst.slice(4,6),
+			dst.slice(6,8),
+		];
+
+		// 0 1
+		// 3 2
+		var t = [
+			$.cross( $.cross(q[0],q[2]) , $.cross(q[1],q[3]) ), // corner-corner
+			$.cross( $.cross(q[0],q[1]) , $.cross(q[3],q[2]) ), //    top-bottom
+			$.cross( $.cross(q[0],q[3]) , $.cross(q[1],q[2]) ), //   left-right
+		];
+
+		//   | H1x H2x H3x |   | h1x h2x h3x |
+		// M | H1y H2y H3y | = | h1y h2y h3y |
+		//   | H1z H2z H3z |   | h1z h2z h3z |
+		//                MH = h
+		//                M  = hH^-1
+		var h = [
+			t[0][0] , t[1][0] , t[2][0] ,
+			t[0][1] , t[1][1] , t[2][1] ,
+			t[0][2] , t[1][2] , t[2][2] ,
+		];
+
+		// var H    = pre-computed
+		// var Hinv = pre-computed
+		var Hinv = [
+			 0     , 0     ,  0.005 ,
+			-0.001 , 0     ,  0.015 ,
+			 0     , 0.001 , -0.015 ,
+		];
+		var M3 = $.matrix_multi33(h, Hinv);
+
+		var t = [
+			$.matrix_multi31( M3, [10,10] ),
+			$.matrix_multi31( M3, [20,10] ),
+			$.matrix_multi31( M3, [20,20] ),
+			$.matrix_multi31( M3, [10,20] ),
+		];
+		return [].concat(t[0],t[1],t[2],t[3]);
+	}
+	
+
+
+	//////////////////////////////
+
+	$.matrix_mix = function( rate, cur, next ){
+		// 4/4 = rate 1    = cur * 1    + next * 0
+		// 3/4 = rate 0.75 = cur * 0.75 + next * 0.25
+		// 2/4 = rate 0.5  = cur * 0.5  + next * 0.5
+		// 1/4 = rate 0.25 = cur * 0.25 + next * 0.75
+		// 0/4 = rate 0    = cur * 0    + next * 1
+		var rev = 1.0 - rate;
+		var m4 = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
+		for ( var i=0; i < 16; i++ )
+			m4[i] = (cur[i] * rate) + (next[i] * rev);
+		return m4;
+	}
+
+	$.color_mix = function( rate, cur, next ){
+		var rev = 1.0 - rate;
+		var c = [0,0,0,0];
+		for ( var i=0; i < 4; i++ )
+			c[i] = (cur[i] * rate) + (next[i] * rev);
+		return c;
+	}
+
+	$.css_color = function( css ){
+		// css = '#rrggbbaa'
+		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )
+			return [1,1,1,1];
+
+		var div = 1.0 / 255;
+		var rgba = [
+			parseInt( css.substring(1,3) , 16 ) * div ,
+			parseInt( css.substring(3,5) , 16 ) * div ,
+			parseInt( css.substring(5,7) , 16 ) * div ,
+			parseInt( css.substring(7,9) , 16 ) * div ,
+		];
+		return rgba;
+	}
+
+	//////////////////////////////
+
+	// order matters
+	//   (A*B)*C === A*(B*C)
+	//    A*B    !== B*A
+	$.image_multi4 = function( mat4, image ){
+		var hw = image.w * 0.5;
+		var hh = image.h * 0.5;
+		var quad = [-hw,hh , hw,hh , hw,-hh , -hw,-hh];
+		return $.quad_multi4(mat4, quad);
+	}
+
+	$.quad_multi4 = function( mat4, quad ){
+		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
+		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
+		var c2 = $.matrix_multi41(mat4, quad.slice(4,6));
+		var c3 = $.matrix_multi41(mat4, quad.slice(6,8));
+		return [].concat( c0.slice(0,2) , c1.slice(0,2) , c2.slice(0,2) , c3.slice(0,2) );
+	}
+
+	$.fog_multi4 = function( color, quad ){
+		var c16 = [
+			quad[ 0]*color[0] , quad[ 1]*color[1] , quad[ 2]*color[2] , quad[ 3]*color[3] ,
+			quad[ 4]*color[0] , quad[ 5]*color[1] , quad[ 6]*color[2] , quad[ 7]*color[3] ,
+			quad[ 8]*color[0] , quad[ 9]*color[1] , quad[10]*color[2] , quad[10]*color[3] ,
+			quad[12]*color[0] , quad[13]*color[1] , quad[14]*color[2] , quad[15]*color[3] ,
+		];
+		return c16;
+	}
+
+	//////////////////////////////
+
+
+	//////////////////////////////
+
+} // function QuadMath
+
+	function BinaryReader(){
+	var $ = this;
+	var m = {};
+
+	//////////////////////////////
+
+	$.uint2txt = function( buf ){
+		buf = new Uint8Array(buf);
+		return m.getstr(buf, 0, buf.byteLength);
+	}
+
+	//////////////////////////////
+
+	m.getint = function( buf, pos, len ){
+		var int = 0;
+		for ( var i=0; i < len; i++ )
+			int |= (buf[pos+i] << (i*8));
+		return int;
+	}
+
+	m.getstr = function( buf, pos, len ){
+		var str = '';
+		for ( var i=0; i < len; i++ )
+			str += String.fromCharCode( buf[pos+i] );
+		return str;
+	}
+
+	m.getsub = function( buf, pos, len ){
+		var sub = new Uint8Array(len);
+		for ( var i=0; i < len; i++ )
+			sub[i] = buf[pos+i];
+		return sub;
+	}
+
+	$.zipread = function( zipbuf ){
+		zipbuf = new Uint8Array(zipbuf)
+		var list = {};
+		var pos  = 0;
+		while (1)
+		{
+			var mgc = m.getint(zipbuf, pos, 4);
+			if ( mgc !== 0x04034b50 )  // PK34
+				break;
+
+			var sz1 = m.getint(zipbuf, pos + 0x12, 4); // data size
+			var sz2 = m.getint(zipbuf, pos + 0x1a, 2); // filename length
+			var sz3 = m.getint(zipbuf, pos + 0x1c, 2); // extra length
+
+			// uncompressed file/store only
+			if ( zipbuf[pos + 8] === 0 ){
+				var fn = m.getstr(zipbuf, pos + 0x1e            , sz2);
+				var dt = m.getsub(zipbuf, pos + 0x1e + sz2 + sz3, sz1);
+				list[fn] = dt;
+			}
+
+			pos += (0x1e + sz1 + sz2 + sz3);
+		} // while (1)
+		return list;
+	}
+
+	//////////////////////////////
+
+	m.setint = function( buf, pos, len, int ){
+		for ( var i=0; i < len; i++ ){
+			var b = int >> (i*8);
+			buf[pos+i] = b & 0xff;
+		}
+	}
+
+	m.setstr = function( buf, pos, str ){
+		for ( var i=0; i < str.length; i++ )
+			buf[pos+i] = str.charCodeAt(i);
+	}
+
+	m.setsub = function( buf, pos, sub ){
+		for ( var i=0; i < sub.byteLength; i++ )
+			buf[pos+i] = sub[i];
+	}
+
+	$.zipwrite = function( list ){
+		var key = Object.keys(list);
+		var pk34len = 0;
+		var pk12len = 0;
+		var pk56len = 0x16;
+
+		var fnlen, dtlen, dtcrc;
+		for ( var i=0; i < key.length; i++ ){
+			fnlen = key[i].length;
+			dtlen = list[ key[i] ].byteLength;
+			pk34len += (0x1e + fnlen + dtlen);
+			pk12len += (0x2e + fnlen);
+		} // for ( var i=0; i < key.length; i++ ){
+		var zipbuf = new Uint8Array( pk34len + pk12len + pk56len );
+
+		var pos34 = 0;
+		var pos12 = pk34len;
+		var pos56 = pk34len + pk12len;
+
+		for ( var i=0; i < key.length; i++ ){
+			fnlen = key[i].length;
+			dtlen = list[ key[i] ].byteLength;
+			dtcrc = $.crc32( list[ key[i] ] );
+
+			m.setint(zipbuf , pos12 , 4 , 0x02014b50);  // PK12
+			zipbuf[ pos12 + 0x04 ] = 10;  // ver 1.0
+			zipbuf[ pos12 + 0x06 ] = 10;  // ver 1.0
+			m.setsub(zipbuf , pos12 + 0x10 , dtcrc);
+			m.setint(zipbuf , pos12 + 0x14 , 4 , dtlen);  // compressed
+			m.setint(zipbuf , pos12 + 0x18 , 4 , dtlen);  // uncompressed
+			m.setint(zipbuf , pos12 + 0x1c , 2 , fnlen);
+			m.setint(zipbuf , pos12 + 0x2a , 4 , pos34);
+				pos12 += 0x2e;
+			m.setstr(zipbuf , pos12 , key[i]);
+				pos12 += fnlen;
+
+			m.setint(zipbuf , pos34 , 4 , 0x04034b50);  // PK34
+			zipbuf[ pos34 + 0x04 ] = 10;  // ver 1.0
+			m.setsub(zipbuf , pos34 + 0x0e , dtcrc);
+			m.setint(zipbuf , pos34 + 0x12 , 4 , dtlen);  // compressed
+			m.setint(zipbuf , pos34 + 0x16 , 4 , dtlen);  // uncompressed
+			m.setint(zipbuf , pos34 + 0x1a , 2 , fnlen);
+				pos34 += 0x1e;
+			m.setstr(zipbuf , pos34 , key[i]);
+				pos34 += fnlen;
+			m.setsub(zipbuf , pos34 , list[ key[i] ]);
+				pos34 += dtlen;
+		} // for ( var i=0; i < key.length; i++ ){
+
+		m.setint(zipbuf , pos56 , 4, 0x06054b50);  // PK56
+		m.setint(zipbuf , pos56 + 0x08 , 2, key.length);  // disk entry
+		m.setint(zipbuf , pos56 + 0x0a , 2, key.length);  // total entry
+		m.setint(zipbuf , pos56 + 0x0c , 4, pk12len);  // PK12 length
+		m.setint(zipbuf , pos56 + 0x10 , 4, pk34len);  // PK12 pos
+		return zipbuf;
+	}
+
+	//////////////////////////////
+
+	$.crc32 = function( uint8 ){
+		uint8 = new Uint8Array(uint8);
+		var crc = new Uint16Array([255,255,255,255]);
+
+		// https://stackoverflow.com/questions/21001659/crc32-algorithm-implementation-in-c-without-a-look-up-table-and-with-a-public-li
+		// https://web.archive.org/web/20190108202303/http://www.hackersdelight.org/hdcodetxt/crc.c.txt
+		// https://web.archive.org/web/20190716204559/http://www.hackersdelight.org/permissions.htm
+		function shift(){
+			var carry = 0;
+			[3,2,1,0].forEach(function(e){
+				crc[e] |= (carry << 8);
+				carry = crc[e] & 1;
+				crc[e] >>= 1;
+			});
+			return carry;
+		}
+		function xor( int ){
+			var b;
+			[0,1,2,3].forEach(function(e){
+				b = (int >> (e*8)) & 0xff;
+				crc[e] ^= b;
+			});
+		}
+
+		var len = uint8.byteLength;
+		for ( var i=0; i < len; i++ ){
+			xor( uint8[i] );
+			for ( var j=0; j < 8; j++ ){
+				var mask = shift();
+				if ( mask )
+					xor( 0xedb88320 );
+			}
+		}
+		xor( 0xffffffff );
+		return new Uint8Array(crc);
+	}
+
+	//////////////////////////////
+
+	$.toBase64 = function( uint8 ){
+		uint8 = new Uint8Array(uint8);
+		var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+		var BIT6  = 0x3f;
+		var len = uint8.byteLength;
+		var pos = 0;
+
+		var b, b1, b2, b3, b4;
+		var b64 = '';
+		while ( len >= 3 ){
+			b = (uint8[pos+0] << 16) | (uint8[pos+1] << 8) | uint8[pos+2];
+				pos += 3;
+				len -= 3;
+
+			b1 = (b >> 18) & BIT6;
+			b2 = (b >> 12) & BIT6;
+			b3 = (b >>  6) & BIT6;
+			b4 = (b >>  0) & BIT6;
+			b64 += token[b1] + token[b2] + token[b3] + token[b4];
+		} // while ( len >= 3 ){
+
+		if ( len === 2 ){
+			b = (uint8[pos+0] << 8) | uint8[pos+1];
+				b <<= 2
+
+			b1 = (b >> 12) & BIT6;
+			b2 = (b >>  6) & BIT6;
+			b3 = (b >>  0) & BIT6;
+			b64 += token[b1] + token[b2] + token[b3] + '=';
+		}
+		if ( len === 1 ){
+			b = uint8[pos+0];
+				b <<= 4;
+
+			b1 = (b >>  6) & BIT6;
+			b2 = (b >>  0) & BIT6;
+			b64 += token[b1] + token[b2] + '==';
+		}
+		return b64;
+	}
+
+	$.fromBase64 = function( b64 ){
+		// data URL handling
+		var pos = b64.indexOf('base64,');
+		if ( pos !== -1 )
+			b64 = b64.substring(pos + 7);
+
+		// must be length % 4 === 0
+		if ( (b64.length & 3) !== 0 )
+			return '';
+
+		// Uint8Array.reserve()
+		var declen = 0;
+		for ( var pos=0; pos < b64.length; pos += 4 ){
+			if ( b64[pos+2] === '=' )
+				declen += 1;
+			else
+			if ( b64[pos+3] === '=' )
+				declen += 2;
+			else
+				declen += 3;
+		} // for ( var pos=0; pos < b64.length; pos += 4 )
+		var uint8 = new Uint8Array(declen);
+
+		var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+		var BIT8  = 0xff;
+
+		var b, b1, b2, b3, b4;
+		var dpos = 0;
+		for ( var pos=0; pos < b64.length; pos += 4 ){
+			b1 = token.indexOf( b64[pos+0] );
+			b2 = token.indexOf( b64[pos+1] );
+
+			if ( b64[pos+2] === '=' ){
+				b = (b1 << 6) | b2;
+					b >>= 4;
+				uint8[dpos+0] = (b >> 0) & BIT8;
+					dpos += 1;
+				continue;
+			}
+
+			b3 = token.indexOf( b64[pos+2] );
+			if ( b64[pos+3] === '=' ){
+				b = (b1 << 12) | (b2 << 6) | b3;
+					b >>= 2;
+				uint8[dpos+0] = (b >> 8) & BIT8;
+				uint8[dpos+1] = (b >> 0) & BIT8;
+					dpos += 2;
+				continue;
+			}
+
+			b4 = token.indexOf( b64[pos+3] );
+			b = (b1 << 18) | (b2 << 12) | (b3 << 6) | b4;
+
+			uint8[dpos+0] = (b >> 16) & BIT8;
+			uint8[dpos+1] = (b >>  8) & BIT8;
+			uint8[dpos+2] = (b >>  0) & BIT8;
+				dpos += 3;
+		} // for ( var pos=0; pos < b64.length; pos += 4 ){
+		return uint8;
+	}
+
+	//////////////////////////////
+
+} // function BinaryReader
+
+
+	$.version = 'ver 2023-05-11 (beta)';
+	$.gl   = new QuadGL  ($);
+	$.func = new QuadFunc($);
+	$.math = new QuadMath($);
+	$.binary = new BinaryReader();
+
+})(QUAD);
+
+function QuadData(qlist){
+	var $ = this;
+	$.LIST = qlist;
+
+	// uploaded files
+	$.name = '';
+	$.QUAD  = {};
+	$.IMAGE = [
+		QUAD.gl.createPixel(255) ,
+		QUAD.gl.createPixel(255) ,
+		QUAD.gl.createPixel(255) ,
+		QUAD.gl.createPixel(255) ,
+	];
+	$.VIDEO = [];
+
+	// activated data
+	$.is_wait  = true;
+	$.is_draw  = false;
+	$.is_hits  = true;
+	$.is_lines = true;
+	$.matrix = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
+	$.color  = [1,1,1,1];
+
+	$.attach = {
+		type : '',
+		id   : 0
+	};
+	$.anim_fps = 0;
+	$.line_index = 0;
+	$.prev = ['',-1,-1,true,true];
+}
+</script>
+</head><body>
+
+<div id='debugger'>
+	<input type='file' id='input_file' multiple class='hidden'>
+	<div id='debugger_top_nav'>
+		<button id='btn_view'>view</button>
+		<button id='btn_upload' data-id='0'>upload</button>
+	</div>
+	<h1 id='quad_version'></h1>
+	<h2>Files</h2>
+	<ol id='debugger_files'></ol>
+	<div id='quad_data'></div>
+	<h3>Logs</h3>
+	<textarea id='logger' disabled></textarea>
+</div>
+
+<div id='viewer'>
+	<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAQMAAAC032DuAAAABlBMVEVAQEDAwMCo6TBpAAAAGklEQVQoz2NgAIEGBjgYZY4yB5r5Hw6Gnd8AoYMxdx81TTIAAAAASUVORK5CYII=">
+	<canvas id='canvas'>Canvas not supported</canvas>
+	<div id='viewer_top_nav'>
+		<button id='btn_debug'>debug</button>
+		<button id='btn_hits'>hitbox</button>
+		<button id='btn_lines'>lines</button>
+	</div>
+	<div id='viewer_bottom_nav'>
+		<button id='btn_prev2'>&lt;&lt;</button>
+
+		<button id='btn_prev'>&lt;</button>
+		<button id='btn_cur'>0</button>
+		<button id='btn_next'>&gt;</button>
+
+		<button id='btn_next2'>&gt;&gt;</button>
+	</div>
+</div>
+
+<script>
+function button_select( elem ){
+	if ( SELECTED )
+		SELECTED.classList.remove('current');
+
+	var par1 = elem.parentElement;
+	SELECTED = par1;
+	SELECTED.classList.add('current');
+
+	var par2 = elem.parentElement.parentElement;
+	var type = par2.getAttribute('data-type');
+	var id   = par2.getAttribute('data-id') | 0;
+
+	qdata_attach(QuadList[0], type, id);
+	displayViewer(HTML, true);
+}
+
+function button_export_png( qdata, out, size ){
+	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
+		return;
+	var camera = [1,0,0,0 , 0,-1,0,0 , 0,0,1,0 , 0,0,0,1];
+	var color  = [1,1,1,1];
+	var maxsz = QUAD.gl.maxTextureSize() >> 1;
+	var maxps = maxsz * 0.5;
+
+	var framebuf = QUAD.gl.canvasBuffer(0);
+	var tex      = QUAD.gl.createPixel (0, maxsz, maxsz);
+	HTML.canvas.width  = maxsz;
+	HTML.canvas.height = maxsz;
+	QUAD.gl.framebufferTexture2D(framebuf, tex.tex);
+
+	//var half = [size[0]*0.5 , size[1]*0.5];
+	var pos  = [
+		-maxps + (size[0] * 0.5),
+		 maxps - (size[1] * 0.5),
+	];
+	qdata.anim_fps = 0;
+	var is_skip = false;
+	for ( var y = pos[1] ; y > pos[0]; y -= size[1] ){
+		if ( (y-size[1]) < pos[0] )  continue;
+		if ( (y+size[1]) > pos[1] )  continue;
+		if ( is_skip )  continue;
+
+		for ( var x = pos[0]; x < pos[1]; x += size[0] ){
+			if ( (x-size[0]) < pos[0] )  continue;
+			if ( (x+size[0]) > pos[1] )  continue;
+			if ( is_skip )  continue;
+
+			camera[0+3] = x;
+			camera[4+3] = y;
+
+			QUAD.func.qdata_draw(qdata, camera, color);
+			if ( ! qdata.is_draw )
+				is_skip = true;
+			qdata.anim_fps++;
+		} // for ( var x = pos[0]; x < pos[1]; x += size[0] )
+	} // for ( var y = pos[1]; y > pos[0]; y -= size[1] )
+
+	var a = document.createElement('a');
+	a.href = QUAD.gl.texture2DtoDataURL(tex.tex, tex.w, tex.h);
+	a.setAttribute('download', out + '.png');
+	a.setAttribute('target'  , '_blank');
+	a.click();
+
+	return QUAD.gl.canvasBuffer(1);
+}
+
+function button_export_zip( qdata, out, size ){
+	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
+		return;
+	var camera = [1,0,0,0 , 0,-1,0,0 , 0,0,1,0 , 0,0,0,1];
+	var color  = [1,1,1,1];
+	var len = 60; // 60 fps for 1 secs
+
+	var list = {};
+	var framebuf = QUAD.gl.canvasBuffer(0);
+	var tex      = QUAD.gl.createPixel (0, size[0], size[1]);
+	HTML.canvas.width  = tex.w;
+	HTML.canvas.height = tex.h;
+	QUAD.gl.framebufferTexture2D(framebuf, tex.tex);
+
+	for ( var i=0; i < len; i++ ){
+		var pad = '00000000' + i + '.png';
+		var fn  = pad.substring( pad.length - 8 );
+
+		qdata.anim_fps = i;
+		QUAD.gl.clear();
+		QUAD.func.qdata_draw(qdata, camera, color);
+		if ( ! qdata.is_draw )
+			break;
+
+		var b64  = QUAD.gl.texture2DtoDataURL(tex.tex, tex.w, tex.h);
+		list[fn] = QUAD.binary.fromBase64(b64);
+	} // for ( var i=0; i < len; i++ )
+
+	var zip = QUAD.binary.zipwrite(list);
+	var a = document.createElement('a');
+	a.href = 'data:application/zip;base64,' + QUAD.binary.toBase64(zip);
+	a.setAttribute('download', out + '.zip');
+	a.setAttribute('target'  , '_blank');
+	a.click();
+
+	return QUAD.gl.canvasBuffer(1);
+}
+
+function button_export( type, elem ){
+	// backup
+	var qdata = QuadList[0];
+	var bak = {
+		type  : qdata.attach.type  ,
+		id    : qdata.attach.id    ,
+		fps   : qdata.anim_fps     ,
+		line  : qdata.is_lines     ,
+		hit   : qdata.is_hits      ,
+		canvw : HTML.canvas.width  ,
+		canvh : HTML.canvas.height ,
+	};
+
+	var par2 = elem.parentElement.parentElement;
+	qdata.attach.type = par2.getAttribute('data-type');
+	qdata.attach.id   = par2.getAttribute('data-id') | 0;
+	qdata.is_lines    = false;
+	qdata.is_hits     = false;
+	QUAD.func.log('export ' + type + ' = ' + qdata.attach.type + '/' + qdata.attach.id);
+
+	var size = [256,256];
+	var out = qdata.name + '_' + qdata.attach.type + '_' + qdata.attach.id;
+	switch ( type ){
+		case 'png':  button_export_png(qdata, out, size); break;
+		case 'zip':  button_export_zip(qdata, out, size); break;
+	} // switch ( type )
+
+	// restore
+	qdata.attach.type  = bak.type;
+	qdata.attach.id    = bak.id;
+	qdata.anim_fps     = bak.fps;
+	qdata.is_lines     = bak.line;
+	qdata.is_hits      = bak.hit;
+	HTML.canvas.width  = bak.canvw;
+	HTML.canvas.height = bak.canvh;
+}
+
+var HTML = getHtmlIds();
+var QuadList = [];
+var SELECTED = '';
+
+(function(){
+	if ( ! QUAD.gl.init(HTML.canvas) )
+		return;
+
+	HTML.quad_version.innerHTML = 'Quad Player ' + QUAD.version;
+
+	// BETWEEN DEBUGGER-VIEWER
+	HTML.btn_view.addEventListener('click', function(){
+		displayViewer(HTML, true);
+	});
+	HTML.btn_debug.addEventListener('click', function(){
+		displayViewer(HTML, false);
+		HTML.logger.innerHTML = QUAD.func.console();
+	});
+
+	var UPLOAD_ID = -1;
+	HTML.btn_upload.addEventListener('click', function(){
+		UPLOAD_ID = this.getAttribute('data-id');
+		HTML.input_file.click();
+	});
+	HTML.input_file.addEventListener('change', function(){
+		QUAD.func.log('QuadList[]', UPLOAD_ID);
+		if ( QuadList[ UPLOAD_ID ] === undefined )
+			QuadList[ UPLOAD_ID ] = new QuadData(QuadList);
+		var qdata = QuadList[ UPLOAD_ID ];
+
+		var promises = [];
+		for ( var up of this.files )
+			promises.push( QUAD.func.uploadPromise(up, qdata) );
+
+		Promise.all(promises).then(function(resolve){
+			HTML.debugger_files.innerHTML = '';
+			if ( qdata.name )
+				HTML.debugger_files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
+			[0,1,2,3].forEach(function(v){
+				if ( qdata.IMAGE[v].name )
+				HTML.debugger_files.innerHTML += '<li>[IMAGE][' + v + '] ' + qdata.IMAGE[v].name + '</li>';
+			});
+
+			if ( qdata.name ){
+				HTML.quad_data.innerHTML = '';
+
+				qdata_tagtable( qdata.QUAD.tag, HTML.quad_data );
+
+				['skeleton','animation','keyframe','hitbox','slot'].forEach(function(qv,qk){
+					if ( qdata.QUAD[qv] ){
+						HTML.quad_data.innerHTML += '<h2>' + qv + '</h2>';
+
+						var table = '<table>';
+						qdata.QUAD[qv].forEach(function(v,k){
+							if ( ! v )
+								return;
+
+							var t = {};
+							t.name = v.name || qv + ' ' + k;
+							t.p    = '<p onclick="button_select(this);">' + t.name + '</p>';
+							t.btn1 = '<button onclick="button_export(\'png\', this);">png</button>';
+							t.btn2 = '<button onclick="button_export(\'zip\', this);">zip</button>';
+
+							var tr = document.createElement('tr');
+							tr.setAttribute('data-type', qv);
+							tr.setAttribute('data-id'  , k);
+							if ( ['keyframe','hitbox','slot'].indexOf(qv) === -1 )
+								tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn1 + t.btn2 + '</td>';
+							else
+								tr.innerHTML = '<td>' + t.p + '</td>';
+
+							table += tr.outerHTML;
+						});
+						table += '</table>';
+						HTML.quad_data.innerHTML += table;
+					}
+				});
+			} // if ( qdata.name )
+		});
+	});
+
+	// VIEWER
+	var HAS_VIEWER = 1;
+	HTML.canvas.addEventListener('click', function(){
+		if ( HAS_VIEWER ) {
+			HTML.viewer_top_nav.style.display    = 'none';
+			HTML.viewer_bottom_nav.style.display = 'none';
+		} else {
+			HTML.viewer_top_nav.style.display    = 'flex';
+			HTML.viewer_bottom_nav.style.display = 'flex';
+		}
+		HAS_VIEWER = ! HAS_VIEWER;
+	});
+	HTML.btn_lines.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		QuadList[0].is_lines = ! QuadList[0].is_lines;
+		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'lines' : 'texture';
+	});
+	HTML.btn_hits.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		QuadList[0].is_hits = ! QuadList[0].is_hits;
+	});
+
+	var IS_BTN_CLICK = 0;
+	HTML.btn_prev.addEventListener('click', function(){
+		IS_BTN_CLICK = 0;
+		btnPrevNext(QuadList[0], -1);
+	});
+	HTML.btn_next.addEventListener('click', function(){
+		IS_BTN_CLICK = 0;
+		btnPrevNext(QuadList[0], 1);
+	});
+	HTML.btn_prev2.addEventListener('click', function(){
+		if ( IS_BTN_CLICK === 0 )
+			IS_BTN_CLICK = -1;
+		else
+			IS_BTN_CLICK = 0;
+	});
+	HTML.btn_next2.addEventListener('click', function(){
+		if ( IS_BTN_CLICK === 0 )
+			IS_BTN_CLICK = 1;
+		else
+			IS_BTN_CLICK = 0;
+	});
+
+	var FPS_DRAW = 0;
+	var CAMERA = QUAD.gl.canvasSpace(0 , 0.5 , 1);
+	var COLOR  = [1,1,1,1];
+	function render(){
+		requestAnimationFrame(render);
+		if ( HTML.viewer.style.display !== 'block' )
+			return;
+		if ( ! QuadList[0] || ! QuadList[0].name )
+			return;
+		var qdata = QuadList[0];
+
+		// auto forward by 60/8 fps = 7.5 fps
+		if ( (FPS_DRAW & 7) === 0 ){
+			btnPrevNext(qdata, IS_BTN_CLICK);
+		}
+
+		// redraw only when changed
+		if ( QUAD.func.isChanged(qdata) ){
+			CAMERA = QUAD.gl.canvasSpace(0 , 0.5 , 1);
+			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
+			HTML.logger.innerHTML  = QUAD.func.console();
+
+			QUAD.func.qdata_clear(qdata);
+			QUAD.func.qdata_draw(qdata, CAMERA, COLOR);
+			if ( ! qdata.is_draw ){
+				HTML.btn_cur.innerHTML = 'END';
+			}
+		}
+
+		FPS_DRAW = (FPS_DRAW + 1) & 0xff;
+	}
+	render();
+})();
+</script>
+
+</body></html>

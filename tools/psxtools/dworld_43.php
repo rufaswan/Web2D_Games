@@ -454,7 +454,7 @@ function dw1_rle( &$file, $fn, $st3, $st4, $st5, $w, $h, $bpp, $rle )
 		} // for ( $x=0; $x < $w; $x += 4 )
 	} // for ( $y=0; $y < $h; $y += 4 )
 
-	savepix($fn, $pix, false);
+	savepix($fn, $pix);
 	return;
 }
 

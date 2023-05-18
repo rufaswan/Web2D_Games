@@ -32,6 +32,9 @@ function substrrev( &$str, $pos, $len )
 function str2big( &$str, $pos, $byte, $sign=false )
 {
 	php_req_bytes($byte);
+	if ( ! isset($str[$pos+$byte-1]) )
+		return php_error('[%x] substr %x > strlen %x', $pos, $byte, strlen($str));
+
 	$sub = substrrev($str, $pos, $byte);
 	$int = ordint($sub);
 	if ( $sign )
@@ -117,13 +120,14 @@ function float32( $int )
 	return iee754_float($int, 8, 23, 0x7f);
 }
 
-function cmp_float( $fl1, $fl2, $near=1.0 )
+function cmp_float( $fl1, $fl2, $dec=1 )
 {
-	$diff = abs($fl1 - $fl2);
-	if ( $diff > abs($near) ) // too far apart
-		return false;
-	else // close enough to consider the same
-		return true;
+	$f1 = (int)($fl1 * (10 ** $dec));
+	$f2 = (int)($fl2 * (10 ** $dec));
+	//    10.01  10.001
+	// 1  same
+	// 2  diff
+	return ( $f1 === $f2 );
 }
 //////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
@@ -183,46 +187,6 @@ function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 		$rip .= substr($rgba, $sxx*4, $w*4);
 	} // for ( $y=0; $y < $h; $y++ )
 	return $rip;
-}
-
-function alpha_normal( $src, $dst )
-{
-	if ( $src[3] == BYTE )  return $src;
-	if ( $src[3] == ZERO )  return $dst;
-	if ( $dst[3] == ZERO )  return $src;
-
-	// en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending
-	// rgb is int 0-255 , a is float 0-1
-	//
-	// FULL Formula
-	//   out_a   =   src_a           + dst_a           * (1-src_a)
-	//   out_rgb = ( src_rgb * src_a + dst_rgb * dst_a * (1-src_a) ) / out_a
-	//
-	// rgba(40,40,40,0.5) + rgba(60,60,60,1)
-	//   a   = 0.5 + 1 * (1 - 0.5)
-	//       = 0.5 + 0.5
-	//       = 1
-	//   rgb = ( 40 * 0.5 + 60 * 1 * (1 - 0.5) ) / 1
-	//       = ( 20 + 30 ) / 1
-	//       = 50
-	//   out = rgba(50,50,50,1);
-	//
-	// IF dst_a == 1 , SIMPLIFIED Formula
-	//   out_a   = 1
-	//   out_rgb = src_rgb * src_a + dst_rgb * (1-src_a)
-	//
-	$src_a = ord($src[3]) / BIT8;
-	$dst_a = ord($dst[3]) / BIT8;
-	$r = ord($src[0]) * $src_a + ord($dst[0]) * $dst_a * (1-$src_a);
-	$g = ord($src[1]) * $src_a + ord($dst[1]) * $dst_a * (1-$src_a);
-	$b = ord($src[2]) * $src_a + ord($dst[2]) * $dst_a * (1-$src_a);
-	$a = $src_a + $dst_a * (1-$src_a);
-
-	$r = int_clamp($r / $a  , 0, BIT8);
-	$g = int_clamp($g / $a  , 0, BIT8);
-	$b = int_clamp($b / $a  , 0, BIT8);
-	$a = int_clamp($a * BIT8, 0, BIT8);
-	return chr($r) . chr($g) . chr($b) . chr($a);
 }
 //////////////////////////////
 function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )

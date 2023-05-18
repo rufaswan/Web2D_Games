@@ -165,7 +165,7 @@ function crilay_bits( &$file, &$pos, &$bybit, $bitned )
 	{
 		$b = ord( $file[$pos] );
 			$pos++;
-		trace("BIT  %8x %2x [%s]\n", $pos+1, $b, $bybit);
+		//trace("BIT  %8x %2x [%s]\n", $pos+1, $b, $bybit);
 
 		$i = 8;
 		while ( $i > 0 )
@@ -183,7 +183,7 @@ function crilay_bits( &$file, &$pos, &$bybit, $bitned )
 			$bits |= 1;
 	}
 	$bybit = substr($bybit, $bitned);
-	trace("RET  %x [%s]\n", $bits, $bybit);
+	//trace("RET  %x [%s]\n", $bits, $bybit);
 	return $bits;
 }
 
@@ -193,22 +193,22 @@ function crilay_len( &$file, &$pos, &$bybit )
 bit_2:
 	$b = crilay_bits($file, $pos, $bybit, 2);
 	$len += $b;
-	if ( $b != 0x03 )
+	if ( $b !== 0x03 )
 		goto done;
 bit_3:
 	$b = crilay_bits($file, $pos, $bybit, 3);
 	$len += $b;
-	if ( $b != 0x07 )
+	if ( $b !== 0x07 )
 		goto done;
 bit_5:
 	$b = crilay_bits($file, $pos, $bybit, 5);
 	$len += $b;
-	if ( $b != 0x1f )
+	if ( $b !== 0x1f )
 		goto done;
 bit_8:
 	$b = crilay_bits($file, $pos, $bybit, 8);
 	$len += $b;
-	if ( $b == 0xff )
+	if ( $b === 0xff )
 		goto bit_8;
 done:
 	return $len;
@@ -236,7 +236,7 @@ function crilayla_decode( &$file )
 			break;
 
 		$flg = crilay_bits($file, $pos, $bybit, 1);
-		if ( $flg )
+		if ( $flg ) // 1
 		{
 			$b = crilay_bits($file, $pos, $bybit, 13);
 			$dpos = $b + 3;
@@ -244,17 +244,16 @@ function crilayla_decode( &$file )
 			$b = crilay_len($file, $pos, $bybit);
 			$dlen = $b + 3;
 
-			trace("REF  POS -%d LEN %d\n", $dpos, $dlen);
 			for ( $i=0; $i < $dlen; $i++ )
 			{
 				$b = strlen($dec) - $dpos;
 				$dec .= $dec[$b];
 			}
 		}
-		else
+		else // 0
 		{
 			$b = crilay_bits($file, $pos, $bybit, 8);
-			trace("COPY %2x [%s]\n", $b, $bybit);
+			//trace("COPY %2x [%s]\n", $b, $bybit);
 			$dec .= chr($b);
 		}
 	} // while ( $st < $ed )

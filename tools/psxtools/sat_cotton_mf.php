@@ -27,31 +27,28 @@ define('NO_TRACE', true);
 
 function LZ00_decode( &$sub )
 {
-	trace("== LZ00_decode\n");
 	$dec = '';
+	trace("== LZ00_decode\n");
+
 	$len = strlen($sub);
 	$pos = 8;
-
 	while ( $pos < $len )
 	{
-		trace("%6x  %6x  ", $pos, strlen($dec));
 		$b1 = ord( $sub[$pos] );
 			$pos++;
 
-		if ( $b1 < 0x10 )
+		if ( $b1 < 0x10 ) // 0-f
 		{
 			$dlen = $b1 + 1;
-			trace("COPY LEN %x\n", $dlen);
 			$dec .= substr($sub, $pos, $dlen);
 			$pos += $dlen;
 		}
-		else
+		else // 10-ff
 		{
 			$b2 = ord( $sub[$pos] );
 				$pos++;
 			$dpos = $b1 - 0x10;
 			$dlen = $b2 + 3;
-			trace("REF  POS -%x LEN %x\n", $dpos, $dlen);
 
 			for ( $i=0; $i < $dlen; $i++ )
 			{
@@ -120,7 +117,7 @@ function sect_map( &$spt, &$scp, &$spl, $fn, $w, $h, $cid, $bpp )
 	} // for ( $y=0; $y < $h; $y += 8 )
 	echo "$map\n";
 
-	savepix($fn, $pix, false);
+	savepix($fn, $pix);
 	return;
 }
 
@@ -229,7 +226,7 @@ function sch_spt_scp( &$file, $dir )
 	return;
 }
 //////////////////////////////
-function cottonmf( &$file, $dir )
+function cottonmf( &$file )
 {
 	$data = array();
 	$ed = strlen($file);
@@ -237,7 +234,7 @@ function cottonmf( &$file, $dir )
 	while ( $st < $ed )
 	{
 		$siz = str2big($file, $st+0, 4, true);
-		if ( $siz <= 0 )
+		if ( $siz < 1 )
 			break;
 
 		$fnm = substr ($file, $st+4, 16);
@@ -245,11 +242,9 @@ function cottonmf( &$file, $dir )
 			$fnm = strtolower($fnm);
 		$rsz = str2big($file, $st+0x14, 4);
 
-		printf("%6x , %6x , %6x , %s\n", $st, $siz, $rsz, $fnm);
+		trace("%6x , %6x , %6x , %s\n", $st, $siz, $rsz, $fnm);
 		$sub = substr($file, $st+0x20, $rsz);
-
 		$data[$fnm] = $sub;
-		save_file("$dir/mf/$fnm", $sub);
 
 		$st += $siz;
 	} // while ( $st < $ed )
@@ -268,9 +263,11 @@ function cotton( $fname )
 	if ( empty($file) )  return;
 
 	$dir = str_replace('.', '_', $fname);
-	cottonmf($file, $dir);
-	sch_spt_scp($file, $dir);
+	cottonmf($file);
+	foreach ( $file as $fk => $fv )
+		save_file("$dir/mf/$fk", $fv);
 
+	sch_spt_scp($file, $dir);
 	return;
 }
 

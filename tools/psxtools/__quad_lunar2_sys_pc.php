@@ -21,12 +21,16 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'common-json.inc';
+require 'common-quad.inc';
 require 'quad.inc';
 require 'quad_lunar2.inc';
 
 define('METAFILE', true);
 
 $gp_clut = array();
+
+// TODO animation
 
 function syschaspr( $fname, $dir )
 {
@@ -53,9 +57,10 @@ function syschaspr( $fname, $dir )
 	);
 	save_clutfile("$dir/pck.0.clut", $img);
 
-	$json = load_idtagfile('lunar2');
-	sectspr($json, $spr[0]);
-	save_quadfile("$dir/pck", $json);
+	$quad = load_idtagfile('lunar2');
+	$quad['blend'] = array( blend_modes('normal') );
+	sectspr($quad, $spr[0]);
+	save_quadfile("$dir/pck", $quad);
 	return;
 }
 
@@ -80,15 +85,15 @@ function pckpc( $fname, $dir )
 		'pix' => $pix,
 	);
 
-
 	while ( $cnt > 0 )
 	{
 		$cnt--;
 		save_clutfile("$dir/$cnt/pck.0.clut", $img);
 
-		$json = load_idtagfile('lunar2');
-		sectspr($json, $pck[$cnt]);
-		save_quadfile("$dir/$cnt/pck", $json);
+		$quad = load_idtagfile('lunar2');
+		$quad['blend'] = array( blend_modes('normal') );
+		sectspr($quad, $pck[$cnt]);
+		save_quadfile("$dir/$cnt/pck", $quad);
 	} // while ( $cnt > 0 )
 
 	return;

@@ -91,6 +91,7 @@ function capsnk_sprite( &$spr, &$gfx, &$efdat, &$clt )
 			$pos += 12;
 		if ( $w < 1 || $h < 1 )
 			continue;
+		//$cnt = $off * 4 / c;
 		$cnt = $off / 3;
 		goto part2;
 	} // while (1)
@@ -109,8 +110,8 @@ part2:
 			continue;
 
 		$off = str2int($spr, $pos + 0, 2) << 2;
-		$x   = str2int($spr, $pos + 4, 2);
-		$y   = str2int($spr, $pos + 6, 2);
+		$x   = str2int($spr, $pos + 4, 2, true);
+		$y   = str2int($spr, $pos + 6, 2, true);
 		$no  = str2int($spr, $pos + 8, 2);
 
 		$txt = sprintf("== spr %d [%x] = %x , %x , %x , %x\n", $i, $i, $w, $h, $x, $y);

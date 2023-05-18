@@ -69,7 +69,7 @@ function kuma( $fname )
 		$sub = substr ($file, $pos+0, 4);
 		$siz = str2int($file, $pos+4, 4);
 		$hdz = str2int($file, $pos+8, 4);
-		if ( $sub != 'FTX0' )
+		if ( $sub !== 'FTX0' )
 			return php_error('UNKNOWN %s @ %x', $sub, $pos);
 		printf("%6x , %6x , %6x , %s\n", $pos, $siz, $hdz, $sub);
 

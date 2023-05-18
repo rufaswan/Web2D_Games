@@ -27,7 +27,7 @@ function batmas_decode( &$file )
 	// in  = 800ff264
 	// out = 8010f1a4
 	$dec = '';
-	trace("== begin sub_800a8354\n");
+	trace("== begin sub_800a8354()\n");
 
 	$bylen = 0;
 	$bycod = 0;
@@ -42,6 +42,7 @@ function batmas_decode( &$file )
 			$bycod = str2int($file, $st, 2);
 				$st += 2;
 			$bylen += 16;
+			continue;
 		}
 
 		$flg = $bycod & 1;
@@ -72,10 +73,9 @@ function batmas_decode( &$file )
 				$st++;
 			$size--;
 		}
-done:
 	} // while ( $size > 0 )
 
-	trace("== end sub_800a8354\n");
+	trace("== end sub_800a8354()\n");
 	$file = $dec;
 	return;
 }

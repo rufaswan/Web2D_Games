@@ -125,7 +125,7 @@ function save_map5( &$data, $dir )
 		} // for ( $mx=0; $mx < 0x800; $mx += 0x80 )
 	} // for ( $my=0; $my < 0x800; $my += 0x80 )
 
-	savepix("$dir/map5", $pix, false, false);
+	savepix("$dir/map5", $pix);
 	return;
 }
 
@@ -185,7 +185,7 @@ function save_map7( &$data, $dir )
 		} // for ( $mx=0; $mx < 0x400; $mx += 8 )
 	} // for ( $my=0; $my < 0x400; $my += 8 )
 
-	savepix("$dir/map7", $pix, false, false);
+	savepix("$dir/map7", $pix);
 	return;
 }
 //////////////////////////////

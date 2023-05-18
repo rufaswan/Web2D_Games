@@ -414,6 +414,23 @@ function FMBS_s4( $id )
 				$s0s1s2   = array($b0a,$b0a,$b0a);
 				break;
 
+			case 'ps3_drag': // c
+				// 0 1 2 3 4 5 6 7 8 9 a b
+				// - 1 1 1 2   2   2   2
+				$b00 = $ord($s, 0x00, 2); // flags
+				$b02 = $ord($s, 0x02, 1); // 0 1 2 6  blend id
+				$b03 = $ord($s, 0x03, 1); // tex id
+				$b04 = $ord($s, 0x04, 2);
+				$b06 = $ord($s, 0x06, 2); // s1 id
+				$b08 = $ord($s, 0x08, 2); // s0 id
+				$b0a = $ord($s, 0x0a, 2); // s2 id
+
+				$flags    = $b00;
+				$blend_id = $b02;
+				$tex_id   = $b03;
+				$s0s1s2   = array($b08,$b06,$b0a);
+				break;
+
 			case 'vit_odin': // 10
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// 2   - - - 1 1 1 1 - 2   2   2
@@ -431,23 +448,6 @@ function FMBS_s4( $id )
 				$blend_id = $b06;
 				$tex_id   = $b07;
 				$s0s1s2   = array($b0e,$b0e,$b0e);
-				break;
-
-			case 'ps3_drag': // c
-				// 0 1 2 3 4 5 6 7 8 9 a b
-				// - 1 1 1 2   2   2   2
-				$b00 = $ord($s, 0x00, 2); // flags
-				$b02 = $ord($s, 0x02, 1); // 0 1 2 6  blend id
-				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2);
-				$b06 = $ord($s, 0x06, 2); // s1 id
-				$b08 = $ord($s, 0x08, 2); // s0 id
-				$b0a = $ord($s, 0x0a, 2); // s2 id
-
-				$flags    = $b00;
-				$blend_id = $b02;
-				$tex_id   = $b03;
-				$s0s1s2   = array($b08,$b06,$b0a);
 				break;
 
 			case 'ps3_odin': // 10
@@ -1037,8 +1037,8 @@ function FMBS_s9( $id )
 				$b28 = $ord($s, 0x28, 2); // sa_set_id
 				$b2a = $ord($s, 0x2a, 1); // sa_set_no
 				$b2b = $ord($s, 0x2b, 1); // sa_set_main
-				$b2c = $ord($s, 0x2c, 2);
-				$b2e = $ord($s, 0x2e, 1);
+				$b2c = $ord($s, 0x2c, 2); // sa_sb_set_id
+				$b2e = $ord($s, 0x2e, 1); // sa_sb_set_no
 				$b2f = $ord($s, 0x2f, 1); // 0 1
 
 				$rect = array($b00 , $b04 , $b08 , $b0c);
@@ -1095,7 +1095,7 @@ function FMBS_sa( $id )
 				$b00 = $ord($s, 0x00, 2); // s8_set_id
 				$b02 = $ord($s, 0x02, 2); // s8_set_no
 				$b04 = $ord($s, 0x04, 2); // s8_set_sum
-				$b06 = $ord($s, 0x06, 2); // 0 1  s8_set_st
+				$b06 = $ord($s, 0x06, 1); // 0 1  s8_set_st
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1112,8 +1112,8 @@ function FMBS_sa( $id )
 				$b00 = $ord($s, 0x00, 2); // s8_set_id
 				$b02 = $ord($s, 0x02, 2); // s8_set_no
 				$b04 = $ord($s, 0x04, 4); // s8_set_sum
-				$b08 = $ord($s, 0x08, 4);
-				$b0c = $ord($s, 0x0c, 2); // 0 1  s8_set_st
+				$b08 = $ord($s, 0x08, 4, true); // s8_set_sum_once
+				$b0c = $ord($s, 0x0c, 1); // 0 1  s8_set_st
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1136,9 +1136,9 @@ function FMBS_sa( $id )
 				$b00 = $ord($s, 0x00, 2); // s8_set_id
 				$b02 = $ord($s, 0x02, 2); // s8_set_no
 				$b04 = $ord($s, 0x04, 4); // s8_set_sum
-				$b08 = $ord($s, 0x08, 4);
-				$b0c = $ord($s, 0x0c, 4);
-				$b10 = $ord($s, 0x10, 2); // 0 1  s8_set_st
+				$b08 = $ord($s, 0x08, 4, true); // s8_set_sum_once
+				$b0c = $ord($s, 0x0c, 4, true); //
+				$b10 = $ord($s, 0x10, 1); // 0 1  s8_set_st
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1164,11 +1164,11 @@ function FMBS_sa( $id )
 				$b00 = $ord($s, 0x00, 2); // s8_set_id
 				$b02 = $ord($s, 0x02, 2); // s8_set_no
 				$b04 = $ord($s, 0x04, 4); // s8_set_sum
-				$b08 = $ord($s, 0x08, 4);
-				$b0c = $ord($s, 0x0c, 4);
-				$b10 = $ord($s, 0x10, 2);
-				$b12 = $ord($s, 0x10, 1);
-				$b13 = $ord($s, 0x10, 1); // 0 1  s8_set_st
+				$b08 = $ord($s, 0x08, 4, true); // s8_set_sum_once
+				$b0c = $ord($s, 0x0c, 4, true); //
+				$b10 = $ord($s, 0x10, 2); // sb_set_id
+				$b12 = $ord($s, 0x12, 1); // sb_set_no
+				$b13 = $ord($s, 0x13, 1); // 0 1  s8_set_st
 				$b14 = $ord($s, 0x14, 2);
 
 				$s8_set_id  = $b00;
@@ -1252,6 +1252,40 @@ function FMBS_sb( $id )
 	return $data;
 }
 //////////////////////////////
+function s1s4_pixel( $fname, &$s1, &$s4 )
+{
+	// s1 are pre-divided to 0.0 to 1.0
+	// revert back to pixel by using s4 tex_id
+	$pfx = substr($fname, 0, strrpos($fname, '.'));
+
+	$ftx  = array();
+	$done = array();
+	foreach ( $s4 as $s4k => $s4v )
+	{
+		if ( ! isset($s4v['tex']) )
+			continue;
+
+		$tid = $s4v['tex'];
+		if ( ! isset( $ftx[$tid] ) )
+			$ftx[$tid] = ftx_size($pfx, $tid);
+
+		if ( $ftx[$tid] === -1 )
+			return php_error('no %s ftx [%d]', $pfx, $tid);
+
+		$s1k = $s4v['s0s1s2'][1];
+		if ( isset( $done[$s1k] ) )
+			continue;
+
+		for ( $i=0; $i < 8; $i += 2 )
+		{
+			$s1[$s1k][$i+0] *= $ftx[$tid][0];
+			$s1[$s1k][$i+1] *= $ftx[$tid][1];
+		}
+		$done[$s1k] = 1;
+	}
+	return;
+}
+
 function vanilla( $tag, $fname )
 {
 	global $gp_data, $gp_share;
@@ -1286,6 +1320,22 @@ function vanilla( $tag, $fname )
 		case 'ps3_odin':
 		case 'ps4_odin':
 		case 'ps4_drag':
+			$json = array(
+				's0' => FMBS_s0(0),
+				's1' => FMBS_s1(1),
+				's2' => FMBS_s2(2),
+				's3' => FMBS_s3(3),
+				's4' => FMBS_s4(4),
+				's5' => FMBS_s5(5),
+				's6' => FMBS_s6(6),
+				's7' => FMBS_s7(7),
+				's8' => FMBS_s8(8),
+				's9' => FMBS_s9(9),
+				'sa' => FMBS_sa(10),
+				'sb' => FMBS_sb(11),
+			);
+			break;
+
 		case 'ps4_sent':
 			$json = array(
 				's0' => FMBS_s0(0),
@@ -1301,6 +1351,7 @@ function vanilla( $tag, $fname )
 				'sa' => FMBS_sa(10),
 				'sb' => FMBS_sb(11),
 			);
+			s1s4_pixel($fname, $json['s1'], $json['s4']);
 			break;
 
 		case 'psp_gran':
@@ -1372,7 +1423,7 @@ TAG
   Upcoming
   swi_sent  2022  Swit  13 Sentinels: Aegis Rim
   swi_grim  2022  Swit  GrimGrimoire OnceMore
-  swi_grim  2022  PS4   GrimGrimoire OnceMore
+  ps4_grim  2022  PS4   GrimGrimoire OnceMore
 
 _ERR;
 
@@ -1403,6 +1454,10 @@ for ( $i=1; $i < $argc; $i++ )
 			case 'vit_mura':
 			case 'vit_drag':
 			case 'vit_odin':
+
+			//case 'swi_sent':
+			//case 'swi_grim':
+			//case 'ps4_grim':
 
 			//case 'con_name':
 				break;

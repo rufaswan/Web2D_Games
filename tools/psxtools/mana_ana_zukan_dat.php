@@ -38,9 +38,9 @@ function mana( $fname )
 	$dat = substr($file, str2int($file, 12, 4));
 	$tim = psxtim($dat);
 
-	if ( ($tim['t'] & 8) == 0 )
+	if ( $tim['t'] === 'RGBA' )
 	{
-		file_put_contents("$fname.tim", $dat);
+		save_clutfile("$fname.rgba", $tim);
 		return;
 	}
 
@@ -63,7 +63,7 @@ function mana( $fname )
 		$pix['src']['w'] = $w;
 		$pix['src']['h'] = $h;
 		$pix['src']['pix'] = rippix8($tim['pix'], $sx, $sy, $w, $h, $tim['w'], $tim['h']);
-		$pix['src']['pal'] = $tim['pal'][0];
+		$pix['src']['pal'] = $tim['pal'];
 
 		printf("%4d , %4d , %4d , %4d , %4d , %4d", $dx, $dy, $sx, $sy, $w, $h);
 		printf("\n");

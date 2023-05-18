@@ -1,0 +1,615 @@
+# castlevania ubawareta kokuin jp
+# offsets are for nds.ram
+
+[info] /*
+	 96.8   2000000  arm9/main.bin
+	 86.3   2380000  arm7/main.bin
+	100.0   21dcea0  arm9/21dcea0/0000_0.overlay
+
+	  6.6   21ffbc0  arm9/21ffbc0/0001_1.overlay
+	100.0   21ffbc0  arm9/21ffbc0/0002_2.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0003_3.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0004_4.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0005_5.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0006_6.overlay
+	  7.4   21ffbc0  arm9/21ffbc0/0007_7.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0008_8.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0009_9.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0010_a.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0011_b.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0012_c.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0013_d.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0014_e.overlay
+	  6.6   21ffbc0  arm9/21ffbc0/0015_f.overlay
+	  5.9   21ffbc0  arm9/21ffbc0/0016_10.overlay
+	  8.1   21ffbc0  arm9/21ffbc0/0017_11.overlay
+
+	100.0   21ffde0  arm9/21ffde0/0018_12.overlay
+	  0.1   21ffde0  arm9/21ffde0/0019_13.overlay
+
+	  0.1   2223b60  arm9/2223b60/0020_14.overlay
+	100.0   2223b60  arm9/2223b60/0021_15.overlay
+	  0.1   2223b60  arm9/2223b60/0022_16.overlay
+
+	  0.1   22b6f60  arm9/22b6f60/0023_17.overlay
+	  0.1   22b6f60  arm9/22b6f60/0024_18.overlay
+	  0.2   22b6f60  arm9/22b6f60/0025_19.overlay
+	  0.1   22b6f60  arm9/22b6f60/0026_1a.overlay
+	  0.1   22b6f60  arm9/22b6f60/0027_1b.overlay
+	  0.1   22b6f60  arm9/22b6f60/0028_1c.overlay
+	  0.2   22b6f60  arm9/22b6f60/0029_1d.overlay
+	  0.3   22b6f60  arm9/22b6f60/0030_1e.overlay
+	  0.2   22b6f60  arm9/22b6f60/0031_1f.overlay
+	  0.2   22b6f60  arm9/22b6f60/0032_20.overlay
+	  0.2   22b6f60  arm9/22b6f60/0033_21.overlay
+	  0.3   22b6f60  arm9/22b6f60/0034_22.overlay
+	  0.2   22b6f60  arm9/22b6f60/0035_23.overlay
+	  0.2   22b6f60  arm9/22b6f60/0036_24.overlay
+	  0.2   22b6f60  arm9/22b6f60/0037_25.overlay
+	100.0   22b6f60  arm9/22b6f60/0038_26.overlay
+
+	  1.4   22c1ba0  arm9/22c1ba0/0039_27.overlay
+	  0.1   22c1ba0  arm9/22c1ba0/0040_28.overlay
+	100.0   22c1ba0  arm9/22c1ba0/0041_29.overlay
+	  7.4   22c1ba0  arm9/22c1ba0/0042_2a.overlay
+	  8.7   22c1ba0  arm9/22c1ba0/0043_2b.overlay
+	  4.9   22c1ba0  arm9/22c1ba0/0044_2c.overlay
+	  4.6   22c1ba0  arm9/22c1ba0/0045_2d.overlay
+	  4.9   22c1ba0  arm9/22c1ba0/0046_2e.overlay
+	  5.4   22c1ba0  arm9/22c1ba0/0047_2f.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0048_30.overlay
+	  4.2   22c1ba0  arm9/22c1ba0/0049_31.overlay
+	 10.5   22c1ba0  arm9/22c1ba0/0050_32.overlay
+	  6.0   22c1ba0  arm9/22c1ba0/0051_33.overlay
+	  6.3   22c1ba0  arm9/22c1ba0/0052_34.overlay
+	 19.1   22c1ba0  arm9/22c1ba0/0053_35.overlay
+	  2.2   22c1ba0  arm9/22c1ba0/0054_36.overlay
+	  9.0   22c1ba0  arm9/22c1ba0/0055_37.overlay
+	  3.6   22c1ba0  arm9/22c1ba0/0056_38.overlay
+	  1.8   22c1ba0  arm9/22c1ba0/0057_39.overlay
+	 11.1   22c1ba0  arm9/22c1ba0/0058_3a.overlay
+	  4.6   22c1ba0  arm9/22c1ba0/0059_3b.overlay
+	  5.0   22c1ba0  arm9/22c1ba0/0060_3c.overlay
+	  0.1   22c1ba0  arm9/22c1ba0/0061_3d.overlay
+	  6.3   22c1ba0  arm9/22c1ba0/0062_3e.overlay
+	  0.6   22c1ba0  arm9/22c1ba0/0063_3f.overlay
+	 14.3   22c1ba0  arm9/22c1ba0/0064_40.overlay
+	  5.5   22c1ba0  arm9/22c1ba0/0065_41.overlay
+	  2.5   22c1ba0  arm9/22c1ba0/0066_42.overlay
+	 22.4   22c1ba0  arm9/22c1ba0/0067_43.overlay
+	  9.0   22c1ba0  arm9/22c1ba0/0068_44.overlay
+	  4.5   22c1ba0  arm9/22c1ba0/0069_45.overlay
+	  6.8   22c1ba0  arm9/22c1ba0/0070_46.overlay
+	 19.0   22c1ba0  arm9/22c1ba0/0071_47.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0072_48.overlay
+	  6.6   22c1ba0  arm9/22c1ba0/0073_49.overlay
+	  9.6   22c1ba0  arm9/22c1ba0/0074_4a.overlay
+	  7.5   22c1ba0  arm9/22c1ba0/0075_4b.overlay
+	  1.6   22c1ba0  arm9/22c1ba0/0076_4c.overlay
+	 10.2   22c1ba0  arm9/22c1ba0/0077_4d.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0078_4e.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0079_4f.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0080_50.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0081_51.overlay
+	  5.1   22c1ba0  arm9/22c1ba0/0082_52.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0083_53.overlay
+	  0.0   22c1ba0  arm9/22c1ba0/0084_54.overlay
+	*/
+	game   nds castlevania order of ecclesia
+	init   over  0  2  12  15  26  29
+	filelist  20da694  20ee3b4  20
+	stg_ovid  20b60fc  20b614c
+	stg_bc    20d8da0  20d8df0
+	stg_data  20d8fc4  20d9014
+
+	mon_ovid  20d9b48  20d9be0
+	mon_sc    20f31c8  20f33ac
+	mon_data  20b63d4  20b74d8  24
+
+	obj_sc    20f3df0  20f4024
+	item_sc   20f4908  20f4920
+
+	mon_func1  2048358  r0=  r1=ram  r2=fptr,sc  r3=palette  r4=r0
+	mon_func2  2048458
+
+[monster]
+	mon_0000_0  sc  /sc/f_armc02.dat  so  /so/p_armc02.dat  pal  20ca080
+	mon_0001_1  sc  /sc/f_zbr00.dat  sc  /sc/f_zbr01.dat  so  /so/p_zbr.dat  pal  20cb59c
+	mon_0002_2  so  /so/p_ya_skl.dat  sc  /sc/t_ya_skl.dat  pal  20cac60
+	mon_0003_3  sc  /sc/f_horse00.dat  sc  /sc/f_horse01.dat  sc  /sc/f_horse02.dat  so  /so/p_horse.dat  pal  20cb44c
+	mon_0004_4  sc  /sc/f_gho00.dat  sc  /sc/f_gho01.dat  sc  /sc/f_gho02.dat  sc  /sc/f_gho03.dat  so  /so/p_gho00.dat  pal  20cb4b0
+	mon_0005_5  pal  20cc5a8  sc  /sc/t_ya_sk3.dat  so  /so/p_ya_sk3.dat
+	mon_0006_6  sc  /sc/f_flykf0.dat  sc  /sc/f_flykf1.dat  sc  /sc/f_flykf2.dat  so  /so/p_flykf.dat  pal  20cad90
+	mon_0007_7  sc  /sc/f_nomi00.dat  sc  /sc/f_nomi01.dat  sc  /sc/f_nomi02.dat  so  /so/p_nomi00.dat  pal  20c9e90
+	mon_0008_8  pal  20ccd50  so  /so/p_axarm0.dat  sc  /sc/f_axarm0.dat  sc  /sc/f_axarm1.dat  sc  /sc/f_axarm2.dat
+	mon_0009_9  pal  20cc738  so  /so/p_sf_une.dat  sc  /sc/t_sf_une.dat
+	mon_0010_a  pal  20cc83c  so  /so/p_fm68.dat  sc  /sc/t_fm68_0.dat  sc  /sc/t_fm68_1.dat
+	mon_0011_b  pal  20cb5e0  sc  /sc/f_necro0.dat  sc  /sc/f_necro1.dat  so  /so/p_necro0.dat
+	mon_0012_c  so  /so/p_fu_bsk.dat  sc  /sc/t_fu_bsk.dat  pal  20caca4
+	mon_0013_d  so  /so/p_ya_ya0.dat  sc  /sc/t_ya_ya0.dat  sc  /sc/t_ya_ya1.dat  pal  20ca0a4
+	mon_0014_e  sc  /sc/f_inves0.dat  sc  /sc/f_inves1.dat  sc  /sc/f_inves2.dat  sc  /sc/f_inves3.dat  sc  /sc/f_inves4.dat  so  /so/p_inves0.dat  pal  20c9bfc
+	mon_0015_f  sc  /sc/f_gesso.dat  so  /so/p_gesso.dat  pal  20c9e6c
+	mon_0016_10  pal  20cd03c  sc  /sc/f_needle_00.dat  so  /so/p_needle_00.dat
+	mon_0017_11_dem   pal  20cbe3c  sc  /sc/f_dem00.dat  sc  /sc/f_dem01.dat  sc  /sc/f_dem02.dat  sc  /sc/f_dem03.dat  sc  /sc/f_dem04.dat  so  /so/p_dem00.dat  so  /jnt/j_dem.jnt
+	mon_0018_12  so  /so/p_fmhb.dat  sc  /sc/t_fmhb.dat  pal  20caee4
+	mon_0019_13  so  /so/p_tako.dat  sc  /sc/t_tako.dat  pal  20ca6cc
+	mon_0020_14  sc  /sc/f_uo0.dat  so  /so/p_uo.dat  pal  20ca9b8
+	mon_0021_15  sc  /sc/f_jfish1.dat  sc  /sc/f_jfish2.dat  sc  /sc/f_jfish3.dat  sc  /sc/f_jfish4.dat  so  /so/p_jfish0.dat  pal  20c9c60
+	mon_0022_16_fran  over  25  sc  /sc/f_fran01.dat  sc  /sc/f_fran02.dat  sc  /sc/f_fran03.dat  sc  /sc/f_fran04.dat  sc  /sc/f_fran05.dat  so  /so/p_fran02.dat  so  /jnt/j_fran02.jnt  pal  20cb21c
+	mon_0023_17  so  /so/p_crow.dat  sc  /sc/t_crow.dat  pal  20c9b98
+	mon_0024_18  sc  /sc/f_skani0.dat  so  /so/p_skani0.dat  pal  20cafcc
+	mon_0025_19  so  /so/p_scare.dat  sc  /sc/t_scare.dat  pal  20c9968
+	mon_0026_1a_sedm  pal  20cc048  sc  /sc/f_sedm00.dat  sc  /sc/f_sedm01.dat  sc  /sc/f_sedm02.dat  sc  /sc/f_sedm03.dat  sc  /sc/f_sedm04.dat  so  /so/p_sedm00.dat  so  /jnt/j_sedm.jnt
+	mon_0027_1b  so  /so/p_fskl68.dat  sc  /sc/t_fskl68.dat  pal  20ca974
+	mon_0028_1c_uma   pal  20cbd34  sc  /sc/f_uma00.dat  sc  /sc/f_uma01.dat  so  /jnt/j_run.jnt  so  /so/p_uma00.dat
+	mon_0029_1d  so  /so/p_bom_am.dat  sc  /sc/t_b_am00.dat  sc  /sc/t_b_am01.dat  pal  20ca648
+	mon_0030_1e_frdm  pal  20cbfa4  sc  /sc/f_frdm00.dat  sc  /sc/f_frdm01.dat  sc  /sc/f_frdm02.dat  sc  /sc/f_frdm03.dat  sc  /sc/f_frdm04.dat  so  /so/p_frdm00.dat  so  /jnt/j_frdm.jnt
+	mon_0031_1f  pal  20cc254  sc  /sc/f_chyon0.dat  sc  /sc/f_chyon1.dat  so  /so/p_chyon.dat
+	mon_0032_20  sc  /sc/f_spec00.dat  sc  /sc/f_spec01.dat  so  /so/p_spec00.dat  pal  20cae3c
+	mon_0033_21  sc  /sc/f_take00.dat  sc  /sc/f_take01.dat  sc  /sc/f_take02.dat  sc  /sc/f_take03.dat  sc  /sc/f_take04.dat  sc  /sc/f_take05.dat  so  /so/p_take00.dat  pal  20ca01c
+	mon_0034_22  pal  20cba20  sc  /sc/f_worb00.dat  sc  /sc/f_worb01.dat  sc  /sc/f_worb02.dat  sc  /sc/f_worb03.dat  sc  /sc/f_worb04.dat  sc  /sc/f_worb05.dat  sc  /sc/f_worb06.dat  sc  /sc/f_worb07.dat  so  /so/p_worb00.dat
+	mon_0035_23  pal  20cb70c  sc  /sc/f_bap2a.dat  sc  /sc/f_bap2b.dat  sc  /sc/f_bap2c.dat  so  /so/p_bap2.dat
+	mon_0036_24_fran  pal  20cb178  sc  /sc/f_fran06.dat  sc  /sc/f_fran07.dat  sc  /sc/f_fran08.dat  sc  /sc/f_fran09.dat  so  /jnt/j_fran01.jnt  so  /so/p_fran01.dat
+	mon_0037_25  sc  /sc/f_honeb.dat  so  /so/p_honeb.dat  pal  20cae80
+	mon_0038_26  pal  20cc584  sc  /sc/t_divsk0.dat  sc  /sc/t_divsk1.dat  so  /so/p_divsk.dat
+	mon_0039_27  pal  20cc5cc  sc  /sc/t_ya_sk6.dat  so  /so/p_ya_sk6.dat
+	mon_0040_28  so  /so/p_sf_dhk.dat  sc  /sc/t_sf_dhk.dat  pal  20ca624
+	mon_0041_29_dino  sc  /sc/f_dino00.dat  so  /so/p_dino00.dat  so  /jnt/j_dino00.jnt  pal  20c9a0c
+	mon_0042_2a  sc  /sc/f_wdrag.dat  so  /so/p_wdrag.dat  pal  20c9ce4
+	mon_0043_2b  sc  /sc/f_elmo00.dat  sc  /sc/f_elmo01.dat  so  /so/p_elmo00.dat  pal  20cae18
+	mon_0044_2c  pal  20ccc6c  sc  /sc/f_sakan00.dat  sc  /sc/f_sakan01.dat  sc  /sc/f_sakan02.dat  sc  /sc/f_sakan03.dat  so  /so/p_sakan.dat
+	mon_0045_2d  sc  /sc/f_umih00.dat  so  /so/p_umih00.dat  pal  20cb514
+	mon_0046_2e  pal  20cb818  sc  /sc/f_sfish0.dat  so  /so/p_sfish0.dat
+	mon_0047_2f  pal  20cc9c0  so  /so/p_ya_fm.dat  sc  /sc/t_ya_fm0.dat  sc  /sc/t_ya_fm1.dat
+	mon_0048_30  sc  /sc/f_catp00.dat  sc  /sc/f_catp01.dat  sc  /sc/f_catp02.dat  sc  /sc/f_catp03.dat  sc  /sc/f_catp04.dat  so  /so/p_catp00.dat  pal  20cb010
+	mon_0049_31  pal  20cced8  so  /so/p_fu_he.dat  sc  /sc/t_fu_he.dat
+	mon_0050_32  sc  /sc/f_lady00.dat  sc  /sc/f_lady01.dat  sc  /sc/f_lady02.dat  sc  /sc/f_lady03.dat  so  /so/p_lady00.dat  pal  20cb538
+	mon_0051_33  sc  /sc/f_fredy0.dat  sc  /sc/f_fredy1.dat  sc  /sc/f_fredy2.dat  so  /so/p_fredy0.dat  pal  20cadb4
+	mon_0052_34  pal  20cc45c  sc  /sc/f_tppa00.dat  so  /so/p_tppa.dat
+	mon_0053_35_bgsk  sc  /sc/f_bigskl00.dat  sc  /sc/f_bigskl01.dat  sc  /sc/f_bigskl02.dat  so  /so/p_bigskl00.dat  so  /jnt/j_bigskl01.jnt  pal  20ca16c
+	mon_0054_36  pal  20c9b14  sc  /sc/f_imp.dat  so  /so/p_imp.dat
+	mon_0055_37  sc  /sc/f_alakh1.dat  sc  /sc/f_alakh2.dat  sc  /sc/f_alakh3.dat  so  /so/p_alakh.dat  pal  20cb3e8
+	mon_0056_38  sc  /sc/f_riz00.dat  sc  /sc/f_riz01.dat  sc  /sc/f_riz02.dat  sc  /sc/f_riz03.dat  sc  /sc/f_riz04.dat  sc  /sc/f_riz05.dat  sc  /sc/f_riz06.dat  so  /so/p_riz00.dat  pal  20c9f14
+	mon_0057_39_geva  sc  /sc/f_geva00.dat  sc  /sc/f_geva01.dat  sc  /sc/f_geva02.dat  so  /so/p_geva00.dat  so  /jnt/j_geva0.jnt  pal  20cb344
+	mon_0058_3a  pal  20cc610  sc  /sc/f_yeti0.dat  sc  /sc/f_yeti1.dat  so  /so/p_yeti.dat
+	mon_0059_3b_thdm  pal  20cbee0  sc  /sc/f_thdm00.dat  sc  /sc/f_thdm01.dat  sc  /sc/f_thdm02.dat  sc  /sc/f_thdm03.dat  sc  /sc/f_thdm04.dat  so  /so/p_thdm00.dat  so  /jnt/j_thdm.jnt
+	mon_0060_3c_owl   over  25  sc  /sc/f_owl_a0.dat  sc  /sc/f_owl_a1.dat  sc  /sc/f_owl_a2.dat  so  /so/p_owl_ar.dat  pal  20ca4fc
+	mon_0061_3d  sc  /sc/f_wwolf0.dat  sc  /sc/f_wwolf1.dat  sc  /sc/f_wwolf2.dat  sc  /sc/f_wwolf3.dat  sc  /sc/f_wwolf4.dat  sc  /sc/f_wwolf5.dat  so  /so/p_wwolf.dat  pal  20ca9fc
+	mon_0062_3e  pal  20ccc28  sc  /sc/f_eagl00.dat  sc  /sc/f_eagl01.dat  so  /so/p_eagl00.dat
+	mon_0063_3f  pal  20cce74  sc  /sc/f_mandra.dat  so  /so/p_mandra.dat
+	mon_0064_40  sc  /sc/f_ger00.dat  sc  /sc/f_ger01.dat  sc  /sc/f_ger02.dat  sc  /sc/f_ger03.dat  sc  /sc/f_ger04.dat  sc  /sc/f_ger05.dat  so  /so/p_ger00.dat  pal  20ca498
+	mon_0065_41_owl   over  25  sc  /sc/f_owl_a0.dat  sc  /sc/f_owl_a1.dat  sc  /sc/f_owl_a2.dat  so  /so/p_owl_ar.dat  pal  20ca4fc
+	mon_0066_42  pal  20cc654  sc  /sc/f_jour00.dat  sc  /sc/f_jour01.dat  sc  /sc/f_jour02.dat  sc  /sc/f_jour03.dat  so  /so/p_jour00.dat
+	mon_0067_43  pal  20cced8  so  /so/p_fu_he.dat  sc  /sc/t_fu_he.dat
+	mon_0068_44  pal  20cbc2c  sc  /sc/f_raze00.dat  sc  /sc/f_raze01.dat  sc  /sc/f_raze02.dat  so  /so/p_raze00.dat
+	mon_0069_45  pal  20cb6a8  sc  /sc/f_bap1a.dat  sc  /sc/f_bap1b.dat  sc  /sc/f_bap1c.dat  so  /so/p_bap1.dat
+	mon_0070_46  sc  /sc/f_head00.dat  sc  /sc/f_head01.dat  sc  /sc/f_head02.dat  sc  /sc/f_head03.dat  sc  /sc/f_head04.dat  sc  /sc/f_head05.dat  so  /so/p_head00.dat  pal  20cb2e0
+	mon_0071_47  pal  20ccb24  so  /so/p_nirus.dat  sc  /sc/t_nirus.dat
+	mon_0072_48  pal  20cb664  sc  /sc/f_zbs00.dat  sc  /sc/f_zbs01.dat  so  /so/p_zbs.dat
+	mon_0073_49  sc  /sc/f_peep0.dat  sc  /sc/f_peep1.dat  so  /so/p_peep.dat  pal  20ca7b0
+	mon_0074_4a  pal  20cb770  sc  /sc/f_garg00.dat  sc  /sc/f_garg01.dat  sc  /sc/f_garg02.dat  so  /so/p_garg00.dat
+	mon_0075_4b  sc  /sc/f_rskl.dat  so  /so/p_rskl.dat  pal  20cad6c
+	mon_0076_4c  sc  /sc/f_catp00.dat  sc  /sc/f_catp01.dat  sc  /sc/f_catp02.dat  sc  /sc/f_catp03.dat  sc  /sc/f_catp04.dat  so  /so/p_catp00.dat  pal  20cb010
+	mon_0077_4d  sc  /sc/f_mimi00.dat  sc  /sc/f_mimi01.dat  so  /so/p_mimi00.dat  pal  20caf88
+	mon_0078_4e_draf  over  25  pal  20cb8fc  sc  /sc/f_draf00.dat  sc  /sc/f_draf01.dat  sc  /sc/f_draf02.dat  so  /so/p_draf00.dat
+	mon_0079_4f  pal  20cc398  so  /so/p_tinman.dat  sc  /sc/t_tinman.dat
+	mon_0080_50  sc  /sc/f_nomi00.dat  sc  /sc/f_nomi01.dat  sc  /sc/f_nomi02.dat  so  /so/p_nomi00.dat  pal  20c9e90
+	mon_0081_51  pal  20cbdd8  so  /so/p_ya_sk7.dat  sc  /sc/t_ya_sk7.dat  sc  /sc/t_ya_sk8.dat
+	mon_0082_52_glem  pal  20cc190  sc  /sc/f_golem00.dat  sc  /sc/f_golem01.dat  sc  /sc/f_golem02.dat  sc  /sc/f_golem03.dat  so  /so/p_golem00.dat  so  /jnt/j_golem0.jnt
+	mon_0083_53  so  /so/p_deam.dat  sc  /sc/t_deam_0.dat  sc  /sc/t_deam_1.dat  sc  /sc/t_deam_2.dat  pal  20ca5a0
+	mon_0084_54_guru  sc  /sc/f_troop.dat  so  /so/p_troop.dat  so  /jnt/j_guru00.jnt  pal  20ca2b4
+	mon_0085_55_red   sc  /sc/f_troop.dat  so  /so/p_troop.dat  so  /jnt/j_red00.jnt  pal  20ca2b4
+	mon_0086_56  so  /so/p_cyupa.dat  sc  /sc/t_cyupa0.dat  sc  /sc/t_cyupa1.dat  sc  /sc/t_cyupa2.dat  pal  20c9a90
+	mon_0087_57  pal  20cc480  sc  /sc/t_fu_sb0.dat  sc  /sc/t_fu_sb1.dat  sc  /sc/t_fu_sb2.dat  so  /so/p_fu_sb.dat
+	mon_0088_58  pal  20cbac4  sc  /sc/f_sack00.dat  sc  /sc/f_sack01.dat  sc  /sc/f_sack02.dat  sc  /sc/f_sack03.dat  sc  /sc/f_sack04.dat  sc  /sc/f_sack05.dat  sc  /sc/f_sack06.dat  sc  /sc/f_sack07.dat  so  /so/p_sack00.dat
+	mon_0089_59  sc  /sc/f_riz00.dat  sc  /sc/f_riz01.dat  sc  /sc/f_riz03.dat  sc  /sc/f_riz05.dat  sc  /sc/f_riz06.dat  sc  /sc/f_riz07.dat  sc  /sc/f_riz08.dat  so  /so/p_riz01.dat  pal  20c9f98
+	mon_0090_5a_hums  sc  /sc/f_troop.dat  so  /so/p_troop.dat  so  /jnt/j_hums00.jnt  pal  20ca2b4
+	mon_0091_5b_fran  sc  /sc/f_fran00.dat  sc  /sc/f_fran05.dat  so  /so/p_fran00.dat  so  /jnt/j_fran00.jnt  pal  20cb0f4
+	mon_0092_5c  sc  /sc/f_imp.dat  so  /so/p_imp.dat  pal  20c9b14
+	mon_0093_5d  sc  /sc/f_peep0.dat  sc  /sc/f_peep1.dat  so  /so/p_peep.dat  pal  20ca7b0
+	mon_0094_5e_fupg  over  25  so  /so/p_fu_pg2.dat  sc  /sc/t_fu_pg2.dat  pal  20c9d28
+	mon_0095_5f  pal  20cc45c  sc  /sc/f_tppa00.dat  so  /so/p_tppa.dat
+	mon_0096_60  sc  /sc/f_medus0.dat  so  /so/p_medusa.dat  pal  20cad08
+	mon_0097_61  sc  /sc/f_medus0.dat  so  /so/p_medusa.dat  pal  20cad08
+	mon_0098_62  pal  20cbb68  sc  /sc/f_jays00.dat  sc  /sc/f_jays01.dat  sc  /sc/f_jays02.dat  so  /so/p_jays00.dat
+	mon_0099_63_gk    pal  20cb7d4  sc  /sc/f_gk00.dat  so  /so/p_gk.dat  so  /jnt/j_gk.jnt
+	mon_0100_64_bgsk  sc  /sc/f_bigskl00.dat  sc  /sc/f_bigskl01.dat  sc  /sc/f_bigskl02.dat  so  /so/p_bigskl00.dat  so  /jnt/j_bigskl02.jnt  pal  20ca1f0
+	mon_0101_65  so  /so/p_fskl68.dat  sc  /sc/t_fskl68.dat  pal  20ca974
+	mon_0102_66_fk    pal  20cbcf0  sc  /sc/f_fk00.dat  so  /so/p_fk.dat  so  /jnt/j_fk.jnt
+	mon_0103_67_kyon  over  1c  sc  /sc/f_kyon00.dat  sc  /sc/f_kyon01.dat  sc  /sc/f_kyon02.dat  sc  /sc/f_kyon03.dat  sc  /sc/f_kyon04.dat  so  /so/p_kyon.dat  pal  22b9c54
+	mon_0104_68_lddm  pal  20cc0ec  sc  /sc/f_lddm00.dat  sc  /sc/f_lddm01.dat  sc  /sc/f_lddm02.dat  sc  /sc/f_lddm03.dat  sc  /sc/f_lddm04.dat  so  /so/p_lddm00.dat  so  /jnt/j_lddm.jnt
+	mon_0105_69_dhum  sc  /sc/f_troop.dat  so  /so/p_troop.dat  so  /jnt/j_dhum00.jnt  pal  20ca2b4
+	mon_0106_6a_wpnm  sc  /sc/f_troop.dat  so  /so/p_troop.dat  so  /jnt/j_wpnm00.jnt  pal  20ca2b4
+	mon_0107_6b_bgsk  sc  /sc/f_bigskl00.dat  sc  /sc/f_bigskl01.dat  sc  /sc/f_bigskl02.dat  so  /so/p_bigskl00.dat  so  /jnt/j_bigskl00.jnt  pal  20ca128
+	mon_0108_6cx  over  17  so  /so/p_armag00.dat  so  /jnt/j_armag2.jnt  pal  22ba0a0
+	mon_0109_6d_kani  over  1d  sc  /sc/f_kani00.dat  sc  /sc/f_kani01.dat  sc  /sc/f_kani02.dat  sc  /sc/f_kani03.dat  sc  /sc/f_kani04.dat  so  /so/p_kani00.dat  so  /jnt/j_kani00.jnt  pal  22b96a0
+	mon_0110_6ex  over  19  pal  22bab58  so  /so/p_man00.dat
+	mon_0111_6fx  over  1a  pal  22bb418  so  /so/p_mael00.dat
+	mon_0112_70_fran  over  1f  pal  22bc180  sc  /sc/f_fran0a.dat  sc  /sc/f_fran0b.dat  sc  /sc/f_fran0c.dat  sc  /sc/f_fran0d.dat  sc  /sc/f_fran0e.dat  so  /jnt/j_fran03.jnt  so  /so/p_fran03.dat
+	mon_0113_71_grav  over  20  pal  22ba02c  sc  /sc/f_grav00.dat  sc  /sc/f_grav01.dat  sc  /sc/f_grav02.dat  sc  /sc/f_grav03.dat  sc  /sc/f_grav04.dat  sc  /sc/f_grav05.dat  sc  /sc/f_grav06.dat  sc  /sc/f_grav07.dat  sc  /sc/f_grav08.dat  sc  /sc/f_grav09.dat  sc  /sc/f_grav0a.dat  so  /jnt/j_grav00.jnt  so  /so/p_grav00.dat
+	mon_0114_72x  over  23  pal  20d6d64  so  /so/p_albus.dat
+	mon_0115_73x  over  24  pal  22bf398  so  /so/p_bar00.dat
+	mon_0116_74x  over  1b  pal  22ba2b8  so  /so/p_wallm00.dat
+	mon_0117_75x  over  22  pal  22b983c  so  /so/p_alessi00.dat  so  /jnt/j_alessi00.jnt
+	mon_0118_76  over  1e  pal  22bdb38  sc  /sc/f_cent00.dat  sc  /sc/f_cent01.dat  sc  /sc/f_cent02.dat  sc  /sc/f_cent03.dat  sc  /sc/f_cent04.dat  sc  /sc/f_cent05.dat  sc  /sc/f_cent06.dat  sc  /sc/f_cent07.dat  sc  /sc/f_cent08.dat  sc  /sc/f_cent09.dat  sc  /sc/f_cent0A.dat  sc  /sc/f_cent0B.dat  sc  /sc/f_cent0C.dat  sc  /sc/f_cent0D.dat  sc  /sc/f_cent0E.dat  so  /jnt/j_cent00.jnt  so  /so/p_cent00.dat
+	mon_0119_77x  over  18  pal  22bc14c  so  /so/p_sgami00.dat
+	mon_0120_78x  over  21  pal  22ce604  so  /jnt/j_dra00.jnt  so  /so/p_dra00.dat
+
+	/*
+	over 17  +sc  22ba230
+	over 18  +sc  22bc254
+	over 19  +sc  22bad20
+	over 1a  +sc  22bb838
+	over 1b  +sc  22ba3ec
+	over 1c
+	over 1d
+	over 1e
+	over 1f
+	over 20
+	over 21  +sc  22befd8
+	over 22  +sc  22b98fc
+	over 23  +sc  22b8e1c
+	over 24  +sc  22bf4e0
+	over 25
+	over 26
+	*/
+
+/*
+[sosc]
+	# so = 347 files
+	# = ov- , so- , sc- , pal- , jnt-
+
+	aadoor  = ov-40 , so-88e , sc-367 , pal-2c74f0
+	aasky   = ov-40 , so-88f , sc-36a-36c , pal-2c7534
+	widlit  = ov-41 , so-9d9 , sc-6ac , pal-d17c8
+	dawave  = ov-45 , so-8bb , sc-3f9 , pal-2e3290
+	kirai   = ov-45 , so-91a , sc-532-533 , pal-d15d0
+	damizu  = ov-45 , so-8ba , sc-3f8 , pal-d0c2c
+	ironm   = ov-50 , so-910 , sc-50e-50f , pal-2cebf8
+	elec    = ov-51 , so-8d7 , sc-41b , pal-2cc540
+	faobj1  = ov-52 , so-8e2 , sc-457-459 , pal-2cd00c
+	faobj0  = ov-52 , so-8e1 , sc-456 , sc-45a , pal-2ccfc8
+	stal    = ov-54 , so-9bf , sc-65a , pal-2cee40
+	wind    = ov-54 , so-9db , sc-6b6 , pal-2cee64
+	cold00  = ov-56 , so-8b5 , sc-3e3-3e4 , pal-2d079c
+	cold01  = ov-56 , so-8b6 , sc-3e5-3e7 , pal-2d079c
+	fall00  = ov-56 , so-8df , sc-450-451 , pal-2d07c0
+	fall01  = ov-56 , so-8e0 , sc-452-454 , pal-2d07c0
+	mari    = ov-61 , so-926 , sc-565 , pal-cdd0c
+	ibbobj  = ov-62 , so-90d , sc-506-507 , pal-d0f28
+	kaobj   = ov-64 , so-916 , sc-527 , pal-d0ea4
+	ball    = ov-67 , so-89c , sc-39d , pal-2e99c8
+	cand    = ov-67 , so-8ad , sc-3c4-3c5 , pal-2e9a0c
+	maobj   = ov-68 , so-925 , sc-564 , pal-2d9338
+	shutter = ov-71 , so-9b9 , sc-653 , pal-d0f90
+	roll    = ov-71 , so-9a8 , sc-615-618 , pal-2db640
+	qaobj   = ov-75 , so-949 , sc-5c3 , pal-d0f6c
+	cerbe   = ov-76 , so-8b1 , sc-3da-3dc , pal-d169c
+	almap   = ov-77 , so-896 , sc-37c , pal-d5208
+	saobj   = ov-77 , so-9b0 , sc-633 , pal-2d7130
+	edca    = ov-83 , so-8d6 , sc-418-41a , pal-2c4a84
+
+	armag  = ov-23 , so-898 , sc-37f-38e , pal-2ba0a0
+	sgami  = ov-24 , so-9b7 , sc-63c-64a , pal-2bc14c
+	man    = ov-25 , so-923 , sc-55f-562 , pal-2bab58
+	mael   = ov-26 , so-922 , sc-54e-55e , pal-2bb418
+	wallm  = ov-27 , so-9d5 , sc-697-69c , pal-2ba2b8
+	kyon   = ov-28 , so-91d , sc-53e-542 , pal-2b9c54
+	kani   = ov-29 , so-915 , sc-522-526 , pal-2b96a0
+	cent   = ov-30 , so-8b0 , sc-3cb-3d9 , pal-2bdb38
+	fran03 = ov-31 , so-8ec , sc-47a-47e , pal-2bc180
+	grav   = ov-32 , so-905 , sc-4ea-4f4 , pal-2ba02c
+	dra00  = ov-33 , so-8ce , sc-77f-790 , sc-7a2-7a3 , pal-2ce604
+	alessi = ov-34 , so-895 , sc-372-37b , pal-2b983c
+	albus  = ov-35 , so-894 , sc-702-70c , pal-d6d64
+	bar    = ov-36 , so-8a0 , sc-3a6-3b6 , pal-2bf398
+	owl_ar = ov-37 , so-942 , sc-5bc-5be , pal-ca4fc
+	draf   = ov-37 , so-8d1 , sc-40f-411 , pal-cb8fc
+	fu_pg2 = ov-37 , so-8f3 , sc-6e4 , pal-c9d28
+	fran02 = ov-37 , so-8eb , sc-471-475 , pal-cb21c
+
+	aataru  = ov-21 , so-890 , sc-36d , pal-d17a4
+	baobj   = ov-21 , so-89d , sc-39e-39f , pal-2d28b8
+	fsmi    = ov-21 , so-8f0 , sc-48d-48f , pal-d4da8
+	deam    = ov-21 , so-8bd , sc-6d9-6db , pal-ca5a0
+	sf_dhk  = ov-21 , so-9b4 , sc-6ea , pal-ca624
+	bom_am  = ov-21 , so-8a3 , sc-6d3-6d4 , pal-ca648
+	tako    = ov-21 , so-9c2 , sc-6ec , pal-ca6cc
+	peep    = ov-21 , so-947 , sc-5c1-5c2 , pal-ca7b0
+	uo      = ov-21 , so-9d0 , sc-68d , pal-ca9b8
+	wwolf   = ov-21 , so-9de , sc-6c6-6cb , pal-ca9fc
+	ya_skl  = ov-21 , so-9e3 , sc-6f4 , pal-cac60
+	medusa  = ov-21 , so-929 , sc-571 , pal-cad08
+	rskl    = ov-21 , so-9ab , sc-61a , pal-cad6c
+	flykf   = ov-21 , so-8e6 , sc-46a-46c , pal-cad90
+	spec    = ov-21 , so-9bd , sc-657-658 , pal-cae3c
+	fredy   = ov-21 , so-8ee , sc-484-486 , pal-cadb4
+	elmo    = ov-21 , so-8d8 , sc-43b-43c , pal-cae18
+	troop   = ov-21 , so-9c9 , sc-685 , pal-ca2b4
+	geva    = ov-21 , so-8fe , sc-4ad-4af , pal-cb344
+	zbr     = ov-21 , so-9e6 , sc-6ce-6cf , pal-cb59c
+	zbs     = ov-21 , so-9e7 , sc-6d0-6d1 , pal-cb664
+	necro   = ov-21 , so-93d , sc-5b2-5b3 , pal-cb5e0
+	bap1    = ov-21 , so-89e , sc-3a0-3a2 , pal-cb6a8
+	bap2    = ov-21 , so-89f , sc-3a3-3a5 , pal-cb70c
+	garg    = ov-21 , so-8f8 , sc-49f-4a1 , pal-cb770
+	gk      = ov-21 , so-901 , sc-4b5 , pal-cb7d4
+	worb    = ov-21 , so-9dd , sc-6be-6c5 , pal-cba20
+	sack    = ov-21 , so-9ae , sc-627-62e , pal-cbac4
+	fk      = ov-21 , so-8e5 , sc-468 , pal-cbcf0
+	uma     = ov-21 , so-9ce , sc-68a-68b , pal-cbd34
+	dem     = ov-21 , so-8be , sc-3fc-400 , pal-cbe3c
+	thdm    = ov-21 , so-9c3 , sc-669-66d , pal-cbee0
+	frdm    = ov-21 , so-8ed , sc-47f-483 , pal-cbfa4
+	sedm    = ov-21 , so-9b3 , sc-636-63a , pal-cc048
+	lddm    = ov-21 , so-921 , sc-549-54d , pal-cc0ec
+	golem   = ov-21 , so-903 , sc-4be-4c1 , pal-cc190
+	sakan   = ov-21 , so-9af , sc-62f-632 , pal-ccc6c
+	fskl68  = ov-21 , so-8ef , sc-6e1 , pal-ca974
+	axarm   = ov-21 , so-89a , sc-391-393 , pal-ccd50
+	mandra  = ov-21 , so-924 , sc-563 , pal-cce74
+	fu_he   = ov-21 , so-8f2 , sc-6e3 , pal-cced8
+	dino    = ov-21 , so-8cc , sc-40e , pal-c9a0c
+	imp     = ov-21 , so-90e , sc-508 , pal-c9b14
+	crow    = ov-21 , so-8b7 , sc-6d5 , pal-c9b98
+	inves   = ov-21 , so-90f , sc-509-50d , pal-c9bfc
+	jfish   = ov-21 , so-912 , sc-519-51c , pal-c9c60
+	gesso   = ov-21 , so-8fd , sc-4ac , pal-c9e6c
+	nomi    = ov-21 , so-940 , sc-5b5-5b7 , pal-c9e90
+	riz00   = ov-21 , so-9a6 , sc-60c-612 , pal-c9f14
+	riz01   = ov-21 , so-9a7 , sc-60c-60d , sc-60f , sc-611-614 , pal-c9f98
+	take    = ov-21 , so-9c1 , sc-663-668 , pal-ca01c
+	ya_ya   = ov-21 , so-9e4 , sc-6f5-6f6 , pal-ca0a4
+	bigskl  = ov-21 , so-8a2 , sc-3b8-3ba , pal-ca128
+	ger     = ov-21 , so-8fc , sc-4a6-4ab , pal-ca498
+	fran00  = ov-21 , so-8e9 , sc-470 , sc-475 , pal-cb0f4
+	fran01  = ov-21 , so-8ea , sc-476-479 , pal-cb178
+	alakh   = ov-21 , so-892 , sc-36f-371 , pal-cb3e8
+	horse   = ov-21 , so-90b , sc-4ff-501 , pal-cb44c
+	gho     = ov-21 , so-8ff , sc-4b0-4b3 , pal-cb4b0
+	lady    = ov-21 , so-91e , sc-543-546 , pal-cb538
+	sfish   = ov-21 , so-9b6 , sc-63b , pal-cb818
+	fm68    = ov-21 , so-8e7 , sc-6de-6df , pal-cc83c
+	ya_fm   = ov-21 , so-9df , sc-6ee-6ef , pal-cc9c0
+	needle  = ov-21 , so-93e , sc-5b4 , pal-cd03c
+	mimi    = ov-21 , so-92c , sc-57f-580 , pal-caf88
+	skani   = ov-21 , so-9bb , sc-655 , pal-cafcc
+	catp    = ov-21 , so-8ae , sc-3c6-3ca , pal-cb010
+	umih    = ov-21 , so-9cf , sc-68c , pal-cb514
+	tppa    = ov-21 , so-9c8 , sc-684 , pal-cc45c
+	yeti    = ov-21 , so-9e5 , sc-6cc-6cd , pal-cc610
+	sf_une  = ov-21 , so-9b5 , sc-6eb , pal-cc738
+	jour    = ov-21 , so-913 , sc-51d-520 , pal-cc654
+	nirus   = ov-21 , so-93f , sc-6e8 , pal-ccb24
+	eagl    = ov-21 , so-8d5 , sc-416-417 , pal-ccc28
+	fu_sb   = ov-21 , so-8f4 , sc-6e5-6e7 , pal-cc480
+	divsk   = ov-21 , so-8cd , sc-6dc-6dd , pal-cc584
+	ya_sk3  = ov-21 , so-9e0 , sc-6f0 , pal-cc5a8
+	ya_sk6  = ov-21 , so-9e1 , sc-6f1 , pal-cc5cc
+	#area02  = ov-21 , so-897 , sc- , pal-
+	boswap  = ov-21 , so-8a4 , sc-3bb , pal-cd210
+	mark    = ov-21 , so-927 , sc-56a , pal-cd624
+	clou    = ov-21 , so-8b3 , sc-3df-3e1 , pal-d0ae8
+	kcask   = ov-21 , so-919 , sc-52f-531 , pal-cd2f8
+	kafog   = ov-21 , so-914 , sc-521 , pal-cd4fc
+	gear    = ov-21 , so-8fb , sc-4a5 , pal-2a5ed4
+	heart   = ov-21 , so-908 , sc-4fc , pal-cd294
+	bflo    = ov-21 , so-8a1 , sc-3b7 , pal-cdd94
+	mflo    = ov-21 , so-92b , sc-57e , pal-cd1a8
+	mouse   = ov-21 , so-92e , sc-5a2 , pal-cdce8
+	rost    = ov-21 , so-9a9 , sc-619 , pal-cdddc
+	sav     = ov-21 , so-9b1 , sc-634 , pal-d09e4
+	drift   = ov-21 , so-8d2 , sc-412 , pal-d0e3c
+	nami    = ov-21 , so-93c , sc-5b1 , pal-d0d74
+	spike   = ov-21 , so-8ba , sc-3f8 , pal-cd104
+	swdoor  = ov-21 , so-9c0 , sc-662 , pal-d1760
+	walin   = ov-21 , so-9d4 , sc-696 , pal-d0cb0
+	wap     = ov-21 , so-9d6 , sc-69d-69f , pal-cde20
+	rstatue = ov-21 , so-9ac , sc-61b , pal-cdc7c
+	dest00  = ov-21 , so-8bf , sc-401 , pal-cd6a8
+	dest01  = ov-21 , so-8c0 , sc-402 , pal-cd6ec
+	dest02  = ov-21 , so-8c1 , sc-403 , pal-cd770
+	dest03  = ov-21 , so-8c2 , sc-404 , pal-cd7b4
+	dest04  = ov-21 , so-8c3 , sc-405 , pal-cd8d8
+	dest05  = ov-21 , so-8c4 , sc-406 , pal-cd99c
+	dest06  = ov-21 , so-8c5 , sc-407 , pal-cda20
+	dest07  = ov-21 , so-8c6 , sc-408 , pal-cdac4
+	dest08  = ov-21 , so-8c7 , sc-409 , pal-cdae8
+	dest09  = ov-21 , so-8c8 , sc-40a , pal-cdb4c
+	dest10  = ov-21 , so-8c9 , sc-40b , pal-cdb90
+	dest11  = ov-21 , so-8ca , sc-40c , pal-cdbb4
+	dest12  = ov-21 , so-8cb , sc-40d , pal-cdc38
+
+	enr00  = ov-19 , so-8da , sc-7ac-7c3 , pal-
+	enbg   = ov-19 , so-8d9 , sc-7a4-7ab , pal-
+	prolo  = ov-19 , so-948 , sc-7d4-7d6 , pal-
+	tlog00 = ov-19 , so-9c5 , sc-66e-6673 , pal-d3f70
+	tlog01 = ov-19 , so-9c6 , sc-674-67c , sc-67e , pal-d4174
+	tlog02 = ov-19 , so-9c7 , sc-680-683 , pal-d4b78
+
+	scare  = ov-18 , so-9b2 , sc-6e9 , pal-c9968
+	fu_bsk = ov-18 , so-8f1 , sc-6e2 , pal-caca4
+	raze   = ov-18 , so-993 , sc-5d9-5db , pal-cbc2c
+	jays   = ov-18 , so-911 , sc-516-518 , pal-cbb68
+	cyupa  = ov-18 , so-8b8 , sc-6d6-6d8 , pal-c9a90
+	wdrag  = ov-18 , so-9d8 , sc-6ab , pal-c9ce4
+	head   = ov-18 , so-907 , sc-4f6-4fb , pal-cb2e0
+	chyon  = ov-18 , so-8b2 , sc-3dd-3de , pal-cc254
+	tinman = ov-18 , so-9c4 , sc-6ed , pal-cc398
+	armc02 = ov-18 , so-899 , sc-38f , pal-ca080
+	honeb  = ov-18 , so-90a , sc-4fe , pal-cae80
+	fmhb   = ov-18 , so-8e8 , sc-6e0 , pal-caee4
+	ya_sk7 = ov-18 , so-9e2 , sc-6f2 , pal-cbdd8
+	giloti = ov-18 , so-900 , sc-4b4 , pal-d0e80
+	eabblk = ov-18 , so-8d3 , sc-413 , pal-cd1ec
+	boxx   = ov-18 , so-8a5 , sc-3bc , pal-cdd70
+	race   = ov-18 , so-94a , sc-5c8 , sc-5cf , sc-5d6 , pal-cd520
+	zzador = ov-18 , so-9e8 , sc-6d2 , pal-d1678
+	signbd = ov-18 , so-9ba , sc-654 , pal-d1634
+	kitt   = ov-18 , so-91b , sc-534-536 , pal-d0d98
+	coffer = ov-18 , so-8b4 , sc-3e2 , pal-cd060
+	aflo   = ov-18 , so-891 , sc-36e , pal-cddb8
+	hinow  = ov-18 , so-909 , sc-4fd , pal-cdca0
+	fire   = ov-18 , so-8e4 , sc-465 , pal-ba310
+
+	exp    = so-8de , sc-449 , pal-b0670
+	hasira = so-906 , sc-4f5 , pal-cdcc4
+	rplay  = so-9aa , sc-86b-887 , pal-d6ce0
+	p00c00 = so-943 , sc-7c6-7c9 , pal-d6bb4
+	p01c00 = so-944 , sc-7ca-7d2 , pal-d6c18
+	p02c00 = so-945 , sc-7d3 , pal-d6cbc
+
+	# alb_p
+	# bakuha
+	# bwall0
+	# bwall1
+	# bwall2
+	# bwall3
+	# bwall5
+	# bwall7
+	# bwall8
+	# cdemo
+	# dablod
+	# dbblod
+	# dra01
+	# dra02
+	# eablod
+	# enr00_p
+	# evalb
+	# ev_bar
+	# fens
+	# fwindow
+	# gaalod
+	# gam
+	# gauge
+	# gbalod
+	# gloss
+	# gout
+	# iba01
+	# kbalod
+	# kcalo
+	# konami
+	# lang
+	# lcast
+	# mbalod
+	# menu
+	# moai
+	# mrb00
+	# mrb01
+	# mrb02
+	# mrb03
+	# mrb04
+	# mrb05
+	# mrb06
+	# mrb07
+	# mrb08
+	# mrb09
+	# mrb0a
+	# mrb0b
+	# mrb0c
+	# oaalod
+	# paalod
+	# rae00
+	# rae01
+	# rae02
+	# rae03
+	# ram00
+	# ram01
+	# ram02
+	# ram03
+	# ram04
+	# ram05
+	# ram06
+	# ram07
+	# ram08
+	# ram09
+	# ram0a
+	# ram0b
+	# ram0c
+	# ram0d
+	# ram0e
+	# ram0f
+	# ram10
+	# ram11
+	# ram12
+	# ram13
+	# rap00
+	# rap01
+	# rap02
+	# rap03
+	# rap04
+	# rap05
+	# rap06
+	# rap07
+	# rap08
+	# rap09
+	# rap0a
+	# rap0b
+	# rap0c
+	# rap0d
+	# rap0e
+	# rap0f
+	# rap10
+	# rap11
+	# rap12
+	# rap13
+	# rap14
+	# rap15
+	# raw00
+	# raw01
+	# raw02
+	# raw03
+	# raw04
+	# raw05
+	# raw06
+	# raw07
+	# raw08
+	# raw09
+	# raw0a
+	# raw0b
+	# raw0c
+	# raw0d
+	# raw0e
+	# raw0f
+	# raw10
+	# raw11
+	# raw12
+	# raw13
+	# raw14
+	# raw15
+	# raw16
+	# raw17
+	# raw18
+	# raw19
+	# rbc00
+	# rbc01
+	# rbc02
+	# rbc03
+	# rbc04
+	# rbc05
+	# rbc06
+	# rbc07
+	# rbc08
+	# rbc09
+	# rbc0a
+	# rbc0b
+	# rbc0c
+	# rbc0d
+	# rbc0e
+	# rbc0f
+	# record
+	# rend
+	# sablo
+	# shop
+	# skel3a
+	# ub01
+	# ub03
+	# ub13
+	# ub14
+	# uy00
+	# uy01
+	# vsstart
+	# wapbg
+	# wiids
+	# wmap
+*/

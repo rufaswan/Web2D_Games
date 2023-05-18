@@ -537,4 +537,20 @@ function sect_data_txt( $i, $data )
 	$txt .= "\n";
 	return $txt;
 }
+
+function ftx_size( $pfx, $tid )
+{
+	$list = array();
+	lsfile_r('.', $list);
+	foreach ( $list as $file )
+	{
+		if ( strpos($file, "$pfx.$tid.") === false )
+			continue;
+
+		$size = imgfile_size($file);
+		if ( $size !== -1 )
+			return $size;
+	}
+	return -1;
+}
 //////////////////////////////

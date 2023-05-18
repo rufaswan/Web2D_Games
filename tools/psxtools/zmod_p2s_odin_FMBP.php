@@ -33,7 +33,7 @@ function loop_FMBP( &$file, &$pos )
 
 		// cen c1 c2 c3 c4 c1
 		$b = str_repeat("\x80\x80\x80\x80", 6);
-		str_update($file, $p+4, $b);
+		//str_update($file, $p+4, $b);
 	} // for ( $i=0; $i < $sc; $i++ )
 
 	$id = 7;
@@ -48,7 +48,17 @@ function loop_FMBP( &$file, &$pos )
 		$b .= "\x00\x00\x80\x3f"; // green
 		$b .= "\x00\x00\x80\x3f"; // blue
 		$b .= "\x00\x00\x80\x3f"; // alpha
-		str_update($file, $p+0, $b);
+		//str_update($file, $p+0, $b);
+	} // for ( $i=0; $i < $sc; $i++ )
+
+	$id = 6;
+	$sp = str2int($file, $pos + $sect[$id]['p']   , 4);
+	$sc = str2int($file, $pos + $sect[$id]['c'][0], $sect[$id]['c'][1]);
+	$sk = $sect[$id]['k'];
+	for ( $i=0; $i < $sc; $i++ )
+	{
+		$p = $sp + ($i * $sk);
+		$file[$p+0x15] = "\x00"; // s5 set cnt
 	} // for ( $i=0; $i < $sc; $i++ )
 	// set RGBA for debugging
 	//////////////////////////////

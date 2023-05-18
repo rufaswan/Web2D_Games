@@ -25,7 +25,7 @@ require 'xeno.inc';
 
 define('VRAM_W', 0x400);
 define('VRAM_H', 0x200);
-//define('NO_TRACE', true);
+define('NO_TRACE', true);
 
 function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 {

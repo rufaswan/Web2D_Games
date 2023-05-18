@@ -33,7 +33,9 @@ function atlasdir( $dir )
 	$list = array();
 	lsfile_r($dir, $list);
 
-	$files = array();
+	$atlas = new AtlasTex;
+	$atlas->init();
+
 	foreach ( $list as $fname )
 	{
 		$img = load_clutfile($fname);
@@ -41,28 +43,14 @@ function atlasdir( $dir )
 			continue;
 
 		printf("add image %x x %x = %s\n", $img['w'], $img['h'], $fname);
-		$img['id'] = $fname;
-		$files[] = $img;
+		if ( isset($img['pal']) )
+			$atlas->putclut($img['w'], $img['h'], $img['pal'], $img['pix']);
+		else
+			$atlas->putrgba($img['w'], $img['h'], $img['pix']);
 	} // foreach ( $list as $fname )
 
-	$atlas = new AtlasTex;
-	list($ind, $cw, $ch) = $atlas->atlasmap($files);
-
-	$pix = copypix_def($cw,$ch);
-
-	foreach ( $files as $img )
-	{
-		$pix['src'] = $img;
-		$pix['dx'] = $img['x'];
-		$pix['dy'] = $img['y'];
-
-		if ( isset($img['cc']) )
-			copypix_fast($pix, 1);
-		else
-			copypix_fast($pix, 4);
-	} // foreach ( $files as $img )
-
-	savepix("$dir.atlas", $pix, false, false);
+	$atlas->sort();
+	$atlas->save($dir);
 	return;
 }
 

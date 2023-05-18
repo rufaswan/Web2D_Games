@@ -34,12 +34,10 @@ function gv_decode( &$sub )
 	$ed = strlen($sub);
 	while ( $st < $ed )
 	{
-		trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $sub[$st] );
 				$st++;
-			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
 			continue;
 		}
@@ -56,7 +54,6 @@ function gv_decode( &$sub )
 
 			$pos = (($b2 & 0x0f) << 8) | $b1;
 			$len = ($b2 >> 4) + 2;
-			trace("REF  POS -%3d LEN %d\n", $pos, $len);
 
 			for ( $i=0; $i < $len; $i++ )
 			{
@@ -68,8 +65,6 @@ function gv_decode( &$sub )
 		{
 			$b1 = $sub[$st];
 				$st++;
-			trace("COPY %2x\n", ord($b1));
-
 			$dec .= $b1;
 		}
 	} // while ( $st < $ed )
@@ -109,9 +104,15 @@ function gunvolt( $fname )
 		if ( $un == 0x17 || $un == 0x12 )
 			gv_decode($s);
 
-		$fn = sprintf('%s/gv_%04d.%x', $pfx, $id, $un);
-		printf("%8x , %8x , %s\n", $of, $sz, $fn);
+		if ( strpos($s, 'IOBJ') !== false )
+			$fn = sprintf('%s/gv_%04d.iobj', $pfx, $id);
+		else
+		if ( strpos($s, '.tga') !== false )
+			$fn = sprintf('%s/gv_%04d.tga', $pfx, $id);
+		else
+			$fn = sprintf('%s/gv_%04d.%x', $pfx, $id, $un);
 
+		printf("%8x , %8x , %s\n", $of, $sz, $fn);
 		save_file($fn, $s);
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;

@@ -22,9 +22,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-guest.inc';
+require 'common-json.inc';
 require 'common-quad.inc';
 require 'quad.inc';
 
+/*
 function adjsrc( &$src, $c )
 {
 	if ( (int)$src & 1 )
@@ -36,7 +38,26 @@ function adjsrc( &$src, $c )
 	return;
 }
 
-function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
+	$scx = ($sqd[0] + $sqd[2] + $sqd[4] + $sqd[6]) / 4;
+	$scy = ($sqd[1] + $sqd[3] + $sqd[5] + $sqd[7]) / 4;
+
+	// texture bleeding fix
+	// 0,0           32,0  <- even number , need 1 pixel padding
+	//     1,1  31,1       <-  odd number , all OK
+	//     1,31 31,31
+	// 0,32          32,32
+	adjsrc($sqd[0], $scx);
+	adjsrc($sqd[2], $scx);
+	adjsrc($sqd[4], $scx);
+	adjsrc($sqd[6], $scx);
+
+	adjsrc($sqd[1], $scy);
+	adjsrc($sqd[3], $scy);
+	adjsrc($sqd[5], $scy);
+	adjsrc($sqd[7], $scy);
+*/
+
+function sectquad( &$file, $off, $w, $h, &$dqd, &$sqd )
 {
 	$float =array();
 	for ( $i=0; $i < 0x40; $i += 4 )
@@ -63,33 +84,16 @@ function sectquad( &$file, $off, $w, $h, &$sqd, &$dqd )
 		$float[10]*$w , $float[11]*$h ,
 		$float[14]*$w , $float[15]*$h ,
 	);
-
-	$scx = ($sqd[0] + $sqd[2] + $sqd[4] + $sqd[6]) / 4;
-	$scy = ($sqd[1] + $sqd[3] + $sqd[5] + $sqd[7]) / 4;
-
-	// auto-shrink quad
-	// 0,0           32,0  <- even number , need 1 pixel padding
-	//     1,1  31,1       <-  odd number , all OK
-	//     1,31 31,31
-	// 0,32          32,32
-	adjsrc($sqd[0], $scx);
-	adjsrc($sqd[2], $scx);
-	adjsrc($sqd[4], $scx);
-	adjsrc($sqd[6], $scx);
-
-	adjsrc($sqd[1], $scy);
-	adjsrc($sqd[3], $scy);
-	adjsrc($sqd[5], $scy);
-	adjsrc($sqd[7], $scy);
 	return;
 }
 
-function sect_spr( &$json, &$file, $ptgt_off, $img )
+function sect_spr( &$quad, &$file, $ptgt_off, $img )
 {
 	$cnt = str2int($file, $ptgt_off+8, 4);
 	$off1 = $ptgt_off + 12;
 	$off2 = $ptgt_off + 12 + ($cnt * 8);
 
+	$quad['keyframe'] = array();
 	for ( $i1=0; $i1 < $cnt; $i1++ )
 	{
 		// 0 1 2 3  4 5  6 7
@@ -98,31 +102,39 @@ function sect_spr( &$json, &$file, $ptgt_off, $img )
 		$tid = str2int($file, $off1+5, 1);
 			$off1 += 8;
 
-		$data = array();
+		$layer = array();
 		for ( $i2=0; $i2 < $no; $i2++ )
 		{
-			$sqd = array();
 			$dqd = array();
-			sectquad($file, $off2, $img[$tid]['w'], $img[$tid]['h'], $sqd, $dqd);
+			$sqd = array();
+			sectquad($file, $off2, $img[$tid]['w'], $img[$tid]['h'], $dqd, $sqd);
 				$off2 += 0x40;
 
-			$data[$i2] = array(
-				'SrcQuad' => $sqd,
-				'DstQuad' => $dqd,
-				'TexID'   => $tid,
+			$lv = array(
+				'dstquad'  => $dqd,
+				'srcquad'  => $sqd,
+				'tex_id'   => $tid,
+				'blend_id' => 0,
 			);
-			quad_convexfix($data[$i2]);
+			quad_convexfix($lv);
+
+			$layer[] = $lv;
 		} // for ( $i2=0; $i2 < $no; $i2++ )
 
-		$json['Frame'][$i1] = $data;
+		$key = array(
+			'name'  => "keyframe $i1",
+			'layer' => $layer,
+		);
+		list_add($quad['keyframe'], $i1, $key);
 	} // for ( $i1=0; $i1 < $cnt; $i1++ )
 
 	return;
 }
-//////////////////////////////
-function sect_anim( &$json, &$file, $off1, $off2 )
+
+function sect_anim( &$quad, &$file, $off1, $off2 )
 {
 	$sub = substr($file, $off1, $off2-$off1);
+	$quad['animation'] = array();
 
 	$cnt = str2int($sub, 0, 4);
 	for ( $i=0; $i < $cnt; $i++ )
@@ -137,27 +149,45 @@ function sect_anim( &$json, &$file, $off1, $off2 )
 		$len = $p2 - $p1;
 		$dat = substr($sub, $p1, $len);
 
-		$ent = array(
-			'FID' => array(),
-			'FPS' => array(),
-		);
-		$name = sprintf('anim_%d', $i);
+		$time = array();
+		$loop = -1;
 		for ( $i2=0; $i2 < $len; $i2 += 4 )
 		{
 			// 1 2  3 4
 			// id   no
-			$id = str2int($dat, $i2+0, 2);
-			$no = str2int($dat, $i2+2, 1, true);
-			if ( $no < 0 )
-			{
-				php_notice("%s[%x] = %x , %d\n", $name, $i2, $id, $no);
-				continue;
-			}
-			$ent['FID'][] = $id;
-			$ent['FPS'][] = $no;
-		}
+			$fid = $i2 >> 2;
+			$kid = str2int($dat, $i2+0, 2);
+			$fps = str2int($dat, $i2+2, 1, true);
 
-		$json['Animation'][$name][0] = $ent;
+			switch ( $fps )
+			{
+				case -1: // no loop
+					break 2;
+				case -2: // loop
+					$loop = 0;
+					break 2;
+				default:
+					if ( $fps < 0 )
+						php_warning('loop %d < 0', $fps);
+
+					$time[$fid] = array(
+						'time' => $fps,
+						'attach' => array(
+							'type' => 'keyframe',
+							'id'   => $kid,
+						),
+					);
+					break;
+			} // switch ( $fps )
+		} // for ( $i2=0; $i2 < $len; $i2 += 4 )
+
+		$anim = array(
+			'name'     => "animation $i",
+			'timeline' => $time,
+			'loop_id'  => $loop,
+		);
+
+		list_add($quad['animation'], $i, $anim);
 	} // for ( $i=0; $i < $cnt; $i++ )
 
 	return;
@@ -213,8 +243,8 @@ function gv_pixd( &$file, $pos )
 	} // switch ( $typ )
 	return $img;
 }
-//////////////////////////////
-function sect_TLPI( &$sect, &$img, $pfx )
+
+function sect_TLPI( &$sect, &$img )
 {
 	if ( ! isset( $sect['TLPI'] ) )
 		return;
@@ -260,8 +290,18 @@ function sect_TLPI( &$sect, &$img, $pfx )
 	}
 	return;
 }
+//////////////////////////////
+function pfxname( $pfx )
+{
+	$pfx = str_replace('\\', '/', $pfx);
+	$pos = strrpos($pfx, '/');
+	if ( $pos === false )
+		return $pfx;
 
-function sect_IOBJ( &$json, &$sect, $pfx )
+	return substr($pfx, $pos+1);
+}
+
+function sect_IOBJ( &$quad, &$sect, $pfx )
 {
 	if ( ! isset($sect['IOBJ']) )
 		return;
@@ -282,19 +322,20 @@ function sect_IOBJ( &$json, &$sect, $pfx )
 			$pixd_off += 4;
 		$img[] = gv_pixd($sect['IOBJ'], $p);
 	}
-	sect_TLPI($sect, $img, $pfx);
+	sect_TLPI($sect, $img);
 
-	sect_anim($json, $sect['IOBJ'], $anim_off, $ptgt_off);
-	sect_spr ($json, $sect['IOBJ'], $ptgt_off, $img);
+	sect_spr ($quad, $sect['IOBJ'], $ptgt_off, $img);
+	sect_anim($quad, $sect['IOBJ'], $anim_off, $ptgt_off);
 
-	save_quadfile("$pfx/gv", $json);
+	$pfx2 = pfxname($pfx);
+	save_quadfile("$pfx/$pfx2", $quad);
 
 	foreach ( $img as $k => $v )
 	{
 		if ( isset( $sect['TLPI'] ) )
-			$fn = sprintf('%s/gv-%d.0.rgba', $pfx, $k);
+			$fn = sprintf('%s/%s-%d.0.rgba', $pfx, $pfx2, $k);
 		else
-			$fn = sprintf('%s/gv.%d.rgba', $pfx, $k);
+			$fn = sprintf('%s/%s.%d.rgba', $pfx, $pfx2, $k);
 		save_clutfile($fn, $v);
 	}
 	return;
@@ -310,7 +351,8 @@ function gunvolt( $fname, $idtag )
 
 	if ( $idtag == '' )
 		return php_error('NO TAG %s', $fname);
-	$json = load_idtagfile($idtag);
+	$quad = load_idtagfile($idtag);
+	$quad['blend'] = array( blend_modes('normal') );
 
 	// no duplicate magic in one file
 	// TLPI will have IOBJ , with pix_cnt = 1 always
@@ -349,7 +391,7 @@ function gunvolt( $fname, $idtag )
 		printf("%8x , %8x , %s , %s.%d\n", $pos, $siz, $type, $pfx, $i);
 	} // for ( $i=0; $i < $cnt; $i++ )
 
-	sect_IOBJ($json, $sect, $pfx);
+	sect_IOBJ($quad, $sect, $pfx);
 	return;
 }
 
@@ -359,22 +401,22 @@ for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case '-bsm' :
-		case '-bmz' :
+		case 'bsm' :  case '-bsm' :
+		case 'bmz' :  case '-bmz' :
 			$idtag = 'pc blast master zero';
 			break;
-		case '-gv'  :
-		case '-gv1' :
+		case 'gv'  :  case '-gv'  :
+		case 'gv1' :  case '-gv1' :
 			$idtag = 'pc gunvolt 1';
 			break;
-		case '-gv2' :
+		case 'gv2' :  case '-gv2' :
 			$idtag = 'pc gunvolt 2';
 			break;
-		case '-gva' :
-		case '-laix':
+		case 'gva' :  case '-gva' :
+		case 'laix':  case '-laix':
 			$idtag = 'pc gunvolt laix';
 			break;
-		case '-mgv' :
+		case 'mgv' :  case '-mgv' :
 			$idtag = 'pc mighty gunvolt';
 			break;
 		default:

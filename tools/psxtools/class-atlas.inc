@@ -24,58 +24,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 class AtlasTex
 {
-	private function MAPTREE_DEF( $x, $y, $w, $h )
-	{
-		return array(
-			'child' => array('',''),
-			'x' => $x,
-			'y' => $y,
-			'w' => $w + 2,
-			'h' => $h + 2,
-		);
-	}
+	private $image  = array();
+	private $canvas = array();
 
-	private function maptree_add( &$tree, &$img, $x, $y, $w, $h )
-	{
-		// img has 1px padding
-		if ( ($img['w']+2) > $w || ($img['h']+2) > $h )
-			return array(-1,-1);
-
-		if ( empty($tree) )
-		{
-			$tree = $this->MAPTREE_DEF($x, $y, $img['w'], $img['h']);
-			$img['x'] = $x + 1;
-			$img['y'] = $y + 1;
-			trace("add map %s [%x x %x] to %x , %x\n", $img['id'], $img['w'], $img['h'], $img['x'], $img['y']);
-			return array($x+1, $y+1);
-		}
-		else
-		{
-			$func = __FUNCTION__;
-			// child 0 is right direction
-			list($rx,$ry) = $this->$func($tree['child'][0], $img,
-				$x + $tree['w'],
-				$y,
-				$w - $tree['w'],
-				$tree['h']
-			);
-			// if success added
-			if ( $rx !== -1 && $ry !== -1 )
-				return array($x,$y);
-
-			// child 1 is bottom direction
-			return $this->$func($tree['child'][1], $img,
-				$x,
-				$y + $tree['h'],
-				$w,
-				$h - $tree['h']
-			);
-		}
-
-		return array(-1,-1);
-	}
-
-	static private function usort($a, $b)
+	static private function sortwh($a, $b)
 	{
 		// sort height DESC , then width DESC
 		if ( $a['h'] !== $b['h'] )
@@ -84,45 +36,149 @@ class AtlasTex
 			return ( $a['w'] < $b['w'] ) ? 1 : -1;
 		return 0;
 	}
-	//////////////////////////////
-	public function atlasmap( &$list )
-	{
-		usort($list, array(__CLASS__,'usort'));
-		$cw = 1;
-		$ch = 1;
 
-		$tree = '';
+	private function maptree_add( &$id, $x, $y, $w, $h )
+	{
+		$img = &$this->image[$id];
+
+		// padding 1px
+		$iw = $img['w'] + 2;
+		$ih = $img['h'] + 2;
+		if ( $iw > $w )  return false;
+		if ( $ih > $h )  return false;
+
+		$img['x'] = $x + 1;
+		$img['y'] = $y + 1;
+
+		$id++;
+		if ( isset( $this->image[$id] ) )
+		{
+			$func = __FUNCTION__;
+
+			// add next image to right direction
+			$r = $this->$func($id, $x + $iw, $y, $w - $iw, $ih);
+			if ( $r )
+				return true;
+
+			// add next image to bottom direction
+			$r = $this->$func($id, $x, $y + $ih, $w, $h - $ih);
+			return $r;
+		}
+		return true;
+	}
+
+	private function atlasmap()
+	{
+		$this->canvas = array(
+			'w' => 1,
+			'h' => 1,
+		);
+
 		$is_done = false;
 		while ( ! $is_done )
 		{
-			$tree = '';
 			$is_done = true;
-			foreach ( $list as $k => $v )
-			{
-				list($rx,$ry) = $this->maptree_add($tree, $list[$k], 0, 0, $cw, $ch);
-				if ( $rx === -1 || $ry === -1 )
-				{
-					$is_done = false;
-					break;
-				}
-			} // foreach ( $list as $k => $v )
+			$id = 0;
+			$x  = 0;
+			$y  = 0;
+			$is_done = $this->maptree_add($id, $x, $y, $this->canvas['w'], $this->canvas['h']);
 
 			if ( ! $is_done )
 			{
-				$tree = '';
-				if ( $cw > $ch )
-					$ch <<= 1;
+				// expand canvas size , width then height
+				if ( $this->canvas['w'] <= $this->canvas['h'] )
+					$this->canvas['w'] <<= 1;
 				else
-					$cw <<= 1;
-				trace("== atlas resize %x x %x\n", $cw, $ch);
+					$this->canvas['h'] <<= 1;
 			}
 		} // while ( ! $is_done )
-
-		$ind = array();
-		foreach ( $list as $k => $v )
-			$ind[ $v['id'] ] = $k;
-
-		trace("atlasmap() = %x x %x\n", $cw, $ch);
-		return array($ind, $cw, $ch);
+		return;
 	}
+
+	//////////////////////////////
+
+	public function init()
+	{
+		$this->image = array();
+		return;
+	}
+
+	public function putclut( $w, $h, &$pal, &$pix )
+	{
+		$rgba = '';
+		$len = strlen($pix);
+		for ( $i=0; $i < $len; $i++ )
+		{
+			$b = ord($pix[$i]);
+			$rgba .= substr($pal, $b<<2, 4);
+		}
+		return $this->putrgba($w, $h, $rgba);
+	}
+
+	public function putrgba( $w, $h, &$pix )
+	{
+		foreach ( $this->image as $ik => $iv )
+		{
+			if ( $w === $iv['w'] && $h === $iv['h'] && $pix === $iv['pix'] )
+				return $iv['id'];
+		}
+		$ent = array(
+			'id' => count($this->image) ,
+			'x' => 1  ,
+			'y' => 1  ,
+			'w' => $w ,
+			'h' => $h ,
+			'pix' => $pix  ,
+		);
+		$this->image[] = $ent;
+		return $ent['id'];
+	}
+
+	public function sort()
+	{
+		if ( count($this->image) < 2 )
+			return;
+		usort($this->image, array(__CLASS__,'sortwh'));
+		$this->atlasmap();
+		return;
+	}
+
+	public function getxywh( $id )
+	{
+		foreach ( $this->image as $ik => $iv )
+		{
+			if ( $id === $iv['id'] )
+				return array( $iv['x'] , $iv['y'] , $iv['w'] , $iv['h'] );
+		}
+		return -1;
+	}
+
+	public function save( $pfx )
+	{
+		$canv = array(
+			'w' => $this->canvas['w'],
+			'h' => $this->canvas['h'],
+			'pix' => str_repeat(ZERO, $this->canvas['w']*$this->canvas['h']*4),
+		);
+		$txt = '';
+		foreach ( $this->image as $ik => $iv )
+		{
+			$txt .= sprintf("%4d , %4d , %4d , %4d , %4d\n", $iv['id'], $iv['x'], $iv['y'], $iv['w'], $iv['h']);
+			for ( $y=0; $y < $iv['h']; $y++ )
+			{
+				$sxx = ($y * $iv['w']);
+
+				$dyy = ($iv['y'] + $y) * $this->canvas['w'];
+				$dxx = $dyy + $iv['x'];
+
+				$s = substr(  $iv['pix'], $sxx*4, $iv['w']*4);
+				str_update ($canv['pix'], $dxx*4, $s);
+			} // for ( $y=0; $y < $iv['h']; $y++ )
+		} // foreach ( $this->image as $ik => $iv )
+
+		save_clutfile("$pfx.rgba", $canv);
+		save_file("$pfx.txt", $txt);
+		return;
+	}
+
 } // class AtlasTex

@@ -71,6 +71,10 @@ function sectmap( &$file, &$pix, &$pal, $pos, $dir, $mw, $mh)
 			$src = rippix8($pix, $sx, $sy, 8, 8, 0x80, 0x2000);
 			updmap($canv2, $src, $x, $y, $map_w, $map_h);
 
+			// 04  cliff
+			// 06  wall
+			// 80  stair / layer change
+			//flag_watch("$x $y", $dat >> 24);
 		} // for ( $x=0; $x < $map_w; $x++ )
 		$buf .= "\n";
 

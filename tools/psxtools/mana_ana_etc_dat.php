@@ -35,7 +35,7 @@ function mana( $fname )
 		$p = 4 + ($i * 4);
 		$ps = str2int($file, $p, 4);
 
-		if ( $file[$ps] == ZERO ) // allface.dat
+		if ( $file[$ps] === ZERO ) // allface.dat
 		{
 			$pal = substr($file, $ps, 0x20);
 				$ps += 0x20;
@@ -57,47 +57,41 @@ function mana( $fname )
 			continue;
 		}
 
-		if ( $file[$ps] != chr(0x10) ) // TIM file
+		// TIM with CLUT
+		$tim = psxtim($file, $ps);
+		if ( $tim === -1 )
 			continue;
 
-		// TIM with CLUT
-		if ( ord( $file[$ps+4] ) & 8 )
+		if ( $tim['t'] === 'RGBA' )
 		{
-			$str = substr($file, $ps);
-			$tim = psxtim($str);
-
-			// FIXME : unknown cid , pair all pal with pix
-			foreach ( $tim['pal'] as $k => $v )
-			{
-				if ( trim($v, ZERO.BYTE) == '' )
-					continue;
-				$clut = 'CLUT';
-				$clut .= chrint($tim['cc'], 4); // no clut
-				$clut .= chrint($tim['w'], 4); // width
-				$clut .= chrint($tim['h'], 4); // height
-				$clut .= $v;
-				$clut .= $tim['pix'];
-
-				$fn = sprintf('%s/%04d_%d.clut', $dir, $i, $k);
-				save_file($fn, $clut);
-			} // foreach ( $tim['pal'] as $k => $v )
+			$fn = sprintf('%s/%04d.rgba', $dir, $i);
+			save_clutfile($fn, $tim);
 			continue;
 		}
 
-		// TIM with 16-bit RGB555 pixels
-		$w = str2int($file, $ps+0x10, 2);
-		$h = str2int($file, $ps+0x12, 2);
-			$ps += 0x14;
+		if ( $tim['t'] === 'CLUT' )
+		{
+			// FIXME : unknown cid , pair all pal with pix
+			$pal  = $tim['pal'];
+			$ccsz = $tim['cc'] * 4;
+			$ccps = 0;
 
-		$rgba = 'RGBA';
-		$rgba .= chrint($w, 4); // width
-		$rgba .= chrint($h, 4); // height
+			while (1)
+			{
+				$str = substr($pal, $ccps, $ccsz);
+					$ccps += $ccsz;
 
-		$b = substr($file, $ps, $w*$h*2);
-		$rgba .= pal555($b);
+				if ( empty($str) )
+					break;
+				if ( trim($str, ZERO.BYTE) === '' )
+					continue;
 
-		$fn = sprintf('%s/%04d.rgba', $dir, $i);
-		save_file($fn, $rgba);
+				$tim['pal'] = $str;
+				$fn = sprintf('%s/%04d_%d.clut', $dir, $i, $ccps/$ccsz);
+				save_clutfile($fn, $tim);
+			} // while (1)
+			continue;
+		}
 	} // for ( $i=0; $i < $cnt; $i++ )
 	return;
 }

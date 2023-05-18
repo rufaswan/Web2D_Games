@@ -352,7 +352,7 @@ function dw1_scn( &$file, &$sect, $dir )
 			} // for ( $x=0; $x < $w; $x += 4 )
 		} // for ( $y=0; $y < $h; $y += 4 )
 
-		savepix($fn, $pix, false);
+		savepix($fn, $pix);
 	} // while ( $st6 < $ed6 )
 	return;
 }

@@ -314,7 +314,7 @@ function lunar_dict( &$seed, $fp, $set, &$sp514 )
 	// 1 = 800b8328 - 800b8728 = 400 / 8 =  80
 	// 2 = 800b8328 - 800b9320 = ff8 / 8 = 1ff
 	// 3 = 800b - 800b = 400 / 8 =
-	trace("== begin sub_80024378\n");
+	trace("== begin sub_80024378()\n");
 
 	$count = array();
 	$min = count($seed);
@@ -354,7 +354,7 @@ function lunar_dict( &$seed, $fp, $set, &$sp514 )
 			$st = $off1;
 			$off1 = lunar_off($off1, $blk >> 1);
 
-			trace("  %x,%x  %x + %x = %x %x %x\n", $i, $v, $st, $blk, $dt[0], $dt[1], $dt[2]);
+			//trace("  %x,%x  %x + %x = %x %x %x\n", $i, $v, $st, $blk, $dt[0], $dt[1], $dt[2]);
 			while ( $st < $ed )
 			{
 				$dict[$st] = $dt;
@@ -379,7 +379,7 @@ function lunar_dict( &$seed, $fp, $set, &$sp514 )
 			$b1 = $off1;
 			$off1 = lunar_off($off1, 1 << ($i-1));
 
-			trace("  %x,%x = %x %x %x , %x , %x\n", $i, $v, $dt[0], $dt[1], $dt[2], $b1, $blk);
+			//trace("  %x,%x = %x %x %x , %x , %x\n", $i, $v, $dt[0], $dt[1], $dt[2], $b1, $blk);
 			$buf[] = array($dt,$b1,$blk);
 		} // foreach ( $count[$i] as $v )
 	} // for ( $i = ($sp514 + 1); $i <= $max; $i++ )
@@ -433,13 +433,13 @@ function lunar_dict( &$seed, $fp, $set, &$sp514 )
 	} // while ( ! empty($buf) )
 
 	lunar_trace_dict($dict);
-	trace("== end sub_80024378\n");
+	trace("== end sub_80024378()\n");
 	return $dict;
 }
 //////////////////////////////
 function lunar_data( &$dec, &$bit, &$file, &$st, &$dict2, &$dict3, $sp514, $sp51c )
 {
-	trace("== begin sub_800248a4\n");
+	trace("== begin sub_800248a4()\n");
 
 	while (1)
 	{
@@ -451,7 +451,7 @@ function lunar_data( &$dec, &$bit, &$file, &$st, &$dict2, &$dict3, $sp514, $sp51
 		$v0 = lunar_getbit($bit, $file, $st, $sp514);
 		$dt2 = $dict2[$v0];
 		lunar_shift($bit, $file, $st, $dt2[1]);
-		trace("dict2[%x] = %x %x %x\n", $v0, $dt2[0], $dt2[1], $dt2[2]);
+		//trace("dict2[%x] = %x %x %x\n", $v0, $dt2[0], $dt2[1], $dt2[2]);
 
 		while ( $dt2[0] > 0x10 )
 		{
@@ -460,13 +460,13 @@ function lunar_data( &$dec, &$bit, &$file, &$st, &$dict2, &$dict3, $sp514, $sp51
 
 			$dt2 = $dict2[$v1];
 			lunar_shift($bit, $file, $st, $dt2[1]);
-			trace("dict2[%x] = %x %x %x\n", $v0, $dt2[0], $dt2[1], $dt2[2]);
+			//trace("dict2[%x] = %x %x %x\n", $v0, $dt2[0], $dt2[1], $dt2[2]);
 		} // while ( $dt2[0] > 0x10 )
 
 		if ( $dt2[0] === 0x10 )
 		{
 			$v1  = $dt2[2] & BIT8;
-			trace("  dec[%x] = %x\n", strlen($dec), $v1);
+			//trace("  dec[%x] = %x\n", strlen($dec), $v1);
 			$dec .= chr($v1);
 			continue;
 		}
@@ -485,7 +485,7 @@ function lunar_data( &$dec, &$bit, &$file, &$st, &$dict2, &$dict3, $sp514, $sp51
 			$v0 = lunar_getbit($bit, $file, $st, $sp51c);
 			$dt3 = $dict3[$v0];
 			lunar_shift($bit, $file, $st, $dt3[1]);
-			trace("dict3[%x] = %x %x %x\n", $v0, $dt3[0], $dt3[1], $dt3[2]);
+			//trace("dict3[%x] = %x %x %x\n", $v0, $dt3[0], $dt3[1], $dt3[2]);
 
 			while ( $dt3[0] > 0x10 )
 			{
@@ -502,13 +502,13 @@ function lunar_data( &$dec, &$bit, &$file, &$st, &$dict2, &$dict3, $sp514, $sp51
 			lunar_shift($bit, $file, $st, $dt3[0]);
 			$dpos = $v0 + $dt3[2];
 
-		trace("  dec[%x] = [%x+%x] , %x\n", strlen($dec), $v0, $dt3[2], $dlen);
+		//trace("  dec[%x] = [%x+%x] , %x\n", strlen($dec), $v0, $dt3[2], $dlen);
 		$dp = strlen($dec) - $dpos;
 		for ( $i=0; $i < $dlen; $i++ )
 			$dec .= $dec[$dp+$i];
 	} // while (1)
 
-	trace("== end sub_800248a4\n");
+	trace("== end sub_800248a4()\n");
 	return;
 }
 
@@ -521,7 +521,7 @@ function lunar_decode( &$file )
 	$bit = array();
 	while ( $last === 0 )
 	{
-		trace("== begin sub_80023e88\n");
+		trace("== begin sub_80023e88()\n");
 		lunar_trace_bit($bit, $st);
 
 		$last = lunar_getbit($bit, $file, $st, 1); // s4
@@ -560,7 +560,7 @@ function lunar_decode( &$file )
 		lunar_data($dec, $bit, $file, $st, $dict2, $dict3, $sp514, $sp51c);
 		trace("DEC %x\n", strlen($dec));
 
-		trace("== end sub_80023e88\n");
+		trace("== end sub_80023e88()\n");
 	} // while ( $last === 0 )
 	return $dec;
 }

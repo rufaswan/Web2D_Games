@@ -815,10 +815,10 @@ class HMAC
 		return $dg2;
 	}
 
-	function  md5  ( $key, $msg ) { return $this->HMACX( "md5"  , $key,  64, $msg); }
-	function sha1  ( $key, $msg ) { return $this->HMACX("sha1"  , $key,  64, $msg); }
-	function sha256( $key, $msg ) { return $this->HMACX("sha256", $key,  64, $msg); }
-	function sha224( $key, $msg ) { return $this->HMACX("sha224", $key,  64, $msg); }
-	function sha512( $key, $msg ) { return $this->HMACX("sha512", $key, 128, $msg); }
-	function sha384( $key, $msg ) { return $this->HMACX("sha384", $key, 128, $msg); }
+	function  md5  ( $key, $msg ) { return $this->HMACX( 'md5'  , $key,  64, $msg); }
+	function sha1  ( $key, $msg ) { return $this->HMACX('sha1'  , $key,  64, $msg); }
+	function sha256( $key, $msg ) { return $this->HMACX('sha256', $key,  64, $msg); }
+	function sha224( $key, $msg ) { return $this->HMACX('sha224', $key,  64, $msg); }
+	function sha512( $key, $msg ) { return $this->HMACX('sha512', $key, 128, $msg); }
+	function sha384( $key, $msg ) { return $this->HMACX('sha384', $key, 128, $msg); }
 } // class HMAC

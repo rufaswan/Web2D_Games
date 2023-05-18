@@ -24,13 +24,13 @@ require 'common.inc';
 
 function suigai_decode( &$file )
 {
+	$dec = '';
 	// SLPM_866.37 , sub_80051e38
+	trace("== begin sub_80051e38()\n");
+
 	$NEW_DICT = str_repeat(ZERO, 0x400);
 	for ( $i=0; $i < 0x100; $i++ )
 		$NEW_DICT[ 0x200+$i ] = chr($i);
-
-	trace("== begin sub_80051e38\n");
-	$dec = '';
 
 	$len = strlen($file);
 	$pos = 0;
@@ -38,7 +38,7 @@ function suigai_decode( &$file )
 	// 80051e64 - 80051fb8
 	$b1  = ord( $file[$pos] ); // a3
 		$pos++;
-	trace("%8x 51e64 START\n", $pos);
+	//trace("%8x 51e64 START\n", $pos);
 	while ( $pos < $len )
 	{
 		$b2 = ord( $file[$pos] ); // t2
@@ -49,7 +49,7 @@ function suigai_decode( &$file )
 
 		// init dictionary
 		// 80051e8c - 80051f2c
-		trace("%8x 51e8c init dict\n", $pos);
+		//trace("%8x 51e8c init dict\n", $pos);
 		while (1)
 		{
 			$cnt = 0;
@@ -62,7 +62,7 @@ function suigai_decode( &$file )
 				break;
 
 			$cnt++;
-			trace("%8x 51ee0 , cnt %x\n", $pos, $cnt-1);
+			//trace("%8x 51ee0 , cnt %x\n", $pos, $cnt-1);
 			while ( $cnt > 0 )
 			{
 				$dict[ $dpos+0x200 ] = chr($b2);
@@ -99,7 +99,7 @@ function suigai_decode( &$file )
 
 		// decompression
 		// 80051f50 - 80051fa8
-		trace("%8x 51f50 , cnt %x\n", $pos, $cnt);
+		//trace("%8x 51f50 , cnt %x\n", $pos, $cnt);
 		while ( $cnt > 0 )
 		{
 			$dpos = $b2;
@@ -108,7 +108,7 @@ function suigai_decode( &$file )
 
 			// expansion
 			// 80051f60 - 80051fa0
-			trace("%8x 51f60 expansion\n", $pos);
+			//trace("%8x 51f60 expansion\n", $pos);
 			while (1)
 			{
 				$db1 = ord( $dict[ $dpos+0x200 ] ); // t0
@@ -137,7 +137,7 @@ function suigai_decode( &$file )
 		$b1 = $b2;
 	} // while ( $pos < $len )
 
-	trace("== end sub_80051e38\n");
+	trace("== end sub_80051e38()\n");
 	return $dec;
 }
 

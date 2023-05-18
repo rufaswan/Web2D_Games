@@ -26,10 +26,10 @@ require 'common.inc';
 
 function gihren_decode( &$file )
 {
+	$dec = '';
 	// SLPS 025.70 , Earth Federation   , sub_80016f28
 	// SLPS 028.20 , Kouryaku Shireisho , sub_80017144
-	trace("== begin sub_80016f28\n");
-	$dec = '';
+	trace("== begin sub_80016f28()\n");
 	$bycod = 0;
 	$bylen = 0;
 
@@ -37,13 +37,10 @@ function gihren_decode( &$file )
 	$st = 12;
 	while ( $st < $ed )
 	{
-		trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen == 0 )
 		{
 			$bycod = ord( $file[$st] );
 				$st++;
-
-			trace("BYTECODE %2x\n", $bycod);
 			$bylen = 8;
 			continue;
 		}
@@ -56,8 +53,6 @@ function gihren_decode( &$file )
 		{
 			$b1 = $file[$st];
 				$st++;
-
-			trace("COPY %2x\n", ord($b1));
 			$dec .= $b1;
 		}
 		else
@@ -73,15 +68,11 @@ function gihren_decode( &$file )
 					$len = (($b1 >> 4) | ($b2 << 4)) + 0x12;
 					$b1 = substr($file, $st, $len);
 						$st += $len;
-
-					trace("%2x COPY %s\n", $op, debug($b1));
 					$dec .= $b1;
 					break;
 
 				case 1:
 					$len = ($b1 >> 4) + 3;
-
-					trace("%2x DUPL %2x LEN %2x\n", $op, $b2, $len);
 					$dec .= str_repeat(chr($b2), $len);
 					break;
 
@@ -90,7 +81,6 @@ function gihren_decode( &$file )
 					$len = ord( $file[$st] ) + 0x10;
 						$st++;
 
-					trace("%2x REF  POS -%d LEN %d\n", $op, $pos, $len);
 					for ( $i=0; $i < $len; $i++ )
 					{
 						$p = strlen($dec) - $pos;
@@ -102,7 +92,6 @@ function gihren_decode( &$file )
 					$pos = ($b1 >> 4) | ($b2 << 4);
 					$len = $op;
 
-					trace("%2x REF  POS -%d LEN %d\n", $op, $pos, $len);
 					for ( $i=0; $i < $len; $i++ )
 					{
 						$p = strlen($dec) - $pos;
@@ -114,7 +103,7 @@ function gihren_decode( &$file )
 
 	} // while ( $st < $ed )
 
-	trace("== end sub_80016f28\n");
+	trace("== end sub_80016f28()\n");
 	return $dec;
 }
 

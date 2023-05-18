@@ -2,8 +2,13 @@
 PlayStation
 
 [Game]
+Tokimeki Memorial 2 Substories Dancing Summer Vacation
+Tokimeki Memorial 2 Substories Leaping School Festival
+Tokimeki Memorial 2 Substories Memories Ringing On
 
 [Copyright]
+1994-2001 KONAMI
+KONAMI COMPUTER ENTERTAINMENT TOKYO
 
 [???]
 

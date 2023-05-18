@@ -79,7 +79,7 @@ function ralph_cex_cpdt( &$cex, &$pdt, &$cdt, $pfx, &$sect )
 		$fn6 = sprintf('%s/%04d', $pfx, $id6);
 
 		trace("== %s %x\n", $pfx, $id6);
-		savepix($fn6, $pix, true);
+		savepix($fn6, $pix);
 	} // for ( $i6=0; $i6 < $len6; $i6 += $sect[6] )
 
 	return;
@@ -147,14 +147,9 @@ function load_tbltim( $fname, $pfx )
 	$st = 12;
 	while ( $st < $ed )
 	{
-		$bak = $st;
-		$st += 8; // TIM header size
-		$st += str2int($tbl, $st, 4); // TIM clut size
-		$st += str2int($tbl, $st, 4); // TIM pixel size
-
-		printf("%x - %x\n", $bak, $st);
-		$sub = substr($tbl, $bak, $st-$bak);
-		$data[0][] = psxtim($sub);
+		$tim = psxtim($tbl, $st);
+			$st += $tim['siz'];
+		$data[0][] = $tim;
 	} // while ( $st < $ed )
 
 	$ed = strlen($tbl);

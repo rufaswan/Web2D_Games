@@ -59,7 +59,7 @@ function sect_map32( &$src, &$tile, &$pal, $fn )
 		} // for ( $x=0; $x < $w; $x += 8 )
 	} // for ( $y=0; $y < $h; $y += 8 )
 
-	savepix($fn, $pix, false);
+	savepix($fn, $pix);
 	return;
 }
 
@@ -97,7 +97,7 @@ function sect_map8( &$src, &$tile, &$pal, $fn )
 		} // for ( $x=0; $x < $w; $x += 8 )
 	} // for ( $y=0; $y < $h; $y += 8 )
 
-	savepix($fn, $pix, false);
+	savepix($fn, $pix);
 	return;
 }
 
@@ -134,7 +134,7 @@ function sect_map0( &$src, &$tile, $fn )
 		} // for ( $x=0; $x < $w; $x += 8 )
 	} // for ( $y=0; $y < $h; $y += 8 )
 
-	savepix($fn, $pix, false);
+	savepix($fn, $pix);
 	return;
 }
 //////////////////////////////

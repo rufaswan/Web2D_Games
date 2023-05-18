@@ -19,6 +19,7 @@ command
   -pull   ID       accept pull request to repo
   -force  CONFIRM  overwrite the repo
   -repush  retry push updates to repo [SKIP commit]
+  -tag    VERSION  (after -push) set current progress as release
 
   -update  fetch updates from upstream
   -last    view the last 5 commits
@@ -46,7 +47,7 @@ case "$cmd" in
 		git push origin master
 		;;
 	'-pull')
-		[ "$1" ] || echo "pull request has no ID";
+		[ "$1" ] || echo "pull request has no ID"
 		echo "git pull $git : # $1"
 		git pull origin pull/$1/head
 		git push origin master
@@ -60,6 +61,11 @@ case "$cmd" in
 	'-repush')
 		echo "git push/retry $git"
 		git push origin master
+		;;
+	'-tag')
+		echo "git tag $git : $@"
+		git tag "$@"
+		git push origin --tags
 		;;
 
 	'-update')

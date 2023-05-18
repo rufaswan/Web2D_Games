@@ -23,8 +23,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-json.inc';
 require 'common-quad.inc';
-require 'class-pixlines.inc';
 require 'quad.inc';
+require 'class-pixlines.inc';
 
 php_req_extension('json_decode', 'json');
 
@@ -36,117 +36,93 @@ $gp_s8_flag = 0;
 
 function s4_flags( $is )
 {
+	//           skip  tex
+	// ps2_grim     2   ~4  5,1
+	// ps4_grim
+	// swi_grim
+	// ps2_odin     2   ~4  ASM
+	// vit_odin     2   ~4  OR 9,1  29,1  2d,1  29,2  RESD  5,1  11,1  21,1  25,1  2d,1  21,2  29,2  2d,2
+	// ps3_odin     2   ~4  5,1  11,1  21,1  25,1  2d,1  21,2  29,2  2d,2
+	// ps4_odin     2   ~4  5,1  11,1  21,1  25,1  2d,1  21,2  29,2  2d,2
+	// wii_mura         ~4  2d,1
+	// vit_mura         ~4  2d,1
+	//      dlc     2
+	// vit_drag     2
+	// ps3_drag     2
+	// ps4_drag     2
+	// ps4_sent     2       9,1  29,1
+	// swi_sent
+
+	// nds_kuma     2
+	// psp_gran
+	//
+	//   skip = s6.rect === [0,0,0,0] && s6.s4_set_no > 0
 	global $gp_json, $gp_s4_flag;
-	switch ( $gp_json['tag'] )
+	switch ( $is )
 	{
-			case 'ps2_grim':
-			case 'ps2_odin':
-				if ( $is === 'is_skip' )  return ($gp_s4_flag & 0x02);
-				if ( $is === 'is_tex'  )  return ($gp_s4_flag & 0x04) === 0;
-				return 0;
-
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
-
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-				return 0;
-	} // switch ( $tag )
+		case 'skip':
+			return ($gp_s4_flag & 0x02);
+		case 'tex':
+			return ($gp_s4_flag & 0x04) === 0;
+	} // switch ( $is )
 	return 0;
 }
 
 function s5_flags( $is )
 {
-	global $gp_json, $gp_s5_flag;
-	switch ( $gp_json['tag'] )
-	{
-			case 'ps2_grim':
-			case 'ps2_odin':
-				if ( $is === 'is_attack' )  return ($gp_s5_flag & 0x01);
-				if ( $is === 'is_damage' )  return ($gp_s5_flag & 0x02);
-				return 0;
-
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
-
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-				return 0;
-	} // switch ( $tag )
 	return 0;
 }
 
 function s6_flags( $is )
 {
-	global $gp_json, $gp_s6_flag;
-	switch ( $gp_json['tag'] )
-	{
-			case 'ps2_grim':
-			case 'ps2_odin':
-				if ( $is === 'is_blend' )  return ($gp_s6_flag & 0x04) === 0;
-				return 0;
-
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
-
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-				return 0;
-	} // switch ( $tag )
 	return 0;
 }
 
 function s8_flags( $is )
 {
+	// -          last  jump  s6zr   fx  fy
+	// ps2_grim    800     4   ~40
+	// ps4_grim
+	// swi_grim
+	// ps2_odin      8     4  ~400    1   2  ASM
+	// vit_odin    800     4  ~400    1   2
+	// ps3_odin    800     4  ~400    1   2
+	// ps4_odin    800     4  ~400    1   2
+	// wii_mura    800     4  ~400    1   2
+	// vit_mura    800     4  ~400    1   2
+	//     dlc     800     4     -    1   2
+	// vit_drag    800     4     -
+	// ps3_drag    800     4     -
+	// ps4_drag    800     4     -
+	// ps4_sent    800     4     -    1   2
+	// swi_sent
+
+	// nds_kuma    800     4  ~400    1   2
+	// psp_gran    800     4  ~400
+	//
+	//   last = sa->s8 , last entry
+	//   jump = s8[10] !== 0 , sa.s8_time_sum
+	//   fx / fy = s9.name === 'turn'
+	//
+	//   depreciated
+	//     s6zr = s6.rect === [0,0,0,0]
 	global $gp_json, $gp_s8_flag;
-	switch ( $gp_json['tag'] )
+	switch ( $is )
 	{
-			case 'ps2_grim':
-			case 'ps2_odin':
-				if ( $is === 'is_flipx' )  return ($gp_s8_flag & 0x01);
-				if ( $is === 'is_flipy' )  return ($gp_s8_flag & 0x02);
-				if ( $is === 'is_loop'  )  return ($gp_s8_flag & 0x04);
-				if ( $is === 'is_end'   )  return ($gp_s8_flag & 0x08);
-				if ( $is === 'is_skip'  )  return ($gp_s8_flag & 0x40);
-				if ( $is === 'is_sfx'   )  return ($gp_s8_flag & 0x80);
-				if ( $is === 'is_s4s5'  )  return ($gp_s8_flag & 0x400) === 0;
-				return 0;
+		case 'last':
+			if ( $gp_json['tag'] === 'ps2_odin' )
+				return ($gp_s8_flag & 0x08);
+			else
+				return ($gp_s8_flag & 0x800);
 
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
+		case 'jump':
+			return ($gp_s8_flag & 0x04);
 
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-				return 0;
-	} // switch ( $tag )
+		case 'flipx':
+			return ($gp_s8_flag & 0x01);
+		case 'flipy':
+			return ($gp_s8_flag & 0x02);
+	} // switch ( $is )
 	return 0;
 }
 //////////////////////////////
@@ -223,25 +199,25 @@ function s6_loop( &$quad )
 				$s4v = $gp_json['s4'][$s4k];
 
 				$gp_s4_flag = hexdec( $s4v['bits'] );
-				if ( s4_flags('is_skip') )
+
+				if ( s4_flags('skip') )
 					continue;
 
 				$s2k = $s4v['s0s1s2'][2];
 				$s2v = $gp_json['s2'][$s2k];
 
 				$data = array(
-					'_debug'   => $s4v['bits'],
+					'_debug'   => sprintf('%s,%s', $s4v['bits'], $s4v['blend']),
 					'dstquad'  => $s2v,
+					'blend_id' => $s4v['blend'],
 				);
-
-				$data['blend_id'] = $s4v['blend'];
 
 				$s0k = $s4v['s0s1s2'][0];
 				$s0v = $gp_json['s0'][$s0k];
 				if ( $s0v !== '#ffffffff' )
 					$data['fogquad'] = $s0v;
 
-				if ( s4_flags('is_tex') )
+				if ( s4_flags('tex') )
 				{
 					$data['tex_id'] = $s4v['tex'];
 
@@ -250,7 +226,8 @@ function s6_loop( &$quad )
 					$data['srcquad'] = $s1v;
 				}
 
-				$layer[$i] = $data;
+				quad_convexfix($data);
+				$layer[] = $data;
 			} // for ( $i=0; $i < $s6v['s4'][1]; $i++ )
 
 			$s4 = array(
@@ -280,10 +257,10 @@ function s6_loop( &$quad )
 				);
 				$gp_s5_flag = hexdec( $s5v['bits'] );
 
-				//if ( s5_flags('is_damage') )  $data['type'] = 'damage';
-				//if ( s5_flags('is_attack') )  $data['type'] = 'attack';
+				//if ( s5_flags('damage') )  $data['type'] = 'damage';
+				//if ( s5_flags('attack') )  $data['type'] = 'attack';
 
-				$layer[$i] = $data;
+				$layer[] = $data;
 			} // for ( $i=0; $i < $s6v['s5'][1]; $i++ )
 
 			$s5 = array(
@@ -306,95 +283,23 @@ function s6_loop( &$quad )
 	return;
 }
 //////////////////////////////
-function s9_loop( &$quad )
-{
-	global $gp_json;
-
-	$quad['skeleton'] = array();
-	foreach ( $gp_json['s9'] as $s9k => $s9v )
-	{
-		if ( empty($s9v) )
-			continue;
-
-		if ( $s9v['sa'][1] > 0 )
-		{
-			$child = array();
-			for ( $i=0; $i < $s9v['sa'][1]; $i++ )
-			{
-				$child[$i] = array(
-					'attach' => array(
-						'type' => 'animation',
-						'id'   => $s9v['sa'][0] + $i,
-					)
-				);
-			} // for ( $i=0; $i < $s9v['sa'][1]; $i++ )
-
-			$name = str_replace('_', ' ', $s9v['name']);
-			$name = strtolower($name);
-
-			$skel = array(
-				'name'  => $name,
-				'child' => $child,
-			);
-			list_add( $quad['skeleton'], $s9k, $skel );
-		}
-	} // foreach ( $gp_json['s9'] as $s9k => $s9v )
-	return;
-}
-//////////////////////////////
-function s7_matrix( $s7, $flipx, $flipy )
-{
-	// in scale - rotate z-y-x - move - flip order
-	$m = matrix_scale(4, $s7['scale'][0], $s7['scale'][1]);
-
-	$t = matrix_rotate_z(4, $s7['rotate'][2]);
-	if ( $t !== -1 )
-		$m = matrix_multi44($m, $t);
-
-	$t = matrix_rotate_y(4, $s7['rotate'][1]);
-	if ( $t !== -1 )
-		$m = matrix_multi44($m, $t);
-
-	$t = matrix_rotate_x(4, $s7['rotate'][0]);
-	if ( $t !== -1 )
-		$m = matrix_multi44($m, $t);
-
-	$bx = ( $flipx ) ? -1 : 1;
-	$by = ( $flipy ) ? -1 : 1;
-
-	$m[0+3] += ($s7['move'][0] * $bx);
-	$m[4+3] += ($s7['move'][1] * $by);
-	$m[8+3] +=  $s7['move'][2];
-
-	$m[0+0] *= $bx;
-	$m[4+1] *= $by;
-
-	$s = implode(',', $m);
-	if ( $s === '1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1' )
-		return 0;
-	return $m;
-}
-//////////////////////////////
 function is_s8_end( &$k, &$s8loop )
 {
-	if ( s8_flags('is_loop') )
+	if ( s8_flags('jump') )
 	{
 		$k = $s8loop;
 		return false;
 	}
 
-	if ( s8_flags('is_end') )
-		return true;
-
 	$k++;
 	return false;
 }
 
-function sa_loop( &$quad )
+function sas8_loop()
 {
-	global $gp_json, $gp_s8_flag;
+	$salist = array();
 
-	$quad['animation'] = array();
+	global $gp_json;
 	foreach ( $gp_json['sa'] as $sak => $sav )
 	{
 		if ( empty($sav) )
@@ -402,14 +307,21 @@ function sa_loop( &$quad )
 
 		// ERROR gwendlyn.mbp , sa 7b , s8 3ce-3de (+1)
 		//   0  3cf
-		//   ...
-		//   5  3d4  loop b <- forward , not loop
+		//   1  3d0
+		//   2  3d1  sfx
+		//   3  3d2
+		//   4  3d3
+		//   5  3d4  jump b <- forward , not loop
+		//   6  3d5
 		//   7  3d6
-		//   ...
+		//   8  3d7
+		//   9  3d8
+		//   a  3d9
 		//   b  3da
-		//   c  3db  loop 7 <- backward , but entry not added
+		//   c  3db  jump 7 <- backward , but entry not added
 		//   d  3dc         <- unused
 		//   e  3dd  end    <- unused
+		// anim = 0 1 2 3 4 5 - [b c 7 8 9 a] - [b c 7 8 9 a] ...
 		$i = 0;
 		$time = array();
 		$loop = -1;
@@ -426,16 +338,77 @@ function sa_loop( &$quad )
 				break;
 			}
 
-			$flipx = s8_flags('is_flipx');
-			$flipy = s8_flags('is_flipy');
+			$line[$i] = count($time);
+			$time[] = $s8v;
+			if ( is_s8_end($i, $s8v['loop']) )
+				break;
+		} // while ( $i < $sav['s8'][1] )
 
-			$s7k = $s8v['s7'];
-			$matrix = s7_matrix( $gp_json['s7'][$s7k], $flipx, $flipy );
+		$anim = array(
+			'time' => $time,
+			'loop' => $loop,
+		);
+		list_add( $salist, $sak, $anim );
+	} // foreach ( $gp_json['sa'] as $sak => $sav )
+	return $salist;
+}
+//////////////////////////////
+function s7_matrix( $s7, $flipx, $flipy )
+{
+	$bx = ( $flipx ) ? -1 : 1;
+	$by = ( $flipy ) ? -1 : 1;
 
-			$s6k = $s8v['s6'];
-			$attach = array();
-			if ( s8_flags('is_s4s5') )
+	// in scale - rotate z-y-x - move - flip order
+	$m = matrix_scale(4, $s7['scale'][0]*$bx, $s7['scale'][1]*$by);
+
+	$t = matrix_rotate_z(4, $s7['rotate'][2]);
+	if ( $t !== -1 )
+		$m = matrix_multi44($m, $t);
+
+	$t = matrix_rotate_y(4, $s7['rotate'][1]);
+	if ( $t !== -1 )
+		$m = matrix_multi44($m, $t);
+
+	$t = matrix_rotate_x(4, $s7['rotate'][0]);
+	if ( $t !== -1 )
+		$m = matrix_multi44($m, $t);
+
+	$m[0+3] += ($s7['move'][0] * $bx);
+	$m[4+3] += ($s7['move'][1] * $by);
+	$m[8+3] +=  $s7['move'][2];
+
+	$s = implode(',', $m);
+	if ( $s === '1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1' )
+		return 0;
+	return $m;
+}
+
+function q3D_sas8s9_loop( &$salist, &$quad )
+{
+	global $gp_json, $gp_s8_flag;
+
+	$quad['animation'] = array();
+	$quad['skeleton' ] = array();
+	foreach ( $gp_json['s9'] as $s9k => $s9v )
+	{
+		if ( empty($s9v) )
+			continue;
+
+		if ( $s9v['sa'][1] < 1 )
+			continue;
+
+		$bone = array();
+		for ( $i=0; $i < $s9v['sa'][1]; $i++ )
+		{
+			$sak = $s9v['sa'][0] + $i;
+
+			$time = array();
+			foreach ( $salist[$sak]['time'] as $s8k => $s8v )
 			{
+				$gp_s8_flag = hexdec( $s8v['bits'] );
+
+				$s6k = $s8v['s6'];
+				$attach = array();
 				if ( ! empty( $quad['slot'][$s6k] ) )
 					$attach = array('type' => 'slot' , 'id' => $s6k);
 				else
@@ -444,43 +417,50 @@ function sa_loop( &$quad )
 				else
 				if ( ! empty( $quad['hitbox'][$s6k] ) )
 					$attach = array('type' => 'hitbox' , 'id' => $s6k);
-			}
 
-			$ent = array(
-				'_debug' => $s8v['bits'],
-				'time'   => $s8v['time'],
+				$flipx = s8_flags('flipx');
+				$flipy = s8_flags('flipy');
+
+				$s7k = $s8v['s7'];
+				$matrix = s7_matrix( $gp_json['s7'][$s7k], $flipx, $flipy );
+
+				$ent = array(
+					'_debug' => $s8v['bits'],
+					'time'   => $s8v['time'],
+					'mix'    => $s8v['in_s7'],
+				);
+
+				if ( ! empty($attach) )
+					$ent['attach'] = $attach;
+				if ( $gp_json['s7'][$s7k]['fog'] !== '#ffffffff' )
+					$ent['color'] = $gp_json['s7'][$s7k]['fog'];
+				if ( $matrix !== 0 )
+					$ent['matrix'] = $matrix;
+
+				$time[] = $ent;
+			} // foreach ( $salist[$sak] as $s8k => $s8v )
+
+			$anim = array(
+				'name'     => "animation $sak",
+				'timeline' => $time,
+				'loop_id'  => $salist[$sak]['loop'],
 			);
-			if ( $gp_json['s7'][$s7k]['fog'] !== '#ffffffff' )
-				$ent['color'] = $gp_json['s7'][$s7k]['fog'];
-			if ( $matrix !== 0 )
-				$ent['matrix'] = $matrix;
-			if ( ! empty($attach) )
-				$ent['attach'] = $attach;
+			list_add( $quad['animation'], $sak, $anim );
 
-			$line[$i] = count($time);
-			$time[] = $ent;
-			if ( is_s8_end($i, $s8v['loop']) )
-				break;
-		} // while ( $i < $sav['s8'][1] )
+			$bone[] = array(
+				//name
+				'attach' => array('type' => 'animation' , 'id' => $sak),
+				//child
+			);
+		} // for ( $i=0; $i < $s9v['sa'][1]; $i++ )
 
-		$delay = 0;
-		while ( ! empty($time) )
-		{
-			if ( isset( $time[0]['attach'] ) )
-				break;
-			$delay += $time[0]['time'];
-			$loop--;
-			array_shift($time);
-		} // while ( ! empty($time) )
-
-		$anim = array(
-			'delay'    => $delay,
-			'name'     => sprintf('animation %d', $sak),
-			'timeline' => $time,
-			'loop_id'  => $loop,
+		$skel = array(
+			//'name' => "skeleton $s9k",
+			'name' => $s9v['name'],
+			'bone' => $bone,
 		);
-		list_add( $quad['animation'], $sak, $anim );
-	} // foreach ( $gp_json['sa'] as $sak => $sav )
+		list_add( $quad['skeleton'], $s9k, $skel );
+	} // foreach ( $gp_json['s9'] as $s9k => $s9v )
 	return;
 }
 //////////////////////////////
@@ -495,34 +475,34 @@ function vanilla_blendmode( $tag )
 			// ABCD are 2 bits
 			//   0=FG  1=BG  2=0  3=reserved
 			$blend[0] = array(
-				'name' => '44',
+				'name' => '44 = 0101',
 				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
 				'_debug' => '((FG.rgb - BG.rgb) * FG.a) + BG.rgb',
 			);
 			$blend[1] = array(
-				'name' => '48',
+				'name' => '48 = 0201',
 				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE'),
-				'_debug' => '(FG.rgb * FG.a) + BG.rgb',
+				'_debug' => '((FG.rgb - 0) * FG.a) + BG.rgb',
 			);
 			$blend[2] = array(
-				'name' => '42',
+				'name' => '42 = 2001',
 				'mode' => array('FUNC_REVERSE_SUBTRACT', 'SRC_ALPHA', 'ONE'),
-				'_debug' => '(-FG.rgb * FG.a) + BG.rgb',
+				'_debug' => '((0 - FG.rgb) * FG.a) + BG.rgb',
 			);
 			$blend[3] = array(
-				'name' => '54',
+				'name' => '54 = 0111',
 				'mode' => array('FUNC_ADD', 'DST_ALPHA', 'ONE_MINUS_DST_ALPHA'),
 				'_debug' => '((FG.rgb - BG.rgb) * BG.a) + BG.rgb',
 			);
 			$blend[4] = array(
-				'name' => '58',
+				'name' => '58 = 0211',
 				'mode' => array('FUNC_ADD', 'DST_ALPHA', 'ONE'),
-				'_debug' => '(FG.rgb * BG.a) + BG.rgb',
+				'_debug' => '((FG.rgb - 0) * BG.a) + BG.rgb',
 			);
 			$blend[5] = array(
-				'name' => '52',
+				'name' => '52 = 2011',
 				'mode' => array('FUNC_REVERSE_SUBTRACT', 'DST_ALPHA', 'ONE'),
-				'_debug' => '(-FG.rgb * BG.a) + BG.rgb',
+				'_debug' => '((0 - FG.rgb) * BG.a) + BG.rgb',
 			);
 			return $blend;
 
@@ -547,10 +527,10 @@ function vanilla_blendmode( $tag )
 		case 'vit_mura': // 0 1 2 6
 		case 'vit_drag': // 0 1 2 6
 		case 'vit_odin': // 0 1 2 6
-
-		default:
-		case 'nds_kuma': // 0
 		//case 'swi': //
+
+		case 'nds_kuma': // 0
+		default:
 			$blend[0] = array(
 				'name' => 'default',
 				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
@@ -579,8 +559,9 @@ function vanilla( $line, $fname )
 		s6s4_lines($dir);
 
 	s6_loop($quad);
-	s9_loop($quad);
-	sa_loop($quad);
+	$sa = sas8_loop();
+
+	q3D_sas8s9_loop($sa, $quad);
 
 	$quad = json_pretty($quad, '');
 	save_file("$fname.quad", $quad);

@@ -498,126 +498,126 @@ for ( $i=1; $i < $argc; $i++ )
 
 /*
 4-bpp GrimGrimoire
-	 80x40   [UN] CHARA_EFFECT_ARRANGED000.TM2
-	400x200  CIRCLE_ARRANGED011.TM2
-	200x200  CIRCLE_ARRANGED021.TM2
-	 80x40   [UN] CURSOR_ARRANGED000.TM2
-	200x100  EFFECT_ARRANGED011.TM2
-	100x80   EFFECT_ARRANGED021.TM2
-	200x100  INTERFACE_ARRANGED000.TM2
-	100x80   OPENING3_ARRANGED032.TM2
+	 80x40   [un] chara_effect_arranged000.tm2
+	400x200  circle_arranged011.tm2
+	200x200  circle_arranged021.tm2
+	 80x40   [un] cursor_arranged000.tm2
+	200x100  effect_arranged011.tm2
+	100x80   effect_arranged021.tm2
+	200x100  interface_arranged000.tm2
+	100x80   opening3_arranged032.tm2
 	200x200  font1
 	200x200  font2
 
 4-bpp Odin Sphere
-	100x200  EFFECT_ICON_ARRANGED000.TM2
-	100x80   EFFECT_ICON_ARRANGED010.TM2
-	100x200  EFFECT_ICON_ARRANGED000.TM2
-	100x80   EFFECT_ICON_ARRANGED010.TM2
-	100x100  ON_MEMORY_ICON_ARRANGED000.TM2
-	100x200  AXEKNIGHT_ICON_ARRANGED000.TM2
-	 40x20   [UN] AXEKNIGHT_ICON_ARRANGED010.TM2
-	 80x80   BEEHIVE_ICON_ARRANGED000.TM2
-	 40x40   [UN] BEEHIVE_ICON_ARRANGED010.TM2
-	100x100  BERSERKER_ICON_ARRANGED000.TM2
-	 80x80   BERSERKER_ICON_ARRANGED010.TM2
-	 80x40   [UN] BERSERKER_ICON_ARRANGED020.TM2
-	100x100  BRIGAND_ICON_ARRANGED000.TM2
-	100x100  BRIGAND_ICON_ARRANGED010.TM2
-	 80x80   BRIGAND_ICON_ARRANGED020.TM2
-	 40x40   [UN] BRIGAND_ICON_ARRANGED030.TM2
-	100x100  BUGBEAR_ICON_ARRANGED000.TM2
-	 80x80   BUGBEAR_ICON_ARRANGED010.TM2
-	 80x80   BUGBEAR_ICON_ARRANGED020.TM2
-	200x100  DARKOVER_ICON_ARRANGED000.TM2
-	200x100  DRAGON_G_ICON_ARRANGED000.TM2
-	100x100  DRAGON_G_ICON_ARRANGED010.TM2
-	100x80   DRAGON_G_ICON_ARRANGED020.TM2
-	 80x100  DWARF_ICON_ARRANGED000.TM2
-	 80x40   [UN] DWARF_ICON_ARRANGED010.TM2
-	100x200  EFFECT_ICON_ARRANGED000.TM2
-	100x80   EFFECT_ICON_ARRANGED010.TM2
-	200x100  ELFHUNTER_ICON_ARRANGED000.TM2
-	200x100  ELFKNIGHT_ICON_ARRANGED000.TM2
-	 40x40   [UN] FILTER_ARRANGED000.TM2
-	100x80   FIN2_ARRANGED070.TM2
-	100x80   GARGOYLE_ICON_ARRANGED000.TM2
-	200x100  GEIST_ICON_ARRANGED000.TM2
-	100x100  GHOULS_ICON_ARRANGED000.TM2
-	 80x100  GOBLIN_ICON_ARRANGED000.TM2
-	 80x80   GOBLIN_ICON_ARRANGED010.TM2
-	200x80   GRIFFON_ICON_ARRANGED000.TM2
-	100x80   GRIFFON_ICON_ARRANGED010.TM2
-	 80x80   GRIFFON_ICON_ARRANGED020.TM2
-	 80x80   GRIZZLY_ICON_ARRANGED000.TM2
-	 40x40   [UN] GRIZZLY_ICON_ARRANGED010.TM2
-	 40x20   [UN] GRIZZLY_ICON_ARRANGED020.TM2
-	200x100  GWENDLYN_ICON_ARRANGED000.TM2
-	100x100  GWENDLYN_ICON_ARRANGED010.TM2
-	100x100  GWENDLYN_ICON_ARRANGED020.TM2
-	200x100  KITCHIN_ARRANGED011.TM2
-	100x100  MAGE_ICON_ARRANGED000.TM2
-	100x100  MANTICORA_ICON_ARRANGED000.TM2
-	 40x40   [UN] MANTICORA_ICON_ARRANGED010.TM2
-	 20x20   [UN] MERCEDES_ENEME_ARRANGED011.TM2
-	100x200  MERCEDES_ENEME_ICON_ARRANGED000.TM2
-	 20x20   [UN] MERCEDES_ARRANGED011.TM2
-	100x200  MERCEDES_ICON_ARRANGED000.TM2
-	 20x20   [UN] NPC_ICON_ARRANGED000.TM2
-	200x200  ODET_ICON_ARRANGED000.TM2
-	100x100  ON_MEMORY_ICON_ARRANGED000.TM2
-	100x200  ONYX_ICON_ARRANGED000.TM2
-	100x100  ONYX_ICON_ARRANGED010.TM2
-	100x80   ONYX_ICON_ARRANGED020.TM2
-	200x80   ORDYNE_ICON_ARRANGED000.TM2
-	200x80   ORDYNE_ICON_ARRANGED010.TM2
-	200x80   ORDYNE_ICON_ARRANGED020.TM2
-	100x80   ORDYNE_ICON_ARRANGED030.TM2
-	 40x40   [UN] ORDYNE_ICON_ARRANGED040.TM2
-	200x200  OSWALD_ENEME_ICON_ARRANGED000.TM2
-	100x100  OSWALD_ENEME_ICON_ARRANGED010.TM2
-	100x100  OSWALD_ENEME_ICON_ARRANGED020.TM2
-	200x200  OSWALD_ICON_ARRANGED000.TM2
-	100x100  OSWALD_ICON_ARRANGED010.TM2
-	100x100  OSWALD_ICON_ARRANGED020.TM2
-	 80x80   PENITENTE_ICON_ARRANGED000.TM2
-	 80x80   PENITENTE_ICON_ARRANGED010.TM2
-	 40x40   [UN] PENITENTE_ICON_ARRANGED020.TM2
-	200x100  POOKA01_ICON_ARRANGED000.TM2
-	100x100  POOKA01_ICON_ARRANGED010.TM2
-	100x80   POOKA01_ICON_ARRANGED020.TM2
-	 80x100  SALAMANDER_ELDER_ICON_ARRANGED000.TM2
-	 40x40   [UN] SALAMANDER_ELDER_ICON_ARRANGED010.TM2
-	 80x100  SALAMANDER_ICON_ARRANGED000.TM2
-	 40x40   [UN] SALAMANDER_ICON_ARRANGED010.TM2
-	100x100  SORSAL_ICON_ARRANGED000.TM2
-	100x100  TROLL_ICON_ARRANGED000.TM2
-	 80x80   TROLLS_ICON_ARRANGED000.TM2
-	 40x40   [UN] TROLLS_ICON_ARRANGED010.TM2
-	100x100  UNICORNKNIGHT_ICON_ARRANGED000.TM2
-	 80x80   UNICORNKNIGHT_ICON_ARRANGED010.TM2
-	 80x80   UNICORNKNIGHT_ICON_ARRANGED020.TM2
-	200x100  VALKYIE_ANOTHER_ICON_ARRANGED000.TM2
-	100x100  VALKYIE_CHEAPEDITION_ICON_ARRANGED000.TM2
-	100x100  VALKYIE_CHEAPEDITION_ICON_ARRANGED010.TM2
-	 40x20   [UN] VALKYIE_CHEAPEDITION_ICON_ARRANGED020.TM2
-	100x100  VALKYIE_ICON_ARRANGED000.TM2
-	100x100  VALKYIE_ICON_ARRANGED010.TM2
-	 40x20   [UN] VALKYIE_ICON_ARRANGED020.TM2
-	 20x20   [UN] VELBET_ENEME_ARRANGED011.TM2
-	200x200  VELBET_ENEME_ICON_ARRANGED000.TM2
-	 20x20   [UN] VELBET_ARRANGED011.TM2
-	200x200  VELBET_ICON_ARRANGED000.TM2
-	 20x20   [UN] VENDER_ICON_ARRANGED000.TM2
-	 80x80   VOLCANE_ICON_ARRANGED000.TM2
-	200x100  VULCAN00_ICON_ARRANGED000.TM2
-	200x200  WAGNER_ICON_ARRANGED000.TM2
-	100x100  WARRIOR_ICON_ARRANGED000.TM2
-	 80x80   WARRIOR_ICON_ARRANGED010.TM2
-	 80x80   WARRIOR_ICON_ARRANGED020.TM2
-	 80x80   WIZERDEYE_ICON_ARRANGED000.TM2
-	200x200  WRAITH_ICON_ARRANGED000.TM2
-	 40x20   [UN] WRAITH_ICON_ARRANGED010.TM2
+	100x200  effect_icon_arranged000.tm2
+	100x80   effect_icon_arranged010.tm2
+	100x200  effect_icon_arranged000.tm2
+	100x80   effect_icon_arranged010.tm2
+	100x100  on_memory_icon_arranged000.tm2
+	100x200  axeknight_icon_arranged000.tm2
+	 40x20   [un] axeknight_icon_arranged010.tm2
+	 80x80   beehive_icon_arranged000.tm2
+	 40x40   [un] beehive_icon_arranged010.tm2
+	100x100  berserker_icon_arranged000.tm2
+	 80x80   berserker_icon_arranged010.tm2
+	 80x40   [un] berserker_icon_arranged020.tm2
+	100x100  brigand_icon_arranged000.tm2
+	100x100  brigand_icon_arranged010.tm2
+	 80x80   brigand_icon_arranged020.tm2
+	 40x40   [un] brigand_icon_arranged030.tm2
+	100x100  bugbear_icon_arranged000.tm2
+	 80x80   bugbear_icon_arranged010.tm2
+	 80x80   bugbear_icon_arranged020.tm2
+	200x100  darkover_icon_arranged000.tm2
+	200x100  dragon_g_icon_arranged000.tm2
+	100x100  dragon_g_icon_arranged010.tm2
+	100x80   dragon_g_icon_arranged020.tm2
+	 80x100  dwarf_icon_arranged000.tm2
+	 80x40   [un] dwarf_icon_arranged010.tm2
+	100x200  effect_icon_arranged000.tm2
+	100x80   effect_icon_arranged010.tm2
+	200x100  elfhunter_icon_arranged000.tm2
+	200x100  elfknight_icon_arranged000.tm2
+	 40x40   [un] filter_arranged000.tm2
+	100x80   fin2_arranged070.tm2
+	100x80   gargoyle_icon_arranged000.tm2
+	200x100  geist_icon_arranged000.tm2
+	100x100  ghouls_icon_arranged000.tm2
+	 80x100  goblin_icon_arranged000.tm2
+	 80x80   goblin_icon_arranged010.tm2
+	200x80   griffon_icon_arranged000.tm2
+	100x80   griffon_icon_arranged010.tm2
+	 80x80   griffon_icon_arranged020.tm2
+	 80x80   grizzly_icon_arranged000.tm2
+	 40x40   [un] grizzly_icon_arranged010.tm2
+	 40x20   [un] grizzly_icon_arranged020.tm2
+	200x100  gwendlyn_icon_arranged000.tm2
+	100x100  gwendlyn_icon_arranged010.tm2
+	100x100  gwendlyn_icon_arranged020.tm2
+	200x100  kitchin_arranged011.tm2
+	100x100  mage_icon_arranged000.tm2
+	100x100  manticora_icon_arranged000.tm2
+	 40x40   [un] manticora_icon_arranged010.tm2
+	 20x20   [un] mercedes_eneme_arranged011.tm2
+	100x200  mercedes_eneme_icon_arranged000.tm2
+	 20x20   [un] mercedes_arranged011.tm2
+	100x200  mercedes_icon_arranged000.tm2
+	 20x20   [un] npc_icon_arranged000.tm2
+	200x200  odet_icon_arranged000.tm2
+	100x100  on_memory_icon_arranged000.tm2
+	100x200  onyx_icon_arranged000.tm2
+	100x100  onyx_icon_arranged010.tm2
+	100x80   onyx_icon_arranged020.tm2
+	200x80   ordyne_icon_arranged000.tm2
+	200x80   ordyne_icon_arranged010.tm2
+	200x80   ordyne_icon_arranged020.tm2
+	100x80   ordyne_icon_arranged030.tm2
+	 40x40   [un] ordyne_icon_arranged040.tm2
+	200x200  oswald_eneme_icon_arranged000.tm2
+	100x100  oswald_eneme_icon_arranged010.tm2
+	100x100  oswald_eneme_icon_arranged020.tm2
+	200x200  oswald_icon_arranged000.tm2
+	100x100  oswald_icon_arranged010.tm2
+	100x100  oswald_icon_arranged020.tm2
+	 80x80   penitente_icon_arranged000.tm2
+	 80x80   penitente_icon_arranged010.tm2
+	 40x40   [un] penitente_icon_arranged020.tm2
+	200x100  pooka01_icon_arranged000.tm2
+	100x100  pooka01_icon_arranged010.tm2
+	100x80   pooka01_icon_arranged020.tm2
+	 80x100  salamander_elder_icon_arranged000.tm2
+	 40x40   [un] salamander_elder_icon_arranged010.tm2
+	 80x100  salamander_icon_arranged000.tm2
+	 40x40   [un] salamander_icon_arranged010.tm2
+	100x100  sorsal_icon_arranged000.tm2
+	100x100  troll_icon_arranged000.tm2
+	 80x80   trolls_icon_arranged000.tm2
+	 40x40   [un] trolls_icon_arranged010.tm2
+	100x100  unicornknight_icon_arranged000.tm2
+	 80x80   unicornknight_icon_arranged010.tm2
+	 80x80   unicornknight_icon_arranged020.tm2
+	200x100  valkyie_another_icon_arranged000.tm2
+	100x100  valkyie_cheapedition_icon_arranged000.tm2
+	100x100  valkyie_cheapedition_icon_arranged010.tm2
+	 40x20   [un] valkyie_cheapedition_icon_arranged020.tm2
+	100x100  valkyie_icon_arranged000.tm2
+	100x100  valkyie_icon_arranged010.tm2
+	 40x20   [un] valkyie_icon_arranged020.tm2
+	 20x20   [un] velbet_eneme_arranged011.tm2
+	200x200  velbet_eneme_icon_arranged000.tm2
+	 20x20   [un] velbet_arranged011.tm2
+	200x200  velbet_icon_arranged000.tm2
+	 20x20   [un] vender_icon_arranged000.tm2
+	 80x80   volcane_icon_arranged000.tm2
+	200x100  vulcan00_icon_arranged000.tm2
+	200x200  wagner_icon_arranged000.tm2
+	100x100  warrior_icon_arranged000.tm2
+	 80x80   warrior_icon_arranged010.tm2
+	 80x80   warrior_icon_arranged020.tm2
+	 80x80   wizerdeye_icon_arranged000.tm2
+	200x200  wraith_icon_arranged000.tm2
+	 40x20   [un] wraith_icon_arranged010.tm2
 	100x100  font1
 	400x400  font2
 */

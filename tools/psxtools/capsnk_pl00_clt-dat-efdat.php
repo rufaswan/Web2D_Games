@@ -85,6 +85,7 @@ function capsnk( $fname )
 	foreach ( $spr as $sk => $sv )
 	{
 		$fn = sprintf('%s/sprgfx/%04d.rgba', $pfx, $sk);
+		center_clutfile($sv, -$sv['cx'], -$sv['cy']);
 		save_clutfile($fn, $sv);
 	}
 	return;

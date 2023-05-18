@@ -67,6 +67,19 @@ forum.yoyogames.com/index.php?threads/sprites-got-jagged-when-rotating.5258/
 	You other option is to use effects to blur the edges like anti-aliasing and interpolation
 	but those effects will also look bad the more low res they are.
 
+math.stackexchange.com/questions/4171316/how-to-find-x-y-coordinate-given-an-angle-and-distance-from-the-origin
+
+	If r is distance from the origin and Q is angle, then
+		x = r cos Q
+	and
+		y = r sin Q
+
+math.stackexchange.com/questions/767945/finding-the-coordinate-of-a-point-using-a-distance-and-an-angle-from-given-point
+
+	With the distance, you have the hypotenuse of a right triangle.
+	You could then use your angle to find the angle opposite point B,
+	then use sin and cos to get the X and Y distances between A and B.
+
 stackoverflow.com/questions/20858338/how-to-draw-text-and-shadow-it-in-imagemagick
 
 	convert logo:                  \
