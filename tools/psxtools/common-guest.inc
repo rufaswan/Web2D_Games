@@ -152,17 +152,21 @@ function clut2rgba( $pal, $pix, $bgzero = true )
 
 function rgba2clut( $rgba, $bg = PIX_BLACK )
 {
-	$clut = array();
+	$pal = array();
 	if ( ! empty($bg) )
-		$clut[] = $bg;
-	$pix  = '';
-	$siz  = strlen($rgba);
+		$pal[] = $bg;
+
+	$pix = '';
+	$siz = strlen($rgba);
 	for ( $i=0; $i < $siz; $i += 4 )
 	{
 		$c = substr($rgba, $i, 4);
-		if ( array_search($c, $clut) === false )
-			$clut[] = $c;
-		$p = array_search($c, $clut);
+		$p = array_search($c, $pal);
+		if ( $p === false )
+		{
+			$p = count($pal);
+			$pal[] = $c;
+		}
 
 		if ( $p > BIT8 )
 		{
@@ -170,14 +174,13 @@ function rgba2clut( $rgba, $bg = PIX_BLACK )
 			return -1;
 		}
 		$pix .= chr($p);
-	}
-	$clut = implode('', $clut);
-	return array($clut, $pix);
+	} // for ( $i=0; $i < $siz; $i += 4 )
+	return array(implode('',$pal), $pix);
 }
 
 function riprgba( &$rgba, $sx, $sy, $w, $h, $sw, $sh )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return '';
 
 	$rip = '';
