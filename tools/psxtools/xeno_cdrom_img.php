@@ -87,7 +87,7 @@ function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
 
 function xeno( $fname )
 {
-	$fp = fopen($fname, 'rb');
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$list = lsiso_r($fp);

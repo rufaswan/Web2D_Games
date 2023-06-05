@@ -74,9 +74,10 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 			//   eax = [op2  *4] * ebx
 			//   edx = [opedi*4] * ecx
 			//
+			// ??? 5-bit RGB ???
 			//   pix = (eax + edx) / 38
+			//   esi <<= 5 ,
 			//   esi += pix
-			//   esi <<= 5 , ??? rgb555 ???
 					$pos += 1; // lodsb
 				$b1 = ($flg & 7) / 7;
 				$b2 = $file[$pos-1];
@@ -189,8 +190,6 @@ function spr_lz_decode( &$file, $pos, $size )
 			$bylen--;
 		if ( $flg )
 		{
-			if ( ! isset($file[$pos]) )
-				goto done;
 			$b1 = $file[$pos];
 				$pos++;
 
@@ -202,8 +201,6 @@ function spr_lz_decode( &$file, $pos, $size )
 		}
 		else
 		{
-			if ( ! isset($file[$pos+1]) )
-				goto done;
 			$b1 = ord($file[$pos+0]);
 			$b2 = ord($file[$pos+1]);
 				$pos += 2;
@@ -223,7 +220,6 @@ function spr_lz_decode( &$file, $pos, $size )
 		}
 	} // while ( $size > 0 )
 
-done:
 	trace("== end sub_40ff70()\n");
 	return $dec;
 }

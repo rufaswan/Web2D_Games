@@ -119,7 +119,9 @@ function cvnds_ooe_mon( $fp, $pos )
 //////////////////////////////
 function cvnds( $fname )
 {
-	$fp = fopen($fname, "rb+");
+	if ( ! is_file($fname) )
+		return;
+	$fp = fopen($fname, 'rb+');
 	if ( ! $fp )  return;
 
 	$head = fp2str($fp, 0, 0x180);

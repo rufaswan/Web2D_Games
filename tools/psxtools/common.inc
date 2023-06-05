@@ -160,10 +160,9 @@ function substr0( &$str, $pos, $end='' )
 
 function ordint( $str )
 {
-	if ( $str === '' )
-		php_warning('ordint() empty');
-	if ( (int)$str === $str ) // already int
-		return $str;
+	// accept str , return int
+	if ( "$str" !== $str )
+		return (int)$str;
 	$str = rtrim("$str", ZERO);
 	$len = strlen($str);
 	$int = 0;
@@ -177,9 +176,9 @@ function ordint( $str )
 
 function chrint( $int, $byte = 0 )
 {
-	if ( "$int" === $int ) // already str
-		return $int;
-	$int = (int)$int;
+	// accept int , return str
+	if ( (int)$int !== $int )
+		return "$int";
 	$str = '';
 	for ( $i=0; $i < $byte; $i++ )
 	{
@@ -463,8 +462,11 @@ function fp_update( $fp, $pos, $str )
 
 function fopen_file( $fname, $scan=true )
 {
+	if ( is_dir($fname) )
+		return false;
 	$fp = fopen($fname, 'rb');
-	if ( $fp )  return $fp;
+	if ( $fp )
+		return $fp;
 	if ( ! $scan )
 		return false;
 

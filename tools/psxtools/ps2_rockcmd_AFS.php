@@ -93,7 +93,7 @@ function afsloop( $fp, $base, $pfx )
 
 function afsfile( $fname )
 {
-	$fp = fopen($fname, 'rb');
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$dir = str_replace('.', '_', $fname);

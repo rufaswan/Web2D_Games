@@ -327,7 +327,7 @@ function sect_cpk( $fp, &$meta, $dir )
 //////////////////////////////
 function cpkfile( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$dir = str_replace('.', '_', $fname);

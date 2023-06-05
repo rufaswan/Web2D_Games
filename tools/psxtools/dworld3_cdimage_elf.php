@@ -28,7 +28,7 @@ function dworld3( $fname )
 	if ( stripos($fname, 'cdimage.elf') === false )
 		return;
 
-	$fp = fopen($fname, "rb");
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$dir = str_replace('.', '_', $fname);

@@ -160,6 +160,8 @@ class NDSList
 	function load( $fname )
 	{
 		$this->list = array();
+		if ( ! is_file($fname) )
+			return -1;
 		$this->fp = fopen($fname, 'rb');
 		if ( ! $this->fp )
 			return -1;

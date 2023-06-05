@@ -25,7 +25,7 @@ require 'common-iso.inc';
 
 function isolist( $fname )
 {
-	$fp = fopen($fname, 'rb');
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$detect = array(

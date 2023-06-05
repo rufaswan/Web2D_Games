@@ -79,13 +79,15 @@ function dir_loop( $fp, $pos, $dir )
 				save_file("$fn.snd", $wav);
 				break;
 
-			case 4: // HotSpot , n * 9
-				$unk = fp2str($fp, $ps, $sz);
-				save_file("$fn.hot", $unk);
-				break;
-
+			case 4: // HotSpot , n * 9 -> Path
+			case 5: // HotSpot
+			case 6: // CollisionSpot
+			case 7: // Data
+			case 8: // Text
 			default:
-				return php_error('unknown type %x', $ty);
+				$unk = fp2str($fp, $ps, $sz);
+				save_file("$fn.$ty", $unk);
+				break;
 		} // switch ( $ty )
 	} // for ( $si=0; $si < $cnt; $si++ )
 	return $txt;
@@ -93,7 +95,7 @@ function dir_loop( $fp, $pos, $dir )
 
 function tinytoon( $fname )
 {
-	$fp = fopen($fname, 'rb');
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$dir = str_replace('.', '_', $fname);

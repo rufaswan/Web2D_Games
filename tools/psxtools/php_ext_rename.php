@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 function renext( $fname )
 {
-	$fp = fopen( $fname, "rb" );
+	$fp = fopen_file($fname);
 	if ( ! $fp )   return;
 
 	$bin = fread($fp, 16);

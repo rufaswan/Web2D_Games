@@ -92,7 +92,7 @@ function sectdir( $fp, $lba, $size, $par )
 //////////////////////////////
 function isofile( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$cd = fp2str($fp, 0x8000, 0x800);

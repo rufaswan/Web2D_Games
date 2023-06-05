@@ -228,7 +228,7 @@ function iso_dewprism($fp, $dir)
 //////////////////////////////
 function isofile( $fname )
 {
-	$fp = fopen($fname, "rb");
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$root = fp2str($fp, 0x8000, 0x800);

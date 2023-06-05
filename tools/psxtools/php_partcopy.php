@@ -22,9 +22,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 function partcopy( $fname, $txt, $range )
 {
-	if ( empty($fname) )
-		return;
-
 	$pos = 0;
 	$len = 0;
 	if ( strpos($range, '-') !== false )
@@ -44,6 +41,9 @@ function partcopy( $fname, $txt, $range )
 
 	printf("%s( %s , %x , %x ) = %x\n", __FUNCTION__, $fname, $pos, $pos+$len, $len);
 
+
+	if ( empty($fname) )
+		return;
 	$fp = fopen($fname, 'rb');
 	fseek($fp, $pos, SEEK_SET);
 	$str = fread($fp, $len);

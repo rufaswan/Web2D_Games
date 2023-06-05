@@ -43,6 +43,8 @@ function isoloc( &$list, $hex )
 printf("%s  ISOFILE  OFFSET...\n", $argv[0]);
 if ( $argc < 3 )  exit();
 
+if ( ! is_file($argv[1]) )
+	exit();
 $isop = fopen($argv[1], 'rb+');
 if ( ! $isop )  exit();
 

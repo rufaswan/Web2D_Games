@@ -32,87 +32,95 @@ function findlist( &$list, $key, $val )
 	}
 	return '';
 }
-//////////////////////////////
-printf("%s  ISOFILE  PATCHFILE\n", $argv[0]);
-if ( $argc != 3 )  exit();
 
-$isop = fopen($argv[1], 'rb+');
-if ( ! $isop )  exit();
-
-$list = lsiso_r($isop);
-if ( empty($list) )  exit();
-
-$data = array(
-	'FILE' => '',
-	'TYPE' => '',
-	'OFF'  => 0,
-);
-foreach ( file($argv[2]) as $line )
+function isopatch( $iso, $patch )
 {
-	$line = preg_replace('|[\s]+|', '', $line);
-	if ( empty($line) )
-		continue;
+	if ( ! is_file($iso) || ! is_file($patch) )
+		return;
+	$isop = fopen($iso, 'rb+');
+	if ( ! $isop )  exit();
 
-	if ( strpos($line, '=') )
-	{
-		list($k,$v) = explode('=', $line);
-		switch ( $k )
-		{
-			case 'FILE':
-				$k = findlist($list, 'file', $v);
-				if ( empty($k) )
-					php_error('FILE = %s not found', $v);
-				$data['FILE'] = $k;
-				$data['OFF' ] = $k['lba'] * 0x800;
-				printf("SET FILE %s @ %x\n", $v, $data['OFF']);
-				break;
-			case 'TYPE':
-				$data['TYPE'] = $v;
-				printf("SET TYPE %s\n", $v);
-				break;
-		} // switch ( $k )
-		continue;
-	}
+	$list = lsiso_r($isop);
+	if ( empty($list) )  exit();
 
-	if ( strpos($line, ',') )
+	$data = array(
+		'FILE' => '',
+		'TYPE' => '',
+		'OFF'  => 0,
+	);
+	foreach ( file($patch) as $line )
 	{
-		list($off,$siz,$nam) = explode(',', $line);
-		$k = findlist($list, 'file', $nam);
-		if ( empty($k) )
+		$line = preg_replace('|[\s]+|', '', $line);
+		if ( empty($line) )
 			continue;
 
-		if ( $off[0] !== '-' )
+		if ( strpos($line, '=') )
 		{
-			$off = hexdec($off) + $data['OFF'];
-			$s = '';
-			switch ( $data['TYPE'] )
+			list($k,$v) = explode('=', $line);
+			switch ( $k )
 			{
-				case 'INT':
-					$s = chrint($k['lba'], 3);
-					printf("PATCH INT lba  @ %x = %x\n", $off, $k['lba']);
+				case 'FILE':
+					$k = findlist($list, 'file', $v);
+					if ( empty($k) )
+						php_error('FILE = %s not found', $v);
+					$data['FILE'] = $k;
+					$data['OFF' ] = $k['lba'] * 0x800;
+					printf("SET FILE %s @ %x\n", $v, $data['OFF']);
 					break;
-			} // switch ( $data['TYPE'] )
-
-			fseek ($isop, $off, SEEK_SET);
-			fwrite($isop, $s);
+				case 'TYPE':
+					$data['TYPE'] = $v;
+					printf("SET TYPE %s\n", $v);
+					break;
+			} // switch ( $k )
+			continue;
 		}
 
-		if ( $siz[0] !== '-' )
+		if ( strpos($line, ',') )
 		{
-			$siz = hexdec($siz) + $data['OFF'];
-			$s = '';
-			switch ( $data['TYPE'] )
+			list($off,$siz,$nam) = explode(',', $line);
+			$k = findlist($list, 'file', $nam);
+			if ( empty($k) )
+				continue;
+
+			if ( $off[0] !== '-' )
 			{
-				case 'INT':
-					$s = chrint($k['size'], 4);
-					printf("PATCH INT size @ %x = %x\n", $siz, $k['size']);
-					break;
-			} // switch ( $data['TYPE'] )
+				$off = hexdec($off) + $data['OFF'];
+				$s = '';
+				switch ( $data['TYPE'] )
+				{
+					case 'INT':
+						$s = chrint($k['lba'], 3);
+						printf("PATCH INT lba  @ %x = %x\n", $off, $k['lba']);
+						break;
+				} // switch ( $data['TYPE'] )
 
-			fseek ($isop, $siz, SEEK_SET);
-			fwrite($isop, $s);
+				fseek ($isop, $off, SEEK_SET);
+				fwrite($isop, $s);
+			}
+
+			if ( $siz[0] !== '-' )
+			{
+				$siz = hexdec($siz) + $data['OFF'];
+				$s = '';
+				switch ( $data['TYPE'] )
+				{
+					case 'INT':
+						$s = chrint($k['size'], 4);
+						printf("PATCH INT size @ %x = %x\n", $siz, $k['size']);
+						break;
+				} // switch ( $data['TYPE'] )
+
+				fseek ($isop, $siz, SEEK_SET);
+				fwrite($isop, $s);
+			}
 		}
-	}
-} // foreach ( file($argv[1]) as $line )
+	} // foreach ( file($patch) as $line )
 
-fclose($isop);
+	fclose($isop);
+	return;
+}
+
+printf("%s  ISOFILE  PATCHFILE\n", $argv[0]);
+if ( $argc !== 3 )  exit();
+
+isopatch( $argv[1], $argv[2] );

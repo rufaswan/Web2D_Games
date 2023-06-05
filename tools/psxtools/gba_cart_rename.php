@@ -30,7 +30,7 @@ function gbaren( $fname )
 	if ( stripos($fname, '.gba') === false )
 		return;
 
-	$fp = fopen($fname, 'rb');
+	$fp = fopen_file($fname);
 	if ( ! $fp )  return;
 
 	$head = fp2str($fp, 0, 0xc0);

@@ -26,7 +26,7 @@ require 'psx_pvab.inc';
 function discnoir( $idx, $smp )
 {
 	$idxp = file_get_contents($idx);
-	$smpp = fopen($smp, 'rb');
+	$smpp = fopen_file($smp);
 	if ( empty($idxp) || ! $smpp )
 		return;
 
