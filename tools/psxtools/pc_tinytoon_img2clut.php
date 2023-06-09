@@ -76,7 +76,7 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 			//
 			// ??? 5-bit RGB ???
 			//   pix = (eax + edx) / 38
-			//   esi <<= 5 ,
+			//   esi <<= 5
 			//   esi += pix
 					$pos += 1; // lodsb
 				$b1 = ($flg & 7) / 7;
@@ -275,14 +275,28 @@ function tinytoon( $pal, $fname )
 			vflip($img['pix'], $w, $h);
 			return save_clutfile("$fname.clut", $img);
 
-		case 0x1d: // buster hansel  rle
-		case 0x57: // buster hansel  rle
-		case 0x17: // buster hansel  rle
+		case 0xff: // hag2  lz
+			// same as 0xb1 , but with additional 12 bytes header
+			$w = str2int($file, 12+1, 2);
+			$h = str2int($file, 12+3, 2);
+			$img = array(
+				'cc'  => strlen($pal) >> 2,
+				'w'   => $w,
+				'h'   => $h,
+				'pal' => $pal,
+				'pix' => spr_lz_decode($file, 12+13, $w*$h),
+			);
+			vflip($img['pix'], $w, $h);
+			return save_clutfile("$fname.clut", $img);
+
+		case 0x1d: // buster hansel hag2  rle
+		case 0x57: // buster hansel hag2  rle
+		case 0x17: // buster hansel hag2  rle
 		case 0x5d: // hansel  rle
 			$pix = spr_rle_decode($file, 9, $w*$h, $pal);
 			$img = array(
-				'w'   => $w,
-				'h'   => $h,
+				'w' => $w,
+				'h' => $h,
 			);
 
 			$clut = rgba2clut($pix);
@@ -326,9 +340,8 @@ for ( $i=1; $i < $argc; $i++ )
 			break;
 
 		case 'img':
-			if ( empty($pal) )
-				continue;
-			tinytoon($pal, $fn);
+			if ( ! empty($pal) )
+				tinytoon($pal, $fn);
 			break;
 	} // switch ( $ext )
 } // for ( $i=1; $i < $argc; $i++ )

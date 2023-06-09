@@ -22,7 +22,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 function fhead( $fname )
 {
-	$fp = fopen_file($fname);
+	if ( ! is_file($fname) )
+		return;
+	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
 	$head = fread($fp, 16);
