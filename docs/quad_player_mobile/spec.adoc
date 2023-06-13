@@ -468,4 +468,4 @@ link:sample.quad[sample.quad (2794 bytes)]
 
 == Online Ver
 * https://github.com/rufaswan/Web2D_Games/blob/master/docs/quad_player_mobile/spec.adoc
-* https://rufaswan.github.io/Web2D_Games/docs/quad_player_mobile/spec.html
+* https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html

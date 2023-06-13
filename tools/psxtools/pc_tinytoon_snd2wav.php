@@ -141,7 +141,7 @@ function wav_decode( &$wav, $size )
 	return;
 }
 //////////////////////////////
-function save_wavefile( $fname, $ar, $wave )
+function save_wavefile( $fname, &$wave )
 {
 	$riff = str_repeat(ZERO, 0x2c);
 	$len  = strlen($wave);
@@ -153,8 +153,8 @@ function save_wavefile( $fname, $ar, $wave )
 	$riff[0x10] = "\x10"; // length of format data
 	$riff[0x14] = "\x01"; // type=pcm
 	$riff[0x16] = "\x01"; // ac=1
-	str_update($riff, 0x18, chrint($ar, 4)); // ar=22050
-	str_update($riff, 0x1c, chrint($ar, 4)); // 22050*1*1
+	str_update($riff, 0x18, chrint(22050, 4)); // ar=22050
+	str_update($riff, 0x1c, chrint(22050, 4)); // 22050*1*1
 
 	$riff[0x20] = "\x01"; // 8 bit mono
 	$riff[0x22] = "\x08"; // bit/sample
@@ -165,17 +165,14 @@ function save_wavefile( $fname, $ar, $wave )
 	return;
 }
 
-function tinytoon( &$ar, $fname )
+function tinytoon( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
 	$pos = 0;
 	if ( substr($file,4,4) === substr($file,8,4) )
-	{
 		$pos = 0x3e;
-		$ar  = str2int($file, 4, 4);
-	}
 
 	$sz = str2int($file, $pos + 0, 4);
 	$b2 = str2int($file, $pos + 4, 1);
@@ -187,13 +184,12 @@ function tinytoon( &$ar, $fname )
 	if ( ($b1 & 0x80) === 0 )
 		wav_decode($wav, $sz);
 
-	save_wavefile("$fname.wav", $ar, $wav);
+	save_wavefile("$fname.wav", $wav);
 	return;
 }
 
-$ar = -1;
 for ( $i=1; $i < $argc; $i++ )
-	tinytoon( $ar, $argv[$i] );
+	tinytoon( $argv[$i] );
 
 /*
 ebp+58 = inp

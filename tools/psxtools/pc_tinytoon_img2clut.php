@@ -321,7 +321,7 @@ function tinytoon( $pal, $fname )
 }
 
 printf("%s  PALETTE/IMAGE...\n", $argv[0]);
-$pal = '';
+$pal = grayclut(0x100);
 for ( $i=1; $i < $argc; $i++ )
 {
 	$fn = $argv[$i];
@@ -340,8 +340,7 @@ for ( $i=1; $i < $argc; $i++ )
 			break;
 
 		case 'img':
-			if ( ! empty($pal) )
-				tinytoon($pal, $fn);
+			tinytoon($pal, $fn);
 			break;
 	} // switch ( $ext )
 } // for ( $i=1; $i < $argc; $i++ )
