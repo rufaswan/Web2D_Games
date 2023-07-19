@@ -1,0 +1,199 @@
+5e5fc0  int32  gald
+
+5e5fd0-5e60c7  int8  monster book flags
+	01  found
+	02  specs
+	04  drop 1
+	08  drop 2
+	10  steal
+	20  location
+	40
+	80
+==============================
+5e6278  lloyd
+5e6390  collet
+5e64a8  genius
+5e65c0  refill
+5e66d8  shihna
+5e67f0  zelos
+5e6908  presea
+5e6a20  regal
+5e6b38  kratos
+5e6c50  noishe
+	00  str[c]  sjis name (6*2)
+	0c
+	0d
+	0e
+	0f  int8   title
+	10  int8   level (max=fa)
+	11  int8   costume (0=default , 1=formal , 2=personal , 4=beach)
+	12  int16  hp
+	14  int16  tp
+	16
+	17
+	18  int32  exp (max=98967f)
+	1c
+	1d
+	1e
+	1f
+	20  int32  unlocked title (bitflag)
+	24
+	25
+	26  int16  real max hp
+	28  int16  real max tp
+	2a  int16  real str   (in 0.1)
+	2c  int16  real def   (in 0.1)
+	2e  int16  real luck  (in 0.1)
+	30  int16  real hit   (in 0.1)
+	32  int16  real evade (in 0.1)
+	34  int16  real int   (in 0.1)
+	36  int16  max hp
+	38  int16  max tp
+	3a  int16  str
+	3c  int16  attack/slash
+	3e  int16  attack/thrust
+	40  int16  def
+	42  int16  luck
+	44  int16  hit
+	46  int16  evade
+	48  int16  int
+	4a  int16  weapon
+	4c  int16  armor body
+	4e  int16  armor head
+	50  int16  armor arms
+	52  int16  accessory
+	54  int16  accessory
+	56
+	57
+	...
+	88  int16  skill used
+	...c8
+
+
+fedc ba98 7654 3210 fedc ba98 7654 3210
+---1 ---- ---- -111 1--- --11 111- 111-
+100783ee
+
+87+ lloyd weapon
+==============================
+-/67
+	5e6e70  item
+	5e6e80  item
+		5e6e83  rune bottle
+	5e6e90  item
+
+	5e6ea0/3
+		5e6ea0    item
+		5e6ea1-3  key
+	5e6ea4  key
+	5e6ea8  key
+	5e6eac  key
+	5e6eb0  key
+	5e6eb4  key
+		5e6eb5  figurine book
+	5e6eb8  item
+	5e6ebc  item
+	5e6ec0-1  item
+
+-/50
+	5e6ec2-3  food
+	5e6ed0  food
+	5e6ee0  food
+	5e6ef0  food
+
+-/139
+		5e6ef4  lloyd weapons
+	5e6f00  lloyd weapons
+	5e6f10  collet weapons
+	5e6f20  genius weapons
+	5e6f30  refill weapons
+	5e6f40  shihna weapons
+	5e6f50  zelos/kratos weapons
+	5e6f60  presea weapons
+	5e6f70  regal weapons
+		5e6f7c-e  regal weapons
+
+-/65
+		5e6f7f    armor body
+	5e6f80  armor body
+	5e6f90  armor body
+	5e6fa0  armor body
+		5e6fac-d  armor body
+
+-/34
+		5e6fae-f  armor head
+	5e6fb0  armor head
+	5e6fc0  armor head
+	5e6fd0  armor head
+
+-/36
+		5e6fd1-3  armor arms
+	5e6fe0  armor arms
+	5e6ff0  armor arms
+		5e6ff4  armor arms
+
+-/73
+		5e6ff5-7  accessory
+	5e7000  accessory
+	5e7010  accessory
+	5e7020  accessory
+	5e7030  accessory
+		5e7038  accessory
+
+special
+-/60
+		5e7039-b  armor body
+		5e703c-f  armor body
+	5e7040  armor body
+	5e7044/3
+		5e7044  armor body  nagatsuki
+		5e7045-7  key
+	5e7048/2
+		5e7048-9  key
+		5e704a  accessory  strike ring
+		5e704b  accessory  technical ring
+	5e704c/3
+		5e704c-e  key
+		5e704f  accessory  franol snow rabbit
+	5e7050/2
+		5e7050-1  key
+		5e7052  armor body  mistril guard
+		5e7053  armor body  sol guard
+	5e7054  armor body
+	5e7058/3
+		5e7058  item  memory gem
+		5e7059-b  key
+	5e705c/3
+		5e705c  key
+		5e705d  item  ex gem max
+		5e705e-f  key
+	5e7060  key
+	5e7064  key
+	5e7068/3
+		5e705e-f  key
+		5e705e-f  key
+	5e706c/2
+		5e705e-f  key
+		5e705e-f  key
+		5e706e  accessory  penguin feather
+	5e7070  item  pellets/fine-super-rare
+	5e7074/3
+		5e7074  key
+		5e7075  accessory  Taquis/Origin
+		5e7076-7  key
+	5e7078  key
+	5e707c/1
+		5e707c  key
+		5e707d-f  ???
+==============================
+5e70e4-5e7128  bits     collector book
+5e7128-5e7d68  str[10]  synosis entries (0x10 per entry)
+
+5e7da8-7e7db8  bits  map shop data
+5e7db8-7e7dc8  bits  map sylvarant data
+5e7dc8-7e7dd8  bits  map tesealla data
+5e7dd8         bits  recipes
+
+5e7e58-5e7e7c  bits  figurine book
+
+5e7ee8  int32  grade (in 0.01) (max=5f5e0ff)
