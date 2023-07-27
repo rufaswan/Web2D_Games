@@ -51,7 +51,7 @@ function expiso( $fp, $fname, $bksz, $bkhd, $skip )
 
 function bin2iso( $fname )
 {
-	$fp = fopen_file($fname);
+	$fp = fopen($fname, 'rb');
 	if ( ! $fp )  return;
 
 	$detect = array(

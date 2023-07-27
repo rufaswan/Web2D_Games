@@ -1,0 +1,76 @@
+30b274  vyze
+30b2d0  aika
+30b32c  fina
+30b388  drachma
+30b3e4  enrique
+30b440  gilder
+	00  str[a]  sjis name (5*2)
+	0a  int16  level
+	0c  int8   died count
+	0d  int8   kp
+	0e  int8   kp
+	0f  int8   weapon element (00-05)
+	10  int16  weapon
+	12  int16  armor     (none=ffff)
+	14  int16  accessory (none=ffff)
+	16
+	17
+	18  int16  hp
+	1a  int16  hp
+	1c  int16  guts
+	1e  int16  max guts
+	...
+	24  int32  total exp
+	...
+	34  int8   green  level
+	35  int8   red    level
+	36  int8   purple level
+	37  int8   blue   level
+	38  int8   yellow level
+	39  int8   silver level
+	3a  int16  str
+	3c  int16  spr
+	3e  int16  vit
+	40  int16  dex
+	42  int16  spd
+	44  int32  green  total exp
+	48  int32  red    total exp
+	4c  int32  purple total exp
+	50  int32  blue   total exp
+	54  int32  yellow total exp
+	58  int32  silver total exp
+
+30b5b8  int16  battle count
+30b5ba  int16  flee   count
+30b5bc  int16  ranking points (req fake vize)
+30b5be
+30b5bf
+30b5c0  int32  rich
+30b5c4  int32  enemy kill count
+
+format
+	int16  item id (empty=ffff)
+	int8   number
+	int8   00/ff
+
+	30b5c8  weapon
+		0e  mononofu sword (req kalifa)
+	30b708  armor
+	30b848  accessory
+	30b988  item
+		103  cham
+		104  str += 3
+		105  spr += 3
+		106  vit += 3
+		107  dex ++
+		108  spd += 3
+		109  hp  += 30
+		10a  kp  ++
+		12b-12d  statue set
+	30bac8  key
+		168  moon fish
+	30bc08  ship item
+	30bc80  ship weapon
+	30bd20  ship armor
+		1d6-1df  luxury set (req ranking)
+	30bdc0  *end*
