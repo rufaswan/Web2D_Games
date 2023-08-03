@@ -116,6 +116,9 @@ function strip_html( &$file )
 		$s = substr($file, $p1, $p2-$p1);
 		$file = str_replace($s, "\n", $file);
 	}
+
+	$file = str_replace('[license]' , '<!--', $file);
+	$file = str_replace('[/license]', '-->' , $file);
 	return;
 }
 //////////////////////////////

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.17">
+<title>Margie Healing Tutorial</title>
+</head>
+<body class="article">
+<div id="header">
+<h1>Margie Healing Tutorial</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is a simple tutorial to look for Margie&#8217;s Healing Spell Value.</p>
+</div>
+<div class="paragraph">
+<p>For a start, we have no idea what value to look for, but we <strong>DO know</strong> what the spell do:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>It heals 40 HP.</p>
+</li>
+<li>
+<p>The target gains +40 HP as a result.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>So we&#8217;ll use Bart vs Ramsus battle at Aveh Palace. There is only one playable character during the fight, so we only need to monitor Bart&#8217;s HP until Margie heals him.</p>
+</div>
+<div class="paragraph">
+<p>There are many ways to locate Bart&#8217;s HP. If you emulator has "cheat search" function (e.g. mednafen), you can use that.</p>
+</div>
+<div class="paragraph">
+<p>You can also find it by opening <strong>uncompressed</strong> save states with any hex editor. You&#8217;ll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.</p>
+</div>
+<div class="paragraph">
+<p>Or you can export the RAM part to a new file, if you don&#8217;t want the trouble to use a calculator everytime.</p>
+</div>
+<div class="paragraph">
+<p>In any case, Bart&#8217;s HP is at RAM 800ccd34 duing battle. Put a WRITE breakpoint there, you&#8217;ll get this on Margie&#8217;s turn.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-1.png"><img src="margie-heal-1.png" alt="margie heal 1" width="320" height="240"></a>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>at = d0000 + s0 - 32cc
+   = d0000 + 0 - 32cc
+   = ccd34
+v0 = (int16)(*RAM + ccd34)
+v1 = (int16)*s3
+   = (int16)(*RAM + c4078)
+v0 += v1
+at = 10000 + s4 - 717c
+   = 10000 + c3eb0 - 717c
+   = ccd34
+(*RAM + ccd34) = (int16)v0</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So <code>v0</code> is Bart&#8217;s HP, and <code>v1</code> is Margie&#8217;s +40 HP healing we are looking for. It is loaded from <code>s3</code>. Put a WRITE breakpoint on RAM 800c4078 to see where it came from.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-2.png"><img src="margie-heal-2.png" alt="margie heal 2" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The value is copied from <code>t0</code>. Again, put a WRITE breakpoint on RAM 800d2c54 to backtrace it.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-3.png"><img src="margie-heal-3.png" alt="margie heal 3" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Now here is the tricky part. The <code>pc</code> has already "returned", but no$psx is nice enough to stay on the delay slot.</p>
+</div>
+<div class="paragraph">
+<p>Looking at <code>v0</code>, it still holding 0x28. And from the instruction above, <code>v0</code> is <code>(a1 &lt;&lt; 10) &gt;&gt; 10</code> (the bit shift are a common ASM trick to turn unsigned int to signed int).</p>
+</div>
+<div class="paragraph">
+<p>Let scroll upward to discover how <code>a1</code> is calculated.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-4a.png"><img src="margie-heal-4a.png" alt="margie heal 4a" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>As you scrolling up, you&#8217;ll keep seeing <code>a1</code> is from <code>v1</code> and <code>v0</code>, but then <code>v1</code> is from <code>a1</code>, and <code>v0</code> is from <code>v1</code>. So it&#8217;s a bunch of nothing.</p>
+</div>
+<div class="paragraph">
+<p>Eventually, you&#8217;ll reach this part, where <code>a1</code> is <code>v1 * v0</code>, and <code>v1</code> and <code>v0</code> are values loaded from somewhere else. <strong>BOOKMARK THIS</strong></p>
+</div>
+<div class="paragraph">
+<p>Following <code>v1</code>, we follow the pointer at <code>a0</code>, and reached RAM 800cd138 + 5b, we get the value 2. Looking at the data struct, it seems like character stats. Margie has Ether = 2.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-4b.png"><img src="margie-heal-4b.png" alt="margie heal 4b" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Following <code>v0</code>, we follow the pointer at <code>v0</code>, and reached RAM 800d0388 + 11, we get the value 0x14.</p>
+</div>
+<div class="paragraph">
+<p><strong>IT FITS!</strong> 2 * 0x14 = 0x28. So the formula is Margie&#8217;s Ether 2 * Spell Power 0x14 = 0x28 HP Heal!</p>
+</div>
+<div class="paragraph">
+<p>Now we are getting somewhere! Put a WRITE breakpoint here to see where 0x14 came from!</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-5b.png"><img src="margie-heal-5b.png" alt="margie heal 5b" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Unfortunately the breakpoint didn&#8217;t triggered. It means the data doesn&#8217;t update during the battle.</p>
+</div>
+<div class="paragraph">
+<p>It also means we have to re-trigger the battle from the start.</p>
+</div>
+<div class="paragraph">
+<p>Indeed, on the start of the battle, the 0x14 is copied from <code>a1</code>. Put (yet another) WRITE breakpoint at RAM 801c3f7a</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="margie-heal-6b.png"><img src="margie-heal-6b.png" alt="margie heal 6b" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>And now we find ourself reading decompression code. <code>a0</code> is the pointer to original compressed data, loaded directly from BIN/CUE.</p>
+</div>
+<div class="paragraph">
+<p>You can use this data to find the correct game file from the disc.</p>
+</div>
+<div class="paragraph">
+<p>There are also many ways to do it:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Extract all files to a folder, then write a custom tool to loop through all files for a match.</p>
+</li>
+<li>
+<p>Remove all ECC/ECM data by convert the BIN/CUE to normal 2048 iso. Find the bytes pattern with a hex editor, and then use Xenogears TOC (it has file offset and file size) to see which file the search result landed between.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>And with that, I located the file is 2614.bin , offset 0x7022.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_potential_bug">Potential Bug</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<a class="image" href="heal-200-margie.png"><img src="heal-200-margie.png" alt="heal 200 margie" width="320" height="240"></a>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="heal-200-miang.png"><img src="heal-200-miang.png" alt="heal 200 miang" width="320" height="240"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>When I changed the spell value from 20 to 100, I noticed not only Margie heals Bart 200 HP, but Miang also heals Ramsus 200 HP.</p>
+</div>
+<div class="paragraph">
+<p>Apparently both Margie and Miang are using the same spell. It may not be what you want, but that&#8217;s whole another story on fixing it.</p>
+</div>
+<div class="paragraph">
+<p>Hope it helps!</p>
+</div>
+<div class="paragraph">
+<p><em>Rufas</em></p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2023-08-03 23:16:34 +0800
+</div>
+</div>
+</body>
+</html>

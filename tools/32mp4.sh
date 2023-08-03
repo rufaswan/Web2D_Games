@@ -35,7 +35,7 @@ while [ "$1" ]; do
 	tmp="/tmp/$$.mp4"
 	if [ -f "$t1" ]; then
 		[ -f "$tmp" ] && rm -vf "$tmp"
-		t2=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=,:p=0  "$t1")
+		t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
 		setsize $(echo "$t2" | tr ','  ' ')
 
 		ffmpeg -y -i "$t1"  \

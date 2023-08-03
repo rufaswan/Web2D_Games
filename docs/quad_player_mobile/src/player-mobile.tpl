@@ -1,4 +1,4 @@
-<!doctype html><!--
+<!doctype html>
 [license]
 Copyright (C) 2019 by Rufas Wan
 
@@ -18,7 +18,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
---><html><head>
+<html><head>
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
