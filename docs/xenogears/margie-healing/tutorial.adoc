@@ -7,13 +7,19 @@ For a start, we have no idea what value to look for, but we **DO know** what the
 . It heals 40 HP.
 . The target gains +40 HP as a result.
 
-So we'll use Bart vs Ramsus battle at Aveh Palace. There is only one playable character during the fight, so we only need to monitor Bart's HP until Margie heals him.
+So we'll use Bart vs Ramsus battle at Aveh Palace. Since we are looking for the *source* data, we'll make 3 save states to rollback to:
 
-There are many ways to locate Bart's HP. If you emulator has "cheat search" function (e.g. mednafen), you can use that.
+. A save state on Margie's room. We'll call it *"BEFORE MAP state"*
+. A save state in the middle of dialog, right before the battle starts. We'll call it *"BEFORE BATTLE state"*
+. A save state before Margie's turn. We'll call it *"BEFORE TURN state"*
 
-You can also find it by opening **uncompressed** save states with any hex editor. You'll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.
+There is only one playable character during the fight, so we only need to monitor Bart's HP until Margie heals him.
 
-Or you can export the RAM part to a new file, if you don't want the trouble to use a calculator everytime.
+There are many ways to locate Bart's HP.
+
+. If you emulator has "cheat search" function (e.g. mednafen), you can use that.
+. You can also find it by opening **uncompressed** save states with any hex editor. You'll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.
+. Or you can export the RAM part to a new file, if you don't want the trouble to use a calculator everytime.
 
 In any case, Bart's HP is at RAM 800ccd34 duing battle. Put a WRITE breakpoint there, you'll get this on Margie's turn.
 
@@ -30,15 +36,17 @@ v0 += v1
 at = 10000 + s4 - 717c
    = 10000 + c3eb0 - 717c
    = ccd34
-(*RAM + ccd34) = (int16)v0
+(int16)(*RAM + ccd34) = v0
 ....
 
-So `v0` is Bart's HP, and `v1` is Margie's +40 HP healing we are looking for. It is loaded from `s3`. Put a WRITE breakpoint on RAM 800c4078 to see where it came from.
+So `v0` is Bart's HP, and `v1` is Margie's +40 HP healing we are looking for. It is loaded from `s3`.
+
+Load back BEFORE TURN state and put a WRITE breakpoint on RAM 800c4078 to see where it came from.
 
 
 image::margie-heal-2.png[link=margie-heal-2.png,320,240]
 
-The value is copied from `t0`. Again, put a WRITE breakpoint on RAM 800d2c54 to backtrace it.
+The value is copied from `t0`. Again, load back BEFORE TURN state and put a WRITE breakpoint on RAM 800d2c54 to backtrace it.
 
 
 image::margie-heal-3.png[link=margie-heal-3.png,320,240]
@@ -65,16 +73,18 @@ Following `v0`, we follow the pointer at `v0`, and reached RAM 800d0388 + 11, we
 
 **IT FITS!** 2 * 0x14 = 0x28. So the formula is Margie's Ether 2 * Spell Power 0x14 = 0x28 HP Heal!
 
-Now we are getting somewhere! Put a WRITE breakpoint here to see where 0x14 came from!
+Now we are getting somewhere! Load back BEFORE TURN state and put a WRITE breakpoint here to see where 0x14 came from!
 
 
 image::margie-heal-5b.png[link=margie-heal-5b.png,320,240]
 
 Unfortunately the breakpoint didn't triggered. It means the data doesn't update during the battle.
 
-It also means we have to re-trigger the battle from the start.
+It also means we have go further back to BEFORE BATTLE state and re-trigger the battle from the start.
 
-Indeed, on the start of the battle, the 0x14 is copied from `a1`. Put (yet another) WRITE breakpoint at RAM 801c3f7a
+Indeed, the breakpoint is triggered! The 0x14 is copied from `a1`.
+
+Load back BEFORE BATTLE state again and put (yet another) WRITE breakpoint at RAM 801c3f7a
 
 
 image::margie-heal-6b.png[link=margie-heal-6b.png,320,240]
@@ -93,8 +103,8 @@ And with that, I located the file is 2614.bin , offset 0x7022.
 
 ## Potential Bug
 
-image::heal-200-margie.png[link=heal-200-margie.png,320,240]
-image::heal-200-miang.png[link=heal-200-miang.png,320,240]
+image:heal-200-margie.png[link=heal-200-margie.png,320,240]
+image:heal-200-miang.png[link=heal-200-miang.png,320,240]
 
 When I changed the spell value from 20 to 100, I noticed not only Margie heals Bart 200 HP, but Miang also heals Ramsus 200 HP.
 

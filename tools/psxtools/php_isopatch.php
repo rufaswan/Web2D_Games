@@ -27,10 +27,10 @@ function findlist( &$list, $key, $val )
 {
 	foreach ( $list as $v )
 	{
-		if ( $v[$key] == $val )
+		if ( $v[$key] === $val )
 			return $v;
 	}
-	return '';
+	return -1;
 }
 
 function isopatch( $iso, $patch )
@@ -38,15 +38,16 @@ function isopatch( $iso, $patch )
 	if ( ! is_file($iso) || ! is_file($patch) )
 		return;
 	$isop = fopen($iso, 'rb+');
-	if ( ! $isop )  exit();
+	if ( ! $isop )  return;
 
 	$list = lsiso_r($isop);
-	if ( empty($list) )  exit();
+	if ( empty($list) )  return;
 
 	$data = array(
-		'FILE' => '',
-		'TYPE' => '',
-		'OFF'  => 0,
+		'FILE'   => '',
+		'POS'    => 0,
+		'OFFSET' => '-', // valid = ASM   LBA  MIN
+		'SIZE'   => '-', // valid = BYTE  LBA  MIN
 	);
 	foreach ( file($patch) as $line )
 	{
@@ -61,58 +62,76 @@ function isopatch( $iso, $patch )
 			{
 				case 'FILE':
 					$k = findlist($list, 'file', $v);
-					if ( empty($k) )
-						php_error('FILE = %s not found', $v);
-					$data['FILE'] = $k;
-					$data['OFF' ] = $k['lba'] * 0x800;
-					printf("SET FILE %s @ %x\n", $v, $data['OFF']);
+					if ( $k === -1 )
+						return php_error('FILE = %s not found', $v);
+
+					$data['FILE'] = $k['file'];
+					$data['POS' ] = $k['lba'] * 0x800;
+					printf("SET FILE %s @ %x\n", $v, $data['POS']);
 					break;
-				case 'TYPE':
-					$data['TYPE'] = $v;
-					printf("SET TYPE %s\n", $v);
+				case 'OFFSET':
+					$data['OFFSET'] = $v;
+					printf("SET OFFSET type = %s\n", $v);
+					break;
+				case 'SIZE':
+					$data['SIZE'] = $v;
+					printf("SET SIZE type = %s\n", $v);
 					break;
 			} // switch ( $k )
 			continue;
 		}
 
+
 		if ( strpos($line, ',') )
 		{
 			list($off,$siz,$nam) = explode(',', $line);
 			$k = findlist($list, 'file', $nam);
-			if ( empty($k) )
+			if ( $k === -1 )
 				continue;
 
-			if ( $off[0] !== '-' )
+
+			$off = hexdec($off) + $data['POS'];
+			switch ( $data['OFFSET'] )
 			{
-				$off = hexdec($off) + $data['OFF'];
-				$s = '';
-				switch ( $data['TYPE'] )
-				{
-					case 'INT':
-						$s = chrint($k['lba'], 3);
-						printf("PATCH INT lba  @ %x = %x\n", $off, $k['lba']);
-						break;
-				} // switch ( $data['TYPE'] )
+				case 'ASM':
+					$s = chrint($k['lba'], 2);
+					printf("PATCH OFFSET ASM @ %x = %x\n", $off, $k['lba'] & BIT16);
+					fp_update($isop, $off, $s);
+					break;
+				case 'LBA':
+					$s = chrint($k['lba'], 3);
+					printf("PATCH OFFSET LBA @ %x = %x\n", $off, $k['lba']);
+					fp_update($isop, $off, $s);
+					break;
+				case 'MIN':
+					$s = lba2frame($k['lba']);
+					printf("PATCH OFFSET MIN @ %x = %s\n", $off, bin2hex($s));
+					fp_update($isop, $off, $s);
+					break;
+			} // switch ( $data['OFFSET'] )
 
-				fseek ($isop, $off, SEEK_SET);
-				fwrite($isop, $s);
-			}
 
-			if ( $siz[0] !== '-' )
+			$siz = hexdec($siz) + $data['POS'];
+			switch ( $data['SIZE'] )
 			{
-				$siz = hexdec($siz) + $data['OFF'];
-				$s = '';
-				switch ( $data['TYPE'] )
-				{
-					case 'INT':
-						$s = chrint($k['size'], 4);
-						printf("PATCH INT size @ %x = %x\n", $siz, $k['size']);
-						break;
-				} // switch ( $data['TYPE'] )
-
-				fseek ($isop, $siz, SEEK_SET);
-				fwrite($isop, $s);
-			}
+				case 'BYTE':
+					$s = chrint($k['size'], 4);
+					printf("PATCH SIZE BYTE @ %x = %x\n", $siz, $k['size']);
+					fp_update($isop, $siz, $s);
+					break;
+				case 'LBA':
+					$b = int_ceil($k['size'], 0x800) >> 11;
+					$s = chrint($b, 3);
+					printf("PATCH SIZE LBA @ %x = %x\n", $siz, $b);
+					fp_update($isop, $siz, $s);
+					break;
+				case 'MIN':
+					$b = int_ceil($k['size'], 0x800) >> 11;
+					$s = lba2frame($k['lba'] + $b);
+					printf("PATCH SIZE MIN @ %x = %s\n", $off, bin2hex($s));
+					fp_update($isop, $siz, $s);
+					break;
+			} // switch ( $data['SIZE'] )
 		}
 	} // foreach ( file($patch) as $line )
 

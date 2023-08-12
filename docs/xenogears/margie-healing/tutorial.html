@@ -31,16 +31,39 @@
 </ol>
 </div>
 <div class="paragraph">
-<p>So we&#8217;ll use Bart vs Ramsus battle at Aveh Palace. There is only one playable character during the fight, so we only need to monitor Bart&#8217;s HP until Margie heals him.</p>
+<p>So we&#8217;ll use Bart vs Ramsus battle at Aveh Palace. Since we are looking for the <strong>source</strong> data, we&#8217;ll make 3 save states to rollback to:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A save state on Margie&#8217;s room. We&#8217;ll call it <strong>"BEFORE MAP state"</strong></p>
+</li>
+<li>
+<p>A save state in the middle of dialog, right before the battle starts. We&#8217;ll call it <strong>"BEFORE BATTLE state"</strong></p>
+</li>
+<li>
+<p>A save state before Margie&#8217;s turn. We&#8217;ll call it <strong>"BEFORE TURN state"</strong></p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>There are many ways to locate Bart&#8217;s HP. If you emulator has "cheat search" function (e.g. mednafen), you can use that.</p>
+<p>There is only one playable character during the fight, so we only need to monitor Bart&#8217;s HP until Margie heals him.</p>
 </div>
 <div class="paragraph">
+<p>There are many ways to locate Bart&#8217;s HP.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If you emulator has "cheat search" function (e.g. mednafen), you can use that.</p>
+</li>
+<li>
 <p>You can also find it by opening <strong>uncompressed</strong> save states with any hex editor. You&#8217;ll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.</p>
-</div>
-<div class="paragraph">
+</li>
+<li>
 <p>Or you can export the RAM part to a new file, if you don&#8217;t want the trouble to use a calculator everytime.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>In any case, Bart&#8217;s HP is at RAM 800ccd34 duing battle. Put a WRITE breakpoint there, you&#8217;ll get this on Margie&#8217;s turn.</p>
@@ -62,11 +85,14 @@ v0 += v1
 at = 10000 + s4 - 717c
    = 10000 + c3eb0 - 717c
    = ccd34
-(*RAM + ccd34) = (int16)v0</pre>
+(int16)(*RAM + ccd34) = v0</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>So <code>v0</code> is Bart&#8217;s HP, and <code>v1</code> is Margie&#8217;s +40 HP healing we are looking for. It is loaded from <code>s3</code>. Put a WRITE breakpoint on RAM 800c4078 to see where it came from.</p>
+<p>So <code>v0</code> is Bart&#8217;s HP, and <code>v1</code> is Margie&#8217;s +40 HP healing we are looking for. It is loaded from <code>s3</code>.</p>
+</div>
+<div class="paragraph">
+<p>Load back BEFORE TURN state and put a WRITE breakpoint on RAM 800c4078 to see where it came from.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -74,7 +100,7 @@ at = 10000 + s4 - 717c
 </div>
 </div>
 <div class="paragraph">
-<p>The value is copied from <code>t0</code>. Again, put a WRITE breakpoint on RAM 800d2c54 to backtrace it.</p>
+<p>The value is copied from <code>t0</code>. Again, load back BEFORE TURN state and put a WRITE breakpoint on RAM 800d2c54 to backtrace it.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -116,7 +142,7 @@ at = 10000 + s4 - 717c
 <p><strong>IT FITS!</strong> 2 * 0x14 = 0x28. So the formula is Margie&#8217;s Ether 2 * Spell Power 0x14 = 0x28 HP Heal!</p>
 </div>
 <div class="paragraph">
-<p>Now we are getting somewhere! Put a WRITE breakpoint here to see where 0x14 came from!</p>
+<p>Now we are getting somewhere! Load back BEFORE TURN state and put a WRITE breakpoint here to see where 0x14 came from!</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -127,10 +153,13 @@ at = 10000 + s4 - 717c
 <p>Unfortunately the breakpoint didn&#8217;t triggered. It means the data doesn&#8217;t update during the battle.</p>
 </div>
 <div class="paragraph">
-<p>It also means we have to re-trigger the battle from the start.</p>
+<p>It also means we have go further back to BEFORE BATTLE state and re-trigger the battle from the start.</p>
 </div>
 <div class="paragraph">
-<p>Indeed, on the start of the battle, the 0x14 is copied from <code>a1</code>. Put (yet another) WRITE breakpoint at RAM 801c3f7a</p>
+<p>Indeed, the breakpoint is triggered! The 0x14 is copied from <code>a1</code>.</p>
+</div>
+<div class="paragraph">
+<p>Load back BEFORE BATTLE state again and put (yet another) WRITE breakpoint at RAM 801c3f7a</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -164,15 +193,9 @@ at = 10000 + s4 - 717c
 <div class="sect1">
 <h2 id="_potential_bug">Potential Bug</h2>
 <div class="sectionbody">
-<div class="imageblock">
-<div class="content">
-<a class="image" href="heal-200-margie.png"><img src="heal-200-margie.png" alt="heal 200 margie" width="320" height="240"></a>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="heal-200-miang.png"><img src="heal-200-miang.png" alt="heal 200 miang" width="320" height="240"></a>
-</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="heal-200-margie.png"><img src="heal-200-margie.png" alt="heal 200 margie" width="320" height="240"></a></span>
+<span class="image"><a class="image" href="heal-200-miang.png"><img src="heal-200-miang.png" alt="heal 200 miang" width="320" height="240"></a></span></p>
 </div>
 <div class="paragraph">
 <p>When I changed the spell value from 20 to 100, I noticed not only Margie heals Bart 200 HP, but Miang also heals Ramsus 200 HP.</p>
@@ -191,7 +214,7 @@ at = 10000 + s4 - 717c
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-03 23:16:34 +0800
+Last updated 2023-08-09 00:36:48 +0800
 </div>
 </div>
 </body>

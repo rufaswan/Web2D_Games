@@ -23,7 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-iso.inc';
 
-function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
+function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $entsiz, $dir )
 {
 	$func = __FUNCTION__;
 	$exts = array(
@@ -33,56 +33,101 @@ function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $ez, $dir )
 		'01120000' => '.tex',
 		'00120000' => '.tex',
 		'60010180' => '.str',
+		'50532d58' => '.exe',
 	);
 
 	while ( $cnt > 0 )
 	{
 		$bak = $pos;
-		$lba = str2int($sub, $pos+0, 3, true);
+		$lba = str2int($sub, $pos + 0, 3, true);
 		if ( $lba < 0 ) // -1 == EOF
 			return;
 
-		$siz = str2int($sub, $pos+$ez[0], 4, true);
-			$pos += $ez[1];
+		$siz = str2int($sub, $pos + $entsiz[0], 4, true);
+			$pos += $entsiz[1];
 
 		$fn = sprintf('%s/%04d', $dir, $id);
 			$id++;
 
-		if ( $lba == 0 || $siz == 0 )
+		$cnt--;
+		if ( $lba === 0 || $siz === 0 )
 			continue;
 
-		$cnt--;
-		if ( $siz < 0 ) // -999 == is_dir
-			$func($fp, $sub, $txt, $pos, $id, -$siz, $ez, $fn);
-		else // is_file
+		// -999 == is_dir
+		if ( $siz < 0 )
 		{
-			$lba2 = str2int($sub, $pos, 3, true);
-			if ( $lba == $lba2 )
-				continue;
+			$func($fp, $sub, $txt, $pos, $id, -$siz, $entsiz, $fn);
+			continue;
+		}
 
-			$s = fp2str($fp, $lba*0x800, $siz);
-			$e = '.bin';
+		// is_file
+		$s = fp2str($fp, $lba*0x800, $siz);
+		$e = '.bin';
 
-			$b1 = substr($s, 0, 4);
-			$b2 = ordint($b1);
-			if ( $b2 > 0 && $b2 < 0x1000 )
-				$e = sprintf('.%x', $b2);
-			else
-			{
-				$b2 = bin2hex($b1);
-				if ( isset( $exts[$b2] ) )
-					$e = $exts[$b2];
-			}
-			$fn .= $e;
-			if ( $e == '.str' )  $s = ZERO;
+		$b1 = substr($s, 0, 4);
+		$b2 = ordint($b1);
 
-			$b1 = sprintf("%8x , %8x , %s\n", $bak, $bak+$ez[0], $fn);
+		// auto file extension
+		if ( $b2 > 0 && $b2 < 0x1000 )
+			$e = sprintf('.%x', $b2);
+		else
+		{
+			// if matched a known filetype
+			$b2 = bin2hex($b1);
+			if ( isset( $exts[$b2] ) )
+				$e = $exts[$b2];
+		}
+		$fn .= $e;
+		if ( $e === '.str' )  $s = ZERO;
+
+		$b1 = sprintf("%8x , %8x , %s\n", $bak, $bak + $entsiz[0], $fn);
 			echo $b1;
 			$txt .= $b1;
-			save_file($fn, $s);
-		}
+		save_file($fn, $s);
 	} // while ( $cnt > 0 )
 	return;
+}
+
+function xeno_exe( &$list )
+{
+	foreach ( $list as $f )
+	{
+		switch ( $f['file'] )
+		{
+			// official releases
+			case '/slps_011.60': // JP Disc 1
+			case '/slps_011.61': // JP Disc 2
+			case '/slus_006.64': // US Disc 1
+			case '/slus_006.69': // US Disc 2
+				return array($f, 3, 7);
+
+			// JP/chinese hack by Agemo, bluerabit, focus, wooddoo
+			//   ERROR : custom code in LBA area
+			case '/omega___.__':
+				return -1;
+
+			// DEMOS
+			case '/slps_012.35': // JP demo from Fushigi no Data Disc
+				foreach ( $list as $exe )
+				{
+					if ( $exe['file'] === '/x.exe' )
+						return array($exe, 4, 8);
+				}
+				return -1;
+
+			case '/papx_900.22': // JP demo from Yoi Ko to Yoi Otona no. PlayStation Taikenban Vol.1
+				foreach ( $list as $exe )
+				{
+					if ( $exe['file'] === '/psx_cd.exe' )
+						return array($exe, 4, 8);
+				}
+				return -1;
+
+			case '/slus_900.28': // US demo from Squaresoft on PlayStation 1998 Collector's CD Vol.1
+				return array($f, 3, 7);
+		} // switch ( $f['file'] )
+	}
+	return -1;
 }
 
 function xeno( $fname )
@@ -94,37 +139,22 @@ function xeno( $fname )
 	if ( empty($list) )  return;
 
 	$dir = str_replace('.', '_', $fname);
-	foreach ( $list as $f )
-	{
-		$ez = '';
-		switch ( $f['file'] )
-		{
-			case '/x.exe': // JP demo from SLPS_012.35
-				$ez = array(4,8);
-				break;
-			case '/slps_011.60': // JP Disc 1
-			case '/slps_011.61': // JP Disc 2
-			case '/slus_006.64': // US Disc 1
-			case '/slus_006.69': // US Disc 2
-			case '/omega___.__': // JP/chinese hack by Agemo, bluerabit, focus, wooddoo
-				$ez = array(3,7);
-				break;
-		} // switch ( $f['file'] )
 
-		if ( empty($ez) )
-			continue;
+	$exe = xeno_exe($list);
+	if ( $exe === -1 )
+		return;
 
-		$txt  = sprintf("FILE = %s\n", $f['file']);
-		$txt .= "TYPE = INT\n";
+	$txt  = sprintf("FILE = %s\n", $exe[0]['file']);
+	$txt .= "OFFSET = LBA\n";
+	$txt .= "SIZE   = BYTE\n";
 
-		$sub = fp2str($fp, $f['lba']*0x800, $f['size']);
-		$pos = 0x804;
-		$id  = 0;
-		ripxeno($fp, $sub, $txt, $pos, $id, 9999, $ez, "$dir/cdrom");
+	$sub = fp2str($fp, $exe[0]['lba']*0x800, $exe[0]['size']);
+	$pos = 0x804;
+	$id  = 0;
+	ripxeno($fp, $sub, $txt, $pos, $id, 99999, array($exe[1],$exe[2]), "$dir/cdrom");
 
-		$txt = str_replace($dir, '', $txt);
-		save_file("$dir/patch.txt", $txt);
-	} // foreach ( $list as $f )
+	$txt = str_replace($dir, '', $txt);
+	save_file("$dir/patch.txt", $txt);
 
 	fclose($fp);
 	return;
