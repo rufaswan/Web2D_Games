@@ -21,6 +21,91 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
+//////////////////////////////
+
+// Akumajou Dracula X JP
+function BISLPM_86023( &$file, $off )
+{
+	// items amount
+	for ( $i = 0x25f; $i < 0x361; $i++ )
+		int_update($file, $off + $i, 80, 1);
+
+	// item sub id
+	for ( $i=0; $i < 0xa8; $i++ )
+		int_update($file, $off + 0x362 + $i, $i+1, 1);
+	for ( $i=0; $i < 0x59; $i++ )
+		int_update($file, $off + 0x40b + $i, $i+1, 1);
+
+	// 474/478  HP
+	// 47c/480  Heart
+	// 484/488  MP
+	// 48c + 49c = 4ac  STR
+	// 490 + 4a0 = 4b0  CON
+	// 494 + 4a4 = 4b4  INT
+	// 498 + 4a8 = 4b8  LCK
+	int_update($file, $off + 0x4bc, 1, 1); // Level
+	// 4c0  EXP
+	int_update($file, $off + 0x4c4, 500000, 4); // Gold
+	// 4c8  Beat/Kill
+
+	// 504:508:50c.510  Time (hh:mm:ss.ff)
+
+	// Familiar
+	for ( $i=0; $i < 7; $i++ )
+	{
+		// +00  Familiar Level
+		// +04  Familiar EXP
+		// +08
+		$p = $off + 0x518 + ($i * 0xc);
+		int_update($file, $p + 4, 9899, 2);
+	}
+
+	// Time Attack , 0x27fc = 10236 = 1:02:36
+	// 5e8  Richter defeat Dracula
+	// 5ec  Defeat Olrox
+	// 5f0  Defeat Doppelganger LV 10
+	// 5f4  Defeat Legion/Granfaloon
+	// 5f8  Defeat Minotaur + Werewolf
+	// 5fc  Defeat Scylla
+	// 600  Defeat Berigan + Gaibon
+	// 604  Defeat Hippogryph
+	// 608  Defeat Beezelbub
+	// 60c  Defeat Succubus
+	// 610  Defeat Malphas/Karasuman
+	// 614  Defeat Fake Ralph/Trevor + Fake Grant + Fake Sypha
+	// 618  Defeat Death
+	// 61c  Defeat Cerberos
+	// 620  Defeat Richter Belmont
+	// 624  Defeat Medusa
+	// 628  Defeat Franken/The Creature
+	// 62c  Defeat Lesser Demon
+	// 630  Defeat Doppelganger LV 40
+	// 634  Defeat Mummy/Akmodan II
+	// 638  Defeat Darkwing Bat
+	// 63c  Defeat Galamoth
+	// 640  Last Save Point
+	// 644  Meet Death (loses Alucard equipments)
+	// 648  Meet Maria (get Holy Glass)
+	// 64c  Meet Librarian
+	// 650  Meet Maria
+
+	// re-fight Bosses
+	for ( $i = 0x5ec; $i < 0x640; $i += 4 )
+	{
+		if ( $i === 0x620 )
+			continue;
+		int_update($file, $off + $i, 0, 4);
+	}
+
+	// no checksum
+	return;
+}
+
+// Castlevania SOTN US
+function BASLUS_00067( &$file, $off )  { return BISLPM_86023($file, $off); }
+
+//////////////////////////////
+
 // Xenogears JP
 function BISLPS_01160( &$file, $off )
 {
@@ -67,35 +152,35 @@ function BISLPS_01160( &$file, $off )
 	// char weapons
 	for ( $i=0; $i < 0x48; $i++ )
 	{
-		int_update($file, $off + 0x163c + $i,   50, 1);
+		int_update($file, $off + 0x163c + $i,   80, 1);
 		int_update($file, $off + 0x16a0 + $i, $i+1, 1);
 	}
 
 	// char armors
 	for ( $i=0; $i < 0x8f; $i++ )
 	{
-		int_update($file, $off + 0x1704 + $i,   50, 1);
+		int_update($file, $off + 0x1704 + $i,   80, 1);
 		int_update($file, $off + 0x17cc + $i, $i+1, 1);
 	}
 
 	// char items
 	for ( $i=0; $i < 0x6c; $i++ )
 	{
-		int_update($file, $off + 0x1894 + $i,   50, 1);
+		int_update($file, $off + 0x1894 + $i,   80, 1);
 		int_update($file, $off + 0x192a + $i, $i+1, 1);
 	}
 
 	// gear weapons
 	for ( $i=0; $i < 0x48; $i++ )
 	{
-		int_update($file, $off + 0x19c0 + $i,   50, 1);
+		int_update($file, $off + 0x19c0 + $i,   80, 1);
 		int_update($file, $off + 0x1a24 + $i, $i+1, 1);
 	}
 
 	// gear armors
 	for ( $i=0; $i < 0x68; $i++ )
 	{
-		int_update($file, $off + 0x1a88 + $i,   50, 1);
+		int_update($file, $off + 0x1a88 + $i,   80, 1);
 		int_update($file, $off + 0x1b1e + $i, $i+1, 1);
 	}
 
@@ -107,3 +192,5 @@ function BISLPS_01160( &$file, $off )
 
 // Xenogears US
 function BASLUS_00664( &$file, $off )  { return BISLPS_01160($file, $off); }
+
+//////////////////////////////

@@ -70,8 +70,6 @@ function mcrfile( $fname )
 		return;
 	if ( substr($bak->file,0,2) !== 'MC' )
 		return;
-	if ( substr($bak->file,0x1f80,2) !== 'MC' )
-		return;
 
 	// 1 + 15 blocks
 	for ( $i=1; $i < 16; $i++ )
@@ -89,9 +87,10 @@ function mcrfile( $fname )
 		$func = substr ($bak->file, $p+10, 12);
 			$func = str_replace('-', '_', $func);
 
+		printf("%2x  %4x  %s\n", $i, $p, $func);
 		if ( function_exists($func) )
 		{
-			printf("%2x  %4x  %6x  %s\n", $i, $p, $i*0x2000, $func);
+			printf("== %s( %6x )\n", $func, $i*0x2000);
 			$func($bak->file, $i*0x2000);
 		}
 	} // for ( $i=1; $i < 16; $i++ )
