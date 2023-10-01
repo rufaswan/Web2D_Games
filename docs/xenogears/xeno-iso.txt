@@ -11,11 +11,11 @@ SLPS 011.60 JP disc 1 [3771]
 		29  [LZ-PAK]
 	34  Overlay [6]
 		35  [LZ][OVER] Battling
-		36  [LZ][OVER] event loop
-		37  [LZ][OVER]
-		38  [LZ][OVER] language
-		39  [LZ][OVER] memory card
-		40  [LZ][OVER] movie cdrom disk
+		36  [LZ][OVER] Field executable
+		37  [LZ][OVER] World map executable
+		38  [LZ][OVER] Battle executable
+		39  [LZ][OVER] Menu executable
+		40  [LZ][OVER] Movie executable
 	45  smds/midi data
 	46  seds
 	47  [LZ]
@@ -922,9 +922,9 @@ SLPS 011.60 JP disc 1 [3771]
 		.7
 	2594  [PAK-LZ] Data
 	2595  Base Stats
-	2596  [OVER]
-	2597  [OVER]
-	2598  [OVER]
+	2596  [OVER] 
+	2597  [OVER] 
+	2598  [OVER] 
 	2599  [OVER]
 	2600  [OVER]
 	2601  [OVER]
