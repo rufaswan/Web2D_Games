@@ -1,31 +1,38 @@
 function BinaryReader(){
 	var $ = this;
-	var m = {};
+	//var m = {};
 
 	//////////////////////////////
 
 	$.uint2txt = function( buf ){
 		buf = new Uint8Array(buf);
-		return m.getstr(buf, 0, buf.byteLength);
+		return $.getstr(buf, 0, buf.byteLength);
+	}
+
+	$.catUint8 = function( a, b ){
+		var c = new Uint8Array( a.byteLength + b.byteLength );
+		c.set(a, 0);
+		c.set(b, a.byteLength);
+		return c;
 	}
 
 	//////////////////////////////
 
-	m.getint = function( buf, pos, len ){
+	$.getint = function( buf, pos, len ){
 		var int = 0;
 		for ( var i=0; i < len; i++ )
 			int |= (buf[pos+i] << (i*8));
 		return int;
 	}
 
-	m.getstr = function( buf, pos, len ){
+	$.getstr = function( buf, pos, len ){
 		var str = '';
 		for ( var i=0; i < len; i++ )
 			str += String.fromCharCode( buf[pos+i] );
 		return str;
 	}
 
-	m.getsub = function( buf, pos, len ){
+	$.getsub = function( buf, pos, len ){
 		var sub = new Uint8Array(len);
 		for ( var i=0; i < len; i++ )
 			sub[i] = buf[pos+i];
@@ -38,18 +45,18 @@ function BinaryReader(){
 		var pos  = 0;
 		while (1)
 		{
-			var mgc = m.getint(zipbuf, pos, 4);
+			var mgc = $.getint(zipbuf, pos, 4);
 			if ( mgc !== 0x04034b50 )  // PK34
 				break;
 
-			var sz1 = m.getint(zipbuf, pos + 0x12, 4); // data size
-			var sz2 = m.getint(zipbuf, pos + 0x1a, 2); // filename length
-			var sz3 = m.getint(zipbuf, pos + 0x1c, 2); // extra length
+			var sz1 = $.getint(zipbuf, pos + 0x12, 4); // data size
+			var sz2 = $.getint(zipbuf, pos + 0x1a, 2); // filename length
+			var sz3 = $.getint(zipbuf, pos + 0x1c, 2); // extra length
 
 			// uncompressed file/store only
 			if ( zipbuf[pos + 8] === 0 ){
-				var fn = m.getstr(zipbuf, pos + 0x1e            , sz2);
-				var dt = m.getsub(zipbuf, pos + 0x1e + sz2 + sz3, sz1);
+				var fn = $.getstr(zipbuf, pos + 0x1e            , sz2);
+				var dt = $.getsub(zipbuf, pos + 0x1e + sz2 + sz3, sz1);
 				list[fn] = dt;
 			}
 
@@ -60,19 +67,19 @@ function BinaryReader(){
 
 	//////////////////////////////
 
-	m.setint = function( buf, pos, len, int ){
+	$.setint = function( buf, pos, len, int ){
 		for ( var i=0; i < len; i++ ){
 			var b = int >> (i*8);
 			buf[pos+i] = b & 0xff;
 		}
 	}
 
-	m.setstr = function( buf, pos, str ){
+	$.setstr = function( buf, pos, str ){
 		for ( var i=0; i < str.length; i++ )
 			buf[pos+i] = str.charCodeAt(i);
 	}
 
-	m.setsub = function( buf, pos, sub ){
+	$.setsub = function( buf, pos, sub ){
 		for ( var i=0; i < sub.byteLength; i++ )
 			buf[pos+i] = sub[i];
 	}
@@ -101,36 +108,36 @@ function BinaryReader(){
 			dtlen = list[ key[i] ].byteLength;
 			dtcrc = $.crc32( list[ key[i] ] );
 
-			m.setint(zipbuf , pos12 , 4 , 0x02014b50);  // PK12
+			$.setint(zipbuf , pos12 , 4 , 0x02014b50);  // PK12
 			zipbuf[ pos12 + 0x04 ] = 10;  // ver 1.0
 			zipbuf[ pos12 + 0x06 ] = 10;  // ver 1.0
-			m.setsub(zipbuf , pos12 + 0x10 , dtcrc);
-			m.setint(zipbuf , pos12 + 0x14 , 4 , dtlen);  // compressed
-			m.setint(zipbuf , pos12 + 0x18 , 4 , dtlen);  // uncompressed
-			m.setint(zipbuf , pos12 + 0x1c , 2 , fnlen);
-			m.setint(zipbuf , pos12 + 0x2a , 4 , pos34);
+			$.setsub(zipbuf , pos12 + 0x10 , dtcrc);
+			$.setint(zipbuf , pos12 + 0x14 , 4 , dtlen);  // compressed
+			$.setint(zipbuf , pos12 + 0x18 , 4 , dtlen);  // uncompressed
+			$.setint(zipbuf , pos12 + 0x1c , 2 , fnlen);
+			$.setint(zipbuf , pos12 + 0x2a , 4 , pos34);
 				pos12 += 0x2e;
-			m.setstr(zipbuf , pos12 , key[i]);
+			$.setstr(zipbuf , pos12 , key[i]);
 				pos12 += fnlen;
 
-			m.setint(zipbuf , pos34 , 4 , 0x04034b50);  // PK34
+			$.setint(zipbuf , pos34 , 4 , 0x04034b50);  // PK34
 			zipbuf[ pos34 + 0x04 ] = 10;  // ver 1.0
-			m.setsub(zipbuf , pos34 + 0x0e , dtcrc);
-			m.setint(zipbuf , pos34 + 0x12 , 4 , dtlen);  // compressed
-			m.setint(zipbuf , pos34 + 0x16 , 4 , dtlen);  // uncompressed
-			m.setint(zipbuf , pos34 + 0x1a , 2 , fnlen);
+			$.setsub(zipbuf , pos34 + 0x0e , dtcrc);
+			$.setint(zipbuf , pos34 + 0x12 , 4 , dtlen);  // compressed
+			$.setint(zipbuf , pos34 + 0x16 , 4 , dtlen);  // uncompressed
+			$.setint(zipbuf , pos34 + 0x1a , 2 , fnlen);
 				pos34 += 0x1e;
-			m.setstr(zipbuf , pos34 , key[i]);
+			$.setstr(zipbuf , pos34 , key[i]);
 				pos34 += fnlen;
-			m.setsub(zipbuf , pos34 , list[ key[i] ]);
+			$.setsub(zipbuf , pos34 , list[ key[i] ]);
 				pos34 += dtlen;
 		} // for ( var i=0; i < key.length; i++ ){
 
-		m.setint(zipbuf , pos56 , 4, 0x06054b50);  // PK56
-		m.setint(zipbuf , pos56 + 0x08 , 2, key.length);  // disk entry
-		m.setint(zipbuf , pos56 + 0x0a , 2, key.length);  // total entry
-		m.setint(zipbuf , pos56 + 0x0c , 4, pk12len);  // PK12 length
-		m.setint(zipbuf , pos56 + 0x10 , 4, pk34len);  // PK12 pos
+		$.setint(zipbuf , pos56 , 4, 0x06054b50);  // PK56
+		$.setint(zipbuf , pos56 + 0x08 , 2, key.length);  // disk entry
+		$.setint(zipbuf , pos56 + 0x0a , 2, key.length);  // total entry
+		$.setint(zipbuf , pos56 + 0x0c , 4, pk12len);  // PK12 length
+		$.setint(zipbuf , pos56 + 0x10 , 4, pk34len);  // PK12 pos
 		return zipbuf;
 	}
 

@@ -77,10 +77,10 @@
 gihren    SLPS 025.70  Gihren no Yabou Zeon no Keibu / Federation Disc
 gihren    SLPS 025.71  Gihren no Yabou Zeon no Keibu / Zeon Disc
 gihren    SLPS 028.20  Gihren no Yabou Zeon no Keibu / Kouryaku Shireisho
-???       SLPS 008.83  Gundam Battle Master
-???       SLPS 012.86  Gundam Battle Master 2
-???       SLPS 034.71  Gundam Battle Master G Gundam
-???       SLPS 034.72  Gundam Battle Master Gundam Wing
+gbattm2   SLPS 008.83  Gundam Battle Master
+gbattm2   SLPS 012.86  Gundam Battle Master 2
+gbattmw   SLPS 034.71  Gundam Battle Master G Gundam
+gbattmw   SLPS 034.72  Gundam Battle Master Gundam Wing
 lunar1    SLPS 013.97  Lunar 1 Silver Star Story / Disc 1
 lunar1    SLPS 013.98  Lunar 1 Silver Star Story / Disc 2
 lunar2    SLPS 020.81  Lunar 2 Eternal Blue / Disc 1
@@ -91,6 +91,9 @@ lunar2    SLPS 020.83  Lunar 2 Eternal Blue / Disc 3
 ???       SLPS 030.50  Tales of Eternia / Disc 1
 ???       SLPS 030.51  Tales of Eternia / Disc 2
 ???       SLPS 030.52  Tales of Eternia / Disc 3
+jinguji   SLPS 030.16  Tantei Jinguji Saburo 5 Mikan no Rupo
+jinguji   SLPS 030.14  Tantei Jinguji Saburo 6 Yume no Owari ni
+jinguji   SLPS 030.15  Tantei Jinguji Saburo 7 Tomoshibi ga Kienu Ma ni
 xeno      SLPS 011.60  Xenogears / Disc 1
 xeno      SLPS 011.61  Xenogears / Disc 2
 
@@ -135,6 +138,7 @@ mitsukr   SLPM 861.34  Mitsumete Knight R
 	lunar1    *.bmp , face_*.tiz/bin only
 	lunar2    isok/*.pck , map/*.dat only
 	mitsukr   merge.mrg (Mitsumete Mode) only
+	jinguji   *.SSD only
 	panzer    --upcoming--
 	ralph     --upcoming--
 	valky     --upcoming--
@@ -185,18 +189,37 @@ odin      PS3                Odin Sphere Leifthrasir HD
 
 ==============================
 == Guest System Games ==
+jinguji   PS2  SLPM 651.73  Tantei Jinguji Saburou 8 Innocent Black
+jinguji   PS2  SLPM 655.76  Tantei Jinguji Saburou 9 Kind of Blue
+
+	jinguji   ALL DONE
+
 lunar     PSP  NPJH_500.54  Lunar Harmony of Silver Star
 ???       PSP  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
 
 	lunar     --upcoming--
 
+rockx     SNES  Rockman X
+rockx     SNES  Rockman X 2
+rockx     SNES  Rockman X 3
+???       SNES  Magical Pop'n
+???       SNES  Majuu Ou
+???       SNES  Zennihon GT Senshuken
+
+	rockx     --upcoming--
+
 cvpor     NDS  ACVJ  Akumajou Dracula Sougetsu no Juujika
 cvpor     NDS  ACBJ  Akumajou Dracula Gallery of Labyrinth
 cvpor     NDS  YR9J  Akumajou Dracula Ubawareta Kokuin
+jinguji   NDS  YJGJ  Tantei Jinguji Saburou DS 1 Inishie no Kioku
+jinguji   NDS  YJJJ  Tantei Jinguji Saburou DS 2 Keinai Kokoro
+jinguji   NDS  CNCJ  Tantei Jinguji Saburou DS 3 Fuserareta Shinjitsu
+jinguji   NDS  BUYJ  Tantei Jinguji Saburou DS 4 Akai Chou
 ???       NDS  AVCJ  Magical Vacation 2
 ???       NDS  YW7E  Commando Steel Disaster
 
 	cvpor     all maps only , *.so/.sc (non-quad) only
+	jinguji   --upcoming--
 
 ???       SATURN  T-1521G   Astra Superstars
 ???       SATURN  T-6607G   Madoh Monogatari
@@ -218,15 +241,6 @@ vfcg      SATURN  -         Virtua Fighter CG Potrait Series
 	tengai4   mi*.bin only
 	mika2     --upcoming--
 	sotn      --upcoming--
-
-rockx     SNES  Rockman X
-rockx     SNES  Rockman X 2
-rockx     SNES  Rockman X 3
-???       SNES  Magical Pop'n
-???       SNES  Majuu Ou
-???       SNES  Zennihon GT Senshuken
-
-	rockx     --upcoming--
 
 rusty     PC98  C-Lab                    Rusty
 rusty     PC98  C-Lab                    Totsugeki Mix

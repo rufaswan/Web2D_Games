@@ -42,11 +42,13 @@ function gowcaiz_decode( &$file )
 			$bycod = ord( $file[$pos] );
 				$pos++;
 			$bylen = 8;
+			continue;
 		}
 
 		$flg = $bycod & 1;
 			$bycod >>= 1;
 			$bylen--;
+
 		if ( $flg )
 		{
 			if ( ! isset($file[$pos]) )

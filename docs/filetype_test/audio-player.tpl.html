@@ -272,59 +272,56 @@ document.getElementById('pfile').addEventListener('change', function(e){
 	{
 		console.log(up.type, up.name);
 		var ext = up.name.toLowerCase().split('.').pop();
-		var p1 = new Promise(function(resolve,reject){
-			switch ( ext )
-			{
-				case 'ogg':
-				case 'm4a':
-				case 'aac':
-				case 'wav':
-				case 'mp3':
-					var reader = new FileReader;
-					reader.onload = function(){
-						listAddAudio(up.name, reader.result, 0);
-						resolve(1);
-					}
-					reader.onerror = reject;
-					reader.readAsDataURL(up);
-					break;
+		switch ( ext ){
+			case 'ogg':
+			case 'm4a':
+			case 'aac':
+			case 'wav':
+			case 'mp3':
+				var p = Promise.resolve(up).then(function(res){
+					console.log('readAsDataURL', ext);
+					return new Promise(function(ok,err){
+						var reader = new FileReader;
+						reader.onload = function(){
+							ok( [res, reader.result] );
+						}
+						reader.onerror = err;
+						reader.readAsDataURL(res);
+					});
+				}).then(function(res){
+					return listAddAudio(res[0].name, res[1], 0);
+				});
+				promises.push(p);
+				break;
 
-				case 'zip':
-					var reader = new FileReader;
-					reader.onload = function(){
-						var list = ziplist( new Uint8Array(reader.result) );
-						PackListAddAudio(list);
-						resolve(1);
-					}
-					reader.onerror = reject;
-					reader.readAsArrayBuffer(up);
-					break;
-
-				case 'iso':
-					var reader = new FileReader;
-					reader.onload = function(){
-						var list = isolist( new Uint8Array(reader.result) );
-						PackListAddAudio(list);
-						resolve(1);
-					}
-					reader.onerror = reject;
-					reader.readAsArrayBuffer(up);
-					break;
-
-				default:
-					resolve(-1);
-					break;
-			} // switch ( ext )
-		});
-		promises.push(p1);
+			case 'zip':
+			case 'iso':
+				var p = Promise.resolve( [ext,up] ).then(function(res){
+					console.log('readAsArrayBuffer', ext);
+					return new Promise(function(ok,err){
+						var reader = new FileReader;
+						reader.onload = function(){
+							ok( [res[0], new Uint8Array(reader.result)] );
+						}
+						reader.onerror = err;
+						reader.readAsArrayBuffer(res[1]);
+					});
+				}).then(function(res){
+					var list = [];
+					if ( res[0] === 'zip' )  list = ziplist( res[1] );
+					if ( res[0] === 'iso' )  list = isolist( res[1] );
+					if ( list.length < 1 )
+						return 0;
+					return PackListAddAudio(list);
+				});
+				promises.push(p);
+				break;
+		} // switch ( ext )
 	} // for ( var up of this.files )
 
-	Promise.all(promises).then(function(resolve){
+	Promise.all(promises).then(function(res){
+		console.log('Promise.all().then()', res);
 		elem.disabled = false;
-		console.log('promise then', resolve);
-	}).catch(function(reject){
-		elem.disabled = false;
-		console.log('promise catch', reject);
 	});
 });
 </script>

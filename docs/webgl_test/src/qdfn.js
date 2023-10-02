@@ -120,14 +120,14 @@ var QDFN = QDFN || {};
 	}
 
 	$.bindTex2DById = function( bind, id ){
-		var p1 = new Promise(function(resolve,reject){
+		var p1 = Promise.resolve().then(function(){
 			var img = document.getElementById(id);
 			// img.onload wont fired when img.src is data-url
 			var tex = $.createTexture();
 			$.texImage2D(img);
 			$.GL.activeTexture( $.GL.TEXTURE0 + bind );
 			$.GL.bindTexture  ( $.GL.TEXTURE_2D, tex );
-			resolve(id);
+			return id;
 		});
 		return p1;
 	}

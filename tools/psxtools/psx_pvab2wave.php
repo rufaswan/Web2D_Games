@@ -76,7 +76,12 @@ vb2rip
 	.vb2   2  44100  [fsiz]
 	.xa2  [0] 44100     [4]
 
+11025  22050  33075  44100  48000
+
 game note
-	discworld 1  ac 1  ar 44100  in 10
-	discworld 2  ac 1  ar 22050  in 10
+	discworld 1  ac 1  ar 44100  -in
+	discworld 2  ac 1  ar 22050  -in
+	jinguji 5    ac 1  ar 22050  -in
+	jinguji 6    ac 2  ar 33075  in 800
+	jinguji 7    ac 2  ar 33075  in 800
  */

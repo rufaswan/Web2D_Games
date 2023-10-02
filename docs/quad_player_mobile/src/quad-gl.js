@@ -12,7 +12,7 @@ function QuadGL(Q){
 			antialias             : true,
 			depth                 : false,
 			premultipliedAlpha    : false,
-			preserveDrawingBuffer : false,
+			preserveDrawingBuffer : true,
 			stencil               : false,
 		};
 		m.GL = dom.getContext('webgl', opt);
@@ -190,11 +190,10 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
-	$.drawLine = function( quads, color, view='' ){
+	$.drawLine = function( quads, color ){
 		m.GL.useProgram( m.SHADER.lines );
 		var loc = m.shaderLoc(m.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
-		if ( ! view )
-			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
 
 		m.GL.lineWidth(2);
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
@@ -208,11 +207,10 @@ function QuadGL(Q){
 		m.indiceLine(idxlen);
 	}
 
-	$.drawKeyframe = function( dst, src, fog, tid, image, view='' ){
+	$.drawKeyframe = function( dst, src, fog, tid, image ){
 		m.GL.useProgram( m.SHADER.keyframe );
 		var loc = m.shaderLoc(m.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_tid', 'u_pxsize', 'u_tex');
-		if ( ! view )
-			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
 
 		// set up 4 textures
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
@@ -235,11 +233,10 @@ function QuadGL(Q){
 		m.indiceQuad(dstlen);
 	}
 
-	$.drawImage = function( dst, src, color, image, view='' ){
+	$.drawImage = function( dst, src, color, image ){
 		m.GL.useProgram( m.SHADER.image );
 		var loc = m.shaderLoc(m.SHADER.image, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex', 'u_color');
-		if ( ! view )
-			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
 
 		// 1 texture per draw
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w ,  1.0/image.h ];
@@ -331,6 +328,11 @@ function QuadGL(Q){
 
 	$.createPixel = function( hex, w=1, h=1 ){
 		hex = Q.math.clamp(hex, 0, 255) | 0;
+		var size  = w * h * 4;
+		var uint8 = new Uint8Array(size);
+		for ( var i=0; i < size; i++ )
+			uint8[i] = hex;
+
 		var pix = {
 			w : w ,
 			h : h ,
@@ -341,49 +343,35 @@ function QuadGL(Q){
 			m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
 			pix.w , pix.h   , 0                  , // width  , height , border
 			m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
-			new Uint8Array( Q.func.arrayRepeat(hex, w*h*4) )
+			uint8
 		);
 		return pix;
 	}
 
-	$.canvasBuffer = function( canv ){
-		if ( canv ){
-			m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, null);
-			return 0;
-		}
-		else {
-			var framebuf = m.GL.createFramebuffer();
-			m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
-			return framebuf;
-		}
-	}
+	$.readRGBA = function(){
+		var bw = m.GL.drawingBufferWidth;
+		var bh = m.GL.drawingBufferHeight;
+		var buf = new Uint8Array( bw * bh * 4 );
+		m.GL.readPixels(0, 0, bw, bh, m.GL.RGBA, m.GL.UNSIGNED_BYTE, buf);
 
-	$.framebufferTexture2D = function( framebuf, tex ){
-		if ( ! framebuf || ! tex )
-			return Q.func.error('framebufferTexture2D() = no framebuf / tex');
+		var pix = new Uint8Array( 12 + (bw * bh * 4) );
+		Q.binary.setint(pix, 0, 4, 0x41424752); // RGBA
+		Q.binary.setint(pix, 4, 4, bw);
+		Q.binary.setint(pix, 8, 4, bh);
 
-		m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
-		m.GL.bindTexture    (m.GL.TEXTURE_2D , tex);
-		m.GL.framebufferTexture2D(m.GL.FRAMEBUFFER, m.GL.COLOR_ATTACHMENT0, m.GL.TEXTURE_2D, tex, 0);
-	}
+		// vflip the image
+		var row = bw * 4;
+		for ( var dy=0; dy < bh; dy++ ){
+			var dyy = 12 + (dy * row);
+			var syy = (bh - 1 - dy) * row;
 
-	$.texture2DtoDataURL = function( tex, w, h ){
-		// use framebuffer to copy pixels to Uint8Array()
-		var pixels = new Uint8Array(w*h*4);
-		var framebuf = m.GL.createFramebuffer();
-		m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
-		m.GL.framebufferTexture2D(m.GL.FRAMEBUFFER, m.GL.COLOR_ATTACHMENT0, m.GL.TEXTURE_2D, tex, 0);
-		m.GL.readPixels(0, 0, w, h, m.GL.RGBA, m.GL.UNSIGNED_BYTE, pixels);
-
-		// use canvas 2D to save as png
-		var canv = document.createElement('canvas');
-		var c2d  = canv.getContext('2d');
-			canv.width  = w;
-			canv.height = h;
-		var image = c2d.createImageData(w, h);
-		image.data.set(pixels);
-		c2d.putImageData(image, 0, 0);
-		return canv.toDataURL('image/png');
+			for ( var x=0; x < row; x++ ){
+				pix[dyy] = buf[syy];
+				dyy++;
+				syy++;
+			}
+		} // for ( var dy=0; dy < bh; dy++ )
+		return pix;
 	}
 
 	//////////////////////////////
@@ -426,37 +414,42 @@ function QuadGL(Q){
 		return true;
 	}
 
+	//////////////////////////////
+
 	$.maxTextureSize = function(){
-		return m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+		var tex = $.createTexture();
+		m.GL.bindTexture(m.GL.TEXTURE_2D, tex);
+
+		// 1 << 32 is negative number
+		var i = 32;
+		while ( i > 0 ){
+			i--;
+			var maxsz = 1 << i;
+			m.GL.texImage2D(
+				m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
+				maxsz , maxsz   , 0                  , // width  , height , border
+				m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+				null
+			);
+
+			var error = m.GL.getError();
+			if ( error === m.GL.NO_ERROR )
+				return maxsz;
+		} // while ( i > 0 )
+		return 0;
 	}
 
 	$.isMaxTextureSize = function(w, h){
-		var max = m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+		var max = $.maxTextureSize();
 		if ( w > max )  return true;
 		if ( h > max )  return true;
 		return false;
 	}
 
-	//////////////////////////////
-
 	$.canvasSize = function(){
 		m.GL.canvas.width  = m.GL.canvas.clientWidth;
 		m.GL.canvas.height = m.GL.canvas.clientHeight;
-	}
-
-	$.canvasSpace = function(sx, sy, zoom=1){
-		m.GL.canvas.width  = m.GL.canvas.clientWidth;
-		m.GL.canvas.height = m.GL.canvas.clientHeight;
-
-		var m4 = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
-		var hw = m.GL.canvas.width  * 0.5;
-		var hh = m.GL.canvas.height * 0.5;
-		m4[0+3] = hw * sx;
-		m4[4+3] = hh * sy;
-
-		m4[0+0] = zoom;
-		m4[4+1] = zoom;
-		return m4;
+		return [ m.GL.canvas.width * 0.5 , m.GL.canvas.height * 0.5 ];
 	}
 
 	//////////////////////////////

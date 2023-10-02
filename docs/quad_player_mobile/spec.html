@@ -55,13 +55,16 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Instead creating a new drawing for every new frame, the sprites can be transform using GPU. Special effects uses this a lot.</p>
+<p>Instead creating a new drawing for every possible transformation, the sprites can be transform directly using GPU.</p>
 </li>
 <li>
 <p>Two transformation can be interpolate during animation. This creates a new type of sprites with doll-like movement.</p>
 </li>
 <li>
 <p>If the 2D sprite is properly layered, its depth value can be faked, allowing dynamic lighting and shadow calculations later.</p>
+</li>
+<li>
+<p>No additional pairing of depth map and/or normal map required.</p>
 </li>
 </ul>
 </div>
@@ -77,7 +80,7 @@
 <p>Z or depth value are not used. It is faked on drawing for perspective correction.</p>
 </li>
 <li>
-<p>X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are in px (pixels).</p>
+<p>X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
 </li>
 <li>
 <p>As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not used. They are auto-generated when drawing as 2 triangles.</p>
@@ -89,22 +92,27 @@
 <div class="sect1">
 <h2 id="_basic_file_structure">Basic File Structure</h2>
 <div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="spec-rel.png" alt="spec rel">
+</div>
+</div>
 <div class="paragraph">
 <p>A QUAD file consists of multiple sub objects:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>"keyframe" defines the drawings of a frame.</p>
+<p><mark><code>keyframe</code></mark> defines the drawings of a frame.</p>
 </li>
 <li>
-<p>"hitbox" defines the areas for collusion detection for a frame.</p>
+<p><mark><code>hitbox</code></mark> defines the areas for collusion detection for a frame.</p>
 </li>
 <li>
-<p>"animation" defines the changes between frames over time.</p>
+<p><mark><code>animation</code></mark> defines the changes between frames over time.</p>
 </li>
 <li>
-<p>"skeleton" defines the relationship between frames.</p>
+<p><mark><code>skeleton</code></mark> defines the relationship between frames.</p>
 </li>
 </ul>
 </div>
@@ -208,14 +216,32 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>type</strong> (required)<br>
-	For linking to other objects in the QUAD file.<br>
-	Valid values are: "keyframe", "hitbox", "slot", "animation" and "skeleton".</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">type (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>For linking to other objects in the QUAD file.</p>
+</li>
+<li>
+<p>Valid values are: <mark><code>keyframe</code></mark>, <mark><code>hitbox</code></mark>, <mark><code>slot</code></mark>, <mark><code>animation</code></mark> and <mark><code>skeleton</code></mark>.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>id</strong> (required)<br>
-	Array index to the object.</p>
+</dd>
+<dt class="hdlist1">id (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Array index to the object.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -254,18 +280,42 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>name</strong><br>
-	Custom string to identify this object.<br>
-	If omitted, then it is default to "keyframe %d".</p>
+</dd>
+<dt class="hdlist1">name</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom string to identify this object.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "keyframe %d".</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>layer</strong> (required)<br>
-	An array of objects to be drawn from bottom to top order (Painter&#8217;s algorithm).</p>
+</dd>
+<dt class="hdlist1">layer (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>An array of objects to be drawn from bottom to top order (Painter&#8217;s algorithm).</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -293,37 +343,103 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>dstquad</strong> (required)<br>
-	Accepts 8 numbers array, or 4 pairs of x,y coordinates.<br>
-	Measured in pixel (px), with +X is right direction, and +Y is down direction.<br>
-	If omitted, then the layer is skipped.</p>
+</dd>
+<dt class="hdlist1">dstquad (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Accepts 8 numbers array, or 4 pairs of x,y coordinates.</p>
+</li>
+<li>
+<p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
+</li>
+<li>
+<p>If omitted, then the layer object is skipped.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>fogquad</strong><br>
-	All strings is in "#rrggbbaa" format.<br>
-	Accepts a string, or 4 strings array.<br>
-	* For a string, it is duplicated 3 times to become 4 strings array.<br>
-	If omitted, then it is default to "#ffffffff" (white solid).</p>
+</dd>
+<dt class="hdlist1">fogquad</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>All strings is in "#rrggbbaa" format.</p>
+</li>
+<li>
+<p>Accepts a string, or 4 strings array.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For a string, it is duplicated 3 times to become 4 strings array.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>blend_id</strong> (optional , required for texture)<br>
-	If omitted or it is invalid, then it is default to -1 (skipped)</p>
+</li>
+<li>
+<p>If omitted, then it is default to "#ffffffff" (white solid).</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>tex_id</strong> (optional , required for texture)<br>
-	If omitted or it is invalid, then it is default to -1 (draw fog color only)</p>
+</dd>
+<dt class="hdlist1">blend_id</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Required to draw texture.</p>
+</li>
+<li>
+<p>If omitted or it is invalid, then it is default to -1 (nothing drawn).</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>srcquad</strong> (optional , required for texture)<br>
-	Requires tex_id to be valid.<br>
-	Accepts 8 numbers array, or 4 pairs of x,y coordinates.<br>
-	Measured in pixel (px), with +X is right direction, and +Y is down direction.<br>
-	If omitted, then fog color only is drawn.</p>
+</dd>
+<dt class="hdlist1">tex_id</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Required to draw texture.</p>
+</li>
+<li>
+<p>If omitted or it is invalid, then it is default to -1 (draw fog color only)</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">srcquad</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Required to draw texture.</p>
+</li>
+<li>
+<p>Accepts 8 numbers array, as in 4 pairs of x,y coordinates.</p>
+</li>
+<li>
+<p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
+</li>
+<li>
+<p>If omitted or it is invalid, then fog color only is drawn.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -344,18 +460,42 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>name</strong><br>
-	Custom string to identify this object.<br>
-	If omitted, then it is default to "hitbox %d".</p>
+</dd>
+<dt class="hdlist1">name</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom string to identify this object.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "hitbox %d".</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>layer</strong> (required)<br>
-	An array of hitbox with different properties.</p>
+</dd>
+<dt class="hdlist1">layer (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>An array of hitbox with different properties.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -373,15 +513,35 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>hitquad</strong> (required)<br>
-	Accepts 8 numbers array, or 4 pairs of x,y coordinates.<br>
-	Measured in pixel (px), with +X is right direction, and +Y is down direction.<br>
-	If omitted, then the layer is skipped.</p>
+</dd>
+<dt class="hdlist1">hitquad (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Accepts 8 numbers array, or 4 pairs of x,y coordinates.</p>
+</li>
+<li>
+<p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
+</li>
+<li>
+<p>If omitted, then the layer object is skipped.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -403,24 +563,58 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>name</strong><br>
-	Custom string to identify this object.<br>
-	If omitted, then it is default to "animation %d".</p>
+</dd>
+<dt class="hdlist1">name</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom string to identify this object.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "animation %d".</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>timeline</strong> (required)<br>
-	An array of objects to be drawn in sequence.</p>
+</dd>
+<dt class="hdlist1">timeline (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>An array of objects to be drawn in sequence.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>loop_id</strong><br>
-	Marks the array index for next frame when timeline reaches the end.<br>
-	Value 0 (zero) restarts from the beginning.<br>
-	If omitted, then it is default -1 (no loop).</p>
+</dd>
+<dt class="hdlist1">loop_id</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Marks the array index for next frame when timeline reaches the end.</p>
+</li>
+<li>
+<p>Value <code>0</code> (zero) restarts from the beginning.</p>
+</li>
+<li>
+<p>If omitted, then it is default <code>-1</code> (no loop).</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -437,35 +631,91 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>time</strong> (required)<br>
-	Measured in frames. For 60 FPS (frames per second), 1 frame is 16.67 milliseconds.</p>
+</dd>
+<dt class="hdlist1">time (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Measured in frames. For 60 FPS (frames per second), 1 frame is 16.67 milliseconds.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>attach</strong><br>
-	If omitted, then nothing is drawn.</p>
+</dd>
+<dt class="hdlist1">attach</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If omitted, then nothing is drawn.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>matrix</strong><br>
-	A 4x4 transformation matrix.<br>
-	If omitted, then it is default to 4x4 identity matrix.</p>
+</dd>
+<dt class="hdlist1">matrix</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>A 4x4 transformation matrix.</p>
+</li>
+<li>
+<p>If omitted, then it is default to 4x4 identity matrix.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>color</strong><br>
-	String is in "#rrggbbaa" format.<br>
-	If omitted, then it is default to "#ffffffff" (white solid).</p>
+</dd>
+<dt class="hdlist1">color</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>String is in "#rrggbbaa" format.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "#ffffffff" (white solid).</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>mix</strong><br>
-	Affects matrix and color value.<br>
-	Marks the animation for the current frame is interpolated with the next frame.<br>
-	* rate = t / time , t++<br>
-	* matrix or color = (current * (1 - rate)) + (next * rate)<br>
-	If omitted, then it is default to 0 (false)</p>
+</dd>
+<dt class="hdlist1">mix</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Affects matrix and color value.</p>
+</li>
+<li>
+<p>Marks the animation for the current frame is interpolated with the next frame.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>rate = t / time , t++</p>
+</li>
+<li>
+<p>matrix or color = (current * (1 - rate)) + (next * rate)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If omitted, then it is default to <code>0</code> (false)</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -486,18 +736,42 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>name</strong><br>
-	Custom string to identify this object.<br>
-	If omitted, then it is default to "skeleton %d".</p>
+</dd>
+<dt class="hdlist1">name</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom string to identify this object.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "skeleton %d".</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>bone</strong> (required)<br>
-	An array of bones to built the skeleton.</p>
+</dd>
+<dt class="hdlist1">bone (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>An array of bones to built the skeleton.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -513,29 +787,71 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>name</strong><br>
-	Custom string to identify this object.<br>
-	If omitted, then it is default to "skeleton bone %d".</p>
+</dd>
+<dt class="hdlist1">name</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom string to identify this object.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "skeleton bone %d".</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>attach</strong><br>
-	If omitted, then it is invisible bone and drawing is skipped.</p>
+</dd>
+<dt class="hdlist1">attach</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If omitted, then it is invisible bone and drawing is skipped.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>parent_id</strong><br>
-	Array index for the Bone ID to inherit transformation matrix and color from.<br>
-	If omitted, or parent_id is same as current bone ID, then it is default to -1 (no parent).</p>
+</dd>
+<dt class="hdlist1">parent_id</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Array index for the Bone ID to inherit transformation matrix and color from.</p>
+</li>
+<li>
+<p>If omitted, or parent_id is same as current bone ID, then it is default to -1 (no parent).</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>order</strong><br>
-	Bones drawing order. Lower value mean it is drawn first (bottom layer), and highest value is drawn last.<br>
-	If 2 or more bones has the same value, then these bones are ordered by its Bone ID.<br>
-	If omitted, then it is default to same value as Bone ID.</p>
+</dd>
+<dt class="hdlist1">order</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Bones drawing order. Lower value mean it is drawn first (bottom layer), and highest value is drawn last.</p>
+</li>
+<li>
+<p>If 2 or more bones has the same value, then these bones are ordered by its Bone ID.</p>
+</li>
+<li>
+<p>If omitted, then it is default to same value as Bone ID.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -561,28 +877,74 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>debug</strong><br>
-	Additional notes and/or comments.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">debug</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Additional notes and/or comments.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>name</strong><br>
-	Custom string to identify this object.<br>
-	If omitted, then it is default to "blend %d".</p>
+</dd>
+<dt class="hdlist1">name</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Custom string to identify this object.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "blend %d".</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>mode</strong> (required)<br>
-	All strings are WebGL enum for <code>blendEquation()</code> and <code>blendFunc()</code>.<br>
-	Accepts a 3 strings array, or a 6 strings array.<br>
-	* For 3 strings array, it is 1 enum for <code>blendEquation()</code> and then 2 enum for <code>blendFunc()</code>.<br>
-	* For 6 strings array, it is 2 enum for <code>blendEquationSeparate()</code> and then 4 enum for <code>blendFuncSeparate()</code>.</p>
+</dd>
+<dt class="hdlist1">mode (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>All strings are WebGL enum for <mark><code>blendEquation()</code></mark> and <mark><code>blendFunc()</code></mark>.</p>
+</li>
+<li>
+<p>Accepts a 3 strings array, or a 6 strings array.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For 3 strings array, it is 1 enum for <mark><code>blendEquation()</code></mark> and then 2 enum for <mark><code>blendFunc()</code></mark>.</p>
+</li>
+<li>
+<p>For 6 strings array, it is 2 enum for <mark><code>blendEquationSeparate()</code></mark> and then 4 enum for <mark><code>blendFuncSeparate()</code></mark>.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>color</strong> (if required)<br>
-	Constant color for <code>blendColor()</code>.<br>
-	Required when <code>blendFunc()/blendFuncSeparate()</code> uses factor "CONSTANT_COLOR", "CONSTANT_ALPHA", "ONE_MINUS_CONSTANT_COLOR" or "ONE_MINUS_CONSTANT_ALPHA".<br>
-	String is in "#rrggbbaa" format.<br>
-	If omitted, then it is default to "#ffffffff" (white solid).</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">color</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Constant color for <mark><code>blendColor()</code></mark>.</p>
+</li>
+<li>
+<p>Used when <mark><code>blendFunc()</code></mark>/<mark><code>blendFuncSeparate()</code></mark> uses factor <mark><code>CONSTANT_COLOR</code></mark>, <mark><code>CONSTANT_ALPHA</code></mark>, <mark><code>ONE_MINUS_CONSTANT_COLOR</code></mark> or <mark><code>ONE_MINUS_CONSTANT_ALPHA</code></mark>.</p>
+</li>
+<li>
+<p>String is in "#rrggbbaa" format.</p>
+</li>
+<li>
+<p>If omitted, then it is default to "#ffffffff" (white solid).</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -598,13 +960,29 @@
 }</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>list</strong> (required)<br>
-	Pointer to array of QUAD files.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">list (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Pointer to array of QUAD files.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>id</strong> (required)<br>
-	Array index to the QUAD file.</p>
+</dd>
+<dt class="hdlist1">id (required)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Array index to the QUAD file.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -612,42 +990,60 @@
 <div class="sect1">
 <h2 id="_revision_history">Revision History</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">v0.x</dt>
+<dd>
 <div class="ulist">
-<div class="title">v0.2 (2023-05-11)</div>
+<ul>
+<li>
+<p>Asciidoc formating and minor text revision.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">v0.2 (2023-05-11)</dt>
+<dd>
+<div class="ulist">
 <ul>
 <li>
 <p>Rewritten from scratch with dynamic attach system.</p>
 </li>
 <li>
-<p>Object keys are standardize to be singular form in lower_snake_case.</p>
+<p>Object keys are standardize to be singular form in <code>lower_snake_case</code>.</p>
 </li>
 <li>
-<p>Added Hitbox objects.</p>
+<p>Added <code>Hitbox</code> objects.</p>
 </li>
 <li>
-<p>Added Slot objects.</p>
+<p>Added <code>Slot</code> objects.</p>
 </li>
 <li>
-<p>Added Skeleton objects.</p>
+<p>Added <code>Skeleton</code> objects.</p>
 </li>
 <li>
-<p>Added Blending objects.</p>
+<p>Added <code>Blending</code> objects.</p>
 </li>
 <li>
-<p>Animation object is simplified to one-track only.</p>
+<p><code>Animation</code> object is simplified to one-track only.</p>
 </li>
 <li>
-<p>Added matrix and color mixing to Animation objects.</p>
+<p>Added matrix and color mixing to <code>Animation</code> objects.</p>
 </li>
 </ul>
 </div>
+</dd>
+<dt class="hdlist1">v0.1 (2021-03-01)</dt>
+<dd>
 <div class="ulist">
-<div class="title">v0.1 (2021-03-01)</div>
 <ul>
 <li>
 <p>Initial release and first draft.</p>
 </li>
 </ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>

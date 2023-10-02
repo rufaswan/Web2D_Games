@@ -47,17 +47,19 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<canvas id='canvas'>Canvas not supported</canvas>
 	<div id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
-		<button id='btn_hits'>hitbox</button>
-		<button id='btn_lines'>lines</button>
+		<button id='btn_hits' class='btn_on'>hit</button>
+		<button id='btn_autofit' class='btn_on'>fit</button>
+		<button id='btn_flipx' class='btn_off'>X</button>
+		<button id='btn_flipy' class='btn_off'>Y</button>
+		<button id='btn_lines'>line</button>
 	</div>
 	<div id='viewer_bottom_nav'>
-		<button id='btn_prev2'>&lt;&lt;</button>
+		<button id='btn_prev'>&lt;&lt;</button>
 
-		<button id='btn_prev'>&lt;</button>
+		<button id='btn_autonext'>auto</button>
 		<button id='btn_cur'>0</button>
-		<button id='btn_next'>&gt;</button>
 
-		<button id='btn_next2'>&gt;&gt;</button>
+		<button id='btn_next'>&gt;&gt;</button>
 	</div>
 </div>
 
@@ -74,133 +76,23 @@ function button_select( elem ){
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
-	qdata_attach(QuadList[0], type, id);
-	displayViewer(HTML, true);
-}
-
-function button_export_png( qdata, out, size ){
-	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
-		return;
-	var camera = [1,0,0,0 , 0,-1,0,0 , 0,0,1,0 , 0,0,0,1];
-	var color  = [1,1,1,1];
-	var maxsz = QUAD.gl.maxTextureSize() >> 1;
-	var maxps = maxsz * 0.5;
-
-	var framebuf = QUAD.gl.canvasBuffer(0);
-	var tex      = QUAD.gl.createPixel (0, maxsz, maxsz);
-	HTML.canvas.width  = maxsz;
-	HTML.canvas.height = maxsz;
-	QUAD.gl.framebufferTexture2D(framebuf, tex.tex);
-
-	//var half = [size[0]*0.5 , size[1]*0.5];
-	var pos  = [
-		-maxps + (size[0] * 0.5),
-		 maxps - (size[1] * 0.5),
-	];
-	qdata.anim_fps = 0;
-	var is_skip = false;
-	for ( var y = pos[1] ; y > pos[0]; y -= size[1] ){
-		if ( (y-size[1]) < pos[0] )  continue;
-		if ( (y+size[1]) > pos[1] )  continue;
-		if ( is_skip )  continue;
-
-		for ( var x = pos[0]; x < pos[1]; x += size[0] ){
-			if ( (x-size[0]) < pos[0] )  continue;
-			if ( (x+size[0]) > pos[1] )  continue;
-			if ( is_skip )  continue;
-
-			camera[0+3] = x;
-			camera[4+3] = y;
-
-			QUAD.func.qdata_draw(qdata, camera, color);
-			if ( ! qdata.is_draw )
-				is_skip = true;
-			qdata.anim_fps++;
-		} // for ( var x = pos[0]; x < pos[1]; x += size[0] )
-	} // for ( var y = pos[1]; y > pos[0]; y -= size[1] )
-
-	var a = document.createElement('a');
-	a.href = QUAD.gl.texture2DtoDataURL(tex.tex, tex.w, tex.h);
-	a.setAttribute('download', out + '.png');
-	a.setAttribute('target'  , '_blank');
-	a.click();
-
-	return QUAD.gl.canvasBuffer(1);
-}
-
-function button_export_zip( qdata, out, size ){
-	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
-		return;
-	var camera = [1,0,0,0 , 0,-1,0,0 , 0,0,1,0 , 0,0,0,1];
-	var color  = [1,1,1,1];
-	var len = 60; // 60 fps for 1 secs
-
-	var list = {};
-	var framebuf = QUAD.gl.canvasBuffer(0);
-	var tex      = QUAD.gl.createPixel (0, size[0], size[1]);
-	HTML.canvas.width  = tex.w;
-	HTML.canvas.height = tex.h;
-	QUAD.gl.framebufferTexture2D(framebuf, tex.tex);
-
-	for ( var i=0; i < len; i++ ){
-		var pad = '00000000' + i + '.png';
-		var fn  = pad.substring( pad.length - 8 );
-
-		qdata.anim_fps = i;
-		QUAD.gl.clear();
-		QUAD.func.qdata_draw(qdata, camera, color);
-		if ( ! qdata.is_draw )
-			break;
-
-		var b64  = QUAD.gl.texture2DtoDataURL(tex.tex, tex.w, tex.h);
-		list[fn] = QUAD.binary.fromBase64(b64);
-	} // for ( var i=0; i < len; i++ )
-
-	var zip = QUAD.binary.zipwrite(list);
-	var a = document.createElement('a');
-	a.href = 'data:application/zip;base64,' + QUAD.binary.toBase64(zip);
-	a.setAttribute('download', out + '.zip');
-	a.setAttribute('target'  , '_blank');
-	a.click();
-
-	return QUAD.gl.canvasBuffer(1);
-}
-
-function button_export( type, elem ){
-	// backup
 	var qdata = QuadList[0];
-	var bak = {
-		type  : qdata.attach.type  ,
-		id    : qdata.attach.id    ,
-		fps   : qdata.anim_fps     ,
-		line  : qdata.is_lines     ,
-		hit   : qdata.is_hits      ,
-		canvw : HTML.canvas.width  ,
-		canvh : HTML.canvas.height ,
-	};
+	qdata_attach(qdata, type, id);
+	displayViewer(HTML, true);
+
+	// canvas == [0,0] when VIEWER == display none
+	qdata.zoom = QUAD.func.autofitZoom(qdata);
+}
+
+function button_export( elem ){
+	var qdata = QuadList[0];
+	var fmt   = elem.innerHTML.toLowerCase();
 
 	var par2 = elem.parentElement.parentElement;
-	qdata.attach.type = par2.getAttribute('data-type');
-	qdata.attach.id   = par2.getAttribute('data-id') | 0;
-	qdata.is_lines    = false;
-	qdata.is_hits     = false;
-	QUAD.func.log('export ' + type + ' = ' + qdata.attach.type + '/' + qdata.attach.id);
-
-	var size = [256,256];
-	var out = qdata.name + '_' + qdata.attach.type + '_' + qdata.attach.id;
-	switch ( type ){
-		case 'png':  button_export_png(qdata, out, size); break;
-		case 'zip':  button_export_zip(qdata, out, size); break;
-	} // switch ( type )
-
-	// restore
-	qdata.attach.type  = bak.type;
-	qdata.attach.id    = bak.id;
-	qdata.anim_fps     = bak.fps;
-	qdata.is_lines     = bak.line;
-	qdata.is_hits      = bak.hit;
-	HTML.canvas.width  = bak.canvw;
-	HTML.canvas.height = bak.canvh;
+	var type = par2.getAttribute('data-type');
+	var id   = par2.getAttribute('data-id') | 0;
+	var fps  = qdata.anim_fps;
+	QUAD.export.export(fmt, qdata, HTML.canvas, type, id, fps);
 }
 
 var HTML = getHtmlIds();
@@ -248,6 +140,7 @@ var SELECTED = '';
 
 			if ( qdata.name ){
 				HTML.quad_data.innerHTML = '';
+				document.title = qdata.name + ' [Quad Player Mobile]';
 
 				qdata_tagtable( qdata.QUAD.tag, HTML.quad_data );
 
@@ -263,14 +156,16 @@ var SELECTED = '';
 							var t = {};
 							t.name = v.name || qv + ' ' + k;
 							t.p    = '<p onclick="button_select(this);">' + t.name + '</p>';
-							t.btn1 = '<button onclick="button_export(\'png\', this);">png</button>';
-							t.btn2 = '<button onclick="button_export(\'zip\', this);">zip</button>';
+							t.btn  = '';
+							t.btn += '<button onclick="button_export(this);">png</button>';
+							t.btn += '<button onclick="button_export(this);">zip</button>';
+							//t.btn += '<button onclick="button_export(this);">rgba</button>';
 
 							var tr = document.createElement('tr');
 							tr.setAttribute('data-type', qv);
 							tr.setAttribute('data-id'  , k);
 							if ( ['keyframe','hitbox','slot'].indexOf(qv) === -1 )
-								tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn1 + t.btn2 + '</td>';
+								tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn + '</td>';
 							else
 								tr.innerHTML = '<td>' + t.p + '</td>';
 
@@ -300,38 +195,95 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		QuadList[0].is_lines = ! QuadList[0].is_lines;
-		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'lines' : 'texture';
+		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
 	});
 	HTML.btn_hits.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
-		QuadList[0].is_hits = ! QuadList[0].is_hits;
+		if ( HTML.btn_hits.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_hits, -1);
+			QuadList[0].is_hits = false;
+		} else {
+			btnToggle(HTML.btn_hits, 1);
+			QuadList[0].is_hits = true;
+		}
+	});
+	HTML.btn_autofit.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_autofit.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_autofit, -1);
+			QuadList[0].zoom = 1;
+		} else {
+			btnToggle(HTML.btn_autofit, 1);
+			QuadList[0].zoom = QUAD.func.autofitZoom(QuadList[0]);
+		}
+	});
+	HTML.btn_flipx.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_flipx.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_flipx, -1);
+			QuadList[0].is_flipx = false;
+		} else {
+			btnToggle(HTML.btn_flipx, 1);
+			QuadList[0].is_flipx = true;
+		}
+	});
+	HTML.btn_flipy.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_flipy.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_flipy, -1);
+			QuadList[0].is_flipy = false;
+		} else {
+			btnToggle(HTML.btn_flipy, 1);
+			QuadList[0].is_flipy = true;
+		}
 	});
 
 	var IS_BTN_CLICK = 0;
+	var IS_AUTONEXT  = false;
 	HTML.btn_prev.addEventListener('click', function(){
-		IS_BTN_CLICK = 0;
-		btnPrevNext(QuadList[0], -1);
+		if ( IS_AUTONEXT ){
+			btnToggle(HTML.btn_next, -1);
+			if ( HTML.btn_prev.classList.contains('btn_on') ){
+				btnToggle(HTML.btn_prev, -1);
+				IS_BTN_CLICK = 0;
+			} else {
+				btnToggle(HTML.btn_prev, 1);
+				IS_BTN_CLICK = -1;
+			}
+		} else
+			IS_BTN_CLICK = -1;
 	});
 	HTML.btn_next.addEventListener('click', function(){
-		IS_BTN_CLICK = 0;
-		btnPrevNext(QuadList[0], 1);
-	});
-	HTML.btn_prev2.addEventListener('click', function(){
-		if ( IS_BTN_CLICK === 0 )
-			IS_BTN_CLICK = -1;
-		else
-			IS_BTN_CLICK = 0;
-	});
-	HTML.btn_next2.addEventListener('click', function(){
-		if ( IS_BTN_CLICK === 0 )
+		if ( IS_AUTONEXT ){
+			btnToggle(HTML.btn_prev, -1);
+			if ( HTML.btn_next.classList.contains('btn_on') ){
+				btnToggle(HTML.btn_next, -1);
+				IS_BTN_CLICK = 0;
+			} else {
+				btnToggle(HTML.btn_next, 1);
+				IS_BTN_CLICK = 1;
+			}
+		} else
 			IS_BTN_CLICK = 1;
-		else
-			IS_BTN_CLICK = 0;
+	});
+	HTML.btn_autonext.addEventListener('click', function(){
+		if ( IS_AUTONEXT ){
+			btnToggle(HTML.btn_prev, 0);
+			btnToggle(HTML.btn_next, 0);
+			IS_AUTONEXT = false;
+		} else {
+			btnToggle(HTML.btn_prev, -1);
+			btnToggle(HTML.btn_next, -1);
+			IS_AUTONEXT = true;
+		}
 	});
 
 	var FPS_DRAW = 0;
-	var CAMERA = QUAD.gl.canvasSpace(0 , 0.5 , 1);
+	var CAMERA = QUAD.math.matrix4();
 	var COLOR  = [1,1,1,1];
 	function render(){
 		requestAnimationFrame(render);
@@ -344,11 +296,13 @@ var SELECTED = '';
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (FPS_DRAW & 7) === 0 ){
 			btnPrevNext(qdata, IS_BTN_CLICK);
+			if ( ! IS_AUTONEXT )
+				IS_BTN_CLICK = 0;
 		}
 
 		// redraw only when changed
 		if ( QUAD.func.isChanged(qdata) ){
-			CAMERA = QUAD.gl.canvasSpace(0 , 0.5 , 1);
+			CAMERA = QUAD.func.viewerCamera(qdata);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();
 

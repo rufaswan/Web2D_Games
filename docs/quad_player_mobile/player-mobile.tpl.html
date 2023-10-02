@@ -44,6 +44,18 @@ button {
 	text-transform   : uppercase;
 }
 
+button.btn_on {
+	background-color : rgba(0 , 255 , 0 , 0.5);
+	color            : #000;
+	border-color     : #fff;
+}
+
+button.btn_off {
+	background-color : rgba(255 , 0 , 0 , 0.5);
+	color            : #fff;
+	border-color     : #000;
+}
+
 textarea {
 	display          : block;
 	width            : 95%;
@@ -125,7 +137,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #quad_data button {
-	margin : 0 18px;
+	margin : 0 9px;
 }
 
 #quad_data p {
@@ -186,6 +198,22 @@ function displayViewer( html, toggle ){
 		html.viewer.style.display   = 'none';
 		html.debugger.style.display = 'block';
 	}
+}
+
+function btnToggle( elem, turn ){
+	var css = elem.classList;
+	if ( turn > 0 ){
+		css.remove('btn_off');
+		css.add('btn_on');
+		return;
+	}
+	if ( turn < 0 ){
+		css.remove('btn_on');
+		css.add('btn_off');
+		return;
+	}
+	css.remove('btn_on');
+	css.remove('btn_off');
 }
 
 function btnPrevNext( qdata, adj ){
@@ -261,7 +289,7 @@ var QUAD = {};
 			antialias             : true,
 			depth                 : false,
 			premultipliedAlpha    : false,
-			preserveDrawingBuffer : false,
+			preserveDrawingBuffer : true,
 			stencil               : false,
 		};
 		m.GL = dom.getContext('webgl', opt);
@@ -439,11 +467,10 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.drawLine = function( quads, color, view='' ){
+	$.drawLine = function( quads, color ){
 		m.GL.useProgram( m.SHADER.lines );
 		var loc = m.shaderLoc(m.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
-		if ( ! view )
-			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
 
 		m.GL.lineWidth(2);
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
@@ -457,11 +484,10 @@ var QUAD = {};
 		m.indiceLine(idxlen);
 	}
 
-	$.drawKeyframe = function( dst, src, fog, tid, image, view='' ){
+	$.drawKeyframe = function( dst, src, fog, tid, image ){
 		m.GL.useProgram( m.SHADER.keyframe );
 		var loc = m.shaderLoc(m.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_tid', 'u_pxsize', 'u_tex');
-		if ( ! view )
-			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
 
 		// set up 4 textures
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
@@ -484,11 +510,10 @@ var QUAD = {};
 		m.indiceQuad(dstlen);
 	}
 
-	$.drawImage = function( dst, src, color, image, view='' ){
+	$.drawImage = function( dst, src, color, image ){
 		m.GL.useProgram( m.SHADER.image );
 		var loc = m.shaderLoc(m.SHADER.image, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex', 'u_color');
-		if ( ! view )
-			view = [m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5];
+		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
 
 		// 1 texture per draw
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w ,  1.0/image.h ];
@@ -580,6 +605,11 @@ var QUAD = {};
 
 	$.createPixel = function( hex, w=1, h=1 ){
 		hex = Q.math.clamp(hex, 0, 255) | 0;
+		var size  = w * h * 4;
+		var uint8 = new Uint8Array(size);
+		for ( var i=0; i < size; i++ )
+			uint8[i] = hex;
+
 		var pix = {
 			w : w ,
 			h : h ,
@@ -590,49 +620,35 @@ var QUAD = {};
 			m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
 			pix.w , pix.h   , 0                  , // width  , height , border
 			m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
-			new Uint8Array( Q.func.arrayRepeat(hex, w*h*4) )
+			uint8
 		);
 		return pix;
 	}
 
-	$.canvasBuffer = function( canv ){
-		if ( canv ){
-			m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, null);
-			return 0;
-		}
-		else {
-			var framebuf = m.GL.createFramebuffer();
-			m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
-			return framebuf;
-		}
-	}
+	$.readRGBA = function(){
+		var bw = m.GL.drawingBufferWidth;
+		var bh = m.GL.drawingBufferHeight;
+		var buf = new Uint8Array( bw * bh * 4 );
+		m.GL.readPixels(0, 0, bw, bh, m.GL.RGBA, m.GL.UNSIGNED_BYTE, buf);
 
-	$.framebufferTexture2D = function( framebuf, tex ){
-		if ( ! framebuf || ! tex )
-			return Q.func.error('framebufferTexture2D() = no framebuf / tex');
+		var pix = new Uint8Array( 12 + (bw * bh * 4) );
+		Q.binary.setint(pix, 0, 4, 0x41424752); // RGBA
+		Q.binary.setint(pix, 4, 4, bw);
+		Q.binary.setint(pix, 8, 4, bh);
 
-		m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
-		m.GL.bindTexture    (m.GL.TEXTURE_2D , tex);
-		m.GL.framebufferTexture2D(m.GL.FRAMEBUFFER, m.GL.COLOR_ATTACHMENT0, m.GL.TEXTURE_2D, tex, 0);
-	}
+		// vflip the image
+		var row = bw * 4;
+		for ( var dy=0; dy < bh; dy++ ){
+			var dyy = 12 + (dy * row);
+			var syy = (bh - 1 - dy) * row;
 
-	$.texture2DtoDataURL = function( tex, w, h ){
-		// use framebuffer to copy pixels to Uint8Array()
-		var pixels = new Uint8Array(w*h*4);
-		var framebuf = m.GL.createFramebuffer();
-		m.GL.bindFramebuffer(m.GL.FRAMEBUFFER, framebuf);
-		m.GL.framebufferTexture2D(m.GL.FRAMEBUFFER, m.GL.COLOR_ATTACHMENT0, m.GL.TEXTURE_2D, tex, 0);
-		m.GL.readPixels(0, 0, w, h, m.GL.RGBA, m.GL.UNSIGNED_BYTE, pixels);
-
-		// use canvas 2D to save as png
-		var canv = document.createElement('canvas');
-		var c2d  = canv.getContext('2d');
-			canv.width  = w;
-			canv.height = h;
-		var image = c2d.createImageData(w, h);
-		image.data.set(pixels);
-		c2d.putImageData(image, 0, 0);
-		return canv.toDataURL('image/png');
+			for ( var x=0; x < row; x++ ){
+				pix[dyy] = buf[syy];
+				dyy++;
+				syy++;
+			}
+		} // for ( var dy=0; dy < bh; dy++ )
+		return pix;
 	}
 
 	//////////////////////////////
@@ -675,37 +691,42 @@ var QUAD = {};
 		return true;
 	}
 
+	//////////////////////////////
+
 	$.maxTextureSize = function(){
-		return m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+		var tex = $.createTexture();
+		m.GL.bindTexture(m.GL.TEXTURE_2D, tex);
+
+		// 1 << 32 is negative number
+		var i = 32;
+		while ( i > 0 ){
+			i--;
+			var maxsz = 1 << i;
+			m.GL.texImage2D(
+				m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
+				maxsz , maxsz   , 0                  , // width  , height , border
+				m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+				null
+			);
+
+			var error = m.GL.getError();
+			if ( error === m.GL.NO_ERROR )
+				return maxsz;
+		} // while ( i > 0 )
+		return 0;
 	}
 
 	$.isMaxTextureSize = function(w, h){
-		var max = m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+		var max = $.maxTextureSize();
 		if ( w > max )  return true;
 		if ( h > max )  return true;
 		return false;
 	}
 
-	//////////////////////////////
-
 	$.canvasSize = function(){
 		m.GL.canvas.width  = m.GL.canvas.clientWidth;
 		m.GL.canvas.height = m.GL.canvas.clientHeight;
-	}
-
-	$.canvasSpace = function(sx, sy, zoom=1){
-		m.GL.canvas.width  = m.GL.canvas.clientWidth;
-		m.GL.canvas.height = m.GL.canvas.clientHeight;
-
-		var m4 = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
-		var hw = m.GL.canvas.width  * 0.5;
-		var hh = m.GL.canvas.height * 0.5;
-		m4[0+3] = hw * sx;
-		m4[4+3] = hh * sy;
-
-		m4[0+0] = zoom;
-		m4[4+1] = zoom;
-		return m4;
+		return [ m.GL.canvas.width * 0.5 , m.GL.canvas.height * 0.5 ];
 	}
 
 	//////////////////////////////
@@ -739,32 +760,9 @@ var QUAD = {};
 		return m.LOGS.join("\n\n");
 	}
 
-	$.arrayRepeat = function( val, cnt ){
-		var res = [];
-		if ( Array.isArray(val) ){
-			for ( var i=0; i < cnt; i++ )
-				res = res.concat(val);
-		}
-		else {
-			for ( var i=0; i < cnt; i++ )
-				res.push(val);
-		}
-		return res;
-	}
-
-	$.intPad = function( int, len ){
-		var sign = false;
-		int |= 0;
-		if ( int < 0 ){
-			sign = true;
-			int  = -int;
-		}
-		var str = '00000000' + int.toString();
-		str = str.substring(str.length - len);
-		if ( sign )
-			return '-' + str;
-		else
-			return str;
+	$.fileExtension = function( fn ){
+		var ext = fn.split('.').pop();
+		return ext.toLowerCase();
 	}
 
 	//////////////////////////////
@@ -840,7 +838,7 @@ var QUAD = {};
 	m.uploadHandler = function( qdata, type, fname, data ){
 		switch( type ){
 			case 'quad':
-				var quad = JSON.parse(data);
+				var quad   = JSON.parse(data);
 				qdata.QUAD = m.quadfileCheck(quad);
 				qdata.name = fname.replace(/[^A-Za-z0-9]/g, '_');
 				return $.log('UPLOAD quad = ' + fname);
@@ -944,7 +942,8 @@ var QUAD = {};
 					quad.keyframe[kk] = 0;
 					return;
 				}
-				kv.debug = kv.debug || 0;
+				kv.debug  = kv.debug || 0;
+				kv.__SIZE = 0;
 
 				kv.layer.forEach(function(lv,lk){
 					if ( ! Array.isArray(lv.dstquad) || lv.dstquad.length !== 8 ){
@@ -988,6 +987,7 @@ var QUAD = {};
 				}
 				av.loop_id = ( av.loop_id === undefined ) ? -1 : av.loop_id; // 0 is valid
 				av.debug   = av.debug || 0;
+				av.__SIZE  = 0;
 
 				av.timeline.forEach(function(tv,tk){
 					tv.debug = tv.debug || 0;
@@ -1012,7 +1012,8 @@ var QUAD = {};
 					quad.skeleton[sk] = 0;
 					return;
 				}
-				sv.debug = sv.debug || 0;
+				sv.debug  = sv.debug || 0;
+				sv.__SIZE = 0;
 
 				sv.bone.forEach(function(bv,bk){
 					if ( ! Array.isArray(bv.child) ){
@@ -1029,11 +1030,6 @@ var QUAD = {};
 		} // if ( quad.skeleton )
 
 		return quad;
-	}
-
-	$.fileExtension = function( fn ){
-		var ext = fn.split('.').pop();
-		return ext.toLowerCase();
 	}
 
 	//////////////////////////////
@@ -1317,14 +1313,44 @@ var QUAD = {};
 		qdata.line_index = 0;
 	}
 
+	$.autofitZoom = function( qdata ){
+		var canvsz  = Q.gl.canvasSize();
+		var sprsize = Q.export.sizeAttach(qdata, qdata.attach.type, qdata.attach.id);
+		if ( sprsize ){
+			var symm = Q.export.sizeSymmetry(sprsize);
+			var zoomx = canvsz[0] / symm[0];
+			var zoomy = canvsz[1] / symm[1];
+			return ( zoomx < zoomy ) ? zoomx : zoomy;
+		}
+		return 1;
+	}
+
+	$.viewerCamera = function(qdata, autofit=false){
+		var m4 = Q.math.matrix4();
+		var canvsz = Q.gl.canvasSize();
+
+		m4[0+3] = canvsz[0] *   0; // move x , no change
+		m4[4+3] = canvsz[1] * 0.5; // move y , half downward
+
+		if ( qdata.is_flipx )  m4[0+0] = -m4[0+0];
+		if ( qdata.is_flipy )  m4[4+1] = -m4[4+1];
+
+		m4[0+0] *= qdata.zoom;
+		m4[4+1] *= qdata.zoom;
+		return m4;
+	}
+
 	$.isChanged = function( qdata ){
 		var c = 0;
 		c += ( qdata.prev[0] === qdata.attach.type );
-		c += ( qdata.prev[1] === qdata.attach.id );
-		c += ( qdata.prev[2] === qdata.anim_fps );
-		c += ( qdata.prev[3] === qdata.is_lines );
-		c += ( qdata.prev[4] === qdata.is_hits );
-		if ( c === 5 )
+		c += ( qdata.prev[1] === qdata.attach.id   );
+		c += ( qdata.prev[2] === qdata.anim_fps    );
+		c += ( qdata.prev[3] === qdata.is_lines    );
+		c += ( qdata.prev[4] === qdata.is_hits     );
+		c += ( qdata.prev[5] === qdata.is_flipx    );
+		c += ( qdata.prev[6] === qdata.is_flipy    );
+		c += ( qdata.prev[7] === qdata.zoom        );
+		if ( c === 8 )
 			return false;
 
 		qdata.prev = [
@@ -1333,12 +1359,12 @@ var QUAD = {};
 			qdata.anim_fps    ,
 			qdata.is_lines    ,
 			qdata.is_hits     ,
+			qdata.is_flipx    ,
+			qdata.is_flipy    ,
+			qdata.zoom        ,
 		];
 		return true;
 	}
-
-	//////////////////////////////
-
 
 	//////////////////////////////
 
@@ -1356,17 +1382,21 @@ var QUAD = {};
 		return n;
 	}
 
-	$.pow2_ceil = function( n ){
-		var sign = false;
-		if ( n < 0 ){
-			sign = true;
-			n = -n;
-		}
+	$.pow2_ceil = function( num ){
+		num |= 0;
+		if ( num === 0 )
+			return 0;
 
-		var i = 1;
-		while ( n > i )
-			i <<= 1;
-		return ( sign ) ? -i : i;
+		var sra = 0;
+		while ( num > 1 ){
+			sra++;
+			num >>= 1;
+		}
+		while ( num < -1 ){
+			sra++;
+			num >>= 1;
+		}
+		return (num << sra);
 	}
 
 	//////////////////////////////
@@ -1608,6 +1638,12 @@ var QUAD = {};
 		return $.quad_multi4(mat4, quad);
 	}
 
+	$.quad_multi2 = function( mat4, quad ){
+		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
+		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
+		return [].concat( c0.slice(0,2) , c1.slice(0,2) );
+	}
+
 	$.quad_multi4 = function( mat4, quad ){
 		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
 		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
@@ -1633,34 +1669,374 @@ var QUAD = {};
 
 } // function QuadMath
 
+	function QuadExport(Q){
+	var $ = this;
+	var m = {}; // all public
+
+	//////////////////////////////
+
+	m.sizeCompare = function( base, size ){
+		if ( size[0] < base[0] )  base[0] = size[0]; // x1
+		if ( size[1] < base[1] )  base[1] = size[1]; // y1
+		if ( size[2] > base[2] )  base[2] = size[2]; // x2
+		if ( size[3] > base[3] )  base[3] = size[3]; // y2
+	}
+
+	$.sizeAttach = function( qdata, type, id ){
+		if ( ! Array.isArray( qdata.QUAD[ type ] ) )
+			return 0;
+		if ( ! qdata.QUAD[ type ][ id ] )
+			return 0;
+
+		var cur = qdata.QUAD[ type ][ id ];
+		switch ( type ){
+			case 'keyframe':
+				if ( cur.__SIZE )
+					return cur.__SIZE;
+
+				var siz = [0,0,0,0];
+				cur.layer.forEach(function(lv,lk){
+					if ( ! lv )
+						return;
+					var dst = lv.dstquad;
+					for ( var i=0; i < 8; i += 2 ){
+						if ( dst[i+0] < siz[0] )  siz[0] = dst[i+0];
+						if ( dst[i+1] < siz[1] )  siz[1] = dst[i+1];
+						if ( dst[i+0] > siz[2] )  siz[2] = dst[i+0];
+						if ( dst[i+1] > siz[3] )  siz[3] = dst[i+1];
+					}
+				});
+				cur.__SIZE = siz;
+				return siz;
+
+			case 'slot':
+				var siz = [0,0,0,0];
+				cur.forEach(function(sv,sk){
+					var xy = $.sizeAttach(qdata, sv.type, sv.id);
+					if ( ! xy )
+						return;
+					m.sizeCompare(siz, xy);
+				});
+				return siz;
+
+			case 'animation':
+				if ( cur.__SIZE )
+					return cur.__SIZE;
+
+				var siz = [0,0,0,0];
+				cur.timeline.forEach(function(tv,tk){
+					if ( ! tv.attach )
+						return;
+
+					var xy = $.sizeAttach(qdata, tv.attach.type, tv.attach.id);
+					if ( ! xy )
+						return;
+					var xy2 = Q.math.quad_multi4(tv.matrix, xy);
+					var t;
+					if ( xy2[0] > xy2[2] ){
+						t = xy2[0];
+						xy2[0] = xy2[2];
+						xy2[2] = t;
+					}
+					if ( xy2[1] > xy2[3] ){
+						t = xy2[1];
+						xy2[1] = xy2[3];
+						xy2[3] = t;
+					}
+					m.sizeCompare(siz, xy2);
+				});
+				cur.__SIZE = siz;
+				return siz;
+
+			case 'skeleton':
+				if ( cur.__SIZE )
+					return cur.__SIZE;
+
+				var res = [];
+				var is_done = false;
+				while ( ! is_done ){
+					is_done = true;
+					cur.bone.forEach(function(bv,bk){
+						if ( res[bk] )
+							return;
+
+						is_done = false;
+						var xy  = 0;
+						if ( bv.parent_id < 0 ){
+							if ( bv.attach )
+								xy = $.sizeAttach(qdata, bv.attach.type, bv.attach.id);
+
+							if ( xy ){
+								res[bk] = xy;
+								res[bk][4] = (xy[0] + xy[2]) * 0.5; // mid x
+								res[bk][5] = (xy[1] + xy[3]) * 0.5; // mid y
+							}
+							else
+								res[bk] = [0,0,0,0 , 0,0];
+
+							return;
+						}
+
+						var par = res[bv.parent_id];
+						if ( ! par )
+							return;
+
+						if ( bv.attach )
+							xy = $.sizeAttach(qdata, bv.attach.type, bv.attach.id);
+
+						if ( xy ){
+							res[bk] = [
+								xy[0] + par[4] , xy[1] + par[5] ,
+								xy[2] + par[4] , xy[3] + par[5] ,
+							];
+							res[bk][4] = (res[bk][0] + res[bk][2]) * 0.5; // mid x
+							res[bk][5] = (res[bk][1] + res[bk][3]) * 0.5; // mid y
+						}
+						else
+							res[bk] = par;
+					});
+				} // while ( ! is_done )
+
+				var siz = [0,0,0,0];
+				res.forEach(function(rv,rk){
+					m.sizeCompare(siz, rv);
+				});
+				cur.__SIZE = siz;
+				return siz;
+		} // switch ( type )
+		return 0;
+	}
+
+	$.sizeSymmetry = function( size ){
+		var abs = [
+			Math.abs(size[0]) , Math.abs(size[1]) ,
+			Math.abs(size[2]) , Math.abs(size[3]) ,
+		];
+		var maxx = ( abs[0] > abs[2] ) ? abs[0] : abs[2];
+		var maxy = ( abs[1] > abs[3] ) ? abs[1] : abs[3];
+		return [ maxx , maxy ];
+	}
+
+	//////////////////////////////
+
+	m.bak = {};
+	m.backup = function( qdata, canvas, type, id, fps ){
+		m.bak = {
+			type  : qdata.attach.type ,
+			id    : qdata.attach.id   ,
+			fps   : qdata.anim_fps    ,
+			line  : qdata.is_lines    ,
+			hit   : qdata.is_hits     ,
+			canvw : canvas.width  ,
+			canvh : canvas.height ,
+			fname : qdata.name + '_' + type + '_' + id + '_' + fps,
+		};
+		qdata.attach.type = type;
+		qdata.attach.id   = id;
+		qdata.anim_fps    = fps;
+		qdata.is_lines    = false;
+		qdata.is_hits     = false;
+	}
+
+	m.restore = function( qdata, canvas ){
+		qdata.attach.type = m.bak.type;
+		qdata.attach.id   = m.bak.id;
+		qdata.anim_fps    = m.bak.fps;
+		qdata.is_lines    = m.bak.line;
+		qdata.is_hits     = m.bak.hit;
+		canvas.width      = m.bak.canvw;
+		canvas.height     = m.bak.canvh;
+	}
+
+	m.download = function( fname, dataurl ){
+		if ( ! fname || ! dataurl )
+			return;
+
+		var a = document.createElement('a');
+		a.href = dataurl;
+		a.setAttribute('download', fname);
+		a.setAttribute('target'  , '_blank');
+		a.click();
+	}
+
+	//////////////////////////////
+
+	m.exportSheet = function( qdata, canvas ){
+		var line_spacing = 1.15;
+		var sprsize = $.sizeAttach(qdata, qdata.attach.type, qdata.attach.id);
+		var sprwh = [
+			(sprsize[2] - sprsize[0]) * line_spacing ,
+			(sprsize[3] - sprsize[1]) * line_spacing ,
+		];
+		var sprmid = [
+			(sprsize[2] + sprsize[0]) * 0.5 ,
+			(sprsize[3] + sprsize[1]) * 0.5 ,
+		];
+
+		var texsize = Q.gl.maxTextureSize() >> 1;
+		canvas.width  = Math.floor(texsize / sprwh[0]) * Math.floor(sprwh[0]);
+		canvas.height = Math.floor(texsize / sprwh[1]) * Math.floor(sprwh[1]);
+
+		// canvas from -halftex to +halftex
+		// sprite 0,0 is at center
+		var halfpos = [
+			canvas.width * 0.5 , canvas.height * 0.5 ,
+			sprwh[0]     * 0.5 , sprwh[1]      * 0.5 ,
+		];
+
+		var is_skip = false;
+		var camera = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
+		var color  = [1,1,1,1];
+		Q.func.qdata_clear(qdata);
+
+		if ( qdata.is_flipx )  camera[0+0] = -camera[0+0];
+		if ( qdata.is_flipy )  camera[4+1] = -camera[4+1];
+
+		// from -1.0 to +1.0
+		for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] ){
+			if ( is_skip )
+				continue;
+
+			// from -1.0 to +1.0
+			for ( var dx = -halfpos[0]; dx < halfpos[0]; dx += sprwh[0] ){
+				if ( is_skip )
+					continue;
+
+				camera[0+3] = dx + halfpos[2] - sprmid[0];
+				camera[4+3] = dy + halfpos[3] - sprmid[1];
+
+				qdata.is_draw = false;
+				Q.func.qdata_draw(qdata, camera, color);
+				if ( ! qdata.is_draw )
+					is_skip = true;
+				qdata.anim_fps++;
+			} // for ( var dx = -canvpos[0]; dx < canvpos[0]; dx += sprwh[0] )
+		} // for ( var dy = canvpos[1]; dy > -canvpos[1]; dy += sprwh[1] )
+
+		return canvas.toDataURL('image/png');
+	}
+
+	m.exportZip = function( qdata, canvas, fmt ){
+		var sprsize = $.sizeAttach(qdata, qdata.attach.type, qdata.attach.id);
+		var symm = $.sizeSymmetry(sprsize);
+
+		var line_spacing = 1.15;
+		canvas.width  = Math.ceil(symm[0] * 2 * line_spacing);
+		canvas.height = Math.ceil(symm[1] * 2 * line_spacing);
+
+		var texsize = Q.gl.maxTextureSize() >> 1;
+		var len  = Math.floor(texsize / canvas.width) * Math.floor(texsize / canvas.height);
+		var list = {};
+
+		var camera = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
+		var color  = [1,1,1,1];
+
+		if ( qdata.is_flipx )  camera[0+0] = -camera[0+0];
+		if ( qdata.is_flipy )  camera[4+1] = -camera[4+1];
+
+		for ( var i=0; i < len; i++ ){
+			Q.func.qdata_clear(qdata);
+			Q.func.qdata_draw (qdata, camera, color);
+			if ( ! qdata.is_draw )
+				break;
+
+			switch ( fmt ){
+				case 'png':
+					// %06d.png
+					var pad = '00000000' + qdata.anim_fps + '.png';
+					var fn  = pad.substring( pad.length - 10 );
+
+					list[fn] = QUAD.binary.fromBase64( canvas.toDataURL('image/png') );
+					break;
+
+				case 'rgba':
+					// %06d.rgba
+					var pad = '00000000' + qdata.anim_fps + '.rgba';
+					var fn  = pad.substring( pad.length - 11 );
+
+					list[fn] = Q.gl.readRGBA();
+					break;
+			} // switch ( fmt )
+
+			qdata.anim_fps++;
+		} // for ( var i=0; i < len; i++ )
+
+		var uint8 = Q.binary.zipwrite(list);
+		return 'data:application/zip;base64,' + Q.binary.toBase64(uint8);
+	}
+
+	//////////////////////////////
+
+	$.export = function( fmt, qdata, canvas, type, id, fps ){
+		var start = performance.now();
+		m.backup(qdata, canvas, type, id, fps);
+
+		switch ( fmt ){
+			case 'png':
+				var fname   = m.bak.fname + '.png';
+				var dataurl = m.exportSheet(qdata, canvas);
+				m.download(fname, dataurl);
+				break;
+			case 'zip':
+				var fname   = m.bak.fname + '.png.zip';
+				var dataurl = m.exportZip(qdata, canvas, 'png');
+				m.download(fname, dataurl);
+				break;
+			case 'rgba':
+				var fname   = m.bak.fname + '.rgba.zip';
+				var dataurl = m.exportZip(qdata, canvas, 'rgba');
+				m.download(fname, dataurl);
+				break;
+		} // switch ( fmt )
+
+		m.restore(qdata, canvas);
+		Q.func.log('QUAD export' , fmt , 'time' , performance.now()-start);
+
+		// performance
+		//   png    1193 ms   1,606,494 byte
+		//   zip    4893 ms   3,332,087 byte
+		//   rgba  62134 ms  59,437,722 byte
+	}
+
+	//////////////////////////////
+
+} // function QuadExport
+
 	function BinaryReader(){
 	var $ = this;
-	var m = {};
+	//var m = {};
 
 	//////////////////////////////
 
 	$.uint2txt = function( buf ){
 		buf = new Uint8Array(buf);
-		return m.getstr(buf, 0, buf.byteLength);
+		return $.getstr(buf, 0, buf.byteLength);
+	}
+
+	$.catUint8 = function( a, b ){
+		var c = new Uint8Array( a.byteLength + b.byteLength );
+		c.set(a, 0);
+		c.set(b, a.byteLength);
+		return c;
 	}
 
 	//////////////////////////////
 
-	m.getint = function( buf, pos, len ){
+	$.getint = function( buf, pos, len ){
 		var int = 0;
 		for ( var i=0; i < len; i++ )
 			int |= (buf[pos+i] << (i*8));
 		return int;
 	}
 
-	m.getstr = function( buf, pos, len ){
+	$.getstr = function( buf, pos, len ){
 		var str = '';
 		for ( var i=0; i < len; i++ )
 			str += String.fromCharCode( buf[pos+i] );
 		return str;
 	}
 
-	m.getsub = function( buf, pos, len ){
+	$.getsub = function( buf, pos, len ){
 		var sub = new Uint8Array(len);
 		for ( var i=0; i < len; i++ )
 			sub[i] = buf[pos+i];
@@ -1673,18 +2049,18 @@ var QUAD = {};
 		var pos  = 0;
 		while (1)
 		{
-			var mgc = m.getint(zipbuf, pos, 4);
+			var mgc = $.getint(zipbuf, pos, 4);
 			if ( mgc !== 0x04034b50 )  // PK34
 				break;
 
-			var sz1 = m.getint(zipbuf, pos + 0x12, 4); // data size
-			var sz2 = m.getint(zipbuf, pos + 0x1a, 2); // filename length
-			var sz3 = m.getint(zipbuf, pos + 0x1c, 2); // extra length
+			var sz1 = $.getint(zipbuf, pos + 0x12, 4); // data size
+			var sz2 = $.getint(zipbuf, pos + 0x1a, 2); // filename length
+			var sz3 = $.getint(zipbuf, pos + 0x1c, 2); // extra length
 
 			// uncompressed file/store only
 			if ( zipbuf[pos + 8] === 0 ){
-				var fn = m.getstr(zipbuf, pos + 0x1e            , sz2);
-				var dt = m.getsub(zipbuf, pos + 0x1e + sz2 + sz3, sz1);
+				var fn = $.getstr(zipbuf, pos + 0x1e            , sz2);
+				var dt = $.getsub(zipbuf, pos + 0x1e + sz2 + sz3, sz1);
 				list[fn] = dt;
 			}
 
@@ -1695,19 +2071,19 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	m.setint = function( buf, pos, len, int ){
+	$.setint = function( buf, pos, len, int ){
 		for ( var i=0; i < len; i++ ){
 			var b = int >> (i*8);
 			buf[pos+i] = b & 0xff;
 		}
 	}
 
-	m.setstr = function( buf, pos, str ){
+	$.setstr = function( buf, pos, str ){
 		for ( var i=0; i < str.length; i++ )
 			buf[pos+i] = str.charCodeAt(i);
 	}
 
-	m.setsub = function( buf, pos, sub ){
+	$.setsub = function( buf, pos, sub ){
 		for ( var i=0; i < sub.byteLength; i++ )
 			buf[pos+i] = sub[i];
 	}
@@ -1736,36 +2112,36 @@ var QUAD = {};
 			dtlen = list[ key[i] ].byteLength;
 			dtcrc = $.crc32( list[ key[i] ] );
 
-			m.setint(zipbuf , pos12 , 4 , 0x02014b50);  // PK12
+			$.setint(zipbuf , pos12 , 4 , 0x02014b50);  // PK12
 			zipbuf[ pos12 + 0x04 ] = 10;  // ver 1.0
 			zipbuf[ pos12 + 0x06 ] = 10;  // ver 1.0
-			m.setsub(zipbuf , pos12 + 0x10 , dtcrc);
-			m.setint(zipbuf , pos12 + 0x14 , 4 , dtlen);  // compressed
-			m.setint(zipbuf , pos12 + 0x18 , 4 , dtlen);  // uncompressed
-			m.setint(zipbuf , pos12 + 0x1c , 2 , fnlen);
-			m.setint(zipbuf , pos12 + 0x2a , 4 , pos34);
+			$.setsub(zipbuf , pos12 + 0x10 , dtcrc);
+			$.setint(zipbuf , pos12 + 0x14 , 4 , dtlen);  // compressed
+			$.setint(zipbuf , pos12 + 0x18 , 4 , dtlen);  // uncompressed
+			$.setint(zipbuf , pos12 + 0x1c , 2 , fnlen);
+			$.setint(zipbuf , pos12 + 0x2a , 4 , pos34);
 				pos12 += 0x2e;
-			m.setstr(zipbuf , pos12 , key[i]);
+			$.setstr(zipbuf , pos12 , key[i]);
 				pos12 += fnlen;
 
-			m.setint(zipbuf , pos34 , 4 , 0x04034b50);  // PK34
+			$.setint(zipbuf , pos34 , 4 , 0x04034b50);  // PK34
 			zipbuf[ pos34 + 0x04 ] = 10;  // ver 1.0
-			m.setsub(zipbuf , pos34 + 0x0e , dtcrc);
-			m.setint(zipbuf , pos34 + 0x12 , 4 , dtlen);  // compressed
-			m.setint(zipbuf , pos34 + 0x16 , 4 , dtlen);  // uncompressed
-			m.setint(zipbuf , pos34 + 0x1a , 2 , fnlen);
+			$.setsub(zipbuf , pos34 + 0x0e , dtcrc);
+			$.setint(zipbuf , pos34 + 0x12 , 4 , dtlen);  // compressed
+			$.setint(zipbuf , pos34 + 0x16 , 4 , dtlen);  // uncompressed
+			$.setint(zipbuf , pos34 + 0x1a , 2 , fnlen);
 				pos34 += 0x1e;
-			m.setstr(zipbuf , pos34 , key[i]);
+			$.setstr(zipbuf , pos34 , key[i]);
 				pos34 += fnlen;
-			m.setsub(zipbuf , pos34 , list[ key[i] ]);
+			$.setsub(zipbuf , pos34 , list[ key[i] ]);
 				pos34 += dtlen;
 		} // for ( var i=0; i < key.length; i++ ){
 
-		m.setint(zipbuf , pos56 , 4, 0x06054b50);  // PK56
-		m.setint(zipbuf , pos56 + 0x08 , 2, key.length);  // disk entry
-		m.setint(zipbuf , pos56 + 0x0a , 2, key.length);  // total entry
-		m.setint(zipbuf , pos56 + 0x0c , 4, pk12len);  // PK12 length
-		m.setint(zipbuf , pos56 + 0x10 , 4, pk34len);  // PK12 pos
+		$.setint(zipbuf , pos56 , 4, 0x06054b50);  // PK56
+		$.setint(zipbuf , pos56 + 0x08 , 2, key.length);  // disk entry
+		$.setint(zipbuf , pos56 + 0x0a , 2, key.length);  // total entry
+		$.setint(zipbuf , pos56 + 0x0c , 4, pk12len);  // PK12 length
+		$.setint(zipbuf , pos56 + 0x10 , 4, pk34len);  // PK12 pos
 		return zipbuf;
 	}
 
@@ -1917,10 +2293,11 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2023-05-11 (beta)';
+	$.version = 'ver 2023-10-2 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
+	$.export = new QuadExport($);
 	$.binary = new BinaryReader();
 
 })(QUAD);
@@ -1942,9 +2319,12 @@ function QuadData(qlist){
 
 	// activated data
 	$.is_wait  = true;
+	$.is_flipx = false;
+	$.is_flipy = false;
 	$.is_draw  = false;
 	$.is_hits  = true;
 	$.is_lines = true;
+	$.zoom   = 1;
 	$.matrix = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
 	$.color  = [1,1,1,1];
 
@@ -1978,17 +2358,19 @@ function QuadData(qlist){
 	<canvas id='canvas'>Canvas not supported</canvas>
 	<div id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
-		<button id='btn_hits'>hitbox</button>
-		<button id='btn_lines'>lines</button>
+		<button id='btn_hits' class='btn_on'>hit</button>
+		<button id='btn_autofit' class='btn_on'>fit</button>
+		<button id='btn_flipx' class='btn_off'>X</button>
+		<button id='btn_flipy' class='btn_off'>Y</button>
+		<button id='btn_lines'>line</button>
 	</div>
 	<div id='viewer_bottom_nav'>
-		<button id='btn_prev2'>&lt;&lt;</button>
+		<button id='btn_prev'>&lt;&lt;</button>
 
-		<button id='btn_prev'>&lt;</button>
+		<button id='btn_autonext'>auto</button>
 		<button id='btn_cur'>0</button>
-		<button id='btn_next'>&gt;</button>
 
-		<button id='btn_next2'>&gt;&gt;</button>
+		<button id='btn_next'>&gt;&gt;</button>
 	</div>
 </div>
 
@@ -2005,133 +2387,23 @@ function button_select( elem ){
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
-	qdata_attach(QuadList[0], type, id);
-	displayViewer(HTML, true);
-}
-
-function button_export_png( qdata, out, size ){
-	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
-		return;
-	var camera = [1,0,0,0 , 0,-1,0,0 , 0,0,1,0 , 0,0,0,1];
-	var color  = [1,1,1,1];
-	var maxsz = QUAD.gl.maxTextureSize() >> 1;
-	var maxps = maxsz * 0.5;
-
-	var framebuf = QUAD.gl.canvasBuffer(0);
-	var tex      = QUAD.gl.createPixel (0, maxsz, maxsz);
-	HTML.canvas.width  = maxsz;
-	HTML.canvas.height = maxsz;
-	QUAD.gl.framebufferTexture2D(framebuf, tex.tex);
-
-	//var half = [size[0]*0.5 , size[1]*0.5];
-	var pos  = [
-		-maxps + (size[0] * 0.5),
-		 maxps - (size[1] * 0.5),
-	];
-	qdata.anim_fps = 0;
-	var is_skip = false;
-	for ( var y = pos[1] ; y > pos[0]; y -= size[1] ){
-		if ( (y-size[1]) < pos[0] )  continue;
-		if ( (y+size[1]) > pos[1] )  continue;
-		if ( is_skip )  continue;
-
-		for ( var x = pos[0]; x < pos[1]; x += size[0] ){
-			if ( (x-size[0]) < pos[0] )  continue;
-			if ( (x+size[0]) > pos[1] )  continue;
-			if ( is_skip )  continue;
-
-			camera[0+3] = x;
-			camera[4+3] = y;
-
-			QUAD.func.qdata_draw(qdata, camera, color);
-			if ( ! qdata.is_draw )
-				is_skip = true;
-			qdata.anim_fps++;
-		} // for ( var x = pos[0]; x < pos[1]; x += size[0] )
-	} // for ( var y = pos[1]; y > pos[0]; y -= size[1] )
-
-	var a = document.createElement('a');
-	a.href = QUAD.gl.texture2DtoDataURL(tex.tex, tex.w, tex.h);
-	a.setAttribute('download', out + '.png');
-	a.setAttribute('target'  , '_blank');
-	a.click();
-
-	return QUAD.gl.canvasBuffer(1);
-}
-
-function button_export_zip( qdata, out, size ){
-	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
-		return;
-	var camera = [1,0,0,0 , 0,-1,0,0 , 0,0,1,0 , 0,0,0,1];
-	var color  = [1,1,1,1];
-	var len = 60; // 60 fps for 1 secs
-
-	var list = {};
-	var framebuf = QUAD.gl.canvasBuffer(0);
-	var tex      = QUAD.gl.createPixel (0, size[0], size[1]);
-	HTML.canvas.width  = tex.w;
-	HTML.canvas.height = tex.h;
-	QUAD.gl.framebufferTexture2D(framebuf, tex.tex);
-
-	for ( var i=0; i < len; i++ ){
-		var pad = '00000000' + i + '.png';
-		var fn  = pad.substring( pad.length - 8 );
-
-		qdata.anim_fps = i;
-		QUAD.gl.clear();
-		QUAD.func.qdata_draw(qdata, camera, color);
-		if ( ! qdata.is_draw )
-			break;
-
-		var b64  = QUAD.gl.texture2DtoDataURL(tex.tex, tex.w, tex.h);
-		list[fn] = QUAD.binary.fromBase64(b64);
-	} // for ( var i=0; i < len; i++ )
-
-	var zip = QUAD.binary.zipwrite(list);
-	var a = document.createElement('a');
-	a.href = 'data:application/zip;base64,' + QUAD.binary.toBase64(zip);
-	a.setAttribute('download', out + '.zip');
-	a.setAttribute('target'  , '_blank');
-	a.click();
-
-	return QUAD.gl.canvasBuffer(1);
-}
-
-function button_export( type, elem ){
-	// backup
 	var qdata = QuadList[0];
-	var bak = {
-		type  : qdata.attach.type  ,
-		id    : qdata.attach.id    ,
-		fps   : qdata.anim_fps     ,
-		line  : qdata.is_lines     ,
-		hit   : qdata.is_hits      ,
-		canvw : HTML.canvas.width  ,
-		canvh : HTML.canvas.height ,
-	};
+	qdata_attach(qdata, type, id);
+	displayViewer(HTML, true);
+
+	// canvas == [0,0] when VIEWER == display none
+	qdata.zoom = QUAD.func.autofitZoom(qdata);
+}
+
+function button_export( elem ){
+	var qdata = QuadList[0];
+	var fmt   = elem.innerHTML.toLowerCase();
 
 	var par2 = elem.parentElement.parentElement;
-	qdata.attach.type = par2.getAttribute('data-type');
-	qdata.attach.id   = par2.getAttribute('data-id') | 0;
-	qdata.is_lines    = false;
-	qdata.is_hits     = false;
-	QUAD.func.log('export ' + type + ' = ' + qdata.attach.type + '/' + qdata.attach.id);
-
-	var size = [256,256];
-	var out = qdata.name + '_' + qdata.attach.type + '_' + qdata.attach.id;
-	switch ( type ){
-		case 'png':  button_export_png(qdata, out, size); break;
-		case 'zip':  button_export_zip(qdata, out, size); break;
-	} // switch ( type )
-
-	// restore
-	qdata.attach.type  = bak.type;
-	qdata.attach.id    = bak.id;
-	qdata.anim_fps     = bak.fps;
-	qdata.is_lines     = bak.line;
-	qdata.is_hits      = bak.hit;
-	HTML.canvas.width  = bak.canvw;
-	HTML.canvas.height = bak.canvh;
+	var type = par2.getAttribute('data-type');
+	var id   = par2.getAttribute('data-id') | 0;
+	var fps  = qdata.anim_fps;
+	QUAD.export.export(fmt, qdata, HTML.canvas, type, id, fps);
 }
 
 var HTML = getHtmlIds();
@@ -2179,6 +2451,7 @@ var SELECTED = '';
 
 			if ( qdata.name ){
 				HTML.quad_data.innerHTML = '';
+				document.title = qdata.name + ' [Quad Player Mobile]';
 
 				qdata_tagtable( qdata.QUAD.tag, HTML.quad_data );
 
@@ -2194,14 +2467,16 @@ var SELECTED = '';
 							var t = {};
 							t.name = v.name || qv + ' ' + k;
 							t.p    = '<p onclick="button_select(this);">' + t.name + '</p>';
-							t.btn1 = '<button onclick="button_export(\'png\', this);">png</button>';
-							t.btn2 = '<button onclick="button_export(\'zip\', this);">zip</button>';
+							t.btn  = '';
+							t.btn += '<button onclick="button_export(this);">png</button>';
+							t.btn += '<button onclick="button_export(this);">zip</button>';
+							//t.btn += '<button onclick="button_export(this);">rgba</button>';
 
 							var tr = document.createElement('tr');
 							tr.setAttribute('data-type', qv);
 							tr.setAttribute('data-id'  , k);
 							if ( ['keyframe','hitbox','slot'].indexOf(qv) === -1 )
-								tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn1 + t.btn2 + '</td>';
+								tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn + '</td>';
 							else
 								tr.innerHTML = '<td>' + t.p + '</td>';
 
@@ -2231,38 +2506,95 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		QuadList[0].is_lines = ! QuadList[0].is_lines;
-		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'lines' : 'texture';
+		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
 	});
 	HTML.btn_hits.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
-		QuadList[0].is_hits = ! QuadList[0].is_hits;
+		if ( HTML.btn_hits.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_hits, -1);
+			QuadList[0].is_hits = false;
+		} else {
+			btnToggle(HTML.btn_hits, 1);
+			QuadList[0].is_hits = true;
+		}
+	});
+	HTML.btn_autofit.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_autofit.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_autofit, -1);
+			QuadList[0].zoom = 1;
+		} else {
+			btnToggle(HTML.btn_autofit, 1);
+			QuadList[0].zoom = QUAD.func.autofitZoom(QuadList[0]);
+		}
+	});
+	HTML.btn_flipx.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_flipx.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_flipx, -1);
+			QuadList[0].is_flipx = false;
+		} else {
+			btnToggle(HTML.btn_flipx, 1);
+			QuadList[0].is_flipx = true;
+		}
+	});
+	HTML.btn_flipy.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_flipy.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_flipy, -1);
+			QuadList[0].is_flipy = false;
+		} else {
+			btnToggle(HTML.btn_flipy, 1);
+			QuadList[0].is_flipy = true;
+		}
 	});
 
 	var IS_BTN_CLICK = 0;
+	var IS_AUTONEXT  = false;
 	HTML.btn_prev.addEventListener('click', function(){
-		IS_BTN_CLICK = 0;
-		btnPrevNext(QuadList[0], -1);
+		if ( IS_AUTONEXT ){
+			btnToggle(HTML.btn_next, -1);
+			if ( HTML.btn_prev.classList.contains('btn_on') ){
+				btnToggle(HTML.btn_prev, -1);
+				IS_BTN_CLICK = 0;
+			} else {
+				btnToggle(HTML.btn_prev, 1);
+				IS_BTN_CLICK = -1;
+			}
+		} else
+			IS_BTN_CLICK = -1;
 	});
 	HTML.btn_next.addEventListener('click', function(){
-		IS_BTN_CLICK = 0;
-		btnPrevNext(QuadList[0], 1);
-	});
-	HTML.btn_prev2.addEventListener('click', function(){
-		if ( IS_BTN_CLICK === 0 )
-			IS_BTN_CLICK = -1;
-		else
-			IS_BTN_CLICK = 0;
-	});
-	HTML.btn_next2.addEventListener('click', function(){
-		if ( IS_BTN_CLICK === 0 )
+		if ( IS_AUTONEXT ){
+			btnToggle(HTML.btn_prev, -1);
+			if ( HTML.btn_next.classList.contains('btn_on') ){
+				btnToggle(HTML.btn_next, -1);
+				IS_BTN_CLICK = 0;
+			} else {
+				btnToggle(HTML.btn_next, 1);
+				IS_BTN_CLICK = 1;
+			}
+		} else
 			IS_BTN_CLICK = 1;
-		else
-			IS_BTN_CLICK = 0;
+	});
+	HTML.btn_autonext.addEventListener('click', function(){
+		if ( IS_AUTONEXT ){
+			btnToggle(HTML.btn_prev, 0);
+			btnToggle(HTML.btn_next, 0);
+			IS_AUTONEXT = false;
+		} else {
+			btnToggle(HTML.btn_prev, -1);
+			btnToggle(HTML.btn_next, -1);
+			IS_AUTONEXT = true;
+		}
 	});
 
 	var FPS_DRAW = 0;
-	var CAMERA = QUAD.gl.canvasSpace(0 , 0.5 , 1);
+	var CAMERA = QUAD.math.matrix4();
 	var COLOR  = [1,1,1,1];
 	function render(){
 		requestAnimationFrame(render);
@@ -2275,11 +2607,13 @@ var SELECTED = '';
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (FPS_DRAW & 7) === 0 ){
 			btnPrevNext(qdata, IS_BTN_CLICK);
+			if ( ! IS_AUTONEXT )
+				IS_BTN_CLICK = 0;
 		}
 
 		// redraw only when changed
 		if ( QUAD.func.isChanged(qdata) ){
-			CAMERA = QUAD.gl.canvasSpace(0 , 0.5 , 1);
+			CAMERA = QUAD.func.viewerCamera(qdata);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();
 

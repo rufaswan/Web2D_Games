@@ -25,32 +25,9 @@ function QuadFunc(Q){
 		return m.LOGS.join("\n\n");
 	}
 
-	$.arrayRepeat = function( val, cnt ){
-		var res = [];
-		if ( Array.isArray(val) ){
-			for ( var i=0; i < cnt; i++ )
-				res = res.concat(val);
-		}
-		else {
-			for ( var i=0; i < cnt; i++ )
-				res.push(val);
-		}
-		return res;
-	}
-
-	$.intPad = function( int, len ){
-		var sign = false;
-		int |= 0;
-		if ( int < 0 ){
-			sign = true;
-			int  = -int;
-		}
-		var str = '00000000' + int.toString();
-		str = str.substring(str.length - len);
-		if ( sign )
-			return '-' + str;
-		else
-			return str;
+	$.fileExtension = function( fn ){
+		var ext = fn.split('.').pop();
+		return ext.toLowerCase();
 	}
 
 	//////////////////////////////
@@ -126,7 +103,7 @@ function QuadFunc(Q){
 	m.uploadHandler = function( qdata, type, fname, data ){
 		switch( type ){
 			case 'quad':
-				var quad = JSON.parse(data);
+				var quad   = JSON.parse(data);
 				qdata.QUAD = m.quadfileCheck(quad);
 				qdata.name = fname.replace(/[^A-Za-z0-9]/g, '_');
 				return $.log('UPLOAD quad = ' + fname);
@@ -230,7 +207,8 @@ function QuadFunc(Q){
 					quad.keyframe[kk] = 0;
 					return;
 				}
-				kv.debug = kv.debug || 0;
+				kv.debug  = kv.debug || 0;
+				kv.__SIZE = 0;
 
 				kv.layer.forEach(function(lv,lk){
 					if ( ! Array.isArray(lv.dstquad) || lv.dstquad.length !== 8 ){
@@ -274,6 +252,7 @@ function QuadFunc(Q){
 				}
 				av.loop_id = ( av.loop_id === undefined ) ? -1 : av.loop_id; // 0 is valid
 				av.debug   = av.debug || 0;
+				av.__SIZE  = 0;
 
 				av.timeline.forEach(function(tv,tk){
 					tv.debug = tv.debug || 0;
@@ -298,7 +277,8 @@ function QuadFunc(Q){
 					quad.skeleton[sk] = 0;
 					return;
 				}
-				sv.debug = sv.debug || 0;
+				sv.debug  = sv.debug || 0;
+				sv.__SIZE = 0;
 
 				sv.bone.forEach(function(bv,bk){
 					if ( ! Array.isArray(bv.child) ){
@@ -315,11 +295,6 @@ function QuadFunc(Q){
 		} // if ( quad.skeleton )
 
 		return quad;
-	}
-
-	$.fileExtension = function( fn ){
-		var ext = fn.split('.').pop();
-		return ext.toLowerCase();
 	}
 
 	//////////////////////////////
@@ -603,14 +578,44 @@ function QuadFunc(Q){
 		qdata.line_index = 0;
 	}
 
+	$.autofitZoom = function( qdata ){
+		var canvsz  = Q.gl.canvasSize();
+		var sprsize = Q.export.sizeAttach(qdata, qdata.attach.type, qdata.attach.id);
+		if ( sprsize ){
+			var symm = Q.export.sizeSymmetry(sprsize);
+			var zoomx = canvsz[0] / symm[0];
+			var zoomy = canvsz[1] / symm[1];
+			return ( zoomx < zoomy ) ? zoomx : zoomy;
+		}
+		return 1;
+	}
+
+	$.viewerCamera = function(qdata, autofit=false){
+		var m4 = Q.math.matrix4();
+		var canvsz = Q.gl.canvasSize();
+
+		m4[0+3] = canvsz[0] *   0; // move x , no change
+		m4[4+3] = canvsz[1] * 0.5; // move y , half downward
+
+		if ( qdata.is_flipx )  m4[0+0] = -m4[0+0];
+		if ( qdata.is_flipy )  m4[4+1] = -m4[4+1];
+
+		m4[0+0] *= qdata.zoom;
+		m4[4+1] *= qdata.zoom;
+		return m4;
+	}
+
 	$.isChanged = function( qdata ){
 		var c = 0;
 		c += ( qdata.prev[0] === qdata.attach.type );
-		c += ( qdata.prev[1] === qdata.attach.id );
-		c += ( qdata.prev[2] === qdata.anim_fps );
-		c += ( qdata.prev[3] === qdata.is_lines );
-		c += ( qdata.prev[4] === qdata.is_hits );
-		if ( c === 5 )
+		c += ( qdata.prev[1] === qdata.attach.id   );
+		c += ( qdata.prev[2] === qdata.anim_fps    );
+		c += ( qdata.prev[3] === qdata.is_lines    );
+		c += ( qdata.prev[4] === qdata.is_hits     );
+		c += ( qdata.prev[5] === qdata.is_flipx    );
+		c += ( qdata.prev[6] === qdata.is_flipy    );
+		c += ( qdata.prev[7] === qdata.zoom        );
+		if ( c === 8 )
 			return false;
 
 		qdata.prev = [
@@ -619,12 +624,12 @@ function QuadFunc(Q){
 			qdata.anim_fps    ,
 			qdata.is_lines    ,
 			qdata.is_hits     ,
+			qdata.is_flipx    ,
+			qdata.is_flipy    ,
+			qdata.zoom        ,
 		];
 		return true;
 	}
-
-	//////////////////////////////
-
 
 	//////////////////////////////
 

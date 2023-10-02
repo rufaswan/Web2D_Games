@@ -19,6 +19,18 @@ button {
 	text-transform   : uppercase;
 }
 
+button.btn_on {
+	background-color : rgba(0 , 255 , 0 , 0.5);
+	color            : #000;
+	border-color     : #fff;
+}
+
+button.btn_off {
+	background-color : rgba(255 , 0 , 0 , 0.5);
+	color            : #fff;
+	border-color     : #000;
+}
+
 textarea {
 	display          : block;
 	width            : 95%;
@@ -100,7 +112,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #quad_data button {
-	margin : 0 18px;
+	margin : 0 9px;
 }
 
 #quad_data p {

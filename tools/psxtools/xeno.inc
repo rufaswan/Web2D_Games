@@ -23,6 +23,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 function xeno_decode( &$file )
 {
+	$file = rtrim($file, ZERO);
+
 	$dec = '';
 	trace("== begin sub_80032cac()\n");
 	$ed = strlen($file);
@@ -50,16 +52,19 @@ function xeno_decode( &$file )
 
 		if ( $flg )
 		{
+			// accidently rtrim
+			while ( ! isset( $file[$st+1] ) )
+				$file .= ZERO;
+
 			$b1 = ord( $file[$st+0] ); // t0
 			$b2 = ord( $file[$st+1] ); // t4
 				$st += 2;
-			$pos = ($b2 & 0xf) << 8;
-				$pos |= $b1;
-			$len = ($b2 >> 4) + 3;
+			$dpos = (($b2 & 0xf) << 8) | $b1;
+			$dlen =  ($b2 >> 4)  + 3;
 
-			for ( $i=0; $i < $len; $i++ )
+			for ( $i=0; $i < $dlen; $i++ )
 			{
-				$p = strlen($dec) - $pos;
+				$p = strlen($dec) - $dpos;
 				$dec .= $dec[$p];
 			}
 		}
@@ -75,6 +80,7 @@ function xeno_decode( &$file )
 	$file = $dec;
 	return;
 }
+//////////////////////////////
 
 /*
 xeno demo

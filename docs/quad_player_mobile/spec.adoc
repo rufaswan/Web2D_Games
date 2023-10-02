@@ -9,25 +9,29 @@ QUAD file is mainly for 2D sprites on modern 3D graphics engine. Every drawing i
 
 The major difference from 2D sprite:
 
-* Instead creating a new drawing for every new frame, the sprites can be transform using GPU. Special effects uses this a lot.
+* Instead creating a new drawing for every possible transformation, the sprites can be transform directly using GPU.
 * Two transformation can be interpolate during animation. This creates a new type of sprites with doll-like movement.
 * If the 2D sprite is properly layered, its depth value can be faked, allowing dynamic lighting and shadow calculations later.
+* No additional pairing of depth map and/or normal map required.
 
 The major difference from 3D model:
 
 * It is still animated in frames, instead of using delta time. On a normal 60 FPS (frames per seconds) game, 1 frame is 16.67 milliseconds.
 * Z or depth value are not used. It is faked on drawing for perspective correction.
-* X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are in px (pixels).
+* X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are measured in px (pixels).
 * As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not used. They are auto-generated when drawing as 2 triangles.
+* No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.
 
 == Basic File Structure
 
+image::spec-rel.png[]
+
 A QUAD file consists of multiple sub objects:
 
-* "keyframe" defines the drawings of a frame.
-* "hitbox" defines the areas for collusion detection for a frame.
-* "animation" defines the changes between frames over time.
-* "skeleton" defines the relationship between frames.
+* #`keyframe`# defines the drawings of a frame.
+* #`hitbox`# defines the areas for collusion detection for a frame.
+* #`animation`# defines the changes between frames over time.
+* #`skeleton`# defines the relationship between frames.
 
 === quad_object
 
@@ -108,12 +112,12 @@ If invalid, the object is not attached.
 
 ----
 
-*type* (required)
-	For linking to other objects in the QUAD file.
-	Valid values are: "keyframe", "hitbox", "slot", "animation" and "skeleton".
+type (required)::
+	* For linking to other objects in the QUAD file.
+	* Valid values are: #`keyframe`#, #`hitbox`#, #`slot`#, #`animation`# and #`skeleton`#.
 
-*id* (required)
-	Array index to the object.
+id (required)::
+	* Array index to the object.
 
 === slot_object
 
@@ -147,15 +151,15 @@ It is to define a drawing for a frame. The result is an assembled sprite.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*name*
-	Custom string to identify this object.
-	If omitted, then it is default to "keyframe %d".
+name::
+	* Custom string to identify this object.
+	* If omitted, then it is default to "keyframe %d".
 
-*layer* (required)
-	An array of objects to be drawn from bottom to top order (Painter's algorithm).
+layer (required)::
+	* An array of objects to be drawn from bottom to top order (Painter's algorithm).
 
 === keyframe_layer_object
 
@@ -182,31 +186,33 @@ It is to define a drawing for a frame. The result is an assembled sprite.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*dstquad* (required)
-	Accepts 8 numbers array, or 4 pairs of x,y coordinates.
-	Measured in pixel (px), with +X is right direction, and +Y is down direction.
-	If omitted, then the layer is skipped.
+dstquad (required)::
+	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
+	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
+	* If omitted, then the layer object is skipped.
 
-*fogquad*
-	All strings is in "#rrggbbaa" format.
-	Accepts a string, or 4 strings array.
-	* For a string, it is duplicated 3 times to become 4 strings array.
-	If omitted, then it is default to "#ffffffff" (white solid).
+fogquad::
+	* All strings is in "#rrggbbaa" format.
+	* Accepts a string, or 4 strings array.
+	** For a string, it is duplicated 3 times to become 4 strings array.
+	* If omitted, then it is default to "#ffffffff" (white solid).
 
-*blend_id* (optional , required for texture)
-	If omitted or it is invalid, then it is default to -1 (skipped)
+blend_id::
+	* Required to draw texture.
+	* If omitted or it is invalid, then it is default to -1 (nothing drawn).
 
-*tex_id* (optional , required for texture)
-	If omitted or it is invalid, then it is default to -1 (draw fog color only)
+tex_id::
+	* Required to draw texture.
+	* If omitted or it is invalid, then it is default to -1 (draw fog color only)
 
-*srcquad* (optional , required for texture)
-	Requires tex_id to be valid.
-	Accepts 8 numbers array, or 4 pairs of x,y coordinates.
-	Measured in pixel (px), with +X is right direction, and +Y is down direction.
-	If omitted, then fog color only is drawn.
+srcquad::
+	* Required to draw texture.
+	* Accepts 8 numbers array, as in 4 pairs of x,y coordinates.
+	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
+	* If omitted or it is invalid, then fog color only is drawn.
 
 === hitbox_object
 
@@ -225,15 +231,15 @@ It is to define the areas for collusion detection for a frame.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*name*
-	Custom string to identify this object.
-	If omitted, then it is default to "hitbox %d".
+name::
+	* Custom string to identify this object.
+	* If omitted, then it is default to "hitbox %d".
 
-*layer* (required)
-	An array of hitbox with different properties.
+layer (required)::
+	* An array of hitbox with different properties.
 
 === hitbox_layer_object
 
@@ -250,13 +256,13 @@ It is to define the areas for collusion detection for a frame.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*hitquad* (required)
-	Accepts 8 numbers array, or 4 pairs of x,y coordinates.
-	Measured in pixel (px), with +X is right direction, and +Y is down direction.
-	If omitted, then the layer is skipped.
+hitquad (required)::
+	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
+	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
+	* If omitted, then the layer object is skipped.
 
 === animation_object
 
@@ -276,20 +282,20 @@ It is to define the *changes* between frames over time.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*name*
-	Custom string to identify this object.
-	If omitted, then it is default to "animation %d".
+name::
+	* Custom string to identify this object.
+	* If omitted, then it is default to "animation %d".
 
-*timeline* (required)
-	An array of objects to be drawn in sequence.
+timeline (required)::
+	* An array of objects to be drawn in sequence.
 
-*loop_id*
-	Marks the array index for next frame when timeline reaches the end.
-	Value 0 (zero) restarts from the beginning.
-	If omitted, then it is default -1 (no loop).
+loop_id::
+	* Marks the array index for next frame when timeline reaches the end.
+	* Value `0` (zero) restarts from the beginning.
+	* If omitted, then it is default `-1` (no loop).
 
 === animation_timeline_object
 
@@ -305,29 +311,29 @@ It is to define the *changes* between frames over time.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*time* (required)
-	Measured in frames. For 60 FPS (frames per second), 1 frame is 16.67 milliseconds.
+time (required)::
+	* Measured in frames. For 60 FPS (frames per second), 1 frame is 16.67 milliseconds.
 
-*attach*
-	If omitted, then nothing is drawn.
+attach::
+	* If omitted, then nothing is drawn.
 
-*matrix*
-	A 4x4 transformation matrix.
-	If omitted, then it is default to 4x4 identity matrix.
+matrix::
+	* A 4x4 transformation matrix.
+	* If omitted, then it is default to 4x4 identity matrix.
 
-*color*
-	String is in "#rrggbbaa" format.
-	If omitted, then it is default to "#ffffffff" (white solid).
+color::
+	* String is in "#rrggbbaa" format.
+	* If omitted, then it is default to "#ffffffff" (white solid).
 
-*mix*
-	Affects matrix and color value.
-	Marks the animation for the current frame is interpolated with the next frame.
-	* rate = t / time , t++
-	* matrix or color = (current * (1 - rate)) + (next * rate)
-	If omitted, then it is default to 0 (false)
+mix::
+	* Affects matrix and color value.
+	* Marks the animation for the current frame is interpolated with the next frame.
+	** rate = t / time , t++
+	** matrix or color = (current * (1 - rate)) + (next * rate)
+	* If omitted, then it is default to `0` (false)
 
 === skeleton_object
 
@@ -346,15 +352,15 @@ It is to define the *relationship* between frames.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*name*
-	Custom string to identify this object.
-	If omitted, then it is default to "skeleton %d".
+name::
+	* Custom string to identify this object.
+	* If omitted, then it is default to "skeleton %d".
 
-*bone* (required)
-	An array of bones to built the skeleton.
+bone (required)::
+	* An array of bones to built the skeleton.
 
 === skeleton_bone_object
 
@@ -369,24 +375,24 @@ It is to define the *relationship* between frames.
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*name*
-	Custom string to identify this object.
-	If omitted, then it is default to "skeleton bone %d".
+name::
+	* Custom string to identify this object.
+	* If omitted, then it is default to "skeleton bone %d".
 
-*attach*
-	If omitted, then it is invisible bone and drawing is skipped.
+attach::
+	* If omitted, then it is invisible bone and drawing is skipped.
 
-*parent_id*
-	Array index for the Bone ID to inherit transformation matrix and color from.
-	If omitted, or parent_id is same as current bone ID, then it is default to -1 (no parent).
+parent_id::
+	* Array index for the Bone ID to inherit transformation matrix and color from.
+	* If omitted, or parent_id is same as current bone ID, then it is default to -1 (no parent).
 
-*order*
-	Bones drawing order. Lower value mean it is drawn first (bottom layer), and highest value is drawn last.
-	If 2 or more bones has the same value, then these bones are ordered by its Bone ID.
-	If omitted, then it is default to same value as Bone ID.
+order::
+	* Bones drawing order. Lower value mean it is drawn first (bottom layer), and highest value is drawn last.
+	* If 2 or more bones has the same value, then these bones are ordered by its Bone ID.
+	* If omitted, then it is default to same value as Bone ID.
 
 === blend_object
 
@@ -410,24 +416,24 @@ It is to define alpha blending formula to handle transparency and semi-transpare
 }
 ----
 
-*debug*
-	Additional notes and/or comments.
+debug::
+	* Additional notes and/or comments.
 
-*name*
-	Custom string to identify this object.
-	If omitted, then it is default to "blend %d".
+name::
+	* Custom string to identify this object.
+	* If omitted, then it is default to "blend %d".
 
-*mode* (required)
-	All strings are WebGL enum for ``blendEquation()`` and ``blendFunc()``.
-	Accepts a 3 strings array, or a 6 strings array.
-	* For 3 strings array, it is 1 enum for ``blendEquation()`` and then 2 enum for ``blendFunc()``.
-	* For 6 strings array, it is 2 enum for ``blendEquationSeparate()`` and then 4 enum for ``blendFuncSeparate()``.
+mode (required)::
+	* All strings are WebGL enum for #`blendEquation()`# and #`blendFunc()`#.
+	* Accepts a 3 strings array, or a 6 strings array.
+	** For 3 strings array, it is 1 enum for #`blendEquation()`# and then 2 enum for #`blendFunc()`#.
+	** For 6 strings array, it is 2 enum for #`blendEquationSeparate()`# and then 4 enum for #`blendFuncSeparate()`#.
 
-*color* (if required)
-	Constant color for ``blendColor()``.
-	Required when ``blendFunc()/blendFuncSeparate()`` uses factor "CONSTANT_COLOR", "CONSTANT_ALPHA", "ONE_MINUS_CONSTANT_COLOR" or "ONE_MINUS_CONSTANT_ALPHA".
-	String is in "#rrggbbaa" format.
-	If omitted, then it is default to "#ffffffff" (white solid).
+color::
+	* Constant color for #`blendColor()`#.
+	* Used when #`blendFunc()`#/#`blendFuncSeparate()`# uses factor #`CONSTANT_COLOR`#, #`CONSTANT_ALPHA`#, #`ONE_MINUS_CONSTANT_COLOR`# or #`ONE_MINUS_CONSTANT_ALPHA`#.
+	* String is in "#rrggbbaa" format.
+	* If omitted, then it is default to "#ffffffff" (white solid).
 
 === quad_object
 
@@ -441,26 +447,29 @@ It is to connect with another QUAD file, allowing interaction between QUAD files
 }
 ----
 
-*list* (required)
-	Pointer to array of QUAD files.
+list (required)::
+	* Pointer to array of QUAD files.
 
-*id* (required)
-	Array index to the QUAD file.
+id (required)::
+	* Array index to the QUAD file.
 
 == Revision History
 
-.v0.2 (2023-05-11)
-* Rewritten from scratch with dynamic attach system.
-* Object keys are standardize to be singular form in lower_snake_case.
-* Added Hitbox objects.
-* Added Slot objects.
-* Added Skeleton objects.
-* Added Blending objects.
-* Animation object is simplified to one-track only.
-* Added matrix and color mixing to Animation objects.
+v0.x::
+	* Asciidoc formating and minor text revision.
 
-.v0.1 (2021-03-01)
-* Initial release and first draft.
+v0.2 (2023-05-11)::
+	* Rewritten from scratch with dynamic attach system.
+	* Object keys are standardize to be singular form in `lower_snake_case`.
+	* Added `Hitbox` objects.
+	* Added `Slot` objects.
+	* Added `Skeleton` objects.
+	* Added `Blending` objects.
+	* `Animation` object is simplified to one-track only.
+	* Added matrix and color mixing to `Animation` objects.
+
+v0.1 (2021-03-01)::
+	* Initial release and first draft.
 
 == Example
 

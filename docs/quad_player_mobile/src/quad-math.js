@@ -10,17 +10,21 @@ function QuadMath(Q){
 		return n;
 	}
 
-	$.pow2_ceil = function( n ){
-		var sign = false;
-		if ( n < 0 ){
-			sign = true;
-			n = -n;
-		}
+	$.pow2_ceil = function( num ){
+		num |= 0;
+		if ( num === 0 )
+			return 0;
 
-		var i = 1;
-		while ( n > i )
-			i <<= 1;
-		return ( sign ) ? -i : i;
+		var sra = 0;
+		while ( num > 1 ){
+			sra++;
+			num >>= 1;
+		}
+		while ( num < -1 ){
+			sra++;
+			num >>= 1;
+		}
+		return (num << sra);
 	}
 
 	//////////////////////////////
@@ -282,6 +286,12 @@ function QuadMath(Q){
 		var hh = image.h * 0.5;
 		var quad = [-hw,hh , hw,hh , hw,-hh , -hw,-hh];
 		return $.quad_multi4(mat4, quad);
+	}
+
+	$.quad_multi2 = function( mat4, quad ){
+		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
+		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
+		return [].concat( c0.slice(0,2) , c1.slice(0,2) );
 	}
 
 	$.quad_multi4 = function( mat4, quad ){
