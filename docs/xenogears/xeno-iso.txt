@@ -77,9 +77,66 @@ SLPS 011.60 JP disc 1 [3771]
 	133  Music [146] [73 pairs]
 		# ID+0 is the  wds/sample data
 		# ID+1 is the smds/midi data
-		134
-		...
-		278
+		135-141 My Village is Number One!
+		143 The Gentle Breeze Sings
+		145 My Village is Number One!
+		147 The Blackmoon Forest
+		149 Valley Where the Wind is Born
+		151 Faraway Promise
+		153 Night
+		155 Our Wounded Bodies Shall Advance Towards the Light
+		157 Steel Giant
+		159 Dozing Off (Short)
+		161 Dozing Off (Long)
+		163 In a Dark Slumber...
+		165 The Sky, the Clouds and You
+		167 Nature
+		169 Sewer
+		171 Wind
+		173 Premonition 
+		175 Crimson Knight
+		177 Nature
+		179 After the Soldiers' Dreams
+		181 Strong Wind
+		183 Goliath Factory
+		185 October Mermaid
+		187 Zeboim
+		189 Ambient noise 1
+		191 Ambient noise 2
+		193 Stage of Death
+		195 Where the Egg of Dreams Hatches
+		197-203 Dummy tracks
+		205 Tears of the Stars, Thoughts of the People
+		207 Reaper ship
+		209 Underwater
+		211 Aveh, The Ancient Dance
+		213 lost... Broken Shards
+		215 Aspiration
+		217 Bonds of Sea and Flame
+		219 Dazil, Town of Burning Sands
+		221 Gathering of Stars in the Night Sky
+		223 Flight
+		225 Thames, Spirit of the Men of the Sea
+		227 Unstealable Jewel
+		229 A Prayer for the Joy Man Desires
+		231-245 Dummy tracks
+		247 Premonition (Omen)
+		249 In a Prison of Peace and Regret
+		251 Fuse
+		253 After the Soldiers' Dreams (no intro)
+		255 Invasion
+		257 Jaws of Ice
+		259 The One Who is Torn Apart
+		261 The Blue Traveler
+		263 Wings
+		265 One Who Bares Fangs at God
+		267 Grahf, Ruler of Darkness
+		269 The Blackmoon Forest (no ambience)
+		271 Awakening
+		273 The Wind Calls to Shevat in the Blue Sky
+		275 After the Soldiers' Dreams
+		277 Invasion
+		279 Solaris, Celestial Paradise
 	390  [11]
 		391-401  seds
 	423  [2]
