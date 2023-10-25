@@ -71,6 +71,15 @@ function QuadMath(Q){
 		return m4;
 	}
 
+	$.matrix_multi12 = function( v, m ){
+		$.vec_resize(2,v);
+		var vm = [
+			v[0]*m[0] + v[1]*m[2] ,
+			v[0]*m[1] + v[1]*m[3] ,
+		];
+		return vm;
+	}
+
 	$.matrix_multi13 = function( v, m ){
 		$.vec_resize(3,v);
 		var vm = [
@@ -90,6 +99,15 @@ function QuadMath(Q){
 			v[0]*m[3] + v[1]*m[7] + v[2]*m[11] + v[3]*m[15] ,
 		];
 		return vm;
+	}
+
+	$.matrix_multi21 = function( m, v ){
+		$.vec_resize(2,v);
+		var mv = [
+			m[0]*v[0] + m[1]*v[1] ,
+			m[2]*v[0] + m[3]*v[1] ,
+		];
+		return mv;
 	}
 
 	$.matrix_multi31 = function( m, v ){
@@ -113,46 +131,118 @@ function QuadMath(Q){
 		return mv;
 	}
 
-	$.matrix_multi33 = function( m1, m2 ){
+	$.matrix_multi22 = function( m2a, m2b ){
+		if ( ! m2a && ! m2b )  return 0;
+		if ( ! m2a )  return m2b;
+		if ( ! m2b )  return m2a;
+		var m2 = [
+			m2a[0]*m2b[0] + m2a[1]*m2b[2],
+			m2a[0]*m2b[1] + m2a[1]*m2b[3],
+
+			m2a[2]*m2b[0] + m2a[3]*m2b[2],
+			m2a[2]*m2b[1] + m2a[3]*m2b[3],
+		];
+		return m2;
+	}
+
+	$.matrix_multi33 = function( m3a, m3b ){
+		if ( ! m3a && ! m3b )  return 0;
+		if ( ! m3a )  return m3b;
+		if ( ! m3b )  return m3a;
 		var m3 = [
-			m1[0]*m2[0] + m1[1]*m2[3] + m1[2]*m2[6],
-			m1[0]*m2[1] + m1[1]*m2[4] + m1[2]*m2[7],
-			m1[0]*m2[2] + m1[1]*m2[5] + m1[2]*m2[8],
+			m3a[0]*m3b[0] + m3a[1]*m3b[3] + m3a[2]*m3b[6],
+			m3a[0]*m3b[1] + m3a[1]*m3b[4] + m3a[2]*m3b[7],
+			m3a[0]*m3b[2] + m3a[1]*m3b[5] + m3a[2]*m3b[8],
 
-			m1[3]*m2[0] + m1[4]*m2[3] + m1[5]*m2[6],
-			m1[3]*m2[1] + m1[4]*m2[4] + m1[5]*m2[7],
-			m1[3]*m2[2] + m1[4]*m2[5] + m1[5]*m2[8],
+			m3a[3]*m3b[0] + m3a[4]*m3b[3] + m3a[5]*m3b[6],
+			m3a[3]*m3b[1] + m3a[4]*m3b[4] + m3a[5]*m3b[7],
+			m3a[3]*m3b[2] + m3a[4]*m3b[5] + m3a[5]*m3b[8],
 
-			m1[6]*m2[0] + m1[7]*m2[3] + m1[8]*m2[6],
-			m1[6]*m2[1] + m1[7]*m2[4] + m1[8]*m2[7],
-			m1[6]*m2[2] + m1[7]*m2[5] + m1[8]*m2[8],
+			m3a[6]*m3b[0] + m3a[7]*m3b[3] + m3a[8]*m3b[6],
+			m3a[6]*m3b[1] + m3a[7]*m3b[4] + m3a[8]*m3b[7],
+			m3a[6]*m3b[2] + m3a[7]*m3b[5] + m3a[8]*m3b[8],
 		];
 		return m3;
 	}
 
-	$.matrix_multi44 = function( m1, m2 ){
+	$.matrix_multi44 = function( m4a, m4b ){
+		if ( ! m4a && ! m4b )  return 0;
+		if ( ! m4a )  return m4b;
+		if ( ! m4b )  return m4a;
 		var m4 = [
-			m1[ 0]*m2[0] + m1[ 1]*m2[4] + m1[ 2]*m2[ 8] + m1[ 3]*m2[12],
-			m1[ 0]*m2[1] + m1[ 1]*m2[5] + m1[ 2]*m2[ 9] + m1[ 3]*m2[13],
-			m1[ 0]*m2[2] + m1[ 1]*m2[6] + m1[ 2]*m2[10] + m1[ 3]*m2[14],
-			m1[ 0]*m2[3] + m1[ 1]*m2[7] + m1[ 2]*m2[11] + m1[ 3]*m2[15],
+			m4a[ 0]*m4b[0] + m4a[ 1]*m4b[4] + m4a[ 2]*m4b[ 8] + m4a[ 3]*m4b[12],
+			m4a[ 0]*m4b[1] + m4a[ 1]*m4b[5] + m4a[ 2]*m4b[ 9] + m4a[ 3]*m4b[13],
+			m4a[ 0]*m4b[2] + m4a[ 1]*m4b[6] + m4a[ 2]*m4b[10] + m4a[ 3]*m4b[14],
+			m4a[ 0]*m4b[3] + m4a[ 1]*m4b[7] + m4a[ 2]*m4b[11] + m4a[ 3]*m4b[15],
 
-			m1[ 4]*m2[0] + m1[ 5]*m2[4] + m1[ 6]*m2[ 8] + m1[ 7]*m2[12],
-			m1[ 4]*m2[1] + m1[ 5]*m2[5] + m1[ 6]*m2[ 9] + m1[ 7]*m2[13],
-			m1[ 4]*m2[2] + m1[ 5]*m2[6] + m1[ 6]*m2[10] + m1[ 7]*m2[14],
-			m1[ 4]*m2[3] + m1[ 5]*m2[7] + m1[ 6]*m2[11] + m1[ 7]*m2[15],
+			m4a[ 4]*m4b[0] + m4a[ 5]*m4b[4] + m4a[ 6]*m4b[ 8] + m4a[ 7]*m4b[12],
+			m4a[ 4]*m4b[1] + m4a[ 5]*m4b[5] + m4a[ 6]*m4b[ 9] + m4a[ 7]*m4b[13],
+			m4a[ 4]*m4b[2] + m4a[ 5]*m4b[6] + m4a[ 6]*m4b[10] + m4a[ 7]*m4b[14],
+			m4a[ 4]*m4b[3] + m4a[ 5]*m4b[7] + m4a[ 6]*m4b[11] + m4a[ 7]*m4b[15],
 
-			m1[ 8]*m2[0] + m1[ 9]*m2[4] + m1[10]*m2[ 8] + m1[11]*m2[12],
-			m1[ 8]*m2[1] + m1[ 9]*m2[5] + m1[10]*m2[ 9] + m1[11]*m2[13],
-			m1[ 8]*m2[2] + m1[ 9]*m2[6] + m1[10]*m2[10] + m1[11]*m2[14],
-			m1[ 8]*m2[3] + m1[ 9]*m2[7] + m1[10]*m2[11] + m1[11]*m2[15],
+			m4a[ 8]*m4b[0] + m4a[ 9]*m4b[4] + m4a[10]*m4b[ 8] + m4a[11]*m4b[12],
+			m4a[ 8]*m4b[1] + m4a[ 9]*m4b[5] + m4a[10]*m4b[ 9] + m4a[11]*m4b[13],
+			m4a[ 8]*m4b[2] + m4a[ 9]*m4b[6] + m4a[10]*m4b[10] + m4a[11]*m4b[14],
+			m4a[ 8]*m4b[3] + m4a[ 9]*m4b[7] + m4a[10]*m4b[11] + m4a[11]*m4b[15],
 
-			m1[12]*m2[0] + m1[13]*m2[4] + m1[14]*m2[ 8] + m1[15]*m2[12],
-			m1[12]*m2[1] + m1[13]*m2[5] + m1[14]*m2[ 9] + m1[15]*m2[13],
-			m1[12]*m2[2] + m1[13]*m2[6] + m1[14]*m2[10] + m1[15]*m2[14],
-			m1[12]*m2[3] + m1[13]*m2[7] + m1[14]*m2[11] + m1[15]*m2[15],
+			m4a[12]*m4b[0] + m4a[13]*m4b[4] + m4a[14]*m4b[ 8] + m4a[15]*m4b[12],
+			m4a[12]*m4b[1] + m4a[13]*m4b[5] + m4a[14]*m4b[ 9] + m4a[15]*m4b[13],
+			m4a[12]*m4b[2] + m4a[13]*m4b[6] + m4a[14]*m4b[10] + m4a[15]*m4b[14],
+			m4a[12]*m4b[3] + m4a[13]*m4b[7] + m4a[14]*m4b[11] + m4a[15]*m4b[15],
 		];
 		return m4;
+	}
+
+	$.matrix_det2 = function( m2 ){
+		return (m2[0]*m2[3] - m2[1]*m2[2]);
+	}
+
+	$.matrix_inv2 = function( m2 ){
+		var det = $.matrix_det2(m2);
+		if ( det === 0 )
+			return 0;
+		var det_inv = 1.0 / det;
+		var mco = [
+			 m2[3] * det_inv , -m2[1] * det_inv ,
+			-m2[2] * det_inv ,  m2[0] * det_inv ,
+		];
+		return mco;
+	}
+
+	$.matrix_inv3 = function( m3 ){
+		// | 0 1 2 |
+		// | 3 4 5 |
+		// | 6 7 8 |
+		var mdet = [
+			$.matrix_det2([ m3[4],m3[5],m3[7],m3[8] ]),
+			$.matrix_det2([ m3[3],m3[5],m3[6],m3[8] ]),
+			$.matrix_det2([ m3[3],m3[4],m3[6],m3[7] ]),
+
+			$.matrix_det2([ m3[1],m3[2],m3[7],m3[8] ]),
+			$.matrix_det2([ m3[0],m3[2],m3[6],m3[8] ]),
+			$.matrix_det2([ m3[0],m3[1],m3[6],m3[7] ]),
+
+			$.matrix_det2([ m3[1],m3[2],m3[4],m3[5] ]),
+			$.matrix_det2([ m3[0],m3[2],m3[3],m3[5] ]),
+			$.matrix_det2([ m3[0],m3[1],m3[3],m3[4] ]),
+		];
+
+		var mco = [
+			 mdet[0] , -mdet[3] ,  mdet[6] ,
+			-mdet[1] ,  mdet[4] , -mdet[7] ,
+			 mdet[2] , -mdet[5] ,  mdet[8] ,
+		];
+
+		var det = m3[0]*mco[0] + m3[1]*mco[3] + m3[2]*mco[6];
+		if ( det === 0 )
+			return 0;
+		var det_inv = 1.0 / det;
+		var i = 9;
+		while ( i > 0 ){
+			i--;
+			mco[i] *= det_inv;
+		}
+		return mco;
 	}
 
 	//////////////////////////////
@@ -169,41 +259,45 @@ function QuadMath(Q){
 		return [x,y,z];
 	}
 
-	$.perspective_quad = function( dst ){
-		var q = [
-			dst.slice(0,2),
-			dst.slice(2,4),
-			dst.slice(4,6),
-			dst.slice(6,8),
+	$.perspective_mat3 = function( quad ){
+		var v = [
+			[ quad[0],quad[1],1 ],
+			[ quad[2],quad[3],1 ],
+			[ quad[4],quad[5],1 ],
+			[ quad[6],quad[7],1 ],
 		];
 
 		// 0 1
 		// 3 2
-		var t = [
-			$.cross( $.cross(q[0],q[2]) , $.cross(q[1],q[3]) ), // corner-corner
-			$.cross( $.cross(q[0],q[1]) , $.cross(q[3],q[2]) ), //    top-bottom
-			$.cross( $.cross(q[0],q[3]) , $.cross(q[1],q[2]) ), //   left-right
+		var c = [
+			$.cross( $.cross(v[0],v[2]) , $.cross(v[1],v[3]) ), // corner-corner
+			$.cross( $.cross(v[0],v[1]) , $.cross(v[3],v[2]) ), //    top-bottom
+			$.cross( $.cross(v[0],v[3]) , $.cross(v[1],v[2]) ), //   left-right
 		];
+		var m3 = [
+			c[0][0] , c[1][0] , c[2][0] ,
+			c[0][1] , c[1][1] , c[2][1] ,
+			c[0][2] , c[1][2] , c[2][2] ,
+		];
+		return m3;
+	}
 
+	$.perspective_quad = function( dst ){
 		//   | H1x H2x H3x |   | h1x h2x h3x |
 		// M | H1y H2y H3y | = | h1y h2y h3y |
 		//   | H1z H2z H3z |   | h1z h2z h3z |
 		//                MH = h
 		//                M  = hH^-1
-		var h = [
-			t[0][0] , t[1][0] , t[2][0] ,
-			t[0][1] , t[1][1] , t[2][1] ,
-			t[0][2] , t[1][2] , t[2][2] ,
-		];
+		var h = $.perspective_mat3(dst);
 
 		// var H    = pre-computed
 		// var Hinv = pre-computed
-		var Hinv = [
+		var H_inv = [
 			 0     , 0     ,  0.005 ,
 			-0.001 , 0     ,  0.015 ,
 			 0     , 0.001 , -0.015 ,
 		];
-		var M3 = $.matrix_multi33(h, Hinv);
+		var M3 = $.matrix_multi33(h, H_inv);
 
 		var t = [
 			$.matrix_multi31( M3, [10,10] ),
@@ -241,13 +335,16 @@ function QuadMath(Q){
 	//////////////////////////////
 
 	$.matrix_mix = function( rate, cur, next ){
+		if ( ! cur && ! next )  return 0;
+		if ( ! cur  )  return next;
+		if ( ! next )  return cur;
 		// 4/4 = rate 1    = cur * 1    + next * 0
 		// 3/4 = rate 0.75 = cur * 0.75 + next * 0.25
 		// 2/4 = rate 0.5  = cur * 0.5  + next * 0.5
 		// 1/4 = rate 0.25 = cur * 0.25 + next * 0.75
 		// 0/4 = rate 0    = cur * 0    + next * 1
 		var rev = 1.0 - rate;
-		var m4 = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
+		var m4  = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
 		for ( var i=0; i < 16; i++ )
 			m4[i] = (cur[i] * rate) + (next[i] * rev);
 		return m4;
@@ -255,10 +352,18 @@ function QuadMath(Q){
 
 	$.color_mix = function( rate, cur, next ){
 		var rev = 1.0 - rate;
-		var c = [0,0,0,0];
+		var c4  = [0,0,0,0];
 		for ( var i=0; i < 4; i++ )
-			c[i] = (cur[i] * rate) + (next[i] * rev);
-		return c;
+			c4[i] = (cur[i] * rate) + (next[i] * rev);
+		return c4;
+	}
+
+	$.quad_mix = function( rate, cur, next ){
+		var rev = 1.0 - rate;
+		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
+		for ( var i=0; i < 8; i++ )
+			xy4[i] = (cur[i] * rate) + (next[i] * rev);
+		return xy4;
 	}
 
 	$.css_color = function( css ){
@@ -289,12 +394,14 @@ function QuadMath(Q){
 	}
 
 	$.quad_multi2 = function( mat4, quad ){
+		if ( ! mat4 )  return quad;
 		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
 		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
 		return [].concat( c0.slice(0,2) , c1.slice(0,2) );
 	}
 
 	$.quad_multi4 = function( mat4, quad ){
+		if ( ! mat4 )  return quad;
 		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
 		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
 		var c2 = $.matrix_multi41(mat4, quad.slice(4,6));
@@ -302,12 +409,13 @@ function QuadMath(Q){
 		return [].concat( c0.slice(0,2) , c1.slice(0,2) , c2.slice(0,2) , c3.slice(0,2) );
 	}
 
+	// color * fogquad
 	$.fog_multi4 = function( color, quad ){
 		var c16 = [
-			quad[ 0]*color[0] , quad[ 1]*color[1] , quad[ 2]*color[2] , quad[ 3]*color[3] ,
-			quad[ 4]*color[0] , quad[ 5]*color[1] , quad[ 6]*color[2] , quad[ 7]*color[3] ,
-			quad[ 8]*color[0] , quad[ 9]*color[1] , quad[10]*color[2] , quad[10]*color[3] ,
-			quad[12]*color[0] , quad[13]*color[1] , quad[14]*color[2] , quad[15]*color[3] ,
+			quad[ 0]*color[0] , quad[ 1]*color[1] , quad[ 2]*color[2] , quad[ 3]*color[3] , // c1
+			quad[ 4]*color[0] , quad[ 5]*color[1] , quad[ 6]*color[2] , quad[ 7]*color[3] , // c2
+			quad[ 8]*color[0] , quad[ 9]*color[1] , quad[10]*color[2] , quad[10]*color[3] , // c3
+			quad[12]*color[0] , quad[13]*color[1] , quad[14]*color[2] , quad[15]*color[3] , // c4
 		];
 		return c16;
 	}

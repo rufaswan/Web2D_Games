@@ -302,12 +302,15 @@ loop_id::
 [subs="specialchars,macros"]
 ----
 {
-  "debug"  : any,
-  "time"   : number fps,
-  "attach" : <<_attach_object>>,
-  "matrix" : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
-  "color"  : string rgba,
-  "mix"    : bool,
+  "debug"        : any,
+  "time"         : number fps,
+  "attach"       : <<_attach_object>>,
+  "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
+  "color"        : string rgba,
+  "matrix_mix"   : bool,
+  "color_mix"    : bool,
+  "keyframe_mix" : bool,
+  "hitbox_mix"   : bool,
 }
 ----
 
@@ -328,12 +331,37 @@ color::
 	* String is in "#rrggbbaa" format.
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
-mix::
-	* Affects matrix and color value.
-	* Marks the animation for the current frame is interpolated with the next frame.
+matrix_mix::
+	* Marks if current matrix is interpolated with the next matrix.
 	** rate = t / time , t++
-	** matrix or color = (current * (1 - rate)) + (next * rate)
-	* If omitted, then it is default to `0` (false)
+	** matrix = (current * (1 - rate)) + (next * rate)
+	* If omitted, then it is default to `0` (`false`)
+
+color_mix::
+	* Marks if current color is interpolated with the next color.
+	** rate = t / time , t++
+	** color = (current * (1 - rate)) + (next * rate)
+	* If omitted, then it is default to `0` (`false`)
+
+keyframe_mix::
+	* Marks if current keyframe layer dstquad is interpolated with the next keyframe layer dstquad.
+	** rate = t / time , t++
+	** dstquad = (current * (1 - rate)) + (next * rate)
+	* Mixing is impossible under the following conditions, and this option is ignored.
+	** if current keyframe layer count is not the same as next keyframe layer count. Default to use current keyframe layer only.
+	** if current keyframe layer is empty. Default to skipped.
+	** if next keyframe layer is empty. Default to use current keyframe layer only.
+	* If omitted, then it is default to `0` (`false`)
+
+hitbox_mix::
+	* Marks if current hitbox layer hitquad is interpolated with the next hitbox layer hitquad.
+	** rate = t / time , t++
+	** hitquad = (current * (1 - rate)) + (next * rate)
+	* Mixing is impossible under the following conditions, and this option is ignored.
+	** if current hitbox layer count is not the same as next hitbox layer count. Default to use current hitbox layer only.
+	** if current hitbox layer is empty. Default to skipped.
+	** if next hitbox layer is empty. Default to use current hitbox layer only.
+	* If omitted, then it is default to `0` (`false`)
 
 === skeleton_object
 
@@ -456,17 +484,21 @@ id (required)::
 == Revision History
 
 v0.x::
-	* Asciidoc formating and minor text revision.
+	* `animation_timeline_object`: removed `mix`
+	* `animation_timeline_object`: added `matrix_mix`
+	* `animation_timeline_object`: added `color_mix`
+	* `animation_timeline_object`: added `keyframe_mix`
+	* `animation_timeline_object`: added `hitbox_mix`
 
 v0.2 (2023-05-11)::
 	* Rewritten from scratch with dynamic attach system.
 	* Object keys are standardize to be singular form in `lower_snake_case`.
-	* Added `Hitbox` objects.
-	* Added `Slot` objects.
-	* Added `Skeleton` objects.
-	* Added `Blending` objects.
-	* `Animation` object is simplified to one-track only.
-	* Added matrix and color mixing to `Animation` objects.
+	* Added `hitbox` objects.
+	* Added `slot` objects.
+	* Added `skeleton` objects.
+	* Added `blend` objects.
+	* `animation` object is simplified to one-track only.
+	* `animation_timeline_object`: added `mix`
 
 v0.1 (2021-03-01)::
 	* Initial release and first draft.

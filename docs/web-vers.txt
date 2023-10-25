@@ -152,6 +152,8 @@ Can I Use?
 	  3.5  15     5    defer attribute for external scripts
 	  3.6  15     5.1  async attribute for external scripts
 	 21    15     6    ECMAScript 5
+	 31    21     9    JavaScript built-in: Number: MAX_SAFE_INTEGER
+	 31    21     9    JavaScript built-in: Number: MIN_SAFE_INTEGER
 	 32    21     9    ES6 Number
 	 26    26    10    ES6 Generators
 	 34    29    12.2  ES6 Template Literals (Template Strings)

@@ -1,63 +1,64 @@
 function QuadExport(Q){
 	var $ = this;
-	var m = {}; // all public
+	var m = {};
 
 	//////////////////////////////
 
-	m.sizeCompare = function( base, size ){
-		if ( size[0] < base[0] )  base[0] = size[0]; // x1
-		if ( size[1] < base[1] )  base[1] = size[1]; // y1
-		if ( size[2] > base[2] )  base[2] = size[2]; // x2
-		if ( size[3] > base[3] )  base[3] = size[3]; // y2
+	m.rectCompare = function( rect, cmp ){
+		if ( cmp[0] < rect[0] )  rect[0] = cmp[0]; // x1
+		if ( cmp[1] < rect[1] )  rect[1] = cmp[1]; // y1
+		if ( cmp[2] > rect[2] )  rect[2] = cmp[2]; // x2
+		if ( cmp[3] > rect[3] )  rect[3] = cmp[3]; // y2
 	}
 
-	$.sizeAttach = function( qdata, type, id ){
+	$.rectAttach = function( qdata, type, id ){
 		if ( ! Array.isArray( qdata.QUAD[ type ] ) )
 			return 0;
 		if ( ! qdata.QUAD[ type ][ id ] )
 			return 0;
 
+		var max = 1 << 24;
 		var cur = qdata.QUAD[ type ][ id ];
 		switch ( type ){
 			case 'keyframe':
-				if ( cur.__SIZE )
-					return cur.__SIZE;
+				if ( cur.__RECT )
+					return cur.__RECT;
 
-				var siz = [0,0,0,0];
+				var rect = [max,max,-max,-max];
 				cur.layer.forEach(function(lv,lk){
 					if ( ! lv )
 						return;
 					var dst = lv.dstquad;
 					for ( var i=0; i < 8; i += 2 ){
-						if ( dst[i+0] < siz[0] )  siz[0] = dst[i+0];
-						if ( dst[i+1] < siz[1] )  siz[1] = dst[i+1];
-						if ( dst[i+0] > siz[2] )  siz[2] = dst[i+0];
-						if ( dst[i+1] > siz[3] )  siz[3] = dst[i+1];
+						if ( dst[i+0] < rect[0] )  rect[0] = dst[i+0];
+						if ( dst[i+1] < rect[1] )  rect[1] = dst[i+1];
+						if ( dst[i+0] > rect[2] )  rect[2] = dst[i+0];
+						if ( dst[i+1] > rect[3] )  rect[3] = dst[i+1];
 					}
 				});
-				cur.__SIZE = siz;
-				return siz;
+				cur.__RECT = rect;
+				return rect;
 
 			case 'slot':
-				var siz = [0,0,0,0];
+				var rect = [max,max,-max,-max];
 				cur.forEach(function(sv,sk){
-					var xy = $.sizeAttach(qdata, sv.type, sv.id);
+					var xy = $.rectAttach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
-					m.sizeCompare(siz, xy);
+					m.rectCompare(rect, xy);
 				});
-				return siz;
+				return rect;
 
 			case 'animation':
-				if ( cur.__SIZE )
-					return cur.__SIZE;
+				if ( cur.__RECT )
+					return cur.__RECT;
 
-				var siz = [0,0,0,0];
+				var rect = [max,max,-max,-max];
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
 
-					var xy = $.sizeAttach(qdata, tv.attach.type, tv.attach.id);
+					var xy = $.rectAttach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
 					var xy2 = Q.math.quad_multi4(tv.matrix, xy);
@@ -72,14 +73,14 @@ function QuadExport(Q){
 						xy2[1] = xy2[3];
 						xy2[3] = t;
 					}
-					m.sizeCompare(siz, xy2);
+					m.rectCompare(rect, xy2);
 				});
-				cur.__SIZE = siz;
-				return siz;
+				cur.__RECT = rect;
+				return rect;
 
 			case 'skeleton':
-				if ( cur.__SIZE )
-					return cur.__SIZE;
+				if ( cur.__RECT )
+					return cur.__RECT;
 
 				var res = [];
 				var is_done = false;
@@ -93,7 +94,7 @@ function QuadExport(Q){
 						var xy  = 0;
 						if ( bv.parent_id < 0 ){
 							if ( bv.attach )
-								xy = $.sizeAttach(qdata, bv.attach.type, bv.attach.id);
+								xy = $.rectAttach(qdata, bv.attach.type, bv.attach.id);
 
 							if ( xy ){
 								res[bk] = xy;
@@ -111,7 +112,7 @@ function QuadExport(Q){
 							return;
 
 						if ( bv.attach )
-							xy = $.sizeAttach(qdata, bv.attach.type, bv.attach.id);
+							xy = $.rectAttach(qdata, bv.attach.type, bv.attach.id);
 
 						if ( xy ){
 							res[bk] = [
@@ -126,12 +127,12 @@ function QuadExport(Q){
 					});
 				} // while ( ! is_done )
 
-				var siz = [0,0,0,0];
+				var rect = [max,max,-max,-max];
 				res.forEach(function(rv,rk){
-					m.sizeCompare(siz, rv);
+					m.rectCompare(rect, rv);
 				});
-				cur.__SIZE = siz;
-				return siz;
+				cur.__RECT = rect;
+				return rect;
 		} // switch ( type )
 		return 0;
 	}
@@ -144,6 +145,31 @@ function QuadExport(Q){
 		var maxx = ( abs[0] > abs[2] ) ? abs[0] : abs[2];
 		var maxy = ( abs[1] > abs[3] ) ? abs[1] : abs[3];
 		return [ maxx , maxy ];
+	}
+
+	$.isloopAttach = function( qdata, type, id ){
+		if ( ! Array.isArray( qdata.QUAD[ type ] ) )
+			return false;
+		if ( ! qdata.QUAD[ type ][ id ] )
+			return false;
+
+		switch ( type ){
+			case 'animation':
+				var loop = qdata.QUAD.animation[id].loop_id;
+				if ( loop === undefined || loop < 0 )
+					return false;
+				else
+					return true;
+			case 'skeleton':
+				var is_loop = false;
+				qdata.QUAD.skeleton[id].bone.forEach(function(bv,bk){
+					var t = $.isloopAttach(qdata, bv.attach.type, bv.attach.id);
+					if ( t )
+						is_loop = true;
+				});
+				return is_loop;
+		} // switch ( type )
+		return false;
 	}
 
 	//////////////////////////////
@@ -192,7 +218,7 @@ function QuadExport(Q){
 
 	m.exportSheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
-		var sprsize = $.sizeAttach(qdata, qdata.attach.type, qdata.attach.id);
+		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
 			(sprsize[2] - sprsize[0]) * line_spacing ,
 			(sprsize[3] - sprsize[1]) * line_spacing ,
@@ -246,13 +272,14 @@ function QuadExport(Q){
 	}
 
 	m.exportZip = function( qdata, canvas, fmt ){
-		var sprsize = $.sizeAttach(qdata, qdata.attach.type, qdata.attach.id);
+		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
 		var symm = $.sizeSymmetry(sprsize);
 
 		var line_spacing = 1.15;
 		canvas.width  = Math.ceil(symm[0] * 2 * line_spacing);
 		canvas.height = Math.ceil(symm[1] * 2 * line_spacing);
 
+		// same number of sprites as sheet
 		var texsize = Q.gl.maxTextureSize() >> 1;
 		var len  = Math.floor(texsize / canvas.width) * Math.floor(texsize / canvas.height);
 		var list = {};

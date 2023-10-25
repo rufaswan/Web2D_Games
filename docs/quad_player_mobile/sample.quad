@@ -21,46 +21,51 @@
       "name"     : "animation #0" ,
       "timeline" : [
         {
-          "debug" : "center" ,
-          "time"  : 30 ,
-          "mix"   : 1
+          "debug"      : "center" ,
+          "time"       : 30 ,
+          "matrix_mix" : 1 ,
+          "color_mix"  : 1
         } ,
         {
-          "debug"  : "left" ,
-          "time"   : 30 ,
-          "mix"    : 1 ,
-          "matrix" : [ 1 , 0 , 0 , 0 , 0 , 1 , 0 , -200 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
-          "attach" : {
+          "debug"      : "left" ,
+          "time"       : 30 ,
+          "matrix_mix" : 1 ,
+          "color_mix"  : 1 ,
+          "matrix"     : [ 1 , 0 , 0 , 0 , 0 , 1 , 0 , -200 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach"     : {
             "type" : "keyframe" ,
             "id"   : 0
           }
         } ,
         {
-          "debug"  : "top" ,
-          "time"   : 30 ,
-          "mix"    : 1 ,
-          "matrix" : [ -1 , 0 , 0 , -200 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
-          "attach" : {
+          "debug"      : "top" ,
+          "time"       : 30 ,
+          "matrix_mix" : 1 ,
+          "color_mix"  : 1 ,
+          "matrix"     : [ -1 , 0 , 0 , -200 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach"     : {
             "type" : "keyframe" ,
             "id"   : 0
           }
         } ,
         {
-          "debug"  : "right" ,
-          "time"   : 30 ,
-          "mix"    : 1 ,
-          "matrix" : [ -1 , 0 , 0 , 0 , 0 , -1 , 0 , 200 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
-          "attach" : {
+          "debug"      : "right" ,
+          "time"       : 30 ,
+          "matrix_mix" : 1 ,
+          "color_mix"  : 1 ,
+          "matrix"     : [ -1 , 0 , 0 , 0 , 0 , -1 , 0 , 200 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach"     : {
             "type" : "keyframe" ,
             "id"   : 0
           }
         } ,
         {
-          "debug"  : "bottom" ,
-          "time"   : 30 ,
-          "mix"    : 1 ,
-          "matrix" : [ 1 , 0 , 0 , 200 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
-          "attach" : {
+          "debug"      : "bottom" ,
+          "time"       : 30 ,
+          "matrix_mix" : 1 ,
+          "color_mix"  : 1 ,
+          "matrix"     : [ 1 , 0 , 0 , 200 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "attach"     : {
             "type" : "keyframe" ,
             "id"   : 0
           }

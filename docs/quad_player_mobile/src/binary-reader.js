@@ -182,8 +182,12 @@ function BinaryReader(){
 
 	//////////////////////////////
 
+	// base64
+	// 4 * 6-bit ASCII == 3 * 8-bit BINARY
+	// in 24-bit sets
+
 	$.toBase64 = function( uint8 ){
-		uint8 = new Uint8Array(uint8);
+		//uint8 = new Uint8Array(uint8);
 		var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 		var BIT6  = 0x3f;
 		var len = uint8.byteLength;
@@ -225,25 +229,23 @@ function BinaryReader(){
 
 	$.fromBase64 = function( b64 ){
 		// data URL handling
+		var st  = 0;
 		var pos = b64.indexOf('base64,');
 		if ( pos !== -1 )
-			b64 = b64.substring(pos + 7);
+			st = pos + 7;
 
 		// must be length % 4 === 0
-		if ( (b64.length & 3) !== 0 )
+		var len = b64.length - st;
+		if ( len < 1 || (len & 3) !== 0 )
 			return '';
 
 		// Uint8Array.reserve()
-		var declen = 0;
-		for ( var pos=0; pos < b64.length; pos += 4 ){
-			if ( b64[pos+2] === '=' )
-				declen += 1;
-			else
-			if ( b64[pos+3] === '=' )
-				declen += 2;
-			else
-				declen += 3;
-		} // for ( var pos=0; pos < b64.length; pos += 4 )
+		var declen = (len >> 2) * 3;
+		if ( b64[ b64.length - 1 ] === '=' ){
+			declen--;
+			if ( b64[ b64.length - 2 ] === '=' )
+				declen--;
+		}
 		var uint8 = new Uint8Array(declen);
 
 		var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -251,7 +253,7 @@ function BinaryReader(){
 
 		var b, b1, b2, b3, b4;
 		var dpos = 0;
-		for ( var pos=0; pos < b64.length; pos += 4 ){
+		for ( var pos = st; pos < b64.length; pos += 4 ){
 			b1 = token.indexOf( b64[pos+0] );
 			b2 = token.indexOf( b64[pos+1] );
 

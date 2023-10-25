@@ -23,13 +23,23 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 php=''
 png=''
-if [ -f "/tmp/img_clut2png.php" ]; then
-	php="/tmp/img_clut2png.php"
-	png=1
-elif [ -f "/tmp/img_clut2bmp.php" ]; then
-	php="/tmp/img_clut2bmp.php"
-	png=''
-fi
+function phppath
+{
+	if [ -f "/tmp/$1" ]; then
+		php="/tmp/$1"
+		png=$2
+		return
+	fi
+	root=$(dirname $(realpath "$0"))
+	if [ -f "$root/$1" ]; then
+		ln -s  "$root/$1"  "/tmp/$1"
+		php="/tmp/$1"
+		png=$2
+		return
+	fi
+}
+phppath  img_clut2bmp.php  0
+phppath  img_clut2png.php  1
 [ "$php" ] || exit
 export php png
 
@@ -52,10 +62,10 @@ function clut2png
 }
 export -f clut2png
 
-find . -iname "*.clut"   | xargs  -I {} bash -c 'clut2png "$@"' _ {}
-find . -iname "*.rgba"   | xargs  -I {} bash -c 'clut2png "$@"' _ {}
-find . -iname "*.clut.*" | xargs  rename .clut.  .
-find . -iname "*.rgba.*" | xargs  rename .rgba.  .
+find . -iname '*.clut'   | xargs  -I {} bash -c 'clut2png "$@"' _ {}
+find . -iname '*.rgba'   | xargs  -I {} bash -c 'clut2png "$@"' _ {}
+find . -iname '*.clut.*'  -exec  rename .clut.  .  {} \;
+find . -iname '*.rgba.*'  -exec  rename .rgba.  .  {} \;
 
 <<'////'
 https://imagemagick.org/script/defines.php

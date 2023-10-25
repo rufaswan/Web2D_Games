@@ -36,11 +36,11 @@ function QuadData(qlist){
 
 	// activated data
 	$.is_wait  = true;
-	$.is_flipx = false;
-	$.is_flipy = false;
 	$.is_draw  = false;
 	$.is_hits  = true;
 	$.is_lines = true;
+	$.is_flipx = false;
+	$.is_flipy = false;
 	$.zoom   = 1;
 	$.matrix = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
 	$.color  = [1,1,1,1];
@@ -51,5 +51,5 @@ function QuadData(qlist){
 	};
 	$.anim_fps = 0;
 	$.line_index = 0;
-	$.prev = ['',-1,-1,true,true];
+	$.prev = ['',-1,-1,true,true,false,false,1];
 }

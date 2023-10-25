@@ -48,7 +48,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<div id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
 		<button id='btn_hits' class='btn_on'>hit</button>
-		<button id='btn_autofit' class='btn_on'>fit</button>
+		<button id='btn_autofit' class='btn_on'>zoom</button>
 		<button id='btn_flipx' class='btn_off'>X</button>
 		<button id='btn_flipy' class='btn_off'>Y</button>
 		<button id='btn_lines'>line</button>
@@ -79,9 +79,6 @@ function button_select( elem ){
 	var qdata = QuadList[0];
 	qdata_attach(qdata, type, id);
 	displayViewer(HTML, true);
-
-	// canvas == [0,0] when VIEWER == display none
-	qdata.zoom = QUAD.func.autofitZoom(qdata);
 }
 
 function button_export( elem ){
@@ -98,6 +95,7 @@ function button_export( elem ){
 var HTML = getHtmlIds();
 var QuadList = [];
 var SELECTED = '';
+var AUTOZOOM = true;
 
 (function(){
 	if ( ! QUAD.gl.init(HTML.canvas) )
@@ -140,7 +138,7 @@ var SELECTED = '';
 
 			if ( qdata.name ){
 				HTML.quad_data.innerHTML = '';
-				document.title = qdata.name + ' [Quad Player Mobile]';
+				document.title = qdata.name + ' [Quad Player ' + QUAD.version + ']';
 
 				qdata_tagtable( qdata.QUAD.tag, HTML.quad_data );
 
@@ -155,6 +153,9 @@ var SELECTED = '';
 
 							var t = {};
 							t.name = v.name || qv + ' ' + k;
+							if ( QUAD.export.isloopAttach(qdata, qv, k) )
+								t.name += ' <strong>[LOOP]</strong>';
+
 							t.p    = '<p onclick="button_select(this);">' + t.name + '</p>';
 							t.btn  = '';
 							t.btn += '<button onclick="button_export(this);">png</button>';
@@ -213,11 +214,12 @@ var SELECTED = '';
 			return;
 		if ( HTML.btn_autofit.classList.contains('btn_on') ){
 			btnToggle(HTML.btn_autofit, -1);
-			QuadList[0].zoom = 1;
+			AUTOZOOM = 0;
 		} else {
 			btnToggle(HTML.btn_autofit, 1);
-			QuadList[0].zoom = QUAD.func.autofitZoom(QuadList[0]);
+			AUTOZOOM = 1;
 		}
+		QuadList[0].zoom = QUAD.func.autofitZoom(QuadList[0], AUTOZOOM);
 	});
 	HTML.btn_flipx.addEventListener('click', function(){
 		if ( ! QuadList[0] )
@@ -301,7 +303,8 @@ var SELECTED = '';
 		}
 
 		// redraw only when changed
-		if ( QUAD.func.isChanged(qdata) ){
+		if ( QUAD.gl.isCanvasResized() || QUAD.func.isChanged(qdata) ){
+			qdata.zoom = QUAD.func.autofitZoom(qdata, AUTOZOOM);
 			CAMERA = QUAD.func.viewerCamera(qdata);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();

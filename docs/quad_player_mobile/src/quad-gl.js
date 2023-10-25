@@ -6,6 +6,8 @@ function QuadGL(Q){
 
 	m.GL = '';
 	m.SHADER = {};
+	m.CANVAS_PREV = [0,0];
+
 	$.init = function( dom ){
 		var opt = {
 			alpha                 : true,
@@ -21,6 +23,8 @@ function QuadGL(Q){
 		var form = m.GL.getShaderPrecisionFormat(m.GL.FRAGMENT_SHADER, m.GL.HIGH_FLOAT);
 		if ( ! form )
 			return Q.func.error('Fragment Shader has no highp support');
+
+		m.CANVAS_PREV = [ m.GL.canvas.clientWidth , m.GL.canvas.clientHeight ];
 
 		var vert_src, frag_src;
 		Q.func.log('WebGL + highp init OK', ['precision',form.precision]);
@@ -416,26 +420,45 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
+	$.drawingBuffer = function( max ){
+		return [ m.GL.drawingBufferWidth , m.GL.drawingBufferHeight ];
+	}
+
 	$.maxTextureSize = function(){
 		var tex = $.createTexture();
 		m.GL.bindTexture(m.GL.TEXTURE_2D, tex);
 
-		// 1 << 32 is negative number
-		var i = 32;
-		while ( i > 0 ){
-			i--;
-			var maxsz = 1 << i;
+		var maxsz = m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
+		maxsz = Math.abs( maxsz|0 );
+
+		var bw = m.GL.canvas.width;
+		var bh = m.GL.canvas.height;
+
+		while ( maxsz > 0 ){
 			m.GL.texImage2D(
 				m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
 				maxsz , maxsz   , 0                  , // width  , height , border
 				m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
 				null
 			);
+			m.GL.canvas.width  = maxsz;
+			m.GL.canvas.height = maxsz;
 
-			var error = m.GL.getError();
-			if ( error === m.GL.NO_ERROR )
+			var error = 0;
+			error |= ( m.GL.getError()    !== m.GL.NO_ERROR            );
+			error |= ( m.GL.canvas.width  !== m.GL.drawingBufferWidth  );
+			error |= ( m.GL.canvas.height !== m.GL.drawingBufferHeight );
+			if ( error === 0 ){
+				m.GL.canvas.width  = bw;
+				m.GL.canvas.height = bh;
 				return maxsz;
-		} // while ( i > 0 )
+			}
+
+			maxsz >>= 1;
+		} // while ( maxsz > 0 )
+
+		m.GL.canvas.width  = bw;
+		m.GL.canvas.height = bh;
 		return 0;
 	}
 
@@ -447,9 +470,20 @@ function QuadGL(Q){
 	}
 
 	$.canvasSize = function(){
+		// display.block = [w,h] , display.none = [0,0]
 		m.GL.canvas.width  = m.GL.canvas.clientWidth;
 		m.GL.canvas.height = m.GL.canvas.clientHeight;
 		return [ m.GL.canvas.width * 0.5 , m.GL.canvas.height * 0.5 ];
+	}
+
+	$.isCanvasResized = function(){
+		var c = 0;
+		c |= ( m.CANVAS_PREV[0] !== m.GL.canvas.clientWidth  );
+		c |= ( m.CANVAS_PREV[1] !== m.GL.canvas.clientHeight );
+
+		if ( c )
+			m.CANVAS_PREV = [ m.GL.canvas.clientWidth , m.GL.canvas.clientHeight ];
+		return c;
 	}
 
 	//////////////////////////////
