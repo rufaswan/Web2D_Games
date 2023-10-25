@@ -41,12 +41,12 @@ cmd="$1"
 shift
 
 case "$cmd" in
-	'-push')
+	'push'|'-push')
 		echo "git push $git : $@"
 		git commit -m "$@"
 		git push origin master
 		;;
-	'-pull')
+	'pull'|'-pull')
 		[ "$1" ] || echo "pull request has no ID"
 		echo "git pull $git : # $1"
 		git pull origin pull/$1/head
@@ -58,17 +58,17 @@ case "$cmd" in
 		echo "git push --force $git : master"
 		git push --force origin master
 		;;
-	'-repush')
+	'repush'|'-repush')
 		echo "git push/retry $git"
 		git push origin master
 		;;
-	'-tag')
+	'tag'|'-tag')
 		echo "git tag $git : $@"
 		git tag "$@"
 		git push origin --tags
 		;;
 
-	'-update')
+	'update'|'-update')
 		if [ "$ups" ]; then
 			echo "git fetch $ups"
 			git fetch upstream
@@ -76,7 +76,7 @@ case "$cmd" in
 			git merge upstream/master
 		fi
 		;;
-	'-last')
+	'last'|'-last')
 		git log --pretty=oneline -5
 		;;
 	*)
