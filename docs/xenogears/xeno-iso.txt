@@ -471,7 +471,7 @@ SLPS 011.60 JP disc 1 [3771]
 		1164  [DRM] Yggdrasil vs Goliath
 		1166  [DRM] Desert - Yggdrasil
 		1168  [DRM] Desert - Yggdrasil - Deck
-		1170  *unk*
+		1170  [DRM] Yggdrasil - Maison Bar
 		1172  [DRM] Yggdrasil - Deck
 		1174  [DRM] Yggdrasil - Gear Dock
 		1176  [DRM] Yggdrasil - Deck
