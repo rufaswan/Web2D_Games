@@ -177,6 +177,7 @@ function s6s4_lines( $dir )
 function s6_loop( &$quad )
 {
 	global $gp_json, $gp_s6_flag, $gp_s4_flag, $gp_s5_flag;
+	$dummy = 0;
 
 	$quad['keyframe'] = array();
 	$quad['hitbox']   = array();
@@ -193,6 +194,8 @@ function s6_loop( &$quad )
 		if ( $s6v['s4'][1] > 0 )
 		{
 			$layer = array();
+			list_add( $layer, $s6v['s4'][1]-1, $dummy );
+
 			for ( $i=0; $i < $s6v['s4'][1]; $i++ )
 			{
 				$s4k = $s6v['s4'][0] + $i;
@@ -227,7 +230,7 @@ function s6_loop( &$quad )
 				}
 
 				quad_convexfix($data);
-				$layer[] = $data;
+				$layer[$i] = $data;
 			} // for ( $i=0; $i < $s6v['s4'][1]; $i++ )
 
 			$s4 = array(
@@ -243,6 +246,8 @@ function s6_loop( &$quad )
 		if ( $s6v['s5'][1] > 0 )
 		{
 			$layer = array();
+			list_add( $layer, $s6v['s5'][1]-1, $dummy );
+
 			for ( $i=0; $i < $s6v['s5'][1]; $i++ )
 			{
 				$s5k = $s6v['s5'][0] + $i;
@@ -260,7 +265,7 @@ function s6_loop( &$quad )
 				//if ( s5_flags('damage') )  $data['type'] = 'damage';
 				//if ( s5_flags('attack') )  $data['type'] = 'attack';
 
-				$layer[] = $data;
+				$layer[$i] = $data;
 			} // for ( $i=0; $i < $s6v['s5'][1]; $i++ )
 
 			$s5 = array(
@@ -283,23 +288,11 @@ function s6_loop( &$quad )
 	return;
 }
 //////////////////////////////
-function is_s8_end( &$k, &$s8loop )
-{
-	if ( s8_flags('jump') )
-	{
-		$k = $s8loop;
-		return false;
-	}
-
-	$k++;
-	return false;
-}
-
 function sas8_loop()
 {
 	$salist = array();
 
-	global $gp_json;
+	global $gp_json, $gp_s8_flag;
 	foreach ( $gp_json['sa'] as $sak => $sav )
 	{
 		if ( empty($sav) )
@@ -325,25 +318,41 @@ function sas8_loop()
 		$i = 0;
 		$time = array();
 		$loop = -1;
+
 		$line = array();
-		while ( $i < $sav['s8'][1] )
+		while (1)
 		{
 			$s8k = $sav['s8'][0] + $i;
+			if ( ! isset($gp_json['s8'][$s8k]) )
+				goto anim_end;
 			$s8v = $gp_json['s8'][$s8k];
 			$gp_s8_flag = hexdec( $s8v['bits'] );
 
-			if ( isset( $line[$i] ) )
+			if ( ! isset($line[$s8k]) ) // new entry
 			{
-				$loop = $line[$i];
-				break;
+				$line[$s8k] = count($line);
+				$time[] = $s8v;
+
+				// when last+jump together
+				// ignore last , goto jump
+				if ( s8_flags('jump') )
+					$i = $s8v['loop'];
+				else
+				{
+					if ( s8_flags('last') )
+						goto anim_end;
+					else
+						$i++;
+				}
 			}
+			else // looped back
+			{
+				$loop = $line[$s8k];
+				goto anim_end;
+			}
+		} // while (1)
 
-			$line[$i] = count($time);
-			$time[] = $s8v;
-			if ( is_s8_end($i, $s8v['loop']) )
-				break;
-		} // while ( $i < $sav['s8'][1] )
-
+anim_end:
 		$anim = array(
 			'time' => $time,
 			'loop' => $loop,
@@ -425,9 +434,12 @@ function q3D_sas8s9_loop( &$salist, &$quad )
 				$matrix = s7_matrix( $gp_json['s7'][$s7k], $flipx, $flipy );
 
 				$ent = array(
-					'_debug' => $s8v['bits'],
-					'time'   => $s8v['time'],
-					'mix'    => $s8v['in_s7'],
+					'_debug'       => $s8v['bits'],
+					'time'         => $s8v['time'],
+					'matrix_mix'   => $s8v['in_s7'],
+					'color_mix'    => $s8v['in_s7'],
+					'keyframe_mix' => $s8v['in_s6'],
+					'hitbox_mix'   => $s8v['in_s5s3'],
 				);
 
 				if ( ! empty($attach) )

@@ -1,5 +1,5 @@
-#!/bin/bash
-<<'////'
+<?php
+/*
 [license]
 Copyright (C) 2019 by Rufas Wan
 
@@ -19,11 +19,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
-////
-[ $# = 0 ] && exit
-mogrify -format png                     \
-	-define png:include-chunk=none,trns \
-	-define png:compression-filter=0    \
-	-define png:compression-level=9     \
-	-quiet  -strip                      \
-	"$@"
+ */
+$gp_cheat = array(
+	'SLPS_257.71' => 'ps2_jp_grim',
+);
+
+function ps2_jp_grim( $isop, &$list )
+{
+	$slps = isosearch($list, '/slps_257.71');
+	$pos  = $slps['lba'] * 0x800 + 0x138330; // RAM 2382b0
+	$siz  = 0x48 * 0x28;
+	$fnm  = sprintf('%s.%x.bak', __FUNCTION__, $pos);
+
+	$sub = baksub($fnm, $isop, $pos, $siz, '2aa2c21a4087739f17dbd2d1d880507cf120fd12');
+	for ( $i=0; $i < $siz; $i += 0x48 )
+	{
+		lhu_update($sub, $i+0x14, 1); // lhu size
+		lhu_update($sub, $i+0x1a, 0); // lhu crystal cost
+		lhu_update($sub, $i+0x1e, 1); // lhu time
+		lhu_update($sub, $i+0x20, 1); // lhu hp
+	} // for ( $i=0; $i < $siz; $i += 0x48 )
+
+	fp_update($isop, $pos, $sub);
+	return;
+}
+
+/*
+*/

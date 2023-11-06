@@ -198,7 +198,7 @@ function sect_quad_jnt( &$por, &$quad )
 					$tent = array(
 						'time'   => $dv[1],
 						'matrix' => $mat4,
-						'mix'    => 1,
+						'matrix_mix' => 1,
 					);
 
 					if ( $dpose['b'][2] < 0 )

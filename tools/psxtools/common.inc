@@ -372,34 +372,40 @@ function count_bits( $int )
 	return $bits;
 }
 //////////////////////////////
-function debug( $str, $name='DEBUG' )
+function printhex( &$str )
 {
-	$buf = "$name : ";
+	$txt = '';
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
 	{
-		if ( $i > 0 && ($i % 4) == 0 )
-			$buf .= '  ';
+		if ( ($i & 3) === 0 )
+			$txt .= '  ';
 		if ( $str[$i] === ZERO )
-			$buf .= '-- ';
+			$txt .= '-- ';
 		else
-			$buf .= sprintf('%02x ', ord($str[$i]) );
+			$txt .= sprintf('%2x ', ord($str[$i]) );
 	}
-	$buf .= "\n";
-	//echo $buf;
-	return $buf;
+	return trim($txt);
+}
+
+function debug( $str, $name='DEBUG' )
+{
+	$txt = sprintf("%s : %s\n", $name, printhex($str));
+	return $txt;
 }
 
 function debug_block( &$str, $blksz )
 {
 	$len = int_ceil( strlen($str) , -$blksz);
-	$buf = '';
+	$txt = '';
+	$id  = 0;
 	for ( $i=0; $i < $len; $i += $blksz )
 	{
-		$n = sprintf('%4x', $i/$blksz);
-		$buf .= debug( substr($str, $i, $blksz), $n );
+		$sub  = substr($str, $i, $blksz);
+		$txt .= sprintf("%4x : %s\n", $id, printhex($sub));
+			$id++;
 	}
-	return $buf;
+	return $txt;
 }
 
 function trace()

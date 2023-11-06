@@ -1,0 +1,289 @@
+============================
+== Wild Arms Advanced 3rd ==
+============================
+
+Treasure Chest
+	Town                    =15
+		Little Twister        1
+		Little Rock           1
+		Ark of Destiny       11  10=1  11=2  12=1  13=1  14=1  15=1  16=1  17=2+1
+		Ballack Rise          2
+
+	Dungeon
+		Gob's Hideout        11  4=4  6=1  7=1  10=1  12=1  14=2  15=1
+		Den of Miasma         5  2=1  3=1  4=1  8=2
+		Fallen Sanctuary      6  5=3  12=2+1
+		Doomed to Obscurity   7  2=1  3=2  8=1  10=1  12=2
+
+		Ruins of Memory       9  6=1  7=1  8=1  9=3  13=2+1
+		Serpent's Coil       12  5=3  9=2  11=2  14=2+1  18=2
+		Ka Dingel            10  2=1  5=3  9=2  11=1+1  15=2
+		*Chapter 1          =60
+
+		The Unclean Mark     12  4=4  7=4  12=4
+		Lunatic Garden       10  2=3  3=3  9=1  10=2  12=1
+		Sand Canal           13  3=2  5=1  6=1  9=2  10=3  12=2  14=1+1
+		Glimmering Emblem     8  4=1  5=1  7=2  9=1  11=1  15=2
+		Leyline Observatory   9  3=2  6=2  9=2  10=3
+		Gemstone Cave         7  3=1  6=2  7=1  12=2  13=1
+		Fortune Gear         10*1  3=1*1  5=2+1  8=3  13=3
+		Faraway Lands        12  3=3  5=3  7=1  8=2  9=1  12=2
+		Decaying Labyrinth    1
+		Infinitum            10  6=4  7=2  12=4
+		Nidhogg Pass         17  3=2  4=3  5=1  6=1  12=3  14=2  16=1  18=2  22=1+1
+		Yggdrasil            16  4=2  8=2  9=2  16=3  18=2  23=3  25=1+1
+		*Chapter 2          =125*1
+
+		Iron's Dragon's Nest  1
+		World's Footprint     8  6=2  12=3  15=3
+		Ruins of Dreams      11  2=2  3=3  9=1  12=3  13=1  14=1
+		Fila del Fia         10  3=3  5=1  6=1  7=3  15=2
+		Caging Tower         14  1=1+1  3=1  5=2  8=1  10=3  13=2  15=3
+		Dragon's Lair         8  2=1  3=2  4=2  5=2  6=1
+		Dissection Facility  11  2=1  5=1  6=2  8=1  9=1  11=1  12=1+1  13=1  15=1
+		Dim Root Path        10  3=3  7=3  8=1  13=3
+		*Chapter 3          =73
+
+		Sacrificial Altar     7  1=2  6=2  14=3
+		Demondor Pillar       2  13=2
+		Demondor Pillar-Rear  8  8=4  13=2  15=2
+		Mimir's Well          9  3=1  4=1  6=1  7=1  9=1  10=2  11=2
+		*Chapter 4          =26
+
+	Millennium Puzzles      =20
+
+	n   = chest
+	+ n = duplicator chest
+	* n = black box
+	TRACKER      = Millennium Puzzles #10
+	TELEPORT ORB = Millennium Puzzles #14
+	ITEM SCOPE   = Gunners Heaven Novice League
+	SONAR KIT    = Gunners Heaven Journeyman League
+
+	TOTAL
+		= 15 + 60 + 125 + 1 + 73 + 26 + 20
+		= 320
+
+Tools
+	Virginia  Gob's Hideout    , Nidhogg Pass        , Dim Root Pass
+	Clive     *start*          , Faraway Lands       , Fila Del Fia
+	Jet       *start*          , Leyline Observatory , Iron Dragon's Nest
+	Gallows   Fallen Sanctuary , Lunatic Garden      , Laxisland
+
+Martina quest
+	Claiborne -> Westwood -> Little Rock
+	-> Little Twister -> Humphreys Peak -> Jolly Roger
+	-> Ballack Rise -> Laxisland -> Claiborne
+
+EX File Key
+	 20 * Millennium Puzzles
+	  8 * Secret Garden
+	 15 * Telepath Tower + BOSS Mothership
+	319 * Chest          + BOSS Black Box
+	100 * BOSS Arioch * 4
+	  3 * Gunners Heaven league + BOSS Emperor Marduk + BOSS Bad News
+	chest Black Pass + max gella
+	chest Adventure book #1-11
+	ABYSS #100 + 2 * BOSS Ragu O Ragla
+	BOSS Balal Quo Naga #2
+	Sunset Peak (Southfarm -> East Highlands)
+	Martina quest
+	MAP 100%
+	MAP Yggdrasil area + Item Scope
+	Final Boss - steal
+
+=============================
+== Wild Arms 4th Detonator ==
+=============================
+
+Treasure Chest
+[!]= cannot revisit
+	Town                    = 6
+		Guara Bobelo          4  1=1  2=2+1
+		Frontier Town Halim   2  3=1+1
+
+	Dungeon
+		[!]Sunlit Path        5  2=2  3=3
+		[!]Ravaged Forest     6  3=2  4=2  8=2
+
+		Forsaken Road         2  2=1  3=1
+		Culane Temple         7  1=1  3=1  4=2  7=1  8=1  11=1
+		Celesti Ruins         8  2=2  3=+1  5=2  7=2  10=1
+		Great Stairway        3  1=1  2=1+1
+		White Orphanage      11  1=1  2=1+1  6=2  9=1-1  11=2+1  12=1
+		*Chapter 1          =42
+
+		Calucion Pass         1  2=1
+		Platapana Passage    10  1=1  4=1  5=1  7=1-1  8=1+2  11=2
+		Neve d'Argento        2  2=-1  3=1
+		Cerulean Tunnel       8  2=3  8=1  15=2+2
+		Autumn River          3  1=1  2=1  3=+1
+		Mim'krilu Skyway     15  2=1  3=2  4=+1  5=1  6=1-1  7=2+1  12=2  14=2+1
+		Desolate Railway      2*1  1=1  2=*1  3=1
+		Etemenanki           13  1=1  2=2+1  4=1+1  5=2  12=2  13=1  15=2
+		Forgotten City       14  5=-1  6=2  7=1  9=-1  10=2  11=+2  12=3+1  14=+1
+		Abandoned Village     3  1=1  2=1  3=-1
+		*Chapter 2          =71*1
+
+		Dragon Fossil Mine    8  1=3  2=1+2  3=1-1
+		Valley of Oblivion    9  1=2  3=1+1  6=1  7=-1  9=1  10=1-1
+		Blue Amity Beach      7  1=3  2=+2  3=1+1
+		Fallen Bridge XdXS    4  1=1  2=+1  3=1-1
+		Dievas Airport        4  4=1  5=2  9=+1
+		Illsveil Prison A    18  3=2  4=1  5=1  6=2  7=2  9=+1  10=1+1  11=1+1  12=3  13=-1
+			(A #14 <-> B #1/B #15)
+		Illsveil Prison B     8  2=1  4=+1  6=1  9=+1  12=+2  14=1
+		*Chapter 3          =58
+
+	n   = chest
+	+ n = duplicator / blue chest
+	- n = detector   / red  chest
+	* n = black box
+	DETECTOR = Illsveil Prison A #11 Duplicator Chest
+
+	TOTAL
+		= 6 + 42 + 71 + 1 + 58
+		= 178
+
+EX File Key
+		A  B  C
+		01 02 03  D
+		04 05 06  E
+		07 08 09  F
+	01  BOSS Ragu O Ragla
+		- chest
+		- chest Black Pass + 40 levels
+		- Riber quest (BOSS Omen Fish -> BOSS Saphire Drake)
+		- same as '09'
+	02   1,500+ * Gella/ACG chain
+	03      24+ * Play Time Hours
+	04      30  * Guara Bobelo challenge
+	05  clear game
+	06  50,000+ * Damage Deal/Hit
+	07     235  * 100% Monster Book (verify with 'D' or '01'+'02'+'03')
+	08     200+ * Encounter
+	09      12  * Extra Challenge gold star
+		-  6 chest/playthrough
+		- +6 convert Wild Arms Alter Code F save
+		-  6 stages * 2 modes (Normal + Hard)
+		- gold star = 50,001+ points/stage
+
+============================
+== Wild Arms Vth Vanguard ==
+============================
+
+Treasure Chest
+	Map South West             = 78*1
+		Overworld                15+5*1
+		Puzzle Box                5  2  5  8  12  17
+		Town
+			Capo Bronco           2  1=2
+			Twelbit               4  1=1+1  2=1+1
+		Dungeon
+			Hillside Ruins        6  4=2  10=1  15=+2  17=1
+			Celestial Peak       10  4=2  7=1  10=1  11=2  14=1  16=1  17=1  18=1
+			Abandoned Path       10  3=2  7=1  8=2  9=1  10=1  12=1  16=1-1
+			Isolated Path         8  5=2  7=+1  8=+1  11=1+1-1  17=1
+			TF System Tower M     7  4=+1  8=+1  11=1  13=2  16=+2
+			COCYTUS               6  4=1  6=1  8=1  10=1  12=1  14=1
+
+	Map North West             =117
+		Overworld                23+5
+		Puzzle Box                5  3  6  15  16  18
+		Town
+			Mirapulse             2  1=2
+			Gounon                2  1=1  2=1
+			Harmonde              4  1=1+1  2=2
+		Dungeon
+			Lightless Shaft      12  1=1  2=1-1  3=2  5=1  8=2  9=1  13=-1  16=2
+			Wayward Path         10  4=2  5=1  6=1  8=1  11=2  12=1  14=+2
+			Temple of Rejection  14  3=1+1  5=1  7=1  8=1  9=+2  10=1  13=+1  14=+1  15=1  16=1  17=2
+			Decrepit Path        10  1=1  6=1-1  8=1  9=1+1  10=-1  13=1+1  16=1
+			TF System Tower F    11  3=2  6=1+1  8=1  11=1+1  12=1  13=+1  14=1  15=+1
+			INFERNO              19  1=1  2=1  3=1  4=1  5=2  6=1  7=2+1  8=1  10=1+1  12=+1-1  13=+1  14=2+1
+
+	Map North East             = 94
+		Overworld                14+7
+		Puzzle Box                5  7  10  14  19  20
+		Town
+			Laila Belle           8  1=2+1  2=2+2  3=1
+			Mythysmere            7  1=1  5=1  6=1  7=1  8=1  9=+1  10=+1
+		Dungeon
+			Memorial Santuary    12  3=4  5=+1  6=+1  8=1  11=2  13=1  19=+2
+			Starlit Path         14  1=1  4=1-1  6=-1  8=+2  9=1+1  12=2-1  15=1  16=1+1
+			TF System Tower S     7  3=1  5=1  8=1  11=+1  13=+1  15=2
+			TF System Tower O     9  3=+2  8=1+1  11=+1  13=2  14=+1  15=1
+			TARTARUS             11  3=2  6=1  8=2  9=+1  10=+1  11=-1  12=1  13=2
+
+	Map South East             = 71
+		Overworld                17+5
+		Puzzle Box                5  1  4  9  11  13
+		Town
+			Honeysday             3  2=2+1
+		Dungeon
+			Desecrated Shrine     9  3=1  4=1  7=1  10=1  12=1  13=1  16=1+1  17=+1
+			Mt. Chug Chug        16  2=1  3=-2  5=-1  6=1-1  9=1  10=+2  13=1  14=2-1  15=1  16=+1  18=1
+			TF System Tower G     5  3=1  4=+1  12=1  17=1  18=1
+			ABYSS                11  3=+1  10=+1  18=+2  22=+1  23=+1  24=+1  25=+1  29=+1  30=+2
+
+	Locus Solus
+		Pilgrims' Cradle          1
+
+	n   = chest
+	+ n = duplicator / blue chest
+	- n = powershot  / cyan chest
+	* n = black box
+	SONAR KIT = COCYTUS #15 Sealed Crystal BOSS Lycanthrope * 3
+
+	TOTAL
+		= 78 + 1 + 117 + 94 + 71 + 1
+		= 362
+
+Cartridge
+	Celestial Peak    , Temple of Rejection , Memorial Santuary ,
+	Mythysmere        , Mt.Chug Chug        , Pilgrims' Cradle  ,
+	TF System Tower 0
+
+Black Pass
+	Harmonde       #1   4 * Tent       -> Second Flash
+	Twelbit        #2   Second Flash   -> Canned Peaches
+	Honeyday       #2   Canned Peaches -> Werewolf Fang
+	Gounon         #2   Johnny Appleseed Wine
+	Laila Belle    #1   Johnny Appleseed Wine ->
+	Laila Belle    #1   Werewolf Fang  -> Black Pass
+
+	Laila Belle    #3   Black Pass + 2 * 6 * 30 levels = School Uniform set
+	Hillside Ruins #17  (School Uniform set) Sealed Crystal BOSS Prime Vals
+		(#11 WA3 door = 221500 gella)
+	Mythysmere     #10  (School Uniform set) BOSS Hresvelgr * 3
+
+Teleport Orb (Lilka) + Stone Circles
+	South West -> North East = Puzzle Box #20
+	North West -> South East = chest + Level Apple tree + Asgard BOSS Creeping Chaos
+	North East -> South East = chest + ABYSS
+	South East -> North West = chest + (JAP:XF linked) Sealed Crystal BOSS Furfur * 2
+
+Cameo Costume
+	-        ATK+                      MAG+
+	Dean     WA3 Jet/Honeysday         WA2 Tim/Mythysmere
+	Rebecca  WA2 Kanon/Meisis          WA4 Yulie/Gounon,Mirapulse
+	Avril    WA2 Anastasia/Harmonde    WA1 Cecilia/Gounon
+	Greg     WA1 Jack/Capo Bronco      WA3 Gallows/Gounon,Memorial Santuary
+	Carol    WA3 Virginia/Harmonde     WA2 Lilka/???
+	Chuck    WA1 Magdalen/Laila Belle  WA4 Arnaud/Mirapulse
+		??? = random Twelbit, Orsaeos, Alcedonia, Harmonde, Gounon, Laila Belle
+
+EX File Key
+		A  B  C
+		01 02 03  D
+		04 05 06  E
+		07 08 09  F
+	01  Sheriff Star
+	02      24+ * Play Time Hours
+	03       6+ * Sealed Crystal BOSS
+	04      20  * Puzzle Box
+	05  clear game
+	06  20,000+ * Damage Deal/Hit
+	07     ???  * 50% Monster Book
+	08     200+ * Encounter
+	09     361  * Chest + BOSS Black Box

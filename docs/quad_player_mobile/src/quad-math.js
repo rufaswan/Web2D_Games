@@ -10,23 +10,6 @@ function QuadMath(Q){
 		return n;
 	}
 
-	$.pow2_ceil = function( num ){
-		num |= 0;
-		if ( num === 0 )
-			return 0;
-
-		var sra = 0;
-		while ( num > 1 ){
-			sra++;
-			num >>= 1;
-		}
-		while ( num < -1 ){
-			sra++;
-			num >>= 1;
-		}
-		return (num << sra);
-	}
-
 	//////////////////////////////
 
 	$.vec_resize = function( len, vec ){
@@ -366,6 +349,14 @@ function QuadMath(Q){
 		return xy4;
 	}
 
+	$.fog_mix = function( rate, cur, next ){
+		var rev = 1.0 - rate;
+		var f4  = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
+		for ( var i=0; i < 16; i++ )
+			f4[i] = (cur[i] * rate) + (next[i] * rev);
+		return f4;
+	}
+
 	$.css_color = function( css ){
 		// css = '#rrggbbaa'
 		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )
@@ -393,10 +384,10 @@ function QuadMath(Q){
 		return $.quad_multi4(mat4, quad);
 	}
 
-	$.quad_multi2 = function( mat4, quad ){
-		if ( ! mat4 )  return quad;
-		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
-		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
+	$.quad_multi2 = function( mat4, rect ){
+		if ( ! mat4 )  return rect;
+		var c0 = $.matrix_multi41(mat4, rect.slice(0,2));
+		var c1 = $.matrix_multi41(mat4, rect.slice(2,4));
 		return [].concat( c0.slice(0,2) , c1.slice(0,2) );
 	}
 
@@ -412,6 +403,7 @@ function QuadMath(Q){
 	// color * fogquad
 	$.fog_multi4 = function( color, quad ){
 		var c16 = [
+			// r                g                   b                   a
 			quad[ 0]*color[0] , quad[ 1]*color[1] , quad[ 2]*color[2] , quad[ 3]*color[3] , // c1
 			quad[ 4]*color[0] , quad[ 5]*color[1] , quad[ 6]*color[2] , quad[ 7]*color[3] , // c2
 			quad[ 8]*color[0] , quad[ 9]*color[1] , quad[10]*color[2] , quad[10]*color[3] , // c3

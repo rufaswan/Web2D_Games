@@ -31,25 +31,34 @@ function rgbachan( $fname )
 	if ( isset($file['pal']) )
 		return;
 
-	$r = '';
-	$g = '';
-	$b = '';
-	$a = '';
+	$img = array();
+	for ( $i=0; $i < 4; $i++ )
+	{
+		$img[$i] = array(
+			'cc'  => 0x100,
+			'w'   => $file['w'],
+			'h'   => $file['h'],
+			'pal' => grayclut(0x100),
+			'pix' => '',
+		);
+	}
+
 	$len = strlen($file['pix']);
 	for ( $i=0; $i < $len; $i += 4 )
 	{
-		$r .= $file['pix'][$i+0];
-		$g .= $file['pix'][$i+1];
-		$b .= $file['pix'][$i+2];
-		$a .= $file['pix'][$i+3];
+		$img[0]['pix'] .= $file['pix'][$i+0];
+		$img[1]['pix'] .= $file['pix'][$i+1];
+		$img[2]['pix'] .= $file['pix'][$i+2];
+		$img[3]['pix'] .= $file['pix'][$i+3];
 	}
 
-	save_file("$fname.r", $r);
-	save_file("$fname.g", $g);
-	save_file("$fname.b", $b);
-	save_file("$fname.a", $a);
+	save_clutfile("$fname.r.clut", $img[0]);
+	save_clutfile("$fname.g.clut", $img[1]);
+	save_clutfile("$fname.b.clut", $img[2]);
+	save_clutfile("$fname.a.clut", $img[3]);
 	return;
 }
 
+echo "to seperate RGBA to its own channel\n";
 for ( $i=1; $i < $argc; $i++ )
 	rgbachan( $argv[$i] );

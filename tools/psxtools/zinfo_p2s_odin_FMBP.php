@@ -1,121 +1,351 @@
 <?php
 require 'common.inc';
-require 'quad_vanillaware.inc';
+require 'common-guest.inc';
+require 'common-quad.inc';
+require 'common-zlib.inc';
 
-// NONE + 84 -> CMNR + 3c -> FMBP
-function odin_CMNR( &$file, $fmbp_off )
+function fmbp_s7_matrix( &$s7_row )
 {
-	$bin  = chrint($fmbp_off, 4);
-	$cmnr = strpos_all($file, $bin);
-	foreach ( $cmnr as $cmnr_off )
+	$float = array();
+	for ( $i=0; $i < 0x30; $i += 4 )
 	{
-		if ( substr($file, $cmnr_off - 0x3c, 4) === 'CMNR' )
-		{
-			printf("  %8x  CMNR + 3c -> %8x  FMBP\n", $cmnr_off, $fmbp_off);
-			$bin  = chrint($cmnr_off - 0x3c, 4);
-			$none = strpos_all($file, $bin);
-			foreach( $none as $none_off )
-			{
-				if ( substr($file, $none_off - 0x84, 4) === 'NONE' )
-				{
-					printf("    %8x  NONE + 84 -> %8x  CMNR\n", $none_off, $cmnr_off - 0x3c);
-					$bin  = chrint($none_off - 0x84, 4);
-					$work = strpos_all($file, $bin);
-					foreach( $work as $work_off )
-						printf("      %8x  -> %8x  NONE\n", $work_off, $none_off - 0x84);
-				}
+		$b = str2int($s7_row, $i, 4);
+		$float[$i] = float32($b);
+	}
 
-				// not NONE data
-				else
-					printf("    %8x  -> %8x  CMNR\n", $none_off, $cmnr_off - 0x3c);
-			} // foreach( $none as $none_off )
+	// r g b a  mx my mz  rx ry rz  sx sy
+	$move   = array($float[16] , $float[20] , $float[24]);
+	$rotate = array($float[28] , $float[32] , $float[36]);
+	$scale  = array($float[40] , $float[44]);
+	printf("    s7  move   %10.2f,%10.2f,%10.2f\n",   $move[0],   $move[1],   $move[2]);
+	printf("    s7  rotate %10.2f,%10.2f,%10.2f\n", $rotate[0], $rotate[1], $rotate[2]);
+	printf("    s7  scale  %10.2f,%10.2f\n"       ,  $scale[0],  $scale[1]);
+
+	// in scale - rotate z-y-x - move - flip order
+	$m = matrix_scale(4, $scale[0], $scale[1]);
+
+	$t = matrix_rotate_z(4, $rotate[2]);
+	if ( $t !== -1 )
+		$m = matrix_multi44($m, $t);
+
+	$t = matrix_rotate_y(4, $rotate[1]);
+	if ( $t !== -1 )
+		$m = matrix_multi44($m, $t);
+
+	$t = matrix_rotate_x(4, $rotate[0]);
+	if ( $t !== -1 )
+		$m = matrix_multi44($m, $t);
+
+	$m[0+3] += $move[0];
+	$m[4+3] += $move[1];
+	$m[8+3] += $move[2];
+
+	printf("    s7  matrix 4x4\n");
+	printf("      %10.2f,%10.2f,%10.2f,%10.2f,\n", $m[ 0], $m[ 1], $m[ 2], $m[ 3]);
+	printf("      %10.2f,%10.2f,%10.2f,%10.2f,\n", $m[ 4], $m[ 5], $m[ 6], $m[ 7]);
+	printf("      %10.2f,%10.2f,%10.2f,%10.2f,\n", $m[ 8], $m[ 9], $m[10], $m[11]);
+	printf("      %10.2f,%10.2f,%10.2f,%10.2f,\n", $m[12], $m[13], $m[14], $m[15]);
+	return;
+}
+
+function fmbp_s6_s4rect( &$ram, $sx_off, $s6_row )
+{
+	$float = array();
+	for ( $i=0; $i < 0x10; $i += 4 )
+	{
+		$b = str2int($s6_row, $i, 4);
+		$float[$i] = float32($b);
+	}
+	printf("    s6  x1,y1 <-> x2,y2\n");
+	printf("      %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[0], $float[4], $float[8], $float[12]);
+
+	$s4_id   = str2int($s6_row, 0x10, 2);
+	$s4_cnt  = str2int($s6_row, 0x14, 1);
+
+	$rect = array( BIT24 , BIT24 , -BIT24 , -BIT24 );
+	for ( $i4=0; $i4 < $s4_cnt; $i4++ )
+	{
+		$s4_off = $sx_off[4] + (($s4_id + $i4) * 0x18);
+		$s4_row = substr($ram, $s4_off, 0x18);
+		printf("      %8x  s4[%4x] = %s\n", $s4_off, $s4_id+$i4, printhex($s4_row));
+
+		$s0_id  = str2int($s4_row, 0x08, 2);
+		$s1_id  = str2int($s4_row, 0x04, 2);
+		$s2_id  = str2int($s4_row, 0x10, 2);
+		$s0_off = $sx_off[0] + ($s0_id * 0x20);
+		$s1_off = $sx_off[1] + ($s1_id * 0x20);
+		$s2_off = $sx_off[2] + ($s2_id * 0x20);
+		$s0_row = substr($ram, $s0_off, 0x20);
+		$s1_row = substr($ram, $s1_off, 0x20);
+		$s2_row = substr($ram, $s2_off, 0x20);
+		printf("        %8x  s0[%4x] = %s\n", $s0_off, $s0_id, printhex($s0_row));
+		printf("        %8x  s1[%4x] = %s\n", $s1_off, $s1_id, printhex($s1_row));
+		printf("        %8x  s2[%4x] = %s\n", $s2_off, $s2_id, printhex($s2_row));
+
+		for ( $i2 = 8; $i2 < 24; $i2 += 4 )
+		{
+			$x = str2int($s2_row, $i2 + 0, 2, true) / 0x10;
+			$y = str2int($s2_row, $i2 + 2, 2, true) / 0x10;
+			if ( $x < $rect[0] )  $rect[0] = $x;
+			if ( $y < $rect[1] )  $rect[1] = $y;
+			if ( $x > $rect[2] )  $rect[2] = $x;
+			if ( $y > $rect[3] )  $rect[3] = $y;
+		}
+	} // for ( $i4=0; $i4 < $s4_cnt; $i4++ )
+
+	printf("    s4  max x1,y1 <-> x2,y2\n");
+	printf("      %10.2f,%10.2f <-> %10.2f,%10.2f\n", $rect[0], $rect[1], $rect[2], $rect[3]);
+	return;
+}
+//////////////////////////////
+function sect_CTRL( &$ram, $ctrl_off, &$sx_off )
+{
+	$float = array();
+	for ( $i=0; $i < 0x70; $i += 4 )
+	{
+		$b = str2int($ram, $ctrl_off + $i, 4);
+		$float[$i] = float32($b);
+	}
+
+	printf("  CTRL matrix 4x4\n");
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[ 0], $float[ 4], $float[ 8], $float[12]);
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[16], $float[20], $float[24], $float[28]);
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[32], $float[36], $float[40], $float[44]);
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[48], $float[52], $float[56], $float[60]);
+
+	printf("  CTRL rgba float*ff\n");
+	printf("    # %2x %2x %2x %2x\n", $float[64]*0xff, $float[ 68]*0xff, $float[ 72]*0xff, $float[ 76]*0xff);
+	printf("    # %2x %2x %2x %2x\n", $float[80]*0xff, $float[ 84]*0xff, $float[ 88]*0xff, $float[ 92]*0xff);
+	printf("    # %2x %2x %2x %2x\n", $float[96]*0xff, $float[100]*0xff, $float[104]*0xff, $float[108]*0xff);
+
+	//////////////////////////////
+
+	$s9_id  = str2int($ram, $ctrl_off + 0x80, 2);
+	$s9_off = $sx_off[9] + ($s9_id * 0x30);
+	$s9_row = substr($ram, $s9_off, 0x30);
+	printf("  %8x  s9[%4x] = %s\n", $s9_off, $s9_id, printhex($s9_row));
+
+	$float = array();
+	for ( $i=0; $i < 0x10; $i += 4 )
+	{
+		$b = str2int($s9_row, $i, 4);
+		$float[$i] = float32($b);
+	}
+
+	printf("    s9  name = %s\n", substr0($s9_row, 0x10));
+	printf("    s9  x1,y1 <-> x2,y2\n");
+	printf("      %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[0], $float[4], $float[8], $float[12]);
+
+	//////////////////////////////
+
+	$float = array();
+	for ( $i=0; $i < 0x10; $i += 4 )
+	{
+		$b = str2int($ram, $ctrl_off + 0xc0 + $i, 4);
+		$float[$i] = float32($b);
+	}
+	printf("  CTRL  x1,y1 <-> x2,y2\n");
+	printf("    %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[0], $float[4], $float[8], $float[12]);
+
+	return;
+}
+
+function sect_WORK( &$ram, $work_off, &$sx_off )
+{
+	$float = array();
+	for ( $i=0; $i < 0x60; $i += 4 )
+	{
+		$b = str2int($ram, $work_off + $i, 4);
+		$float[$i] = float32($b);
+	}
+
+	printf("  WORK matrix 4x4\n");
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[ 0], $float[ 4], $float[ 8], $float[12]);
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[16], $float[20], $float[24], $float[28]);
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[32], $float[36], $float[40], $float[44]);
+	printf("    %10.2f,%10.2f,%10.2f,%10.2f,\n", $float[48], $float[52], $float[56], $float[60]);
+
+	printf("  WORK x1,y1 <-> x2,y2\n");
+	printf("    %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[64], $float[68], $float[72], $float[76]);
+	printf("    %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[80], $float[84], $float[88], $float[92]);
+
+	//////////////////////////////
+
+	$s8_time_c = str2int($ram, $work_off + 0x6c, 2); // countdown
+	$s8_time   = str2int($ram, $work_off + 0x6e, 2);
+	$sa_id     = str2int($ram, $work_off + 0x70, 2);
+	$s8_id_c   = str2int($ram, $work_off + 0x72, 2);
+	$s8_set_st = str2int($ram, $work_off + 0x74, 1);
+
+	$sa_off = $sx_off[10] + ($sa_id * 8);
+	$sa_row = substr($ram, $sa_off, 8);
+	printf("  %8x  sa[%4x] = %s\n", $sa_off, $sa_id, printhex($sa_row));
+
+	$s8_id  = str2int($sa_row, 0, 2) + $s8_id_c + $s8_set_st;
+	$s8_off = $sx_off[8] + ($s8_id * 0x20);
+	$s8_row = substr($ram, $s8_off, 0x20);
+	printf("  %8x  s8[%4x] = %s\n", $s8_off, $s8_id, printhex($s8_row));
+
+	$s6_id  = str2int($s8_row, 0, 2);
+	$s7_id  = str2int($s8_row, 4, 2);
+	$s6_off = $sx_off[6] + ($s6_id * 0x18);
+	$s7_off = $sx_off[7] + ($s7_id * 0x30);
+	$s6_row = substr($ram, $s6_off, 0x18);
+	$s7_row = substr($ram, $s7_off, 0x30);
+	printf("  %8x  s6[%4x] = %s\n", $s6_off, $s6_id, printhex($s6_row));
+	printf("  %8x  s7[%4x] = %s\n", $s7_off, $s7_id, printhex($s7_row));
+
+	//////////////////////////////
+
+	fmbp_s7_matrix($s7_row);
+	fmbp_s6_s4rect($ram, $sx_off, $s6_row);
+	return;
+}
+
+function sect_CMNR( &$ram, $cmnr_off, &$sx_off )
+{
+	$off = chrint($cmnr_off, 4);
+
+	$len = strlen($ram);
+	$pos = 0;
+	while ( $pos < $len )
+	{
+		$pos = strpos($ram, $off, $pos);
+		if ( $pos === false )
+			return;
+
+		$bak = $pos;
+			$pos++;
+		if ( $bak & 3 ) // aligned to 4-bytes
+			continue;
+
+		// if next is CTEX and control
+		$ctex_off = str2int($ram, $bak+4, 4);
+		$ctrl_off = str2int($ram, $bak+8, 4);
+		if ( substr($ram,$ctex_off,4) !== 'CTEX' )
+		{
+			printf("%8x\n", $bak);
+			continue;
 		}
 
-		// not CMNR data
+		$ctrl_cmnr_off = str2int($ram, $ctrl_off + 0x78, 4);
+		$ctrl_ctex_off = str2int($ram, $ctrl_off + 0x7c, 4);
+		if ( $cmnr_off === $ctrl_cmnr_off && $ctex_off === $ctrl_ctex_off )
+		{
+			// active WORK
+			$work_off = $bak - 0x60;
+			$name1 = substr0($ram, $cmnr_off + 0x1a);
+			$name2 = substr0($ram, $ctex_off + 0x1a);
+			printf("%8x  WORK  CMNR %s + CTEX %s [active]\n", $work_off, $name1, $name2);
+			sect_WORK($ram, $work_off, $sx_off);
+
+			printf("%8x  CTRL [active]\n", $ctrl_off);
+			sect_CTRL($ram, $ctrl_off, $sx_off);
+		}
 		else
-			printf("  %8x  -> %8x  FMBP\n", $cmnr_off, $fmbp_off);
-	} // foreach ( $cmnr as $cmnr_off )
-	return;
-}
-
-function odin_FMBP( $fname )
-{
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return '';
-
-	global $gp_data;
-	$sect = $gp_data['ps2_odin']['sect'];
-
-	$fmbp = strpos_all($file, 'FMBP');
-	$ret  = array();
-	foreach ( $fmbp as $fmbp_off )
-	{
-		// not FMBP file, but for strcmp()
-		$b1 = str2int($file, $fmbp_off + 8, 4);
-		if ( $b1 !== 0xa0 )
-			continue;
-
-		// original file from ISO , invalid offset
-		$b1 = str2int($file, $fmbp_off + 0x54, 4);
-		if ( $b1 < $fmbp_off )
-			continue;
-
-		$fn = substr0($file, $fmbp_off + 0x80);
-		foreach ( $sect as $sk => $sv )
 		{
-			$p = str2int($file, $fmbp_off + $sv['p'], 4);
-			$c = str2int($file, $fmbp_off + $sv['c'][0], $sv['c'][1]);
-			$data = array(
-				'pos' => $p,
-				'siz' => $c * $sv['k'],
-				'mbp' => $fn,
-				'sec' => $sk,
-				'blk' => $sv['k'],
-			);
-
-			printf("%s [ s%x ] = %8x + %8x\n", $data['mbp'], $data['sec'], $data['pos'], $data['siz']);
-			$ret[] = $data;
-		} // foreach ( $sect as $sk => $sv )
-
-		//odin_CMNR($file, $fmbp_off);
-	} // foreach ( $fmbp as $fmbp_off )
-
-	return $ret;
-}
-
-function odinoff( $fmbp, $hex )
-{
-	if ( empty($fmbp) )
-		return;
-	$hex = hexdec($hex);
-
-	foreach ( $fmbp as $fv )
-	{
-		$off = $hex - $fv['pos'];
-		if ( $off < 0 )
-			continue;
-		if ( $off >= $fv['siz'] )
-			continue;
-
-		$id = 0;
-		while ( $off > $fv['blk'] )
-		{
-			$id++;
-			$off -= $fv['blk'];
+			// deleted WORK
+			$work_off = $bak - 0x60;
+			$name1 = substr0($ram, $cmnr_off + 0x1a);
+			$name2 = substr0($ram, $ctex_off + 0x1a);
+			printf("%8x  WORK  CMNR %s + CTEX %s [deleted]\n", $work_off, $name1, $name2);
 		}
-		printf("%8x = %s [ s%x ][ %x ] + %x\n", $hex, $fv['mbp'], $fv['sec'], $id, $off);
-		return;
-	} // foreach ( $fmbp as $fv )
+	} // while ( $pos < $len )
 	return;
 }
 
-printf("%s  eeMemory.bin  HEX...\n", $argv[0]);
-if ( $argc < 2 )  exit();
+function sect_FMBP( &$ram, $fmbp_off, &$sx_off )
+{
+	$off = chrint($fmbp_off, 4);
 
-$fmbp = odin_FMBP( $argv[1] );
+	$len = strlen($ram);
+	$pos = 0;
+	while ( $pos < $len )
+	{
+		$pos = strpos($ram, $off, $pos);
+		if ( $pos === false )
+			return;
 
-for ( $i=2; $i < $argc; $i++ )
-	odinoff( $fmbp, $argv[$i] );
+		if ( $pos & 3 ) // aligned to 4-bytes
+		{
+			$pos++;
+			continue;
+		}
+
+		$cmnr_off = $pos - 0x3c;
+		if ( substr($ram,$cmnr_off,4) === 'CMNR' )
+		{
+			$name = substr0($ram, $cmnr_off + 0x1a);
+			printf("%8x  CMNR  %s\n", $cmnr_off, $name);
+			sect_CMNR($ram, $cmnr_off, $sx_off);
+		}
+		else
+			printf("%8x\n", $pos);
+
+		$pos++;
+	} // while ( $pos < $len )
+	return;
+}
+//////////////////////////////
+function p2sram( $fname )
+{
+	$fp = fopen($fname, 'rb');
+	if ( ! $fp )  return '';
+
+	$list = zipfile_list($fp);
+	foreach ( $list as $lv )
+	{
+		if ( stripos($lv['file'], 'eememory.bin') !== false )
+		{
+			$ram = fp2str($fp, $lv['pos'], $lv['size1']);
+			if ( $lv['size1'] != $lv['size2'] )
+				$ram = zlib_decode($ram);
+			return $ram;
+		}
+	} // foreach ( $list as $lv )
+	return '';
+}
+
+function odinp2s( $fname )
+{
+	$ram = p2sram($fname);
+	if ( empty($ram) )  return;
+
+	save_file("$fname.ram", $ram);
+
+	$len = strlen($ram);
+	$pos = 0;
+	while ( $pos < $len )
+	{
+		$pos = strpos($ram, 'FMBP', $pos);
+		if ( $pos === false )
+			return;
+
+		$mgc = $ram[$pos+8] . $ram[$pos+0x14];
+		if ( $mgc === "\xa0\x55" || $mgc === "\xa0\xc9" )
+		{
+			$name = substr0($ram, $pos + 0x80);
+			echo "------------------------------\n";
+			printf("%8x  FMBP  %s\n", $pos, $name);
+
+			$sx_off = array();
+			for ( $i = 0x54; $i < 0x80; $i += 4 )
+				$sx_off[] = str2int($ram, $pos + $i, 4);
+
+			if ( $sx_off[0] < $pos )
+				printf("  CDread() copy. skipped.\n");
+			else
+				sect_FMBP($ram, $pos, $sx_off);
+		}
+
+		$pos += 4;
+	} // while ( $pos < $len )
+	return;
+}
+
+printf("%s  P2S_FILE...\n", $argv[0]);
+for ( $i=1; $i < $argc; $i++ )
+	odinp2s( $argv[$i] );
 
 /*
 //////////////////////////////

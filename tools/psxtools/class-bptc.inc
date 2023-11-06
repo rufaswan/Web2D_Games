@@ -701,4 +701,4 @@ class BPTC_Texture
 		} // for ( $y=0; $y < $h; $y += 4 )
 		return $canvas;
 	}
-} // class BPTC
+} // class BPTC_Texture

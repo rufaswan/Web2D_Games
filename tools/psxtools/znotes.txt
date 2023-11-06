@@ -80,6 +80,17 @@ math.stackexchange.com/questions/767945/finding-the-coordinate-of-a-point-using-
 	You could then use your angle to find the angle opposite point B,
 	then use sin and cos to get the X and Y distances between A and B.
 
+https://scratch.mit.edu/discuss/topic/356578/?page=1#post-3610855
+	Convert x,y to Angle, Distance
+		set Angle    to ( (atan of (y/x)) + (180*(x < 0)) ) mod 360
+		set Distance to   (sqrt of  x*x)  + (  y*y)
+
+	Convert Angle,Distance to x,y
+		set x to Distance * cos of Angle
+		set y to Distance * sin of Angle
+
+	NB. Distance comes out black in the two lines above, but is the orange variable distance.
+
 stackoverflow.com/questions/20858338/how-to-draw-text-and-shadow-it-in-imagemagick
 
 	convert logo:                  \

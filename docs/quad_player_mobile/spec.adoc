@@ -344,24 +344,28 @@ color_mix::
 	* If omitted, then it is default to `0` (`false`)
 
 keyframe_mix::
-	* Marks if current keyframe layer dstquad is interpolated with the next keyframe layer dstquad.
+	* Marks if current keyframe layer is interpolated with the next keyframe layer.
+	* Affects `dstquad` and `fogquad`.
 	** rate = t / time , t++
-	** dstquad = (current * (1 - rate)) + (next * rate)
-	* Mixing is impossible under the following conditions, and this option is ignored.
-	** if current keyframe layer count is not the same as next keyframe layer count. Default to use current keyframe layer only.
-	** if current keyframe layer is empty. Default to skipped.
-	** if next keyframe layer is empty. Default to use current keyframe layer only.
+	** layer = (current * (1 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
+	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
+	*** if current keyframe layer count is not the same as next keyframe layer count.
+	*** if current keyframe layer is empty.
+	*** if next keyframe layer is empty.
+	** If `false`, only current keyframe layer is used, next keyframe layer is ignored.
 
 hitbox_mix::
-	* Marks if current hitbox layer hitquad is interpolated with the next hitbox layer hitquad.
+	* Marks if current hitbox layer is interpolated with the next hitbox layer.
+	* Affects `hitquad`.
 	** rate = t / time , t++
-	** hitquad = (current * (1 - rate)) + (next * rate)
-	* Mixing is impossible under the following conditions, and this option is ignored.
-	** if current hitbox layer count is not the same as next hitbox layer count. Default to use current hitbox layer only.
-	** if current hitbox layer is empty. Default to skipped.
-	** if next hitbox layer is empty. Default to use current hitbox layer only.
+	** layer = (current * (1 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
+	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
+	*** if current hitbox layer count is not the same as next hitbox layer count.
+	*** if current hitbox layer is empty.
+	*** if next hitbox layer is empty.
+	** If `false`, only current hitbox layer is used, next hitbox layer is ignored.
 
 === skeleton_object
 
@@ -483,7 +487,7 @@ id (required)::
 
 == Revision History
 
-v0.x::
+v0.3 (2023-11-06)::
 	* `animation_timeline_object`: removed `mix`
 	* `animation_timeline_object`: added `matrix_mix`
 	* `animation_timeline_object`: added `color_mix`
@@ -491,21 +495,21 @@ v0.x::
 	* `animation_timeline_object`: added `hitbox_mix`
 
 v0.2 (2023-05-11)::
-	* Rewritten from scratch with dynamic attach system.
+	* Rewritten from scratch with dynamic `attach_object` system.
 	* Object keys are standardize to be singular form in `lower_snake_case`.
 	* Added `hitbox` objects.
 	* Added `slot` objects.
 	* Added `skeleton` objects.
 	* Added `blend` objects.
 	* `animation` object is simplified to one-track only.
-	* `animation_timeline_object`: added `mix`
 
 v0.1 (2021-03-01)::
 	* Initial release and first draft.
 
 == Example
 
-link:sample.quad[sample.quad (2794 bytes)]
+link:sample-mat4mix.quad[sample-mat4mix.quad (2176 bytes)]
+link:sample-keymix.quad[sample-keymix.quad (1478 bytes)]
 
 == Online Ver
 * https://github.com/rufaswan/Web2D_Games/blob/master/docs/quad_player_mobile/spec.adoc

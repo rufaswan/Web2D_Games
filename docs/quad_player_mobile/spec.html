@@ -85,6 +85,9 @@
 <li>
 <p>As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not used. They are auto-generated when drawing as 2 triangles.</p>
 </li>
+<li>
+<p>No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -622,12 +625,15 @@
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "debug"  : any,
-  "time"   : number fps,
-  "attach" : <a href="#_attach_object">attach_object</a>,
-  "matrix" : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
-  "color"  : string rgba,
-  "mix"    : bool,
+  "debug"        : any,
+  "time"         : number fps,
+  "attach"       : <a href="#_attach_object">attach_object</a>,
+  "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
+  "color"        : string rgba,
+  "matrix_mix"   : bool,
+  "color_mix"    : bool,
+  "keyframe_mix" : bool,
+  "hitbox_mix"   : bool,
 }</pre>
 </div>
 </div>
@@ -689,28 +695,146 @@
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">mix</dt>
+<dt class="hdlist1">matrix_mix</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Affects matrix and color value.</p>
-</li>
-<li>
-<p>Marks the animation for the current frame is interpolated with the next frame.</p>
+<p>Marks if current matrix is interpolated with the next matrix.</p>
 <div class="ulist">
 <ul>
 <li>
 <p>rate = t / time , t++</p>
 </li>
 <li>
-<p>matrix or color = (current * (1 - rate)) + (next * rate)</p>
+<p>matrix = (current * (1 - rate)) + (next * rate)</p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>If omitted, then it is default to <code>0</code> (false)</p>
+<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">color_mix</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Marks if current color is interpolated with the next color.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>rate = t / time , t++</p>
+</li>
+<li>
+<p>color = (current * (1 - rate)) + (next * rate)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">keyframe_mix</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Marks if current keyframe layer is interpolated with the next keyframe layer.</p>
+</li>
+<li>
+<p>Affects <code>dstquad</code> and <code>fogquad</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>rate = t / time , t++</p>
+</li>
+<li>
+<p>layer = (current * (1 - rate)) + (next * rate)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mixing is impossible under the following conditions, and this setting is default to <code>0</code> (<code>false</code>).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if current keyframe layer count is not the same as next keyframe layer count.</p>
+</li>
+<li>
+<p>if current keyframe layer is empty.</p>
+</li>
+<li>
+<p>if next keyframe layer is empty.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If <code>false</code>, only current keyframe layer is used, next keyframe layer is ignored.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">hitbox_mix</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Marks if current hitbox layer is interpolated with the next hitbox layer.</p>
+</li>
+<li>
+<p>Affects <code>hitquad</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>rate = t / time , t++</p>
+</li>
+<li>
+<p>layer = (current * (1 - rate)) + (next * rate)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mixing is impossible under the following conditions, and this setting is default to <code>0</code> (<code>false</code>).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if current hitbox layer count is not the same as next hitbox layer count.</p>
+</li>
+<li>
+<p>if current hitbox layer is empty.</p>
+</li>
+<li>
+<p>if next hitbox layer is empty.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If <code>false</code>, only current hitbox layer is used, next hitbox layer is ignored.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -992,12 +1116,24 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">v0.x</dt>
+<dt class="hdlist1">v0.3 (2023-11-06)</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Asciidoc formating and minor text revision.</p>
+<p><code>animation_timeline_object</code>: removed <code>mix</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code>: added <code>matrix_mix</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code>: added <code>color_mix</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code>: added <code>keyframe_mix</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code>: added <code>hitbox_mix</code></p>
 </li>
 </ul>
 </div>
@@ -1007,28 +1143,25 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Rewritten from scratch with dynamic attach system.</p>
+<p>Rewritten from scratch with dynamic <code>attach_object</code> system.</p>
 </li>
 <li>
 <p>Object keys are standardize to be singular form in <code>lower_snake_case</code>.</p>
 </li>
 <li>
-<p>Added <code>Hitbox</code> objects.</p>
+<p>Added <code>hitbox</code> objects.</p>
 </li>
 <li>
-<p>Added <code>Slot</code> objects.</p>
+<p>Added <code>slot</code> objects.</p>
 </li>
 <li>
-<p>Added <code>Skeleton</code> objects.</p>
+<p>Added <code>skeleton</code> objects.</p>
 </li>
 <li>
-<p>Added <code>Blending</code> objects.</p>
+<p>Added <code>blend</code> objects.</p>
 </li>
 <li>
-<p><code>Animation</code> object is simplified to one-track only.</p>
-</li>
-<li>
-<p>Added matrix and color mixing to <code>Animation</code> objects.</p>
+<p><code>animation</code> object is simplified to one-track only.</p>
 </li>
 </ul>
 </div>
@@ -1051,7 +1184,8 @@
 <h2 id="_example">Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="sample.quad">sample.quad (2794 bytes)</a></p>
+<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (2176 bytes)</a><br>
+<a href="sample-keymix.quad">sample-keymix.quad (1478 bytes)</a></p>
 </div>
 </div>
 </div>

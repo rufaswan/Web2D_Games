@@ -35,7 +35,7 @@ textarea {
 	display          : block;
 	width            : 95%;
 	height           : 25em;
-	margin           : 0 auto 5em;
+	margin           : 0 auto 0;
 	background-color : #fff;
 	color            : #000;
 	resize           : none;
@@ -80,7 +80,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #debugger h1 {
-	margin-top : 45px;
+	margin-top : 3em;
 }
 
 #viewer_top_nav,
@@ -109,6 +109,23 @@ h1, h2, h3, h4, h5, h6 {
 #debugger_top_nav {
 	position         : fixed;
 	background-color : #404040;
+	border-bottom    : 2px #c0c0c0 solid;
+	padding-bottom   : 1em;
+}
+
+#export_div {
+	position         : fixed;
+	bottom           : 0;
+	background-color : #404040;
+	display          : none;
+	text-align       : center;
+	border-top       : 2px #c0c0c0 solid;
+	padding-top      : 1em;
+	width            : 100vw;
+}
+
+#export_div button {
+	margin : 1em;
 }
 
 #quad_data button {
@@ -147,7 +164,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #quad_data_tags td:nth-child(2) {
-	width       : 100%;
+	width       : auto;
 	border      : 1px #c0c0c0 solid;
 	white-space : break-spaces;
 }

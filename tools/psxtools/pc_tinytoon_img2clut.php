@@ -223,7 +223,7 @@ function spr_lz_decode( &$file, $pos, $size )
 	trace("== end sub_40ff70()\n");
 	return $dec;
 }
-
+//////////////////////////////
 function vflip( &$pix, $w, $h )
 {
 	if ( ($w*$h) > strlen($pix) )
@@ -319,7 +319,7 @@ function tinytoon( $pal, $fname )
 	} // switch ( $ty )
 	return;
 }
-
+//////////////////////////////
 printf("%s  PALETTE/IMAGE...\n", $argv[0]);
 $pal = grayclut(0x100);
 for ( $i=1; $i < $argc; $i++ )

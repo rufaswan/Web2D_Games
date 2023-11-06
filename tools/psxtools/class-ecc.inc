@@ -198,4 +198,4 @@ class ECC
 
 		return $this->fix930($h.$sect.$f , $lba);
 	}
-}
+} // class ECC

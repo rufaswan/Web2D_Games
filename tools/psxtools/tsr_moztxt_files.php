@@ -20,25 +20,41 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
-require 'common-json.inc';
-require 'class-atlas.inc';
-require 'quad.inc';
 
-function silhmira( $fname )
+function moztxt( $fname )
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$dir = str_replace('.', '_', $fname);
-	silhmirabin($file);
+	preg_match_all('|<([^>]+)>|', $file, $match);
+	if ( empty($match) )
+		return;
 
+	//print_r($match[1]);
+	$list = array();
+	foreach ( $match[1] as $url )
+	{
+		$http  = parse_url($url);
+		if ( ! isset($http['path']) )
+			continue;
+		if ( isset($http['query']) )
+			continue;
 
+		$fname = substr($http['path'], strrpos($http['path'],'/')+1);
+		if ( empty($fname) )
+			continue;
+		if ( strpos($fname, '.') === false )
+			continue;
+
+		$path = sprintf('<p><a href="%s">%s</a></p>', $url, urldecode($fname));
+		$list[] = $path;
+	} // foreach ( $match[1] as $url )
+
+	sort($list);
+	foreach ( $list as $p )
+		echo "$p\n";
 	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )
-	silhmira( $argv[$i] );
-
-/*
- */
+	moztxt( $argv[$i] );

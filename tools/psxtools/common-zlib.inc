@@ -138,3 +138,36 @@ if ( ! function_exists('zlib_encode') )
 		return zlib_deflate_store($data);
 	}
 }
+
+//////////////////////////////
+
+function zipfile_list( $fp )
+{
+	$list = array();
+	$pos = 0;
+	while (1)
+	{
+		$pk3 = fp2str($fp, $pos, 0x1e);
+			$pos += 0x1e;
+		if ( substr($pk3,0,4) !== "PK\x03\x04" )
+			break;
+
+		$fsz1 = str2int($pk3, 0x12, 4); // compressed size
+		$fsz2 = str2int($pk3, 0x16, 4); // uncompressed size
+		$flen = str2int($pk3, 0x1a, 2);
+		$fext = str2int($pk3, 0x1c, 2);
+
+		$fnam = fp2str($fp, $pos, $flen);
+			$pos += ($flen + $fext);
+
+		$list[] = array(
+			'file'  => $fnam,
+			'pos'   => $pos,
+			'size1' => $fsz1,
+			'size2' => $fsz2,
+		);
+
+		$pos += $fsz1;
+	} // while (1)
+	return $list;
+}

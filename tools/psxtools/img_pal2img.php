@@ -61,7 +61,15 @@ function palfile( $cc, $fname )
 	return;
 }
 
-echo "{$argv[0]}  [-16/-256]  PALETTE_FILE...\n";
+echo <<<_MSG
+to convert *.PAL into tileset image
+with each color is 16x16 tile size
+and aligned to 16 / 128 / 256 colors per set
+
+usage : {$argv[0]}  [-16/-128/-256]  PALETTE_FILE...
+
+_MSG;
+
 $cc = 0;
 for ( $i=1; $i < $argc; $i++ )
 {

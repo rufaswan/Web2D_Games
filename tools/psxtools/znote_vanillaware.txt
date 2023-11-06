@@ -16,9 +16,15 @@
 2016  PS4   Odin Sphere Leifthsar
 2018  PS4   Dragon's Crown Pro
 2019  PS4   13 Sentinels: Aegis Rim
+
 2022  SWIT  13 Sentinels: Aegis Rim
 2022  SWIT  GrimGrimoire OnceMore
 2022  PS4   GrimGrimoire OnceMore
+2023  PS5   GrimGrimoire OnceMore
+2024  SWIT  Unicorn Overlord
+2024  PS4   Unicorn Overlord
+2024  PS5   Unicorn Overlord
+2024  XBSX  Unicorn Overlord
 ==============================
 ps2 grim/cat00.mbp
 	- 0 1 2 |    -   a0  1a0  3e0 |  -    8*20 12*20 70*20
@@ -105,6 +111,11 @@ ps4 sent  76   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*
 swi sent
 swi grim
 ps4 grim
+ps5 grim
+swi unic
+ps4 unic
+ps5 unic
+xbx unic
 ==============================
 COUNT     pos  int16
 ps2 grim  3c   0 1  2 4 3 5 7 8 6 9  a
@@ -123,11 +134,17 @@ ps4 sent  50   4+ 0 1 2 3 5 7  8 6 9 a - b
 swi sent
 swi grim
 ps4 grim
+ps5 grim
+swi unic
+ps4 unic
+ps5 unic
+xbx unic
 ==============================
 grim
 	ps2  *base* , 256 color
 	swi
 	ps4
+	ps5
 odin
 	ps2  *base* , 256 color
 	vit  size=1x ps2 , DXT 1/3/5 , remastered
@@ -143,4 +160,9 @@ drag
 sent
 	ps4  *base* , BC7
 	swi
+unic
+	swi
+	ps4
+	ps5
+	xbx
 ==============================

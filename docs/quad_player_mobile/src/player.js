@@ -19,6 +19,7 @@ function displayViewer( html, toggle ){
 		html.viewer.style.display   = 'none';
 		html.debugger.style.display = 'block';
 	}
+	html.export_div.style.display = 'none';
 }
 
 function btnToggle( elem, turn ){
@@ -85,6 +86,56 @@ function qdata_attach( qdata, type, id ){
 	qdata.attach.type = type;
 	qdata.attach.id   = id;
 	qdata.anim_fps    = 0;
+}
+
+//////////////////////////////
+// TODO : remove all global var
+
+function button_select( elem ){
+	if ( SELECTED )
+		SELECTED.classList.remove('current');
+
+	var par1 = elem.parentElement;
+	SELECTED = par1;
+	SELECTED.classList.add('current');
+
+	var par2 = elem.parentElement.parentElement;
+	var type = par2.getAttribute('data-type');
+	var id   = par2.getAttribute('data-id') | 0;
+
+	qdata_attach(QuadList[0], type, id);
+	displayViewer(HTML, true);
+}
+
+function button_export( elem ){
+	var par2 = elem.parentElement.parentElement;
+	var type = par2.getAttribute('data-type');
+	var id   = par2.getAttribute('data-id') | 0;
+
+	var div = HTML.export_div;
+	div.setAttribute('data-type', type);
+	div.setAttribute('data-id'  , id);
+	div.style.display = 'block';
+
+	HTML.export_name.innerHTML = type + ' , ' + id;
+
+	var qdata = QuadList[0];
+	var time  = QUAD.export.timeAttach(qdata, type, id);
+	var range = HTML.export_range;
+	range.setAttribute('max', time - 1); // index 0
+	range.value = 0;
+	HTML.export_start.innerHTML = 0;
+}
+
+function button_export_type( elem ){
+	var par2 = elem.parentElement.parentElement;
+	var type = par2.getAttribute('data-type');
+	var id   = par2.getAttribute('data-id') | 0;
+	var fmt  = elem.innerHTML.toLowerCase();
+
+	var time = HTML.export_start.innerHTML | 0;
+	var zoom = 1.0 * HTML.export_zoom.innerHTML;
+	QUAD.export.export(fmt, QuadList[0], HTML.canvas, type, id, time, zoom);
 }
 
 /*

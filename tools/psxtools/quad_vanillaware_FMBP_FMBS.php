@@ -1285,30 +1285,86 @@ function s1s4_pixel( $fname, &$s1, &$s4 )
 	}
 	return;
 }
+//////////////////////////////
+function detect_tag( &$file )
+{
+	switch ( substr($file,0,4) )
+	{
+		case 'FMBP':
+			$ver = str2int($file, 0x14, 2);
+			switch ( $ver )
+			{
+				case 0xc9:  return 'ps2_grim';
+				case 0x55:  return 'ps2_odin';
+			} // switch ( $ver )
+			return '';
+		case 'FMBS':
+			// big endian test
+			$ver = str2big($file, 0x14, 2);
+			switch ( $ver )
+			{
+				case 0x66:  return 'wii_mura';
+				case 0x6e:  return 'ps3_drag';
+				case 0x72:  return 'ps3_odin';
+			} // switch ( $ver )
+
+			// little endian test
+			$ver = str2int($file, 0x14, 2);
+			switch ( $ver )
+			{
+				case 0x66:  return 'nds_kuma';
+				case 0x6b:  return 'psp_gran';
+				case 0x6d:  return 'vit_mura';
+				case 0x6e:  return 'vit_drag';
+				case 0x72:
+					// s0 test
+					if ( str2int($file,0xb0,4) === 0x120 )
+					{
+						$mgc = substr($file, 0x80, 5);
+						if ( $mgc === 'REHD_' || $mgc === 'ORHD_' )
+							return 'ps4_odin';
+						else
+							return 'ps4_drag';
+					}
+					if ( str2int($file,0xc8,4) === 0x120 || str2int($file,0xe0,4) === 0x120 )
+						return 'vit_odin';
+					return '';
+				case 0x76:  return 'ps4_sent';
+			} // switch ( $ver )
+
+			// test failed
+			return '';
+	} // switch ( substr($file,0,4) )
+	return '';
+}
 
 function vanilla( $tag, $fname )
 {
 	global $gp_data, $gp_share;
 	$gp_share = array(
-		'tag'  => $tag,
+		'tag'  => '',
 		'data' => '',
 		'file' => '',
 		'dir'  => '',
 		'idx'  => 0,
 	);
 
-	if ( ! isset($gp_data[$tag]) )
-		return php_error('Unknown tag [%s] = %s', $tag, $fname);
-	$gp_share['data'] = $gp_data[$tag];
-
 	$gp_share['file'] = file_get_contents($fname);
 	if ( empty($gp_share['file']) )  return;
 
-	$mgc = substr($gp_share['file'], 0, 4);
-	if ( $mgc !== 'FMBP' && $mgc !== 'FMBS' )
-		return;
+	$t = detect_tag($gp_share['file']);
+	if ( ! empty($t) )
+	{
+		printf("[AUTO] tag = %s\n", $t);
+		$tag = $t;
+	}
 
-	$gp_share['dir'] = str_replace('.', '_', $fname);
+	if ( ! isset($gp_data[$tag]) )
+		return php_error('Unknown tag [%s] = %s', $tag, $fname);
+
+	$gp_share['data'] = $gp_data[$tag];
+	$gp_share['tag']  = $tag;
+	$gp_share['dir']  = str_replace('.', '_', $fname);
 
 	switch ( $gp_share['tag'] )
 	{
@@ -1403,27 +1459,32 @@ function vanilla( $tag, $fname )
 }
 //////////////////////////////
 $err = <<<_ERR
-{$argv[0]}  TAG  MBP/MBS_FILE...
+{$argv[0]}  [TAG]  MBP/MBS_FILE...
 TAG
-  ps2_grim  2007  PS2   GrimGrimoire
-  ps2_odin  2007  PS2   Odin Sphere
-  nds_kuma  2008  NDS   Kumatanchi
-  wii_mura  2009  Wii   Muramasa - The Demon Blade
-  ps3_drag  2013  PS3   Dragon's Crown
-  ps3_odin  2016  PS3   Odin Sphere Leifthsar
-  ps4_odin  2016  PS4   Odin Sphere Leifthsar
-  ps4_drag  2018  PS4   Dragon's Crown Pro
-  ps4_sent  2019  PS4   13 Sentinels: Aegis Rim
+  ps2_grim  2007  PS2   [AUTO] GrimGrimoire
+  ps2_odin  2007  PS2   [AUTO] Odin Sphere
+  nds_kuma  2008  NDS   [AUTO] Kumatanchi
+  wii_mura  2009  Wii   [AUTO] Muramasa - The Demon Blade
+  ps3_drag  2013  PS3   [AUTO] Dragon's Crown
+  ps3_odin  2016  PS3   [AUTO] Odin Sphere Leifthsar
+  ps4_odin  2016  PS4   [AUTO] Odin Sphere Leifthsar
+  ps4_drag  2018  PS4   [AUTO] Dragon's Crown Pro
+  ps4_sent  2019  PS4   [AUTO] 13 Sentinels: Aegis Rim
 
-  psp_gran  2011  PSP   Gran Knights History
-  vit_mura  2013  Vita  Muramasa Rebirth + DLC
-  vit_drag  2013  Vita  Dragon's Crown
-  vit_odin  2016  Vita  Odin Sphere Leifthsar
+  psp_gran  2011  PSP   [AUTO] Gran Knights History
+  vit_mura  2013  Vita  [AUTO] Muramasa Rebirth + DLC
+  vit_drag  2013  Vita  [AUTO] Dragon's Crown
+  vit_odin  2016  Vita  [AUTO] Odin Sphere Leifthsar
 
   Upcoming
   swi_sent  2022  Swit  13 Sentinels: Aegis Rim
   swi_grim  2022  Swit  GrimGrimoire OnceMore
   ps4_grim  2022  PS4   GrimGrimoire OnceMore
+  ps5_grim  2023  PS5   GrimGrimoire OnceMore
+  swi_unic  2024  Swit  Unicorn Overlord
+  ps4_unic  2024  PS4   Unicorn Overlord
+  ps5_unic  2024  PS5   Unicorn Overlord
+  xbx_unic  2024  XBSX  Unicorn Overlord
 
 _ERR;
 
@@ -1436,30 +1497,3 @@ for ( $i=1; $i < $argc; $i++ )
 	else
 		$tag = $argv[$i];
 }
-
-/*
-		switch ( $gp_share['tag'] )
-		{
-			case 'ps2_grim':
-			case 'ps2_odin':
-			case 'nds_kuma':
-			case 'wii_mura':
-			case 'ps3_drag':
-			case 'ps3_odin':
-			case 'ps4_odin':
-			case 'ps4_drag':
-			case 'ps4_sent':
-
-			case 'psp_gran':
-			case 'vit_mura':
-			case 'vit_drag':
-			case 'vit_odin':
-
-			//case 'swi_sent':
-			//case 'swi_grim':
-			//case 'ps4_grim':
-
-			//case 'con_name':
-				break;
-		} // switch ( $gp_tag )
- */

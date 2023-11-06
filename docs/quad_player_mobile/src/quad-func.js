@@ -40,6 +40,13 @@ function QuadFunc(Q){
 	$.isUndef = function( a ){
 		return ( typeof a === 'undefined' );
 	}
+	$.isArray = function( array, size ){
+		if ( ! Array.isArray(array) )
+			return false;
+		if ( array.length !== size )
+			return false;
+		return true;
+	}
 
 	$.fileExtension = function( fn ){
 		var ext = fn.split('.').pop();
@@ -66,32 +73,21 @@ function QuadFunc(Q){
 				}).then(function(list){
 					var key = Object.keys(list);
 					var pro = [];
-
 					for ( var i=0; i < key.length; i++ ){
 						var ext = $.fileExtension( key[i] );
 						var dat = list[ key[i] ];
+
 						switch ( ext ){
 							case 'quad':
-								var p = new Promise(function(resolve, reject){
-									var src = Q.binary.uint2txt(dat);
-									resolve(src);
-								}).then(function(text){
-									return m.uploadHandler(qdata, 'quad', key[i], text);
-								});
-								pro.push(p);
+								var text = Q.binary.uint2txt(dat);
+								pro[i] = m.uploadHandler(qdata, 'quad', key[i], text);
 								break;
 							case 'png':
-								var p = new Promise(function(resolve, reject){
-									var src = 'data:image/png;base64,' + Q.binary.toBase64(dat);
-									resolve(src);
-								}).then(function(data){
-									return m.uploadHandler(qdata, 'image', key[i], src);
-								});
-								pro.push(p);
+								var data = 'data:image/png;base64,' + Q.binary.toBase64(dat);
+								pro[i] = m.uploadHandler(qdata, 'image', key[i], data);
 								break;
 						} // switch ( ext )
 					} // for ( var i=0; i < key.length; i++ )
-
 					return Promise.all(pro);
 				});
 
@@ -195,7 +191,7 @@ function QuadFunc(Q){
 			var c = Q.math.css_color(fog);
 			return [].concat(c, c, c, c);
 		}
-		if ( Array.isArray(fog) && fog.length === 4 ){
+		if ( $.isArray(fog, 4) ){
 			var c0 = Q.math.css_color( fog[0] );
 			var c1 = Q.math.css_color( fog[1] );
 			var c2 = Q.math.css_color( fog[2] );
@@ -208,11 +204,12 @@ function QuadFunc(Q){
 
 	m.quadfileCheck = function( quad ){
 		quad.blend     = quad.blend     || [];
-		quad.keyframe  = quad.keyframe  || [];
+		quad.slot      = quad.slot      || [];
 		quad.hitbox    = quad.hitbox    || [];
+		quad.keyframe  = quad.keyframe  || [];
 		quad.animation = quad.animation || [];
 		quad.skeleton  = quad.skeleton  || [];
-		quad.__MIX = [];
+		quad.__MIX     = [];
 
 		var ent;
 		function nullent(arr,k){
@@ -232,39 +229,11 @@ function QuadFunc(Q){
 			};
 		}); // quad.blend.forEach
 
-		quad.keyframe.forEach(function(kv,kk){
-			if ( ! Array.isArray(kv.layer) )
-				return nullent(quad.keyframe, kk);
-			kv.layer.forEach(function(lv,lk){
-				if ( ! Array.isArray(lv.dstquad) || lv.dstquad.length !== 8 )
-					return nullent(kv.layer, lk);
-				ent = {
-					'debug'    : lv.debug || 0,
-					'dstquad'  : lv.dstquad,
-					'tex_id'   : -1,
-					'blend_id' : -1,
-					'fogquad'  : m.keyFogQuad( lv.fogquad ),
-					'srcquad'  : 0,
-				};
-				if ( ! $.isUndef(lv.blend_id) )  ent.blend_id = lv.blend_id; // 0 is valid
-				if ( ! $.isUndef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id;   // 0 is valid
-				if ( Array.isArray(lv.srcquad) && lv.srcquad.length === 8 )
-					ent.srcquad = lv.srcquad;
-				kv.layer[lk] = ent;
-			});
-			quad.keyframe[kk] = {
-				'debug'  : kv.debug || 0,
-				'name'   : kv.name  || 'keyframe '+ kk,
-				'layer'  : kv.layer,
-				'__RECT' : 0,
-			};
-		}); // quad.keyframe.forEach
-
 		quad.hitbox.forEach(function(hv,hk){
 			if ( ! Array.isArray(hv.layer) )
 				return nullent(quad.hitbox, hk);
 			hv.layer.forEach(function(lv,lk){
-				if ( ! Array.isArray(lv.hitquad) && lv.hitquad.length !== 8 )
+				if ( ! $.isArray(lv.hitquad, 8) )
 					return nullent(hv.layer, lk);
 				hv.layer[lk] = {
 					'debug'   : lv.debug || 0,
@@ -277,6 +246,34 @@ function QuadFunc(Q){
 				'layer' : hv.layer,
 			};
 		}); // quad.hitbox.forEach
+
+		quad.keyframe.forEach(function(kv,kk){
+			if ( ! Array.isArray(kv.layer) )
+				return nullent(quad.keyframe, kk);
+			kv.layer.forEach(function(lv,lk){
+				if ( ! $.isArray(lv.dstquad, 8) )
+					return nullent(kv.layer, lk);
+				ent = {
+					'debug'    : lv.debug || 0,
+					'dstquad'  : lv.dstquad,
+					'tex_id'   : -1,
+					'blend_id' : -1,
+					'fogquad'  : m.keyFogQuad( lv.fogquad ),
+					'srcquad'  : 0,
+				};
+				if ( ! $.isUndef(lv.blend_id) )  ent.blend_id = lv.blend_id; // 0 is valid
+				if ( ! $.isUndef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id;   // 0 is valid
+				if ( $.isArray(lv.srcquad, 8) )
+					ent.srcquad = lv.srcquad;
+				kv.layer[lk] = ent;
+			});
+			quad.keyframe[kk] = {
+				'debug'  : kv.debug || 0,
+				'name'   : kv.name  || 'keyframe '+ kk,
+				'layer'  : kv.layer,
+				'__RECT' : 0,
+			};
+		}); // quad.keyframe.forEach
 
 		quad.animation.forEach(function(av,ak){
 			if ( ! Array.isArray(av.timeline) )
@@ -295,7 +292,7 @@ function QuadFunc(Q){
 					'keyframe_mix' : ( tv.keyframe_mix ) ? true : false,
 					'hitbox_mix'   : ( tv.hitbox_mix   ) ? true : false,
 				};
-				if ( Array.isArray(tv.matrix) && tv.matrix.length === 16 )
+				if ( $.isArray(tv.matrix, 16) )
 					ent.matrix = tv.matrix;
 				av.timeline[tk] = ent;
 			});
@@ -387,14 +384,11 @@ function QuadFunc(Q){
 		$.drawLines(qdata, layer, mat4, 'hitquad');
 	}
 
-	m.drawKeyframeLine = function( qdata, layer, mat4 ){
-		$.drawLines(qdata, layer, mat4, 'dstquad');
-	}
-
 	//////////////////////////////
 
 	m.drawKeyframeTex = function( qdata, layer, mat4, color ){
 		var ctexs = [];
+		var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
 		layer.forEach(function(lv,lk){
 			if ( ! lv )
@@ -412,10 +406,9 @@ function QuadFunc(Q){
 			var clr = Q.math.fog_multi4(color, lv.fogquad);
 			kv.fog = kv.fog.concat(clr);
 
-			if ( lv.srcquad )
-				kv.src = kv.src.concat(lv.srcquad);
-			else
-				kv.src = kv.src.concat([0,0 , 0,0 , 0,0 , 0,0]);
+			var src = lv.srcquad || dummysrc;
+			kv.src = kv.src.concat(src);
+
 			kv.tid = kv.tid.concat([lv.tex_id , lv.tex_id , lv.tex_id , lv.tex_id]);
 		});
 
@@ -432,7 +425,7 @@ function QuadFunc(Q){
 	$.drawKeyframe = function( qdata, kid, mat4, color ){
 		var layer = qdata.QUAD.keyframe[kid].layer;
 		if ( qdata.is_lines )
-			return m.drawKeyframeLine(qdata, layer, mat4);
+			return $.drawLines(qdata, layer, mat4, 'dstquad');
 		else
 			return m.drawKeyframeTex(qdata, layer, mat4, color);
 	}
@@ -445,17 +438,18 @@ function QuadFunc(Q){
 			switch ( mv.type ){
 				case 'keyframe':
 					if ( qdata.is_lines )
-						return m.drawKeyframeLine(qdata, mv.layer, mat4);
+						return $.drawLines(qdata, mv.layer, mat4, 'dstquad');
 					else
 						return m.drawKeyframeTex(qdata, mv.layer, mat4, color);
 				case 'hitbox':
+					if ( ! qdata.is_hits )
+						return;
 					return $.drawLines(qdata, mv.layer, mat4, 'hitquad');
 			} // switch ( mv.type )
 		});
 	}
 
 	m.mixAttach = function( qdata, cur, nxt, rate, keymix, hitmix ){
-		var MIX = qdata.QUAD.__MIX;
 		var mixslot = [];
 
 		function nextlayer( next, s ){
@@ -463,21 +457,26 @@ function QuadFunc(Q){
 				return qdata.QUAD[s][ next.id ].layer;
 			if ( next.type === 'slot' ){
 				var slot = qdata.QUAD.slot[ next.id ];
-				slot.forEach(function(sv,sk){
-					if ( sv.type === s )
-						return qdata.QUAD[s][ sv.id ].layer;
-				});
+				for ( var i=0; i < slot.length; i++ ){
+					if ( slot[i].type === s )
+						return qdata.QUAD[s][ slot[i].id ].layer;
+				}
 			}
 			return 0;
 		}
 		function addmixslot( mcur, mnxt ){
 			switch( mcur.type ){
+				case 'slot':
+					var slot = qdata.QUAD.slot[ cur.id ];
+					slot.forEach(function(sv,sk){
+						addmixslot(sv, mnxt);
+					});
+					return;
 				case 'keyframe':
 				case 'hitbox':
 					var curlayer = qdata.QUAD[ mcur.type ][ mcur.id ].layer;
 					if ( ! curlayer )
 						return;
-
 					var ent = {
 						'type'  : mcur.type,
 						'layer' : $.copyObject( curlayer ),
@@ -492,34 +491,27 @@ function QuadFunc(Q){
 					var nxtlayer = nextlayer(mnxt, mcur.type);
 					if ( ! nxtlayer )
 						return mixslot.push(ent);
-					if ( ent.layer.length !== nxtlayer.length )
+					if ( curlayer.length !== nxtlayer.length )
 						return mixslot.push(ent);
-
-					var quad = '';
-					if ( mcur.type === 'keyframe' )  quad = 'dstquad';
-					if ( mcur.type === 'hitbox'   )  quad = 'hitquad';
 
 					ent.layer.forEach(function(lv,lk){
 						if ( ! lv )
 							return;
-						ent.layer[lk][quad] = Q.math.quad_mix( rate, curlayer[lk][quad], nxtlayer[lk][quad] );
+						if ( lv.dstquad )
+							lv.dstquad = Q.math.quad_mix( rate, curlayer[lk].dstquad, nxtlayer[lk].dstquad );
+						if ( lv.hitquad )
+							lv.hitquad = Q.math.quad_mix( rate, curlayer[lk].hitquad, nxtlayer[lk].hitquad );
+						if ( lv.fogquad )
+							lv.fogquad = Q.math.fog_mix ( rate, curlayer[lk].fogquad, nxtlayer[lk].fogquad );
 					});
 					return mixslot.push(ent);
 			} // switch( mcur.type )
 		}
-
-		if ( cur.type === 'slot' ){
-			var slot = qdata.QUAD.slot[ cur.id ];
-			slot.forEach(function(sv,sk){
-				addmixslot(sv, nxt);
-			});
-		}
-		else
-			addmixslot(cur, nxt);
+		addmixslot(cur, nxt);
 
 		// return attach object
-		var id = MIX.length;
-		MIX.push(mixslot);
+		var id = qdata.QUAD.__MIX.length;
+		qdata.QUAD.__MIX.push(mixslot);
 		return {
 			'type' : '__MIX',
 			'id'   : id,
@@ -598,6 +590,7 @@ function QuadFunc(Q){
 			c4 = cur.color;
 		ret.color = Q.math.vec4_multi( ret.color, c4 );
 
+		// layer mixing test
 		if ( ! cur.keyframe_mix && ! cur.hitbox_mix )
 			return ret;
 
@@ -684,10 +677,16 @@ function QuadFunc(Q){
 
 	//////////////////////////////
 
+	$.isValidAttach = function( qdata, type, id ){
+		if ( ! Array.isArray( qdata.QUAD[ type ] ) )
+			return false;
+		if ( ! qdata.QUAD[ type ][ id ] )
+			return false;
+		return true;
+	}
+
 	$.drawAttach = function( qdata, attach, mat4, color ){
-		if ( ! Array.isArray( qdata.QUAD[ attach.type ] ) )
-			return;
-		if ( ! qdata.QUAD[ attach.type ][ attach.id ] )
+		if ( ! $.isValidAttach(qdata, attach.type, attach.id) )
 			return;
 		switch ( attach.type ){
 			case 'keyframe':
@@ -712,7 +711,7 @@ function QuadFunc(Q){
 				return $.drawMIX( qdata, attach.id, mat4, color );
 			case 'quad':
 				var qid = qdata.QUAD.quad[ attach.id ];
-				if ( qid === undefined || qid < 0 )
+				if ( $.isUndef(qid) || qid < 0 )
 					return;
 				return $.qdata_draw( qdata.LIST[qid], mat4, color );
 		} // switch ( attach.type )
@@ -735,32 +734,44 @@ function QuadFunc(Q){
 		qdata.QUAD.__MIX = [];
 	}
 
-	$.autofitZoom = function( qdata, autozoom ){
-		if ( ! autozoom )
-			return 1;
-		var canvsz  = Q.gl.canvasSize();
-		var sprsize = Q.export.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
-		if ( sprsize ){
-			var symm = Q.export.sizeSymmetry(sprsize);
-			var zoomx = canvsz[0] / symm[0];
-			var zoomy = canvsz[1] / symm[1];
-			return ( zoomx < zoomy ) ? zoomx : zoomy;
-		}
-		return 1;
-	}
-
-	$.viewerCamera = function(qdata, autofit=false){
-		var m4 = Q.math.matrix4();
+	$.viewerCamera = function( qdata, autozoom ){
 		var canvsz = Q.gl.canvasSize();
 
-		m4[0+3] = canvsz[0] *   0; // move x , no change
-		m4[4+3] = canvsz[1] * 0.5; // move y , half downward
+		qdata.zoom = 1.0;
+		var movex = canvsz[0] * 0  ; // no change
+		var movey = canvsz[1] * 0.5; // half downward
 
+		if ( autozoom ){
+			var sprsize = Q.export.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
+			if ( sprsize ){
+				if ( sprsize[0] < 0 || sprsize[1] < 0 ){
+					// is sprite , 0,0 is at center
+					// x1 or y1 is negative
+					var symm = Q.export.sizeSymmetry(sprsize);
+					var zoomx = canvsz[0] / symm[0];
+					var zoomy = canvsz[1] / symm[1];
+					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
+				}
+				else {
+					// is map , 0,0 is top-left
+					// x1 and y1 is positive
+					var zoomx = canvsz[0] / (sprsize[2] * 0.5);
+					var zoomy = canvsz[1] / (sprsize[3] * 0.5);
+					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
+					movex = (-sprsize[2] * 0.5 * qdata.zoom);
+					movey = (-sprsize[3] * 0.5 * qdata.zoom);
+				}
+			} // if ( sprsize )
+		} // if ( autozoom )
+
+		var m4 = Q.math.matrix4();
+		m4[0+3] = movex;
+		m4[4+3] = movey;
+
+		m4[0+0] = qdata.zoom;
+		m4[4+1] = qdata.zoom;
 		if ( qdata.is_flipx )  m4[0+0] = -m4[0+0];
 		if ( qdata.is_flipy )  m4[4+1] = -m4[4+1];
-
-		m4[0+0] *= qdata.zoom;
-		m4[4+1] *= qdata.zoom;
 		return m4;
 	}
 

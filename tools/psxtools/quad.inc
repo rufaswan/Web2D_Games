@@ -69,12 +69,51 @@ function load_idtagfile( $pfx )
 	return $data;
 }
 
+function anim_allkeys( &$quad )
+{
+	if ( empty($quad) )
+		return;
+	if ( ! isset( $quad['keyframe'] ) )
+		return;
+	if ( ! isset( $quad['animation'] ) )
+		$quad['animation'] = array();
+
+	$time = array();
+	foreach ( $quad['keyframe'] as $kk => $kv )
+	{
+		if ( empty($kv) )
+			continue;
+		$en = array(
+			'time' => 1,
+			'attach' => array(
+				'type' => 'keyframe',
+				'id'   => $kk
+			),
+		);
+		$time[] = $en;
+	}
+
+	$anim = array(
+		'name' => 'ALL KEYFRAMES',
+		'timeline' => $time,
+	);
+	$quad['animation'][] = $anim;
+	return;
+}
+
 function list_add( &$list, $k, &$v )
 {
 	$k = (int)$k;
-	while ( ! isset($list[$k]) )
-		$list[] = 0;
-	$list[$k] = $v;
+	for ( $i=0; $i <= $k; $i++ )
+	{
+		if ( ! isset($list[$i]) )
+			$list[$i] = 0;
+		if ( $i === $k )
+			$list[$i] = $v;
+	}
+
+	// unorder keys is std::map, not std::vector
+	ksort($list);
 	return;
 }
 
@@ -82,6 +121,7 @@ function save_quadfile( $pfx, &$quad )
 {
 	if ( empty($quad) )
 		return;
+	anim_allkeys($quad);
 
 	$quad = json_pretty($quad, '');
 	save_file("$pfx.quad", $quad);

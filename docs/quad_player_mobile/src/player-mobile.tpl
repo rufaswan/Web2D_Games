@@ -40,6 +40,28 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<div id='quad_data'></div>
 	<h3>Logs</h3>
 	<textarea id='logger' disabled></textarea>
+	<p>
+		<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/player-mobile.tpl.html' target='_blank'>Latest version</a> -
+		<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html' target='_blank'>QUAD File Spec</a> -
+		<a href='https://github.com/rufaswan/Web2D_Games' target='_blank'>Github</a>
+	</p>
+
+	<div id='export_div' data-type='' data-id=''>
+		<p id='export_name'></p>
+		<p>
+			START = <span id='export_start'>0</span>
+			<input id='export_range' type='range' min='0' max='0' step='1' value='0'>
+		</p>
+		<p>
+			ZOOM = <span id='export_zoom'>1.0</span>
+			<input id='export_times' type='range' min='0.1' max='10.0' step='0.1' value='1.0'>
+		</p>
+		<p>
+			<button onclick='button_export_type(this);'>png</button>
+			<button onclick='button_export_type(this);'>zip</button>
+			<button onclick='button_export_type(this);'>rgba</button>
+		</p>
+	</div>
 </div>
 
 <div id='viewer'>
@@ -64,38 +86,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 </div>
 
 <script>
-function button_select( elem ){
-	if ( SELECTED )
-		SELECTED.classList.remove('current');
-
-	var par1 = elem.parentElement;
-	SELECTED = par1;
-	SELECTED.classList.add('current');
-
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
-
-	var qdata = QuadList[0];
-	qdata_attach(qdata, type, id);
-	displayViewer(HTML, true);
-}
-
-function button_export( elem ){
-	var qdata = QuadList[0];
-	var fmt   = elem.innerHTML.toLowerCase();
-
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
-	var fps  = qdata.anim_fps;
-	QUAD.export.export(fmt, qdata, HTML.canvas, type, id, fps);
-}
-
 var HTML = getHtmlIds();
 var QuadList = [];
 var SELECTED = '';
-var AUTOZOOM = true;
 
 (function(){
 	if ( ! QUAD.gl.init(HTML.canvas) )
@@ -119,7 +112,7 @@ var AUTOZOOM = true;
 	});
 	HTML.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', UPLOAD_ID);
-		if ( QuadList[ UPLOAD_ID ] === undefined )
+		if ( QUAD.func.isUndef( QuadList[ UPLOAD_ID ] ) )
 			QuadList[ UPLOAD_ID ] = new QuadData(QuadList);
 		var qdata = QuadList[ UPLOAD_ID ];
 
@@ -143,54 +136,61 @@ var AUTOZOOM = true;
 				qdata_tagtable( qdata.QUAD.tag, HTML.quad_data );
 
 				['skeleton','animation','keyframe','hitbox','slot'].forEach(function(qv,qk){
-					if ( qdata.QUAD[qv] ){
-						HTML.quad_data.innerHTML += '<h2>' + qv + '</h2>';
+					if ( qdata.QUAD[qv].length < 1 )
+						return;
 
-						var table = '<table>';
-						qdata.QUAD[qv].forEach(function(v,k){
-							if ( ! v )
-								return;
+					HTML.quad_data.innerHTML += '<h2>' + qv + '</h2>';
 
-							var t = {};
-							t.name = v.name || qv + ' ' + k;
-							if ( QUAD.export.isloopAttach(qdata, qv, k) )
-								t.name += ' <strong>[LOOP]</strong>';
+					var table = '<table>';
+					qdata.QUAD[qv].forEach(function(v,k){
+						if ( ! v )
+							return;
 
-							t.p    = '<p onclick="button_select(this);">' + t.name + '</p>';
-							t.btn  = '';
-							t.btn += '<button onclick="button_export(this);">png</button>';
-							t.btn += '<button onclick="button_export(this);">zip</button>';
-							//t.btn += '<button onclick="button_export(this);">rgba</button>';
+						var t = {};
+						t.name = v.name || qv + ' ' + k;
+						if ( QUAD.export.isLoopAttach(qdata, qv, k) )
+							t.name += ' <strong>[LOOP]</strong>';
+						if ( QUAD.export.isMixAttach(qdata, qv, k) )
+							t.name += ' <strong>[MIX]</strong>';
 
-							var tr = document.createElement('tr');
-							tr.setAttribute('data-type', qv);
-							tr.setAttribute('data-id'  , k);
-							if ( ['keyframe','hitbox','slot'].indexOf(qv) === -1 )
-								tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn + '</td>';
-							else
-								tr.innerHTML = '<td>' + t.p + '</td>';
+						t.p   = '<p onclick="button_select(this);">' + t.name + '</p>';
+						t.btn = '<button onclick="button_export(this);">export</button>';
 
-							table += tr.outerHTML;
-						});
-						table += '</table>';
-						HTML.quad_data.innerHTML += table;
-					}
-				});
+						var tr = document.createElement('tr');
+						tr.setAttribute('data-type', qv);
+						tr.setAttribute('data-id'  , k);
+						if ( ['keyframe','hitbox','slot'].indexOf(qv) === -1 )
+							tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn + '</td>';
+						else
+							tr.innerHTML = '<td>' + t.p + '</td>';
+
+						table += tr.outerHTML;
+					});
+					table += '</table>';
+					HTML.quad_data.innerHTML += table;
+				}); // ['skeleton','animation','keyframe','hitbox','slot'].forEach
 			} // if ( qdata.name )
 		});
 	});
+	HTML.export_range.addEventListener('change', function(){
+		HTML.export_start.innerHTML = this.value;
+	});
+	HTML.export_times.addEventListener('change', function(){
+		HTML.export_zoom.innerHTML = this.value;
+	});
 
 	// VIEWER
-	var HAS_VIEWER = 1;
+	var IS_VIEWER_NAV = true;
+	var IS_AUTOZOOM   = true;
 	HTML.canvas.addEventListener('click', function(){
-		if ( HAS_VIEWER ) {
+		if ( IS_VIEWER_NAV ) {
 			HTML.viewer_top_nav.style.display    = 'none';
 			HTML.viewer_bottom_nav.style.display = 'none';
 		} else {
 			HTML.viewer_top_nav.style.display    = 'flex';
 			HTML.viewer_bottom_nav.style.display = 'flex';
 		}
-		HAS_VIEWER = ! HAS_VIEWER;
+		IS_VIEWER_NAV = ! IS_VIEWER_NAV;
 	});
 	HTML.btn_lines.addEventListener('click', function(){
 		if ( ! QuadList[0] )
@@ -214,12 +214,13 @@ var AUTOZOOM = true;
 			return;
 		if ( HTML.btn_autofit.classList.contains('btn_on') ){
 			btnToggle(HTML.btn_autofit, -1);
-			AUTOZOOM = 0;
+			IS_AUTOZOOM = false;
+			QuadList[0].zoom = 1;
 		} else {
 			btnToggle(HTML.btn_autofit, 1);
-			AUTOZOOM = 1;
+			IS_AUTOZOOM = true;
+			QuadList[0].zoom = -1;
 		}
-		QuadList[0].zoom = QUAD.func.autofitZoom(QuadList[0], AUTOZOOM);
 	});
 	HTML.btn_flipx.addEventListener('click', function(){
 		if ( ! QuadList[0] )
@@ -302,10 +303,9 @@ var AUTOZOOM = true;
 				IS_BTN_CLICK = 0;
 		}
 
-		// redraw only when changed
+		// update/redraw only when changed
 		if ( QUAD.gl.isCanvasResized() || QUAD.func.isChanged(qdata) ){
-			qdata.zoom = QUAD.func.autofitZoom(qdata, AUTOZOOM);
-			CAMERA = QUAD.func.viewerCamera(qdata);
+			CAMERA = QUAD.func.viewerCamera(qdata, IS_AUTOZOOM);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();
 

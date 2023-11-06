@@ -527,48 +527,76 @@ work * 80
 	//  | sin   -sin  cos   0 |
 	//  | tx    ty    tz    1 |
 	00
-		171784  lwc1  f0, 0(v1) -> 0(t0)
-		1717b0  lwc1  f1, 0(v1) -> 0(t0)
-		175c80  lwc1  f2, 0(a1)
+		171784  lwc1  f0,  0(v1) -> 0(t0)
+		1717b0  lwc1  f1,  0(v1) -> 0(t0)
+		172da4  lw    a0,  0(a3) -> 0(a2)
+		175c80  lwc1  f2,  0(a1)
 	04
-		171790  lwc1  f0, 4(v1) -> 4(t0)
-		1717c8  lwc1  f1, 4(v1) -> 4(t0)
-		175c70  lwc1  f3, 4(a1)
+		171790  lwc1  f0,  4(v1) -> 4(t0)
+		1717c8  lwc1  f1,  4(v1) -> 4(t0)
+		172dac  lw    v1,  4(a3) -> 4(a2)
+		175c70  lwc1  f3,  4(a1)
 	08
-		171798  lwc1  f0, 8(v1) -> 8(t0)
-		1717e0  lwc1  f1, 8(v1) -> 8(t0)
+		171798  lwc1  f0,  8(v1) -> 8(t0)
+		1717e0  lwc1  f1,  8(v1) -> 8(t0)
+		172da4  lw    a0,  0(a3) -> 0(a2)
 	0c
-		1717a0  lwc1  f0, c(v1) -> c(t0)
-		1717f8  lwc1  f1, c(v1) -> c(t0)
-	10  175c88  lwc1  f1, 10(a1)
-	14  175c68  lwc1  f1, 14(a1)
+		1717a0  lwc1  f0,  c(v1) -> c(t0)
+		1717f8  lwc1  f1,  c(v1) -> c(t0)
+		172dac  lw    v1,  4(a3) -> 4(a2)
+	10
+		175c88  lwc1  f1, 10(a1)
+		172da4  lw    a0,  0(a3) -> 0(a2)
+	14
+		175c68  lwc1  f1, 14(a1)
+		172dac  lw    v1,  4(a3) -> 4(a2)
 	18
+		172da4  lw    a0,  0(a3) -> 0(a2)
 	1c
+		172dac  lw    v1,  4(a3) -> 4(a2)
 	20
+		172da4  lw    a0,  0(a3) -> 0(a2)
 	24
+		172dac  lw    v1,  4(a3) -> 4(a2)
 	28
+		172da4  lw    a0,  0(a3) -> 0(a2)
 	2c
-	30  175c8c  lwc1  f0, 30(a1) // move x
-	34  175c78  lwc1  f0, 34(a1) // move y
+		172dac  lw    v1,  4(a3) -> 4(a2)
+	30
+		172da4  lw    a0,  0(a3) -> 0(a2)
+		175c8c  lwc1  f0, 30(a1) // move x
+	34
+		172dac  lw    v1,  4(a3) -> 4(a2)
+		175c78  lwc1  f0, 34(a1) // move y
 	38  // move z
+		172da4  lw    a0,  0(a3) -> 0(a2)
 	3c
+		172dac  lw    v1,  4(a3) -> 4(a2)
 	//////////////////////////////
 	40  // x1
 		1725dc  swc1  f0, 40(s3)
 		172628  swc1  f0, 40(s3)
 		17274c  swc1  f0, 40(s3)
+		172acc  lwc1  fc, 40(s3)
+		172ae0  lwc1  fc, 40(s3)
 	44  // y1
 		1725e4  swc1  f0, 44(s3)
 		17263c  swc1  f0, 44(s3)
 		172778  swc1  f0, 44(s3)
+		172ad0  lwc1  fd, 44(s3)
+		172af8  lwc1  fd, 44(s3)
 	48  // x2
 		1725ec  swc1  f0, 48(s3)
 		172650  swc1  f0, 48(s3)
 		1727a4  swc1  f0, 48(s3)
+		172af4  lwc1  fc, 48(s3)
+		172b08  lwc1  fc, 48(s3)
 	4c  // y2
 		1725f4  swc1  f0, 4c(s3)
 		172664  swc1  f0, 4c(s3)
 		1727cc  swc1  f0, 4c(s3)
+		172ae4  lwc1  fd, 4c(s3)
+		172b0c  lwc1  fd, 4c(s3)
 	50  swc1  // x1t
 		172b4c  swcl  f0, 50(s3)
 		172b70  swcl  f0, 50(s3)

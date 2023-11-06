@@ -1,0 +1,106 @@
+Unit data
+
+v1 = (240000-7d50) + ((a2+(a3<<3)) << 3)
+2382b0 (BLOCK = 0x48)
+	00  // -> Elf
+		lw
+	04  // -> ELF.MBP
+		lw
+	08  // -> WALKER_S.FTP
+		lw
+	0c  // unit type
+		199ab4  lb   a0, c(a0)
+		1ad65c  lb   a2, c(a2)
+		1ad7c8  lb   v1, c(v1)
+		1e210c  lb   a0, c(a0)
+	0d
+		196afc  lbu  v1, d(a2)
+		19a310  lbu  v1, d(a0)
+		1b0170  lbu  v1, d(v1)
+		1bb3c0  lbu  v0, d(v0)
+		1c1ce0  lbu  a1, d(a1)
+	0e  lb
+	0f  lbu
+	10  lh
+	12  lh
+	14  lbu  unit size
+	15  -
+	16
+		194c0c  lhu  v0, 16(v0)
+		196b90  lhu  s0, 16(a2)
+		19a318  lhu  v0, 16(a0)
+		19a320  lhu  v0, 16(a0)
+		19a35c  lhu  v0, 16(a0)
+		1a09c4  lhu  v0, 16(s0)
+	18  lh
+	19  lh
+	1a  lhu  crystal cost
+	1c  lhu  unit no (HP/no)
+	1e  lhu  unit time
+	20  // unit HP
+		1ad7c4  lhu  v0, 20(v1)
+	22  // unit MP
+		1ad658  lhu  v0, 22(a2)
+	24  float
+	28  float
+	2c  float
+	30  1b8584  lbu  v1, 30(v1)
+	31  lbu
+	32  lb
+	33  lb
+	34  lh
+	36  lh
+	38  lh
+	3a  lh
+	3c  lh
+	3e  lh
+	40  lh
+	42  lh
+	44  lh
+	46  197024  lbu  v1, 46(v1)
+	47  -
+
+Units ID
+	-   name           mbp           ftp
+	00  Elf            ELF           WALKER_S
+	01  Fairy          FAIRY         FLIER
+	02  Unicorn        UNICORN       WALKER_S
+	03  MorningStar    MORNING_STAR  FLIER
+	04  Talisman       TALISMAN      MONUMENT
+	05  Blob           BLOB          WALKER_S
+	06  Homunculus     HOMUNCULUS    WALKER_S
+	07  Golem          GOLEM         WALKER_M
+	08  Chimera        CHIMERA       BREAKER
+	09  Gargoyle       GARGOYLE      MONUMENT
+	0a  Imp            IMP           WALKER_S
+	0b  Grimalkin      GRIMALKIN     WALKER_S
+	0c  Demon          DEMON         WALKER_M
+	0d  Egg            EGG           WALKER_S
+	0e  Dragon         DRAGON        BREAKER
+	0f  Guardian       GUARDIAN      MONUMENT
+
+	10  Ghost          GHOST         FLIER
+	11  Phantom        PHANTOM       WALKER_M
+	12  Skullmage      SKULLMAGE     WALKER_M
+	13  Charon         CHARON        FLIER
+	14  Obelisk        OBELISK       MONUMENT
+	15  Crystal        CRYSTAL       CRYSTAL
+	16  SheeSanctuary  CRYSTAL       CRYSTAL
+	17  CrystalQuarry  CRYSTAL       CRYSTAL
+	18  SaturnCitadel  CRYSTAL       CRYSTAL
+	19  HauntedTemple  CRYSTAL       CRYSTAL
+	1a  FairyRing      CIRCLE        CIRCLE
+	1b  Titania        CIRCLE        CIRCLE
+	1c  Wicca          CIRCLE        CIRCLE
+	1d  Laboratory     CIRCLE        CIRCLE
+	1e  ChimeraSpawn   CIRCLE        CIRCLE
+	1f  Engrave        CIRCLE        CIRCLE
+
+	20  ChaosNest      CIRCLE        CIRCLE
+	21  HellGate       CIRCLE        CIRCLE
+	22  Gehena         CIRCLE        CIRCLE
+	23  HadesGate      CIRCLE        CIRCLE
+	24  Acheron        CIRCLE        CIRCLE
+	25  Purgatory      CIRCLE        CIRCLE
+	26  DummySight     CIRCLE        CIRCLE
+	27  DummyStarRise  CIRCLE        CIRCLE

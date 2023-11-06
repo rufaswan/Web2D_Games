@@ -23,16 +23,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-iso.inc';
 
-function findlist( &$list, $key, $val )
-{
-	foreach ( $list as $v )
-	{
-		if ( $v[$key] === $val )
-			return $v;
-	}
-	return -1;
-}
-
 function isopatch( $iso, $patch )
 {
 	if ( ! is_file($iso) || ! is_file($patch) )
@@ -61,7 +51,7 @@ function isopatch( $iso, $patch )
 			switch ( $k )
 			{
 				case 'FILE':
-					$k = findlist($list, 'file', $v);
+					$k = isosearch($list, $v);
 					if ( $k === -1 )
 						return php_error('FILE = %s not found', $v);
 
@@ -85,7 +75,7 @@ function isopatch( $iso, $patch )
 		if ( strpos($line, ',') )
 		{
 			list($off,$siz,$nam) = explode(',', $line);
-			$k = findlist($list, 'file', $nam);
+			$k = isosearch($list, $nam);
 			if ( $k === -1 )
 				continue;
 

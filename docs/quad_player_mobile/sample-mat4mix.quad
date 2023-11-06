@@ -1,0 +1,90 @@
+{
+  "keyframe"  : [
+    {
+      "layer" : [
+        {
+          "dstquad"  : [ 10 , -10 , 20 , -30 , 30 , -30 , 40 , -10 ] ,
+          "fogquad"  : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#ffffffff" ] ,
+          "blend_id" : 0
+        }
+      ]
+    } ,
+    {
+      "layer" : [
+        {
+          "dstquad"  : [ -20 , -20 , 20 , -20 , 20 , 20 , -20 , 20 ] ,
+          "fogquad"  : [ "#00ffffff" , "#ff00ffff" , "#ffff00ff" , "#000000ff" ] ,
+          "blend_id" : 0
+        }
+      ]
+    }
+  ] ,
+  "animation" : [
+    {
+      "timeline" : [
+        {
+          "time"       : 7 ,
+          "attach"     : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"     : [ 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix" : 1
+        } ,
+        {
+          "time"       : 7 ,
+          "attach"     : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"     : [ 1 , 0 , 0 , 0 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix" : 1
+        } ,
+        {
+          "time"       : 7 ,
+          "attach"     : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"     : [ -1 , 0 , 0 , 0 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix" : 1
+        } ,
+        {
+          "time"       : 7 ,
+          "attach"     : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"     : [ -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix" : 1
+        }
+      ] ,
+      "loop_id"  : 0
+    }
+  ] ,
+  "skeleton"  : [
+    {
+      "bone" : [
+        {
+          "attach" : {
+            "type" : "animation" ,
+            "id"   : 0
+          } ,
+          "order"  : 1
+        } ,
+        {
+          "attach" : {
+            "type" : "keyframe" ,
+            "id"   : 1
+          } ,
+          "order"  : 0
+        }
+      ]
+    }
+  ] ,
+  "blend"     : [
+    {
+      "mode" : [ "FUNC_ADD" , "ONE" , "ONE" ]
+    }
+  ]
+}

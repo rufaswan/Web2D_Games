@@ -20,7 +20,6 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-
 function isofile_r( $iso, &$sub, &$list, $par, $skip=0 )
 {
 	$func = __FUNCTION__;
@@ -138,4 +137,14 @@ function frame2lba( $frame )
 	$lba = ($m * 60 + $s) * 60 + $f;
 	$lba -= (75 * 2);
 	return $lba;
+}
+
+function isosearch( &$list, $fname )
+{
+	foreach ( $list as $v )
+	{
+		if ( stripos($v['file'], $fname) !== false )
+			return $v;
+	}
+	return -1;
 }

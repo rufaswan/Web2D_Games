@@ -6,7 +6,6 @@ function QuadGL(Q){
 
 	m.GL = '';
 	m.SHADER = {};
-	m.CANVAS_PREV = [0,0];
 
 	$.init = function( dom ){
 		var opt = {
@@ -23,8 +22,6 @@ function QuadGL(Q){
 		var form = m.GL.getShaderPrecisionFormat(m.GL.FRAGMENT_SHADER, m.GL.HIGH_FLOAT);
 		if ( ! form )
 			return Q.func.error('Fragment Shader has no highp support');
-
-		m.CANVAS_PREV = [ m.GL.canvas.clientWidth , m.GL.canvas.clientHeight ];
 
 		var vert_src, frag_src;
 		Q.func.log('WebGL + highp init OK', ['precision',form.precision]);
@@ -202,7 +199,7 @@ function QuadGL(Q){
 		m.GL.lineWidth(2);
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
 
-		$.setVertexAttrib(loc.a_xy, quads, 2);
+		m.setVertexAttrib(loc.a_xy, quads, 2);
 		m.GL.uniform4fv  (loc.u_color , color);
 		m.GL.uniform2fv  (loc.u_pxsize, pxsz);
 		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
@@ -225,10 +222,10 @@ function QuadGL(Q){
 			m.GL.bindTexture  (m.GL.TEXTURE_2D, img.tex);
 		});
 
-		$.setVertexAttrib(loc.a_xyz, dst, 3);
-		$.setVertexAttrib(loc.a_uv , src, 2);
-		$.setVertexAttrib(loc.a_fog, fog, 4);
-		$.setVertexAttrib(loc.a_tid, tid, 1);
+		m.setVertexAttrib(loc.a_xyz, dst, 3);
+		m.setVertexAttrib(loc.a_uv , src, 2);
+		m.setVertexAttrib(loc.a_fog, fog, 4);
+		m.setVertexAttrib(loc.a_tid, tid, 1);
 		m.GL.uniform2fv  (loc.u_pxsize, pxsz);
 		m.GL.uniform1iv  (loc.u_tex, [0,1,2,3]);
 		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
@@ -247,8 +244,8 @@ function QuadGL(Q){
 		m.GL.activeTexture(m.GL.TEXTURE0);
 		m.GL.bindTexture  (m.GL.TEXTURE_2D, image.tex);
 
-		$.setVertexAttrib(loc.a_xy, dst, 2);
-		$.setVertexAttrib(loc.a_uv, src, 2);
+		m.setVertexAttrib(loc.a_xy, dst, 2);
+		m.setVertexAttrib(loc.a_uv, src, 2);
 		m.GL.uniform4fv  (loc.u_color , color);
 		m.GL.uniform4fv  (loc.u_pxsize, pxsz);
 		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
@@ -300,7 +297,7 @@ function QuadGL(Q){
 		return loc;
 	}
 
-	$.setVertexAttrib = function( loc, data, v ){
+	m.setVertexAttrib = function( loc, data, v ){
 		var buf = m.GL.createBuffer();
 		m.GL.bindBuffer(m.GL.ARRAY_BUFFER, buf);
 		m.GL.bufferData(m.GL.ARRAY_BUFFER, new Float32Array(data), m.GL.STATIC_DRAW);
@@ -408,6 +405,7 @@ function QuadGL(Q){
 		m.GL.clear( m.GL.COLOR_BUFFER_BIT );
 		m.GL.colorMask ( true , true , true , true );
 		m.GL.clearColor( 0 , 0 , 0 , 0 );
+		m.GL.flush();
 	}
 
 	$.isValidConstant = function(){
@@ -470,19 +468,19 @@ function QuadGL(Q){
 	}
 
 	$.canvasSize = function(){
-		// display.block = [w,h] , display.none = [0,0]
-		m.GL.canvas.width  = m.GL.canvas.clientWidth;
-		m.GL.canvas.height = m.GL.canvas.clientHeight;
 		return [ m.GL.canvas.width * 0.5 , m.GL.canvas.height * 0.5 ];
 	}
 
 	$.isCanvasResized = function(){
+		// display.block = [w,h] , display.none = [0,0]
 		var c = 0;
-		c |= ( m.CANVAS_PREV[0] !== m.GL.canvas.clientWidth  );
-		c |= ( m.CANVAS_PREV[1] !== m.GL.canvas.clientHeight );
+		c |= ( m.GL.canvas.width  !== m.GL.canvas.clientWidth  );
+		c |= ( m.GL.canvas.height !== m.GL.canvas.clientHeight );
 
-		if ( c )
-			m.CANVAS_PREV = [ m.GL.canvas.clientWidth , m.GL.canvas.clientHeight ];
+		if ( c ){
+			m.GL.canvas.width  = m.GL.canvas.clientWidth;
+			m.GL.canvas.height = m.GL.canvas.clientHeight;
+		}
 		return c;
 	}
 

@@ -79,11 +79,11 @@ function dir_loop( $fp, $pos, $dir )
 				save_file("$fn.snd", $wav);
 				break;
 
-			case 4: // HotSpot , n * 9 -> Path
-			case 5: // HotSpot
-			case 6: // CollisionSpot
-			case 7: // Data
-			case 8: // Text
+			//case 4: // Path
+			//case 5: // HotSpot , n * 9
+			//case 6: // CollisionSpot
+			//case 7: // Data
+			//case 8: // Text
 			default:
 				$unk = fp2str($fp, $ps, $sz);
 				save_file("$fn.$ty", $unk);
