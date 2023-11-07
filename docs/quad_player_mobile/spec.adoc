@@ -1,5 +1,5 @@
 :hardbreaks-option:
-= QUAD Format Specification v0.2
+= QUAD Format Specification v0.3
 by Rufas Wan
 :toc:
 
