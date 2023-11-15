@@ -23,15 +23,28 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-iso.inc';
 
-function isopatch( $iso, $patch )
+function cdxaboot( $isop, &$list )
 {
-	if ( ! is_file($iso) || ! is_file($patch) )
+	$k = isosearch($list, '__CDXA__/boot.bin');
+	if ( $k === -1 )
 		return;
-	$isop = fopen($iso, 'rb+');
-	if ( ! $isop )  return;
+	if ( $k['size'] > 0x8000 )
+		return;
 
-	$list = lsiso_r($isop);
-	if ( empty($list) )  return;
+	$boot = fp2str($isop, $k['lba']*0x800, $k['size']);
+	fp_update($isop, 0, $boot);
+	return;
+}
+
+function cdxapatch( $isop, &$list )
+{
+	$k = isosearch($list, '__CDXA__/patch.txt');
+	if ( $k === -1 )
+		return;
+
+	$patch = fp2str($isop, $k['lba']*0x800, $k['size']);
+		$patch = str_replace("\r", "\n", $patch);
+		$patch = explode("\n", $patch);
 
 	$data = array(
 		'FILE'   => '',
@@ -39,7 +52,7 @@ function isopatch( $iso, $patch )
 		'OFFSET' => '-', // valid = ASM   LBA  MIN
 		'SIZE'   => '-', // valid = BYTE  LBA  MIN
 	);
-	foreach ( file($patch) as $line )
+	foreach ( $patch as $line )
 	{
 		$line = preg_replace('|[\s]+|', '', $line);
 		if ( empty($line) )
@@ -85,17 +98,17 @@ function isopatch( $iso, $patch )
 			{
 				case 'ASM':
 					$s = chrint($k['lba'], 2);
-					printf("PATCH OFFSET ASM @ %x = %x\n", $off, $k['lba'] & BIT16);
+					printf("PATCH OFFSET ASM  @ %6x = %6x [%s]\n", $off, $k['lba'] & BIT16, $nam);
 					fp_update($isop, $off, $s);
 					break;
 				case 'LBA':
 					$s = chrint($k['lba'], 3);
-					printf("PATCH OFFSET LBA @ %x = %x\n", $off, $k['lba']);
+					printf("PATCH OFFSET LBA  @ %6x = %6x [%s]\n", $off, $k['lba'], $nam);
 					fp_update($isop, $off, $s);
 					break;
 				case 'MIN':
 					$s = lba2frame($k['lba']);
-					printf("PATCH OFFSET MIN @ %x = %s\n", $off, bin2hex($s));
+					printf("PATCH OFFSET MIN  @ %6x = %s [%s]\n", $off, bin2hex($s), $nam);
 					fp_update($isop, $off, $s);
 					break;
 			} // switch ( $data['OFFSET'] )
@@ -106,30 +119,49 @@ function isopatch( $iso, $patch )
 			{
 				case 'BYTE':
 					$s = chrint($k['size'], 4);
-					printf("PATCH SIZE BYTE @ %x = %x\n", $siz, $k['size']);
+					printf("PATCH SIZE   BYTE @ %6x = %6x [%s]\n", $siz, $k['size'], $nam);
 					fp_update($isop, $siz, $s);
 					break;
 				case 'LBA':
 					$b = int_ceil($k['size'], 0x800) >> 11;
 					$s = chrint($b, 3);
-					printf("PATCH SIZE LBA @ %x = %x\n", $siz, $b);
+					printf("PATCH SIZE   LBA  @ %6x = %6x [%s]\n", $siz, $b, $nam);
 					fp_update($isop, $siz, $s);
 					break;
 				case 'MIN':
 					$b = int_ceil($k['size'], 0x800) >> 11;
 					$s = lba2frame($k['lba'] + $b);
-					printf("PATCH SIZE MIN @ %x = %s\n", $off, bin2hex($s));
+					printf("PATCH SIZE   MIN  @ %6x = %s [%s]\n", $off, bin2hex($s), $nam);
 					fp_update($isop, $siz, $s);
 					break;
 			} // switch ( $data['SIZE'] )
 		}
 	} // foreach ( file($patch) as $line )
+	return;
+}
+
+function isopatch( $iso )
+{
+	if ( ! is_file($iso) )
+		return;
+	$isop = fopen($iso, 'rb+');
+	if ( ! $isop )  return;
+
+	$list = lsiso_r($isop);
+	if ( empty($list) )  return;
+
+	cdxaboot ($isop, $list);
+	cdxapatch($isop, $list);
 
 	fclose($isop);
 	return;
 }
 
-printf("%s  ISOFILE  PATCHFILE\n", $argv[0]);
-if ( $argc !== 3 )  exit();
+echo <<<_MSG
+patch ISO by __CDXA__ files
+  __CDXA__/boot.bin
+  __CDXA__/patch.txt
 
-isopatch( $argv[1], $argv[2] );
+_MSG;
+for ( $i=1; $i < $argc; $i++ )
+	isopatch( $argv[$i] );

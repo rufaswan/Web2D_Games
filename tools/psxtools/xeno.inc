@@ -23,20 +23,21 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 function xeno_decode( &$file )
 {
-	$file = rtrim($file, ZERO);
-
 	$dec = '';
 	trace("== begin sub_80032cac()\n");
-	$ed = strlen($file);
-	$st = 0;
 
-	//$lw = str2int($file, $st, 3);
-		$st += 4;
+	$lw = str2int($file, 0, 4);
+	$st = 4;
 
 	$bycod = 0;
 	$bylen = 0;
-	while ( $st < $ed )
+	while ( $lw > 0 )
 	{
+		// no more data to decode
+		// the rest is padding for 8-bit bycod
+		if ( ! isset( $file[$st] ) )
+			break;
+
 		//trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen === 0 )
 		{
@@ -52,10 +53,6 @@ function xeno_decode( &$file )
 
 		if ( $flg )
 		{
-			// accidently rtrim
-			while ( ! isset( $file[$st+1] ) )
-				$file .= ZERO;
-
 			$b1 = ord( $file[$st+0] ); // t0
 			$b2 = ord( $file[$st+1] ); // t4
 				$st += 2;
@@ -66,6 +63,7 @@ function xeno_decode( &$file )
 			{
 				$p = strlen($dec) - $dpos;
 				$dec .= $dec[$p];
+				$lw--;
 			}
 		}
 		else
@@ -73,6 +71,7 @@ function xeno_decode( &$file )
 			$b1 = $file[$st]; // t0
 				$st++;
 			$dec .= $b1;
+			$lw--;
 		}
 	} // while ( $st < $ed )
 	trace("== end sub_80032cac()\n");
@@ -81,8 +80,126 @@ function xeno_decode( &$file )
 	return;
 }
 //////////////////////////////
+function xeno_enc_dict( &$dict )
+{
+	$cnt = count($dict);
+	if ( $cnt < 1 )
+		return '';
+
+	$enc = '';
+	for ( $pos = 0; $pos < $cnt; $pos += 8 )
+	{
+		$flg = 0;
+		$dat = '';
+		for ( $k=0; $k < 8; $k++ )
+		{
+			$p = $pos + $k;
+			$v = $dict[$p];
+
+			// is DICT = flag 1
+			if ( (int)$v === $v )
+			{
+				$flg |= (1 << $k);
+				$dat .= chrint($v, 2);
+			}
+			// is COPY = flag 0
+			else
+				$dat .= $v;
+		} // for ( $k=0; $k < 8; $k++ )
+
+		$enc .= chr($flg) . $dat;
+	} // for ( $p=0; $p < $cnt; $p += 8 )
+
+	return $enc;
+}
+
+function xeno_enc_search( &$file, $pos )
+{
+	$len = strlen($file);
+	$find_len = 0xf + 3;
+	if ( ($pos + $find_len) > $len )
+		$find_len = $len - $pos;
+
+	$find_pos = $pos - 0xfff;
+	if ( $find_pos < 0 )
+		$find_pos = 0;
+
+	while ( $find_len >= 3 )
+	{
+		$seek = substr($file, $pos , $find_len);
+		$skps = strpos($file, $seek, $find_pos);
+		if ( $skps < $pos )
+		{
+			$dpos = $pos - $skps;
+			return array($dpos, $find_len);
+		}
+		$find_len--;
+	} // while ( $find_len >= 3 )
+
+	return -1;
+}
+
+function xeno_encode( &$file )
+{
+	$len = strlen($file);
+
+	$dict = array();
+	$pos = 0;
+	while ( $pos < $len )
+	{
+		$src = xeno_enc_search($file, $pos);
+		if ( $src === -1 )
+		{
+			// flag 0 copy
+			$dict[] = $file[$pos];
+			$pos++;
+		}
+		else
+		{
+			// flag 1 dict
+			list($dpos,$dlen) = $src;
+
+			$dict[] = (($dlen - 3) << 12) | $dpos;
+			$pos += $dlen;
+		}
+	} // while ( $pos < $len )
+
+	// on decode, EOF check is on reading flags
+	$pad = 0;
+	while ( count($dict) & 7 )
+	{
+		$pad++;
+		$dict[] = ZERO;
+	}
+
+	$bin  = xeno_enc_dict($dict);
+	$enc  = chrint($len + $pad, 4);
+	$enc .= substr($bin, 0, strlen($bin) - $pad);
+
+	// data aligned to 4-bytes
+	while ( strlen($enc) & 3 )
+		$enc .= ZERO;
+
+	$file = $enc;
+	return;
+}
 
 /*
+xeno encode note
+	data = 00 00 00 00
+	enc
+		01 flag 0  00
+		02 flag 1  pos -1 , len 0+3
+		04 flag 0  -
+		08 flag 0  -
+		10 flag 0  -
+		20 flag 0  -
+		40 flag 0  -
+		80 flag 0  -
+	= size = 0a , chunk = flag/02  00  0001  -  -  -  -  -  -
+	NOTE : EOF check is on reading flags
+		size must be padded so pEND === size when reading flags
+
 xeno demo
 	1
 	12

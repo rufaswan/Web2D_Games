@@ -50,21 +50,36 @@ function isolist( $fname )
 			$txt .= $buf;
 
 			$sub = fp2str($fp, $skip+$ent['lba']*0x800, $ent['size']);
-			$fn  = sprintf('%s/iso/%s', $dir, $ent['file']);
+			$fn  = sprintf('%s/%s', $dir, $ent['file']);
 			save_file($fn, $sub);
 		} // foreach ( $list as $ent )
-		save_file("$dir/iso-list.txt", $txt);
+		save_file("$dir/__CDXA__/list.txt", $txt);
+
+
+		if ( $skip > 0 )
+		{
+			$sub = fp2str($fp, 0, $skip);
+			save_file("$dir/__CDXA__/$type.bin", $sub);
+		}
+
 
 		$sub = fp2str($fp, $skip, 0x8000);
 		if ( trim($sub,ZERO) !== '' )
-			save_file("$dir/iso-boot.bin", $sub);
+			save_file("$dir/__CDXA__/boot.bin", $sub);
+
 
 		$sub = fp2str($fp, $skip+0x8000, 0x800);
 		$txt  = '';
-		$txt .= sprintf("8008  %s\n", substr($sub,0x08 ,0x20)); // system identifier
-		$txt .= sprintf("8028  %s\n", substr($sub,0x28 ,0x20)); // volume identifier
-		$txt .= sprintf("80be  %s\n", substr($sub,0xbe ,0x80)); // volume set identifier
-		save_file("$dir/iso-meta.txt", $txt);
+		$txt .= sprintf("system             = %s\n", substr($sub,0x08 ,0x20));
+		$txt .= sprintf("volume             = %s\n", substr($sub,0x28 ,0x20));
+		$txt .= sprintf("volume set         = %s\n", substr($sub,0xbe ,0x80));
+		$txt .= sprintf("publisher          = %s\n", substr($sub,0x13e,0x80));
+		$txt .= sprintf("data preparer      = %s\n", substr($sub,0x1be,0x80));
+		$txt .= sprintf("application        = %s\n", substr($sub,0x23e,0x80));
+		$txt .= sprintf("copyright file     = %s\n", substr($sub,0x2be,0x26));
+		$txt .= sprintf("abstract file      = %s\n", substr($sub,0x2e4,0x24));
+		$txt .= sprintf("bibliographic file = %s\n", substr($sub,0x308,0x25));
+		save_file("$dir/__CDXA__/meta.txt", $txt);
 		return;
 	} // foreach ( $detect as $type => $skip )
 	fclose($fp);

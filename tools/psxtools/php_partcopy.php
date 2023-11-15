@@ -70,7 +70,7 @@ function partcopy( $fname, $txt, $range )
 	return;
 }
 
-$MSG = <<<_MSG
+echo <<<_MSG
 {$argv[0]}  [option]  FILE [range...]  [FILE [range...]]...
 
 option:
@@ -89,10 +89,6 @@ for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case '-h':
-		case '-help':
-			echo "$MSG\n";
-			exit();
 		case '-txt':  $txt = true ; break;
 		case '-bin':  $txt = false; break;
 		default:

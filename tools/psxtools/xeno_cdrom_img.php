@@ -23,69 +23,89 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-iso.inc';
 
-function ripxeno( $fp, &$sub, &$txt, &$pos, &$id, $cnt, $entsiz, $dir )
+function xeno_isofile( &$list, $lba, $dir )
+{
+	foreach ( $list as $f )
+	{
+		if ( $f['lba'] === $lba )
+			return $dir . $f['file'];
+	}
+	return -1;
+}
+
+function xeno_ext( &$sub )
+{
+	$exts = array(
+		'77647320' => 'wds', // 'wds '
+		'73656473' => 'sed', // 'seds'
+		'736d6473' => 'smd', // 'smds'
+		'01120000' => 'tex',
+		'00120000' => 'tex',
+		'60010180' => 'str',
+		'50532d58' => 'exe',
+	);
+	$b1 = substr($sub, 0, 4);
+
+	$b2 = ordint($b1);
+	if ( $b2 < 0x1000 )
+		return sprintf('%x', $b2);
+
+	// if matched a known filetype
+	$b2 = bin2hex($b1);
+	if ( isset( $exts[$b2] ) )
+	{
+		$e = $exts[$b2];
+		if ( $e === 'str' )
+			$sub = ZERO;
+		return $e;
+	}
+
+	// default
+	return 'bin';
+}
+
+function ripxeno( $fp, &$list, &$sub, &$pos, &$id, $cnt, $entsiz, $root, $dir )
 {
 	$func = __FUNCTION__;
-	$exts = array(
-		'77647320' => '.wds',
-		'73656473' => '.eds',
-		'736d6473' => '.mds',
-		'01120000' => '.tex',
-		'00120000' => '.tex',
-		'60010180' => '.str',
-		'50532d58' => '.exe',
-	);
 
+	$txt = '';
 	while ( $cnt > 0 )
 	{
-		$bak = $pos;
-		$lba = str2int($sub, $pos + 0, 3, true);
-		if ( $lba < 0 ) // -1 == EOF
-			return;
-
+		$lba = str2int($sub, $pos + 0         , 3, true);
 		$siz = str2int($sub, $pos + $entsiz[0], 4, true);
-			$pos += $entsiz[1];
 
-		$fn = sprintf('%s/%04d', $dir, $id);
-			$id++;
-
+		$pos += $entsiz[1];
+		$id++;
 		$cnt--;
-		if ( $lba === 0 || $siz === 0 )
+
+		if ( $lba < 0 ) // -1 == is EOF
+			break;
+		if ( $lba === 0 || $siz === 0 ) // is dummy
 			continue;
 
-		// -999 == is_dir
+		// -999 == is dir
 		if ( $siz < 0 )
 		{
-			$func($fp, $sub, $txt, $pos, $id, -$siz, $entsiz, $fn);
+			$fn = sprintf('%s/%04d', $dir, $id-1);
+			$txt .= $func($fp, $list, $sub, $pos, $id, -$siz, $entsiz, $root, $fn);
 			continue;
 		}
 
-		// is_file
-		$s = fp2str($fp, $lba*0x800, $siz);
-		$e = '.bin';
+		// lba > 0 && siz > 0 == is file
+		$bak = $pos - $entsiz[1];
+		$s   = fp2str($fp, $lba*0x800, $siz);
 
-		$b1 = substr($s, 0, 4);
-		$b2 = ordint($b1);
-
-		// auto file extension
-		if ( $b2 > 0 && $b2 < 0x1000 )
-			$e = sprintf('.%x', $b2);
-		else
-		{
-			// if matched a known filetype
-			$b2 = bin2hex($b1);
-			if ( isset( $exts[$b2] ) )
-				$e = $exts[$b2];
-		}
-		$fn .= $e;
-		if ( $e === '.str' )  $s = ZERO;
+		$fn = xeno_isofile($list, $lba, $root);
+		if ( $fn === -1 )
+			$fn = sprintf('%s/%s/%04d.%s', $root, $dir, $id-1, xeno_ext($s));
 
 		$b1 = sprintf("%8x , %8x , %s\n", $bak, $bak + $entsiz[0], $fn);
-			echo $b1;
-			$txt .= $b1;
+		echo $b1;
+		$txt .= $b1;
+
 		save_file($fn, $s);
 	} // while ( $cnt > 0 )
-	return;
+	return $txt;
 }
 
 function xeno_exe( &$list )
@@ -144,6 +164,10 @@ function xeno( $fname )
 	if ( $exe === -1 )
 		return;
 
+	$boot = fp2str($fp, 0, 0x8000);
+	save_file("$dir/__CDXA__/boot.bin", $boot);
+
+
 	$txt  = sprintf("FILE = %s\n", $exe[0]['file']);
 	$txt .= "OFFSET = LBA\n";
 	$txt .= "SIZE   = BYTE\n";
@@ -151,10 +175,10 @@ function xeno( $fname )
 	$sub = fp2str($fp, $exe[0]['lba']*0x800, $exe[0]['size']);
 	$pos = 0x804;
 	$id  = 0;
-	ripxeno($fp, $sub, $txt, $pos, $id, 99999, array($exe[1],$exe[2]), "$dir/cdrom");
+	$txt .= ripxeno($fp, $list, $sub, $pos, $id, 99999, array($exe[1],$exe[2]), $dir, 'cdrom');
 
 	$txt = str_replace($dir, '', $txt);
-	save_file("$dir/patch.txt", $txt);
+	save_file("$dir/__CDXA__/patch.txt", $txt);
 
 	fclose($fp);
 	return;

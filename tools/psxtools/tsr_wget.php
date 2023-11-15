@@ -105,12 +105,13 @@ function wget( $fullurl )
 	$http['fext' ] = strtolower( substr($fn, $p + 1) );
 
 	$http['fname'] = valid_name($http['fname'], $http['fext']);
+	printf("> wget %s.%s\n", $http['fname'], $http['fext']);
 
 	$wget  = 'wget';
 	$wget .= ' --quiet';
 	$wget .= ' --no-config';
 	$wget .= ' --no-check-certificate';
-	$wget .= ' --user-agent="Mozilla/5.0 (Linux; Android 5.1; OPPO A37m) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"';
+	$wget .= ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"';
 	$cmd = sprintf("%s '%s' -O '%s.%s'", $wget, $fullurl, $http['fname'], $http['fext']);
 	exec($cmd);
 	return;
