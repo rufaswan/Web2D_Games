@@ -35,6 +35,7 @@ function xeno_map_unpack( $fname )
 	$sub = substr($file, 0, $ps);
 	save_file("$dir/head.bin", $sub);
 
+	$list = array();
 	for ( $i=0; $i < 9; $i++ )
 	{
 		$p = 0x130 + ($i * 4);
@@ -47,11 +48,14 @@ function xeno_map_unpack( $fname )
 		printf("unpack  %x  %6x  %6x\n", $i, $ps, $sz);
 		$sub = substr($file, $ps, $sz);
 		xeno_decode($sub);
-		save_file("$dir/$i.dec", $sub);
+		$list[$i] = $sub;
 	} // for ( $i=0; $i < 9; $i++ )
+
+	foreach ( $list as $k => $v )
+		save_file("$dir/$k.dec", $v);
 	return;
 }
-
+//////////////////////////////
 function xeno_map_pack( $dir )
 {
 	$dir = rtrim($dir, '/\\');
@@ -78,7 +82,7 @@ function xeno_map_pack( $dir )
 	save_file("$dir.bin", $map);
 	return;
 }
-
+//////////////////////////////
 function xeno( $ent )
 {
 	if ( is_file($ent) )

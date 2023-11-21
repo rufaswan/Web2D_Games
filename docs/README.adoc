@@ -1,6 +1,6 @@
 :ghpage: http://rufaswan.github.io/Web2D_Games
 
-## Tools (HTML/JS) and Docs
+== Tools (HTML/JS) and Docs
 
 * WebGL Quad Player is one-page web app, using only Javascript and HTML5
 ** updates is located at `docs/quad_player_mobile`

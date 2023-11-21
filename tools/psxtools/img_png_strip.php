@@ -22,8 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-guest.inc';
-
-define('PNG_MAGIC', "\x89PNG\x0d\x0a\x1a\x0a");
+require 'common-zlib.inc';
 
 function png_recode( $level, &$png )
 {

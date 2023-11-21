@@ -1,6 +1,6 @@
-# Web2D_Games
+= Web2D_Games
 
-## Prerequisites
+== Prerequisites
 
 * PHP 7.0 or above
 ** http://windows.php.net/downloads

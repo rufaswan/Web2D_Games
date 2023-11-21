@@ -1,4 +1,5 @@
 Xenogears ROM map/ISO list
+
 SLPS 011.60 JP disc 1 [3771]
 	0  Movie [17]
 		1-17  .STR
@@ -93,7 +94,7 @@ SLPS 011.60 JP disc 1 [3771]
 		167 Nature
 		169 Sewer
 		171 Wind
-		173 Premonition 
+		173 Premonition
 		175 Crimson Knight
 		177 Nature
 		179 After the Soldiers' Dreams
@@ -979,9 +980,9 @@ SLPS 011.60 JP disc 1 [3771]
 		.7
 	2594  [PAK-LZ] Data
 	2595  Base Stats
-	2596  [OVER] 
-	2597  [OVER] 
-	2598  [OVER] 
+	2596  [OVER]
+	2597  [OVER]
+	2598  [OVER]
 	2599  [OVER]
 	2600  [OVER]
 	2601  [OVER]
@@ -1515,10 +1516,10 @@ SLPS 011.60 JP disc 1 [3771]
 		3954  Xenogears
 		3955  Heimdal/Sword
 	3956  [2]
-		3957
+		3957  [LZ]
 		3958  *same as 2593* [PAK-LZ]
 	3959  [3]
-		3960
+		3960  [OVER]
 		3961
 		3962
 	3963  [10]
@@ -1593,4 +1594,406 @@ SLUS 006.69 US disc 2 [3766]
 	...
 	id + 5 == disc 1
 ==============================
-
+SLPS 012.35 JP demo - Fushigi na Data Disc [2457]
+PAPX 900.22 JP demo - Yoi Ko to Yoi Otona no. PlayStation Taikenban Vol. 1 [2457]
+	0  X.EXE / PSX_CD.EXE
+	1  [6]
+		2  wds/sample data
+		3  wds/sample data
+		4  wds/sample data
+		5  wds/sample data
+		6
+		7
+	12  Overlay [6]
+		13  [LZ][OVER]
+		14  [LZ][OVER]
+		15  [LZ][OVER]
+		16  [LZ][OVER]
+		17  [LZ][OVER]
+		18  [LZ][OVER]
+	23  [4]
+		24  wds/sample data
+		25  wds/sample data
+		26  wds/sample data
+		27  wds/sample data
+	40  Music [62] [31 pairs]
+		# ID+0 is the  wds/sample data
+		# ID+1 is the smds/midi data
+		41
+		43
+		45
+		47
+		49
+		51
+		53
+		55
+		57
+		59
+		61
+		63
+		65
+		67
+		69
+		71
+		73
+		75
+		77
+		79
+		81
+		83
+		85
+		87
+		89
+		91
+		93
+		95
+		97
+		99
+		101
+	553  [1]
+		554  seds
+	586  [2]
+		587
+		588
+	589  Field [21]
+		590  [LZ] Fei
+		591  [LZ] Elly
+		592  [LZ] Citan
+		593  [LZ] Bart
+		594-605  *dummy 24*
+		606  [LZ] Weltall
+		607  [LZ] Weltall
+		608  [LZ] Virge
+		609  [LZ] Heimdal
+		610  [LZ] Brigandier
+	654  Face , PS1 TIM 64x64 [85]
+		655  Fei
+		656-660  *dummy 24*
+		661  Elly
+		662-671  *dummy 24*
+		672  Citan
+		673  *dummy 24*
+		674  Bart
+		675  Bart
+		676-731  *dummy 24*
+		732  Yui
+		733  ?
+		734  Chief
+		735  *dummy 24*
+		736  Alice
+		737  Dan
+		738  Timothy
+		739  *blank*
+	751  [3]
+		752  [PAK ] compass , PS1 TIM
+		753  seds
+		754  [OVER]
+	768  Maps [982] [491 pairs]
+		# ID+0 is the packed map data
+		# ID+1 is the texture data
+		769
+		771
+		773
+		775
+		777
+		779
+		781-784  *dummy 24*
+		785
+		787
+		789
+		791
+		793
+		795
+		797
+		799
+		801
+		803
+		805
+		807
+		809-812  *dummy 24*
+		813
+		815
+		817-860  *dummy 24*
+		861
+		863-904  *dummy 24*
+		905
+		907-922  *dummy 24*
+		923
+		925-1040  *dummy 24*
+		1041
+		1043-1074  *dummy 24*
+		1075
+		1077-1120  *dummy 24*
+		1121
+		1123-1410  *dummy 24*
+		1411
+		1413-1524  *dummy 24*
+		1525
+		1527-1602  *dummy 24*
+		1603
+		1605
+		1607-1746  *dummy 24*
+		1747
+		1749
+	2305  [77]
+		# ID+0 is
+		# ID+1 is the model data
+		2306  [OVER]
+		2307
+		2308
+		2309-2312  *dummy 24*
+		2313
+		2314
+		2315-2320  *dummy 24*
+		2321
+		2322
+		2323
+		2324
+		2325-2328  *dummy 24*
+		2329
+		2330
+		2331-2342  *dummy 24*
+		2343
+		2344
+		2345-2364  *dummy 24*
+		2365
+		2366
+		2367-2378  *dummy 24*
+		2379
+		2380
+		2381-2382  *dummy 24*
+	2434  Char Cutscene [74]
+		2435-2440  Fei
+		2441-2446  Elly
+		2447-2452  Citan
+		2453-2458  Fei
+		2459-2494  *dummy 24*
+		2495-2501  Fei
+		2502-2507  Elly
+		2508  Fei
+	2563  Events [6]
+		2564  Red vs Blue  , PS1 TIM 320x224
+		2565  Demo Message , PS1 TIM 320x224
+		2566
+		2567  Credits      , PS1 TIM 320x224
+		2568  Coming Soon  , PS1 TIM 320x224
+		2569  effect       , PS1 TIM 256x252
+	2628
+	2629
+	2630
+	2631
+	2632
+	2633
+	2634
+	2635
+	2636
+	2637
+	2638
+	2639
+	2640
+	2641
+	2642
+	2643
+	2644  [4]
+		2645  seds
+		2646  [PAK-LZ]
+		2647  [OVER]
+		2648  smds/midi data
+	2649  Enemies [88] [44 pairs]
+		# ID+0 is the stats/name
+		# ID+1 is the texture/animation data
+		2650
+		2652
+		2654-2667  *dummy 24*
+		2668  [MIX ]
+		2670-2729  *dummy 24*
+		2730
+		2732-2737  *dummy 24*
+	2738  texture
+	2739  [2]
+		2740
+		2741
+	2742  [112]
+		2743-2748  *dummy 24*
+		2749
+		2750
+		2751-2756  *dummy 24*
+		2757
+		2758
+		2759-2778  *dummy 24*
+		2779
+		2780
+		2781-2854  *dummy 24*
+	2855  [44]
+		2856
+		2857
+		2858-2899  *dummy 24*
+	2900  Fei
+	2901  Elly
+	2902  Bart
+	2903  Citan
+	2904  Billy
+	2905  Rico
+	2906  Emeralda
+	2907  Chu-chu
+	2908  Maria
+	2909  Emeralda/Adult
+	2910  *elly*
+	2911  *elly*
+	2912  *elly*
+	2913  *elly*
+	2914  *elly*
+	2915  *elly*
+	2916  Fei            Deathblow
+	2917  Elly           Deathblow
+	2918  Bart           Deathblow
+	2919  Citan          Deathblow
+	2920  Billy          Deathblow
+	2921  Rico           Deathblow
+	2922  Emeralda       Deathblow
+	2923  Chu-chu        Deathblow
+	2924  Emeralda/Adult Deathblow
+	2925  *elly/db*
+	2926  *elly/db*
+	2927  *elly/db*
+	2928  *elly/db*
+	2929  *elly/db*
+	2930  seds
+	2931   wds/sample data
+	2932   wds/sample data
+	2933   wds/sample data
+	2934   wds/sample data
+	2935   wds/sample data
+	2936   wds/sample data
+	2937  seds
+	2938   wds/sample data
+	2939   wds/sample data
+	2940   wds/sample data
+	2941   wds/sample data
+	2942   wds/sample data
+	2943   wds/sample data
+	2944   wds/sample data
+	2945   wds/sample data
+	2946  seds
+	2947   wds/sample data
+	2948   wds/sample data
+	2949   wds/sample data
+	2950   wds/sample data
+	2951   wds/sample data
+	2952   wds/sample data
+	2953  seds
+	2954   wds/sample data
+	2955   wds/sample data
+	2956   wds/sample data
+	2957   wds/sample data
+	2958   wds/sample data
+	2959   wds/sample data
+	2960   wds/sample data
+	2961
+	2962
+	2963  seds
+	2964   wds/sample data
+	2965   wds/sample data
+	2966   wds/sample data
+	2967
+	2968
+	2969
+	2970   wds/sample data
+	2971   wds/sample data
+	2972  seds
+	2973  smds/midi data
+	2974
+	2975
+	2976
+	2977
+	2978
+	2979
+	2980
+	2981
+	2982
+	2983
+	2984
+	2985
+	2986
+	2987
+	2988
+	2989
+	2990
+	2991
+	2992
+	2993  [196]
+		2994
+		2995-3017  *dummy 24*
+		3018
+		3019
+		3020
+		3021-3071  *dummy 24*
+		3072
+		3073
+		3074-3135  *dummy 24*
+		3136
+		3137
+		3138-3185  *dummy 24*
+		3186
+		3187
+		3188
+		3189
+	3190  Spells [468] [234 pairs]
+		# 218 sprite+texture PAIR
+		#   - sprite+dummy PAIR
+		#   - dummy
+		#  32 Overlays
+		3191
+		...
+		3223
+		...
+		3268
+		3269-3274  *dummy 24*
+		3275
+		...
+		3318
+		3319-3372  *dummy 24*
+		3373
+		...
+		3412
+		3413-3548  *dummy 24*
+		3549
+		...
+		3658
+	3659  *dummy 24*
+	3660  *dummy 24*
+	3661  Char Overworld [16]
+		3662  Fei
+		3663  Elly
+		3664  Citan
+		3665  Bart
+		3666-3677  *dummy 24*
+	3678  Gear/2D Overworld [16]
+		3679  Weltall
+		3680  Weltall
+		3681  Virge
+		3682  Heimdal
+		3683-3694  *dummy 24*
+	3695  [2]
+		3696  [LZ]
+		3697  [PAK-LZ]
+	3698  [3]
+		3699-3701  *dummy 24*
+	3702  [9]
+		3703
+		3704
+		3705
+		3706
+		3707  smds/midi data
+		3708  seds
+		3709
+		3710
+		3711  smds/midi data
+	3712  [9]
+		3713-3721  MDEC_rest:bad option(%d)
+	3722  [8]
+		3723-3730  MDEC_rest:bad option(%d)
+	3731  [8]
+		3732-3739  MDEC_rest:bad option(%d)
+	3740  *PADDING* CD LEAD-OUT
+==============================

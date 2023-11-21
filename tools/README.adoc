@@ -1,4 +1,4 @@
-## Tools (PHP)
+== Tools (PHP)
 
 * For everything in `tools` folder, just run the PHP script directly with the files. No web server required.
 ** `php.exe  psxtools/img_clut2png.php  0000.rgba  0001.rgba...`

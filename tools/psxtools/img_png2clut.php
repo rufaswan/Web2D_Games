@@ -302,12 +302,12 @@ function png2rgba( &$chunk, $w, $h, $dp, $cl, $fname )
 	return;
 }
 //////////////////////////////
-function pngfile( $fname )
+function png2img( $fname )
 {
 	$png = file_get_contents($fname);
 	if ( empty($png) )  return;
 
-	if ( substr($png, 1, 3) !== 'PNG' )
+	if ( substr($png, 0, 8) !== PNG_MAGIC )
 		return;
 
 	$chunk = png_chunk($png);
@@ -324,10 +324,23 @@ function pngfile( $fname )
 	if (       $in != 0 )  return printf("adam7 interlace not supported\n");
 
 	if ( $cl & 1 ) // indexed color , CLUT
-		png2clut($chunk, $w, $h, $dp, $cl, $fname);
+		return png2clut($chunk, $w, $h, $dp, $cl, $fname);
 	else // true color , RGBA
-		png2rgba($chunk, $w, $h, $dp, $cl, $fname);
+		return png2rgba($chunk, $w, $h, $dp, $cl, $fname);
+	return;
+}
 
+function pngfile( $ent )
+{
+	if ( is_file($ent) )
+		return png2img($ent);
+	if ( ! is_dir($ent) )
+		return;
+
+	$list = array();
+	lsfile_r($ent, $list);
+	foreach ( $list as $fn )
+		png2img($fn);
 	return;
 }
 

@@ -94,14 +94,13 @@ function clut2png( &$file, $fname )
 	$ihdr .= ZERO; // filter , 0=adaptive/5 type
 	$ihdr .= ZERO; // interlace , 0=none , 1=adam7
 
-	//$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
-	$png = "\x89PNG\x0d\x0a\x1a\x0a";
-	$png .= pngchunk("IHDR", $ihdr);
-	$png .= pngchunk("PLTE", $plte);
+	$png = PNG_MAGIC;
+	$png .= pngchunk('IHDR', $ihdr);
+	$png .= pngchunk('PLTE', $plte);
 	if ( ! empty($trns) )
-		$png .= pngchunk("tRNS", $trns);
-	$png .= pngchunk("IDAT", $idat, true);
-	$png .= pngchunk("IEND", '');
+		$png .= pngchunk('tRNS', $trns);
+	$png .= pngchunk('IDAT', $idat, true);
+	$png .= pngchunk('IEND', '');
 
 	file_put_contents("$fname.png", $png);
 	return;
@@ -128,9 +127,9 @@ function rgba2png( &$file, $fname )
 
 	//$png = chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
 	$png = "\x89PNG\x0d\x0a\x1a\x0a";
-	$png .= pngchunk("IHDR", $ihdr);
-	$png .= pngchunk("IDAT", $idat, true);
-	$png .= pngchunk("IEND", '');
+	$png .= pngchunk('IHDR', $ihdr);
+	$png .= pngchunk('IDAT', $idat, true);
+	$png .= pngchunk('IEND', '');
 
 	file_put_contents("$fname.png", $png);
 	return;
@@ -150,5 +149,19 @@ function img2png( $fname )
 	return;
 }
 
-for ( $i=0; $i < $argc; $i++ )
-	img2png( $argv[$i] );
+function imgfile( $ent )
+{
+	if ( is_file($ent) )
+		return img2png($ent);
+	if ( ! is_dir($ent) )
+		return;
+
+	$list = array();
+	lsfile_r($ent, $list);
+	foreach ( $list as $fn )
+		img2png($fn);
+	return;
+}
+
+for ( $i=1; $i < $argc; $i++ )
+	imgfile( $argv[$i] );

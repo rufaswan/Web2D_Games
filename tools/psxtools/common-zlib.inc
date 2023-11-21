@@ -28,6 +28,9 @@ php_req_extension('zlib_decode', 'zlib');
 //php_req_extension('inflate_init', 'zlib'); // for custom dictionary
 //php_req_extension('deflate_init', 'zlib'); // for custom dictionary
 
+// chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
+define('PNG_MAGIC', "\x89PNG\x0d\x0a\x1a\x0a");
+
 function zlib_raw_store( &$data )
 {
 	// +5 bytes for every 0xffff bytes data

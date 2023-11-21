@@ -21,101 +21,91 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
-function numname( $old, $ext )
-{
-	$fn = sprintf('%s.%s', $old, $ext);
-	if ( ! is_file($fn) )
-		return $old;
-
-	// append number for handle duplicates
-	$i = 1;
-	while ( $i > 0 )
-	{
-		$new = sprintf('%s.%d', $old, $i);
-		if ( strlen($new) >= 0x80 )
-			return '';
-
-		$fn = sprintf('%s.%s', $new, $ext);
-		if ( ! is_file($fn) )
-			return $new;
-		$i++;
-	} // while ( $i > 0 )
-	return '';
-}
-
-function valid_name( $old, $ext )
+function valid_name( $fnam, $fext )
 {
 	// filename limit 255 chars
-	if ( strlen($old) < 0x80 )
-		return numname($old, $ext);
-
-	$new = array(
-		substr($old, 0, 0x40),
-		sprintf('%08x', crc32($old)),
-		md5($old),
-		sha1($old),
-	);
-	foreach ( $new as $k => $v )
+	$new = ( strlen($fnam) < 0x40 ) ? $fnam : substr($fnam, 0, 0x40);
+	$i = 0;
+	while ( $i < 10000 )
 	{
-		$new = numname($v, $ext);
-		if ( ! empty($new) )
-			return $new;
+		$fn1 = sprintf('%s.%d', $new, $i);
+		$fn2 = sprintf('%s.%s', $fn1, $fext);
+		if ( ! is_file($fn2) )
+			return $fn1;
+		$i++;
 	}
-	return $old;
+	return -1;
 }
 
-function wget( $fullurl )
+function phpwget()
 {
-	$http = array(
-		'http'   => '',
-		'domain' => '',
-		'path'   => '',
-		'fname'  => '',
-		'fext'   => '',
-		'query'  => '',
-	);
-	$url = $fullurl;
-
-	// URL testing
-	$p = strpos($url, '://');
-	if ( $p === false )
-		return printf("%s is not an URL\n", $url);
-	$http['http'] = substr($url, 0, $p);
-	$url = substr($url, $p + 3);
-
-
-	$p = strpos($url, '?');
-	if ( $p !== false )
+	$is_done = false;
+	while ( ! $is_done )
 	{
-		$http['query'] = substr($url, $p + 1);
-		$url = substr($url, 0, $p);
-	}
+		echo "> type 'q' to quit\n";
+		echo "> URL =\n";
+		$input = trim( fgets(STDIN) );
+		if ( $input === 'q' )
+		{
+			$is_done = true;
+			continue;
+		}
 
+		// http://127.0.0.1/path/file.mp4?k=v&a=b
+		$url = parse_url($input);
+		if ( ! isset( $url['host'] ) )
+		{
+			echo "> ERROR : not an URL\n";
+			continue;
+		}
 
-	$p = strrpos($url, '/');
-	if ( $p === false )
-		return printf("%s is base url\n", $url);
-	$fn  = substr($url, $p + 1);
-	$url = substr($url, 0, $p);
-	if ( empty($fn) )
-		return printf("%s has no file\n", $url);
+		if ( ! isset( $url['path'] ) )
+		{
+			echo "> ERROR : no URL path\n";
+			continue;
+		}
 
-	$p = strrpos($fn, '.');
-	$http['fname'] = urldecode ( substr($fn,0,$p) );
-	$http['fext' ] = strtolower( substr($fn, $p + 1) );
+		$p = strrpos($url['path'], '/');
+		$fname = ( $p === false ) ? $url['path'] : substr($url['path'], $p+1);
 
-	$http['fname'] = valid_name($http['fname'], $http['fext']);
-	printf("> wget %s.%s\n", $http['fname'], $http['fext']);
+		$p = strrpos($fname, '.');
+		if ( $p === false )
+		{
+			echo "> ERROR : no filename on URL\n";
+			continue;
+		}
 
-	$wget  = 'wget';
-	$wget .= ' --quiet';
-	$wget .= ' --no-config';
-	$wget .= ' --no-check-certificate';
-	$wget .= ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"';
-	$cmd = sprintf("%s '%s' -O '%s.%s'", $wget, $fullurl, $http['fname'], $http['fext']);
-	exec($cmd);
+		$fext = strtolower( substr($fname, $p + 1) );
+		$fnam =  urldecode( substr($fname, 0, $p) );
+
+		$fnam = valid_name($fnam, $fext);
+		if ( $fnam === -1 )
+		{
+			echo "> ERROR : unable to generate valid filename\n";
+			continue;
+		}
+
+		$fname = $fnam . '.' . $fext;
+		printf("> wget  '%s'\n", $fname);
+
+		$wget  = 'wget';
+		$wget .= ' --quiet';
+		$wget .= ' --no-config';
+		$wget .= ' --no-check-certificate';
+		$wget .= ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"';
+		$cmd = sprintf("%s '%s' -O '%s'", $wget, $input, $fname);
+		exec($cmd);
+
+		$fsz = filesize($fname);
+		if ( $fsz < 1 )
+		{
+			echo "> ERROR : empty file. Deleted\n";
+			unlink($fname);
+		}
+		else
+			printf("> DONE : size %x bytes\n", $fsz);
+	} // while ( ! $is_done )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	wget($argv[$i]);
+phpwget();
