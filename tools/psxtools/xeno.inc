@@ -183,7 +183,6 @@ function xeno_encode( &$file )
 	$file = $enc;
 	return;
 }
-
 /*
 xeno encode note
 	data = 00 00 00 00
@@ -196,42 +195,53 @@ xeno encode note
 		20 flag 0  -
 		40 flag 0  -
 		80 flag 0  -
-	= size = 0a , chunk = flag/02  00  0001  -  -  -  -  -  -
+	= size  = 0a
+	= chunk = flag/02  00  0001  -  -  -  -  -  - , EOF
 	NOTE : EOF check is on reading flags
-		size must be padded so pEND === size when reading flags
+		6 unused flags are used, reading *junk data*
+		next flags read is on (4 + 6) = position 10 , so the decompressed size is 10, but the actual size is 4.
+		EOF check is an "equals to", the size must be EXACT === position
+*/
+//////////////////////////////
+function detect_ext( &$sub )
+{
+	$mgc = substr($sub, 0, 4);
+	$len = strlen($sub);
 
-xeno demo
-	1
-	12
-	23
-	40
-	553
-	586
-	589
-	654
-		655-739  tim dialog portrait
-	751
-	768
-		769-1750 map data + 1200/1201 tex pair
-	2305
-		2306-2380 3d model
-	2434
-		2435-2508 spr2 fei event sprite
-	2563
-		2564-2569 tim gallery
-	2644
-	2649
-		2650-2737 spr1+3d battle sprite
-	2739
-	2742
-	2855
-		2856-2899 3d model
-	2993
-	3190
-	3661
-	3678
-	3695
-	3702
+	// TEST : if matched a known filetype
+	$exts = array(
+		'77647320' => 'wds', // 'wds '
+		'73656473' => 'sed', // 'seds'
+		'736d6473' => 'smd', // 'smds'
+		'01120000' => 'tex',
+		'00120000' => 'tex',
+		'60010180' => 'str',
+		'50532d58' => 'exe', // 'PS-X'
+	);
+	$b = bin2hex($mgc);
+	if ( isset( $exts[$b] ) )
+	{
+		// STR video is already broken, dummy it
+		if ( $exts[$b] === 'str' )
+			$sub = ZERO;
+		return $exts[$b];
+	}
+
+	// TEST : if it is a [PAK], magic is file count
+	$b = ordint($mgc);
+	if ( ($b*4+8) > $len )
+		goto not_pak;
+	$sz = str2int($sub, 4 + ($b * 4), 4);
+	if ( $sz !== $len )
+		goto not_pak;
+	return sprintf('%x', $b);
+
+not_pak:
+	// default
+	return 'bin';
+}
+
+/*
 //////////////////////////////
 battle vierge data
 	RAM hp 8006e154  fuel 8006e12c

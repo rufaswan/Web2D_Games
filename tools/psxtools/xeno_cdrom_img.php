@@ -22,6 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-iso.inc';
+require 'xeno.inc';
 
 function xeno_isofile( &$list, $lba, $dir )
 {
@@ -31,37 +32,6 @@ function xeno_isofile( &$list, $lba, $dir )
 			return $dir . $f['file'];
 	}
 	return -1;
-}
-
-function xeno_ext( &$sub )
-{
-	$exts = array(
-		'77647320' => 'wds', // 'wds '
-		'73656473' => 'sed', // 'seds'
-		'736d6473' => 'smd', // 'smds'
-		'01120000' => 'tex',
-		'00120000' => 'tex',
-		'60010180' => 'str',
-		'50532d58' => 'exe',
-	);
-	$b1 = substr($sub, 0, 4);
-
-	$b2 = ordint($b1);
-	if ( $b2 < 0x1000 )
-		return sprintf('%x', $b2);
-
-	// if matched a known filetype
-	$b2 = bin2hex($b1);
-	if ( isset( $exts[$b2] ) )
-	{
-		$e = $exts[$b2];
-		if ( $e === 'str' )
-			$sub = ZERO;
-		return $e;
-	}
-
-	// default
-	return 'bin';
 }
 
 function ripxeno( $fp, &$list, &$sub, &$pos, &$id, $cnt, $entsiz, $root, $dir )
@@ -97,7 +67,7 @@ function ripxeno( $fp, &$list, &$sub, &$pos, &$id, $cnt, $entsiz, $root, $dir )
 
 		$fn = xeno_isofile($list, $lba, $root);
 		if ( $fn === -1 )
-			$fn = sprintf('%s/%s/%04d.%s', $root, $dir, $id-1, xeno_ext($s));
+			$fn = sprintf('%s/%s/%04d.%s', $root, $dir, $id-1, detect_ext($s));
 
 		$b1 = sprintf("%8x , %8x , %s\n", $bak, $bak + $entsiz[0], $fn);
 		echo $b1;

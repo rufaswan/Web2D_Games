@@ -73,9 +73,563 @@ battle meta.1 = RAM 80107f6c-80108ca4
 	8001d8ec  lbu  v0, 2(s2)
 		int8(v0) -> 2(s0)
 //////////////////////////////
-Save Data = RAM 80
+Save Data = RAM 8006cf30
+	RAM 8006cf30 == 2595.bin +  26c == SAVE +  390
+	RAM 8006f01c == 2595.bin + 2358 != SAVE + 3c5c (> 1eff)
 
 	sum = 0
 	for ( i=100; i < 1fff; i++ )
 		sum = (sum + save[i]) & ff
 	save[1fff] = sum
+//////////////////////////////
+opcode dec.5
+	lw   op, 800af54c  // op_struct
+	lhu  v1, cc(op)    // op_cur
+	sh   v1, 78(op)    // op_call
+	lw   v0, 800af594  // op_
+
+	00
+	01  p = lhu/1
+	02  lbu/5
+		bne ? p += 6 : p += 8
+	03  9bb7c() =>  lhu/1  lbu/3  p += 4
+	04
+	05  lhu/1; ret = p + 3; p=/1  [STACKERR ACT=%d]
+	06  lhu/1; ret = p + 5; p=/1  [STACKERR ACT=%d]
+	07  p += 3
+	08  lbu/2  p += 3
+	09  p += 3
+	0a  lbu/1 lhu/2  p += 4
+	0b  p += 3
+	0c  bak=p; opa7() => p++; p=bak
+	0d  p = ret
+	0e  p++  [nop]
+	0f  p++  [nop]
+
+	10
+	11
+	12  op98() => p += 5; p += 4
+	13  p++  [nop]
+	14  [b164a] = 0; p++
+	15  p++
+	16  p += 3
+	17  lbu/11
+		/11 & 80  var/1
+		/11 & 40  var/3
+		/11 & 20  var/5
+		/11 & 10  var/7
+		/11 & 08  var/9
+		/11 & 04  var/b
+		/11 & 02  var/d
+		/11 & 01  var/f
+		p += 12
+	18  18(op) = lbu/1
+		1c(op) = lbu/2
+		1a(op) = lbu/3
+		1e(op) = lbu/4
+		p += 5
+	19  lbu/5
+		/5 & 80  var/1
+		/5 & 40  var/3
+		p += 6
+	1a  lbu/1  p += 2
+	1b  lbu/5  lbu/6
+		/5 & 80  var/1
+		/5 & 40  var/3
+		p += 7
+	1c  lbu/3
+		/3 & 80  var/1
+		p += 4
+	1d  lh/1  lh/3  lh/5  p += 7
+	1e  p++
+	1f  lbu/1  p += 2
+
+	20  p += 3
+	21  p += 3
+	22  p++
+	23  p++
+	24  p += 2
+	25  p += 2
+	26  p += 3
+	27  p += 2
+	28  p += 2
+	29  p += 2
+	2a  0(op) |=  20000; p++
+	2b  0(op) &= ~20000; p++
+	2c  lbu/1  p += 2
+	2d  lhu/2  lhu/4  lhu/6  p += 8
+	2e  lhu/1  p += 3
+	2f  lhu/1  p += 3
+
+	30  lhu/1; p += 3
+	31  9564c() => lhu/1  lhu/3  p += 5
+	32  9564c() => lhu/1  lhu/3  p += 5
+	33  [af140] = 0; p++
+	34  lhu/3  p += 5
+	35  lhu/1  p += 6
+	36  lhu/1  p += 3
+	37  lhu/1  p += 3
+	38  lhu/1  p += 6
+	39  lhu/1  p += 6
+	3a  lhu/1  p += 6
+	3b  lhu/1  p += 6
+	3c  lhu/1  p += 3
+	3d  lhu/1  p += 3
+	3e  lhu/1  p += 6
+	3f  lhu/1  p += 6
+
+	40  lhu/1  p += 6
+	41  lhu/1  p += 5
+	42  lhu/1  p += 5
+	43  lhu/1  p += 3
+	44  p += 5
+	45  p += 8
+	46  p++
+	47  91e68() => var/2  var/4  p += 6
+	48  lhu/1  lhu/3  p += 7
+	49  lhu/1  lhu/3  p += 8
+	4a  p += 6
+	4b  99094() => lbu/5  ;var/6  p += 8
+		??? p += 7
+	4c  p += 8
+	4d  p += a
+	4e  p += 6
+	4f  p += 8
+
+	50  p += 8
+	51  p += a
+	52  p += 2
+	53  p += 4
+	54  p += 5
+	55  p += 7
+	56  p += a
+	57  lbu/1  lbu/a  p += d
+	58  p += 4
+	59  p++
+	5a  op5b(); p++
+	5b
+	5c  p += 3
+	5d  op2c() => lbu/1  p += 2
+	5e  4(op) |= 10000; p++
+	5f  p += 2
+
+	60  p++
+	61  p += 8
+	62  p += 2
+	63  p += 8
+	64  p++
+	65  p += 8
+	66  p += 2
+	67  99f2c() => p += 4
+	68  99f2c() => p += 4
+	69  99ed8() => p += 3
+	6a  9a0dc() => p += 3
+	6b  99ed8() => p += 3
+	6c  99ed8() => p += 3
+	6d  lbu/1  p += 8
+	6e  lbu/1  p += 8
+	6f  p += 2
+
+	70  p += 2
+	71  p += 3
+	72  if ( [8ed20] )  8ed8c() => p += 3
+	73  p += 8
+	74  p += 3
+	75  if ( [ad0e4] )  8ed8c() => p += 3
+	76  0(op) &= ~8000; p++
+	77  0(op) |=  8000; p++
+	78  lbu/1  lhu/2  p += 4
+	79  p++
+	7a  p++
+	7b  p += 4
+	7c  p += 4
+	7d  p += 4
+	7e  p += 4
+	7f  p += 3
+
+	80  p += 5
+	81  p += 5
+	82  p += 5
+	83  p += 5
+	84  lhu/3  p += 5
+	85  lhu/3  p += 5
+	86  lhu/3  p += 5
+	87  p += 3
+	88  p += 3
+	89  if ( v0 === ff )  p = lhu/4  else  p += 6
+	8a  if ( [ad0f0] )  p += 4  else  p = lhu/2;
+	8b  if ( v0 === -1 )  p = lhu/3  else  p += 5
+	8c  p += 3
+	8d  p += 3
+	8e  if ( v0 < v1 )  p = lhu/5  else  p += 7
+	8f  var/1  p += 3
+
+	90  var/1  p += 3
+	91  if ( v0 !== v1 )  p = lhu/2  else  p += 4
+	92
+	93  p += 3
+	94  p += 5
+	95  p += 2
+	96  p++
+	97  p += 3
+	98  p += 5
+	99  p++
+	9a  p += 3
+	9b  p += 5
+	9c  p++
+	9d  lbu/3  var/1  p += 4
+	9e  p++
+	9f  p++
+
+	a0  var/3  var/1  var/5  p += 7
+	a1  var/1  p += 3
+	a2  p++
+	a3  p += 8
+	a4  p += 4
+	a5  p += 3
+	a6  p += ((var/1 * 3) + 3)
+	a7  p++
+	a8  p += 5
+	a9  p += 2
+	aa  p += 2
+	ab  p++
+	ac  p += 4
+	ad  p += 7
+	ae  p += 7
+	af  p += 4
+
+	b0  p += 4
+	b1  p += 4
+	b2  p += 2
+	b3  p += 3
+	b4  p += 3
+	b5  p += 5
+	b6  p += 5
+	b7  0(op) |=  4000; p++
+	b8  0(op) &= ~4000; p++
+	b9  if ( v0 === 0 )  p = lhu/2  else  p += 4
+	ba  p += 2
+	bb  p += 2
+	bc  p++
+	bd  p += 3
+	be  p += 3
+	bf  p += 3
+
+	c0  p += 3
+	c1  p += 3
+	c2  p += 3
+	c3  [af594] = 1; p++
+	c4  p += 2
+	c5  p += 2
+	c6  [af150] += 20; p++
+	c7  p += 3
+	c8  p += 3
+	c9  if ( v0 < 0 )  p = lhu/2  else  p += 4
+	ca  p += 8
+	cb  if ( v0 < 0 )  p = lhu/2  else  p += 4
+	cc  p += 4
+	cd  0(op) |=  800000; p++
+	ce  0(op) &= ~800000; p++
+	cf  p += 5
+
+	d0  var/1  var/3  var/5  var/7  var/9  p += b
+	d1  0
+	d2  9bb7c() =>  lhu/1  lbu/3  p += 4
+	d3
+	d4  if ( v0 === ff )  p += 6  else
+	{
+		p++
+		9bb7c() =>  lhu/1  lbu/3  p += 4
+		if ( v0 !== -1 )
+		else
+			p--
+	}
+	d5  lhu/1  p += 3
+	d6  var/1  p += 3
+	d7  var/1  p += 3
+	d8  var/1  p += 3
+	d9  var/1  p += 3
+	da  lhu/9  lhu/f  lhu/1  lhu/3  lhu/5  lhu/7  lhu/b  lhu/d  p += 11
+	db  var/1  var/3  p += 5
+	dc  lhu/1  lhu/3  p += 5
+	dd  p += 6
+	de  p += 6
+	df  p += 6
+
+	e0  p += 7
+	e1  p += e
+	e2
+	e3
+	e4  0
+	e5  var/1  var/3  var/5  var/7  var/9  var/b  var/d  var/f  p += 11
+	e6  lh/1  lh/3  lh/5  lh/7  p += 9
+	e7  var/1  var/3  var/5  p += 7
+	e8  p += 7
+	e9  p += 7
+	ea
+	eb  lhu/e  lhu/10  lhu/12  p += 14
+	ec  lhu/9  lhu/b  lhu/d  p += f
+	ed  lhu/2  lhu/4  lhu/6  p += 8
+	ee  p += 3
+	ef  var/1  p += 3
+
+	f0  lhu/1  lhu/3  lhu/5  p += 7
+	f1  var/9  var/3  var/5  var/7  var/1  p += b
+	f2  var/1  var/3  var/5  var/7  p += 9
+	f3  lhu/1  lhu/3  lhu/5  p += 7
+	f4  p += 2
+	f5  9bb7c() =>  lhu/1  lbu/3  p += 4
+	f6  p += 2
+	f7  var/1  var/3  p += 5
+	f8  p += 4
+	f9  p += 2
+	fa
+	fb  if ( v0 === 0  )  p = lhu/3  else  p += 5
+	fc  if ( v0 === ff )  p += 6  else  opd4()
+	fd  p++  [nop]
+	fe  p++  [PAGE 2]
+	ff  p++  [nop]
+
+	fe opcode
+		00  0
+		01  p++
+		02  p += 4
+		03  p += 3
+		04  p += 3
+		05  if ( v1 !== var/2 )  p = lhu/4  else  p += 6
+		06  if ( s0 !== var/2 )  p = lhu/4  else  p += 6
+		07  p += 2
+		08  var/1  var/3  var/5  p += 7
+		09  var/1  p += 3
+		0a  var/1  p += 3
+		0b  var/1  p += 3
+		0c  lhu/1  lhu/3  lhu/5  lhu/7  lhu/9  lhu/b  p += d
+		0d  var/1  p += 3
+		0e  var/1  var/3  p += 5
+		0f  p += 6
+
+		10  var/1  var/3  p += 5
+		11  p += 6
+		12  var/1  p += 3
+		13  var/1  var/3  p += 5
+		14  var/1  var/3  p += 5
+		15  var/1  var/3  p += 5
+		16  p++
+		17  p += 3
+		18  p += 4
+		19  p += 2
+		1a  p++
+		1b  lh/1  lh/3  p += 5
+		1c  p += 8
+		1d  p += 8
+		1e  p += 2
+		1f  p++
+
+		20  p += 2
+		21  var/1  p += 3
+		22  lhu/1  p += 3
+		23  lbu/d  var/e  var/10  var/12  p += 14
+		24  p++
+		25  lbu/1  p += 2
+		26  p += f
+		27  var/2  p += 4
+		28  8da6c() =>  lhu/1  p += 3
+		29  8da6c() =>  lhu/1  p += 3
+		2a  8da6c() =>  lhu/1  p += 3
+		2b  8da6c() =>  lhu/1  p += 3
+		2c  lhu/1  p += 3
+		2d  lhu/1  p += 3
+		2e  lhu/1  p += 3
+		2f  lhu/1  p += 3
+
+		30  8d71c() => if ( lhu/1 === 0 )  p = lhu/3  else  p += 5
+		31  8d71c() => if ( lhu/1 === 0 )  p = lhu/3  else  p += 5
+		32  8d71c() => if ( lhu/1 === 0 )  p = lhu/3  else  p += 5
+		33  8d71c() => if ( lhu/1 === 0 )  p = lhu/3  else  p += 5
+		34  8d6b0() => if ( lhu/1 === 0 )  p = lhu/4  else  p += 6
+		35  8d6b0() => if ( lhu/1 === 0 )  p = lhu/4  else  p += 6
+		36  8d6b0() => if ( lhu/1 === 0 )  p = lhu/4  else  p += 6
+		37  8d6b0() => if ( lhu/1 === 0 )  p = lhu/4  else  p += 6
+		38  lhu/1  p += 5
+		39  var/1  p += 3
+		3a  var/1  p += 3
+		3b  var/1  p += 3
+		3c  var/1  var/3  p += 5
+		3d  p += a
+		3e  lbu/9  p += a
+		3f  var/1  var/3  var/5  p += 7
+
+		40  var/1  var/3  lhu/5  p += 7
+		41  var/1  p += 3
+		42  var/1  p += 3
+		43  p++
+		44  p++
+		45  lbu/1  p += 2
+		46  lbu/1  p += 2
+		47  var/1  p += 3
+		48  lbu/7  p += 8
+		49  p++
+		4a  var/1  p += 3
+		4b  p++
+		4c  fe4d() => lbu/1  p += 2
+		4d  lbu/1  p += 2
+		4e  p++
+		4f  [b16a4] = 0; p++
+
+		50  [b16a4] = 1; p++
+		51  [b16a5] = 0; p++
+		52  [b16a5] = 1; p++
+		53  [b164a] = 0;  [b16a4] = 0;  [b16a5] = 0; p++
+		54  p++
+		55  [af594] = 1;  [ad03c] = 0;  [4e9f4]++;  [58811] = [b1840]; p++
+		56  var/1  p += 3
+		57  [af594] = 1;  [ad03c] = 2;  [4e9f4]++;  p++
+		58  var/1  p += 3
+		59  var/1  p += 3
+		5a  var/1  p += 3
+		5b  var/1  p += 3
+		5c  lbu/1  var/2  p += 4
+		5d  var/1  var/5  var/3  p += 7
+		5e  var/1  p += 3
+		5f  lbu/1  var/2  var/4  var/6  p += 8
+
+		60  var/1  var/3  var/5  var/7  p += 9
+		61  p++
+		62  var/3  var/1  p += 5
+		63  var/3  var/1  p += 5
+		64  var/1  p += 3
+		65  var/1  var/3  p += 5
+		66  var/1  var/5  var/3  var/7  p += 9
+		67  var/1  var/3  var/5  var/7  var/9  var/b  var/d  var/f  var/11  p += 13
+		68  lbu/5
+		69  var/3  lhu/1  p += 5
+		6a  var/1  p += 3
+		6b  var/3  var/1  p += 5
+		6c  p++
+		6d  p++
+		6e  p += 4
+		6f  p += 8
+
+		70  var/1  p += 3
+		71  lhu/1  p += 3
+		72  lbu/9  lhu/1  p += a
+		73  lbu/b  lhu/1  p += c
+		74  lhu/1  p += 3
+		75  lhu/2  p += 4
+		76  lbu/f  lhu/1  p += 10
+		77  p += b
+		78  0
+		79  0
+		7a  0
+		7b  0
+		7c  0
+		7d  0
+		7e  0
+		7f  if ( [ad060] !== 0 )  p--  else  p++  [wait]
+
+		80  lhu/1  lhu/3  lhu/5  lhu/7  lhu/9  lhu/b  lhu/d  p += f
+		81  lbu/7  p += 8
+		82  var/1  var/3  var/5  var/7  var/9  var/b  var/d  var/f  var/11  var/13  var/15  var/17  p += 19
+		83  var/1  p += 3
+		84  var/1  var/5  var/7  p += 9
+		85  lhu/1  p += 3
+		86  lbu/1  p += 2
+		87  if ( [4e9f4] !== 0 )  p--  else  p++  [wait]
+		88  lbu/11  p += 12
+		89  lbu/9  p += b
+		8a  var/1  p += 3
+		8b  lhu/1  p += 3
+		8c  var/3  var/1  var/5  p += 7
+		8d  var/1  p += 3
+		8e  var/1  var/3  p += 5
+		8f  var/2  var/4  var/6  p += 8
+
+		90  var/1  var/3  var/5  var/7  p += 9
+		91  lbu/d  p += e
+		92  lbu/d  p += e
+		93  var/1  var/3  var/5  var/7  var/9  p += b
+		94  lbu/9  p += a
+		95  lbu/d  p += e
+		96  p++
+		97  lbu/1  p += 2
+		98  var/1  p += 3
+		99  lbu/1  p += 2
+		9a  var/3  var/5  var/7  p += 9
+		9b  var/1  p += 3
+		9c  var/1  p += 3
+		9d  var/1  p += 3
+		9e  var/1  var/3  var/5  var/7  p += 9
+		9f  var/2  lbu/1  p += 4
+
+		a0  if ( [ad0b4] !== 0 )  return; lbu/1  p += c
+			??? p += 2
+		a1  var/1  var/3  p += 5
+		a2  if ( [4e9ac] !== -1 )  p++  else  p--  [wait]
+		a3  lbu/1  p += 2
+		a4  p++
+		a5  var/1  var/3  var/5  p += 7
+		a6  var/1  var/3  p += 5
+		a7  var/1  var/3  var/5  var/7  p += 9
+		a8  lhu/1  lhu/3  lhu/5  p += 7
+		a9  lhu/1  lhu/3  lhu/5  p += 7
+		aa  p += 2
+		ab  lbu/3  p += 4
+		ac  lbu/3  p += 4
+		ad  lhu/1  lbu/3  p += 4
+		ae  var/1  var/3  var/5  p += 7
+		af  lhu/c  lhu/e  lhu/10  p += 12
+
+		b0  lbu/1  var/2  var/4  p += 6
+		b1  p++
+		b2  var/2  lbu/1  p += 4
+		b3  var/2  lbu/1  p += 4
+		b4  lhu/1  lbu/3  p += 4
+		b5  p++
+		b6  p += 2
+		b7  var/1  p += 3
+		b8  var/2  lbu/1  p += 4
+		b9  lhu/1  lhu/3  lhu/5  lhu/7  p += 9
+		ba  lbu/9  p += a
+		bb  lhu/1  p += 3
+		bc  lbu/3  p += 4
+		bd  var/1  p += 7
+		be  [4e9a4] = 1; p++
+		bf  var/1  var/3  var/5  var/7  var/9  var/b  p += d
+
+		c0  lhu/1  p += 3
+		c1  var/5  lhu/1  lhu/3  p += 7
+		c2  var/1  var/3  var/5  var/7  p += 9
+		c3  4(op) |= 2000800; p++
+		c4  p += 2
+		c5  var/1  var/3  p += 5
+		c6  var/1  p += 5
+		c7  var/1  lhu/3  p += 5
+		c8  8830c() =>  lbu/11  p += 12
+		c9  8830c() =>  lbu/11  p += 12
+		ca  p += 2
+		cb  [af594] = 1; [ad05c]++; p++
+		cc  if ( [ad04c] !== 0 )  p--  else  p++
+		cd  lhu/1  p += 3
+		ce  var/1  p += 3
+		cf  var/3  var/1  p += 5
+
+		d0  var/1  var/3  p += 5
+		d1  p++
+		d2  p += 3
+		d3  var/1  var/3  var/5  var/7  var/9  var/b  lhu/d  lhu/f  p += 11
+		d4  lbu/1  var/2  var/4  var/6  var/8  p += a
+		d5  lhu/1  lhu/3  p += 5
+		d6  lhu/1  lhu/3  p += 5
+		d7  lbu/9  p += 6
+		d8  lbu/1  p += 2
+		d9  lbu/1  p += 2
+		da  [58811] = 1; [ad03c] = 6; [af594] = 1; [4e9f4]++; p++
+		db  var/1  p += 3
+		dc  var/1  var/3  p += 5
+		dd  lbu/1  var/2  var/4  p += 6
+			??? p += 2
+		de  var/1  var/3  p += 5
+		df  var/1  p += 3
+
+		e0  lbu/1  p += 2
+		e1  var/1  var/3  p += 5

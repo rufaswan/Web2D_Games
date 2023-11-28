@@ -385,7 +385,7 @@ function printhex( &$str )
 		else
 			$txt .= sprintf('%2x ', ord($str[$i]) );
 	}
-	return trim($txt);
+	return $txt;
 }
 
 function debug( $str, $name='DEBUG' )

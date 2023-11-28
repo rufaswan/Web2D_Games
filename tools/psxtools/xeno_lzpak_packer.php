@@ -53,7 +53,7 @@ function lzpak_unpack( $type, $fname )
 			$list = xeno_unpak($file);
 			foreach ( $list as $k => $v )
 			{
-				$fn = sprintf('%s/%04d.bin', $dir, $k);
+				$fn = sprintf('%s/%04d.%s', $dir, $k, detect_ext($v));
 				save_file($fn, $v);
 			}
 			return;
@@ -62,7 +62,7 @@ function lzpak_unpack( $type, $fname )
 			$list = xeno_unpak($file);
 			foreach ( $list as $k => $v )
 			{
-				$fn = sprintf('%s/%04d.bin', $dir, $k);
+				$fn = sprintf('%s/%04d.%s', $dir, $k, detect_ext($v));
 				save_file($fn, $v);
 			}
 			return;
@@ -70,7 +70,7 @@ function lzpak_unpack( $type, $fname )
 			$list = xeno_unpak($file);
 			foreach ( $list as $k => $v )
 			{
-				$fn = sprintf('%s/%04d.bin', $dir, $k);
+				$fn = sprintf('%s/%04d.%s', $dir, $k, detect_ext($v));
 				xeno_decode($v);
 				save_file($fn, $v);
 			}
