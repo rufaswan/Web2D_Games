@@ -385,3 +385,39 @@ stackoverflow.com/questions/4264447/can-gits-gitattributes-treat-all-files-as-bi
 		to the more specific ones.
 		("a later line overrides an earlier line")
 
+en.wikipedia.org/wiki/CD-ROM
+
+	The net byte rate of a Mode-1 CD-ROM, based on comparison to CD-DA audio standards,
+	is 44,100 Hz x 16 bits/sample x 2 channels x 2,048 / 2,352 / 8 = 150 KB/s (150 x 2^10) .
+	This value, 150 Kbyte/s, is defined as "1x speed".
+	Therefore, for Mode 1 CD-ROMs, a 1x CD-ROM drive reads 150/2 = 75 consecutive sectors per second.
+
+	The playing time of a standard CD is 74 minutes, or 4,440 seconds,
+	contained in 333,000 blocks or sectors.
+	Therefore, the net capacity of a Mode-1 CD-ROM is 650 MB (650 x 2^20).
+	For 80 minute CDs, the capacity is 703 MB.
+
+	On a 74-minute CD-R, it is possible to fit larger disc images using raw mode,
+	up to 333,000 x 2,352 = 783,216,000 bytes (~747 MB).
+	This is the upper limit for raw images created on a 74 min or ~650 MB Red Book CD.
+	The 14.8% increase is due to the discarding of error correction data.
+
+problemkaputt.de/psxspx-cdrom-iso-file-and-directory-descriptors.htm
+
+	04h 2      File Attributes (big endian):
+		0   Owner Read    (usually 1)
+		1   Reserved      (0)
+		2   Owner Execute (usually 1)
+		3   Reserved      (0)
+		4   Group Read    (usually 1)
+		5   Reserved      (0)
+		6   Group Execute (usually 1)
+		7   Reserved      (0)
+		8   World Read    (usually 1)
+		9   Reserved      (0)
+		10  World Execute (usually 1)
+		11  IS_MODE2        (0=MODE1 or CD-DA, 1=MODE2)
+		12  IS_MODE2_FORM2  (0=FORM1, 1=FORM2)
+		13  IS_INTERLEAVED  (0=No, 1=Yes...?) (by file and/or channel?)
+		14  IS_CDDA         (0=Data or ADPCM, 1=CD-DA Audio Track)
+		15  IS_DIRECTORY    (0=File or CD-DA, 1=Directory Record)

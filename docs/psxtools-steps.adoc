@@ -83,6 +83,35 @@ php  psxtools/pc98_rusty_mag-ani.php  vs1_02.mag  vs1.ani
 ....
 
 '''
+== MS Gundam Battle Master series (PS1)
+
+Also known as MS Gundam Battle Assault in US.
+
+For GBM 1 and 2
+....
+php  psxtools/gbattm2_data_dat_decode.php  data/ms/*.dat
+php  psxtools/quad_gbattm2_data_ms.php  DIR
+....
+For GBM G and W
+....
+php  psxtools/gbattmw_data_pac_decode.php  data/ms*.pac
+php  psxtools/quad_gbattm2_data_ms.php  DIR
+....
+== Gunvolt series (PC)
+
+Game files are packed in .IRLST and .IRARC file pair. Then use the correct IDTAG to convert extracted subfiles to .QUAD format.
+....
+php  psxtools/pc_gunvolt_irlst-irarc.php  .IRLST
+
+php  psxtools/quad_pc_gunvolt_IOBJ.php  -gv/-gv2/gva/-mgv  OUTPUT_DIR/*all subfiles*
+-gv  = Azure Striker Gunvolt IDTAG
+-gv2 = Azure Striker Gunvolt 2 IDTAG
+-gva = Gunvolt Chronicles Luminous Avenger iX IDTAG
+-mgv = Mighty Gunvolt IDTAG
+-bmz = Blast Master Zero IDTAG
+....
+
+'''
 == Vanillaware series
 
 === Extracting Files
@@ -109,7 +138,11 @@ For Wii, run "php  psxtools/wii_mura_FTEX.php  .FTX"
 For NDS, run "php  psxtools/nds_kuma_FTEX.php  .FTX"
 For Vita, run "php  psxtools/vita_mura_FTEX.php  .FTX"
 ....
-
+The result .TM2/.TPL/.GIM/.GXT/.GTF/.GNF are actually .RGBA/.CLUT and can be converted to .BMP or .PNG like so:
+....
+php  psxtools/img_clut2bmp.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF
+php  psxtools/img_clut2png.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF
+....
 === Converting .MBP/.MBS
 
 These are sprite data, and was convert to .V55 format (based on PS2 Odin Sphere FMBP version 0x55) first, then to .QUAD format.
@@ -119,18 +152,4 @@ php  psxtools/quad_vanillaware_v55.php  .V55
 ....
 
 '''
-== Gunvolt series (PC)
 
-Game files are packed in .IRLST and .IRARC file pair. Then use the correct IDTAG to convert extracted subfiles to .QUAD format.
-....
-php  psxtools/pc_gunvolt_irlst-irarc.php  .IRLST
-
-php  psxtools/quad_pc_gunvolt_IOBJ.php  -gv/-gv2/gva/-mgv  OUTPUT_DIR/*all subfiles*
--gv  = Azure Striker Gunvolt IDTAG
--gv2 = Azure Striker Gunvolt 2 IDTAG
--gva = Gunvolt Chronicles Luminous Avenger iX IDTAG
--mgv = Mighty Gunvolt IDTAG
--bmz = Blast Master Zero IDTAG
-....
-
-'''

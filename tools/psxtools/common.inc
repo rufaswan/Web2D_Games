@@ -305,6 +305,17 @@ function int_ceil( $int, $near )
 	return 0;
 }
 
+// int based rounding
+//   base 16
+//    0 -  7 =>  0 ,  8 - 15 => 16
+//   16 - 23 => 16 , 24 - 31 => 32
+function int_round( $int, $near )
+{
+	$rnd = (int)round($int / $near);
+	$res = (int)($rnd * $near);
+	return $res;
+}
+
 function int_ceil_pow2( $int )
 {
 	// round int to nearest 2^n
@@ -378,7 +389,7 @@ function printhex( &$str )
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
 	{
-		if ( ($i & 3) === 0 )
+		if ( ($i & 3) === 0 && $i > 1 )
 			$txt .= '  ';
 		if ( $str[$i] === ZERO )
 			$txt .= '-- ';
