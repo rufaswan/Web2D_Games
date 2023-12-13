@@ -130,6 +130,98 @@ function cmp_float( $fl1, $fl2, $dec=1 )
 	return ( $f1 === $f2 );
 }
 //////////////////////////////
+function utf8_binhex( $bin )
+{
+	$len = strlen($bin);
+
+	if ( $len < 1 )  return '';
+	$b1  = ord($bin[0]);
+	if ( ($b1 & 0x80) === 0 )
+		return sprintf('U+%02x', $b1 & 0x7f); // U+00-U+7f
+
+	if ( $len < 2 )  return '';
+	$b2  = ord($bin[1]);
+	if ( ($b1 & 0xe0) === 0xc0 )
+	{
+		if ( ($b2 & 0xc0) !== 0x80 )  return '';
+		$b1 &= 0x1f; // 5-bit
+		$b2 &= 0x3f; // 6-bit
+		$hex = ($b1 << 6) | $b2;
+		return sprintf('U+%04x', $hex); // U+80-U+7ff
+	}
+
+	if ( $len < 3 )  return '';
+	$b3 = ord($bin[2]);
+	if ( ($b1 & 0xf0) === 0xe0 )
+	{
+		if ( ($b2 & 0xc0) !== 0x80 )  return '';
+		if ( ($b3 & 0xc0) !== 0x80 )  return '';
+		$b1 &= 0x0f; // 4-bit
+		$b2 &= 0x3f; // 6-bit
+		$b3 &= 0x3f; // 6-bit
+		$hex = ($b1 << 12) | ($b2 << 6) | $b3;
+		return sprintf('U+%04x', $hex); // U+800-U+ffff
+	}
+
+	if ( $len < 4 )  return '';
+	$b4  = ord($bin[3]);
+	if ( ($b1 & 0xf8) === 0xf0 )
+	{
+		if ( ($b2 & 0xc0) !== 0x80 )  return '';
+		if ( ($b3 & 0xc0) !== 0x80 )  return '';
+		if ( ($b4 & 0xc0) !== 0x80 )  return '';
+		$b1 &= 0x07; // 3-bit
+		$b2 &= 0x3f; // 6-bit
+		$b3 &= 0x3f; // 6-bit
+		$b4 &= 0x3f; // 6-bit
+		$hex = ($b1 << 18) | ($b2 << 12) | ($b3 << 6) | $b4;
+		return sprintf('U+%06x', $hex); // U+10000-U+10ffff
+	}
+
+	// invalid
+	return '';
+}
+
+function utf8_hexbin( $hex )
+{
+	if ( empty($hex) )
+		return '';
+	if ( substr($hex,0,2) !== 'U+' )
+		return '';
+	$hex = ltrim($hex, 'U+0');
+	$dec = hexdec($hex);
+
+	if ( $dec < 0x80 )
+		return chr($dec);
+
+	if ( $dec < 0x800 )
+	{
+		$b1 = ($dec >> 6) & 0x1f;  $b1 |= 0xc0;
+		$b2 = ($dec >> 0) & 0x3f;  $b2 |= 0x80;
+		return chr($b1) . chr($b2);
+	}
+
+	if ( $dec < 0x10000 )
+	{
+		$b1 = ($dec >> 12) & 0x0f;  $b1 |= 0xe0;
+		$b2 = ($dec >>  6) & 0x3f;  $b2 |= 0x80;
+		$b3 = ($dec >>  0) & 0x3f;  $b3 |= 0x80;
+		return chr($b1) . chr($b2) . chr($b3);
+	}
+
+	if ( $dec < 0x110000 )
+	{
+		$b1 = ($dec >> 18) & 0x07;  $b1 |= 0xf0;
+		$b2 = ($dec >> 12) & 0x3f;  $b2 |= 0x80;
+		$b3 = ($dec >>  6) & 0x3f;  $b3 |= 0x80;
+		$b4 = ($dec >>  0) & 0x3f;  $b4 |= 0x80;
+		return chr($b1) . chr($b2) . chr($b3) . chr($b4);
+	}
+
+	// invalid
+	return '';
+}
+//////////////////////////////
 function clut2rgba( $pal, $pix, $bgzero = true )
 {
 	$rgba = '';

@@ -194,8 +194,10 @@ jinguji   PS2  SLPM 655.76  Tantei Jinguji Saburou 9 Kind of Blue
 
 	jinguji   ALL DONE
 
-lunar     PSP  NPJH_500.54  Lunar Harmony of Silver Star
+lunar     PSP  NPJH 500.54  Lunar Harmony of Silver Star
 ???       PSP  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku
+???       PSP  ULJS 001.90  Queen Blade Spiral Chaos
+???       PSP  ULJS 003.77  Queen Gate Spiral Chaos
 
 	lunar     --upcoming--
 

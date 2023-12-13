@@ -74,15 +74,72 @@ battle meta.1 = RAM 80107f6c-80108ca4
 		int8(v0) -> 2(s0)
 //////////////////////////////
 Save Data = RAM 8006cf30
-	RAM 8006cf30 == 2595.bin +  26c == SAVE +  390
-	RAM 8006f01c == 2595.bin + 2358 != SAVE + 3c5c (> 1eff)
+	RAM       2595.bin  SAVE + 100
+	8006ccc4     0        24
+	8006cda0    dc       100
+	8006cf30   26c       290  // char data
+	8006d63c   978       99c  // gear data
+	8006e30c  1648       e4c
+	8006e384  16c0       ec4
+	8006e4e4  1820      1024
+	8006e5e4  1920      1124  // copy bytes
+	8006f01c  2358      1b5c  // end
 
+
+SAVE fei hp
+	break [8006cf7c]?
+	801cba94  lbu  v1, 30(v0)
+		v0 = v1 * a4
+	801cbab8  lhu  v0, -3084(at)
+	801cbac0  sh   v0,     4(a2) // a2=801c30f8
+
+	801e49cc  lw  v0, 0(a2) -> sw  0(a3)
+	801e49d0  lw  v1, 4(a2) -> sw  4(a3)
+	801e49d4  lw  a0, 8(a2) -> sw  8(a3)
+	801e49d8  lw  a1, c(a2) -> sw  c(a3)
+	// a2=8006cf70  a3=801c33c8
+
+	break [801c33c8]?
+	801cc38c  lbu  v0, 0(v1)
+
+
+save data
+	SAVE  290 + ( b * a4) = RAM 8006cf30 + ( b * a4)  // char data
+	SAVE  99c + (14 * 3c) = RAM 8006d63c + (14 * a4)  // gear data
+		lw    0(RAM) -> sw   0(SAVE)
+		lw    4(RAM) -> sw   4(SAVE)
+		lw    8(RAM) -> sw   8(SAVE)
+		lw    c(RAM) -> sw   c(SAVE)
+		lw   10(RAM) -> sw  10(SAVE)
+		lw   14(RAM) -> sw  14(SAVE)
+		lw   18(RAM) -> sw  18(SAVE)
+		lw   1c(RAM) -> sw  1c(SAVE)
+		lw   20(RAM) -> sw  20(SAVE)
+		lw   24(RAM) -> sw  24(SAVE)
+		lw   5c(RAM) -> sw  28(SAVE)
+		lw   60(RAM) -> sw  2c(SAVE)
+		?? sw  30(SAVE)
+		lhu  38(RAM) -> sh  34(SAVE)
+		?? sh  36(SAVE)
+		lbu  99(RAM) -> sb  38(SAVE)
+		lbu  74(RAM) -> sb  39(SAVE)
+		lbu  75(RAM) -> sb  3a(SAVE)
+		?? sb  3b(SAVE)
+	SAVE   24 +  dc = RAM 8006ccc4 +  dc
+	SAVE  100 + 190 = RAM 8006cda0 + 190
+	SAVE  e4c +  78 = RAM 8006e30c +  78
+	SAVE  ec4 + 160 = RAM 8006e384 + 160
+	SAVE 1024 + 100 = RAM 8006e4e4 + 100
+	SAVE 1124 + a38 = RAM 8006e5e4 + a38  // copy bytes
+	=> end SAVE 1b5c = RAM 8006f10c
+
+checksum
 	sum = 0
 	for ( i=100; i < 1fff; i++ )
 		sum = (sum + save[i]) & ff
 	save[1fff] = sum
 //////////////////////////////
-opcode dec.5
+map opcode dec.5
 	lw   v0, 800ad0d0  // FILE dec.5
 	lw   v0, 800ad0d8  // op_const
 	lw   op, 800af54c  // op_struct
@@ -1163,3 +1220,5 @@ opcode dec.5
 		=> const/a0
 	a3d24() <- fe26  a1ca4()
 		=> var/1  var/5  var/7  var/9  var/b  var/d
+//////////////////////////////
+//////////////////////////////

@@ -100,6 +100,31 @@ function php_notice()
 	$err = vsprintf("PHP : $fmt\n", $args);
 	return trigger_error($err, E_USER_NOTICE);
 }
+
+function php_exec()
+{
+	$args = func_get_args();
+	$fmt = array_shift($args);
+
+	$is_ret = false;
+	if ( (int)$fmt === $fmt )
+	{
+		$is_ret = $fmt;
+		$fmt = array_shift($args);
+	}
+
+	$cmd = escapeshellcmd( vsprintf($fmt, $args) );
+	$out = array();
+	$ret = 0;
+	exec($cmd, $out, $ret);
+
+	$out = implode("\n", $out);
+	if ( $is_ret === false )
+		return $out;
+	if ( $is_ret === $ret )
+		return $out;
+	return '';
+}
 //////////////////////////////
 function php_req_bytes( $byte )
 {

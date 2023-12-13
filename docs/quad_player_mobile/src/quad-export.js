@@ -149,6 +149,14 @@ function QuadExport(Q){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return false;
 		switch ( type ){
+			case 'slot':
+				var slot = qdata.QUAD.slot[id];
+				for ( var i=0; i < slot.length; i++ ){
+					var loop = $.isLoopAttach(qdata, slot[i].type, slot[i].id);
+					if ( loop )
+						return true;
+				}
+				return false;
 			case 'animation':
 				var loop = qdata.QUAD.animation[id].loop_id;
 				if ( loop < 0 )
@@ -158,7 +166,7 @@ function QuadExport(Q){
 			case 'skeleton':
 				var bone = qdata.QUAD.skeleton[id].bone;
 				for ( var i=0; i < bone.length; i++ ){
-					if ( ! bone[i] )
+					if ( ! bone[i] || ! bone[i].attach )
 						continue;
 					var loop = $.isLoopAttach(qdata, bone[i].attach.type, bone[i].attach.id);
 					if ( loop )
@@ -173,6 +181,14 @@ function QuadExport(Q){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return false;
 		switch ( type ){
+			case 'slot':
+				var slot = qdata.QUAD.slot[id];
+				for ( var i=0; i < slot.length; i++ ){
+					var mix = $.isMixAttach(qdata, slot[i].type, slot[i].id);
+					if ( mix )
+						return true;
+				}
+				return false;
 			case 'animation':
 				var time = qdata.QUAD.animation[id].timeline;
 				for ( var i=0; i < time.length; i++ ){
@@ -189,7 +205,7 @@ function QuadExport(Q){
 			case 'skeleton':
 				var bone = qdata.QUAD.skeleton[id].bone;
 				for ( var i=0; i < bone.length; i++ ){
-					if ( ! bone[i] )
+					if ( ! bone[i] || ! bone[i].attach )
 						continue;
 					var mix = $.isMixAttach(qdata, bone[i].attach.type, bone[i].attach.id);
 					if ( mix )
@@ -204,6 +220,15 @@ function QuadExport(Q){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return 0;
 		switch ( type ){
+			case 'slot':
+				var slot = qdata.QUAD.slot[id];
+				var time = 0;
+				for ( var i=0; i < slot.length; i++ ){
+					var t = $.timeAttach(qdata, slot[i].type, slot[i].id);
+					if ( t > time )
+						time = t;
+				}
+				return time;
 			case 'animation':
 				var anim = qdata.QUAD.animation[id].timeline;
 				var time = 0;
@@ -215,7 +240,7 @@ function QuadExport(Q){
 				var bone = qdata.QUAD.skeleton[id].bone;
 				var time = 0;
 				bone.forEach(function(bv,bk){
-					if ( ! bv )
+					if ( ! bv || ! bv.attach )
 						return;
 					var t = $.timeAttach(qdata, bv.attach.type, bv.attach.id);
 					if ( t > time )
@@ -224,6 +249,72 @@ function QuadExport(Q){
 				return time;
 		} // switch ( type )
 		return 0;
+	}
+
+
+	$.listAttach = function( qdata, type, id, rec=false ){
+		if ( ! Q.func.isValidAttach(qdata, type, id) )
+			return [];
+
+		function dupRemove( list ){
+			function cmpmax( max, ty, id ){
+				while ( max > 0 ){
+					max--;
+					if ( list[max][0] === ty && list[max][1] === id )
+						return true;
+				}
+				return false;
+			}
+			var len = list.length;
+			while ( len > 0 ){
+				len--;
+				if ( cmpmax(len, list[len][0], list[len][1]) )
+					list.splice(len, 1);
+			}
+		}
+		switch ( type ){
+			case 'slot':
+				var slot = qdata.QUAD.slot[id];
+				var list = [];
+				slot.forEach(function(sv,sk){
+					list.push( [sv.type, sv.id] );
+					if ( rec ){
+						var t = $.listAttach(qdata, sv.type, sv.id, rec);
+						list = list.concat(t);
+					}
+				});
+				dupRemove(list);
+				return list;
+			case 'animation':
+				var anim = qdata.QUAD.animation[id].timeline;
+				var list = [];
+				anim.forEach(function(tv,tk){
+					if ( ! tv || ! tv.attach )
+						return;
+					list.push( [tv.attach.type, tv.attach.id] );
+					if ( rec ){
+						var t = $.listAttach(qdata, tv.attach.type, tv.attach.id, rec);
+						list = list.concat(t);
+					}
+				});
+				dupRemove(list);
+				return list;
+			case 'skeleton':
+				var bone = qdata.QUAD.skeleton[id].bone;
+				var list = [];
+				bone.forEach(function(bv,bk){
+					if ( ! bv || ! bv.attach )
+						return;
+					list.push( [bv.attach.type, bv.attach.id] );
+					if ( rec ){
+						var t = $.listAttach(qdata, bv.attach.type, bv.attach.id, rec);
+						list = list.concat(t);
+					}
+				});
+				dupRemove(list);
+				return list;
+		} // switch ( type )
+		return [];
 	}
 
 	//////////////////////////////

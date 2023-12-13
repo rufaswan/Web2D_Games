@@ -34,6 +34,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 		<button id='btn_view'>view</button>
 		<button id='btn_upload' data-id='0'>upload</button>
 	</div>
+
+	<button>dummy</button>
 	<h1 id='quad_version'></h1>
 	<h2>Files</h2>
 	<ol id='debugger_files'></ol>
@@ -133,42 +135,23 @@ var SELECTED = '';
 				HTML.quad_data.innerHTML = '';
 				document.title = qdata.name + ' [Quad Player ' + QUAD.version + ']';
 
-				qdata_tagtable( qdata.QUAD.tag, HTML.quad_data );
+				var buffer = qdata_tagtable(qdata.QUAD.tag);
+				HTML.quad_data.innerHTML += buffer;
 
-				['skeleton','animation','keyframe','hitbox','slot'].forEach(function(qv,qk){
-					if ( qdata.QUAD[qv].length < 1 )
+				var quad_main = quad_mainlist(qdata.QUAD);
+				if ( quad_main === -1 )
+					return;
+
+				var buffer = '<h2>' + quad_main + '</h2>';
+				buffer += '<ul>';
+				qdata.QUAD[quad_main].forEach(function(v,k){
+					if ( ! v )
 						return;
+					buffer += qdata_listing(qdata, quad_main, k, false);
 
-					HTML.quad_data.innerHTML += '<h2>' + qv + '</h2>';
-
-					var table = '<table>';
-					qdata.QUAD[qv].forEach(function(v,k){
-						if ( ! v )
-							return;
-
-						var t = {};
-						t.name = v.name || qv + ' ' + k;
-						if ( QUAD.export.isLoopAttach(qdata, qv, k) )
-							t.name += ' <strong>[LOOP]</strong>';
-						if ( QUAD.export.isMixAttach(qdata, qv, k) )
-							t.name += ' <strong>[MIX]</strong>';
-
-						t.p   = '<p onclick="button_select(this);">' + t.name + '</p>';
-						t.btn = '<button onclick="button_export(this);">export</button>';
-
-						var tr = document.createElement('tr');
-						tr.setAttribute('data-type', qv);
-						tr.setAttribute('data-id'  , k);
-						if ( ['keyframe','hitbox','slot'].indexOf(qv) === -1 )
-							tr.innerHTML = '<td>' + t.p + '</td><td>' + t.btn + '</td>';
-						else
-							tr.innerHTML = '<td>' + t.p + '</td>';
-
-						table += tr.outerHTML;
-					});
-					table += '</table>';
-					HTML.quad_data.innerHTML += table;
-				}); // ['skeleton','animation','keyframe','hitbox','slot'].forEach
+				});
+				buffer += '</ul>';
+				HTML.quad_data.innerHTML += buffer;
 			} // if ( qdata.name )
 		});
 	});

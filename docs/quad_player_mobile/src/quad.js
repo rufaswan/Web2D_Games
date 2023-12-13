@@ -10,7 +10,7 @@ var QUAD = {};
 	@@quad-export.js@@
 	@@binary-reader.js@@
 
-	$.version = 'ver 2023-11-6 (beta)';
+	$.version = 'ver 2023-12-12 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);

@@ -287,7 +287,7 @@ function xeno_map5op( &$file )
 	{
 		$res = map5_opcode($oplist, $sub, $label, $range[0], $pos);
 		if ( $res !== $pos )
-			php_warning('subfunc() before obj_0::init do not stop at obj_0::init !');
+			php_warning('subfunc() before obj_0::init do not stop @ obj_0::init !');
 		ksort($oplist);
 	}
 
@@ -295,7 +295,7 @@ function xeno_map5op( &$file )
 	foreach ( $label as $k => $v )
 	{
 		if ( ! isset($oplist[$v]) )
-			printf("opcode not stop @ %4x [%s]\n", $v, $k);
+			php_warning('opcode not stop @ %4x [%s]', $v, trim($k));
 	}
 
 	// to print constants

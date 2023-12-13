@@ -38,7 +38,7 @@ while [ "$1" ]; do
 		t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
 		setsize $(echo "$t2" | tr ','  ' ')
 
-		ffmpeg -y -i "$t1"  \
+		nice -n 19  ffmpeg -y -i "$t1"  \
 			-s $size        \
 			-aspect $orin   \
 			-vcodec libx264 \
