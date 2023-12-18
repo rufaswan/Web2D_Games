@@ -370,7 +370,7 @@ Gear Accessory
 2594.bin/19.bin (BLOCK = 0x1c or 28 bytes)
  0 int32 always 7f ff ff ff
  4 int16 buying price
- 6 int16 ???
+ 6 int16 weight
  8 int32 always 00 00 00 00
 12 int8  always 00
 13 int8  +gear defense
