@@ -27,6 +27,9 @@ require 'common-quad.inc';
 require 'quad.inc';
 
 /*
+h  18  26  42  50  58  66  186
+=> 2 + (n * 8)
+
 function adjsrc( &$src, $c )
 {
 	if ( (int)$src & 1 )

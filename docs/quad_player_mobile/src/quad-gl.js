@@ -127,38 +127,6 @@ function QuadGL(Q){
 
 		//////////////////////////////
 
-		vert_src = `
-			attribute  highp  vec2  a_xy;
-			attribute  highp  vec2  a_uv;
-			uniform    highp  vec4  u_pxsize;
-			varying    highp  vec2  v_uv;
-
-			highp  vec2 xy;
-			highp  vec2 uv;
-			void main(void){
-				xy.x = (a_xy.x + 0.5) * u_pxsize.x;
-				xy.y = (a_xy.y + 0.5) * u_pxsize.y;
-
-				uv.x = a_uv.x * u_pxsize.z;
-				uv.y = a_uv.y * u_pxsize.w;
-
-				v_uv = uv;
-				gl_Position = vec4(xy.x , xy.y , 1.0 , 1.0);
-			}
-		`;
-		frag_src = `
-			uniform  sampler2D  u_tex;
-			uniform  highp  vec4  u_color;
-			varying  highp  vec2  v_uv;
-
-			void main(void){
-				gl_FragColor = texture2D(u_tex, v_uv) * u_color;
-			}
-		`;
-		m.SHADER.image = m.createShader('draw image', vert_src, frag_src);
-
-		//////////////////////////////
-
 		return true;
 	}
 
@@ -231,26 +199,6 @@ function QuadGL(Q){
 		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var dstlen = dst.length / 3; // number of x,y
-		m.indiceQuad(dstlen);
-	}
-
-	$.drawImage = function( dst, src, color, image ){
-		m.GL.useProgram( m.SHADER.image );
-		var loc = m.shaderLoc(m.SHADER.image, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex', 'u_color');
-		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
-
-		// 1 texture per draw
-		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w ,  1.0/image.h ];
-		m.GL.activeTexture(m.GL.TEXTURE0);
-		m.GL.bindTexture  (m.GL.TEXTURE_2D, image.tex);
-
-		m.setVertexAttrib(loc.a_xy, dst, 2);
-		m.setVertexAttrib(loc.a_uv, src, 2);
-		m.GL.uniform4fv  (loc.u_color , color);
-		m.GL.uniform4fv  (loc.u_pxsize, pxsz);
-		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
-
-		var dstlen = dst.length / 2; // number of x,y
 		m.indiceQuad(dstlen);
 	}
 

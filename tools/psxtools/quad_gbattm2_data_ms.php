@@ -115,8 +115,8 @@ function sectquad( &$quad, &$atlas, &$keys, &$skel )
 			$mat4[4+3] += $skel_ent['dst'][1];
 
 			$tent = array(
-				'time'   => 10,
-				'matrix' => $mat4,
+				'time'       => 10,
+				'matrix'     => $mat4,
 				'matrix_mix' => 1,
 			);
 			if ( $skel_ent['disp'] )

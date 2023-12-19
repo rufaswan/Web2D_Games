@@ -1,20 +1,6 @@
 <?php
 require 'common.inc';
 
-function hexstring( $str )
-{
-	$hex = array();
-	$len = strlen($str);
-	for ( $i=0; $i < $len; $i++ )
-	{
-		if ( $str[$i] === ZERO )
-			$hex[] = '--';
-		else
-			$hex[] = sprintf('%2x', ord($str[$i]));;
-	}
-	return implode(' ', $hex);
-}
-
 function ramoff( &$file, $off )
 {
 	if ( $file[$off+3] !== "\x02" )
@@ -36,7 +22,7 @@ function info_pose0( &$file, $off )
 	//ramoff($file, $off + 0x20); //
 
 	$jpos = substr($file, $jnt_file + 0x22, 0x2d-0x22);
-	printf("jnt  head = %s\n", hexstring($jpos));
+	printf("jnt  head = %s\n", printhex($jpos));
 
 	$cjnt = str2int($file, $jnt_file + 0x26, 1);
 	$txt1 = '';
@@ -45,7 +31,7 @@ function info_pose0( &$file, $off )
 	$res_off = $off + 0x78;
 	$jpos = substr($file, $pos_off, 2);
 		$pos_off += 2;
-	printf("pose head = %s\n", hexstring($jpos));
+	printf("pose head = %s\n", printhex($jpos));
 
 	for ( $i=0; $i < $cjnt; $i++ )
 	{
@@ -57,7 +43,7 @@ function info_pose0( &$file, $off )
 			$jnt_off += 4;
 		$jpos = substr($file, $pos_off, 4);
 			$pos_off += 4;
-		$txt1 .= sprintf("%2x   %s   %s   %s\n", $i, hexstring($jjnt), hexstring($jpos), hexstring($jres));
+		$txt1 .= sprintf("%2x   %s   %s   %s\n", $i, printhex($jjnt), printhex($jpos), printhex($jres));
 
 		$b02 = str2int($jres, 0x02, 1);
 		$b04 = str2int($jres, 0x04, 4, true); // x
@@ -84,7 +70,7 @@ function info_pose0( &$file, $off )
 
 function cvooe( $fname )
 {
-	$file = file_get_contents('RAM2');
+	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
 	$pos = 0;

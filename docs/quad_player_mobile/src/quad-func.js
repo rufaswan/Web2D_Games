@@ -150,38 +150,6 @@ function QuadFunc(Q){
 					Q.gl.updateTexture(tex.tex, img);
 					return $.log('UPLOAD image = ' +tid+ ' , ' +tex.w+ 'x' +tex.h+ ' , ' +fname);
 				});
-
-			case 'video':
-				return new Promise(function(resolve, reject){
-					var fnm = fname.match(/\.([0-9]+)\./);
-					var tid = fnm[1];
-					if ( ! qdata.IMAGE[tid] )
-						return;
-
-					var video = document.createElement('video');
-					video.onload = function(){
-						resolve([tid,video]);
-					}
-					video.src = data;
-				}).then(function(res){
-					var tid   = res[0];
-					var video = res[1];
-					video.pause();
-					video.currentTime = 0; // in seconds
-					video.addEventListener('seeked', function(){
-						if ( Q.gl.isMaxTextureSize(video.videoWidth, video.videoHeight) )
-							return $.error('OVER Video Max Texture Size = ' + fname);
-
-						var tex = qdata.IMAGE[tid];
-						tex.w = video.videoWidth;
-						tex.h = video.videoHeight;
-						tex.name = fname;
-						Q.gl.updateTexture(tex.tex , video);
-					});
-
-					qdata.VIDEO[tid] = video;
-					return $.log('UPLOAD video = ' + tid + ' , ' + fname);
-				});
 		} // switch( type )
 		return 0;
 	}
@@ -573,7 +541,7 @@ function QuadFunc(Q){
 		}
 
 		// mixing tests
-		var m4, c4;
+		var m4, dt, c4;
 		var rate = t[1] / cur.time;
 
 		// mix matrix

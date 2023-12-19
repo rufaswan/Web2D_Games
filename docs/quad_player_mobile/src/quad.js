@@ -32,7 +32,6 @@ function QuadData(qlist){
 		QUAD.gl.createPixel(255) ,
 		QUAD.gl.createPixel(255) ,
 	];
-	$.VIDEO = [];
 
 	// activated data
 	$.is_wait  = true;

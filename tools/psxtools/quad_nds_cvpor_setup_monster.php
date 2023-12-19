@@ -54,31 +54,33 @@ function jnt_pose( &$jnt, &$jnt_pose, &$jnt_joint, &$pos, $cpss, $cjnt, $cx, $cy
 
 		for ( $ji = 0; $ji < $cjnt; $ji++ )
 		{
-			$cur_rot  = str2int($jnt, $pos + 0, 2); // rotation
-			$cur_dist = str2int($jnt, $pos + 2, 1); // distance
-			$cur_kid  = str2int($jnt, $pos + 3, 1, true); // replace
-				$pos += 4;
-			$body[$ji] = array($cur_rot , $cur_dist , $cur_kid);
+			$ent = array(
+				'rot' => str2int($jnt, $pos + 0, 2), // rotation
+				'dis' => str2int($jnt, $pos + 2, 1), // distance
+				'key' => str2int($jnt, $pos + 3, 1, true), // replace key id , ff=no replace
+			);
+			$pos += 4;
+			$body[$ji] = $ent;
 
-			list($jpar,$jkid,$jflg,$jb1) = $jnt_joint[$ji];
+			$cur_jnt = $jnt_joint[$ji];
 
-			if ( $jpar < 0 )
+			if ( $cur_jnt['par'] < 0 )
 				$rot = 0;
 			else
-				$rot = $comp[$jpar][2];
+				$rot = $comp[ $cur_jnt['par'] ][2];
 
-			$rot += (($jflg & 3) * 0x4000 );
-			$xy = rotdist_xy($rot , $cur_dist, true);
+			$rot += (($cur_jnt['flg'] & 3) * 0x4000 );
+			$xy = rotdist_xy($rot , $ent['dis'], true);
 
-			if ( $jpar < 0 )
+			if ( $cur_jnt['par'] < 0 )
 			{
 				$xy[0] += $cx;
 				$xy[1] += $cy;
 			}
 
-			$nxt_rot = $cur_rot;
-			if ( $jflg & 4 )
-				$nxt_rot += $comp[$jpar][2];
+			$nxt_rot = $ent['rot'];
+			if ( $cur_jnt['flg'] & 4 )
+				$nxt_rot += $comp[ $cur_jnt['par'] ][2];
 
 			$comp[$ji] = array($xy[0] , $xy[1] , $nxt_rot, $rot);
 		} // for ( $ji = 0; $ji < $cjnt; $ji++ )
@@ -113,12 +115,14 @@ function sect_quad_jnt( &$por, &$quad )
 	$jnt['joint'] = array();
 		for ( $i=0; $i < $cjnt; $i++ )
 		{
-			$b1 = str2int($por['jnt'], $pos + 0, 1, true); // parent
-			$b2 = str2int($por['jnt'], $pos + 1, 1, true); // so keyframe
-			$b3 = str2int($por['jnt'], $pos + 2, 1); // bitflag
-			$b4 = str2int($por['jnt'], $pos + 3, 1);
+			$ent = array(
+				'par' => str2int($por['jnt'], $pos + 0, 1, true), // parent
+				'key' => str2int($por['jnt'], $pos + 1, 1, true), // so keyframe
+				'flg' => str2int($por['jnt'], $pos + 2, 1), // bitflag
+				'unk' => str2int($por['jnt'], $pos + 3, 1),
+			);
 				$pos += 4;
-			$jnt['joint'][$i] = array($b1,$b2,$b3,$b4);
+			$jnt['joint'][$i] = $ent;
 		}
 	$jnt['pose'] = array();
 		jnt_pose($por['jnt'], $jnt['pose'], $jnt['joint'], $pos, $cpss, $cjnt, $cx, $cy);
@@ -148,23 +152,23 @@ function sect_quad_jnt( &$por, &$quad )
 		$dat_anm = array();
 		for ( $i=0; $i < $cnt_anm; $i++ )
 		{
-			// 0    1    2
-			// pid  fps  case
-			$b1 = str2int($jnt['anim'], $p_anm + 0, 1);
-			$b2 = str2int($jnt['anim'], $p_anm + 1, 1);
-			$b3 = str2int($jnt['anim'], $p_anm + 2, 1);
+			$ent = array(
+				'pss' => str2int($jnt['anim'], $p_anm + 0, 1), // poses id
+				'fps' => str2int($jnt['anim'], $p_anm + 1, 1), // fps
+				'cas' => str2int($jnt['anim'], $p_anm + 2, 1), // switch
+			);
 				$p_anm += 3;
-			$dat_anm[] = array($b1,$b2,$b3);
+			$dat_anm[] = $ent;
 		} // for ( $i=0; $i < $cnt_anm; $i++ )
 
 		$bone = array();
 		for ( $bk=0; $bk < $cjnt; $bk++ )
 		{
 			$djoint = $jnt['joint'][$bk];
-			if ( $djoint[1] < 0 )
+			if ( $djoint['key'] < 0 )
 			{
 				$bent = array(
-					'parent_id' => $djoint[0],
+					'parent_id' => $djoint['par'],
 					'order'     => -1,
 				);
 				$bone[$bk] = $bent;
@@ -174,38 +178,33 @@ function sect_quad_jnt( &$por, &$quad )
 				$time = array();
 				foreach ( $dat_anm as $dk => $dv )
 				{
-					$dpose = $jnt['pose'][ $dv[0] ];
+					$dpose = $jnt['pose'][ $dv['pss'] ];
+
+					$zoomx = ( $djoint['flg'] & 0x08 ) ? -1 : 1; // hflip
+					$zoomy = ( $djoint['flg'] & 0x10 ) ? -1 : 1; // vflip
+					$mat4 = matrix_scale(4, $zoomx, $zoomy);
 
 					$radian = ($dpose['c'][$bk][2] / 0x8000) * pi();
-					$mat4 = matrix_rotate_z(4, $radian);
-					if ( $mat4 === -1 )
-						$mat4 = matrix(4);
+					$t = matrix_rotate_z(4, $radian);
+					$mat4 = matrix_multi44($mat4, $t);
 
-					$mat4[0+3] += $dpose['c'][$bk][0];
-					$mat4[4+3] += $dpose['c'][$bk][1];
+					$mat4[0+3] += $dpose['c'][$bk][0]; // move x
+					$mat4[4+3] += $dpose['c'][$bk][1]; // move y
 
-					if ( $djoint[2] & 8 )
-					{
-						$mat4[0+0] = -$mat4[0+0];
-						$mat4[0+3] = -$mat4[0+3];
-					}
-					if ( $djoint[2] & 0x10 )
-					{
-						$mat4[4+1] = -$mat4[4+1];
-						$mat4[4+3] = -$mat4[4+3];
-					}
+					if ( $dpose['b'][$bk]['key'] < 0 ) // ff = do not replace
+						$key = $djoint['key'];
+					else
+						$key = $dpose['b'][$bk]['key'];
 
 					$tent = array(
-						'time'   => $dv[1],
-						'matrix' => $mat4,
+						'time'       => $dv['fps'],
+						'matrix'     => $mat4,
 						'matrix_mix' => 1,
+						'attach'     => array(
+							'type' => 'keyframe',
+							'id'   => $key,
+						),
 					);
-
-					if ( $dpose['b'][2] < 0 )
-						$tent['attach'] = array('type'=>'keyframe' , 'id'=>$dpose['b'][$bk][2]);
-					else
-						$tent['attach'] = array('type'=>'keyframe' , 'id'=>$djoint[1]);
-
 					$time[] = $tent;
 				} // foreach ( $dat_anm as $dk => $dv )
 
@@ -218,7 +217,7 @@ function sect_quad_jnt( &$por, &$quad )
 
 				$bent = array(
 					'attach'    => array('type'=>'animation' , 'id'=>$anim_id),
-					'parent_id' => $djoint[0],
+					'parent_id' => $djoint['par'],
 					'order'     => -1,
 				);
 				$bone[$bk] = $bent;

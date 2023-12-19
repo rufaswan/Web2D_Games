@@ -487,6 +487,8 @@ id (required)::
 
 == Revision History
 
+v0.x::
+
 v0.3 (2023-11-06)::
 	* `animation_timeline_object`: removed `mix`
 	* `animation_timeline_object`: added `matrix_mix`

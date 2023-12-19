@@ -172,59 +172,37 @@ for ( $i=1; $i < $argc; $i++ )
 	batmas( $argv[$i] );
 
 /*
-g gundam
-	ms
-		00  denim       / zaku ii
-		04  puru two    / quin mantha
-		05  dozul       / bygzam
-		07  gato        / neue ziel
-		09  maria       / psycho
-		0a  amuro       / rx-78
-		0b  gato        / gp-02a
-		0c  judau       / zz-gundam
-		0e  akahana     / acguy
-		12  shiroh      / ball
-		13  char        / zaku ii s
-		14  domon       / god
-		15  chibodee    / maxter
-		16  george      / rose
-		17  argo        / bolt
-		18  sai         / dragon
-		19  heero       / wing
-		1a  duo         / deathscythe
-		1b  trowa       / heavy arms
-		1c  quatre      / sandrock
-		1d  wufei       / altron
-		1e  kyouji      / devil
-		1f  master asia / master
-		21  zechs       / tallgeese
-
-gundam wing
-	ms
-		01  mikhail     / hygog
-		02  char        / zeong
-		03  char        / sazabi
-		05  dozul       / bygzam
-		07  gato        / neue ziel
-		08  amuro       / v gundam
-		09  maria       / psycho
-		0a  amuro       / rx-78
-		0e  akahana     / acguy
-		11  valder      / hydra
-		13  char        / zaku ii s
-		14  domon       / god
-		15  chibodee    / maxter
-		16  george      / rose
-		17  argo        / bolt
-		18  sai         / dragon
-		19  heero       / wing
-		1a  duo         / deathscythe
-		1b  trowa       / heavy arms
-		1c  quatre      / sandrock
-		1d  wufei       / altron
-		1f  master asia / master
-		20  treize      / epyon
-		21  zechs       / tallgeese
+- -  ms
+g -  00  denim       / zaku ii
+- w  01  mikhail     / hygog
+- w  02  char        / zeong
+- w  03  char        / sazabi
+g -  04  puru two    / quin mantha
+g w  05  dozul       / bygzam
+g w  07  gato        / neue ziel
+- w  08  amuro       / v gundam
+g w  09  maria       / psycho
+g w  0a  amuro       / rx-78
+g -  0b  gato        / gp-02a
+g -  0c  judau       / zz-gundam
+g w  0e  akahana     / acguy
+- w  11  valder      / hydra
+g -  12  shiroh      / ball
+g w  13  char        / zaku ii s
+g w  14  domon       / god
+g w  15  chibodee    / maxter
+g w  16  george      / rose
+g w  17  argo        / bolt
+g w  18  sai         / dragon
+g w  19  heero       / wing
+g w  1a  duo         / deathscythe
+g w  1b  trowa       / heavy arms
+g w  1c  quatre      / sandrock
+g w  1d  wufei       / altron
+g -  1e  kyouji      / devil
+g w  1f  master asia / master
+- w  20  treize      / epyon
+g w  21  zechs       / tallgeese
 
 ms
 	1 2 3 4  TIM 4-bpp

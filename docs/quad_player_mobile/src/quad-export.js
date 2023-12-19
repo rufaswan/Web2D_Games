@@ -59,14 +59,15 @@ function QuadExport(Q){
 					var xy = $.rectAttach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
+
 					var xy2 = Q.math.quad_multi4(tv.matrix, xy);
 					var t;
-					if ( xy2[0] > xy2[2] ){
+					if ( xy2[0] > xy2[2] ){ // if x1 > x2  swap()
 						t = xy2[0];
 						xy2[0] = xy2[2];
 						xy2[2] = t;
 					}
-					if ( xy2[1] > xy2[3] ){
+					if ( xy2[1] > xy2[3] ){ // if y1 > y2  swap()
 						t = xy2[1];
 						xy2[1] = xy2[3];
 						xy2[3] = t;

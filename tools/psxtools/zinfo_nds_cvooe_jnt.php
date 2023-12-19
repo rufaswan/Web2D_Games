@@ -3,13 +3,11 @@ require 'common.inc';
 
 function jntfile( &$file, $off )
 {
-	$txt = '';
 	$b1 = ord( $file[2] );
 	$fn = substr($file, 3, $b1);
 
 	$head = substr($file, 0x22, 0x2d-0x22);
-	$txt .= debug($head, $fn);
-	$txt .= "\n";
+	printf("%s : %s\n", $fn, printhex($head));
 
 	$cjnt = ord( $file[0x26] );
 	$cjnt_inv = ord( $file[0x27] );
@@ -18,84 +16,78 @@ function jntfile( &$file, $off )
 	$cpss = ord( $file[0x2a] );
 	$cpnt = ord( $file[0x2b] );
 	$canm = ord( $file[0x2c] );
+	$pos  = 0x30;
 
-	$pos = 0x30;
-	$txt .= sprintf("[%8x] joint = vis %x + inv %x = %x\n", $pos + $off, $cjnt_vis, $cjnt_inv, $cjnt);
+	printf("[%8x] joint = vis %x + inv %x = %x\n", $pos + $off, $cjnt_vis, $cjnt_inv, $cjnt);
 	for ( $i=0; $i < $cjnt; $i++ )
 	{
-		$fn = sprintf('  %2x', $i);
 		$b1 = substr($file, $pos, 4);
 			$pos += 4;
-		$txt .= debug($b1, $fn);
+		printf("  %2x : %s\n", $i, printhex($b1));
 	} // for ( $i=0; $i < $cjnt; $i++ )
-	$txt .= "\n";
+	echo "\n";
 
-	$txt .= sprintf("[%8x] pose = %x\n", $pos + $off, $cpss);
+	printf("[%8x] pose = %x\n", $pos + $off, $cpss);
 	for ( $i=0; $i < $cpss; $i++ )
 	{
-		$fn = sprintf('  %2x', $i);
 		$b1 = substr($file, $pos, 2);
 			$pos += 2;
-		$txt .= debug($b1, $fn);
-		$txt .= sprintf("  [%8x]\n", $pos + $off);
+		printf("  %2x : %s\n", $i, printhex($b1));
+		printf("  [%8x]\n", $pos + $off);
 
 		for ( $j=0; $j < $cjnt; $j++ )
 		{
-			$fn = sprintf('    %2x,%2x', $i, $j);
 			$b1 = substr($file, $pos, 4);
 				$pos += 4;
-			$txt .= debug($b1, $fn);
+			printf("    %2x,%2x : %s\n", $i, $j, printhex($b1));
 		} // for ( $j=0; $j < $cjnt; $j++ )
 	} // for ( $i=0; $i < $cjnt; $i++ )
-	$txt .= "\n";
+	echo "\n";
 
-	$txt .= sprintf("[%8x] hitbox = %x\n", $pos + $off, $chit);
+	printf("[%8x] hitbox = %x\n", $pos + $off, $chit);
 	for ( $i=0; $i < $chit; $i++ )
 	{
-		$fn = sprintf('  %2x', $i);
 		$b1 = substr($file, $pos, 8);
 			$pos += 8;
-		$txt .= debug($b1, $fn);
+		printf("  %2x : %s\n", $i, printhex($b1));
 	} // for ( $i=0; $i < $cjnt; $i++ )
-	$txt .= "\n";
+	echo "\n";
 
-	$txt .= sprintf("[%8x] point = %x\n", $pos + $off, $cpnt);
+	printf("[%8x] point = %x\n", $pos + $off, $cpnt);
 	for ( $i=0; $i < $cpnt; $i++ )
 	{
-		$fn = sprintf('  %2x', $i);
 		$b1 = substr($file, $pos, 4);
 			$pos += 4;
-		$txt .= debug($b1, $fn);
+		printf("  %2x : %s\n", $i, printhex($b1));
 	} // for ( $i=0; $i < $cjnt; $i++ )
-	$txt .= "\n";
+	echo "\n";
 
-	$txt .= sprintf("[%8x] draw = %x\n", $pos + $off, $cjnt_vis);
+	printf("[%8x] draw = %x\n", $pos + $off, $cjnt_vis);
 	for ( $i=0; $i < $cjnt_vis; $i++ )
 	{
-		$txt .= sprintf("  %2x : %2x\n", $i, ord($file[$pos]));
+		printf("  %2x : %2x\n", $i, ord($file[$pos]));
 			$pos++;
 	} // for ( $i=0; $i < $cjnt_vis; $i++ )
-	$txt .= "\n";
+	echo "\n";
 
-	$txt .= sprintf("[%8x] anim = %x\n", $pos + $off, $canm);
+	printf("[%8x] anim = %x\n", $pos + $off, $canm);
 	for ( $i=0; $i < $canm; $i++ )
 	{
 		$cnt = ord( $file[$pos] );
 			$pos++;
-		$txt .= sprintf("  %2x : %2x\n", $i, $cnt);
-		$txt .= sprintf("  [%8x]\n", $pos + $off);
+		printf("  %2x : %2x\n", $i, $cnt);
+		printf("  [%8x]\n", $pos + $off);
 
 		for ( $j=0; $j < $cnt; $j++ )
 		{
-			$fn = sprintf('    %2x,%2x', $i, $j);
 			$b1 = substr($file, $pos, 3);
 				$pos += 3;
-			$txt .= debug($b1, $fn);
+			printf("    %2x,%2x : %s\n", $i, $j, printhex($b1));
 		}
 	} // for ( $i=0; $i < $canm; $i++ )
-	$txt .= "\n";
+	echo "\n";
 
-	return $txt;
+	return;
 }
 
 function cvooe( $fname, $off )
@@ -112,7 +104,10 @@ function cvooe( $fname, $off )
 	if ( $p1 !== $p2 )
 		return;
 
-	$txt = jntfile($file, $off);
+	ob_start();
+	jntfile($file, $off);
+	$txt = ob_get_clean();
+
 	save_file("$fname.txt", $txt);
 	return;
 }
