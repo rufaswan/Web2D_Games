@@ -203,8 +203,8 @@ SLPS 011.60 JP disc 1 [3771]
 		626  Lahan - Bar - 2F
 		628  Lahan - Alice house
 		630  Lahan - Alice house - 2F
-		632  Lahan - Chef house
-		634  Lahan - Chef house Basement
+		632  Lahan - Chief house
+		634  Lahan - Chief house Basement
 		636  Mountain Path [ENC]
 		638  Mountain Path [ENC]
 		640  Citan house
