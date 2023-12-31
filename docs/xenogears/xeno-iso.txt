@@ -93,10 +93,10 @@ SLPS 011.60 JP disc 1 [3771]
 		165 The Sky, the Clouds and You
 		167 Nature
 		169 Sewer
-		171 Wind
+		171 Sewer 2
 		173 Premonition
 		175 Crimson Knight
-		177 Nature
+		177 Wind
 		179 After the Soldiers' Dreams
 		181 Strong Wind
 		183 Goliath Factory
@@ -128,7 +128,7 @@ SLPS 011.60 JP disc 1 [3771]
 		255 Invasion
 		257 Jaws of Ice
 		259 The One Who is Torn Apart
-		261 The Blue Traveler
+		261 The Blue Traveller
 		263 Wings
 		265 One Who Bares Fangs at God
 		267 Grahf, Ruler of Darkness
