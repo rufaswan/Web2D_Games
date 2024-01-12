@@ -10,7 +10,7 @@ var QUAD = {};
 	@@quad-export.js@@
 	@@binary-reader.js@@
 
-	$.version = 'ver 2023-12-12 (beta)';
+	$.version = 'ver 2024-1-11 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -26,12 +26,8 @@ function QuadData(qlist){
 	// uploaded files
 	$.name = '';
 	$.QUAD  = {};
-	$.IMAGE = [
-		QUAD.gl.createPixel(255) ,
-		QUAD.gl.createPixel(255) ,
-		QUAD.gl.createPixel(255) ,
-		QUAD.gl.createPixel(255) ,
-	];
+	$.IMAGE = []; // { pos:rect , name:string }
+	$.VRAM  = QUAD.gl.createPixel(255,-1,-1);
 
 	// activated data
 	$.is_wait  = true;

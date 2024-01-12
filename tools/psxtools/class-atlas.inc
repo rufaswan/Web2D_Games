@@ -27,14 +27,15 @@ class AtlasTex
 	private $image  = array();
 	private $canvas = array();
 
+	// a < b == 3,2,1  DESC , a > b == 1,2,3  ASC
+	// a - b == 1,2,3  ASC  , b - a == 3,2,1  DESC
 	static private function sortwh($a, $b)
 	{
 		// sort height DESC , then width DESC
-		if ( $a['h'] !== $b['h'] )
-			return ( $a['h'] < $b['h'] ) ? 1 : -1;
-		if ( $a['w'] !== $b['w'] )
-			return ( $a['w'] < $b['w'] ) ? 1 : -1;
-		return 0;
+		$d = $b['h'] - $a['h'];
+		if ( $d !== 0 )
+			return $d;
+		return $b['w'] - $a['w'];
 	}
 
 	private function maptree_add( &$id, $x, $y, $w, $h )

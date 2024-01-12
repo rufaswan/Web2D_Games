@@ -1,6 +1,6 @@
 function BinaryReader(){
-	var $ = this;
-	//var m = {};
+	var $ = this; // public
+	//var __ = {};  // private
 
 	//////////////////////////////
 

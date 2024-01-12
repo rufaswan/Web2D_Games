@@ -143,12 +143,12 @@ function sectkeys( &$meta, &$atlas, &$tim, $pos, $i16 )
 	return array($keys,$hits);
 }
 
-function sectquad( &$atlas, &$keys, &$quad )
+function sectquad( &$atlas, &$keys, &$hits, &$quad )
 {
 	printf("== sectquad()\n");
 	$max = 0;
 	$quad['keyframe'] = array();
-	foreach ( $keys[0] as $kk => $kv )
+	foreach ( $keys as $kk => $kv )
 	{
 		if ( empty($kv) )
 			continue;
@@ -192,7 +192,7 @@ function sectquad( &$atlas, &$keys, &$quad )
 
 
 	$quad['hitbox'] = array();
-	foreach ( $keys[1] as $hk => $hv )
+	foreach ( $hits as $hk => $hv )
 	{
 		if ( empty($hv) )
 			continue;
@@ -298,14 +298,29 @@ function sectanim( &$meta, &$quad )
 //////////////////////////////
 function mana_blend()
 {
+	// src = FG , dst = BG
 	return array(
 		array(
-			'name' => '00',
+			'name' => '00 = FG * a + BG * (1-a)',
 			'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
 		),
 		array(
-			'name' => '01,03',
+			'name' => '01 = FG + BG',
 			'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
+		),
+		array(
+			'name' => '02 = -FG + BG',
+			'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
+		),
+		array(
+			'name'  => '03 = FG/4 + BG',
+			'color' => '#ffffff40',
+			'mode'  => array('FUNC_ADD', 'CONSTANT_ALPHA', 'ONE'),
+		),
+		array(
+			'name'  => '04 = FG/2 + BG/2',
+			'color' => '#ffffff80',
+			'mode'  => array('FUNC_ADD', 'CONSTANT_ALPHA', 'CONSTANT_ALPHA'),
 		),
 	);
 }
@@ -317,14 +332,14 @@ function sectmeta( &$meta, &$tim, $pfx )
 
 	$atlas = new AtlasTex;
 	$atlas->init();
-	$keys = sectkeys($meta, $atlas, $tim, $pos, $flg & 1);
+	list($keys,$hits) = sectkeys($meta, $atlas, $tim, $pos, $flg & 1);
 
 	$atlas->sort();
 	$atlas->save("$pfx.0");
 
 	$quad = load_idtagfile('ps1 legend of mana');
 	$quad['blend'] = mana_blend();
-	sectquad($atlas, $keys, $quad);
+	sectquad($atlas, $keys, $hits, $quad);
 	sectanim($meta, $quad);
 
 	save_quadfile($pfx, $quad);

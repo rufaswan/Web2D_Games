@@ -70,33 +70,42 @@ ul {
 
 #viewer_top_nav,
 #debugger_top_nav {
-	position        : fixed;
-	top             : 0;
-	left            : 0;
-	width           : 100vw;
+	position : fixed;
+	top      : 0;
+	left     : 0;
+	width    : 100vw;
+	display  : block;
+}
+#debugger_top_nav {
+	background-color : #404040;
+	border-bottom    : 2px #c0c0c0 solid;
+}
+#viewer_top_nav p,
+#debugger_top_nav p {
 	display         : flex;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;
 	align-items     : center;
+	margin          : 0;
+	padding         : 0;
 }
 
 #viewer_bottom_nav {
-	position        : fixed;
-	bottom          : 0;
-	left            : 0;
-	width           : 100vw;
+	position : fixed;
+	bottom   : 0;
+	left     : 0;
+	width    : 100vw;
+	display  : block;
+}
+#viewer_bottom_nav p {
 	display         : flex;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;
 	align-items     : center;
-}
-
-#debugger_top_nav {
-	position         : fixed;
-	background-color : #404040;
-	border-bottom    : 2px #c0c0c0 solid;
+	margin          : 0;
+	padding         : 0;
 }
 
 #export_div {

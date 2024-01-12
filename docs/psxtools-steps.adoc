@@ -90,12 +90,12 @@ Also known as MS Gundam Battle Assault in US.
 For GBM 1 and 2
 ....
 php  psxtools/gbattm2_data_dat_decode.php  data/ms/*.dat
-php  psxtools/quad_gbattm2_data_ms.php  DIR
+php  psxtools/quad_gbattm2_data_msdat.php  DIR
 ....
 For GBM G and W
 ....
 php  psxtools/gbattmw_data_pac_decode.php  data/ms*.pac
-php  psxtools/quad_gbattm2_data_ms.php  DIR
+php  psxtools/quad_gbattmw_data_mspac.php  DIR
 ....
 == Gunvolt series (PC)
 

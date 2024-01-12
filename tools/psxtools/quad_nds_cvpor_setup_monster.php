@@ -30,211 +30,127 @@ require 'common-quad.inc';
 require 'common-json.inc';
 require 'class-atlas.inc';
 require 'quad.inc';
-
-function rotdist_xy( $radian, $dist, $is_hex=false )
-{
-	if ( $dist === 0 || $radian === 0 )
-		return array(0,0);
-	if ( $is_hex )
-		$radian = ($radian / 0x8000) * pi();
-
-	$x = $dist * cos($radian);
-	$y = $dist * sin($radian);
-	return array($x,$y);
-}
-
-function jnt_pose( &$jnt, &$jnt_pose, &$jnt_joint, &$pos, $cpss, $cjnt, $cx, $cy )
-{
-	for ( $pi = 0; $pi < $cpss; $pi++ )
-	{
-		$head = substr($jnt, $pos, 2);
-			$pos += 2;
-		$body = array();
-		$comp = array();
-
-		for ( $ji = 0; $ji < $cjnt; $ji++ )
-		{
-			$ent = array(
-				'rot' => str2int($jnt, $pos + 0, 2), // rotation
-				'dis' => str2int($jnt, $pos + 2, 1), // distance
-				'key' => str2int($jnt, $pos + 3, 1, true), // replace key id , ff=no replace
-			);
-			$pos += 4;
-			$body[$ji] = $ent;
-
-			$cur_jnt = $jnt_joint[$ji];
-
-			if ( $cur_jnt['par'] < 0 )
-				$rot = 0;
-			else
-				$rot = $comp[ $cur_jnt['par'] ][2];
-
-			$rot += (($cur_jnt['flg'] & 3) * 0x4000 );
-			$xy = rotdist_xy($rot , $ent['dis'], true);
-
-			if ( $cur_jnt['par'] < 0 )
-			{
-				$xy[0] += $cx;
-				$xy[1] += $cy;
-			}
-
-			$nxt_rot = $ent['rot'];
-			if ( $cur_jnt['flg'] & 4 )
-				$nxt_rot += $comp[ $cur_jnt['par'] ][2];
-
-			$comp[$ji] = array($xy[0] , $xy[1] , $nxt_rot, $rot);
-		} // for ( $ji = 0; $ji < $cjnt; $ji++ )
-
-		$pent = array(
-			'h' => $head,
-			'b' => $body,
-			'c' => $comp,
-		);
-		$jnt_pose[$pi] = $pent;
-	} // for ( $pi = 0; $pi < $cpss; $pi++ )
-	return;
-}
+require 'nds_cvpor.inc';
 
 function sect_quad_jnt( &$por, &$quad )
 {
-	$cx = str2int($por['jnt'], 0x22, 2, true);
-	$cy = str2int($por['jnt'], 0x24, 2, true);
+	$jnt = cvooe_jntfile($por['jnt'], 0);
+	if ( $jnt === -1 )
+		return;
 
-	$cjnt     = str2int($por['jnt'], 0x26, 1);
-	$cjnt_inv = str2int($por['jnt'], 0x27, 1);
-	$cjnt_vis = str2int($por['jnt'], 0x28, 1);
-	$chit     = str2int($por['jnt'], 0x29, 1);
-	$cpss     = str2int($por['jnt'], 0x2a, 1);
-	$cpnt     = str2int($por['jnt'], 0x2b, 1);
-	$canm     = str2int($por['jnt'], 0x2c, 1);
-
-	$jnt = array();
-	//$cpss_blk = 2 + ($cjnt * 4);
-
-	$pos = 0x30;
-	$jnt['joint'] = array();
-		for ( $i=0; $i < $cjnt; $i++ )
-		{
-			$ent = array(
-				'par' => str2int($por['jnt'], $pos + 0, 1, true), // parent
-				'key' => str2int($por['jnt'], $pos + 1, 1, true), // so keyframe
-				'flg' => str2int($por['jnt'], $pos + 2, 1), // bitflag
-				'unk' => str2int($por['jnt'], $pos + 3, 1),
-			);
-				$pos += 4;
-			$jnt['joint'][$i] = $ent;
-		}
-	$jnt['pose'] = array();
-		jnt_pose($por['jnt'], $jnt['pose'], $jnt['joint'], $pos, $cpss, $cjnt, $cx, $cy);
-	$jnt['hitbox'] = substr($por['jnt'], $pos, $chit * 8);
-		$pos += ($chit * 8);
-	$jnt['point'] = substr($por['jnt'], $pos, $cpnt * 4);
-		$pos += ($cpnt * 4);
-	$jnt['draw'] = array();
-		for ( $i=0; $i < $cjnt_vis; $i++ )
-		{
-			$jnt['draw'][$i] = str2int($por['jnt'], $pos, 1);
-			$pos++;
-		}
-	$jnt['anim'] = substr($por['jnt'], $pos);
-
-
-
-	$anim_id = array_nextid($quad['animation']);
-	$quad['skeleton'] = array();
-
-	$p_anm = 0;
-	for ( $ak=0; $ak < $canm; $ak++ )
+	$cnt_key = count($quad['keyframe']);
+	$time = array();
+	foreach ( $jnt['pose'] as $pk => $pv )
 	{
-		$cnt_anm = str2int($jnt['anim'], $p_anm, 1);
-			$p_anm++;
-
-		$dat_anm = array();
-		for ( $i=0; $i < $cnt_anm; $i++ )
+		$key_layer = array();
+		$inherit = array();
+		$is_done = false;
+		while ( ! $is_done )
 		{
-			$ent = array(
-				'pss' => str2int($jnt['anim'], $p_anm + 0, 1), // poses id
-				'fps' => str2int($jnt['anim'], $p_anm + 1, 1), // fps
-				'cas' => str2int($jnt['anim'], $p_anm + 2, 1), // switch
-			);
-				$p_anm += 3;
-			$dat_anm[] = $ent;
-		} // for ( $i=0; $i < $cnt_anm; $i++ )
-
-		$bone = array();
-		for ( $bk=0; $bk < $cjnt; $bk++ )
-		{
-			$djoint = $jnt['joint'][$bk];
-			if ( $djoint['key'] < 0 )
+			$is_done = true;
+			foreach ( $pv['body'] as $jk => $jv )
 			{
-				$bent = array(
-					'parent_id' => $djoint['par'],
-					'order'     => -1,
-				);
-				$bone[$bk] = $bent;
-			}
-			else
-			{
-				$time = array();
-				foreach ( $dat_anm as $dk => $dv )
+				$joint = $jnt['joint'][$jk];
+				$par = $joint['parent'];
+				// has parent but data not available yet, try again on next loop
+				if ( $par >= 0 && ! isset($inherit[$par]) )
 				{
-					$dpose = $jnt['pose'][ $dv['pss'] ];
+					$is_done = false;
+					continue;
+				}
+				// already done
+				if ( isset($inherit[$jk]) )
+					continue;
 
-					$zoomx = ( $djoint['flg'] & 0x08 ) ? -1 : 1; // hflip
-					$zoomy = ( $djoint['flg'] & 0x10 ) ? -1 : 1; // vflip
-					$mat4 = matrix_scale(4, $zoomx, $zoomy);
+				$protate = ( $par < 0 ) ? 0 : $inherit[$par][0];
+				$protate += ($joint['flag'] & 3) * (pi() * 0.5);
+				list($dx,$dy) = qdxdy_dist($protate, $jv['dist']);
+				if ( $par < 0 )
+				{
+					$dx += $jnt['head']['cx'];
+					$dy += $jnt['head']['cy'];
+				}
+				else
+				{
+					$dx += $inherit[$par][1];
+					$dy += $inherit[$par][2];
+				}
 
-					$radian = ($dpose['c'][$bk][2] / 0x8000) * pi();
-					$t = matrix_rotate_z(4, $radian);
-					$mat4 = matrix_multi44($mat4, $t);
+				$radian = ( $jv['rotate'] / 0x8000) * pi();
+				if ( $joint['flag'] & 4 )
+					$radian += $inherit[$par][0];
 
-					$mat4[0+3] += $dpose['c'][$bk][0]; // move x
-					$mat4[4+3] += $dpose['c'][$bk][1]; // move y
+				$cur_inherit = array($radian, $dx, $dy);
+				$inherit[$jk] = $cur_inherit;
 
-					if ( $dpose['b'][$bk]['key'] < 0 ) // ff = do not replace
-						$key = $djoint['key'];
-					else
-						$key = $dpose['b'][$bk]['key'];
+				// if visible keyframe
+				$cur_key = 0;
+				$kid = $jv['key'];
+				if ( $kid < 0 )
+					$kid = $joint['key'];
+				if ( $kid < 0 )
+					goto end_layer;
 
-					$tent = array(
-						'time'       => $dv['fps'],
-						'matrix'     => $mat4,
-						'matrix_mix' => 1,
-						'attach'     => array(
-							'type' => 'keyframe',
-							'id'   => $key,
-						),
-					);
-					$time[] = $tent;
-				} // foreach ( $dat_anm as $dk => $dv )
+				$zoomx = ( $joint['flag'] & 0x08 ) ? -1 : 1; // flipx
+				$zoomy = ( $joint['flag'] & 0x10 ) ? -1 : 1; // flipy
+				$cur_matrix = matrix_scale(3, $zoomx, $zoomy);
 
-				$aent = array(
-					'name'     => "jnt anim $ak $bk",
-					'timeline' => $time,
-					'loop_id'  => 0,
-				);
-				list_add($quad['animation'], $anim_id, $aent);
+				$t = qmat3_dxdy($cur_inherit[0], $cur_inherit[1], $cur_inherit[2]);
+				$cur_matrix = matrix_multi33($cur_matrix, $t);
 
-				$bent = array(
-					'attach'    => array('type'=>'animation' , 'id'=>$anim_id),
-					'parent_id' => $djoint['par'],
-					'order'     => -1,
-				);
-				$bone[$bk] = $bent;
+				$cur_key = $quad['keyframe'][$kid]['layer'][0];
+				qmat3_mult($cur_matrix, $cur_key['dstquad']);
 
-				$anim_id++;
-			}
-		} // for ( $bk=0; $bk < $cjnt; $bk++ )
+end_layer:
+				list_add($key_layer, $jk, $cur_key);
+			} // foreach ( $pv['body'] as $jk => $jv )
+		} // while ( ! $is_done )
+		//print_r($inherit);
 
-		foreach ( $jnt['draw'] as $dk => $dv )
-			$bone[$dv]['order'] = $dk;
-
-		$sent = array(
-			'name' => "jnt skeleton $ak",
-			'bone' => $bone,
+		$kid = $cnt_key + $pk;
+		$kent = array(
+			'name'  => 'jnt pose ' . $pk,
+			'layer' => $key_layer,
+			'order' => $jnt['draw'],
 		);
-		list_add($quad['skeleton'], $ak, $sent);
-	} // for ( $ak=0; $ak < $canm; $ak++ )
+		list_add($quad['keyframe'], $kid, $kent);
+
+		$tent = array(
+			'time'         => 10,
+			'keyframe_mix' => 1,
+			'attach'       => array('type'=>'keyframe' , 'id'=>$kid),
+		);
+		$time[] = $tent;
+	} // foreach ( $jnt['pose'] as $pk => $pv )
+
+	$ent = array(
+		'name'     => 'ALL KEYPOSES',
+		'timeline' => $time,
+		'loop_id'  => 0,
+	);
+	$quad['animation'][] = $ent;
+
+	foreach ( $jnt['anim'] as $ak => $av )
+	{
+		$time = array();
+		foreach ( $av as $tk => $tv )
+		{
+			$kid = $cnt_key + $tv['pose'];
+			$tent = array(
+				'time'         => $tv['time'],
+				'keyframe_mix' => 1,
+				'attach'       => array('type'=>'keyframe' , 'id'=>$kid),
+			);
+			$time[] = $tent;
+		} // foreach ( $av as $tk => $tv )
+
+		$ent = array(
+			'name'     => 'jnt anim ' . $ak,
+			'timeline' => $time,
+			'loop_id'  => 0,
+		);
+		$quad['animation'][] = $ent;
+	} // foreach ( $jnt['anim'] as $ak => $av )
 	return;
 }
 //////////////////////////////
@@ -287,6 +203,7 @@ function sect_quad_so( &$por, &$atlas, &$quad )
 				),
 				'tex_id'   => 0,
 				'blend_id' => 0,
+				'_xywh'    => array($x,$y,$w,$h),
 			);
 			$klayer[] = $ent;
 		} // for ( $j=0; $j < $scnt; $j++ )

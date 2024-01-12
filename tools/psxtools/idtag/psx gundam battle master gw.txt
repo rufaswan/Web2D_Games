@@ -1,0 +1,19 @@
+[System]
+PlayStation
+
+[Game]
+Simple Characters 2000 Series Vol.12: Kidou Butouden G Gundam - The Battle
+Simple Characters 2000 Series Vol.13: Shin Kidou Senki Gundam W - The Battle
+
+[Copyright]
+Bandai
+
+[Designers]
+Shunichi Taniguchi
+Takashi Shinpo
+Hiroshi Inagaki
+Kunio Suzuki
+Noriyasu Nakade
+
+[Comment]
+Ripped by Rufas Wan

@@ -139,6 +139,28 @@ for ( $i=1; $i < $argc; $i++ )
 	batmas( $argv[$i] );
 
 /*
+- - - -  ms
+- 2 g w  acguy
+- 2 - w  boss   / hydra
+1 2 g w  bygzam
+1 2 g -  gp02
+- 2 - -  hamma
+1 2 - w  hygog
+- 2 g -  k0     / ball
+- 2 g w  k1     / zaku ii s
+1 2 g w  n ziel / neue ziel
+1 2 g w  psycho
+1 2 g -  qman   / quin mantha
+- 2 - -  qube
+1 2 g w  rx78
+1 2 - w  rx93   / v gundam
+1 2 - w  sazabi
+1 2 - -  the o
+1 2 g -  zaku
+- 2 - -  zeta
+1 2 - w  ziong
+1 2 g -  zz
+
 batmas 1
 	ms
 		12 13        pVAB sound

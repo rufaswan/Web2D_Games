@@ -27,9 +27,12 @@ function gbattmw_0007( &$file )
 	$head = substr($file, 0, 0x10);
 	printf("[%6x] HEAD : %s\n", 0, printhex($head));
 
+	// 01  23  4567  89ab  cdef
+	// cl  ca  sz    ----  ----
 	$cnt_layer = str2int($head, 0, 2); // 1c
 	$cnt_anim  = str2int($head, 2, 2); // 63
-	$c3 = str2int($head, 4, 2); // 10
+	//$b04 = str2int($head, 4, 4); // 10 , header size + RAM
+	//$b08 = str2int($head, 8, 4); // RAM work
 	$pos = 0x10;
 	for ( $i=0; $i < $cnt_layer; $i++ )
 	{
@@ -52,7 +55,7 @@ function gbattmw_0007( &$file )
 		$p3 = str2int($sub, 0x14, 4);
 		$p4 = str2int($sub, 0x18, 4);
 
-		printf("  [%6x] anim id %x /2 -> [%6x] anim data %x /c\n", $p1, $i, $p2, $i);
+		printf("  [%6x] pose id %x /2 -> [%6x] pose data %x /c\n", $p1, $i, $p2, $i);
 		for ( $j=0; $j < $cnt_anim; $j++ )
 		{
 			$p2id = str2int($file, $p1, 2);
@@ -65,11 +68,11 @@ function gbattmw_0007( &$file )
 			printf("    %4x,%4x,1 : %s\n", $i, $j, printhex($s));
 		}
 
-		printf("  [%6x] %x /4\n", $p3, $i);
-		for ( $j=0; $j < $c45; $j++ )
+		printf("  [%6x] %x draw order/4\n", $p3, $i);
+		for ( $j=0; $j < $c4; $j++ )
 		{
-			// 0123
-			//
+			// 01  23
+			// --  ord
 			$s = substr($file, $p3, 4);
 				$p3 += 4;
 			printf("    %4x,%4x,2 : %s\n", $i, $j, printhex($s));
@@ -106,3 +109,41 @@ function gbattmw( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	gbattmw( $argv[$i] );
+
+/*
+	g/w    -> bm2  28/12c  29/c  30/62  31/8
+	head
+		/0 -> 28/1 ,first=-1 , parent
+		/2
+		/4 -> 28/6
+		/6 -> 28/4
+		/8 -> 28/7
+		/a -> 28/0
+	p1
+	p2
+		/0
+		/2
+		/4
+		/6
+		/8
+		/a
+	p3
+		/0
+		/2  -> 28/3 * 4 + 40 , order
+	p4
+		/0  -> 29/6 , dx
+		/2  -> 29/7 , dy
+		/4
+		/6
+		/8
+		/a
+		/c
+		/e
+		/10 -> 29/8 , hx
+		/12 -> 29/a , hy
+		/14
+		/16
+		/18
+		/1a -> 29/1 - c  , tex id
+		/1c -> 29/0 / 40 , clr id
+*/

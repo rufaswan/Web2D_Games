@@ -1,6 +1,6 @@
 function QuadMath(Q){
-	var $ = this;
-	//var m = {}; // all public
+	var $ = this; // public
+	//var __ = {};  // private
 
 	//////////////////////////////
 
@@ -8,6 +8,41 @@ function QuadMath(Q){
 		if ( n < min )  return min;
 		if ( n > max )  return max;
 		return n;
+	}
+
+	$.rect_symmetry = function( rect ){
+		var abs = [
+			Math.abs(rect[0]) , Math.abs(rect[1]) ,
+			Math.abs(rect[2]) , Math.abs(rect[3]) ,
+		];
+		var maxx = ( abs[0] > abs[2] ) ? abs[0] : abs[2];
+		var maxy = ( abs[1] > abs[3] ) ? abs[1] : abs[3];
+		return [ maxx , maxy ];
+	}
+
+	$.vram_srcquad = function( quad, pos ){
+		if ( ! quad )  return 0; // fog color only
+		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
+		for ( var i=0; i < 8; i += 2 ){
+			xy4[i+0] = quad[i+0] + pos[0];
+			xy4[i+1] = quad[i+1] + pos[1];
+		}
+		return xy4;
+	}
+
+	$.css_color = function( css ){
+		// css = '#rrggbbaa'
+		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )
+			return [1,1,1,1];
+
+		var div = 1.0 / 255;
+		var rgba = [
+			parseInt( css.substring(1,3) , 16 ) * div ,
+			parseInt( css.substring(3,5) , 16 ) * div ,
+			parseInt( css.substring(5,7) , 16 ) * div ,
+			parseInt( css.substring(7,9) , 16 ) * div ,
+		];
+		return rgba;
 	}
 
 	//////////////////////////////
@@ -318,9 +353,9 @@ function QuadMath(Q){
 	//////////////////////////////
 
 	$.matrix_mix = function( rate, cur, next ){
-		if ( ! cur && ! next )  return 0;
-		if ( ! cur  )  return next;
-		if ( ! next )  return cur;
+		if ( ! cur && ! next )  return 0; // both identidy matrix
+		if ( ! cur  )  cur  = $.matrix4();
+		if ( ! next )  next = $.matrix4();
 		// 4/4 = rate 1    = cur * 1    + next * 0
 		// 3/4 = rate 0.75 = cur * 0.75 + next * 0.25
 		// 2/4 = rate 0.5  = cur * 0.5  + next * 0.5
@@ -334,6 +369,8 @@ function QuadMath(Q){
 	}
 
 	$.color_mix = function( rate, cur, next ){
+		if ( ! cur || ! next )
+			Q.func.error('math.color_mix',cur,next);
 		var rev = 1.0 - rate;
 		var c4  = [0,0,0,0];
 		for ( var i=0; i < 4; i++ )
@@ -342,6 +379,8 @@ function QuadMath(Q){
 	}
 
 	$.quad_mix = function( rate, cur, next ){
+		if ( ! cur || ! next )
+			Q.func.error('math.quad_mix',cur,next);
 		var rev = 1.0 - rate;
 		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
 		for ( var i=0; i < 8; i++ )
@@ -350,6 +389,8 @@ function QuadMath(Q){
 	}
 
 	$.fog_mix = function( rate, cur, next ){
+		if ( ! cur || ! next )
+			Q.func.error('math.fog_mix',cur,next);
 		var rev = 1.0 - rate;
 		var f4  = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
 		for ( var i=0; i < 16; i++ )
@@ -357,47 +398,31 @@ function QuadMath(Q){
 		return f4;
 	}
 
-	$.css_color = function( css ){
-		// css = '#rrggbbaa'
-		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )
-			return [1,1,1,1];
-
-		var div = 1.0 / 255;
-		var rgba = [
-			parseInt( css.substring(1,3) , 16 ) * div ,
-			parseInt( css.substring(3,5) , 16 ) * div ,
-			parseInt( css.substring(5,7) , 16 ) * div ,
-			parseInt( css.substring(7,9) , 16 ) * div ,
-		];
-		return rgba;
-	}
-
-	//////////////////////////////
-
 	// order matters
 	//   (A*B)*C === A*(B*C)
 	//    A*B    !== B*A
-	$.image_multi4 = function( mat4, image ){
-		var hw = image.w * 0.5;
-		var hh = image.h * 0.5;
-		var quad = [-hw,hh , hw,hh , hw,-hh , -hw,-hh];
-		return $.quad_multi4(mat4, quad);
-	}
-
-	$.quad_multi2 = function( mat4, rect ){
-		if ( ! mat4 )  return rect;
-		var c0 = $.matrix_multi41(mat4, rect.slice(0,2));
-		var c1 = $.matrix_multi41(mat4, rect.slice(2,4));
-		return [].concat( c0.slice(0,2) , c1.slice(0,2) );
+	$.rect_multi4 = function( mat4, rect ){
+		if ( ! mat4 )  return rect; // mat4=0 is identidy matrix , rect=no change
+		var xy2 = [0,0 , 0,0];
+		for ( var i=0; i < 4; i += 2 ){
+			var x = rect[i+0];
+			var y = rect[i+1];
+			xy2[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
+			xy2[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
+		}
+		return xy2;
 	}
 
 	$.quad_multi4 = function( mat4, quad ){
-		if ( ! mat4 )  return quad;
-		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
-		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
-		var c2 = $.matrix_multi41(mat4, quad.slice(4,6));
-		var c3 = $.matrix_multi41(mat4, quad.slice(6,8));
-		return [].concat( c0.slice(0,2) , c1.slice(0,2) , c2.slice(0,2) , c3.slice(0,2) );
+		if ( ! mat4 )  return quad; // mat4=0 is identidy matrix , quad=no change
+		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
+		for ( var i=0; i < 8; i += 2 ){
+			var x = quad[i+0];
+			var y = quad[i+1];
+			xy4[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
+			xy4[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
+		}
+		return xy4;
 	}
 
 	// color * fogquad
@@ -411,9 +436,6 @@ function QuadMath(Q){
 		];
 		return c16;
 	}
-
-	//////////////////////////////
-
 
 	//////////////////////////////
 

@@ -179,13 +179,17 @@ g -  00  denim       / zaku ii
 - w  03  char        / sazabi
 g -  04  puru two    / quin mantha
 g w  05  dozul       / bygzam
+     06
 g w  07  gato        / neue ziel
 - w  08  amuro       / v gundam
 g w  09  maria       / psycho
 g w  0a  amuro       / rx-78
 g -  0b  gato        / gp-02a
 g -  0c  judau       / zz-gundam
+     0d
 g w  0e  akahana     / acguy
+     0f
+     10
 - w  11  valder      / hydra
 g -  12  shiroh      / ball
 g w  13  char        / zaku ii s

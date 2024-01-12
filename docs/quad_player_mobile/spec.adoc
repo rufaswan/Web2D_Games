@@ -1,5 +1,5 @@
 :hardbreaks-option:
-= QUAD Format Specification v0.3
+= QUAD Format Specification v0.4
 by Rufas Wan
 :toc:
 
@@ -10,17 +10,22 @@ QUAD file is mainly for 2D sprites on modern 3D graphics engine. Every drawing i
 The major difference from 2D sprite:
 
 * Instead creating a new drawing for every possible transformation, the sprites can be transform directly using GPU.
-* Two transformation can be interpolate during animation. This creates a new type of sprites with doll-like movement.
+* Two transformation can be interpolate during animation. This creates a new type of sprites with 2D doll-like movement.
 * If the 2D sprite is properly layered, its depth value can be faked, allowing dynamic lighting and shadow calculations later.
-* No additional pairing of depth map and/or normal map required.
+* As everything on GPU is measured in `-1.0 to +1.0` or `0.0 to 1.0`, rounding error is a very common problem.
+* Not to mention Anti-Alias and Smoothing filters are often used to blend the sharp outer edge of 3D models and background, it may be possible this is not be suitable for 2D pixel art.
 
 The major difference from 3D model:
 
 * It is still animated in frames, instead of using delta time. On a normal 60 FPS (frames per seconds) game, 1 frame is 16.67 milliseconds.
-* Z or depth value are not used. It is faked on drawing for perspective correction.
 * X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are measured in px (pixels).
-* As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not used. They are auto-generated when drawing as 2 triangles.
+* On drawing, `[0,0]` is still at the center of the canvas. If the canvas size is 320x240, then X is `-160px to +160px`, and Y is `-120px to +120px`.
+* Z or depth value are not used. It is faked on drawing for perspective correction and drawing order.
+* As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not needed. They are auto-generated when drawing as 2 triangles.
 * No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.
+* Camera Clipping Planes are not used. There are no `near` and `far` in 2D games. Camera is only used for zoom in or out for dramatic effects.
+* Full opaque/solid sprites nearly doesn't exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, even textbox.
+* Therefore 3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter's algorithm).
 
 == Basic File Structure
 
@@ -148,6 +153,11 @@ It is to define a drawing for a frame. The result is an assembled sprite.
     <<_keyframe_layer_object>>,
     ...
   ],
+  "order" : [
+    int layer_id ,
+    int layer_id ,
+    ...
+  ],
 }
 ----
 
@@ -159,7 +169,13 @@ name::
 	* If omitted, then it is default to "keyframe %d".
 
 layer (required)::
-	* An array of objects to be drawn from bottom to top order (Painter's algorithm).
+	* An array of objects to be drawn for this keyframe.
+
+order::
+	* Drawing order for `keyframe_layer_object`, in bottom-to-top order (Painter's algorithm).
+	* All `layer_id` must be unique within the array, or else it is invalid.
+	* If omitted or invalid, then it is default to:
+	** `[ 0 , 1 , 2 , ... , layer.length - 1 ]`
 
 === keyframe_layer_object
 
@@ -303,7 +319,7 @@ loop_id::
 ----
 {
   "debug"        : any,
-  "time"         : number fps,
+  "time"         : int fps,
   "attach"       : <<_attach_object>>,
   "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
   "color"        : string rgba,
@@ -402,8 +418,6 @@ bone (required)::
   "debug"     : any,
   "name"      : string,
   "attach"    : <<_attach_object>>,
-  "parent_id" : int id,
-  "order"     : number,
 }
 ----
 
@@ -416,15 +430,6 @@ name::
 
 attach::
 	* If omitted, then it is invisible bone and drawing is skipped.
-
-parent_id::
-	* Array index for the Bone ID to inherit transformation matrix and color from.
-	* If omitted, or parent_id is same as current bone ID, then it is default to -1 (no parent).
-
-order::
-	* Bones drawing order. Lower value mean it is drawn first (bottom layer), and highest value is drawn last.
-	* If 2 or more bones has the same value, then these bones are ordered by its Bone ID.
-	* If omitted, then it is default to same value as Bone ID.
 
 === blend_object
 
@@ -487,7 +492,10 @@ id (required)::
 
 == Revision History
 
-v0.x::
+v0.4 (2024-1-11)::
+	* `keyframe_object` : added `order`
+	* `skeleton_bone_object` : removed `order`
+	* `skeleton_bone_object` : removed `parent_id`
 
 v0.3 (2023-11-06)::
 	* `animation_timeline_object`: removed `mix`
@@ -510,8 +518,9 @@ v0.1 (2021-03-01)::
 
 == Example
 
-link:sample-mat4mix.quad[sample-mat4mix.quad (2176 bytes)]
+link:sample-mat4mix.quad[sample-mat4mix.quad (2124 bytes)]
 link:sample-keymix.quad[sample-keymix.quad (1478 bytes)]
+link:sample-depth.quad[sample-depth.quad (786 bytes)]
 
 == Online Ver
 * https://github.com/rufaswan/Web2D_Games/blob/master/docs/quad_player_mobile/spec.adoc

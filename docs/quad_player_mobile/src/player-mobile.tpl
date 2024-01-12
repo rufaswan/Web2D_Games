@@ -31,8 +31,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <div id='debugger'>
 	<input type='file' id='input_file' multiple class='hidden'>
 	<div id='debugger_top_nav'>
-		<button id='btn_view'>view</button>
-		<button id='btn_upload' data-id='0'>upload</button>
+		<p id='debugger_top_row_1'>
+			<button id='btn_view'>view</button>
+			<button id='btn_upload' data-id='0'>upload</button>
+		</p>
 	</div>
 
 	<button>dummy</button>
@@ -70,20 +72,22 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	@@<bg-q3.png>@@
 	<canvas id='canvas'>Canvas not supported</canvas>
 	<div id='viewer_top_nav'>
-		<button id='btn_debug'>debug</button>
-		<button id='btn_hits' class='btn_on'>hit</button>
-		<button id='btn_autofit' class='btn_on'>zoom</button>
-		<button id='btn_flipx' class='btn_off'>X</button>
-		<button id='btn_flipy' class='btn_off'>Y</button>
-		<button id='btn_lines'>line</button>
+		<p id='viewer_top_row_1'>
+			<button id='btn_debug'>debug</button>
+			<button id='btn_hits' class='btn_on'>hit</button>
+			<button id='btn_flipx' class='btn_off'>X</button>
+			<button id='btn_lines'>line</button>
+		</p>
 	</div>
 	<div id='viewer_bottom_nav'>
-		<button id='btn_prev'>&lt;&lt;</button>
+		<p id='viewer_bottom_row_1'>
+			<button id='btn_prev'>&lt;&lt;</button>
 
-		<button id='btn_autonext'>auto</button>
-		<button id='btn_cur'>0</button>
+			<button id='btn_autonext'>auto</button>
+			<button id='btn_cur'>0</button>
 
-		<button id='btn_next'>&gt;&gt;</button>
+			<button id='btn_next'>&gt;&gt;</button>
+		</p>
 	</div>
 </div>
 
@@ -111,6 +115,7 @@ var SELECTED = '';
 	HTML.btn_upload.addEventListener('click', function(){
 		UPLOAD_ID = this.getAttribute('data-id');
 		HTML.input_file.click();
+		HTML.logger.innerHTML = QUAD.func.console();
 	});
 	HTML.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', UPLOAD_ID);
@@ -123,14 +128,7 @@ var SELECTED = '';
 			promises.push( QUAD.func.uploadPromise(up, qdata) );
 
 		Promise.all(promises).then(function(resolve){
-			HTML.debugger_files.innerHTML = '';
-			if ( qdata.name )
-				HTML.debugger_files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
-			[0,1,2,3].forEach(function(v){
-				if ( qdata.IMAGE[v].name )
-				HTML.debugger_files.innerHTML += '<li>[IMAGE][' + v + '] ' + qdata.IMAGE[v].name + '</li>';
-			});
-
+			qdata_filetable(qdata, HTML.debugger_files);
 			if ( qdata.name ){
 				HTML.quad_data.innerHTML = '';
 				document.title = qdata.name + ' [Quad Player ' + QUAD.version + ']';
@@ -147,12 +145,13 @@ var SELECTED = '';
 				qdata.QUAD[quad_main].forEach(function(v,k){
 					if ( ! v )
 						return;
-					buffer += qdata_listing(qdata, quad_main, k, false);
+					buffer += qdata_listing(qdata, quad_main, k);
 
 				});
 				buffer += '</ul>';
 				HTML.quad_data.innerHTML += buffer;
 			} // if ( qdata.name )
+			HTML.logger.innerHTML = QUAD.func.console();
 		});
 	});
 	HTML.export_range.addEventListener('change', function(){
@@ -170,8 +169,8 @@ var SELECTED = '';
 			HTML.viewer_top_nav.style.display    = 'none';
 			HTML.viewer_bottom_nav.style.display = 'none';
 		} else {
-			HTML.viewer_top_nav.style.display    = 'flex';
-			HTML.viewer_bottom_nav.style.display = 'flex';
+			HTML.viewer_top_nav.style.display    = 'block';
+			HTML.viewer_bottom_nav.style.display = 'block';
 		}
 		IS_VIEWER_NAV = ! IS_VIEWER_NAV;
 	});
@@ -192,19 +191,6 @@ var SELECTED = '';
 			QuadList[0].is_hits = true;
 		}
 	});
-	HTML.btn_autofit.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_autofit.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_autofit, -1);
-			IS_AUTOZOOM = false;
-			QuadList[0].zoom = 1;
-		} else {
-			btnToggle(HTML.btn_autofit, 1);
-			IS_AUTOZOOM = true;
-			QuadList[0].zoom = -1;
-		}
-	});
 	HTML.btn_flipx.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
@@ -214,17 +200,6 @@ var SELECTED = '';
 		} else {
 			btnToggle(HTML.btn_flipx, 1);
 			QuadList[0].is_flipx = true;
-		}
-	});
-	HTML.btn_flipy.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_flipy.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_flipy, -1);
-			QuadList[0].is_flipy = false;
-		} else {
-			btnToggle(HTML.btn_flipy, 1);
-			QuadList[0].is_flipy = true;
 		}
 	});
 

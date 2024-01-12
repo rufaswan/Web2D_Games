@@ -213,17 +213,14 @@ function sect_quad( &$atlas, &$data, &$quad )
 			$bone[0] = array(
 				//'name'   => 'base',
 				'attach' => array('type'=>'keyframe' , 'id'=>0),
-				'order'  => 0,
 			);
 			$bone[1] = array(
 				//'name'   => $mv['name'],
 				'attach' => array('type'=>'animation' , 'id'=>$mk),
-				'order'  => 1,
 			);
 			$bone[2] = array(
 				//'name'   => $kv['name'],
 				'attach' => $kv['timeline'][0]['attach'],
-				'order'  => 2,
 			);
 
 			$skel = array(
@@ -236,7 +233,6 @@ function sect_quad( &$atlas, &$data, &$quad )
 			$bone[2] = array(
 				//'name'   => $kv['name'],
 				'attach' => array('type'=>'animation' , 'id'=>$kk),
-				'order'  => 2,
 			);
 
 			$skel = array(

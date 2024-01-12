@@ -1,0 +1,34 @@
+[System]
+PlayStation
+
+[Game]
+Gundam The Battle Master/Assault
+
+[Copyright]
+Bandai
+
+[Designer]
+Shunichi Taniguchi
+Kunio Suzuki
+
+[Character Designer and Chief Animator]
+Atsushi Shigeta
+
+[Original MS Designer]
+Kunio Ohkawara
+
+[Art Director]
+Junichi Higashi
+
+[Background]
+Studio Easter
+
+[Color Key]
+Yumiko Katayama
+
+[Ink and Painting]
+Nobuko Mizuta
+Yayoi Yamashita
+
+[Comment]
+Ripped by Rufas Wan

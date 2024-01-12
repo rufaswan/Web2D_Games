@@ -1,79 +1,88 @@
 function QuadExport(Q){
-	var $ = this;
-	var m = {};
+	var $ = this; // public
+	var __ = {};  // private
 
 	//////////////////////////////
 
-	m.rectCompare = function( rect, cmp ){
-		if ( cmp[0] < rect[0] )  rect[0] = cmp[0]; // x1
-		if ( cmp[1] < rect[1] )  rect[1] = cmp[1]; // y1
-		if ( cmp[2] > rect[2] )  rect[2] = cmp[2]; // x2
-		if ( cmp[3] > rect[3] )  rect[3] = cmp[3]; // y2
+	__.rectCompare = function( rect, xy ){
+		if ( rect[0] > xy[0] )  rect[0] = xy[0]; // x1
+		if ( rect[1] > xy[1] )  rect[1] = xy[1]; // y1
+		if ( rect[2] < xy[2] )  rect[2] = xy[2]; // x2
+		if ( rect[3] < xy[3] )  rect[3] = xy[3]; // y2
 	}
 
 	$.rectAttach = function( qdata, type, id ){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return 0;
 
-		var max = 1 << 24;
+		var max  = 1 << 24;
+		var rect = [max,max,-max,-max];
+		var is_null = true;
+
 		var cur = qdata.QUAD[ type ][ id ];
 		switch ( type ){
 			case 'keyframe':
+			case 'hitbox':
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var rect = [max,max,-max,-max];
+				var quad = '';
+				if ( type === 'keyframe' )  quad = 'dstquad';
+				if ( type === 'hitbox'   )  quad = 'hitquad';
 				cur.layer.forEach(function(lv,lk){
-					if ( ! lv )
+					if ( ! lv || ! lv[quad] )
 						return;
-					var dst = lv.dstquad;
+					var dst = lv[quad];
 					for ( var i=0; i < 8; i += 2 ){
-						if ( dst[i+0] < rect[0] )  rect[0] = dst[i+0];
-						if ( dst[i+1] < rect[1] )  rect[1] = dst[i+1];
-						if ( dst[i+0] > rect[2] )  rect[2] = dst[i+0];
-						if ( dst[i+1] > rect[3] )  rect[3] = dst[i+1];
-					}
+						if ( rect[0] > dst[i+0] )  rect[0] = dst[i+0]; // x1
+						if ( rect[1] > dst[i+1] )  rect[1] = dst[i+1]; // y1
+						if ( rect[2] < dst[i+0] )  rect[2] = dst[i+0]; // x2
+						if ( rect[3] < dst[i+1] )  rect[3] = dst[i+1]; // y2
+					} // for ( var i=0; i < 8; i += 2 )
 				});
 				cur.__RECT = rect;
 				return rect;
 
 			case 'slot':
-				var rect = [max,max,-max,-max];
 				cur.forEach(function(sv,sk){
 					var xy = $.rectAttach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
-					m.rectCompare(rect, xy);
+					is_null = false;
+					__.rectCompare(rect, xy);
 				});
+				if ( is_null )
+					return 0;
 				return rect;
 
 			case 'animation':
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var rect = [max,max,-max,-max];
+				var is_null = true;
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
-
 					var xy = $.rectAttach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
-
-					var xy2 = Q.math.quad_multi4(tv.matrix, xy);
+					is_null = false;
+					var xy2 = Q.math.rect_multi4(tv.matrix, xy);
 					var t;
 					if ( xy2[0] > xy2[2] ){ // if x1 > x2  swap()
 						t = xy2[0];
-						xy2[0] = xy2[2];
+						xy2[0] = xy[2];
 						xy2[2] = t;
 					}
-					if ( xy2[1] > xy2[3] ){ // if y1 > y2  swap()
+					if ( xy2[1] > xy[3] ){ // if y1 > y2  swap()
 						t = xy2[1];
 						xy2[1] = xy2[3];
 						xy2[3] = t;
 					}
-					m.rectCompare(rect, xy2);
+					__.rectCompare(rect, xy2);
 				});
+				if ( is_null )
+					return 0;
 				cur.__RECT = rect;
 				return rect;
 
@@ -81,69 +90,21 @@ function QuadExport(Q){
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var res = [];
-				var is_done = false;
-				while ( ! is_done ){
-					is_done = true;
-					cur.bone.forEach(function(bv,bk){
-						if ( res[bk] )
-							return;
-
-						is_done = false;
-						var xy  = 0;
-						if ( bv.parent_id < 0 ){
-							if ( bv.attach )
-								xy = $.rectAttach(qdata, bv.attach.type, bv.attach.id);
-
-							if ( xy ){
-								res[bk] = xy;
-								res[bk][4] = (xy[0] + xy[2]) * 0.5; // mid x
-								res[bk][5] = (xy[1] + xy[3]) * 0.5; // mid y
-							}
-							else
-								res[bk] = [0,0,0,0 , 0,0];
-
-							return;
-						}
-
-						var par = res[bv.parent_id];
-						if ( ! par )
-							return;
-
-						if ( bv.attach )
-							xy = $.rectAttach(qdata, bv.attach.type, bv.attach.id);
-
-						if ( xy ){
-							res[bk] = [
-								xy[0] + par[4] , xy[1] + par[5] ,
-								xy[2] + par[4] , xy[3] + par[5] ,
-							];
-							res[bk][4] = (res[bk][0] + res[bk][2]) * 0.5; // mid x
-							res[bk][5] = (res[bk][1] + res[bk][3]) * 0.5; // mid y
-						}
-						else
-							res[bk] = par;
-					});
-				} // while ( ! is_done )
-
-				var rect = [max,max,-max,-max];
-				res.forEach(function(rv,rk){
-					m.rectCompare(rect, rv);
+				cur.bone.forEach(function(bv,bk){
+					if ( ! bv || ! bv.attach )
+						return;
+					var xy = $.rectAttach(qdata, bv.type, bv.id);
+					if ( ! xy )
+						return;
+					is_null = false;
+					__.rectCompare(rect, xy);
 				});
+				if ( is_null )
+					return 0;
 				cur.__RECT = rect;
 				return rect;
 		} // switch ( type )
 		return 0;
-	}
-
-	$.sizeSymmetry = function( size ){
-		var abs = [
-			Math.abs(size[0]) , Math.abs(size[1]) ,
-			Math.abs(size[2]) , Math.abs(size[3]) ,
-		];
-		var maxx = ( abs[0] > abs[2] ) ? abs[0] : abs[2];
-		var maxy = ( abs[1] > abs[3] ) ? abs[1] : abs[3];
-		return [ maxx , maxy ];
 	}
 
 	$.isLoopAttach = function( qdata, type, id ){
@@ -253,38 +214,18 @@ function QuadExport(Q){
 	}
 
 
-	$.listAttach = function( qdata, type, id, rec=false ){
+	$.listAttach = function( qdata, type, id ){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return [];
 
-		function dupRemove( list ){
-			function cmpmax( max, ty, id ){
-				while ( max > 0 ){
-					max--;
-					if ( list[max][0] === ty && list[max][1] === id )
-						return true;
-				}
-				return false;
-			}
-			var len = list.length;
-			while ( len > 0 ){
-				len--;
-				if ( cmpmax(len, list[len][0], list[len][1]) )
-					list.splice(len, 1);
-			}
-		}
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				var list = [];
 				slot.forEach(function(sv,sk){
-					list.push( [sv.type, sv.id] );
-					if ( rec ){
-						var t = $.listAttach(qdata, sv.type, sv.id, rec);
-						list = list.concat(t);
-					}
+					list.push( sv.type +','+ sv.id );
 				});
-				dupRemove(list);
+				Q.func.arrayCleanDups(list);
 				return list;
 			case 'animation':
 				var anim = qdata.QUAD.animation[id].timeline;
@@ -292,13 +233,9 @@ function QuadExport(Q){
 				anim.forEach(function(tv,tk){
 					if ( ! tv || ! tv.attach )
 						return;
-					list.push( [tv.attach.type, tv.attach.id] );
-					if ( rec ){
-						var t = $.listAttach(qdata, tv.attach.type, tv.attach.id, rec);
-						list = list.concat(t);
-					}
+					list.push( tv.attach.type +','+ tv.attach.id );
 				});
-				dupRemove(list);
+				Q.func.arrayCleanDups(list);
 				return list;
 			case 'skeleton':
 				var bone = qdata.QUAD.skeleton[id].bone;
@@ -306,13 +243,9 @@ function QuadExport(Q){
 				bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					list.push( [bv.attach.type, bv.attach.id] );
-					if ( rec ){
-						var t = $.listAttach(qdata, bv.attach.type, bv.attach.id, rec);
-						list = list.concat(t);
-					}
+					list.push( bv.attach.type +','+ bv.attach.id );
 				});
-				dupRemove(list);
+				Q.func.arrayCleanDups(list);
 				return list;
 		} // switch ( type )
 		return [];
@@ -320,9 +253,9 @@ function QuadExport(Q){
 
 	//////////////////////////////
 
-	m.bak = {};
-	m.backup = function( qdata, canvas, type, id, fps, zoom ){
-		m.bak = {
+	__.bak = {};
+	__.backup = function( qdata, canvas, type, id, fps, zoom ){
+		__.bak = {
 			type  : qdata.attach.type ,
 			id    : qdata.attach.id   ,
 			fps   : qdata.anim_fps    ,
@@ -341,18 +274,18 @@ function QuadExport(Q){
 		qdata.is_hits     = false;
 	}
 
-	m.restore = function( qdata, canvas ){
-		qdata.attach.type = m.bak.type;
-		qdata.attach.id   = m.bak.id;
-		qdata.anim_fps    = m.bak.fps;
-		qdata.zoom        = m.bak.zoom;
-		qdata.is_lines    = m.bak.line;
-		qdata.is_hits     = m.bak.hit;
-		canvas.width      = m.bak.canvw;
-		canvas.height     = m.bak.canvh;
+	__.restore = function( qdata, canvas ){
+		qdata.attach.type = __.bak.type;
+		qdata.attach.id   = __.bak.id;
+		qdata.anim_fps    = __.bak.fps;
+		qdata.zoom        = __.bak.zoom;
+		qdata.is_lines    = __.bak.line;
+		qdata.is_hits     = __.bak.hit;
+		canvas.width      = __.bak.canvw;
+		canvas.height     = __.bak.canvh;
 	}
 
-	m.download = function( fname, dataurl ){
+	__.download = function( fname, dataurl ){
 		if ( ! fname || ! dataurl )
 			return;
 
@@ -365,7 +298,7 @@ function QuadExport(Q){
 
 	//////////////////////////////
 
-	m.exportSheet = function( qdata, canvas ){
+	__.exportSheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
 		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
@@ -378,7 +311,7 @@ function QuadExport(Q){
 		];
 
 		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize() >> 1;
+		var texsize = Q.gl.maxTextureSize();
 
 		var anim_remain = anim_time - qdata.anim_fps;
 		var tilecol = 1;
@@ -408,10 +341,8 @@ function QuadExport(Q){
 		var color  = [1,1,1,1];
 		Q.func.qdata_clear(qdata);
 
-		camera[0+0] = qdata.zoom;
-		camera[4+1] = qdata.zoom;
-		if ( qdata.is_flipx )  camera[0+0] = -camera[0+0];
-		if ( qdata.is_flipy )  camera[4+1] = -camera[4+1];
+		camera[0+0] = ( qdata.is_flipx ) ? -qdata.zoom : qdata.zoom;
+		camera[4+1] = ( qdata.is_flipy ) ? -qdata.zoom : qdata.zoom;
 
 		// from -1.0 to +1.0
 		for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] ){
@@ -423,11 +354,13 @@ function QuadExport(Q){
 				if ( qdata.anim_fps >= anim_time )
 					continue;
 
-				camera[0+3] = dx + halfpos[2] - sprmid[0];
-				camera[4+3] = dy + halfpos[3] - sprmid[1];
+				var m4 = Q.math.matrix4();
+				m4[0+3] = dx + halfpos[2] - sprmid[0];
+				m4[4+3] = dy + halfpos[3] - sprmid[1];
+				m4 = Q.math.matrix_multi44(camera, m4);
 
 				qdata.is_draw = false;
-				Q.func.qdata_draw(qdata, camera, color);
+				Q.func.qdata_draw(qdata, m4, color);
 				qdata.anim_fps++;
 			} // for ( var dx = -canvpos[0]; dx < canvpos[0]; dx += sprwh[0] )
 		} // for ( var dy = canvpos[1]; dy > -canvpos[1]; dy += sprwh[1] )
@@ -435,9 +368,9 @@ function QuadExport(Q){
 		return canvas.toDataURL('image/png');
 	}
 
-	m.exportZip = function( qdata, canvas, fmt ){
+	__.exportZip = function( qdata, canvas, fmt ){
 		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var symm = $.sizeSymmetry(sprsize);
+		var symm = Q.math.rect_symmetry(sprsize);
 
 		var line_spacing = 1.15;
 		canvas.width  = Math.ceil(symm[0] * 2 * line_spacing * qdata.zoom);
@@ -445,21 +378,20 @@ function QuadExport(Q){
 
 		// same number of sprites as sheet
 		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize() >> 1;
+		var texsize = Q.gl.maxTextureSize();
 		var len  = Math.floor(texsize / canvas.width) * Math.floor(texsize / canvas.height);
 		var list = {};
 
 		var camera = Q.math.matrix4();
 		var color  = [1,1,1,1];
 
-		camera[0+0] = qdata.zoom;
-		camera[4+1] = qdata.zoom;
-		if ( qdata.is_flipx )  camera[0+0] = -camera[0+0];
-		if ( qdata.is_flipy )  camera[4+1] = -camera[4+1];
+		camera[0+0] = ( qdata.is_flipx ) ? -qdata.zoom : qdata.zoom;
+		camera[4+1] = ( qdata.is_flipy ) ? -qdata.zoom : qdata.zoom;
 
-		for ( var i=0; i < len; i++ ){
+		var i = 0;
+		while ( i < len ){
 			if ( qdata.anim_fps >= anim_time )
-				continue;
+				break;
 			Q.func.qdata_clear(qdata);
 			Q.func.qdata_draw (qdata, camera, color);
 
@@ -481,7 +413,8 @@ function QuadExport(Q){
 			} // switch ( fmt )
 
 			qdata.anim_fps++;
-		} // for ( var i=0; i < len; i++ )
+			i++;
+		} // while ( i < len )
 
 		var uint8 = Q.binary.zipwrite(list);
 		return 'data:application/zip;base64,' + Q.binary.toBase64(uint8);
@@ -493,27 +426,27 @@ function QuadExport(Q){
 		if ( zoom < 0.1 || zoom > 10.0 )
 			return;
 		var start = performance.now();
-		m.backup(qdata, canvas, type, id, fps, zoom);
+		__.backup(qdata, canvas, type, id, fps, zoom);
 
 		switch ( fmt ){
 			case 'png':
-				var fname   = m.bak.fname + '.png';
-				var dataurl = m.exportSheet(qdata, canvas);
-				m.download(fname, dataurl);
+				var fname   = __.bak.fname + '.png';
+				var dataurl = __.exportSheet(qdata, canvas);
+				__.download(fname, dataurl);
 				break;
 			case 'zip':
-				var fname   = m.bak.fname + '.png.zip';
-				var dataurl = m.exportZip(qdata, canvas, 'png');
-				m.download(fname, dataurl);
+				var fname   = __.bak.fname + '.png.zip';
+				var dataurl = __.exportZip(qdata, canvas, 'png');
+				__.download(fname, dataurl);
 				break;
 			case 'rgba':
-				var fname   = m.bak.fname + '.rgba.zip';
-				var dataurl = m.exportZip(qdata, canvas, 'rgba');
-				m.download(fname, dataurl);
+				var fname   = __.bak.fname + '.rgba.zip';
+				var dataurl = __.exportZip(qdata, canvas, 'rgba');
+				__.download(fname, dataurl);
 				break;
 		} // switch ( fmt )
 
-		m.restore(qdata, canvas);
+		__.restore(qdata, canvas);
 		Q.func.log('QUAD export' , fmt , 'time' , performance.now()-start);
 
 		// performance

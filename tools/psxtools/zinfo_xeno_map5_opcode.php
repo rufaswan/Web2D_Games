@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'common.inc';
+require 'common-guest.inc';
 
 $gp_op_siz = array(
 //   0  1  2  3    4  5  6  7    8  9  a  b    c  d  e  f
@@ -47,7 +48,7 @@ $gp_op_siz = array(
 $gp_opfe_siz = array(
 //   0  1  2  3    4  5  6  7    8  9  a  b    c  d  e  f
 	 0, 1, 4, 3 ,  3,-2,-2, 2 ,  7, 3, 3, 3 , 13, 3, 5, 6 , // 00
-	 5, 6, 3, 5 ,  5, 5, 1, 3 ,  4, 2, 1, 5 ,  8, 8, 2, 1 , // 10
+	 5, 6, 3, 5 ,  5, 5, 1, 3 ,  2, 2, 1, 5 ,  8, 8, 2, 1 , // 10
 	 2, 3, 3,20 ,  1, 2,15,-1 ,  3, 3, 3, 3 ,  3, 3, 3, 3 , // 20
 	-2,-2,-2,-2 , -2,-2,-2,-2 ,  5, 3, 3, 3 ,  5,10,10, 7 , // 30
 
@@ -245,29 +246,6 @@ function map5_opcode( &$oplist, &$file, &$label, $pos, $len )
 	return $pos;
 }
 //////////////////////////////
-function map5_haslabels( &$label, $p )
-{
-	$list = array();
-	foreach ( $label as $k => $v )
-	{
-		if ( $v === $p )
-			$list[] = $k;
-	}
-	return $list;
-}
-
-function map5_labelrange( &$label )
-{
-	$min = BIT16;
-	$max = 0;
-	foreach ( $label as $k => $v )
-	{
-		if ( $v < $min )  $min = $v;
-		if ( $v > $max )  $max = $v;
-	}
-	return array($min,$max);
-}
-
 function xeno_map5op( &$file )
 {
 	$cnt = str2int($file, 0x80, 2);
@@ -282,7 +260,7 @@ function xeno_map5op( &$file )
 	map5_opcode($oplist, $sub, $label, $pos, $len);
 
 	// to handle subfunc() before obj_0::init
-	$range = map5_labelrange($label);
+	$range = asm_labelrange($label);
 	if ( $range[0] !== $pos )
 	{
 		$res = map5_opcode($oplist, $sub, $label, $range[0], $pos);
@@ -291,15 +269,8 @@ function xeno_map5op( &$file )
 		ksort($oplist);
 	}
 
-	// check for invalid labels
-	foreach ( $label as $k => $v )
-	{
-		if ( ! isset($oplist[$v]) )
-			php_warning('opcode not stop @ %4x [%s]', $v, trim($k));
-	}
-
 	// to print constants
-	$range = map5_labelrange($label);
+	$range = asm_labelrange($label);
 	if ( $range[0] > 0 && $sub[0] === "\xff" )
 	{
 		echo "constant:\n";
@@ -312,18 +283,7 @@ function xeno_map5op( &$file )
 		} // while ( $pos < $range[0] )
 	} // if ( $range[0] > 0 && $sub[0] === "\xff" )
 
-	// to print opcodes with labels
-	foreach ( $oplist as $ok => $ov )
-	{
-		$lab = map5_haslabels($label, $ok);
-		if ( ! empty($lab) )
-		{
-			foreach ( $lab as $lv )
-				printf("%s:\n", $lv);
-		}
-		printf("      %4x : %s\n", $ok, printhex($ov));
-	} // foreach ( $oplist as $ok => $ov )
-
+	asm_trace($label, $oplist);
 	return;
 }
 
@@ -336,7 +296,7 @@ function xeno( $fname )
 	xeno_map5op($file);
 	$txt = ob_get_clean();
 
-	file_put_contents("$fname.txt", $txt);
+	save_file("$fname.txt", $txt);
 	return;
 }
 

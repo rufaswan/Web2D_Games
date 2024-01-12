@@ -6,11 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.17">
 <meta name="author" content="by Rufas Wan">
-<title>QUAD Format Specification v0.2</title>
+<title>QUAD Format Specification v0.4</title>
 </head>
 <body class="article">
 <div id="header">
-<h1>QUAD Format Specification v0.2</h1>
+<h1>QUAD Format Specification v0.4</h1>
 <div class="details">
 <span id="author" class="author">by Rufas Wan</span><br>
 </div>
@@ -58,13 +58,16 @@
 <p>Instead creating a new drawing for every possible transformation, the sprites can be transform directly using GPU.</p>
 </li>
 <li>
-<p>Two transformation can be interpolate during animation. This creates a new type of sprites with doll-like movement.</p>
+<p>Two transformation can be interpolate during animation. This creates a new type of sprites with 2D doll-like movement.</p>
 </li>
 <li>
 <p>If the 2D sprite is properly layered, its depth value can be faked, allowing dynamic lighting and shadow calculations later.</p>
 </li>
 <li>
-<p>No additional pairing of depth map and/or normal map required.</p>
+<p>As everything on GPU is measured in <code>-1.0 to +1.0</code> or <code>0.0 to 1.0</code>, rounding error is a very common problem.</p>
+</li>
+<li>
+<p>Not to mention Anti-Alias and Smoothing filters are often used to blend the sharp outer edge of 3D models and background, it may be possible this is not be suitable for 2D pixel art.</p>
 </li>
 </ul>
 </div>
@@ -77,16 +80,28 @@
 <p>It is still animated in frames, instead of using delta time. On a normal 60 FPS (frames per seconds) game, 1 frame is 16.67 milliseconds.</p>
 </li>
 <li>
-<p>Z or depth value are not used. It is faked on drawing for perspective correction.</p>
-</li>
-<li>
 <p>X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
 </li>
 <li>
-<p>As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not used. They are auto-generated when drawing as 2 triangles.</p>
+<p>On drawing, <code>[0,0]</code> is still at the center of the canvas. If the canvas size is 320x240, then X is <code>-160px to +160px</code>, and Y is <code>-120px to +120px</code>.</p>
+</li>
+<li>
+<p>Z or depth value are not used. It is faked on drawing for perspective correction and drawing order.</p>
+</li>
+<li>
+<p>As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not needed. They are auto-generated when drawing as 2 triangles.</p>
 </li>
 <li>
 <p>No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.</p>
+</li>
+<li>
+<p>Camera Clipping Planes are not used. There are no <code>near</code> and <code>far</code> in 2D games. Camera is only used for zoom in or out for dramatic effects.</p>
+</li>
+<li>
+<p>Full opaque/solid sprites nearly doesn&#8217;t exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, even textbox.</p>
+</li>
+<li>
+<p>Therefore 3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter&#8217;s algorithm).</p>
 </li>
 </ul>
 </div>
@@ -280,6 +295,11 @@
     <a href="#_keyframe_layer_object">keyframe_layer_object</a>,
     ...
   ],
+  "order" : [
+    int layer_id ,
+    int layer_id ,
+    ...
+  ],
 }</pre>
 </div>
 </div>
@@ -313,7 +333,30 @@
 <div class="ulist">
 <ul>
 <li>
-<p>An array of objects to be drawn from bottom to top order (Painter&#8217;s algorithm).</p>
+<p>An array of objects to be drawn for this keyframe.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">order</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Drawing order for <code>keyframe_layer_object</code>, in bottom-to-top order (Painter&#8217;s algorithm).</p>
+</li>
+<li>
+<p>All <code>layer_id</code> must be unique within the array, or else it is invalid.</p>
+</li>
+<li>
+<p>If omitted or invalid, then it is default to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>[ 0 , 1 , 2 , &#8230;&#8203; , layer.length - 1 ]</code></p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -626,7 +669,7 @@
 <div class="content">
 <pre>{
   "debug"        : any,
-  "time"         : number fps,
+  "time"         : int fps,
   "attach"       : <a href="#_attach_object">attach_object</a>,
   "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
   "color"        : string rgba,
@@ -906,8 +949,6 @@
   "debug"     : any,
   "name"      : string,
   "attach"    : <a href="#_attach_object">attach_object</a>,
-  "parent_id" : int id,
-  "order"     : number,
 }</pre>
 </div>
 </div>
@@ -942,35 +983,6 @@
 <ul>
 <li>
 <p>If omitted, then it is invisible bone and drawing is skipped.</p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">parent_id</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>Array index for the Bone ID to inherit transformation matrix and color from.</p>
-</li>
-<li>
-<p>If omitted, or parent_id is same as current bone ID, then it is default to -1 (no parent).</p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">order</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>Bones drawing order. Lower value mean it is drawn first (bottom layer), and highest value is drawn last.</p>
-</li>
-<li>
-<p>If 2 or more bones has the same value, then these bones are ordered by its Bone ID.</p>
-</li>
-<li>
-<p>If omitted, then it is default to same value as Bone ID.</p>
 </li>
 </ul>
 </div>
@@ -1116,6 +1128,22 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
+<dt class="hdlist1">v0.4 (2024-1-11)</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>keyframe_object</code> : added <code>order</code></p>
+</li>
+<li>
+<p><code>skeleton_bone_object</code> : removed <code>order</code></p>
+</li>
+<li>
+<p><code>skeleton_bone_object</code> : removed <code>parent_id</code></p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">v0.3 (2023-11-06)</dt>
 <dd>
 <div class="ulist">
@@ -1184,8 +1212,9 @@
 <h2 id="_example">Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (2176 bytes)</a><br>
-<a href="sample-keymix.quad">sample-keymix.quad (1478 bytes)</a></p>
+<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (2124 bytes)</a><br>
+<a href="sample-keymix.quad">sample-keymix.quad (1478 bytes)</a><br>
+<a href="sample-depth.quad">sample-depth.quad (786 bytes)</a></p>
 </div>
 </div>
 </div>

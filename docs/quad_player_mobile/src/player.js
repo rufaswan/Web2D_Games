@@ -48,6 +48,18 @@ function btnPrevNext( qdata, adj ){
 		qdata.anim_fps  += adj;
 }
 
+function qdata_filetable( qdata, files ){
+	files.innerHTML = '';
+	if ( qdata.name )
+		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
+	for ( var i=0; i < qdata.IMAGE.length; i++ ){
+		if ( ! qdata.IMAGE[i] || ! qdata.IMAGE[i].name )
+			continue;
+		var img = qdata.IMAGE[i];
+		files.innerHTML += '<li>[IMAGE][' + i + '] ' + img.name + ' (' + JSON.stringify(img.pos) + ')</li>';
+	}
+}
+
 function qdata_tagtable( tag ){
 	if ( ! tag )
 		return '';
@@ -101,8 +113,8 @@ function quad_mainlist( quad ){
 	return -1;
 }
 
-function qdata_listing( qdata, type, id, visible=false ){
-	var qchild = QUAD.export.listAttach(qdata, type, id, false);
+function qdata_listing( qdata, type, id ){
+	var qchild = QUAD.export.listAttach(qdata, type, id);
 	var qtype  = qdata.QUAD[type][id];
 
 	var qname  = qtype.name || type + ' ' + id;
@@ -122,13 +134,10 @@ function qdata_listing( qdata, type, id, visible=false ){
 	html += '</p>';
 
 	if ( qchild.length > 0 ){
-		if ( visible )
-			html += '<ul style="display:block;">';
-		else
-			html += '<ul style="display:none;">';
-
+		html += '<ul style="display:none;">';
 		qchild.forEach(function(cv,ck){
-			html += qdata_listing(qdata, cv[0], cv[1], false);
+			cv = cv.split(',');
+			html += qdata_listing(qdata, cv[0], cv[1]);
 		});
 		html += '</ul>';
 	}
@@ -199,12 +208,48 @@ function button_export_type( elem ){
 }
 
 /*
-		m.GL.enable(m.GL.DEPTH_TEST);
-		m.GL.depthFunc(m.GL.LESS);
+		<p id='viewer_top_row_1'>
+			<button id='btn_debug'>debug</button>
+			<button id='btn_option'>options</button>
+			<button id='btn_lines'>line</button>
+		</p>
+		<p id='viewer_top_row_2'>
+			<button id='btn_autofit' class='btn_on'>zoom</button>
+			<button id='btn_flipx' class='btn_off'>X</button>
+			<button id='btn_flipy' class='btn_off'>Y</button>
+		</p>
 
-			$.vec_resize(2, c0);
-			$.vec_resize(2, c1);
-			$.vec_resize(2, c2);
-			$.vec_resize(2, c3);
-		return [].concat(c0,c1,c2,c3);
+	html.viewer_top_row_2.style.display = 'none';
+
+	HTML.btn_option.addEventListener('click', function(){
+		var row2 = HTML.viewer_top_row_2;
+		if ( row2.style.display === 'flex' )
+			row2.style.display = 'none';
+		else
+			row2.style.display = 'flex';
+	});
+	HTML.btn_autofit.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_autofit.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_autofit, -1);
+			IS_AUTOZOOM = false;
+			QuadList[0].zoom = 1;
+		} else {
+			btnToggle(HTML.btn_autofit, 1);
+			IS_AUTOZOOM = true;
+			QuadList[0].zoom = -1;
+		}
+	});
+	HTML.btn_flipy.addEventListener('click', function(){
+		if ( ! QuadList[0] )
+			return;
+		if ( HTML.btn_flipy.classList.contains('btn_on') ){
+			btnToggle(HTML.btn_flipy, -1);
+			QuadList[0].is_flipy = false;
+		} else {
+			btnToggle(HTML.btn_flipy, 1);
+			QuadList[0].is_flipy = true;
+		}
+	});
 */

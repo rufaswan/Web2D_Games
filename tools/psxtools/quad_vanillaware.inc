@@ -544,7 +544,9 @@ function ftx_size( $pfx, $tid )
 	lsfile_r('.', $list);
 	foreach ( $list as $file )
 	{
-		if ( strpos($file, "$pfx.$tid.") === false )
+		if ( strpos($file, $pfx) === false )
+			continue;
+		if ( strpos($file, ".$tid.") === false )
 			continue;
 
 		$size = imgfile_size($file);

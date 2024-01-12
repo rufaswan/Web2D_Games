@@ -84,7 +84,7 @@ function anim_allkeys( &$quad )
 		if ( empty($kv) )
 			continue;
 		$en = array(
-			'time' => 1,
+			'time'   => 1,
 			'attach' => array(
 				'type' => 'keyframe',
 				'id'   => $kk
@@ -94,7 +94,7 @@ function anim_allkeys( &$quad )
 	}
 
 	$anim = array(
-		'name' => 'ALL KEYFRAMES',
+		'name'     => 'ALL KEYFRAMES',
 		'timeline' => $time,
 	);
 	$quad['animation'][] = $anim;
@@ -190,7 +190,93 @@ function xywh_move( &$quad, $mx, $my )
 	}
 	return;
 }
+
+function xywh_scale( &$quad, $sx, $sy )
+{
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		$quad[$i+0] *= $sx;
+		$quad[$i+1] *= $sy;
+	}
+	return;
+}
 //////////////////////////////
+function qmat3_dxdy( $radian, $dx, $dy )
+{
+	$sin = sin($radian);
+	$cos = cos($radian);
+
+	$m3 = array(
+		$cos , -$sin , $dx ,
+		$sin ,  $cos , $dy ,
+		   0 ,     0 ,   1 ,
+	);
+	return $m3;
+}
+
+function qdxdy_dist( $radian, $dist )
+{
+	$dx = $dist * cos($radian);
+	$dy = $dist * sin($radian);
+	return array($dx, $dy);
+}
+
+function qmat3_mult( &$mat3, &$quad )
+{
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		$x = $quad[$i+0];
+		$y = $quad[$i+1];
+		$quad[$i+0] = $mat3[0]*$x + $mat3[1]*$y + $mat3[2];
+		$quad[$i+1] = $mat3[3]*$x + $mat3[4]*$y + $mat3[5];
+	}
+	return;
+}
+
+// for usort , list = { p : parent , i : layer , o : order }
+// a < b == 3,2,1  DESC , a > b == 1,2,3  ASC
+// a - b == 1,2,3  ASC  , b - a == 3,2,1  DESC
+function sort_by_order( $a, $b )
+{
+	$d = $a['o'] - $b['o'];
+	if ( $d !== 0 )
+		return $d;
+	return $a['i'] - $b['i'];
+}
+function sort_by_parent( $a, $b )
+{
+	$d = $a['p'] - $b['p'];
+	if ( $d !== 0 )
+		return $d;
+	return $a['i'] - $b['i'];
+}
+//////////////////////////////
+function quad_type( &$quad )
+{
+	//  1   2
+	//    m
+	//  4   3
+	$midx = ($quad[0] + $quad[2] + $quad[4] + $quad[6]) / 4;
+	$midy = ($quad[1] + $quad[3] + $quad[5] + $quad[7]) / 4;
+
+	$type = 'q';
+	for ( $i=0; $i < 8; $i += 2 )
+	{
+		$x = $quad[$i+0];
+		$y = $quad[$i+1];
+		if ( $x < $midx && $y < $midy )  $type .= '1';
+		else
+		if ( $x > $midx && $y < $midy )  $type .= '2';
+		else
+		if ( $x > $midx && $y > $midy )  $type .= '3';
+		else
+		if ( $x < $midx && $y > $midy )  $type .= '4';
+		else
+			$type .= '0';
+	}
+	return $type;
+}
+
 // debug + fix
 function quad_ext1px( &$quad )
 {
@@ -320,6 +406,7 @@ function quad_convexfix( &$quad )
 //////////////////////////////
 function blend_modes( $mode )
 {
+	// src = FG , dst = BG
 	switch ( $mode )
 	{
 		case 'normal':
@@ -353,6 +440,7 @@ function blend_modes( $mode )
 	return 0;
 }
 //////////////////////////////
+/*
 function quad_center( $V4 )
 {
 	$cx = ($V4[0] + $V4[2] + $V4[4] + $V4[6]) / 4;
@@ -444,4 +532,5 @@ function quad_dump( $V4, $name )
 	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
 	return;
 }
+*/
 //////////////////////////////

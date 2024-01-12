@@ -1,0 +1,19 @@
+{
+  "keyframe" : [
+    {
+      "layer" : [
+        {
+          "dstquad"  : [ -256 , -256 , 256 , -256 , 256 , 256 , -256 , 256 ] ,
+          "srcquad"  : [ 0 , 0 , 512 , 0 , 512 , 512 , 0 , 512 ] ,
+          "tex_id"   : 0 ,
+          "blend_id" : 0
+        }
+      ]
+    }
+  ] ,
+  "blend"    : [
+    {
+      "mode" : [ "FUNC_ADD" , "SRC_ALPHA" , "ONE_MINUS_SRC_ALPHA" ]
+    }
+  ]
+}

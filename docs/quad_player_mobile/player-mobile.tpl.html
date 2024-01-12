@@ -95,33 +95,42 @@ ul {
 
 #viewer_top_nav,
 #debugger_top_nav {
-	position        : fixed;
-	top             : 0;
-	left            : 0;
-	width           : 100vw;
+	position : fixed;
+	top      : 0;
+	left     : 0;
+	width    : 100vw;
+	display  : block;
+}
+#debugger_top_nav {
+	background-color : #404040;
+	border-bottom    : 2px #c0c0c0 solid;
+}
+#viewer_top_nav p,
+#debugger_top_nav p {
 	display         : flex;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;
 	align-items     : center;
+	margin          : 0;
+	padding         : 0;
 }
 
 #viewer_bottom_nav {
-	position        : fixed;
-	bottom          : 0;
-	left            : 0;
-	width           : 100vw;
+	position : fixed;
+	bottom   : 0;
+	left     : 0;
+	width    : 100vw;
+	display  : block;
+}
+#viewer_bottom_nav p {
 	display         : flex;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;
 	align-items     : center;
-}
-
-#debugger_top_nav {
-	position         : fixed;
-	background-color : #404040;
-	border-bottom    : 2px #c0c0c0 solid;
+	margin          : 0;
+	padding         : 0;
 }
 
 #export_div {
@@ -234,6 +243,18 @@ function btnPrevNext( qdata, adj ){
 		qdata.anim_fps  += adj;
 }
 
+function qdata_filetable( qdata, files ){
+	files.innerHTML = '';
+	if ( qdata.name )
+		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
+	for ( var i=0; i < qdata.IMAGE.length; i++ ){
+		if ( ! qdata.IMAGE[i] || ! qdata.IMAGE[i].name )
+			continue;
+		var img = qdata.IMAGE[i];
+		files.innerHTML += '<li>[IMAGE][' + i + '] ' + img.name + ' (' + JSON.stringify(img.pos) + ')</li>';
+	}
+}
+
 function qdata_tagtable( tag ){
 	if ( ! tag )
 		return '';
@@ -287,8 +308,8 @@ function quad_mainlist( quad ){
 	return -1;
 }
 
-function qdata_listing( qdata, type, id, visible=false ){
-	var qchild = QUAD.export.listAttach(qdata, type, id, false);
+function qdata_listing( qdata, type, id ){
+	var qchild = QUAD.export.listAttach(qdata, type, id);
 	var qtype  = qdata.QUAD[type][id];
 
 	var qname  = qtype.name || type + ' ' + id;
@@ -308,13 +329,10 @@ function qdata_listing( qdata, type, id, visible=false ){
 	html += '</p>';
 
 	if ( qchild.length > 0 ){
-		if ( visible )
-			html += '<ul style="display:block;">';
-		else
-			html += '<ul style="display:none;">';
-
+		html += '<ul style="display:none;">';
 		qchild.forEach(function(cv,ck){
-			html += qdata_listing(qdata, cv[0], cv[1], false);
+			cv = cv.split(',');
+			html += qdata_listing(qdata, cv[0], cv[1]);
 		});
 		html += '</ul>';
 	}
@@ -394,32 +412,41 @@ var QUAD = {};
 (function($){
 
 	function QuadGL(Q){
-	var $ = this;
-	var m = {};
+	var $ = this; // public
+	var __ = {};  // private
 
 	//////////////////////////////
 
-	m.GL = '';
-	m.SHADER = {};
+	__.GL = '';
+	__.SHADER = {};
+	__.MAX_TEX_SIZE = -1;
 
 	$.init = function( dom ){
 		var opt = {
 			alpha                 : true,
 			antialias             : true,
-			depth                 : false,
+			depth                 : true,
 			premultipliedAlpha    : false,
 			preserveDrawingBuffer : true,
 			stencil               : false,
 		};
-		m.GL = dom.getContext('webgl', opt);
-		if ( ! m.GL )
+		__.GL = dom.getContext('webgl', opt);
+		if ( ! __.GL )
 			return Q.func.error('WebGL context failed');
-		var form = m.GL.getShaderPrecisionFormat(m.GL.FRAGMENT_SHADER, m.GL.HIGH_FLOAT);
+		var form = __.GL.getShaderPrecisionFormat(__.GL.FRAGMENT_SHADER, __.GL.HIGH_FLOAT);
 		if ( ! form )
 			return Q.func.error('Fragment Shader has no highp support');
 
+		var maxsz = $.detectMaxTexSize();
+		if ( maxsz < 1 )
+			return Q.func.error('MAX_TEXTURE_SIZE < 1', maxsz);
+		__.MAX_TEX_SIZE = maxsz | 0;
+
 		var vert_src, frag_src;
-		Q.func.log('WebGL + highp init OK', ['precision',form.precision]);
+		Q.func.log('WebGL + highp init OK',
+			['precision',form.precision],
+			['MAX_TEXTURE_SIZE',__.MAX_TEX_SIZE]
+		);
 
 		//////////////////////////////
 
@@ -441,7 +468,7 @@ var QUAD = {};
 				gl_FragColor = u_color;
 			}
 		`;
-		m.SHADER.lines = m.createShader('draw lines', vert_src, frag_src);
+		__.SHADER.lines = __.createShader('draw lines', vert_src, frag_src);
 
 		//////////////////////////////
 
@@ -449,104 +476,107 @@ var QUAD = {};
 			attribute  highp  vec4   a_fog;
 			attribute  highp  vec3   a_xyz;
 			attribute  highp  vec2   a_uv;
-			attribute  lowp   float  a_tid;
-			uniform    highp  vec2   u_pxsize[5];
+			attribute  lowp   float  a_z;
+			uniform    highp  vec2   u_pxsize[2];
 			varying    highp  vec4   v_fog;
 			varying    highp  vec2   v_uv;
 			varying    highp  float  v_z;
-			varying    lowp   float  v_tid;
 
 			highp  vec4   FOG;
-			highp  vec3   POS;
-			highp  vec2   TEX;
+			highp  vec3   XYZ;
+			highp  vec2   UV;
 			highp  float  z;
 			void main(void){
 				z = 1.0 / a_xyz.z;
 				FOG = a_fog * z;
-				POS = a_xyz * z;
-				TEX = a_uv  * z;
+				XYZ = a_xyz * z;
+				UV  = a_uv  * z;
 
-				POS.x = (POS.x + 0.5) * u_pxsize[0].x;
-				POS.y = (POS.y + 0.5) * u_pxsize[0].y;
+				XYZ.x = (XYZ.x + 0.5) * u_pxsize[0].x;
+				XYZ.y = (XYZ.y + 0.5) * u_pxsize[0].y;
 
 				v_fog = FOG;
-				v_uv  = TEX;
+				v_uv  = UV;
 				v_z   = z;
-				v_tid = a_tid;
-				gl_Position = vec4(POS.x, POS.y, 1.0, 1.0);
+				gl_Position = vec4(XYZ.x, XYZ.y, a_z, 1.0);
 			}
 		`;
 		frag_src = `
-			uniform  sampler2D  u_tex[4];
-			uniform  highp  vec2   u_pxsize[5];
+			uniform  sampler2D  u_tex;
+			uniform  highp  vec2   u_pxsize[2];
 			varying  highp  vec4   v_fog;
 			varying  highp  vec2   v_uv;
 			varying  highp  float  v_z;
-			varying  lowp   float  v_tid;
 
 			highp  vec4   FOG;
-			highp  vec2   TEX;
+			highp  vec2   UV;
 			highp  float  z;
-			lowp   int    tid;
 			void main(void){
-				z = 1.0 / v_z;
+				z   = 1.0 / v_z;
 				FOG = v_fog * z;
-				TEX = v_uv  * z;
-
-				tid = int(v_tid);
-				if ( tid == 0 ){
-					TEX *= u_pxsize[1];
-					gl_FragColor = texture2D(u_tex[0], TEX) * FOG;
-				}
-				else
-				if ( tid == 1 ){
-					TEX *= u_pxsize[2];
-					gl_FragColor = texture2D(u_tex[1], TEX) * FOG;
-				}
-				else
-				if ( tid == 2 ){
-					TEX *= u_pxsize[3];
-					gl_FragColor = texture2D(u_tex[2], TEX) * FOG;
-				}
-				else
-				if ( tid == 3 ){
-					TEX *= u_pxsize[4];
-					gl_FragColor = texture2D(u_tex[3], TEX) * FOG;
-				}
-				else
-					gl_FragColor = FOG;
+				UV  = v_uv  * z;
+				gl_FragColor = texture2D(u_tex, UV * u_pxsize[1]) * FOG;
+				if ( gl_FragColor.a == 0.0 )
+					discard;
 			}
 		`;
-		// Error: '[]' : Index expression must be constant
-		m.SHADER.keyframe = m.createShader('draw keyframe', vert_src, frag_src);
+		__.SHADER.keyframe = __.createShader('draw keyframe', vert_src, frag_src);
+
+		//////////////////////////////
+
+		vert_src = `
+			attribute  highp  vec2   a_xy;
+			attribute  highp  vec2   a_uv;
+			uniform    highp  vec2   u_pxsize[2];
+			varying    highp  vec2   v_uv;
+
+			highp  vec2   XY;
+			void main(void){
+				v_uv = a_uv;
+				XY = a_xy * u_pxsize[0];
+				gl_Position = vec4(XY.x, XY.y, 1.0, 1.0);
+			}
+		`;
+		frag_src = `
+			uniform  sampler2D  u_tex;
+			uniform  highp  vec2   u_pxsize[2];
+			varying  highp  vec2   v_uv;
+
+			highp  vec2   UV;
+			void main(void){
+				UV = v_uv * u_pxsize[1];
+				gl_FragColor = texture2D(u_tex, UV);
+			}
+		`;
+		__.SHADER.vram = __.createShader('draw vram', vert_src, frag_src);
 
 		//////////////////////////////
 
 		return true;
 	}
 
-	m.createShader = function( name, vert_src, frag_src ){
-		var vert_shader = m.GL.createShader(m.GL.VERTEX_SHADER);
-		m.GL.shaderSource (vert_shader, vert_src);
-		m.GL.compileShader(vert_shader);
-		var t = m.GL.getShaderParameter(vert_shader, m.GL.COMPILE_STATUS);
+	__.createShader = function( name, vert_src, frag_src ){
+		var vert_shader = __.GL.createShader(__.GL.VERTEX_SHADER);
+		__.GL.shaderSource (vert_shader, vert_src);
+		__.GL.compileShader(vert_shader);
+		var t = __.GL.getShaderParameter(vert_shader, __.GL.COMPILE_STATUS);
 		if ( ! t )
-			return Q.func.error( m.GL.getShaderInfoLog(vert_shader) );
+			return Q.func.error( __.GL.getShaderInfoLog(vert_shader) );
 
-		var frag_shader = m.GL.createShader(m.GL.FRAGMENT_SHADER);
-		m.GL.shaderSource (frag_shader, frag_src);
-		m.GL.compileShader(frag_shader);
-		var t = m.GL.getShaderParameter(frag_shader, m.GL.COMPILE_STATUS);
+		var frag_shader = __.GL.createShader(__.GL.FRAGMENT_SHADER);
+		__.GL.shaderSource (frag_shader, frag_src);
+		__.GL.compileShader(frag_shader);
+		var t = __.GL.getShaderParameter(frag_shader, __.GL.COMPILE_STATUS);
 		if ( ! t )
-			return Q.func.error( m.GL.getShaderInfoLog(frag_shader) );
+			return Q.func.error( __.GL.getShaderInfoLog(frag_shader) );
 
-		var prog = m.GL.createProgram();
-		m.GL.attachShader(prog, vert_shader);
-		m.GL.attachShader(prog, frag_shader);
-		m.GL.linkProgram (prog);
-		var t = m.GL.getProgramParameter(prog, m.GL.LINK_STATUS);
+		var prog = __.GL.createProgram();
+		__.GL.attachShader(prog, vert_shader);
+		__.GL.attachShader(prog, frag_shader);
+		__.GL.linkProgram (prog);
+		var t = __.GL.getProgramParameter(prog, __.GL.LINK_STATUS);
 		if ( ! t )
-			return Q.func.error( m.GL.getProgramInfoLog(prog) );
+			return Q.func.error( __.GL.getProgramInfoLog(prog) );
 
 		Q.func.log('shader init', name);
 		return prog;
@@ -555,123 +585,150 @@ var QUAD = {};
 	//////////////////////////////
 
 	$.drawLine = function( quads, color ){
-		m.GL.useProgram( m.SHADER.lines );
-		var loc = m.shaderLoc(m.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
-		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
+		__.GL.useProgram( __.SHADER.lines );
+		var loc = __.shaderLoc(__.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
+		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
-		m.GL.lineWidth(2);
+		__.GL.lineWidth(2);
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
 
-		m.setVertexAttrib(loc.a_xy, quads, 2);
-		m.GL.uniform4fv  (loc.u_color , color);
-		m.GL.uniform2fv  (loc.u_pxsize, pxsz);
-		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
+		__.setVertexAttrib(loc.a_xy, quads, 2);
+		__.GL.uniform4fv  (loc.u_color , color);
+		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var idxlen = quads.length / 2;  // number of x,y
-		m.indiceLine(idxlen);
+		__.indiceLine(idxlen);
 	}
 
-	$.drawKeyframe = function( dst, src, fog, tid, image ){
-		m.GL.useProgram( m.SHADER.keyframe );
-		var loc = m.shaderLoc(m.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_tid', 'u_pxsize', 'u_tex');
-		var view = [ m.GL.drawingBufferWidth * 0.5 , m.GL.drawingBufferHeight * 0.5 ];
+	$.drawKeyframe = function( dst, src, fog, z, image ){
+		__.GL.useProgram( __.SHADER.keyframe );
+		var loc = __.shaderLoc(__.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_z', 'u_pxsize', 'u_tex');
+		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
-		// set up 4 textures
-		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
-		[0,1,2,3].forEach(function(v){
-			var img = image[v];
-			pxsz = pxsz.concat([ 1.0/img.w , 1.0/img.h ]);
-			m.GL.activeTexture(m.GL.TEXTURE0 + v);
-			m.GL.bindTexture  (m.GL.TEXTURE_2D, img.tex);
-		});
+		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w , 1.0/image.h ];
+		__.GL.activeTexture(__.GL.TEXTURE0);
+		__.GL.bindTexture  (__.GL.TEXTURE_2D, image.tex);
 
-		m.setVertexAttrib(loc.a_xyz, dst, 3);
-		m.setVertexAttrib(loc.a_uv , src, 2);
-		m.setVertexAttrib(loc.a_fog, fog, 4);
-		m.setVertexAttrib(loc.a_tid, tid, 1);
-		m.GL.uniform2fv  (loc.u_pxsize, pxsz);
-		m.GL.uniform1iv  (loc.u_tex, [0,1,2,3]);
-		m.GL.viewport(0, 0, view[0]*2, view[1]*2);
+		__.setVertexAttrib(loc.a_xyz, dst, 3);
+		__.setVertexAttrib(loc.a_uv , src, 2);
+		__.setVertexAttrib(loc.a_fog, fog, 4);
+		__.setVertexAttrib(loc.a_z  , z  , 1);
+		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		__.GL.uniform1i   (loc.u_tex   , 0   );
+		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var dstlen = dst.length / 3; // number of x,y
-		m.indiceQuad(dstlen);
+		__.indiceQuad(dstlen);
 	}
 
-	m.indiceLine = function( len ){
+	$.drawVRAM = function( vram, tex, rect ){
+		__.GL.useProgram( __.SHADER.vram );
+		var loc = __.shaderLoc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
+		var view = [ vram.w * 0.5 , vram.h * 0.5 ];
+		var sw = rect[2] - rect[0];
+		var sh = rect[3] - rect[1];
+
+		// to be used with canvas - DO NOT flipy !
+		var pxsz = [ 1.0/view[0] , 1.0/view[1] , 1.0/sw , 1.0/sh ];
+		__.GL.activeTexture(__.GL.TEXTURE0);
+		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
+
+		var rx1 = rect[0] - view[0];
+		var ry1 = rect[1] - view[1];
+		var rx2 = rect[2] - view[0];
+		var ry2 = rect[3] - view[1];
+		var dst = [rx1,ry1 , rx2,ry1 , rx2,ry2 , rx1,ry2];
+		var src = [0,0 , sw,0 , sw,sh , 0,sh];
+		__.setVertexAttrib(loc.a_xy, dst, 2);
+		__.setVertexAttrib(loc.a_uv, src, 2);
+		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		__.GL.uniform1i   (loc.u_tex   , 0   );
+		__.GL.viewport(0, 0, vram.w, vram.h);
+
+		$.enableFrameBuffer(vram.tex);
+		__.indiceQuad(4);
+		$.enableFrameBuffer(0);
+	}
+
+	__.indiceLine = function( len ){
 		var idx = [];
 		for ( var i=0; i < len; i += 4 )
 			idx.push(i+0,i+1 , i+1,i+2 , i+2,i+3 , i+3,i+0);
 
-		var buf = m.GL.createBuffer();
-		m.GL.bindBuffer(m.GL.ELEMENT_ARRAY_BUFFER, buf);
-		m.GL.bufferData(m.GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), m.GL.STATIC_DRAW);
+		var buf = __.GL.createBuffer();
+		__.GL.bindBuffer(__.GL.ELEMENT_ARRAY_BUFFER, buf);
+		__.GL.bufferData(__.GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), __.GL.STATIC_DRAW);
 
 		// 1 quad = 4 x,y   = 8 numbers
 		//        = 4 lines = 8 points / indices
-		m.GL.drawElements(m.GL.LINES, len/4*8, m.GL.UNSIGNED_SHORT, 0);
+		__.GL.drawElements(__.GL.LINES, len/4*8, __.GL.UNSIGNED_SHORT, 0);
 	}
 
-	m.indiceQuad = function( len ){
+	__.indiceQuad = function( len ){
 		var idx = [];
 		for ( var i=0; i < len; i += 4 )
 			idx.push(i+0,i+1,i+2 , i+0,i+2,i+3);
 
-		var buf = m.GL.createBuffer();
-		m.GL.bindBuffer(m.GL.ELEMENT_ARRAY_BUFFER, buf);
-		m.GL.bufferData(m.GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), m.GL.STATIC_DRAW);
+		var buf = __.GL.createBuffer();
+		__.GL.bindBuffer(__.GL.ELEMENT_ARRAY_BUFFER, buf);
+		__.GL.bufferData(__.GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), __.GL.STATIC_DRAW);
 
 		// 1 quad = 4 x,y       =  8 numbers
 		//        = 4 x,y,z     = 12 numbers
 		//        = 2 triangles =  6 points / indices
-		m.GL.drawElements(m.GL.TRIANGLES, len/4*6, m.GL.UNSIGNED_SHORT, 0);
+		__.GL.drawElements(__.GL.TRIANGLES, len/4*6, __.GL.UNSIGNED_SHORT, 0);
 	}
 
-	m.shaderLoc = function(){
+	__.shaderLoc = function(){
 		var shader = arguments[0];
 		var loc    = {};
 		for ( var i=1; i < arguments.length; i++ )
 		{
 			var v = arguments[i];
 			switch ( v.charAt(0) ){
-			case 'a':  loc[v] = m.GL.getAttribLocation (shader, v); break;
-			case 'u':  loc[v] = m.GL.getUniformLocation(shader, v); break;
+			case 'a':  loc[v] = __.GL.getAttribLocation (shader, v); break;
+			case 'u':  loc[v] = __.GL.getUniformLocation(shader, v); break;
 			}
 		} // for ( var i=1; i < arguments.length; i++ )
 		return loc;
 	}
 
-	m.setVertexAttrib = function( loc, data, v ){
-		var buf = m.GL.createBuffer();
-		m.GL.bindBuffer(m.GL.ARRAY_BUFFER, buf);
-		m.GL.bufferData(m.GL.ARRAY_BUFFER, new Float32Array(data), m.GL.STATIC_DRAW);
-		m.GL.enableVertexAttribArray(loc);
-		m.GL.vertexAttribPointer(loc, v, m.GL.FLOAT, false, 0, 0);
+	__.setVertexAttrib = function( loc, data, v ){
+		var buf = __.GL.createBuffer();
+		__.GL.bindBuffer(__.GL.ARRAY_BUFFER, buf);
+		__.GL.bufferData(__.GL.ARRAY_BUFFER, new Float32Array(data), __.GL.STATIC_DRAW);
+		__.GL.enableVertexAttribArray(loc);
+		__.GL.vertexAttribPointer(loc, v, __.GL.FLOAT, false, 0, 0);
 	}
 
 	//////////////////////////////
 
 	$.createTexture = function(){
-		var tex = m.GL.createTexture();
-		m.GL.bindTexture  (m.GL.TEXTURE_2D, tex);
-		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_WRAP_S    , m.GL.CLAMP_TO_EDGE);
-		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_WRAP_T    , m.GL.CLAMP_TO_EDGE);
-		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_MIN_FILTER, m.GL.NEAREST);
-		m.GL.texParameteri(m.GL.TEXTURE_2D, m.GL.TEXTURE_MAG_FILTER, m.GL.NEAREST);
+		var tex = __.GL.createTexture();
+		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.NEAREST);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.NEAREST);
 		return tex;
 	}
 
 	$.updateTexture = function( tex, img ){
 		if ( ! tex )
 			tex = $.createTexture();
-		m.GL.bindTexture(m.GL.TEXTURE_2D, tex);
-		m.GL.texImage2D(
-			m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level , internalformat
-			m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
+		__.GL.texImage2D(
+			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level , internalformat
+			__.GL.RGBA       , __.GL.UNSIGNED_BYTE , // format , type
 		img);
 	}
 
 	$.createPixel = function( hex, w=1, h=1 ){
 		hex = Q.math.clamp(hex, 0, 255) | 0;
+		if ( w < 0 )  w = __.MAX_TEX_SIZE;
+		if ( h < 0 )  h = __.MAX_TEX_SIZE;
+
 		var size  = w * h * 4;
 		var uint8 = new Uint8Array(size);
 		for ( var i=0; i < size; i++ )
@@ -682,21 +739,21 @@ var QUAD = {};
 			h : h ,
 			tex : $.createTexture() ,
 		};
-		m.GL.bindTexture(m.GL.TEXTURE_2D, pix.tex);
-		m.GL.texImage2D(
-			m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
-			pix.w , pix.h   , 0                  , // width  , height , border
-			m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+		__.GL.bindTexture(__.GL.TEXTURE_2D, pix.tex);
+		__.GL.texImage2D(
+			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level  , internalformat
+			pix.w , pix.h    , 0                   , // width  , height , border
+			__.GL.RGBA       , __.GL.UNSIGNED_BYTE , // format , type
 			uint8
 		);
 		return pix;
 	}
 
 	$.readRGBA = function(){
-		var bw = m.GL.drawingBufferWidth;
-		var bh = m.GL.drawingBufferHeight;
+		var bw = __.GL.drawingBufferWidth;
+		var bh = __.GL.drawingBufferHeight;
 		var buf = new Uint8Array( bw * bh * 4 );
-		m.GL.readPixels(0, 0, bw, bh, m.GL.RGBA, m.GL.UNSIGNED_BYTE, buf);
+		__.GL.readPixels(0, 0, bw, bh, __.GL.RGBA, __.GL.UNSIGNED_BYTE, buf);
 
 		var pix = new Uint8Array( 12 + (bw * bh * 4) );
 		Q.binary.setint(pix, 0, 4, 0x41424752); // RGBA
@@ -722,38 +779,67 @@ var QUAD = {};
 
 	$.enableBlend = function( blend ){
 		if ( ! blend )
-			return m.GL.disable(m.GL.BLEND);
+			return __.GL.disable(__.GL.BLEND);
 
 		var c = blend.color;
-		m.GL.blendColor(c[0], c[1], c[2], c[3]);
+		__.GL.blendColor(c[0], c[1], c[2], c[3]);
 
 		var mode = blend.mode;
 		if ( ! Array.isArray(mode) )
-			return m.GL.disable(m.GL.BLEND);
+			return __.GL.disable(__.GL.BLEND);
 
 		if ( mode.length === 6 ){
-			m.GL.blendEquationSeperate(m.GL[ mode[0] ] , m.GL[ mode[1] ]);
-			m.GL.blendFuncSeperate    (m.GL[ mode[2] ] , m.GL[ mode[3] ] , m.GL[ mode[4] ] , m.GL[ mode[5] ]);
-			return m.GL.enable(m.GL.BLEND);
+			__.GL.blendEquationSeperate(__.GL[ mode[0] ] , __.GL[ mode[1] ]);
+			__.GL.blendFuncSeperate    (__.GL[ mode[2] ] , __.GL[ mode[3] ] , __.GL[ mode[4] ] , __.GL[ mode[5] ]);
+			return __.GL.enable(__.GL.BLEND);
 		}
 		if ( mode.length === 3 ){
-			m.GL.blendEquation(m.GL[ mode[0] ]);
-			m.GL.blendFunc    (m.GL[ mode[1] ] , m.GL[ mode[2] ]);
-			return m.GL.enable(m.GL.BLEND);
+			__.GL.blendEquation(__.GL[ mode[0] ]);
+			__.GL.blendFunc    (__.GL[ mode[1] ] , __.GL[ mode[2] ]);
+			return __.GL.enable(__.GL.BLEND);
 		}
-		return m.GL.disable(m.GL.BLEND);
+		return __.GL.disable(__.GL.BLEND);
+	}
+
+	$.enableDepth = function( depth ){
+		if ( ! depth ){
+			__.GL.clear(__.GL.DEPTH_BUFFER_BIT);
+			//__.GL.depthMask(true); // can write depth
+			__.GL.clearDepth(1.0);
+			return __.GL.disable(__.GL.DEPTH_TEST);
+		}
+
+		__.GL.depthFunc(__.GL[depth]);
+		return __.GL.enable(__.GL.DEPTH_TEST);
+	}
+
+	$.enableFrameBuffer = function( tex ){
+		if ( ! tex ){
+			__.GL.bindFramebuffer(__.GL.FRAMEBUFFER, null);
+			return null;
+		}
+
+		var fb = __.GL.createFramebuffer();
+		__.GL.bindFramebuffer     (__.GL.FRAMEBUFFER, fb);
+		__.GL.framebufferTexture2D(__.GL.FRAMEBUFFER, __.GL.COLOR_ATTACHMENT0, __.GL.TEXTURE_2D, tex, 0);
+		var t = __.GL.checkFramebufferStatus(__.GL.FRAMEBUFFER);
+		if ( t === __.GL.FRAMEBUFFER_COMPLETE ){
+			Q.func.log('framebuffer OK');
+			return fb;
+		}
+		return Q.func.error('framebuffer failed',t);
 	}
 
 	$.clear = function(){
-		m.GL.clear( m.GL.COLOR_BUFFER_BIT );
-		m.GL.colorMask ( true , true , true , true );
-		m.GL.clearColor( 0 , 0 , 0 , 0 );
-		m.GL.flush();
+		__.GL.clear(__.GL.COLOR_BUFFER_BIT);
+		//__.GL.colorMask(true , true , true , true); // can write red, green, blue, alpha
+		__.GL.clearColor(0 , 0 , 0 , 0);
+		__.GL.flush();
 	}
 
 	$.isValidConstant = function(){
 		for ( var i=0; i < arguments.length; i++ ){
-			if ( ! m.GL[ arguments[i] ] )
+			if ( ! __.GL[ arguments[i] ] )
 				return false;
 		}
 		return true;
@@ -762,67 +848,70 @@ var QUAD = {};
 	//////////////////////////////
 
 	$.drawingBuffer = function( max ){
-		return [ m.GL.drawingBufferWidth , m.GL.drawingBufferHeight ];
+		return [ __.GL.drawingBufferWidth , __.GL.drawingBufferHeight ];
 	}
 
-	$.maxTextureSize = function(){
+	$.detectMaxTexSize = function(){
 		var tex = $.createTexture();
-		m.GL.bindTexture(m.GL.TEXTURE_2D, tex);
+		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 
-		var maxsz = m.GL.getParameter( m.GL.MAX_TEXTURE_SIZE );
-		maxsz = Math.abs( maxsz|0 );
+		var maxsz = __.GL.getParameter( __.GL.MAX_TEXTURE_SIZE ) >> 1;
+		var bw = __.GL.canvas.width;
+		var bh = __.GL.canvas.height;
 
-		var bw = m.GL.canvas.width;
-		var bh = m.GL.canvas.height;
-
+		if ( maxsz < 0 )
+			maxsz = 0;
 		while ( maxsz > 0 ){
-			m.GL.texImage2D(
-				m.GL.TEXTURE_2D , 0 , m.GL.RGBA      , // target , level  , internalformat
-				maxsz , maxsz   , 0                  , // width  , height , border
-				m.GL.RGBA       , m.GL.UNSIGNED_BYTE , // format , type
+			// test if reading texture at this size
+			__.GL.texImage2D(
+				__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level  , internalformat
+				maxsz , maxsz    , 0                   , // width  , height , border
+				__.GL.RGBA       , __.GL.UNSIGNED_BYTE , // format , type
 				null
 			);
-			m.GL.canvas.width  = maxsz;
-			m.GL.canvas.height = maxsz;
+			// test if writing canvas at this size
+			__.GL.canvas.width  = maxsz;
+			__.GL.canvas.height = maxsz;
 
 			var error = 0;
-			error |= ( m.GL.getError()    !== m.GL.NO_ERROR            );
-			error |= ( m.GL.canvas.width  !== m.GL.drawingBufferWidth  );
-			error |= ( m.GL.canvas.height !== m.GL.drawingBufferHeight );
-			if ( error === 0 ){
-				m.GL.canvas.width  = bw;
-				m.GL.canvas.height = bh;
-				return maxsz;
-			}
+			error |= ( __.GL.getError()    !== __.GL.NO_ERROR            );
+			error |= ( __.GL.canvas.width  >   __.GL.drawingBufferWidth  );
+			error |= ( __.GL.canvas.height >   __.GL.drawingBufferHeight );
+			if ( error === 0 )
+				break;
 
+			// has error, halved maxsz and test again
 			maxsz >>= 1;
 		} // while ( maxsz > 0 )
 
-		m.GL.canvas.width  = bw;
-		m.GL.canvas.height = bh;
-		return 0;
+		// restore canvas size after testing
+		__.GL.canvas.width  = bw;
+		__.GL.canvas.height = bh;
+		return maxsz;
 	}
 
-	$.isMaxTextureSize = function(w, h){
-		var max = $.maxTextureSize();
-		if ( w > max )  return true;
-		if ( h > max )  return true;
-		return false;
+	$.maxTextureSize = function(){
+		return __.MAX_TEX_SIZE;
+	}
+	$.isMaxTexSize = function(w, h){
+		if ( w > __.MAX_TEX_SIZE || h > __.MAX_TEX_SIZE )
+			return false;
+		return true;
 	}
 
 	$.canvasSize = function(){
-		return [ m.GL.canvas.width * 0.5 , m.GL.canvas.height * 0.5 ];
+		return [ __.GL.canvas.width * 0.5 , __.GL.canvas.height * 0.5 ];
 	}
 
 	$.isCanvasResized = function(){
 		// display.block = [w,h] , display.none = [0,0]
 		var c = 0;
-		c |= ( m.GL.canvas.width  !== m.GL.canvas.clientWidth  );
-		c |= ( m.GL.canvas.height !== m.GL.canvas.clientHeight );
+		c |= ( __.GL.canvas.width  !== __.GL.canvas.clientWidth  );
+		c |= ( __.GL.canvas.height !== __.GL.canvas.clientHeight );
 
 		if ( c ){
-			m.GL.canvas.width  = m.GL.canvas.clientWidth;
-			m.GL.canvas.height = m.GL.canvas.clientHeight;
+			__.GL.canvas.width  = __.GL.canvas.clientWidth;
+			__.GL.canvas.height = __.GL.canvas.clientHeight;
 		}
 		return c;
 	}
@@ -832,47 +921,32 @@ var QUAD = {};
 } // function QuadGL
 
 	function QuadFunc(Q){
-	var $ = this;
-	var m = {};
+	var $ = this; // public
+	var __ = {};  // private
 
 	//////////////////////////////
 
-	m.LOGS = [];
+	__.LOGS = [];
 	$.log = function(){
 		var arg = [].slice.call(arguments);
 		var txt = JSON.stringify(arg);
-		m.LOGS.unshift( txt );
-		while ( m.LOGS.length > 20 )
-			m.LOGS.pop();
+		__.LOGS.unshift( txt );
+		while ( __.LOGS.length > 20 )
+			__.LOGS.pop();
 		return true;
 	}
 	$.error = function(){
 		var arg = [].slice.call(arguments);
 		var txt = JSON.stringify(arg);
-		m.LOGS.unshift( 'ERROR : ' + txt );
-		while ( m.LOGS.length > 20 )
-			m.LOGS.pop();
+		__.LOGS.unshift( 'ERROR : ' + txt );
+		while ( __.LOGS.length > 20 )
+			__.LOGS.pop();
 		return false;
 	}
 	$.console = function(){
-		return m.LOGS.join("\n\n");
+		return __.LOGS.join("\n\n");
 	}
 
-	$.arrayClean = function( list ){
-		if ( ! Array.isArray(list) )
-			return;
-		var len = list.length;
-		while ( len > 0 ){
-			len--;
-			if ( list[len] === 0 )
-				list.splice(len, 1);
-		}
-		return;
-	}
-
-	$.isUndef = function( a ){
-		return ( typeof a === 'undefined' );
-	}
 	$.isArray = function( array, size ){
 		if ( ! Array.isArray(array) )
 			return false;
@@ -880,12 +954,50 @@ var QUAD = {};
 			return false;
 		return true;
 	}
+	$.isArrayUnique = function( array ){
+		if ( ! Array.isArray(array) )
+			return false;
+		for ( var i=0; i < array.length; i++){
+			var idx = array.indexOf( array[i] );
+			if ( idx !== i )
+				return false;
+		}
+		return true;
+	}
+	$.arrayCleanNull = function( list ){
+		if ( ! Array.isArray(list) )
+			return;
+		var len = list.length;
+		while ( len > 0 ){
+			len--;
+			if ( list[len] === 0 )
+				list.splice(len, 1);
+		} // while ( len > 0 )
+	}
+	$.arrayCleanDups = function( list ){
+		if ( ! Array.isArray(list) )
+			return;
+		var len = list.length;
+		while ( len > 0 ){
+			len--;
+			if ( list.indexOf( list[len] ) !== len )
+				list.splice(len, 1);
+		} // while ( len > 0 )
+	}
+	$.arrayNumber = function( size ){
+		var array = [];
+		for ( var i=0; i < size; i++ )
+			array.push(i);
+		return array;
+	}
 
+	$.isUndef = function( a ){
+		return ( typeof a === 'undefined' );
+	}
 	$.fileExtension = function( fn ){
 		var ext = fn.split('.').pop();
 		return ext.toLowerCase();
 	}
-
 	$.copyObject = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
 	}
@@ -913,11 +1025,11 @@ var QUAD = {};
 						switch ( ext ){
 							case 'quad':
 								var text = Q.binary.uint2txt(dat);
-								pro[i] = m.uploadHandler(qdata, 'quad', key[i], text);
+								pro[i] = __.uploadHandler(qdata, 'quad', key[i], text);
 								break;
 							case 'png':
 								var data = 'data:image/png;base64,' + Q.binary.toBase64(dat);
-								pro[i] = m.uploadHandler(qdata, 'image', key[i], data);
+								pro[i] = __.uploadHandler(qdata, 'image', key[i], data);
 								break;
 						} // switch ( ext )
 					} // for ( var i=0; i < key.length; i++ )
@@ -932,7 +1044,7 @@ var QUAD = {};
 					}
 					reader.readAsText(up);
 				}).then(function(text){
-					return m.uploadHandler(qdata, 'quad', up.name, text);
+					return __.uploadHandler(qdata, 'quad', up.name, text);
 				});
 
 			case 'png':
@@ -943,27 +1055,76 @@ var QUAD = {};
 					}
 					reader.readAsDataURL(up);
 				}).then(function(data){
-					return m.uploadHandler(qdata, 'image', up.name, data);
+					return __.uploadHandler(qdata, 'image', up.name, data);
 				});
 		} // switch ( ext )
 		return 0;
 	}
 
-	m.uploadHandler = function( qdata, type, fname, data ){
+	__.isRectCollide = function( rect, list ){
+		function collide( rect1, rect2 ){
+			if ( rect1[0] >= rect2[2] )  return false; // r1.x1 >= r2.x2 , over right
+			if ( rect1[1] >= rect2[3] )  return false; // r1.y1 >= r2.y2 , over bottom
+			if ( rect1[2] <= rect2[0] )  return false; // r1.x2 <= r2.x1 , over left
+			if ( rect1[3] <= rect2[1] )  return false; // r1.y2 <= r2.y1 , over top
+			return true;
+		}
+		for ( var i=0; i < list.length; i++ ){
+			if ( ! list[i] )
+				continue;
+			var col = collide(rect, list[i].pos);
+			if ( col )
+				return true;
+		}
+		return false;
+	}
+
+	__.VRAMposrect = function( xy, vram, texsz, list ){
+		var x2 = xy[0] + texsz[0];
+		var y2 = xy[1] + texsz[1];
+		if ( x2 > vram.w )  return 0;
+		if ( y2 > vram.h )  return 0;
+
+		var rect = [xy[0] , xy[1] , x2 , y2];
+		var col = __.isRectCollide(rect, list);
+		if ( ! col )
+			return rect;
+
+		// morton VRAM allocation
+		var halfx = xy[0] + ((vram.w - xy[0]) >> 1);
+		var halfy = xy[1] + ((vram.h - xy[1]) >> 1);
+
+		// in 100x100 slots
+		if ( halfx & 0xff )  return 0;
+		if ( halfy & 0xff )  return 0;
+
+		col = __.VRAMposrect( [halfx,xy[1]], vram, texsz, list);
+		if ( col )
+			return col;
+		col = __.VRAMposrect( [xy[0],halfy], vram, texsz, list);
+		if ( col )
+			return col;
+		col = __.VRAMposrect( [halfx,halfy], vram, texsz, list);
+		if ( col )
+			return col;
+
+		// failed to allocate VRAM
+		return 0;
+	}
+
+	__.uploadHandler = function( qdata, type, fname, data ){
 		switch( type ){
 			case 'quad':
 				var quad   = JSON.parse(data);
-				qdata.QUAD = m.quadfileCheck(quad);
+				qdata.QUAD = __.quadfileCheck(quad);
 				qdata.name = fname.replace(/[^A-Za-z0-9]/g, '_');
-				return $.log('UPLOAD quad = ' + fname);
+				return $.log('UPLOAD quad', fname);
 
 			case 'image':
 				return new Promise(function(resolve, reject){
+					var dummytex = Q.gl.createPixel(255);
 					var fnm = fname.match(/\.([0-9]+)\./);
 					var tid = fnm[1];
-					var tex = qdata.IMAGE[tid];
-					if ( ! tex )
-						return 0;
 
 					var img = new Image;
 					img.onload = function(){
@@ -973,21 +1134,34 @@ var QUAD = {};
 				}).then(function(res){
 					var tid = res[0];
 					var img = res[1];
-					if ( Q.gl.isMaxTextureSize(img.width, img.height) )
-						return $.error('OVER Image Max Texture Size = ' + fname);
 
-					var tex = qdata.IMAGE[tid];
-					tex.w = img.width;
-					tex.h = img.height;
-					tex.name = fname;
-					Q.gl.updateTexture(tex.tex, img);
-					return $.log('UPLOAD image = ' +tid+ ' , ' +tex.w+ 'x' +tex.h+ ' , ' +fname);
+					var tex = Q.gl.createTexture();
+					Q.gl.updateTexture(tex, img);
+					return [tid,tex,img.width,img.height];
+				}).then(function(res){
+					var tid = res[0];
+					var tex = res[1];
+					var w = res[2];
+					var h = res[3];
+
+					// remove loaded texture
+					qdata.IMAGE[tid] = 0;
+					var pos = __.VRAMposrect( [0,0], qdata.VRAM , [w,h] , qdata.IMAGE );
+					if ( ! pos )
+						return $.error('cannot fit texture into VRAM', [qdata.VRAM.w,qdata.VRAM.h] , [w,h] , qdata.IMAGE);
+
+					Q.gl.drawVRAM(qdata.VRAM, tex, pos);
+					qdata.IMAGE[tid] = {
+						pos  : pos,
+						name : fname,
+					};
+					return $.log('UPLOAD image', tid, qdata.IMAGE[tid]);
 				});
 		} // switch( type )
 		return 0;
 	}
 
-	m.keyFogQuad = function( fog ){
+	__.keyFogQuad = function( fog ){
 		if ( typeof fog === 'string' ){
 			var c = Q.math.css_color(fog);
 			return [].concat(c, c, c, c);
@@ -1003,7 +1177,7 @@ var QUAD = {};
 		return [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1];
 	}
 
-	m.quadfileCheck = function( quad ){
+	__.quadfileCheck = function( quad ){
 		quad.blend     = quad.blend     || [];
 		quad.slot      = quad.slot      || [];
 		quad.hitbox    = quad.hitbox    || [];
@@ -1033,47 +1207,60 @@ var QUAD = {};
 		quad.hitbox.forEach(function(hv,hk){
 			if ( ! Array.isArray(hv.layer) )
 				return nullent(quad.hitbox, hk);
+			var is_null = true;
 			hv.layer.forEach(function(lv,lk){
 				if ( ! $.isArray(lv.hitquad, 8) )
 					return nullent(hv.layer, lk);
+				is_null = false;
 				hv.layer[lk] = {
 					'debug'   : lv.debug || 0,
 					'hitquad' : lv.hitquad,
 				};
-			});
-			quad.hitbox[hk] = {
+			}); // hv.layer.forEach
+			if ( is_null )
+				return nullent(quad.hitbox, hk);
+			ent = {
 				'debug' : hv.debug || 0,
 				'name'  : hv.name  || 'hitbox '+ hk,
 				'layer' : hv.layer,
 			};
+			quad.hitbox[hk] = ent;
 		}); // quad.hitbox.forEach
 
 		quad.keyframe.forEach(function(kv,kk){
 			if ( ! Array.isArray(kv.layer) )
 				return nullent(quad.keyframe, kk);
+			var is_null = true;
 			kv.layer.forEach(function(lv,lk){
 				if ( ! $.isArray(lv.dstquad, 8) )
 					return nullent(kv.layer, lk);
+				is_null = false;
 				ent = {
 					'debug'    : lv.debug || 0,
 					'dstquad'  : lv.dstquad,
 					'tex_id'   : -1,
 					'blend_id' : -1,
-					'fogquad'  : m.keyFogQuad( lv.fogquad ),
+					'fogquad'  : __.keyFogQuad( lv.fogquad ),
 					'srcquad'  : 0,
 				};
-				if ( ! $.isUndef(lv.blend_id) )  ent.blend_id = lv.blend_id; // 0 is valid
-				if ( ! $.isUndef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id;   // 0 is valid
+				if ( ! $.isUndef(lv.blend_id) )  ent.blend_id = lv.blend_id | 0; // 0 is valid
+				if ( ! $.isUndef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
 				if ( $.isArray(lv.srcquad, 8) )
 					ent.srcquad = lv.srcquad;
 				kv.layer[lk] = ent;
-			});
-			quad.keyframe[kk] = {
+			}); // kv.layer.forEach
+			if ( is_null )
+				return nullent(quad.keyframe, kk);
+			ent = {
 				'debug'  : kv.debug || 0,
 				'name'   : kv.name  || 'keyframe '+ kk,
 				'layer'  : kv.layer,
+				'order'  : kv.order,
 				'__RECT' : 0,
 			};
+			if ( ! $.isArrayUnique(ent.order) )
+				ent.order = $.arrayNumber( kv.layer.length );
+			quad.keyframe[kk] = ent;
 		}); // quad.keyframe.forEach
 
 		quad.animation.forEach(function(av,ak){
@@ -1096,8 +1283,8 @@ var QUAD = {};
 				if ( $.isArray(tv.matrix, 16) )
 					ent.matrix = tv.matrix;
 				av.timeline[tk] = ent;
-			});
-			$.arrayClean(av.timeline);
+			}); // av.timeline.forEach
+			$.arrayCleanNull(av.timeline);
 			if ( av.timeline.length < 1 )
 				return nullent(quad.animation, ak);
 			ent = {
@@ -1119,15 +1306,9 @@ var QUAD = {};
 					'debug'     : bv.debug  || 0,
 					'name'      : bv.name   || 'bone ' + bk,
 					'attach'    : bv.attach || 0,
-					'parent_id' : -1,
-					'order'     : bk,
 				};
-				if ( ! $.isUndef(bv.parent_id) && bv.parent_id !== bk )
-					ent.parent_id = bv.parent_id; // 0 is valid
-				if ( ! $.isUndef(bv.order) )
-					ent.order = bv.order; // 0 is valid
 				sv.bone[bk] = ent;
-			});
+			}); // sv.bone.forEach
 			quad.skeleton[sk] = {
 				'debug'  : sv.debug || 0,
 				'name'   : sv.name  || 'skeleton ' + sk,
@@ -1141,7 +1322,7 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.drawLines = function( qdata, layer, mat4, quad ){
+	__.drawLines = function( qdata, layer, mat4, quad ){
 		var clines = [];
 
 		var debug = [];
@@ -1171,6 +1352,7 @@ var QUAD = {};
 			[0.5,0.5,0.5,1] , // gray
 		];
 
+		Q.gl.enableBlend(0);
 		clines.forEach(function(cv,ck){
 			var cid = qdata.line_index % color.length;
 			Q.gl.drawLine(cv, color[cid]);
@@ -1180,77 +1362,89 @@ var QUAD = {};
 		});
 	}
 
-	$.drawHitbox = function( qdata, hid, mat4 ){
+	__.drawHitbox = function( qdata, hid, mat4 ){
 		var layer = qdata.QUAD.hitbox[hid].layer;
-		$.drawLines(qdata, layer, mat4, 'hitquad');
+		__.drawLines(qdata, layer, mat4, 'hitquad');
 	}
 
 	//////////////////////////////
 
-	m.drawKeyframeTex = function( qdata, layer, mat4, color ){
-		var ctexs = [];
+	__.drawKeyframeTex = function( qdata, layer, order, mat4, color ){
 		var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
-		layer.forEach(function(lv,lk){
+		var zrate = 1.0 / (layer.length + 1);
+		var buf_list = [];
+		var depth = 1.0;
+		//console.log('order',order);
+
+		// draw layers by keyframe order
+		order.forEach(function(ov){
+			var lv = layer[ov];
 			if ( ! lv )
 				return;
-			var bid = lv.blend_id;
-			if ( ! ctexs[bid] )
-				ctexs[bid] = { dst:[] , src:[] , fog:[] , tid:[] };
+			depth -= zrate;
 
-			var kv = ctexs[bid];
+			var bid = lv.blend_id | 0;
+			if ( ! buf_list[bid] )
+				buf_list[bid] = { dst:[] , src:[] , fog:[] , z:[] };
+			var ent = buf_list[bid];
+
+			if ( lv.tex_id < 0 || ! qdata.IMAGE[lv.tex_id] )
+				var src = dummysrc;
+			else
+				var src = Q.math.vram_srcquad(lv.srcquad, qdata.IMAGE[lv.tex_id].pos);
+			ent.src = ent.src.concat(src);
 
 			var dst = Q.math.quad_multi4(mat4, lv.dstquad);
 			var xyz = Q.math.perspective_quad(dst);
-			kv.dst = kv.dst.concat(xyz);
+			ent.dst = ent.dst.concat(xyz);
 
 			var clr = Q.math.fog_multi4(color, lv.fogquad);
-			kv.fog = kv.fog.concat(clr);
+			ent.fog = ent.fog.concat(clr);
 
-			var src = lv.srcquad || dummysrc;
-			kv.src = kv.src.concat(src);
-
-			kv.tid = kv.tid.concat([lv.tex_id , lv.tex_id , lv.tex_id , lv.tex_id]);
+			ent.z = ent.z.concat([depth , depth , depth , depth]);
 		});
+		//console.log('buf_list',buf_list);
 
-		qdata.QUAD.blend.forEach(function(bv,bk){
-			if ( ! ctexs[bk] )
+		Q.gl.enableDepth('LESS');
+		buf_list.forEach(function(bv,bk){
+			if ( ! bv || ! qdata.QUAD.blend[bk] )
 				return;
 			qdata.is_draw = true;
-			var kv = ctexs[bk];
-			Q.gl.enableBlend ( bv );
-			Q.gl.drawKeyframe( kv.dst, kv.src, kv.fog, kv.tid, qdata.IMAGE );
+			Q.gl.enableBlend ( qdata.QUAD.blend[bk] );
+			Q.gl.drawKeyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.VRAM );
 		});
+		Q.gl.enableDepth(0);
 	}
 
-	$.drawKeyframe = function( qdata, kid, mat4, color ){
-		var layer = qdata.QUAD.keyframe[kid].layer;
+	__.drawKeyframe = function( qdata, kid, mat4, color ){
+		var key = qdata.QUAD.keyframe[kid];
 		if ( qdata.is_lines )
-			return $.drawLines(qdata, layer, mat4, 'dstquad');
+			return __.drawLines(qdata, key.layer, mat4, 'dstquad');
 		else
-			return m.drawKeyframeTex(qdata, layer, mat4, color);
+			return __.drawKeyframeTex(qdata, key.layer, key.order, mat4, color);
 	}
 
 	//////////////////////////////
 
-	$.drawMIX = function( qdata, id, mat4, color ){
+	__.drawMIX = function( qdata, id, mat4, color ){
 		var mix = qdata.QUAD.__MIX[id];
 		mix.forEach(function(mv,mk){
 			switch ( mv.type ){
 				case 'keyframe':
 					if ( qdata.is_lines )
-						return $.drawLines(qdata, mv.layer, mat4, 'dstquad');
+						return __.drawLines(qdata, mv.layer, mat4, 'dstquad');
 					else
-						return m.drawKeyframeTex(qdata, mv.layer, mat4, color);
+						return __.drawKeyframeTex(qdata, mv.layer, mv.order, mat4, color);
 				case 'hitbox':
 					if ( ! qdata.is_hits )
 						return;
-					return $.drawLines(qdata, mv.layer, mat4, 'hitquad');
+					return __.drawLines(qdata, mv.layer, mat4, 'hitquad');
 			} // switch ( mv.type )
 		});
 	}
 
-	m.mixAttach = function( qdata, cur, nxt, rate, keymix, hitmix ){
+	__.mixAttach = function( qdata, cur, nxt, rate, keymix, hitmix ){
 		var mixslot = [];
 
 		function nextlayer( next, s ){
@@ -1282,6 +1476,8 @@ var QUAD = {};
 						'type'  : mcur.type,
 						'layer' : $.copyObject( curlayer ),
 					};
+					if ( mcur.type === 'keyframe' )
+						ent.order = qdata.QUAD[ mcur.type ][ mcur.id ].order;
 
 					var mix = 0;
 					mix |= ( mcur.type === 'keyframe' && keymix );
@@ -1296,13 +1492,13 @@ var QUAD = {};
 						return mixslot.push(ent);
 
 					ent.layer.forEach(function(lv,lk){
-						if ( ! lv )
+						if ( ! lv || ! nxtlayer[lk] )
 							return;
-						if ( lv.dstquad )
+						if ( keymix && lv.dstquad && nxtlayer[lk].dstquad )
 							lv.dstquad = Q.math.quad_mix( rate, curlayer[lk].dstquad, nxtlayer[lk].dstquad );
-						if ( lv.hitquad )
+						if ( hitmix && lv.hitquad && nxtlayer[lk].hitquad )
 							lv.hitquad = Q.math.quad_mix( rate, curlayer[lk].hitquad, nxtlayer[lk].hitquad );
-						if ( lv.fogquad )
+						if ( keymix && lv.fogquad && nxtlayer[lk].fogquad )
 							lv.fogquad = Q.math.fog_mix ( rate, curlayer[lk].fogquad, nxtlayer[lk].fogquad );
 					});
 					return mixslot.push(ent);
@@ -1319,7 +1515,7 @@ var QUAD = {};
 		};
 	}
 
-	m.animTimeIndex = function( fps, anim ){
+	__.animTimeIndex = function( fps, anim ){
 		var len = anim.timeline.length;
 		var cur = 0;
 		while (1){
@@ -1336,7 +1532,7 @@ var QUAD = {};
 		} // while (1)
 	}
 
-	m.animCurrent = function( qdata, aid, mat4, color ){
+	__.animCurrent = function( qdata, aid, mat4, color ){
 		var ret = {
 			attach : 0,
 			mat4   : mat4,
@@ -1349,7 +1545,7 @@ var QUAD = {};
 		var anim = qdata.QUAD.animation[aid];
 
 		// get current frame
-		var t = m.animTimeIndex(qdata.anim_fps, anim);
+		var t = __.animTimeIndex(qdata.anim_fps, anim);
 		var curid = t[0];
 		if ( curid < 0 )
 			return ret;
@@ -1374,7 +1570,7 @@ var QUAD = {};
 		}
 
 		// mixing tests
-		var m4, dt, c4;
+		var m4, c4;
 		var rate = t[1] / cur.time;
 
 		// mix matrix
@@ -1395,85 +1591,17 @@ var QUAD = {};
 		if ( ! cur.keyframe_mix && ! cur.hitbox_mix )
 			return ret;
 
-		ret.attach = m.mixAttach(qdata, cur.attach, nxt.attach, rate, cur.keyframe_mix, cur.hitbox_mix);
+		ret.attach = __.mixAttach(qdata, cur.attach, nxt.attach, rate, cur.keyframe_mix, cur.hitbox_mix);
 		return ret;
 	}
 
 	//////////////////////////////
 
-	m.skeletonTree = function( qdata, bone, bid, transform, mat4, color ){
-		if ( transform[bid] )
-			return true;
-
-		var bv  = bone[bid];
-		var cur = {
-			id     : bid,
-			attach : 0,
-			mat4   : mat4,
-			color  : color,
-			order  : bv.order,
-		};
-
-		// if has parent , calculate it first
-		// then inherit its mat4 and color
-		if ( bv.parent_id >= 0 ){
-			if ( ! transform[ bv.parent_id ] )
-				return false;
-			else {
-				var par = transform[ bv.parent_id ];
-				cur.mat4  = par.mat4;
-				cur.color = par.color;
-			}
-		}
-
-		// if dummy bone = done
-		if ( ! bv.attach ){
-			transform[bid] = cur;
-			return true;
-		}
-
-		// mat4 + color from 'animation' needs to be recalculated
-		// *any* is done
-		cur.attach = bv.attach;
-		if ( bv.attach.type !== 'animation' ){
-			transform[bid] = cur;
-			return true;
-		}
-
-		var t = m.animCurrent(qdata, bv.attach.id, cur.mat4, cur.color);
-		t.id    = bid;
-		t.order = bv.order;
-		transform[bid] = t;
-		return true;
-	}
-
-	$.drawSkeleton = function( qdata, sid, mat4, color ){
+	__.drawSkeleton = function( qdata, sid, mat4, color ){
 		var bone = qdata.QUAD.skeleton[sid].bone;
-
-		// we want parent * current = nested matrix
-		// save pre-computed to transform array
-		// recursive function = out of memory
-		var transform = [];
-		var is_done = false;
-		while ( ! is_done ){
-			is_done = true;
-			bone.forEach(function(bv,bk){
-				var res = m.skeletonTree( qdata, bone, bk, transform, mat4, color );
-				if ( ! res )
-					is_done = false;
-			});
-		} // while ( ! is_done )
-
-		transform.sort(function(a,b){
-			return a.order - b.order;
+		bone.forEach(function(bv,bk){
+			__.drawAttach(qdata, bv.attach, mat4, color);
 		});
-		transform.forEach(function(tv){
-			if ( ! tv.attach )
-				return;
-			$.drawAttach(qdata, tv.attach, tv.mat4, tv.color);
-		});
-
-		transform = null;
 	}
 
 	//////////////////////////////
@@ -1486,30 +1614,30 @@ var QUAD = {};
 		return true;
 	}
 
-	$.drawAttach = function( qdata, attach, mat4, color ){
+	__.drawAttach = function( qdata, attach, mat4, color ){
 		if ( ! $.isValidAttach(qdata, attach.type, attach.id) )
 			return;
 		switch ( attach.type ){
 			case 'keyframe':
-				return $.drawKeyframe( qdata, attach.id, mat4, color );
+				return __.drawKeyframe( qdata, attach.id, mat4, color );
 			case 'animation':
-				var t = m.animCurrent( qdata, attach.id, mat4, color );
+				var t = __.animCurrent( qdata, attach.id, mat4, color );
 				if ( ! t.attach )
 					return;
-				return $.drawAttach( qdata, t.attach, t.mat4, t.color );
+				return __.drawAttach( qdata, t.attach, t.mat4, t.color );
 			case 'slot':
 				qdata.QUAD.slot[ attach.id ].forEach(function(sv,sk){
-					$.drawAttach(qdata, sv, mat4, color);
+					__.drawAttach(qdata, sv, mat4, color);
 				});
 				return;
 			case 'hitbox':
 				if ( ! qdata.is_hits )
 					return;
-				return $.drawHitbox( qdata, attach.id, mat4 );
+				return __.drawHitbox( qdata, attach.id, mat4 );
 			case 'skeleton':
-				return $.drawSkeleton( qdata, attach.id, mat4, color );
+				return __.drawSkeleton( qdata, attach.id, mat4, color );
 			case '__MIX':
-				return $.drawMIX( qdata, attach.id, mat4, color );
+				return __.drawMIX( qdata, attach.id, mat4, color );
 			case 'quad':
 				var qid = qdata.QUAD.quad[ attach.id ];
 				if ( $.isUndef(qid) || qid < 0 )
@@ -1523,7 +1651,7 @@ var QUAD = {};
 			return;
 		var m4 = Q.math.matrix_multi44( mat4, qdata.matrix );
 		var c4 = Q.math.vec4_multi(color, qdata.color);
-		return $.drawAttach(qdata, qdata.attach, m4, c4);
+		return __.drawAttach(qdata, qdata.attach, m4, c4);
 	}
 
 	$.qdata_clear = function( qdata ){
@@ -1548,7 +1676,7 @@ var QUAD = {};
 				if ( sprsize[0] < 0 || sprsize[1] < 0 ){
 					// is sprite , 0,0 is at center
 					// x1 or y1 is negative
-					var symm = Q.export.sizeSymmetry(sprsize);
+					var symm = Q.math.rect_symmetry(sprsize);
 					var zoomx = canvsz[0] / symm[0];
 					var zoomy = canvsz[1] / symm[1];
 					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
@@ -1556,11 +1684,13 @@ var QUAD = {};
 				else {
 					// is map , 0,0 is top-left
 					// x1 and y1 is positive
-					var zoomx = canvsz[0] / (sprsize[2] * 0.5);
-					var zoomy = canvsz[1] / (sprsize[3] * 0.5);
+					var hw = (sprsize[2] - sprsize[0]) * 0.5;
+					var hh = (sprsize[3] - sprsize[1]) * 0.5;
+					var zoomx = canvsz[0] / hw;
+					var zoomy = canvsz[1] / hh;
 					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
-					movex = (-sprsize[2] * 0.5 * qdata.zoom);
-					movey = (-sprsize[3] * 0.5 * qdata.zoom);
+					movex = (sprsize[0] - hw) * qdata.zoom;
+					movey = (sprsize[1] - hh) * qdata.zoom;
 				}
 			} // if ( sprsize )
 		} // if ( autozoom )
@@ -1607,8 +1737,8 @@ var QUAD = {};
 } // function QuadFunc(Q)
 
 	function QuadMath(Q){
-	var $ = this;
-	//var m = {}; // all public
+	var $ = this; // public
+	//var __ = {};  // private
 
 	//////////////////////////////
 
@@ -1616,6 +1746,41 @@ var QUAD = {};
 		if ( n < min )  return min;
 		if ( n > max )  return max;
 		return n;
+	}
+
+	$.rect_symmetry = function( rect ){
+		var abs = [
+			Math.abs(rect[0]) , Math.abs(rect[1]) ,
+			Math.abs(rect[2]) , Math.abs(rect[3]) ,
+		];
+		var maxx = ( abs[0] > abs[2] ) ? abs[0] : abs[2];
+		var maxy = ( abs[1] > abs[3] ) ? abs[1] : abs[3];
+		return [ maxx , maxy ];
+	}
+
+	$.vram_srcquad = function( quad, pos ){
+		if ( ! quad )  return 0; // fog color only
+		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
+		for ( var i=0; i < 8; i += 2 ){
+			xy4[i+0] = quad[i+0] + pos[0];
+			xy4[i+1] = quad[i+1] + pos[1];
+		}
+		return xy4;
+	}
+
+	$.css_color = function( css ){
+		// css = '#rrggbbaa'
+		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )
+			return [1,1,1,1];
+
+		var div = 1.0 / 255;
+		var rgba = [
+			parseInt( css.substring(1,3) , 16 ) * div ,
+			parseInt( css.substring(3,5) , 16 ) * div ,
+			parseInt( css.substring(5,7) , 16 ) * div ,
+			parseInt( css.substring(7,9) , 16 ) * div ,
+		];
+		return rgba;
 	}
 
 	//////////////////////////////
@@ -1904,9 +2069,9 @@ var QUAD = {};
 	//////////////////////////////
 
 	$.matrix_mix = function( rate, cur, next ){
-		if ( ! cur && ! next )  return 0;
-		if ( ! cur  )  return next;
-		if ( ! next )  return cur;
+		if ( ! cur && ! next )  return 0; // both identidy matrix
+		if ( ! cur  )  cur  = $.matrix4();
+		if ( ! next )  next = $.matrix4();
 		// 4/4 = rate 1    = cur * 1    + next * 0
 		// 3/4 = rate 0.75 = cur * 0.75 + next * 0.25
 		// 2/4 = rate 0.5  = cur * 0.5  + next * 0.5
@@ -1920,6 +2085,8 @@ var QUAD = {};
 	}
 
 	$.color_mix = function( rate, cur, next ){
+		if ( ! cur || ! next )
+			Q.func.error('math.color_mix',cur,next);
 		var rev = 1.0 - rate;
 		var c4  = [0,0,0,0];
 		for ( var i=0; i < 4; i++ )
@@ -1928,6 +2095,8 @@ var QUAD = {};
 	}
 
 	$.quad_mix = function( rate, cur, next ){
+		if ( ! cur || ! next )
+			Q.func.error('math.quad_mix',cur,next);
 		var rev = 1.0 - rate;
 		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
 		for ( var i=0; i < 8; i++ )
@@ -1936,6 +2105,8 @@ var QUAD = {};
 	}
 
 	$.fog_mix = function( rate, cur, next ){
+		if ( ! cur || ! next )
+			Q.func.error('math.fog_mix',cur,next);
 		var rev = 1.0 - rate;
 		var f4  = [0,0,0,0 , 0,0,0,0 , 0,0,0,0 , 0,0,0,0];
 		for ( var i=0; i < 16; i++ )
@@ -1943,47 +2114,31 @@ var QUAD = {};
 		return f4;
 	}
 
-	$.css_color = function( css ){
-		// css = '#rrggbbaa'
-		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )
-			return [1,1,1,1];
-
-		var div = 1.0 / 255;
-		var rgba = [
-			parseInt( css.substring(1,3) , 16 ) * div ,
-			parseInt( css.substring(3,5) , 16 ) * div ,
-			parseInt( css.substring(5,7) , 16 ) * div ,
-			parseInt( css.substring(7,9) , 16 ) * div ,
-		];
-		return rgba;
-	}
-
-	//////////////////////////////
-
 	// order matters
 	//   (A*B)*C === A*(B*C)
 	//    A*B    !== B*A
-	$.image_multi4 = function( mat4, image ){
-		var hw = image.w * 0.5;
-		var hh = image.h * 0.5;
-		var quad = [-hw,hh , hw,hh , hw,-hh , -hw,-hh];
-		return $.quad_multi4(mat4, quad);
-	}
-
-	$.quad_multi2 = function( mat4, rect ){
-		if ( ! mat4 )  return rect;
-		var c0 = $.matrix_multi41(mat4, rect.slice(0,2));
-		var c1 = $.matrix_multi41(mat4, rect.slice(2,4));
-		return [].concat( c0.slice(0,2) , c1.slice(0,2) );
+	$.rect_multi4 = function( mat4, rect ){
+		if ( ! mat4 )  return rect; // mat4=0 is identidy matrix , rect=no change
+		var xy2 = [0,0 , 0,0];
+		for ( var i=0; i < 4; i += 2 ){
+			var x = rect[i+0];
+			var y = rect[i+1];
+			xy2[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
+			xy2[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
+		}
+		return xy2;
 	}
 
 	$.quad_multi4 = function( mat4, quad ){
-		if ( ! mat4 )  return quad;
-		var c0 = $.matrix_multi41(mat4, quad.slice(0,2));
-		var c1 = $.matrix_multi41(mat4, quad.slice(2,4));
-		var c2 = $.matrix_multi41(mat4, quad.slice(4,6));
-		var c3 = $.matrix_multi41(mat4, quad.slice(6,8));
-		return [].concat( c0.slice(0,2) , c1.slice(0,2) , c2.slice(0,2) , c3.slice(0,2) );
+		if ( ! mat4 )  return quad; // mat4=0 is identidy matrix , quad=no change
+		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
+		for ( var i=0; i < 8; i += 2 ){
+			var x = quad[i+0];
+			var y = quad[i+1];
+			xy4[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
+			xy4[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
+		}
+		return xy4;
 	}
 
 	// color * fogquad
@@ -2000,87 +2155,93 @@ var QUAD = {};
 
 	//////////////////////////////
 
-
-	//////////////////////////////
-
 } // function QuadMath
 
 	function QuadExport(Q){
-	var $ = this;
-	var m = {};
+	var $ = this; // public
+	var __ = {};  // private
 
 	//////////////////////////////
 
-	m.rectCompare = function( rect, cmp ){
-		if ( cmp[0] < rect[0] )  rect[0] = cmp[0]; // x1
-		if ( cmp[1] < rect[1] )  rect[1] = cmp[1]; // y1
-		if ( cmp[2] > rect[2] )  rect[2] = cmp[2]; // x2
-		if ( cmp[3] > rect[3] )  rect[3] = cmp[3]; // y2
+	__.rectCompare = function( rect, xy ){
+		if ( rect[0] > xy[0] )  rect[0] = xy[0]; // x1
+		if ( rect[1] > xy[1] )  rect[1] = xy[1]; // y1
+		if ( rect[2] < xy[2] )  rect[2] = xy[2]; // x2
+		if ( rect[3] < xy[3] )  rect[3] = xy[3]; // y2
 	}
 
 	$.rectAttach = function( qdata, type, id ){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return 0;
 
-		var max = 1 << 24;
+		var max  = 1 << 24;
+		var rect = [max,max,-max,-max];
+		var is_null = true;
+
 		var cur = qdata.QUAD[ type ][ id ];
 		switch ( type ){
 			case 'keyframe':
+			case 'hitbox':
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var rect = [max,max,-max,-max];
+				var quad = '';
+				if ( type === 'keyframe' )  quad = 'dstquad';
+				if ( type === 'hitbox'   )  quad = 'hitquad';
 				cur.layer.forEach(function(lv,lk){
-					if ( ! lv )
+					if ( ! lv || ! lv[quad] )
 						return;
-					var dst = lv.dstquad;
+					var dst = lv[quad];
 					for ( var i=0; i < 8; i += 2 ){
-						if ( dst[i+0] < rect[0] )  rect[0] = dst[i+0];
-						if ( dst[i+1] < rect[1] )  rect[1] = dst[i+1];
-						if ( dst[i+0] > rect[2] )  rect[2] = dst[i+0];
-						if ( dst[i+1] > rect[3] )  rect[3] = dst[i+1];
-					}
+						if ( rect[0] > dst[i+0] )  rect[0] = dst[i+0]; // x1
+						if ( rect[1] > dst[i+1] )  rect[1] = dst[i+1]; // y1
+						if ( rect[2] < dst[i+0] )  rect[2] = dst[i+0]; // x2
+						if ( rect[3] < dst[i+1] )  rect[3] = dst[i+1]; // y2
+					} // for ( var i=0; i < 8; i += 2 )
 				});
 				cur.__RECT = rect;
 				return rect;
 
 			case 'slot':
-				var rect = [max,max,-max,-max];
 				cur.forEach(function(sv,sk){
 					var xy = $.rectAttach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
-					m.rectCompare(rect, xy);
+					is_null = false;
+					__.rectCompare(rect, xy);
 				});
+				if ( is_null )
+					return 0;
 				return rect;
 
 			case 'animation':
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var rect = [max,max,-max,-max];
+				var is_null = true;
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
-
 					var xy = $.rectAttach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
-
-					var xy2 = Q.math.quad_multi4(tv.matrix, xy);
+					is_null = false;
+					var xy2 = Q.math.rect_multi4(tv.matrix, xy);
 					var t;
 					if ( xy2[0] > xy2[2] ){ // if x1 > x2  swap()
 						t = xy2[0];
-						xy2[0] = xy2[2];
+						xy2[0] = xy[2];
 						xy2[2] = t;
 					}
-					if ( xy2[1] > xy2[3] ){ // if y1 > y2  swap()
+					if ( xy2[1] > xy[3] ){ // if y1 > y2  swap()
 						t = xy2[1];
 						xy2[1] = xy2[3];
 						xy2[3] = t;
 					}
-					m.rectCompare(rect, xy2);
+					__.rectCompare(rect, xy2);
 				});
+				if ( is_null )
+					return 0;
 				cur.__RECT = rect;
 				return rect;
 
@@ -2088,69 +2249,21 @@ var QUAD = {};
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var res = [];
-				var is_done = false;
-				while ( ! is_done ){
-					is_done = true;
-					cur.bone.forEach(function(bv,bk){
-						if ( res[bk] )
-							return;
-
-						is_done = false;
-						var xy  = 0;
-						if ( bv.parent_id < 0 ){
-							if ( bv.attach )
-								xy = $.rectAttach(qdata, bv.attach.type, bv.attach.id);
-
-							if ( xy ){
-								res[bk] = xy;
-								res[bk][4] = (xy[0] + xy[2]) * 0.5; // mid x
-								res[bk][5] = (xy[1] + xy[3]) * 0.5; // mid y
-							}
-							else
-								res[bk] = [0,0,0,0 , 0,0];
-
-							return;
-						}
-
-						var par = res[bv.parent_id];
-						if ( ! par )
-							return;
-
-						if ( bv.attach )
-							xy = $.rectAttach(qdata, bv.attach.type, bv.attach.id);
-
-						if ( xy ){
-							res[bk] = [
-								xy[0] + par[4] , xy[1] + par[5] ,
-								xy[2] + par[4] , xy[3] + par[5] ,
-							];
-							res[bk][4] = (res[bk][0] + res[bk][2]) * 0.5; // mid x
-							res[bk][5] = (res[bk][1] + res[bk][3]) * 0.5; // mid y
-						}
-						else
-							res[bk] = par;
-					});
-				} // while ( ! is_done )
-
-				var rect = [max,max,-max,-max];
-				res.forEach(function(rv,rk){
-					m.rectCompare(rect, rv);
+				cur.bone.forEach(function(bv,bk){
+					if ( ! bv || ! bv.attach )
+						return;
+					var xy = $.rectAttach(qdata, bv.type, bv.id);
+					if ( ! xy )
+						return;
+					is_null = false;
+					__.rectCompare(rect, xy);
 				});
+				if ( is_null )
+					return 0;
 				cur.__RECT = rect;
 				return rect;
 		} // switch ( type )
 		return 0;
-	}
-
-	$.sizeSymmetry = function( size ){
-		var abs = [
-			Math.abs(size[0]) , Math.abs(size[1]) ,
-			Math.abs(size[2]) , Math.abs(size[3]) ,
-		];
-		var maxx = ( abs[0] > abs[2] ) ? abs[0] : abs[2];
-		var maxy = ( abs[1] > abs[3] ) ? abs[1] : abs[3];
-		return [ maxx , maxy ];
 	}
 
 	$.isLoopAttach = function( qdata, type, id ){
@@ -2260,38 +2373,18 @@ var QUAD = {};
 	}
 
 
-	$.listAttach = function( qdata, type, id, rec=false ){
+	$.listAttach = function( qdata, type, id ){
 		if ( ! Q.func.isValidAttach(qdata, type, id) )
 			return [];
 
-		function dupRemove( list ){
-			function cmpmax( max, ty, id ){
-				while ( max > 0 ){
-					max--;
-					if ( list[max][0] === ty && list[max][1] === id )
-						return true;
-				}
-				return false;
-			}
-			var len = list.length;
-			while ( len > 0 ){
-				len--;
-				if ( cmpmax(len, list[len][0], list[len][1]) )
-					list.splice(len, 1);
-			}
-		}
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				var list = [];
 				slot.forEach(function(sv,sk){
-					list.push( [sv.type, sv.id] );
-					if ( rec ){
-						var t = $.listAttach(qdata, sv.type, sv.id, rec);
-						list = list.concat(t);
-					}
+					list.push( sv.type +','+ sv.id );
 				});
-				dupRemove(list);
+				Q.func.arrayCleanDups(list);
 				return list;
 			case 'animation':
 				var anim = qdata.QUAD.animation[id].timeline;
@@ -2299,13 +2392,9 @@ var QUAD = {};
 				anim.forEach(function(tv,tk){
 					if ( ! tv || ! tv.attach )
 						return;
-					list.push( [tv.attach.type, tv.attach.id] );
-					if ( rec ){
-						var t = $.listAttach(qdata, tv.attach.type, tv.attach.id, rec);
-						list = list.concat(t);
-					}
+					list.push( tv.attach.type +','+ tv.attach.id );
 				});
-				dupRemove(list);
+				Q.func.arrayCleanDups(list);
 				return list;
 			case 'skeleton':
 				var bone = qdata.QUAD.skeleton[id].bone;
@@ -2313,13 +2402,9 @@ var QUAD = {};
 				bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					list.push( [bv.attach.type, bv.attach.id] );
-					if ( rec ){
-						var t = $.listAttach(qdata, bv.attach.type, bv.attach.id, rec);
-						list = list.concat(t);
-					}
+					list.push( bv.attach.type +','+ bv.attach.id );
 				});
-				dupRemove(list);
+				Q.func.arrayCleanDups(list);
 				return list;
 		} // switch ( type )
 		return [];
@@ -2327,9 +2412,9 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	m.bak = {};
-	m.backup = function( qdata, canvas, type, id, fps, zoom ){
-		m.bak = {
+	__.bak = {};
+	__.backup = function( qdata, canvas, type, id, fps, zoom ){
+		__.bak = {
 			type  : qdata.attach.type ,
 			id    : qdata.attach.id   ,
 			fps   : qdata.anim_fps    ,
@@ -2348,18 +2433,18 @@ var QUAD = {};
 		qdata.is_hits     = false;
 	}
 
-	m.restore = function( qdata, canvas ){
-		qdata.attach.type = m.bak.type;
-		qdata.attach.id   = m.bak.id;
-		qdata.anim_fps    = m.bak.fps;
-		qdata.zoom        = m.bak.zoom;
-		qdata.is_lines    = m.bak.line;
-		qdata.is_hits     = m.bak.hit;
-		canvas.width      = m.bak.canvw;
-		canvas.height     = m.bak.canvh;
+	__.restore = function( qdata, canvas ){
+		qdata.attach.type = __.bak.type;
+		qdata.attach.id   = __.bak.id;
+		qdata.anim_fps    = __.bak.fps;
+		qdata.zoom        = __.bak.zoom;
+		qdata.is_lines    = __.bak.line;
+		qdata.is_hits     = __.bak.hit;
+		canvas.width      = __.bak.canvw;
+		canvas.height     = __.bak.canvh;
 	}
 
-	m.download = function( fname, dataurl ){
+	__.download = function( fname, dataurl ){
 		if ( ! fname || ! dataurl )
 			return;
 
@@ -2372,7 +2457,7 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	m.exportSheet = function( qdata, canvas ){
+	__.exportSheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
 		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
@@ -2385,7 +2470,7 @@ var QUAD = {};
 		];
 
 		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize() >> 1;
+		var texsize = Q.gl.maxTextureSize();
 
 		var anim_remain = anim_time - qdata.anim_fps;
 		var tilecol = 1;
@@ -2415,10 +2500,8 @@ var QUAD = {};
 		var color  = [1,1,1,1];
 		Q.func.qdata_clear(qdata);
 
-		camera[0+0] = qdata.zoom;
-		camera[4+1] = qdata.zoom;
-		if ( qdata.is_flipx )  camera[0+0] = -camera[0+0];
-		if ( qdata.is_flipy )  camera[4+1] = -camera[4+1];
+		camera[0+0] = ( qdata.is_flipx ) ? -qdata.zoom : qdata.zoom;
+		camera[4+1] = ( qdata.is_flipy ) ? -qdata.zoom : qdata.zoom;
 
 		// from -1.0 to +1.0
 		for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] ){
@@ -2430,11 +2513,13 @@ var QUAD = {};
 				if ( qdata.anim_fps >= anim_time )
 					continue;
 
-				camera[0+3] = dx + halfpos[2] - sprmid[0];
-				camera[4+3] = dy + halfpos[3] - sprmid[1];
+				var m4 = Q.math.matrix4();
+				m4[0+3] = dx + halfpos[2] - sprmid[0];
+				m4[4+3] = dy + halfpos[3] - sprmid[1];
+				m4 = Q.math.matrix_multi44(camera, m4);
 
 				qdata.is_draw = false;
-				Q.func.qdata_draw(qdata, camera, color);
+				Q.func.qdata_draw(qdata, m4, color);
 				qdata.anim_fps++;
 			} // for ( var dx = -canvpos[0]; dx < canvpos[0]; dx += sprwh[0] )
 		} // for ( var dy = canvpos[1]; dy > -canvpos[1]; dy += sprwh[1] )
@@ -2442,9 +2527,9 @@ var QUAD = {};
 		return canvas.toDataURL('image/png');
 	}
 
-	m.exportZip = function( qdata, canvas, fmt ){
+	__.exportZip = function( qdata, canvas, fmt ){
 		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var symm = $.sizeSymmetry(sprsize);
+		var symm = Q.math.rect_symmetry(sprsize);
 
 		var line_spacing = 1.15;
 		canvas.width  = Math.ceil(symm[0] * 2 * line_spacing * qdata.zoom);
@@ -2452,21 +2537,20 @@ var QUAD = {};
 
 		// same number of sprites as sheet
 		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize() >> 1;
+		var texsize = Q.gl.maxTextureSize();
 		var len  = Math.floor(texsize / canvas.width) * Math.floor(texsize / canvas.height);
 		var list = {};
 
 		var camera = Q.math.matrix4();
 		var color  = [1,1,1,1];
 
-		camera[0+0] = qdata.zoom;
-		camera[4+1] = qdata.zoom;
-		if ( qdata.is_flipx )  camera[0+0] = -camera[0+0];
-		if ( qdata.is_flipy )  camera[4+1] = -camera[4+1];
+		camera[0+0] = ( qdata.is_flipx ) ? -qdata.zoom : qdata.zoom;
+		camera[4+1] = ( qdata.is_flipy ) ? -qdata.zoom : qdata.zoom;
 
-		for ( var i=0; i < len; i++ ){
+		var i = 0;
+		while ( i < len ){
 			if ( qdata.anim_fps >= anim_time )
-				continue;
+				break;
 			Q.func.qdata_clear(qdata);
 			Q.func.qdata_draw (qdata, camera, color);
 
@@ -2488,7 +2572,8 @@ var QUAD = {};
 			} // switch ( fmt )
 
 			qdata.anim_fps++;
-		} // for ( var i=0; i < len; i++ )
+			i++;
+		} // while ( i < len )
 
 		var uint8 = Q.binary.zipwrite(list);
 		return 'data:application/zip;base64,' + Q.binary.toBase64(uint8);
@@ -2500,27 +2585,27 @@ var QUAD = {};
 		if ( zoom < 0.1 || zoom > 10.0 )
 			return;
 		var start = performance.now();
-		m.backup(qdata, canvas, type, id, fps, zoom);
+		__.backup(qdata, canvas, type, id, fps, zoom);
 
 		switch ( fmt ){
 			case 'png':
-				var fname   = m.bak.fname + '.png';
-				var dataurl = m.exportSheet(qdata, canvas);
-				m.download(fname, dataurl);
+				var fname   = __.bak.fname + '.png';
+				var dataurl = __.exportSheet(qdata, canvas);
+				__.download(fname, dataurl);
 				break;
 			case 'zip':
-				var fname   = m.bak.fname + '.png.zip';
-				var dataurl = m.exportZip(qdata, canvas, 'png');
-				m.download(fname, dataurl);
+				var fname   = __.bak.fname + '.png.zip';
+				var dataurl = __.exportZip(qdata, canvas, 'png');
+				__.download(fname, dataurl);
 				break;
 			case 'rgba':
-				var fname   = m.bak.fname + '.rgba.zip';
-				var dataurl = m.exportZip(qdata, canvas, 'rgba');
-				m.download(fname, dataurl);
+				var fname   = __.bak.fname + '.rgba.zip';
+				var dataurl = __.exportZip(qdata, canvas, 'rgba');
+				__.download(fname, dataurl);
 				break;
 		} // switch ( fmt )
 
-		m.restore(qdata, canvas);
+		__.restore(qdata, canvas);
 		Q.func.log('QUAD export' , fmt , 'time' , performance.now()-start);
 
 		// performance
@@ -2534,8 +2619,8 @@ var QUAD = {};
 } // function QuadExport
 
 	function BinaryReader(){
-	var $ = this;
-	//var m = {};
+	var $ = this; // public
+	//var __ = {};  // private
 
 	//////////////////////////////
 
@@ -2826,7 +2911,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2023-12-12 (beta)';
+	$.version = 'ver 2024-1-11 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -2842,12 +2927,8 @@ function QuadData(qlist){
 	// uploaded files
 	$.name = '';
 	$.QUAD  = {};
-	$.IMAGE = [
-		QUAD.gl.createPixel(255) ,
-		QUAD.gl.createPixel(255) ,
-		QUAD.gl.createPixel(255) ,
-		QUAD.gl.createPixel(255) ,
-	];
+	$.IMAGE = []; // { pos:rect , name:string }
+	$.VRAM  = QUAD.gl.createPixel(255,-1,-1);
 
 	// activated data
 	$.is_wait  = true;
@@ -2874,8 +2955,10 @@ function QuadData(qlist){
 <div id='debugger'>
 	<input type='file' id='input_file' multiple class='hidden'>
 	<div id='debugger_top_nav'>
-		<button id='btn_view'>view</button>
-		<button id='btn_upload' data-id='0'>upload</button>
+		<p id='debugger_top_row_1'>
+			<button id='btn_view'>view</button>
+			<button id='btn_upload' data-id='0'>upload</button>
+		</p>
 	</div>
 
 	<button>dummy</button>
@@ -2913,20 +2996,22 @@ function QuadData(qlist){
 	<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAQMAAAC032DuAAAABlBMVEVAQEDAwMCo6TBpAAAAGklEQVQoz2NgAIEGBjgYZY4yB5r5Hw6Gnd8AoYMxdx81TTIAAAAASUVORK5CYII=">
 	<canvas id='canvas'>Canvas not supported</canvas>
 	<div id='viewer_top_nav'>
-		<button id='btn_debug'>debug</button>
-		<button id='btn_hits' class='btn_on'>hit</button>
-		<button id='btn_autofit' class='btn_on'>zoom</button>
-		<button id='btn_flipx' class='btn_off'>X</button>
-		<button id='btn_flipy' class='btn_off'>Y</button>
-		<button id='btn_lines'>line</button>
+		<p id='viewer_top_row_1'>
+			<button id='btn_debug'>debug</button>
+			<button id='btn_hits' class='btn_on'>hit</button>
+			<button id='btn_flipx' class='btn_off'>X</button>
+			<button id='btn_lines'>line</button>
+		</p>
 	</div>
 	<div id='viewer_bottom_nav'>
-		<button id='btn_prev'>&lt;&lt;</button>
+		<p id='viewer_bottom_row_1'>
+			<button id='btn_prev'>&lt;&lt;</button>
 
-		<button id='btn_autonext'>auto</button>
-		<button id='btn_cur'>0</button>
+			<button id='btn_autonext'>auto</button>
+			<button id='btn_cur'>0</button>
 
-		<button id='btn_next'>&gt;&gt;</button>
+			<button id='btn_next'>&gt;&gt;</button>
+		</p>
 	</div>
 </div>
 
@@ -2954,6 +3039,7 @@ var SELECTED = '';
 	HTML.btn_upload.addEventListener('click', function(){
 		UPLOAD_ID = this.getAttribute('data-id');
 		HTML.input_file.click();
+		HTML.logger.innerHTML = QUAD.func.console();
 	});
 	HTML.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', UPLOAD_ID);
@@ -2966,14 +3052,7 @@ var SELECTED = '';
 			promises.push( QUAD.func.uploadPromise(up, qdata) );
 
 		Promise.all(promises).then(function(resolve){
-			HTML.debugger_files.innerHTML = '';
-			if ( qdata.name )
-				HTML.debugger_files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
-			[0,1,2,3].forEach(function(v){
-				if ( qdata.IMAGE[v].name )
-				HTML.debugger_files.innerHTML += '<li>[IMAGE][' + v + '] ' + qdata.IMAGE[v].name + '</li>';
-			});
-
+			qdata_filetable(qdata, HTML.debugger_files);
 			if ( qdata.name ){
 				HTML.quad_data.innerHTML = '';
 				document.title = qdata.name + ' [Quad Player ' + QUAD.version + ']';
@@ -2990,12 +3069,13 @@ var SELECTED = '';
 				qdata.QUAD[quad_main].forEach(function(v,k){
 					if ( ! v )
 						return;
-					buffer += qdata_listing(qdata, quad_main, k, false);
+					buffer += qdata_listing(qdata, quad_main, k);
 
 				});
 				buffer += '</ul>';
 				HTML.quad_data.innerHTML += buffer;
 			} // if ( qdata.name )
+			HTML.logger.innerHTML = QUAD.func.console();
 		});
 	});
 	HTML.export_range.addEventListener('change', function(){
@@ -3013,8 +3093,8 @@ var SELECTED = '';
 			HTML.viewer_top_nav.style.display    = 'none';
 			HTML.viewer_bottom_nav.style.display = 'none';
 		} else {
-			HTML.viewer_top_nav.style.display    = 'flex';
-			HTML.viewer_bottom_nav.style.display = 'flex';
+			HTML.viewer_top_nav.style.display    = 'block';
+			HTML.viewer_bottom_nav.style.display = 'block';
 		}
 		IS_VIEWER_NAV = ! IS_VIEWER_NAV;
 	});
@@ -3035,19 +3115,6 @@ var SELECTED = '';
 			QuadList[0].is_hits = true;
 		}
 	});
-	HTML.btn_autofit.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_autofit.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_autofit, -1);
-			IS_AUTOZOOM = false;
-			QuadList[0].zoom = 1;
-		} else {
-			btnToggle(HTML.btn_autofit, 1);
-			IS_AUTOZOOM = true;
-			QuadList[0].zoom = -1;
-		}
-	});
 	HTML.btn_flipx.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
@@ -3057,17 +3124,6 @@ var SELECTED = '';
 		} else {
 			btnToggle(HTML.btn_flipx, 1);
 			QuadList[0].is_flipx = true;
-		}
-	});
-	HTML.btn_flipy.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_flipy.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_flipy, -1);
-			QuadList[0].is_flipy = false;
-		} else {
-			btnToggle(HTML.btn_flipy, 1);
-			QuadList[0].is_flipy = true;
 		}
 	});
 

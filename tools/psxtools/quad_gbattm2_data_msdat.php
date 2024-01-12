@@ -26,7 +26,132 @@ require 'common-quad.inc';
 require 'class-atlas.inc';
 require 'quad.inc';
 
-function sectquad( &$quad, &$atlas, &$keys, &$skel )
+function gbatmas_sort_order( $a, $b )
+{
+	$d = $a['o'] - $b['o'];
+	if ( $d !== 0 )
+		return $d;
+	return $b['i'] - $a['i'];
+}
+
+function sectkeypose( &$quad, &$pose )
+{
+	$cnt_key = count($quad['keyframe']);
+
+	$quad['animation'] = array();
+	$time = array();
+	foreach ( $pose as $pk => $pv )
+	{
+		// psycho.dat
+		// 0 - 27 -  1
+		//      | -  2 - 3 -  4
+		//      |        | -  5
+		//      |        | -  6
+		//      |        | - 17 - 18 - 19 - 21 - 20
+		//      |        | - 22 - 23 - 24 - 26 - 25
+		//      | -  7 - 8 - 9 - 10
+		//      | - 11
+		//      | - 12 - 13 - 14 - 15
+		//      | - 16
+		$key_layer = array();
+		$hit_layer = array();
+		$orders  = array();
+		$inherit = array();
+		$is_done = false;
+		while ( ! $is_done )
+		{
+			$is_done = true;
+			foreach ( $pv as $lk => $lv )
+			{
+				$par = $lv['parent'];
+				// should be -1
+				if ( $par === $lk )
+					$par--;
+				// has parent but data not available yet, try again on next loop
+				if ( $par >= 0 && ! isset($inherit[$par]) )
+				{
+					$is_done = false;
+					continue;
+				}
+				// already done
+				if ( isset($inherit[$lk]) )
+					continue;
+
+				// 1000 = 360 degree
+				$radian = ($lv['rot'] / 0x800) * pi();
+				$cur_inherit = qmat3_dxdy($radian, $lv['dst'][0], $lv['dst'][1]);
+				if ( $par >= 0 )
+					$cur_inherit = matrix_multi33($inherit[$par], $cur_inherit);
+				$inherit[$lk] = $cur_inherit;
+
+				$orders[] = array('p'=>$par , 'i'=>$lk , 'o'=>$lv['order']);
+
+				$cur_key = 0;
+				$cur_hit = 0;
+				if ( $lv['disp'] !== 0 )
+				{
+					$kid = $lv['skel'];
+					$cur_key = $quad['keyframe'][$kid]['layer'][0];
+					qmat3_mult($cur_inherit, $cur_key['dstquad']);
+						$cur_key['debug'] = sprintf('order %x', $lv['order']);
+
+					if ( isset($quad['hitbox'][$kid]) && $quad['hitbox'][$kid] !== 0 )
+					{
+						$cur_hit = $quad['hitbox'][$kid]['layer'][0];
+						qmat3_mult($cur_inherit, $cur_hit['hitquad']);
+					}
+				}
+
+				list_add($key_layer, $lk, $cur_key);
+				list_add($hit_layer, $lk, $cur_hit);
+			} // foreach ( $pv as $lk => $lv )
+		} // while ( ! $is_done )
+
+		// add by order
+		usort($orders, 'gbatmas_sort_order');
+		$ord_vis = array();
+		foreach ( $orders as $k => $v )
+			$ord_vis[] = $v['i'];
+
+		$kid = $cnt_key + $pk;
+		$kent = array(
+			'name'  => "keyframe $pk",
+			'layer' => $key_layer,
+			'order' => $ord_vis,
+		);
+		list_add($quad['keyframe'], $kid, $kent);
+
+		$hent = array(
+			'name'  => "hitbox $pk",
+			'layer' => $hit_layer,
+		);
+		list_add($quad['hitbox'], $kid, $hent);
+
+		$sent = array(
+			array('type'=>'keyframe' , 'id'=>$kid),
+			array('type'=>'hitbox'   , 'id'=>$kid),
+		);
+		list_add($quad['slot'], $kid, $sent);
+
+		$tent = array(
+			'time'         => 10,
+			'keyframe_mix' => 1,
+			'hitbox_mix'   => 1,
+			'attach'       => array('type'=>'slot' , 'id'=>$kid),
+		);
+		$time[] = $tent;
+	} // foreach ( $pose as $pk => $pv )
+
+	$ent = array(
+		'name'     => "ALL KEYPOSES",
+		'timeline' => $time,
+		'loop_id'  => 0,
+	);
+	$quad['animation'][] = $ent;
+	return;
+}
+
+function sectlayer( &$quad, &$atlas, &$keys )
 {
 	$quad['keyframe'] = array();
 	$quad['hitbox'  ] = array();
@@ -37,7 +162,7 @@ function sectquad( &$quad, &$atlas, &$keys, &$skel )
 		list($dx,$dy) = $kv['dst'];
 
 		$kent = array(
-			'name'  => "keyframe $kk",
+			'name'  => "part $kk",
 			'layer' => array(
 				array(
 					'dstquad'  => array(
@@ -60,9 +185,9 @@ function sectquad( &$quad, &$atlas, &$keys, &$skel )
 		);
 		list_add($quad['keyframe'], $kk, $kent);
 
-		list($hx,$hy,$hw,$hh) = $kv['hit'];
-		if ( $hw === 0 || $hh === 0 )
+		if ( $kv['hit'] === 0 )
 			continue;
+		list($hx,$hy,$hw,$hh) = $kv['hit'];
 
 		$hent = array(
 			'name'  => "hitbox $kk",
@@ -84,81 +209,10 @@ function sectquad( &$quad, &$atlas, &$keys, &$skel )
 		list_add($quad['hitbox'], $kk, $hent);
 		list_add($quad['slot'  ], $kk, $sent);
 	} // foreach ( $keys as $kk => $kv )
-
-	$quad['animation'] = array();
-	$quad['skeleton' ] = array();
-
-	$skel_cnt = count($skel[0]);
-	$anim_cnt = count($skel);
-
-	$bone = array();
-	$aid  = 0;
-	for ( $sk=0; $sk < $skel_cnt; $sk++ )
-	{
-		$time = array();
-		$parent = -1;
-		$order  = -1;
-		for ( $ak=0; $ak < $anim_cnt; $ak++ )
-		{
-			$skel_ent = $skel[$ak][$sk];
-			$parent = $skel_ent['parent'];
-			$order  = $skel_ent['order'];
-
-			$mat4 = matrix(4);
-
-			$radian = $skel_ent['rot'] / 0x8000 * pi();
-			$t = matrix_rotate_z(4, $radian);
-			if ( $t !== -1 )
-				$mat4 = matrix_multi44($mat4, $t);
-
-			$mat4[0+3] += $skel_ent['dst'][0];
-			$mat4[4+3] += $skel_ent['dst'][1];
-
-			$tent = array(
-				'time'       => 10,
-				'matrix'     => $mat4,
-				'matrix_mix' => 1,
-			);
-			if ( $skel_ent['disp'] )
-			{
-				$kid = $skel_ent['skel'];
-				if ( ! empty( $quad['slot'][$kid] ) )
-					$tent['attach'] = array('type'=>'slot' , 'id'=>$kid);
-				else
-					$tent['attach'] = array('type'=>'keyframe' , 'id'=>$kid);
-			}
-
-			$time[] = $tent;
-		} // for ( $ak=0; $ak < $anim_cnt; $ak++ )
-
-		$aent = array(
-			'name'     => "bone $sk",
-			'timeline' => $time,
-			'loop_id'  => 0,
-		);
-		list_add($quad['animation'], $aid, $aent);
-
-		$bent = array(
-			//name
-			'attach'    => array('type'=>'animation' , 'id'=>$aid),
-			'parent_id' => $parent,
-			'order'     => $order,
-		);
-		$bone[] = $bent;
-
-		$aid++;
-	} // for ( $sk=0; $sk < $skel_cnt; $sk )
-
-	$sent = array(
-		'name' => 'all animation',
-		'bone' => $bone,
-	);
-	$quad['skeleton'][] = $sent;
-
 	return;
 }
 //////////////////////////////
-function sectkeys_c( &$atlas, &$meta, &$tim )
+function sectkeys_c( &$atlas, &$meta, &$tim, $bm )
 {
 	$len  = strlen($meta);
 	$keys = array();
@@ -182,51 +236,56 @@ function sectkeys_c( &$atlas, &$meta, &$tim )
 			$w = $x2 - $x1;
 			$h = $y2 - $y1;
 
+		$pal = substr ($tim[12]['pal'], $cid*0x40, 0x40);
+			$pal[3] = ZERO;
+
 		$tex = $tim[$tid];
 		$src = rippix8($tex['pix'], $x1, $y1, $w, $h, $tex['w'], $tex['h']);
-		$pal = substr ($tex['pal'], $cid*0x40, 0x40);
-			$pal[3] = ZERO;
 		$aid = $atlas->putclut($w, $h, $pal, $src);
 
 		$ent = array(
 			'dst'   => array($dx, $dy),
-			'hit'   => array($hx, $hy, $hw, $hh),
+			'hit'   => 0,
 			'atlas' => $aid,
 		);
+		if ( $hx|$hy|$hw|$hh )
+			$ent['hit'] = array($hx, $hy, $hw, $hh);
 		$keys[] = $ent;
 	} // for ( $p=0; $p < $len; $p += 12 )
 
 	return $keys;
 }
 
-function sectskel_182( &$m20, &$m21 )
+function sectpose_182( &$m20, &$m21 )
 {
-	$skel_cnt = str2int($m20, 0, 3);
-	$anim_cnt = str2int($m20, 4, 3);
+	$layer_cnt = str2int($m20, 0, 3);
+	$pose_cnt  = str2int($m20, 4, 3);
 
-	$skel = array();
-	for ( $ak=0; $ak < $anim_cnt; $ak++ )
+	$pose = array();
+	for ( $pk=0; $pk < $pose_cnt; $pk++ )
 	{
-		$m20p = 8 + ($ak * 0x182);
-		if ( $m20[$m20p] === ZERO )
+		$m20p = 8 + ($pk * 0x182);
+		$m20s = substr($m20, $m20p, 0x182);
+		if ( str2int($m20s,0,2) !== 1 )
 			continue;
+		//printf("[%4x]%2x = %s\n", $m20p, $pk, printhex($m20s));
 
-		$m20p += 2;
-		$pose = array();
-		for ( $sk=0; $sk < $skel_cnt; $sk++ )
+		$m20p  = 2;
+		$layer = array();
+		for ( $lk=0; $lk < $layer_cnt; $lk++ )
 		{
-			$m20s = substr($m20, $m20p, 8);
+			$m20ps = substr($m20s, $m20p, 8);
+			//printf("  [%4x]%2x = %s\n", $m20p, $lk, printhex($m20ps));
 				$m20p += 8;
-			$m21p1 = 4 + ($sk * 0x12c);
-			//echo debug($m20s, "$ak $sk");
+			$m21p1 = 4 + ($lk * 0x12c);
 
 			// 0  1  2 3  4  5   6 7
 			// k  d  rot  dx dy  ? ?
-			$k   = str2int($m20s, 0, 1);
-			$d   = str2int($m20s, 1, 1);
-			$rot = str2int($m20s, 2, 2);
-			$dx  = str2int($m20s, 4, 1, true);
-			$dy  = str2int($m20s, 5, 1, true);
+			$k   = str2int($m20ps, 0, 1);
+			$d   = str2int($m20ps, 1, 1);
+			$rot = str2int($m20ps, 2, 2);
+			$dx  = str2int($m20ps, 4, 1, true);
+			$dy  = str2int($m20ps, 5, 1, true);
 
 			$m21k = ($k & 0x7f) * 2;
 			$m21p2 = $m21p1 + 0x2c + $m21k;
@@ -243,35 +302,37 @@ function sectskel_182( &$m20, &$m21 )
 				'rot'  => $rot,
 				'dst'  => array($dx,$dy),
 			);
-			$pose[] = $ent;
-		} // for ( $sk=0; $sk < $skel_cnt; $sk++ )
+			$layer[] = $ent;
+		} // for ( $lk=0; $lk < $layer_cnt; $lk++ )
 
-		$skel[] = $pose;
-	} // for ( $ak=0; $ak < $anim_cnt; $ak++ )
-	return $skel;
+		$pose[] = $layer;
+	} // for ( $pk=0; $pk < $pose_cnt; $pk++ )
+	return $pose;
 }
 
-function sectskel_62( &$m30, &$m31, &$m28 )
+function sectpose_62( &$m30, &$m31, &$m28 )
 {
-	$skel_cnt = str2int($m30, 0, 3);
-	$anim_cnt = str2int($m30, 4, 3);
+	$layer_cnt = str2int($m30, 0, 3);
+	$pose_cnt  = str2int($m30, 4, 3);
 
-	$skel = array();
-	for ( $ak=0; $ak < $anim_cnt; $ak++ )
+	$pose = array();
+	for ( $pk=0; $pk < $pose_cnt; $pk++ )
 	{
-		$m30p = 8 + ($ak * 0x62);
-		if ( $m30[$m30p] === ZERO )
+		$m30p = 8 + ($pk * 0x62);
+		$m30s = substr($m30, $m30p, 0x62);
+		if ( str2int($m30s,0,2) !== 1 )
 			continue;
+		//printf("[%4x]%2x = %s\n", $m30p, $pk, printhex($m30s));
 
-		$m30p += 2;
-		$pose = array();
-		for ( $sk=0; $sk < $skel_cnt; $sk++ )
+		$m30p  = 2;
+		$layer = array();
+		for ( $lk=0; $lk < $layer_cnt; $lk++ )
 		{
-			$m31k = str2int($m30, $m30p, 2);
+			$m31k = str2int($m30s, $m30p, 2);
 				$m30p += 2;
 			$m31s = substr($m31, $m31k*8, 8);
-			$m28p1 = 4 + ($sk * 0x12c);
-			//echo debug($m31s, "$ak $sk");
+			$m28p1 = 4 + ($lk * 0x12c);
+			//printf("  [%4x]%2x = %s\n", $m31k*8, $lk, printhex($m31s));
 
 			// 0  1  2 3  4  5   6 7
 			// k  d  rot  dx dy  ? ?
@@ -296,12 +357,12 @@ function sectskel_62( &$m30, &$m31, &$m28 )
 				'rot'  => $rot,
 				'dst'  => array($dx,$dy),
 			);
-			$pose[] = $ent;
-		} // for ( $sk=0; $sk < $skel_cnt; $sk++ )
+			$layer[] = $ent;
+		} // for ( $lk=0; $lk < $layer_cnt; $lk++ )
 
-		$skel[] = $pose;
-	} // for ( $ak=0; $ak < $anim_cnt; $ak++ )
-	return $skel;
+		$pose[] = $layer;
+	} // for ( $pk=0; $pk < $pose_cnt; $pk++ )
+	return $pose;
 }
 //////////////////////////////
 function gbatmas1( $dir )
@@ -324,8 +385,8 @@ function gbatmas1( $dir )
 
 	$atlas = new AtlasTex;
 	$atlas->init();
-	$keys = sectkeys_c($atlas, $m[22], $tim);
-	$skel = sectskel_182($m[20], $m[21]);
+	$keys = sectkeys_c($atlas, $m[22], $tim, 1);
+	$pose = sectpose_182($m[20], $m[21]);
 
 	$atlas->sort();
 	$atlas->save("$dir.0");
@@ -333,7 +394,8 @@ function gbatmas1( $dir )
 	$quad = load_idtagfile('ps1 gundam battle master 1');
 	$quad['blend'] = array( blend_modes('normal') );
 
-	sectquad($quad, $atlas, $keys, $skel);
+	sectlayer  ($quad, $atlas, $keys);
+	sectkeypose($quad, $pose);
 	save_quadfile($dir, $quad);
 	return;
 }
@@ -359,8 +421,8 @@ function gbatmas2( $dir )
 
 	$atlas = new AtlasTex;
 	$atlas->init();
-	$keys = sectkeys_c($atlas, $m[29], $tim);
-	$skel = sectskel_62($m[30], $m[31], $m[28]);
+	$keys = sectkeys_c($atlas, $m[29], $tim, 2);
+	$pose = sectpose_62($m[30], $m[31], $m[28]);
 
 	$atlas->sort();
 	$atlas->save("$dir.0");
@@ -368,10 +430,12 @@ function gbatmas2( $dir )
 	$quad = load_idtagfile('psx gundam battle master 2');
 	$quad['blend'] = array( blend_modes('normal') );
 
-	sectquad($quad, $atlas, $keys, $skel);
+	sectlayer  ($quad, $atlas, $keys);
+	sectkeypose($quad, $pose);
 	save_quadfile($dir, $quad);
 	return;
 }
+
 //////////////////////////////
 function batmas( $dir )
 {
@@ -422,5 +486,21 @@ bm2
 zeta jump 1e = 16 17 16*3 17 16*18
 	25=19  29=88  31=d4a
 zaku idle 1a = 16*1a
+//////////////////////////////
+Gundam Battle Master 2
+	1p zeta
+		meta.24 = RAM 801c4d0c +30e
+		meta.25 = RAM 80171d20 +3a0
+		meta.26 = RAM 8016bbf8 +2414
+		meta.28 = RAM 80147ca0 +2b60
+		meta.29 = RAM 8014ba24 +660
+		meta.30 = RAM 8014ede8 +c408
+		meta.31 = RAM 8015b1f0 +6a50
 
+	BREAK ON meta.26 TOC = [8016bed8..8016c118]?
+		80044ff0  lw   v0, 40(a1)
+			a0 = (a0 << 1) + v0
+		80044ffc  lhu  a0,  0(a0)
+
+	80044ff4 -> xor a0,a0 = forced ALL -> IDLE animation
  */

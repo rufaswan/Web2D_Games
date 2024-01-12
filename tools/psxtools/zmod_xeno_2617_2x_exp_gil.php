@@ -33,8 +33,11 @@ function xeno( $fname )
 			printf("%4x CHAR = HP %4x/%4x  EXP %8x GIL %4x\n", $i, $hp, $mhp, $exp, $gil);
 		}
 
-		$sexp = chrint($exp * 2, 4);
-		$sgil = chrint($gil * 2, 2);
+		$exp *= 2;
+		$gil *= 2;
+
+		$sexp = chrint( (int)$exp, 4);
+		$sgil = chrint( (int)$gil, 2);
 		str_update($file, $i+$data[2], $sexp);
 		str_update($file, $i+$data[3], $sgil);
 	} // for ( $i = 0x7e; $i < $len; $i += 0x170 )

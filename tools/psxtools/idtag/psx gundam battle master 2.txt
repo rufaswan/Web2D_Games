@@ -1,0 +1,21 @@
+[System]
+PlayStation
+
+[Game]
+Gundam The Battle Master 2/Assault 2
+
+[Copyright]
+Bandai
+
+[Designer]
+Shunichi Taniguchi
+Kunio Suzuki
+
+[Character Designer]
+Atsushi Shigeta
+
+[Psyco Gundam MK-III Designer]
+Kunio Ohkawara
+
+[Comment]
+Ripped by Rufas Wan

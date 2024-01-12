@@ -69,15 +69,13 @@
           "attach" : {
             "type" : "animation" ,
             "id"   : 0
-          } ,
-          "order"  : 1
+          }
         } ,
         {
           "attach" : {
             "type" : "keyframe" ,
             "id"   : 1
-          } ,
-          "order"  : 0
+          }
         }
       ]
     }
