@@ -343,7 +343,7 @@ function tm2pal( &$pal, $swizzle )
 		$b3 = substr($pal, $i+0x40, 0x20);
 		$b4 = substr($pal, $i+0x60, 0x20);
 		$new .= $b1 . $b3 . $b2 . $b4;
-	} // for ( $i=0; $i < 0x400; $i += 4 )
+	} // for ( $i=0; $i < 0x400; $i += 0x80 )
 
 	ps2_alpha2x($new);
 	$pal = $new;

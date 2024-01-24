@@ -408,13 +408,14 @@ function count_bits( $int )
 	return $bits;
 }
 //////////////////////////////
-function printhex( &$str )
+function printhex( &$str, $sep=-1 )
 {
+	$sep = (int)$sep;
 	$txt = '';
 	$len = strlen($str);
 	for ( $i=0; $i < $len; $i++ )
 	{
-		if ( ($i & 3) === 0 && $i > 1 )
+		if ( $sep > 0 && $i > 1 && ($i % $sep) === 0 )
 			$txt .= '  ';
 		if ( $str[$i] === ZERO )
 			$txt .= '-- ';

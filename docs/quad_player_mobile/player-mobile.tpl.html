@@ -533,7 +533,9 @@ var QUAD = {};
 			highp  vec2   XY;
 			void main(void){
 				v_uv = a_uv;
-				XY = a_xy * u_pxsize[0];
+
+				// convert 0.0 to 1.0 => -1.0 to +1.0
+				XY = (a_xy * u_pxsize[0] * 2.0) - 1.0;
 				gl_Position = vec4(XY.x, XY.y, 1.0, 1.0);
 			}
 		`;
@@ -630,15 +632,16 @@ var QUAD = {};
 		var sh = rect[3] - rect[1];
 
 		// to be used with canvas - DO NOT flipy !
-		var pxsz = [ 1.0/view[0] , 1.0/view[1] , 1.0/sw , 1.0/sh ];
+		var pxsz = [ 1.0/vram.w , 1.0/vram.h , 1.0/sw , 1.0/sh ];
 		__.GL.activeTexture(__.GL.TEXTURE0);
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
 
-		var rx1 = rect[0] - view[0];
-		var ry1 = rect[1] - view[1];
-		var rx2 = rect[2] - view[0];
-		var ry2 = rect[3] - view[1];
-		var dst = [rx1,ry1 , rx2,ry1 , rx2,ry2 , rx1,ry2];
+		var dst = [
+			rect[0] , rect[1] ,
+			rect[2] , rect[1] ,
+			rect[2] , rect[3] ,
+			rect[0] , rect[3] ,
+		];
 		var src = [0,0 , sw,0 , sw,sh , 0,sh];
 		__.setVertexAttrib(loc.a_xy, dst, 2);
 		__.setVertexAttrib(loc.a_uv, src, 2);
@@ -2911,7 +2914,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-1-11 (beta)';
+	$.version = 'ver 2024-1-23 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);

@@ -139,6 +139,7 @@ mitsukr   SLPM 861.34  Mitsumete Knight R
 	lunar2    isok/*.pck , map/*.dat only
 	mitsukr   merge.mrg (Mitsumete Mode) only
 	jinguji   *.SSD only
+	gbattmw   MS*.PAC only
 	panzer    --upcoming--
 	ralph     --upcoming--
 	valky     --upcoming--
@@ -191,8 +192,12 @@ odin      PS3                Odin Sphere Leifthrasir HD
 == Guest System Games ==
 jinguji   PS2  SLPM 651.73  Tantei Jinguji Saburou 8 Innocent Black
 jinguji   PS2  SLPM 655.76  Tantei Jinguji Saburou 9 Kind of Blue
+zero      PS2  SLPS 257.08  Zero no Tsukaima 1 Koakuma to Harukaze no Concerto
+zero      PS2  SLPS 258.30  Zero no Tsukaima 2 Muma ga Tsumugu Yokaze no Nocturne
+zero      PS2  SLPS 258.97  Zero no Tsukaima 3 Maigo no Period to Ikusen no Symphony
 
 	jinguji   ALL DONE
+	zero      ALL DONE
 
 lunar     PSP  NPJH 500.54  Lunar Harmony of Silver Star
 ???       PSP  ULJM 051.06  Tengai Makyou Daishi no Mokushiroku

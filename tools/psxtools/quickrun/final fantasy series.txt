@@ -1,0 +1,256 @@
+=========================
+=== Final Fantasy XII ===
+=========================
+Moogle Cartographers
+
+Rabanastre            - Southern Plaza
+Dalmasca Estersand    - South Bank Village,North Bank Village
+Giza Plains (The Dry) - Nomad Village
+Bhujerba              - Lhusu Square,Travica Way
+Jahara                - Banks of the Sogoht
+Eruyt Village         - Road of Verdant Praise
+Mt Bur-Omisace        - Sand-strewn Pass
+Mosphoran Highwaste   - Babbling Vale
+Phon Coast            - Hunters' Camp
+Old Archades          - Alley of Low Whispers
+Archades              - Bulward's Technicks
+Balfonheim            - Seabreeze Lane
+------------------------------
+Map Urns
+
+Map of Royal Palace of Eabanastre - Celler Stores
+Map of Garamsythe Waterway        - East Waterway Control
+Map of Nalbina Dungeons           - Confiscatory
+Map of Barheim Passage            - Great Eastern Passage
+Map of Leviathan                  - Port Launch
+Map of Ogir-yensa Sandsea         - Platform 1 - Refinery
+Map of Nam-yensa Sandsea          - Augur Hill
+Map of Tomb of Raithwall          - Royal Passage
+Map of Golmore Jungle             - Path of Chained Light
+Map of Henne Mines                - Phase 1 Shaft
+Map of Stilshrine of Miriam       - Ward of Steel
+Map of Salikawood                 - Truckwall Road
+Map of Sochen Cave Palace         - Mirror of the Soul
+Map of Draklor Laboratory         - 67th Floor
+Map of Feywood                    - Walk of Stolen Truths
+Map of Giruvegan                  - The Trimahla Water-steps (revisit)
+Map of Ridorana Cataract          - Colliseum
+Map of Pharos: First Ascent       - Wellspring Labyrinth
+Map of Pharos: Second Ascent      - Station of Suffering
+Map of Pharos: Third Ascent       - Spire Ravel - 1st Flight
+Map of Nabreus Deadlands          - Vale of Lingering Sorrow
+Map of Necrohol of Nabudis        - BOSS Humbaba Mistant (medallion of bravery)
+Map of Zertinan Caverns           - Balamka Fault
+Feywood Candle    - White Magick's Embrace
+Barheim Candle    - Zeviah Span
+Garamsythe Candle - East Sluice Control
+Henne Candle      - Phase 2 Dig
+Lhusu Candle      - Site 5
+------------------------------
+Airship Flights
+
+R  ->    N  BH  A
+N  -> R         A  BA
+BH -> R            BA
+A  -> R  N         BA
+BA ->    N  BH  A
+
+	R ---N       N
+	|\   |      /
+	| BH |     /
+	|   \|    /
+	A ---BA  A
+
+Rabanastre <-> Bhujerba <-> Balfonheim <-> Nalbina <-> Rabanastre <-> Archades <-> Balfonheim
+Nalbina <-> Archades
+------------------------------
+Sochen Cave Palace
+
+    1
+   / \
+   2 3---|
+   \ /   |
+    4    |
+ __/ \___|
+ a b c d e
+=waterfall=
+ f g h i j
+ ---------
+     |
+-----|
+Waterfall Puzzle - enter zones in order j-f-a-d-i-g-b-c
+Door      Puzzle - open  doors in order 3-4-2-1-3
+------------------------------
+Dungeon Merchant Exclusives
+
+Dalmasca Estersand/South Bank Village
+	Hastega
+Dalmasca Westersand/The Western Divide
+	Renew
+Barheim Passage/The Lightworks
+	Ardor
+Necrohol of Nabudis/Hall of Enffulgent Light
+	Scathe,Telekinesis
+------------------------------
+Rare Game Trophies
+
+2  Thalassinon     Phon Coast             The Vaddu Strand
+	wait on top of hill
+59 Terror Tyrant   Dalmasca Estersand     Broken Sands
+5  Gavial          Garamsythe Waterway    No. 10 Channel
+	wait on standing water
+62 Ishteen         Barheim Passage        The Zeviah Span or East-West Bypass
+73 Disma           Lhusu Mines            Site 5 or Site 6 North
+7  Kaiser Wolf     Dalmasca Westersand    Corridor of Sand
+++ Lindbur Wolf    Dalmasca Westersand    Shimmering Horizons (from Galtea Downs)
+	chain Wolf for Lindbur Wolf
+	defeat Lindbur Wolf for Kaiser Wolf (random)
+35 Bull Chocobo    Ogir-Yensa Sandsea     South Tank Approach
+30 Victanir        Nam-Yensa Sandsea      Yellow Sands
+70 Zombie Lord     The Tomb of Raithwall  Northwall Passage
+	game clock 00 to 29 minutes
+29 Nazarnir        Giza Plains (The Dry)  Starfall Field
+53 Killbug         Ozmone Plain           The Switchback
+79 Alteci          Zertinan Caverns       The Undershore
+	chain Mallicant
+46 Melt            Henne Mines            Pithead Junction B
+16 Biding Mantis   Golmore Jungle         The Needlebrake
+	game clock 30 to 59 minutes
+74 Ancbolder       Paramina Rift          Karydine Glacier
+37 Myath           Stilshrine of Miriam   Ward of Velitation
+57 Dheed           Mosphoran Highwaste    Skyreach Ridge
+15 Rageclaw        Salikawood             Piebald Path
+	wait 1 minute, appear on opposite exit
+36 Skullash        Phon Coast             Cape Tialan
+19 Grimalkin       Tchita Uplands         Uazcuff Hills
+56 Kris            Tchita Uplands         The Highlands
+42 Anubys          Sochen Cave Palace     Mirror of the Soul
+	solve the Waterfall Puzzle, enter secret room from north
+75 Wendice         Sochen Cave Palace     Destiny's March
+1  Aspidochelon    Cerobi Steppe          Feddik River
+77 Bluesang        Cerobi Steppe          The Crossing
+9  Dreadguard      The Feywood            Walk of Dancing Shadow
+	chain Mirrorknight
+68 Crystal Knight  The Great Crystal      A Vikaari Kanbhru Ra
+60 Abelisk         Ridorana Cataract      Echoes from Time's Garden
+78 Avenger         Pharos: Second Ascent  Station of Ascendance
+66 Arioch          Nabreus Deadlands      The Slumbermead
+63 Vorres          Necrohol of Nabudis    Hall of the Ivory Covenant
+	attack and lure Dark Element to location
+------------------------------
+Hunts
+
+1  Rogue Tomato            Dalmasca Estersand     The Stepping
+2  Thextera                Dalmasca Westersand    Galtea Downs
+3  Flowering Cactoid       Dalmasca Estersand     Yardang Labyrinth
+4  Wraith                  Garamsythe Waterway    Overflow Cloaca
+	wait in the open area
+5  Nidhogg                 Lhusu Mines            Transitway 1
+6  White Mousse            Garamsythe Waterway    West Sluice Control
+7  Ring Wyrm               Dalmasca Westersand    Windtrace Dunes (sandstorm)
+8  Wyvern Lord             Nam-Yensa Sandsea      Simoon Bluff
+9  Marilith                Zertinan Caverns       Invitation to Heresy
+	wait 5 minutes on the grass near sunny area
+10 Enkelados               Ozmone Plain           The Shred
+	clear and reenter
+11 Croakadile              Giza Plains (Raining)  Starfall Field
+12 Ixtab                   Henne Mines            Phase 1 Shaft
+13 Feral Retriever         Paramina Rift          Spine of the Ice Wyrm
+14 Vorpal Bunny            Golmore Jungle         The Rustling Chapel
+15 Mindflayer              Henne Mines            Phase 1 Dig
+	enter with all full MP
+16 Bloodwing               Barheim Passage        West Annex
+	need Barheim Key from Eastersand Patient quest
+17 Atomos                  Mosphoran Highwaste    Northern Skirts
+18 Roblon                  Nabreus Deadlands      Overlooking Eternity
+	secret path at northwest of The Slumbermead
+19 Braegh                  Salikawood             Corridor of Ages
+20 Darksteel               Sochen Cave Palace     Temptation Eluded
+21 Vyraal                  Cerobi Steppe          The Northsward
+22 Lindwyrm                Tchita Uplands         Garden of Life's Circle (cloudy)
+23 Overlord                Sochen Cave Palace     Doubt Abandoned
+24 Goliath                 Necrohol of Nabudis    Hall of Slumbering Might
+25 Deathscythe             Necrohol of Nabudis    Cloister of the Highborn
+	one party at HP critical
+26 Deathgaze               Airship (Leisure Craft Deck)
+27 Diabolos                Lhusu Mines            Site 11
+	completed Mark 38 Antlion
+	need Site 11 Key from Phon Coast to start
+28 Piscodaemon             Giruvegan              Gate of Fire
+29 Wild Malboro            The Feywood            Redolent Glade
+30 Catoblepas              Zertinan Caverns       Hourglass Basin
+	secret path near blue save crystal at The Undershore
+31 Fafnir                  Paramina Rift          Silverflow's End (blizzard)
+32 Pylraster               The Pharos at Ridoran  They Who Thirst Not
+
+Elite Hunts
+33 Cluckatrice             Giza Plains            Gizas North Bank
+	clear and reenter
+34 Rocktoise               Lhusu Mines            Site 2
+35 Orthros                 Garamsythe Waterway    Southern Sluice Way
+	enter with all female characters
+36 Gil Snapper             Giza Plains (Raining)  Tracks of the Beast (heavy rain)
+	cut 6 white dried trees to enter
+37 Trickster               Paramina Rift          Frozen Brook
+38 Antlion                 Lhusu Mines            Site 9
+39 Carrot                  The Salikawood         Sun-dappled Path
+	no kill/pacifist run on Salikawood
+40 Ancient Man of Mystery  Lhusu Mines            Tasche Span , Site 7
+41 Belito                  Nam-Yensa Sandsea      Withering Shores
+	through Zertinan Caverns from Ogir-Yensa Sandsea
+42 Behemoth King           Feywood                Edge of Reason
+	clear The Edge of Reason
+	clear The Ice Field of Clearsight
+43 Ixion                   The Pharos: Subterra
+44 The Seer                The Pharos: Subterra   Unknown Floor
+	need to defeat Phoenix in Penumbra secret northeast room
+45 Yiazmat                 Ridorana Cataract      Colosseum
+------------------------------
+Esper
+
+LP  MC
+20  1  Belial      - Tomb of Raithwall     *story*
+	required for Feywood-Giruvegan Door
+30  1  Mateus      - Stilshrine of Miriam  *story*
+50  2  Shemhazai   - Giruvegan             *story*
+50  2  Hashmal     - Pharos: Third Ascent  *story*
+100 3  Famfrit     - Pharos: Third Ascent  *story*
+
+30  1  Zelera      - Barheim Passage       Terminus No. 7
+	done Hunt 3 - Flowering Cactoid
+	done Eastersand Ferry quest
+	need Barheim Key from Eastersand Patient quest
+	SEALED : 5 minutes timer
+35  1  Adrammelech - Zertinan Caverns      Anthroza Quicksands
+50  2  Cuchulainn  - Garamsythe Waterway   No. 1 Cloaca
+	need Sluice Gate Key from Hunt 6 - White Mousse
+		hint : East + SouthEast = Center East Gate , West + SouthWest = Center West Gate
+			then SouthEast + SouthWest
+65  2  Zeromus     - Stilshrine of Miriam  Throne of Veiled Gods
+	need Stone of the Condemner from Mt. Bur-Omisace
+	SEALED : Magic command
+65  2  Exodus      - Mosphoran Highwaste   Empyrean Seat
+	need chocobo to open a shortcut
+		hint : South shrine for shortcut
+			then West shrine + NorthWest shrine
+	SEALED : Item command
+100 3  Chaos       - Necrohol of Nabudis   The Crucible
+	need Madallion of Bravery for Door of Horrors
+		need Blackened Fragment from Elite Hunt 35 - Orthros
+		need Dull Fragment from Garamsythe Waterway/Central Waterway Control
+			hint = Dusty Letter
+		need Grimy Fragment from Rabanastre Necklace quest
+		give to Roh'kenmou at Lowtown/Old Dulan's Place
+	need Madallion of Love for Door of Loathing
+		need Moonsilver Medallion from Otto at Old Archades/Alley of Muted Sighs
+		give to Roh'kenmu at Archades/Charlotte's Magickery
+	need Madallion of Might for Door of Despair
+		get both medallions from Nabreus Deadlands/Overlooking Eternity
+		defeat Fury and Humbaba Mistant
+	SEALED : Attack command
+115 3  Ultima      - The Great Crystal     Cystal Peak
+	SEALED : *random* command
+200 3  Zodiark     - Henne Mines           Special Charter Dig
+	done Hunt 15 - Mindflayer
+	need 10+ Espers
+------------------------------
