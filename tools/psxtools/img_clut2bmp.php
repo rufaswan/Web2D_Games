@@ -133,19 +133,4 @@ function img2bmp( $fname )
 	return;
 }
 
-function imgfile( $ent )
-{
-	if ( is_file($ent) )
-		return img2bmp($ent);
-	if ( ! is_dir($ent) )
-		return;
-
-	$list = array();
-	lsfile_r($ent, $list);
-	foreach ( $list as $fn )
-		img2bmp($fn);
-	return;
-}
-
-for ( $i=1; $i < $argc; $i++ )
-	imgfile( $argv[$i] );
+argv_loopfile($argv, 'img2bmp');

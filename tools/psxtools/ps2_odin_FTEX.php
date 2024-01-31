@@ -493,8 +493,7 @@ function odin( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	odin( $argv[$i] );
+argv_loopfile($argv, 'odin');
 
 /*
 4-bpp GrimGrimoire

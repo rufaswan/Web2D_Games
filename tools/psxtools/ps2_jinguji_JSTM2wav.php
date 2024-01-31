@@ -99,5 +99,4 @@ function jinguji( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	jinguji( $argv[$i] );
+argv_loopfile($argv, 'jinguji');

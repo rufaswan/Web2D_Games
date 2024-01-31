@@ -3,18 +3,132 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Mobile Test</title>
+<title>Mobile Browser Test</title>
 @@<mobile.css>@@
+@@<mobile.js>@@
 
 </head><body>
-<main></main>
 
-<script>var DOM_MAIN = document.getElementsByTagName('main')[0];</script>
+<h2>Mobile Browser</h2>
+	<h3>Navigator</h3>
+	<table id='listnavigator'></table>
 
-@@<mobile-user-agent.js>@@
-@@<mobile-log-screen.js>@@
-@@<mobile-log-js.js>@@
-@@<mobile-log-css.js>@@
-@@<mobile-webgl.js>@@
+	<h3>Window</h3>
+	<table id='listwindow'></table>
+
+	<h3>Document</h3>
+	<table id='listdocument'></table>
+
+	<h3>CSS Support</h3>
+	<table id='listcss'></table>
+
+<h2>WebGL</h2>
+	<h3>WebGL Parameter</h3>
+	<table id='listwebgl'></table>
+
+	<h3>WebGL Reference</h3>
+	<table id='listreference'></table>
+
+	<h3>WebGL Precision</h3>
+	<table id='listprecision'></table>
+
+
+<script>
+var HTML = getHtmlIds();
+
+// test Mobile Browser
+var list = [
+	'platform',
+	'userAgent',
+	['mediaDevices' , 'getUserMedia'],
+];
+mobileparameter(navigator, list, HTML.listnavigator);
+
+var list = [
+	'KeyboardEvent',
+	'MouseEvent',
+	'TouchEvent',
+	'PointerEvent',
+	'StorageEvent',
+	'File' , 'FileReader',
+	'XMLHttpRequest',
+	'MediaRecorder',
+	'WebAssembly',
+	['Promise' , 'all'],
+	['JSON'    , 'parse'],
+	['CSS'     , 'supports'],
+	'atob', 'btoa',
+	'sessionStorage' , 'localStorage',
+	'requestAnimationFrame',
+	'devicePixelRatio',
+];
+mobileparameter(window, list, HTML.listwindow);
+
+var list = [
+	'querySelector' , 'querySelectorAll',
+];
+mobileparameter(document, list, HTML.listdocument);
+
+var list = [
+	['display', 'flex'],
+	['display', 'contents'],
+	['display', 'grid'],
+	['width'  , '1vw'],
+	['width'  , '1em'],
+	['width'  , '1rem'],
+	['width'  , 'calc(50% - 200px)'],
+];
+mobilecss(list, HTML.listcss);
+
+// test WEBGL
+var WEBGL_OPT = {
+	alpha                 : true,
+	antialias             : true,
+	depth                 : true,
+	premultipliedAlpha    : false,
+	preserveDrawingBuffer : true,
+	stencil               : true,
+};
+var WEBGL = document.createElement('canvas').getContext('webgl', WEBGL_OPT);
+if ( WEBGL ){
+	glprecision(WEBGL, HTML.listprecision);
+
+	// from https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf
+	var list = [
+		['RED_BITS'     ,  8], // page 3 : lowp
+		['GREEN_BITS'   ,  8], // page 3 : lowp
+		['BLUE_BITS'    ,  8], // page 3 : lowp
+		['ALPHA_BITS'   ,  8], // page 3 : lowp
+		['DEPTH_BITS'   , 16], // page 1 : webgl context attributes
+		['STENCIL_BITS' ,  8], // page 1 : webgl context attributes
+
+		// page 4 : built-in constants with minimum values
+		['MAX_VERTEX_ATTRIBS'              ,   8],
+		['MAX_VERTEX_UNIFORM_VECTORS'      , 128],
+		['MAX_VARYING_VECTORS'             ,   8],
+		['MAX_VERTEX_TEXTURE_IMAGE_UNITS'  ,   0],
+		['MAX_COMBINED_TEXTURE_IMAGE_UNITS',   8],
+		['MAX_TEXTURE_IMAGE_UNITS'         ,   8],
+		['MAX_FRAGMENT_UNIFORM_VECTORS'    ,  16],
+		['MAX_DRAW_BUFFERS'                ,   1],
+	];
+	glreference(WEBGL, list, HTML.listreference)
+
+	var list = [
+		'VERSION',
+		'SHADING_LANGUAGE_VERSION',
+		'VENDOR',
+		'RENDERER',
+		'MAX_CUBE_MAP_TEXTURE_SIZE',
+		'MAX_RENDERBUFFER_SIZE',
+		'MAX_TEXTURE_SIZE',
+		'MAX_VIEWPORT_DIMS',
+		'ALIASED_POINT_SIZE_RANGE',
+		'ALIASED_LINE_WIDTH_RANGE',
+	];
+	glparameter(WEBGL, list, HTML.listwebgl);
+}
+</script>
 
 </body></html>
+

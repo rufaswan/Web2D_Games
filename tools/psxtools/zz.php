@@ -42,3 +42,4 @@ function prefix( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	prefix( $argv[$i] );
+//argv_loopfile($argv, 'prefix');

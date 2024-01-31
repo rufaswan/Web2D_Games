@@ -1,6 +1,6 @@
 #!/bin/bash
-[ $# = 0 ] && exit
 [ $(which ffmpeg) ] || exit
+nice='nice -n 19'
 
 ifps=60
 while [ "$1" ]; do
@@ -13,15 +13,15 @@ while [ "$1" ]; do
 		# input png @ 60 FPS , output animation @ 10 FPS
 		case "$ext" in
 			'gif')
-				ffmpeg -y                     \
+				$nice  ffmpeg -y                 \
 					-r $ifps  -i "$tit"/%06d.png \
 					-r 10  "$tit".gif;;
 			'apng')
-				ffmpeg -y                     \
+				$nice  ffmpeg -y                 \
 					-r $ifps  -i "$tit"/%06d.png \
 					-f apng -plays 0 -r 10  "$tit".apng;;
 			'webp')
-				ffmpeg -y                     \
+				$nice  ffmpeg -y                 \
 					-r $ifps  -i "$tit"/%06d.png \
 					-vcodec libwebp_anim -lossless 1 -loop 0 -r 10  "$tit".webp;;
 		esac

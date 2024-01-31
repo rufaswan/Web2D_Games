@@ -18,21 +18,21 @@ echo "MEM LIMIT : $kb"
 # Nice-scale goes from -20 (greedy) to 19 (nice)
 # greedy takes and demand more CPU
 # nice   gives and wait   for  CPU
-nice="nice -n 19"
+[ $(which wine) ] || { echo 'WINE (32-bit) not installed.'; exit; }
+nice='nice -n 19'
 
-# detect wine
-WINE=$(which wine)
-[ "$WINE" ] || { echo "WINE (32-bit) not installed."; exit; }
-WINE="$nice $WINE"
+BAK_LIB="$LD_LIBRARY_PATH"
+BAK_GL="$LIBGL_DRIVERS_PATH"
+BAK_HOME="$HOME"
 
 # look for 32-bit LIB for WINE
 export    LD_LIBRARY_PATH=$HOME/opt/lib32:/usr/lib32:/lib32:"$PWD"
 export LIBGL_DRIVERS_PATH=/usr/lib/i386-linux-gnu/dri:/usr/lib32/dri:/lib32/dri:"$PWD"
 
 # wiki.winehq.org/Debug_Channels
-#export WINEDEBUG="err+all,warn-all,fixme-all,trace-all"
-#export WINEDEBUG="-all,err+all"
-export WINEDEBUG="-all,err+module"
+#export WINEDEBUG='err+all,warn-all,fixme-all,trace-all'
+#export WINEDEBUG='-all,err+all'
+export WINEDEBUG='-all,err+module'
 
 # wiki.winehq.org/Wine_User%27s_Guide#DLL_Overrides
 dll="winemenubuilder.exe=d"   # Disable Desktop Icons
@@ -44,23 +44,23 @@ dll="$dll;dsound=n,b"  # Touhou Vorbis DLL
 export WINEDLLOVERRIDES="$dll"
 
 # wiki.winehq.org/FAQ
-export   WINEARCH="win32"
+export   WINEARCH='win32'
 export WINEPREFIX="/tmp/$WINEARCH"
 export       HOME="/tmp/home-dummy"
 
 # wineconsole cmd.bat
 # wine cmd /c cmd.bat
 #winecmd="$nice wineconsole"
-winecmd="$nice wine cmd /c"
+winecmd='wine cmd /c'
 
 # virtual desktop setting
   deskid=$(date +"%s")
-desksize="900x600"
+desksize='900x600'
     desk="explorer /desktop=$WINEARCH-$deskid,$desksize"
 ########################################
 function mouselock()
 {
-	echo "Mouse Lock"
+	echo 'Mouse Lock'
 	cat << _REG  > /tmp/wine.reg
 REGEDIT4
 
@@ -77,76 +77,77 @@ if [ ! -d "$WINEPREFIX" ]; then
 	echo "New HOME = $HOME"
 	mkdir -p "$HOME"
 	winecfg
-	#fonts="$WINEPREFIX/drive_c/windows/Fonts/"
-	#ln -s $(find /usr/share/fonts -iname "*.ttf")  "$fonts"
-	#ln -s $(find /usr/share/wine  -iname "*.ttf")  "$fonts"
 fi
 if [ $# = 0 ]; then
 	winecfg
 	wineserver -k
-	exit
+else
+	while [ "$1" ]; do
+		t1="${1%/}"
+		tit="${t1%.*}"
+		ext="${t1##*.}"
+		shift
+
+		if [ -f "$t1" ]; then
+			case "$ext" in
+				'exe' | 'EXE')  $nice  wine  $desk "$t1" "$@"; shift $#;;
+				'bat' | 'BAT')  $nice  $winecmd  "$t1";;
+				'reg' | 'REG')  regedit    "$t1";;
+				'msi' | 'MSI')  msiexec /i "$t1";;
+			esac
+		else
+			case "$t1" in
+				'-k' | '-kill')   wineserver -k;;
+				'-h' | '-help')   wine --help;;
+				'-V' | '-ver')    wine --version;;
+
+				'-desk' | '-size' | '-s')
+					desksize="$1"
+					shift
+					desk="explorer /desktop=wine-$deskid,$desksize";;
+				'-nodesk' | '-quiet' | '-q')
+					desk='';;
+
+				'-path')
+					case "$1" in
+						*'/'*)   winepath --windows "$1";; #  dos2unix
+						*'\\'*)  winepath --unix    "$1";; # unix2dos
+					esac
+					shift;;
+
+				'-cmd' | '-bat')     $nice  $winecmd  "$@"; shift $#;;
+				'-reg' | 'regedit')  regedit;;
+				'-txt' | 'notepad')  notepad;;
+
+				'-sjis')
+					sjis='/usr/share/i18n/charmaps/SHIFT_JIS.gz'
+					if [ -f "$sjis" ]; then
+						mkdir -p '/tmp/sjisdef'
+						localedef -c -f SHIFT_JIS -i ja_JP '/tmp/sjisdef/ja_JP.SJIS'
+						export LOCPATH='/tmp/sjisdef'
+						export LANG='ja_JP.SJIS'
+					else
+						echo "NOT FOUND : $sjis"
+						echo "REQUIRED : locales_*_all.deb"
+					fi
+					;;
+
+				'-cfg')     winecfg;;
+				'-file')    winefile;;
+				'-server')  wineserver;;
+				'-boot')    wineboot -h;;
+				'-msi')     msiexec /h;;
+				'-uninst')  uninstaller;;
+				'-ctrl')    control;;
+
+				'-mouselock')   mouselock;;
+
+				*)  $nice  wine  $desk  "$t1";;
+			esac
+		fi
+	done
 fi
 
-while [ "$1" ]; do
-	t1="${1%/}"
-	tit="${t1%.*}"
-	ext="${t1##*.}"
-	shift
-
-	case "$t1" in
-
-		*".exe" | *".EXE")  $WINE $desk "$t1" "$@"; shift $#;;
-		*".reg" | *".REG")  regedit "$t1";;
-		*".msi" | *".MSI")  msiexec /i "$t1";;
-		*".bat" | *".BAT")  $winecmd "$t1";;
-
-		"-k" | "-kill")   wineserver -k;;
-		"-h" | "-help")   $WINE --help;;
-		"-V" | "-ver")    $WINE --version;;
-
-		"-desk" | "-size" | "-s")
-			desksize="$1"
-			desk="explorer /desktop=wine-$deskid,$desksize"
-			shift;;
-		"-nodesk" | "-quiet" | "-q")
-			desk="";;
-
-		"-path")
-			case "$1" in
-				*'/'*)   winepath --windows "$1";; #  dos2unix
-				*'\\'*)  winepath --unix    "$1";; # unix2dos
-			esac
-			shift;;
-
-		"-cmd" | "-bat")     $winecmd "$@"; shift $#;;
-		"-reg" | "regedit")  regedit;;
-		"-txt" | "notepad")  notepad;;
-
-		"-sjis")
-			sjis="/usr/share/i18n/charmaps/SHIFT_JIS.gz"
-			if [ -f "$sjis" ]; then
-				mkdir -p /tmp/sjisdef
-				localedef -c -f SHIFT_JIS -i ja_JP /tmp/sjisdef/ja_JP.SJIS
-				export LOCPATH=/tmp/sjisdef
-				export LANG=ja_JP.SJIS
-			else
-				echo "NOT FOUND : $sjis"
-				echo "REQUIRED : locales_*_all.deb"
-			fi
-			;;
-
-		"-cfg")     winecfg;;
-		"-file")    winefile;;
-		"-server")  wineserver;;
-		"-boot")    wineboot -h;;
-		"-msi")     msiexec /h;;
-		"-uninst")  uninstaller;;
-		"-ctrl")    control;;
-
-		"-mouselock")   mouselock;;
-
-		*)  $WINE $desk "$t1";;
-
-	esac
-done
-
+export LD_LIBRARY_PATH="$BAK_LIB"
+export LIBGL_DRIVERS_PATH="$BAK_GL"
+export HOME="$BAK_HOME"

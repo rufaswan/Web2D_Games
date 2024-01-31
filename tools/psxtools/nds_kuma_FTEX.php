@@ -92,5 +92,4 @@ function kuma( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	kuma( $argv[$i] );
+argv_loopfile($argv, 'kuma');

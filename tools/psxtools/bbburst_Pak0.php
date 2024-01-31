@@ -71,8 +71,7 @@ function burst( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	burst( $argv[$i] );
+argv_loopfile($argv, 'burst');
 
 /*
 2d_all.bin TOC = RAM 800b8504-800b9a48

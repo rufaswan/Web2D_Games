@@ -3,321 +3,223 @@
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Mobile Test</title>
+<title>Mobile Browser Test</title>
 <style>
-body {
-	background-color : #000;
-	color            : #fff;
-	font-size        : 1.0em;
-	margin           : 0;
-	padding          : 0;
-	overflow         : auto;
-}
-
-main {
-	display        : flex;
-	flex-direction : row;
-	flex-wrap      : wrap;
-	align-items    : stretch;
-	padding        : 0.5em;
-}
-
-.section {
-	margin   : 0.5em;
-	border   : #ff0 0.2em solid;
-	overflow : auto;
-}
-
-.ok {
-	color : #0f0;
-}
-.err {
-	color : #f00;
+td {
+	padding : 0.5em 1em;
 }
 </style>
-
-</head><body>
-<main></main>
-
-<script>var DOM_MAIN = document.getElementsByTagName('main')[0];</script>
-
 <script>'use strict';
 
-(function(){
-	var DIV = document.createElement('div');
-	DIV.classList.add('section');
-
-	var p = document.createElement('p');
-	p.innerHTML = navigator.userAgent;
-	DIV.appendChild(p);
-
-	DOM_MAIN.appendChild(DIV);
-})();
-</script>
-<script>'use strict';
-
-(function(){
-	var DIV = document.createElement('div');
-	DIV.classList.add('section');
-
-	var scr_w = window.innerWidth;
-	var scr_h = window.innerHeight;
-	DIV.innerHTML += '<p>screen size = '+ scr_w +' x '+ scr_h +'</p>';
-
-	var scr_sz = scr_w * scr_h;
-	if ( scr_sz > (16384 * 8640) )  DIV.innerHTML += '<p>16K UHD compatible</p>';
-	if ( scr_sz > ( 8192 * 4320) )  DIV.innerHTML += '<p>8K UHD compatible</p>';
-	if ( scr_sz > ( 4096 * 2160) )  DIV.innerHTML += '<p>4K UHD compatible</p>';
-	if ( scr_sz > ( 2048 * 1080) )  DIV.innerHTML += '<p>2K UHD compatible</p>';
-	if ( scr_sz > ( 1024 *  540) )  DIV.innerHTML += '<p>UHD compatible</p>';
-	if ( scr_sz > (  512 *  270) )  DIV.innerHTML += '<p>qUHD compatible</p>';
-	if ( scr_sz > (  256 *  135) )  DIV.innerHTML += '<p>qqUHD compatible</p>';
-
-	DOM_MAIN.appendChild(DIV);
-})();
-
-</script>
-<script>'use strict';
-
-(function(){
-	var DIV = document.createElement('div');
-	DIV.classList.add('section');
-
-	function logJS( name, test ){
-		var p = document.createElement('p');
-		p.innerHTML = 'checking for "' + name + '" support ... ';
-		if ( test )
-			p.innerHTML += '<span class="ok">[OK]</span>';
-		else
-			p.innerHTML += '<span class="err">[ERROR]</span>';
-		DIV.appendChild(p);
-		return;
+function getHtmlIds(){
+	var html = {};
+	var eles = document.querySelectorAll('*[id]');
+	for ( var i=0; i < eles.length; i++ ) {
+		var id  = eles[i].id;
+		html[id] = eles[i];
 	}
+	return html;
+}
 
-	var e;
+function mobileparameter( mobile, list, table ){
+	var output = '';
+	list.forEach(function(lv,lk){
+		if ( Array.isArray(lv) ){
+			var cur  = mobile;
+			var name = '';
+			for ( var i=0; i < lv.length; i++ ){
+				var tmp = cur[ lv[i] ];
+				var p2  = ( tmp ) ? 'ok' : 'fail';
+				name   += '.' + lv[i];
+				output += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
+				cur = tmp;
+			} // for ( var i=0; i < lv.length; i++ )
+		}
+		else {
+			var p2 = ( mobile[lv] ) ? 'ok' : 'fail';
+			output += '<tr><td>' + lv + '</td><td>' + p2 + '</td></tr>';
+		}
+	});
+	table.innerHTML = output;
+}
 
-	e = document.createElement('canvas').getContext('webgl');
-	logJS('CANVAS.getContext("webgl")', e);
-
-	e = ( window.Promise );
-	logJS('new Promise', e);
-
-	e = ( window.Promise.all );
-	logJS('Promise.all()', e);
-
-	e = ( window.FileReader );
-	logJS('new FileReader', e);
-
-	e = ( window.MediaRecorder );
-	logJS('new MediaRecorder', e);
-
-	e = ( window.JSON.parse );
-	logJS('JSON.parse()', e);
-
-	e = ( window.CSS.supports );
-	logJS('CSS.supports()', e);
-
-	//   mousedown    mousemove    mouseup   mouseuout
-	//  touchstart    touchmove   touchend           -
-	// pointerdown  pointermove  pointerup  pointerout
-	e = ( window.onmousedown );
-	logJS('addEventListener("mousedown")', e);
-
-	e = ( window.ontouchstart );
-	logJS('addEventListener("touchstart")', e);
-
-	e = ( window.onpointerdown );
-	logJS('addEventListener("pointerdown")', e);
-
-	e = ( window.atob );
-	logJS('base64 atob()/btoa()', e);
-
-	// https://stackoverflow.com/questions/36312150/mousedown-event-not-firing-on-tablet-mobile-html5-canvas
-	// mouse          touch
-	// event.clientX  (event.targetTouches[0] ? event.targetTouches[0].pageX : event.changedTouches[event.changedTouches.length-1].pageX)
-	// event.clientY  (event.targetTouches[0] ? event.targetTouches[0].pageY : event.changedTouches[event.changedTouches.length-1].pageY)
-
-	//e = ( window.WebAssembly.validate !== undefined );
-	//logJS('WebAssembly.validate()', e);
-
-	e = ( navigator.mediaDevices.getUserMedia );
-	logJS('navigator.mediaDevices.getUserMedia', e);
-
-	DOM_MAIN.appendChild(DIV);
-})();
-</script>
-<script>'use strict';
-
-(function(){
-	var DIV = document.createElement('div');
-	DIV.classList.add('section');
-
-	function logCSS( key, val ){
-		var p = document.createElement('p');
-		p.innerHTML = 'CSS "' + key + ' : ' + val + '" support ... ';
-		if ( CSS.supports(key, val) )
-			p.innerHTML += '<span class="ok">[OK]</span>';
-		else
-			p.innerHTML += '<span class="err">[ERROR]</span>';
-		DIV.appendChild(p);
+function mobilecss( list, table ){
+	if ( ! window.CSS.supports )
 		return;
-	}
+	var output = '';
+	list.forEach(function(lv,lk){
+		var p1 = lv[0] + ' : ' + lv[1];
+		var p2 = ( CSS.supports(lv[0], lv[1]) ) ? 'ok' : 'fail';
+			output += '<tr><td>' + p1 + '</td><td>' + p2 + '</td></tr>';
+	});
+	table.innerHTML = output;
+}
 
-	logCSS('display', 'flex');
-	//logCSS('display', 'contents');
-	//logCSS('display', 'grid');
-	logCSS('width'  , '1vw');
-	logCSS('width'  , '1em');
-	logCSS('width'  , '1rem');
-	logCSS('width'  , 'calc(50% - 200px)');
+function glparameter( GL, list, table ){
+	var output = '';
+	list.forEach(function(lv,lk){
+		var val = GL.getParameter( GL[lv] );
+		var p2  = JSON.stringify(val);
+		output += '<tr><td>' + lv.toLowerCase() + '</td><td>' + p2 + '</td></tr>';
+	});
+	table.innerHTML = output;
+}
 
-	DOM_MAIN.appendChild(DIV);
-})();
-</script>
-<script>'use strict';
+function glreference( GL, list, table ){
+	var output = '';
+	list.forEach(function(lv,lk){
+		var val = GL.getParameter( GL[ lv[0] ] );
+		var p2 = '' + val + ' [' + lv[1] + ']';
+		var p3 = ( val >= lv[1] ) ? 'ok' : 'fail';
+		output += '<tr><td>' + lv[0].toLowerCase() + '</td><td>' + p2 + '</td><td>' + p3 + '</td></tr>';
+	});
+	table.innerHTML = output;
+}
 
-(function(){
-	var vert_src = `
-		attribute  highp  vec3  a_xyz;
-		attribute  highp  vec4  a_color;
-		varying    highp  vec4  v_color;
+function glprecision( GL, table ){
+	var output = '';
+	['LOW','MEDIUM','HIGH'].forEach(function(pr){
+		['INT','FLOAT'].forEach(function(ty){
+			['VERTEX_SHADER','FRAGMENT_SHADER'].forEach(function(sh){
+				var type = pr + '_' + ty;
+				var form = GL.getShaderPrecisionFormat(GL[sh], GL[type]);
 
-		void main(void){
-			v_color = a_color;
-			gl_Position = vec4(a_xyz, 1.0);
-		}
-	`;
-	var frag_src = `
-		varying  highp  vec4  v_color;
-
-		void main(void){
-			gl_FragColor = v_color;
-		}
-	`;
-	var gl_data = {
-		'cnt' : 6,
-		'xyz' : [
-			-1, 1,1,  1, 1,1,   1,-1,1,
-			-1, 1,1,  1,-1,1,  -1,-1,1,
-		],
-		'color' : [
-			1,0,0,1,  0,1,0,1,  0,0,1,1,
-			1,0,0,1,  0,0,1,1,  1,1,1,1,
-		],
-	};
-
-	var CANVAS = document.createElement('canvas');
-	CANVAS.classList.add('section');
-
-	var DIV = document.createElement('div');
-	DIV.classList.add('section');
-
-	var PREC = document.createElement('div');
-	PREC.classList.add('section');
-
-	function glprecision( GL )
-	{
-		['VERTEX_SHADER','FRAGMENT_SHADER'].forEach(function(sh){
-			['LOW','MEDIUM','HIGH'].forEach(function(pr){
-				['INT','FLOAT'].forEach(function(ty){
-					var type = pr + '_' + ty;
-					var form = GL.getShaderPrecisionFormat(GL[sh], GL[type]);
-					//console.log(sh, type, form);
-
-					var p = document.createElement('p');
-					p.innerHTML  = 'GL.getShaderPrecisionFormat';
-					p.innerHTML += '<span class="ok">[ ' + sh + ' ][ ' + type + ' ]</span> = ';
-					p.innerHTML += 'range '+ form.rangeMin +'-'+ form.rangeMax +' , precision '+ form.precision;
-					PREC.appendChild(p);
-				});
+				var p1 = sh + ' ' + type;
+				var p2 = form.precision + ' [-2<sup>' + form.rangeMin + '</sup>,2<sup>' + form.rangeMax + '</sup>]';
+				if ( form.precision === 0 )
+					var p3 = (1 << form.rangeMin).toLocaleString(); // int
+				else
+					var p3 = (1 << form.precision).toLocaleString(); // float
+				output += '<tr><td>' + p1.toLowerCase() + '</td><td>' + p2 + '</td><td>' + p3 + '</td></tr>';
 			});
 		});
-		return;
-	}
+	});
+	table.innerHTML = output;
+}
+</script>
 
-	(function(){
-		var GL = CANVAS.getContext('webgl');
-		if ( ! GL )  return;
+</head><body>
 
-		function logGL( key, min ){
-			var name = key.toLowerCase().replace(/_/g, ' ');
-			//console.log(key, GL[key]);
+<h2>Mobile Browser</h2>
+	<h3>Navigator</h3>
+	<table id='listnavigator'></table>
 
-			var p = document.createElement('p');
-			var v = GL.getParameter( GL[key] );
-			p.innerHTML  = name + ' = ' + JSON.stringify(v);
-			p.innerHTML += ' (<span class="ok">' + min + '</span>)';
-			DIV.appendChild(p);
-			return;
-		}
-		// from https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf
-		logGL('RED_BITS'     , '8'); // page 3 : lowp
-		logGL('GREEN_BITS'   , '8'); // page 3 : lowp
-		logGL('BLUE_BITS'    , '8'); // page 3 : lowp
-		logGL('ALPHA_BITS'   , '8'); // page 3 : lowp
-		logGL('SUBPIXEL_BITS', '-');
-		logGL('DEPTH_BITS'   , '16'); // page 1 : webgl context attributes
-		logGL('STENCIL_BITS' , '8');  // page 1 : webgl context attributes
+	<h3>Window</h3>
+	<table id='listwindow'></table>
+
+	<h3>Document</h3>
+	<table id='listdocument'></table>
+
+	<h3>CSS Support</h3>
+	<table id='listcss'></table>
+
+<h2>WebGL</h2>
+	<h3>WebGL Parameter</h3>
+	<table id='listwebgl'></table>
+
+	<h3>WebGL Reference</h3>
+	<table id='listreference'></table>
+
+	<h3>WebGL Precision</h3>
+	<table id='listprecision'></table>
+
+
+<script>
+var HTML = getHtmlIds();
+
+// test Mobile Browser
+var list = [
+	'platform',
+	'userAgent',
+	['mediaDevices' , 'getUserMedia'],
+];
+mobileparameter(navigator, list, HTML.listnavigator);
+
+var list = [
+	'KeyboardEvent',
+	'MouseEvent',
+	'TouchEvent',
+	'PointerEvent',
+	'StorageEvent',
+	'File' , 'FileReader',
+	'XMLHttpRequest',
+	'MediaRecorder',
+	'WebAssembly',
+	['Promise' , 'all'],
+	['JSON'    , 'parse'],
+	['CSS'     , 'supports'],
+	'atob', 'btoa',
+	'sessionStorage' , 'localStorage',
+	'requestAnimationFrame',
+	'devicePixelRatio',
+];
+mobileparameter(window, list, HTML.listwindow);
+
+var list = [
+	'querySelector' , 'querySelectorAll',
+];
+mobileparameter(document, list, HTML.listdocument);
+
+var list = [
+	['display', 'flex'],
+	['display', 'contents'],
+	['display', 'grid'],
+	['width'  , '1vw'],
+	['width'  , '1em'],
+	['width'  , '1rem'],
+	['width'  , 'calc(50% - 200px)'],
+];
+mobilecss(list, HTML.listcss);
+
+// test WEBGL
+var WEBGL_OPT = {
+	alpha                 : true,
+	antialias             : true,
+	depth                 : true,
+	premultipliedAlpha    : false,
+	preserveDrawingBuffer : true,
+	stencil               : true,
+};
+var WEBGL = document.createElement('canvas').getContext('webgl', WEBGL_OPT);
+if ( WEBGL ){
+	glprecision(WEBGL, HTML.listprecision);
+
+	// from https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf
+	var list = [
+		['RED_BITS'     ,  8], // page 3 : lowp
+		['GREEN_BITS'   ,  8], // page 3 : lowp
+		['BLUE_BITS'    ,  8], // page 3 : lowp
+		['ALPHA_BITS'   ,  8], // page 3 : lowp
+		['DEPTH_BITS'   , 16], // page 1 : webgl context attributes
+		['STENCIL_BITS' ,  8], // page 1 : webgl context attributes
 
 		// page 4 : built-in constants with minimum values
-		logGL('MAX_VERTEX_ATTRIBS'              , '8');
-		logGL('MAX_VERTEX_UNIFORM_VECTORS'      , '128');
-		logGL('MAX_VARYING_VECTORS'             , '8');
-		logGL('MAX_VERTEX_TEXTURE_IMAGE_UNITS'  , '0');
-		logGL('MAX_COMBINED_TEXTURE_IMAGE_UNITS', '8');
-		logGL('MAX_TEXTURE_IMAGE_UNITS'         , '8');
-		logGL('MAX_FRAGMENT_UNIFORM_VECTORS'    , '16');
-		logGL('MAX_DRAW_BUFFERS'                , '1');
+		['MAX_VERTEX_ATTRIBS'              ,   8],
+		['MAX_VERTEX_UNIFORM_VECTORS'      , 128],
+		['MAX_VARYING_VECTORS'             ,   8],
+		['MAX_VERTEX_TEXTURE_IMAGE_UNITS'  ,   0],
+		['MAX_COMBINED_TEXTURE_IMAGE_UNITS',   8],
+		['MAX_TEXTURE_IMAGE_UNITS'         ,   8],
+		['MAX_FRAGMENT_UNIFORM_VECTORS'    ,  16],
+		['MAX_DRAW_BUFFERS'                ,   1],
+	];
+	glreference(WEBGL, list, HTML.listreference)
 
-		// from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices
-		logGL('MAX_CUBE_MAP_TEXTURE_SIZE', 'MDN 4096');
-		logGL('MAX_RENDERBUFFER_SIZE'    , 'MDN 4096');
-		logGL('MAX_TEXTURE_SIZE'         , 'MDN 4096');
-		logGL('MAX_VIEWPORT_DIMS'        , 'MDN [4096,4096]');
-		logGL('ALIASED_POINT_SIZE_RANGE' , 'MDN [1,100]');
-
-		glprecision(GL);
-
-		// compile shader
-		var vert_shader = GL.createShader(GL.VERTEX_SHADER);
-		GL.shaderSource (vert_shader, vert_src);
-		GL.compileShader(vert_shader);
-
-		var frag_shader = GL.createShader(GL.FRAGMENT_SHADER);
-		GL.shaderSource (frag_shader, frag_src);
-		GL.compileShader(frag_shader);
-
-		var SHADER = GL.createProgram();
-		GL.attachShader(SHADER, vert_shader);
-		GL.attachShader(SHADER, frag_shader);
-		GL.linkProgram (SHADER);
-
-		function glattr( attr, data, cnt ){
-			var loc = GL.getAttribLocation(SHADER, attr);
-			var buf = GL.createBuffer();
-			GL.bindBuffer(GL.ARRAY_BUFFER, buf);
-			GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(data), GL.STATIC_DRAW);
-			GL.enableVertexAttribArray(loc);
-			GL.vertexAttribPointer(loc, cnt, GL.FLOAT, false, 0, 0);
-			return;
-		}
-
-		GL.useProgram(SHADER);
-		glattr('a_xyz'  , gl_data.xyz  , 3);
-		glattr('a_color', gl_data.color, 4);
-
-		GL.viewport(0, 0, GL.drawingBufferWidth, GL.drawingBufferHeight);
-		GL.drawArrays(GL.TRIANGLES, 0, gl_data.cnt);
-
-	})();
-
-	DOM_MAIN.appendChild(CANVAS);
-	DOM_MAIN.appendChild(DIV);
-	DOM_MAIN.appendChild(PREC);
-})();
-
-
-
+	var list = [
+		'VERSION',
+		'SHADING_LANGUAGE_VERSION',
+		'VENDOR',
+		'RENDERER',
+		'MAX_CUBE_MAP_TEXTURE_SIZE',
+		'MAX_RENDERBUFFER_SIZE',
+		'MAX_TEXTURE_SIZE',
+		'MAX_VIEWPORT_DIMS',
+		'ALIASED_POINT_SIZE_RANGE',
+		'ALIASED_LINE_WIDTH_RANGE',
+	];
+	glparameter(WEBGL, list, HTML.listwebgl);
+}
 </script>
 
 </body></html>
+

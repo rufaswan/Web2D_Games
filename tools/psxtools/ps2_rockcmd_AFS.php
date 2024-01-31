@@ -101,5 +101,4 @@ function afsfile( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	afsfile( $argv[$i] );
+argv_loopfile($argv, 'afsfile');

@@ -215,8 +215,7 @@ function odin( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	odin( $argv[$i] );
+argv_loopfile($argv, 'odin');
 
 /*
 ps3 dcrown

@@ -41,11 +41,10 @@ function QuadGL(Q){
 			attribute  highp  vec2  a_xy;
 			uniform    highp  vec2  u_pxsize;
 
+			highp  vec2  XY;
 			void main(void){
-				gl_Position = vec4(
-					(a_xy.x + 0.5) * u_pxsize.x ,
-					(a_xy.y + 0.5) * u_pxsize.y ,
-				1.0 , 1.0);
+				XY = a_xy * u_pxsize;
+				gl_Position = vec4(XY.x, XY.y, 1.0 , 1.0);
 			}
 		`;
 		frag_src = `
@@ -70,22 +69,19 @@ function QuadGL(Q){
 			varying    highp  float  v_z;
 
 			highp  vec4   FOG;
-			highp  vec3   XYZ;
+			highp  vec2   XY;
 			highp  vec2   UV;
 			highp  float  z;
 			void main(void){
 				z = 1.0 / a_xyz.z;
-				FOG = a_fog * z;
-				XYZ = a_xyz * z;
-				UV  = a_uv  * z;
-
-				XYZ.x = (XYZ.x + 0.5) * u_pxsize[0].x;
-				XYZ.y = (XYZ.y + 0.5) * u_pxsize[0].y;
+				FOG = a_fog    * z;
+				XY  = a_xyz.xy * z * u_pxsize[0];
+				UV  = a_uv     * z * 1000.0;
 
 				v_fog = FOG;
 				v_uv  = UV;
 				v_z   = z;
-				gl_Position = vec4(XYZ.x, XYZ.y, a_z, 1.0);
+				gl_Position = vec4(XY.x, XY.y, a_z, 1.0);
 			}
 		`;
 		frag_src = `
@@ -101,10 +97,8 @@ function QuadGL(Q){
 			void main(void){
 				z   = 1.0 / v_z;
 				FOG = v_fog * z;
-				UV  = v_uv  * z;
-				gl_FragColor = texture2D(u_tex, UV * u_pxsize[1]) * FOG;
-				if ( gl_FragColor.a == 0.0 )
-					discard;
+				UV  = v_uv  * z * u_pxsize[1] * 0.001;
+				gl_FragColor = texture2D(u_tex, UV) * FOG;
 			}
 		`;
 		__.SHADER.keyframe = __.createShader('draw keyframe', vert_src, frag_src);

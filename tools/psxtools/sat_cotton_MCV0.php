@@ -168,8 +168,7 @@ function cotton( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	cotton( $argv[$i] );
+argv_loopfile($argv, 'cotton');
 
 /*
 cotton boomerang - mcv_st1.bin

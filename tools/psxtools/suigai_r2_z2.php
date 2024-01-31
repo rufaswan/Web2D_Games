@@ -96,7 +96,7 @@ function suigai( $fname )
 	if ( stripos($fname, '.r2') !== false )
 		return r2arc($file, $fname);
 	if ( stripos($fname, '.z2') !== false )
-		return r2arc($file, $fname);
+		return z2arc($file, $fname);
 	return;
 }
 

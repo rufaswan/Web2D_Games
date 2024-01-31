@@ -65,5 +65,4 @@ function burst( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	burst( $argv[$i] );
+argv_loopfile($argv, 'burst');

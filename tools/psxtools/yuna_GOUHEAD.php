@@ -46,5 +46,4 @@ function yuna( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	yuna( $argv[$i] );
+argv_loopfile($argv, 'yuna');

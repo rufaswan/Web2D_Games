@@ -78,9 +78,8 @@ function lunar( $fname )
 			$sub = zlib_decode($sub);
 		}
 		unFCHN($fn, $sub);
-	}
+	} // while (1)
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	lunar( $argv[$i] );
+argv_loopfile($argv, 'lunar');

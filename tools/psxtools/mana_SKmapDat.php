@@ -337,5 +337,4 @@ function mana( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	mana( $argv[$i] );
+argv_loopfile($argv, 'mana');

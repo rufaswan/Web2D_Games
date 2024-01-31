@@ -342,5 +342,4 @@ function cpkfile( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	cpkfile( $argv[$i] );
+argv_loopfile($argv, 'cpkfile');

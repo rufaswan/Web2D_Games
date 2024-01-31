@@ -100,5 +100,4 @@ function mura( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	mura( $argv[$i] );
+argv_loopfile($argv, 'mura');

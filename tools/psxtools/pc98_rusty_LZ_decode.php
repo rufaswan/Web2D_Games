@@ -100,8 +100,7 @@ function rusty( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	rusty( $argv[$i] );
+argv_loopfile($argv, 'rusty');
 
 /*
 Neko Project 2 GDC clock 5 MHz error

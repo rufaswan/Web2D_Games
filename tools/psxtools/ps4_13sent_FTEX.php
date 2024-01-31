@@ -240,8 +240,7 @@ function aegis( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	aegis( $argv[$i] );
+argv_loopfile($argv, 'aegis');
 
 /*
 odin sphere hd

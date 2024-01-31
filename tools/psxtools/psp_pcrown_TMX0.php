@@ -96,5 +96,4 @@ function pcrown( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	pcrown( $argv[$i] );
+argv_loopfile($argv, 'pcrown');

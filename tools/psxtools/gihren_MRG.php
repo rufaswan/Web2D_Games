@@ -201,5 +201,4 @@ function gihren( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	gihren( $argv[$i] );
+argv_loopfile($argv, 'gihren');

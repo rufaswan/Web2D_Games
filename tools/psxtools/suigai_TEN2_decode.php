@@ -157,5 +157,4 @@ function suigai( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	suigai( $argv[$i] );
+argv_loopfile($argv, 'suigai');

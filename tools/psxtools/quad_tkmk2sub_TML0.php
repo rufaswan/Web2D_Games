@@ -278,5 +278,4 @@ function tm2sub( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	tm2sub( $argv[$i] );
+argv_loopfile($argv, 'tm2sub');

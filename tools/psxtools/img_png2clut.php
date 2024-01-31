@@ -330,19 +330,4 @@ function png2img( $fname )
 	return;
 }
 
-function pngfile( $ent )
-{
-	if ( is_file($ent) )
-		return png2img($ent);
-	if ( ! is_dir($ent) )
-		return;
-
-	$list = array();
-	lsfile_r($ent, $list);
-	foreach ( $list as $fn )
-		png2img($fn);
-	return;
-}
-
-for ( $i=0; $i < $argc; $i++ )
-	pngfile( $argv[$i] );
+argv_loopfile($argv, 'png2img');

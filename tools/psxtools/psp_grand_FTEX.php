@@ -191,5 +191,4 @@ function grand( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	grand( $argv[$i] );
+argv_loopfile($argv, 'grand');

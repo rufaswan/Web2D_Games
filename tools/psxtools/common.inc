@@ -561,7 +561,7 @@ function save_file( $fname, $str )
 		return;
 	if ( empty($str) )
 		return;
-	if ( strpos($fname, '\\') )
+	if ( strpos($fname, '\\') !== false )
 		$fname = str_replace('\\', '/', $fname);
 
 	if ( strpos($fname, '/') !== false )
@@ -893,6 +893,41 @@ function dir_file_exists( &$list, $dir, &$check )
 	} // foreach ( $check as $cf )
 
 	return true;
+}
+
+function argv_loopfile( &$argv, $func )
+{
+	if ( ! function_exists($func) )
+		return;
+	trace("usage : %s  FILE/DIR...\n", $argv[0]);
+	$argc = count($argv);
+	for ( $i=1; $i < $argc; $i++ )
+	{
+		$ent = rtrim($argv[$i], '/\\');
+		if ( is_file($ent) )
+		{
+			trace("[%x] %s( %s )\n", $argc-$i, $func, $ent);
+			$func($ent);
+			continue;
+		}
+		if ( is_link($ent) ) // DO NOT follow non-file symlinks
+			continue;
+		if ( is_dir($ent) )
+		{
+			$list = array();
+			lsfile_r($ent, $list);
+
+			$cnt = count($list);
+			for( $j=0; $j < $cnt; $j++ )
+			{
+				trace("[%x][%x] %s( %s )\n", $argc-$i, $cnt-$j, $func, $list[$j]);
+				$func($list[$j]);
+			}
+			continue;
+		}
+		// skip vars
+	} // for ( $i=1; $i < $argc; $i++ )
+	return;
 }
 //////////////////////////////
 define('PIX_BLACK', ZERO . ZERO . ZERO . BYTE);

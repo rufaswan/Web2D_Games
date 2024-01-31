@@ -1,6 +1,6 @@
 #!/bin/bash
-adoc=$(which asciidoctor)
-[ "$adoc" ] || exit
+[ $(which asciidoctor) ] || exit
+nice='nice -n 19'
 
 [ $# = 0 ] && exit
 while [ "$1" ]; do
@@ -9,7 +9,7 @@ while [ "$1" ]; do
 	shift
 
 	[[ "$ext" == 'adoc' ]] || continue
-	"$adoc"                    \
+	$nice  asciidoctor         \
 		-a stylesheet\!        \
 		-a last-update-label\! \
 		"$t1"

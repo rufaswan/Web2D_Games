@@ -204,5 +204,4 @@ function pspgim( $fname )
 	return;
 }
 
-for ( $i=1; $i < $argc; $i++ )
-	pspgim( $argv[$i] );
+argv_loopfile($argv, 'pspgim');
