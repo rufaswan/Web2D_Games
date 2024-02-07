@@ -20,7 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function isofile_r( $iso, &$sub, &$list, $par, $skip=0 )
+
+function isofile_r( $isop, &$sub, &$list, $par, $skip=0 )
 {
 	$func = __FUNCTION__;
 	$size = strlen($sub);
@@ -46,18 +47,30 @@ function isofile_r( $iso, &$sub, &$list, $par, $skip=0 )
 			$lfg = ord( $sub[$p+25] );
 			if ( $lfg & 2 ) // is_dir
 			{
-				$s = fp2str($iso, $skip+$lba*0x800, $lsz);
-				$func($iso, $s, $list, "$par/$lfn");
+				$s = fp2str($isop, $skip+$lba*0x800, $lsz);
+				$func($isop, $s, $list, "$par/$lfn", $skip);
 				goto endp;
 			}
 			else // is_file
 			{
 				$s = substr($lfn, 0, strrpos($lfn, ';'));
-				$list[] = array(
+				$ent = array(
 					'lba'  => $lba,
 					'size' => $lsz,
 					'file' => "$par/$s",
 				);
+
+				$pxa = $p + 0x21 + $len2;
+				if ( $pxa & 1 )
+					$pxa++;
+				if ( ($p+$len1) > ($pxa+8) && substr($sub,$pxa+6,2) === 'XA' )
+				{
+					// 0d 55 XA = file
+					// 8d 55 XA = dir
+					// 25 55 XA = XA/STR file
+					$ent['xa'] = ordint( $sub[$pxa+5] . $sub[$pxa+4] );
+				}
+				$list[] = $ent;
 				goto endp;
 			}
 
@@ -73,19 +86,19 @@ endp:
 	return;
 }
 
-function lsiso_r( $iso, $skip=0 )
+function lsiso_r( $isop, $skip=0 )
 {
-	$s = fp2str($iso, $skip+0x8000, 0x800);
+	$s = fp2str($isop, $skip+0x8000, 0x800);
 	if ( substr($s,0,6) !== "\x01CD001" )
 		return '';
 
 	$s = substr($s, 0x9c); // root dir
 	$lba = str2int($s,  2, 4);
 	$siz = str2int($s, 10, 4);
-	$s = fp2str($iso, $skip+$lba*0x800, $siz);
+	$s = fp2str($isop, $skip+$lba*0x800, $siz);
 
 	$list = array();
-	isofile_r($iso, $s, $list, '', $skip);
+	isofile_r($isop, $s, $list, '', $skip);
 	return $list;
 }
 //////////////////////////////
@@ -107,6 +120,21 @@ function lsiso_r( $iso, $skip=0 )
 // mkisofs
 //   -full-iso9660-filenames = 31 char
 //   -max-iso9660-filenames  = 37 char (violates ISO9660)
+//
+// https://opensource.apple.com/source/xnu/xnu-344.32/bsd/isofs/cd9660/iso.h.auto.html
+// https://problemkaputt.de/psxspx-cdrom-iso-file-and-directory-descriptors.htm
+// XA flags
+//   0001  Owner Read    (usually 1)
+//   0004  Owner Execute (usually 1)
+//   0010  Group Read    (usually 1)
+//   0040  Group Execute (usually 1)
+//   0100  World Read    (usually 1)
+//   0400  World Execute (usually 1)
+//   0800  IS_MODE2        (0=MODE1 or CD-DA, 1=MODE2)
+//   1000  IS_MODE2_FORM2  (0=FORM1, 1=FORM2)
+//   2000  IS_INTERLEAVED  (0=No, 1=Yes...?) (by file and/or channel?)
+//   4000  IS_CDDA         (0=Data or ADPCM, 1=CD-DA Audio Track)
+//   8000  IS_DIRECTORY    (0=File or CD-DA, 1=Directory Record)
 
 function lba2frame( $lba )
 {
@@ -134,9 +162,17 @@ function frame2lba( $frame )
 	$f = (int)( $frame[4].$frame[5] );
 
 	// frames starts at 00:02:00
-	$lba = ($m * 60 + $s) * 60 + $f;
+	$lba = ($m * 60 + $s) * 75 + $f;
 	$lba -= (75 * 2);
 	return $lba;
+}
+
+function printframe( $frame )
+{
+	$m = ord( $frame[0] );
+	$s = ord( $frame[1] );
+	$f = ord( $frame[2] );
+	return sprintf('%2x:%2x:%2x', $m, $s, $f);
 }
 
 function isosearch( &$list, $fname )
@@ -144,6 +180,16 @@ function isosearch( &$list, $fname )
 	foreach ( $list as $v )
 	{
 		if ( stripos($v['file'], $fname) !== false )
+			return $v;
+	}
+	return -1;
+}
+
+function isolba( &$list, $lba )
+{
+	foreach ( $list as $v )
+	{
+		if ( $v['lba'] === $lba )
 			return $v;
 	}
 	return -1;

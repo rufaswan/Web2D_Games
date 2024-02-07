@@ -1,6 +1,6 @@
 #!/bin/bash
-[ $(which ffprobe) ] && exit
-[ $(which ffmpeg)  ] && exit
+[ $(which ffprobe) ] || exit
+[ $(which ffmpeg)  ] || exit
 nice='nice -n 19'
 
 s=2

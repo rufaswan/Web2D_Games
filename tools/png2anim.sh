@@ -19,11 +19,20 @@ while [ "$1" ]; do
 			'apng')
 				$nice  ffmpeg -y                 \
 					-r $ifps  -i "$tit"/%06d.png \
-					-f apng -plays 0 -r 10  "$tit".apng;;
+					-f apng  -pix_fmt rgba       \
+					-plays 0                     \
+					-r 10  "$tit".apng;;
 			'webp')
 				$nice  ffmpeg -y                 \
 					-r $ifps  -i "$tit"/%06d.png \
-					-vcodec libwebp_anim -lossless 1 -loop 0 -r 10  "$tit".webp;;
+					-vcodec libwebp_anim  -pix_fmt bgra \
+					-lossless 1  -loop 0         \
+					-r 10  "$tit".webp;;
+			'mov')
+				$nice  ffmpeg -y                 \
+					-r $ifps  -i "$tit"/%06d.png \
+					-vcodec qtrle  -pix_fmt argb \
+					-r 10  "$tit".mov;;
 		esac
 	else
 		let ifps=$t1*1

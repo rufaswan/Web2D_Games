@@ -300,6 +300,28 @@ blender.stackexchange.com/questions/2050/any-video-formats-that-render-with-alph
 	If .mov file is okay for you, here are the setting to get a transparent background (alpha channel) video output form Blender.
 	Just tried this with Blender 2.80 RC1 and you can use quicktime RLE
 
+stackoverflow.com/questions/61355521/how-can-i-create-a-transparent-video-from-transparent-images
+
+	You have to use an encoder that supports transparency/alpha channel.
+	You can view a list of encoders with
+
+		ffmpeg -h encoders
+
+	and get further details with
+
+		ffmpeg -h encoder=<encoder name>
+
+	such as
+
+		ffmpeg -h encoder=qtrle
+
+	Then refer to the Supported pixel formats line:
+	if has as "a" in the supported pixel format name,
+	such as rgba, then it supports alpha.
+	See a general list of pixel formats with
+
+		ffmpeg -pix_fmts
+
 mugenguild.com/forum/topics/grab-problem-184803.0.html
 
 	You'll create a state for the "attempt".

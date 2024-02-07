@@ -255,6 +255,17 @@ function neghex( $int )
 		return sprintf('%x', $int);
 }
 
+function splitline( $t, $line )
+{
+	if ( strpos($line,$t) === false )
+		return $line;
+	$arr = explode($t, $line);
+	$cnt = count($arr);
+	for ( $i=0; $i < $cnt; $i++ )
+		$arr[$i] = trim( $arr[$i] );
+	return $arr;
+}
+
 function str_update( &$file, $pos, $str )
 {
 	if ( "$str" !== $str )

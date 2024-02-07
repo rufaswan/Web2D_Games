@@ -60,7 +60,7 @@ function cdxapatch( $isop, &$list )
 
 		if ( strpos($line, '=') )
 		{
-			list($k,$v) = explode('=', $line);
+			list($k,$v) = splitline('=', $line);
 			switch ( $k )
 			{
 				case 'FILE':
@@ -87,56 +87,98 @@ function cdxapatch( $isop, &$list )
 
 		if ( strpos($line, ',') )
 		{
-			list($off,$siz,$nam) = explode(',', $line);
+			list($off,$siz,$nam) = splitline(',', $line);
 			$k = isosearch($list, $nam);
 			if ( $k === -1 )
 				continue;
 
 
-			$off = hexdec($off) + $data['POS'];
-			switch ( $data['OFFSET'] )
+			if ( $off[0] !== '-' )
 			{
-				case 'ASM':
-					$s = chrint($k['lba'], 2);
-					printf("PATCH OFFSET ASM  @ %6x = %6x [%s]\n", $off, $k['lba'] & BIT16, $nam);
-					fp_update($isop, $off, $s);
-					break;
-				case 'LBA':
-					$s = chrint($k['lba'], 3);
-					printf("PATCH OFFSET LBA  @ %6x = %6x [%s]\n", $off, $k['lba'], $nam);
-					fp_update($isop, $off, $s);
-					break;
-				case 'MIN':
-					$s = lba2frame($k['lba']);
-					printf("PATCH OFFSET MIN  @ %6x = %s [%s]\n", $off, bin2hex($s), $nam);
-					fp_update($isop, $off, $s);
-					break;
-			} // switch ( $data['OFFSET'] )
+				$off = hexdec($off) + $data['POS'];
+				switch ( $data['OFFSET'] )
+				{
+					case 'ASM':
+						$s = chrint($k['lba'], 2);
+						printf("PATCH OFFSET ASM  @ %6x = %6x [%s]\n", $off, $k['lba'] & BIT16, $nam);
+						fp_update($isop, $off, $s);
+						break;
+					case 'LBA':
+						$s = chrint($k['lba'], 3);
+						printf("PATCH OFFSET LBA  @ %6x = %6x [%s]\n", $off, $k['lba'], $nam);
+						fp_update($isop, $off, $s);
+						break;
+					case 'MIN':
+						$s = lba2frame($k['lba']);
+						printf("PATCH OFFSET MIN  @ %6x = %s [%s]\n", $off, bin2hex($s), $nam);
+						fp_update($isop, $off, $s);
+						break;
+				} // switch ( $data['OFFSET'] )
+			}
 
 
-			$siz = hexdec($siz) + $data['POS'];
-			switch ( $data['SIZE'] )
+			if ( $siz[0] !== '-' )
 			{
-				case 'BYTE':
-					$s = chrint($k['size'], 4);
-					printf("PATCH SIZE   BYTE @ %6x = %6x [%s]\n", $siz, $k['size'], $nam);
-					fp_update($isop, $siz, $s);
-					break;
-				case 'LBA':
-					$b = int_ceil($k['size'], 0x800) >> 11;
-					$s = chrint($b, 3);
-					printf("PATCH SIZE   LBA  @ %6x = %6x [%s]\n", $siz, $b, $nam);
-					fp_update($isop, $siz, $s);
-					break;
-				case 'MIN':
-					$b = int_ceil($k['size'], 0x800) >> 11;
-					$s = lba2frame($k['lba'] + $b);
-					printf("PATCH SIZE   MIN  @ %6x = %s [%s]\n", $off, bin2hex($s), $nam);
-					fp_update($isop, $siz, $s);
-					break;
-			} // switch ( $data['SIZE'] )
+				$siz = hexdec($siz) + $data['POS'];
+				switch ( $data['SIZE'] )
+				{
+					case 'BYTE':
+						$s = chrint($k['size'], 4);
+						printf("PATCH SIZE   BYTE @ %6x = %6x [%s]\n", $siz, $k['size'], $nam);
+						fp_update($isop, $siz, $s);
+						break;
+					case 'LBA':
+						$b = int_ceil($k['size'], 0x800) >> 11;
+						$s = chrint($b, 3);
+						printf("PATCH SIZE   LBA  @ %6x = %6x [%s]\n", $siz, $b, $nam);
+						fp_update($isop, $siz, $s);
+						break;
+					case 'MIN':
+						$b = int_ceil($k['size'], 0x800) >> 11;
+						$s = lba2frame($k['lba'] + $b);
+						printf("PATCH SIZE   MIN  @ %6x = %s [%s]\n", $off, bin2hex($s), $nam);
+						fp_update($isop, $siz, $s);
+						break;
+				} // switch ( $data['SIZE'] )
+			}
 		}
 	} // foreach ( file($patch) as $line )
+	return;
+}
+
+function isometa_update( $isop, $val, $off, $siz )
+{
+	while ( strlen($val) < $siz )
+		$val .= ' ';
+	$val = substr($val, 0, $siz);
+	fp_update($isop, $off , $val);
+	return;
+}
+
+function cdxameta( $isop, $list )
+{
+	$k = isosearch($list, '__CDXA__/meta.txt');
+	if ( $k === -1 )
+		return;
+
+	$meta = fp2str($isop, $k['lba']*0x800, $k['size']);
+	$off  = 0x8000;
+	foreach ( explode("\n",$meta) as $mk => $mv )
+	{
+		$mv = splitline('=', $mv);
+		switch ( $k )
+		{
+			case 'system':              isometa_update($isop, $v, $off +     8, 0x20); break;
+			case 'volume':              isometa_update($isop, $v, $off +  0x28, 0x20); break;
+			case 'volume set':          isometa_update($isop, $v, $off +  0xbe, 0x80); break;
+			case 'publisher':           isometa_update($isop, $v, $off + 0x13e, 0x80); break;
+			case 'data preparer':       isometa_update($isop, $v, $off + 0x1be, 0x80); break;
+			case 'application':         isometa_update($isop, $v, $off + 0x23e, 0x80); break;
+			case 'copyright file':      isometa_update($isop, $v, $off + 0x2be, 0x26); break;
+			case 'abstract file':       isometa_update($isop, $v, $off + 0x2e4, 0x24); break;
+			case 'bibliographic file':  isometa_update($isop, $v, $off + 0x308, 0x25); break;
+		} // switch ( $k )
+	} // foreach ( explode("\n",$meta) as $mk => $mv )
 	return;
 }
 
@@ -152,6 +194,7 @@ function isopatch( $iso )
 
 	cdxaboot ($isop, $list);
 	cdxapatch($isop, $list);
+	cdxameta ($isop, $list);
 
 	fclose($isop);
 	return;

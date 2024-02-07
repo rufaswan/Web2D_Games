@@ -45,11 +45,23 @@ function isolist( $fname )
 		$txt = '';
 		foreach ( $list as $ent )
 		{
-			$buf = sprintf("%6x , %8x , %s\n", $ent['lba'], $ent['size'], $ent['file']);
+			if ( isset($ent['xa']) )
+			{
+				$min = lba2frame( $ent['lba'] );
+				$buf = sprintf("%6x , %8s , %8x , %4x , %s\n", $ent['lba'], printframe($min), $ent['size'], $ent['xa'], $ent['file']);
+				if ( $ent['xa'] & 0x7000 ) // cdda-inter-form2
+					$sub = ZERO;
+				else
+					$sub = fp2str($fp, $skip+$ent['lba']*0x800, $ent['size']);
+			}
+			else
+			{
+				$buf = sprintf("%6x , %8x , %s\n", $ent['lba'], $ent['size'], $ent['file']);
+				$sub = fp2str($fp, $skip+$ent['lba']*0x800, $ent['size']);
+			}
 			echo $buf;
 			$txt .= $buf;
 
-			$sub = fp2str($fp, $skip+$ent['lba']*0x800, $ent['size']);
 			$fn  = sprintf('%s/%s', $dir, $ent['file']);
 			save_file($fn, $sub);
 		} // foreach ( $list as $ent )
