@@ -22,33 +22,57 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-iso.inc';
+require 'psx_lbapatch.inc';
 
-$gp_patch = array(
-	'/slps_023.68' => 'jp_marvel_vs_capcom',
-);
+define('ZERO3', ZERO . ZERO . ZERO);
 
-function jp_marvel_vs_capcom( $dir, &$iso )
+function patch_min4( $dir, $fname, $st, $ed, &$iso )
 {
 	$patch = '';
+	$file = load_file("$dir/$fname");
+	if ( empty($file) )
+		return '';
 
-	$psx = load_file("$dir/slps_023.68");
-	if ( empty($psx) )  return '';
-
-	$patch .= "FILE   = /slps_023.68\n";
+	$patch .= "FILE   = /$fname\n";
 	$patch .= "OFFSET = MIN\n";
-	$patch .= "SIZE   = BYTE\n";
-	for ( $i = 0x15de4; $i < 0x16b44; $i += 8 )
+	$patch .= "SIZE   = -1\n";
+	for ( $i=$st; $i < $ed; $i += 4 )
 	{
-		$min = substr($psx, $i, 3);
-		if ( $min === ZERO.ZERO.ZERO )
+		$min = substr($file, $i, 3);
+		if ( $min === ZERO3 )
 			continue;
 
 		$lba = frame2lba($min);
 		$ent = isolba($iso, $lba);
 		if ( $ent === -1 )
-			return php_error('[slps_023.68 @ %x] LBA %x not found', $i, $lba);
+			return php_error('[%s @ %x] LBA %x not found', $fname, $i, $lba);
+		$patch .= sprintf("%6x , -1 , %s\n", $i, $ent['file']);
+	} // for ( $i=$st; $i < $ed; $i += 4 )
+	return $patch;
+}
+
+function patch_minbyte8( $dir, $fname, $st, $ed, &$iso )
+{
+	$patch = '';
+	$file = load_file("$dir/$fname");
+	if ( empty($file) )
+		return '';
+
+	$patch .= "FILE   = /$fname\n";
+	$patch .= "OFFSET = MIN\n";
+	$patch .= "SIZE   = BYTE\n";
+	for ( $i=$st; $i < $ed; $i += 8 )
+	{
+		$min = substr($file, $i, 3);
+		if ( $min === ZERO3 )
+			continue;
+
+		$lba = frame2lba($min);
+		$ent = isolba($iso, $lba);
+		if ( $ent === -1 )
+			return php_error('[%s @ %x] LBA %x not found', $fname, $i, $lba);
 		$patch .= sprintf("%6x , %8x , %s\n", $i, $i+4, $ent['file']);
-	} // for ( $i = 0x15de4; $i < 0x; $i += 8 )
+	} // for ( $i=$st; $i < $ed; $i += 8 )
 	return $patch;
 }
 

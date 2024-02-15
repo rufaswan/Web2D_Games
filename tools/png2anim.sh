@@ -13,23 +13,23 @@ while [ "$1" ]; do
 		# input png @ 60 FPS , output animation @ 10 FPS
 		case "$ext" in
 			'gif')
-				$nice  ffmpeg -y                 \
+				$nice  ffmpeg -y  -v 0           \
 					-r $ifps  -i "$tit"/%06d.png \
 					-r 10  "$tit".gif;;
 			'apng')
-				$nice  ffmpeg -y                 \
+				$nice  ffmpeg -y  -v 0           \
 					-r $ifps  -i "$tit"/%06d.png \
 					-f apng  -pix_fmt rgba       \
 					-plays 0                     \
 					-r 10  "$tit".apng;;
 			'webp')
-				$nice  ffmpeg -y                 \
+				$nice  ffmpeg -y  -v 0           \
 					-r $ifps  -i "$tit"/%06d.png \
 					-vcodec libwebp_anim  -pix_fmt bgra \
 					-lossless 1  -loop 0         \
 					-r 10  "$tit".webp;;
 			'mov')
-				$nice  ffmpeg -y                 \
+				$nice  ffmpeg -y  -v 0           \
 					-r $ifps  -i "$tit"/%06d.png \
 					-vcodec qtrle  -pix_fmt argb \
 					-r 10  "$tit".mov;;

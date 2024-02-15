@@ -35,14 +35,16 @@ function isofile_r( $isop, &$sub, &$list, $par, $skip=0 )
 			if ( $len1 == 0 ) // entry on next sector
 				goto endj;
 
+			// file = min 3 = 'A;1'
+			// dir  = min 1 = 'A'
 			$len2 = ord( $sub[$p+32] );
-			if ( $len2 == 1 ) // for  . and ..
+			$lfn  = substr($sub, $p+33, $len2);
+			if ( $lfn === "\x00" || $lfn === "\x01" ) // for  . and ..
 				goto endp;
 
+			$lfn = strtolower($lfn);
 			$lba = str2int($sub, $p+ 2, 4);
 			$lsz = str2int($sub, $p+10, 4);
-			$lfn = substr ($sub, $p+33, $len2);
-				$lfn = strtolower($lfn);
 
 			$lfg = ord( $sub[$p+25] );
 			if ( $lfg & 2 ) // is_dir

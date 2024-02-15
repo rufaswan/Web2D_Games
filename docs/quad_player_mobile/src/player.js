@@ -1,6 +1,6 @@
 'use strict';
 
-function getHtmlIds(){
+function get_html_id(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
@@ -10,7 +10,7 @@ function getHtmlIds(){
 	return html;
 }
 
-function displayViewer( html, toggle ){
+function display_viewer( html, toggle ){
 	if ( toggle ){
 		html.viewer.style.display   = 'block';
 		//html.debugger.style.display = 'none';
@@ -22,7 +22,7 @@ function displayViewer( html, toggle ){
 	html.export_div.style.display = 'none';
 }
 
-function btnToggle( elem, turn ){
+function btn_toggle( elem, turn ){
 	var css = elem.classList;
 	if ( turn > 0 ){
 		css.remove('btn_off');
@@ -38,7 +38,7 @@ function btnToggle( elem, turn ){
 	css.remove('btn_off');
 }
 
-function btnPrevNext( qdata, adj ){
+function btn_prev_next( qdata, adj ){
 	adj = adj | 0;
 	if ( ! qdata || adj === 0 )
 		return;
@@ -114,13 +114,13 @@ function quad_mainlist( quad ){
 }
 
 function qdata_listing( qdata, type, id ){
-	var qchild = QUAD.export.listAttach(qdata, type, id);
+	var qchild = QUAD.export.list_attach(qdata, type, id);
 	var qtype  = qdata.QUAD[type][id];
 
 	var qname  = qtype.name || type + ' ' + id;
-	if ( QUAD.export.isLoopAttach(qdata, type, id) )
+	if ( QUAD.export.is_loop_attach(qdata, type, id) )
 		qname += ' <strong>[LOOP]</strong>';
-	if ( QUAD.export.isMixAttach(qdata, type, id) )
+	if ( QUAD.export.is_mix_attach(qdata, type, id) )
 		qname += ' <strong>[MIX]</strong>';
 
 	var html = '<li data-type="' + type + '" data-id="' + id + '"><p>';
@@ -160,7 +160,7 @@ function button_select( elem ){
 	var id   = par2.getAttribute('data-id') | 0;
 
 	qdata_attach(QuadList[0], type, id);
-	displayViewer(HTML, true);
+	display_viewer(HTML, true);
 }
 
 function button_expand( elem ){
@@ -189,7 +189,7 @@ function button_export( elem ){
 	HTML.export_name.innerHTML = type + ' , ' + id;
 
 	var qdata = QuadList[0];
-	var time  = QUAD.export.timeAttach(qdata, type, id);
+	var time  = QUAD.export.time_attach(qdata, type, id);
 	var range = HTML.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
@@ -232,11 +232,11 @@ function button_export_type( elem ){
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_autofit.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_autofit, -1);
+			btn_toggle(HTML.btn_autofit, -1);
 			IS_AUTOZOOM = false;
 			QuadList[0].zoom = 1;
 		} else {
-			btnToggle(HTML.btn_autofit, 1);
+			btn_toggle(HTML.btn_autofit, 1);
 			IS_AUTOZOOM = true;
 			QuadList[0].zoom = -1;
 		}
@@ -245,10 +245,10 @@ function button_export_type( elem ){
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_flipy.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_flipy, -1);
+			btn_toggle(HTML.btn_flipy, -1);
 			QuadList[0].is_flipy = false;
 		} else {
-			btnToggle(HTML.btn_flipy, 1);
+			btn_toggle(HTML.btn_flipy, 1);
 			QuadList[0].is_flipy = true;
 		}
 	});

@@ -1,0 +1,89 @@
+00 "CB-OBJ Format 1"
+10  s0 off
+14  s1 off
+18  s2 off
+1c  s3 off
+20  s4 off
+24  s5 off = compressed data
+28  pix off
+2c  pix size
+30  pal off
+34  pal size
+38
+3c
+40
+44
+48
+4c
+50
+54
+58
+5c
+
+s0
+s1
+s2
+	80036a70  lhu  v0, 0(v0)
+		<<= 3 + s3_off
+	80036d94  lhu  v0, 0(v0)
+		<<= 3 + s3_off
+s3  *8
+	// 0123  456  7
+	// 0123  4  5  67
+	80036a84  lw   v0, 4(s2)
+		&= (8000 << 10)
+	80036abc  lw   v0, 0(s2)
+		(&= 1fff) << 3 + s4_off
+	s1 = s2 + 4
+	80036af4  lw   v0, 0(s1)
+		(<<= 14) >> 14 + s5
+	80036b2c  lw   v0, 0(s1)
+		(<<= 8) >> 14 + s4
+	80036b40  lbu  v0, 3(s1)
+		&= 7f
+	80036bd8  lbu  a1, -2(s1)
+	80036bdc  lbu  a0, -1(s1)
+	80036c48  lbu  v0, 3(s1)
+		&= 7f
+
+	80036da8  lw   v0, 0(s3)
+		&= 8000
+	80036de0  lw   v0, 0(s3)
+		&= 3000
+	s4 = s3 + 5
+	80036e10  lhu  v0, 1(s4)
+		<<= 3 + s4_off
+	80036e20  lw   a0, 0(s3)
+		&= 3000
+	80036e74  lw   v0, 0(s3)
+		((v0 << 4) >> 14) + s6
+	80036e88  lbu  v0, -1(s4)
+	80036f20  lbu  v0, -1(s4)
+	800372dc  lbu  v1, 0(s4)
+	800372f8  lbu  a0, 0(s4)
+s4  *8
+	// 0  1  2  3  [4567]
+	// 0  1  2  3  4  5  6  7
+	80036b74  lb   v0, 2(t0)
+	80036b78  lbu  v1, 0(t0)
+	80036b90  lb   v0, 3(t0)
+	80036b94  lbu  v1, 1(t0)
+	80036ba0  lb   v0, 3(t0)
+	80036ba4  lbu  v1, 1(t0)
+
+	80036bf8  lbu  v0, 0(t0)
+	80036bfc  lbu  v1, 1(t0)
+
+	80036eb8  lb   v0, 2(s2)
+	80036ebc  lbu  v1, 0(s2)
+	80036ed4  lb   v0, 3(s2)
+	80036ed8  lbu  v1, 1(s2)
+	80036ee8  lb   v0, 3(s2)
+	80036eec  lbu  v1, 1(s2)
+
+	8003726c  lbu  a1, 5(s2)
+	80037270  lbu  a2, 6(s2)
+	8003728c  lbu  v0, 0(s2)
+	80037290  lbu  v1, 1(s2)
+	80037318  lbu  v0, 4(s2)
+	8003734c  lbu  v0, 7(s2)

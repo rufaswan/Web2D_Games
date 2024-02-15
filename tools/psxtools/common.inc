@@ -516,26 +516,32 @@ function fp_update( $fp, $pos, $str )
 
 function fopen_file( $fname, $scan=true )
 {
-	if ( is_dir($fname) )
-		return false;
-	$fp = fopen($fname, 'rb');
-	if ( $fp )
-		return $fp;
+	if ( is_file($fname) )
+		return fopen($fname, 'rb');
 	if ( ! $scan )
 		return false;
 
-	// case-insensitive loading
-	// files/data/enemydata.bin == FILES/Data/EnemyData.bin
-	$func = __FUNCTION__;
+	// relative path only
+	$fname = str_replace('\\', '/', $fname);
+	$pos = strpos($fname, '/');
+	if ( $pos === false )
+	{
+		$path  = '.';
+		$fname = './' . $fname;
+	}
+	else
+		$path = substr($fname, 0, $pos);
+	$lower = strtolower($fname);
+
+	// case-insensitive
+	//   files/data/enemydata.bin == FILES/Data/EnemyData.bin
 	$list = array();
-	lsfile_r('.', $list);
+	lsfile_r($path, $list);
 	foreach ( $list as $f )
 	{
-		if ( stripos($f, $fname) === false )
+		if ( strtolower($f) !== $lower )
 			continue;
-		$fp = $func($f, false);
-		if ( $fp )
-			return $fp;
+		return fopen($fname, 'rb');
 	} // foreach ( $list as $f )
 
 	return false;
@@ -548,18 +554,27 @@ function load_file( $fname, $scan=true )
 	if ( ! $scan )
 		return '';
 
-	// case-insensitive loading
-	// files/data/enemydata.bin == FILES/Data/EnemyData.bin
-	$func = __FUNCTION__;
+	// relative path only
+	$fname = str_replace('\\', '/', $fname);
+	$pos = strpos($fname, '/');
+	if ( $pos === false )
+	{
+		$path  = '.';
+		$fname = './' . $fname;
+	}
+	else
+		$path = substr($fname, 0, $pos);
+	$lower = strtolower($fname);
+
+	// case-insensitive
+	//   files/data/enemydata.bin == FILES/Data/EnemyData.bin
 	$list = array();
-	lsfile_r('.', $list);
+	lsfile_r($path, $list);
 	foreach ( $list as $f )
 	{
-		if ( stripos($f, $fname) === false )
+		if ( strtolower($f) !== $lower )
 			continue;
-		$data = $func($f, false);
-		if ( $data !== '' )
-			return $data;
+		return file_get_contents($f);
 	} // foreach ( $list as $f )
 
 	// nothing found
@@ -572,8 +587,7 @@ function save_file( $fname, $str )
 		return;
 	if ( empty($str) )
 		return;
-	if ( strpos($fname, '\\') !== false )
-		$fname = str_replace('\\', '/', $fname);
+	$fname = str_replace('\\', '/', $fname);
 
 	if ( strpos($fname, '/') !== false )
 		@mkdir( dirname($fname), 0755, true );

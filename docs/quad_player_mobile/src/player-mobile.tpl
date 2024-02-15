@@ -92,7 +92,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 </div>
 
 <script>
-var HTML = getHtmlIds();
+var HTML = get_html_id();
 var QuadList = [];
 var SELECTED = '';
 
@@ -104,10 +104,10 @@ var SELECTED = '';
 
 	// BETWEEN DEBUGGER-VIEWER
 	HTML.btn_view.addEventListener('click', function(){
-		displayViewer(HTML, true);
+		display_viewer(HTML, true);
 	});
 	HTML.btn_debug.addEventListener('click', function(){
-		displayViewer(HTML, false);
+		display_viewer(HTML, false);
 		HTML.logger.innerHTML = QUAD.func.console();
 	});
 
@@ -119,13 +119,13 @@ var SELECTED = '';
 	});
 	HTML.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', UPLOAD_ID);
-		if ( QUAD.func.isUndef( QuadList[ UPLOAD_ID ] ) )
+		if ( QUAD.func.is_undef( QuadList[ UPLOAD_ID ] ) )
 			QuadList[ UPLOAD_ID ] = new QuadData(QuadList);
 		var qdata = QuadList[ UPLOAD_ID ];
 
 		var promises = [];
 		for ( var up of this.files )
-			promises.push( QUAD.func.uploadPromise(up, qdata) );
+			promises.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(promises).then(function(resolve){
 			qdata_filetable(qdata, HTML.debugger_files);
@@ -184,10 +184,10 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_hits.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_hits, -1);
+			btn_toggle(HTML.btn_hits, -1);
 			QuadList[0].is_hits = false;
 		} else {
-			btnToggle(HTML.btn_hits, 1);
+			btn_toggle(HTML.btn_hits, 1);
 			QuadList[0].is_hits = true;
 		}
 	});
@@ -195,10 +195,10 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_flipx.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_flipx, -1);
+			btn_toggle(HTML.btn_flipx, -1);
 			QuadList[0].is_flipx = false;
 		} else {
-			btnToggle(HTML.btn_flipx, 1);
+			btn_toggle(HTML.btn_flipx, 1);
 			QuadList[0].is_flipx = true;
 		}
 	});
@@ -207,12 +207,12 @@ var SELECTED = '';
 	var IS_AUTONEXT  = false;
 	HTML.btn_prev.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btnToggle(HTML.btn_next, -1);
+			btn_toggle(HTML.btn_next, -1);
 			if ( HTML.btn_prev.classList.contains('btn_on') ){
-				btnToggle(HTML.btn_prev, -1);
+				btn_toggle(HTML.btn_prev, -1);
 				IS_BTN_CLICK = 0;
 			} else {
-				btnToggle(HTML.btn_prev, 1);
+				btn_toggle(HTML.btn_prev, 1);
 				IS_BTN_CLICK = -1;
 			}
 		} else
@@ -220,12 +220,12 @@ var SELECTED = '';
 	});
 	HTML.btn_next.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btnToggle(HTML.btn_prev, -1);
+			btn_toggle(HTML.btn_prev, -1);
 			if ( HTML.btn_next.classList.contains('btn_on') ){
-				btnToggle(HTML.btn_next, -1);
+				btn_toggle(HTML.btn_next, -1);
 				IS_BTN_CLICK = 0;
 			} else {
-				btnToggle(HTML.btn_next, 1);
+				btn_toggle(HTML.btn_next, 1);
 				IS_BTN_CLICK = 1;
 			}
 		} else
@@ -233,12 +233,12 @@ var SELECTED = '';
 	});
 	HTML.btn_autonext.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btnToggle(HTML.btn_prev, 0);
-			btnToggle(HTML.btn_next, 0);
+			btn_toggle(HTML.btn_prev, 0);
+			btn_toggle(HTML.btn_next, 0);
 			IS_AUTONEXT = false;
 		} else {
-			btnToggle(HTML.btn_prev, -1);
-			btnToggle(HTML.btn_next, -1);
+			btn_toggle(HTML.btn_prev, -1);
+			btn_toggle(HTML.btn_next, -1);
 			IS_AUTONEXT = true;
 		}
 	});
@@ -256,14 +256,14 @@ var SELECTED = '';
 
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (FPS_DRAW & 7) === 0 ){
-			btnPrevNext(qdata, IS_BTN_CLICK);
+			btn_prev_next(qdata, IS_BTN_CLICK);
 			if ( ! IS_AUTONEXT )
 				IS_BTN_CLICK = 0;
 		}
 
 		// update/redraw only when changed
-		if ( QUAD.gl.isCanvasResized() || QUAD.func.isChanged(qdata) ){
-			CAMERA = QUAD.func.viewerCamera(qdata, IS_AUTOZOOM);
+		if ( QUAD.gl.is_canvas_resized() || QUAD.func.is_changed(qdata) ){
+			CAMERA = QUAD.func.viewer_camera(qdata, IS_AUTOZOOM);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();
 

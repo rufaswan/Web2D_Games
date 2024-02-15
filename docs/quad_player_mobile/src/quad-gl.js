@@ -24,7 +24,7 @@ function QuadGL(Q){
 		if ( ! form )
 			return Q.func.error('Fragment Shader has no highp support');
 
-		var maxsz = $.detectMaxTexSize();
+		var maxsz = $.detect_max_texsize();
 		if ( maxsz < 1 )
 			return Q.func.error('MAX_TEXTURE_SIZE < 1', maxsz);
 		__.MAX_TEX_SIZE = maxsz | 0;
@@ -167,47 +167,47 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
-	$.drawLine = function( quads, color ){
+	$.draw_line = function( quads, color ){
 		__.GL.useProgram( __.SHADER.lines );
-		var loc = __.shaderLoc(__.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
+		var loc = __.shader_loc(__.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
 		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
 		__.GL.lineWidth(2);
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
 
-		__.setVertexAttrib(loc.a_xy, quads, 2);
-		__.GL.uniform4fv  (loc.u_color , color);
-		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		__.set_vertex_attrib(loc.a_xy, quads, 2);
+		__.GL.uniform4fv    (loc.u_color , color);
+		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
 		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var idxlen = quads.length / 2;  // number of x,y
-		__.indiceLine(idxlen);
+		__.indice_line(idxlen);
 	}
 
-	$.drawKeyframe = function( dst, src, fog, z, image ){
+	$.draw_keyframe = function( dst, src, fog, z, image ){
 		__.GL.useProgram( __.SHADER.keyframe );
-		var loc = __.shaderLoc(__.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_z', 'u_pxsize', 'u_tex');
+		var loc = __.shader_loc(__.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_z', 'u_pxsize', 'u_tex');
 		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w , 1.0/image.h ];
 		__.GL.activeTexture(__.GL.TEXTURE0);
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, image.tex);
 
-		__.setVertexAttrib(loc.a_xyz, dst, 3);
-		__.setVertexAttrib(loc.a_uv , src, 2);
-		__.setVertexAttrib(loc.a_fog, fog, 4);
-		__.setVertexAttrib(loc.a_z  , z  , 1);
-		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
-		__.GL.uniform1i   (loc.u_tex   , 0   );
+		__.set_vertex_attrib(loc.a_xyz, dst, 3);
+		__.set_vertex_attrib(loc.a_uv , src, 2);
+		__.set_vertex_attrib(loc.a_fog, fog, 4);
+		__.set_vertex_attrib(loc.a_z  , z  , 1);
+		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
+		__.GL.uniform1i     (loc.u_tex   , 0   );
 		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var dstlen = dst.length / 3; // number of x,y
-		__.indiceQuad(dstlen);
+		__.indice_quad(dstlen);
 	}
 
-	$.drawVRAM = function( vram, tex, rect ){
+	$.draw_VRAM = function( vram, tex, rect ){
 		__.GL.useProgram( __.SHADER.vram );
-		var loc = __.shaderLoc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
+		var loc = __.shader_loc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
 		var view = [ vram.w * 0.5 , vram.h * 0.5 ];
 		var sw = rect[2] - rect[0];
 		var sh = rect[3] - rect[1];
@@ -224,18 +224,18 @@ function QuadGL(Q){
 			rect[0] , rect[3] ,
 		];
 		var src = [0,0 , sw,0 , sw,sh , 0,sh];
-		__.setVertexAttrib(loc.a_xy, dst, 2);
-		__.setVertexAttrib(loc.a_uv, src, 2);
-		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
-		__.GL.uniform1i   (loc.u_tex   , 0   );
+		__.set_vertex_attrib(loc.a_xy, dst, 2);
+		__.set_vertex_attrib(loc.a_uv, src, 2);
+		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
+		__.GL.uniform1i     (loc.u_tex   , 0   );
 		__.GL.viewport(0, 0, vram.w, vram.h);
 
-		$.enableFrameBuffer(vram.tex);
-		__.indiceQuad(4);
-		$.enableFrameBuffer(0);
+		$.enable_framebuffer(vram.tex);
+		__.indice_quad(4);
+		$.enable_framebuffer(0);
 	}
 
-	__.indiceLine = function( len ){
+	__.indice_line = function( len ){
 		var idx = [];
 		for ( var i=0; i < len; i += 4 )
 			idx.push(i+0,i+1 , i+1,i+2 , i+2,i+3 , i+3,i+0);
@@ -249,7 +249,7 @@ function QuadGL(Q){
 		__.GL.drawElements(__.GL.LINES, len/4*8, __.GL.UNSIGNED_SHORT, 0);
 	}
 
-	__.indiceQuad = function( len ){
+	__.indice_quad = function( len ){
 		var idx = [];
 		for ( var i=0; i < len; i += 4 )
 			idx.push(i+0,i+1,i+2 , i+0,i+2,i+3);
@@ -264,7 +264,7 @@ function QuadGL(Q){
 		__.GL.drawElements(__.GL.TRIANGLES, len/4*6, __.GL.UNSIGNED_SHORT, 0);
 	}
 
-	__.shaderLoc = function(){
+	__.shader_loc = function(){
 		var shader = arguments[0];
 		var loc    = {};
 		for ( var i=1; i < arguments.length; i++ )
@@ -278,7 +278,7 @@ function QuadGL(Q){
 		return loc;
 	}
 
-	__.setVertexAttrib = function( loc, data, v ){
+	__.set_vertex_attrib = function( loc, data, v ){
 		var buf = __.GL.createBuffer();
 		__.GL.bindBuffer(__.GL.ARRAY_BUFFER, buf);
 		__.GL.bufferData(__.GL.ARRAY_BUFFER, new Float32Array(data), __.GL.STATIC_DRAW);
@@ -288,7 +288,7 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
-	$.createTexture = function(){
+	$.create_texture = function(){
 		var tex = __.GL.createTexture();
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
 		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
@@ -298,9 +298,9 @@ function QuadGL(Q){
 		return tex;
 	}
 
-	$.updateTexture = function( tex, img ){
+	$.update_texture = function( tex, img ){
 		if ( ! tex )
-			tex = $.createTexture();
+			tex = $.create_texture();
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 		__.GL.texImage2D(
 			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level , internalformat
@@ -308,7 +308,7 @@ function QuadGL(Q){
 		img);
 	}
 
-	$.createPixel = function( hex, w=1, h=1 ){
+	$.create_pixel = function( hex, w=1, h=1 ){
 		hex = Q.math.clamp(hex, 0, 255) | 0;
 		if ( w < 0 )  w = __.MAX_TEX_SIZE;
 		if ( h < 0 )  h = __.MAX_TEX_SIZE;
@@ -321,7 +321,7 @@ function QuadGL(Q){
 		var pix = {
 			w : w ,
 			h : h ,
-			tex : $.createTexture() ,
+			tex : $.create_texture() ,
 		};
 		__.GL.bindTexture(__.GL.TEXTURE_2D, pix.tex);
 		__.GL.texImage2D(
@@ -333,7 +333,7 @@ function QuadGL(Q){
 		return pix;
 	}
 
-	$.readRGBA = function(){
+	$.read_RGBA = function(){
 		var bw = __.GL.drawingBufferWidth;
 		var bh = __.GL.drawingBufferHeight;
 		var buf = new Uint8Array( bw * bh * 4 );
@@ -361,7 +361,7 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
-	$.enableBlend = function( blend ){
+	$.enable_blend = function( blend ){
 		if ( ! blend )
 			return __.GL.disable(__.GL.BLEND);
 
@@ -385,7 +385,7 @@ function QuadGL(Q){
 		return __.GL.disable(__.GL.BLEND);
 	}
 
-	$.enableDepth = function( depth ){
+	$.enable_depth = function( depth ){
 		if ( ! depth ){
 			__.GL.clear(__.GL.DEPTH_BUFFER_BIT);
 			//__.GL.depthMask(true); // can write depth
@@ -397,7 +397,7 @@ function QuadGL(Q){
 		return __.GL.enable(__.GL.DEPTH_TEST);
 	}
 
-	$.enableFrameBuffer = function( tex ){
+	$.enable_framebuffer = function( tex ){
 		if ( ! tex ){
 			__.GL.bindFramebuffer(__.GL.FRAMEBUFFER, null);
 			return null;
@@ -421,7 +421,7 @@ function QuadGL(Q){
 		__.GL.flush();
 	}
 
-	$.isValidConstant = function(){
+	$.is_valid_constant = function(){
 		for ( var i=0; i < arguments.length; i++ ){
 			if ( ! __.GL[ arguments[i] ] )
 				return false;
@@ -431,12 +431,12 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
-	$.drawingBuffer = function( max ){
+	$.drawingbuffer_size = function( max ){
 		return [ __.GL.drawingBufferWidth , __.GL.drawingBufferHeight ];
 	}
 
-	$.detectMaxTexSize = function(){
-		var tex = $.createTexture();
+	$.detect_max_texsize = function(){
+		var tex = $.create_texture();
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 
 		var maxsz = __.GL.getParameter( __.GL.MAX_TEXTURE_SIZE ) >> 1;
@@ -474,20 +474,20 @@ function QuadGL(Q){
 		return maxsz;
 	}
 
-	$.maxTextureSize = function(){
+	$.max_texsize = function(){
 		return __.MAX_TEX_SIZE;
 	}
-	$.isMaxTexSize = function(w, h){
+	$.is_max_texsize = function(w, h){
 		if ( w > __.MAX_TEX_SIZE || h > __.MAX_TEX_SIZE )
 			return false;
 		return true;
 	}
 
-	$.canvasSize = function(){
+	$.canvas_size = function(){
 		return [ __.GL.canvas.width * 0.5 , __.GL.canvas.height * 0.5 ];
 	}
 
-	$.isCanvasResized = function(){
+	$.is_canvas_resized = function(){
 		// display.block = [w,h] , display.none = [0,0]
 		var c = 0;
 		c |= ( __.GL.canvas.width  !== __.GL.canvas.clientWidth  );

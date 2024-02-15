@@ -4,15 +4,15 @@ function QuadExport(Q){
 
 	//////////////////////////////
 
-	__.rectCompare = function( rect, xy ){
+	__.rect_compare = function( rect, xy ){
 		if ( rect[0] > xy[0] )  rect[0] = xy[0]; // x1
 		if ( rect[1] > xy[1] )  rect[1] = xy[1]; // y1
 		if ( rect[2] < xy[2] )  rect[2] = xy[2]; // x2
 		if ( rect[3] < xy[3] )  rect[3] = xy[3]; // y2
 	}
 
-	$.rectAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.rect_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return 0;
 
 		var max  = 1 << 24;
@@ -45,11 +45,11 @@ function QuadExport(Q){
 
 			case 'slot':
 				cur.forEach(function(sv,sk){
-					var xy = $.rectAttach(qdata, sv.type, sv.id);
+					var xy = $.rect_attach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
 					is_null = false;
-					__.rectCompare(rect, xy);
+					__.rect_compare(rect, xy);
 				});
 				if ( is_null )
 					return 0;
@@ -63,7 +63,7 @@ function QuadExport(Q){
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
-					var xy = $.rectAttach(qdata, tv.attach.type, tv.attach.id);
+					var xy = $.rect_attach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
 					is_null = false;
@@ -79,7 +79,7 @@ function QuadExport(Q){
 						xy2[1] = xy2[3];
 						xy2[3] = t;
 					}
-					__.rectCompare(rect, xy2);
+					__.rect_compare(rect, xy2);
 				});
 				if ( is_null )
 					return 0;
@@ -93,11 +93,11 @@ function QuadExport(Q){
 				cur.bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					var xy = $.rectAttach(qdata, bv.type, bv.id);
+					var xy = $.rect_attach(qdata, bv.type, bv.id);
 					if ( ! xy )
 						return;
 					is_null = false;
-					__.rectCompare(rect, xy);
+					__.rect_compare(rect, xy);
 				});
 				if ( is_null )
 					return 0;
@@ -107,14 +107,14 @@ function QuadExport(Q){
 		return 0;
 	}
 
-	$.isLoopAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.is_loop_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return false;
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				for ( var i=0; i < slot.length; i++ ){
-					var loop = $.isLoopAttach(qdata, slot[i].type, slot[i].id);
+					var loop = $.is_loop_attach(qdata, slot[i].type, slot[i].id);
 					if ( loop )
 						return true;
 				}
@@ -130,7 +130,7 @@ function QuadExport(Q){
 				for ( var i=0; i < bone.length; i++ ){
 					if ( ! bone[i] || ! bone[i].attach )
 						continue;
-					var loop = $.isLoopAttach(qdata, bone[i].attach.type, bone[i].attach.id);
+					var loop = $.is_loop_attach(qdata, bone[i].attach.type, bone[i].attach.id);
 					if ( loop )
 						return true;
 				}
@@ -139,14 +139,14 @@ function QuadExport(Q){
 		return false;
 	}
 
-	$.isMixAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.is_mix_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return false;
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				for ( var i=0; i < slot.length; i++ ){
-					var mix = $.isMixAttach(qdata, slot[i].type, slot[i].id);
+					var mix = $.is_mix_attach(qdata, slot[i].type, slot[i].id);
 					if ( mix )
 						return true;
 				}
@@ -169,7 +169,7 @@ function QuadExport(Q){
 				for ( var i=0; i < bone.length; i++ ){
 					if ( ! bone[i] || ! bone[i].attach )
 						continue;
-					var mix = $.isMixAttach(qdata, bone[i].attach.type, bone[i].attach.id);
+					var mix = $.is_mix_attach(qdata, bone[i].attach.type, bone[i].attach.id);
 					if ( mix )
 						return true;
 				}
@@ -178,15 +178,15 @@ function QuadExport(Q){
 		return false;
 	}
 
-	$.timeAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.time_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return 0;
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				var time = 0;
 				for ( var i=0; i < slot.length; i++ ){
-					var t = $.timeAttach(qdata, slot[i].type, slot[i].id);
+					var t = $.time_attach(qdata, slot[i].type, slot[i].id);
 					if ( t > time )
 						time = t;
 				}
@@ -204,7 +204,7 @@ function QuadExport(Q){
 				bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					var t = $.timeAttach(qdata, bv.attach.type, bv.attach.id);
+					var t = $.time_attach(qdata, bv.attach.type, bv.attach.id);
 					if ( t > time )
 						time = t;
 				});
@@ -214,8 +214,8 @@ function QuadExport(Q){
 	}
 
 
-	$.listAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.list_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return [];
 
 		switch ( type ){
@@ -225,7 +225,7 @@ function QuadExport(Q){
 				slot.forEach(function(sv,sk){
 					list.push( sv.type +','+ sv.id );
 				});
-				Q.func.arrayCleanDups(list);
+				Q.func.array_clean_dups(list);
 				return list;
 			case 'animation':
 				var anim = qdata.QUAD.animation[id].timeline;
@@ -235,7 +235,7 @@ function QuadExport(Q){
 						return;
 					list.push( tv.attach.type +','+ tv.attach.id );
 				});
-				Q.func.arrayCleanDups(list);
+				Q.func.array_clean_dups(list);
 				return list;
 			case 'skeleton':
 				var bone = qdata.QUAD.skeleton[id].bone;
@@ -245,7 +245,7 @@ function QuadExport(Q){
 						return;
 					list.push( bv.attach.type +','+ bv.attach.id );
 				});
-				Q.func.arrayCleanDups(list);
+				Q.func.array_clean_dups(list);
 				return list;
 		} // switch ( type )
 		return [];
@@ -298,9 +298,9 @@ function QuadExport(Q){
 
 	//////////////////////////////
 
-	__.exportSheet = function( qdata, canvas ){
+	__.export_sheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
-		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
+		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
 			(sprsize[2] - sprsize[0]) * line_spacing * qdata.zoom,
 			(sprsize[3] - sprsize[1]) * line_spacing * qdata.zoom ,
@@ -310,8 +310,8 @@ function QuadExport(Q){
 			(sprsize[3] + sprsize[1]) * 0.5 * qdata.zoom ,
 		];
 
-		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize();
+		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var texsize = Q.gl.max_texsize();
 
 		var anim_remain = anim_time - qdata.anim_fps;
 		var tilecol = 1;
@@ -368,8 +368,8 @@ function QuadExport(Q){
 		return canvas.toDataURL('image/png');
 	}
 
-	__.exportZip = function( qdata, canvas, fmt ){
-		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
+	__.export_zip = function( qdata, canvas, fmt ){
+		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 		var symm = Q.math.rect_symmetry(sprsize);
 
 		var line_spacing = 1.15;
@@ -377,8 +377,8 @@ function QuadExport(Q){
 		canvas.height = Math.ceil(symm[1] * 2 * line_spacing * qdata.zoom);
 
 		// same number of sprites as sheet
-		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize();
+		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var texsize = Q.gl.max_texsize();
 		var len  = Math.floor(texsize / canvas.width) * Math.floor(texsize / canvas.height);
 		var list = {};
 
@@ -401,14 +401,14 @@ function QuadExport(Q){
 					var pad = '00000000' + qdata.anim_fps + '.png';
 					var fn  = pad.substring( pad.length - 10 );
 
-					list[fn] = QUAD.binary.fromBase64( canvas.toDataURL('image/png') );
+					list[fn] = QUAD.binary.from_base64( canvas.toDataURL('image/png') );
 					break;
 				case 'rgba':
 					// %06d.rgba
 					var pad = '00000000' + qdata.anim_fps + '.rgba';
 					var fn  = pad.substring( pad.length - 11 );
 
-					list[fn] = Q.gl.readRGBA();
+					list[fn] = Q.gl.read_RGBA();
 					break;
 			} // switch ( fmt )
 
@@ -417,7 +417,7 @@ function QuadExport(Q){
 		} // while ( i < len )
 
 		var uint8 = Q.binary.zipwrite(list);
-		return 'data:application/zip;base64,' + Q.binary.toBase64(uint8);
+		return 'data:application/zip;base64,' + Q.binary.to_base64(uint8);
 	}
 
 	//////////////////////////////
@@ -431,17 +431,17 @@ function QuadExport(Q){
 		switch ( fmt ){
 			case 'png':
 				var fname   = __.bak.fname + '.png';
-				var dataurl = __.exportSheet(qdata, canvas);
+				var dataurl = __.export_sheet(qdata, canvas);
 				__.download(fname, dataurl);
 				break;
 			case 'zip':
 				var fname   = __.bak.fname + '.png.zip';
-				var dataurl = __.exportZip(qdata, canvas, 'png');
+				var dataurl = __.export_zip(qdata, canvas, 'png');
 				__.download(fname, dataurl);
 				break;
 			case 'rgba':
 				var fname   = __.bak.fname + '.rgba.zip';
-				var dataurl = __.exportZip(qdata, canvas, 'rgba');
+				var dataurl = __.export_zip(qdata, canvas, 'rgba');
 				__.download(fname, dataurl);
 				break;
 		} // switch ( fmt )

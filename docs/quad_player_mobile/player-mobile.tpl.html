@@ -195,7 +195,7 @@ ul {
 </style>
 <script>'use strict';
 
-function getHtmlIds(){
+function get_html_id(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
@@ -205,7 +205,7 @@ function getHtmlIds(){
 	return html;
 }
 
-function displayViewer( html, toggle ){
+function display_viewer( html, toggle ){
 	if ( toggle ){
 		html.viewer.style.display   = 'block';
 		//html.debugger.style.display = 'none';
@@ -217,7 +217,7 @@ function displayViewer( html, toggle ){
 	html.export_div.style.display = 'none';
 }
 
-function btnToggle( elem, turn ){
+function btn_toggle( elem, turn ){
 	var css = elem.classList;
 	if ( turn > 0 ){
 		css.remove('btn_off');
@@ -233,7 +233,7 @@ function btnToggle( elem, turn ){
 	css.remove('btn_off');
 }
 
-function btnPrevNext( qdata, adj ){
+function btn_prev_next( qdata, adj ){
 	adj = adj | 0;
 	if ( ! qdata || adj === 0 )
 		return;
@@ -309,13 +309,13 @@ function quad_mainlist( quad ){
 }
 
 function qdata_listing( qdata, type, id ){
-	var qchild = QUAD.export.listAttach(qdata, type, id);
+	var qchild = QUAD.export.list_attach(qdata, type, id);
 	var qtype  = qdata.QUAD[type][id];
 
 	var qname  = qtype.name || type + ' ' + id;
-	if ( QUAD.export.isLoopAttach(qdata, type, id) )
+	if ( QUAD.export.is_loop_attach(qdata, type, id) )
 		qname += ' <strong>[LOOP]</strong>';
-	if ( QUAD.export.isMixAttach(qdata, type, id) )
+	if ( QUAD.export.is_mix_attach(qdata, type, id) )
 		qname += ' <strong>[MIX]</strong>';
 
 	var html = '<li data-type="' + type + '" data-id="' + id + '"><p>';
@@ -355,7 +355,7 @@ function button_select( elem ){
 	var id   = par2.getAttribute('data-id') | 0;
 
 	qdata_attach(QuadList[0], type, id);
-	displayViewer(HTML, true);
+	display_viewer(HTML, true);
 }
 
 function button_expand( elem ){
@@ -384,7 +384,7 @@ function button_export( elem ){
 	HTML.export_name.innerHTML = type + ' , ' + id;
 
 	var qdata = QuadList[0];
-	var time  = QUAD.export.timeAttach(qdata, type, id);
+	var time  = QUAD.export.time_attach(qdata, type, id);
 	var range = HTML.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
@@ -437,7 +437,7 @@ var QUAD = {};
 		if ( ! form )
 			return Q.func.error('Fragment Shader has no highp support');
 
-		var maxsz = $.detectMaxTexSize();
+		var maxsz = $.detect_max_texsize();
 		if ( maxsz < 1 )
 			return Q.func.error('MAX_TEXTURE_SIZE < 1', maxsz);
 		__.MAX_TEX_SIZE = maxsz | 0;
@@ -580,47 +580,47 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.drawLine = function( quads, color ){
+	$.draw_line = function( quads, color ){
 		__.GL.useProgram( __.SHADER.lines );
-		var loc = __.shaderLoc(__.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
+		var loc = __.shader_loc(__.SHADER.lines, 'a_xy', 'u_pxsize', 'u_color');
 		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
 		__.GL.lineWidth(2);
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
 
-		__.setVertexAttrib(loc.a_xy, quads, 2);
-		__.GL.uniform4fv  (loc.u_color , color);
-		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
+		__.set_vertex_attrib(loc.a_xy, quads, 2);
+		__.GL.uniform4fv    (loc.u_color , color);
+		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
 		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var idxlen = quads.length / 2;  // number of x,y
-		__.indiceLine(idxlen);
+		__.indice_line(idxlen);
 	}
 
-	$.drawKeyframe = function( dst, src, fog, z, image ){
+	$.draw_keyframe = function( dst, src, fog, z, image ){
 		__.GL.useProgram( __.SHADER.keyframe );
-		var loc = __.shaderLoc(__.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_z', 'u_pxsize', 'u_tex');
+		var loc = __.shader_loc(__.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_z', 'u_pxsize', 'u_tex');
 		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
 		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w , 1.0/image.h ];
 		__.GL.activeTexture(__.GL.TEXTURE0);
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, image.tex);
 
-		__.setVertexAttrib(loc.a_xyz, dst, 3);
-		__.setVertexAttrib(loc.a_uv , src, 2);
-		__.setVertexAttrib(loc.a_fog, fog, 4);
-		__.setVertexAttrib(loc.a_z  , z  , 1);
-		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
-		__.GL.uniform1i   (loc.u_tex   , 0   );
+		__.set_vertex_attrib(loc.a_xyz, dst, 3);
+		__.set_vertex_attrib(loc.a_uv , src, 2);
+		__.set_vertex_attrib(loc.a_fog, fog, 4);
+		__.set_vertex_attrib(loc.a_z  , z  , 1);
+		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
+		__.GL.uniform1i     (loc.u_tex   , 0   );
 		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
 		var dstlen = dst.length / 3; // number of x,y
-		__.indiceQuad(dstlen);
+		__.indice_quad(dstlen);
 	}
 
-	$.drawVRAM = function( vram, tex, rect ){
+	$.draw_VRAM = function( vram, tex, rect ){
 		__.GL.useProgram( __.SHADER.vram );
-		var loc = __.shaderLoc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
+		var loc = __.shader_loc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
 		var view = [ vram.w * 0.5 , vram.h * 0.5 ];
 		var sw = rect[2] - rect[0];
 		var sh = rect[3] - rect[1];
@@ -637,18 +637,18 @@ var QUAD = {};
 			rect[0] , rect[3] ,
 		];
 		var src = [0,0 , sw,0 , sw,sh , 0,sh];
-		__.setVertexAttrib(loc.a_xy, dst, 2);
-		__.setVertexAttrib(loc.a_uv, src, 2);
-		__.GL.uniform2fv  (loc.u_pxsize, pxsz);
-		__.GL.uniform1i   (loc.u_tex   , 0   );
+		__.set_vertex_attrib(loc.a_xy, dst, 2);
+		__.set_vertex_attrib(loc.a_uv, src, 2);
+		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
+		__.GL.uniform1i     (loc.u_tex   , 0   );
 		__.GL.viewport(0, 0, vram.w, vram.h);
 
-		$.enableFrameBuffer(vram.tex);
-		__.indiceQuad(4);
-		$.enableFrameBuffer(0);
+		$.enable_framebuffer(vram.tex);
+		__.indice_quad(4);
+		$.enable_framebuffer(0);
 	}
 
-	__.indiceLine = function( len ){
+	__.indice_line = function( len ){
 		var idx = [];
 		for ( var i=0; i < len; i += 4 )
 			idx.push(i+0,i+1 , i+1,i+2 , i+2,i+3 , i+3,i+0);
@@ -662,7 +662,7 @@ var QUAD = {};
 		__.GL.drawElements(__.GL.LINES, len/4*8, __.GL.UNSIGNED_SHORT, 0);
 	}
 
-	__.indiceQuad = function( len ){
+	__.indice_quad = function( len ){
 		var idx = [];
 		for ( var i=0; i < len; i += 4 )
 			idx.push(i+0,i+1,i+2 , i+0,i+2,i+3);
@@ -677,7 +677,7 @@ var QUAD = {};
 		__.GL.drawElements(__.GL.TRIANGLES, len/4*6, __.GL.UNSIGNED_SHORT, 0);
 	}
 
-	__.shaderLoc = function(){
+	__.shader_loc = function(){
 		var shader = arguments[0];
 		var loc    = {};
 		for ( var i=1; i < arguments.length; i++ )
@@ -691,7 +691,7 @@ var QUAD = {};
 		return loc;
 	}
 
-	__.setVertexAttrib = function( loc, data, v ){
+	__.set_vertex_attrib = function( loc, data, v ){
 		var buf = __.GL.createBuffer();
 		__.GL.bindBuffer(__.GL.ARRAY_BUFFER, buf);
 		__.GL.bufferData(__.GL.ARRAY_BUFFER, new Float32Array(data), __.GL.STATIC_DRAW);
@@ -701,7 +701,7 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.createTexture = function(){
+	$.create_texture = function(){
 		var tex = __.GL.createTexture();
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
 		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
@@ -711,9 +711,9 @@ var QUAD = {};
 		return tex;
 	}
 
-	$.updateTexture = function( tex, img ){
+	$.update_texture = function( tex, img ){
 		if ( ! tex )
-			tex = $.createTexture();
+			tex = $.create_texture();
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 		__.GL.texImage2D(
 			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level , internalformat
@@ -721,7 +721,7 @@ var QUAD = {};
 		img);
 	}
 
-	$.createPixel = function( hex, w=1, h=1 ){
+	$.create_pixel = function( hex, w=1, h=1 ){
 		hex = Q.math.clamp(hex, 0, 255) | 0;
 		if ( w < 0 )  w = __.MAX_TEX_SIZE;
 		if ( h < 0 )  h = __.MAX_TEX_SIZE;
@@ -734,7 +734,7 @@ var QUAD = {};
 		var pix = {
 			w : w ,
 			h : h ,
-			tex : $.createTexture() ,
+			tex : $.create_texture() ,
 		};
 		__.GL.bindTexture(__.GL.TEXTURE_2D, pix.tex);
 		__.GL.texImage2D(
@@ -746,7 +746,7 @@ var QUAD = {};
 		return pix;
 	}
 
-	$.readRGBA = function(){
+	$.read_RGBA = function(){
 		var bw = __.GL.drawingBufferWidth;
 		var bh = __.GL.drawingBufferHeight;
 		var buf = new Uint8Array( bw * bh * 4 );
@@ -774,7 +774,7 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.enableBlend = function( blend ){
+	$.enable_blend = function( blend ){
 		if ( ! blend )
 			return __.GL.disable(__.GL.BLEND);
 
@@ -798,7 +798,7 @@ var QUAD = {};
 		return __.GL.disable(__.GL.BLEND);
 	}
 
-	$.enableDepth = function( depth ){
+	$.enable_depth = function( depth ){
 		if ( ! depth ){
 			__.GL.clear(__.GL.DEPTH_BUFFER_BIT);
 			//__.GL.depthMask(true); // can write depth
@@ -810,7 +810,7 @@ var QUAD = {};
 		return __.GL.enable(__.GL.DEPTH_TEST);
 	}
 
-	$.enableFrameBuffer = function( tex ){
+	$.enable_framebuffer = function( tex ){
 		if ( ! tex ){
 			__.GL.bindFramebuffer(__.GL.FRAMEBUFFER, null);
 			return null;
@@ -834,7 +834,7 @@ var QUAD = {};
 		__.GL.flush();
 	}
 
-	$.isValidConstant = function(){
+	$.is_valid_constant = function(){
 		for ( var i=0; i < arguments.length; i++ ){
 			if ( ! __.GL[ arguments[i] ] )
 				return false;
@@ -844,12 +844,12 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.drawingBuffer = function( max ){
+	$.drawingbuffer_size = function( max ){
 		return [ __.GL.drawingBufferWidth , __.GL.drawingBufferHeight ];
 	}
 
-	$.detectMaxTexSize = function(){
-		var tex = $.createTexture();
+	$.detect_max_texsize = function(){
+		var tex = $.create_texture();
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 
 		var maxsz = __.GL.getParameter( __.GL.MAX_TEXTURE_SIZE ) >> 1;
@@ -887,20 +887,20 @@ var QUAD = {};
 		return maxsz;
 	}
 
-	$.maxTextureSize = function(){
+	$.max_texsize = function(){
 		return __.MAX_TEX_SIZE;
 	}
-	$.isMaxTexSize = function(w, h){
+	$.is_max_texsize = function(w, h){
 		if ( w > __.MAX_TEX_SIZE || h > __.MAX_TEX_SIZE )
 			return false;
 		return true;
 	}
 
-	$.canvasSize = function(){
+	$.canvas_size = function(){
 		return [ __.GL.canvas.width * 0.5 , __.GL.canvas.height * 0.5 ];
 	}
 
-	$.isCanvasResized = function(){
+	$.is_canvas_resized = function(){
 		// display.block = [w,h] , display.none = [0,0]
 		var c = 0;
 		c |= ( __.GL.canvas.width  !== __.GL.canvas.clientWidth  );
@@ -944,14 +944,14 @@ var QUAD = {};
 		return __.LOGS.join("\n\n");
 	}
 
-	$.isArray = function( array, size ){
+	$.is_array = function( array, size ){
 		if ( ! Array.isArray(array) )
 			return false;
 		if ( array.length !== size )
 			return false;
 		return true;
 	}
-	$.isArrayUnique = function( array ){
+	$.is_array_unique = function( array ){
 		if ( ! Array.isArray(array) )
 			return false;
 		for ( var i=0; i < array.length; i++){
@@ -961,7 +961,7 @@ var QUAD = {};
 		}
 		return true;
 	}
-	$.arrayCleanNull = function( list ){
+	$.array_clean_null = function( list ){
 		if ( ! Array.isArray(list) )
 			return;
 		var len = list.length;
@@ -971,7 +971,7 @@ var QUAD = {};
 				list.splice(len, 1);
 		} // while ( len > 0 )
 	}
-	$.arrayCleanDups = function( list ){
+	$.array_clean_dups = function( list ){
 		if ( ! Array.isArray(list) )
 			return;
 		var len = list.length;
@@ -981,28 +981,28 @@ var QUAD = {};
 				list.splice(len, 1);
 		} // while ( len > 0 )
 	}
-	$.arrayNumber = function( size ){
+	$.array_number = function( size ){
 		var array = [];
 		for ( var i=0; i < size; i++ )
 			array.push(i);
 		return array;
 	}
 
-	$.isUndef = function( a ){
+	$.is_undef = function( a ){
 		return ( typeof a === 'undefined' );
 	}
-	$.fileExtension = function( fn ){
+	$.file_extension = function( fn ){
 		var ext = fn.split('.').pop();
 		return ext.toLowerCase();
 	}
-	$.copyObject = function( obj ){
+	$.copy_object = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
 	}
 
 	//////////////////////////////
 
-	$.uploadPromise = function( up, qdata ){
-		var ext = $.fileExtension(up.name);
+	$.upload_promise = function( up, qdata ){
+		var ext = $.file_extension(up.name);
 		switch ( ext ){
 			case 'zip':
 				return new Promise(function(resolve, reject){
@@ -1016,17 +1016,17 @@ var QUAD = {};
 					var key = Object.keys(list);
 					var pro = [];
 					for ( var i=0; i < key.length; i++ ){
-						var ext = $.fileExtension( key[i] );
+						var ext = $.file_extension( key[i] );
 						var dat = list[ key[i] ];
 
 						switch ( ext ){
 							case 'quad':
 								var text = Q.binary.uint2txt(dat);
-								pro[i] = __.uploadHandler(qdata, 'quad', key[i], text);
+								pro[i] = __.upload_handler(qdata, 'quad', key[i], text);
 								break;
 							case 'png':
-								var data = 'data:image/png;base64,' + Q.binary.toBase64(dat);
-								pro[i] = __.uploadHandler(qdata, 'image', key[i], data);
+								var data = 'data:image/png;base64,' + Q.binary.to_base64(dat);
+								pro[i] = __.upload_handler(qdata, 'image', key[i], data);
 								break;
 						} // switch ( ext )
 					} // for ( var i=0; i < key.length; i++ )
@@ -1041,7 +1041,7 @@ var QUAD = {};
 					}
 					reader.readAsText(up);
 				}).then(function(text){
-					return __.uploadHandler(qdata, 'quad', up.name, text);
+					return __.upload_handler(qdata, 'quad', up.name, text);
 				});
 
 			case 'png':
@@ -1052,13 +1052,13 @@ var QUAD = {};
 					}
 					reader.readAsDataURL(up);
 				}).then(function(data){
-					return __.uploadHandler(qdata, 'image', up.name, data);
+					return __.upload_handler(qdata, 'image', up.name, data);
 				});
 		} // switch ( ext )
 		return 0;
 	}
 
-	__.isRectCollide = function( rect, list ){
+	__.is_rect_collide = function( rect, list ){
 		function collide( rect1, rect2 ){
 			if ( rect1[0] >= rect2[2] )  return false; // r1.x1 >= r2.x2 , over right
 			if ( rect1[1] >= rect2[3] )  return false; // r1.y1 >= r2.y2 , over bottom
@@ -1076,50 +1076,39 @@ var QUAD = {};
 		return false;
 	}
 
-	__.VRAMposrect = function( xy, vram, texsz, list ){
-		var x2 = xy[0] + texsz[0];
-		var y2 = xy[1] + texsz[1];
-		if ( x2 > vram.w )  return 0;
-		if ( y2 > vram.h )  return 0;
+	__.VRAM_posrect = function( vram, texsz, list ){
+		for ( var y = 0x80; y < vram.h; y += 0x80 ){
+			var y2 = y + texsz[1];
+			if ( y2 > vram.h )
+				continue;
 
-		var rect = [xy[0] , xy[1] , x2 , y2];
-		var col = __.isRectCollide(rect, list);
-		if ( ! col )
-			return rect;
+			for ( var x = 0x80; x < vram.w; x += 0x80 ){
+				var x2 = x + texsz[0];
+				if ( x2 > vram.w )
+					continue;
 
-		// morton VRAM allocation
-		var halfx = xy[0] + ((vram.w - xy[0]) >> 1);
-		var halfy = xy[1] + ((vram.h - xy[1]) >> 1);
-
-		// in 100x100 slots
-		if ( halfx & 0xff )  return 0;
-		if ( halfy & 0xff )  return 0;
-
-		col = __.VRAMposrect( [halfx,xy[1]], vram, texsz, list);
-		if ( col )
-			return col;
-		col = __.VRAMposrect( [xy[0],halfy], vram, texsz, list);
-		if ( col )
-			return col;
-		col = __.VRAMposrect( [halfx,halfy], vram, texsz, list);
-		if ( col )
-			return col;
+				var rect = [x , y , x2 , y2];
+				var col = __.is_rect_collide(rect, list);
+				if ( ! col )
+					return rect;
+			} // for ( var x = 0x80; x < vram.w; x += 0x80 )
+		} // for ( var y = 0x80; y < vram.h; y += 0x80 )
 
 		// failed to allocate VRAM
 		return 0;
 	}
 
-	__.uploadHandler = function( qdata, type, fname, data ){
+	__.upload_handler = function( qdata, type, fname, data ){
 		switch( type ){
 			case 'quad':
 				var quad   = JSON.parse(data);
-				qdata.QUAD = __.quadfileCheck(quad);
+				qdata.QUAD = __.quadfile_check(quad);
 				qdata.name = fname.replace(/[^A-Za-z0-9]/g, '_');
 				return $.log('UPLOAD quad', fname);
 
 			case 'image':
 				return new Promise(function(resolve, reject){
-					var dummytex = Q.gl.createPixel(255);
+					var dummytex = Q.gl.create_pixel(255);
 					var fnm = fname.match(/\.([0-9]+)\./);
 					var tid = fnm[1];
 
@@ -1132,8 +1121,8 @@ var QUAD = {};
 					var tid = res[0];
 					var img = res[1];
 
-					var tex = Q.gl.createTexture();
-					Q.gl.updateTexture(tex, img);
+					var tex = Q.gl.create_texture();
+					Q.gl.update_texture(tex, img);
 					return [tid,tex,img.width,img.height];
 				}).then(function(res){
 					var tid = res[0];
@@ -1143,11 +1132,11 @@ var QUAD = {};
 
 					// remove loaded texture
 					qdata.IMAGE[tid] = 0;
-					var pos = __.VRAMposrect( [0,0], qdata.VRAM , [w,h] , qdata.IMAGE );
+					var pos = __.VRAM_posrect( qdata.VRAM , [w,h] , qdata.IMAGE );
 					if ( ! pos )
 						return $.error('cannot fit texture into VRAM', [qdata.VRAM.w,qdata.VRAM.h] , [w,h] , qdata.IMAGE);
 
-					Q.gl.drawVRAM(qdata.VRAM, tex, pos);
+					Q.gl.draw_VRAM(qdata.VRAM, tex, pos);
 					qdata.IMAGE[tid] = {
 						pos  : pos,
 						name : fname,
@@ -1158,12 +1147,12 @@ var QUAD = {};
 		return 0;
 	}
 
-	__.keyFogQuad = function( fog ){
+	__.key_fogquad = function( fog ){
 		if ( typeof fog === 'string' ){
 			var c = Q.math.css_color(fog);
 			return [].concat(c, c, c, c);
 		}
-		if ( $.isArray(fog, 4) ){
+		if ( $.is_array(fog, 4) ){
 			var c0 = Q.math.css_color( fog[0] );
 			var c1 = Q.math.css_color( fog[1] );
 			var c2 = Q.math.css_color( fog[2] );
@@ -1174,7 +1163,7 @@ var QUAD = {};
 		return [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1];
 	}
 
-	__.quadfileCheck = function( quad ){
+	__.quadfile_check = function( quad ){
 		quad.blend     = quad.blend     || [];
 		quad.slot      = quad.slot      || [];
 		quad.hitbox    = quad.hitbox    || [];
@@ -1189,7 +1178,7 @@ var QUAD = {};
 		}
 
 		quad.blend.forEach(function(bv,bk){
-			var valid = Q.gl.isValidConstant.apply(null, bv.mode);
+			var valid = Q.gl.is_valid_constant.apply(null, bv.mode);
 			if ( ! valid )
 				return nullent(quad.blend, bk);
 			if ( bv.mode.length !== 6 && bv.mode.length !== 3 )
@@ -1206,7 +1195,7 @@ var QUAD = {};
 				return nullent(quad.hitbox, hk);
 			var is_null = true;
 			hv.layer.forEach(function(lv,lk){
-				if ( ! $.isArray(lv.hitquad, 8) )
+				if ( ! $.is_array(lv.hitquad, 8) )
 					return nullent(hv.layer, lk);
 				is_null = false;
 				hv.layer[lk] = {
@@ -1229,7 +1218,7 @@ var QUAD = {};
 				return nullent(quad.keyframe, kk);
 			var is_null = true;
 			kv.layer.forEach(function(lv,lk){
-				if ( ! $.isArray(lv.dstquad, 8) )
+				if ( ! $.is_array(lv.dstquad, 8) )
 					return nullent(kv.layer, lk);
 				is_null = false;
 				ent = {
@@ -1237,12 +1226,12 @@ var QUAD = {};
 					'dstquad'  : lv.dstquad,
 					'tex_id'   : -1,
 					'blend_id' : -1,
-					'fogquad'  : __.keyFogQuad( lv.fogquad ),
+					'fogquad'  : __.key_fogquad( lv.fogquad ),
 					'srcquad'  : 0,
 				};
-				if ( ! $.isUndef(lv.blend_id) )  ent.blend_id = lv.blend_id | 0; // 0 is valid
-				if ( ! $.isUndef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
-				if ( $.isArray(lv.srcquad, 8) )
+				if ( ! $.is_undef(lv.blend_id) )  ent.blend_id = lv.blend_id | 0; // 0 is valid
+				if ( ! $.is_undef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
+				if ( $.is_array(lv.srcquad, 8) )
 					ent.srcquad = lv.srcquad;
 				kv.layer[lk] = ent;
 			}); // kv.layer.forEach
@@ -1255,8 +1244,8 @@ var QUAD = {};
 				'order'  : kv.order,
 				'__RECT' : 0,
 			};
-			if ( ! $.isArrayUnique(ent.order) )
-				ent.order = $.arrayNumber( kv.layer.length );
+			if ( ! $.is_array_unique(ent.order) )
+				ent.order = $.array_number( kv.layer.length );
 			quad.keyframe[kk] = ent;
 		}); // quad.keyframe.forEach
 
@@ -1277,11 +1266,11 @@ var QUAD = {};
 					'keyframe_mix' : ( tv.keyframe_mix ) ? true : false,
 					'hitbox_mix'   : ( tv.hitbox_mix   ) ? true : false,
 				};
-				if ( $.isArray(tv.matrix, 16) )
+				if ( $.is_array(tv.matrix, 16) )
 					ent.matrix = tv.matrix;
 				av.timeline[tk] = ent;
 			}); // av.timeline.forEach
-			$.arrayCleanNull(av.timeline);
+			$.array_clean_null(av.timeline);
 			if ( av.timeline.length < 1 )
 				return nullent(quad.animation, ak);
 			ent = {
@@ -1291,7 +1280,7 @@ var QUAD = {};
 				'loop_id'  : -1,
 				'__RECT'   : 0,
 			};
-			if ( ! $.isUndef(av.loop_id) )  ent.loop_id = av.loop_id; // 0 is valid
+			if ( ! $.is_undef(av.loop_id) )  ent.loop_id = av.loop_id; // 0 is valid
 			quad.animation[ak] = ent;
 		}); // quad.animation.forEach
 
@@ -1319,7 +1308,7 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	__.drawLines = function( qdata, layer, mat4, quad ){
+	__.draw_lines = function( qdata, layer, mat4, quad ){
 		var clines = [];
 
 		var debug = [];
@@ -1349,24 +1338,24 @@ var QUAD = {};
 			[0.5,0.5,0.5,1] , // gray
 		];
 
-		Q.gl.enableBlend(0);
+		Q.gl.enable_blend(0);
 		clines.forEach(function(cv,ck){
 			var cid = qdata.line_index % color.length;
-			Q.gl.drawLine(cv, color[cid]);
+			Q.gl.draw_line(cv, color[cid]);
 
 			qdata.line_index++;
 			qdata.is_draw = true;
 		});
 	}
 
-	__.drawHitbox = function( qdata, hid, mat4 ){
+	__.draw_hitbox = function( qdata, hid, mat4 ){
 		var layer = qdata.QUAD.hitbox[hid].layer;
-		__.drawLines(qdata, layer, mat4, 'hitquad');
+		__.draw_lines(qdata, layer, mat4, 'hitquad');
 	}
 
 	//////////////////////////////
 
-	__.drawKeyframeTex = function( qdata, layer, order, mat4, color ){
+	__.draw_keyframe_tex = function( qdata, layer, order, mat4, color ){
 		var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
 		var zrate = 1.0 / (layer.length + 1);
@@ -1403,45 +1392,45 @@ var QUAD = {};
 		});
 		//console.log('buf_list',buf_list);
 
-		Q.gl.enableDepth('LESS');
+		Q.gl.enable_depth('LESS');
 		buf_list.forEach(function(bv,bk){
 			if ( ! bv || ! qdata.QUAD.blend[bk] )
 				return;
 			qdata.is_draw = true;
-			Q.gl.enableBlend ( qdata.QUAD.blend[bk] );
-			Q.gl.drawKeyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.VRAM );
+			Q.gl.enable_blend ( qdata.QUAD.blend[bk] );
+			Q.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.VRAM );
 		});
-		Q.gl.enableDepth(0);
+		Q.gl.enable_depth(0);
 	}
 
-	__.drawKeyframe = function( qdata, kid, mat4, color ){
+	__.draw_keyframe = function( qdata, kid, mat4, color ){
 		var key = qdata.QUAD.keyframe[kid];
 		if ( qdata.is_lines )
-			return __.drawLines(qdata, key.layer, mat4, 'dstquad');
+			return __.draw_lines(qdata, key.layer, mat4, 'dstquad');
 		else
-			return __.drawKeyframeTex(qdata, key.layer, key.order, mat4, color);
+			return __.draw_keyframe_tex(qdata, key.layer, key.order, mat4, color);
 	}
 
 	//////////////////////////////
 
-	__.drawMIX = function( qdata, id, mat4, color ){
+	__.draw_MIX = function( qdata, id, mat4, color ){
 		var mix = qdata.QUAD.__MIX[id];
 		mix.forEach(function(mv,mk){
 			switch ( mv.type ){
 				case 'keyframe':
 					if ( qdata.is_lines )
-						return __.drawLines(qdata, mv.layer, mat4, 'dstquad');
+						return __.draw_lines(qdata, mv.layer, mat4, 'dstquad');
 					else
-						return __.drawKeyframeTex(qdata, mv.layer, mv.order, mat4, color);
+						return __.draw_keyframe_tex(qdata, mv.layer, mv.order, mat4, color);
 				case 'hitbox':
 					if ( ! qdata.is_hits )
 						return;
-					return __.drawLines(qdata, mv.layer, mat4, 'hitquad');
+					return __.draw_lines(qdata, mv.layer, mat4, 'hitquad');
 			} // switch ( mv.type )
 		});
 	}
 
-	__.mixAttach = function( qdata, cur, nxt, rate, keymix, hitmix ){
+	__.mix_attach = function( qdata, cur, nxt, rate, keymix, hitmix ){
 		var mixslot = [];
 
 		function nextlayer( next, s ){
@@ -1471,7 +1460,7 @@ var QUAD = {};
 						return;
 					var ent = {
 						'type'  : mcur.type,
-						'layer' : $.copyObject( curlayer ),
+						'layer' : $.copy_object( curlayer ),
 					};
 					if ( mcur.type === 'keyframe' )
 						ent.order = qdata.QUAD[ mcur.type ][ mcur.id ].order;
@@ -1512,7 +1501,7 @@ var QUAD = {};
 		};
 	}
 
-	__.animTimeIndex = function( fps, anim ){
+	__.anim_time_index = function( fps, anim ){
 		var len = anim.timeline.length;
 		var cur = 0;
 		while (1){
@@ -1529,7 +1518,7 @@ var QUAD = {};
 		} // while (1)
 	}
 
-	__.animCurrent = function( qdata, aid, mat4, color ){
+	__.anim_current = function( qdata, aid, mat4, color ){
 		var ret = {
 			attach : 0,
 			mat4   : mat4,
@@ -1542,7 +1531,7 @@ var QUAD = {};
 		var anim = qdata.QUAD.animation[aid];
 
 		// get current frame
-		var t = __.animTimeIndex(qdata.anim_fps, anim);
+		var t = __.anim_time_index(qdata.anim_fps, anim);
 		var curid = t[0];
 		if ( curid < 0 )
 			return ret;
@@ -1588,22 +1577,22 @@ var QUAD = {};
 		if ( ! cur.keyframe_mix && ! cur.hitbox_mix )
 			return ret;
 
-		ret.attach = __.mixAttach(qdata, cur.attach, nxt.attach, rate, cur.keyframe_mix, cur.hitbox_mix);
+		ret.attach = __.mix_attach(qdata, cur.attach, nxt.attach, rate, cur.keyframe_mix, cur.hitbox_mix);
 		return ret;
 	}
 
 	//////////////////////////////
 
-	__.drawSkeleton = function( qdata, sid, mat4, color ){
+	__.draw_skeleton = function( qdata, sid, mat4, color ){
 		var bone = qdata.QUAD.skeleton[sid].bone;
 		bone.forEach(function(bv,bk){
-			__.drawAttach(qdata, bv.attach, mat4, color);
+			__.draw_attach(qdata, bv.attach, mat4, color);
 		});
 	}
 
 	//////////////////////////////
 
-	$.isValidAttach = function( qdata, type, id ){
+	$.is_valid_attach = function( qdata, type, id ){
 		if ( ! Array.isArray( qdata.QUAD[ type ] ) )
 			return false;
 		if ( ! qdata.QUAD[ type ][ id ] )
@@ -1611,33 +1600,33 @@ var QUAD = {};
 		return true;
 	}
 
-	__.drawAttach = function( qdata, attach, mat4, color ){
-		if ( ! $.isValidAttach(qdata, attach.type, attach.id) )
+	__.draw_attach = function( qdata, attach, mat4, color ){
+		if ( ! $.is_valid_attach(qdata, attach.type, attach.id) )
 			return;
 		switch ( attach.type ){
 			case 'keyframe':
-				return __.drawKeyframe( qdata, attach.id, mat4, color );
+				return __.draw_keyframe( qdata, attach.id, mat4, color );
 			case 'animation':
-				var t = __.animCurrent( qdata, attach.id, mat4, color );
+				var t = __.anim_current( qdata, attach.id, mat4, color );
 				if ( ! t.attach )
 					return;
-				return __.drawAttach( qdata, t.attach, t.mat4, t.color );
+				return __.draw_attach( qdata, t.attach, t.mat4, t.color );
 			case 'slot':
 				qdata.QUAD.slot[ attach.id ].forEach(function(sv,sk){
-					__.drawAttach(qdata, sv, mat4, color);
+					__.draw_attach(qdata, sv, mat4, color);
 				});
 				return;
 			case 'hitbox':
 				if ( ! qdata.is_hits )
 					return;
-				return __.drawHitbox( qdata, attach.id, mat4 );
+				return __.draw_hitbox( qdata, attach.id, mat4 );
 			case 'skeleton':
-				return __.drawSkeleton( qdata, attach.id, mat4, color );
+				return __.draw_skeleton( qdata, attach.id, mat4, color );
 			case '__MIX':
-				return __.drawMIX( qdata, attach.id, mat4, color );
+				return __.draw_MIX( qdata, attach.id, mat4, color );
 			case 'quad':
 				var qid = qdata.QUAD.quad[ attach.id ];
-				if ( $.isUndef(qid) || qid < 0 )
+				if ( $.is_undef(qid) || qid < 0 )
 					return;
 				return $.qdata_draw( qdata.LIST[qid], mat4, color );
 		} // switch ( attach.type )
@@ -1648,7 +1637,7 @@ var QUAD = {};
 			return;
 		var m4 = Q.math.matrix_multi44( mat4, qdata.matrix );
 		var c4 = Q.math.vec4_multi(color, qdata.color);
-		return __.drawAttach(qdata, qdata.attach, m4, c4);
+		return __.draw_attach(qdata, qdata.attach, m4, c4);
 	}
 
 	$.qdata_clear = function( qdata ){
@@ -1660,15 +1649,15 @@ var QUAD = {};
 		qdata.QUAD.__MIX = [];
 	}
 
-	$.viewerCamera = function( qdata, autozoom ){
-		var canvsz = Q.gl.canvasSize();
+	$.viewer_camera = function( qdata, autozoom ){
+		var canvsz = Q.gl.canvas_size();
 
 		qdata.zoom = 1.0;
 		var movex = canvsz[0] * 0  ; // no change
 		var movey = canvsz[1] * 0.5; // half downward
 
 		if ( autozoom ){
-			var sprsize = Q.export.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
+			var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 			if ( sprsize ){
 				if ( sprsize[0] < 0 || sprsize[1] < 0 ){
 					// is sprite , 0,0 is at center
@@ -1703,7 +1692,7 @@ var QUAD = {};
 		return m4;
 	}
 
-	$.isChanged = function( qdata ){
+	$.is_changed = function( qdata ){
 		var c = 0;
 		c |= ( qdata.prev[0] !== qdata.attach.type );
 		c |= ( qdata.prev[1] !== qdata.attach.id   );
@@ -2160,15 +2149,15 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	__.rectCompare = function( rect, xy ){
+	__.rect_compare = function( rect, xy ){
 		if ( rect[0] > xy[0] )  rect[0] = xy[0]; // x1
 		if ( rect[1] > xy[1] )  rect[1] = xy[1]; // y1
 		if ( rect[2] < xy[2] )  rect[2] = xy[2]; // x2
 		if ( rect[3] < xy[3] )  rect[3] = xy[3]; // y2
 	}
 
-	$.rectAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.rect_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return 0;
 
 		var max  = 1 << 24;
@@ -2201,11 +2190,11 @@ var QUAD = {};
 
 			case 'slot':
 				cur.forEach(function(sv,sk){
-					var xy = $.rectAttach(qdata, sv.type, sv.id);
+					var xy = $.rect_attach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
 					is_null = false;
-					__.rectCompare(rect, xy);
+					__.rect_compare(rect, xy);
 				});
 				if ( is_null )
 					return 0;
@@ -2219,7 +2208,7 @@ var QUAD = {};
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
-					var xy = $.rectAttach(qdata, tv.attach.type, tv.attach.id);
+					var xy = $.rect_attach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
 					is_null = false;
@@ -2235,7 +2224,7 @@ var QUAD = {};
 						xy2[1] = xy2[3];
 						xy2[3] = t;
 					}
-					__.rectCompare(rect, xy2);
+					__.rect_compare(rect, xy2);
 				});
 				if ( is_null )
 					return 0;
@@ -2249,11 +2238,11 @@ var QUAD = {};
 				cur.bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					var xy = $.rectAttach(qdata, bv.type, bv.id);
+					var xy = $.rect_attach(qdata, bv.type, bv.id);
 					if ( ! xy )
 						return;
 					is_null = false;
-					__.rectCompare(rect, xy);
+					__.rect_compare(rect, xy);
 				});
 				if ( is_null )
 					return 0;
@@ -2263,14 +2252,14 @@ var QUAD = {};
 		return 0;
 	}
 
-	$.isLoopAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.is_loop_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return false;
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				for ( var i=0; i < slot.length; i++ ){
-					var loop = $.isLoopAttach(qdata, slot[i].type, slot[i].id);
+					var loop = $.is_loop_attach(qdata, slot[i].type, slot[i].id);
 					if ( loop )
 						return true;
 				}
@@ -2286,7 +2275,7 @@ var QUAD = {};
 				for ( var i=0; i < bone.length; i++ ){
 					if ( ! bone[i] || ! bone[i].attach )
 						continue;
-					var loop = $.isLoopAttach(qdata, bone[i].attach.type, bone[i].attach.id);
+					var loop = $.is_loop_attach(qdata, bone[i].attach.type, bone[i].attach.id);
 					if ( loop )
 						return true;
 				}
@@ -2295,14 +2284,14 @@ var QUAD = {};
 		return false;
 	}
 
-	$.isMixAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.is_mix_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return false;
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				for ( var i=0; i < slot.length; i++ ){
-					var mix = $.isMixAttach(qdata, slot[i].type, slot[i].id);
+					var mix = $.is_mix_attach(qdata, slot[i].type, slot[i].id);
 					if ( mix )
 						return true;
 				}
@@ -2325,7 +2314,7 @@ var QUAD = {};
 				for ( var i=0; i < bone.length; i++ ){
 					if ( ! bone[i] || ! bone[i].attach )
 						continue;
-					var mix = $.isMixAttach(qdata, bone[i].attach.type, bone[i].attach.id);
+					var mix = $.is_mix_attach(qdata, bone[i].attach.type, bone[i].attach.id);
 					if ( mix )
 						return true;
 				}
@@ -2334,15 +2323,15 @@ var QUAD = {};
 		return false;
 	}
 
-	$.timeAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.time_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return 0;
 		switch ( type ){
 			case 'slot':
 				var slot = qdata.QUAD.slot[id];
 				var time = 0;
 				for ( var i=0; i < slot.length; i++ ){
-					var t = $.timeAttach(qdata, slot[i].type, slot[i].id);
+					var t = $.time_attach(qdata, slot[i].type, slot[i].id);
 					if ( t > time )
 						time = t;
 				}
@@ -2360,7 +2349,7 @@ var QUAD = {};
 				bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					var t = $.timeAttach(qdata, bv.attach.type, bv.attach.id);
+					var t = $.time_attach(qdata, bv.attach.type, bv.attach.id);
 					if ( t > time )
 						time = t;
 				});
@@ -2370,8 +2359,8 @@ var QUAD = {};
 	}
 
 
-	$.listAttach = function( qdata, type, id ){
-		if ( ! Q.func.isValidAttach(qdata, type, id) )
+	$.list_attach = function( qdata, type, id ){
+		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return [];
 
 		switch ( type ){
@@ -2381,7 +2370,7 @@ var QUAD = {};
 				slot.forEach(function(sv,sk){
 					list.push( sv.type +','+ sv.id );
 				});
-				Q.func.arrayCleanDups(list);
+				Q.func.array_clean_dups(list);
 				return list;
 			case 'animation':
 				var anim = qdata.QUAD.animation[id].timeline;
@@ -2391,7 +2380,7 @@ var QUAD = {};
 						return;
 					list.push( tv.attach.type +','+ tv.attach.id );
 				});
-				Q.func.arrayCleanDups(list);
+				Q.func.array_clean_dups(list);
 				return list;
 			case 'skeleton':
 				var bone = qdata.QUAD.skeleton[id].bone;
@@ -2401,7 +2390,7 @@ var QUAD = {};
 						return;
 					list.push( bv.attach.type +','+ bv.attach.id );
 				});
-				Q.func.arrayCleanDups(list);
+				Q.func.array_clean_dups(list);
 				return list;
 		} // switch ( type )
 		return [];
@@ -2454,9 +2443,9 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	__.exportSheet = function( qdata, canvas ){
+	__.export_sheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
-		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
+		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
 			(sprsize[2] - sprsize[0]) * line_spacing * qdata.zoom,
 			(sprsize[3] - sprsize[1]) * line_spacing * qdata.zoom ,
@@ -2466,8 +2455,8 @@ var QUAD = {};
 			(sprsize[3] + sprsize[1]) * 0.5 * qdata.zoom ,
 		];
 
-		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize();
+		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var texsize = Q.gl.max_texsize();
 
 		var anim_remain = anim_time - qdata.anim_fps;
 		var tilecol = 1;
@@ -2524,8 +2513,8 @@ var QUAD = {};
 		return canvas.toDataURL('image/png');
 	}
 
-	__.exportZip = function( qdata, canvas, fmt ){
-		var sprsize = $.rectAttach(qdata, qdata.attach.type, qdata.attach.id);
+	__.export_zip = function( qdata, canvas, fmt ){
+		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 		var symm = Q.math.rect_symmetry(sprsize);
 
 		var line_spacing = 1.15;
@@ -2533,8 +2522,8 @@ var QUAD = {};
 		canvas.height = Math.ceil(symm[1] * 2 * line_spacing * qdata.zoom);
 
 		// same number of sprites as sheet
-		var anim_time = $.timeAttach(qdata, qdata.attach.type, qdata.attach.id);
-		var texsize = Q.gl.maxTextureSize();
+		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var texsize = Q.gl.max_texsize();
 		var len  = Math.floor(texsize / canvas.width) * Math.floor(texsize / canvas.height);
 		var list = {};
 
@@ -2557,14 +2546,14 @@ var QUAD = {};
 					var pad = '00000000' + qdata.anim_fps + '.png';
 					var fn  = pad.substring( pad.length - 10 );
 
-					list[fn] = QUAD.binary.fromBase64( canvas.toDataURL('image/png') );
+					list[fn] = QUAD.binary.from_base64( canvas.toDataURL('image/png') );
 					break;
 				case 'rgba':
 					// %06d.rgba
 					var pad = '00000000' + qdata.anim_fps + '.rgba';
 					var fn  = pad.substring( pad.length - 11 );
 
-					list[fn] = Q.gl.readRGBA();
+					list[fn] = Q.gl.read_RGBA();
 					break;
 			} // switch ( fmt )
 
@@ -2573,7 +2562,7 @@ var QUAD = {};
 		} // while ( i < len )
 
 		var uint8 = Q.binary.zipwrite(list);
-		return 'data:application/zip;base64,' + Q.binary.toBase64(uint8);
+		return 'data:application/zip;base64,' + Q.binary.to_base64(uint8);
 	}
 
 	//////////////////////////////
@@ -2587,17 +2576,17 @@ var QUAD = {};
 		switch ( fmt ){
 			case 'png':
 				var fname   = __.bak.fname + '.png';
-				var dataurl = __.exportSheet(qdata, canvas);
+				var dataurl = __.export_sheet(qdata, canvas);
 				__.download(fname, dataurl);
 				break;
 			case 'zip':
 				var fname   = __.bak.fname + '.png.zip';
-				var dataurl = __.exportZip(qdata, canvas, 'png');
+				var dataurl = __.export_zip(qdata, canvas, 'png');
 				__.download(fname, dataurl);
 				break;
 			case 'rgba':
 				var fname   = __.bak.fname + '.rgba.zip';
-				var dataurl = __.exportZip(qdata, canvas, 'rgba');
+				var dataurl = __.export_zip(qdata, canvas, 'rgba');
 				__.download(fname, dataurl);
 				break;
 		} // switch ( fmt )
@@ -2626,7 +2615,7 @@ var QUAD = {};
 		return $.getstr(buf, 0, buf.byteLength);
 	}
 
-	$.catUint8 = function( a, b ){
+	$.cat_uint8 = function( a, b ){
 		var c = new Uint8Array( a.byteLength + b.byteLength );
 		c.set(a, 0);
 		c.set(b, a.byteLength);
@@ -2803,7 +2792,7 @@ var QUAD = {};
 	// 4 * 6-bit ASCII == 3 * 8-bit BINARY
 	// in 24-bit sets
 
-	$.toBase64 = function( uint8 ){
+	$.to_base64 = function( uint8 ){
 		//uint8 = new Uint8Array(uint8);
 		var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 		var BIT6  = 0x3f;
@@ -2844,7 +2833,7 @@ var QUAD = {};
 		return b64;
 	}
 
-	$.fromBase64 = function( b64 ){
+	$.from_base64 = function( b64 ){
 		// data URL handling
 		var st  = 0;
 		var pos = b64.indexOf('base64,');
@@ -2908,7 +2897,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-1-30 (beta)';
+	$.version = 'ver 2024-2-13 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -2925,7 +2914,7 @@ function QuadData(qlist){
 	$.name = '';
 	$.QUAD  = {};
 	$.IMAGE = []; // { pos:rect , name:string }
-	$.VRAM  = QUAD.gl.createPixel(255,-1,-1);
+	$.VRAM  = QUAD.gl.create_pixel(255,-1,-1);
 
 	// activated data
 	$.is_wait  = true;
@@ -3013,7 +3002,7 @@ function QuadData(qlist){
 </div>
 
 <script>
-var HTML = getHtmlIds();
+var HTML = get_html_id();
 var QuadList = [];
 var SELECTED = '';
 
@@ -3025,10 +3014,10 @@ var SELECTED = '';
 
 	// BETWEEN DEBUGGER-VIEWER
 	HTML.btn_view.addEventListener('click', function(){
-		displayViewer(HTML, true);
+		display_viewer(HTML, true);
 	});
 	HTML.btn_debug.addEventListener('click', function(){
-		displayViewer(HTML, false);
+		display_viewer(HTML, false);
 		HTML.logger.innerHTML = QUAD.func.console();
 	});
 
@@ -3040,13 +3029,13 @@ var SELECTED = '';
 	});
 	HTML.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', UPLOAD_ID);
-		if ( QUAD.func.isUndef( QuadList[ UPLOAD_ID ] ) )
+		if ( QUAD.func.is_undef( QuadList[ UPLOAD_ID ] ) )
 			QuadList[ UPLOAD_ID ] = new QuadData(QuadList);
 		var qdata = QuadList[ UPLOAD_ID ];
 
 		var promises = [];
 		for ( var up of this.files )
-			promises.push( QUAD.func.uploadPromise(up, qdata) );
+			promises.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(promises).then(function(resolve){
 			qdata_filetable(qdata, HTML.debugger_files);
@@ -3105,10 +3094,10 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_hits.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_hits, -1);
+			btn_toggle(HTML.btn_hits, -1);
 			QuadList[0].is_hits = false;
 		} else {
-			btnToggle(HTML.btn_hits, 1);
+			btn_toggle(HTML.btn_hits, 1);
 			QuadList[0].is_hits = true;
 		}
 	});
@@ -3116,10 +3105,10 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_flipx.classList.contains('btn_on') ){
-			btnToggle(HTML.btn_flipx, -1);
+			btn_toggle(HTML.btn_flipx, -1);
 			QuadList[0].is_flipx = false;
 		} else {
-			btnToggle(HTML.btn_flipx, 1);
+			btn_toggle(HTML.btn_flipx, 1);
 			QuadList[0].is_flipx = true;
 		}
 	});
@@ -3128,12 +3117,12 @@ var SELECTED = '';
 	var IS_AUTONEXT  = false;
 	HTML.btn_prev.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btnToggle(HTML.btn_next, -1);
+			btn_toggle(HTML.btn_next, -1);
 			if ( HTML.btn_prev.classList.contains('btn_on') ){
-				btnToggle(HTML.btn_prev, -1);
+				btn_toggle(HTML.btn_prev, -1);
 				IS_BTN_CLICK = 0;
 			} else {
-				btnToggle(HTML.btn_prev, 1);
+				btn_toggle(HTML.btn_prev, 1);
 				IS_BTN_CLICK = -1;
 			}
 		} else
@@ -3141,12 +3130,12 @@ var SELECTED = '';
 	});
 	HTML.btn_next.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btnToggle(HTML.btn_prev, -1);
+			btn_toggle(HTML.btn_prev, -1);
 			if ( HTML.btn_next.classList.contains('btn_on') ){
-				btnToggle(HTML.btn_next, -1);
+				btn_toggle(HTML.btn_next, -1);
 				IS_BTN_CLICK = 0;
 			} else {
-				btnToggle(HTML.btn_next, 1);
+				btn_toggle(HTML.btn_next, 1);
 				IS_BTN_CLICK = 1;
 			}
 		} else
@@ -3154,12 +3143,12 @@ var SELECTED = '';
 	});
 	HTML.btn_autonext.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btnToggle(HTML.btn_prev, 0);
-			btnToggle(HTML.btn_next, 0);
+			btn_toggle(HTML.btn_prev, 0);
+			btn_toggle(HTML.btn_next, 0);
 			IS_AUTONEXT = false;
 		} else {
-			btnToggle(HTML.btn_prev, -1);
-			btnToggle(HTML.btn_next, -1);
+			btn_toggle(HTML.btn_prev, -1);
+			btn_toggle(HTML.btn_next, -1);
 			IS_AUTONEXT = true;
 		}
 	});
@@ -3177,14 +3166,14 @@ var SELECTED = '';
 
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (FPS_DRAW & 7) === 0 ){
-			btnPrevNext(qdata, IS_BTN_CLICK);
+			btn_prev_next(qdata, IS_BTN_CLICK);
 			if ( ! IS_AUTONEXT )
 				IS_BTN_CLICK = 0;
 		}
 
 		// update/redraw only when changed
-		if ( QUAD.gl.isCanvasResized() || QUAD.func.isChanged(qdata) ){
-			CAMERA = QUAD.func.viewerCamera(qdata, IS_AUTOZOOM);
+		if ( QUAD.gl.is_canvas_resized() || QUAD.func.is_changed(qdata) ){
+			CAMERA = QUAD.func.viewer_camera(qdata, IS_AUTOZOOM);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();
 

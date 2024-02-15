@@ -165,7 +165,8 @@ function cdxameta( $isop, $list )
 	$off  = 0x8000;
 	foreach ( explode("\n",$meta) as $mk => $mv )
 	{
-		$mv = splitline('=', $mv);
+		list($k,$v) = splitline('=', $mv);
+		printf("PATCH META %18s = %s\n", $k, $v);
 		switch ( $k )
 		{
 			case 'system':              isometa_update($isop, $v, $off +     8, 0x20); break;

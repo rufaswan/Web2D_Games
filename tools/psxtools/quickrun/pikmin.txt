@@ -1,0 +1,75 @@
+================
+=== Pikmin 2 ===
+================
+Valley of Repose
+	2  ----  Emergence Cave
+		2  2x Purple (< 20)
+		Sphere Chart / Awakening Wood
+	9  R-YW  Subterranean Complex
+		3  1x White
+		4  3x White
+		8  3x Purple , 2x QCB
+		Solar System - boss
+	8  RBYW  Frontier Cavern
+		1  1x Purple (< 20)
+		3  1x White
+		4  1x Purple
+		5  1x Purple , 1x White
+		7  1x White
+		Rocket Fist
+		Rush Boots - boss
+
+Awakening Wood
+	Survey Chart / Perplexing Pool
+	5  R---  Hole of Beasts
+		2  2x Purple (< 20)
+		4  1x Purple
+		Treasure Gauge - boss
+	5  R--W  White Flower Garden
+		3  3x White (< 20)
+		Five-Man Napsack - boss
+	7  R-Y-  Bulblax Kingdom
+		1  1x White (< 20)
+		3  1x White
+		4  2x Purple
+		6  1x Purple
+		Scorch Guard - boss
+	7  -BYW  Snagret Hole
+		2  1x White (< 20)
+		3  1x Purple , 1x White
+		6  1x White , 1x QCB
+		7  2x QCB
+		Metal Suit Z - boss
+
+Perplexing Pool
+	5  R-Y-  Citadel of Spiders
+		2  1x Purple (< 20)
+		3  1x QCB
+		4  1x White
+		The Key / Challenge Mode - boss
+	6  --Y-  Glutton's Kitchen
+		2  1x Purple (< 20)
+		5  1x Purple , 1x QCB
+		Anti-Electrifier - boss
+	7  RBYW  Shower Room
+		1  1x White (< 20)
+		2  1x Purple (< 20)
+		4  2x QCB
+		5  1x Purple
+		6  1x White
+		Mega-Tweeter - boss
+	5  RBYW  Submerged Castle
+		3  1x White
+		5  2x Purple
+		Pluckaphone - boss
+
+Wistful Wild
+	10  RBYW  Cavern of Chaos
+		4  1x QCB
+		5  1x Purple , 1x White , 1x QCB
+	15  RBYW  Hole of Heroes
+		5   1x QCB
+		8   1x QCB
+		12  1x QCB
+	14  RBYW  Dream Den
+

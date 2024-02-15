@@ -23,6 +23,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-iso.inc';
 
+function sortlba( $a, $b )
+{
+	return $a['lba'] - $b['lba'];
+}
+
 function isolist( $fname )
 {
 	$fp = fopen_file($fname);
@@ -40,6 +45,7 @@ function isolist( $fname )
 		$list = lsiso_r($fp, $skip);
 		if ( empty($list) )
 			continue;
+		usort($list, 'sortlba');
 
 		printf("DETECT %s , %x , %s\n", $type, $skip, $fname);
 		$txt = '';

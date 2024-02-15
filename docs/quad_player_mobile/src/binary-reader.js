@@ -9,7 +9,7 @@ function BinaryReader(){
 		return $.getstr(buf, 0, buf.byteLength);
 	}
 
-	$.catUint8 = function( a, b ){
+	$.cat_uint8 = function( a, b ){
 		var c = new Uint8Array( a.byteLength + b.byteLength );
 		c.set(a, 0);
 		c.set(b, a.byteLength);
@@ -186,7 +186,7 @@ function BinaryReader(){
 	// 4 * 6-bit ASCII == 3 * 8-bit BINARY
 	// in 24-bit sets
 
-	$.toBase64 = function( uint8 ){
+	$.to_base64 = function( uint8 ){
 		//uint8 = new Uint8Array(uint8);
 		var token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 		var BIT6  = 0x3f;
@@ -227,7 +227,7 @@ function BinaryReader(){
 		return b64;
 	}
 
-	$.fromBase64 = function( b64 ){
+	$.from_base64 = function( b64 ){
 		// data URL handling
 		var st  = 0;
 		var pos = b64.indexOf('base64,');
