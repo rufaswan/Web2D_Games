@@ -34,7 +34,7 @@
 
 
 <script>
-var HTML = getHtmlIds();
+var HTML = get_html_id();
 
 // test Mobile Browser
 var list = [

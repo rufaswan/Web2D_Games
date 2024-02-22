@@ -76,42 +76,42 @@ var frag_src = `
 	}
 `;
 
-var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_xy', 'u_pxsize', 'u_mat4', 'u_tex');
+QDFN.set_shader_program(vert_src, frag_src);
+QDFN.set_shader_loc('a_xy', 'u_pxsize', 'u_mat4', 'u_tex');
 
-QDFN.setTexCount('u_tex', 1);
+QDFN.set_tex_count('u_tex', 1);
 var TEX_SIZE = [360,640];
 
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
-function quadDraw()
-{
-	QDFN.canvasSize();
-	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
+function quad_draw(){
+	QDFN.canvas_resize();
+	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 
 	var mat4 = bilinearwarp(DST, TEX_SIZE[0], TEX_SIZE[1]);
-	QDFN.setMatrix4fv('u_mat4', mat4);
+	QDFN.set_mat4fv('u_mat4', mat4);
 
-	var hw  = QDFN.GL.drawingBufferWidth  * 0.5;
-	var hh  = QDFN.GL.drawingBufferHeight * 0.5;
+	var half = QDFN.get_drawing_half();
+	var hw = half[0];
+	var hh = half[1];
 
 	var xy = [
 		-hw,-hh , hw,-hh ,  hw,hh ,
 		-hw,-hh , hw,hh  , -hw,hh ,
 	];
-	QDFN.v2Attrib('a_xy', xy);
+	QDFN.v2_attrib('a_xy', xy);
 	return QDFN.draw(6);
 }
 
 function render(){
 	if ( IS_CLICK ){
-		getDstCorner();
-		quadDraw();
+		get_dst_corner();
+		quad_draw();
 		IS_CLICK = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
 	IS_CLICK = true;
 	requestAnimationFrame(render);
 });

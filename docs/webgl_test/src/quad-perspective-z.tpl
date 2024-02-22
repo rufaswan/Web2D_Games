@@ -52,10 +52,10 @@ var frag_src = `
 	}
 `;
 
-var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_xyz', 'a_uv', 'u_pxsize', 'u_tex');
+QDFN.set_shader_program(vert_src, frag_src);
+QDFN.set_shader_loc('a_xyz', 'a_uv', 'u_pxsize', 'u_tex');
 
-QDFN.setTexCount('u_tex', 1);
+QDFN.set_tex_count('u_tex', 1);
 var TEX_SIZE = [360,640];
 
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
@@ -64,7 +64,7 @@ function dst_perp( dst, src='' )
 {
 	if ( src === '' )
 		src = [10,10 , 20,10 , 20,20 , 10,20];
-	var mat3 = getTransMat3(src, dst, false);
+	var mat3 = get_perspective_mat3(src, dst, false);
 	var v0 = matrix_multi31(mat3, [ src[0],src[1],1 ]);
 	var v1 = matrix_multi31(mat3, [ src[2],src[3],1 ]);
 	var v2 = matrix_multi31(mat3, [ src[4],src[5],1 ]);
@@ -73,10 +73,9 @@ function dst_perp( dst, src='' )
 	return [v0,v1,v2,v3];
 }
 
-function quadDraw()
-{
-	QDFN.canvasSize();
-	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
+function quad_draw(){
+	QDFN.canvas_resize();
+	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 	var dst = dst_perp(DST);
 
 	var xyz = [
@@ -88,21 +87,21 @@ function quadDraw()
 		SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
 	];
 
-	QDFN.v3Attrib('a_xyz', xyz);
-	QDFN.v2Attrib('a_uv' , uv);
+	QDFN.v3_attrib('a_xyz', xyz);
+	QDFN.v2_attrib('a_uv' , uv);
 	return QDFN.draw(6);
 }
 
 function render(){
 	if ( IS_CLICK ){
-		getDstCorner();
-		quadDraw();
+		get_dst_corner();
+		quad_draw();
 		IS_CLICK = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
 	IS_CLICK = true;
 	requestAnimationFrame(render);
 });

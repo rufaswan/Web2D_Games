@@ -1,6 +1,5 @@
 
-function cross()
-{
+function cross(){
 	// x = y1*z2 - y2*z1
 	// y = z1*x2 - z2*x1
 	// z = x1*y2 - x2*y1
@@ -52,8 +51,7 @@ function matrix_inv3( M ){
 	return Mco;
 }
 
-function matrix_multi13( V, M )
-{
+function matrix_multi13( V, M ){
 	//            | a b c |
 	// | 0 1 2 |  | d e f | = | 0a+1d+2g  0b+1e+2h  0c+1f+2i |
 	//            | g h i |
@@ -65,8 +63,7 @@ function matrix_multi13( V, M )
 	return VM;
 }
 
-function matrix_multi31( M, V )
-{
+function matrix_multi31( M, V ){
 	// | 0 1 2 |  | a |   | 0a+1b+2c |
 	// | 3 4 5 |  | b | = | 3a+4b+5c |
 	// | 6 7 8 |  | c |   | 6a+7b+8c |
@@ -98,8 +95,7 @@ function matrix_multi33( M1, M2 ){
 	return M;
 }
 
-function getTransMat3( src, dst, inv=true )
-{
+function get_perspective_mat3( src, dst, inv=true ){
 	// 0,1  2,3
 	// 6,7  4,5
 	var H1 = cross( cross(src[0],src[1] , src[4],src[5]) , cross(src[2],src[3] , src[6],src[7]) ); // corner-corner
@@ -138,8 +134,7 @@ function getTransMat3( src, dst, inv=true )
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/bilinearwarp
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/BilinearImageWarping2.pdf
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/FourCornerImageWarp2.pdf
-function bilinearwarp( d, nx, ny )
-{
+function bilinearwarp( d, nx, ny ){
 	// x  = a0 + a1*u + a2*v + a3*u*v
 	// y  = b0 + b1*u + b2*v + b3*u*v
 
@@ -180,7 +175,7 @@ function bilinearwarp( d, nx, ny )
 	];
 }
 //////////////////////////////
-function getIntersectPoint(){
+function get_intersect_point(){
 	function isPointInLine( pt, v1, v2 ){
 		var x1 = Math.min(v1[0], v2[0]);
 		var y1 = Math.min(v1[1], v2[1]);
@@ -219,23 +214,22 @@ function getIntersectPoint(){
 	return intr;
 }
 
-function findIntersectPoint( quad )
-{
+function find_intersect_point( quad ){
 	// 0,1  2,3
 	// 6,7  4,5
-	var intr = getIntersectPoint(quad[0],quad[1] , quad[4],quad[5] , quad[2],quad[3] , quad[6],quad[7]);
+	var intr = get_intersect_point(quad[0],quad[1] , quad[4],quad[5] , quad[2],quad[3] , quad[6],quad[7]);
 	if ( intr !== -1 ) // is simple
 		return intr;
-	var intr = getIntersectPoint(quad[0],quad[1] , quad[2],quad[3] , quad[6],quad[7] , quad[4],quad[5]);
+	var intr = get_intersect_point(quad[0],quad[1] , quad[2],quad[3] , quad[6],quad[7] , quad[4],quad[5]);
 	if ( intr !== -1 ) // is twisted top-bottom
 		return intr;
-	var intr = getIntersectPoint(quad[0],quad[1] , quad[6],quad[7] , quad[2],quad[3] , quad[4],quad[5]);
+	var intr = get_intersect_point(quad[0],quad[1] , quad[6],quad[7] , quad[2],quad[3] , quad[4],quad[5]);
 	if ( intr !== -1 ) // is twisted left-right
 		return intr;
 	return -1;
 }
 
-function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
+function quad_area( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 	function triArea( ax,ay , bx,by , cx,cy )
 	{
 		var r1 = ax * (by - cy);
@@ -249,5 +243,41 @@ function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 	var t1 = triArea(x1,y1 , x2,y2 , x3,y3);
 	var t2 = triArea(x1,y1 , x3,y3 , x4,y4);
 	return (t1 + t2);
+}
+
+function quad_type( quad ){
+	var midx = (quad[0] + quad[2] + quad[4] + quad[6]) * 0.25;
+	var midy = (quad[1] + quad[3] + quad[5] + quad[7]) * 0.25;
+
+	// 1 2
+	// 4 3
+	var ty = 'q';
+	for ( var i=0; i < 8; i += 2 ){
+		if ( quad[i+0] < midx && quad[i+1] < midy )  ty += '1';
+		else
+		if ( quad[i+0] < midx && quad[i+1] > midy )  ty += '4';
+		else
+		if ( quad[i+0] > midx && quad[i+1] < midy )  ty += '2';
+		else
+		if ( quad[i+0] > midx && quad[i+1] > midy )  ty += '3';
+		else
+			ty += '-';
+	}
+	return ty;
+}
+
+function quad_normal( type ){
+	switch ( type ){
+		case 'q1234':  case 'q2341':  case 'q3412':  case 'q4123':
+			return 'normal';
+		case 'q2143':  case 'q3214':  case 'q4321':  case 'q1432':
+			return 'normal';
+		case 'q1243':  case 'q2134':  case 'q1324':  case 'q4231':
+		case 'q2314':  case 'q3241':  case 'q1342':  case 'q2431':
+		case 'q3421':  case 'q4312':  case 'q2413':  case 'q3142':
+		case 'q4132':  case 'q1423':
+			return 'twist';
+	} // switch ( type )
+	return 'bend';
 }
 //////////////////////////////

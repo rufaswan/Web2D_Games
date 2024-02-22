@@ -1,6 +1,6 @@
 'use strict';
 
-function getHtmlIds(){
+function get_html_id(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {

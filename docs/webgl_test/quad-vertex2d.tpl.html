@@ -50,15 +50,15 @@ canvas {
 </style>
 <script>'use strict';
 
-var QDFN = QDFN || {};
+function QuadFunc(){
+	var $  = this; // public
+	var __ = {};   // private
 
-(function($){
+	__.GL = '';
+	__.SHADER = '';
+	__.LOC = {};
 
-	$.GL = '';
-	$.Shader = '';
-	$.LOC = {};
-
-	$.setWebGLCanvasById = function( id ){
+	$.set_webgl_by_id = function( id ){
 		var opt = {
 			alpha                 : true,
 			antialias             : true,
@@ -67,165 +67,178 @@ var QDFN = QDFN || {};
 			stencil               : false,
 			premultipliedAlpha    : false,
 		};
-		$.GL = document.getElementById(id).getContext('webgl', opt);
-		console.log('QDFN webgl ready');
+		__.GL = document.getElementById(id).getContext('webgl', opt);
+		console.log('QDFN webgl context OK');
 	}
 
-	$.canvasSize = function(){
-		$.GL.canvas.width  = $.GL.canvas.clientWidth;
-		$.GL.canvas.height = $.GL.canvas.clientHeight;
-	}
-
-	$.getBoundingClientRect = function(){
-		return $.GL.canvas.getBoundingClientRect();
-	}
-
-	$.setShaderProgram = function( vert_src, frag_src ){
-		var vert_shader = $.GL.createShader($.GL.VERTEX_SHADER);
-		$.GL.shaderSource (vert_shader, vert_src);
-		$.GL.compileShader(vert_shader);
-		var t = $.GL.getShaderParameter(vert_shader, $.GL.COMPILE_STATUS);
+	$.set_shader_program = function( vert_src, frag_src ){
+		var vert_shader = __.GL.createShader(__.GL.VERTEX_SHADER);
+		__.GL.shaderSource (vert_shader, vert_src);
+		__.GL.compileShader(vert_shader);
+		var t = __.GL.getShaderParameter(vert_shader, __.GL.COMPILE_STATUS);
 		if ( ! t )
-			console.error( $.GL.getShaderInfoLog(vert_shader) );
+			console.error( __.GL.getShaderInfoLog(vert_shader) );
 
-		var frag_shader = $.GL.createShader($.GL.FRAGMENT_SHADER);
-		$.GL.shaderSource (frag_shader, frag_src);
-		$.GL.compileShader(frag_shader);
-		var t = $.GL.getShaderParameter(frag_shader, $.GL.COMPILE_STATUS);
+		var frag_shader = __.GL.createShader(__.GL.FRAGMENT_SHADER);
+		__.GL.shaderSource (frag_shader, frag_src);
+		__.GL.compileShader(frag_shader);
+		var t = __.GL.getShaderParameter(frag_shader, __.GL.COMPILE_STATUS);
 		if ( ! t )
-			console.error( $.GL.getShaderInfoLog(frag_shader) );
+			console.error( __.GL.getShaderInfoLog(frag_shader) );
 
-		var prog = $.GL.createProgram();
-		$.GL.attachShader(prog, vert_shader);
-		$.GL.attachShader(prog, frag_shader);
-		$.GL.linkProgram (prog);
-		var t = $.GL.getProgramParameter(prog, $.GL.LINK_STATUS);
+		var prog = __.GL.createProgram();
+		__.GL.attachShader(prog, vert_shader);
+		__.GL.attachShader(prog, frag_shader);
+		__.GL.linkProgram (prog);
+		var t = __.GL.getProgramParameter(prog, __.GL.LINK_STATUS);
 		if ( ! t )
-			console.error( $.GL.getProgramInfoLog(prog) );
+			console.error( __.GL.getProgramInfoLog(prog) );
 
-		$.GL.useProgram(prog);
-		$.Shader = prog
+		__.GL.useProgram(prog);
+		__.SHADER = prog;
+		console.log('QDFN shader program OK');
 	}
 
-	$.setShaderLoc = function(){
-		$.LOC = {};
+	$.set_shader_loc = function(){
+		__.LOC = {};
 		for ( var i=0; i < arguments.length; i++ )
 		{
 			var v = arguments[i];
 			switch ( v.charAt(0) )
 			{
-				case 'a':  $.LOC[v] = $.GL.getAttribLocation ($.Shader, v); break;
-				case 'u':  $.LOC[v] = $.GL.getUniformLocation($.Shader, v); break;
+				case 'a':  __.LOC[v] = __.GL.getAttribLocation (__.SHADER, v); break;
+				case 'u':  __.LOC[v] = __.GL.getUniformLocation(__.SHADER, v); break;
 			}
 		} // for ( var i=0; i < arguments.length; i++ )
 		return;
 	}
 
-	$.setVec4pxSize = function( loc, sw=1, sh=1 ){
-		if ( $.LOC[loc] === undefined )
-			console.log('QDFN LOC not found', loc);
-		var hw  = $.GL.drawingBufferWidth  * 0.5;
-		var hh  = $.GL.drawingBufferHeight * 0.5;
-		var px  = [ 1/hw, -1/hh , 1/sw , 1/sh ];
-		$.GL.uniform4fv($.LOC[loc], px);
+	$.is_valid_loc = function( loc ){
+		if ( typeof __.LOC[loc] === 'undefined' ){
+			console.error('QDFN LOC not found', loc);
+			return false;
+		}
+		return true;
 	}
 
-	$.setMatrix3fv = function( loc, mat3 ){
-		if ( $.LOC[loc] === undefined )
-			console.log('QDFN LOC not found', loc);
+	$.set_vec4_size = function( loc, sw=1, sh=1 ){
+		if ( ! $.is_valid_loc(loc) )
+			return;
+		var half = $.get_drawing_half();
+		var px  = [ 1/half[0], -1/half[1] , 1/sw , 1/sh ];
+		__.GL.uniform4fv(__.LOC[loc], px);
+	}
+
+	$.set_mat3fv = function( loc, mat3 ){
+		if ( ! $.is_valid_loc(loc) )
+			return;
 
 		// https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/uniformMatrix
 		//   The values are assumed to be supplied in column major order.
 		// https://webglfundamentals.org/webgl/lessons/webgl-matrix-vs-math.html
-		$.GL.uniformMatrix3fv($.LOC[loc], false, mat3);
+		__.GL.uniformMatrix3fv(__.LOC[loc], false, mat3);
 	}
 
-	$.setMatrix4fv = function( loc, mat4 ){
-		if ( $.LOC[loc] === undefined )
-			console.log('QDFN LOC not found', loc);
-		$.GL.uniformMatrix4fv($.LOC[loc], false, mat4);
+	$.set_mat4fv = function( loc, mat4 ){
+		if ( ! $.is_valid_loc(loc) )
+			return;
+		__.GL.uniformMatrix4fv(__.LOC[loc], false, mat4);
 	}
 
-	$.createTexture = function(){
-		var tex = $.GL.createTexture();
-		$.GL.bindTexture  ($.GL.TEXTURE_2D, tex);
-		$.GL.texParameteri($.GL.TEXTURE_2D, $.GL.TEXTURE_WRAP_S    , $.GL.CLAMP_TO_EDGE);
-		$.GL.texParameteri($.GL.TEXTURE_2D, $.GL.TEXTURE_WRAP_T    , $.GL.CLAMP_TO_EDGE);
-		$.GL.texParameteri($.GL.TEXTURE_2D, $.GL.TEXTURE_MIN_FILTER, $.GL.NEAREST);
-		$.GL.texParameteri($.GL.TEXTURE_2D, $.GL.TEXTURE_MAG_FILTER, $.GL.NEAREST);
+	$.create_texture = function(){
+		var tex = __.GL.createTexture();
+		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.NEAREST);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.NEAREST);
 		return tex;
 	}
 
 	$.texImage2D = function( img='' ){
-		var target         = $.GL.TEXTURE_2D;
+		var target         = __.GL.TEXTURE_2D;
 		var level          = 0;
-		var internalformat = $.GL.RGBA;
-		var format         = $.GL.RGBA;
-		var type           = $.GL.UNSIGNED_BYTE;
+		var internalformat = __.GL.RGBA;
+		var format         = __.GL.RGBA;
+		var type           = __.GL.UNSIGNED_BYTE;
 		//var pixels         = img;
 		if ( img === '' )
-			$.GL.texImage2D(target, level, internalformat, format, type, $.GL.canvas);
+			__.GL.texImage2D(target, level, internalformat, format, type, __.GL.canvas);
 		else
-			$.GL.texImage2D(target, level, internalformat, format, type, img);
+			__.GL.texImage2D(target, level, internalformat, format, type, img);
 	}
 
-	$.bindTex2DById = function( bind, id ){
+	$.bind_tex2D_id = function( bind, id ){
 		var p1 = Promise.resolve().then(function(){
 			var img = document.getElementById(id);
 			// img.onload wont fired when img.src is data-url
-			var tex = $.createTexture();
+			var tex = $.create_texture();
 			$.texImage2D(img);
-			$.GL.activeTexture( $.GL.TEXTURE0 + bind );
-			$.GL.bindTexture  ( $.GL.TEXTURE_2D, tex );
+			__.GL.activeTexture( __.GL.TEXTURE0 + bind );
+			__.GL.bindTexture  ( __.GL.TEXTURE_2D, tex );
 			return id;
 		});
 		return p1;
 	}
 
-	$.setTexCount = function( loc, cnt ){
-		if ( $.LOC[loc] === undefined )
-			console.log('QDFN LOC not found', loc);
+	$.set_tex_count = function( loc, cnt ){
+		if ( ! __.LOC[loc] )
+			return console.log('QDFN LOC not found', loc);
 		if ( cnt < 1 )
 			return;
 		if ( cnt === 1 )
-			$.GL.uniform1i($.LOC[loc], 0);
+			__.GL.uniform1i(__.LOC[loc], 0);
 		else {
 			var iv = [];
 			for ( var i=0; i < cnt; i++ )
 				iv.push(i);
-			$.GL.uniform1iv($.LOC[loc], iv);
+			__.GL.uniform1iv(__.LOC[loc], iv);
 		}
 	}
 
-	$.setVertexAttrib = function( loc, data, vec ){
-		if ( $.LOC[loc] === undefined )
-			console.log('QDFN LOC not found', loc);
-		var buf = $.GL.createBuffer();
-		$.GL.bindBuffer($.GL.ARRAY_BUFFER, buf);
-		$.GL.bufferData($.GL.ARRAY_BUFFER, new Float32Array(data), $.GL.STATIC_DRAW);
-		$.GL.enableVertexAttribArray($.LOC[loc]);
-		$.GL.vertexAttribPointer($.LOC[loc], vec, $.GL.FLOAT, false, 0, 0);
+	$.set_vertex_attrib = function( loc, data, vec ){
+		if ( ! $.is_valid_loc(loc) )
+			return;
+		var buf = __.GL.createBuffer();
+		__.GL.bindBuffer(__.GL.ARRAY_BUFFER, buf);
+		__.GL.bufferData(__.GL.ARRAY_BUFFER, new Float32Array(data), __.GL.STATIC_DRAW);
+		__.GL.enableVertexAttribArray(__.LOC[loc]);
+		__.GL.vertexAttribPointer(__.LOC[loc], vec, __.GL.FLOAT, false, 0, 0);
 	}
 
-	$.v2Attrib = function( loc, data )  { $.setVertexAttrib(loc, data, 2); }
-	$.v3Attrib = function( loc, data )  { $.setVertexAttrib(loc, data, 3); }
-	$.v4Attrib = function( loc, data )  { $.setVertexAttrib(loc, data, 4); }
+	$.v2_attrib = function( loc, data )  { $.set_vertex_attrib(loc, data, 2); }
+	$.v3_attrib = function( loc, data )  { $.set_vertex_attrib(loc, data, 3); }
+	$.v4_attrib = function( loc, data )  { $.set_vertex_attrib(loc, data, 4); }
 
 	$.draw = function( cnt ){
-		$.GL.viewport(0, 0, $.GL.drawingBufferWidth, $.GL.drawingBufferHeight);
-		$.GL.drawArrays($.GL.TRIANGLES, 0, cnt);
+		__.GL.viewport(0, 0, __.GL.drawingBufferWidth, __.GL.drawingBufferHeight);
+		__.GL.drawArrays(__.GL.TRIANGLES, 0, cnt);
 	}
 
-	$.drawLine = function( cnt ){
-		$.GL.viewport(0, 0, $.GL.drawingBufferWidth, $.GL.drawingBufferHeight);
-		$.GL.drawArrays($.GL.LINES, 0, cnt);
+	$.draw_line = function( cnt ){
+		__.GL.viewport(0, 0, __.GL.drawingBufferWidth, __.GL.drawingBufferHeight);
+		__.GL.drawArrays(__.GL.LINES, 0, cnt);
 	}
 
-	$.drawOutline = function( cnt ){
-		$.GL.viewport(0, 0, $.GL.drawingBufferWidth, $.GL.drawingBufferHeight);
-		$.GL.drawArrays($.GL.LINE_LOOP, 0, cnt);
+	$.draw_outline = function( cnt ){
+		__.GL.viewport(0, 0, __.GL.drawingBufferWidth, __.GL.drawingBufferHeight);
+		__.GL.drawArrays(__.GL.LINE_LOOP, 0, cnt);
 	}
-})(QDFN);
+
+	$.canvas_resize = function(){
+		__.GL.canvas.width  = __.GL.canvas.clientWidth;
+		__.GL.canvas.height = __.GL.canvas.clientHeight;
+	}
+
+	$.get_drawing_half = function(){
+		return [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
+	}
+
+	$.get_bounding_rect = function(){
+		return __.GL.canvas.getBoundingClientRect();
+	}
+};
+var QDFN = new QuadFunc;
 </script>
 
 </head><body>
@@ -238,40 +251,40 @@ var QDFN = QDFN || {};
 <div id='corner3' class='clickable'>D</div>
 
 <script>
-QDFN.setWebGLCanvasById('canvas');
+QDFN.set_webgl_by_id('canvas');
 var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
 var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
 
-function divLeftTop( div, left, top )
+function div_left_top( div, left, top )
 {
 	div.style.left = (left|0) + 'px';
 	div.style.top  = (top |0) + 'px';
 	return;
 }
 
-function initCorners()
+function init_corners()
 {
-	var rect = QDFN.getBoundingClientRect();
+	var rect = QDFN.get_bounding_rect();
 	var box;
 	//console.log(rect);
 
 	box = document.getElementById('corner0');
-	divLeftTop(box, rect.left, rect.top);
+	div_left_top(box, rect.left, rect.top);
 
 	box = document.getElementById('corner1');
-	divLeftTop(box, rect.right, rect.top);
+	div_left_top(box, rect.right, rect.top);
 
 	box = document.getElementById('corner2');
-	divLeftTop(box, rect.right, rect.bottom);
+	div_left_top(box, rect.right, rect.bottom);
 
 	box = document.getElementById('corner3');
-	divLeftTop(box, rect.left, rect.bottom);
+	div_left_top(box, rect.left, rect.bottom);
 	return;
 };
 
-function getDstCorner()
+function get_dst_corner()
 {
-	var box = QDFN.getBoundingClientRect();
+	var box = QDFN.get_bounding_rect();
 	var hw  = box.width  * 0.5;
 	var hh  = box.height * 0.5;
 	DST = [];
@@ -284,15 +297,14 @@ function getDstCorner()
 	}
 }
 
-initCorners();
-getDstCorner();
+init_corners();
+get_dst_corner();
 
 var IS_CLICK = true;
-var CORNER = undefined;
+var CORNER = 0;
 var CLICK  = document.getElementsByClassName('clickable');
 window.addEventListener('click', function(e){
-	function xyRect( x, y, rect )
-	{
+	function xy_rect( x, y, rect ){
 		if ( x < rect.left   )  return false;
 		if ( y < rect.top    )  return false;
 		if ( x > rect.right  )  return false;
@@ -300,12 +312,11 @@ window.addEventListener('click', function(e){
 		return true;
 	}
 
-	if ( CORNER === undefined )
-	{
+	if ( CORNER === 0 ){
 		for ( var i=0; i < CLICK.length; i++ )
 		{
 			var rect = CLICK[i].getBoundingClientRect();
-			if ( xyRect(e.pageX, e.pageY, rect) )
+			if ( xy_rect(e.pageX, e.pageY, rect) )
 			{
 				CORNER = CLICK[i];
 				CORNER.classList.add('activebox');
@@ -314,11 +325,10 @@ window.addEventListener('click', function(e){
 		}
 		return;
 	}
-	else
-	{
-		divLeftTop(CORNER, e.pageX, e.pageY);
+	else {
+		div_left_top(CORNER, e.pageX, e.pageY);
 		CORNER.classList.remove('activebox');
-		CORNER = undefined;
+		CORNER = 0;
 		IS_CLICK = true;
 		return;
 	}
@@ -326,8 +336,7 @@ window.addEventListener('click', function(e){
 </script>
 
 <script>
-function cross()
-{
+function cross(){
 	// x = y1*z2 - y2*z1
 	// y = z1*x2 - z2*x1
 	// z = x1*y2 - x2*y1
@@ -379,8 +388,7 @@ function matrix_inv3( M ){
 	return Mco;
 }
 
-function matrix_multi13( V, M )
-{
+function matrix_multi13( V, M ){
 	//            | a b c |
 	// | 0 1 2 |  | d e f | = | 0a+1d+2g  0b+1e+2h  0c+1f+2i |
 	//            | g h i |
@@ -392,8 +400,7 @@ function matrix_multi13( V, M )
 	return VM;
 }
 
-function matrix_multi31( M, V )
-{
+function matrix_multi31( M, V ){
 	// | 0 1 2 |  | a |   | 0a+1b+2c |
 	// | 3 4 5 |  | b | = | 3a+4b+5c |
 	// | 6 7 8 |  | c |   | 6a+7b+8c |
@@ -425,8 +432,7 @@ function matrix_multi33( M1, M2 ){
 	return M;
 }
 
-function getTransMat3( src, dst, inv=true )
-{
+function get_perspective_mat3( src, dst, inv=true ){
 	// 0,1  2,3
 	// 6,7  4,5
 	var H1 = cross( cross(src[0],src[1] , src[4],src[5]) , cross(src[2],src[3] , src[6],src[7]) ); // corner-corner
@@ -465,8 +471,7 @@ function getTransMat3( src, dst, inv=true )
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/bilinearwarp
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/BilinearImageWarping2.pdf
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/FourCornerImageWarp2.pdf
-function bilinearwarp( d, nx, ny )
-{
+function bilinearwarp( d, nx, ny ){
 	// x  = a0 + a1*u + a2*v + a3*u*v
 	// y  = b0 + b1*u + b2*v + b3*u*v
 
@@ -507,7 +512,7 @@ function bilinearwarp( d, nx, ny )
 	];
 }
 //////////////////////////////
-function getIntersectPoint(){
+function get_intersect_point(){
 	function isPointInLine( pt, v1, v2 ){
 		var x1 = Math.min(v1[0], v2[0]);
 		var y1 = Math.min(v1[1], v2[1]);
@@ -546,23 +551,22 @@ function getIntersectPoint(){
 	return intr;
 }
 
-function findIntersectPoint( quad )
-{
+function find_intersect_point( quad ){
 	// 0,1  2,3
 	// 6,7  4,5
-	var intr = getIntersectPoint(quad[0],quad[1] , quad[4],quad[5] , quad[2],quad[3] , quad[6],quad[7]);
+	var intr = get_intersect_point(quad[0],quad[1] , quad[4],quad[5] , quad[2],quad[3] , quad[6],quad[7]);
 	if ( intr !== -1 ) // is simple
 		return intr;
-	var intr = getIntersectPoint(quad[0],quad[1] , quad[2],quad[3] , quad[6],quad[7] , quad[4],quad[5]);
+	var intr = get_intersect_point(quad[0],quad[1] , quad[2],quad[3] , quad[6],quad[7] , quad[4],quad[5]);
 	if ( intr !== -1 ) // is twisted top-bottom
 		return intr;
-	var intr = getIntersectPoint(quad[0],quad[1] , quad[6],quad[7] , quad[2],quad[3] , quad[4],quad[5]);
+	var intr = get_intersect_point(quad[0],quad[1] , quad[6],quad[7] , quad[2],quad[3] , quad[4],quad[5]);
 	if ( intr !== -1 ) // is twisted left-right
 		return intr;
 	return -1;
 }
 
-function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
+function quad_area( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 	function triArea( ax,ay , bx,by , cx,cy )
 	{
 		var r1 = ax * (by - cy);
@@ -576,6 +580,42 @@ function quadArea( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
 	var t1 = triArea(x1,y1 , x2,y2 , x3,y3);
 	var t2 = triArea(x1,y1 , x3,y3 , x4,y4);
 	return (t1 + t2);
+}
+
+function quad_type( quad ){
+	var midx = (quad[0] + quad[2] + quad[4] + quad[6]) * 0.25;
+	var midy = (quad[1] + quad[3] + quad[5] + quad[7]) * 0.25;
+
+	// 1 2
+	// 4 3
+	var ty = 'q';
+	for ( var i=0; i < 8; i += 2 ){
+		if ( quad[i+0] < midx && quad[i+1] < midy )  ty += '1';
+		else
+		if ( quad[i+0] < midx && quad[i+1] > midy )  ty += '4';
+		else
+		if ( quad[i+0] > midx && quad[i+1] < midy )  ty += '2';
+		else
+		if ( quad[i+0] > midx && quad[i+1] > midy )  ty += '3';
+		else
+			ty += '-';
+	}
+	return ty;
+}
+
+function quad_normal( type ){
+	switch ( type ){
+		case 'q1234':  case 'q2341':  case 'q3412':  case 'q4123':
+			return 'normal';
+		case 'q2143':  case 'q3214':  case 'q4321':  case 'q1432':
+			return 'normal';
+		case 'q1243':  case 'q2134':  case 'q1324':  case 'q4231':
+		case 'q2314':  case 'q3241':  case 'q1342':  case 'q2431':
+		case 'q3421':  case 'q4312':  case 'q2413':  case 'q3142':
+		case 'q4132':  case 'q1423':
+			return 'twist';
+	} // switch ( type )
+	return 'bend';
 }
 //////////////////////////////
 </script>
@@ -607,31 +647,29 @@ var frag_src = `
 	}
 `;
 
-var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_xy', 'a_uv', 'u_pxsize', 'u_tex');
+QDFN.set_shader_program(vert_src, frag_src);
+QDFN.set_shader_loc('a_xy', 'a_uv', 'u_pxsize', 'u_tex');
 
-QDFN.setTexCount('u_tex', 1);
+QDFN.set_tex_count('u_tex', 1);
 var TEX_SIZE = [360,640];
 
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
-function quadDraw()
-{
-	QDFN.canvasSize();
-	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
+function quad_draw(){
+	QDFN.canvas_resize();
+	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
 
-	var scx = findIntersectPoint(SRC);
-	var dcx = findIntersectPoint(DST);
+	var scx = find_intersect_point(SRC);
+	var dcx = find_intersect_point(DST);
 
 	// for simple and twisted
-	if ( dcx !== -1 )
-	{
+	if ( dcx !== -1 ){
 		var xy = [
 			dcx[0],dcx[1] , DST[0],DST[1] , DST[2],DST[3] ,
 			dcx[0],dcx[1] , DST[2],DST[3] , DST[4],DST[5] ,
 			dcx[0],dcx[1] , DST[4],DST[5] , DST[6],DST[7] ,
 			dcx[0],dcx[1] , DST[6],DST[7] , DST[0],DST[1] ,
 		];
-		QDFN.v2Attrib('a_xy', xy);
+		QDFN.v2_attrib('a_xy', xy);
 
 		var uv = [
 			scx[0],scx[1] , SRC[0],SRC[1] , SRC[2],SRC[3] ,
@@ -639,18 +677,17 @@ function quadDraw()
 			scx[0],scx[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
 			scx[0],scx[1] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
 		];
-		QDFN.v2Attrib('a_uv', uv);
+		QDFN.v2_attrib('a_uv', uv);
 
 		console.log('simple and twisted', dcx);
 		return QDFN.draw(12);
 	}
 
 	// bended
-	var area1 = quadArea(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
-	var area2 = quadArea(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
+	var area1 = quad_area(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
+	var area2 = quad_area(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
 
-	if ( area1 < area2 )
-	{
+	if ( area1 < area2 ){
 		var xy = [
 			DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] ,
 			DST[0],DST[1] , DST[4],DST[5] , DST[6],DST[7] ,
@@ -660,8 +697,7 @@ function quadDraw()
 			SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
 		];
 	}
-	else
-	{
+	else {
 		var xy = [
 			DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] ,
 			DST[2],DST[3] , DST[6],DST[7] , DST[0],DST[1] ,
@@ -671,8 +707,8 @@ function quadDraw()
 			SRC[2],SRC[3] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
 		];
 	}
-	QDFN.v2Attrib('a_xy', xy);
-	QDFN.v2Attrib('a_uv', uv);
+	QDFN.v2_attrib('a_xy', xy);
+	QDFN.v2_attrib('a_uv', uv);
 
 	console.log('bended', dcx);
 	return QDFN.draw(6);
@@ -680,14 +716,14 @@ function quadDraw()
 
 function render(){
 	if ( IS_CLICK ){
-		getDstCorner();
-		quadDraw();
+		get_dst_corner();
+		quad_draw();
 		IS_CLICK = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
 	IS_CLICK = true;
 	requestAnimationFrame(render);
 });

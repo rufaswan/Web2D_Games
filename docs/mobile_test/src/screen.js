@@ -12,12 +12,12 @@
 			displaySurface : 'monitor',
 		},
 	};
-	var isCapture = false;
+	var is_capture = false;
 	var timer;
 
 	document.getElementById('screencast').addEventListener('click', function(){
 
-		if ( isCapture )
+		if ( is_capture )
 		{
 			VIDEO.srcObject.getTracks().forEach(function(t){
 				t.stop();
@@ -25,7 +25,7 @@
 			VIDEO.srcObject = null;
 
 			clearInterval(timer);
-			isCapture = ! isCapture;
+			is_capture = ! is_capture;
 		}
 		else
 		{
@@ -41,7 +41,7 @@
 				CANVAS.height = VIDEO.videoHeight;
 				CANVAS.getContext('2d').drawImage(VIDEO, 0, 0, CANVAS.width, CANVAS.height);
 			}, 1000);
-			isCapture = ! isCapture;
+			is_capture = ! is_capture;
 		}
 	});
 

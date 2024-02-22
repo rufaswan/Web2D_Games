@@ -41,57 +41,53 @@ var frag_src = `
 	}
 `;
 
-var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_uv', 'u_pxsize', 'u_mat3', 'u_tex');
+QDFN.set_shader_program(vert_src, frag_src);
+QDFN.set_shader_loc('a_uv', 'u_pxsize', 'u_mat3', 'u_tex');
 
-QDFN.setTexCount('u_tex', 1);
+QDFN.set_tex_count('u_tex', 1);
 var TEX_SIZE = [360,640];
 
 SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
-function quadDraw()
-{
-	QDFN.canvasSize();
-	QDFN.setVec4pxSize('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
-	var mat3 = getTransMat3(SRC, DST, false);
-	QDFN.setMatrix3fv('u_mat3', mat3);
+function quad_draw(){
+	QDFN.canvas_resize();
+	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
+	var mat3 = get_perspective_mat3(SRC, DST, false);
+	QDFN.set_mat3fv('u_mat3', mat3);
 
-	var scx = findIntersectPoint(SRC);
-	var dcx = findIntersectPoint(DST);
+	var scx = find_intersect_point(SRC);
+	var dcx = find_intersect_point(DST);
 
 	// for simple and twisted
-	if ( dcx !== -1 )
-	{
+	if ( dcx !== -1 ){
 		var uv = [
 			scx[0],scx[1] , SRC[0],SRC[1] , SRC[2],SRC[3] ,
 			scx[0],scx[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
 			scx[0],scx[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
 			scx[0],scx[1] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
 		];
-		QDFN.v2Attrib('a_uv', uv);
+		QDFN.v2_attrib('a_uv', uv);
 
 		console.log('simple and twisted', dcx);
 		return QDFN.draw(12);
 	}
 
 	// bended
-	var area1 = quadArea(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
-	var area2 = quadArea(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
+	var area1 = quad_area(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
+	var area2 = quad_area(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
 
-	if ( area1 < area2 )
-	{
+	if ( area1 < area2 ){
 		var uv = [
 			SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
 			SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
 		];
 	}
-	else
-	{
+	else {
 		var uv = [
 			SRC[2],SRC[3] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
 			SRC[2],SRC[3] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
 		];
 	}
-	QDFN.v2Attrib('a_uv', uv);
+	QDFN.v2_attrib('a_uv', uv);
 
 	console.log('bended', dcx);
 	return QDFN.draw(6);
@@ -99,14 +95,14 @@ function quadDraw()
 
 function render(){
 	if ( IS_CLICK ){
-		getDstCorner();
-		quadDraw();
+		get_dst_corner();
+		quad_draw();
 		IS_CLICK = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
 	IS_CLICK = true;
 	requestAnimationFrame(render);
 });

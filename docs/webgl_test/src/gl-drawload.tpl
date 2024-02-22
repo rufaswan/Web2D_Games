@@ -45,7 +45,7 @@ body {
 <div id='message'><p>DEBUG TEXT HERE</p></div>
 
 <script>
-QDFN.setWebGLCanvasById('canvas');
+QDFN.set_webgl_by_id('canvas');
 
 var vert_src = `
 	attribute  highp  vec2  a_pos;
@@ -69,21 +69,21 @@ var frag_src = `
 	}
 `;
 
-var SHADER = QDFN.setShaderProgram(vert_src, frag_src);
-QDFN.setShaderLoc('a_pos', 'u_tex');
+QDFN.set_shader_program(vert_src, frag_src);
+QDFN.set_shader_loc('a_pos', 'u_tex');
 
-QDFN.setTexCount('u_tex', 1);
+QDFN.set_tex_count('u_tex', 1);
 
 var pos = [
 	0,0 , 2,0 , 2,2 ,
 	0,0 , 2,2 , 0,2 ,
 ];
-QDFN.v2Attrib('a_pos', pos);
+QDFN.v2_attrib('a_pos', pos);
 
 var MESSAGE = document.getElementById('message');
-//var TEX = QDFN.createTexture();
+//var TEX = QDFN.create_texture();
 
-QDFN.bindTex2DById(0, 'mona_lisa_png').then(function(){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
 	function drawload(){
 		var prev = performance.now();
 		var count = 0;

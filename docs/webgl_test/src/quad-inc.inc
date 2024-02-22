@@ -5,40 +5,40 @@
 <div id='corner3' class='clickable'>D</div>
 
 <script>
-QDFN.setWebGLCanvasById('canvas');
+QDFN.set_webgl_by_id('canvas');
 var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
 var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
 
-function divLeftTop( div, left, top )
+function div_left_top( div, left, top )
 {
 	div.style.left = (left|0) + 'px';
 	div.style.top  = (top |0) + 'px';
 	return;
 }
 
-function initCorners()
+function init_corners()
 {
-	var rect = QDFN.getBoundingClientRect();
+	var rect = QDFN.get_bounding_rect();
 	var box;
 	//console.log(rect);
 
 	box = document.getElementById('corner0');
-	divLeftTop(box, rect.left, rect.top);
+	div_left_top(box, rect.left, rect.top);
 
 	box = document.getElementById('corner1');
-	divLeftTop(box, rect.right, rect.top);
+	div_left_top(box, rect.right, rect.top);
 
 	box = document.getElementById('corner2');
-	divLeftTop(box, rect.right, rect.bottom);
+	div_left_top(box, rect.right, rect.bottom);
 
 	box = document.getElementById('corner3');
-	divLeftTop(box, rect.left, rect.bottom);
+	div_left_top(box, rect.left, rect.bottom);
 	return;
 };
 
-function getDstCorner()
+function get_dst_corner()
 {
-	var box = QDFN.getBoundingClientRect();
+	var box = QDFN.get_bounding_rect();
 	var hw  = box.width  * 0.5;
 	var hh  = box.height * 0.5;
 	DST = [];
@@ -51,15 +51,14 @@ function getDstCorner()
 	}
 }
 
-initCorners();
-getDstCorner();
+init_corners();
+get_dst_corner();
 
 var IS_CLICK = true;
-var CORNER = undefined;
+var CORNER = 0;
 var CLICK  = document.getElementsByClassName('clickable');
 window.addEventListener('click', function(e){
-	function xyRect( x, y, rect )
-	{
+	function xy_rect( x, y, rect ){
 		if ( x < rect.left   )  return false;
 		if ( y < rect.top    )  return false;
 		if ( x > rect.right  )  return false;
@@ -67,12 +66,11 @@ window.addEventListener('click', function(e){
 		return true;
 	}
 
-	if ( CORNER === undefined )
-	{
+	if ( CORNER === 0 ){
 		for ( var i=0; i < CLICK.length; i++ )
 		{
 			var rect = CLICK[i].getBoundingClientRect();
-			if ( xyRect(e.pageX, e.pageY, rect) )
+			if ( xy_rect(e.pageX, e.pageY, rect) )
 			{
 				CORNER = CLICK[i];
 				CORNER.classList.add('activebox');
@@ -81,11 +79,10 @@ window.addEventListener('click', function(e){
 		}
 		return;
 	}
-	else
-	{
-		divLeftTop(CORNER, e.pageX, e.pageY);
+	else {
+		div_left_top(CORNER, e.pageX, e.pageY);
 		CORNER.classList.remove('activebox');
-		CORNER = undefined;
+		CORNER = 0;
 		IS_CLICK = true;
 		return;
 	}
