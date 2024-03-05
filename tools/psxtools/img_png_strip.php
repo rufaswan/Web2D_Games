@@ -36,16 +36,10 @@ function png_recode( $level, &$png )
 	{
 		switch ( $png[$i]['name'] )
 		{
+			case 'fdAT':
 			case 'IDAT':
 				$dat = zlib_decode( $png[$i]['data'] );
 				$png[$i]['data'] = zlib_encode($dat, ZLIB_ENCODING_DEFLATE, $level);
-				break;
-			case 'fdAT':
-				$seq = substr($png[$i]['data'], 0, 4);
-				$bin = substr($png[$i]['data'], 4);
-
-				$dat = zlib_decode($bin);
-				$png[$i]['data'] = $seq . zlib_encode($dat, ZLIB_ENCODING_DEFLATE, $level);
 				break;
 		} // switch ( $png[$i]['name'] )
 	} // for ( $i=0; $i < $cnt; $i++ )
@@ -55,17 +49,20 @@ function png_recode( $level, &$png )
 // to strip off any optional PNG chunks (tIME,gAMA,iCCP,etc)
 function png_strip( &$png )
 {
-	$valid = array(
-		'IHDR','IDAT','IEND',
-		'acTL','fcTL','fdAT',
-		'PLTE','tRNS',
-	);
 	$cnt = count($png);
 	while ( $cnt > 0 )
 	{
 		$cnt--;
-		if ( array_search($png[$cnt]['name'], $valid) === false )
-			array_splice($png, $cnt, 1);
+		switch ( $png[$cnt]['name'] )
+		{
+			case 'IHDR':  case 'IDAT':  case 'IEND':
+			case 'acTL':  case 'fcTL':  case 'fdAT':
+			case 'PLTE':  case 'tRNS':
+				break;
+			default:
+				printf("REMOVED %x %s\n", $cnt, $png[$cnt]['name']);
+				array_splice($png, $cnt, 1);
+		} // switch ( $png[$cnt]['name'] )
 	}
 	return;
 }
@@ -78,33 +75,58 @@ function load_png( &$file )
 	while ( $st < $ed )
 	{
 		$len = str2big($file, $st + 0, 4);
-		$nam = substr ($file, $st + 4, 4);
-		$dat = substr ($file, $st + 8, $len);
+		$ent = array(
+			'name' => substr ($file, $st + 4, 4) ,
+			'data' => substr ($file, $st + 8, $len) ,
+		);
 		//$crc = str2big($file, $st + 8 + $len, 4);
-		printf("%8x  %8x  %s\n", $st, strlen($dat), $nam);
+		printf("%8x  %8x  %s\n", $st, strlen($ent['data']), $ent['name']);
+			$st += (8 + $len + 4);
 
-		$chunk[] = array('name'=>$nam , 'data'=>$dat);
-		$st += (8 + $len + 4);
+		switch ( $ent['name'] )
+		{
+			case 'fdAT':
+				$seq = str2big($ent['data'], 0, 4);
+				printf("APNG  %s  %x\n", $ent['name'], $seq);
+				$ent['data'] = substr($ent['data'], 4);
+			case 'IDAT':
+				if ( $chunk[0]['name'] === $ent['name'] )
+					$chunk[0]['data'] .= $ent['data'];
+				else
+					array_unshift($chunk, $ent);
+				break;
+			case 'fcTL':
+				$seq = str2big($ent['data'], 0, 4);
+				printf("APNG  %s  %x\n", $ent['name'], $seq);
+				$ent['data'] = substr($ent['data'], 4);
+			default:
+				array_unshift($chunk, $ent);
+				break;
+		} // switch ( $ent['name'] )
 	} // while ( $st < $ed )
 
-	$cnt = count($chunk);
-	while ( $cnt > 1 )
-	{
-		$cnt--;
-		if ( $chunk[$cnt]['name'] === $chunk[$cnt-1]['name'] )
-		{
-			$chunk[$cnt-1]['data'] .= $chunk[$cnt]['data'];
-			array_splice($chunk, $cnt, 1);
-		}
-	}
 	return $chunk;
 }
 
 function save_png( $fname, &$png )
 {
 	$file = PNG_MAGIC;
-	foreach ( $png as $chunk )
+	$cnt  = count($png);
+	$apng = 0;
+	while ( $cnt > 0 )
 	{
+		$cnt--;
+		$chunk = $png[$cnt];
+
+		switch ( $chunk['name'] )
+		{
+			case 'fcTL':
+			case 'fdAT':
+				$chunk['data'] = chrbig($apng,4) . $png[$cnt]['data'];
+					$apng++;
+				break;
+		} // switch ( $chunk['name'] )
+
 		$len = strlen($chunk['data']);
 		$crc = crc32( $chunk['name'] . $chunk['data'] );
 
@@ -112,7 +134,8 @@ function save_png( $fname, &$png )
 		$file .= $chunk['name'];
 		$file .= $chunk['data'];
 		$file .= chrbig($crc, 4);
-	}
+	} // while ( $cnt > 0 )
+
 	file_put_contents($fname, $file);
 	return;
 }

@@ -8,13 +8,6 @@
 # /bin/wine   = for 32-bit EXE + DLL only
 # /bin/wine64 = for 64-bit EXE + DLL only
 
-# limited to half of all RAM
-# ulimit is measured in KB
-kb=$(free -k | grep -i "mem" | awk '{ print $2 }') # mem total
-let kb=$kb/2
-ulimit -Sv $kb
-echo "MEM LIMIT : $kb"
-
 # Nice-scale goes from -20 (greedy) to 19 (nice)
 # greedy takes and demand more CPU
 # nice   gives and wait   for  CPU
@@ -78,6 +71,10 @@ if [ ! -d "$WINEPREFIX" ]; then
 	mkdir -p "$HOME"
 	winecfg
 fi
+USER=$(whoami)
+ln -s  "$WINEPREFIX/drive_c/users/$USER/Local Settings/Application Data"  "$HOME/appdata_xp"
+ln -s  "$WINEPREFIX/drive_c/users/$USER/AppData"                          "$HOME/appdata_vista"
+
 if [ $# = 0 ]; then
 	winecfg
 	wineserver -k

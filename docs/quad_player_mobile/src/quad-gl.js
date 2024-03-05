@@ -54,7 +54,7 @@ function QuadGL(Q){
 				gl_FragColor = u_color;
 			}
 		`;
-		__.SHADER.lines = __.createShader('draw lines', vert_src, frag_src);
+		__.SHADER.lines = __.create_shader('draw lines', vert_src, frag_src);
 
 		//////////////////////////////
 
@@ -76,7 +76,7 @@ function QuadGL(Q){
 				z = 1.0 / a_xyz.z;
 				FOG = a_fog    * z;
 				XY  = a_xyz.xy * z * u_pxsize[0];
-				UV  = a_uv     * z * 1000.0;
+				UV  = a_uv     * z;
 
 				v_fog = FOG;
 				v_uv  = UV;
@@ -97,11 +97,11 @@ function QuadGL(Q){
 			void main(void){
 				z   = 1.0 / v_z;
 				FOG = v_fog * z;
-				UV  = v_uv  * z * u_pxsize[1] * 0.001;
+				UV  = v_uv  * z * u_pxsize[1];
 				gl_FragColor = texture2D(u_tex, UV) * FOG;
 			}
 		`;
-		__.SHADER.keyframe = __.createShader('draw keyframe', vert_src, frag_src);
+		__.SHADER.keyframe = __.create_shader('draw keyframe', vert_src, frag_src);
 
 		//////////////////////////////
 
@@ -131,14 +131,14 @@ function QuadGL(Q){
 				gl_FragColor = texture2D(u_tex, UV);
 			}
 		`;
-		__.SHADER.vram = __.createShader('draw vram', vert_src, frag_src);
+		__.SHADER.vram = __.create_shader('draw vram', vert_src, frag_src);
 
 		//////////////////////////////
 
 		return true;
 	}
 
-	__.createShader = function( name, vert_src, frag_src ){
+	__.create_shader = function( name, vert_src, frag_src ){
 		var vert_shader = __.GL.createShader(__.GL.VERTEX_SHADER);
 		__.GL.shaderSource (vert_shader, vert_src);
 		__.GL.compileShader(vert_shader);

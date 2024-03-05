@@ -29,7 +29,8 @@ php_req_extension('zlib_decode', 'zlib');
 //php_req_extension('deflate_init', 'zlib'); // for custom dictionary
 
 // chr(0x89) . "PNG\r\n" . chr(0x1a) . "\n";
-define('PNG_MAGIC', "\x89PNG\x0d\x0a\x1a\x0a");
+define('PNG_MAGIC' , "\x89PNG\x0d\x0a\x1a\x0a");
+define('GZIP_MAGIC', "\x1f\x8b\x08");
 
 function zlib_raw_store( &$data )
 {
@@ -65,7 +66,7 @@ function zlib_gzip_store( &$data )
 	// +a bytes header
 	//    *same as raw*
 	// +8 bytes footer
-	$zlib  = "\x1f\x8b\x08" . ZERO . ZERO . ZERO . ZERO . ZERO . "\x04\x03"; // magic
+	$zlib  = GZIP_MAGIC . ZERO . chrint(0,4) . "\x04\x03"; // magic
 	$zlib .= zlib_raw_store($data);
 
 	// crc LE
@@ -107,6 +108,7 @@ function zlib_deflate_store( &$data )
 			$sum1 -= 0xfff1;
 	} // for ( $i=0; $i < $len; $i++ )
 
+	// Adler-32 checksum
 	// 0 1 = sum of sum bytes BE
 	// 2 3 = sum bytes BE
 	$b1a = ($sum1 >> 8) & BIT8;

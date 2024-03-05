@@ -64,6 +64,9 @@ function FMBS_s0( $id )
 			case 'ps4_odin':
 			case 'ps4_drag':
 			case 'ps4_sent':
+			case 'swi_sent':
+			case 'swi_grim':
+			case 'swi_unic':
 				$s0 = nds_quad18c($s);
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -105,6 +108,9 @@ function FMBS_s1( $id )
 			case 'ps4_odin':
 			case 'ps4_drag':
 			case 'ps4_sent':
+			case 'swi_sent':
+			case 'swi_grim':
+			case 'swi_unic':
 				$s1 = nds_quad30p($s, $ord);
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -146,6 +152,9 @@ function FMBS_s2( $id )
 			case 'ps4_odin':
 			case 'ps4_drag':
 			case 'ps4_sent':
+			case 'swi_sent':
+			case 'swi_grim':
+			case 'swi_unic':
 				$s2 = nds_quad30p($s, $ord);
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -271,6 +280,9 @@ function FMBS_s3( $id )
 				//                                 1                               2                               3                               4
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// f4      f4      f4      f4      f4      f4      f4      f4      f4      f4      - - - - f4      f4      - - - - f4      f4      - - - - f4      f4      - - - -
+			case 'swi_sent': // 50
+			case 'swi_grim': // 50
+			case 'swi_unic': // 50
 				$b00 = float32( $ord($s,0x00,4) ); // x1
 				$b04 = float32( $ord($s,0x04,4) ); // y1
 				$b08 = float32( $ord($s,0x08,4) ); // x2
@@ -478,6 +490,9 @@ function FMBS_s4( $id )
 			case 'ps4_sent': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// 2   - - 1 1 1 1 4       2   2   2   - -
+			case 'swi_sent': // 14
+			case 'swi_grim': // 14
+			case 'swi_unic': // 14
 				$b00 = $ord($s, 0x00, 4);
 				$b04 = $ord($s, 0x04, 1);
 				$b05 = $ord($s, 0x05, 1); // flags
@@ -568,6 +583,9 @@ function FMBS_s5( $id )
 			case 'ps4_sent': // 8
 				// 0 1 2 3 4 5 6 7
 				// 1 - 1 - 1 - - -
+			case 'swi_sent': // 8
+			case 'swi_grim': // 8
+			case 'swi_unic': // 8
 				$b00 = $ord($s, 0x00, 2); // s3 id
 				$b02 = $ord($s, 0x02, 1);
 				$b03 = $ord($s, 0x03, 1);
@@ -686,6 +704,9 @@ function FMBS_s6( $id )
 			case 'ps4_sent': // 1c
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b
 				// f4      f4      f4      f4      3     - 1 - 2   1 1 - -
+			case 'swi_sent': // 1c
+			case 'swi_grim': // 1c
+			case 'swi_unic': // 1c
 				$b00 = float32( $ord($s,0x00,4) ); // rect.left
 				$b04 = float32( $ord($s,0x04,4) ); // rect.top
 				$b08 = float32( $ord($s,0x08,4) ); // rect.right
@@ -803,6 +824,9 @@ function FMBS_s7( $id )
 			case 'ps4_sent': // 24
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// f4      f4      f4      f4      f4      f4      f4      f4      c4
+			case 'swi_sent': // 24
+			case 'swi_grim': // 24
+			case 'swi_unic': // 24
 				$b00 = float32( $ord($s,0x00,4) ); // move x
 				$b04 = float32( $ord($s,0x04,4) ); // move y
 				$b08 = float32( $ord($s,0x08,4) ); // move z
@@ -901,6 +925,9 @@ function FMBS_s8( $id )
 			case 'ps4_sent': // 20
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// 2   - - 2   2   2   - - 1 - 1 1 1 1 1 - 1 - - - 1 - - - - - - -
+			case 'swi_sent': // 20
+			case 'swi_grim': // 20
+			case 'swi_unic': // 20
 				$b00 = $ord($s, 0x00, 2); // s6 id
 				// 00 00
 				$b04 = $ord($s, 0x04, 2); // s7 id
@@ -1029,6 +1056,9 @@ function FMBS_s9( $id )
 			case 'ps4_sent': // 30
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// f4      f4      f4      f4      c[18]                                           2   1 1 2   1 1
+			case 'swi_sent': // 30
+			case 'swi_grim': // 30
+			case 'swi_unic': // 30
 				$b00 = float32( $ord($s,0x00,4) ); // rect.left
 				$b04 = float32( $ord($s,0x04,4) ); // rect.top
 				$b08 = float32( $ord($s,0x08,4) ); // rect.right
@@ -1161,6 +1191,9 @@ function FMBS_sa( $id )
 			case 'ps4_sent': // 18
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
 				// 2   2   3     - 4       4       1 - 1 1 1 - - -
+			case 'swi_sent': // 18
+			case 'swi_grim': // 18
+			case 'swi_unic': // 18
 				$b00 = $ord($s, 0x00, 2); // s8_set_id
 				$b02 = $ord($s, 0x02, 2); // s8_set_no
 				$b04 = $ord($s, 0x04, 4); // s8_set_sum
@@ -1231,6 +1264,9 @@ function FMBS_sb( $id )
 			case 'ps4_sent': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// 2   - - 1 - - - 1 - - - 1 - - - - - - -
+			case 'swi_sent': // 14
+			case 'swi_grim': // 14
+			case 'swi_unic': // 14
 				$b00 = $ord($s, 0x00, 4);
 				$b04 = $ord($s, 0x04, 2);
 				// 00 00
@@ -1250,40 +1286,6 @@ function FMBS_sb( $id )
 	$fn = sprintf('%s/sb.txt', $gp_share['dir']);
 	save_file($fn, $text);
 	return $data;
-}
-//////////////////////////////
-function s1s4_pixel( $fname, &$s1, &$s4 )
-{
-	// s1 are pre-divided to 0.0 to 1.0
-	// revert back to pixel by using s4 tex_id
-	$pfx = substr($fname, 0, strrpos($fname, '.'));
-
-	$ftx  = array();
-	$done = array();
-	foreach ( $s4 as $s4k => $s4v )
-	{
-		if ( ! isset($s4v['tex']) )
-			continue;
-
-		$tid = $s4v['tex'];
-		if ( ! isset( $ftx[$tid] ) )
-			$ftx[$tid] = ftx_size($pfx, $tid);
-
-		if ( $ftx[$tid] === -1 )
-			return php_error('no %s ftx [%d]', $pfx, $tid);
-
-		$s1k = $s4v['s0s1s2'][1];
-		if ( isset( $done[$s1k] ) )
-			continue;
-
-		for ( $i=0; $i < 8; $i += 2 )
-		{
-			$s1[$s1k][$i+0] *= $ftx[$tid][0];
-			$s1[$s1k][$i+1] *= $ftx[$tid][1];
-		}
-		$done[$s1k] = 1;
-	}
-	return;
 }
 //////////////////////////////
 function detect_tag( &$file )
@@ -1318,16 +1320,10 @@ function detect_tag( &$file )
 				case 0x6e:  return 'vit_drag';
 				case 0x72:
 					// s0 test
-					if ( str2int($file,0xb0,4) === 0x120 )
-					{
-						$mgc = substr($file, 0x80, 5);
-						if ( $mgc === 'REHD_' || $mgc === 'ORHD_' )
-							return 'ps4_odin';
-						else
-							return 'ps4_drag';
-					}
 					if ( str2int($file,0xc8,4) === 0x120 || str2int($file,0xe0,4) === 0x120 )
 						return 'vit_odin';
+					if ( str2int($file,0xb0,4) === 0x120 )
+						php_warning('unable to detect %s OR %s', 'ps4_odin', 'ps4_sent');
 					return '';
 				case 0x76:  return 'ps4_sent';
 			} // switch ( $ver )
@@ -1376,23 +1372,10 @@ function vanilla( $tag, $fname )
 		case 'ps3_odin':
 		case 'ps4_odin':
 		case 'ps4_drag':
-			$json = array(
-				's0' => FMBS_s0(0),
-				's1' => FMBS_s1(1),
-				's2' => FMBS_s2(2),
-				's3' => FMBS_s3(3),
-				's4' => FMBS_s4(4),
-				's5' => FMBS_s5(5),
-				's6' => FMBS_s6(6),
-				's7' => FMBS_s7(7),
-				's8' => FMBS_s8(8),
-				's9' => FMBS_s9(9),
-				'sa' => FMBS_sa(10),
-				'sb' => FMBS_sb(11),
-			);
-			break;
-
 		case 'ps4_sent':
+		case 'swi_sent':
+		case 'swi_grim':
+		case 'swi_unic':
 			$json = array(
 				's0' => FMBS_s0(0),
 				's1' => FMBS_s1(1),
@@ -1407,7 +1390,6 @@ function vanilla( $tag, $fname )
 				'sa' => FMBS_sa(10),
 				'sb' => FMBS_sb(11),
 			);
-			s1s4_pixel($fname, $json['s1'], $json['s4']);
 			break;
 
 		case 'psp_gran':
@@ -1467,21 +1449,21 @@ TAG
   wii_mura  2009  Wii   [AUTO] Muramasa - The Demon Blade
   ps3_drag  2013  PS3   [AUTO] Dragon's Crown
   ps3_odin  2016  PS3   [AUTO] Odin Sphere Leifthsar
-  ps4_odin  2016  PS4   [AUTO] Odin Sphere Leifthsar
-  ps4_drag  2018  PS4   [AUTO] Dragon's Crown Pro
+  ps4_odin  2016  PS4   Odin Sphere Leifthsar
+  ps4_drag  2018  PS4   Dragon's Crown Pro
   ps4_sent  2019  PS4   [AUTO] 13 Sentinels: Aegis Rim
 
   psp_gran  2011  PSP   [AUTO] Gran Knights History
   vit_mura  2013  Vita  [AUTO] Muramasa Rebirth + DLC
   vit_drag  2013  Vita  [AUTO] Dragon's Crown
   vit_odin  2016  Vita  [AUTO] Odin Sphere Leifthsar
-
-  Upcoming
   swi_sent  2022  Swit  13 Sentinels: Aegis Rim
   swi_grim  2022  Swit  GrimGrimoire OnceMore
+  swi_unic  2024  Swit  Unicorn Overlord
+
+  Upcoming
   ps4_grim  2022  PS4   GrimGrimoire OnceMore
   ps5_grim  2023  PS5   GrimGrimoire OnceMore
-  swi_unic  2024  Swit  Unicorn Overlord
   ps4_unic  2024  PS4   Unicorn Overlord
   ps5_unic  2024  PS5   Unicorn Overlord
   xbx_unic  2024  XBSX  Unicorn Overlord

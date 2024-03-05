@@ -130,6 +130,56 @@ function cmp_float( $fl1, $fl2, $dec=1 )
 	return ( $f1 === $f2 );
 }
 //////////////////////////////
+function asm_haslabels( &$label, $p )
+{
+	$list = array();
+	foreach ( $label as $k => $v )
+	{
+		if ( $v === $p )
+			$list[] = $k;
+	}
+	return $list;
+}
+
+function asm_labelrange( &$label )
+{
+	$min = (1 << 31) - 1;
+	$max = 0;
+	foreach ( $label as $k => $v )
+	{
+		if ( $v < $min )  $min = $v;
+		if ( $v > $max )  $max = $v;
+	}
+	return array($min,$max);
+}
+
+function asm_trace( &$label, &$oplist )
+{
+	if ( defined('NO_TRACE') )
+		return;
+
+	// check for invalid labels
+	foreach ( $label as $k => $v )
+	{
+		if ( ! isset($oplist[$v]) )
+			php_warning('opcode not stop @ %4x [%s]', $v, trim($k));
+	}
+
+	// to print opcodes with labels
+	foreach ( $oplist as $ok => $ov )
+	{
+		$lab = asm_haslabels($label, $ok);
+		if ( ! empty($lab) )
+		{
+			foreach ( $lab as $lv )
+				printf("%s:\n", $lv);
+		}
+		printf("      %4x : %s\n", $ok, printhex($ov));
+	} // foreach ( $oplist as $ok => $ov )
+
+	return;
+}
+//////////////////////////////
 function utf8_binhex( $bin )
 {
 	$len = strlen($bin);
@@ -295,6 +345,48 @@ function bits8( $bit7 , $bit6 , $bit5 , $bit4 , $bit3 , $bit2 , $bit1 , $bit0 )
 	$b1 = ($bit1 & 1) << 1;
 	$b0 = ($bit0 & 1) << 0;
 	return ( $b7|$b6|$b5|$b4|$b3|$b2|$b1|$b0 );
+}
+
+function swizzle_bitmask( $int, $mask )
+{
+	$bit = 0;
+	$sll = 0;
+	while (1)
+	{
+		// use < 1 to handle negatives
+		if ( $mask < 1 )  break; // no more bitwise AND
+		if ( $int  < 1 )  break; // all zero anyway
+
+		$bi = $int  & 1;
+		$bm = $mask & 1;
+			$int  >>= 1;
+			$mask >>= 1;
+
+		if ( $bm )
+		{
+			$bit |= ($bi << $sll);
+			$sll++;
+		}
+	} // while (1)
+	return $bit;
+}
+
+function pixdec_copy44( &$bc, $dx, $dy )
+{
+	if ( $dx >= $bc['w'] )  return;
+	if ( $dy >= $bc['h'] )  return;
+
+	// in 4x4 pixels , for DXT1-5 or BC1-7 swizzled
+	$row = 4 * $bc['bpp']; // 4 pixel
+	for ( $y=0; $y < 4; $y++ )
+	{
+		$dyy = ($dy*4 + $y  ) * $bc['w']*4;
+		$dxx =  $dx*4 + $dyy;
+		$s = substr($bc['pix'], $bc['pos'], $row);
+			$bc['pos'] += $row;
+		str_update($bc['dec'], $dxx*$bc['bpp'], $s);
+	} // for ( $y=0; $y < 4; $y++ )
+	return;
 }
 //////////////////////////////
 function ps2_alpha2x( &$pal )

@@ -768,39 +768,6 @@ loadpatch:
 	return $data;
 }
 
-function imgfile_size( $fname )
-{
-	$ext = substr($fname, strrpos($fname, '.')+1);
-		$ext = strtolower($ext);
-	switch ( $ext )
-	{
-		case 'png':
-			$file = file_get_contents($fname);
-			$w = str2big($file, 0x10, 4);
-			$h = str2big($file, 0x14, 4);
-			return array($w,$h);
-
-		case 'bmp':
-			$file = file_get_contents($fname);
-			$w = str2int($file, 0x12, 4);
-			$h = str2int($file, 0x16, 4);
-			return array($w,$h);
-
-		case 'clut':
-			$file = file_get_contents($fname);
-			$w = str2int($file,  8, 4);
-			$h = str2int($file, 12, 4);
-			return array($w,$h);
-
-		case 'rgba':
-			$file = file_get_contents($fname);
-			$w = str2int($file, 4, 4);
-			$h = str2int($file, 8, 4);
-			return array($w,$h);
-	} // switch ( $ext )
-	return -1;
-}
-
 function center_clutfile( &$data, $x1, $y1 )
 {
 	if ( ! isset($data['pix']) )

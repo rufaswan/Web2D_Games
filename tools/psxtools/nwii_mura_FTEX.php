@@ -203,7 +203,7 @@ function tpl_dxt1( $str )
 //////////////////////////////
 function tplimage( &$pix, $iw, $ih, $byte, $bw, $bh )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 	printf("== tplimage( %x , %x , $byte , %x , %x )\n", $iw, $ih, $bw, $bh);
 	$cw = $iw / $bw;

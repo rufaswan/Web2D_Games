@@ -69,6 +69,8 @@ Can I Use?
 	  3.5  10     7    CSS3 Media Queries
 	  3.5  10.5   3.2  CSS3 2D Transforms
 	  2    11.5   5    CSS at-rule: @media: orientation media feature
+	 50    11.5   9    CSS property: column-width
+	 52    11.5   9    CSS property: column-count
 	  2    11.6   3.2  CSS outline properties
 	 11    12.1   7    CSS at-rule: @media: Nested media queries
 	  3.6  15     4    CSS pointer-events (for HTML)

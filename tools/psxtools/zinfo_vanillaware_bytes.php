@@ -23,6 +23,32 @@ function save_mbsmeta( &$file, $fname )
 	return;
 }
 
+function load_mbsfile( &$file, $sect, $ord )
+{
+	$off = array();
+	foreach ( $sect as $sk => $sv )
+	{
+		$c = $ord($file, $sv['c'][0], $sv['c'][1]);
+		$p = $ord($file, $sv['p'], 4);
+		if ( $c === 0 || $p === 0 )
+			continue;
+
+		$off[] = $p;
+		$sect[$sk]['h'] = $c;
+		$sect[$sk]['o'] = $p;
+		$sect[$sk]['d'] = substr($file, $p, $c*$sv['k']);
+	} // foreach ( $sect as $sk => $sv )
+
+	sort($off);
+	$p1 = str2int($file, 8, 4);
+	$p2 = array_shift($off);
+	if ( $p1 !== $p2 )
+		return php_error('FMBS head %x != %x', $p1, $p2);
+
+	$file = $sect;
+	return;
+}
+
 function vanilla( $fname, $tag )
 {
 	$file = file_get_contents($fname);
@@ -33,7 +59,7 @@ function vanilla( $fname, $tag )
 		return php_error('NO TAG %s', $fname);
 
 	load_mbsfile($file, $gp_data[$tag]['sect'], $gp_data[$tag]['ord']);
-	save_mbsmeta($file, $fname);
+	//save_mbsmeta($file, $fname);
 
 	global $gp_list;
 	foreach ( $file as $sk => $sv )

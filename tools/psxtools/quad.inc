@@ -91,7 +91,7 @@ function anim_allkeys( &$quad )
 			),
 		);
 		$time[] = $en;
-	}
+	} // foreach ( $quad['keyframe'] as $kk => $kv )
 
 	$anim = array(
 		'name'     => 'ALL KEYFRAMES',
@@ -117,14 +117,58 @@ function list_add( &$list, $k, &$v )
 	return;
 }
 
+function is_srcquad_prediv( &$quad )
+{
+	if ( empty($quad) )
+		return false;
+	if ( ! isset($quad['keyframe']) )
+		return false;
+
+	$px = array();
+	foreach ( $quad['keyframe'] as $kk => $kv )
+	{
+		if ( empty($kv) )
+			continue;
+		if ( ! isset($kv['layer']) )
+			continue;
+		foreach ( $kv['layer'] as $lk => $lv )
+		{
+			if ( empty($lv) )
+				continue;
+			if ( ! isset($lv['srcquad']) )
+				continue;
+
+			// check srcquad is in 0.0 to 1.0
+			// OR in pixels
+			for ( $i=0 ; $i < 8; $i++ )
+			{
+				$id = (int)$lv['srcquad'][$i];
+				if ( ! isset($px[$id]) )
+					$px[$id] = 0;
+				$px[$id]++;
+			}
+		} // foreach ( $kv['layer'] as $lk => $lv )
+	} // foreach ( $quad['keyframe'] as $kk => $kv )
+
+	if ( count($px) > 2 )
+		return false;
+	return true;
+}
+
 function save_quadfile( $pfx, &$quad )
 {
 	if ( empty($quad) )
 		return;
 	anim_allkeys($quad);
 
-	$quad = json_pretty($quad, '');
-	save_file("$pfx.quad", $quad);
+	$json = json_pretty($quad, '');
+	if ( is_srcquad_prediv($quad) )
+	{
+		php_warning('%s srcquad is in 0.0 to 1.0 / pre-divided', $pfx);
+		save_file("$pfx.prediv.quad", $json);
+	}
+	else
+		save_file("$pfx.quad", $json);
 	return;
 }
 //////////////////////////////

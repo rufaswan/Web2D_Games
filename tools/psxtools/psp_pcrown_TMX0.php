@@ -27,7 +27,7 @@ require 'common-guest.inc';
 
 function tmxpal( &$pal )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 	// swizzled
 	//  0- 7  10-17

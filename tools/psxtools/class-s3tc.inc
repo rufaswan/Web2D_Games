@@ -222,6 +222,22 @@ class S3TC_Texture
 		return $pix;
 	}
 
+	public function BC4( &$data ) // A8
+	{
+		$pix = '';
+		$len = int_ceil( strlen($data), -8 );
+		for ( $i=0; $i < $len; $i += 8 )
+		{
+			$alp = $this->bc3_alpha($data, $i+0);
+			for ( $j=0; $j < 16; $j++ )
+			{
+				$a = int_clamp($alp[$j], 0, BIT8);
+				$pix .= chr($a);
+			}
+		} // for ( $i=0; $i < $len; $i += 16 )
+		return $pix;
+	}
+
 	public function DXT1( &$data )  { return $this->BC1($data); }
 	public function DXT2( &$data )  { return $this->BC2($data); }
 	public function DXT3( &$data )  { return $this->BC2($data); }
@@ -248,7 +264,35 @@ class S3TC_Texture
 					$src = substr($data, $pos, 16); // 4 RGBA pixels
 						$pos += 16;
 					$dyy = ($y   + $by) * $w;
-					$dxx = ($dyy + $x ) * 4;
+					$dxx =  $dyy + $x;
+					str_update($canvas, $dxx*4, $src);
+				} // for ( $by=0; $by < 4; $by++ )
+			} // for ( $x=0; $x < $w; $x += 4 )
+		} // for ( $y=0; $y < $h; $y += 4 )
+		return $canvas;
+	}
+
+	public function BC4_debug( &$data, $w, $h )
+	{
+		trace("== BC4_debug( %x , %x )\n", $w, $h);
+		$b1 = strlen($data);
+		$b2 = $w * $h;
+		if ( $b1 != $b2 )
+			return php_error('data size [%x] != w x h [%x]', $b1, $b2);
+
+		// BC4 blocks are always 4x4 pixels
+		$canvas = str_repeat(ZERO, $b1);
+		$pos    = 0;
+		for ( $y=0; $y < $h; $y += 4 )
+		{
+			for ( $x=0; $x < $w; $x += 4 )
+			{
+				for ( $by=0; $by < 4; $by++ )
+				{
+					$src = substr($data, $pos, 4); // 4 Alpha
+						$pos += 4;
+					$dyy = ($y   + $by) * $w;
+					$dxx =  $dyy + $x;
 					str_update($canvas, $dxx, $src);
 				} // for ( $by=0; $by < 4; $by++ )
 			} // for ( $x=0; $x < $w; $x += 4 )

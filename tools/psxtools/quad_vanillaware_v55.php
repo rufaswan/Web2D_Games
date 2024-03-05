@@ -371,16 +371,19 @@ function s7_matrix( $s7, $flipx, $flipy )
 	$m = matrix_scale(4, $s7['scale'][0]*$bx, $s7['scale'][1]*$by);
 
 	$t = matrix_rotate_z(4, $s7['rotate'][2]);
-	if ( $t !== -1 )
-		$m = matrix_multi44($m, $t);
+	$m = matrix_multi44($m, $t);
 
-	$t = matrix_rotate_y(4, $s7['rotate'][1]);
-	if ( $t !== -1 )
+	if ( $s7['rotate'][1] !== 0 )
+	{
+		$t = matrix_rotate_y(4, $s7['rotate'][1]);
 		$m = matrix_multi44($m, $t);
+	}
 
-	$t = matrix_rotate_x(4, $s7['rotate'][0]);
-	if ( $t !== -1 )
+	if ( $s7['rotate'][0] !== 0 )
+	{
+		$t = matrix_rotate_x(4, $s7['rotate'][0]);
 		$m = matrix_multi44($m, $t);
+	}
 
 	$m[0+3] += ($s7['move'][0] * $bx);
 	$m[4+3] += ($s7['move'][1] * $by);
@@ -575,8 +578,7 @@ function vanilla( $line, $fname )
 
 	q3D_sas8s9_loop($sa, $quad);
 
-	$quad = json_pretty($quad, '');
-	save_file("$fname.quad", $quad);
+	save_quadfile($fname, $quad);
 	return;
 }
 

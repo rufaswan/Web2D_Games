@@ -31,33 +31,7 @@ require 'class-s3tc.inc';
 
 //define('DRY_RUN', true);
 
-function morton_swizzle( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
-{
-	if ( $bw == 4 && $bh == 4 )
-	{
-		for ( $y=0; $y < 4; $y++ )
-		{
-			$dyy = ($dy  + $y) * $ow;
-			$dxx = ($dyy + $dx) * 4;
-			$s = substr($pix, $pos, 16); // 4 RGBA
-				$pos += 16;
-			str_update($dec, $dxx, $s);
-		} // for ( $y=0; $y < 4; $y++ )
-	}
-	else
-	{
-		$func = __FUNCTION__;
-		$hbw = $bw >> 1;
-		$hbh = $bh >> 1;
-		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
-	}
-	return;
-}
-
-function gnf_swizzled( &$pix, $ow, $oh )
+function gnf_swizzled_bc( &$pix, $ow, $oh )
 {
 	// 1 tile  = 4*4 pixels
 	// 1 block = 8*8 tiles = 32*32 pixels
@@ -70,17 +44,40 @@ function gnf_swizzled( &$pix, $ow, $oh )
 	//   34 35 38 39 50 51 54 55
 	//   40 41 44 45 56 57 60 61
 	//   42 43 46 47 58 59 62 63
-	printf("== gnf_swizzled( %x , %x )\n", $ow, $oh);
-	$dec = $pix;
-	$pos = 0;
+	// bitmask
+	//          0 -> 1        = right
+	//         01 -> 23       = down
+	//       0123 -> 4567     = right
+	//   01234567 -> 89abcdef = down
+	// pattern = -rdr drdr
+	//         = x/55  y/2a
+	printf("== gnf_swizzled_bc( %x , %x )\n", $ow, $oh);
 
-	for ( $y=0; $y < $oh; $y += 32 )
+	// 1 pixel = 4*4 bc tile
+	$bc = array(
+		'pix' => $pix,
+		'dec' => str_repeat(ZERO, strlen($pix)),
+		'pos' => 0,
+		'w'   => $ow >> 2, // div 4
+		'h'   => $oh >> 2, // div 4
+		'bpp' => 4,
+	);
+
+	// morton swizzle for every 8x8 tiles
+	for ( $y=0; $y < $bc['h']; $y += 8 )
 	{
-		for ( $x=0; $x < $ow; $x += 32 )
-			morton_swizzle($pix, $dec, $pos, $x, $y, 32, 32, $ow, $oh);
-	} // for ( $y=0; $y < $oh; $y += 32 )
+		for ( $x=0; $x < $bc['w']; $x += 8 )
+		{
+			for ( $i=0; $i < 0x40; $i++ )
+			{
+				$sx = swizzle_bitmask($i, 0x55);
+				$sy = swizzle_bitmask($i, 0x2a);
+				pixdec_copy44($bc, $x+$sx, $y+$sy);
+			}
+		} // for ( $x=0; $x < $bc['w']; $x += 8 )
+	} // for ( $y=0; $y < $bc['h']; $y += 8 )
 
-	$pix = $dec;
+	$pix = $bc['dec'];
 	return;
 }
 //////////////////////////////
@@ -93,7 +90,7 @@ function im_bc3( &$file, $pos, $w, $h )
 	$pix = $bc3->BC3($pix);
 	//$pix = $bc3->S3TC_debug($pix, $w, $h);
 
-	gnf_swizzled($pix, $w, $h);
+	gnf_swizzled_bc($pix, $w, $h);
 	return $pix;
 }
 
@@ -106,7 +103,7 @@ function im_bc7( &$file, $pos, $w, $h )
 	$pix = $bc7->BC7($pix);
 	//$pix = $bc7->BPTC_debug($pix, $w, $h);
 
-	gnf_swizzled($pix, $w, $h);
+	gnf_swizzled_bc($pix, $w, $h);
 	return $pix;
 }
 //////////////////////////////
@@ -192,7 +189,7 @@ function ps4gnf( &$file, $base, $pfx, $id )
 		return php_error('UNKNOWN im fmt  %x', $fmt);
 	printf("DETECT  fmt %s , %x x %x \n", $list_fmt[$fmt], $w, $h);
 
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	$fn = sprintf('%s.%d.gnf', $pfx, $id);
@@ -243,11 +240,44 @@ function aegis( $fname )
 argv_loopfile($argv, 'aegis');
 
 /*
-odin sphere hd
+odin sphere leifthsar
 	25  im_bc3
 	29  im_bc7
 dragon crown pro
 	29  im_bc7
-13 sentinel
+13 sentinels
 	29  im_bc7
+
+odin sphere leifthsar
+	29  im_bc7
+		bg32a.ftx
+		bg32b.ftx
+		Interface_DE.ftx
+		Interface_ES.ftx
+		Interface_FR.ftx
+		Interface.ftx
+		Interface_IT.ftx
+		Interface_UK.ftx
+		Interface_US.ftx
+		Menu_DE.ftx
+		Menu_ES.ftx
+		Menu_FR.ftx
+		Menu.ftx
+		Menu_IT.ftx
+		Menu_UK.ftx
+		Menu_US.ftx
+		SKILLCARD00.ftx
+		SKILLCARD01.ftx
+		SKILLCARD02.ftx
+		SKILLCARD03.ftx
+		SKILLCARD04.ftx
+		SKILLCARD05.ftx
+		SKILLCARD06.ftx
+		title_DE.ftx
+		title_ES.ftx
+		title_FR.ftx
+		title.ftx
+		title_IT.ftx
+		title_UK.ftx
+		title_US.ftx
  */

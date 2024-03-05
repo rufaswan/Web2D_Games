@@ -97,6 +97,8 @@ For GBM G and W
 php  psxtools/gbattmw_data_pac_decode.php  data/ms*.pac
 php  psxtools/quad_gbattmw_data_mspac.php  DIR
 ....
+
+'''
 == Gunvolt series (PC)
 
 Game files are packed in .IRLST and .IRARC file pair. Then use the correct IDTAG to convert extracted subfiles to .QUAD format.
@@ -123,25 +125,26 @@ php  psxtools/php_isolist.php  DISC.CVM
 ....
 For Muramasa (Wii), the game files are compressed. Decode them first.
 ....
-php  psxtools/wii_mura_FCMP_decode.php  FILES
+php  psxtools/nwii_mura_FCMP_decode.php  FILES
 ....
 
 === Converting .FTP/.FTX
 
 These are packed texture images file, and was grouped by console.
 ....
-For PS2, run "php  psxtools/ps2_odin_FTEX.php  .FTP"
-For PS3, run "php  psxtools/ps3_odin_FTEX.php  .FTX"
-For PS4, run "php  psxtools/ps4_13sent_FTEX.php  .FTX"
-For PSP, run "php  psxtools/psp_grand_FTEX.php  .FTX"
-For Wii, run "php  psxtools/wii_mura_FTEX.php  .FTX"
-For NDS, run "php  psxtools/nds_kuma_FTEX.php  .FTX"
-For Vita, run "php  psxtools/vita_mura_FTEX.php  .FTX"
+For PS2   , run "php  psxtools/ps2_odin_FTEX.php       .FTP"
+For PS3   , run "php  psxtools/ps3_odin_FTEX.php       .FTX"
+For PS4   , run "php  psxtools/ps4_13sent_FTEX.php     .FTX"
+For PSP   , run "php  psxtools/psp_grand_FTEX.php      .FTX"
+For Vita  , run "php  psxtools/psvita_mura_FTEX.php    .FTX"
+For NDS   , run "php  psxtools/nds_kuma_FTEX.php       .FTX"
+For Wii   , run "php  psxtools/nwii_mura_FTEX.php      .FTX"
+For Switch, run "php  psxtools/nswit_unicorn_FTEX.php  .FTX"
 ....
-The result .TM2/.TPL/.GIM/.GXT/.GTF/.GNF are actually .RGBA/.CLUT and can be converted to .BMP or .PNG like so:
+The result .TM2/.TPL/.GIM/.GXT/.GTF/.GNF/.NVT are actually .RGBA/.CLUT and can be converted to .BMP or .PNG like so:
 ....
-php  psxtools/img_clut2bmp.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF
-php  psxtools/img_clut2png.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF
+php  psxtools/img_clut2bmp.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF/.NVT
+php  psxtools/img_clut2png.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF/.NVT
 ....
 === Converting .MBP/.MBS
 
@@ -151,5 +154,11 @@ php  psxtools/quad_vanillaware_FMBP_FMBS.php  .MBP/.MBS
 php  psxtools/quad_vanillaware_v55.php  .V55
 ....
 
-'''
+From version 0x76 (PS4 13 Sentinels) onwards, Vanillaware pre-divided the texture UV (or srcquad) are to 0.0 to 1.0, so you'll get .PREDIV.QUAD instead.
 
+One additional step is needed to revert them back to px using the the original texture(s) size. Accept textures in .PNG and .CLUT/.RGBA format.
+....
+php  psxtools/quad_prediv.php  TEXTURE.0.PNG  [TEXTURE.1.PNG]...  .PREDIV.QUAD
+....
+
+'''

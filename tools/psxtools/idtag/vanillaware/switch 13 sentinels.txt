@@ -1,0 +1,12 @@
+[System]
+Nintendo Switch
+
+[Game]
+13 Sentinels: Aegis Rim
+
+[Copyright]
+
+[???]
+
+[Comment]
+Vanillaware Ripping Project

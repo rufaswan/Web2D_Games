@@ -79,33 +79,16 @@ function im_dxt5p2( &$file, $pos, $w, $h )
 }
 
 //////////////////////////////
-function morton_swizzle1( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
-{
-	if ( $bw == 1 && $bh == 1 )
-	{
-		$dxx = (($dy * $ow) + $dx) * 4;
-		$s = substr($pix, $pos, 4); // 1 RGBA pixel
-				$pos += 4;
-		str_update($dec, $dxx, $s);
-	}
-	else
-	{
-		$func = __FUNCTION__;
-		$hbw = $bw >> 1;
-		$hbh = $bh >> 1;
-		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
-	}
-	return;
-}
-
 function argb_swizzled( &$pix, $ow, $oh )
 {
 	// unswizzle pixels
 	//   0 1
 	//   2 3
+	// bitmask
+	//          0 -> 1  = right
+	//         01 -> 23 = down
+	// pattern = drdr drdr
+	//         = x/55  y/aa
 	printf("== argb_swizzled( %x , %x )\n", $ow, $oh);
 	$dec = $pix;
 	$pos = 0;
@@ -114,7 +97,20 @@ function argb_swizzled( &$pix, $ow, $oh )
 	for ( $y=0; $y < $oh; $y += $min )
 	{
 		for ( $x=0; $x < $ow; $x += $min )
-			morton_swizzle1($pix, $dec, $pos, $x, $y, $min, $min, $ow, $oh);
+		{
+			$blk = $min * $min;
+			for ( $i=0; $i < $blk; $i++ )
+			{
+				$sx = swizzle_bitmask($i, 0x555555);
+				$sy = swizzle_bitmask($i, 0xaaaaaa);
+
+				$dyy = ($y  + $sy) * $ow;
+				$dxx = $dyy + $x + $sx;
+				$s = substr($pix, $pos, 4); // 1 RGBA pixel
+						$pos += 4;
+				str_update($dec, $dxx*4, $s);
+			}
+		} // for ( $x=0; $x < $ow; $x += $min )
 	} // for ( $y=0; $y < $oh; $y += 32 )
 
 	$pix = $dec;
@@ -170,7 +166,7 @@ function ps3gtf( &$file, $base, $pfx, $id )
 	$fn = sprintf('%s.%d.gtf', $pfx, $id);
 	printf("%4x x %4x , %s\n", $w, $h, $fn);
 
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	$func = $list_fmt[$fmt];
@@ -218,21 +214,23 @@ function odin( $fname )
 argv_loopfile($argv, 'odin');
 
 /*
-ps3 dcrown
+dragon crown
 	87 im_dxt3
 	88 im_dxt5
-ps3 odin
+odin sphere leifthsar
 	85 im_argb
 	87 im_dxt3
 	88 im_dxt5
 	a6 im_dxt1p2
 	a8 im_dxt5p2
 
-ps3 odin
-	im_85
+odin sphere leifthsar
+	85 im_argb
 		HD_Cook03.ftx
-	im_a6  w/non-pow-2 size
+	a6 im_dxt1p2
+	w/non-pow-2 size
 		HD_HIDE_[00/01].ftx
-	im_a8  w/non-pow-2 size
+	a8 im_dxt5p2
+	w/non-pow-2 size
 		HD_HIDE_[02/03/04/05/06].ftx
  */

@@ -1,0 +1,12 @@
+[System]
+Nintendo Switch
+
+[Game]
+Grim Grimoire OnceAgain
+
+[Copyright]
+
+[???]
+
+[Comment]
+Vanillaware Ripping Project

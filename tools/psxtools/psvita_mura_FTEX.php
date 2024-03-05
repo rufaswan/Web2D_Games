@@ -30,32 +30,6 @@ require 'class-s3tc.inc';
 
 //define('DRY_RUN', true);
 
-function morton_swizzle4( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
-{
-	if ( $bw == 4 && $bh == 4 )
-	{
-		for ( $y=0; $y < 4; $y++ )
-		{
-			$dyy = ($dy  + $y) * $ow;
-			$dxx = ($dyy + $dx) * 4;
-			$s = substr($pix, $pos, 16); // 4 RGBA pixels
-				$pos += 16;
-			str_update($dec, $dxx, $s);
-		} // for ( $y=0; $y < 4; $y++ )
-	}
-	else
-	{
-		$func = __FUNCTION__;
-		$hbw = $bw >> 1;
-		$hbh = $bh >> 1;
-		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
-	}
-	return;
-}
-
 function dxt_swizzled( &$pix, $ow, $oh )
 {
 	// 1 tile = 4*4 pixels
@@ -64,18 +38,41 @@ function dxt_swizzled( &$pix, $ow, $oh )
 	//   1 3  9 11
 	//   4 6 12 14
 	//   5 7 13 15
+	// bitmask
+	//          0 -> 1        = down
+	//         01 -> 23       = right
+	//       0123 -> 4567     = down
+	//   01234567 -> 89abcdef = right
+	// pattern = rdrd rdrd
+	//         = x/aa  y/55
 	printf("== dxt_swizzled( %x , %x )\n", $ow, $oh);
-	$dec = $pix;
-	$pos = 0;
-	$min = ( $ow > $oh ) ? $oh : $ow;
 
-	for ( $y=0; $y < $oh; $y += $min )
+	// 1 pixel = 4*4 bc tile
+	$bc = array(
+		'pix' => $pix,
+		'dec' => str_repeat(ZERO, strlen($pix)),
+		'pos' => 0,
+		'w'   => $ow >> 2, // div 4
+		'h'   => $oh >> 2, // div 4
+		'bpp' => 4,
+	);
+	$min = ( $bc['w'] > $bc['h'] ) ? $bc['h'] : $bc['w'];
+
+	for ( $y=0; $y < $bc['h']; $y += $min )
 	{
-		for ( $x=0; $x < $ow; $x += $min )
-			morton_swizzle4($pix, $dec, $pos, $x, $y, $min, $min, $ow, $oh);
-	} // for ( $y=0; $y < $oh; $y += 32 )
+		for ( $x=0; $x < $bc['w']; $x += $min )
+		{
+			$blk = $min * $min;
+			for ( $i=0; $i < $blk; $i++ )
+			{
+				$sx = swizzle_bitmask($i, 0xaaaaaa);
+				$sy = swizzle_bitmask($i, 0x555555);
+				pixdec_copy44($bc, $x+$sx, $y+$sy);
+			}
+		} // for ( $x=0; $x < $bc['w']; $x += $min )
+	} // for ( $y=0; $y < $bc['h']; $y += 32 )
 
-	$pix = $dec;
+	$pix = $bc['dec'];
 	return;
 }
 //////////////////////////////
@@ -118,33 +115,16 @@ function im_dxt5( &$file, $pos, $w, $h )
 	return $pix;
 }
 //////////////////////////////
-function morton_swizzle1( &$pix, &$dec, &$pos, $dx, $dy, $bw, $bh, $ow, $oh)
-{
-	if ( $bw == 1 && $bh == 1 )
-	{
-		$dxx = (($dy * $ow) + $dx) * 4;
-		$s = substr($pix, $pos, 16); // 1 RGBA pixel
-				$pos += 4;
-		str_update($dec, $dxx, $s);
-	}
-	else
-	{
-		$func = __FUNCTION__;
-		$hbw = $bw >> 1;
-		$hbh = $bh >> 1;
-		$func($pix, $dec, $pos, $dx+0   , $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+0   , $dy+$hbh, $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+0   , $hbw, $hbh, $ow, $oh);
-		$func($pix, $dec, $pos, $dx+$hbw, $dy+$hbh, $hbw, $hbh, $ow, $oh);
-	}
-	return;
-}
-
 function bgra_swizzled( &$pix, $ow, $oh )
 {
 	// unswizzle pixels
 	//   0 2
 	//   1 3
+	// bitmask
+	//          0 -> 1  = down
+	//         01 -> 23 = right
+	// pattern = rdrd rdrd
+	//         = x/aa  y/55
 	printf("== bgra_swizzled( %x , %x )\n", $ow, $oh);
 	$dec = $pix;
 	$pos = 0;
@@ -153,7 +133,20 @@ function bgra_swizzled( &$pix, $ow, $oh )
 	for ( $y=0; $y < $oh; $y += $min )
 	{
 		for ( $x=0; $x < $ow; $x += $min )
-			morton_swizzle1($pix, $dec, $pos, $x, $y, $min, $min, $ow, $oh);
+		{
+			$blk = $min * $min;
+			for ( $i=0; $i < $blk; $i++ )
+			{
+				$sx = swizzle_bitmask($i, 0xaaaaaa);
+				$sy = swizzle_bitmask($i, 0x555555);
+
+				$dyy = ($y  + $sy) * $ow;
+				$dxx = $dyy + $x + $sx;
+				$s = substr($pix, $pos, 4); // 1 RGBA pixel
+						$pos += 4;
+				str_update($dec, $dxx*4, $s);
+			}
+		} // for ( $x=0; $x < $ow; $x += $min )
 	} // for ( $y=0; $y < $oh; $y += 32 )
 
 	$pix = $dec;
@@ -182,7 +175,7 @@ function im_bgra8888( &$file, $pos, $w, $h )
 function vitagxt( &$file, $base, $pfx, $id )
 {
 	printf("== vitagxt( %x , $pfx , $id )\n", $base);
-	if ( substr($file, $base+0, 4) !== "GXT\x00" )
+	if ( substr($file, $base+0, 4) !== 'GXT'.ZERO )
 		return;
 
 	$cnt = str2int($file, $base+8, 4);
@@ -210,7 +203,7 @@ function vitagxt( &$file, $base, $pfx, $id )
 	$fn  = sprintf('%s.%d.gxt', $pfx, $id);
 	printf("%4x x %4x  %s\n", $w, $h, $fn);
 
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	$func = $list_fmt[$fmt];

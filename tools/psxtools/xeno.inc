@@ -38,7 +38,6 @@ function xeno_decode( &$file )
 		if ( ! isset( $file[$st] ) )
 			break;
 
-		//trace("%6x  %6x  ", $st, strlen($dec));
 		if ( $bylen === 0 )
 		{
 			$bycod = ord( $file[$st] ); // t8

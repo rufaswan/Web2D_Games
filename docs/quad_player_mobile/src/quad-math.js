@@ -4,6 +4,12 @@ function QuadMath(Q){
 
 	//////////////////////////////
 
+	$.is_int_pow2 = function( int ){
+		// 100 & ff === 0
+		var rem = int & (int - 1);
+		return ( rem === 0 );
+	}
+
 	$.clamp = function( n, min, max ){
 		if ( n < min )  return min;
 		if ( n > max )  return max;

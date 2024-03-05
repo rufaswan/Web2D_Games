@@ -94,7 +94,7 @@ function unswizz8( &$sub, $inv, &$upper, &$lower )
 
 function tm2pix8( &$pix, $ow, $oh )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	// minimum size 128x128 for swizzled image
@@ -284,7 +284,7 @@ function pix4square( &$pix, $ow, $oh )
 
 function tm2pix4( &$pix, $ow, $oh )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 
 	// $pix is converted from 4-bpp to 8-bpp
@@ -326,7 +326,7 @@ function tm2pix4( &$pix, $ow, $oh )
 //////////////////////////////
 function tm2pal( &$pal, $swizzle )
 {
-	if ( defined("DRY_RUN") )
+	if ( defined('DRY_RUN') )
 		return;
 	if ( ! $swizzle )
 		return ps2_alpha2x($pal);
