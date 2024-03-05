@@ -150,8 +150,29 @@ php  psxtools/img_clut2png.php  .TM2/.TPL/.GIM/.GXT/.GTF/.GNF/.NVT
 
 These are sprite data, and was convert to .V55 format (based on PS2 Odin Sphere FMBP version 0x55) first, then to .QUAD format.
 ....
-php  psxtools/quad_vanillaware_FMBP_FMBS.php  .MBP/.MBS
+php  psxtools/quad_vanillaware_FMBP_FMBS.php  game_id  .MBP/.MBS
 php  psxtools/quad_vanillaware_v55.php  .V55
+
+game_id
+  These games can auto-detected, so game_id is optional
+    ps2_grim  PS2   GrimGrimoire
+    ps2_odin  PS2   Odin Sphere
+    nds_kuma  NDS   Kumatanchi
+    wii_mura  Wii   Muramasa - The Demon Blade
+    ps3_drag  PS3   Dragon's Crown
+    ps3_odin  PS3   Odin Sphere Leifthsar
+    ps4_sent  PS4   13 Sentinels: Aegis Rim
+    psp_gran  PSP   Gran Knights History
+    vit_mura  Vita  Muramasa Rebirth + DLC
+    vit_drag  Vita  Dragon's Crown
+    vit_odin  Vita  Odin Sphere Leifthsar
+
+  Need to specify game_id
+    ps4_odin  PS4   Odin Sphere Leifthsar
+    ps4_drag  PS4   Dragon's Crown Pro
+    swi_sent  Swit  13 Sentinels: Aegis Rim
+    swi_grim  Swit  GrimGrimoire OnceMore
+    swi_unic  Swit  Unicorn Overlord
 ....
 
 From version 0x76 (PS4 13 Sentinels) onwards, Vanillaware pre-divided the texture UV (or srcquad) are to 0.0 to 1.0, so you'll get .PREDIV.QUAD instead.
