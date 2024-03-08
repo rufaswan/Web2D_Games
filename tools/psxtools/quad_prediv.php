@@ -68,6 +68,15 @@ function predivsize( &$imgsize, &$file, $fname )
 	return;
 }
 
+function get_texid( $base )
+{
+	$match = array();
+	preg_match('|\.([0-9]+)\.|', $base, $match);
+	if ( empty($match) )
+		return php_error('no tex_id available');
+	return $match[1];
+}
+
 function predivquad( &$imgsize, $fname )
 {
 	if ( ! is_file($fname) )
@@ -89,14 +98,9 @@ function predivquad( &$imgsize, $fname )
 
 
 
-	$match = array();
-	preg_match('|\.([0-9]+)\.|', $base, $match);
-	if ( empty($match) )
-		return php_warning('no tex_id available');
-	$tex_id = $match[1];
-
 	if ( substr($file,0,4) === 'RGBA' )
 	{
+		$tex_id = get_texid($base);
 		$w = str2int($file, 4, 4);
 		$h = str2int($file, 8, 4);
 		$imgsize[ $tex_id ] = array($w, $h);
@@ -104,6 +108,7 @@ function predivquad( &$imgsize, $fname )
 	}
 	if ( substr($file,0,4) === 'CLUT' )
 	{
+		$tex_id = get_texid($base);
 		$w = str2int($file,  8, 4);
 		$h = str2int($file, 12, 4);
 		$imgsize[ $tex_id ] = array($w, $h);
@@ -111,6 +116,7 @@ function predivquad( &$imgsize, $fname )
 	}
 	if ( substr($file,0,8) === "\x89PNG\x0d\x0a\x1a\x0a" )
 	{
+		$tex_id = get_texid($base);
 		$w = str2big($file, 0x10, 4);
 		$h = str2big($file, 0x14, 4);
 		$imgsize[ $tex_id ] = array($w, $h);

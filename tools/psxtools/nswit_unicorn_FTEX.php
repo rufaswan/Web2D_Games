@@ -274,7 +274,7 @@ function im_bc4( &$file, $pos, $w, $h, $size )
 	$pix = $bc4->BC4($pix);
 	//$pix = $bc4->BC4_debug($pix, $w, $h);
 
-	$ch = int_ceil($h, 0x100);
+	$ch = int_ceil_pow2($h);
 	tegra_x1_swizzled_8_bits($pix, $w, $ch);
 	$img = array(
 		'cc'  => 0x100,
@@ -295,7 +295,9 @@ function im_bc7( &$file, $pos, $w, $h, $size )
 	$pix = $bc7->BC7($pix);
 	//$pix = $bc7->BPTC_debug($pix, $w, $h);
 
-	$ch = int_ceil($h, 0x100);
+	// Supporter00.ftx   c0 180 ->  c0 200
+	// for_Minimap.ftx  780 438 -> 780 800
+	$ch = int_ceil_pow2($h);
 	tegra_x1_swizzled_16_bits($pix, $w, $ch);
 	$img = array(
 		'w'   => $w,
