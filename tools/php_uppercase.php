@@ -18,6 +18,19 @@ var_dump( $mixed_VAR );
 var_dump( $MIXED_var );
 var_dump( $UPPER_VAR );
 
+$alp = array('a', 'b', 'c');
+$num = array(0, 1, 2);
+function test_func( $lower_arg, $mixed_ARG, $MIXED_arg, $UPPER_ARG )
+{
+	echo "== test_func()\n";
+	var_dump( $lower_arg );
+	var_dump( $mixed_ARG );
+	var_dump( $MIXED_arg );
+	var_dump( $UPPER_ARG );
+	return;
+}
+test_func($alp, $alp, $alp, $alp);
+test_func($num, $num, $num, $num);
 /*
 //////////////////////////////
 Expected Output:

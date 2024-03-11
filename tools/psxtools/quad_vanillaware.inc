@@ -60,7 +60,7 @@ $gp_data = array();
 		array('p'=>0xb8  , 'k'=>0x30 , 'c'=>array(0x56,2)), // s1
 		array('p'=>0xc0  , 'k'=>0x30 , 'c'=>array(0x58,2)), // s2
 		array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s3 bg=0
-		array('p'=>0xd0  , 'k'=>0x10 , 'c'=>array(0x50,4)), // s4
+		array('p'=>0xd0  , 'k'=>0x14 , 'c'=>array(0x50,4)), // s4
 		array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s5 bg=0
 		array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x62,2)), // s6
 		array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s7

@@ -67,6 +67,7 @@ function FMBS_s0( $id )
 			case 'swi_sent':
 			case 'swi_grim':
 			case 'swi_unic':
+			case 'ps4_unic':
 				$s0 = nds_quad18c($s);
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -111,6 +112,7 @@ function FMBS_s1( $id )
 			case 'swi_sent':
 			case 'swi_grim':
 			case 'swi_unic':
+			case 'ps4_unic':
 				$s1 = nds_quad30p($s, $ord);
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -155,6 +157,7 @@ function FMBS_s2( $id )
 			case 'swi_sent':
 			case 'swi_grim':
 			case 'swi_unic':
+			case 'ps4_unic':
 				$s2 = nds_quad30p($s, $ord);
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -283,6 +286,7 @@ function FMBS_s3( $id )
 			case 'swi_sent': // 50
 			case 'swi_grim': // 50
 			case 'swi_unic': // 50
+			case 'ps4_unic': // 50
 				$b00 = float32( $ord($s,0x00,4) ); // x1
 				$b04 = float32( $ord($s,0x04,4) ); // y1
 				$b08 = float32( $ord($s,0x08,4) ); // x2
@@ -493,6 +497,7 @@ function FMBS_s4( $id )
 			case 'swi_sent': // 14
 			case 'swi_grim': // 14
 			case 'swi_unic': // 14
+			case 'ps4_unic': // 14
 				$b00 = $ord($s, 0x00, 4);
 				$b04 = $ord($s, 0x04, 1);
 				$b05 = $ord($s, 0x05, 1); // flags
@@ -586,6 +591,7 @@ function FMBS_s5( $id )
 			case 'swi_sent': // 8
 			case 'swi_grim': // 8
 			case 'swi_unic': // 8
+			case 'ps4_unic': // 8
 				$b00 = $ord($s, 0x00, 2); // s3 id
 				$b02 = $ord($s, 0x02, 1);
 				$b03 = $ord($s, 0x03, 1);
@@ -707,6 +713,7 @@ function FMBS_s6( $id )
 			case 'swi_sent': // 1c
 			case 'swi_grim': // 1c
 			case 'swi_unic': // 1c
+			case 'ps4_unic': // 1c
 				$b00 = float32( $ord($s,0x00,4) ); // rect.left
 				$b04 = float32( $ord($s,0x04,4) ); // rect.top
 				$b08 = float32( $ord($s,0x08,4) ); // rect.right
@@ -827,6 +834,7 @@ function FMBS_s7( $id )
 			case 'swi_sent': // 24
 			case 'swi_grim': // 24
 			case 'swi_unic': // 24
+			case 'ps4_unic': // 24
 				$b00 = float32( $ord($s,0x00,4) ); // move x
 				$b04 = float32( $ord($s,0x04,4) ); // move y
 				$b08 = float32( $ord($s,0x08,4) ); // move z
@@ -928,6 +936,7 @@ function FMBS_s8( $id )
 			case 'swi_sent': // 20
 			case 'swi_grim': // 20
 			case 'swi_unic': // 20
+			case 'ps4_unic': // 20
 				$b00 = $ord($s, 0x00, 2); // s6 id
 				// 00 00
 				$b04 = $ord($s, 0x04, 2); // s7 id
@@ -1059,6 +1068,7 @@ function FMBS_s9( $id )
 			case 'swi_sent': // 30
 			case 'swi_grim': // 30
 			case 'swi_unic': // 30
+			case 'ps4_unic': // 30
 				$b00 = float32( $ord($s,0x00,4) ); // rect.left
 				$b04 = float32( $ord($s,0x04,4) ); // rect.top
 				$b08 = float32( $ord($s,0x08,4) ); // rect.right
@@ -1194,6 +1204,7 @@ function FMBS_sa( $id )
 			case 'swi_sent': // 18
 			case 'swi_grim': // 18
 			case 'swi_unic': // 18
+			case 'ps4_unic': // 18
 				$b00 = $ord($s, 0x00, 2); // s8_set_id
 				$b02 = $ord($s, 0x02, 2); // s8_set_no
 				$b04 = $ord($s, 0x04, 4); // s8_set_sum
@@ -1267,6 +1278,7 @@ function FMBS_sb( $id )
 			case 'swi_sent': // 14
 			case 'swi_grim': // 14
 			case 'swi_unic': // 14
+			case 'ps4_unic': // 14
 				$b00 = $ord($s, 0x00, 4);
 				$b04 = $ord($s, 0x04, 2);
 				// 00 00
@@ -1376,6 +1388,7 @@ function vanilla( $tag, $fname )
 		case 'swi_sent':
 		case 'swi_grim':
 		case 'swi_unic':
+		case 'ps4_unic':
 			$json = array(
 				's0' => FMBS_s0(0),
 				's1' => FMBS_s1(1),
@@ -1460,11 +1473,11 @@ TAG
   swi_sent  2022  Swit  13 Sentinels: Aegis Rim
   swi_grim  2022  Swit  GrimGrimoire OnceMore
   swi_unic  2024  Swit  Unicorn Overlord
+  ps4_unic  2024  PS4   Unicorn Overlord
 
   Upcoming
   ps4_grim  2022  PS4   GrimGrimoire OnceMore
   ps5_grim  2023  PS5   GrimGrimoire OnceMore
-  ps4_unic  2024  PS4   Unicorn Overlord
   ps5_unic  2024  PS5   Unicorn Overlord
   xbx_unic  2024  XBSX  Unicorn Overlord
 

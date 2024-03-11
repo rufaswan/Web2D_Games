@@ -173,6 +173,7 @@ game_id
     swi_sent  Swit  13 Sentinels: Aegis Rim
     swi_grim  Swit  GrimGrimoire OnceMore
     swi_unic  Swit  Unicorn Overlord
+    ps4_unic  PS4   Unicorn Overlord
 ....
 
 From version 0x76 (PS4 13 Sentinels) onwards, Vanillaware pre-divided the texture UV (or srcquad) are to 0.0 to 1.0, so you'll get .PREDIV.QUAD instead.
