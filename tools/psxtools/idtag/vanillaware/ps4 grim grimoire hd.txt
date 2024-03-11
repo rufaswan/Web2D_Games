@@ -1,5 +1,5 @@
 [System]
-Nintendo Switch
+PlayStation 4
 
 [Game]
 Grim Grimoire OnceMore
