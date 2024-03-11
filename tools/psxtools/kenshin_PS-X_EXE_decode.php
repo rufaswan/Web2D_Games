@@ -85,7 +85,7 @@ function dec_getflag( &$file, &$st, &$fgcod, &$fglen )
 //////////////////////////////
 function kenshin_decode( &$file, $st )
 {
-	echo "== begin sub_801e0028\n";
+	echo "== begin sub_801e0028()\n";
 	$dec = '';
 	$fgcod = 0; // v0 & 1
 	$fglen = 0; // v1
@@ -159,7 +159,7 @@ function kenshin_decode( &$file, $st )
 		}
 	} // while ( $size > 0 )
 
-	echo "== end sub_801e0028\n";
+	echo "== end sub_801e0028()\n";
 	return $dec;
 }
 

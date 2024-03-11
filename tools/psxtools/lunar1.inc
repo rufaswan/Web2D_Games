@@ -216,7 +216,7 @@ function lunar_off( $off, $half )
 
 function lunar_val100( $set, $id )
 {
-	$CONST = array(
+	$const = array(
 		0 => array(
 			// RAM 800ad8dc
 			0 => array(
@@ -259,11 +259,11 @@ function lunar_val100( $set, $id )
 		),
 	);
 
-	if ( ! isset($CONST[$set]) )
+	if ( ! isset($const[$set]) )
 		return -1;
-	if ( ! isset($CONST[$set][0][$id]) )
+	if ( ! isset($const[$set][0][$id]) )
 		return -1;
-	return array( $CONST[$set][0][$id], $CONST[$set][4][$id] );
+	return array( $const[$set][0][$id], $const[$set][4][$id] );
 }
 
 function lunar_dten( $k, $v, $set, $fp )
@@ -795,7 +795,7 @@ function lunar_getbit2( &$bit, &$file, &$st )
 
 function lunar_decode2( &$file )
 {
-	trace("== begin sub_80024c60\n");
+	trace("== begin sub_80024c60()\n");
 	$dec = '';
 
 	$bit = array();
@@ -852,7 +852,7 @@ function lunar_decode2( &$file )
 	} // while ( $st < $ed )
 
 done:
-	trace("== end sub_80024c60\n");
+	trace("== end sub_80024c60()\n");
 	return $dec;
 }
 //////////////////////////////

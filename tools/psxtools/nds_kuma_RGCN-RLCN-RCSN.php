@@ -26,9 +26,9 @@ $gp_nscr = array();
 $gp_nclr = '';
 $gp_ncgr = array();
 
-function sect_RCSN( &$file, $fname )
+function sect_rcsn( &$file, $fname )
 {
-	echo "== sect_RCSN( $fname )\n";
+	echo "== sect_rcsn( $fname )\n";
 	if ( substr($file, 16, 4) !== 'NRCS' )
 		return;
 
@@ -96,9 +96,9 @@ function sect_RCSN( &$file, $fname )
 	return;
 }
 
-function sect_RLCN( &$file, $fname )
+function sect_rlcn( &$file, $fname )
 {
-	echo "== sect_RLCN( $fname )\n";
+	echo "== sect_rlcn( $fname )\n";
 	global $gp_nclr;
 	$gp_nclr = '';
 	if ( substr($file, 16, 4) !== 'TTLP' )
@@ -111,9 +111,9 @@ function sect_RLCN( &$file, $fname )
 	return;
 }
 
-function sect_RGCN( &$file, $fname )
+function sect_rgcn( &$file, $fname )
 {
-	echo "== sect_RGCN( $fname )\n";
+	echo "== sect_rgcn( $fname )\n";
 	global $gp_ncgr;
 	$gp_ncgr = array();
 	if ( substr($file, 16, 4) !== 'RAHC' )
@@ -151,11 +151,11 @@ function kuma( $fname )
 
 	$mgc = substr($file, 0, 4);
 	if ( $mgc === 'RCSN' )
-		return sect_RCSN($file, $fname);
+		return sect_rcsn($file, $fname);
 	if ( $mgc === 'RLCN' )
-		return sect_RLCN($file, $fname);
+		return sect_rlcn($file, $fname);
 	if ( $mgc === 'RGCN' )
-		return sect_RGCN($file, $fname);
+		return sect_rgcn($file, $fname);
 
 	return;
 }

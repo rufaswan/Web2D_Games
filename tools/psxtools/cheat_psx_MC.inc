@@ -24,7 +24,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////
 
 // Akumajou Dracula X JP
-function BISLPM_86023( &$file, $off )
+function bislpm_86023( &$file, $off )
 {
 	// items amount
 	for ( $i = 0x25f; $i < 0x361; $i++ )
@@ -102,12 +102,12 @@ function BISLPM_86023( &$file, $off )
 }
 
 // Castlevania SOTN US
-function BASLUS_00067( &$file, $off )  { return BISLPM_86023($file, $off); }
+function baslus_00067( &$file, $off )  { return bislpm_86023($file, $off); }
 
 //////////////////////////////
 
 // Xenogears JP
-function BISLPS_01160( &$file, $off )
+function bislps_01160( &$file, $off )
 {
 	// char stats
 	for ( $i=0; $i < 11; $i++ )
@@ -191,6 +191,6 @@ function BISLPS_01160( &$file, $off )
 }
 
 // Xenogears US
-function BASLUS_00664( &$file, $off )  { return BISLPS_01160($file, $off); }
+function baslus_00664( &$file, $off )  { return bislps_01160($file, $off); }
 
 //////////////////////////////

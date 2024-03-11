@@ -26,7 +26,7 @@ require 'xeno.inc';
 
 function xeno( $fname )
 {
-	$bak = new BakFile;
+	$bak = new bak_file;
 	$bak->load($fname);
 	if ( $bak->is_empty() )
 		return;

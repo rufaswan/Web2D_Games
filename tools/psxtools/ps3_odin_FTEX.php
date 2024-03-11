@@ -33,9 +33,9 @@ function im_dxt3( &$file, $pos, $w, $h )
 	$w = int_ceil_pow2($w);
 	$h = int_ceil_pow2($h);
 
-	$dxt3 = new S3TC_Texture;
-	$pix  = $dxt3->DXT3($pix);
-	$pix  = $dxt3->S3TC_debug($pix, $w, $h);
+	$dxt3 = new s3tc_texture;
+	$pix  = $dxt3->dxt3($pix);
+	$pix  = $dxt3->s3tc_debug($pix, $w, $h);
 	return $pix;
 }
 
@@ -46,9 +46,9 @@ function im_dxt5( &$file, $pos, $w, $h )
 	$w = int_ceil_pow2($w);
 	$h = int_ceil_pow2($h);
 
-	$dxt5 = new S3TC_Texture;
-	$pix  = $dxt5->DXT5($pix);
-	$pix  = $dxt5->S3TC_debug($pix, $w, $h);
+	$dxt5 = new s3tc_texture;
+	$pix  = $dxt5->dxt5($pix);
+	$pix  = $dxt5->s3tc_debug($pix, $w, $h);
 	return $pix;
 }
 
@@ -59,9 +59,9 @@ function im_dxt1p2( &$file, $pos, $w, $h )
 	$w = int_ceil($w, 4);
 	$h = int_ceil($h, 4);
 
-	$dxt1 = new S3TC_Texture;
-	$pix  = $dxt1->DXT1($pix);
-	$pix  = $dxt1->S3TC_debug($pix, $w, $h);
+	$dxt1 = new s3tc_texture;
+	$pix  = $dxt1->dxt1($pix);
+	$pix  = $dxt1->s3tc_debug($pix, $w, $h);
 	return $pix;
 }
 
@@ -72,9 +72,9 @@ function im_dxt5p2( &$file, $pos, $w, $h )
 	$w = int_ceil($w, 4);
 	$h = int_ceil($h, 4);
 
-	$dxt5 = new S3TC_Texture;
-	$pix  = $dxt5->DXT5($pix);
-	$pix  = $dxt5->S3TC_debug($pix, $w, $h);
+	$dxt5 = new s3tc_texture;
+	$pix  = $dxt5->dxt5($pix);
+	$pix  = $dxt5->s3tc_debug($pix, $w, $h);
 	return $pix;
 }
 

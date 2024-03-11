@@ -127,10 +127,9 @@ function listfiles( &$list, $func )
 	return;
 }
 //////////////////////////////
-$MSG = <<<_MSG
+echo <<<_MSG
 {$argv[0]}  [option]
 option
-  h  : show this help message
   e  : list files by extension [default]
   fs : list files by file size
   fn : list files by file name length
@@ -146,7 +145,6 @@ for ( $i=1; $i < $argc; $i++ )
 {
 	switch ( $argv[$i] )
 	{
-		case 'h':  exit($MSG);
 		case 'e' :  $func = 'list_by_ext';   break;
 		case 'fs':  $func = 'list_by_fsize'; break;
 		case 'fn':  $func = 'list_by_fname'; break;
@@ -155,4 +153,3 @@ for ( $i=1; $i < $argc; $i++ )
 } // for ( $i=1; $i < $argc; $i++ )
 
 listfiles($list, $func);
-echo "type h for help\n";

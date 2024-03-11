@@ -383,7 +383,7 @@ function gbatmas1( $dir )
 	$m[21] = load_file("$dir/meta.21"); // 12c  src skeleton
 	$m[22] = load_file("$dir/meta.22"); //   c  src x1,y1,x2,y2
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	$keys = sectkeys_c($atlas, $m[22], $tim, 1);
 	$pose = sectpose_182($m[20], $m[21]);
@@ -419,7 +419,7 @@ function gbatmas2( $dir )
 	$m[30] = load_file("$dir/meta.30"); //  62  dst list
 	$m[31] = load_file("$dir/meta.31"); //   8  dst data
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	$keys = sectkeys_c($atlas, $m[29], $tim, 2);
 	$pose = sectpose_62($m[30], $m[31], $m[28]);

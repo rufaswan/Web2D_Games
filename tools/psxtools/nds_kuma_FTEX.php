@@ -24,7 +24,7 @@ require 'common.inc';
 
 $gp_pix = array();
 
-function sect_BIT( &$sub )
+function sect_bit( &$sub )
 {
 	if ( substr($sub,0,3) !== 'BIT' )
 		return php_error('not BIT');
@@ -75,7 +75,7 @@ function kuma( $fname )
 
 		$sub = substr($file, $pos+$hdz, $siz);
 		if ( $i === 0 )
-			sect_BIT($sub);
+			sect_bit($sub);
 		else
 		{
 			$id = $i - 1;

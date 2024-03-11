@@ -28,7 +28,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 // https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dx-graphics-dds-pguide
 
 // per OpenGL spec , read in Little-Endian order
-class S3TC_Texture
+class s3tc_texture
 {
 	private function int16( &$data, $pos )
 	{
@@ -181,7 +181,7 @@ class S3TC_Texture
 		return $pix;
 	}
 	//////////////////////////////
-	public function BC1( &$data ) // RGB565 + A 0-1
+	public function bc1( &$data ) // RGB565 + A 0-1
 	{
 		$pix = '';
 		$len = int_ceil( strlen($data), -8 );
@@ -196,7 +196,7 @@ class S3TC_Texture
 		return $pix;
 	}
 
-	public function BC2( &$data ) // RGB565 + A4
+	public function bc2( &$data ) // RGB565 + A4
 	{
 		$pix = '';
 		$len = int_ceil( strlen($data), -16 );
@@ -209,7 +209,7 @@ class S3TC_Texture
 		return $pix;
 	}
 
-	public function BC3( &$data ) // RGB565 + A8
+	public function bc3( &$data ) // RGB565 + A8
 	{
 		$pix = '';
 		$len = int_ceil( strlen($data), -16 );
@@ -222,7 +222,7 @@ class S3TC_Texture
 		return $pix;
 	}
 
-	public function BC4( &$data ) // A8
+	public function bc4( &$data ) // A8
 	{
 		$pix = '';
 		$len = int_ceil( strlen($data), -8 );
@@ -238,15 +238,15 @@ class S3TC_Texture
 		return $pix;
 	}
 
-	public function DXT1( &$data )  { return $this->BC1($data); }
-	public function DXT2( &$data )  { return $this->BC2($data); }
-	public function DXT3( &$data )  { return $this->BC2($data); }
-	public function DXT4( &$data )  { return $this->BC3($data); }
-	public function DXT5( &$data )  { return $this->BC3($data); }
+	public function dxt1( &$data )  { return $this->bc1($data); }
+	public function dxt2( &$data )  { return $this->bc2($data); }
+	public function dxt3( &$data )  { return $this->bc2($data); }
+	public function dxt4( &$data )  { return $this->bc3($data); }
+	public function dxt5( &$data )  { return $this->bc3($data); }
 	//////////////////////////////
-	public function S3TC_debug( &$data, $w, $h )
+	public function s3tc_debug( &$data, $w, $h )
 	{
-		trace("== S3TC_debug( %x , %x )\n", $w, $h);
+		trace("== s3tc_debug( %x , %x )\n", $w, $h);
 		$b1 = strlen($data);
 		$b2 = $w * $h * 4;
 		if ( $b1 != $b2 )
@@ -272,9 +272,9 @@ class S3TC_Texture
 		return $canvas;
 	}
 
-	public function BC4_debug( &$data, $w, $h )
+	public function bc4_debug( &$data, $w, $h )
 	{
-		trace("== BC4_debug( %x , %x )\n", $w, $h);
+		trace("== bc4_debug( %x , %x )\n", $w, $h);
 		$b1 = strlen($data);
 		$b2 = $w * $h;
 		if ( $b1 != $b2 )
@@ -299,4 +299,4 @@ class S3TC_Texture
 		} // for ( $y=0; $y < $h; $y += 4 )
 		return $canvas;
 	}
-} // class S3TC_Texture
+} // class s3tc_texture

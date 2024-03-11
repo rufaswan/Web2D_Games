@@ -25,16 +25,19 @@ function fmbp_s7_matrix( &$s7_row )
 	$m = matrix_scale(4, $scale[0], $scale[1]);
 
 	$t = matrix_rotate_z(4, $rotate[2]);
-	if ( $t !== -1 )
-		$m = matrix_multi44($m, $t);
+	$m = matrix_multi44($m, $t);
 
-	$t = matrix_rotate_y(4, $rotate[1]);
-	if ( $t !== -1 )
+	if ( $rotate[1] !== 0.0 )
+	{
+		$t = matrix_rotate_y(4, $rotate[1]);
 		$m = matrix_multi44($m, $t);
+	}
 
-	$t = matrix_rotate_x(4, $rotate[0]);
-	if ( $t !== -1 )
+	if ( $rotate[0] !== 0.0 )
+	{
+		$t = matrix_rotate_x(4, $rotate[0]);
 		$m = matrix_multi44($m, $t);
+	}
 
 	$m[0+3] += $move[0];
 	$m[4+3] += $move[1];
@@ -98,7 +101,7 @@ function fmbp_s6_s4rect( &$ram, $sx_off, $s6_row )
 	return;
 }
 //////////////////////////////
-function sect_CTRL( &$ram, $ctrl_off, &$sx_off )
+function sect_ctrl( &$ram, $ctrl_off, &$sx_off )
 {
 	$float = array();
 	for ( $i=0; $i < 0x70; $i += 4 )
@@ -150,7 +153,7 @@ function sect_CTRL( &$ram, $ctrl_off, &$sx_off )
 	return;
 }
 
-function sect_WORK( &$ram, $work_off, &$sx_off )
+function sect_work( &$ram, $work_off, &$sx_off )
 {
 	$float = array();
 	for ( $i=0; $i < 0x60; $i += 4 )
@@ -202,7 +205,7 @@ function sect_WORK( &$ram, $work_off, &$sx_off )
 	return;
 }
 
-function sect_CMNR( &$ram, $cmnr_off, &$sx_off )
+function sect_cmnr( &$ram, $cmnr_off, &$sx_off )
 {
 	$off = chrint($cmnr_off, 4);
 
@@ -237,10 +240,10 @@ function sect_CMNR( &$ram, $cmnr_off, &$sx_off )
 			$name1 = substr0($ram, $cmnr_off + 0x1a);
 			$name2 = substr0($ram, $ctex_off + 0x1a);
 			printf("%8x  WORK  CMNR %s + CTEX %s [active]\n", $work_off, $name1, $name2);
-			sect_WORK($ram, $work_off, $sx_off);
+			sect_work($ram, $work_off, $sx_off);
 
 			printf("%8x  CTRL [active]\n", $ctrl_off);
-			sect_CTRL($ram, $ctrl_off, $sx_off);
+			sect_ctrl($ram, $ctrl_off, $sx_off);
 		}
 		else
 		{
@@ -254,7 +257,7 @@ function sect_CMNR( &$ram, $cmnr_off, &$sx_off )
 	return;
 }
 
-function sect_FMBP( &$ram, $fmbp_off, &$sx_off )
+function sect_fmbp( &$ram, $fmbp_off, &$sx_off )
 {
 	$off = chrint($fmbp_off, 4);
 
@@ -277,7 +280,7 @@ function sect_FMBP( &$ram, $fmbp_off, &$sx_off )
 		{
 			$name = substr0($ram, $cmnr_off + 0x1a);
 			printf("%8x  CMNR  %s\n", $cmnr_off, $name);
-			sect_CMNR($ram, $cmnr_off, $sx_off);
+			sect_cmnr($ram, $cmnr_off, $sx_off);
 		}
 		else
 			printf("%8x\n", $pos);
@@ -335,7 +338,7 @@ function odinp2s( $fname )
 			if ( $sx_off[0] < $pos )
 				printf("  CDread() copy. skipped.\n");
 			else
-				sect_FMBP($ram, $pos, $sx_off);
+				sect_fmbp($ram, $pos, $sx_off);
 		}
 
 		$pos += 4;

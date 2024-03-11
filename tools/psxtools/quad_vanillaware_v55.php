@@ -131,7 +131,7 @@ function s6s4_lines( $dir )
 	global $gp_json;
 	ob_start();
 
-	$grid = new PixLines;
+	$grid = new pixel_lines;
 	foreach ( $gp_json['s6'] as $s6k => $s6v )
 	{
 		if ( empty($s6v) )

@@ -247,7 +247,7 @@ function gv_pixd( &$file, $pos )
 	return $img;
 }
 
-function sect_TLPI( &$sect, &$img )
+function sect_tpli( &$sect, &$img )
 {
 	if ( ! isset( $sect['TLPI'] ) )
 		return;
@@ -304,7 +304,7 @@ function pfxname( $pfx )
 	return substr($pfx, $pos+1);
 }
 
-function sect_IOBJ( &$quad, &$sect, $pfx )
+function sect_iobj( &$quad, &$sect, $pfx )
 {
 	if ( ! isset($sect['IOBJ']) )
 		return;
@@ -313,7 +313,7 @@ function sect_IOBJ( &$quad, &$sect, $pfx )
 	$ptgt_off = str2int($sect['IOBJ'],  8, 4);
 	$pixd_cnt = str2int($sect['IOBJ'], 12, 4);
 	$pixd_off = 0x10;
-	printf("== sect_IOBJ( %s ) = %d\n", $pfx, $pixd_cnt);
+	printf("== sect_iobj( %s ) = %d\n", $pfx, $pixd_cnt);
 
 	if ( substr($sect['IOBJ'],$ptgt_off,4) !== 'PTGT' )
 		php_warning('IOBJ-PTGT not found = %x', $ptgt_off);
@@ -325,7 +325,7 @@ function sect_IOBJ( &$quad, &$sect, $pfx )
 			$pixd_off += 4;
 		$img[] = gv_pixd($sect['IOBJ'], $p);
 	}
-	sect_TLPI($sect, $img);
+	sect_tpli($sect, $img);
 
 	sect_spr ($quad, $sect['IOBJ'], $ptgt_off, $img);
 	sect_anim($quad, $sect['IOBJ'], $anim_off, $ptgt_off);
@@ -394,7 +394,7 @@ function gunvolt( $fname, $idtag )
 		printf("%8x , %8x , %s , %s.%d\n", $pos, $siz, $type, $pfx, $i);
 	} // for ( $i=0; $i < $cnt; $i++ )
 
-	sect_IOBJ($quad, $sect, $pfx);
+	sect_iobj($quad, $sect, $pfx);
 	return;
 }
 

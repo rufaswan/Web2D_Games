@@ -284,7 +284,7 @@ function capsnk( $fname )
 
 	$spr = capsnk_sprite($file['dat'][0], $file['dat'][1], $file['efdat'][0], $file['clt']);
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	$keys = sectkeys($atlas, $spr);
 	$anim = sectanim($file['dat'][3]);

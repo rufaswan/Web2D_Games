@@ -61,7 +61,7 @@ function lbu_sum_xor( &$file, $st, $ed )
 
 function mcrfile( $fname )
 {
-	$bak = new BakFile;
+	$bak = new bak_file;
 	$bak->load($fname);
 	if ( $bak->is_empty() )
 		return;
@@ -86,6 +86,7 @@ function mcrfile( $fname )
 		$size = str2int($bak->file, $p+ 4,  3);
 		$func = substr ($bak->file, $p+10, 12);
 			$func = str_replace('-', '_', $func);
+			$func = strtolower($func);
 
 		printf("%2x  %4x  %s\n", $i, $p, $func);
 		if ( function_exists($func) )

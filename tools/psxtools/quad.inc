@@ -485,32 +485,32 @@ function blend_modes( $mode )
 }
 //////////////////////////////
 /*
-function quad_center( $V4 )
+function quad_center( $v4 )
 {
-	$cx = ($V4[0] + $V4[2] + $V4[4] + $V4[6]) / 4;
-	$cy = ($V4[1] + $V4[3] + $V4[5] + $V4[7]) / 4;
+	$cx = ($v4[0] + $v4[2] + $v4[4] + $v4[6]) / 4;
+	$cy = ($v4[1] + $v4[3] + $v4[5] + $v4[7]) / 4;
 	trace("== center : %.2f , %.2f\n", $cx, $cy);
 	return array($cx,$cy);
 }
 
-function quad_rebase( $V4 )
+function quad_rebase( $v4 )
 {
-	// rebase $V4 to 0,0
+	// rebase $v4 to 0,0
 	$base = array(
-		(int)$V4[0] ,
-		(int)$V4[1] ,
+		(int)$v4[0] ,
+		(int)$v4[1] ,
 	);
 	for ( $i=0; $i < 8; $i += 2 ) // A B C D
 	{
-		$V4[$i+0] -= $base[0];
-		$V4[$i+1] -= $base[1];
+		$v4[$i+0] -= $base[0];
+		$v4[$i+1] -= $base[1];
 	}
 
 	// get box size
-	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
-	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+	$x1 = var_min($v4[0], $v4[2], $v4[4], $v4[6]);
+	$y1 = var_min($v4[1], $v4[3], $v4[5], $v4[7]);
+	$x2 = var_max($v4[0], $v4[2], $v4[4], $v4[6]);
+	$y2 = var_max($v4[1], $v4[3], $v4[5], $v4[7]);
 		$x1 = (int)floor($x1);
 		$y1 = (int)floor($y1);
 		$x2 = (int)ceil ($x2);
@@ -518,26 +518,26 @@ function quad_rebase( $V4 )
 
 	$quad = array(
 		'quad' => array(
-			array( $V4[0] , $V4[1] , 1 ),
-			array( $V4[2] , $V4[3] , 1 ),
-			array( $V4[4] , $V4[5] , 1 ),
-			array( $V4[6] , $V4[7] , 1 ),
+			array( $v4[0] , $v4[1] , 1 ),
+			array( $v4[2] , $v4[3] , 1 ),
+			array( $v4[4] , $v4[5] , 1 ),
+			array( $v4[6] , $v4[7] , 1 ),
 		),
 		'base' => $base,
 		'box'  => array($x1, $y1, $x2, $y2),
 	);
 	trace("== quad_rebase() = %.2f , %.2f\n", $base[0], $base[1]);
 	trace("   box x = %.2f - %.2f  y = %.2f - %.2f\n", $x1, $x2, $y1, $y2);
-	quad_dump($V4, 'rebase');
+	quad_dump($v4, 'rebase');
 	return $quad;
 }
 
-function quad2xywh( $V4 )
+function quad2xywh( $v4 )
 {
-	$x1 = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y1 = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
-	$x2 = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
-	$y2 = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+	$x1 = var_min($v4[0], $v4[2], $v4[4], $v4[6]);
+	$y1 = var_min($v4[1], $v4[3], $v4[5], $v4[7]);
+	$x2 = var_max($v4[0], $v4[2], $v4[4], $v4[6]);
+	$y2 = var_max($v4[1], $v4[3], $v4[5], $v4[7]);
 		$x1 = (int)floor($x1);
 		$y1 = (int)floor($y1);
 		$x2 = (int)ceil($x2);
@@ -547,31 +547,31 @@ function quad2xywh( $V4 )
 		'xy' => array($x1, $y1),
 		'wh' => array($x2-$x1, $y2-$y1),
 		'quad' => array(
-			$V4[0]-$x1, $V4[1]-$y1,
-			$V4[2]-$x1, $V4[3]-$y1,
-			$V4[4]-$x1, $V4[5]-$y1,
-			$V4[6]-$x1, $V4[7]-$y1,
+			$v4[0]-$x1, $v4[1]-$y1,
+			$v4[2]-$x1, $v4[3]-$y1,
+			$v4[4]-$x1, $v4[5]-$y1,
+			$v4[6]-$x1, $v4[7]-$y1,
 		),
 	);
 	quad_dump($xywh['quad'], 'xywh quad');
 	return $xywh;
 }
 
-function quad_dump( $V4, $name )
+function quad_dump( $v4, $name )
 {
 	if ( defined("NO_TRACE") )
 		return;
 
-	$minx = var_min($V4[0], $V4[2], $V4[4], $V4[6]);
-	$miny = var_min($V4[1], $V4[3], $V4[5], $V4[7]);
-	$maxx = var_max($V4[0], $V4[2], $V4[4], $V4[6]);
-	$maxy = var_max($V4[1], $V4[3], $V4[5], $V4[7]);
+	$minx = var_min($v4[0], $v4[2], $v4[4], $v4[6]);
+	$miny = var_min($v4[1], $v4[3], $v4[5], $v4[7]);
+	$maxx = var_max($v4[0], $v4[2], $v4[4], $v4[6]);
+	$maxy = var_max($v4[1], $v4[3], $v4[5], $v4[7]);
 
 	trace("quad( %s )\n", $name);
-	trace("  %10.2f,%10.2f\n", $V4[0], $V4[1]);
-	trace("  %10.2f,%10.2f\n", $V4[2], $V4[3]);
-	trace("  %10.2f,%10.2f\n", $V4[4], $V4[5]);
-	trace("  %10.2f,%10.2f\n", $V4[6], $V4[7]);
+	trace("  %10.2f,%10.2f\n", $v4[0], $v4[1]);
+	trace("  %10.2f,%10.2f\n", $v4[2], $v4[3]);
+	trace("  %10.2f,%10.2f\n", $v4[4], $v4[5]);
+	trace("  %10.2f,%10.2f\n", $v4[6], $v4[7]);
 	trace("  w %10.2f - %10.2f [%10.2f]\n", $minx, $maxx, $maxx-$minx);
 	trace("  h %10.2f - %10.2f [%10.2f]\n", $miny, $maxy, $maxy-$miny);
 	return;

@@ -3,35 +3,35 @@ require 'common.inc';
 require 'common-quad.inc';
 
 ///// MATRIX TEST /////
-	$M = array(-3,1 , 5,-2);
-		matrix_dump($M, 'M2');
-	$Minv = matrix_inv2($M);
-		matrix_dump($Minv, 'Minv2');
-	$I = matrix_multi22($M, $Minv);
-		matrix_dump($I, 'I2');
+	$m = array(-3,1 , 5,-2);
+		matrix_dump($m, 'M2');
+	$minv = matrix_inv2($m);
+		matrix_dump($minv, 'Minv2');
+	$i = matrix_multi22($m, $minv);
+		matrix_dump($i, 'I2');
 
-	$M = array(3,0,2 , 2,0,-2 , 0,1,1);
-		matrix_dump($M, 'M3');
-	$Minv = matrix_inv3($M);
-		matrix_dump($Minv, 'Minv3');
-	$I = matrix_multi33($M, $Minv);
-		matrix_dump($I, 'I3');
+	$m = array(3,0,2 , 2,0,-2 , 0,1,1);
+		matrix_dump($m, 'M3');
+	$minv = matrix_inv3($m);
+		matrix_dump($minv, 'Minv3');
+	$i = matrix_multi33($m, $minv);
+		matrix_dump($i, 'I3');
 
-	$M = array(5,0,0,0 , 0,0,3,0 , 0,1,3,0 , 1,0,0,1);
-		matrix_dump($M, 'M4');
-	$Minv = matrix_inv4($M);
-		matrix_dump($Minv, 'Minv4');
-	$I = matrix_multi44($M, $Minv);
-		matrix_dump($I, 'I4');
+	$m = array(5,0,0,0 , 0,0,3,0 , 0,1,3,0 , 1,0,0,1);
+		matrix_dump($m, 'M4');
+	$minv = matrix_inv4($m);
+		matrix_dump($minv, 'Minv4');
+	$i = matrix_multi44($m, $minv);
+		matrix_dump($i, 'I4');
 
 ///// QUAD AREA TEST /////
-function ascii_quad( $V4 )
+function ascii_quad( $v4 )
 {
 	$quad = array(
-		array($V4[0],$V4[1],1),
-		array($V4[2],$V4[3],1),
-		array($V4[4],$V4[5],1),
-		array($V4[6],$V4[7],1),
+		array($v4[0],$v4[1],1),
+		array($v4[2],$v4[3],1),
+		array($v4[4],$v4[5],1),
+		array($v4[6],$v4[7],1),
 	);
 	$q1 = triad_area($quad[0], $quad[1], $quad[2]); // ABC
 	$q2 = triad_area($quad[0], $quad[3], $quad[2]); // ADC

@@ -107,14 +107,14 @@ function sect_rippix( &$file, $w, $h )
 	foreach ( $smap as $mk => $mv )
 	{
 		echo "rip SMAP $mk\n";
-		$mv = sect_SMAP($mv);
-		SMAP2BMAP($mv, $w, $h);
+		$mv = sect_smap($mv);
+		smap2bmap($mv, $w, $h);
 		$pix[] = $mv;
 	}
 	foreach ( $bmap as $mk => $mv )
 	{
 		echo "rip BMAP $mk\n";
-		$pix[] = sect_BMAP($mv, $w, $h);
+		$pix[] = sect_bmap($mv, $w, $h);
 	}
 
 	return $pix;
@@ -164,7 +164,7 @@ function get_bits( &$bits, &$file, &$pos, $c )
 	return $int;
 }
 
-function decode_BMAP( &$bmap )
+function decode_bmap( &$bmap )
 {
 	if ( defined('DRY_RUN') )
 		return array(0,'');
@@ -285,7 +285,7 @@ error:
 	return php_error('SMAP = UNKNOWN code %x [%d , %d]', $code, $div, $mod);
 }
 
-function SMAP2BMAP( &$pix, $w, $h )
+function smap2bmap( &$pix, $w, $h )
 {
 	$canv = str_repeat(ZERO, $w*$h);
 	$strp = 8 * $h;
@@ -333,15 +333,15 @@ function SMAP2BMAP( &$pix, $w, $h )
 	return;
 }
 
-function sect_BMAP( &$file, $w, $h )
+function sect_bmap( &$file, $w, $h )
 {
-	$pix = decode_BMAP($file);
+	$pix = decode_bmap($file);
 	if ( $pix[0] === 15 ) // fill
 		$pix[1] .= str_repeat($pix[1][0], $w*$h);
 	return $pix[1];
 }
 
-function sect_SMAP( &$file )
+function sect_smap( &$file )
 {
 	$base = 0;
 	while (1)
@@ -372,12 +372,12 @@ function sect_SMAP( &$file )
 		printf('%x - %x [%x]  ', $off1, $off2, $size);
 
 		$sub = substr($file, $base+$off1, $size);
-		$pix[] = decode_BMAP($sub);
+		$pix[] = decode_bmap($sub);
 	} // for ( $i=0; $i < $hded; $i += 4 )
 	return $pix;
 }
 //////////////////////////////
-function sect_IMHD( &$file )
+function sect_imhd( &$file )
 {
 	$size = strlen($file);
 
@@ -452,7 +452,7 @@ error:
 	return php_error('IMHD  UNKNOWN size [%x]', $size);
 }
 
-function sect_RMHD( &$file )
+function sect_rmhd( &$file )
 {
 	$size = strlen($file);
 	switch ( $size )
@@ -496,9 +496,9 @@ function sect_RMHD( &$file )
 	return array($w,$h);
 }
 //////////////////////////////
-function decode_WIZD_1( &$wizd, $w, $h )
+function decode_wizd_1( &$wizd, $w, $h )
 {
-	printf("== decode_WIZD_1( %x , %x )\n", $w, $h);
+	printf("== decode_wizd_1( %x , %x )\n", $w, $h);
 	if ( defined('DRY_RUN') )
 		return '';
 	$dec = '';
@@ -543,9 +543,9 @@ function decode_WIZD_1( &$wizd, $w, $h )
 	return $dec;
 }
 
-function decode_WIZD_2( &$wizd, $w, $h )
+function decode_wizd_2( &$wizd, $w, $h )
 {
-	printf("== decode_WIZD_1( %x , %x )\n", $w, $h);
+	printf("== decode_wizd_1( %x , %x )\n", $w, $h);
 	if ( defined('DRY_RUN') )
 		return '';
 	$dec = '';
@@ -568,9 +568,9 @@ function decode_WIZD_2( &$wizd, $w, $h )
 	return $dec;
 }
 
-function decode_AKCD( &$akcd, $pos, $w, $h, $t, $c1sz )
+function decode_akcd( &$akcd, $pos, $w, $h, $t, $c1sz )
 {
-	printf("== decode_AKCD( %x , %x , %x , %x )\n", $w, $h, $t, $c1sz);
+	printf("== decode_akcd( %x , %x , %x , %x )\n", $w, $h, $t, $c1sz);
 	if ( defined('DRY_RUN') )
 		return '';
 
@@ -654,9 +654,9 @@ function decode_AKCD( &$akcd, $pos, $w, $h, $t, $c1sz )
 	return $pix;
 }
 //////////////////////////////
-function sect_AWIZ( &$file, $dir, $pal=array() )
+function sect_awiz( &$file, $dir, $pal=array() )
 {
-	echo "== sect_AWIZ()\n";
+	echo "== sect_awiz()\n";
 	$rgbs = sect_rippal($file);
 
 	$wizh = sect_riptag_all($file, "WIZH\x00");
@@ -693,7 +693,7 @@ function sect_AWIZ( &$file, $dir, $pal=array() )
 			if ( empty($rgbs) )  $rgbs = $pal;
 			if ( empty($rgbs) )  return;
 
-			$pix = decode_WIZD_1($wizd[0], $w, $h);
+			$pix = decode_wizd_1($wizd[0], $w, $h);
 			foreach ( $rgbs as $pk => $pv )
 			{
 				$img = array(
@@ -709,7 +709,7 @@ function sect_AWIZ( &$file, $dir, $pal=array() )
 
 		case 2:
 			//save_file("$dir.wiz2", $wizd[0]);
-			$pix = decode_WIZD_2($wizd[0], $w, $h);
+			$pix = decode_wizd_2($wizd[0], $w, $h);
 			$img = array(
 				'w'   => $w,
 				'h'   => $h,
@@ -724,20 +724,20 @@ function sect_AWIZ( &$file, $dir, $pal=array() )
 	return;
 }
 
-function sect_MULT( &$file, $dir, $pal=array() )
+function sect_mult( &$file, $dir, $pal=array() )
 {
-	echo "== sect_MULT()\n";
+	echo "== sect_mult()\n";
 	$rgbs = sect_rippal($file);
 	if ( empty($rgbs) )  $rgbs = $pal;
 	if ( empty($rgbs) )  return;
 
 	$awiz = sect_riptag_all($file, "AWIZ\x00");
 	foreach ( $awiz as $k => $v )
-		sect_AWIZ($v, "$dir/AWIZ/p$k", $rgbs);
+		sect_awiz($v, "$dir/AWIZ/p$k", $rgbs);
 	return;
 }
 
-function sect_AKPL( &$akpl, &$pal )
+function sect_akpl( &$akpl, &$pal )
 {
 	$clr = '';
 	$len = strlen($akpl);
@@ -749,9 +749,9 @@ function sect_AKPL( &$akpl, &$pal )
 	return $clr;
 }
 
-function sect_AKOS( &$akos, $dir, $pal=array() )
+function sect_akos( &$akos, $dir, $pal=array() )
 {
-	echo "== sect_AKOS()\n";
+	echo "== sect_akos()\n";
 	$rgbs = sect_rippal($file);
 	if ( empty($rgbs) )  $rgbs = $pal;
 	if ( empty($rgbs) )  return;
@@ -806,11 +806,11 @@ function sect_AKOS( &$akos, $dir, $pal=array() )
 
 		$w = str2int($akci[0], $p_ci+0, 2);
 		$h = str2int($akci[0], $p_ci+2, 2);
-		$pix = decode_AKCD($akcd[0], $p_cd, $w, $h, $comp, $c1sz);
+		$pix = decode_akcd($akcd[0], $p_cd, $w, $h, $comp, $c1sz);
 
 		foreach ( $rgbs as $pk => $pv )
 		{
-			$clr = sect_AKPL($akpl[0], $pv);
+			$clr = sect_akpl($akpl[0], $pv);
 			$img = array(
 				'cc'  => 0x100,
 				'w'   => $w,
@@ -825,65 +825,65 @@ function sect_AKOS( &$akos, $dir, $pal=array() )
 	return;
 }
 
-function sect_OBIM( &$obim, $dir, $pal=array() )
+function sect_obim( &$obim, $dir, $pal=array() )
 {
-	echo "== sect_OBIM()\n";
+	echo "== sect_obim()\n";
 	if ( empty($pal) )
 		return;
 
 	$imhd = sect_riptag_all($obim, "IMHD\x00");
-	list($w,$h) = sect_IMHD($imhd[0]);
+	list($w,$h) = sect_imhd($imhd[0]);
 
 	$pix = sect_rippix($obim, $w, $h);
 	save_palpix($dir, $pal, $pix, $w, $h);
 	return;
 }
 //////////////////////////////
-function sect_ROOM( &$room, &$akos, $dir )
+function sect_room( &$room, &$akos, $dir )
 {
-	echo "== sect_ROOM()\n";
+	echo "== sect_room()\n";
 	// Lucas Arts games , LA 5/6/7/8
 	//save_file("$dir.room", $file);
 
 	$obim = sect_riptag_all($room, "OBIM\x00");
 	$rmhd = sect_riptag_all($room, "RMHD\x00");
-	list($w,$h) = sect_RMHD($rmhd[0]);
+	list($w,$h) = sect_rmhd($rmhd[0]);
 
 	$pal = sect_rippal($room);
 	$pix = sect_rippix($room, $w, $h);
 	save_palpix($dir, $pal, $pix, $w, $h);
 
 	foreach ( $obim as $ok => $ov )
-		sect_OBIM($ov, "$dir/OBIM/p$ok", $pal);
+		sect_obim($ov, "$dir/OBIM/p$ok", $pal);
 	foreach ( $akos as $ok => $ov )
-		sect_AKOS($ov, "$dir/AKOS/p$ok", $pal);
+		sect_akos($ov, "$dir/AKOS/p$ok", $pal);
 	return;
 }
 
-function sect_RMIM_RMDA( &$rmim, &$rmda, $dir, &$pal)
+function sect_rmim_rmda( &$rmim, &$rmda, $dir, &$pal)
 {
-	echo "== sect_RMIM_RMDA()\n";
+	echo "== sect_rmim_rmda()\n";
 	$obim = sect_riptag_all($rmda, "OBIM\x00");
 	$rmhd = sect_riptag_all($rmda, "RMHD\x00");
-	list($w,$h) = sect_RMHD($rmhd[0]);
+	list($w,$h) = sect_rmhd($rmhd[0]);
 
 	$pal = sect_rippal($rmda);
 	$pix = sect_rippix($rmim, $w, $h);
 	save_palpix($dir, $pal, $pix, $w, $h);
 
 	foreach ( $obim as $ok => $ov )
-		sect_OBIM($ov, "$dir/OBIM/p$ok", $pal);
+		sect_obim($ov, "$dir/OBIM/p$ok", $pal);
 	return;
 }
 
-function sect_LFLF( &$file, $dir )
+function sect_lflf( &$file, $dir )
 {
-	echo "== sect_LFLF()\n";
+	echo "== sect_lflf()\n";
 	if ( substr($file,8,5) === "ROOM\x00" )
 	{
 		$room = sect_riptag($file, 8);
 		$akos = sect_riptag_all($file, "AKOS\x00");
-		return sect_ROOM($room, $akos, $dir);
+		return sect_room($room, $akos, $dir);
 	}
 	// Humongous Entertainment games , LA 6 , HE 6.x/7.x/8.x/9.x/10.x
 	//save_file("$dir.lflf", $file);
@@ -891,22 +891,22 @@ function sect_LFLF( &$file, $dir )
 	$pal  = array();
 	$rmim = sect_riptag_all($file, "RMIM\x00");
 	$rmda = sect_riptag_all($file, "RMDA\x00");
-	sect_RMIM_RMDA($rmim[0], $rmda[0], $dir, $pal);
+	sect_rmim_rmda($rmim[0], $rmda[0], $dir, $pal);
 
 	$akos = sect_riptag_all($file, "AKOS\x00");
 	$mult = sect_riptag_all($file, "MULT\x00");
 	$awiz = sect_riptag_all($file, "AWIZ\x00");
 
 	foreach ( $akos as $k => $v )
-		sect_AKOS($v, "$dir/AKOS/p$k", $pal);
+		sect_akos($v, "$dir/AKOS/p$k", $pal);
 	foreach ( $mult as $k => $v )
-		sect_MULT($v, "$dir/MULT/p$k", $pal);
+		sect_mult($v, "$dir/MULT/p$k", $pal);
 	foreach ( $awiz as $k => $v )
-		sect_AWIZ($v, "$dir/AWIZ/p$k", $pal);
+		sect_awiz($v, "$dir/AWIZ/p$k", $pal);
 	return;
 }
 //////////////////////////////
-function trim_LFLF( &$lflf )
+function trim_lflf( &$lflf )
 {
 	$func = __FUNCTION__;
 	$new  = substr($lflf, 0, 8);
@@ -962,9 +962,9 @@ function trim_LFLF( &$lflf )
 	return;
 }
 
-function sect_LECF( &$file, $dir )
+function sect_lecf( &$file, $dir )
 {
-	echo "== sect_LECF()\n";
+	echo "== sect_lecf()\n";
 	$ed = strlen($file);
 	$st = 8;
 	$fid = 0;
@@ -977,7 +977,7 @@ function sect_LECF( &$file, $dir )
 		if ( $mgc === 'LFLF' )
 		{
 			$sub = substr($file, $st, $siz);
-				trim_LFLF($sub);
+				trim_lflf($sub);
 
 			$fn = sprintf('%s/%04d.lflf', $dir, $fid);
 				$fid++;
@@ -1015,11 +1015,11 @@ function spyfox( $fname )
 	$dir = str_replace('.', '_', $fname);
 	$mgc = substr($file, 0, 4);
 	if ( $mgc === 'LECF' )
-		return sect_LECF($file, $dir);
+		return sect_lecf($file, $dir);
 	if ( $mgc === 'LFLF' )
-		return sect_LFLF($file, $dir);
+		return sect_lflf($file, $dir);
 	if ( $mgc === 'MULT' )
-		return sect_MULT($file, $dir);
+		return sect_mult($file, $dir);
 	return;
 }
 for ( $i=1; $i < $argc; $i++ )

@@ -137,7 +137,7 @@ function update_dict( &$dict, $lv, &$e )
 function zero_decode( &$file, $siz )
 {
 	$dec = '';
-	trace("== begin sub_116048\n");
+	trace("== begin sub_116048()\n");
 
 	$dict = array(
 		array(6, ZERO),
@@ -200,7 +200,7 @@ function zero_decode( &$file, $siz )
 	} // while ( $siz > 0 )
 
 done:
-	trace("== end sub_116048\n");
+	trace("== end sub_116048()\n");
 	$file = $dec;
 	return;
 }

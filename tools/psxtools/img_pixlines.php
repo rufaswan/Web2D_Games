@@ -41,7 +41,7 @@ function pjoint( &$pix, $pos )
 	return;
 }
 
-$pix = new PixLines;
+$pix = new pixel_lines;
 
 $pix->new();
 for ( $i=1; $i < $argc; $i++ )

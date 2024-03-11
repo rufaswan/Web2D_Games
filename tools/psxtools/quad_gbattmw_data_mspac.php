@@ -336,7 +336,7 @@ function godwing( $dir )
 		$tim[3] = psxtim($m[4]);
 	$m[7] = load_file("$dir/0007.unk");
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	$keys = sectkeys($atlas, $m[7], $tim);
 

@@ -2,7 +2,7 @@
 require 'common.inc';
 require 'common-guest.inc';
 
-function sect_TAGS( &$file, $dir, $st, $ed )
+function sect_tags( &$file, $dir, $st, $ed )
 {
 	global $gp_tags;
 	$func = __FUNCTION__;
@@ -75,7 +75,7 @@ function spyfox( $fname )
 
 	echo "== $fname\n";
 	$len = strlen($file);
-	sect_TAGS($file, $fname, 0, $len);
+	sect_tags($file, $fname, 0, $len);
 
 	return;
 }

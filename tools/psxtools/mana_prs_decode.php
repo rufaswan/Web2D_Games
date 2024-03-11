@@ -264,7 +264,7 @@ function mana( $fname )
 	// for /map/*/*.prs
 	// for /wm/wmap/*.pim
 	// for /wm/wmtim/wmapt*/wm_*.pim
-	$bak = new BakFile;
+	$bak = new bak_file;
 	$bak->load($fname);
 	if ( $bak->is_empty() )
 		return;

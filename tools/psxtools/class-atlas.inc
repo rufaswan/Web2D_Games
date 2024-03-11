@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 // Accept a list of CLUT/RGBA data and create an atlas map
 
-class AtlasTex
+class atlas_tex
 {
 	private $image  = array();
 	private $canvas = array();
@@ -182,4 +182,4 @@ class AtlasTex
 		return;
 	}
 
-} // class AtlasTex
+} // class atlas_tex

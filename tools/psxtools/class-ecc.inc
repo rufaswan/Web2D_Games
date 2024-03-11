@@ -26,7 +26,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   The PlayStation 1 Video (STR) Format v1.00
  *     Michael Sabin
  */
-class ECC
+class error_correction_code
 {
 	private $ecc_f_lut;
 	private $ecc_b_lut;
@@ -198,4 +198,4 @@ class ECC
 
 		return $this->fix930($h.$sect.$f , $lba);
 	}
-} // class ECC
+} // class error_correction_code

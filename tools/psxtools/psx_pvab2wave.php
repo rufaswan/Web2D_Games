@@ -35,7 +35,7 @@ function vab2wav( &$vbop, $fname )
 }
 
 printf("%s [ar 44100] [ac 1] [in 10]  FILE\n", $argv[0]);
-$vbop = PVAB_DEF();
+$vbop = pvab_def();
 $i = 1;
 while ( $i < $argc )
 {

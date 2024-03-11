@@ -61,11 +61,11 @@ function bilinear( $name, $dst, $nx, $ny )
 	printf("a0 %12.6f  a1 %12.6f  a2 %12.6f  a3 %12.6f\n", $a0, $a1, $a2, $a3);
 	printf("b0 %12.6f  b1 %12.6f  b2 %12.6f  b3 %12.6f\n", $b0, $b1, $b2, $b3);
 
-	$A  = ($b2 * $a3) - ($b3 * $a2);
-	$C1 = ($b0 * $a1) - ($b1 * $a0);
-	$B1 = ($b0 * $a3) - ($b3 * $a0) + ($b2 * $a1) - ($b1 * $a2);
+	$r_a  = ($b2 * $a3) - ($b3 * $a2);
+	$r_c1 = ($b0 * $a1) - ($b1 * $a0);
+	$r_b1 = ($b0 * $a3) - ($b3 * $a0) + ($b2 * $a1) - ($b1 * $a2);
 
-	printf("A %12.6f  B1 %12.6f  C1 %12.6f\n", $A, $B1, $C1);
+	printf("A %12.6f  B1 %12.6f  C1 %12.6f\n", $r_a, $r_b1, $r_c1);
 
 	for ( $i=0; $i < 8; $i += 2 )
 	{
@@ -73,22 +73,22 @@ function bilinear( $name, $dst, $nx, $ny )
 		$y = $dst[$i+1];
 
 		// i,j = x,y  is,il = u,v
-		$B = $B1 + ($b3 * $x) - ($a3 * $y);
-		$C = $C1 + ($b1 * $x) - ($a1 * $y);
+		$r_b = $r_b1 + ($b3 * $x) - ($a3 * $y);
+		$r_c = $r_c1 + ($b1 * $x) - ($a1 * $y);
 
-		$rt = ($B * $B) - (4 * $A * $C);
-		$v  = (-$B + sqrt($rt)) / (2 * $A);
+		$rt = ($r_b * $r_b) - (4 * $r_a * $r_c);
+		$v  = (-$r_b + sqrt($rt)) / (2 * $r_a);
 		$u  = ($x - $a0 - ($a2 * $v)) / ($a1 + ($a3 * $v));
 
 		$iv = (int)$v;
 		$iu = (int)$u;
 		if ( $iv < 0 || $iv > $ny || $iu < 0 || $iu > $nx )
 		{
-			$v = (-$B - sqrt($rt)) / (2 * $A);
+			$v = (-$r_b - sqrt($rt)) / (2 * $r_a);
 			$u = ($x - $a0 - ($a2 * $v)) / ($a1 + ($a3 * $v));
 		}
 
-		printf("B %12.6f  C %12.6f  rt %12.6f  ", $B, $C, $rt);
+		printf("B %12.6f  C %12.6f  rt %12.6f  ", $r_b, $r_c, $rt);
 		printf("xy %4d,%4d  uv %12.6f,%12.6f\n", $x, $y, $u, $v);
 	}
 	return;

@@ -24,7 +24,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *   cmdpack - vb2rip
  *     Neill Corlett
  */
-function PVAB_DEF()
+function pvab_def()
 {
 	// same options as ffmpeg
 	return array(

@@ -86,9 +86,9 @@ function im_bc3( &$file, $pos, $w, $h )
 	printf("== im_bc3( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
 
-	$bc3 = new S3TC_Texture;
-	$pix = $bc3->BC3($pix);
-	//$pix = $bc3->S3TC_debug($pix, $w, $h);
+	$bc3 = new s3tc_texture;
+	$pix = $bc3->bc3($pix);
+	//$pix = $bc3->s3tc_debug($pix, $w, $h);
 
 	gnf_swizzled_bc($pix, $w, $h);
 	return $pix;
@@ -99,9 +99,9 @@ function im_bc7( &$file, $pos, $w, $h )
 	printf("== im_bc7( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
 
-	$bc7 = new BPTC_Texture;
-	$pix = $bc7->BC7($pix);
-	//$pix = $bc7->BPTC_debug($pix, $w, $h);
+	$bc7 = new bptc_texture;
+	$pix = $bc7->bc7($pix);
+	//$pix = $bc7->bptc_debug($pix, $w, $h);
 
 	gnf_swizzled_bc($pix, $w, $h);
 	return $pix;

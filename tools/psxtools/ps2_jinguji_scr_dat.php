@@ -22,7 +22,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 
-function sect_TIM2( &$file, $pfx )
+function sect_tim2( &$file, $pfx )
 {
 	$pixsiz = str2int($file, 0x18, 4);
 	$w = str2int($file, 0x24, 2);
@@ -100,7 +100,7 @@ function sect_unpack( &$file, $pfx )
 		printf("%8x  %8x  %8x  %s\n", $pos-0x10, $off, $siz, $fn);
 
 		if ( substr($sub,0,4) === 'TIM2' )
-			sect_TIM2($sub, $fn);
+			sect_tim2($sub, $fn);
 		else
 			save_file("$fn.bin", $sub);
 	} // while ( $pos < $len )

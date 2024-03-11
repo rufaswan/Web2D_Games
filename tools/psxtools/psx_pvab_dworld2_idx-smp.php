@@ -42,7 +42,7 @@ function disc2( $idx, $smp )
 		$ids[ $i/4 ] = $b;
 	}
 
-	$vbop = PVAB_DEF();
+	$vbop = pvab_def();
 	$vbop['ac'] = 1;
 	$vbop['ar'] = 22050;
 

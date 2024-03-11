@@ -270,9 +270,9 @@ function im_bc4( &$file, $pos, $w, $h, $size )
 	printf("== im_bc4( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $size);
 
-	$bc4 = new S3TC_Texture;
-	$pix = $bc4->BC4($pix);
-	//$pix = $bc4->BC4_debug($pix, $w, $h);
+	$bc4 = new s3tc_Texture;
+	$pix = $bc4->bc4($pix);
+	//$pix = $bc4->bc4_debug($pix, $w, $h);
 
 	$ch = int_ceil_pow2($h);
 	tegra_x1_swizzled_8_bits($pix, $w, $ch);
@@ -291,9 +291,9 @@ function im_bc7( &$file, $pos, $w, $h, $size )
 	printf("== im_bc7( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $size);
 
-	$bc7 = new BPTC_Texture;
-	$pix = $bc7->BC7($pix);
-	//$pix = $bc7->BPTC_debug($pix, $w, $h);
+	$bc7 = new bptc_texture;
+	$pix = $bc7->bc7($pix);
+	//$pix = $bc7->bptc_debug($pix, $w, $h);
 
 	// Supporter00.ftx   c0 180 ->  c0 200
 	// for_Minimap.ftx  780 438 -> 780 800

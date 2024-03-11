@@ -34,7 +34,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 // https://datatracker.ietf.org/doc/html/rfc1321
 // https://datatracker.ietf.org/doc/html/rfc3174
 // https://datatracker.ietf.org/doc/html/rfc6234
-class Merkel_Damgard
+class merkel_damgard
 {
 	private $mLen;
 
@@ -228,7 +228,7 @@ class Merkel_Damgard
 		// K[64]
 		// Use binary integer part of the sines of integers (Radians) as constants
 		// K[i] := floor( 2^32 * abs( sin(i+1) ) )
-		$K = $this->ord_const(array(
+		$key = $this->ord_const(array(
 			'd76aa478', 'e8c7b756', '242070db', 'c1bdceee', 'f57c0faf', '4787c62a', 'a8304613', 'fd469501',
 			'698098d8', '8b44f7af', 'ffff5bb1', '895cd7be', '6b901122', 'fd987193', 'a679438e', '49b40821',
 			'f61e2562', 'c040b340', '265e5a51', 'e9b6c7aa', 'd62f105d', '02441453', 'd8a1e681', 'e7d3fbc8',
@@ -256,56 +256,56 @@ class Merkel_Damgard
 				$chunk[] = $this->ord_chunk($str, $i+$j);
 
 			// main compress loop
-			list($A,$B,$C,$D) = $h;
+			list($h_a,$h_b,$h_c,$h_d) = $h;
 			for ( $j=0; $j < 64; $j++ )
 			{
 				switch ( $j >> 4 )
 				{
 					case 0: // 0-15
-						//$F = ($B & $C) | (~$B & $D);
-						$xB  = $this->c_not($B);
-						$BC  = $this->c_and($B, $C);
-						$xBD = $this->c_and($xB, $D);
+						//$h_f = ($h_b & $h_c) | (~$h_b & $h_d);
+						$h_xb  = $this->c_not($h_b);
+						$h_bc  = $this->c_and($h_b, $h_c);
+						$h_xbd = $this->c_and($h_xb, $h_d);
 
-						$F = $this->c_or($BC, $xBD);
-						$G = $j & BIT4;
+						$h_f = $this->c_or($h_bc, $h_xbd);
+						$h_g = $j & BIT4;
 						break;
 					case 1: // 16-31
-						//$F = ($D & $B) | (~$D & $C);
-						$xD  = $this->c_not($D);
-						$DB  = $this->c_and($D, $B);
-						$xDC = $this->c_and($xD, $C);
+						//$h_f = ($h_d & $h_b) | (~$h_d & $h_c);
+						$h_xd  = $this->c_not($h_d);
+						$h_db  = $this->c_and($h_d, $h_b);
+						$h_xdc = $this->c_and($xD, $h_c);
 
-						$F = $this->c_or($DB, $xDC);
-						$G = ($j * 5 + 1) & BIT4;
+						$h_f = $this->c_or($h_db, $h_xdc);
+						$h_g = ($j * 5 + 1) & BIT4;
 						break;
 					case 2: // 32-47
-						//$F = ($B ^ $C ^ $D);
-						$F = $this->c_xor($B, $C, $D);
-						$G = ($j * 3 + 5) & BIT4;
+						//$h_f = ($h_b ^ $h_c ^ $h_d);
+						$h_f = $this->c_xor($h_b, $h_c, $h_d);
+						$h_g = ($j * 3 + 5) & BIT4;
 						break;
 					case 3: // 48-63
-						//$F = $C ^ ($B | ~$D);
-						$xD  = $this->c_not($D);
-						$BxD = $this->c_or($B, $xD);
-						$F = $this->c_xor($C, $BxD);
-						$G = ($j * 7) & BIT4;
+						//$h_f = $h_c ^ ($h_b | ~$h_d);
+						$h_xd  = $this->c_not($h_d);
+						$h_bxd = $this->c_or($h_b, $h_xd);
+						$h_f = $this->c_xor($h_c, $h_bxd);
+						$h_g = ($j * 7) & BIT4;
 						break;
 				} // switch ( $j >> 4 )
 
-				$F  = $this->c_add($F, $A, $K[$j], $chunk[$G]);
-				$b1 = $this->c_rotate_left($F, $sh[$j]);
+				$h_f = $this->c_add($h_f, $h_a, $key[$j], $chunk[$h_g]);
+				$b1  = $this->c_rotate_left($h_f, $sh[$j]);
 
-				$A = $D;
-				$D = $C;
-				$C = $B;
-				$B = $this->c_add($B, $b1);
+				$h_a = $h_d;
+				$h_d = $h_c;
+				$h_c = $h_b;
+				$h_b = $this->c_add($h_b, $b1);
 			} // for ( $j=0; $j < 64; $j++ )
 
-			$h[0] = $this->c_add($h[0], $A);
-			$h[1] = $this->c_add($h[1], $B);
-			$h[2] = $this->c_add($h[2], $C);
-			$h[3] = $this->c_add($h[3], $D);
+			$h[0] = $this->c_add($h[0], $h_a);
+			$h[1] = $this->c_add($h[1], $h_b);
+			$h[2] = $this->c_add($h[2], $h_c);
+			$h[3] = $this->c_add($h[3], $h_d);
 		} // for ( $i=0; $i < $len; $i += 0x40 )
 		return;
 	}
@@ -339,7 +339,7 @@ class Merkel_Damgard
 	private function sha1_calc( &$str, &$h )
 	{
 		// K[4]
-		$K = $this->ord_const(array(
+		$key = $this->ord_const(array(
 			'5a827999',
 			'6ed9eba1',
 			'8f1bbcdc',
@@ -362,48 +362,48 @@ class Merkel_Damgard
 			} // for ( $j = 16; $j < 80; $j++ )
 
 			// main compress loop
-			list($A,$B,$C,$D,$E) = $h;
+			list($h_a,$h_b,$h_c,$h_d,$h_e) = $h;
 			for ( $j=0; $j < 80; $j++ )
 			{
 				$ah = (int)($j / 20);
 				switch ( $ah )
 				{
 					case 0:
-						//$F = ($B & $C) | (~$B & $D);
-						$xB  = $this->c_not($B);
-						$BC  = $this->c_and($B, $C);
-						$xBD = $this->c_and($xB, $D);
-						$F = $this->c_or($BC, $xBD);
+						//$h_f = ($h_b & $h_c) | (~$h_b & $h_d);
+						$h_xb  = $this->c_not($h_b);
+						$h_bc  = $this->c_and($h_b, $h_c);
+						$h_xbd = $this->c_and($h_xb, $h_d);
+						$h_f   = $this->c_or($h_bc, $h_xbd);
 						break;
 					case 1:
 					case 3:
-						//$F = ($B ^ $C ^ $D);
-						$F = $this->c_xor($B, $C, $D);
+						//$h_f = ($h_b ^ $h_c ^ $h_d);
+						$h_f = $this->c_xor($h_b, $h_c, $h_d);
 						break;
 					case 2:
-						//$F = ($B & $C) | ($B & $D) | ($C & $D);
-						$BC = $this->c_and($B, $C);
-						$BD = $this->c_and($B, $D);
-						$CD = $this->c_and($C, $D);
-						$F = $this->c_or($BC, $BD, $CD);
+						//$h_f = ($h_b & $h_c) | ($h_b & $h_d) | ($h_c & $h_d);
+						$h_bc = $this->c_and($h_b, $h_c);
+						$h_bd = $this->c_and($h_b, $h_d);
+						$h_cd = $this->c_and($h_c, $h_d);
+						$h_f  = $this->c_or($h_bc, $h_bd, $h_cd);
 						break;
 				} // switch ( $ah )
 
-				$b1 = $this->c_rotate_left($A, 5);
-				$b1 = $this->c_add($b1, $F, $E, $K[$ah], $chunk[$j]);
+				$b1 = $this->c_rotate_left($h_a, 5);
+				$b1 = $this->c_add($b1, $h_f, $h_e, $key[$ah], $chunk[$j]);
 
-				$E = $D;
-				$D = $C;
-				$C = $this->c_rotate_left($B, 30);
-				$B = $A;
-				$A = $b1;
+				$h_e = $h_d;
+				$h_d = $h_c;
+				$h_c = $this->c_rotate_left($h_b, 30);
+				$h_b = $h_a;
+				$h_a = $b1;
 			} // for ( $j=0; $j < 80; $j++ )
 
-			$h[0] = $this->c_add($h[0], $A);
-			$h[1] = $this->c_add($h[1], $B);
-			$h[2] = $this->c_add($h[2], $C);
-			$h[3] = $this->c_add($h[3], $D);
-			$h[4] = $this->c_add($h[4], $E);
+			$h[0] = $this->c_add($h[0], $h_a);
+			$h[1] = $this->c_add($h[1], $h_b);
+			$h[2] = $this->c_add($h[2], $h_c);
+			$h[3] = $this->c_add($h[3], $h_d);
+			$h[4] = $this->c_add($h[4], $h_e);
 		} // for ( $i=0; $i < $len; $i += 0x40 )
 		return;
 	}
@@ -440,7 +440,7 @@ class Merkel_Damgard
 	{
 		// K[64]
 		// first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311
-		$K = $this->ord_const(array(
+		$key = $this->ord_const(array(
 			'428a2f98', '71374491', 'b5c0fbcf', 'e9b5dba5', '3956c25b', '59f111f1', '923f82a4', 'ab1c5ed5',
 			'd807aa98', '12835b01', '243185be', '550c7dc3', '72be5d74', '80deb1fe', '9bdc06a7', 'c19bf174',
 			'e49b69c1', 'efbe4786', '0fc19dc6', '240ca1cc', '2de92c6f', '4a7484aa', '5cb0a9dc', '76f988da',
@@ -480,60 +480,60 @@ class Merkel_Damgard
 			} // for ( $j = 16; $j < 64; $j++ )
 
 			// main compress loop
-			list($A,$B,$C,$D,$E,$F,$G,$H) = $h;
+			list($h_a,$h_b,$h_c,$h_d,$h_e,$h_f,$h_g,$h_h) = $h;
 			for ( $j=0; $j < 64; $j++ )
 			{
 				// T1 = h + BSIG1(e) + CH(e,f,g) + Kt + Wt
 				// BSIG1(x) = ROTR^6(x) XOR ROTR^11(x) XOR ROTR^25(x)
 				// CH( x, y, z) = (x AND y) XOR ( (NOT x) AND z)
-				$s1a = $this->c_rotate_right($E,  6);
-				$s1b = $this->c_rotate_right($E, 11);
-				$s1c = $this->c_rotate_right($E, 25);
+				$s1a = $this->c_rotate_right($h_e,  6);
+				$s1b = $this->c_rotate_right($h_e, 11);
+				$s1c = $this->c_rotate_right($h_e, 25);
 
-				$xE  = $this->c_not($E);
-				$EF  = $this->c_and($E, $F);
-				$xEG = $this->c_and($xE, $G);
+				$h_xe  = $this->c_not($h_e);
+				$h_ef  = $this->c_and($h_e, $h_f);
+				$h_xeg = $this->c_and($h_xe, $h_g);
 
 				$s1 = $this->c_xor($s1a, $s1b, $s1c);
-				$ch = $this->c_xor($EF, $xEG);
+				$ch = $this->c_xor($h_ef, $h_xeg);
 
-				$b1 = $this->c_add($H, $s1, $ch, $K[$j], $chunk[$j]);
+				$b1 = $this->c_add($h_h, $s1, $ch, $key[$j], $chunk[$j]);
 
 				// T2 = BSIG0(a) + MAJ(a,b,c)
 				// BSIG0(x) = ROTR^2(x) XOR ROTR^13(x) XOR ROTR^22(x)
 				// MAJ( x, y, z) = (x AND y) XOR (x AND z) XOR (y AND z)
-				$s0a = $this->c_rotate_right($A,  2);
-				$s0b = $this->c_rotate_right($A, 13);
-				$s0c = $this->c_rotate_right($A, 22);
+				$s0a = $this->c_rotate_right($h_a,  2);
+				$s0b = $this->c_rotate_right($h_a, 13);
+				$s0c = $this->c_rotate_right($h_a, 22);
 
-				$AB = $this->c_and($A, $B);
-				$AC = $this->c_and($A, $C);
-				$BC = $this->c_and($B, $C);
+				$h_ab = $this->c_and($h_a, $h_b);
+				$h_ac = $this->c_and($h_a, $h_c);
+				$h_bc = $this->c_and($h_b, $h_c);
 
 				$s0  = $this->c_xor($s0a, $s0b, $s0c);
-				$maj = $this->c_xor($AB , $AC , $BC );
+				$maj = $this->c_xor($h_ab , $h_ac , $h_bc);
 
 				$b2 = $this->c_add($s0, $maj);
 
 
-				$H = $G;
-				$G = $F;
-				$F = $E;
-				$E = $this->c_add($D, $b1);
-				$D = $C;
-				$C = $B;
-				$B = $A;
-				$A = $this->c_add($b1, $b2);
+				$h_h = $h_g;
+				$h_g = $h_f;
+				$h_f = $h_e;
+				$h_e = $this->c_add($h_d, $b1);
+				$h_d = $h_c;
+				$h_c = $h_b;
+				$h_b = $h_a;
+				$h_a = $this->c_add($b1, $b2);
 			} // for ( $j=0; $j < 64; $j++ )
 
-			$h[0] = $this->c_add($h[0], $A);
-			$h[1] = $this->c_add($h[1], $B);
-			$h[2] = $this->c_add($h[2], $C);
-			$h[3] = $this->c_add($h[3], $D);
-			$h[4] = $this->c_add($h[4], $E);
-			$h[5] = $this->c_add($h[5], $F);
-			$h[6] = $this->c_add($h[6], $G);
-			$h[7] = $this->c_add($h[7], $H);
+			$h[0] = $this->c_add($h[0], $h_a);
+			$h[1] = $this->c_add($h[1], $h_b);
+			$h[2] = $this->c_add($h[2], $h_c);
+			$h[3] = $this->c_add($h[3], $h_d);
+			$h[4] = $this->c_add($h[4], $h_e);
+			$h[5] = $this->c_add($h[5], $h_f);
+			$h[6] = $this->c_add($h[6], $h_g);
+			$h[7] = $this->c_add($h[7], $h_h);
 		} // for ( $i=0; $i < $len; $i += 0x40 )
 		return;
 	}
@@ -611,7 +611,7 @@ class Merkel_Damgard
 	{
 		// K[80]
 		// first 64 bits of the fractional parts of the cube roots of the first 80 primes 2..409
-		$K = $this->ord_const(array(
+		$key = $this->ord_const(array(
 			'428a2f98d728ae22', '7137449123ef65cd', 'b5c0fbcfec4d3b2f', 'e9b5dba58189dbbc',
 			'3956c25bf348b538', '59f111f1b605d019', '923f82a4af194f9b', 'ab1c5ed5da6d8118',
 			'd807aa98a3030242', '12835b0145706fbe', '243185be4ee4b28c', '550c7dc3d5ffb4e2',
@@ -663,58 +663,58 @@ class Merkel_Damgard
 			} // for ( $j = 16; $j < 80; $j++ )
 
 			// main compress loop
-			list($A,$B,$C,$D,$E,$F,$G,$H) = $h;
+			list($h_a,$h_b,$h_c,$h_d,$h_e,$h_f,$h_g,$h_h) = $h;
 			for ( $j=0; $j < 80; $j++ )
 			{
 				// T1 = h + BSIG1(e) + CH(e,f,g) + Kt + Wt
 				// BSIG1(x) = ROTR^14(x) XOR ROTR^18(x) XOR ROTR^41(x)
 				// CH( x, y, z) = (x AND y) XOR ( (NOT x) AND z)
-				$s1a = $this->c_rotate_right($E, 14);
-				$s1b = $this->c_rotate_right($E, 18);
-				$s1c = $this->c_rotate_right($E, 41);
+				$s1a = $this->c_rotate_right($h_e, 14);
+				$s1b = $this->c_rotate_right($h_e, 18);
+				$s1c = $this->c_rotate_right($h_e, 41);
 
-				$xE  = $this->c_not($E);
-				$EF  = $this->c_and($E, $F);
-				$xEG = $this->c_and($xE, $G);
+				$h_xe  = $this->c_not($h_e);
+				$h_ef  = $this->c_and($h_e, $h_f);
+				$h_xeg = $this->c_and($h_xe, $h_g);
 
 				$s1 = $this->c_xor($s1a, $s1b, $s1c);
-				$ch = $this->c_xor($EF, $xEG);
-				$b1 = $this->c_add($H, $s1, $ch, $K[$j], $chunk[$j]);
+				$ch = $this->c_xor($h_ef, $h_xeg);
+				$b1 = $this->c_add($h_h, $s1, $ch, $key[$j], $chunk[$j]);
 
 				// T2 = BSIG0(a) + MAJ(a,b,c)
 				// BSIG0(x) = ROTR^28(x) XOR ROTR^34(x) XOR ROTR^39(x)
 				// MAJ( x, y, z) = (x AND y) XOR (x AND z) XOR (y AND z)
-				$s0a = $this->c_rotate_right($A, 28);
-				$s0b = $this->c_rotate_right($A, 34);
-				$s0c = $this->c_rotate_right($A, 39);
+				$s0a = $this->c_rotate_right($h_a, 28);
+				$s0b = $this->c_rotate_right($h_a, 34);
+				$s0c = $this->c_rotate_right($h_a, 39);
 
-				$AB = $this->c_and($A, $B);
-				$AC = $this->c_and($A, $C);
-				$BC = $this->c_and($B, $C);
+				$h_ab = $this->c_and($h_a, $h_b);
+				$h_ac = $this->c_and($h_a, $h_c);
+				$h_bc = $this->c_and($h_b, $h_c);
 
 				$s0  = $this->c_xor($s0a, $s0b, $s0c);
-				$maj = $this->c_xor($AB , $AC , $BC );
+				$maj = $this->c_xor($h_ab , $h_ac , $h_bc );
 				$b2  = $this->c_add($s0, $maj);
 
 
-				$H = $G;
-				$G = $F;
-				$F = $E;
-				$E = $this->c_add($D, $b1);
-				$D = $C;
-				$C = $B;
-				$B = $A;
-				$A = $this->c_add($b1, $b2);
+				$h_h = $h_g;
+				$h_g = $h_f;
+				$h_f = $h_e;
+				$h_e = $this->c_add($h_d, $b1);
+				$h_d = $h_c;
+				$h_c = $h_b;
+				$h_b = $h_a;
+				$h_a = $this->c_add($b1, $b2);
 			} // for ( $j=0; $j < 80; $j++ )
 
-			$h[0] = $this->c_add($h[0], $A);
-			$h[1] = $this->c_add($h[1], $B);
-			$h[2] = $this->c_add($h[2], $C);
-			$h[3] = $this->c_add($h[3], $D);
-			$h[4] = $this->c_add($h[4], $E);
-			$h[5] = $this->c_add($h[5], $F);
-			$h[6] = $this->c_add($h[6], $G);
-			$h[7] = $this->c_add($h[7], $H);
+			$h[0] = $this->c_add($h[0], $h_a);
+			$h[1] = $this->c_add($h[1], $h_b);
+			$h[2] = $this->c_add($h[2], $h_c);
+			$h[3] = $this->c_add($h[3], $h_d);
+			$h[4] = $this->c_add($h[4], $h_e);
+			$h[5] = $this->c_add($h[5], $h_f);
+			$h[6] = $this->c_add($h[6], $h_g);
+			$h[7] = $this->c_add($h[7], $h_h);
 		} // for ( $i=0; $i < $len; $i += 0x80 )
 		return;
 	}
@@ -787,13 +787,13 @@ class Merkel_Damgard
 		return $sum;
 	}
 	//////////////////////////////
-} // class Merkel_Damgard
+} // class merkel_damgard
 
-class HMAC
+class hmac
 {
-	private function HMACX( $hash, $key, $max, $msg )
+	private function hmacx( $hash, $key, $max, $msg )
 	{
-		$mer = new Merkel_Damgard;
+		$mer = new merkel_damgard;
 		if    ( strlen($key) > $max )  $key  = $mer->$hash($key);
 		while ( strlen($key) < $max )  $key .= ZERO;
 
@@ -815,10 +815,10 @@ class HMAC
 		return $dg2;
 	}
 
-	function  md5  ( $key, $msg ) { return $this->HMACX( 'md5'  , $key,  64, $msg); }
-	function sha1  ( $key, $msg ) { return $this->HMACX('sha1'  , $key,  64, $msg); }
-	function sha256( $key, $msg ) { return $this->HMACX('sha256', $key,  64, $msg); }
-	function sha224( $key, $msg ) { return $this->HMACX('sha224', $key,  64, $msg); }
-	function sha512( $key, $msg ) { return $this->HMACX('sha512', $key, 128, $msg); }
-	function sha384( $key, $msg ) { return $this->HMACX('sha384', $key, 128, $msg); }
-} // class HMAC
+	function  md5  ( $key, $msg ) { return $this->hmacx( 'md5'  , $key,  64, $msg); }
+	function sha1  ( $key, $msg ) { return $this->hmacx('sha1'  , $key,  64, $msg); }
+	function sha256( $key, $msg ) { return $this->hmacx('sha256', $key,  64, $msg); }
+	function sha224( $key, $msg ) { return $this->hmacx('sha224', $key,  64, $msg); }
+	function sha512( $key, $msg ) { return $this->hmacx('sha512', $key, 128, $msg); }
+	function sha384( $key, $msg ) { return $this->hmacx('sha384', $key, 128, $msg); }
+} // class hmac

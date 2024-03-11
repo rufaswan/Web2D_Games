@@ -330,7 +330,7 @@ function sectmeta( &$meta, &$tim, $pfx )
 	$pos = str2int($meta, 2, 2);
 	$flg = str2int($meta, 5, 1);
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	list($keys,$hits) = sectkeys($meta, $atlas, $tim, $pos, $flg & 1);
 

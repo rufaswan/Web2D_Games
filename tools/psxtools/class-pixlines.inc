@@ -21,7 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 
-class PixLines
+class pixel_lines
 {
 	private $canvas;
 	private $quad;
@@ -239,4 +239,4 @@ class PixLines
 
 		return $this->canvas;
 	}
-} // class PixLines
+} // class pixel_lines

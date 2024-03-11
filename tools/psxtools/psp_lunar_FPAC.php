@@ -23,7 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-zlib.inc';
 
-function unFCHN($dir, &$sub)
+function unfchn($dir, &$sub)
 {
 	if ( substr($sub, 0, 4) !== 'FCHN' )
 		return save_file("$dir.bin", $sub);
@@ -77,7 +77,7 @@ function lunar( $fname )
 			$fn  = "$dir/$str";
 			$sub = zlib_decode($sub);
 		}
-		unFCHN($fn, $sub);
+		unfchn($fn, $sub);
 	} // while (1)
 	return;
 }

@@ -214,7 +214,7 @@ function gowcaiz( $fname )
 	$file = substr ($file, 0xc000);
 	$tmg  = secttmg($file);
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	foreach ( $tmg as $tk => $tv )
 	{

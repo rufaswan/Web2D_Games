@@ -24,268 +24,268 @@ require 'common.inc';
 define('SHA1FILE', '83098573fa7479044c11180de28f03402ed8996a');
 
 // sub_80054d54+10
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerge_  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $v0, 3 // 1000
-// addu  $a3, $v0    // 1001
-// sll   $a3, 2      // 100100
-// subu  $a3, $v0    // 100011
-// sll   $a3, 2      // 10001100
-// addiu $a3, 0x6BF  // 6bf + 8c (35f800 + 46000)
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerge_  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, v0, 3 // 1000
+// addu  a3, v0    // 1001
+// sll   a3, 2      // 100100
+// subu  a3, v0    // 100011
+// sll   a3, 2      // 10001100
+// addiu a3, 0x6BF  // 6bf + 8c (35f800 + 46000)
 
 // sub_800577bc+40
-// la   $a1, aDataMrgmMerg_0  # "data/mrgM/merge.mrg"
-// la   $a2, word_8016E000
-// move $a3, $0
+// la   a1, aDataMrgmMerg_0  # "data/mrgM/merge.mrg"
+// la   a2, word_8016E000
+// move a3, 0
 
 // sub_8005934c+68
-// li    $a0, 0x2000000A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 1 // 10
-// addu  $a3, $t0    // 11
-// sll   $a3, 2      // 1100
-// subu  $a3, $t0    // 1011
-// sll   $a3, 3      // 1011000
-// subu  $a3, $t0    // 1010111
-// sll   $a3, 1      // 10101110
-// addiu $a3, 0x1FEE // 1fee + ae (ff7000 + 57000)
+// li    a0, 0x2000000A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 1 // 10
+// addu  a3, t0    // 11
+// sll   a3, 2      // 1100
+// subu  a3, t0    // 1011
+// sll   a3, 3      // 1011000
+// subu  a3, t0    // 1010111
+// sll   a3, 1      // 10101110
+// addiu a3, 0x1FEE // 1fee + ae (ff7000 + 57000)
 
 // sub_8005934c+c0
-// li    $a0, 0x2000000A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 1 // 10
-// addu  $a3, $t0    // 11
-// sll   $a3, 2      // 1100
-// subu  $a3, $t0    // 1011
-// sll   $a3, 3      // 1011000
-// subu  $a3, $t0    // 1010111
-// sll   $a3, 1      // 10101110
-// addiu $a3, 0x1FBE // 1fbe + ae (fdf000 + 57000)
+// li    a0, 0x2000000A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 1 // 10
+// addu  a3, t0    // 11
+// sll   a3, 2      // 1100
+// subu  a3, t0    // 1011
+// sll   a3, 3      // 1011000
+// subu  a3, t0    // 1010111
+// sll   a3, 1      // 10101110
+// addiu a3, 0x1FBE // 1fbe + ae (fdf000 + 57000)
 
 // sub_8005934c+118
-// li    $a0, 0x2000000A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 1 // 10
-// addu  $a3, $t0    // 11
-// sll   $a3, 2      // 1100
-// subu  $a3, $t0    // 1011
-// sll   $a3, 3      // 1011000
-// subu  $a3, $t0    // 1010111
-// sll   $a3, 1      // 10101110
-// addiu $a3, 0x1FD6 // 1fd6 + ae (feb000 + 57000)
+// li    a0, 0x2000000A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 1 // 10
+// addu  a3, t0    // 11
+// sll   a3, 2      // 1100
+// subu  a3, t0    // 1011
+// sll   a3, 3      // 1011000
+// subu  a3, t0    // 1010111
+// sll   a3, 1      // 10101110
+// addiu a3, 0x1FD6 // 1fd6 + ae (feb000 + 57000)
 
 // sub_8005934c+1a0
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 1
-// addu  $a3, $t0
-// sll   $a3, 2
-// subu  $a3, $t0
-// sll   $a3, 3
-// subu  $a3, $t0
-// sll   $a3, 1
-// addiu $a3, 0x1FEE
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 1
+// addu  a3, t0
+// sll   a3, 2
+// subu  a3, t0
+// sll   a3, 3
+// subu  a3, t0
+// sll   a3, 1
+// addiu a3, 0x1FEE
 //// DUP
 
 // sub_8005934c+23c
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 1
-// addu  $a3, $t0
-// sll   $a3, 2
-// subu  $a3, $t0
-// sll   $a3, 3
-// subu  $a3, $t0
-// sll   $a3, 1
-// addiu $a3, 0x1FEE
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 1
+// addu  a3, t0
+// sll   a3, 2
+// subu  a3, t0
+// sll   a3, 3
+// subu  a3, t0
+// sll   a3, 1
+// addiu a3, 0x1FEE
 //// DUP
 
 // sub_800596bc+7c
-// li    $a0, 0x2000000A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 2 // 100
-// addu  $a3, $t0    // 101
-// sll   $a3, 4      // 1010000
-// addu  $a3, $t0    // 1010001
-// addiu $a3, 0x2325 // 2325 + 51 (1192800 + 28800)
+// li    a0, 0x2000000A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 2 // 100
+// addu  a3, t0    // 101
+// sll   a3, 4      // 1010000
+// addu  a3, t0    // 1010001
+// addiu a3, 0x2325 // 2325 + 51 (1192800 + 28800)
 
 // sub_800596bc+ac
-// li    $a0, 0x2000000A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 2 // 100
-// addu  $a3, $t0    // 101
-// sll   $a3, 4      // 1010000
-// addu  $a3, $t0    // 1010001
-// addiu $a3, 0x2311 // 2311 + 51 (1188800 + 28800)
+// li    a0, 0x2000000A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 2 // 100
+// addu  a3, t0    // 101
+// sll   a3, 4      // 1010000
+// addu  a3, t0    // 1010001
+// addiu a3, 0x2311 // 2311 + 51 (1188800 + 28800)
 
 // sub_800596bc+f0
-// li    $a0, 0x2000000A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 2 // 100
-// addu  $a3, $t0    // 101
-// sll   $a3, 4      // 1010000
-// addu  $a3, $t0    // 1010001
-// addiu $a3, 0x231B // 231b + 51 (118d800 + 28800)
+// li    a0, 0x2000000A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 2 // 100
+// addu  a3, t0    // 101
+// sll   a3, 4      // 1010000
+// addu  a3, t0    // 1010001
+// addiu a3, 0x231B // 231b + 51 (118d800 + 28800)
 
 // sub_800596bc+168
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 2
-// addu  $a3, $t0
-// sll   $a3, 4
-// addu  $a3, $t0
-// addiu $a3, 0x2325
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 2
+// addu  a3, t0
+// sll   a3, 4
+// addu  a3, t0
+// addiu a3, 0x2325
 //// DUP
 
 // sub_800596bc+1c0
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $t0, 2
-// addu  $a3, $t0
-// sll   $a3, 4
-// addu  $a3, $t0
-// addiu $a3, 0x2311
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, t0, 2
+// addu  a3, t0
+// sll   a3, 4
+// addu  a3, t0
+// addiu a3, 0x2311
 //// DUP
 
 // sub_80059930+194
-// li   $a0, 0x20000002
-// la   $s0, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// move $a1, $s0
-// lw   $a2, dword_800A7DFC
-// li   $a3, 0x1123
+// li   a0, 0x20000002
+// la   s0, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// move a1, s0
+// lw   a2, dword_800A7DFC
+// li   a3, 0x1123
 //// DUP
 
 // sub_80059930+2d8
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s4, 1 // 10
-// addu  $a3, $s4    // 11
-// sll   $a3, 3      // 11000
-// addu  $a3, $s4    // 11001
-// addiu $a3, 0x40CF // 40cf + 19 (2067800 + c800)
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s4, 1 // 10
+// addu  a3, s4    // 11
+// sll   a3, 3      // 11000
+// addu  a3, s4    // 11001
+// addiu a3, 0x40CF // 40cf + 19 (2067800 + c800)
 
 // sub_80059930+380
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s1, 1 // 10
-// addu  $a3, $s1    // 11
-// sll   $a3, 2      // 1100
-// addu  $a3, $s1    // 1101
-// sll   $a3, 1      // 11010
-// addiu $a3, 0x42F5 // 42f5 + 1a (217a800 + d000)
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s1, 1 // 10
+// addu  a3, s1    // 11
+// sll   a3, 2      // 1100
+// addu  a3, s1    // 1101
+// sll   a3, 1      // 11010
+// addiu a3, 0x42F5 // 42f5 + 1a (217a800 + d000)
 
 // sub_80059930+420
-// li    $a0, 0x20000042
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// sll   $a3, $s0, 5 // 100000
-// subu  $a3, $s0    // 011111
-// sll   $a3, 2      // 01111100
-// addiu $a3, 0x114D // 114d + 7c (8a6800 + 3e000)
+// li    a0, 0x20000042
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// sll   a3, s0, 5 // 100000
+// subu  a3, s0    // 011111
+// sll   a3, 2      // 01111100
+// addiu a3, 0x114D // 114d + 7c (8a6800 + 3e000)
 
 // sub_80059930+488
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s1, 1 // 10
-// addu  $a3, $s1    // 11
-// sll   $a3, 2      // 1100
-// addu  $a3, $s1    // 1101
-// sll   $a3, 1      // 11010
-// addiu $a3, 0x42FE // 42fe + 1a (217f000 + d000)
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s1, 1 // 10
+// addu  a3, s1    // 11
+// sll   a3, 2      // 1100
+// addu  a3, s1    // 1101
+// sll   a3, 1      // 11010
+// addiu a3, 0x42FE // 42fe + 1a (217f000 + d000)
 
 // sub_80059930+510
-// li    $a0, 0x20000042
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, byte_801DC000
-// sll   $a3, $s0, 5 // 100000
-// subu  $a3, $s0    // 011111
-// sll   $a3, 2      // 01111100
-// addiu $a3, 0x1123 // 1123 + 7c (891800 + 3e000)
+// li    a0, 0x20000042
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, byte_801DC000
+// sll   a3, s0, 5 // 100000
+// subu  a3, s0    // 011111
+// sll   a3, 2      // 01111100
+// addiu a3, 0x1123 // 1123 + 7c (891800 + 3e000)
 
 // sub_80059930+570
-// li    $a0, 0x20000042
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, byte_801DC000
-// sll   $a3, $s0, 5
-// subu  $a3, $s0
-// sll   $a3, 2
-// addiu $a3, 0x1123
+// li    a0, 0x20000042
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, byte_801DC000
+// sll   a3, s0, 5
+// subu  a3, s0
+// sll   a3, 2
+// addiu a3, 0x1123
 //// DUP
 
 // sub_80059930+5d8
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s3, 2 // 100
-// addu  $a3, $s3    // 101
-// sll   $a3, 4      // 1010000
-// addu  $a3, $s3    // 1010001
-// addiu $a3, 0x2331 // 2331 + 51 (1198800 + 28800)
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s3, 2 // 100
+// addu  a3, s3    // 101
+// sll   a3, 4      // 1010000
+// addu  a3, s3    // 1010001
+// addiu a3, 0x2331 // 2331 + 51 (1198800 + 28800)
 
 // sub_80059930+6e0
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s4, 1
-// addu  $a3, $s4
-// sll   $a3, 3
-// addu  $a3, $s4
-// addiu $a3, 0x40CF
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s4, 1
+// addu  a3, s4
+// sll   a3, 3
+// addu  a3, s4
+// addiu a3, 0x40CF
 //// DUP
 
 // sub_80059930+758
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s1, 1
-// addu  $a3, $s1
-// sll   $a3, 2
-// addu  $a3, $s1
-// sll   $a3, 1
-// addiu $a3, 0x42F5
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s1, 1
+// addu  a3, s1
+// sll   a3, 2
+// addu  a3, s1
+// sll   a3, 1
+// addiu a3, 0x42F5
 //// DUP
 
 // sub_8005a458+6c
-// li    $a0, 0x2000004A
-// lui   $a1, 0x8001
-// lui   $a2, 0x8017
-// sll   $a3, $t0, 4 // 10000
-// addu  $a3, $t0    // 10001
-// sll   $a3, 1      // 100010
-// la    $a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// addiu $a3, 0x4E3  // 4e3 + 22 (271800 + 11000)
+// li    a0, 0x2000004A
+// lui   a1, 0x8001
+// lui   a2, 0x8017
+// sll   a3, t0, 4 // 10000
+// addu  a3, t0    // 10001
+// sll   a3, 1      // 100010
+// la    a1, aDataMrgmMerg_1  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// addiu a3, 0x4E3  // 4e3 + 22 (271800 + 11000)
 
 // sub_8006393c+1fc
-// li    $a0, 0x2000004A
-// la    $a1, aDataMrgmMerg_2  # "data/mrgM/merge.mrg"
-// la    $a2, word_8016E000
-// sll   $a3, $s2, 1 // 10
-// addu  $a3, $s2    // 11
-// sll   $a3, 4      // 110000
-// addu  $a3, $s2    // 110001
-// addiu $a3, 0xAD   // ad + 31 (56800 + 18800)
+// li    a0, 0x2000004A
+// la    a1, aDataMrgmMerg_2  # "data/mrgM/merge.mrg"
+// la    a2, word_8016E000
+// sll   a3, s2, 1 // 10
+// addu  a3, s2    // 11
+// sll   a3, 4      // 110000
+// addu  a3, s2    // 110001
+// addiu a3, 0xAD   // ad + 31 (56800 + 18800)
 
 // sub_8006425c+3c
-// li  $a0, 0x2000004A
-// lui $a1, 0x8001
-// lui $a2, 0x8017
-// la  $a1, aDataMrgmMerg_2  # "data/mrgM/merge.mrg"
-// la  $a2, word_8016E000
-// li  $a3, 0x85 // 42800
+// li  a0, 0x2000004A
+// lui a1, 0x8001
+// lui a2, 0x8017
+// la  a1, aDataMrgmMerg_2  # "data/mrgM/merge.mrg"
+// la  a2, word_8016E000
+// li  a3, 0x85 // 42800
 
 // sub_800577bc+40        0/0         -/-
 // sub_8006425c+3c       85/42800     -/-

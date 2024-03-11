@@ -28,9 +28,9 @@ function suigai_decode( &$file )
 	// SLPM_866.37 , sub_80051e38
 	trace("== begin sub_80051e38()\n");
 
-	$NEW_DICT = str_repeat(ZERO, 0x400);
+	$new_dict = str_repeat(ZERO, 0x400);
 	for ( $i=0; $i < 0x100; $i++ )
-		$NEW_DICT[ 0x200+$i ] = chr($i);
+		$new_dict[ 0x200+$i ] = chr($i);
 
 	$len = strlen($file);
 	$pos = 0;
@@ -44,7 +44,7 @@ function suigai_decode( &$file )
 		$b2 = ord( $file[$pos] ); // t2
 			$pos++;
 
-		$dict = $NEW_DICT;
+		$dict = $new_dict;
 		$dpos = 0;
 
 		// init dictionary

@@ -81,9 +81,9 @@ function im_dxt1( &$file, $pos, $w, $h )
 	printf("== im_dxt1( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
 
-	$s3  = new S3TC_Texture;
-	$pix = $s3->DXT1($pix);
-	//$pix = $s3->S3TC_debug($pix, $w, $h);
+	$s3  = new s3tc_texture;
+	$pix = $s3->dxt1($pix);
+	//$pix = $s3->s3tc_debug($pix, $w, $h);
 
 	dxt_swizzled($pix, $w, $h);
 	return $pix;
@@ -94,9 +94,9 @@ function im_dxt3( &$file, $pos, $w, $h )
 	printf("== im_dxt3( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
 
-	$s3  = new S3TC_Texture;
-	$pix = $s3->DXT3($pix);
-	//$pix = $s3->S3TC_debug($pix, $w, $h);
+	$s3  = new s3tc_Texture;
+	$pix = $s3->dxt3($pix);
+	//$pix = $s3->s3tc_debug($pix, $w, $h);
 
 	dxt_swizzled($pix, $w, $h);
 	return $pix;
@@ -107,9 +107,9 @@ function im_dxt5( &$file, $pos, $w, $h )
 	printf("== im_dxt5( %x , %x , %x )\n", $pos, $w, $h);
 	$pix = substr($file, $pos, $w*$h);
 
-	$s3  = new S3TC_Texture;
-	$pix = $s3->DXT5($pix);
-	//$pix = $s3->S3TC_debug($pix, $w, $h);
+	$s3  = new s3tc_texture;
+	$pix = $s3->dxt5($pix);
+	//$pix = $s3->s3tc_debug($pix, $w, $h);
 
 	dxt_swizzled($pix, $w, $h);
 	return $pix;

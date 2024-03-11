@@ -35,9 +35,9 @@ $gp_clut = array();
 $gp_game = '';
 // MARL = Map Area Room Layer
 
-function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
+function layerloop( &$ram, $dir, $marl_ma, $marl_rl, $off, $mp3 )
 {
-	printf("=== layerloop( $dir , $MA , $RL , %x , $mp3 )\n", $off);
+	printf("=== layerloop( $dir , $marl_ma , $marl_rl , %x , $mp3 )\n", $off);
 	$map_w = ord( $ram[$off+0] ) * 0x100;
 	$map_h = ord( $ram[$off+1] ) * 0xc0;
 		zero_watch("ram2", $ram[$off+2]);
@@ -124,7 +124,7 @@ function layerloop( &$ram, $dir, $MA, $RL, $off, $mp3 )
 	echo "$map4 \n";
 	echo "$map8a\n";
 	//echo "$map8b\n";
-	$fn = sprintf('%s/cvnds_map/ma_%04d/l_%04d', $dir, $MA, $RL);
+	$fn = sprintf('%s/cvnds_map/ma_%04d/l_%04d', $dir, $marl_ma, $marl_rl);
 	savepix($fn, $pix);
 	return;
 }
@@ -202,7 +202,7 @@ function monobj( &$ram, &$room, $off)
 	return;
 }
 
-function roomloop( &$ram, $dir, $MA, $off )
+function roomloop( &$ram, $dir, $marl_ma, $off )
 {
 	global $gp_clut, $gp_pix_a, $gp_pix_r;
 	$id = 0;
@@ -212,10 +212,10 @@ function roomloop( &$ram, $dir, $MA, $off )
 	// rooms , hallways ...
 	while (1)
 	{
-		$R = $id;
+		$marl_r = $id;
 			$id++;
-		$p = $R * 4;
-		printf("=== roomloop( $dir , $MA , %x )\n", $off+$p);
+		$p = $marl_r * 4;
+		printf("=== roomloop( $dir , $marl_ma , %x )\n", $off+$p);
 		$sps = str2int($ram, $off + $p, 3); // 2ab630
 		if ( $sps == 0 )
 			break;
@@ -266,34 +266,34 @@ function roomloop( &$ram, $dir, $MA, $off )
 		} // while (1)
 
 		// room set = fg , bg1 , bg2 , bg3
-		$L = 4;
-		while ( $L > 0 )
+		$marl_l = 4;
+		while ( $marl_l > 0 )
 		{
-			$L--;
-			$p = $off1 + ($L * 0x10) + 12;
+			$marl_l--;
+			$p = $off1 + ($marl_l * 0x10) + 12;
 			$cps = str2int($ram, $p, 3);
 			if ( $cps == 0 || $ram[$p+3] != chr(2) )
 				continue;
-			$RL = ($R * 10) + $L;
-			$room[] = sprintf('l_%04d+0+0', $RL);
-			layerloop($ram, $dir, $MA, $RL, $cps, $mappos[3]);
-		} // while ( $L > 0 )
+			$marl_rl = ($marl_r * 10) + $marl_l;
+			$room[] = sprintf('l_%04d+0+0', $marl_rl);
+			layerloop($ram, $dir, $marl_ma, $marl_rl, $cps, $mappos[3]);
+		} // while ( $marl_l > 0 )
 
 		// layer on top of bg + fg
 		monobj($ram, $room, $off4);
 
-		$rlst[] = sprintf('r_%04d+%d+%d', $R, $mappos[1], $mappos[2]);
-		$layout .= sprintf("r_%04d = %s\n", $R, implode(' , ', $room));
+		$rlst[] = sprintf('r_%04d+%d+%d', $marl_r, $mappos[1], $mappos[2]);
+		$layout .= sprintf("r_%04d = %s\n", $marl_r, implode(' , ', $room));
 		//return;
 	} // while (1)
 
 	$layout .= sprintf("main = %s\n", implode(' , ', $rlst));
-	$fn = sprintf('%s/cvnds_map/ma_%04d/layout.txt', $dir, $MA);
+	$fn = sprintf('%s/cvnds_map/ma_%04d/layout.txt', $dir, $marl_ma);
 	save_file($fn, $layout);
 	return;
 }
 //////////////////////////////
-function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
+function arealoop( &$ram, $dir, $marl_m, $ovid, $bc, $data )
 {
 	global $gp_pix_a, $gp_patch;
 	$id = 0;
@@ -303,10 +303,10 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 	// entrance , library , clock tower ...
 	while (1)
 	{
-		$A = $id;
+		$marl_a = $id;
 			$id++;
-		$p = $A * 4;
-		printf("=== arealoop( $dir , $M , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p);
+		$p = $marl_a * 4;
+		printf("=== arealoop( $dir , $marl_m , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p);
 		$off1 = str2int($ram, $ovid + $p, 3); // 40
 		$off2 = str2int($ram, $bc   + $p, 3); // ef5fc
 		$off3 = str2int($ram, $data + $p, 3); // 21f664
@@ -332,8 +332,8 @@ function arealoop( &$ram, $dir, $M, $ovid, $bc, $data )
 			$gp_pix_a[$fp] = "$dir/data/$fn";
 		} // while (1)
 
-		$MA = ($M * 100) + $A;
-		roomloop( $ram, $dir, $MA, $off3 );
+		$marl_ma = ($marl_m * 100) + $marl_a;
+		roomloop( $ram, $dir, $marl_ma, $off3 );
 		//return;
 	} // while (1)
 	return;
@@ -345,16 +345,16 @@ function maploop( &$ram, $dir, $ovid, $bc, $data )
 	$id = 0;
 	while (1)
 	{
-		$M = $id;
+		$marl_m = $id;
 			$id++;
-		$p = $M * 4;
+		$p = $marl_m * 4;
 		printf("=== maploop( $dir , %x , %x , %x )\n", $ovid+$p, $bc+$p, $data+$p);
 		$off1 = str2int($ram, $ovid + $p, 3); // b60c4
 		$off2 = str2int($ram, $bc   + $p, 3); // d8d68
 		$off3 = str2int($ram, $data + $p, 3); // 221ee0
 		if ( $off1 == 0 || $off2 == 0 || $off3 == 0 )
 			break;
-		arealoop( $ram, $dir, $M, $off1, $off2, $off3 );
+		arealoop( $ram, $dir, $marl_m, $off1, $off2, $off3 );
 		//return;
 	} // while (1)
 	return;

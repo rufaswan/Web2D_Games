@@ -47,7 +47,7 @@ function discnoir( $idx, $smp )
 	// sort offset ascending
 	usort($ids, function ($a,$b){ return ($a[1] > $b[1]); });
 
-	$vbop = PVAB_DEF();
+	$vbop = pvab_def();
 	$vbop['ac'] = 1;
 	$vbop['ar'] = 11025;
 

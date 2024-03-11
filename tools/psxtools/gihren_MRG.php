@@ -57,23 +57,23 @@ function cmp0_decode( &$file )
 }
 //////////////////////////////
 //////////////////////////////
-function s_TX_MP16( &$TX, &$MP16, $dir )
+function s_tx_mp16( &$tx, &$mp16, $dir )
 {
 	return;
 }
 
-function s_TX_PL_MP16( &$TX, &$PL, &$MP16, $dir )
+function s_tx_pl_mp16( &$tx, &$pl, &$mp16, $dir )
 {
-	$w   = str2int($TX,  8, 2);
-	$h   = str2int($TX, 10, 2);
-	$src = substr ($TX, 12);
-	$pal = substr ($PL, 12);
+	$w   = str2int($tx,  8, 2);
+	$h   = str2int($tx, 10, 2);
+	$src = substr ($tx, 12);
+	$pal = substr ($pl, 12);
 		$pal = pal555($pal);
 	if ( strlen($src) != ($w*$h) )
 		bpp4to8($src);
 
-	$mapw = str2int($MP16,  8, 2) * 16;
-	$maph = str2int($MP16, 10, 2) * 16;
+	$mapw = str2int($mp16,  8, 2) * 16;
+	$maph = str2int($mp16, 10, 2) * 16;
 	$pos  = 12;
 
 	$tw = $w / 16;
@@ -88,7 +88,7 @@ function s_TX_PL_MP16( &$TX, &$PL, &$MP16, $dir )
 	{
 		for ( $x=0; $x < $mapw; $x += 16 )
 		{
-			$ind = str2int($MP16, $pos, 2);
+			$ind = str2int($mp16, $pos, 2);
 				$pos += 2;
 
 			$sy = (int)($ind / $tw);
@@ -105,26 +105,26 @@ function s_TX_PL_MP16( &$TX, &$PL, &$MP16, $dir )
 	return;
 }
 //////////////////////////////
-function TX_PL_MP16( &$sect, $dir )
+function tx_pl_mp16( &$sect, $dir )
 {
-	s_TX_PL_MP16($sect[0][1], $sect[1][1], $sect[2][1], "$dir/0000");
+	s_tx_pl_mp16($sect[0][1], $sect[1][1], $sect[2][1], "$dir/0000");
 	return;
 }
 
-function TX_TX_PL_PL_MP16_MP16( &$sect, $dir )
+function tx_tx_pl_pl_mp16_mp16( &$sect, $dir )
 {
-	s_TX_PL_MP16($sect[0][1], $sect[2][1], $sect[4][1], "$dir/0000");
-	s_TX_PL_MP16($sect[1][1], $sect[3][1], $sect[5][1], "$dir/0001");
+	s_tx_pl_mp16($sect[0][1], $sect[2][1], $sect[4][1], "$dir/0000");
+	s_tx_pl_mp16($sect[1][1], $sect[3][1], $sect[5][1], "$dir/0001");
 	return;
 }
 
-function MP16_TX_PL( &$sect, $dir )
+function mp16_tx_pl( &$sect, $dir )
 {
-	s_TX_PL_MP16($sect[1][1], $sect[2][1], $sect[0][1], "$dir/0000");
+	s_tx_pl_mp16($sect[1][1], $sect[2][1], $sect[0][1], "$dir/0000");
 	return;
 }
 
-function TX_TX_TX_TX_TX_PL( &$sect, $dir )
+function tx_tx_tx_tx_tx_pl( &$sect, $dir )
 {
 	$pal = substr($sect[5][1], 12);
 		$pal = pal555($pal);
@@ -183,6 +183,7 @@ function mrgfile( &$file, $dir )
 		$file[] = $v[0];
 
 	$func = implode('_', $file);
+		$func = strtolower($func);
 	echo "CALL $func( $dir )\n";
 	if ( function_exists($func) )
 		$func($sect, $dir);

@@ -71,11 +71,11 @@ function euclidean_dist( &$rgb )
 //////////////////////////////
 function labf( $f )
 {
-	$Q = 6 / 29;
-	if ( $f > ($Q ** 3) )
+	$q = 6 / 29;
+	if ( $f > ($q ** 3) )
 		return $f ** (1/3);
 	else
-		return ($f / (3 * $Q * $Q)) + (4 / 29);
+		return ($f / (3 * $q * $q)) + (4 / 29);
 }
 
 function rgb2lab( $rgb )
@@ -115,10 +115,10 @@ function rgb2lab( $rgb )
 
 function lab_dist( $name, $c1, $c2 )
 {
-	$L = $c2[0] - $c1[0];
+	$l = $c2[0] - $c1[0];
 	$a = $c2[1] - $c1[1];
 	$b = $c2[2] - $c1[2];
-	$d1 = ($L*$L) + ($a*$a) + ($b*$b);
+	$d1 = ($l*$l) + ($a*$a) + ($b*$b);
 		$d1 = sqrt($d1);
 	$d2 = $d1 * LAB_MAXD;
 	printf("%s  %6.2f  %6.2f\n", $name, $d2*100, $d1);

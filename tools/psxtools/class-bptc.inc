@@ -27,7 +27,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 // https://www.khronos.org/registry/DataFormat/specs/1.1/dataformat.1.1.html#BPTC
 
 // Unlike S3 Texture Compression, the blocks are taken as byte streams, and thus they are endian-independent.
-class BPTC_Texture
+class bptc_texture
 {
 	// 64 pre-defined partition set for 2 region tile
 	private $m_p2_table = array(
@@ -661,8 +661,8 @@ class BPTC_Texture
 		return str_repeat(PIX_ALPHA, 4*4);
 	}
 	//////////////////////////////
-	public function BPTC( &$data )  { return $this->BC7($data); }
-	public function BC7( &$data )
+	public function bptc( &$data )  { return $this->bc7($data); }
+	public function bc7( &$data )
 	{
 		$pix = '';
 		$len = int_ceil( strlen($data), -16 );
@@ -674,9 +674,9 @@ class BPTC_Texture
 		return $pix;
 	}
 
-	public function BPTC_debug( &$data, $w, $h )
+	public function bptc_debug( &$data, $w, $h )
 	{
-		trace("== BPTC_debug( %x , %x )\n", $w, $h);
+		trace("== bptc_debug( %x , %x )\n", $w, $h);
 		$b1 = strlen($data);
 		$b2 = $w * $h * 4;
 		if ( $b1 != $b2 )
@@ -701,4 +701,4 @@ class BPTC_Texture
 		} // for ( $y=0; $y < $h; $y += 4 )
 		return $canvas;
 	}
-} // class BPTC_Texture
+} // class bptc_texture
