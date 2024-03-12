@@ -19,7 +19,7 @@ function QuadExport(Q){
 		var rect = [max,max,-max,-max];
 		var is_null = true;
 
-		var cur = qdata.QUAD[ type ][ id ];
+		var cur = qdata.quad[ type ][ id ];
 		switch ( type ){
 			case 'keyframe':
 			case 'hitbox':
@@ -112,7 +112,7 @@ function QuadExport(Q){
 			return false;
 		switch ( type ){
 			case 'slot':
-				var slot = qdata.QUAD.slot[id];
+				var slot = qdata.quad.slot[id];
 				for ( var i=0; i < slot.length; i++ ){
 					var loop = $.is_loop_attach(qdata, slot[i].type, slot[i].id);
 					if ( loop )
@@ -120,13 +120,13 @@ function QuadExport(Q){
 				}
 				return false;
 			case 'animation':
-				var loop = qdata.QUAD.animation[id].loop_id;
+				var loop = qdata.quad.animation[id].loop_id;
 				if ( loop < 0 )
 					return false;
 				else
 					return true;
 			case 'skeleton':
-				var bone = qdata.QUAD.skeleton[id].bone;
+				var bone = qdata.quad.skeleton[id].bone;
 				for ( var i=0; i < bone.length; i++ ){
 					if ( ! bone[i] || ! bone[i].attach )
 						continue;
@@ -144,7 +144,7 @@ function QuadExport(Q){
 			return false;
 		switch ( type ){
 			case 'slot':
-				var slot = qdata.QUAD.slot[id];
+				var slot = qdata.quad.slot[id];
 				for ( var i=0; i < slot.length; i++ ){
 					var mix = $.is_mix_attach(qdata, slot[i].type, slot[i].id);
 					if ( mix )
@@ -152,7 +152,7 @@ function QuadExport(Q){
 				}
 				return false;
 			case 'animation':
-				var time = qdata.QUAD.animation[id].timeline;
+				var time = qdata.quad.animation[id].timeline;
 				for ( var i=0; i < time.length; i++ ){
 					var tv = time[i];
 					var mix = 0;
@@ -165,7 +165,7 @@ function QuadExport(Q){
 				}
 				return false;
 			case 'skeleton':
-				var bone = qdata.QUAD.skeleton[id].bone;
+				var bone = qdata.quad.skeleton[id].bone;
 				for ( var i=0; i < bone.length; i++ ){
 					if ( ! bone[i] || ! bone[i].attach )
 						continue;
@@ -183,7 +183,7 @@ function QuadExport(Q){
 			return 0;
 		switch ( type ){
 			case 'slot':
-				var slot = qdata.QUAD.slot[id];
+				var slot = qdata.quad.slot[id];
 				var time = 0;
 				for ( var i=0; i < slot.length; i++ ){
 					var t = $.time_attach(qdata, slot[i].type, slot[i].id);
@@ -192,14 +192,14 @@ function QuadExport(Q){
 				}
 				return time;
 			case 'animation':
-				var anim = qdata.QUAD.animation[id].timeline;
+				var anim = qdata.quad.animation[id].timeline;
 				var time = 0;
 				anim.forEach(function(av,ak){
 					time += av.time;
 				});
 				return time;
 			case 'skeleton':
-				var bone = qdata.QUAD.skeleton[id].bone;
+				var bone = qdata.quad.skeleton[id].bone;
 				var time = 0;
 				bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
@@ -220,7 +220,7 @@ function QuadExport(Q){
 
 		switch ( type ){
 			case 'slot':
-				var slot = qdata.QUAD.slot[id];
+				var slot = qdata.quad.slot[id];
 				var list = [];
 				slot.forEach(function(sv,sk){
 					list.push( sv.type +','+ sv.id );
@@ -228,7 +228,7 @@ function QuadExport(Q){
 				Q.func.array_clean_dups(list);
 				return list;
 			case 'animation':
-				var anim = qdata.QUAD.animation[id].timeline;
+				var anim = qdata.quad.animation[id].timeline;
 				var list = [];
 				anim.forEach(function(tv,tk){
 					if ( ! tv || ! tv.attach )
@@ -238,7 +238,7 @@ function QuadExport(Q){
 				Q.func.array_clean_dups(list);
 				return list;
 			case 'skeleton':
-				var bone = qdata.QUAD.skeleton[id].bone;
+				var bone = qdata.quad.skeleton[id].bone;
 				var list = [];
 				bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )

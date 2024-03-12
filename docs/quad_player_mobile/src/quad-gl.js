@@ -205,7 +205,7 @@ function QuadGL(Q){
 		__.indice_quad(dstlen);
 	}
 
-	$.draw_VRAM = function( vram, tex, rect ){
+	$.draw_vram = function( vram, tex, rect ){
 		__.GL.useProgram( __.SHADER.vram );
 		var loc = __.shader_loc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
 		var view = [ vram.w * 0.5 , vram.h * 0.5 ];

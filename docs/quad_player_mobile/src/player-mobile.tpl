@@ -133,16 +133,16 @@ var SELECTED = '';
 				HTML.quad_data.innerHTML = '';
 				document.title = qdata.name + ' [Quad Player ' + QUAD.version + ']';
 
-				var buffer = qdata_tagtable(qdata.QUAD.tag);
+				var buffer = qdata_tagtable(qdata.quad.tag);
 				HTML.quad_data.innerHTML += buffer;
 
-				var quad_main = quad_mainlist(qdata.QUAD);
+				var quad_main = quad_mainlist(qdata.quad);
 				if ( quad_main === -1 )
 					return;
 
 				var buffer = '<h2>' + quad_main + '</h2>';
 				buffer += '<ul>';
-				qdata.QUAD[quad_main].forEach(function(v,k){
+				qdata.quad[quad_main].forEach(function(v,k){
 					if ( ! v )
 						return;
 					buffer += qdata_listing(qdata, quad_main, k);

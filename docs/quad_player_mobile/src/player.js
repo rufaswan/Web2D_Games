@@ -52,10 +52,10 @@ function qdata_filetable( qdata, files ){
 	files.innerHTML = '';
 	if ( qdata.name )
 		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
-	for ( var i=0; i < qdata.IMAGE.length; i++ ){
-		if ( ! qdata.IMAGE[i] || ! qdata.IMAGE[i].name )
+	for ( var i=0; i < qdata.image.length; i++ ){
+		if ( ! qdata.image[i] || ! qdata.image[i].name )
 			continue;
-		var img = qdata.IMAGE[i];
+		var img = qdata.image[i];
 		files.innerHTML += '<li>[IMAGE][' + i + '] ' + img.name + ' (' + JSON.stringify(img.pos) + ')</li>';
 	}
 }
@@ -115,7 +115,7 @@ function quad_mainlist( quad ){
 
 function qdata_listing( qdata, type, id ){
 	var qchild = QUAD.export.list_attach(qdata, type, id);
-	var qtype  = qdata.QUAD[type][id];
+	var qtype  = qdata.quad[type][id];
 
 	var qname  = qtype.name || type + ' ' + id;
 	if ( QUAD.export.is_loop_attach(qdata, type, id) )
