@@ -650,22 +650,22 @@ Gear Shop Data
 
 0
 64   Dazil
-c8
-12c  Aveh
-190
-1f4
-258
-2bc  Kislev D Block
-320
-384
+c8   Stalactite Cave 
+12c  Bart's Lair, Aveh
+190  Unused
+1f4  Yggdrasil, Nisan, Aveh-Kislev Mountains
+258  Kislev D Block (Hammer)
+2bc  Kislev D Block, Goliath Factory
+320  Yggdrasil 2, Thames
+384  Yggdrasil 2 (after Alkanshel)
 3e8  Shevat, Nisan 2
 44c  Thames Loading Bay, Yggdrasil 3
-4b0
-514
-578
-5dc
-640
-6a4
-708
-76c
+4b0  Unused
+514  Unused
+578  Snowfield Hideout, Yggdrasil 3
+5dc  Unused
+640  Anima Dungeon 1 & 2 
+6a4  Lighthouse
+708  Merkava
+76c  Deus
 ==============================
