@@ -183,7 +183,7 @@ sent
 	swi  size=1x ps4  , BC4 + BC7   , prediv
 unic
 	swi  *base*       , BC4 + BC7   , prediv , SD prefix
-	ps4
+	ps4  size=2x swi  , BC7         , prediv
 	ps5
 	xbx
 ==============================

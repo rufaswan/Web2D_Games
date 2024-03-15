@@ -1335,9 +1335,21 @@ function detect_tag( &$file )
 					if ( str2int($file,0xc8,4) === 0x120 || str2int($file,0xe0,4) === 0x120 )
 						return 'vit_odin';
 					if ( str2int($file,0xb0,4) === 0x120 )
-						php_warning('unable to detect %s OR %s', 'ps4_odin', 'ps4_sent');
+					{
+						$poss = array('ps4_odin' , 'ps4_sent');
+						php_warning('unable to auto-detect %s', implode(' , ', $poss));
+					}
 					return '';
 				case 0x76:  return 'ps4_sent';
+				case 0x77:
+					$poss = array(
+						'swi_sent' , 'swi_grim' , 'swi_unic' ,
+						'ps4_grim' , 'ps4_unic' ,
+						'ps5_grim' , 'ps5_unic' ,
+						'xbx_unic'
+					);
+					php_warning('unable to auto-detect %s', implode(' , ', $poss));
+					return '';
 			} // switch ( $ver )
 
 			// test failed
@@ -1366,6 +1378,8 @@ function vanilla( $tag, $fname )
 		printf("[AUTO] tag = %s\n", $t);
 		$tag = $t;
 	}
+	else
+		printf("tag = %s\n", $tag);
 
 	if ( ! isset($gp_data[$tag]) )
 		return php_error('Unknown tag [%s] = %s', $tag, $fname);

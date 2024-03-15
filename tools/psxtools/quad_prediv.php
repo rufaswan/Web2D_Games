@@ -34,6 +34,7 @@ function predivsize( &$imgsize, &$file, $fname )
 		return;
 	if ( ! isset($quad['keyframe']) )
 		return;
+	printf("PREDIV.QUAD\n");
 
 	foreach ( $quad['keyframe'] as $kk => $kv )
 	{
