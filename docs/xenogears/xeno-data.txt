@@ -590,53 +590,53 @@ Char Shop Data
 2593.bin/6.bin (BLOCK = 0x5c or 92 bytes)
 3958.bin/6.bin
 
-0x98   Item    -
+0x98   Item    Lahan, Stalactite Cave, Aveh-Kislev Mountains, Merkava, Deus
 0xf4   Item    Dazil
 0x114  Weapon  Dazil
-0x132  Armor   -
+0x132  Armor   Dazil
 0x1ac  Item    Aveh
 0x1cc  Weapon  Aveh
-0x264  Items   -
-0x2a2  Armor   -
-0x31c  Item    Yggdrasil 3/Mason
-0x35a  Armor   -
-0x3d4  Item    -
-0x412  Armor   -
-0x48c  Item    Kislev A Block
-0x4ac  Weapon  Kislev A Block
-0x4ca  Armor   -
-0x544  Item    Thames Deck
-0x564  Weapon  Thames Deck, Yggdrasil 3/Mason  +Armor
-0x582  Armor   -
-0x5fc  Item    -
-0x61c  Weapon  -
-0x63a  Armor   -
+0x264  Items   Nisan
+0x2a2  Armor   Nisan
+0x31c  Item    Yggdrasil/Maison, Bart's Lair, Yggdrasil 2/Maison, Yggdrasil 3/Maison
+0x35a  Armor   Yggdrasil/Maison, Yggdrasil 2/Maison
+0x3d4  Item    Kislev D Block, Kislev A Block
+0x412  Armor   Kislev D Block, Kislev A Block
+0x48c  Item    Kislev A Block (after Hecht)
+0x4ac  Weapon  Kislev A Block (after Hecht)
+0x4ca  Armor   Kislev A Block (after Hecht)
+0x544  Item    Thames Deck, Thames Deck 2
+0x564  Weapon  Thames Deck, Yggdrasil 2/Maison, Yggdrasil 3/Maison  +Armor
+0x582  Armor   Thames Deck, Yggdrasil 2/Maison
+0x5fc  Item    Same as 0x544
+0x61c  Weapon  Unused
+0x63a  Armor   Same as 0x35a
 0x6b4  Item    Shevat/Chu-chu, Nisan 2
 0x6d4  Weapon  Shevat/Chu-chu, Nisan 2
-0x6f2  Armor   -
-0x76c  Item    -
-0x78c  Weapon  -
-0x7aa  Armor   -
-0x824  Item    -
-0x844  Weapon  -
-0x862  Armor   -
-0x8dc  Item    -
-0x8fc  Weapon  -
-0x91a  Armor   -
-0x994  Item    -
-0x9b4  Weapon  -
-0x9d2  Armor   -
-0xa4c  Item    -
-0xa8a  Armor   -
-0xb04  Item    -
-0xb24  Weapon  -
-0xb42  Armor   -
-0xbbc  Item    -
-0xbdc  Weapon  -
-0xbfa  Armor   -
+0x6f2  Armor   Shevat/Chu-chu, Nisan 2
+0x76c  Item    Unused
+0x78c  Weapon  Unused
+0x7aa  Armor   Unused
+0x824  Item    Same as 0x76c
+0x844  Weapon  Unused
+0x862  Armor   Unused
+0x8dc  Item    Unused
+0x8fc  Weapon  Unused
+0x91a  Armor   Unused
+0x994  Item    Solaris 2nd Class, Solaris 3rd Class (Hammer), Snowfield Hideout
+0x9b4  Weapon  Snowfield Hideout
+0x9d2  Armor   Snowfield Hideout
+0xa4c  Item    Anima Dungeon 1 & 2 
+0xa8a  Armor   Same as 0x91a
+0xb04  Item    Same as 0xa4c
+0xb24  Weapon  Anima Dungeon 1 & 2 
+0xb42  Armor   Anima Dungeon 1 & 2 
+0xbbc  Item    Lighthouse
+0xbdc  Weapon  Unused
+0xbfa  Armor   Unused
 0xc56  Armor   Aveh
-0xc94  Weapon  -
-0xcb2  Armor   -
+0xc94  Weapon  Solaris 2nd Class, Solaris 3rd Class (Hammer)
+0xcb2  Armor   Solaris 2nd Class, Solaris 3rd Class (Hammer)
 ==============================
 Gear Shop Data
 2593.bin/7.bin (BLOCK = 0x64 or 100 bytes)
