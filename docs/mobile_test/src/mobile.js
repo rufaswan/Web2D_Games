@@ -10,23 +10,39 @@ function get_html_id(){
 	return html;
 }
 
-function mobileparameter( mobile, list, table ){
+function mobilevalue( list, table ){
+	var output = '';
+	list.forEach(function(lv,lk){
+		if ( ! Array.isArray(lv) || ! Array.isArray(lv[2]) )
+			return;
+		var curr = lv[0];
+		lv[2].forEach(function(lvv,lvk){
+			var name = lv[1] + '.' + lvv;
+			var tmp = curr[ lvv ];
+			output += '<tr><td>' + name + '</td><td>' + tmp + '</td></tr>';
+		});
+	});
+	table.innerHTML = output;
+}
+
+function mobileparameter( mobile, base, list, table ){
 	var output = '';
 	list.forEach(function(lv,lk){
 		if ( Array.isArray(lv) ){
-			var cur  = mobile;
-			var name = '';
+			var curr = mobile;
+			var name = base;
 			for ( var i=0; i < lv.length; i++ ){
-				var tmp = cur[ lv[i] ];
+				var tmp = curr[ lv[i] ];
 				var p2  = ( tmp ) ? 'ok' : 'fail';
 				name   += '.' + lv[i];
 				output += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
-				cur = tmp;
+				curr = tmp;
 			} // for ( var i=0; i < lv.length; i++ )
 		}
 		else {
-			var p2 = ( mobile[lv] ) ? 'ok' : 'fail';
-			output += '<tr><td>' + lv + '</td><td>' + p2 + '</td></tr>';
+			var p2   = ( mobile[lv] ) ? 'ok' : 'fail';
+			var name = base + '.' + lv;
+			output  += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
 		}
 	});
 	table.innerHTML = output;
@@ -57,8 +73,10 @@ function glparameter( GL, list, table ){
 function glreference( GL, list, table ){
 	var output = '';
 	list.forEach(function(lv,lk){
+		if ( ! Array.isArray(lv) )
+			return;
 		var val = GL.getParameter( GL[ lv[0] ] );
-		var p2 = '' + val + ' [' + lv[1] + ']';
+		var p2 = '' + val + ' >= ' + lv[1];
 		var p3 = ( val >= lv[1] ) ? 'ok' : 'fail';
 		output += '<tr><td>' + lv[0].toLowerCase() + '</td><td>' + p2 + '</td><td>' + p3 + '</td></tr>';
 	});

@@ -22,9 +22,13 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>Quad Player - Mobile</title>
+<title>Quad Debugger - Keyframe</title>
 <style>body {
 	background-color : #404040;
+	overflow         : hidden;
+	margin           : 0;
+	padding          : 0;
+	overflow         : hidden;
 }
 body, a, a:hover, a:visited {
 	color       : #c0c0c0;
@@ -35,7 +39,7 @@ button {
 	background-color : rgba(255 , 255 , 255 , 0.5);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 18px;
+	margin           : 9px  18px;
 	min-width        : 42px;
 	min-height       : 42px;
 	padding          : 0.5em;
@@ -51,15 +55,6 @@ button.btn_off {
 	color            : #fff;
 }
 
-textarea {
-	display          : block;
-	width            : 95%;
-	height           : 25em;
-	margin           : 0 auto 0;
-	background-color : #fff;
-	color            : #000;
-	resize           : none;
-}
 
 h1, h2, h3, h4, h5, h6 {
 	text-transform : uppercase;
@@ -74,16 +69,38 @@ ul {
 	display : none;
 }
 
-#viewer {
-	position : fixed;
-	left     : 0;
-	top      : 0;
-	width    : 100vw;
-	height   : 100vh;
-	overflow : auto;
-	display  : none;
+main,
+main > nav {
+	display     : flex;
+	position    : relative;
+	align-items : stretch;
+	margin      : 0;
+	padding     : 0;
 }
-
+main > nav {
+	overflow : hidden scroll;
+}
+#debugger {
+	position : relative;
+	overflow : hidden;
+}
+#debugger #quad_data,
+#debugger #layerdata {
+	position         : absolute;
+	top              : 0;
+	left             : 0;
+	width            : 100%;
+	height           : 100%;
+	background-color : #404040;
+	overflow         : scroll;
+}
+#debugger #layerdata {
+	display : none;
+}
+#viewer {
+	position : relative;
+	overflow : hidden;
+}
 #viewer #canvas,
 #viewer img {
 	position : absolute;
@@ -92,108 +109,58 @@ ul {
 	width    : 100%;
 	height   : 100%;
 }
-
-#viewer_top_nav,
-#debugger_top_nav {
-	position : fixed;
-	top      : 0;
-	left     : 0;
-	width    : 100vw;
-	display  : block;
+#keylist,
+#layerlist {
+	margin           : 0;
+	padding          : 0;
 }
-#debugger_top_nav {
-	background-color : #404040;
-	border-bottom    : 2px #c0c0c0 solid;
+#keylist p,
+#layerlist p {
+	border      : 1px #c0c0c0 solid;
+	padding     : 0 0.5em;
+	line-height : 42px;
 }
-#viewer_top_nav p,
-#debugger_top_nav p {
-	display         : flex;
-	flex-direction  : row;
-	flex-wrap       : nowrap;
-	justify-content : space-between;
-	align-items     : center;
-	margin          : 0;
-	padding         : 0;
-}
-
-#viewer_bottom_nav {
-	position : fixed;
-	bottom   : 0;
-	left     : 0;
-	width    : 100vw;
-	display  : block;
-}
-#viewer_bottom_nav p {
-	display         : flex;
-	flex-direction  : row;
-	flex-wrap       : nowrap;
-	justify-content : space-between;
-	align-items     : center;
-	margin          : 0;
-	padding         : 0;
-}
-
-#export_div {
-	position         : fixed;
-	bottom           : 0;
-	background-color : #404040;
-	display          : none;
-	text-align       : center;
-	border-top       : 2px #c0c0c0 solid;
-	padding-top      : 1em;
-	width            : 100vw;
-}
-
-#export_div button {
-	margin : 1em;
-}
-#export_div input[type=range] {
-	width : 90%;
-}
-
-#quad_data p {
-	line-height     : 42px;
-	display         : flex;
-	flex-direction  : row;
-	flex-wrap       : nowrap;
-	justify-content : space-around;
-	align-items     : center;
-}
-
-#quad_data ul {
-	padding : 0;
-}
-#quad_data ul ul {
-	padding-left : 42px;
-}
-
-#quad_data .liexpand,
-#quad_data .liexport {
-	background-color : rgba(255 , 255 , 255 , 0.5);
-	color            : #000;
-	white-space      : nowrap;
-	text-transform   : uppercase;
-	text-align       : center;
-	min-height       : 42px;
-	padding          : 0.5em;
-}
-
-#quad_data .liname {
-	flex-grow : 2;
-	border    : 1px #c0c0c0 solid;
-	padding   : 0 0.5em;
-}
-#quad_data .current {
+#layerlist .layer_on {
 	background-color : #c0c0c0;
 	color            : #404040;
 }
 
-#quad_data_tags {
-	padding-left : 42px;
+@media (orientation:landscape) {
+	main {
+		flex-direction : row;
+	}
+	main > nav {
+		flex-direction : column;
+		width          :  10vw;
+		height         : 100vh;
+	}
+	#viewer {
+		width  :  45vw;
+		height : 100vh;
+	}
+	#debugger {
+		width  :  45vw;
+		height : 100vh;
+	}
 }
-#quad_data_tags p {
-	display      : block;
-	padding-left : 42px;
+
+@media (orientation:portrait) {
+	main {
+		flex-direction : column;
+	}
+	main > nav {
+		flex-direction : row;
+		width          : 100vw;
+		height         :  10vh;
+	}
+	#viewer {
+		width  : 100vw;
+		height :  45vh;
+	}
+	#debugger {
+		width  : 100vw;
+		height :  45vh;
+	}
 }
 </style>
 <script>'use strict';
@@ -208,49 +175,6 @@ function get_html_id(){
 	return html;
 }
 
-function display_viewer( html, toggle ){
-	if ( toggle ){
-		html.viewer.style.display   = 'block';
-		//html.debugger.style.display = 'none';
-	}
-	else {
-		html.viewer.style.display   = 'none';
-		//html.debugger.style.display = 'block';
-	}
-	html.export_div.style.display = 'none';
-}
-
-function button_toggle( elem, turn ){
-	var css = elem.classList;
-	if ( turn > 0 ){
-		css.remove('btn_off');
-		css.add('btn_on');
-		return;
-	}
-	if ( turn < 0 ){
-		css.remove('btn_on');
-		css.add('btn_off');
-		return;
-	}
-	css.remove('btn_on');
-	css.remove('btn_off');
-}
-
-function button_prev_next( qdata, adj ){
-	adj = adj | 0;
-	if ( ! qdata || adj === 0 )
-		return;
-	if ( ['keyframe','hitbox','slot'].indexOf(qdata.attach.type) !== -1 )
-		qdata.attach.id += adj;
-	else
-		qdata.anim_fps  += adj;
-}
-
-function button_close( elem ){
-	var par2  = elem.parentElement.parentElement;
-	par2.style.display = 'none';
-}
-
 function qdata_filetable( qdata, files ){
 	files.innerHTML = '';
 	if ( qdata.name )
@@ -263,155 +187,161 @@ function qdata_filetable( qdata, files ){
 	}
 }
 
-function qdata_tagtable( tag ){
-	if ( ! tag )
-		return '';
-	function wikilink( tagkey, tagval ){
-		if ( tagkey.toLowerCase() === 'comment' || tagval === '-' )
-			return tagval;
-		var href = tagval.replace(/ /g, '_');
-		return '<a href="https://en.m.wikipedia.org/wiki/' + href + '" target="_blank">' + tagval + '</a>';
-	}
-
-	var buffer = '<h2>tag</h2>';
-	buffer += '<div id="quad_data_tags">';
-
-	var keys = Object.keys(tag);
-	keys.forEach(function(k){
-		var t = {};
-		t.l = k;
-		if ( Array.isArray(tag[k]) ){
-			t.v = [];
-			tag[k].forEach(function(tv){
-				t.v.push( wikilink( k, tv ) );
-			});
-			t.r = t.v.join(' , ');
-		}
-		else {
-			t.r = wikilink( k, tag[k] );
-		}
-
-		buffer += '<h3>' + t.l + '</h3>';
-		buffer += '<p>' + t.r + '</p>';
-	});
-
-	buffer += '</div>';
-	return buffer;
-}
-
-function qdata_attach( qdata, type, id ){
-	qdata.attach.type = type;
-	qdata.attach.id   = id;
-	qdata.anim_fps    = 0;
-}
-
-function quad_mainlist( quad ){
-	var type = ['skeleton','animation','slot','keyframe','hitbox'];
-	for ( var i=0; i < type.length; i++ ){
-		var tv = type[i];
-		if ( quad[tv].length < 1 )
-			continue;
-		return tv;
-	}
-	return -1;
-}
-
-function qdata_listing( qdata, type, id ){
-	var qchild = QUAD.export.list_attach(qdata, type, id);
-	var qtype  = qdata.quad[type][id];
-
-	var qname  = qtype.name || type + ' ' + id;
-	if ( QUAD.export.is_loop_attach(qdata, type, id) )
-		qname += ' <strong>[LOOP]</strong>';
-	if ( QUAD.export.is_mix_attach(qdata, type, id) )
-		qname += ' <strong>[MIX]</strong>';
-
-	var html = '<li data-type="' + type + '" data-id="' + id + '"><p>';
-	if ( qchild.length > 0 )
-		html += '<span class="liexpand" onclick="button_expand(this);">+</span>';
-
-	html += '<span class="liname" onclick="button_select(this);">' + qname + '</span>';
-
-	if ( ['skeleton','animation'].indexOf(type) !== -1 )
-		html += '<span class="liexport" onclick="button_export(this);">export</span>';
-	html += '</p>';
-
-	if ( qchild.length > 0 ){
-		html += '<ul style="display:none;">';
-		qchild.forEach(function(cv,ck){
-			cv = cv.split(',');
-			html += qdata_listing(qdata, cv[0], cv[1]);
-		});
-		html += '</ul>';
-	}
-
-	html += '</li>';
-	return html;
-}
 //////////////////////////////
 // TODO : remove all global var
 
-function button_select( elem ){
-	if ( SELECTED )
-		SELECTED.classList.remove('current');
+function keyframe_select( key_id ){
+	HTML.layerdata.style.display      = 'block';
+	HTML.btn_selectall.style.display  = 'block';
+	HTML.btn_selectnone.style.display = 'block';
+	HTML.layerlist.innerHTML  = '';
+	HTML.layer_name.innerHTML = '';
 
-	SELECTED = elem;
-	SELECTED.classList.add('current');
-
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
-
-	qdata_attach(QuadList[0], type, id);
-	display_viewer(HTML, true);
-}
-
-function button_expand( elem ){
-	var par2  = elem.parentElement.parentElement;
-	var ulist = par2.getElementsByTagName('ul');
-	if ( ulist.length < 1 )
+	var key = QuadList[0].quad.keyframe[key_id];
+	if ( ! key )
 		return;
+	HTML.layer_name.innerHTML = key.name;
+	ON_KEY   = key_id;
+	ON_LAYER = [];
+	QuadList[0].attach.id = key_id;
 
-	var dis = ulist[0].style.display;
-	if ( dis === 'block' )
-		ulist[0].style.display = 'none';
+	var buffer = '';
+	key.layer.forEach(function(v,k){
+		if ( ! v )
+			return;
+		ON_LAYER.push(k);
+
+		name = 'layer ' + k + ' (' + v.debug + ')';
+		buffer += '<li class="layer_on" data-id="' + k + '"><p onclick="layer_select(this);">' + name + '</p></li>';
+	});
+	HTML.layerlist.innerHTML = buffer;
+	IS_REDRAW = true;
+}
+
+function layer_select( elem ){
+	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
+	var idx = ON_LAYER.indexOf(layer_id);
+	if ( idx === -1 )
+		ON_LAYER.push(layer_id);
 	else
-		ulist[0].style.display = 'block';
+		ON_LAYER.splice(idx, 1);
+
+	var list = document.querySelectorAll('#layerlist li');
+	for ( var i=0; i < list.length; i++ ){
+		var id  = list[i].getAttribute('data-id') | 0;
+		var idx = ON_LAYER.indexOf(id);
+		if ( idx === -1 )
+			list[i].classList.remove('layer_on');
+		else
+			list[i].classList.add('layer_on');
+	}
+	IS_REDRAW = true;
 }
 
-function button_export( elem ){
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
-
-	var div = HTML.export_div;
-	div.setAttribute('data-type', type);
-	div.setAttribute('data-id'  , id);
-	div.style.display = 'block';
-
-	HTML.export_name.innerHTML = type + ' , ' + id;
-
-	var qdata = QuadList[0];
-	var time  = QUAD.export.time_attach(qdata, type, id);
-	var range = HTML.export_range;
-	range.setAttribute('max', time - 1); // index 0
-	range.value = 0;
-	HTML.export_start.innerHTML = 0;
+function layer_close(){
+	HTML.layerdata.style.display      = 'none';
+	HTML.btn_selectall.style.display  = 'none';
+	HTML.btn_selectnone.style.display = 'none';
 }
 
-function button_export_type( elem ){
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
-	var fmt  = elem.innerHTML.toLowerCase();
-
-	var time = HTML.export_start.innerHTML | 0;
-	var zoom = 1.0 * HTML.export_zoom.innerHTML;
-	QUAD.export.export(fmt, QuadList[0], HTML.canvas, type, id, time, zoom);
+function keydebug_draw( qdata, mat4, color ){
+	var key = qdata.quad.keyframe[ON_KEY];
+	if ( ! key )
+		return;
+	if ( qdata.is_lines )
+		return keydebug_drawline(qdata, key, mat4, color);
+	else
+		return keydebug_drawtex (qdata, key, mat4, color);
 }
 
+function keydebug_drawline( qdata, key, mat4, color ){
+	var clines = [];
 
+	var debug = [];
+	var did, dbg;
+	key.layer.forEach(function(lv,lk){
+		if ( ! lv )
+			return;
+		if ( ON_LAYER.indexOf(lk) === -1 )
+			return;
 
+		dbg = JSON.stringify(lv.debug);
+		did = debug.indexOf(dbg);
+		if ( did < 0 ){
+			did = debug.length;
+			debug.push(dbg);
+			clines[did] = [];
+		}
+
+		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
+		clines[did] = clines[did].concat(dst);
+	});
+
+	var color = [
+		[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
+		[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
+		[0,0,0,1] , [1,1,1,1] ,             // black white
+		[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
+		[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
+		[0.5,0.5,0.5,1] , // gray
+	];
+
+	QUAD.gl.enable_blend(0);
+	clines.forEach(function(cv,ck){
+		var cid = qdata.line_index % color.length;
+		QUAD.gl.draw_line(cv, color[cid]);
+		qdata.line_index++;
+	});
+}
+
+function keydebug_drawtex( qdata, key, mat4, color ){
+	var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
+
+	var zrate = 1.0 / (key.layer.length + 1);
+	var buf_list = [];
+	var depth = 1.0;
+	//console.log('key.order',key.order);
+
+	// draw layers by keyframe order
+	key.order.forEach(function(ov){
+		var lv = key.layer[ov];
+		if ( ! lv )
+			return;
+		if ( ON_LAYER.indexOf(ov) === -1 )
+			return;
+		depth -= zrate;
+
+		var bid = lv.blend_id | 0;
+		if ( ! buf_list[bid] )
+			buf_list[bid] = { dst:[] , src:[] , fog:[] , z:[] };
+		var ent = buf_list[bid];
+
+		if ( lv.tex_id < 0 || ! qdata.image[lv.tex_id] )
+			var src = dummysrc;
+		else
+			var src = QUAD.math.vram_srcquad(lv.srcquad, qdata.image[lv.tex_id].pos);
+		ent.src = ent.src.concat(src);
+
+		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
+		var xyz = QUAD.math.perspective_quad(dst);
+		ent.dst = ent.dst.concat(xyz);
+
+		var clr = QUAD.math.fog_multi4(color, lv.fogquad);
+		ent.fog = ent.fog.concat(clr);
+
+		ent.z = ent.z.concat([depth , depth , depth , depth]);
+	});
+	//console.log('buf_list',buf_list);
+
+	QUAD.gl.enable_depth('LESS');
+	buf_list.forEach(function(bv,bk){
+		if ( ! bv || ! qdata.quad.blend[bk] )
+			return;
+		QUAD.gl.enable_blend ( qdata.quad.blend[bk] );
+		QUAD.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.vram );
+	});
+	QUAD.gl.enable_depth(0);
+}
 </script>
 <script>'use strict';
 
@@ -2957,73 +2887,52 @@ function QuadData(qlist){
 </script>
 </head><body>
 
-<div id='debugger'>
-	<input type='file' id='input_file' multiple class='hidden'>
-	<div id='debugger_top_nav'>
-		<p id='debugger_top_row_1'>
-			<button id='btn_view'>view</button>
-			<button id='btn_upload' data-id='0'>upload</button>
-		</p>
+<main>
+	<nav>
+		<input type='file' id='input_file' multiple class='hidden'>
+		<button id='btn_upload' data-id='0'>upload</button>
+
+		<button id='btn_lines'>line</button>
+		<button id='btn_zoomin'>+</button>
+		<button id='btn_zoomout'>-</button>
+
+		<button id='btn_selectall' class='hidden'>all</button>
+		<button id='btn_selectnone' class='hidden'>none</button>
+	</nav>
+
+	<div id='viewer'>
+		<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAQMAAAC032DuAAAABlBMVEVAQEDAwMCo6TBpAAAAGklEQVQoz2NgAIEGBjgYZY4yB5r5Hw6Gnd8AoYMxdx81TTIAAAAASUVORK5CYII=">
+		<canvas id='canvas'>Canvas not supported</canvas>
 	</div>
 
-	<button>dummy</button>
-	<h1 id='quad_version'></h1>
-	<h2>Files</h2>
-	<ol id='debugger_files'></ol>
-	<div id='quad_data'></div>
-	<h3>Logs</h3>
-	<textarea id='logger' disabled></textarea>
-	<p>
-		<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/player-mobile.tpl.html' target='_blank'>Latest version</a> -
-		<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html' target='_blank'>QUAD File Spec</a> -
-		<a href='https://github.com/rufaswan/Web2D_Games' target='_blank'>Github</a>
-	</p>
+	<div id='debugger'>
 
-	<div id='export_div' data-type='' data-id=''>
-		<p><button onclick='button_close(this);'>close</button> <span id='export_name'></span></p>
-		<p>
-			START = <span id='export_start'>0</span>
-			<input id='export_range' type='range' min='0' max='0' step='1' value='0'>
-		</p>
-		<p>
-			ZOOM = <span id='export_zoom'>1.0</span>
-			<input id='export_times' type='range' min='0.1' max='10.0' step='0.1' value='1.0'>
-		</p>
-		<p>
-			<button onclick='button_export_type(this);'>png</button>
-			<button onclick='button_export_type(this);'>zip</button>
-			<button onclick='button_export_type(this);'>rgba</button>
-		</p>
+		<div id='quad_data'>
+			<h1 id='quad_version'></h1>
+			<h2>Files</h2>
+			<ol id='debugger_files'></ol>
+			<ul id='keylist'></ul>
+			<p>
+				<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/debugger-keyframe.tpl.html' target='_blank'>Latest version</a> -
+				<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html' target='_blank'>QUAD File Spec</a> -
+				<a href='https://github.com/rufaswan/Web2D_Games' target='_blank'>Github</a>
+			</p>
+		</div>
+
+		<div id='layerdata'>
+			<p><button onclick='layer_close();'>close</button> <span id='layer_name'></span></p>
+			<ul id='layerlist'></ul>
+		</div>
+
 	</div>
-</div>
-
-<div id='viewer'>
-	<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAQMAAAC032DuAAAABlBMVEVAQEDAwMCo6TBpAAAAGklEQVQoz2NgAIEGBjgYZY4yB5r5Hw6Gnd8AoYMxdx81TTIAAAAASUVORK5CYII=">
-	<canvas id='canvas'>Canvas not supported</canvas>
-	<div id='viewer_top_nav'>
-		<p id='viewer_top_row_1'>
-			<button id='btn_debug'>debug</button>
-			<button id='btn_hits' class='btn_on'>hit</button>
-			<button id='btn_flipx' class='btn_off'>X</button>
-			<button id='btn_lines'>line</button>
-		</p>
-	</div>
-	<div id='viewer_bottom_nav'>
-		<p id='viewer_bottom_row_1'>
-			<button id='btn_prev'>&lt;&lt;</button>
-
-			<button id='btn_autonext'>auto</button>
-			<button id='btn_cur'>0</button>
-
-			<button id='btn_next'>&gt;&gt;</button>
-		</p>
-	</div>
-</div>
+</main>
 
 <script>
 var HTML = get_html_id();
-var QuadList = [];
-var SELECTED = '';
+var QuadList  = [];
+var ON_KEY   = -1;
+var ON_LAYER = [];
+var IS_REDRAW = true;
 
 (function(){
 	if ( ! QUAD.gl.init(HTML.canvas) )
@@ -3033,19 +2942,10 @@ var SELECTED = '';
 	HTML.quad_version.innerHTML = document.title;
 
 	// BETWEEN DEBUGGER-VIEWER
-	HTML.btn_view.addEventListener('click', function(){
-		display_viewer(HTML, true);
-	});
-	HTML.btn_debug.addEventListener('click', function(){
-		display_viewer(HTML, false);
-		HTML.logger.innerHTML = QUAD.func.console();
-	});
-
 	var UPLOAD_ID = -1;
 	HTML.btn_upload.addEventListener('click', function(){
 		UPLOAD_ID = this.getAttribute('data-id');
 		HTML.input_file.click();
-		HTML.logger.innerHTML = QUAD.func.console();
 	});
 	HTML.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', UPLOAD_ID);
@@ -3060,151 +2960,82 @@ var SELECTED = '';
 		Promise.all(promises).then(function(resolve){
 			qdata_filetable(qdata, HTML.debugger_files);
 			if ( qdata.name ){
-				HTML.quad_data.innerHTML = '';
+				HTML.keylist.innerHTML = '';
 				document.title = '[' + qdata.name + '] ' + HTML.quad_version.innerHTML;
 
-				var buffer = qdata_tagtable(qdata.quad.tag);
-				HTML.quad_data.innerHTML += buffer;
-
-				var quad_main = quad_mainlist(qdata.quad);
-				if ( quad_main === -1 )
+				if ( ! qdata.quad.keyframe )
 					return;
+				qdata.attach.type = 'keyframe';
 
-				var buffer = '<h2>' + quad_main + '</h2>';
-				buffer += '<ul>';
-				qdata.quad[quad_main].forEach(function(v,k){
+				var buffer = '';
+				qdata.quad.keyframe.forEach(function(v,k){
 					if ( ! v )
 						return;
-					buffer += qdata_listing(qdata, quad_main, k);
-
+					var name = v.name + ' (' + v.debug + ')';
+					buffer += '<li><p onclick="keyframe_select(' + k + ');">' + name + '</p></li>';
 				});
-				buffer += '</ul>';
-				HTML.quad_data.innerHTML += buffer;
+				HTML.keylist.innerHTML = buffer;
 			} // if ( qdata.name )
-			HTML.logger.innerHTML = QUAD.func.console();
+			IS_REDRAW = true;
 		});
-	});
-	HTML.export_range.addEventListener('change', function(){
-		HTML.export_start.innerHTML = this.value;
-	});
-	HTML.export_times.addEventListener('change', function(){
-		HTML.export_zoom.innerHTML = this.value;
 	});
 
 	// VIEWER
-	var IS_VIEWER_NAV = true;
-	var AUTOZOOM = -1;
-	HTML.canvas.addEventListener('click', function(){
-		if ( IS_VIEWER_NAV ) {
-			HTML.viewer_top_nav.style.display    = 'none';
-			HTML.viewer_bottom_nav.style.display = 'none';
-		} else {
-			HTML.viewer_top_nav.style.display    = 'block';
-			HTML.viewer_bottom_nav.style.display = 'block';
-		}
-		IS_VIEWER_NAV = ! IS_VIEWER_NAV;
+	var AUTOZOOM = 1.0;
+	HTML.btn_zoomin.addEventListener('click', function(){
+		AUTOZOOM *= 1.1;
+		if ( AUTOZOOM > 10.0 )
+			AUTOZOOM = 10.0;
+		IS_REDRAW = true;
+	});
+	HTML.btn_zoomout.addEventListener('click', function(){
+		AUTOZOOM /= 1.1;
+		if ( AUTOZOOM < 0.1 )
+			AUTOZOOM = 0.1;
+		IS_REDRAW = true;
 	});
 	HTML.btn_lines.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
 		QuadList[0].is_lines = ! QuadList[0].is_lines;
 		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
+		IS_REDRAW = true;
 	});
-	HTML.btn_hits.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_hits.classList.contains('btn_on') ){
-			button_toggle(HTML.btn_hits, -1);
-			QuadList[0].is_hits = false;
-		} else {
-			button_toggle(HTML.btn_hits, 1);
-			QuadList[0].is_hits = true;
+	HTML.btn_selectall.addEventListener('click', function(){
+		ON_LAYER = [];
+		var list = document.querySelectorAll('#layerlist li');
+		for ( var i=0; i < list.length; i++ ){
+			var id = list[i].getAttribute('data-id') | 0;
+			list[i].classList.add('layer_on');
+			ON_LAYER.push(id);
 		}
+		IS_REDRAW = true;
 	});
-	HTML.btn_flipx.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_flipx.classList.contains('btn_on') ){
-			button_toggle(HTML.btn_flipx, -1);
-			QuadList[0].is_flipx = false;
-		} else {
-			button_toggle(HTML.btn_flipx, 1);
-			QuadList[0].is_flipx = true;
+	HTML.btn_selectnone.addEventListener('click', function(){
+		ON_LAYER = [];
+		var list = document.querySelectorAll('#layerlist li');
+		for ( var i=0; i < list.length; i++ ){
+			list[i].classList.remove('layer_on');
 		}
+		IS_REDRAW = true;
 	});
 
-	var IS_BTN_CLICK = 0;
-	var IS_AUTONEXT  = false;
-	HTML.btn_prev.addEventListener('click', function(){
-		if ( IS_AUTONEXT ){
-			button_toggle(HTML.btn_next, -1);
-			if ( HTML.btn_prev.classList.contains('btn_on') ){
-				button_toggle(HTML.btn_prev, -1);
-				IS_BTN_CLICK = 0;
-			} else {
-				button_toggle(HTML.btn_prev, 1);
-				IS_BTN_CLICK = -1;
-			}
-		} else
-			IS_BTN_CLICK = -1;
-	});
-	HTML.btn_next.addEventListener('click', function(){
-		if ( IS_AUTONEXT ){
-			button_toggle(HTML.btn_prev, -1);
-			if ( HTML.btn_next.classList.contains('btn_on') ){
-				button_toggle(HTML.btn_next, -1);
-				IS_BTN_CLICK = 0;
-			} else {
-				button_toggle(HTML.btn_next, 1);
-				IS_BTN_CLICK = 1;
-			}
-		} else
-			IS_BTN_CLICK = 1;
-	});
-	HTML.btn_autonext.addEventListener('click', function(){
-		if ( IS_AUTONEXT ){
-			button_toggle(HTML.btn_prev, 0);
-			button_toggle(HTML.btn_next, 0);
-			IS_AUTONEXT = false;
-		} else {
-			button_toggle(HTML.btn_prev, -1);
-			button_toggle(HTML.btn_next, -1);
-			IS_AUTONEXT = true;
-		}
-	});
-
-	var FPS_DRAW = 0;
 	var CAMERA = QUAD.math.matrix4();
 	var COLOR  = [1,1,1,1];
 	function render(){
 		requestAnimationFrame(render);
-		if ( HTML.viewer.style.display !== 'block' )
-			return;
 		if ( ! QuadList[0] || ! QuadList[0].name )
 			return;
 		var qdata = QuadList[0];
 
-		// auto forward by 60/8 fps = 7.5 fps
-		if ( (FPS_DRAW & 7) === 0 ){
-			button_prev_next(qdata, IS_BTN_CLICK);
-			if ( ! IS_AUTONEXT )
-				IS_BTN_CLICK = 0;
-		}
-
 		// update/redraw only when changed
-		if ( QUAD.gl.is_canvas_resized() || QUAD.func.is_changed(qdata) ){
+		if ( QUAD.gl.is_canvas_resized() || IS_REDRAW ){
 			CAMERA = QUAD.func.viewer_camera(qdata, AUTOZOOM);
-			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
-			HTML.logger.innerHTML  = QUAD.func.console();
 
 			QUAD.func.qdata_clear(qdata);
-			QUAD.func.qdata_draw(qdata, CAMERA, COLOR);
-			if ( ! qdata.is_draw ){
-				HTML.btn_cur.innerHTML = 'END';
-			}
+			keydebug_draw(qdata, CAMERA, COLOR);
+			IS_REDRAW = false;
 		}
-
-		FPS_DRAW = (FPS_DRAW + 1) & 0xff;
 	}
 	render();
 })();

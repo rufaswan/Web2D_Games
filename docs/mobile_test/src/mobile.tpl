@@ -10,6 +10,9 @@
 </head><body>
 
 <h2>Mobile Browser</h2>
+	<h3>Global Vars</h3>
+	<table id='valuenavigator'></table>
+
 	<h3>Navigator</h3>
 	<table id='listnavigator'></table>
 
@@ -38,11 +41,45 @@ var HTML = get_html_id();
 
 // test Mobile Browser
 var list = [
-	'platform',
-	'userAgent',
-	['mediaDevices' , 'getUserMedia'],
+	[navigator , 'navigator', [
+		'appName',
+		'appCodeName',
+		'appVersion',
+		'product',
+		'productSub',
+		'vendor',
+		'vendorSub',
+		'platform',
+		'oscpu',
+		'buildID',
+		'userAgent',
+		'language',
+		'doNotTrack',
+		'cookieEnabled',
+		'maxTouchPoints',
+	]] ,
+	[document , 'document' , [
+		'URL',
+		'baseURI',
+		'location',
+		'title',
+		'dir',
+		'domain',
+		'referrer',
+		'readyState',
+		'visibilityState',
+		'compatMode',
+		'designMode',
+	]] ,
 ];
-mobileparameter(navigator, list, HTML.listnavigator);
+mobilevalue(list, HTML.valuenavigator);
+
+var list = [
+	['mediaDevices' , 'getUserMedia'],
+	['serviceWorker' , 'register'],
+	['storage' , 'estimate'],
+];
+mobileparameter(navigator, 'navigator', list, HTML.listnavigator);
 
 var list = [
 	'KeyboardEvent',
@@ -62,12 +99,12 @@ var list = [
 	'requestAnimationFrame',
 	'devicePixelRatio',
 ];
-mobileparameter(window, list, HTML.listwindow);
+mobileparameter(window, 'window', list, HTML.listwindow);
 
 var list = [
 	'querySelector' , 'querySelectorAll',
 ];
-mobileparameter(document, list, HTML.listdocument);
+mobileparameter(document, 'document', list, HTML.listdocument);
 
 var list = [
 	['display', 'flex'],

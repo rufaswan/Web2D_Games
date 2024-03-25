@@ -1,0 +1,14 @@
+# https://developer.mozilla.org/en-US/docs/Web/CSS/%40page/size
+# https://pixelcalculator.com/en
+
+-       mm       in         px@72 dpi  px@300 dpi
+A5      148x210   5.8x 8.3  420x 595   1748x2480
+A4      210x297   8.3x11.7  595x 842   2480x3508
+A3      297x420  11.7x16.5  842x1191   3508x4961
+B5      176x250   6.9x 9.8  499x 709   2079x2953
+B4      250x353   9.8x13.9  709x1001   2953x4169
+JIS-B5  182x257   7.1x10.1  516x 729   2150x3035
+JIS-B4  257x364  10.1x14.3  729x1032   3035x4299
+letter  216x279   8.5x11    612x 792   2550x3300
+legal   216x356   8.5x14    612x1008   2550x4200
+ledger  279x432  11  x17    792x1224   3300x5100

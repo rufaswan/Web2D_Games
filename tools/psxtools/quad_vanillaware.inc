@@ -23,6 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 $gp_data = array();
 
+	//////////////////////////////
 	$gp_data['ver55'] = array(
 		// ps2_grim  ps2_odin
 		// 3c   0 1  2 4 3 5 7 8 6 9  a
@@ -38,6 +39,18 @@ $gp_data = array();
 		array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x4e,2)), // s9
 		array('p'=>0x7c , 'k'=>0x8  , 'c'=>array(0x50,2)), // sa
 	); // ver55
+
+	$gp_data['ps2_grim'] = array(
+		'idtag' => 'ps2 grim grimoire',
+		'ord'  => 'str2int',
+		'sect' => $gp_data['ver55'],
+	); // ps2_grim
+	$gp_data['ps2_odin'] = array(
+		'idtag' => 'ps2 odin sphere',
+		'ord'  => 'str2int',
+		'sect' => $gp_data['ver55'],
+	); // ps2_odin
+	//////////////////////////////
 	$gp_data['ver66'] = array(
 		// nds_kuma  wii_mura
 		// 3c   0 1  2 4 3 5 7 8 6 9  a
@@ -53,137 +66,19 @@ $gp_data = array();
 		array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x4e,2)), // s9
 		array('p'=>0x7c , 'k'=>0x10 , 'c'=>array(0x50,2)), // sa
 	); // ver66
-	$gp_data['ver72'] = array(
-		// ps4_drag  ps3_odin  ps4_odin
-		// 50   4+ 0 1 2 3 5 7  8 6 9 a - b
-		array('p'=>0xb0  , 'k'=>0x18 , 'c'=>array(0x54,2)), // s0
-		array('p'=>0xb8  , 'k'=>0x30 , 'c'=>array(0x56,2)), // s1
-		array('p'=>0xc0  , 'k'=>0x30 , 'c'=>array(0x58,2)), // s2
-		array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s3 bg=0
-		array('p'=>0xd0  , 'k'=>0x10 , 'c'=>array(0x50,4)), // s4
-		array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s5 bg=0
-		array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x62,2)), // s6
-		array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s7
-		array('p'=>0xf0  , 'k'=>0x20 , 'c'=>array(0x60,2)), // s8
-		array('p'=>0xf8  , 'k'=>0x30 , 'c'=>array(0x64,2)), // s9
-		array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // sa
-		array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
-	); // ver72
-	$gp_data['ver77'] = array(
-		// swi_sent  swi_grim  swi_unic
-		// 50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
-		array('p'=>0xb0  , 'k'=>0x18 , 'c'=>array(0x54,4)), // s0
-		array('p'=>0xb8  , 'k'=>0x30 , 'c'=>array(0x58,4)), // s1
-		array('p'=>0xc0  , 'k'=>0x30 , 'c'=>array(0x5c,4)), // s2
-		array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x60,4)), // s3 bg=0
-		array('p'=>0xd0  , 'k'=>0x14 , 'c'=>array(0x50,4)), // s4
-		array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x64,2)), // s5 bg=0
-		array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x6a,2)), // s6
-		array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x66,2)), // s7
-		array('p'=>0xf0  , 'k'=>0x20 , 'c'=>array(0x68,2)), // s8
-		array('p'=>0xf8  , 'k'=>0x30 , 'c'=>array(0x6c,2)), // s9
-		array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x6e,2)), // sa
-		array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x72,2)), // sb bg=0
-	); // ver77
-	//////////////////////////////
-	$gp_data['ps2_grim'] = array(
-		'idtag' => 'ps2 grim grimoire',
-		'ord'  => 'str2int',
-		'sect' => $gp_data['ver55'],
-	); // ps2_grim
 
-	$gp_data['swi_grim'] = array(
-		'idtag' => 'switch grim grimoire hd',
+	$gp_data['nds_kuma'] = array(
+		'idtag' => 'nds kumatanchi',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
-	); // swi_grim
-	$gp_data['ps4_grim'] = array(
-		'idtag' => 'ps4 grim grimoire hd',
-		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
-	); // ps4_grim
-	$gp_data['ps5_grim'] = array(
-		'idtag' => 'ps5 grim grimoire hd',
-		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
-	); // ps5_grim
-	//////////////////////////////
-	$gp_data['ps2_odin'] = array(
-		'idtag' => 'ps2 odin sphere',
-		'ord'  => 'str2int',
-		'sect' => $gp_data['ver55'],
-	); // ps2_odin
-
-	$gp_data['vit_odin'] = array(
-		'idtag' => 'vita odin sphere resd',
-		'ord'  => 'str2int',
-		'sect' => array(
-			// 50  1+ - - - 0 2 4  5 3 6 7 - 8 - 9
-			array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s0 bg=0
-			array('p'=>0xd0  , 'k'=>0x10 , 'c'=>array(0x50,4)), // s1
-			array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s2 bg=0
-			array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x62,2)), // s3
-			array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s4
-			array('p'=>0xf0  , 'k'=>0x20 , 'c'=>array(0x60,2)), // s5
-			array('p'=>0xf8  , 'k'=>0x30 , 'c'=>array(0x64,2)), // s6
-			array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // s7
-			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // s8 bg=0
-			array('p'=>0x118 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s9
-		),
-	); // vit_odin
-
-	$gp_data['ps3_odin'] = array(
-		'idtag' => 'ps3 odin sphere rehd',
-		'ord'  => 'str2big',
-		'sect' => $gp_data['ver72'],
-	); // ps3_odin
-
-	$gp_data['ps4_odin'] = array(
-		'idtag' => 'ps4 odin sphere rehd',
-		'ord'  => 'str2int',
-		'sect' => $gp_data['ver72'],
-	); // ps4_odin
-	//////////////////////////////
+		'sect' => $gp_data['ver66'],
+	); // nds_kuma
 	$gp_data['wii_mura'] = array(
 		'idtag' => 'wii muramasa',
 		'ord'  => 'str2big',
 		'sect' => $gp_data['ver66'],
 	); // wii_mura
-
-	$gp_data['vit_mura'] = array(
-		'idtag' => 'vita muramasa rebirth',
-		'ord'  => 'str2int',
-		'sect' => array(
-			// 56  1 0 2 4 5  3 6 7 - - 8
-			array('p'=>0x7c , 'k'=>0x50 , 'c'=>array(0x58,2)), // s0 bg=0
-			array('p'=>0x80 , 'k'=>0xc  , 'c'=>array(0x56,2)), // s1
-			array('p'=>0x84 , 'k'=>0x8  , 'c'=>array(0x5a,2)), // s2 bg=0
-			array('p'=>0x88 , 'k'=>0x18 , 'c'=>array(0x60,2)), // s3
-			array('p'=>0x8c , 'k'=>0x24 , 'c'=>array(0x5c,2)), // s4
-			array('p'=>0x90 , 'k'=>0x20 , 'c'=>array(0x5e,2)), // s5
-			array('p'=>0x94 , 'k'=>0x30 , 'c'=>array(0x62,2)), // s6
-			array('p'=>0x98 , 'k'=>0x14 , 'c'=>array(0x64,2)), // s7
-			array('p'=>0xa0 , 'k'=>0x78 , 'c'=>array(0x6a,2)), // s8
-		),
-	); // vit_mura
 	//////////////////////////////
-	$gp_data['vit_drag'] = array(
-		'idtag' => 'vita dragon crown',
-		'ord'  => 'str2int',
-		'sect' => array(
-			// 50  1+ - - - 0 2 4  5 - 3 6 7 - 8
-			array('p'=>0x80 , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s0 bg=0
-			array('p'=>0x84 , 'k'=>0xc  , 'c'=>array(0x50,4)), // s1
-			array('p'=>0x88 , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s2 bg=0
-			array('p'=>0x8c , 'k'=>0x1c , 'c'=>array(0x64,2)), // s3
-			array('p'=>0x90 , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s4
-			array('p'=>0x94 , 'k'=>0x20 , 'c'=>array(0x60,2)), // s5
-			array('p'=>0x98 , 'k'=>0x30 , 'c'=>array(0x66,2)), // s6
-			array('p'=>0x9c , 'k'=>0x14 , 'c'=>array(0x68,2)), // s7
-			array('p'=>0xa4 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s8
-		),
-	); // vit_drag
-
+	// ver6e
 	$gp_data['ps3_drag'] = array(
 		'idtag' => 'ps3 dragon crown',
 		'ord'  => 'str2big',
@@ -202,13 +97,41 @@ $gp_data = array();
 			array('p'=>0x9c , 'k'=>0x14 , 'c'=>array(0x68,2)), // sa
 		),
 	); // ps3_drag
+	//////////////////////////////
+	$gp_data['ver72'] = array(
+		// ps4_drag  ps3_odin  ps4_odin
+		// 50   4+ 0 1 2 3 5 7  8 6 9 a - b
+		array('p'=>0xb0  , 'k'=>0x18 , 'c'=>array(0x54,2)), // s0
+		array('p'=>0xb8  , 'k'=>0x30 , 'c'=>array(0x56,2)), // s1
+		array('p'=>0xc0  , 'k'=>0x30 , 'c'=>array(0x58,2)), // s2
+		array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s3 bg=0
+		array('p'=>0xd0  , 'k'=>0x10 , 'c'=>array(0x50,4)), // s4
+		array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s5 bg=0
+		array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x62,2)), // s6
+		array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s7
+		array('p'=>0xf0  , 'k'=>0x20 , 'c'=>array(0x60,2)), // s8
+		array('p'=>0xf8  , 'k'=>0x30 , 'c'=>array(0x64,2)), // s9
+		array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // sa
+		array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
+	); // ver72
 
+	$gp_data['ps3_odin'] = array(
+		'idtag' => 'ps3 odin sphere rehd',
+		'ord'  => 'str2big',
+		'sect' => $gp_data['ver72'],
+	); // ps3_odin
+	$gp_data['ps4_odin'] = array(
+		'idtag' => 'ps4 odin sphere rehd',
+		'ord'  => 'str2int',
+		'sect' => $gp_data['ver72'],
+	); // ps4_odin
 	$gp_data['ps4_drag'] = array(
 		'idtag' => 'ps4 dragon crown pro',
 		'ord'  => 'str2int',
 		'sect' => $gp_data['ver72'],
 	); // ps4_drag
 	//////////////////////////////
+	// ver76
 	$gp_data['ps4_sent'] = array(
 		'idtag' => 'ps4 13 sentinels',
 		'ord'  => 'str2int',
@@ -228,13 +151,44 @@ $gp_data = array();
 			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // sb bg=0
 		),
 	); // ps4_sent
+	//////////////////////////////
+	$gp_data['ver77'] = array(
+		// swi_sent  swi_grim  swi_unic
+		// 50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
+		array('p'=>0xb0  , 'k'=>0x18 , 'c'=>array(0x54,4)), // s0
+		array('p'=>0xb8  , 'k'=>0x30 , 'c'=>array(0x58,4)), // s1
+		array('p'=>0xc0  , 'k'=>0x30 , 'c'=>array(0x5c,4)), // s2
+		array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x60,4)), // s3 bg=0
+		array('p'=>0xd0  , 'k'=>0x14 , 'c'=>array(0x50,4)), // s4
+		array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x64,2)), // s5 bg=0
+		array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x6a,2)), // s6
+		array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x66,2)), // s7
+		array('p'=>0xf0  , 'k'=>0x20 , 'c'=>array(0x68,2)), // s8
+		array('p'=>0xf8  , 'k'=>0x30 , 'c'=>array(0x6c,2)), // s9
+		array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x6e,2)), // sa
+		array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x72,2)), // sb bg=0
+	); // ver77
 
 	$gp_data['swi_sent'] = array(
 		'idtag' => 'switch 13 sentinels',
 		'ord'  => 'str2int',
 		'sect' => $gp_data['ver77'],
 	); // swi_sent
-	//////////////////////////////
+	$gp_data['swi_grim'] = array(
+		'idtag' => 'switch grim grimoire hd',
+		'ord'  => 'str2int',
+		'sect' => $gp_data['ver77'],
+	); // swi_grim
+	$gp_data['ps4_grim'] = array(
+		'idtag' => 'ps4 grim grimoire hd',
+		'ord'  => 'str2int',
+		'sect' => $gp_data['ver77'],
+	); // ps4_grim
+	$gp_data['ps5_grim'] = array(
+		'idtag' => 'ps5 grim grimoire hd',
+		'ord'  => 'str2int',
+		'sect' => $gp_data['ver77'],
+	); // ps5_grim
 	$gp_data['swi_unic'] = array(
 		'idtag' => 'switch unicorn overlord',
 		'ord'  => 'str2int',
@@ -250,13 +204,34 @@ $gp_data = array();
 		'ord'  => 'str2int',
 		'sect' => $gp_data['ver77'],
 	); // ps5_unic
-	//////////////////////////////
-	$gp_data['nds_kuma'] = array(
-		'idtag' => 'nds kumatanchi',
+	$gp_data['xbx_unic'] = array(
+		'idtag' => 'xbsx unicorn overlord',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver66'],
-	); // nds_kuma
-
+		'sect' => $gp_data['ver77'],
+	); // xbx_unic
+	//////////////////////////////
+	// ver55 -> ver66
+	//   s0 *20 -> *18
+	//   s1s2 *20 -> *30
+	//   s4 *18 -> *c
+	//   s7 *30 -> *24
+	//   sa *8  -> *10
+	// ver66 -> ver6e
+	//   head_off 3c -> 50
+	//   head 4 -> 4+
+	//   s6 *18 -> *1c
+	//   sa *10 -> *14
+	// ver6e -> ver72
+	//   new sb
+	//   s4 *c  -> *10
+	//   sa *14 -> *18
+	// ver72 -> ver76
+	//   s1 pre-divided
+	//   s4 *10 -> *14
+	// ver76 -> ver77
+	//   head 0 1 2 3 -> 0+ 1+ 2+ 3+
+	//////////////////////////////
+	// ver6b-m
 	$gp_data['psp_gran'] = array(
 		'idtag' => 'psp grand knights history',
 		'ord'  => 'str2int',
@@ -273,27 +248,61 @@ $gp_data = array();
 			array('p'=>0xa4 , 'k'=>0x60 , 'c'=>array(0x68,2)), // s8
 		),
 	); // psp_gran
-
-// v55 -> v66
-//   s0 *20 -> *18
-//   s1s2 *20 -> *30
-//   s4 *18 -> *c
-//   s7 *30 -> *24
-//   sa *8  -> *10
-// v66 -> v6e
-//   head_off 3c -> 50
-//   head 4 -> 4+
-//   s6 *18 -> *1c
-//   sa *10 -> *14
-// v6e -> v72
-//   new sb
-//   s4 *c  -> *10
-//   sa *14 -> *18
-// v72 -> v76
-//   s1 pre-divided
-//   s4 *10 -> *14
-// v76 -> v77
-//   head 0 1 2 3 -> 0+ 1+ 2+ 3+
+	//////////////////////////////
+	// ver6d-m
+	$gp_data['vit_mura'] = array(
+		'idtag' => 'vita muramasa rebirth',
+		'ord'  => 'str2int',
+		'sect' => array(
+			// 56  1 0 2 4 5  3 6 7 - - 8
+			array('p'=>0x7c , 'k'=>0x50 , 'c'=>array(0x58,2)), // s0 bg=0
+			array('p'=>0x80 , 'k'=>0xc  , 'c'=>array(0x56,2)), // s1
+			array('p'=>0x84 , 'k'=>0x8  , 'c'=>array(0x5a,2)), // s2 bg=0
+			array('p'=>0x88 , 'k'=>0x18 , 'c'=>array(0x60,2)), // s3
+			array('p'=>0x8c , 'k'=>0x24 , 'c'=>array(0x5c,2)), // s4
+			array('p'=>0x90 , 'k'=>0x20 , 'c'=>array(0x5e,2)), // s5
+			array('p'=>0x94 , 'k'=>0x30 , 'c'=>array(0x62,2)), // s6
+			array('p'=>0x98 , 'k'=>0x14 , 'c'=>array(0x64,2)), // s7
+			array('p'=>0xa0 , 'k'=>0x78 , 'c'=>array(0x6a,2)), // s8
+		),
+	); // vit_mura
+	//////////////////////////////
+	// ver6e-m
+	$gp_data['vit_drag'] = array(
+		'idtag' => 'vita dragon crown',
+		'ord'  => 'str2int',
+		'sect' => array(
+			// 50  1+ - - - 0 2 4  5 - 3 6 7 - 8
+			array('p'=>0x80 , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s0 bg=0
+			array('p'=>0x84 , 'k'=>0xc  , 'c'=>array(0x50,4)), // s1
+			array('p'=>0x88 , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s2 bg=0
+			array('p'=>0x8c , 'k'=>0x1c , 'c'=>array(0x64,2)), // s3
+			array('p'=>0x90 , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s4
+			array('p'=>0x94 , 'k'=>0x20 , 'c'=>array(0x60,2)), // s5
+			array('p'=>0x98 , 'k'=>0x30 , 'c'=>array(0x66,2)), // s6
+			array('p'=>0x9c , 'k'=>0x14 , 'c'=>array(0x68,2)), // s7
+			array('p'=>0xa4 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s8
+		),
+	); // vit_drag
+	//////////////////////////////
+	// ver72-m
+	$gp_data['vit_odin'] = array(
+		'idtag' => 'vita odin sphere resd',
+		'ord'  => 'str2int',
+		'sect' => array(
+			// 50  1+ - - - 0 2 4  5 3 6 7 - 8 - 9
+			array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s0 bg=0
+			array('p'=>0xd0  , 'k'=>0x10 , 'c'=>array(0x50,4)), // s1
+			array('p'=>0xd8  , 'k'=>0x8  , 'c'=>array(0x5c,2)), // s2 bg=0
+			array('p'=>0xe0  , 'k'=>0x1c , 'c'=>array(0x62,2)), // s3
+			array('p'=>0xe8  , 'k'=>0x24 , 'c'=>array(0x5e,2)), // s4
+			array('p'=>0xf0  , 'k'=>0x20 , 'c'=>array(0x60,2)), // s5
+			array('p'=>0xf8  , 'k'=>0x30 , 'c'=>array(0x64,2)), // s6
+			array('p'=>0x100 , 'k'=>0x18 , 'c'=>array(0x66,2)), // s7
+			array('p'=>0x108 , 'k'=>0x14 , 'c'=>array(0x6a,2)), // s8 bg=0
+			array('p'=>0x118 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s9
+		),
+	); // vit_odin
 //////////////////////////////
 function fog_quad( &$s, $p1, $p2, $p3, $p4 )
 {

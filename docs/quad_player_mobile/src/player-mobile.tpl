@@ -1,5 +1,5 @@
 <!doctype html>
-[license]
+<license>
 Copyright (C) 2019 by Rufas Wan
 
 This file is part of Web2D Games.
@@ -17,14 +17,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
-[/license]
+</license>
 <html><head>
 
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Quad Player - Mobile</title>
-@@<player.css>@@
-@@<player.js>@@
+@@<player-mobile.css>@@
+@@<player-mobile.js>@@
 @@<quad.js>@@
 </head><body>
 
@@ -51,7 +51,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	</p>
 
 	<div id='export_div' data-type='' data-id=''>
-		<p id='export_name'></p>
+		<p><button onclick='button_close(this);'>close</button> <span id='export_name'></span></p>
 		<p>
 			START = <span id='export_start'>0</span>
 			<input id='export_range' type='range' min='0' max='0' step='1' value='0'>
@@ -100,7 +100,8 @@ var SELECTED = '';
 	if ( ! QUAD.gl.init(HTML.canvas) )
 		return;
 
-	HTML.quad_version.innerHTML = 'Quad Player ' + QUAD.version;
+	document.title += ' - ' + QUAD.version;
+	HTML.quad_version.innerHTML = document.title;
 
 	// BETWEEN DEBUGGER-VIEWER
 	HTML.btn_view.addEventListener('click', function(){
@@ -131,7 +132,7 @@ var SELECTED = '';
 			qdata_filetable(qdata, HTML.debugger_files);
 			if ( qdata.name ){
 				HTML.quad_data.innerHTML = '';
-				document.title = qdata.name + ' [Quad Player ' + QUAD.version + ']';
+				document.title = '[' + qdata.name + '] ' + HTML.quad_version.innerHTML;
 
 				var buffer = qdata_tagtable(qdata.quad.tag);
 				HTML.quad_data.innerHTML += buffer;
@@ -163,7 +164,7 @@ var SELECTED = '';
 
 	// VIEWER
 	var IS_VIEWER_NAV = true;
-	var IS_AUTOZOOM   = true;
+	var AUTOZOOM = -1;
 	HTML.canvas.addEventListener('click', function(){
 		if ( IS_VIEWER_NAV ) {
 			HTML.viewer_top_nav.style.display    = 'none';
@@ -184,10 +185,10 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_hits.classList.contains('btn_on') ){
-			btn_toggle(HTML.btn_hits, -1);
+			button_toggle(HTML.btn_hits, -1);
 			QuadList[0].is_hits = false;
 		} else {
-			btn_toggle(HTML.btn_hits, 1);
+			button_toggle(HTML.btn_hits, 1);
 			QuadList[0].is_hits = true;
 		}
 	});
@@ -195,10 +196,10 @@ var SELECTED = '';
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_flipx.classList.contains('btn_on') ){
-			btn_toggle(HTML.btn_flipx, -1);
+			button_toggle(HTML.btn_flipx, -1);
 			QuadList[0].is_flipx = false;
 		} else {
-			btn_toggle(HTML.btn_flipx, 1);
+			button_toggle(HTML.btn_flipx, 1);
 			QuadList[0].is_flipx = true;
 		}
 	});
@@ -207,12 +208,12 @@ var SELECTED = '';
 	var IS_AUTONEXT  = false;
 	HTML.btn_prev.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btn_toggle(HTML.btn_next, -1);
+			button_toggle(HTML.btn_next, -1);
 			if ( HTML.btn_prev.classList.contains('btn_on') ){
-				btn_toggle(HTML.btn_prev, -1);
+				button_toggle(HTML.btn_prev, -1);
 				IS_BTN_CLICK = 0;
 			} else {
-				btn_toggle(HTML.btn_prev, 1);
+				button_toggle(HTML.btn_prev, 1);
 				IS_BTN_CLICK = -1;
 			}
 		} else
@@ -220,12 +221,12 @@ var SELECTED = '';
 	});
 	HTML.btn_next.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btn_toggle(HTML.btn_prev, -1);
+			button_toggle(HTML.btn_prev, -1);
 			if ( HTML.btn_next.classList.contains('btn_on') ){
-				btn_toggle(HTML.btn_next, -1);
+				button_toggle(HTML.btn_next, -1);
 				IS_BTN_CLICK = 0;
 			} else {
-				btn_toggle(HTML.btn_next, 1);
+				button_toggle(HTML.btn_next, 1);
 				IS_BTN_CLICK = 1;
 			}
 		} else
@@ -233,12 +234,12 @@ var SELECTED = '';
 	});
 	HTML.btn_autonext.addEventListener('click', function(){
 		if ( IS_AUTONEXT ){
-			btn_toggle(HTML.btn_prev, 0);
-			btn_toggle(HTML.btn_next, 0);
+			button_toggle(HTML.btn_prev, 0);
+			button_toggle(HTML.btn_next, 0);
 			IS_AUTONEXT = false;
 		} else {
-			btn_toggle(HTML.btn_prev, -1);
-			btn_toggle(HTML.btn_next, -1);
+			button_toggle(HTML.btn_prev, -1);
+			button_toggle(HTML.btn_next, -1);
 			IS_AUTONEXT = true;
 		}
 	});
@@ -256,14 +257,14 @@ var SELECTED = '';
 
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (FPS_DRAW & 7) === 0 ){
-			btn_prev_next(qdata, IS_BTN_CLICK);
+			button_prev_next(qdata, IS_BTN_CLICK);
 			if ( ! IS_AUTONEXT )
 				IS_BTN_CLICK = 0;
 		}
 
 		// update/redraw only when changed
 		if ( QUAD.gl.is_canvas_resized() || QUAD.func.is_changed(qdata) ){
-			CAMERA = QUAD.func.viewer_camera(qdata, IS_AUTOZOOM);
+			CAMERA = QUAD.func.viewer_camera(qdata, AUTOZOOM);
 			HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			HTML.logger.innerHTML  = QUAD.func.console();
 

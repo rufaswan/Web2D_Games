@@ -1,0 +1,12 @@
+[System]
+Xbox Series S/X
+
+[Game]
+Unicorn Overlord
+
+[Copyright]
+
+[???]
+
+[Comment]
+Vanillaware Ripping Project

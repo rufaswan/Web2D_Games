@@ -22,7 +22,7 @@ function display_viewer( html, toggle ){
 	html.export_div.style.display = 'none';
 }
 
-function btn_toggle( elem, turn ){
+function button_toggle( elem, turn ){
 	var css = elem.classList;
 	if ( turn > 0 ){
 		css.remove('btn_off');
@@ -38,7 +38,7 @@ function btn_toggle( elem, turn ){
 	css.remove('btn_off');
 }
 
-function btn_prev_next( qdata, adj ){
+function button_prev_next( qdata, adj ){
 	adj = adj | 0;
 	if ( ! qdata || adj === 0 )
 		return;
@@ -46,6 +46,11 @@ function btn_prev_next( qdata, adj ){
 		qdata.attach.id += adj;
 	else
 		qdata.anim_fps  += adj;
+}
+
+function button_close( elem ){
+	var par2  = elem.parentElement.parentElement;
+	par2.style.display = 'none';
 }
 
 function qdata_filetable( qdata, files ){
@@ -232,23 +237,21 @@ function button_export_type( elem ){
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_autofit.classList.contains('btn_on') ){
-			btn_toggle(HTML.btn_autofit, -1);
-			IS_AUTOZOOM = false;
-			QuadList[0].zoom = 1;
+			button_toggle(HTML.btn_autofit, -1);
+			AUTOZOOM = 1;
 		} else {
-			btn_toggle(HTML.btn_autofit, 1);
-			IS_AUTOZOOM = true;
-			QuadList[0].zoom = -1;
+			button_toggle(HTML.btn_autofit, 1);
+			AUTOZOOM = -1;
 		}
 	});
 	HTML.btn_flipy.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
 		if ( HTML.btn_flipy.classList.contains('btn_on') ){
-			btn_toggle(HTML.btn_flipy, -1);
+			button_toggle(HTML.btn_flipy, -1);
 			QuadList[0].is_flipy = false;
 		} else {
-			btn_toggle(HTML.btn_flipy, 1);
+			button_toggle(HTML.btn_flipy, 1);
 			QuadList[0].is_flipy = true;
 		}
 	});

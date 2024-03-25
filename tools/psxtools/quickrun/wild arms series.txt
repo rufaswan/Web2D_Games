@@ -3,54 +3,67 @@
 ============================
 
 Treasure Chest
-	Town                    =15
-		Little Twister        1
-		Little Rock           1
-		Ark of Destiny       11  10=1  11=2  12=1  13=1  14=1  15=1  16=1  17=2+1
-		Ballack Rise          2
+[!]= cannot revisit
 
-	Dungeon
-		Gob's Hideout        11  4=4  6=1  7=1  10=1  12=1  14=2  15=1
-		Den of Miasma         5  2=1  3=1  4=1  8=2
-		Fallen Sanctuary      6  5=3  12=2+1
-		Doomed to Obscurity   7  2=1  3=2  8=1  10=1  12=2
+	Chapter 1                   =60
+		Gob's Hideout            11  4=4  6=1  7=1  10=1  12=1  14=2  15=1
+		Den of Miasma             5  2=1  3=1  4=1  8=2
+		Baskar Colony             -
+		Fallen Sanctuary          6  5=3  12=2+1
+		Doomed to Obscurity       7  2=1  3=2  8=1  10=1  12=2
 
-		Ruins of Memory       9  6=1  7=1  8=1  9=3  13=2+1
-		Serpent's Coil       12  5=3  9=2  11=2  14=2+1  18=2
-		Ka Dingel            10  2=1  5=3  9=2  11=1+1  15=2
-		*Chapter 1          =60
+		Jolly Roger               -
+		Ruins of Memory           9  6=1  7=1  8=1  9=3  13=2+1
+		Claiborne                 -
+		Serpent's Coil           12  5=3  9=2  11=2  14=2+1  18=2
+		Ka Dingel                10  2=1  5=3  9=2  11=1+1  15=2
 
-		The Unclean Mark     12  4=4  7=4  12=4
-		Lunatic Garden       10  2=3  3=3  9=1  10=2  12=1
-		Sand Canal           13  3=2  5=1  6=1  9=2  10=3  12=2  14=1+1
-		Glimmering Emblem     8  4=1  5=1  7=2  9=1  11=1  15=2
-		Leyline Observatory   9  3=2  6=2  9=2  10=3
-		Gemstone Cave         7  3=1  6=2  7=1  12=2  13=1
-		Fortune Gear         10*1  3=1*1  5=2+1  8=3  13=3
-		Faraway Lands        12  3=3  5=3  7=1  8=2  9=1  12=2
-		Decaying Labyrinth    1
-		Infinitum            10  6=4  7=2  12=4
-		Nidhogg Pass         17  3=2  4=3  5=1  6=1  12=3  14=2  16=1  18=2  22=1+1
-		Yggdrasil            16  4=2  8=2  9=2  16=3  18=2  23=3  25=1+1
-		*Chapter 2          =125*1
+	Chapter 2                   =138*1
+		Little Twister            1
+		The Unclean Mark         12  4=4  7=4  12=4
+		Lunatic Garden           10  2=3  3=3  9=1  10=2  12=1
+		Sand Canal               13  3=2  5=1  6=1  9=2  10=3  12=2  14=1+1
+		Little Rock               1
+		Glimmering Emblem         8  4=1  5=1  7=2  9=1  11=1  15=2
+		Leyline Observatory       9  3=2  6=2  9=2  10=3
+		Humphreys Peak            -
+		Gemstone Cave             7  3=1  6=2  7=1  12=2  13=1
+		Fortune Gear             10*1  3=1*1  5=2+1  8=3  13=3
+		Faraway Lands            12  3=3  5=3  7=1  8=2  9=1  12=2
+		Secret Garden             -
+		Decaying Labyrinth        1
+		Ark of Destiny           11  10=1  11=2  12=1  13=1  14=1  15=1  16=1  17=2+1
+		[!]Survey Point #17       -
+		Boot Hill                 -
+		Infinitum                10  6=4  7=2  12=4
+		Nidhogg Pass             17  3=2  4=3  5=1  6=1  12=3  14=2  16=1  18=2  22=1+1
+		Greenlodge                -
+		Yggdrasil                16  4=2  8=2  9=2  16=3  18=2  23=3  25=1+1
 
-		Iron's Dragon's Nest  1
-		World's Footprint     8  6=2  12=3  15=3
-		Ruins of Dreams      11  2=2  3=3  9=1  12=3  13=1  14=1
-		Fila del Fia         10  3=3  5=1  6=1  7=3  15=2
-		Caging Tower         14  1=1+1  3=1  5=2  8=1  10=3  13=2  15=3
-		Dragon's Lair         8  2=1  3=2  4=2  5=2  6=1
-		Dissection Facility  11  2=1  5=1  6=2  8=1  9=1  11=1  12=1+1  13=1  15=1
-		Dim Root Path        10  3=3  7=3  8=1  13=3
-		*Chapter 3          =73
+	Chapter 3                   =75
+		[!]Iron's Dragon's Nest   1
+		World's Footprint         8  6=2  12=3  15=3
+		Ruins of Dreams          11  2=2  3=3  9=1  12=3  13=1  14=1
+		Fila del Fia             10  3=3  5=1  6=1  7=3  15=2
+		Caging Tower             14  1=1+1  3=1  5=2  8=1  10=3  13=2  15=3
+		Laxisland                 -
+		Dragon's Lair             8  2=1  3=2  4=2  5=2  6=1
+		Dissection Facility      11  2=1  5=1  6=2  8=1  9=1  11=1  12=1+1  13=1  15=1
+		THE ABYSS                 -
+		Dim Root Path            10  3=3  7=3  8=1  13=3
+		[!]Cradle of Metal Gods   -
+		Ballack Rise              2
+		[!]Deus Ex Machina        -
 
-		Sacrificial Altar     7  1=2  6=2  14=3
-		Demondor Pillar       2  13=2
-		Demondor Pillar-Rear  8  8=4  13=2  15=2
-		Mimir's Well          9  3=1  4=1  6=1  7=1  9=1  10=2  11=2
-		*Chapter 4          =26
+	Chapter 4                   =26
+		Sacrificial Altar         7  1=2  6=2  14=3
+		Demondor Pillar           2  13=2
+		Demondor Pillar-Rear      8  8=4  13=2  15=2
+		Gunners Heaven            -
+		Mimir's Well              9  3=1  4=1  6=1  7=1  9=1  10=2  11=2
+		Nightmare Castle          -
 
-	Millennium Puzzles      =20
+	Millennium Puzzles          =20
 
 	n   = chest
 	+ n = duplicator chest
@@ -59,9 +72,10 @@ Treasure Chest
 	TELEPORT ORB = Millennium Puzzles #14
 	ITEM SCOPE   = Gunners Heaven Novice League
 	SONAR KIT    = Gunners Heaven Journeyman League
+	EXODUS ORB   = Sacrificial Altar #2
 
 	TOTAL
-		= 15 + 60 + 125 + 1 + 73 + 26 + 20
+		= 60 + 138 + 1 + 75 + 26 + 20
 		= 320
 
 Tools
@@ -92,17 +106,188 @@ EX File Key
 	MAP Yggdrasil area + Item Scope
 	Final Boss - steal
 
+============================
+== Wild Arms Alter Code:F ==
+============================
+
+Treasure Chest
+[!]= cannot revisit
+
+	Chapter 1               =49
+		Surf Village          3  1=1  chief=1  horse barn=1
+		Berry Cave            6  4=1  6=2  7=1  8=1  9=1
+		Ruins of Memory      12  2=3  3=3  5=1  7=1-1  9=1  11=2
+		Curan Abbey           -
+		|-Sealed Library      5  1=1  3=1  12=1  14=1  15=1
+		|-De La Metalica      *refer chap 4*
+		Downtown Adlehyde     1  exhibition=1
+		|-Castle Adlehyde     6  =3+3
+		|-Under Adlehyde      6  3=1  6=2  8=1  13=1  14=1
+		Lolithia's Coffin    10  2=1  3=1  4=2  12=1  16=2  17=1  20=2
+
+	Chapter 2               =65*1
+		Mountain Path        15  4=1  5=3  6=2  7=2  8=1  9=4  10=2
+		Milama Village        3  1=3
+		Guardian Temple      10  2=2  5=2  6=1  7=2  9=1  10=1  12=1
+		Baskar Village        1  under alter=1
+		Mount Zenom          10  2=1  4=1  5=2  6=1  7=3  10=1+1
+		Elw Shrine 1-2        4  =2  =2
+		Saint Centaur         3  1=2  =1
+		Caging Tower         10  2=2  4=3  5=1  6=2  7=2
+		Elw Shrine 3-4        4  =2  =2
+		Port Timney           1*1  inn=+1  well=*1
+		|-Sweet Candy         -
+		Elw Shrine 5-6        4  =2  =2
+
+	Chapter 3               =73
+		Sand River            8  2=3  6=2  7=1  12=2
+		Ship Graveyard        5  1=5  (start 1=1 , after ghost ship 1=5)
+		Gento Soem            9  4=3  8=3  11=3
+		[!]Ghost Ship         1  5=1
+		Rosetta Town          -
+		Secret Garden         -
+		Volcannon Trap       16  4=2+1  5=4  7=2  8=2  11=3  12=1  17=1
+		Giant's Cradle       13  3=1  5=3  6=3  13=2  15=2  16=2
+		Court Seim            1  1=1
+		Sea of Wind Epitaph  16  2=4  9=3  13=3  14=3  15=2  19=1
+		Barrier Shelter       4  4=1  5=1  10=1  13=1
+		Photosphere           -
+
+	Chapter 4               =142
+		Dragon Shrine        22  3=1+2  4=2  5=1  6=2  8=1  10=1  11=2  12=1  14=3  15=3  (from elw world)  1=+3
+		Forgotten House       1  2=1
+		|-De La Metalica      9  2=4  4=1  (from curan abbey)  13=1  14=1  15=1  16=1
+		Fallen Sanctuary      9  3=3  4=3  7=2+1
+		Demon's Lab          13  4=1  8=2  9=3  10=2  14=3  15=2
+		[!]Gate Generator     1  4=1
+		Holy Wood Mount       5  elw=5
+		|-Tarjon Village      3  waterfall=3
+		|-Forest Prison      10  1=+4  3=+2  6=+2  7=+2
+		|-Sinner's Studio     1  cave=1
+		Gemini's Corpse       7  4=1  14=5  16=1
+		Pandemonium          16  2=3  6=2  20=3  27=2  28=5  29=+1
+		Artica Castle         7  5=2  8=2  12=1  19=2
+		Ka Dingel            24  2=2  6=3  8=3  9=1  11=2  16=1  19=2  22=2  24=3  30=2  35=3
+			(#34 switch = #3 #9 #12 #25 #26)
+		|-Malduke            14  5=1  8=1  13=4  19=4  26=4
+
+	Extra                   =23
+		Devil's Playground    1  =1
+			(password = PS2 system date)
+		Killing Stone Cave    8  12=+1  26=+1  35=+1  38=+1  41=+1  43=+1  44=+1  48=+1
+		Perpetual Engine     12  1=12
+		Elw Shrine 7          2  =2  (damaged) <- any Shrine + 30 Teleport Gem
+		|-The Abyss           -
+
+	Puzzle Box              =30
+
+	n   = chest
+	+ n = duplicator / fancy chest
+	- n = exploding  / yellow chest (gone after opened)
+	* n = black box
+	TARGET TOOL     = Curan Abbey
+	ITEM SCOPE      = Downtown Adlehyde , donate 12,000+ gella
+	TRACKER         = Mount Zenom #7
+	GIANT'S OCARINA = Forgotten House
+	SONAR KIT       = Ka Dingel #6
+	WHISTLE         = Killing Stone Cave #22
+
+	TOTAL
+		= 49 + 65 + 1 + 73 + 142 + 23 + 30
+		= 383
+
+Tools
+	Rudy     Surf Village   , Sand River   , Ghost Ship     , Gemini's Corpse
+	Jack     *start*        , Caging Tower , Dragon Shrine  , Malduke
+	Cecilia  Sealed Library , Port Timney  , Giant's Cradle , Fallen Sanctuary
+
+	Emma     Lolithia's Coffin
+	Zed      (3 guys)Sea of Wind Epitaph
+
+Killing Stone Cave
+
+	.          1*2
+	===================
+	.      5*6-4 26c
+	.          | |
+	.     23---3-24--25
+	.          |
+	.          2
+	===================
+	. 8*9  30*36 28*38
+	. |    |     |
+	. 7----6-----27
+	. |    |     |
+	.32*33 31*35 29*39
+	===================
+	.      36----37*6--38c
+	.            |
+	.33----34*6  39
+	.      |
+	.      35c
+	===================
+	. 43c-11--12c 15*16
+	.     |   |   |
+	.  9--10  13--14
+	.     |   |   |
+	. 41c-40--42  44c
+	===================
+	. 20*21-19**--18**
+	.       |     |
+	. 46**--45**--17**
+	. |     |     |
+	. 48c**-47**  16**  ** = *16
+	===================
+	. 22*1
+	. |
+	. 21*20
+
+ABYSS
+	blue +/-1 , green +/-10 , orange=#1
+
+	3-13-23
+	7-17
+	12-2-1 exodus orb
+	21-31-41
+	27-37
+	30->31
+	42-52
+	47-57
+	53-63-73/sw->83-93
+	67-77
+	79->80-90->100
+	84-94
+
+EX File Key
+	 1  chest Lolithia's Coffin #17
+	 2  chest Elw Shrine 2
+	 3   99 * Gimel Coins
+	 4  Surf Village Chicken quest
+	 5   37 * Music (F24 + B13)
+	 6  BOSS Mother
+	 7    7 * Golems
+	 8  chest Witch Novels #1-10
+	 9  chest Black Pass + max gella
+	10  382 * Chest + BOSS Black Box * 3
+	11  chest Pandemonium #29
+	12  331 * 50% Monster Book
+	13-18  LV 100 Rudy , Jack , Cecilia , Jane , Zed , Emma
+	19  MAP 100%
+	20    7 * Secret Garden
+	21  BOSS Motherfried - steal
+	22  ABYSS #100 + 2 * BOSS Ragu O Ragla
+	23   30 * Puzzle Box
+	24  BOSS Zeik Tuvai - Lucky Shot
+	25  MAP Gento Soem area + Item Scope
+
 =============================
 == Wild Arms 4th Detonator ==
 =============================
 
 Treasure Chest
 [!]= cannot revisit
-	Town                    = 6
-		Guara Bobelo          4  1=1  2=2+1
-		Frontier Town Halim   2  3=1+1
 
-	Dungeon
+	Chapter 1               =42
 		[!]Sunlit Path        5  2=2  3=3
 		[!]Ravaged Forest     6  3=2  4=2  8=2
 
@@ -111,8 +296,9 @@ Treasure Chest
 		Celesti Ruins         8  2=2  3=+1  5=2  7=2  10=1
 		Great Stairway        3  1=1  2=1+1
 		White Orphanage      11  1=1  2=1+1  6=2  9=1-1  11=2+1  12=1
-		*Chapter 1          =42
 
+	Chapter 2               =75*1
+		Guara Bobelo          4  1=1  2=2+1
 		Calucion Pass         1  2=1
 		Platapana Passage    10  1=1  4=1  5=1  7=1-1  8=1+2  11=2
 		Neve d'Argento        2  2=-1  3=1
@@ -123,9 +309,10 @@ Treasure Chest
 		Etemenanki           13  1=1  2=2+1  4=1+1  5=2  12=2  13=1  15=2
 		Forgotten City       14  5=-1  6=2  7=1  9=-1  10=2  11=+2  12=3+1  14=+1
 		Abandoned Village     3  1=1  2=1  3=-1
-		*Chapter 2          =71*1
 
+	Chapter 3               =60
 		Dragon Fossil Mine    8  1=3  2=1+2  3=1-1
+		Frontier Town Halim   2  3=1+1
 		Valley of Oblivion    9  1=2  3=1+1  6=1  7=-1  9=1  10=1-1
 		Blue Amity Beach      7  1=3  2=+2  3=1+1
 		Fallen Bridge XdXS    4  1=1  2=+1  3=1-1
@@ -133,16 +320,16 @@ Treasure Chest
 		Illsveil Prison A    18  3=2  4=1  5=1  6=2  7=2  9=+1  10=1+1  11=1+1  12=3  13=-1
 			(A #14 <-> B #1/B #15)
 		Illsveil Prison B     8  2=1  4=+1  6=1  9=+1  12=+2  14=1
-		*Chapter 3          =58
 
 	n   = chest
 	+ n = duplicator / blue chest
 	- n = detector   / red  chest
 	* n = black box
-	DETECTOR = Illsveil Prison A #11 Duplicator Chest
+	DETECTOR   = Illsveil Prison A #11 Duplicator Chest
+	EXODUS ORB = Illsveil Prison B #14 Chest
 
 	TOTAL
-		= 6 + 42 + 71 + 1 + 58
+		= 42 + 75 + 1 + 60
 		= 178
 
 EX File Key
@@ -228,12 +415,16 @@ Treasure Chest
 
 	Locus Solus
 		Pilgrims' Cradle          1
+		Black Box                 -
 
 	n   = chest
 	+ n = duplicator / blue chest
 	- n = powershot  / cyan chest
 	* n = black box
-	SONAR KIT = COCYTUS #15 Sealed Crystal BOSS Lycanthrope * 3
+	GIANT'S OCARINA = Pilgrims' Cradle (before)
+	TELEPORT ORB    = Pilgrims' Cradle (after)
+	EXODUS ORB      = TF System Tower O #15 Chest
+	SONAR KIT       = COCYTUS #15 Sealed Crystal BOSS Lycanthrope * 3
 
 	TOTAL
 		= 78 + 1 + 117 + 94 + 71 + 1

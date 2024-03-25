@@ -122,6 +122,9 @@ ul {
 #export_div button {
 	margin : 1em;
 }
+#export_div input[type=range] {
+	width : 90%;
+}
 
 #quad_data p {
 	line-height     : 42px;

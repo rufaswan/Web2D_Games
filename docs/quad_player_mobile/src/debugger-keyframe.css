@@ -1,0 +1,139 @@
+body {
+	background-color : #404040;
+	overflow         : hidden;
+	margin           : 0;
+	padding          : 0;
+	overflow         : hidden;
+}
+body, a, a:hover, a:visited {
+	color       : #c0c0c0;
+	font-family : sans-serif;
+}
+
+button {
+	background-color : rgba(255 , 255 , 255 , 0.5);
+	white-space      : nowrap;
+	text-transform   : uppercase;
+	margin           : 9px  18px;
+	min-width        : 42px;
+	min-height       : 42px;
+	padding          : 0.5em;
+	border           : 0;
+}
+button.btn_on {
+	background-color : rgba(0 , 255 , 0 , 0.5);
+	color            : #000;
+}
+
+button.btn_off {
+	background-color : rgba(255 , 0 , 0 , 0.5);
+	color            : #fff;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	text-transform : uppercase;
+	border-bottom  : 1px #808080 solid;
+}
+
+ul {
+	list-style-type : none;
+}
+
+.hidden {
+	display : none;
+}
+
+main,
+main > nav {
+	display     : flex;
+	position    : relative;
+	align-items : stretch;
+	margin      : 0;
+	padding     : 0;
+}
+main > nav {
+	overflow : hidden scroll;
+}
+#debugger {
+	position : relative;
+	overflow : hidden;
+}
+#debugger #quad_data,
+#debugger #layerdata {
+	position         : absolute;
+	top              : 0;
+	left             : 0;
+	width            : 100%;
+	height           : 100%;
+	background-color : #404040;
+	overflow         : scroll;
+}
+#debugger #layerdata {
+	display : none;
+}
+#viewer {
+	position : relative;
+	overflow : hidden;
+}
+#viewer #canvas,
+#viewer img {
+	position : absolute;
+	top      : 0;
+	left     : 0;
+	width    : 100%;
+	height   : 100%;
+}
+#keylist,
+#layerlist {
+	margin           : 0;
+	padding          : 0;
+}
+#keylist p,
+#layerlist p {
+	border      : 1px #c0c0c0 solid;
+	padding     : 0 0.5em;
+	line-height : 42px;
+}
+#layerlist .layer_on {
+	background-color : #c0c0c0;
+	color            : #404040;
+}
+
+@media (orientation:landscape) {
+	main {
+		flex-direction : row;
+	}
+	main > nav {
+		flex-direction : column;
+		width          :  10vw;
+		height         : 100vh;
+	}
+	#viewer {
+		width  :  45vw;
+		height : 100vh;
+	}
+	#debugger {
+		width  :  45vw;
+		height : 100vh;
+	}
+}
+
+@media (orientation:portrait) {
+	main {
+		flex-direction : column;
+	}
+	main > nav {
+		flex-direction : row;
+		width          : 100vw;
+		height         :  10vh;
+	}
+	#viewer {
+		width  : 100vw;
+		height :  45vh;
+	}
+	#debugger {
+		width  : 100vw;
+		height :  45vh;
+	}
+}

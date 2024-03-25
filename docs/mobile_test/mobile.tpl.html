@@ -21,23 +21,39 @@ function get_html_id(){
 	return html;
 }
 
-function mobileparameter( mobile, list, table ){
+function mobilevalue( list, table ){
+	var output = '';
+	list.forEach(function(lv,lk){
+		if ( ! Array.isArray(lv) || ! Array.isArray(lv[2]) )
+			return;
+		var curr = lv[0];
+		lv[2].forEach(function(lvv,lvk){
+			var name = lv[1] + '.' + lvv;
+			var tmp = curr[ lvv ];
+			output += '<tr><td>' + name + '</td><td>' + tmp + '</td></tr>';
+		});
+	});
+	table.innerHTML = output;
+}
+
+function mobileparameter( mobile, base, list, table ){
 	var output = '';
 	list.forEach(function(lv,lk){
 		if ( Array.isArray(lv) ){
-			var cur  = mobile;
-			var name = '';
+			var curr = mobile;
+			var name = base;
 			for ( var i=0; i < lv.length; i++ ){
-				var tmp = cur[ lv[i] ];
+				var tmp = curr[ lv[i] ];
 				var p2  = ( tmp ) ? 'ok' : 'fail';
 				name   += '.' + lv[i];
 				output += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
-				cur = tmp;
+				curr = tmp;
 			} // for ( var i=0; i < lv.length; i++ )
 		}
 		else {
-			var p2 = ( mobile[lv] ) ? 'ok' : 'fail';
-			output += '<tr><td>' + lv + '</td><td>' + p2 + '</td></tr>';
+			var p2   = ( mobile[lv] ) ? 'ok' : 'fail';
+			var name = base + '.' + lv;
+			output  += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
 		}
 	});
 	table.innerHTML = output;
@@ -68,8 +84,10 @@ function glparameter( GL, list, table ){
 function glreference( GL, list, table ){
 	var output = '';
 	list.forEach(function(lv,lk){
+		if ( ! Array.isArray(lv) )
+			return;
 		var val = GL.getParameter( GL[ lv[0] ] );
-		var p2 = '' + val + ' [' + lv[1] + ']';
+		var p2 = '' + val + ' >= ' + lv[1];
 		var p3 = ( val >= lv[1] ) ? 'ok' : 'fail';
 		output += '<tr><td>' + lv[0].toLowerCase() + '</td><td>' + p2 + '</td><td>' + p3 + '</td></tr>';
 	});
@@ -101,6 +119,9 @@ function glprecision( GL, table ){
 </head><body>
 
 <h2>Mobile Browser</h2>
+	<h3>Global Vars</h3>
+	<table id='valuenavigator'></table>
+
 	<h3>Navigator</h3>
 	<table id='listnavigator'></table>
 
@@ -129,11 +150,45 @@ var HTML = get_html_id();
 
 // test Mobile Browser
 var list = [
-	'platform',
-	'userAgent',
-	['mediaDevices' , 'getUserMedia'],
+	[navigator , 'navigator', [
+		'appName',
+		'appCodeName',
+		'appVersion',
+		'product',
+		'productSub',
+		'vendor',
+		'vendorSub',
+		'platform',
+		'oscpu',
+		'buildID',
+		'userAgent',
+		'language',
+		'doNotTrack',
+		'cookieEnabled',
+		'maxTouchPoints',
+	]] ,
+	[document , 'document' , [
+		'URL',
+		'baseURI',
+		'location',
+		'title',
+		'dir',
+		'domain',
+		'referrer',
+		'readyState',
+		'visibilityState',
+		'compatMode',
+		'designMode',
+	]] ,
 ];
-mobileparameter(navigator, list, HTML.listnavigator);
+mobilevalue(list, HTML.valuenavigator);
+
+var list = [
+	['mediaDevices' , 'getUserMedia'],
+	['serviceWorker' , 'register'],
+	['storage' , 'estimate'],
+];
+mobileparameter(navigator, 'navigator', list, HTML.listnavigator);
 
 var list = [
 	'KeyboardEvent',
@@ -153,12 +208,12 @@ var list = [
 	'requestAnimationFrame',
 	'devicePixelRatio',
 ];
-mobileparameter(window, list, HTML.listwindow);
+mobileparameter(window, 'window', list, HTML.listwindow);
 
 var list = [
 	'querySelector' , 'querySelectorAll',
 ];
-mobileparameter(document, list, HTML.listdocument);
+mobileparameter(document, 'document', list, HTML.listdocument);
 
 var list = [
 	['display', 'flex'],

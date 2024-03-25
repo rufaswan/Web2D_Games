@@ -740,7 +740,9 @@ function QuadFunc(Q){
 		var movex = canvsz[0] * 0  ; // no change
 		var movey = canvsz[1] * 0.5; // half downward
 
-		if ( autozoom ){
+		if ( autozoom > 0.0 )
+			qdata.zoom = autozoom;
+		if ( autozoom < 0.0 ){
 			var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 			if ( sprsize ){
 				if ( sprsize[0] < 0 || sprsize[1] < 0 ){
@@ -763,7 +765,7 @@ function QuadFunc(Q){
 					movey = (sprsize[1] - hh) * qdata.zoom;
 				}
 			} // if ( sprsize )
-		} // if ( autozoom )
+		} // if ( autozoom < 0.0 )
 
 		var m4 = Q.math.matrix4();
 		m4[0+3] = movex;
