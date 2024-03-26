@@ -104,6 +104,7 @@ swi grim/cat00.mbs
 	a - b - | 11dc -    - - |  a*18    -
 
 swi unic/Cat00.mbs
+ps4 unic/Cat00.mbs
 	0 - 1 - |  120 -  138 - |   1*18  19*30
 	2 - 3 - |  5e8 - 3198 - |  e9*30   3*50
 	4 - 5 - | 5234 - 75fc - | 1ca*14   4*8
@@ -130,7 +131,7 @@ swi grim  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*
 ps4 grim
 ps5 grim
 swi unic  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
-ps4 unic
+ps4 unic  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
 ps5 unic
 xbx unic
 ==============================
@@ -153,7 +154,7 @@ swi grim  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
 ps4 grim
 ps5 grim
 swi unic  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
-ps4 unic
+ps4 unic  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
 ps5 unic
 xbx unic
 ==============================

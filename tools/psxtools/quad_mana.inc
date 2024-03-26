@@ -167,7 +167,7 @@ function sectquad( &$atlas, &$keys, &$hits, &$quad )
 			xywh_move  ($dst, $kvv['dx'], $kvv['dy']);
 
 			$en = array(
-				'_debug'   => sprintf('0x%x', $kvv['bit']),
+				'debug'    => sprintf('0x%x', $kvv['bit']),
 				'dstquad'  => $dst,
 				'srcquad'  => array(
 					$x   ,$y    ,
@@ -203,7 +203,7 @@ function sectquad( &$atlas, &$keys, &$hits, &$quad )
 		foreach ( $hv as $hvv )
 		{
 			$en = array(
-				'_debug'  => sprintf('0x%x', $kvv['bit']),
+				'debug'   => sprintf('0x%x', $kvv['bit']),
 				'hitquad' => $hvv['hit'],
 			);
 			$layer[] = $en;

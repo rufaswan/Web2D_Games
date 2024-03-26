@@ -141,7 +141,7 @@ function sect_quad( &$atlas, &$tmg, &$meta, &$quad )
 			{
 				list($hx,$hy,$hw,$hh,$hty) = $lv;
 				$h = array(
-					'_debug'  => $hty,
+					'debug'   => $hty,
 					'hitquad' => array(
 						$hx    , $hy    ,
 						$hx+$hw, $hy    ,

@@ -6,6 +6,7 @@
 ** updates is located at `docs/quad_player_mobile`
 ** Online version :
 *** {ghpage}/quad_player_mobile/player-mobile.tpl.html
+*** {ghpage}/quad_player_mobile/debugger-keyframe.tpl.html
 
 ** Dev Test
 *** {ghpage}/mobile_test/mobile.tpl.html

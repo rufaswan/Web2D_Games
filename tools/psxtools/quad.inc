@@ -458,7 +458,7 @@ function blend_modes( $mode )
 			$blend = array(
 				'name' => 'normal',
 				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-				'_debug' => '(FG.rgb * FG.a) + ((BG.rgb * BG.a) * (1 - FG.a))',
+				'debug' => '(FG.rgb * FG.a) + ((BG.rgb * BG.a) * (1 - FG.a))',
 			);
 			return $blend;
 
@@ -467,7 +467,7 @@ function blend_modes( $mode )
 			$blend = array(
 				'name' => 'add',
 				'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
-				'_debug' => 'FG.rgba + BG.rgba',
+				'debug' => 'FG.rgba + BG.rgba',
 			);
 			return $blend;
 
@@ -477,7 +477,7 @@ function blend_modes( $mode )
 			$blend = array(
 				'name' => 'subtract',
 				'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
-				'_debug' => 'BG.rgba - FG.rgba',
+				'debug' => 'BG.rgba - FG.rgba',
 			);
 			return $blend;
 	} // switch ( $mode )

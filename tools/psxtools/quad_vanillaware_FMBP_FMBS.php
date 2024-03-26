@@ -354,6 +354,7 @@ function FMBS_s4( $id )
 		$blend_id = 0;
 		$tex_id   = 0;
 		$s0s1s2   = array(0,0,0);
+		$set_id   = array(0,0);
 
 		// c , v66+
 		// 10 , v72+
@@ -493,17 +494,26 @@ function FMBS_s4( $id )
 
 			case 'ps4_sent': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
-				// 2   - - 1 1 1 1 4       2   2   2   - -
+				// 2   - - 1 1 1 1 2   2   2   2   2   - -
 			case 'swi_sent': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - 1 1 1 1 2   2   2   2   2   - -
 			case 'swi_grim': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - - 1 1 1 - - - - 2   2   2   - -
 			case 'swi_unic': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 2   - - 1 1 1 1 2   2   2   2   2   - -
 			case 'ps4_unic': // 14
+				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
+				// 4       1 1 1 1 2   2   2   2   2   - -
 				$b00 = $ord($s, 0x00, 4);
 				$b04 = $ord($s, 0x04, 1);
 				$b05 = $ord($s, 0x05, 1); // flags
 				$b06 = $ord($s, 0x06, 1); // 0 1 2 3  blend id
 				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 4);
+				$b08 = $ord($s, 0x08, 2); // set id
+				$b0a = $ord($s, 0x0a, 2); // set sub-id
 				$b0c = $ord($s, 0x0c, 2); // s1 id
 				$b0e = $ord($s, 0x0e, 2); // s0 id
 				$b10 = $ord($s, 0x10, 2); // s2 id
@@ -512,6 +522,7 @@ function FMBS_s4( $id )
 				$blend_id = $b06;
 				$tex_id   = $b07;
 				$s0s1s2   = array($b0e,$b0c,$b10);
+				$set_id   = array($b08,$b0a);
 				break;
 		} // switch ( $gp_share['tag'] )
 
@@ -521,6 +532,7 @@ function FMBS_s4( $id )
 			'tex'    => $tex_id   ,
 			's0s1s2' => $s0s1s2   ,
 			'bits'   => '0x' . dechex($flags) ,
+			'sets'   => $set_id   ,
 		);
 	} // for ( $i=0; $i < $sc; $i++ )
 

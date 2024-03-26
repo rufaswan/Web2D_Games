@@ -210,7 +210,7 @@ function s6_loop( &$quad )
 				$s2v = $gp_json['s2'][$s2k];
 
 				$data = array(
-					'_debug'   => sprintf('%s,%s', $s4v['bits'], $s4v['blend']),
+					'debug'    => sprintf('%s,%s,%x,%x', $s4v['bits'], $s4v['blend'], $s4v['sets'][0], $s4v['sets'][1]),
 					'dstquad'  => $s2v,
 					'blend_id' => $s4v['blend'],
 				);
@@ -234,9 +234,9 @@ function s6_loop( &$quad )
 			} // for ( $i=0; $i < $s6v['s4'][1]; $i++ )
 
 			$s4 = array(
-				'_debug' => $s6v['bits'],
-				'name'   => sprintf('keyframe %d', $s6k),
-				'layer'  => $layer,
+				'debug' => $s6v['bits'],
+				'name'  => sprintf('keyframe %d', $s6k),
+				'layer' => $layer,
 			);
 			list_add( $quad['keyframe'], $s6k, $s4 );
 		}
@@ -257,7 +257,7 @@ function s6_loop( &$quad )
 				$s3v = $gp_json['s3'][$s3k];
 
 				$data = array(
-					'_debug'  => $s5v['bits'],
+					'debug'   => $s5v['bits'],
 					'hitquad' => $s3v['rect'],
 				);
 				$gp_s5_flag = hexdec( $s5v['bits'] );
@@ -437,7 +437,7 @@ function q3D_sas8s9_loop( &$salist, &$quad )
 				$matrix = s7_matrix( $gp_json['s7'][$s7k], $flipx, $flipy );
 
 				$ent = array(
-					'_debug'       => $s8v['bits'],
+					'debug'        => $s8v['bits'],
 					'time'         => $s8v['time'],
 					'matrix_mix'   => $s8v['in_s7'],
 					'color_mix'    => $s8v['in_s7'],
@@ -492,32 +492,32 @@ function vanilla_blendmode( $tag )
 			$blend[0] = array(
 				'name' => '44 = 0101',
 				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-				'_debug' => '((FG.rgb - BG.rgb) * FG.a) + BG.rgb',
+				'debug' => '((FG.rgb - BG.rgb) * FG.a) + BG.rgb',
 			);
 			$blend[1] = array(
 				'name' => '48 = 0201',
 				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE'),
-				'_debug' => '((FG.rgb - 0) * FG.a) + BG.rgb',
+				'debug' => '((FG.rgb - 0) * FG.a) + BG.rgb',
 			);
 			$blend[2] = array(
 				'name' => '42 = 2001',
 				'mode' => array('FUNC_REVERSE_SUBTRACT', 'SRC_ALPHA', 'ONE'),
-				'_debug' => '((0 - FG.rgb) * FG.a) + BG.rgb',
+				'debug' => '((0 - FG.rgb) * FG.a) + BG.rgb',
 			);
 			$blend[3] = array(
 				'name' => '54 = 0111',
 				'mode' => array('FUNC_ADD', 'DST_ALPHA', 'ONE_MINUS_DST_ALPHA'),
-				'_debug' => '((FG.rgb - BG.rgb) * BG.a) + BG.rgb',
+				'debug' => '((FG.rgb - BG.rgb) * BG.a) + BG.rgb',
 			);
 			$blend[4] = array(
 				'name' => '58 = 0211',
 				'mode' => array('FUNC_ADD', 'DST_ALPHA', 'ONE'),
-				'_debug' => '((FG.rgb - 0) * BG.a) + BG.rgb',
+				'debug' => '((FG.rgb - 0) * BG.a) + BG.rgb',
 			);
 			$blend[5] = array(
 				'name' => '52 = 2011',
 				'mode' => array('FUNC_REVERSE_SUBTRACT', 'DST_ALPHA', 'ONE'),
-				'_debug' => '((0 - FG.rgb) * BG.a) + BG.rgb',
+				'debug' => '((0 - FG.rgb) * BG.a) + BG.rgb',
 			);
 			return $blend;
 
