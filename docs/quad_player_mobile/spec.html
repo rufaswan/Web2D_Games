@@ -20,20 +20,20 @@
 <li><a href="#_introduction">Introduction</a></li>
 <li><a href="#_basic_file_structure">Basic File Structure</a>
 <ul class="sectlevel2">
-<li><a href="#_quad_object">quad_object</a></li>
-<li><a href="#_tag_object">tag_object</a></li>
-<li><a href="#_attach_object">attach_object</a></li>
-<li><a href="#_slot_object">slot_object</a></li>
-<li><a href="#_keyframe_object">keyframe_object</a></li>
-<li><a href="#_keyframe_layer_object">keyframe_layer_object</a></li>
-<li><a href="#_hitbox_object">hitbox_object</a></li>
-<li><a href="#_hitbox_layer_object">hitbox_layer_object</a></li>
-<li><a href="#_animation_object">animation_object</a></li>
-<li><a href="#_animation_timeline_object">animation_timeline_object</a></li>
-<li><a href="#_skeleton_object">skeleton_object</a></li>
-<li><a href="#_skeleton_bone_object">skeleton_bone_object</a></li>
-<li><a href="#_blend_object">blend_object</a></li>
-<li><a href="#_quad_object_2">quad_object</a></li>
+<li><a href="#quad_object">Quad Object</a></li>
+<li><a href="#tag_object">Tag Object</a></li>
+<li><a href="#attach_object">Attach Object</a></li>
+<li><a href="#slot_object">Slot Object</a></li>
+<li><a href="#keyframe_object">Keyframe Object</a></li>
+<li><a href="#keyframe_layer_object">Keyframe Layer Object</a></li>
+<li><a href="#hitbox_object">Hitbox Object</a></li>
+<li><a href="#hitbox_layer_object">Hitbox Layer Object</a></li>
+<li><a href="#animation_object">Animation Object</a></li>
+<li><a href="#animation_timeline_object">Animation Timeline Object</a></li>
+<li><a href="#skeleton_object">Skeleton Object</a></li>
+<li><a href="#skeleton_bone_object">Skeleton Bone Object</a></li>
+<li><a href="#blend_object">Blend Object</a></li>
+<li><a href="#link_object">Link Object</a></li>
 </ul>
 </li>
 <li><a href="#_revision_history">Revision History</a></li>
@@ -112,7 +112,7 @@
 <div class="sectionbody">
 <div class="imageblock">
 <div class="content">
-<img src="spec-rel.png" alt="spec rel">
+<img src="spec-rel.png" alt="spec-rel.png">
 </div>
 </div>
 <div class="paragraph">
@@ -135,44 +135,44 @@
 </ul>
 </div>
 <div class="sect2">
-<h3 id="_quad_object">quad_object</h3>
+<h3 id="quad_object">Quad Object</h3>
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "tag"       : <a href="#_tag_object">tag_object</a>,
+  "tag"       : <a href="#tag_object">Tag Object</a>,
   "keyframe"  : [
-    <a href="#_keyframe_object">keyframe_object</a>,
-    <a href="#_keyframe_object">keyframe_object</a>,
+    <a href="#keyframe_object">Keyframe Object</a>,
+    <a href="#keyframe_object">Keyframe Object</a>,
     ...
   ],
   "hitbox"    : [
-    <a href="#_hitbox_object">hitbox_object</a>,
-    <a href="#_hitbox_object">hitbox_object</a>,
+    <a href="#hitbox_object">Hitbox Object</a>,
+    <a href="#hitbox_object">Hitbox Object</a>,
     ...
   ],
   "animation" : [
-    <a href="#_animation_object">animation_object</a>,
-    <a href="#_animation_object">animation_object</a>,
+    <a href="#animation_object">Animation Object</a>,
+    <a href="#animation_object">Animation Object</a>,
     ...
   ],
   "skeleton"  : [
-    <a href="#_skeleton_object">skeleton_object</a>,
-    <a href="#_skeleton_object">skeleton_object</a>,
+    <a href="#skeleton_object">Skeleton Object</a>,
+    <a href="#skeleton_object">Skeleton Object</a>,
     ...
   ],
   "slot"      : [
-    <a href="#_slot_object">slot_object</a>,
-    <a href="#_slot_object">slot_object</a>,
+    <a href="#slot_object">Slot Object</a>,
+    <a href="#slot_object">Slot Object</a>,
     ...
   ],
   "blend"     : [
-    <a href="#_blend_object">blend_object</a>,
-    <a href="#_blend_object">blend_object</a>,
+    <a href="#blend_object">Blend Object</a>,
+    <a href="#blend_object">Blend Object</a>,
     ...
   ],
-  "quad"      : [
-    <a href="#_quad_object">quad_object</a>,
-    <a href="#_quad_object">quad_object</a>,
+  "link"      : [
+    <a href="#link_object">Link Object</a>,
+    <a href="#link_object">Link Object</a>,
     ...
   ],
 }</pre>
@@ -180,7 +180,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_tag_object">tag_object</h3>
+<h3 id="tag_object">Tag Object</h3>
 <div class="paragraph">
 <p>It is to define the metadata for current QUAD file, that includes:</p>
 </div>
@@ -219,7 +219,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_attach_object">attach_object</h3>
+<h3 id="attach_object">Attach Object</h3>
 <div class="paragraph">
 <p>Used internally by an object to link with another object.</p>
 </div>
@@ -263,7 +263,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_slot_object">slot_object</h3>
+<h3 id="slot_object">Slot Object</h3>
 <div class="paragraph">
 <p>Used when more than 1 object need to be attach to a frame.</p>
 </div>
@@ -273,15 +273,15 @@
 <div class="listingblock">
 <div class="content">
 <pre>[
-  <a href="#_attach_object">attach_object</a>,
-  <a href="#_attach_object">attach_object</a>,
+  <a href="#attach_object">Attach Object</a>,
+  <a href="#attach_object">Attach Object</a>,
   ...
 ]</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_keyframe_object">keyframe_object</h3>
+<h3 id="keyframe_object">Keyframe Object</h3>
 <div class="paragraph">
 <p>It is to define a drawing for a frame. The result is an assembled sprite.</p>
 </div>
@@ -291,8 +291,8 @@
   "debug" : any,
   "name"  : string,
   "layer" : [
-    <a href="#_keyframe_layer_object">keyframe_layer_object</a>,
-    <a href="#_keyframe_layer_object">keyframe_layer_object</a>,
+    <a href="#keyframe_layer_object">Keyframe Layer Object</a>,
+    <a href="#keyframe_layer_object">Keyframe Layer Object</a>,
     ...
   ],
   "order" : [
@@ -365,7 +365,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_keyframe_layer_object">keyframe_layer_object</h3>
+<h3 id="keyframe_layer_object">Keyframe Layer Object</h3>
 <div class="listingblock">
 <div class="content">
 <pre>{
@@ -489,7 +489,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hitbox_object">hitbox_object</h3>
+<h3 id="hitbox_object">Hitbox Object</h3>
 <div class="paragraph">
 <p>It is to define the areas for collusion detection for a frame.</p>
 </div>
@@ -499,8 +499,8 @@
   "debug" : any,
   "name"  : string,
   "layer" : [
-    <a href="#_hitbox_layer_object">hitbox_layer_object</a>,
-    <a href="#_hitbox_layer_object">hitbox_layer_object</a>,
+    <a href="#hitbox_layer_object">Hitbox Layer Object</a>,
+    <a href="#hitbox_layer_object">Hitbox Layer Object</a>,
     ...
   ],
 }</pre>
@@ -545,7 +545,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hitbox_layer_object">hitbox_layer_object</h3>
+<h3 id="hitbox_layer_object">Hitbox Layer Object</h3>
 <div class="listingblock">
 <div class="content">
 <pre>{
@@ -591,7 +591,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_animation_object">animation_object</h3>
+<h3 id="animation_object">Animation Object</h3>
 <div class="paragraph">
 <p>It is to define the <strong>changes</strong> between frames over time.</p>
 </div>
@@ -601,8 +601,8 @@
   "debug"    : any,
   "name"     : string,
   "timeline" : [
-    <a href="#_animation_timeline_object">animation_timeline_object</a>,
-    <a href="#_animation_timeline_object">animation_timeline_object</a>,
+    <a href="#animation_timeline_object">Animation Timeline Object</a>,
+    <a href="#animation_timeline_object">Animation Timeline Object</a>,
     ...
   ],
   "loop_id"  : int id,
@@ -664,13 +664,13 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_animation_timeline_object">animation_timeline_object</h3>
+<h3 id="animation_timeline_object">Animation Timeline Object</h3>
 <div class="listingblock">
 <div class="content">
 <pre>{
   "debug"        : any,
   "time"         : int fps,
-  "attach"       : <a href="#_attach_object">attach_object</a>,
+  "attach"       : <a href="#attach_object">Attach Object</a>,
   "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
   "color"        : string rgba,
   "matrix_mix"   : bool,
@@ -750,7 +750,7 @@
 <p>rate = t / time , t++</p>
 </li>
 <li>
-<p>matrix = (current * (1 - rate)) + (next * rate)</p>
+<p>matrix = (current * (1.0 - rate)) + (next * rate)</p>
 </li>
 </ul>
 </div>
@@ -773,7 +773,7 @@
 <p>rate = t / time , t++</p>
 </li>
 <li>
-<p>color = (current * (1 - rate)) + (next * rate)</p>
+<p>color = (current * (1.0 - rate)) + (next * rate)</p>
 </li>
 </ul>
 </div>
@@ -799,7 +799,7 @@
 <p>rate = t / time , t++</p>
 </li>
 <li>
-<p>layer = (current * (1 - rate)) + (next * rate)</p>
+<p>layer = (current * (1.0 - rate)) + (next * rate)</p>
 </li>
 </ul>
 </div>
@@ -848,7 +848,7 @@
 <p>rate = t / time , t++</p>
 </li>
 <li>
-<p>layer = (current * (1 - rate)) + (next * rate)</p>
+<p>layer = (current * (1.0 - rate)) + (next * rate)</p>
 </li>
 </ul>
 </div>
@@ -886,7 +886,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_skeleton_object">skeleton_object</h3>
+<h3 id="skeleton_object">Skeleton Object</h3>
 <div class="paragraph">
 <p>It is to define the <strong>relationship</strong> between frames.</p>
 </div>
@@ -896,8 +896,8 @@
   "debug" : any,
   "name"  : string,
   "bone"  : [
-    <a href="#_skeleton_bone_object">skeleton_bone_object</a>,
-    <a href="#_skeleton_bone_object">skeleton_bone_object</a>,
+    <a href="#skeleton_bone_object">Skeleton Bone Object</a>,
+    <a href="#skeleton_bone_object">Skeleton Bone Object</a>,
     ...
   ],
 }</pre>
@@ -942,13 +942,13 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_skeleton_bone_object">skeleton_bone_object</h3>
+<h3 id="skeleton_bone_object">Skeleton Bone Object</h3>
 <div class="listingblock">
 <div class="content">
 <pre>{
   "debug"     : any,
   "name"      : string,
-  "attach"    : <a href="#_attach_object">attach_object</a>,
+  "attach"    : <a href="#attach_object">Attach Object</a>,
 }</pre>
 </div>
 </div>
@@ -991,7 +991,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_blend_object">blend_object</h3>
+<h3 id="blend_object">Blend Object</h3>
 <div class="paragraph">
 <p>It is to define alpha blending formula to handle transparency and semi-transparency pixels.</p>
 </div>
@@ -1084,7 +1084,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_quad_object_2">quad_object</h3>
+<h3 id="link_object">Link Object</h3>
 <div class="paragraph">
 <p>It is to connect with another QUAD file, allowing interaction between QUAD files.</p>
 </div>
@@ -1128,6 +1128,16 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
+<dt class="hdlist1">v0.x ()</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>quad_object</code> : renamed to <code>link_object</code></p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">v0.4 (2024-1-11)</dt>
 <dd>
 <div class="ulist">
@@ -1211,10 +1221,18 @@
 <div class="sect1">
 <h2 id="_example">Example</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (2124 bytes)</a><br>
-<a href="sample-keymix.quad">sample-keymix.quad (1478 bytes)</a><br>
-<a href="sample-depth.quad">sample-depth.quad (786 bytes)</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (2124 bytes)</a></p>
+</li>
+<li>
+<p><a href="sample-keymix.quad">sample-keymix.quad (1478 bytes)</a></p>
+</li>
+<li>
+<p><a href="sample-depth.quad">sample-depth.quad (786 bytes)</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>

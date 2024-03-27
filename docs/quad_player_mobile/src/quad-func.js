@@ -283,14 +283,14 @@ function QuadFunc(Q){
 					return nullent(hv.layer, lk);
 				is_null = false;
 				hv.layer[lk] = {
-					'debug'   : lv.debug || 0,
+					'debug'   : JSON.stringify(lv.debug || 0),
 					'hitquad' : lv.hitquad,
 				};
 			}); // hv.layer.forEach
 			if ( is_null )
 				return nullent(quad.hitbox, hk);
 			ent = {
-				'debug' : hv.debug || 0,
+				'debug' : JSON.stringify(hv.debug || 0),
 				'name'  : hv.name  || 'hitbox '+ hk,
 				'layer' : hv.layer,
 			};
@@ -306,7 +306,7 @@ function QuadFunc(Q){
 					return nullent(kv.layer, lk);
 				is_null = false;
 				ent = {
-					'debug'    : lv.debug || 0,
+					'debug'    : JSON.stringify(lv.debug || 0),
 					'dstquad'  : lv.dstquad,
 					'tex_id'   : -1,
 					'blend_id' : -1,
@@ -322,7 +322,7 @@ function QuadFunc(Q){
 			if ( is_null )
 				return nullent(quad.keyframe, kk);
 			ent = {
-				'debug'  : kv.debug || 0,
+				'debug'  : JSON.stringify(kv.debug || 0),
 				'name'   : kv.name  || 'keyframe '+ kk,
 				'layer'  : kv.layer,
 				'order'  : kv.order,
@@ -340,7 +340,7 @@ function QuadFunc(Q){
 				if ( tv.time < 1 )
 					return nullent(av.timeline, tk);
 				ent = {
-					'debug'        : tv.debug  || 0,
+					'debug'        : JSON.stringify(tv.debug  || 0),
 					'time'         : tv.time,
 					'attach'       : tv.attach || 0 ,
 					'matrix'       : 0,
@@ -358,7 +358,7 @@ function QuadFunc(Q){
 			if ( av.timeline.length < 1 )
 				return nullent(quad.animation, ak);
 			ent = {
-				'debug'    : av.debug || 0,
+				'debug'    : JSON.stringify(av.debug || 0),
 				'name'     : av.name  || 'animation' + ak,
 				'timeline' : av.timeline,
 				'loop_id'  : -1,
@@ -373,14 +373,14 @@ function QuadFunc(Q){
 				return nullent(quad.skeleton, sk);
 			sv.bone.forEach(function(bv,bk){
 				ent = {
-					'debug'     : bv.debug  || 0,
+					'debug'     : JSON.stringify(bv.debug  || 0),
 					'name'      : bv.name   || 'bone ' + bk,
 					'attach'    : bv.attach || 0,
 				};
 				sv.bone[bk] = ent;
 			}); // sv.bone.forEach
 			quad.skeleton[sk] = {
-				'debug'  : sv.debug || 0,
+				'debug'  : JSON.stringify(sv.debug || 0),
 				'name'   : sv.name  || 'skeleton ' + sk,
 				'bone'   : sv.bone,
 				'__RECT' : 0,
@@ -396,21 +396,19 @@ function QuadFunc(Q){
 		var clines = [];
 
 		var debug = [];
-		var did, dbg;
 		layer.forEach(function(lv,lk){
 			if ( ! lv )
 				return;
 
-			dbg = JSON.stringify(lv.debug);
-			did = debug.indexOf(dbg);
-			if ( did < 0 ){
-				did = debug.length;
-				debug.push(dbg);
-				clines[did] = [];
+			var dbg_id = debug.indexOf(lv.debug);
+			if ( dbg_id < 0 ){
+				dbg_id = debug.length;
+				debug.push(lv.debug);
+				clines[dbg_id] = [];
 			}
 
 			var dst = Q.math.quad_multi4(mat4, lv[quad]);
-			clines[did] = clines[did].concat(dst);
+			clines[dbg_id] = clines[dbg_id].concat(dst);
 		});
 
 		var color = [

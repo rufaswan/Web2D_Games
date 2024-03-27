@@ -3,6 +3,8 @@
 by Rufas Wan
 :toc:
 
+
+
 == Introduction
 
 QUAD file is mainly for 2D sprites on modern 3D graphics engine. Every drawing is a polygon in square, rectangle, or other quadrilaterals (hence the name QUAD).
@@ -27,9 +29,11 @@ The major difference from 3D model:
 * Full opaque/solid sprites nearly doesn't exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, even textbox.
 * Therefore 3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter's algorithm).
 
+
+
 == Basic File Structure
 
-image::spec-rel.png[]
+image::spec-rel.png[spec-rel.png]
 
 A QUAD file consists of multiple sub objects:
 
@@ -38,51 +42,57 @@ A QUAD file consists of multiple sub objects:
 * #`animation`# defines the changes between frames over time.
 * #`skeleton`# defines the relationship between frames.
 
-=== quad_object
+
+
+[#quad_object]
+=== Quad Object
 
 [subs="specialchars,macros"]
 ----
 {
-  "tag"       : <<_tag_object>>,
+  "tag"       : <<tag_object>>,
   "keyframe"  : [
-    <<_keyframe_object>>,
-    <<_keyframe_object>>,
+    <<keyframe_object>>,
+    <<keyframe_object>>,
     ...
   ],
   "hitbox"    : [
-    <<_hitbox_object>>,
-    <<_hitbox_object>>,
+    <<hitbox_object>>,
+    <<hitbox_object>>,
     ...
   ],
   "animation" : [
-    <<_animation_object>>,
-    <<_animation_object>>,
+    <<animation_object>>,
+    <<animation_object>>,
     ...
   ],
   "skeleton"  : [
-    <<_skeleton_object>>,
-    <<_skeleton_object>>,
+    <<skeleton_object>>,
+    <<skeleton_object>>,
     ...
   ],
   "slot"      : [
-    <<_slot_object>>,
-    <<_slot_object>>,
+    <<slot_object>>,
+    <<slot_object>>,
     ...
   ],
   "blend"     : [
-    <<_blend_object>>,
-    <<_blend_object>>,
+    <<blend_object>>,
+    <<blend_object>>,
     ...
   ],
-  "quad"      : [
-    <<_quad_object>>,
-    <<_quad_object>>,
+  "link"      : [
+    <<link_object>>,
+    <<link_object>>,
     ...
   ],
 }
 ----
 
-=== tag_object
+
+
+[#tag_object]
+=== Tag Object
 
 It is to define the metadata for current QUAD file, that includes:
 
@@ -102,7 +112,10 @@ It is to define the metadata for current QUAD file, that includes:
 }
 ----
 
-=== attach_object
+
+
+[#attach_object]
+=== Attach Object
 
 Used internally by an object to link with another object.
 
@@ -124,7 +137,10 @@ type (required)::
 id (required)::
 	* Array index to the object.
 
-=== slot_object
+
+
+[#slot_object]
+=== Slot Object
 
 Used when more than 1 object need to be attach to a frame.
 
@@ -133,13 +149,16 @@ A frame can consist of a sprite, a hitbox and a sound effect.
 [subs="specialchars,macros"]
 ----
 [
-  <<_attach_object>>,
-  <<_attach_object>>,
+  <<attach_object>>,
+  <<attach_object>>,
   ...
 ]
 ----
 
-=== keyframe_object
+
+
+[#keyframe_object]
+=== Keyframe Object
 
 It is to define a drawing for a frame. The result is an assembled sprite.
 
@@ -149,8 +168,8 @@ It is to define a drawing for a frame. The result is an assembled sprite.
   "debug" : any,
   "name"  : string,
   "layer" : [
-    <<_keyframe_layer_object>>,
-    <<_keyframe_layer_object>>,
+    <<keyframe_layer_object>>,
+    <<keyframe_layer_object>>,
     ...
   ],
   "order" : [
@@ -177,7 +196,10 @@ order::
 	* If omitted or invalid, then it is default to:
 	** `[ 0 , 1 , 2 , ... , layer.length - 1 ]`
 
-=== keyframe_layer_object
+
+
+[#keyframe_layer_object]
+=== Keyframe Layer Object
 
 [subs="specialchars,macros"]
 ----
@@ -230,7 +252,10 @@ srcquad::
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted or it is invalid, then fog color only is drawn.
 
-=== hitbox_object
+
+
+[#hitbox_object]
+=== Hitbox Object
 
 It is to define the areas for collusion detection for a frame.
 
@@ -240,8 +265,8 @@ It is to define the areas for collusion detection for a frame.
   "debug" : any,
   "name"  : string,
   "layer" : [
-    <<_hitbox_layer_object>>,
-    <<_hitbox_layer_object>>,
+    <<hitbox_layer_object>>,
+    <<hitbox_layer_object>>,
     ...
   ],
 }
@@ -257,7 +282,10 @@ name::
 layer (required)::
 	* An array of hitbox with different properties.
 
-=== hitbox_layer_object
+
+
+[#hitbox_layer_object]
+=== Hitbox Layer Object
 
 [subs="specialchars,macros"]
 ----
@@ -280,7 +308,10 @@ hitquad (required)::
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted, then the layer object is skipped.
 
-=== animation_object
+
+
+[#animation_object]
+=== Animation Object
 
 It is to define the *changes* between frames over time.
 
@@ -290,8 +321,8 @@ It is to define the *changes* between frames over time.
   "debug"    : any,
   "name"     : string,
   "timeline" : [
-    <<_animation_timeline_object>>,
-    <<_animation_timeline_object>>,
+    <<animation_timeline_object>>,
+    <<animation_timeline_object>>,
     ...
   ],
   "loop_id"  : int id,
@@ -313,14 +344,17 @@ loop_id::
 	* Value `0` (zero) restarts from the beginning.
 	* If omitted, then it is default `-1` (no loop).
 
-=== animation_timeline_object
+
+
+[#animation_timeline_object]
+=== Animation Timeline Object
 
 [subs="specialchars,macros"]
 ----
 {
   "debug"        : any,
   "time"         : int fps,
-  "attach"       : <<_attach_object>>,
+  "attach"       : <<attach_object>>,
   "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
   "color"        : string rgba,
   "matrix_mix"   : bool,
@@ -350,20 +384,20 @@ color::
 matrix_mix::
 	* Marks if current matrix is interpolated with the next matrix.
 	** rate = t / time , t++
-	** matrix = (current * (1 - rate)) + (next * rate)
+	** matrix = (current * (1.0 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
 
 color_mix::
 	* Marks if current color is interpolated with the next color.
 	** rate = t / time , t++
-	** color = (current * (1 - rate)) + (next * rate)
+	** color = (current * (1.0 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
 
 keyframe_mix::
 	* Marks if current keyframe layer is interpolated with the next keyframe layer.
 	* Affects `dstquad` and `fogquad`.
 	** rate = t / time , t++
-	** layer = (current * (1 - rate)) + (next * rate)
+	** layer = (current * (1.0 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
 	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
 	*** if current keyframe layer count is not the same as next keyframe layer count.
@@ -375,7 +409,7 @@ hitbox_mix::
 	* Marks if current hitbox layer is interpolated with the next hitbox layer.
 	* Affects `hitquad`.
 	** rate = t / time , t++
-	** layer = (current * (1 - rate)) + (next * rate)
+	** layer = (current * (1.0 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
 	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
 	*** if current hitbox layer count is not the same as next hitbox layer count.
@@ -383,7 +417,10 @@ hitbox_mix::
 	*** if next hitbox layer is empty.
 	** If `false`, only current hitbox layer is used, next hitbox layer is ignored.
 
-=== skeleton_object
+
+
+[#skeleton_object]
+=== Skeleton Object
 
 It is to define the *relationship* between frames.
 
@@ -393,8 +430,8 @@ It is to define the *relationship* between frames.
   "debug" : any,
   "name"  : string,
   "bone"  : [
-    <<_skeleton_bone_object>>,
-    <<_skeleton_bone_object>>,
+    <<skeleton_bone_object>>,
+    <<skeleton_bone_object>>,
     ...
   ],
 }
@@ -410,14 +447,17 @@ name::
 bone (required)::
 	* An array of bones to built the skeleton.
 
-=== skeleton_bone_object
+
+
+[#skeleton_bone_object]
+=== Skeleton Bone Object
 
 [subs="specialchars,macros"]
 ----
 {
   "debug"     : any,
   "name"      : string,
-  "attach"    : <<_attach_object>>,
+  "attach"    : <<attach_object>>,
 }
 ----
 
@@ -431,7 +471,10 @@ name::
 attach::
 	* If omitted, then it is invisible bone and drawing is skipped.
 
-=== blend_object
+
+
+[#blend_object]
+=== Blend Object
 
 It is to define alpha blending formula to handle transparency and semi-transparency pixels.
 
@@ -472,7 +515,10 @@ color::
 	* String is in "#rrggbbaa" format.
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
-=== quad_object
+
+
+[#link_object]
+=== Link Object
 
 It is to connect with another QUAD file, allowing interaction between QUAD files.
 
@@ -490,7 +536,12 @@ list (required)::
 id (required)::
 	* Array index to the QUAD file.
 
+
+
 == Revision History
+
+v0.x ()::
+	* `quad_object` : renamed to `link_object`
 
 v0.4 (2024-1-11)::
 	* `keyframe_object` : added `order`
@@ -516,11 +567,15 @@ v0.2 (2023-05-11)::
 v0.1 (2021-03-01)::
 	* Initial release and first draft.
 
+
+
 == Example
 
-link:sample-mat4mix.quad[sample-mat4mix.quad (2124 bytes)]
-link:sample-keymix.quad[sample-keymix.quad (1478 bytes)]
-link:sample-depth.quad[sample-depth.quad (786 bytes)]
+* link:sample-mat4mix.quad[sample-mat4mix.quad (2124 bytes)]
+* link:sample-keymix.quad[sample-keymix.quad (1478 bytes)]
+* link:sample-depth.quad[sample-depth.quad (786 bytes)]
+
+
 
 == Online Ver
 * https://github.com/rufaswan/Web2D_Games/blob/master/docs/quad_player_mobile/spec.adoc
