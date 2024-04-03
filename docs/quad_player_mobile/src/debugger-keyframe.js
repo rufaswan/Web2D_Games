@@ -4,7 +4,7 @@ function get_html_id(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
-		var id  = eles[i].id;
+		var id   = eles[i].id;
 		html[id] = eles[i];
 	}
 	return html;
@@ -26,61 +26,123 @@ function qdata_filetable( qdata, files ){
 // TODO : remove all global var
 
 function keyframe_select( key_id ){
-	HTML.layerdata.style.display      = 'block';
-	HTML.btn_selectall.style.display  = 'block';
-	HTML.btn_selectnone.style.display = 'block';
-	HTML.layerlist.innerHTML  = '';
-	HTML.layer_name.innerHTML = '';
+	__.HTML.layerdata.style.display      = 'block';
+	__.HTML.btn_selectall.style.display  = 'block';
+	__.HTML.btn_selectnone.style.display = 'block';
+	__.HTML.layerlist.innerHTML  = '';
+	__.HTML.layer_name.innerHTML = '';
 
 	var key = QuadList[0].quad.keyframe[key_id];
 	if ( ! key )
 		return;
-	HTML.layer_name.innerHTML = key.name;
-	ON_KEY   = key_id;
-	ON_LAYER = [];
+	__.HTML.layer_name.innerHTML = key.name;
+	__.ON_KEY   = key_id;
+	__.ON_LAYER = [];
 	QuadList[0].attach.id = key_id;
 
-	var buffer = '';
+	var buffer  = '';
+	var dbglist = [];
 	key.layer.forEach(function(v,k){
 		if ( ! v )
 			return;
-		ON_LAYER.push(k);
+		__.ON_LAYER.push(k);
 
-		name = 'layer ' + k + ' (' + v.debug + ')';
-		buffer += '<li class="layer_on" data-id="' + k + '"><p onclick="layer_select(this);">' + name + '</p></li>';
+		var dbg = '#' + v.debug.replace(/[^a-zA-Z0-9,]/g, '_');
+		if ( dbglist.indexOf(dbg) < 0 )
+			dbglist.push(dbg);
+
+		var name = 'layer ' + k + ' (' + dbg + ')';
+		buffer += '<li class="layer_on" data-id="' + k + '" data-debug="' + dbg + '"><p onclick="layer_select(this);">' + name + '</p></li>';
 	});
-	HTML.layerlist.innerHTML = buffer;
-	IS_REDRAW = true;
+	__.HTML.layerlist.innerHTML = buffer;
+
+	dbglist.sort();
+	dbglist.unshift(0);
+	var buffer  = '';
+	dbglist.forEach(function(v,k){
+		if ( ! v )
+			buffer += '<option value="0">ALL</option>';
+		else
+			buffer += '<option>' + v + '</option>';
+	});
+	__.HTML.debuglist.innerHTML = buffer;
+
+	__.AUTOZOOM  = QUAD.func.viewer_autozoom(QuadList[0]);
+	__.IS_REDRAW = true;
 }
 
 function layer_select( elem ){
 	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
-	var idx = ON_LAYER.indexOf(layer_id);
+	var idx = __.ON_LAYER.indexOf(layer_id);
 	if ( idx === -1 )
-		ON_LAYER.push(layer_id);
+		__.ON_LAYER.push(layer_id);
 	else
-		ON_LAYER.splice(idx, 1);
+		__.ON_LAYER.splice(idx, 1);
 
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id  = list[i].getAttribute('data-id') | 0;
-		var idx = ON_LAYER.indexOf(id);
+		var idx = __.ON_LAYER.indexOf(id);
 		if ( idx === -1 )
 			list[i].classList.remove('layer_on');
 		else
 			list[i].classList.add('layer_on');
 	}
-	IS_REDRAW = true;
+	__.IS_REDRAW = true;
 }
 
 function layer_close(){
-	HTML.layerdata.style.display      = 'none';
-	HTML.btn_selectall.style.display  = 'none';
-	HTML.btn_selectnone.style.display = 'none';
+	__.HTML.layerdata.style.display      = 'none';
+	__.HTML.btn_selectall.style.display  = 'none';
+	__.HTML.btn_selectnone.style.display = 'none';
+}
+
+function button_select_layers( text ){
+	__.ON_LAYER = [];
+	var list = document.querySelectorAll('#layerlist li');
+	for ( var i=0; i < list.length; i++ ){
+		var id = list[i].getAttribute('data-id') | 0;
+		if ( ! text ){ // select all
+			list[i].classList.add('layer_on');
+			__.ON_LAYER.push(id);
+		}
+		else { // select matched
+			var debug = list[i].getAttribute('data-debug');
+			if ( debug === text ){
+				list[i].classList.add('layer_on');
+				__.ON_LAYER.push(id);
+			}
+			else { // unmatched are unchanged
+				if ( list[i].classList.contains('layer_on') )
+					__.ON_LAYER.push(id);
+			}
+		}
+	} // for ( var i=0; i < list.length; i++ )
+}
+
+function button_unselect_layers( text ){
+	__.ON_LAYER = [];
+	var list = document.querySelectorAll('#layerlist li');
+	for ( var i=0; i < list.length; i++ ){
+		var id = list[i].getAttribute('data-id') | 0;
+		if ( ! text ){ // unselect all
+			list[i].classList.remove('layer_on');
+		}
+		else { // unselect matched
+			var debug = list[i].getAttribute('data-debug');
+			if ( debug === text ){
+				list[i].classList.remove('layer_on');
+			}
+			else { // unmatched are unchanged
+				if ( list[i].classList.contains('layer_on') )
+					__.ON_LAYER.push(id);
+			}
+		}
+	} // for ( var i=0; i < list.length; i++ )
 }
 
 function keydebug_draw( qdata, mat4, color ){
-	var key = qdata.quad.keyframe[ON_KEY];
+	var key = qdata.quad.keyframe[__.ON_KEY];
 	if ( ! key )
 		return;
 	if ( qdata.is_lines )
@@ -93,23 +155,22 @@ function keydebug_drawline( qdata, key, mat4, color ){
 	var clines = [];
 
 	var debug = [];
-	var did, dbg;
+	var dbg_id;
 	key.layer.forEach(function(lv,lk){
 		if ( ! lv )
 			return;
-		if ( ON_LAYER.indexOf(lk) === -1 )
+		if ( __.ON_LAYER.indexOf(lk) < 0 )
 			return;
 
-		dbg = JSON.stringify(lv.debug);
-		did = debug.indexOf(dbg);
-		if ( did < 0 ){
-			did = debug.length;
-			debug.push(dbg);
-			clines[did] = [];
+		dbg_id = debug.indexOf(lv.debug);
+		if ( dbg_id < 0 ){
+			dbg_id = debug.length;
+			debug.push(lv.debug);
+			clines[dbg_id] = [];
 		}
 
 		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
-		clines[did] = clines[did].concat(dst);
+		clines[dbg_id] = clines[dbg_id].concat(dst);
 	});
 
 	var color = [
@@ -142,7 +203,7 @@ function keydebug_drawtex( qdata, key, mat4, color ){
 		var lv = key.layer[ov];
 		if ( ! lv )
 			return;
-		if ( ON_LAYER.indexOf(ov) === -1 )
+		if ( __.ON_LAYER.indexOf(ov) < 0 )
 			return;
 		depth -= zrate;
 

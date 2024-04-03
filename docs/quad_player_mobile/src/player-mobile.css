@@ -10,11 +10,12 @@ button {
 	background-color : rgba(255 , 255 , 255 , 0.5);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 18px;
+	margin           : 9px 18px;
 	min-width        : 42px;
-	min-height       : 42px;
-	padding          : 0.5em;
+	height           : 42px;
+	padding          : 0;
 	border           : 0;
+	box-sizing       : border-box;
 }
 button.btn_on {
 	background-color : rgba(0 , 255 , 0 , 0.5);
@@ -69,46 +70,50 @@ ul {
 }
 
 #viewer_top_nav,
+#viewer_bottom_nav,
 #debugger_top_nav {
 	position : fixed;
-	top      : 0;
-	left     : 0;
 	width    : 100vw;
 	display  : block;
+	margin   : 0;
+	padding  : 0;
+	display  : flex;
 }
 #debugger_top_nav {
+	top              : 0;
+	left             : 0;
 	background-color : #404040;
 	border-bottom    : 2px #c0c0c0 solid;
+	flex-direction   : row;
+	flex-wrap        : nowrap;
+	justify-content  : space-between;
+	align-items      : center;
+	align-content    : flex-start;
 }
-#viewer_top_nav p,
-#debugger_top_nav p {
-	display         : flex;
+#viewer_top_nav {
+	top             : 0;
+	left            : 0;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;
 	align-items     : center;
-	margin          : 0;
-	padding         : 0;
+	align-content   : flex-start;
+	overflow        : scroll hidden;
 }
-
 #viewer_bottom_nav {
-	position : fixed;
-	bottom   : 0;
-	left     : 0;
-	width    : 100vw;
-	display  : block;
-}
-#viewer_bottom_nav p {
-	display         : flex;
+	bottom          : 0;
+	left            : 0;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;
 	align-items     : center;
-	margin          : 0;
-	padding         : 0;
+	align-content   : flex-end;
 }
 
-#export_div {
+#colorize_menu,
+#keyattr_menu,
+#hitattr_menu,
+#export_menu {
 	position         : fixed;
 	bottom           : 0;
 	background-color : #404040;
@@ -119,10 +124,10 @@ ul {
 	width            : 100vw;
 }
 
-#export_div button {
+#export_menu button {
 	margin : 1em;
 }
-#export_div input[type=range] {
+#export_menu input[type=range] {
 	width : 90%;
 }
 

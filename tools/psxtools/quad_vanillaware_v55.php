@@ -210,7 +210,7 @@ function s6_loop( &$quad )
 				$s2v = $gp_json['s2'][$s2k];
 
 				$data = array(
-					'debug'    => sprintf('%s,%s,%x,%x', $s4v['bits'], $s4v['blend'], $s4v['sets'][0], $s4v['sets'][1]),
+					'debug'    => array($s4v['bits'], $s4v['blend'], $s4v['color'], $s4v['attr']),
 					'dstquad'  => $s2v,
 					'blend_id' => $s4v['blend'],
 				);
@@ -228,6 +228,13 @@ function s6_loop( &$quad )
 					$s1v = $gp_json['s1'][$s1k];
 					$data['srcquad'] = $s1v;
 				}
+
+				$s4_attr = hexdec($s4v['attr']);
+				if ( $s4_attr > 0 )
+					$data['attribute'] = bitflag_attr($s4_attr, 'keyattr');
+
+				if ( $s4v['color'] > 0 )
+					$data['colorize'] = sprintf('%s_%x', 'COLOR', $s4v['color']);
 
 				quad_convexfix($data);
 				$layer[$i] = $data;

@@ -79,6 +79,23 @@ function QuadFunc(Q){
 	$.copy_object = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
 	}
+	$.attr_bitflag = function( attrib, enumlist ){
+		if ( Array.isArray(attrib) ){
+			var bitflag = 0;
+			for ( var i=0; i < attrib.length; i++ )
+				bitflag |= $.attr_bitflag(attrib[i], enumlist);
+			return bitflag;
+		}
+		if ( typeof attrib === 'string' ){
+			var idx = enumlist.indexOf(attrib);
+			if ( idx < 0 ){
+				idx = enumlist.length;
+				enumlist.push(attrib);
+			}
+			return (1 << idx);
+		}
+		return 0;
+	}
 
 	//////////////////////////////
 
@@ -255,6 +272,11 @@ function QuadFunc(Q){
 		quad.animation = quad.animation || [];
 		quad.skeleton  = quad.skeleton  || [];
 		quad.__MIX     = [];
+		quad.__ATTR    = {
+			keyframe : [],
+			hitbox   : [],
+			colorize : [],
+		};
 
 		var ent;
 		function nullent(arr,k){
@@ -283,8 +305,9 @@ function QuadFunc(Q){
 					return nullent(hv.layer, lk);
 				is_null = false;
 				hv.layer[lk] = {
-					'debug'   : JSON.stringify(lv.debug || 0),
-					'hitquad' : lv.hitquad,
+					'debug'     : JSON.stringify(lv.debug || 0),
+					'hitquad'   : lv.hitquad,
+					'attribute' : $.attr_bitflag( lv.attribute, quad.__ATTR.hitbox ),
 				};
 			}); // hv.layer.forEach
 			if ( is_null )
@@ -306,12 +329,14 @@ function QuadFunc(Q){
 					return nullent(kv.layer, lk);
 				is_null = false;
 				ent = {
-					'debug'    : JSON.stringify(lv.debug || 0),
-					'dstquad'  : lv.dstquad,
-					'tex_id'   : -1,
-					'blend_id' : -1,
-					'fogquad'  : __.key_fogquad( lv.fogquad ),
-					'srcquad'  : 0,
+					'debug'     : JSON.stringify(lv.debug || 0),
+					'dstquad'   : lv.dstquad,
+					'blend_id'  : -1,
+					'fogquad'   : __.key_fogquad( lv.fogquad ),
+					'attribute' : $.attr_bitflag( lv.attribute, quad.__ATTR.keyframe ),
+					'colorize'  : $.attr_bitflag( lv.colorize , quad.__ATTR.colorize ),
+					'tex_id'    : -1,
+					'srcquad'   : 0,
 				};
 				if ( ! $.is_undef(lv.blend_id) )  ent.blend_id = lv.blend_id | 0; // 0 is valid
 				if ( ! $.is_undef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
@@ -450,6 +475,8 @@ function QuadFunc(Q){
 			var lv = layer[ov];
 			if ( ! lv )
 				return;
+			if ( (qdata.keyattr & lv.attribute) !== lv.attribute )
+				return;
 			depth -= zrate;
 
 			var bid = lv.blend_id | 0;
@@ -467,7 +494,13 @@ function QuadFunc(Q){
 			var xyz = Q.math.perspective_quad(dst);
 			ent.dst = ent.dst.concat(xyz);
 
-			var clr = Q.math.fog_multi4(color, lv.fogquad);
+			if ( lv.colorize > 0 ){
+				var clr = qdata.colorize[lv.colorize];
+				clr = Q.math.vec4_multi(clr, color);
+				clr = Q.math.fog_multi4(clr, lv.fogquad);
+			}
+			else
+				var clr = Q.math.fog_multi4(color, lv.fogquad);
 			ent.fog = ent.fog.concat(clr);
 
 			ent.z = ent.z.concat([depth , depth , depth , depth]);
@@ -731,6 +764,18 @@ function QuadFunc(Q){
 		qdata.quad.__MIX = [];
 	}
 
+	$.viewer_autozoom = function( qdata ){
+		var canvsz  = Q.gl.canvas_size();
+		var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+		if ( ! sprsize )
+			return 1.0;
+
+		var symm = Q.math.rect_symmetry(sprsize);
+		var zoomx = (canvsz[0] * 1.0) / symm[0];
+		var zoomy = (canvsz[1] * 1.5) / symm[1];
+		return ( zoomx < zoomy ) ? zoomx : zoomy;
+	}
+
 	$.viewer_camera = function( qdata, autozoom ){
 		var canvsz = Q.gl.canvas_size();
 
@@ -740,30 +785,8 @@ function QuadFunc(Q){
 
 		if ( autozoom > 0.0 )
 			qdata.zoom = autozoom;
-		if ( autozoom < 0.0 ){
-			var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
-			if ( sprsize ){
-				if ( sprsize[0] < 0 || sprsize[1] < 0 ){
-					// is sprite , 0,0 is at center
-					// x1 or y1 is negative
-					var symm = Q.math.rect_symmetry(sprsize);
-					var zoomx = canvsz[0] / symm[0];
-					var zoomy = canvsz[1] / symm[1];
-					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
-				}
-				else {
-					// is map , 0,0 is top-left
-					// x1 and y1 is positive
-					var hw = (sprsize[2] - sprsize[0]) * 0.5;
-					var hh = (sprsize[3] - sprsize[1]) * 0.5;
-					var zoomx = canvsz[0] / hw;
-					var zoomy = canvsz[1] / hh;
-					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
-					movex = (sprsize[0] - hw) * qdata.zoom;
-					movey = (sprsize[1] - hh) * qdata.zoom;
-				}
-			} // if ( sprsize )
-		} // if ( autozoom < 0.0 )
+		else
+			qdata.zoom = $.viewer_autozoom(qdata);
 
 		var m4 = Q.math.matrix4();
 		m4[0+3] = movex;
@@ -774,32 +797,6 @@ function QuadFunc(Q){
 		if ( qdata.is_flipx )  m4[0+0] = -m4[0+0];
 		if ( qdata.is_flipy )  m4[4+1] = -m4[4+1];
 		return m4;
-	}
-
-	$.is_changed = function( qdata ){
-		var c = 0;
-		c |= ( qdata.prev[0] !== qdata.attach.type );
-		c |= ( qdata.prev[1] !== qdata.attach.id   );
-		c |= ( qdata.prev[2] !== qdata.anim_fps    );
-		c |= ( qdata.prev[3] !== qdata.is_lines    );
-		c |= ( qdata.prev[4] !== qdata.is_hits     );
-		c |= ( qdata.prev[5] !== qdata.is_flipx    );
-		c |= ( qdata.prev[6] !== qdata.is_flipy    );
-		c |= ( qdata.prev[7] !== qdata.zoom        );
-
-		if ( c ){
-			qdata.prev = [
-				qdata.attach.type ,
-				qdata.attach.id   ,
-				qdata.anim_fps    ,
-				qdata.is_lines    ,
-				qdata.is_hits     ,
-				qdata.is_flipx    ,
-				qdata.is_flipy    ,
-				qdata.zoom        ,
-			];
-		}
-		return c;
 	}
 
 	//////////////////////////////

@@ -95,10 +95,15 @@ foreach ( $gp_list as $sk => $sv )
 {
 	foreach ( $sv as $bk => $bv )
 	{
-		ksort($bv);
 		printf('s%x[%2x] = ', $sk, $bk);
-		foreach ( $bv as $k => $v )
-			printf('%x ', $k);
+		if ( count($bv) === 0x100 )
+			printf('[00-ff]');
+		else
+		{
+			ksort($bv);
+			foreach ( $bv as $k => $v )
+				printf('%x ', $k);
+		}
 		echo "\n";
 	}
 	echo "\n";

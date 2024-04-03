@@ -4,38 +4,34 @@ function get_html_id(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
-		var id  = eles[i].id;
+		var id   = eles[i].id;
 		html[id] = eles[i];
 	}
 	return html;
 }
 
 function display_viewer( html, toggle ){
-	if ( toggle ){
-		html.viewer.style.display   = 'block';
-		//html.debugger.style.display = 'none';
-	}
-	else {
-		html.viewer.style.display   = 'none';
-		//html.debugger.style.display = 'block';
-	}
-	html.export_div.style.display = 'none';
+	if ( toggle )
+		html.viewer.style.display = 'block';
+	else
+		html.viewer.style.display = 'none';
+	html.export_menu.style.display = 'none';
 }
 
 function button_toggle( elem, turn ){
-	var css = elem.classList;
-	if ( turn > 0 ){
-		css.remove('btn_off');
-		css.add('btn_on');
+	if ( turn > 0 ){ // +1 = turn ON
+		elem.classList.remove('btn_off');
+		elem.classList.add('btn_on');
 		return;
 	}
-	if ( turn < 0 ){
-		css.remove('btn_on');
-		css.add('btn_off');
+	if ( turn < 0 ){ // -1 = turn OFF
+		elem.classList.remove('btn_on');
+		elem.classList.add('btn_off');
 		return;
 	}
-	css.remove('btn_on');
-	css.remove('btn_off');
+	// 0 = not a ON/OFF button
+	elem.classList.remove('btn_on');
+	elem.classList.remove('btn_off');
 }
 
 function button_prev_next( qdata, adj ){
@@ -49,8 +45,22 @@ function button_prev_next( qdata, adj ){
 }
 
 function button_close( elem ){
-	var par2  = elem.parentElement.parentElement;
+	var par2 = elem.parentElement.parentElement;
 	par2.style.display = 'none';
+}
+
+function qdata_toggle( qdata, elem, key ){
+	var t = elem.classList.contains('btn_on');
+	if ( qdata )
+		t |= qdata[key];
+
+	if ( t ) // if ON, turn OFF
+		button_toggle(elem, -1);
+	else // if OFF, turn ON
+		button_toggle(elem, 1);
+
+	if ( qdata )
+		qdata[key] = !t;
 }
 
 function qdata_filetable( qdata, files ){
@@ -154,18 +164,19 @@ function qdata_listing( qdata, type, id ){
 // TODO : remove all global var
 
 function button_select( elem ){
-	if ( SELECTED )
-		SELECTED.classList.remove('current');
+	if ( __.SELECTED )
+		__.SELECTED.classList.remove('current');
 
-	SELECTED = elem;
-	SELECTED.classList.add('current');
+	__.SELECTED = elem;
+	__.SELECTED.classList.add('current');
 
 	var par2 = elem.parentElement.parentElement;
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
 	qdata_attach(QuadList[0], type, id);
-	display_viewer(HTML, true);
+	display_viewer(__.HTML, true);
+	__.IS_REDRAW = true;
 }
 
 function button_expand( elem ){
@@ -186,19 +197,19 @@ function button_export( elem ){
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
-	var div = HTML.export_div;
+	var div = __.HTML.export_menu;
 	div.setAttribute('data-type', type);
 	div.setAttribute('data-id'  , id);
 	div.style.display = 'block';
 
-	HTML.export_name.innerHTML = type + ' , ' + id;
+	__.HTML.export_name.innerHTML = type + ' , ' + id;
 
 	var qdata = QuadList[0];
 	var time  = QUAD.export.time_attach(qdata, type, id);
-	var range = HTML.export_range;
+	var range = __.HTML.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
-	HTML.export_start.innerHTML = 0;
+	__.HTML.export_start.innerHTML = 0;
 }
 
 function button_export_type( elem ){
@@ -207,52 +218,66 @@ function button_export_type( elem ){
 	var id   = par2.getAttribute('data-id') | 0;
 	var fmt  = elem.innerHTML.toLowerCase();
 
-	var time = HTML.export_start.innerHTML | 0;
-	var zoom = 1.0 * HTML.export_zoom.innerHTML;
-	QUAD.export.export(fmt, QuadList[0], HTML.canvas, type, id, time, zoom);
+	var time = __.HTML.export_start.innerHTML | 0;
+	var zoom = 1.0 * __.HTML.export_zoom.innerHTML;
+	QUAD.export.export(fmt, QuadList[0], __.HTML.canvas, type, id, time, zoom);
 }
 
-/*
-		<p id='viewer_top_row_1'>
-			<button id='btn_debug'>debug</button>
-			<button id='btn_option'>options</button>
-			<button id='btn_lines'>line</button>
-		</p>
-		<p id='viewer_top_row_2'>
-			<button id='btn_autofit' class='btn_on'>zoom</button>
-			<button id='btn_flipx' class='btn_off'>X</button>
-			<button id='btn_flipy' class='btn_off'>Y</button>
-		</p>
+function viewer_btn_menu( qdata ){
+	__.HTML.btn_hitattr.style.display = 'none';
+	__.HTML.hitattr_list.innerHTML = '';
+	if ( qdata.quad.hitbox.length > 0 )
+		__.HTML.btn_hitattr.style.display = 'block';
 
-	html.viewer_top_row_2.style.display = 'none';
+	__.HTML.btn_keyattr.style.display = 'none';
+	__.HTML.keyattr_list.innerHTML = '';
+	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
+		__.HTML.btn_keyattr.style.display = 'block';
+		var buffer = '';
+		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
+			var mask = 1 << ek;
+			buffer += '<button class="btn_on" onclick="qdata_attr(this,\'keyattr\',' + mask + ');">' + ev + '</button>';
+		});
+		__.HTML.keyattr_list.innerHTML = buffer;
+		QUAD.func.log('keyframe attr', qdata.quad.__ATTR.keyframe);
+	}
 
-	HTML.btn_option.addEventListener('click', function(){
-		var row2 = HTML.viewer_top_row_2;
-		if ( row2.style.display === 'flex' )
-			row2.style.display = 'none';
-		else
-			row2.style.display = 'flex';
-	});
-	HTML.btn_autofit.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_autofit.classList.contains('btn_on') ){
-			button_toggle(HTML.btn_autofit, -1);
-			AUTOZOOM = 1;
-		} else {
-			button_toggle(HTML.btn_autofit, 1);
-			AUTOZOOM = -1;
-		}
-	});
-	HTML.btn_flipy.addEventListener('click', function(){
-		if ( ! QuadList[0] )
-			return;
-		if ( HTML.btn_flipy.classList.contains('btn_on') ){
-			button_toggle(HTML.btn_flipy, -1);
-			QuadList[0].is_flipy = false;
-		} else {
-			button_toggle(HTML.btn_flipy, 1);
-			QuadList[0].is_flipy = true;
-		}
-	});
-*/
+	__.HTML.btn_colorize.style.display = 'none';
+	__.HTML.colorize_list.innerHTML = '';
+	if ( qdata.quad.__ATTR.colorize.length > 0 ){
+		__.HTML.btn_colorize.style.display = 'block';
+		var buffer = '';
+		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
+			var mask = 1 << ck;
+			qdata.colorize[mask] = [1,1,1,1];
+			buffer += cv + ' = <input type="color" value="#ffffff" onchange="qdata_colorize(this,' + mask + ');">&nbsp;';
+		});
+		__.HTML.colorize_list.innerHTML = buffer;
+		QUAD.func.log('colorize attr', qdata.quad.__ATTR.colorize);
+	}
+}
+
+function qdata_attr( elem, name, mask ){
+	if ( elem.classList.contains('btn_on') ){
+		button_toggle(elem, -1);
+		QuadList[0][name] &= ~mask;
+	}
+	else {
+		button_toggle(elem, 1);
+		QuadList[0][name] |= mask;
+	}
+	__.IS_REDRAW = true;
+}
+
+function qdata_colorize( elem, id ){
+	var color = elem.value;
+	var div   = 1.0 / 255;
+	var rgb   = [
+		parseInt( color.substring(1,3) , 16 ) * div ,
+		parseInt( color.substring(3,5) , 16 ) * div ,
+		parseInt( color.substring(5,7) , 16 ) * div ,
+		1.0,
+	];
+	QuadList[0].colorize[id] = rgb;
+	__.IS_REDRAW = true;
+}

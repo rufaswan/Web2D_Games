@@ -14,11 +14,12 @@ button {
 	background-color : rgba(255 , 255 , 255 , 0.5);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 9px  18px;
+	margin           : 18px 9px;
 	min-width        : 42px;
-	min-height       : 42px;
-	padding          : 0.5em;
+	height           : 42px;
+	padding          : 0;
 	border           : 0;
+	box-sizing       : border-box;
 }
 button.btn_on {
 	background-color : rgba(0 , 255 , 0 , 0.5);
@@ -72,6 +73,18 @@ main > nav {
 #debugger #layerdata {
 	display : none;
 }
+#debugger #layerdata div {
+	display        : flex;
+	flex-direction : row;
+	flex-wrap      : nowrap;
+	align-items    : center;
+	align-content  : stretch;
+	margin         : 0;
+}
+#debugger #layerdata select {
+	width  : 90%;
+	height : 42px;
+}
 #viewer {
 	position : relative;
 	overflow : hidden;
@@ -86,8 +99,8 @@ main > nav {
 }
 #keylist,
 #layerlist {
-	margin           : 0;
-	padding          : 0;
+	margin  : 0;
+	padding : 0;
 }
 #keylist p,
 #layerlist p {

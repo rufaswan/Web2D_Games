@@ -15,8 +15,8 @@ function QuadExport(Q){
 		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return 0;
 
-		var max  = 1 << 24;
-		var rect = [max,max,-max,-max];
+		var max  = 1 << 30;
+		var rect = 0;
 		var is_null = true;
 
 		var cur = qdata.quad[ type ][ id ];
@@ -32,6 +32,9 @@ function QuadExport(Q){
 				cur.layer.forEach(function(lv,lk){
 					if ( ! lv || ! lv[quad] )
 						return;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					var dst = lv[quad];
 					for ( var i=0; i < 8; i += 2 ){
 						if ( rect[0] > dst[i+0] )  rect[0] = dst[i+0]; // x1
@@ -48,25 +51,26 @@ function QuadExport(Q){
 					var xy = $.rect_attach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
-					is_null = false;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					__.rect_compare(rect, xy);
 				});
-				if ( is_null )
-					return 0;
 				return rect;
 
 			case 'animation':
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var is_null = true;
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
 					var xy = $.rect_attach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
-					is_null = false;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					var xy2 = Q.math.rect_multi4(tv.matrix, xy);
 					var t;
 					if ( xy2[0] > xy2[2] ){ // if x1 > x2  swap()
@@ -81,8 +85,6 @@ function QuadExport(Q){
 					}
 					__.rect_compare(rect, xy2);
 				});
-				if ( is_null )
-					return 0;
 				cur.__RECT = rect;
 				return rect;
 
@@ -93,14 +95,14 @@ function QuadExport(Q){
 				cur.bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					var xy = $.rect_attach(qdata, bv.type, bv.id);
+					var xy = $.rect_attach(qdata, bv.attach.type, bv.attach.id);
 					if ( ! xy )
 						return;
-					is_null = false;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					__.rect_compare(rect, xy);
 				});
-				if ( is_null )
-					return 0;
 				cur.__RECT = rect;
 				return rect;
 		} // switch ( type )

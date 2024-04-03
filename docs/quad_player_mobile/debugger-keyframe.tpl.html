@@ -39,11 +39,12 @@ button {
 	background-color : rgba(255 , 255 , 255 , 0.5);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 9px  18px;
+	margin           : 18px 9px;
 	min-width        : 42px;
-	min-height       : 42px;
-	padding          : 0.5em;
+	height           : 42px;
+	padding          : 0;
 	border           : 0;
+	box-sizing       : border-box;
 }
 button.btn_on {
 	background-color : rgba(0 , 255 , 0 , 0.5);
@@ -97,6 +98,18 @@ main > nav {
 #debugger #layerdata {
 	display : none;
 }
+#debugger #layerdata div {
+	display        : flex;
+	flex-direction : row;
+	flex-wrap      : nowrap;
+	align-items    : center;
+	align-content  : stretch;
+	margin         : 0;
+}
+#debugger #layerdata select {
+	width  : 90%;
+	height : 42px;
+}
 #viewer {
 	position : relative;
 	overflow : hidden;
@@ -111,8 +124,8 @@ main > nav {
 }
 #keylist,
 #layerlist {
-	margin           : 0;
-	padding          : 0;
+	margin  : 0;
+	padding : 0;
 }
 #keylist p,
 #layerlist p {
@@ -169,7 +182,7 @@ function get_html_id(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
-		var id  = eles[i].id;
+		var id   = eles[i].id;
 		html[id] = eles[i];
 	}
 	return html;
@@ -191,61 +204,123 @@ function qdata_filetable( qdata, files ){
 // TODO : remove all global var
 
 function keyframe_select( key_id ){
-	HTML.layerdata.style.display      = 'block';
-	HTML.btn_selectall.style.display  = 'block';
-	HTML.btn_selectnone.style.display = 'block';
-	HTML.layerlist.innerHTML  = '';
-	HTML.layer_name.innerHTML = '';
+	__.HTML.layerdata.style.display      = 'block';
+	__.HTML.btn_selectall.style.display  = 'block';
+	__.HTML.btn_selectnone.style.display = 'block';
+	__.HTML.layerlist.innerHTML  = '';
+	__.HTML.layer_name.innerHTML = '';
 
 	var key = QuadList[0].quad.keyframe[key_id];
 	if ( ! key )
 		return;
-	HTML.layer_name.innerHTML = key.name;
-	ON_KEY   = key_id;
-	ON_LAYER = [];
+	__.HTML.layer_name.innerHTML = key.name;
+	__.ON_KEY   = key_id;
+	__.ON_LAYER = [];
 	QuadList[0].attach.id = key_id;
 
-	var buffer = '';
+	var buffer  = '';
+	var dbglist = [];
 	key.layer.forEach(function(v,k){
 		if ( ! v )
 			return;
-		ON_LAYER.push(k);
+		__.ON_LAYER.push(k);
 
-		name = 'layer ' + k + ' (' + v.debug + ')';
-		buffer += '<li class="layer_on" data-id="' + k + '"><p onclick="layer_select(this);">' + name + '</p></li>';
+		var dbg = '#' + v.debug.replace(/[^a-zA-Z0-9,]/g, '_');
+		if ( dbglist.indexOf(dbg) < 0 )
+			dbglist.push(dbg);
+
+		var name = 'layer ' + k + ' (' + dbg + ')';
+		buffer += '<li class="layer_on" data-id="' + k + '" data-debug="' + dbg + '"><p onclick="layer_select(this);">' + name + '</p></li>';
 	});
-	HTML.layerlist.innerHTML = buffer;
-	IS_REDRAW = true;
+	__.HTML.layerlist.innerHTML = buffer;
+
+	dbglist.sort();
+	dbglist.unshift(0);
+	var buffer  = '';
+	dbglist.forEach(function(v,k){
+		if ( ! v )
+			buffer += '<option value="0">ALL</option>';
+		else
+			buffer += '<option>' + v + '</option>';
+	});
+	__.HTML.debuglist.innerHTML = buffer;
+
+	__.AUTOZOOM  = QUAD.func.viewer_autozoom(QuadList[0]);
+	__.IS_REDRAW = true;
 }
 
 function layer_select( elem ){
 	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
-	var idx = ON_LAYER.indexOf(layer_id);
+	var idx = __.ON_LAYER.indexOf(layer_id);
 	if ( idx === -1 )
-		ON_LAYER.push(layer_id);
+		__.ON_LAYER.push(layer_id);
 	else
-		ON_LAYER.splice(idx, 1);
+		__.ON_LAYER.splice(idx, 1);
 
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id  = list[i].getAttribute('data-id') | 0;
-		var idx = ON_LAYER.indexOf(id);
+		var idx = __.ON_LAYER.indexOf(id);
 		if ( idx === -1 )
 			list[i].classList.remove('layer_on');
 		else
 			list[i].classList.add('layer_on');
 	}
-	IS_REDRAW = true;
+	__.IS_REDRAW = true;
 }
 
 function layer_close(){
-	HTML.layerdata.style.display      = 'none';
-	HTML.btn_selectall.style.display  = 'none';
-	HTML.btn_selectnone.style.display = 'none';
+	__.HTML.layerdata.style.display      = 'none';
+	__.HTML.btn_selectall.style.display  = 'none';
+	__.HTML.btn_selectnone.style.display = 'none';
+}
+
+function button_select_layers( text ){
+	__.ON_LAYER = [];
+	var list = document.querySelectorAll('#layerlist li');
+	for ( var i=0; i < list.length; i++ ){
+		var id = list[i].getAttribute('data-id') | 0;
+		if ( ! text ){ // select all
+			list[i].classList.add('layer_on');
+			__.ON_LAYER.push(id);
+		}
+		else { // select matched
+			var debug = list[i].getAttribute('data-debug');
+			if ( debug === text ){
+				list[i].classList.add('layer_on');
+				__.ON_LAYER.push(id);
+			}
+			else { // unmatched are unchanged
+				if ( list[i].classList.contains('layer_on') )
+					__.ON_LAYER.push(id);
+			}
+		}
+	} // for ( var i=0; i < list.length; i++ )
+}
+
+function button_unselect_layers( text ){
+	__.ON_LAYER = [];
+	var list = document.querySelectorAll('#layerlist li');
+	for ( var i=0; i < list.length; i++ ){
+		var id = list[i].getAttribute('data-id') | 0;
+		if ( ! text ){ // unselect all
+			list[i].classList.remove('layer_on');
+		}
+		else { // unselect matched
+			var debug = list[i].getAttribute('data-debug');
+			if ( debug === text ){
+				list[i].classList.remove('layer_on');
+			}
+			else { // unmatched are unchanged
+				if ( list[i].classList.contains('layer_on') )
+					__.ON_LAYER.push(id);
+			}
+		}
+	} // for ( var i=0; i < list.length; i++ )
 }
 
 function keydebug_draw( qdata, mat4, color ){
-	var key = qdata.quad.keyframe[ON_KEY];
+	var key = qdata.quad.keyframe[__.ON_KEY];
 	if ( ! key )
 		return;
 	if ( qdata.is_lines )
@@ -258,23 +333,22 @@ function keydebug_drawline( qdata, key, mat4, color ){
 	var clines = [];
 
 	var debug = [];
-	var did, dbg;
+	var dbg_id;
 	key.layer.forEach(function(lv,lk){
 		if ( ! lv )
 			return;
-		if ( ON_LAYER.indexOf(lk) === -1 )
+		if ( __.ON_LAYER.indexOf(lk) < 0 )
 			return;
 
-		dbg = JSON.stringify(lv.debug);
-		did = debug.indexOf(dbg);
-		if ( did < 0 ){
-			did = debug.length;
-			debug.push(dbg);
-			clines[did] = [];
+		dbg_id = debug.indexOf(lv.debug);
+		if ( dbg_id < 0 ){
+			dbg_id = debug.length;
+			debug.push(lv.debug);
+			clines[dbg_id] = [];
 		}
 
 		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
-		clines[did] = clines[did].concat(dst);
+		clines[dbg_id] = clines[dbg_id].concat(dst);
 	});
 
 	var color = [
@@ -307,7 +381,7 @@ function keydebug_drawtex( qdata, key, mat4, color ){
 		var lv = key.layer[ov];
 		if ( ! lv )
 			return;
-		if ( ON_LAYER.indexOf(ov) === -1 )
+		if ( __.ON_LAYER.indexOf(ov) < 0 )
 			return;
 		depth -= zrate;
 
@@ -936,6 +1010,23 @@ var QUAD = {};
 	$.copy_object = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
 	}
+	$.attr_bitflag = function( attrib, enumlist ){
+		if ( Array.isArray(attrib) ){
+			var bitflag = 0;
+			for ( var i=0; i < attrib.length; i++ )
+				bitflag |= $.attr_bitflag(attrib[i], enumlist);
+			return bitflag;
+		}
+		if ( typeof attrib === 'string' ){
+			var idx = enumlist.indexOf(attrib);
+			if ( idx < 0 ){
+				idx = enumlist.length;
+				enumlist.push(attrib);
+			}
+			return (1 << idx);
+		}
+		return 0;
+	}
 
 	//////////////////////////////
 
@@ -1112,6 +1203,11 @@ var QUAD = {};
 		quad.animation = quad.animation || [];
 		quad.skeleton  = quad.skeleton  || [];
 		quad.__MIX     = [];
+		quad.__ATTR    = {
+			keyframe : [],
+			hitbox   : [],
+			colorize : [],
+		};
 
 		var ent;
 		function nullent(arr,k){
@@ -1140,8 +1236,9 @@ var QUAD = {};
 					return nullent(hv.layer, lk);
 				is_null = false;
 				hv.layer[lk] = {
-					'debug'   : JSON.stringify(lv.debug || 0),
-					'hitquad' : lv.hitquad,
+					'debug'     : JSON.stringify(lv.debug || 0),
+					'hitquad'   : lv.hitquad,
+					'attribute' : $.attr_bitflag( lv.attribute, quad.__ATTR.hitbox ),
 				};
 			}); // hv.layer.forEach
 			if ( is_null )
@@ -1163,12 +1260,14 @@ var QUAD = {};
 					return nullent(kv.layer, lk);
 				is_null = false;
 				ent = {
-					'debug'    : JSON.stringify(lv.debug || 0),
-					'dstquad'  : lv.dstquad,
-					'tex_id'   : -1,
-					'blend_id' : -1,
-					'fogquad'  : __.key_fogquad( lv.fogquad ),
-					'srcquad'  : 0,
+					'debug'     : JSON.stringify(lv.debug || 0),
+					'dstquad'   : lv.dstquad,
+					'blend_id'  : -1,
+					'fogquad'   : __.key_fogquad( lv.fogquad ),
+					'attribute' : $.attr_bitflag( lv.attribute, quad.__ATTR.keyframe ),
+					'colorize'  : $.attr_bitflag( lv.colorize , quad.__ATTR.colorize ),
+					'tex_id'    : -1,
+					'srcquad'   : 0,
 				};
 				if ( ! $.is_undef(lv.blend_id) )  ent.blend_id = lv.blend_id | 0; // 0 is valid
 				if ( ! $.is_undef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
@@ -1307,6 +1406,8 @@ var QUAD = {};
 			var lv = layer[ov];
 			if ( ! lv )
 				return;
+			if ( (qdata.keyattr & lv.attribute) !== lv.attribute )
+				return;
 			depth -= zrate;
 
 			var bid = lv.blend_id | 0;
@@ -1324,7 +1425,13 @@ var QUAD = {};
 			var xyz = Q.math.perspective_quad(dst);
 			ent.dst = ent.dst.concat(xyz);
 
-			var clr = Q.math.fog_multi4(color, lv.fogquad);
+			if ( lv.colorize > 0 ){
+				var clr = qdata.colorize[lv.colorize];
+				clr = Q.math.vec4_multi(clr, color);
+				clr = Q.math.fog_multi4(clr, lv.fogquad);
+			}
+			else
+				var clr = Q.math.fog_multi4(color, lv.fogquad);
 			ent.fog = ent.fog.concat(clr);
 
 			ent.z = ent.z.concat([depth , depth , depth , depth]);
@@ -1588,6 +1695,18 @@ var QUAD = {};
 		qdata.quad.__MIX = [];
 	}
 
+	$.viewer_autozoom = function( qdata ){
+		var canvsz  = Q.gl.canvas_size();
+		var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+		if ( ! sprsize )
+			return 1.0;
+
+		var symm = Q.math.rect_symmetry(sprsize);
+		var zoomx = (canvsz[0] * 1.0) / symm[0];
+		var zoomy = (canvsz[1] * 1.5) / symm[1];
+		return ( zoomx < zoomy ) ? zoomx : zoomy;
+	}
+
 	$.viewer_camera = function( qdata, autozoom ){
 		var canvsz = Q.gl.canvas_size();
 
@@ -1597,30 +1716,8 @@ var QUAD = {};
 
 		if ( autozoom > 0.0 )
 			qdata.zoom = autozoom;
-		if ( autozoom < 0.0 ){
-			var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
-			if ( sprsize ){
-				if ( sprsize[0] < 0 || sprsize[1] < 0 ){
-					// is sprite , 0,0 is at center
-					// x1 or y1 is negative
-					var symm = Q.math.rect_symmetry(sprsize);
-					var zoomx = canvsz[0] / symm[0];
-					var zoomy = canvsz[1] / symm[1];
-					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
-				}
-				else {
-					// is map , 0,0 is top-left
-					// x1 and y1 is positive
-					var hw = (sprsize[2] - sprsize[0]) * 0.5;
-					var hh = (sprsize[3] - sprsize[1]) * 0.5;
-					var zoomx = canvsz[0] / hw;
-					var zoomy = canvsz[1] / hh;
-					qdata.zoom = ( zoomx < zoomy ) ? zoomx : zoomy;
-					movex = (sprsize[0] - hw) * qdata.zoom;
-					movey = (sprsize[1] - hh) * qdata.zoom;
-				}
-			} // if ( sprsize )
-		} // if ( autozoom < 0.0 )
+		else
+			qdata.zoom = $.viewer_autozoom(qdata);
 
 		var m4 = Q.math.matrix4();
 		m4[0+3] = movex;
@@ -1631,32 +1728,6 @@ var QUAD = {};
 		if ( qdata.is_flipx )  m4[0+0] = -m4[0+0];
 		if ( qdata.is_flipy )  m4[4+1] = -m4[4+1];
 		return m4;
-	}
-
-	$.is_changed = function( qdata ){
-		var c = 0;
-		c |= ( qdata.prev[0] !== qdata.attach.type );
-		c |= ( qdata.prev[1] !== qdata.attach.id   );
-		c |= ( qdata.prev[2] !== qdata.anim_fps    );
-		c |= ( qdata.prev[3] !== qdata.is_lines    );
-		c |= ( qdata.prev[4] !== qdata.is_hits     );
-		c |= ( qdata.prev[5] !== qdata.is_flipx    );
-		c |= ( qdata.prev[6] !== qdata.is_flipy    );
-		c |= ( qdata.prev[7] !== qdata.zoom        );
-
-		if ( c ){
-			qdata.prev = [
-				qdata.attach.type ,
-				qdata.attach.id   ,
-				qdata.anim_fps    ,
-				qdata.is_lines    ,
-				qdata.is_hits     ,
-				qdata.is_flipx    ,
-				qdata.is_flipy    ,
-				qdata.zoom        ,
-			];
-		}
-		return c;
 	}
 
 	//////////////////////////////
@@ -2107,8 +2178,8 @@ var QUAD = {};
 		if ( ! Q.func.is_valid_attach(qdata, type, id) )
 			return 0;
 
-		var max  = 1 << 24;
-		var rect = [max,max,-max,-max];
+		var max  = 1 << 30;
+		var rect = 0;
 		var is_null = true;
 
 		var cur = qdata.quad[ type ][ id ];
@@ -2124,6 +2195,9 @@ var QUAD = {};
 				cur.layer.forEach(function(lv,lk){
 					if ( ! lv || ! lv[quad] )
 						return;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					var dst = lv[quad];
 					for ( var i=0; i < 8; i += 2 ){
 						if ( rect[0] > dst[i+0] )  rect[0] = dst[i+0]; // x1
@@ -2140,25 +2214,26 @@ var QUAD = {};
 					var xy = $.rect_attach(qdata, sv.type, sv.id);
 					if ( ! xy )
 						return;
-					is_null = false;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					__.rect_compare(rect, xy);
 				});
-				if ( is_null )
-					return 0;
 				return rect;
 
 			case 'animation':
 				if ( cur.__RECT )
 					return cur.__RECT;
 
-				var is_null = true;
 				cur.timeline.forEach(function(tv,tk){
 					if ( ! tv.attach )
 						return;
 					var xy = $.rect_attach(qdata, tv.attach.type, tv.attach.id);
 					if ( ! xy )
 						return;
-					is_null = false;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					var xy2 = Q.math.rect_multi4(tv.matrix, xy);
 					var t;
 					if ( xy2[0] > xy2[2] ){ // if x1 > x2  swap()
@@ -2173,8 +2248,6 @@ var QUAD = {};
 					}
 					__.rect_compare(rect, xy2);
 				});
-				if ( is_null )
-					return 0;
 				cur.__RECT = rect;
 				return rect;
 
@@ -2185,14 +2258,14 @@ var QUAD = {};
 				cur.bone.forEach(function(bv,bk){
 					if ( ! bv || ! bv.attach )
 						return;
-					var xy = $.rect_attach(qdata, bv.type, bv.id);
+					var xy = $.rect_attach(qdata, bv.attach.type, bv.attach.id);
 					if ( ! xy )
 						return;
-					is_null = false;
+					if ( ! rect )
+						rect = [max,max,-max,-max];
+
 					__.rect_compare(rect, xy);
 				});
-				if ( is_null )
-					return 0;
 				cur.__RECT = rect;
 				return rect;
 		} // switch ( type )
@@ -2844,7 +2917,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-3-26 (beta)';
+	$.version = 'ver 2024-4-2 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -2858,6 +2931,9 @@ function QuadData(qlist){
 	$.list = qlist;
 
 	// uploaded files
+	$.colorize = [];
+	$.keyattr  = -1;
+	$.hitattr  = -1;
 	$.name = '';
 	$.quad  = {};
 	$.image = []; // { pos:rect , name:string }
@@ -2880,7 +2956,6 @@ function QuadData(qlist){
 	};
 	$.anim_fps = 0;
 	$.line_index = 0;
-	$.prev = ['',-1,-1,true,true,false,false,1];
 }
 </script>
 </head><body>
@@ -2890,12 +2965,9 @@ function QuadData(qlist){
 		<input type='file' id='input_file' multiple class='hidden'>
 		<button id='btn_upload' data-id='0'>upload</button>
 
-		<button id='btn_lines'>line</button>
-		<button id='btn_zoomin'>+</button>
+		<button id='btn_lines'  >line</button>
+		<button id='btn_zoomin' >+</button>
 		<button id='btn_zoomout'>-</button>
-
-		<button id='btn_selectall' class='hidden'>all</button>
-		<button id='btn_selectnone' class='hidden'>none</button>
 	</nav>
 
 	<div id='viewer'>
@@ -2918,7 +2990,14 @@ function QuadData(qlist){
 		</div>
 
 		<div id='layerdata'>
-			<p><button onclick='layer_close();'>close</button> <span id='layer_name'></span></p>
+			<div><button onclick='layer_close();'>close</button> <span id='layer_name'></span></div>
+
+			<div>
+				<select id='debuglist'></select>
+				<button id='btn_selectall' class='hidden'>on</button>
+				<button id='btn_selectnone' class='hidden'>off</button>
+			</div>
+
 			<ul id='layerlist'></ul>
 		</div>
 
@@ -2926,40 +3005,47 @@ function QuadData(qlist){
 </main>
 
 <script>
-var HTML = get_html_id();
-var QuadList  = [];
-var ON_KEY   = -1;
-var ON_LAYER = [];
-var IS_REDRAW = true;
+'use strict';
+
+var __ = {
+	HTML      : get_html_id(),
+	UPLOAD_ID : -1,
+	ON_KEY    : -1,
+	ON_LAYER  : [],
+	IS_REDRAW : true,
+	AUTOZOOM  : 1.0,
+	CAMERA    : QUAD.math.matrix4(),
+	COLOR     : [1,1,1,1],
+};
+var QuadList = [];
 
 (function(){
-	if ( ! QUAD.gl.init(HTML.canvas) )
+	if ( ! QUAD.gl.init(__.HTML.canvas) )
 		return;
 
 	document.title += ' - ' + QUAD.version;
-	HTML.quad_version.innerHTML = document.title;
+	__.HTML.quad_version.innerHTML = document.title;
 
 	// BETWEEN DEBUGGER-VIEWER
-	var UPLOAD_ID = -1;
-	HTML.btn_upload.addEventListener('click', function(){
-		UPLOAD_ID = this.getAttribute('data-id');
-		HTML.input_file.click();
+	__.HTML.btn_upload.addEventListener('click', function(){
+		__.UPLOAD_ID = this.getAttribute('data-id');
+		__.HTML.input_file.click();
 	});
-	HTML.input_file.addEventListener('change', function(){
-		QUAD.func.log('QuadList[]', UPLOAD_ID);
-		if ( QUAD.func.is_undef( QuadList[ UPLOAD_ID ] ) )
-			QuadList[ UPLOAD_ID ] = new QuadData(QuadList);
-		var qdata = QuadList[ UPLOAD_ID ];
+	__.HTML.input_file.addEventListener('change', function(){
+		QUAD.func.log('QuadList[]', __.UPLOAD_ID);
+		if ( QUAD.func.is_undef( QuadList[ __.UPLOAD_ID ] ) )
+			QuadList[ __.UPLOAD_ID ] = new QuadData(QuadList);
+		var qdata = QuadList[ __.UPLOAD_ID ];
 
 		var promises = [];
 		for ( var up of this.files )
 			promises.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(promises).then(function(resolve){
-			qdata_filetable(qdata, HTML.debugger_files);
+			qdata_filetable(qdata, __.HTML.debugger_files);
 			if ( qdata.name ){
-				HTML.keylist.innerHTML = '';
-				document.title = '[' + qdata.name + '] ' + HTML.quad_version.innerHTML;
+				__.HTML.keylist.innerHTML = '';
+				document.title = '[' + qdata.name + '] ' + __.HTML.quad_version.innerHTML;
 
 				if ( ! qdata.quad.keyframe )
 					return;
@@ -2972,54 +3058,49 @@ var IS_REDRAW = true;
 					var name = v.name + ' (' + v.debug + ')';
 					buffer += '<li><p onclick="keyframe_select(' + k + ');">' + name + '</p></li>';
 				});
-				HTML.keylist.innerHTML = buffer;
+				__.HTML.keylist.innerHTML = buffer;
 			} // if ( qdata.name )
-			IS_REDRAW = true;
+			__.AUTOZOOM  = 1.0;
+			__.IS_REDRAW = true;
 		});
 	});
 
 	// VIEWER
-	var AUTOZOOM = 1.0;
-	HTML.btn_zoomin.addEventListener('click', function(){
-		AUTOZOOM *= 1.1;
-		if ( AUTOZOOM > 10.0 )
-			AUTOZOOM = 10.0;
-		IS_REDRAW = true;
+	__.HTML.btn_zoomin.addEventListener('click', function(){
+		__.AUTOZOOM *= 1.1;
+		if ( __.AUTOZOOM > 10.0 )
+			__.AUTOZOOM = 10.0;
+		__.IS_REDRAW = true;
 	});
-	HTML.btn_zoomout.addEventListener('click', function(){
-		AUTOZOOM /= 1.1;
-		if ( AUTOZOOM < 0.1 )
-			AUTOZOOM = 0.1;
-		IS_REDRAW = true;
+	__.HTML.btn_zoomout.addEventListener('click', function(){
+		__.AUTOZOOM /= 1.1;
+		if ( __.AUTOZOOM < 0.1 )
+			__.AUTOZOOM = 0.1;
+		__.IS_REDRAW = true;
 	});
-	HTML.btn_lines.addEventListener('click', function(){
+	__.HTML.btn_lines.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
-		QuadList[0].is_lines = ! QuadList[0].is_lines;
-		HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
-		IS_REDRAW = true;
+		var qdata = QuadList[0];
+		qdata.is_lines = ! qdata.is_lines;
+		__.HTML.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
+		__.IS_REDRAW = true;
 	});
-	HTML.btn_selectall.addEventListener('click', function(){
-		ON_LAYER = [];
-		var list = document.querySelectorAll('#layerlist li');
-		for ( var i=0; i < list.length; i++ ){
-			var id = list[i].getAttribute('data-id') | 0;
-			list[i].classList.add('layer_on');
-			ON_LAYER.push(id);
-		}
-		IS_REDRAW = true;
+	__.HTML.btn_selectall.addEventListener('click', function(){
+		var dbg = __.HTML.debuglist.value;
+		if ( dbg.indexOf('#') < 0 )
+			dbg = 0;
+		button_select_layers(dbg);
+		__.IS_REDRAW = true;
 	});
-	HTML.btn_selectnone.addEventListener('click', function(){
-		ON_LAYER = [];
-		var list = document.querySelectorAll('#layerlist li');
-		for ( var i=0; i < list.length; i++ ){
-			list[i].classList.remove('layer_on');
-		}
-		IS_REDRAW = true;
+	__.HTML.btn_selectnone.addEventListener('click', function(){
+		var dbg = __.HTML.debuglist.value;
+		if ( dbg.indexOf('#') < 0 )
+			dbg = 0;
+		button_unselect_layers(dbg);
+		__.IS_REDRAW = true;
 	});
 
-	var CAMERA = QUAD.math.matrix4();
-	var COLOR  = [1,1,1,1];
 	function render(){
 		requestAnimationFrame(render);
 		if ( ! QuadList[0] || ! QuadList[0].name )
@@ -3027,12 +3108,12 @@ var IS_REDRAW = true;
 		var qdata = QuadList[0];
 
 		// update/redraw only when changed
-		if ( QUAD.gl.is_canvas_resized() || IS_REDRAW ){
-			CAMERA = QUAD.func.viewer_camera(qdata, AUTOZOOM);
+		if ( __.IS_REDRAW || QUAD.gl.is_canvas_resized() ){
+			__.CAMERA = QUAD.func.viewer_camera(qdata, __.AUTOZOOM);
 
 			QUAD.func.qdata_clear(qdata);
-			keydebug_draw(qdata, CAMERA, COLOR);
-			IS_REDRAW = false;
+			keydebug_draw(qdata, __.CAMERA, __.COLOR);
+			__.IS_REDRAW = false;
 		}
 	}
 	render();

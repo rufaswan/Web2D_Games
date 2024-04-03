@@ -204,18 +204,21 @@ order::
 [subs="specialchars,macros"]
 ----
 {
-  "debug"    : any,
-  "dstquad"  : [
+  "debug"     : any,
+  "dstquad"   : [
     number x1 , number y1 ,
     number x2 , number y2 ,
     number x3 , number y3 ,
     number x4 , number y4 ,
   ],
-  "fogquad"  : [ string rgba1 , string rgba2 , string rgba3 , string rgba4 ],
-  "fogquad"  : string rgba,
-  "blend_id" : int id,
-  "tex_id"   : int id,
-  "srcquad"  : [
+  "blend_id"  : int id,
+  "fogquad"   : [ string rgba1 , string rgba2 , string rgba3 , string rgba4 ],
+  "fogquad"   : string rgba,
+  "attribute" : [ string , string , ... ],
+  "attribute" : string,
+  "colorize"  : string,
+  "tex_id"    : int id,
+  "srcquad"   : [
     number x1 , number y1 ,
     number x2 , number y2 ,
     number x3 , number y3 ,
@@ -232,15 +235,24 @@ dstquad (required)::
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted, then the layer object is skipped.
 
+blend_id (required)::
+	* If omitted or it is invalid, then it is default to -1 (nothing drawn).
+
 fogquad::
 	* All strings is in "#rrggbbaa" format.
 	* Accepts a string, or 4 strings array.
 	** For a string, it is duplicated 3 times to become 4 strings array.
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
-blend_id::
-	* Required to draw texture.
-	* If omitted or it is invalid, then it is default to -1 (nothing drawn).
+attribute::
+	* Accepts a string for only 1 attribute, or a list of string for multiple attributes.
+	* Used for character customization.
+	* Can be used with enum attributes to form an int of bitflags for faster render.
+
+colorize::
+	* Accepts a string of custom color name.
+	* Used for character customization, by adjusting the color level of a grayscale texture to custom color.
+	* Custom color is in RGB, default to `rgb(1.0 , 1.0 , 1.0)`.
 
 tex_id::
 	* Required to draw texture.
@@ -297,6 +309,8 @@ layer (required)::
     number x3 , number y3 ,
     number x4 , number y4 ,
   ],
+  "attribute" : [ string , string , ... ],
+  "attribute" : string,
 }
 ----
 
@@ -307,6 +321,10 @@ hitquad (required)::
 	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted, then the layer object is skipped.
+
+attribute::
+	* Accepts a string for only 1 attribute, or a list of string for multiple attributes.
+	* Can be used with enum attributes to form an int of bitflags for faster collusion detection.
 
 
 
@@ -542,6 +560,9 @@ id (required)::
 
 v0.x ()::
 	* `quad_object` : renamed to `link_object`
+	* `keyframe_layer_object` : added `colorize`
+	* `keyframe_layer_object` : added `attribute`
+	* `hitbox_layer_object` : added `attribute`
 
 v0.4 (2024-1-11)::
 	* `keyframe_object` : added `order`

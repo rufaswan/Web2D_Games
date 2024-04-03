@@ -165,7 +165,7 @@ grim
 	ps5
 odin
 	ps2  *base*       , 256 color
-	vit  size=1x ps2  , DXT 1/3/5   , ORSD/RESD prefix
+	vit  size=1x ps2  , DXT 1/3/5   , *remake* ORSD/RESD prefix
 	ps3  size=2x vita , DXT 3/5     , ORHD/REHD prefix
 	ps4  size=2x vita , DXT 5 + BC7 , ORHD/REHD prefix
 kuma
@@ -183,7 +183,7 @@ sent
 	ps4  *base*       , BC7         , prediv
 	swi  size=1x ps4  , BC4 + BC7   , prediv
 unic
-	swi  *base*       , BC4 + BC7   , prediv , SD prefix
+	swi  *base*       , BC4 + BC7   , prediv
 	ps4  size=2x swi  , BC7         , prediv
 	ps5
 	xbx

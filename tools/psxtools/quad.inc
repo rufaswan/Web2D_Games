@@ -483,6 +483,29 @@ function blend_modes( $mode )
 	} // switch ( $mode )
 	return 0;
 }
+
+function bitflag_attr( $int, $pfx )
+{
+	$int = (int)$int;
+	if ( $int < 1 ) // 0 and negative
+		return 0;
+
+	$attrib = array();
+	$sll   = 0;
+	while ( $int > 0 )
+	{
+		$bit = $int & 1;
+		if ( $bit )
+			$attrib[] = sprintf('%s_%x', $pfx, 1 << $sll);
+
+		$int >>= 1;
+		$sll++;
+	}
+
+	if ( count($attrib) === 1 )
+		return $attrib[0];
+	return $attrib;
+}
 //////////////////////////////
 /*
 function quad_center( $v4 )
