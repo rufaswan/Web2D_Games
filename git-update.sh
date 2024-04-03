@@ -67,6 +67,11 @@ case "$cmd" in
 		git tag "$@"
 		git push origin --tags
 		;;
+	'rmtag'|'-rmtag')
+		echo "git remove tag $git : $@"
+		git push --delete origin "$@"
+		git tag -d "$@"
+		;;
 
 	'update'|'-update')
 		if [ "$ups" ]; then

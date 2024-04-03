@@ -1,5 +1,5 @@
 :hardbreaks-option:
-= QUAD Format Specification v0.4
+= QUAD Format Specification v0.5
 by Rufas Wan
 :toc:
 
@@ -558,7 +558,7 @@ id (required)::
 
 == Revision History
 
-v0.x ()::
+v0.5 (2024-4-2)::
 	* `quad_object` : renamed to `link_object`
 	* `keyframe_layer_object` : added `colorize`
 	* `keyframe_layer_object` : added `attribute`
@@ -596,6 +596,13 @@ v0.1 (2021-03-01)::
 * link:sample-keymix.quad[sample-keymix.quad (1478 bytes)]
 * link:sample-depth.quad[sample-depth.quad (786 bytes)]
 
+
+
+== Contributors
+
+In alphabetical order::
+	* Cloud2333
+	* tombmonkey
 
 
 == Online Ver
