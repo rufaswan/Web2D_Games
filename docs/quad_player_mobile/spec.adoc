@@ -14,8 +14,10 @@ The major difference from 2D sprite:
 * Instead creating a new drawing for every possible transformation, the sprites can be transform directly using GPU.
 * Two transformation can be interpolate during animation. This creates a new type of sprites with 2D doll-like movement.
 * If the 2D sprite is properly layered, its depth value can be faked, allowing dynamic lighting and shadow calculations later.
+* All indexed color textures will be convert to RGBA true color textures when loading. There are no more palette animations.
+* The texture can be in grayscale to be blended with user selected colors. This can be better than editing palettes that edits only 1 color at a time (and that color can be affecting multiple unrelated layers). Blending the whole layer is a lot more convenient, but cost CPU/GPU processing power.
 * As everything on GPU is measured in `-1.0 to +1.0` or `0.0 to 1.0`, rounding error is a very common problem.
-* Not to mention Anti-Alias and Smoothing filters are often used to blend the sharp outer edge of 3D models and background, it may be possible this is not be suitable for 2D pixel art.
+* Anti-Alias and Smoothing filters are often used to blend the sharp outer edge of 3D models and background. It may not be suitable for 2D pixel art.
 
 The major difference from 3D model:
 
@@ -25,9 +27,9 @@ The major difference from 3D model:
 * Z or depth value are not used. It is faked on drawing for perspective correction and drawing order.
 * As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not needed. They are auto-generated when drawing as 2 triangles.
 * No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.
-* Camera Clipping Planes are not used. There are no `near` and `far` in 2D games. Camera is only used for zoom in or out for dramatic effects.
-* Full opaque/solid sprites nearly doesn't exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, even textbox.
-* Therefore 3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter's algorithm).
+* Camera Clipping Planes are not used. There are no `near` and `far` in 2D games. Everything within the camera are drawn. Camera is only used for zoom in or out for dramatic effects.
+* Full opaque/solid sprites doesn't exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, including GUI elements and textbox.
+* 3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter's algorithm).
 
 
 
@@ -558,7 +560,7 @@ id (required)::
 
 == Revision History
 
-v0.5 (2024-4-2)::
+v0.5 (2024-4-3)::
 	* `quad_object` : renamed to `link_object`
 	* `keyframe_layer_object` : added `colorize`
 	* `keyframe_layer_object` : added `attribute`

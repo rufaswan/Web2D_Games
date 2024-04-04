@@ -421,7 +421,7 @@ function FMBS_s4( $id )
 				$b00 = $ord($s, 0x00, 2); // flags
 				$b02 = $ord($s, 0x02, 1); // blend id
 				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2); // set id
+				$b04 = $ord($s, 0x04, 2); // attrib
 				$b06 = $ord($s, 0x06, 2); // s1 id *unused*
 				$b08 = $ord($s, 0x08, 2); // s0 id *unused*
 				$b0a = $ord($s, 0x0a, 2); // s2 id
@@ -430,6 +430,7 @@ function FMBS_s4( $id )
 				$blend_id = $b02;
 				$tex_id   = $b03;
 				$s0s1s2   = array($b0a,$b0a,$b0a);
+				$attrib   = $b04;
 				break;
 
 			case 'ps3_drag': // c
@@ -438,7 +439,7 @@ function FMBS_s4( $id )
 				$b00 = $ord($s, 0x00, 2); // flags
 				$b02 = $ord($s, 0x02, 1); // 0 1 2 6  blend id
 				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2); // set id
+				$b04 = $ord($s, 0x04, 2); // attrib
 				$b06 = $ord($s, 0x06, 2); // s1 id
 				$b08 = $ord($s, 0x08, 2); // s0 id
 				$b0a = $ord($s, 0x0a, 2); // s2 id
@@ -458,7 +459,7 @@ function FMBS_s4( $id )
 				$b05 = $ord($s, 0x05, 1); // flags
 				$b06 = $ord($s, 0x06, 1); // 0 1 2 6  blend id
 				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 2); // set id
+				$b08 = $ord($s, 0x08, 2); // attrib
 				$b0a = $ord($s, 0x0a, 2); // s1 id *unused*
 				$b0c = $ord($s, 0x0c, 2); // s0 id *unused*
 				$b0e = $ord($s, 0x0e, 2); // s2 id
@@ -485,7 +486,7 @@ function FMBS_s4( $id )
 				$b05 = $ord($s, 0x05, 1); // flags
 				$b06 = $ord($s, 0x06, 1); // blend id
 				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 2); // set id
+				$b08 = $ord($s, 0x08, 2); // attrib
 				$b0a = $ord($s, 0x0a, 2); // s1 id
 				$b0c = $ord($s, 0x0c, 2); // s0 id
 				$b0e = $ord($s, 0x0e, 2); // s2 id
@@ -518,7 +519,7 @@ function FMBS_s4( $id )
 				$b05 = $ord($s, 0x05, 1); // flags
 				$b06 = $ord($s, 0x06, 1); // 0 1 2 3  blend id
 				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 4); // set id
+				$b08 = $ord($s, 0x08, 4); // attrib
 				$b0c = $ord($s, 0x0c, 2); // s1 id
 				$b0e = $ord($s, 0x0e, 2); // s0 id
 				$b10 = $ord($s, 0x10, 2); // s2 id

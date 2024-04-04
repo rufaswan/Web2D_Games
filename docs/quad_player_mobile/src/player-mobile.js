@@ -232,6 +232,7 @@ function viewer_btn_menu( qdata ){
 	__.HTML.btn_keyattr.style.display = 'none';
 	__.HTML.keyattr_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
+		qdata.keyattr = -1;
 		__.HTML.btn_keyattr.style.display = 'block';
 		var buffer = '';
 		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
@@ -245,6 +246,7 @@ function viewer_btn_menu( qdata ){
 	__.HTML.btn_colorize.style.display = 'none';
 	__.HTML.colorize_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.colorize.length > 0 ){
+		qdata.colorize = [];
 		__.HTML.btn_colorize.style.display = 'block';
 		var buffer = '';
 		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){

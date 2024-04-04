@@ -65,10 +65,16 @@
 <p>If the 2D sprite is properly layered, its depth value can be faked, allowing dynamic lighting and shadow calculations later.</p>
 </li>
 <li>
+<p>All indexed color textures will be convert to RGBA true color textures when loading. There are no more palette animations.</p>
+</li>
+<li>
+<p>The texture can be in grayscale to be blended with user selected colors. This can be better than editing palettes that edits only 1 color at a time (and that color can be affecting multiple unrelated layers). Blending the whole layer is a lot more convenient, but cost CPU/GPU processing power.</p>
+</li>
+<li>
 <p>As everything on GPU is measured in <code>-1.0 to +1.0</code> or <code>0.0 to 1.0</code>, rounding error is a very common problem.</p>
 </li>
 <li>
-<p>Not to mention Anti-Alias and Smoothing filters are often used to blend the sharp outer edge of 3D models and background, it may be possible this is not be suitable for 2D pixel art.</p>
+<p>Anti-Alias and Smoothing filters are often used to blend the sharp outer edge of 3D models and background. It may not be suitable for 2D pixel art.</p>
 </li>
 </ul>
 </div>
@@ -96,13 +102,13 @@
 <p>No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.</p>
 </li>
 <li>
-<p>Camera Clipping Planes are not used. There are no <code>near</code> and <code>far</code> in 2D games. Camera is only used for zoom in or out for dramatic effects.</p>
+<p>Camera Clipping Planes are not used. There are no <code>near</code> and <code>far</code> in 2D games. Everything within the camera are drawn. Camera is only used for zoom in or out for dramatic effects.</p>
 </li>
 <li>
-<p>Full opaque/solid sprites nearly doesn&#8217;t exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, even textbox.</p>
+<p>Full opaque/solid sprites doesn&#8217;t exists in 2D. There are always transparent/semi-transparent pixels surrounding the sprite, including GUI elements and textbox.</p>
 </li>
 <li>
-<p>Therefore 3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter&#8217;s algorithm).</p>
+<p>3D technique of reducing GPU overdraw by rendering opaque objects front-to-back order is not applicable. All sprites, regardless of opaque/transparent, is rendered in back-to-front order (Painter&#8217;s algorithm).</p>
 </li>
 </ul>
 </div>
@@ -1176,7 +1182,7 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">v0.5 (2024-4-2)</dt>
+<dt class="hdlist1">v0.5 (2024-4-3)</dt>
 <dd>
 <div class="ulist">
 <ul>
