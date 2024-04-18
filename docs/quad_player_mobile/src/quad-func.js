@@ -338,10 +338,9 @@ function QuadFunc(Q){
 					'tex_id'    : -1,
 					'srcquad'   : 0,
 				};
-				if ( ! $.is_undef(lv.blend_id) )  ent.blend_id = lv.blend_id | 0; // 0 is valid
-				if ( ! $.is_undef(lv.tex_id  ) )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
-				if ( $.is_array(lv.srcquad, 8) )
-					ent.srcquad = lv.srcquad;
+				if ( ! $.is_undef(lv.blend_id)   )  ent.blend_id = lv.blend_id | 0; // 0 is valid
+				if ( ! $.is_undef(lv.tex_id  )   )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
+				if (   $.is_array(lv.srcquad, 8) )  ent.srcquad  = lv.srcquad;
 				kv.layer[lk] = ent;
 			}); // kv.layer.forEach
 			if ( is_null )
@@ -466,7 +465,7 @@ function QuadFunc(Q){
 		var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
 		var zrate = 1.0 / (layer.length + 1);
-		var buf_list = [];
+		var buf_list = {};
 		var depth = 1.0;
 		//console.log('order',order);
 
@@ -508,13 +507,22 @@ function QuadFunc(Q){
 		//console.log('buf_list',buf_list);
 
 		Q.gl.enable_depth('LESS');
-		buf_list.forEach(function(bv,bk){
-			if ( ! bv || ! qdata.quad.blend[bk] )
-				return;
+		for ( var i = -1; i < qdata.quad.blend.length; i++ ){
+			if ( ! buf_list[i] ) // no data to draw
+				continue;
+
+			if ( i < 0 ) // disable blending
+				Q.gl.enable_blend(0);
+			else {
+				if ( ! qdata.quad.blend[i] ) // invalid or unknown blending
+					continue;
+				Q.gl.enable_blend( qdata.quad.blend[i] );
+			}
+
 			qdata.is_draw = true;
-			Q.gl.enable_blend ( qdata.quad.blend[bk] );
+			var bv = buf_list[i];
 			Q.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.vram );
-		});
+		} // for ( var i = -1; i < qdata.quad.blend.length; i++ )
 		Q.gl.enable_depth(0);
 	}
 
@@ -530,86 +538,85 @@ function QuadFunc(Q){
 
 	__.draw_MIX = function( qdata, id, mat4, color ){
 		var mix = qdata.quad.__MIX[id];
-		mix.forEach(function(mv,mk){
-			switch ( mv.type ){
-				case 'keyframe':
-					if ( qdata.is_lines )
-						return __.draw_lines(qdata, mv.layer, mat4, 'dstquad');
-					else
-						return __.draw_keyframe_tex(qdata, mv.layer, mv.order, mat4, color);
-				case 'hitbox':
-					if ( ! qdata.is_hits )
-						return;
-					return __.draw_lines(qdata, mv.layer, mat4, 'hitquad');
-			} // switch ( mv.type )
-		});
+		if ( mix.keyframe ){
+			if ( qdata.is_lines )
+				__.draw_lines(qdata, mix.keyframe.layer, mat4, 'dstquad');
+			else
+				__.draw_keyframe_tex(qdata, mix.keyframe.layer, mix.keyframe.order, mat4, color);
+		}
+		if ( mix.hitbox && qdata.is_hits )
+			__.draw_lines(qdata, mix.hitbox.layer, mat4, 'hitquad');
 	}
 
 	__.mix_attach = function( qdata, cur, nxt, rate, keymix, hitmix ){
-		var mixslot = [];
-
-		function nextlayer( next, s ){
-			if ( next.type === s )
-				return qdata.quad[s][ next.id ].layer;
-			if ( next.type === 'slot' ){
-				var slot = qdata.quad.slot[ next.id ];
-				for ( var i=0; i < slot.length; i++ ){
-					if ( slot[i].type === s )
-						return qdata.quad[s][ slot[i].id ].layer;
-				}
-			}
-			return 0;
-		}
-		function addmixslot( mcur, mnxt ){
-			switch( mcur.type ){
+		function getmixed( mixed, attach ){
+			switch ( attach.type ){
 				case 'slot':
-					var slot = qdata.quad.slot[ cur.id ];
-					slot.forEach(function(sv,sk){
-						addmixslot(sv, mnxt);
+					if ( ! qdata.quad.slot[ attach.id ] )
+						return;
+					qdata.quad.slot[ attach.id ].forEach(function(sv,sk){
+						getmixed(mixed, sv);
 					});
 					return;
 				case 'keyframe':
-				case 'hitbox':
-					var curlayer = qdata.quad[ mcur.type ][ mcur.id ].layer;
-					if ( ! curlayer )
+					if ( ! qdata.quad.keyframe[ attach.id ] )
 						return;
-					var ent = {
-						'type'  : mcur.type,
-						'layer' : $.copy_object( curlayer ),
-					};
-					if ( mcur.type === 'keyframe' )
-						ent.order = qdata.quad[ mcur.type ][ mcur.id ].order;
-
-					var mix = 0;
-					mix |= ( mcur.type === 'keyframe' && keymix );
-					mix |= ( mcur.type === 'hitbox'   && hitmix );
-					if ( ! mix )
-						return mixslot.push(ent);
-
-					var nxtlayer = nextlayer(mnxt, mcur.type);
-					if ( ! nxtlayer )
-						return mixslot.push(ent);
-					if ( curlayer.length !== nxtlayer.length )
-						return mixslot.push(ent);
-
-					ent.layer.forEach(function(lv,lk){
-						if ( ! lv || ! nxtlayer[lk] )
-							return;
-						if ( keymix && lv.dstquad && nxtlayer[lk].dstquad )
-							lv.dstquad = Q.math.quad_mix( rate, curlayer[lk].dstquad, nxtlayer[lk].dstquad );
-						if ( hitmix && lv.hitquad && nxtlayer[lk].hitquad )
-							lv.hitquad = Q.math.quad_mix( rate, curlayer[lk].hitquad, nxtlayer[lk].hitquad );
-						if ( keymix && lv.fogquad && nxtlayer[lk].fogquad )
-							lv.fogquad = Q.math.fog_mix ( rate, curlayer[lk].fogquad, nxtlayer[lk].fogquad );
-					});
-					return mixslot.push(ent);
-			} // switch( mcur.type )
+					if ( ! mixed.keyframe )
+						mixed.keyframe = qdata.quad.keyframe[ attach.id ];
+					return;
+				case 'hitbox':
+					if ( ! qdata.quad.hitbox[ attach.id ] )
+						return;
+					if ( ! mixed.hitbox )
+						mixed.hitbox   = qdata.quad.hitbox[ attach.id ];
+					return;
+			} // switch ( attach.type )
 		}
-		addmixslot(cur, nxt);
+		function is_canmixed( is_mix, objcur, objnxt ){
+			if ( ! is_mix )  return false;
+			if ( ! objcur )  return false;
+			if ( ! objnxt )  return false;
+			if ( objcur.layer.length !== objnxt.layer.length )
+				return false;
+			return true;
+		}
+
+		var mixcur = {
+			keyframe : 0,
+			hitbox   : 0,
+		};
+		var mixnxt = {
+			keyframe : 0,
+			hitbox   : 0,
+		};
+		getmixed( mixcur, cur );
+		getmixed( mixnxt, nxt );
+		var mixent = $.copy_object(mixcur);
+
+		if ( is_canmixed(keymix, mixcur.keyframe, mixnxt.keyframe) ){
+			for ( var i=0; i < mixcur.keyframe.layer.length; i++ ){
+				if ( ! mixcur.keyframe.layer[i] )
+					continue;
+				if ( ! mixnxt.keyframe.layer[i] )
+					continue;
+				mixent.keyframe.layer[i].dstquad = Q.math.quad_mix( rate , mixcur.keyframe.layer[i].dstquad , mixnxt.keyframe.layer[i].dstquad );
+				mixent.keyframe.layer[i].fogquad = Q.math.fog_mix ( rate , mixcur.keyframe.layer[i].fogquad , mixnxt.keyframe.layer[i].fogquad );
+			} // for ( var i=0; i < mixcur.keyframe.length; i++ )
+		}
+
+		if ( is_canmixed(hitmix, mixcur.hitbox, mixnxt.hitbox) ){
+			for ( var i=0; i < mixcur.hitbox.layer.length; i++ ){
+				if ( ! mixcur.hitbox.layer[i] )
+					continue;
+				if ( ! mixnxt.hitbox.layer[i] )
+					continue;
+				mixent.hitbox.layer[i].hitquad = Q.math.quad_mix( rate , mixcur.hitbox.layer[i].hitquad , mixnxt.hitbox.layer[i].hitquad );
+			} // for ( var i=0; i < mixcur.hitbox.length; i++ )
+		}
 
 		// return attach object
 		var id = qdata.quad.__MIX.length;
-		qdata.quad.__MIX.push(mixslot);
+		qdata.quad.__MIX.push(mixent);
 		return {
 			'type' : '__MIX',
 			'id'   : id,
@@ -759,7 +766,7 @@ function QuadFunc(Q){
 		if ( ! qdata.quad )
 			return;
 		Q.gl.clear();
-		qdata.is_draw = false;
+		qdata.is_draw    = false;
 		qdata.line_index = 0;
 		qdata.quad.__MIX = [];
 	}

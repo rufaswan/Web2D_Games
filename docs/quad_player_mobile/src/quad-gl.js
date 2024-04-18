@@ -28,6 +28,7 @@ function QuadGL(Q){
 		if ( maxsz < 1 )
 			return Q.func.error('MAX_TEXTURE_SIZE < 1', maxsz);
 		__.MAX_TEX_SIZE = maxsz | 0;
+		var vec2_vram = 'vec2(' + maxsz.toFixed(1) + ' , ' + maxsz.toFixed(1) + ')';
 
 		var vert_src, frag_src;
 		Q.func.log('WebGL + highp init OK',
@@ -63,7 +64,7 @@ function QuadGL(Q){
 			attribute  highp  vec3   a_xyz;
 			attribute  highp  vec2   a_uv;
 			attribute  lowp   float  a_z;
-			uniform    highp  vec2   u_pxsize[2];
+			uniform    highp  vec2   u_pxsize;
 			varying    highp  vec4   v_fog;
 			varying    highp  vec2   v_uv;
 			varying    highp  float  v_z;
@@ -75,7 +76,7 @@ function QuadGL(Q){
 			void main(void){
 				z = 1.0 / a_xyz.z;
 				FOG = a_fog    * z;
-				XY  = a_xyz.xy * z * u_pxsize[0];
+				XY  = a_xyz.xy * z * u_pxsize;
 				UV  = a_uv     * z;
 
 				v_fog = FOG;
@@ -86,7 +87,6 @@ function QuadGL(Q){
 		`;
 		frag_src = `
 			uniform  sampler2D  u_tex;
-			uniform  highp  vec2   u_pxsize[2];
 			varying  highp  vec4   v_fog;
 			varying  highp  vec2   v_uv;
 			varying  highp  float  v_z;
@@ -97,8 +97,8 @@ function QuadGL(Q){
 			void main(void){
 				z   = 1.0 / v_z;
 				FOG = v_fog * z;
-				UV  = v_uv  * z * u_pxsize[1];
-				gl_FragColor = texture2D(u_tex, UV) * FOG;
+				UV  = v_uv  * z;
+				gl_FragColor = texture2D(u_tex, UV / ${vec2_vram}) * FOG;
 			}
 		`;
 		__.SHADER.keyframe = __.create_shader('draw keyframe', vert_src, frag_src);
@@ -108,26 +108,26 @@ function QuadGL(Q){
 		vert_src = `
 			attribute  highp  vec2   a_xy;
 			attribute  highp  vec2   a_uv;
-			uniform    highp  vec2   u_pxsize[2];
 			varying    highp  vec2   v_uv;
 
 			highp  vec2   XY;
 			void main(void){
 				v_uv = a_uv;
+				XY   = a_xy / ${vec2_vram};
 
 				// convert 0.0 to 1.0 => -1.0 to +1.0
-				XY = (a_xy * u_pxsize[0] * 2.0) - 1.0;
+				XY = (XY * 2.0) - 1.0;
 				gl_Position = vec4(XY.x, XY.y, 1.0, 1.0);
 			}
 		`;
 		frag_src = `
 			uniform  sampler2D  u_tex;
-			uniform  highp  vec2   u_pxsize[2];
+			uniform  highp  vec2   u_pxsize;
 			varying  highp  vec2   v_uv;
 
 			highp  vec2   UV;
 			void main(void){
-				UV = v_uv * u_pxsize[1];
+				UV = v_uv * u_pxsize;
 				gl_FragColor = texture2D(u_tex, UV);
 			}
 		`;
@@ -189,7 +189,7 @@ function QuadGL(Q){
 		var loc = __.shader_loc(__.SHADER.keyframe, 'a_fog', 'a_xyz', 'a_uv', 'a_z', 'u_pxsize', 'u_tex');
 		var view = [ __.GL.drawingBufferWidth * 0.5 , __.GL.drawingBufferHeight * 0.5 ];
 
-		var pxsz = [ 1.0/view[0] , -1.0/view[1] , 1.0/image.w , 1.0/image.h ];
+		var pxsz = [ 1.0/view[0] , -1.0/view[1] ];
 		__.GL.activeTexture(__.GL.TEXTURE0);
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, image.tex);
 
@@ -197,7 +197,7 @@ function QuadGL(Q){
 		__.set_vertex_attrib(loc.a_uv , src, 2);
 		__.set_vertex_attrib(loc.a_fog, fog, 4);
 		__.set_vertex_attrib(loc.a_z  , z  , 1);
-		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
+		__.GL.uniform2f     (loc.u_pxsize, pxsz[0], pxsz[1]);
 		__.GL.uniform1i     (loc.u_tex   , 0   );
 		__.GL.viewport(0, 0, view[0]*2, view[1]*2);
 
@@ -208,12 +208,11 @@ function QuadGL(Q){
 	$.draw_vram = function( vram, tex, rect ){
 		__.GL.useProgram( __.SHADER.vram );
 		var loc = __.shader_loc(__.SHADER.vram, 'a_xy', 'a_uv', 'u_pxsize', 'u_tex');
-		var view = [ vram.w * 0.5 , vram.h * 0.5 ];
 		var sw = rect[2] - rect[0];
 		var sh = rect[3] - rect[1];
 
 		// to be used with canvas - DO NOT flipy !
-		var pxsz = [ 1.0/vram.w , 1.0/vram.h , 1.0/sw , 1.0/sh ];
+		var pxsz = [ 1.0/sw , 1.0/sh ];
 		__.GL.activeTexture(__.GL.TEXTURE0);
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
 
@@ -226,7 +225,7 @@ function QuadGL(Q){
 		var src = [0,0 , sw,0 , sw,sh , 0,sh];
 		__.set_vertex_attrib(loc.a_xy, dst, 2);
 		__.set_vertex_attrib(loc.a_uv, src, 2);
-		__.GL.uniform2fv    (loc.u_pxsize, pxsz);
+		__.GL.uniform2f     (loc.u_pxsize, pxsz[0], pxsz[1]);
 		__.GL.uniform1i     (loc.u_tex   , 0   );
 		__.GL.viewport(0, 0, vram.w, vram.h);
 

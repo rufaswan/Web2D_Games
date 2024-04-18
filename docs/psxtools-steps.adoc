@@ -60,6 +60,12 @@ For 605/all subfiles, the files are in pairs. Run them in sets.
 php  psxtools/xeno_map2battle.php  605/EVEN_FILE  605/ODD_FILE
 php  psxtools/quad_xeno_battle_2d.php  605/OUTPUT_DIR/spr/*all subfiles*
 ....
+(TESTING) Map events are in variable-length VM bytecodes, total 482 of them. I managed to loop through them, but nothing are known about what they actually do.
+#HELP WANTED#
+....
+php  psxtools/xeno_map_packer.php  605/EVEN_FILE
+php  psxtools/zinfo_xeno_map5_opcode.php  605/EVEN_FILE/5.dec
+....
 
 '''
 == Rusty (PC-98)

@@ -3,28 +3,24 @@
     {
       "layer" : [
         {
-          "dstquad"  : [ 10 , 10 , 30 , 10 , 30 , 20 , 10 , 20 ] ,
-          "fogquad"  : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#ffffffff" ] ,
-          "blend_id" : 0
+          "dstquad"  : [ 40 , -30 , 40 , -20 , 10 , -10 , 10 , -40 ] ,
+          "fogquad"  : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#ffffffff" ]
         } ,
         {
-          "dstquad"  : [ 10 , 30 , 30 , 30 , 30 , 40 , 10 , 40 ] ,
-          "fogquad"  : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#ffffffff" ] ,
-          "blend_id" : 0
+          "dstquad"  : [ -40 , 30 , -40 , 20 , -10 , 10 , -10 , 40 ] ,
+          "fogquad"  : [ "#00ffffff" , "#ff00ffff" , "#ffff00ff" , "#000000ff" ]
         }
       ]
     } ,
     {
       "layer" : [
         {
-          "dstquad"  : [ 10 , 40 , 20 , 40 , 20 , 10 , 10 , 10 ] ,
-          "fogquad"  : [ "#00ffffff" , "#ff00ffff" , "#ffff00ff" , "#000000ff" ] ,
-          "blend_id" : 0
+          "dstquad"  : [ -40 , -30 , -40 , -20 , -10 , -10 , -10 , -40 ] ,
+          "fogquad"  : [ "#00ffffff" , "#ff00ffff" , "#ffff00ff" , "#000000ff" ]
         } ,
         {
-          "dstquad"  : [ 30 , 40 , 40 , 40 , 40 , 10 , 30 , 10 ] ,
-          "fogquad"  : [ "#00ffffff" , "#ff00ffff" , "#ffff00ff" , "#000000ff" ] ,
-          "blend_id" : 0
+          "dstquad"  : [ 40 , 30 , 40 , 20 , 10 , 10 , 10 , 40 ] ,
+          "fogquad"  : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#ffffffff" ]
         }
       ]
     }
@@ -33,7 +29,7 @@
     {
       "timeline" : [
         {
-          "time"         : 7 ,
+          "time"         : 11 ,
           "attach"       : {
             "type" : "keyframe" ,
             "id"   : 0
@@ -41,7 +37,7 @@
           "keyframe_mix" : 1
         } ,
         {
-          "time"         : 7 ,
+          "time"         : 11 ,
           "attach"       : {
             "type" : "keyframe" ,
             "id"   : 1
@@ -50,11 +46,6 @@
         }
       ] ,
       "loop_id"  : 0
-    }
-  ] ,
-  "blend"     : [
-    {
-      "mode" : [ "FUNC_ADD" , "ONE" , "ONE" ]
     }
   ]
 }

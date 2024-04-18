@@ -251,7 +251,26 @@
 <p>For linking to other objects in the QUAD file.</p>
 </li>
 <li>
-<p>Valid values are: <mark><code>keyframe</code></mark>, <mark><code>hitbox</code></mark>, <mark><code>slot</code></mark>, <mark><code>animation</code></mark> and <mark><code>skeleton</code></mark>.</p>
+<p>Valid values are:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>keyframe</code> for <a href="#keyframe_object">Keyframe Object</a></p>
+</li>
+<li>
+<p><code>hitbox</code> for <a href="#hitbox_object">Hitbox Object</a></p>
+</li>
+<li>
+<p><code>slot</code> for <a href="#slot_object">Slot Object</a></p>
+</li>
+<li>
+<p><code>animation</code> for <a href="#animation_object">Animation Object</a></p>
+</li>
+<li>
+<p><code>skeleton</code> for <a href="#skeleton_object">Skeleton Object</a></p>
+</li>
+</ol>
+</div>
 </li>
 </ul>
 </div>
@@ -350,7 +369,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Drawing order for <code>keyframe_layer_object</code>, in bottom-to-top order (Painter&#8217;s algorithm).</p>
+<p>Drawing order for <a href="#keyframe_layer_object">Keyframe Layer Object</a>, in bottom-to-top order (Painter&#8217;s algorithm).</p>
 </li>
 <li>
 <p>All <code>layer_id</code> must be unique within the array, or else it is invalid.</p>
@@ -419,6 +438,9 @@
 <p>Accepts 8 numbers array, or 4 pairs of x,y coordinates.</p>
 </li>
 <li>
+<p>Defines the area on the canvas or BG to write pixels to.</p>
+</li>
+<li>
 <p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
 </li>
 <li>
@@ -427,12 +449,21 @@
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">blend_id (required)</dt>
+<dt class="hdlist1">blend_id</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>If omitted or it is invalid, then it is default to -1 (nothing drawn).</p>
+<p>Index of <a href="#blend_object">Blend Object</a> to use for alpha blending.</p>
+</li>
+<li>
+<p>If <a href="#blend_object">Blend Object</a> is invalid or does not exists, then it is skipped.</p>
+</li>
+<li>
+<p>If omitted, then it is default to -1.</p>
+</li>
+<li>
+<p>-1 means disable alpha blending. All pixels, including transparent pixels, will overwrite pixels within <code>dstquad</code>.</p>
 </li>
 </ul>
 </div>
@@ -514,6 +545,9 @@
 </li>
 <li>
 <p>Accepts 8 numbers array, as in 4 pairs of x,y coordinates.</p>
+</li>
+<li>
+<p>Defines the area of texture or FG to read pixels from.</p>
 </li>
 <li>
 <p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
@@ -618,6 +652,9 @@
 <ul>
 <li>
 <p>Accepts 8 numbers array, or 4 pairs of x,y coordinates.</p>
+</li>
+<li>
+<p>Defines the area for collusion detection.</p>
 </li>
 <li>
 <p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
@@ -843,7 +880,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Marks if current keyframe layer is interpolated with the next keyframe layer.</p>
+<p>Marks if current <a href="#keyframe_layer_object">Keyframe Layer Object</a> is interpolated with the next <a href="#keyframe_layer_object">Keyframe Layer Object</a>.</p>
 </li>
 <li>
 <p>Affects <code>dstquad</code> and <code>fogquad</code>.</p>
@@ -892,7 +929,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Marks if current hitbox layer is interpolated with the next hitbox layer.</p>
+<p>Marks if current <a href="#hitbox_layer_object">Hitbox Layer Object</a> is interpolated with the next <a href="#hitbox_layer_object">Hitbox Layer Object</a>.</p>
 </li>
 <li>
 <p>Affects <code>hitquad</code>.</p>
@@ -1123,7 +1160,23 @@
 <p>Constant color for <mark><code>blendColor()</code></mark>.</p>
 </li>
 <li>
-<p>Used when <mark><code>blendFunc()</code></mark>/<mark><code>blendFuncSeparate()</code></mark> uses factor <mark><code>CONSTANT_COLOR</code></mark>, <mark><code>CONSTANT_ALPHA</code></mark>, <mark><code>ONE_MINUS_CONSTANT_COLOR</code></mark> or <mark><code>ONE_MINUS_CONSTANT_ALPHA</code></mark>.</p>
+<p>Used when <mark><code>blendFunc()</code></mark>/<mark><code>blendFuncSeparate()</code></mark> uses factor:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CONSTANT_COLOR</code></p>
+</li>
+<li>
+<p><code>CONSTANT_ALPHA</code></p>
+</li>
+<li>
+<p><code>ONE_MINUS_CONSTANT_COLOR</code></p>
+</li>
+<li>
+<p><code>ONE_MINUS_CONSTANT_ALPHA</code></p>
+</li>
+</ul>
+</div>
 </li>
 <li>
 <p>String is in "#rrggbbaa" format.</p>
@@ -1182,6 +1235,16 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
+<dt class="hdlist1">v0.x</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><code>keyframe_layer_object</code> : define <code>blend_id</code> == -1 as disable alpha blending.</p>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">v0.5 (2024-4-3)</dt>
 <dd>
 <div class="ulist">
@@ -1287,13 +1350,13 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (2124 bytes)</a></p>
+<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (1461 bytes)</a></p>
 </li>
 <li>
-<p><a href="sample-keymix.quad">sample-keymix.quad (1478 bytes)</a></p>
+<p><a href="sample-keymix.quad">sample-keymix.quad (1299 bytes)</a></p>
 </li>
 <li>
-<p><a href="sample-depth.quad">sample-depth.quad (786 bytes)</a></p>
+<p><a href="sample-depth.quad">sample-depth.quad (592 bytes)</a></p>
 </li>
 </ul>
 </div>

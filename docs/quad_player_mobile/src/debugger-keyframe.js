@@ -194,7 +194,7 @@ function keydebug_drawtex( qdata, key, mat4, color ){
 	var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
 	var zrate = 1.0 / (key.layer.length + 1);
-	var buf_list = [];
+	var buf_list = {};
 	var depth = 1.0;
 	//console.log('key.order',key.order);
 
@@ -230,11 +230,20 @@ function keydebug_drawtex( qdata, key, mat4, color ){
 	//console.log('buf_list',buf_list);
 
 	QUAD.gl.enable_depth('LESS');
-	buf_list.forEach(function(bv,bk){
-		if ( ! bv || ! qdata.quad.blend[bk] )
-			return;
-		QUAD.gl.enable_blend ( qdata.quad.blend[bk] );
+	for ( var i = -1; i < qdata.quad.blend.length; i++ ){
+		if ( ! buf_list[i] ) // no data to draw
+			continue;
+
+		if ( i < 0 ) // disable blending
+			QUAD.gl.enable_blend(0);
+		else {
+			if ( ! qdata.quad.blend[i] ) // invalid or unknown blending
+				continue;
+			QUAD.gl.enable_blend( qdata.quad.blend[i] );
+		}
+
+		var bv = buf_list[i];
 		QUAD.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.vram );
-	});
+	} // for ( var i = -1; i < qdata.quad.blend.length; i++ )
 	QUAD.gl.enable_depth(0);
 }

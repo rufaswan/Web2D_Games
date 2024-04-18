@@ -1,31 +1,24 @@
 {
   "keyframe" : [
     {
-      "name"  : "sample" ,
       "layer" : [
         {
           "dstquad"  : [ -10 , -10 , 5 , -10 , 5 , 0 , -10 , 0 ] ,
-          "fogquad"  : "#ff0000ff" ,
-          "blend_id" : 0
+          "fogquad"  : "#ff0000ff"
         } ,
         {
           "dstquad"  : [ 10 , -10 , 10 , 5 , 0 , 5 , 0 , -10 ] ,
           "fogquad"  : "#00ff00ff" ,
-          "blend_id" : 1
+          "blend_id" : 0
         } ,
         {
           "dstquad"  : [ 10 , 10 , -5 , 10 , -5 , 0 , 10 , 0 ] ,
-          "fogquad"  : "#0000ffff" ,
-          "blend_id" : 0
+          "fogquad"  : "#0000ffff"
         }
       ]
     }
   ] ,
   "blend"    : [
-    {
-      "name" : "none" ,
-      "mode" : [ "FUNC_ADD" , "SRC_ALPHA" , "ONE_MINUS_SRC_ALPHA" ]
-    } ,
     {
       "name" : "addition" ,
       "mode" : [ "FUNC_ADD" , "ONE" , "ONE" ]

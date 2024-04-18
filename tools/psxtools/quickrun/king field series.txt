@@ -20,52 +20,56 @@ B5F
 ======================
 === King's Field 2 ===
 ======================
-  6/7-8
-  |
-  5
-  |
-1-2-3-4
+.     6/7 - 8
+.     |
+.     5
+.     |
+. 1 - 2 - 3 - 4
 
 Map 1 west seaside
 	Crystal Fire
 	Crystal Wind
-	Crystal Water  Skull Key
-	GATE Star      body
-	MAP Pirate     chest
-	Shrine Key
-	Skull Key      chest , Pirate Key
-	Dragon Stone   chest
+	Crystal Water  need Skull Key
+	MAP Pirate
+	GATE Star
+	Shrine Key     behind Giant Kraken
+	Skull Key      need Pirate Key
+	Dragon Stone
 
 Map 2 jail
-	Crystal Earth  (need gate)
-	Crystal Earth  chest
-	Crystal Light  (hidden door , Guard Room)
+	Crystal Earth  fall from bridge, need GATE to escape
+	Crystal Earth
+	Crystal Light  hidden door , Guard Room
 	Crystal Light  Priest , exchanged GATE Moon/Wind Flute/MAP Lord , gift
-	KEY Star       chest
-	KEY Moon
-	GATE Moon      Priest , exchange Seth Statue
 	MAP Digger     Fatty Shop , 6300 G
 	MAP Lord       Priest , exchange 3 Crystal Bottle
+	KEY Star       chest
+	KEY Moon       on the Marker
+	GATE Moon      Priest , exchange Seth Statue
 	Jail Key       drop/Guard
 	Silver Key     Key Smith Shop ,  1530 G
 	Magician Key   Key Smith Shop ,  8350 G
 	Gold Key       Key Smith Shop , 13500 G
 	Wind Flute     Priest , exchange 3 Crystal Bottle
 	Dragon Stone   Man , Jail Key
+	Seath Armor    need Dark Slayer, sealed room
 	*duplicate 20x Guard Key (580 G) if lazy
 
 Map 3
 	Crystal Earth  drop/Termite Queen
 	Crystal Wind
-	Crystal Wind
-	Crystal Water  (need gate)
-	KEY Sun        chest , Wind Flute
-	Shrine Key
+	Crystal Wind   break King Portrait
+	Crystal Water  fall from hole, need GATE to escape
+	KEY Sun        need Wind Flute
+	Shrine Key     need King Key
 	Pirate Key     Kid , after Termite Queen
+	Seath Shield   need Dark Slayer, sealed room
 
 Map 4 east seaside
 	Crystal Fire
-	Crystal Water  (need gate)
+	Crystal Water  fall from tomb hole, need GATE to escape
+	Dark Slayer    need Dark Crystal + wait for 1 Level up
+	Ruinous Glove  need Dark Slayer, sealed room
 
 Map 5 minecart
 	Crystal Earth  drop/Dinosaur
@@ -75,11 +79,11 @@ Map 5 minecart
 
 Map 6
 	Crystal Fire   (torches)
-	Crystal Wind   chest , King Key
-	Crystal Water  Shrine Key*2
-	GATE Sun       chest , King Key
-	[DS]           Dark Crystal , Shrine Key*2 + Elf Key
-	[DS]           Leon , Jail Key
+	Crystal Wind   need King Key
+	Crystal Water  need 2 * Shrine Key
+	GATE Sun       need King Key
+	Dark Crystal   need 2 * Shrine Key + Elf Key
+	[DS]           Leon , need Jail Key
 
 Map 7 colosseum
 	Crystal Fire
@@ -90,87 +94,335 @@ Map 8 cyber-space
 ======================
 === King's Field 3 ===
 ======================
-     K
-     |
- J - I -[H]- G -[E]-[F]
-                 |
-         5      [D] [C]
-         |       | /
-[2]- 3 -[4]      A
- |       |       | \
-[1]  7 -[6]- 8 -[9] [B]
+.      K
+.      |
+.  J - I -[H]- G -[E]-[F]
+.                  |
+.          5      [D] [C]
+.          |       | /
+. [2]- 3 -[4]      A
+.  |       |       | \
+. [1]  7 -[6]- 8 -[9] [B]
 
 Map 1 quist
 
 Map 2 battlefield
 	Spell Fire
-	Verdite Map    Sonia
+	Verdite Map      Sonia
 
 Map 3 barrack
-	Jail Key       body (hidden door , Captain Room)
-	Copper Key     drop/Tree
+	Jail Key         hidden door , Captain Room
+	Copper Key       drop/Tree
 
 Map 4 forest
-	Icarius Eye    Aude
+	Icarius Eye      Aude
 	Pixie Map
-	INT Fruit      barrel
-	*all tree stump removed after puzzle (North-West corner)
+	INT Fruit        barrel
+	* all tree stump removed after puzzle (North-West corner)
 
 Map 5 wind mansion
 	Spell Wind
-	*use 1 wind crystal to enter (WIND > 0)
+	* use 1 wind crystal to enter (WIND > 0)
 
 Map 6 ralugo
-	*Silver Key     (hidden wall , gate to 8/Poison Path)
-	INT Fruit      barrel
+	*Silver Key      hidden door , gate to 8/Poison Path)
+	INT Fruit        barrel
 	Bloody Herb
-	*to access 8/Poison Path , help Gill by giving Bloody Herb
-	*to access 7/Cave        , help Gill by giving Bloody Herb , then talk to Bruno
+	* to access 8/Poison Path , help Gill by giving Bloody Herb
+	* to access 7/Cave        , help Gill by giving Bloody Herb , then talk to Bruno
 
 Map 7 cave
 	Spell Earth
 	Promeus
-	Promeus        drop/Golem
-	Magician Key   skull
+	Promeus          drop/Golem
+	Magician Key     skull
 
 Map 8 poison path
-	*Jail Key      barrel
+	*Jail Key        barrel
 
 Map 9 lake
 	Spell Water
 	*Magician Key
-	*no item payment require after puzzle (South West Island)
+	* no item payment require after puzzle (South West Island)
 
 Map A thieve path
-	Silver Key     chest (hidden door , North East corner)
+	Silver Key       hidden door , North East corner
 
 Map B blacksmith
-	Dwarf Key      drop/Slime
+	Dwarf Key        drop/Slime
 
 Map C wind gates
-	*all wind gate remain active after Icarius Armor set
+	Fairy Fossil     need Orladin Key
+	Demon Key        need Orladin Key
+	* all wind gate remain active after Icarius Armor set
 
 Map D cason
 	Icarius Wing
-	INT Fruit      barrel
+	INT Fruit        barrel
 
 Map E snow field
-	Mina's Key
+	Mina Key
 	Promeus
 
 Map F garan
-	Icarius Crown  drop/Lizard Man
+	Icarius Crown    drop/Lizard Man
 	INT Fruit
-	Promeus        drop/Golem
-	Promeus        drop/Golem
+	Promeus          drop/Golem
+	Promeus          drop/Golem
 
 Map G death path
-	Royal Key      chest (hidden door , South West Corner)
+	Royal Key        hidden door , South West Corner
 
 Map H prayer hill
 
 Map I fountain
 
 Map J KF1 cementary
+	Moonlight Sword  need Fairy Fossil
 
 Map K castle
+	Phantom Crown    drop/Dragon Master
+
+======================
+=== King's Field 4 ===
+======================
+
+Surface
+.    |--Palace--- EV
+.    |     |   |
+. |- VR    |   MN
+. CH |     |
+. |- MG - [PU]
+
+VR  Village Ruins
+	Crystal Water       fall into Well, underwater
+
+MG  Miners Graveyard
+	Crystal Wind        shop 2500 gold
+
+MN  Mines
+	Rock of Life
+	Rock of Life        blocked area, drop/Giant Slime
+
+EV  East Valley
+	Crystal Fire        Lynn, reward for Rock of Life to Mother
+
+PU  Palace Underground / Altar of Healing
+	-> 3F GG
+	Crystal Water       drop/Big Spider
+	Crystal Light       Fireball to Hole of Spider Web
+	Icon of Healing     2+1 Release Rock
+	* access by using Fireball to burn Spider Webs
+
+CH  Church
+	MAP Caretaker
+	Rusty Key
+==============================
+Ancient City 3F
+.                    KT - HF
+.                         |
+.          NG             PH
+.          |              |
+. [GG] - Tower - SV ------|
+.          |              SC
+.          SG             |- CW
+.          |              |
+.      ST --- [LQ]  M --- SV
+.          |           |
+.          SC          SC
+.          |           |
+.     LV - FO -------- EF
+
+M   Marker
+	Guide Stone Green   use Stone Wand Green to get here
+
+GG  Guardian Gate
+	<- Surface PU
+	Crystal Earth
+	Guide Stone Red
+	Keystone
+
+NG  North Gate
+	Expedition Key
+
+SV  Silver Gate
+	* break 4 * Lion Heads to stop lava
+	* room next to Belric/Old Knight <- 3F LQ Ladder
+
+PH  Priest Hall
+	Crystal Dark
+	Keystone
+
+HF  Holy Forest
+	Crystal Earth
+	Guide Stone Blue
+	Black Eye           need Priest Key
+	Black Eye           need Craftsman Key
+	Black Eye           need Engineer Key
+	Black Eye           need Serrak Key
+
+KT  King Throne
+	Crystal Light       Fireball to light torch, shoot down from ceiling
+	Crystal Light       need Ring of Wisdom, drop/Ancient King
+	Crystal Light       after Ancient King
+	Stone Wand Red      need Priest Key, fire trap
+	Stone Wand Blue     need Priest Key, fire trap
+	Stone Wand Green    need Priest Key, fire trap
+	Priest Key
+	King Key            after Ancient King
+	Moonlight Sword     after Ancient King, need 4 * Black Eye, Lawful Blade
+
+SC  South Cliff
+	Ring of Sight       east side, hidden door, on hand hanging cliff edge
+
+CW  Craftman Workshop
+	MAP Earth Folk      Fireball to light candle
+
+EF  Earth Folks Area
+	Earth Folk Key
+	Craftsman Key       Harmurah/blacksmith
+
+FO  Refinery
+	Crystal Fire        need Icon/Altar of Ice
+	Icon of Ice         drop/Earth King
+
+LV  Lava / Altar of Ice
+	Crystal Fire        need Icon/Altar of Ice, behind Fire Lord
+
+LQ  Living Quarter
+	-> 2F SG
+
+SG  South Gate
+
+ST  Storage
+	Crystal Wind
+	Keystone
+==============================
+Ancient City 2F
+.             OF
+.             |
+. [EF] - QP - OS
+.             |
+.            [NC]
+.             |
+. WS -------- NG
+. |           |
+. |--- WG - Tower <- [EG]
+. |           |       |
+. ES         [SG]     HW
+
+SG  South Gate
+	<- 3F LQ
+	Crystal Light       need Release Rock
+	Crystal Wind        hidden door near ice skeleton, fire trap
+	Guide Stone Yellow  hidden door near ice skeleton, chest
+	Keystone
+
+WG  West Gate
+
+WS  Wise Sage / Dark Sorcerer
+	Engineer Key        infinite 2*Stone Guardian Room
+
+ES  Engineer Shack
+	Crystal Earth       drop/Giant Beetle
+	Stone Wand Yellow   shop 3000 gold
+	Keystone            need Engineer Key
+
+NG  North Gate
+	-> 1F GG (shortcut)
+	MAP Zastari         Tower northeast
+
+NG  North Cliff
+
+OS  Ocean Shore / Altar of Fire
+	Crystal Water       fall from cliff near lighthouse, break Wall Monk Statue
+	MAP Widda           drop/Widda soldier
+	Icon of Fire
+
+OF  Ocean Fortress
+	Crystal Dark        floor trap, run
+	Widda Ring          1F floor trap, run
+	Widda Bracelet      3F poison trap, break wall to escape
+	Widda Necklace      2F arrow trap
+
+QP  Queen Palace
+	Crystal Fire        drop/Widda Queen
+	Widda Key           behind Widda Queen
+	Lawful Blade        need Widda Key
+	* equip Widda Ring/Bracelet/Necklace to access
+
+EF  Egg Field
+	-> 1F GG
+	Crystal Wind        mid-point
+	Crystal Earth       one-way cave
+	Strange Egg
+	Strange Egg         one-way cave
+
+EG  East Gate
+	-> one-way back to Tower
+	<- 1F EG (multi-level)
+	Myu Legs            need Moonlight Sword
+
+HW  Howling Winds
+	Crystal Wind        fall from cliff near bridge
+	Serrak Key          drop/Dark Giant
+	Icon of Water       need Serrak Key
+==============================
+Ancient City 1F
+.                  TR
+.                  |
+. [GG] -> Tower - [EG]
+.           |
+.           SG
+.           |
+.   [END] - OB
+
+Tower
+	Crystal Water       underwater
+	Myu Helmet          underwater , hidden door , need Moonlight Sword
+
+GG  Great Graveyard
+	<- 3F EF
+	<- 3F NG (shortcut)
+	-> one-way to Tower
+	Crystal Dark        water area
+	Ancient Key         water area
+	Myu Necklace        hidden door, pot near Oagh/shop
+	Myu Arms            need Moonlight Sword
+	* give 1 * Strange Egg to access
+
+EG  East Gate
+	-> 2F EG (multi-level)
+	Crystal Fire        on the torch
+	Zastari Key
+
+TR  Treasury
+	Crystal Earth       button in chest facing the wrong way, fire trap
+	MAP King            fall onto block, break wall, break 3 * Lion Head to stop lava
+	Ring of Wisdom      Earth-Water-Fire-Wind button puzzle
+
+SG  South Gate / Altar of Water
+	Crystal Water       underwater, drop/Giant Clay Golem
+	Jail Key            water area
+
+OB  Old Battlefield
+	Crystal Dark        need Jail Key, hidden door near bridge
+	Crystal Dark        drop/Gargoyle
+	Guide Stone Violet  need Jail Key, break jail wall near skeleton
+	Stone Wand Violet   need Jail Key, drop/Dark Knight
+	Myu Shield          need Jail Key, Moonlight Sword
+	Myu Armor           need Moonlight Sword
+	* need Icon/Altar of Water to access
+	* Use Idol of Sorrow to access END
+==============================
+gamefaqs.gamespot.com/boards/431703-kings-field-the-ancient-city/77030786
+
+	The bug is that some areas won't load properly, as shown in this youtube video:
+	https://www.youtube.com/watch?v=XQuTx-7PlwA
+
+	For PCSX2 users, the game plays best with EE/FPU Round Mode set to the default "Chop/Zero"
+	(or "Nearest", which seems to behave similarly).
+	But this bug will almost certainly bite you in those modes
+	-- the only workaround I could find mentioned on the internet was to set EE/FPU Round Mode to "Negative"
+	before going near the staircase,
+	and switch it back when you reach the top of the stairs.

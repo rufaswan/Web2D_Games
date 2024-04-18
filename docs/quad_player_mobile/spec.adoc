@@ -134,7 +134,12 @@ If invalid, the object is not attached.
 
 type (required)::
 	* For linking to other objects in the QUAD file.
-	* Valid values are: #`keyframe`#, #`hitbox`#, #`slot`#, #`animation`# and #`skeleton`#.
+	* Valid values are:
+	.. `keyframe` for <<keyframe_object>>
+	.. `hitbox` for <<hitbox_object>>
+	.. `slot` for <<slot_object>>
+	.. `animation` for <<animation_object>>
+	.. `skeleton` for <<skeleton_object>>
 
 id (required)::
 	* Array index to the object.
@@ -193,7 +198,7 @@ layer (required)::
 	* An array of objects to be drawn for this keyframe.
 
 order::
-	* Drawing order for `keyframe_layer_object`, in bottom-to-top order (Painter's algorithm).
+	* Drawing order for <<keyframe_layer_object>>, in bottom-to-top order (Painter's algorithm).
 	* All `layer_id` must be unique within the array, or else it is invalid.
 	* If omitted or invalid, then it is default to:
 	** `[ 0 , 1 , 2 , ... , layer.length - 1 ]`
@@ -234,11 +239,15 @@ debug::
 
 dstquad (required)::
 	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
+	* Defines the area on the canvas or BG to write pixels to.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted, then the layer object is skipped.
 
-blend_id (required)::
-	* If omitted or it is invalid, then it is default to -1 (nothing drawn).
+blend_id::
+	* Index of <<blend_object>> to use for alpha blending.
+	* If <<blend_object>> is invalid or does not exists, then it is skipped.
+	* If omitted, then it is default to -1.
+	* -1 means disable alpha blending. All pixels, including transparent pixels, will overwrite pixels within `dstquad`.
 
 fogquad::
 	* All strings is in "#rrggbbaa" format.
@@ -263,6 +272,7 @@ tex_id::
 srcquad::
 	* Required to draw texture.
 	* Accepts 8 numbers array, as in 4 pairs of x,y coordinates.
+	* Defines the area of texture or FG to read pixels from.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted or it is invalid, then fog color only is drawn.
 
@@ -321,6 +331,7 @@ debug::
 
 hitquad (required)::
 	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
+	* Defines the area for collusion detection.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted, then the layer object is skipped.
 
@@ -414,7 +425,7 @@ color_mix::
 	* If omitted, then it is default to `0` (`false`)
 
 keyframe_mix::
-	* Marks if current keyframe layer is interpolated with the next keyframe layer.
+	* Marks if current <<keyframe_layer_object>> is interpolated with the next <<keyframe_layer_object>>.
 	* Affects `dstquad` and `fogquad`.
 	** rate = t / time , t++
 	** layer = (current * (1.0 - rate)) + (next * rate)
@@ -426,7 +437,7 @@ keyframe_mix::
 	** If `false`, only current keyframe layer is used, next keyframe layer is ignored.
 
 hitbox_mix::
-	* Marks if current hitbox layer is interpolated with the next hitbox layer.
+	* Marks if current <<hitbox_layer_object>> is interpolated with the next <<hitbox_layer_object>>.
 	* Affects `hitquad`.
 	** rate = t / time , t++
 	** layer = (current * (1.0 - rate)) + (next * rate)
@@ -531,7 +542,11 @@ mode (required)::
 
 color::
 	* Constant color for #`blendColor()`#.
-	* Used when #`blendFunc()`#/#`blendFuncSeparate()`# uses factor #`CONSTANT_COLOR`#, #`CONSTANT_ALPHA`#, #`ONE_MINUS_CONSTANT_COLOR`# or #`ONE_MINUS_CONSTANT_ALPHA`#.
+	* Used when #`blendFunc()`#/#`blendFuncSeparate()`# uses factor:
+	** `CONSTANT_COLOR`
+	** `CONSTANT_ALPHA`
+	** `ONE_MINUS_CONSTANT_COLOR`
+	** `ONE_MINUS_CONSTANT_ALPHA`
 	* String is in "#rrggbbaa" format.
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
@@ -559,6 +574,9 @@ id (required)::
 
 
 == Revision History
+
+v0.x::
+	* `keyframe_layer_object` : define `blend_id` == -1 as disable alpha blending.
 
 v0.5 (2024-4-3)::
 	* `quad_object` : renamed to `link_object`
@@ -594,9 +612,9 @@ v0.1 (2021-03-01)::
 
 == Example
 
-* link:sample-mat4mix.quad[sample-mat4mix.quad (2124 bytes)]
-* link:sample-keymix.quad[sample-keymix.quad (1478 bytes)]
-* link:sample-depth.quad[sample-depth.quad (786 bytes)]
+* link:sample-mat4mix.quad[sample-mat4mix.quad (1461 bytes)]
+* link:sample-keymix.quad[sample-keymix.quad (1299 bytes)]
+* link:sample-depth.quad[sample-depth.quad (592 bytes)]
 
 
 
@@ -608,5 +626,6 @@ In alphabetical order::
 
 
 == Online Ver
+
 * https://github.com/rufaswan/Web2D_Games/blob/master/docs/quad_player_mobile/spec.adoc
 * https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html
