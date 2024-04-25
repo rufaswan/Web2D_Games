@@ -148,22 +148,18 @@ function sect_quad( &$atlas, &$data, &$quad )
 			$layer = array();
 			foreach ( $av as $avk => $avv )
 			{
-				list($x,$y,$w,$h) = $atlas->getxywh( $avv['atlas'] );
 				$fps = $avv['fps'];
 
+				list($x,$y,$w,$h) = $atlas->getxywh( $avv['atlas'] );
+				$src = xywh_quad($w, $h);
+				xywh_move($src, $x, $y);
+
+				$dst = xywh_quad($w, $h);
+				xywh_move($dst, $avv['dx'], $avv['dy']);
+
 				$ent = array(
-					'dstquad'  => array(
-						$avv['dx']   ,$avv['dy']    ,
-						$avv['dx']+$w,$avv['dy']    ,
-						$avv['dx']+$w,$avv['dy']+$h ,
-						$avv['dx']   ,$avv['dy']+$h ,
-					),
-					'srcquad'  => array(
-						$x   ,$y    ,
-						$x+$w,$y    ,
-						$x+$w,$y+$h ,
-						$x   ,$y+$h ,
-					),
+					'dstquad'  => $dst,
+					'srcquad'  => $src,
 					'blend_id' => 0,
 					'tex_id'   => 0,
 					'_xywh'    => array($x,$y,$w,$h),
@@ -181,7 +177,7 @@ function sect_quad( &$atlas, &$data, &$quad )
 
 			$tent = array(
 				'time'   => $fps,
-				'attach' => array('type' =>'keyframe' , 'id'=> $kid-1),
+				'attach' => quad_attach('keyframe', $kid-1),
 			);
 			$time[] = $tent;
 		} // foreach ( $dv['anim'] as $ak => $av )
@@ -212,11 +208,11 @@ function sect_quad( &$atlas, &$data, &$quad )
 			$bone = array();
 			$bone[0] = array(
 				//'name'   => 'base',
-				'attach' => array('type'=>'keyframe' , 'id'=>0),
+				'attach' => quad_attach('keyframe', 0),
 			);
 			$bone[1] = array(
 				//'name'   => $mv['name'],
-				'attach' => array('type'=>'animation' , 'id'=>$mk),
+				'attach' => quad_attach('animation', $mk),
 			);
 			$bone[2] = array(
 				//'name'   => $kv['name'],
@@ -232,7 +228,7 @@ function sect_quad( &$atlas, &$data, &$quad )
 			// animated
 			$bone[2] = array(
 				//'name'   => $kv['name'],
-				'attach' => array('type'=>'animation' , 'id'=>$kk),
+				'attach' => quad_attach('animation', $kk),
 			);
 
 			$skel = array(

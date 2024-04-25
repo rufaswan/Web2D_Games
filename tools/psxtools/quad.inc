@@ -69,9 +69,20 @@ function load_idtagfile( $pfx )
 	return $data;
 }
 
+function quad_attach( $type, $id )
+{
+	$attach = array(
+		'type' => $type,
+		'id'   => $id,
+	);
+	return $attach;
+}
+
 function anim_allkeys( &$quad )
 {
 	if ( empty($quad) )
+		return;
+	if ( has_skeleton($quad) )
 		return;
 	if ( ! isset( $quad['keyframe'] ) )
 		return;
@@ -85,10 +96,7 @@ function anim_allkeys( &$quad )
 			continue;
 		$en = array(
 			'time'   => 1,
-			'attach' => array(
-				'type' => 'keyframe',
-				'id'   => $kk
-			),
+			'attach' => quad_attach('keyframe',$kk),
 		);
 		$time[] = $en;
 	} // foreach ( $quad['keyframe'] as $kk => $kv )
@@ -115,6 +123,21 @@ function list_add( &$list, $k, &$v )
 	// unorder keys is std::map, not std::vector
 	ksort($list);
 	return;
+}
+
+function has_skeleton( &$quad )
+{
+	if ( empty($quad) )
+		return false;
+	if ( ! isset($quad['skeleton']) )
+		return false;
+
+	foreach ( $quad['skeleton'] as $sk => $sv )
+	{
+		if ( $sv !== 0 )
+			return true;
+	}
+	return false;
 }
 
 function is_srcquad_prediv( &$quad )
@@ -448,6 +471,119 @@ function quad_convexfix( &$quad )
 	return;
 }
 //////////////////////////////
+function psx_blend_mode( $f, $b )
+{
+	// (FG * f) + (BG * b)
+	// alpha = BG.a
+	$f = (int)($f * 100);
+	$b = (int)($b * 100);
+	if ( $f === 50 && $b === 50 ) // 0.5 , 0.5 / average
+		return array(
+			'name'  => 'PSX  FG * 0.5 + BG * 0.5',
+			'color' => '#ffffff80',
+			'mode'  => array(
+				'FUNC_ADD'                        , 'FUNC_ADD' ,
+				'CONSTANT_ALPHA','CONSTANT_ALPHA' , 'ONE','ONE'
+			),
+		);
+	if ( $f === 100 && $b === 100 ) // 1.0 , 1.0 / addition
+		return array(
+			'name' => 'PSX  FG * 1 + BG * 1',
+			'mode' => array(
+				'FUNC_ADD'  , 'FUNC_ADD' ,
+				'ONE','ONE' , 'ONE','ONE'
+			),
+		);
+	if ( $f === 25 && $b === 100 ) // 0.25 , 1.0 / partial addition
+		return array(
+			'name'  => 'PSX  FG * 0.25 + BG * 1',
+			'color' => '#ffffff40',
+			'mode'  => array(
+				'FUNC_ADD'             , 'FUNC_ADD' ,
+				'CONSTANT_ALPHA','ONE' , 'ONE','ONE'
+			),
+		);
+	if ( $f === -100 && $b === 100 ) // -1.0 , 1.0 / subtraction
+		return array(
+			'name' => 'PSX  FG * -1 + BG * 1',
+			'mode' => array(
+				'FUNC_REVERSE_SUBTRACT' , 'FUNC_ADD' ,
+				'ONE','ONE'             , 'ONE','ONE'
+			),
+		);
+	return php_error('unknown f = %.2f , b = %.2f', $f * 0.01, $b * 0.01);
+}
+
+function wii_blend_mode( $a, $b, $c, $d )
+{
+	// D +/- ( (1 - C) * A + (C * B) )
+	$mode = "$a,$b,$c,$d";
+	switch ( $mode )
+	{
+		case 'FG.rgb,0,0,BG.rgb': // addition = D + A
+			// rgb = FG.rgb + BG.rgb
+			// a   = BG.a
+			return array(
+				'name' => 'WII  D + ( (1 - 0) * A + (0 * 0) )',
+				'mode' => array(
+					'FUNC_ADD'  , 'FUNC_ADD',
+					'ONE','ONE' , 'ZERO','ONE'
+				),
+			);
+		case '-FG.rgb,0,0,BG.rgb': // subtraction = D - A
+			// rgb = FG.rgb * -1 + BG.rgb
+			// a   = BG.a
+			return array(
+				'name' => 'WII  D - ( (1 - 0) * A + (0 * 0) )',
+				'mode' => array(
+					'FUNC_REVERSE_SUBTRACT' , 'FUNC_ADD',
+					'ONE','ONE'             , 'ZERO','ONE'
+				),
+			);
+		case '0,FG.rgb,BG.rgb,0': // multiplication = C * B
+			// rgb = FG.rgb * BG.rgb
+			// a   = BG.a
+			return array(
+				'name' => 'WII  0 + ( (1 - C) * 0 + (C * B) )',
+				'mode' => array(
+					'FUNC_MULTIPLY' , 'FUNC_ADD',
+					'ONE','ONE'     , 'ZERO','ONE'
+				),
+			);
+		case '0,FG.rgb,FG.a,BG.rgb': // addition and multiplication = D + C * B
+			// rgb = FG.rgb * FG.a + BG.rgb
+			// a   = BG.a
+			return array(
+				'name' => 'WII  D + ( (1 - C) * 0 + (C * B) )',
+				'mode' => array(
+					'FUNC_ADD'        , 'FUNC_ADD',
+					'SRC_ALPHA','ONE' , 'ZERO','ONE'
+				),
+			);
+		case 'BG.rgb,FG.rgb,FG.a,0': // decal = (1 - C) * A + (C * B)
+			// rgb = FG.rgb * FG.a + BG.rgb * (1 - FG.a)
+			// a   = BG.a
+			return array(
+				'name' => 'WII  0 + ( (1 - C) * A + (C * B) )',
+				'mode' => array(
+					'FUNC_ADD'                        , 'FUNC_ADD',
+					'SRC_ALPHA','ONE_MINUS_SRC_ALPHA' , 'ZERO','ONE'
+				),
+			);
+		case 'FG,0,0,BG': // proportional
+			// rgba = FG * (1 - k) + BG * k
+			return array(
+				'name' => 'WII  D + ( (1 - C) * A + (C * 0) )',
+				'mode' => array(
+					'FUNC_ADD'                                  , 'FUNC_ADD',
+					'ONE_MINUS_CONSTANT_COLOR','CONSTANT_COLOR' , 'ONE_MINUS_CONSTANT_ALPHA','CONSTANT_ALPHA'
+				),
+				'color' => '#ffffffff',
+			);
+	} // switch ( $mode )
+	return php_error('unknown %s', $mode);
+}
+
 function blend_modes( $mode )
 {
 	// src = FG , dst = BG

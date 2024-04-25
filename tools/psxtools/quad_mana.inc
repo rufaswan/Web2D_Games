@@ -159,9 +159,11 @@ function sectquad( &$atlas, &$keys, &$hits, &$quad )
 		foreach ( $kv as $kvv )
 		{
 			list($x,$y,$w,$h) = $atlas->getxywh( $kvv['atlas'] );
-			$radian = $kvv['rot'] * pi() / 0x80;
+			$src = xywh_quad($w, $h);
+			xywh_move($src, $x, $y);
 
 			// w,h to quad -> rotate -> move dx,dy
+			$radian = $kvv['rot'] * pi() / 0x80;
 			$dst = xywh_quad($w, $h, $kvv['bit'] & 0x40, $kvv['bit'] & 0x80);
 			xywh_rotate($dst, $radian);
 			xywh_move  ($dst, $kvv['dx'], $kvv['dy']);
@@ -169,12 +171,7 @@ function sectquad( &$atlas, &$keys, &$hits, &$quad )
 			$en = array(
 				'debug'    => sprintf('0x%x', $kvv['bit']),
 				'dstquad'  => $dst,
-				'srcquad'  => array(
-					$x   ,$y    ,
-					$x+$w,$y    ,
-					$x+$w,$y+$h ,
-					$x   ,$y+$h ,
-				),
+				'srcquad'  => $src,
 				'blend_id' => $kvv['blend'],
 				'tex_id'   => 0,
 				'_xywh'    => array($x,$y,$w,$h),
@@ -224,8 +221,8 @@ function sectquad( &$atlas, &$keys, &$hits, &$quad )
 		if ( empty( $quad['keyframe'][$i] ) )  continue;
 		if ( empty( $quad['hitbox'  ][$i] ) )  continue;
 		$en = array(
-			array('type'=>'keyframe', 'id'=>$i),
-			array('type'=>'hitbox'  , 'id'=>$i),
+			quad_attach('keyframe', $i),
+			quad_attach('hitbox'  , $i),
 		);
 		list_add($quad['slot'], $i, $en);
 	}
@@ -271,13 +268,13 @@ function sectanim( &$meta, &$quad )
 
 			$attach = array();
 			if ( ! empty( $quad['slot'][$kid] ) )
-				$attach = array('type' => 'slot' , 'id' => $kid);
+				$attach = quad_attach('slot', $kid);
 			else
 			if ( ! empty( $quad['keyframe'][$kid] ) )
-				$attach = array('type' => 'keyframe' , 'id' => $kid);
+				$attach = quad_attach('keyframe', $kid);
 			else
 			if ( ! empty( $quad['hitbox'][$kid] ) )
-				$attach = array('type' => 'hitbox' , 'id' => $kid);
+				$attach = quad_attach('hitbox', $kid);
 
 			$ent = array('time' => $fps);
 			if ( ! empty($attach) )
@@ -304,24 +301,10 @@ function mana_blend()
 			'name' => '00 = FG * a + BG * (1-a)',
 			'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
 		),
-		array(
-			'name' => '01 = FG + BG',
-			'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
-		),
-		array(
-			'name' => '02 = -FG + BG',
-			'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
-		),
-		array(
-			'name'  => '03 = FG/4 + BG',
-			'color' => '#ffffff40',
-			'mode'  => array('FUNC_ADD', 'CONSTANT_ALPHA', 'ONE'),
-		),
-		array(
-			'name'  => '04 = FG/2 + BG/2',
-			'color' => '#ffffff80',
-			'mode'  => array('FUNC_ADD', 'CONSTANT_ALPHA', 'CONSTANT_ALPHA'),
-		),
+		psx_blend_mode( 1   ,  1 ),
+		psx_blend_mode(-1   ,  1 ),
+		psx_blend_mode(0.25 , 1.0),
+		psx_blend_mode(0.5  , 0.5),
 	);
 }
 

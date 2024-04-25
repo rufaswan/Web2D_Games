@@ -37,9 +37,26 @@ function valid_name( $fnam, $fext )
 	return -1;
 }
 
+function save_logfile( &$file )
+{
+	if ( empty($file) )
+		return;
+
+	$i = 0;
+	while (1)
+	{
+		$fn = sprintf('phpwget.%d.log', $i);
+		if ( ! file_exists($fn) )
+			return file_put_contents($fn, $file);
+		$i++;
+	}
+	return;
+}
+
 function phpwget()
 {
 	$is_done = false;
+	$file = '';
 	while ( ! $is_done )
 	{
 		echo "> type 'q' to quit\n";
@@ -87,6 +104,7 @@ function phpwget()
 
 		$fname = $fnam . '.' . $fext;
 		printf("> wget  '%s'\n", $fname);
+		$file .= "$input\n";
 
 		$wget  = 'wget';
 		$wget .= ' --quiet';
@@ -105,6 +123,8 @@ function phpwget()
 		else
 			printf("> DONE : size %x bytes\n", $fsz);
 	} // while ( ! $is_done )
+
+	save_logfile($file);
 	return;
 }
 

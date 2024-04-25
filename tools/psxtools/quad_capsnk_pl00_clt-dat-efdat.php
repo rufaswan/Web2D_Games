@@ -32,21 +32,16 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 	foreach ( $keys as $kk => $kv )
 	{
 		list($x,$y,$w,$h) = $atlas->getxywh( $kv['atlas'] );
+		$src = xywh_quad($w, $h);
+		xywh_move($src, $x, $y);
+
+		$dst = xywh_quad($w, $h);
+		xywh_move($dst, $kv['dx'], $kv['dy']);
 
 		$layer = array(
 			array(
-				'dstquad' => array(
-					$kv['dx']   ,$kv['dy']   ,
-					$kv['dx']+$w,$kv['dy']   ,
-					$kv['dx']+$w,$kv['dy']+$h,
-					$kv['dx']   ,$kv['dy']+$h,
-				),
-				'srcquad' => array(
-					$x   ,$y   ,
-					$x+$w,$y   ,
-					$x+$w,$y+$h,
-					$x   ,$y+$h,
-				),
+				'dstquad'  => $dst,
+				'srcquad'  => $src,
 				'tex_id'   => 0,
 				'blend_id' => 0,
 			),
@@ -59,7 +54,7 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 		list_add($quad['keyframe'], $kk, $kent);
 	} // foreach ( $keys as $kk => $kv )
 
-	$quad['slot'] = array();
+	$quad['slot']   = array();
 	$quad['hitbox'] = array();
 	$b04 = str2int($hit,  4, 3);
 	$b08 = str2int($hit,  8, 3);
@@ -90,14 +85,12 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 				$x =  $x - $w;
 				$y = -$y - $h;
 
+			$hit = xywh_quad($w, $h);
+			xywh_move($hit, $x, $y);
+
 			$lent = array(
-				'debug' => "damage $bx1 $i",
-				'hitquad' => array(
-					$x   ,$y   ,
-					$x+$w,$y   ,
-					$x+$w,$y+$h,
-					$x   ,$y+$h,
-				),
+				'debug'   => "damage $bx1 $i",
+				'hitquad' => $hit,
 			);
 			$layer[] = $lent;
 		} // for ( $i=0; $i < 4; $i++ )
@@ -133,8 +126,8 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 		list_add($quad['hitbox'], $sk, $hent);
 
 		$sent = array(
-			array('type'=>'keyframe' , 'id'=>$kid),
-			array('type'=>'hitbox'   , 'id'=>$sk ),
+			quad_attach('keyframe', $kid),
+			quad_attach('hitbox'  , $sk ),
 		);
 		list_add($quad['slot'], $sk, $sent);
 	} // foreach ( $anim[0] as $sk => $sv )
@@ -147,7 +140,7 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 		{
 			$tent = array(
 				'time'   => $tv['fps'],
-				'attach' => array('type'=>'slot' , 'id'=>$tv['slot']),
+				'attach' => quad_attach('slot', $tv['slot']),
 			);
 			$time[] = $tent;
 		} // foreach ( $av['time'] as $tv )

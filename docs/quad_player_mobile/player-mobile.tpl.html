@@ -324,14 +324,15 @@ function quad_mainlist( quad ){
 	var type = ['skeleton','animation','slot','keyframe','hitbox'];
 	for ( var i=0; i < type.length; i++ ){
 		var tv = type[i];
-		if ( quad[tv].length < 1 )
-			continue;
-		return tv;
+		if ( quad[tv].length > 0 )
+			return tv;
 	}
 	return -1;
 }
 
 function qdata_listing( qdata, type, id ){
+	if ( ! qdata.quad[type] || ! qdata.quad[type][id] )
+		return '';
 	var qchild = QUAD.export.list_attach(qdata, type, id);
 	var qtype  = qdata.quad[type][id];
 
@@ -2993,7 +2994,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-4-17 (beta)';
+	$.version = 'ver 2024-4-21 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);

@@ -106,11 +106,8 @@ function wmland_anim( &$dat, &$quad )
 				break;
 
 			$ent = array(
-				'time' => $fps,
-				'attach' => array(
-					'type' => 'keyframe',
-					'id'   => $key,
-				),
+				'time'   => $fps,
+				'attach' => quad_attach('keyframe', $key),
 			);
 			$time[] = $ent;
 		} // while (1)

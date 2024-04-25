@@ -1,0 +1,21 @@
+[System]
+PlayStation
+
+[Game]
+Panzer Bandit
+
+[Copyright]
+Fill in Cafe
+BANPRESTO 1997
+
+[Character Design]
+Yoshitsune Izuna
+
+[Graphics]
+Kaita Hamamoto
+Toshihiko Azuma
+Norihiro Sawada
+Takeshi Honda
+
+[Comment]
+Ripped by Rufas Wan

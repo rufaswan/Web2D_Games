@@ -106,21 +106,17 @@ function sect_quad( &$atlas, &$tmg, &$meta, &$quad )
 			{
 				list($tk,$kx,$ky) = $lv;
 				$b = $tmg[$tk];
+
 				list($x,$y,$w,$h) = $atlas->getxywh( $b['atlas'] );
+				$src = xywh_quad($w, $h);
+				xywh_move($src, $x, $y);
+
+				$dst = xywh_quad($w, $h);
+				xywh_move($dst, $kx, $ky);
 
 				$k = array(
-					'dstquad' => array(
-						$kx   ,$ky   ,
-						$kx+$w,$ky   ,
-						$kx+$w,$ky+$h,
-						$kx   ,$ky+$h,
-					),
-					'srcquad' => array(
-						$x   ,$y   ,
-						$x+$w,$y   ,
-						$x+$w,$y+$h,
-						$x   ,$y+$h,
-					),
+					'dstquad'  => $dst,
+					'srcquad'  => $src,
 					'blend_id' => 0,
 					'tex_id'   => 0,
 				);
@@ -162,8 +158,8 @@ function sect_quad( &$atlas, &$tmg, &$meta, &$quad )
 		if ( ! empty($klayer) && ! empty($hlayer) )
 		{
 			$sent = array(
-				array('type'=>'keyframe' , 'id'=>$kk),
-				array('type'=>'hitbox'   , 'id'=>$kk),
+				quad_attach('keyframe', $kk),
+				quad_attach('hitbox'  , $kk),
 			);
 			list_add($quad['slot'], $kk, $sent);
 		}
@@ -179,13 +175,13 @@ function sect_quad( &$atlas, &$tmg, &$meta, &$quad )
 
 			$a = array('time' => $fps);
 			if ( ! empty($quad['slot'][$id]) )
-				$a['attach'] = array('type'=>'slot' , 'id'=>$id);
+				$a['attach'] = quad_attach('slot', $id);
 			else
 			if ( ! empty($quad['keyframe'][$id]) )
-				$a['attach'] = array('type'=>'keyframe' , 'id'=>$id);
+				$a['attach'] = quad_attach('keyframe', $id);
 			else
 			if ( ! empty($quad['hitbox'][$id]) )
-				$a['attach'] = array('type'=>'hitbox' , 'id'=>$id);
+				$a['attach'] = quad_attach('hitbox', $id);
 
 			$time[] = $a;
 		} // foreach ( $av as $tk => $tv )

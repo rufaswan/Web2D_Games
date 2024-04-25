@@ -148,8 +148,8 @@ end_layer:
 		list_add($quad['hitbox'], $kid, $hent);
 
 		$sent = array(
-			array('type'=>'keyframe' , 'id'=>$kid),
-			array('type'=>'hitbox'   , 'id'=>$kid),
+			quad_attach('keyframe', $kid),
+			quad_attach('hitbox'  , $kid),
 		);
 		list_add($quad['slot'], $kid, $sent);
 
@@ -157,7 +157,7 @@ end_layer:
 			'time'         => 10,
 			'keyframe_mix' => 1,
 			'hitbox_mix'   => 1,
-			'attach'       => array('type'=>'slot' , 'id'=>$kid),
+			'attach'       => quad_attach('slot', $kid),
 		);
 		$time[] = $tent;
 	} // for ( $ipose=0; $ipose < $cnt_pose; $ipose++ )
@@ -192,23 +192,19 @@ function sectlayer( &$quad, &$atlas, &$keys )
 		$keys[$kk]['id'] = $id;
 
 		list($x,$y,$w,$h) = $atlas->getxywh( $kv['atlas'] );
+		$src = xywh_quad($w, $h);
+		xywh_move($src, $x, $y);
+
 		list($dx,$dy,$dw,$dh) = $kv['dst'];
+		$dst = xywh_quad($dw, $dh);
+		xywh_move($dst, $dx, $dy);
+
 		$kent = array(
 			'name'  => 'key ' . $kv['name'],
 			'layer' => array(
 				array(
-					'dstquad'  => array(
-						$dx    ,$dy    ,
-						$dx+$dw,$dy    ,
-						$dx+$dw,$dy+$dh,
-						$dx    ,$dy+$dh,
-					),
-					'srcquad'  => array(
-						$x   ,$y   ,
-						$x+$w,$y   ,
-						$x+$w,$y+$h,
-						$x   ,$y+$h,
-					),
+					'dstquad'  => $dst,
+					'srcquad'  => $src,
 					'blend_id' => 0,
 					'tex_id'   => 0,
 					'_xywh'    => array($x,$y,$w,$h),
@@ -221,22 +217,20 @@ function sectlayer( &$quad, &$atlas, &$keys )
 			continue;
 
 		list($hx,$hy,$hw,$hh) = $kv['hit'];
+		$hit = xywh_quad($hw, $hh);
+		xywh_move($hit, $hx, $hy);
+
 		$hent = array(
 			'name'  => 'hit ' . $kv['name'],
 			'layer' => array(
 				array(
-					'hitquad' => array(
-						$hx    ,$hy    ,
-						$hx+$hw,$hy    ,
-						$hx+$hw,$hy+$hh,
-						$hx    ,$hy+$hh,
-					),
+					'hitquad' => $hit,
 				),
 			),
 		);
 		$sent = array(
-			array('type'=>'keyframe' , 'id'=>$id),
-			array('type'=>'hitbox'   , 'id'=>$id),
+			quad_attach('keyframe', $id),
+			quad_attach('hitbox'  , $id),
 		);
 		list_add($quad['hitbox'], $id, $hent);
 		list_add($quad['slot'  ], $id, $sent);

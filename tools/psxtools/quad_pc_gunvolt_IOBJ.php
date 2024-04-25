@@ -23,42 +23,73 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-guest.inc';
 require 'common-json.inc';
-require 'common-quad.inc';
 require 'quad.inc';
 
-/*
-h  18  26  42  50  58  66  186
-=> 2 + (n * 8)
-
-function adjsrc( &$src, $c )
+function is_textile8( &$quad )
 {
-	if ( (int)$src & 1 )
-		return;
-	if ( $src < $c )
-		$src++;
-	else
-		$src--;
-	return;
+	if ( ! isset($quad['keyframe']) )
+		return false;
+
+	$has_tile = false;
+	foreach ( $quad['keyframe'] as $kk => $kv )
+	{
+		if ( empty($kv) )
+			continue;
+		foreach ( $kv['layer'] as $lk => $lv )
+		{
+			if ( empty($lv) )
+				continue;
+			$has_tile = true;
+
+			// h  16  24  32  40  48  56  64  184
+			// => n * 8
+			// h  18  26  34  42  50  58  66  186
+			// => 2 + (n * 8)
+			for ( $i=0; $i < 8; $i++ )
+			{
+				$src = $lv['srcquad'][$i];
+				if ( $src & 7 )
+					return false;
+			}
+		} // foreach ( $kv['layer'] as $lk => $lv )
+	} // foreach ( $quad['keyframe'] as $kk => $kv )
+
+	// is 8x8 tiles
+	// make sure it is not empty
+	return $has_tile;
 }
 
-	$scx = ($sqd[0] + $sqd[2] + $sqd[4] + $sqd[6]) / 4;
-	$scy = ($sqd[1] + $sqd[3] + $sqd[5] + $sqd[7]) / 4;
+function textile8_fix( &$quad )
+{
+	if ( ! is_textile8($quad) )
+		return;
 
-	// texture bleeding fix
-	// 0,0           32,0  <- even number , need 1 pixel padding
-	//     1,1  31,1       <-  odd number , all OK
-	//     1,31 31,31
-	// 0,32          32,32
-	adjsrc($sqd[0], $scx);
-	adjsrc($sqd[2], $scx);
-	adjsrc($sqd[4], $scx);
-	adjsrc($sqd[6], $scx);
+	foreach ( $quad['keyframe'] as $kk => $kv )
+	{
+		if ( empty($kv) )
+			continue;
+		foreach ( $kv['layer'] as $lk => $lv )
+		{
+			if ( empty($lv) )
+				continue;
 
-	adjsrc($sqd[1], $scy);
-	adjsrc($sqd[3], $scy);
-	adjsrc($sqd[5], $scy);
-	adjsrc($sqd[7], $scy);
-*/
+			$src = $lv['srcquad'];
+			$cx = ($src[0] + $src[2] + $src[4] + $src[6]) / 4;
+			$cy = ($src[1] + $src[3] + $src[5] + $src[7]) / 4;
+
+			for ( $i=0; $i < 8; $i += 2 )
+			{
+				$x = $lv['srcquad'][$i+0];
+				$y = $lv['srcquad'][$i+1];
+				( $x < $cx ) ? $x++ : $x--;
+				( $y < $cy ) ? $y++ : $y--;
+				$lv['srcquad'][$i+0] = $x;
+				$lv['srcquad'][$i+1] = $y;
+			}
+		} // foreach ( $kv['layer'] as $lk => $lv )
+	} // foreach ( $quad['keyframe'] as $kk => $kv )
+	return;
+}
 
 function sectquad( &$file, $off, $w, $h, &$dqd, &$sqd )
 {
@@ -174,11 +205,8 @@ function sect_anim( &$quad, &$file, $off1, $off2 )
 						php_warning('loop %d < 0', $fps);
 
 					$time[$fid] = array(
-						'time' => $fps,
-						'attach' => array(
-							'type' => 'keyframe',
-							'id'   => $kid,
-						),
+						'time'   => $fps,
+						'attach' => quad_attach('keyframe', $kid),
 					);
 					break;
 			} // switch ( $fps )

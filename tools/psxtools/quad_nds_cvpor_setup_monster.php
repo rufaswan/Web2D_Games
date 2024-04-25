@@ -118,7 +118,7 @@ end_layer:
 		$tent = array(
 			'time'         => 10,
 			'keyframe_mix' => 1,
-			'attach'       => array('type'=>'keyframe' , 'id'=>$kid),
+			'attach'       => quad_attach('keyframe', $kid),
 		);
 		$time[] = $tent;
 	} // foreach ( $jnt['pose'] as $pk => $pv )
@@ -139,7 +139,7 @@ end_layer:
 			$tent = array(
 				'time'         => $tv['time'],
 				'keyframe_mix' => 1,
-				'attach'       => array('type'=>'keyframe' , 'id'=>$kid),
+				'attach'       => quad_attach('keyframe', $kid),
 			);
 			$time[] = $tent;
 		} // foreach ( $av as $tk => $tv )
@@ -189,18 +189,16 @@ function sect_quad_so( &$por, &$atlas, &$quad )
 			$src['key'] = $kid;
 
 			list($x,$y,$w,$h) = $atlas->getxywh( $src['atlas'] );
+			$src = xywh_quad($w, $h);
+			xywh_move($src, $x, $y);
+
 			$dst = xywh_quad($w, $h, $src['bit'] & 2, $src['bit'] & 1);
 			xywh_move($dst, $src['dx'], $src['dy']);
 
 			$ent = array(
 				'debug'    => sprintf('0x%02x', $src['bit']),
 				'dstquad'  => $dst,
-				'srcquad'  => array(
-					$x   , $y   ,
-					$x+$w, $y   ,
-					$x+$w, $y+$h,
-					$x   , $y+$h,
-				),
+				'srcquad'  => $src,
 				'tex_id'   => 0,
 				'blend_id' => 0,
 				'_xywh'    => array($x,$y,$w,$h),
@@ -225,6 +223,9 @@ function sect_quad_so( &$por, &$atlas, &$quad )
 		$por['src'][$sk]['key'] = $kid;
 
 		list($x,$y,$w,$h) = $atlas->getxywh( $sv['atlas'] );
+		$src = xywh_quad($w, $h);
+		xywh_move($src, $x, $y);
+
 		$dst = xywh_quad($w, $h, $sv['bit'] & 2, $sv['bit'] & 1);
 		xywh_move($dst, $sv['dx'], $sv['dy']);
 
@@ -234,12 +235,7 @@ function sect_quad_so( &$por, &$atlas, &$quad )
 				array(
 					'debug'    => sprintf('0x%02x', $sv['bit']),
 					'dstquad'  => $dst,
-					'srcquad'  => array(
-						$x   , $y   ,
-						$x+$w, $y   ,
-						$x+$w, $y+$h,
-						$x   , $y+$h,
-					),
+					'srcquad'  => $src,
 					'tex_id'   => 0,
 					'blend_id' => 0,
 				),
@@ -274,7 +270,7 @@ function sect_quad_so( &$por, &$atlas, &$quad )
 
 			$ent = array(
 				'time'   => $fps,
-				'attach' => array('type'=>'keyframe' , 'id'=>$key),
+				'attach' => quad_attach('keyframe', $key),
 			);
 			$time[] = $ent;
 		} // for ( $j=0; $j < $num; $j++ )

@@ -286,8 +286,8 @@ function s6_loop( &$quad )
 		if ( ! empty($s4) && ! empty($s5) )
 		{
 			$slot = array(
-				array('type' => 'keyframe' , 'id' => $s6k),
-				array('type' => 'hitbox'   , 'id' => $s6k),
+				quad_attach('keyframe', $s6k),
+				quad_attach('hitbox'  , $s6k),
 			);
 			list_add( $quad['slot'], $s6k, $slot );
 		}
@@ -429,13 +429,13 @@ function q3D_sas8s9_loop( &$salist, &$quad )
 				$s6k = $s8v['s6'];
 				$attach = array();
 				if ( ! empty( $quad['slot'][$s6k] ) )
-					$attach = array('type' => 'slot' , 'id' => $s6k);
+					$attach = quad_attach('slot', $s6k);
 				else
 				if ( ! empty( $quad['keyframe'][$s6k] ) )
-					$attach = array('type' => 'keyframe' , 'id' => $s6k);
+					$attach = quad_attach('keyframe', $s6k);
 				else
 				if ( ! empty( $quad['hitbox'][$s6k] ) )
-					$attach = array('type' => 'hitbox' , 'id' => $s6k);
+					$attach = quad_attach('hitbox', $s6k);
 
 				$flipx = s8_flags('flipx');
 				$flipy = s8_flags('flipy');
@@ -471,7 +471,7 @@ function q3D_sas8s9_loop( &$salist, &$quad )
 
 			$bone[] = array(
 				//name
-				'attach' => array('type' => 'animation' , 'id' => $sak),
+				'attach' => quad_attach('animation', $sak),
 				//child
 			);
 		} // for ( $i=0; $i < $s9v['sa'][1]; $i++ )

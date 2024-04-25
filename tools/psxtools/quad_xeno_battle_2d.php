@@ -34,14 +34,12 @@ function quad_keys( &$quad, &$meta, &$atlas )
 		foreach ( $mv as $lk => $lv )
 		{
 			list($x,$y,$w,$h) = $atlas->getxywh( $lv['atlas'] );
+			$src = xywh_quad($w, $h);
+			xywh_move($src, $x, $y);
+
 			$ent = array(
 				'dstquad'  => $lv['dst'],
-				'srcquad'  => array(
-					$x   ,$y    ,
-					$x+$w,$y    ,
-					$x+$w,$y+$h ,
-					$x   ,$y+$h ,
-				),
+				'srcquad'  => $src,
 				'blend_id' => 0,
 				'tex_id'   => 0,
 				'_xywh'    => array($x,$y,$w,$h),
