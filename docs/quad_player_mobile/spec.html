@@ -37,6 +37,7 @@
 </ul>
 </li>
 <li><a href="#_revision_history">Revision History</a></li>
+<li><a href="#_terminology">Terminology</a></li>
 <li><a href="#_example">Example</a></li>
 <li><a href="#_contributors">Contributors</a></li>
 <li><a href="#_online_ver">Online Ver</a></li>
@@ -85,12 +86,6 @@
 <ul>
 <li>
 <p>It is still animated in frames, instead of using delta time. On a normal 60 FPS (frames per seconds) game, 1 frame is 16.67 milliseconds.</p>
-</li>
-<li>
-<p>X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
-</li>
-<li>
-<p>On drawing, <code>[0,0]</code> is still at the center of the canvas. If the canvas size is 320x240, then X is <code>-160px to +160px</code>, and Y is <code>-120px to +120px</code>.</p>
 </li>
 <li>
 <p>Z or depth value are not used. It is faked on drawing for perspective correction and drawing order.</p>
@@ -438,13 +433,13 @@
 <p>Accepts 8 numbers array, or 4 pairs of x,y coordinates.</p>
 </li>
 <li>
-<p>Defines the area on the canvas or BG to write pixels to.</p>
+<p>Defines the area on the canvas or background to write pixels to.</p>
 </li>
 <li>
 <p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
 </li>
 <li>
-<p>If omitted, then the layer object is skipped.</p>
+<p>If omitted, then this layer object is invalid and skipped.</p>
 </li>
 </ul>
 </div>
@@ -515,7 +510,7 @@
 <p>Accepts a string of custom color name.</p>
 </li>
 <li>
-<p>Used for character customization, by adjusting the color level of a grayscale texture to custom color.</p>
+<p>Used for character customization, by adjusting the HSV (Hue Saturation Value) of a grayscale texture to custom color.</p>
 </li>
 <li>
 <p>Custom color is in RGB, default to <code>rgb(1.0 , 1.0 , 1.0)</code>.</p>
@@ -547,7 +542,7 @@
 <p>Accepts 8 numbers array, as in 4 pairs of x,y coordinates.</p>
 </li>
 <li>
-<p>Defines the area of texture or FG to read pixels from.</p>
+<p>Defines the area of texture or foreground to read pixels from.</p>
 </li>
 <li>
 <p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
@@ -660,7 +655,7 @@
 <p>Measured in pixel (px), with +X is right direction, and +Y is down direction.</p>
 </li>
 <li>
-<p>If omitted, then the layer object is skipped.</p>
+<p>If omitted, then this layer object is invalid and skipped.</p>
 </li>
 </ul>
 </div>
@@ -762,7 +757,7 @@
   "debug"        : any,
   "time"         : int fps,
   "attach"       : <a href="#attach_object">Attach Object</a>,
-  "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
+  "matrix"       : [ a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p ],
   "color"        : string rgba,
   "matrix_mix"   : bool,
   "color_mix"    : bool,
@@ -904,13 +899,13 @@
 <div class="ulist">
 <ul>
 <li>
-<p>if current keyframe layer count is not the same as next keyframe layer count.</p>
+<p>If current keyframe layer count is not the same as next keyframe layer count.</p>
 </li>
 <li>
-<p>if current keyframe layer is empty.</p>
+<p>If current keyframe layer is empty.</p>
 </li>
 <li>
-<p>if next keyframe layer is empty.</p>
+<p>If next keyframe layer is empty.</p>
 </li>
 </ul>
 </div>
@@ -953,13 +948,13 @@
 <div class="ulist">
 <ul>
 <li>
-<p>if current hitbox layer count is not the same as next hitbox layer count.</p>
+<p>If current hitbox layer count is not the same as next hitbox layer count.</p>
 </li>
 <li>
-<p>if current hitbox layer is empty.</p>
+<p>If current hitbox layer is empty.</p>
 </li>
 <li>
-<p>if next hitbox layer is empty.</p>
+<p>If next hitbox layer is empty.</p>
 </li>
 </ul>
 </div>
@@ -1089,18 +1084,13 @@
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "debug"  : any,
-  "name"   : string,
-  "mode"   : [
-    string mode,
-    string s_factor, string d_factor
-  ],
-  "mode"   : [
-    string c_mode, string a_mode,
-    string sc_factor, string dc_factor,
-    string sa_factor, string da_factor
-  ],
-  "color"  : string rgba,
+  "debug"      : any,
+  "name"       : string,
+  "mode_rgb"   : [ string mode , string src_factor , string dst_factor ],
+  "mode_alpha" : [ string mode , string src_factor , string dst_factor ],
+  "color"      : string rgba,
+  "logic_op"   : string opcode,
+  "logic_op"   : [ string opcode_r , string opcode_g , string opcode_b , string opcode_a ],
 }</pre>
 </div>
 </div>
@@ -1129,38 +1119,93 @@
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">mode (required)</dt>
+<dt class="hdlist1">mode_rgb (required)</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>All strings are WebGL enum for <mark><code>blendEquation()</code></mark> and <mark><code>blendFunc()</code></mark>.</p>
-</li>
-<li>
-<p>Accepts a 3 strings array, or a 6 strings array.</p>
+<p>Accepts a 3 strings array</p>
 <div class="ulist">
 <ul>
 <li>
-<p>For 3 strings array, it is 1 enum for <mark><code>blendEquation()</code></mark> and then 2 enum for <mark><code>blendFunc()</code></mark>.</p>
+<p><code>mode</code> is enum for <code>blendEquation()</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>FUNC_ADD</code> as math operation <code>SRC + DST</code></p>
 </li>
 <li>
-<p>For 6 strings array, it is 2 enum for <mark><code>blendEquationSeparate()</code></mark> and then 4 enum for <mark><code>blendFuncSeparate()</code></mark>.</p>
+<p><code>FUNC_SUBTRACT</code> as math operation <code>SRC - DST</code></p>
+</li>
+<li>
+<p><code>FUNC_REVERSE_SUBTRACT</code> as math operation <code>-SRC + DST</code></p>
+</li>
+<li>
+<p><code>MIN</code> as <code>min(SRC.r, DST.r)</code>,  <code>min(SRC.g, DST.g)</code>,  <code>min(SRC.b, DST.b)</code> and <code>min(SRC.a, DST.a)</code></p>
+</li>
+<li>
+<p><code>MAX</code> as <code>max(SRC.r, DST.r)</code>,  <code>max(SRC.g, DST.g)</code>,  <code>max(SRC.b, DST.b)</code> and <code>max(SRC.a, DST.a)</code></p>
 </li>
 </ul>
 </div>
 </li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">color</dt>
-<dd>
+<li>
+<p><code>src_factor</code> and <code>dst_factor</code> are enum for <code>blendFunc()</code></p>
 <div class="ulist">
 <ul>
 <li>
-<p>Constant color for <mark><code>blendColor()</code></mark>.</p>
+<p>Static value</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ZERO</code> as value <code>0.0</code></p>
 </li>
 <li>
-<p>Used when <mark><code>blendFunc()</code></mark>/<mark><code>blendFuncSeparate()</code></mark> uses factor:</p>
+<p><code>ONE</code> as value <code>1.0</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>SRC or Foreground (top layer)</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SRC_COLOR</code></p>
+</li>
+<li>
+<p><code>SRC_ALPHA</code></p>
+</li>
+<li>
+<p><code>ONE_MINUS_SRC_COLOR</code></p>
+</li>
+<li>
+<p><code>ONE_MINUS_SRC_ALPHA</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>DST or Background (bottom layer)</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>DST_COLOR</code></p>
+</li>
+<li>
+<p><code>DST_ALPHA</code></p>
+</li>
+<li>
+<p><code>ONE_MINUS_DST_COLOR</code></p>
+</li>
+<li>
+<p><code>ONE_MINUS_DST_ALPHA</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>CONSTANT  (require <code>color</code> below)</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1178,11 +1223,121 @@
 </ul>
 </div>
 </li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">mode_alpha</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>same format as <code>mode_rgb</code> above</p>
+</li>
+<li>
+<p>if omitted, then it is the same as <code>mode_rgb</code></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">color</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>required only if <code>src/dst_factor</code> uses CONSTANT</p>
+</li>
 <li>
 <p>String is in "#rrggbbaa" format.</p>
 </li>
 <li>
 <p>If omitted, then it is default to "#ffffffff" (white solid).</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">logic_op</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Can only be used for integer draw buffer. It has no effect for floating-point draw buffer.</p>
+</li>
+<li>
+<p>When it is set, normal blending is disabled. Hence <code>mode_rgb</code>, <code>mode_alpha</code> and <code>color</code> are ignored.</p>
+</li>
+<li>
+<p>Accepts a string, or 4 strings array</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For a string, it is duplicated 3 times to become 4 strings array, for each RGBA values.</p>
+</li>
+<li>
+<p>opcode is enum for <code>logicOp()</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CLEAR</code> as value 0</p>
+</li>
+<li>
+<p><code>SET</code> as value 1</p>
+</li>
+<li>
+<p><code>COPY</code> as bitwise operation <code>SRC</code></p>
+</li>
+<li>
+<p><code>COPY_INVERTED</code> as bitwise operation <code>~SRC</code></p>
+</li>
+<li>
+<p><code>NOOP</code> as bitwise operation <code>DST</code></p>
+</li>
+<li>
+<p><code>INVERT</code> as bitwise operation <code>~DST</code></p>
+</li>
+<li>
+<p><code>AND</code> as bitwise operation <code>SRC &amp; DST</code></p>
+</li>
+<li>
+<p><code>NAND</code> as bitwise operation <code>~(SRC &amp; DST)</code></p>
+</li>
+<li>
+<p><code>OR</code> as bitwise operation <code>SRC | DST</code></p>
+</li>
+<li>
+<p><code>NOR</code> as bitwise operation <code>~(SRC | DST)</code></p>
+</li>
+<li>
+<p><code>XOR</code> as bitwise operation <code>SRC ^ DST</code></p>
+</li>
+<li>
+<p><code>EQUIV</code> as bitwise operation <code>~(SRC ^ DST)</code></p>
+</li>
+<li>
+<p><code>AND_REVERSE</code> as bitwise operation <code>SRC &amp; ~DST</code></p>
+</li>
+<li>
+<p><code>AND_INVERTED</code> as bitwise operation <code>~SRC &amp; DST</code></p>
+</li>
+<li>
+<p><code>OR_REVERSE</code> as bitwise operation <code>SRC | ~DST</code></p>
+</li>
+<li>
+<p><code>OR_INVERTED</code> as bitwise operation <code>~SRC | DST</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If omitted or invalid, then it is default to <code>0</code> (use normal blending).</p>
 </li>
 </ul>
 </div>
@@ -1240,7 +1395,19 @@
 <div class="ulist">
 <ul>
 <li>
-<p><code>keyframe_layer_object</code> : define <code>blend_id</code> == -1 as disable alpha blending.</p>
+<p><code>keyframe_layer_object</code> : define <code>blend_id</code> == -1 as disable alpha blending</p>
+</li>
+<li>
+<p><code>blend_object</code> : removed <code>mode</code></p>
+</li>
+<li>
+<p><code>blend_object</code> : added <code>mode_rgb</code></p>
+</li>
+<li>
+<p><code>blend_object</code> : added <code>mode_alpha</code></p>
+</li>
+<li>
+<p><code>blend_object</code> : added <code>logic_op</code></p>
 </li>
 </ul>
 </div>
@@ -1345,18 +1512,68 @@
 </div>
 </div>
 <div class="sect1">
+<h2 id="_terminology">Terminology</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Canvas XY</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>+X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
+</li>
+<li>
+<p>0,0 is at the center of canvas.</p>
+</li>
+<li>
+<p>For Canvas size 320x240, X is -160px to +160px , and Y is -120px to +120px.</p>
+</li>
+<li>
+<p>It is then normalized to -1.0 to +1.0.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Texture UV</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>+X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
+</li>
+<li>
+<p>0,0 is at top-left of texture.</p>
+</li>
+<li>
+<p>For Texture size 320x240, X is 0px to 320px , and Y is 0px to 240px.</p>
+</li>
+<li>
+<p>It is then normalized to 0.0 to 1.0.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_example">Example</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (1461 bytes)</a></p>
+<p><a href="sample-colorize.quad">sample-colorize.quad (352 bytes)</a></p>
+</li>
+<li>
+<p><a href="sample-depth.quad">sample-depth.quad (567 bytes)</a></p>
 </li>
 <li>
 <p><a href="sample-keymix.quad">sample-keymix.quad (1299 bytes)</a></p>
 </li>
 <li>
-<p><a href="sample-depth.quad">sample-depth.quad (592 bytes)</a></p>
+<p><a href="sample-mat4mix.quad">sample-mat4mix.quad (1461 bytes)</a></p>
 </li>
 </ul>
 </div>

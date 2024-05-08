@@ -284,16 +284,21 @@ function QuadFunc(Q){
 		}
 
 		quad.blend.forEach(function(bv,bk){
-			var valid = Q.gl.is_valid_constant.apply(null, bv.mode);
-			if ( ! valid )
+			if ( ! Q.gl.is_gl_enum(bv.mode_rgb) )
+				bv.mode_rgb = 0;
+			if ( ! $.is_array(bv.mode_rgb, 3) )
 				return nullent(quad.blend, bk);
-			if ( bv.mode.length !== 6 && bv.mode.length !== 3 )
-				return nullent(quad.blend, bk);
-			quad.blend[bk] = {
-				'mode'  : bv.mode,
-				'name'  : bv.name || 'blend ' + bk,
-				'color' : Q.math.css_color( bv.color ),
+			ent = {
+				'mode_rgb'   : bv.mode_rgb,
+				'mode_alpha' : 0,
+				'name'       : bv.name || 'blend ' + bk,
+				'color'      : Q.math.css_color( bv.color ),
 			};
+			if ( ! Q.gl.is_gl_enum(bv.mode_alpha) )
+				bv.mode_alpha = 0;
+			if ( $.is_array(bv.mode_alpha, 3) )
+				ent.mode_alpha = bv.mode_alpha;
+			quad.blend[bk] = ent;
 		}); // quad.blend.forEach
 
 		quad.hitbox.forEach(function(hv,hk){
@@ -340,6 +345,8 @@ function QuadFunc(Q){
 				};
 				if ( ! $.is_undef(lv.blend_id)   )  ent.blend_id = lv.blend_id | 0; // 0 is valid
 				if ( ! $.is_undef(lv.tex_id  )   )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
+				if ( ent.blend_id < 0 )  ent.blend_id = -1;
+				if ( ent.tex_id   < 0 )  ent.tex_id   = -1;
 				if (   $.is_array(lv.srcquad, 8) )  ent.srcquad  = lv.srcquad;
 				kv.layer[lk] = ent;
 			}); // kv.layer.forEach
@@ -388,7 +395,7 @@ function QuadFunc(Q){
 				'loop_id'  : -1,
 				'__RECT'   : 0,
 			};
-			if ( ! $.is_undef(av.loop_id) )  ent.loop_id = av.loop_id; // 0 is valid
+			if ( ! $.is_undef(av.loop_id) )  ent.loop_id = av.loop_id | 0; // 0 is valid
 			quad.animation[ak] = ent;
 		}); // quad.animation.forEach
 
@@ -483,7 +490,7 @@ function QuadFunc(Q){
 				buf_list[bid] = { dst:[] , src:[] , fog:[] , z:[] };
 			var ent = buf_list[bid];
 
-			if ( lv.tex_id < 0 || ! qdata.image[lv.tex_id] )
+			if ( lv.tex_id < 0 || ! qdata.image[lv.tex_id] || ! lv.srcquad )
 				var src = dummysrc;
 			else
 				var src = Q.math.vram_srcquad(lv.srcquad, qdata.image[lv.tex_id].pos);

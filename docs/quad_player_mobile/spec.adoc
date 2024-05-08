@@ -22,8 +22,6 @@ The major difference from 2D sprite:
 The major difference from 3D model:
 
 * It is still animated in frames, instead of using delta time. On a normal 60 FPS (frames per seconds) game, 1 frame is 16.67 milliseconds.
-* X and Y is the same as 2D image. +X is right direction, +Y is down direction, and they are measured in px (pixels).
-* On drawing, `[0,0]` is still at the center of the canvas. If the canvas size is 320x240, then X is `-160px to +160px`, and Y is `-120px to +120px`.
 * Z or depth value are not used. It is faked on drawing for perspective correction and drawing order.
 * As every polygons are quadrilateral with 4 unique x,y coordinates, indices are not needed. They are auto-generated when drawing as 2 triangles.
 * No triangulation needed. The 2 triangles never need to be further broken into smaller triangles.
@@ -239,9 +237,9 @@ debug::
 
 dstquad (required)::
 	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
-	* Defines the area on the canvas or BG to write pixels to.
+	* Defines the area on the canvas or background to write pixels to.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
-	* If omitted, then the layer object is skipped.
+	* If omitted, then this layer object is invalid and skipped.
 
 blend_id::
 	* Index of <<blend_object>> to use for alpha blending.
@@ -250,9 +248,9 @@ blend_id::
 	* -1 means disable alpha blending. All pixels, including transparent pixels, will overwrite pixels within `dstquad`.
 
 fogquad::
-	* All strings is in "#rrggbbaa" format.
-	* Accepts a string, or 4 strings array.
-	** For a string, it is duplicated 3 times to become 4 strings array.
+	* Accepts 4 RGBA strings for 4 corners of a quad.
+	** Can be shorthand to 1 RGBA string when all 4 corners are the same color.
+	* RGBA string is in "#rrggbbaa" format.
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
 attribute::
@@ -262,7 +260,7 @@ attribute::
 
 colorize::
 	* Accepts a string of custom color name.
-	* Used for character customization, by adjusting the color level of a grayscale texture to custom color.
+	* Used for character customization, by adjusting the HSV (Hue Saturation Value) of a grayscale texture to custom color.
 	* Custom color is in RGB, default to `rgb(1.0 , 1.0 , 1.0)`.
 
 tex_id::
@@ -272,7 +270,7 @@ tex_id::
 srcquad::
 	* Required to draw texture.
 	* Accepts 8 numbers array, as in 4 pairs of x,y coordinates.
-	* Defines the area of texture or FG to read pixels from.
+	* Defines the area of texture or foreground to read pixels from.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
 	* If omitted or it is invalid, then fog color only is drawn.
 
@@ -333,7 +331,7 @@ hitquad (required)::
 	* Accepts 8 numbers array, or 4 pairs of x,y coordinates.
 	* Defines the area for collusion detection.
 	* Measured in pixel (px), with +X is right direction, and +Y is down direction.
-	* If omitted, then the layer object is skipped.
+	* If omitted, then this layer object is invalid and skipped.
 
 attribute::
 	* Accepts a string for only 1 attribute, or a list of string for multiple attributes.
@@ -386,7 +384,7 @@ loop_id::
   "debug"        : any,
   "time"         : int fps,
   "attach"       : <<attach_object>>,
-  "matrix"       : [a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p],
+  "matrix"       : [ a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p ],
   "color"        : string rgba,
   "matrix_mix"   : bool,
   "color_mix"    : bool,
@@ -431,9 +429,9 @@ keyframe_mix::
 	** layer = (current * (1.0 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
 	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
-	*** if current keyframe layer count is not the same as next keyframe layer count.
-	*** if current keyframe layer is empty.
-	*** if next keyframe layer is empty.
+	*** If current keyframe layer count is not the same as next keyframe layer count.
+	*** If current keyframe layer is empty.
+	*** If next keyframe layer is empty.
 	** If `false`, only current keyframe layer is used, next keyframe layer is ignored.
 
 hitbox_mix::
@@ -443,9 +441,9 @@ hitbox_mix::
 	** layer = (current * (1.0 - rate)) + (next * rate)
 	* If omitted, then it is default to `0` (`false`)
 	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
-	*** if current hitbox layer count is not the same as next hitbox layer count.
-	*** if current hitbox layer is empty.
-	*** if next hitbox layer is empty.
+	*** If current hitbox layer count is not the same as next hitbox layer count.
+	*** If current hitbox layer is empty.
+	*** If next hitbox layer is empty.
 	** If `false`, only current hitbox layer is used, next hitbox layer is ignored.
 
 
@@ -512,18 +510,13 @@ It is to define alpha blending formula to handle transparency and semi-transpare
 [subs="specialchars,macros"]
 ----
 {
-  "debug"  : any,
-  "name"   : string,
-  "mode"   : [
-    string mode,
-    string s_factor, string d_factor
-  ],
-  "mode"   : [
-    string c_mode, string a_mode,
-    string sc_factor, string dc_factor,
-    string sa_factor, string da_factor
-  ],
-  "color"  : string rgba,
+  "debug"      : any,
+  "name"       : string,
+  "mode_rgb"   : [ string mode , string src_factor , string dst_factor ],
+  "mode_alpha" : [ string mode , string src_factor , string dst_factor ],
+  "color"      : string rgba,
+  "logic_op"   : [ string opcode_r , string opcode_g , string opcode_b , string opcode_a ],
+  "logic_op"   : string opcode,
 }
 ----
 
@@ -534,21 +527,66 @@ name::
 	* Custom string to identify this object.
 	* If omitted, then it is default to "blend %d".
 
-mode (required)::
-	* All strings are WebGL enum for #`blendEquation()`# and #`blendFunc()`#.
-	* Accepts a 3 strings array, or a 6 strings array.
-	** For 3 strings array, it is 1 enum for #`blendEquation()`# and then 2 enum for #`blendFunc()`#.
-	** For 6 strings array, it is 2 enum for #`blendEquationSeparate()`# and then 4 enum for #`blendFuncSeparate()`#.
+mode_rgb (required)::
+	* Accepts a 3 strings array
+	** `mode` is enum for `blendEquation()`
+	*** `FUNC_ADD` is math operation `SRC + DST`
+	*** `FUNC_SUBTRACT` is math operation `SRC - DST`
+	*** `FUNC_REVERSE_SUBTRACT` is math operation `-SRC + DST`
+	***  `MIN` is `min(SRC.r, DST.r)`,  `min(SRC.g, DST.g)`,  `min(SRC.b, DST.b)` and `min(SRC.a, DST.a)`
+	***  `MAX` is `max(SRC.r, DST.r)`,  `max(SRC.g, DST.g)`,  `max(SRC.b, DST.b)` and `max(SRC.a, DST.a)`
+	** `src_factor` and `dst_factor` are enum for `blendFunc()`
+	*** Static value
+	**** `ZERO` is value `0.0`
+	**** `ONE` is value `1.0`
+	*** SRC or Foreground (top layer)
+	**** `SRC_COLOR`
+	**** `SRC_ALPHA`
+	**** `ONE_MINUS_SRC_COLOR`
+	**** `ONE_MINUS_SRC_ALPHA`
+	*** DST or Background (bottom layer)
+	**** `DST_COLOR`
+	**** `DST_ALPHA`
+	**** `ONE_MINUS_DST_COLOR`
+	**** `ONE_MINUS_DST_ALPHA`
+	*** CONSTANT  (require `color` below)
+	**** `CONSTANT_COLOR`
+	**** `CONSTANT_ALPHA`
+	**** `ONE_MINUS_CONSTANT_COLOR`
+	**** `ONE_MINUS_CONSTANT_ALPHA`
+
+mode_alpha::
+	* same format as `mode_rgb` above
+	* if omitted, then it is the same as `mode_rgb`
 
 color::
-	* Constant color for #`blendColor()`#.
-	* Used when #`blendFunc()`#/#`blendFuncSeparate()`# uses factor:
-	** `CONSTANT_COLOR`
-	** `CONSTANT_ALPHA`
-	** `ONE_MINUS_CONSTANT_COLOR`
-	** `ONE_MINUS_CONSTANT_ALPHA`
+	* required only if `src/dst_factor` uses CONSTANT
 	* String is in "#rrggbbaa" format.
 	* If omitted, then it is default to "#ffffffff" (white solid).
+
+logic_op::
+	* Can only be used for integer draw buffer. It has no effect for floating-point draw buffer.
+	* When it is set, normal blending is disabled. Hence `mode_rgb`, `mode_alpha` and `color` are ignored.
+	* Accepts 4 strings array for each RGBA components.
+	** Can be shorthand to 1 string when all 4 RGBA components are the same.
+	** `opcode` is enum for `logicOp()`
+	*** `CLEAR` as value 0
+	*** `SET` as value 1
+	*** `COPY` as bitwise operation `SRC`
+	*** `COPY_INVERTED` as bitwise operation `~SRC`
+	*** `NOOP` as bitwise operation `DST`
+	*** `INVERT` as bitwise operation `~DST`
+	*** `AND` as bitwise operation `SRC & DST`
+	*** `NAND` as bitwise operation `~(SRC & DST)`
+	*** `OR` as bitwise operation `SRC | DST`
+	*** `NOR` as bitwise operation `~(SRC | DST)`
+	*** `XOR` as bitwise operation `SRC ^ DST`
+	*** `EQUIV` as bitwise operation `~(SRC ^ DST)`
+	*** `AND_REVERSE` as bitwise operation `SRC & ~DST`
+	*** `AND_INVERTED` as bitwise operation `~SRC & DST`
+	*** `OR_REVERSE` as bitwise operation `SRC | ~DST`
+	*** `OR_INVERTED` as bitwise operation `~SRC | DST`
+	* If omitted or invalid, then it is default to `0` (use normal blending).
 
 
 
@@ -576,7 +614,11 @@ id (required)::
 == Revision History
 
 v0.x::
-	* `keyframe_layer_object` : define `blend_id` == -1 as disable alpha blending.
+	* `keyframe_layer_object` : define `blend_id` == -1 as disable alpha blending
+	* `blend_object` : removed `mode`
+	* `blend_object` : added `mode_rgb`
+	* `blend_object` : added `mode_alpha`
+	* `blend_object` : added `logic_op`
 
 v0.5 (2024-4-3)::
 	* `quad_object` : renamed to `link_object`
@@ -610,11 +652,28 @@ v0.1 (2021-03-01)::
 
 
 
+== Terminology
+
+Canvas XY::
+	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
+	* 0,0 is at the center of canvas.
+	* For Canvas size 320x240, X is -160px to +160px , and Y is -120px to +120px.
+	* It is then normalized to -1.0 to +1.0.
+
+Texture UV::
+	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
+	* 0,0 is at top-left of texture.
+	* For Texture size 320x240, X is 0px to 320px , and Y is 0px to 240px.
+	* It is then normalized to 0.0 to 1.0.
+
+
+
 == Example
 
+* link:sample-colorize.quad[sample-colorize.quad (352 bytes)]
+* link:sample-depth.quad[sample-depth.quad (567 bytes)]
+* link:sample-keymix.quad[sample-keymix.quad (943 bytes)]
 * link:sample-mat4mix.quad[sample-mat4mix.quad (1461 bytes)]
-* link:sample-keymix.quad[sample-keymix.quad (1299 bytes)]
-* link:sample-depth.quad[sample-depth.quad (592 bytes)]
 
 
 

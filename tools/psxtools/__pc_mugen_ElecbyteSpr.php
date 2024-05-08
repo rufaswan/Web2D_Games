@@ -197,7 +197,7 @@ function pcx2clut( &$file, $pos, $is_prev_pal )
 		'h'   => $h,
 		'pix' => $pix,
 	);
-	if ( $is_prev_pal )
+	if ( $is_prev_pal || $plane_cnt > 1 )
 		return $img;
 
 	$pal = '';
@@ -225,7 +225,7 @@ function sffv1( &$file, $dir )
 
 	global $gp_required_sprite;
 	$def  = ";Sprite\r\n";
-	$def .= ";group,itemno, fname, axisx, axisy\r\n";
+	$def .= ";group  , itemno , fname       , axisx  , axisy\r\n";
 	$def .= "[Sprite]\r\n";
 
 	$pos = $hdsz_main;
@@ -248,7 +248,7 @@ function sffv1( &$file, $dir )
 		if ( $len_sub > 0 )
 		{
 			$fn   = sprintf('%s/%06d', $dir, $id);
-			$def .= sprintf('%6d , %6d , %06d.clut , %6d , %6d', $group_id, $image_id, $id, $image_x, $image_y);
+			$def .= sprintf(' %6d , %6d , %06d.clut , %6d , %6d', $group_id, $image_id, $id, $image_x, $image_y);
 			printf("%8x  %8x  %s\n", $pos, $len_sub, $fn);
 
 			$sub = substr($file, $pos + $hdsz_sub, $len_sub);
@@ -270,17 +270,20 @@ function sffv1( &$file, $dir )
 		// linked or duplicate sprites
 		else {
 			$fn   = sprintf('%s/%06d', $dir, $prev_img_id);
-			$def .= sprintf('%6d , %6d , %06d.clut , %6d , %6d', $group_id, $image_id, $prev_img_id, $image_x, $image_y);
+			$def .= sprintf(' %6d , %6d , %06d.clut , %6d , %6d', $group_id, $image_id, $prev_img_id, $image_x, $image_y);
 			printf("%8x  %8x  @%s\n", $pos, $len_sub, $fn);
 		}
 
 		$t = sprintf('%d,%d', $group_id, $image_id);
 		if ( isset($gp_required_sprite[$t]) )
-			$def .= sprintf(' ; %s', $gp_required_sprite[$t]);
+			$def .= sprintf('   ; %s', $gp_required_sprite[$t]);
 		$def .= "\r\n";
 
-		$pos = $off_link;
 		$id++;
+		if ( $off_link > $hdsz_main )
+			$pos = $off_link;
+		else
+			break;
 	} // while ( $pos < $len )
 
 	save_file("$dir/sffv1.def", $def);

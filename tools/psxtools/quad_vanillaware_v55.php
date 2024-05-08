@@ -496,36 +496,30 @@ function vanilla_blendmode( $tag )
 			// (A.rgb - B.rgb) * C.a + D.rgb
 			// ABCD are 2 bits
 			//   0=FG  1=BG  2=0  3=reserved
-			$blend[0] = array(
-				'name' => '44 = 0101',
-				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-				'debug' => '((FG.rgb - BG.rgb) * FG.a) + BG.rgb',
-			);
-			$blend[1] = array(
-				'name' => '48 = 0201',
-				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE'),
-				'debug' => '((FG.rgb - 0) * FG.a) + BG.rgb',
-			);
-			$blend[2] = array(
-				'name' => '42 = 2001',
-				'mode' => array('FUNC_REVERSE_SUBTRACT', 'SRC_ALPHA', 'ONE'),
-				'debug' => '((0 - FG.rgb) * FG.a) + BG.rgb',
-			);
-			$blend[3] = array(
-				'name' => '54 = 0111',
-				'mode' => array('FUNC_ADD', 'DST_ALPHA', 'ONE_MINUS_DST_ALPHA'),
-				'debug' => '((FG.rgb - BG.rgb) * BG.a) + BG.rgb',
-			);
-			$blend[4] = array(
-				'name' => '58 = 0211',
-				'mode' => array('FUNC_ADD', 'DST_ALPHA', 'ONE'),
-				'debug' => '((FG.rgb - 0) * BG.a) + BG.rgb',
-			);
-			$blend[5] = array(
-				'name' => '52 = 2011',
-				'mode' => array('FUNC_REVERSE_SUBTRACT', 'DST_ALPHA', 'ONE'),
-				'debug' => '((0 - FG.rgb) * BG.a) + BG.rgb',
-			);
+			$b = ps2_blend_mode('FG' , 'BG' , 'FG' , 'BG');
+			$b['debug'] = '44 = 0101';
+			list_add($blend, 0, $b);
+
+			$b = ps2_blend_mode('FG' , 0 , 'FG' , 'BG');
+			$b['debug'] = '48 = 0201';
+			list_add($blend, 1, $b);
+
+			$b = ps2_blend_mode(0 , 'FG' , 'FG' , 'BG');
+			$b['debug'] = '42 = 2001';
+			list_add($blend, 2, $b);
+
+			$b = ps2_blend_mode('FG' , 'BG' , 'BG' , 'BG');
+			$b['debug'] = '54 = 0111';
+			list_add($blend, 3, $b);
+
+			$b = ps2_blend_mode('FG' , 0 , 'BG' , 'BG');
+			$b['debug'] = '58 = 0211';
+			list_add($blend, 4, $b);
+
+			$b = ps2_blend_mode(0 , 'FG' , 'BG' , 'BG');
+			$b['debug'] = '52 = 2011';
+			list_add($blend, 5, $b);
+
 			return $blend;
 
 		case 'wii_mura': // 0 1 2
@@ -553,10 +547,8 @@ function vanilla_blendmode( $tag )
 
 		case 'nds_kuma': // 0
 		default:
-			$blend[0] = array(
-				'name' => 'default',
-				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-			);
+			$b = blend_modes('normal');
+			list_add($blend, 0, $b);
 			return $blend;
 	} // switch ( $cons )
 

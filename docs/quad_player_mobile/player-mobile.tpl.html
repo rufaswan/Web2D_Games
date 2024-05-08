@@ -863,21 +863,14 @@ var QUAD = {};
 		var c = blend.color;
 		__.GL.blendColor(c[0], c[1], c[2], c[3]);
 
-		var mode = blend.mode;
-		if ( ! Array.isArray(mode) )
-			return __.GL.disable(__.GL.BLEND);
+		if ( ! blend.mode_alpha )
+			blend.mode_alpha = blend.mode_rgb;
 
-		if ( mode.length === 6 ){
-			__.GL.blendEquationSeperate(__.GL[ mode[0] ] , __.GL[ mode[1] ]);
-			__.GL.blendFuncSeperate    (__.GL[ mode[2] ] , __.GL[ mode[3] ] , __.GL[ mode[4] ] , __.GL[ mode[5] ]);
-			return __.GL.enable(__.GL.BLEND);
-		}
-		if ( mode.length === 3 ){
-			__.GL.blendEquation(__.GL[ mode[0] ]);
-			__.GL.blendFunc    (__.GL[ mode[1] ] , __.GL[ mode[2] ]);
-			return __.GL.enable(__.GL.BLEND);
-		}
-		return __.GL.disable(__.GL.BLEND);
+		var mc = blend.mode_rgb;
+		var ma = blend.mode_alpha;
+		__.GL.blendEquationSeparate(__.GL[ mc[0] ] , __.GL[ ma[0] ]);
+		__.GL.blendFuncSeparate    (__.GL[ mc[1] ] , __.GL[ mc[2] ] , __.GL[ ma[1] ] , __.GL[ ma[2] ]);
+		return __.GL.enable(__.GL.BLEND);
 	}
 
 	$.enable_depth = function( depth ){
@@ -916,12 +909,16 @@ var QUAD = {};
 		__.GL.flush();
 	}
 
-	$.is_valid_constant = function(){
-		for ( var i=0; i < arguments.length; i++ ){
-			if ( ! __.GL[ arguments[i] ] )
-				return false;
+	$.is_gl_enum = function( str ){
+		if ( Array.isArray(str) ){
+			for ( var i=0; i < str.length; i++ ){
+				str[i] = str[i].toUpperCase();
+				if ( ! __.GL[ str[i] ] )
+					return false;
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	//////////////////////////////
@@ -1285,16 +1282,21 @@ var QUAD = {};
 		}
 
 		quad.blend.forEach(function(bv,bk){
-			var valid = Q.gl.is_valid_constant.apply(null, bv.mode);
-			if ( ! valid )
+			if ( ! Q.gl.is_gl_enum(bv.mode_rgb) )
+				bv.mode_rgb = 0;
+			if ( ! $.is_array(bv.mode_rgb, 3) )
 				return nullent(quad.blend, bk);
-			if ( bv.mode.length !== 6 && bv.mode.length !== 3 )
-				return nullent(quad.blend, bk);
-			quad.blend[bk] = {
-				'mode'  : bv.mode,
-				'name'  : bv.name || 'blend ' + bk,
-				'color' : Q.math.css_color( bv.color ),
+			ent = {
+				'mode_rgb'   : bv.mode_rgb,
+				'mode_alpha' : 0,
+				'name'       : bv.name || 'blend ' + bk,
+				'color'      : Q.math.css_color( bv.color ),
 			};
+			if ( ! Q.gl.is_gl_enum(bv.mode_alpha) )
+				bv.mode_alpha = 0;
+			if ( $.is_array(bv.mode_alpha, 3) )
+				ent.mode_alpha = bv.mode_alpha;
+			quad.blend[bk] = ent;
 		}); // quad.blend.forEach
 
 		quad.hitbox.forEach(function(hv,hk){
@@ -1341,6 +1343,8 @@ var QUAD = {};
 				};
 				if ( ! $.is_undef(lv.blend_id)   )  ent.blend_id = lv.blend_id | 0; // 0 is valid
 				if ( ! $.is_undef(lv.tex_id  )   )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
+				if ( ent.blend_id < 0 )  ent.blend_id = -1;
+				if ( ent.tex_id   < 0 )  ent.tex_id   = -1;
 				if (   $.is_array(lv.srcquad, 8) )  ent.srcquad  = lv.srcquad;
 				kv.layer[lk] = ent;
 			}); // kv.layer.forEach
@@ -1389,7 +1393,7 @@ var QUAD = {};
 				'loop_id'  : -1,
 				'__RECT'   : 0,
 			};
-			if ( ! $.is_undef(av.loop_id) )  ent.loop_id = av.loop_id; // 0 is valid
+			if ( ! $.is_undef(av.loop_id) )  ent.loop_id = av.loop_id | 0; // 0 is valid
 			quad.animation[ak] = ent;
 		}); // quad.animation.forEach
 
@@ -1484,7 +1488,7 @@ var QUAD = {};
 				buf_list[bid] = { dst:[] , src:[] , fog:[] , z:[] };
 			var ent = buf_list[bid];
 
-			if ( lv.tex_id < 0 || ! qdata.image[lv.tex_id] )
+			if ( lv.tex_id < 0 || ! qdata.image[lv.tex_id] || ! lv.srcquad )
 				var src = dummysrc;
 			else
 				var src = Q.math.vram_srcquad(lv.srcquad, qdata.image[lv.tex_id].pos);
@@ -2542,14 +2546,14 @@ var QUAD = {};
 
 	__.export_sheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
-		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var spr_rect = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
-			(sprsize[2] - sprsize[0]) * line_spacing * qdata.zoom,
-			(sprsize[3] - sprsize[1]) * line_spacing * qdata.zoom ,
+			Math.ceil( (spr_rect[2] - spr_rect[0]) * line_spacing * qdata.zoom ),
+			Math.ceil( (spr_rect[3] - spr_rect[1]) * line_spacing * qdata.zoom ),
 		];
 		var sprmid = [
-			(sprsize[2] + sprsize[0]) * 0.5 * qdata.zoom ,
-			(sprsize[3] + sprsize[1]) * 0.5 * qdata.zoom ,
+			(spr_rect[2] + spr_rect[0]) * 0.5 * qdata.zoom,
+			(spr_rect[3] + spr_rect[1]) * 0.5 * qdata.zoom,
 		];
 
 		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
@@ -2569,14 +2573,14 @@ var QUAD = {};
 			var y = Math.ceil(anim_remain / tile[0]);
 			tilerow = ( y < tile[1] ) ? y : tile[1];
 		}
-		canvas.width  = tilecol * Math.floor(sprwh[0]);
-		canvas.height = tilerow * Math.floor(sprwh[1]);
+		canvas.width  = tilecol * sprwh[0];
+		canvas.height = tilerow * sprwh[1];
 
 		// canvas from -halftex to +halftex
 		// sprite 0,0 is at center
 		var halfpos = [
-			canvas.width * 0.5 , canvas.height * 0.5 ,
-			sprwh[0]     * 0.5 , sprwh[1]      * 0.5 ,
+			canvas.width * 0.5 , canvas.height * 0.5,
+			sprwh[0]     * 0.5 , sprwh[1]      * 0.5,
 		];
 
 		var camera = Q.math.matrix4();
@@ -2604,19 +2608,18 @@ var QUAD = {};
 				qdata.is_draw = false;
 				Q.func.qdata_draw(qdata, m4, color);
 				qdata.anim_fps++;
-			} // for ( var dx = -canvpos[0]; dx < canvpos[0]; dx += sprwh[0] )
-		} // for ( var dy = canvpos[1]; dy > -canvpos[1]; dy += sprwh[1] )
+			} // for ( var dx = -halfpos[0]; dx < halfpos[0]; dx += sprwh[0] )
+		} // for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] )
 
 		return canvas.toDataURL('image/png');
 	}
 
 	__.export_zip = function( qdata, canvas, fmt ){
-		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
-		var symm = Q.math.rect_symmetry(sprsize);
+		var spr_rect = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var symm = Q.math.rect_symmetry(spr_rect);
 
-		var line_spacing = 1.15;
-		canvas.width  = Math.ceil(symm[0] * 2 * line_spacing * qdata.zoom);
-		canvas.height = Math.ceil(symm[1] * 2 * line_spacing * qdata.zoom);
+		canvas.width  = Math.ceil(symm[0] * qdata.zoom) * 2 + 4;
+		canvas.height = Math.ceil(symm[1] * qdata.zoom) * 2 + 4;
 
 		// same number of sprites as sheet
 		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
@@ -2994,7 +2997,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-4-21 (beta)';
+	$.version = 'ver 2024-5-7 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);

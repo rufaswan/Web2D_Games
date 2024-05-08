@@ -302,14 +302,14 @@ function QuadExport(Q){
 
 	__.export_sheet = function( qdata, canvas ){
 		var line_spacing = 1.15;
-		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var spr_rect = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
 		var sprwh = [
-			(sprsize[2] - sprsize[0]) * line_spacing * qdata.zoom,
-			(sprsize[3] - sprsize[1]) * line_spacing * qdata.zoom ,
+			Math.ceil( (spr_rect[2] - spr_rect[0]) * line_spacing * qdata.zoom ),
+			Math.ceil( (spr_rect[3] - spr_rect[1]) * line_spacing * qdata.zoom ),
 		];
 		var sprmid = [
-			(sprsize[2] + sprsize[0]) * 0.5 * qdata.zoom ,
-			(sprsize[3] + sprsize[1]) * 0.5 * qdata.zoom ,
+			(spr_rect[2] + spr_rect[0]) * 0.5 * qdata.zoom,
+			(spr_rect[3] + spr_rect[1]) * 0.5 * qdata.zoom,
 		];
 
 		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);
@@ -329,14 +329,14 @@ function QuadExport(Q){
 			var y = Math.ceil(anim_remain / tile[0]);
 			tilerow = ( y < tile[1] ) ? y : tile[1];
 		}
-		canvas.width  = tilecol * Math.floor(sprwh[0]);
-		canvas.height = tilerow * Math.floor(sprwh[1]);
+		canvas.width  = tilecol * sprwh[0];
+		canvas.height = tilerow * sprwh[1];
 
 		// canvas from -halftex to +halftex
 		// sprite 0,0 is at center
 		var halfpos = [
-			canvas.width * 0.5 , canvas.height * 0.5 ,
-			sprwh[0]     * 0.5 , sprwh[1]      * 0.5 ,
+			canvas.width * 0.5 , canvas.height * 0.5,
+			sprwh[0]     * 0.5 , sprwh[1]      * 0.5,
 		];
 
 		var camera = Q.math.matrix4();
@@ -364,19 +364,18 @@ function QuadExport(Q){
 				qdata.is_draw = false;
 				Q.func.qdata_draw(qdata, m4, color);
 				qdata.anim_fps++;
-			} // for ( var dx = -canvpos[0]; dx < canvpos[0]; dx += sprwh[0] )
-		} // for ( var dy = canvpos[1]; dy > -canvpos[1]; dy += sprwh[1] )
+			} // for ( var dx = -halfpos[0]; dx < halfpos[0]; dx += sprwh[0] )
+		} // for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] )
 
 		return canvas.toDataURL('image/png');
 	}
 
 	__.export_zip = function( qdata, canvas, fmt ){
-		var sprsize = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
-		var symm = Q.math.rect_symmetry(sprsize);
+		var spr_rect = $.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+		var symm = Q.math.rect_symmetry(spr_rect);
 
-		var line_spacing = 1.15;
-		canvas.width  = Math.ceil(symm[0] * 2 * line_spacing * qdata.zoom);
-		canvas.height = Math.ceil(symm[1] * 2 * line_spacing * qdata.zoom);
+		canvas.width  = Math.ceil(symm[0] * qdata.zoom) * 2 + 4;
+		canvas.height = Math.ceil(symm[1] * qdata.zoom) * 2 + 4;
 
 		// same number of sprites as sheet
 		var anim_time = $.time_attach(qdata, qdata.attach.type, qdata.attach.id);

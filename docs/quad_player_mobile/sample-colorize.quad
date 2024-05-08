@@ -1,0 +1,17 @@
+{
+  "keyframe"  : [
+    {
+      "layer" : [
+        {
+          "dstquad"  : [ -50 , 0 , -50 , -100 , 50 , -100 , 50 , 0 ] ,
+          "fogquad"  : "#ff0000ff"
+        } ,
+        {
+          "dstquad"  : [ -50 , -25 , -50 , -75 , 50 , -75 , 50 , -25 ] ,
+          "fogquad"  : "#ccccccff" ,
+          "colorize" : "body"
+        }
+      ]
+    }
+  ]
+}

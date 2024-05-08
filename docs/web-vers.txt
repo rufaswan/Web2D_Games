@@ -212,6 +212,7 @@ Can I Use?
 
 	  2     9     3.2  naturalWidth & naturalHeight image properties
 	  3.5  10     3.2  querySelector/querySelectorAll
+	  4    11.5   5    getComputedStyle
 	 18    11.6   3.2  Window.devicePixelRatio
 	  2    12.1   3.2  Element API: scrollIntoView
 	 11    15     6    requestAnimationFrame

@@ -166,12 +166,12 @@ Nintendo DS ROM header
 == IEEE 754 Int Precision ==
 	format = sign  exponent  mantissa
 
-	float  exp  man  bias    max man          1.0
-	16      5    10      15  ( 1 <<  10) - 1  3c 00
-	32      8    23     127  ( 8 <<  20) - 1  3f 80 00 00
-	64     11    52    1023  ( 4 <<  50) - 1  3f f0 00 00 00 00 00 00
-	128    15   112   16383  ( 4 << 110) - 1  3f ff 00 00 00 00 00 00 00 00 00 00 00 00
-	256    19   236  262143  (64 << 230) - 1  3f ff f0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+	float  exp  man  bias    max man        1.0
+	16      5    10      15  ( 1 <<  10)-1  3c        seee ee--
+	32      8    23     127  ( 8 <<  20)-1  3f 80     seee eeee e---
+	64     11    52    1023  ( 4 <<  50)-1  3f f0     seee eeee eeee
+	128    15   112   16383  ( 4 << 110)-1  3f ff     seee eeee eeee eeee
+	256    19   236  262143  (64 << 230)-1  3f ff f0  seee eeee eeee eeee eeee
 
 	WebGL
 	lowp      8    ff    255.0
@@ -214,3 +214,5 @@ Nintendo DS ROM header
 	mame0178b.exe
 	mame0178b_debug.exe
 	mame0217b_32bit.exe
+
+<(*-*<) ^(*-*)^ (>*-*)>

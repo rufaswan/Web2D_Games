@@ -410,3 +410,44 @@ sub_80042adc()
 	3   8  14  0
 	2  20  18  2
 	1  40  1a  3
+
+801ddaa0
+	00
+		80020408  lhu  v1, 0(s0)
+			if v1 === f0
+				break
+			if v1 >= f1
+				if v1 === fa
+					break
+				if v1 === ff
+					break
+			if v1 === 0
+				break
+			if v1 === 80
+				break
+	02
+		80020444  lhu  v0, 2(s0)
+			if v0 >= c0
+				break
+	04
+		800204e4  lhu  v0, 4(s0)
+	...
+	e8
+		80020470  lw  s4, e8(s0)
+			v0 = [8009ff6c] - 48
+		800204bc  sw  v0, e8(s0)
+			v0 = [8009ff6c] + 188
+		800204e0  sw  v0, e8(s0)
+		800204f4  lw  a0, e8(s0)
+		80020528  lw  a0, e8(s0)
+	ec
+		80020474  lw  s6, ec(s0)
+		80020590  lw  v1, ec(s0)
+	f0
+		80020478  lw  fp, f0(s0)
+		800205b4  lw  v1, f0(s0)
+	f4  // pos x
+	f8  // pos y
+	fc
+	100 // velocity x
+	104 // velocity y

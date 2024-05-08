@@ -389,9 +389,10 @@ function is_line_on_line( $v1a, $v1b, $v2a, $v2b )
 	if ( $z === 0 )
 		return -1;
 
-	$pnt[0] /= $pnt[2];
-	$pnt[1] /= $pnt[2];
-	$pnt[2] /= $pnt[2];
+	$z = 1.0 / $pnt[2];
+	$pnt[0] *= $z;
+	$pnt[1] *= $z;
+	$pnt[2] *= $z;
 	if ( is_point_on_line($pnt,$v1a,$v1b) && is_point_on_line($pnt,$v2a,$v2b) )
 		return $pnt;
 	return -1;
@@ -473,147 +474,189 @@ function quad_convexfix( &$quad )
 //////////////////////////////
 function psx_blend_mode( $f, $b )
 {
-	// (FG * f) + (BG * b)
-	// alpha = BG.a
+	// (SRC * f) + (DST * b)
+	$blend = array(
+		'name'  => sprintf('PSX = SRC * %.2f + DST * %.2f', $f, $b),
+		'mode_rgb'   => 0,
+		'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+	);
 	$f = (int)($f * 100);
 	$b = (int)($b * 100);
 	if ( $f === 50 && $b === 50 ) // 0.5 , 0.5 / average
-		return array(
-			'name'  => 'PSX  FG * 0.5 + BG * 0.5',
-			'color' => '#ffffff80',
-			'mode'  => array(
-				'FUNC_ADD'                        , 'FUNC_ADD' ,
-				'CONSTANT_ALPHA','CONSTANT_ALPHA' , 'ONE','ONE'
-			),
-		);
+		$blend['mode_rgb'] = array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'CONSTANT_ALPHA');
+		$blend['color']    = '#ffffff80';
+		return $blend;
 	if ( $f === 100 && $b === 100 ) // 1.0 , 1.0 / addition
-		return array(
-			'name' => 'PSX  FG * 1 + BG * 1',
-			'mode' => array(
-				'FUNC_ADD'  , 'FUNC_ADD' ,
-				'ONE','ONE' , 'ONE','ONE'
-			),
-		);
+		$blend['mode_rgb'] = array('FUNC_ADD' , 'ONE' , 'ONE');
+		return $blend;
 	if ( $f === 25 && $b === 100 ) // 0.25 , 1.0 / partial addition
-		return array(
-			'name'  => 'PSX  FG * 0.25 + BG * 1',
-			'color' => '#ffffff40',
-			'mode'  => array(
-				'FUNC_ADD'             , 'FUNC_ADD' ,
-				'CONSTANT_ALPHA','ONE' , 'ONE','ONE'
-			),
-		);
+		$blend['mode_rgb'] = array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'ONE');
+		$blend['color']    = '#ffffff40';
+		return $blend;
 	if ( $f === -100 && $b === 100 ) // -1.0 , 1.0 / subtraction
-		return array(
-			'name' => 'PSX  FG * -1 + BG * 1',
-			'mode' => array(
-				'FUNC_REVERSE_SUBTRACT' , 'FUNC_ADD' ,
-				'ONE','ONE'             , 'ONE','ONE'
-			),
-		);
+		$blend['mode_rgb'] = array('FUNC_REVERSE_SUBTRACT' , 'ONE' , 'ONE');
+		return $blend;
 	return php_error('unknown f = %.2f , b = %.2f', $f * 0.01, $b * 0.01);
+}
+
+function ps2_blend_mode( $a, $b, $c, $d )
+{
+	// (A - B) * C + D
+	// ABCD are 2 bits
+	//   0=SRC  1=DST  2=0  3=reserved
+	// ABD are color , C is alpha
+	$mode = "$a,$b,$c,$d";
+	$blend = array(
+		'name' => sprintf('PS2 = (%s.rgb - %s.rgb) * %s.a + %s.rgb', $a, $b, $c, $d),
+		'mode_rgb'   => 0,
+		'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+	);
+	switch ( $mode )
+	{
+		case 'SRC,DST,SRC,DST':
+			// ((SRC.rgb - DST.rgb) * SRC.a) + DST.rgb
+			// = SRC.rgb * SRC.a + (-DST.rgb * SRC.a + DST.rgb)
+			// = SRC.rgb * SRC.a + DST.rgb * (-1 * SRC.a + 1)
+			// = SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a)
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE_MINUS_SRC_ALPHA');
+			return $blend;
+		case 'SRC,0,SRC,DST':
+			// ((SRC.rgb - 0) * SRC.a) + DST.rgb
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE');
+			return $blend;
+		case '0,SRC,SRC,DST':
+			// ((0 - SRC.rgb) * SRC.a) + DST.rgb
+			$blend['mode_rgb'] = array('FUNC_REVERSE_SUBTRACT' , 'SRC_ALPHA' , 'ONE');
+			return $blend;
+		case 'SRC,DST,DST,DST':
+			// ((SRC.rgb - DST.rgb) * DST.a) + DST.rgb
+			// = SRC.rgb * DST.a + (-DST.rgb * DST.a + DST.rgb)
+			// = SRC.rgb * DST.a + DST.rgb * (-1 * DST.a + 1)
+			// = SRC.rgb * DST.a + DST.rgb * (1 - DST.a)
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'DST_ALPHA' , 'ONE_MINUS_DST_ALPHA');
+			return $blend;
+		case 'SRC,0,DST,DST':
+			// ((SRC.rgb - 0) * DST.a) + DST.rgb
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'DST_ALPHA' , 'ONE');
+			return $blend;
+		case '0,SRC,DST,DST':
+			// ((0 - SRC.rgb) * DST.a) + DST.rgb
+			$blend['mode_rgb'] = array('FUNC_REVERSE_SUBTRACT' , 'DST_ALPHA' , 'ONE');
+			return $blend;
+	} // switch ( $mode )
+	return php_error('unknown %s', $mode);
 }
 
 function wii_blend_mode( $a, $b, $c, $d )
 {
 	// D +/- ( (1 - C) * A + (C * B) )
 	$mode = "$a,$b,$c,$d";
+	$blend = array(
+		'name' => sprintf('WII = %s + ( (1 - %s) * %s + %s * %s )', $d, $c, $a, $c, $b),
+		'mode_rgb'   => 0,
+		'mode_alpha' => array('FUNC_ADD' , 'ZERO' , 'ONE'),
+	);
 	switch ( $mode )
 	{
-		case 'FG.rgb,0,0,BG.rgb': // addition = D + A
-			// rgb = FG.rgb + BG.rgb
-			// a   = BG.a
-			return array(
-				'name' => 'WII  D + ( (1 - 0) * A + (0 * 0) )',
-				'mode' => array(
-					'FUNC_ADD'  , 'FUNC_ADD',
-					'ONE','ONE' , 'ZERO','ONE'
-				),
-			);
-		case '-FG.rgb,0,0,BG.rgb': // subtraction = D - A
-			// rgb = FG.rgb * -1 + BG.rgb
-			// a   = BG.a
-			return array(
-				'name' => 'WII  D - ( (1 - 0) * A + (0 * 0) )',
-				'mode' => array(
-					'FUNC_REVERSE_SUBTRACT' , 'FUNC_ADD',
-					'ONE','ONE'             , 'ZERO','ONE'
-				),
-			);
-		case '0,FG.rgb,BG.rgb,0': // multiplication = C * B
-			// rgb = FG.rgb * BG.rgb
-			// a   = BG.a
-			return array(
-				'name' => 'WII  0 + ( (1 - C) * 0 + (C * B) )',
-				'mode' => array(
-					'FUNC_MULTIPLY' , 'FUNC_ADD',
-					'ONE','ONE'     , 'ZERO','ONE'
-				),
-			);
-		case '0,FG.rgb,FG.a,BG.rgb': // addition and multiplication = D + C * B
-			// rgb = FG.rgb * FG.a + BG.rgb
-			// a   = BG.a
-			return array(
-				'name' => 'WII  D + ( (1 - C) * 0 + (C * B) )',
-				'mode' => array(
-					'FUNC_ADD'        , 'FUNC_ADD',
-					'SRC_ALPHA','ONE' , 'ZERO','ONE'
-				),
-			);
-		case 'BG.rgb,FG.rgb,FG.a,0': // decal = (1 - C) * A + (C * B)
-			// rgb = FG.rgb * FG.a + BG.rgb * (1 - FG.a)
-			// a   = BG.a
-			return array(
-				'name' => 'WII  0 + ( (1 - C) * A + (C * B) )',
-				'mode' => array(
-					'FUNC_ADD'                        , 'FUNC_ADD',
-					'SRC_ALPHA','ONE_MINUS_SRC_ALPHA' , 'ZERO','ONE'
-				),
-			);
-		case 'FG,0,0,BG': // proportional
-			// rgba = FG * (1 - k) + BG * k
-			return array(
-				'name' => 'WII  D + ( (1 - C) * A + (C * 0) )',
-				'mode' => array(
-					'FUNC_ADD'                                  , 'FUNC_ADD',
-					'ONE_MINUS_CONSTANT_COLOR','CONSTANT_COLOR' , 'ONE_MINUS_CONSTANT_ALPHA','CONSTANT_ALPHA'
-				),
-				'color' => '#ffffffff',
-			);
+		case 'SRC.rgb,0,0,DST.rgb': // addition = D + A
+			// rgb = SRC.rgb + DST.rgb
+			// a   = DST.a
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'ONE' , 'ONE');
+			return $blend;
+		case '-SRC.rgb,0,0,DST.rgb': // subtraction = D - A
+			// rgb = SRC.rgb * -1 + DST.rgb
+			// a   = DST.a
+			$blend['mode_rgb'] = array('FUNC_REVERSE_SUBTRACT' , 'ONE' , 'ONE');
+			return $blend;
+		case '0,SRC.rgb,DST.rgb,0': // multiplication = C * B
+			// rgb = SRC.rgb * DST.rgb
+			// a   = DST.a
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'DST_COLOR' , 'ZERO');
+			return $blend;
+		case '0,SRC.rgb,SRC.a,DST.rgb': // addition and multiplication = D + C * B
+			// rgb = SRC.rgb * SRC.a + DST.rgb
+			// a   = DST.a
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE');
+			return $blend;
+		case 'DST.rgb,SRC.rgb,SRC.a,0': // decal = (1 - C) * A + (C * B)
+			// rgb = SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a)
+			// a   = DST.a
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE_MINUS_SRC_ALPHA');
+			return $blend;
+		case 'SRC,0,0,DST': // proportional
+			// rgba = SRC * (1 - k) + DST * k
+			$blend['mode_rgb']   = array('FUNC_ADD' , 'ONE_MINUS_CONSTANT_COLOR' , 'CONSTANT_COLOR');
+			$blend['mode_alpha'] = array('FUNC_ADD' , 'ONE_MINUS_CONSTANT_ALPHA' , 'CONSTANT_ALPHA');
+			$blend['color']      = '#ffffffff';
+			return $blend;
 	} // switch ( $mode )
 	return php_error('unknown %s', $mode);
 }
 
 function blend_modes( $mode )
 {
-	// src = FG , dst = BG
 	switch ( $mode )
 	{
+		case 'rgba': // linear
 		case 'normal':
 		case 'over':
 			$blend = array(
 				'name' => 'normal',
-				'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-				'debug' => '(FG.rgb * FG.a) + ((BG.rgb * BG.a) * (1 - FG.a))',
+				'mode_rgb'   => array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE_MINUS_SRC_ALPHA'),
+				'mode_alpha' => array('FUNC_ADD' , 'ONE'       , 'ONE_MINUS_SRC_ALPHA'),
+				'debug' => array(
+					'SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a)',
+					'SRC.a + DST.a * (1 - SRC.a)',
+				),
+			);
+			return $blend;
+
+		case 'rgb': // linear
+			$blend = array(
+				'name' => 'rgb normal',
+				'mode_rgb'   => array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE_MINUS_SRC_ALPHA'),
+				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'debug' => 'SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a) , SRC.a + DST.a)',
 			);
 			return $blend;
 
 		case 'add':
-		case 'addition':
 			$blend = array(
 				'name' => 'add',
-				'mode' => array('FUNC_ADD', 'ONE', 'ONE'),
-				'debug' => 'FG.rgba + BG.rgba',
+				'mode_rgb'   => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'debug' => 'SRC.rgb + DST.rgb , SRC.a + DST.a',
 			);
 			return $blend;
 
 		case 'sub':
 		case 'subtract':
-		case 'subtraction':
 			$blend = array(
 				'name' => 'subtract',
-				'mode' => array('FUNC_REVERSE_SUBTRACT', 'ONE', 'ONE'),
-				'debug' => 'BG.rgba - FG.rgba',
+				'mode_rgb'   => array('FUNC_REVERSE_SUBTRACT' , 'ONE' , 'ONE'),
+				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'debug' => '-SRC.rgb + DST.rgb  , SRC.a + DST.a',
+			);
+			return $blend;
+
+		case 'mul':
+		case 'multiply':
+			$blend = array(
+				'name' => 'multiply',
+				'mode_rgb'   => array('FUNC_ADD' , 'DST_COLOR' , 'ZERO'),
+				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'debug' => 'SRC.rgb * DST.rgb , SRC.a + DST.a',
+			);
+			return $blend;
+
+		case 'fade':
+		case 'proportional':
+			$blend = array(
+				'name' => 'fade',
+				'mode_rgb'   => array('FUNC_ADD' , 'CONSTANT_COLOR' , 'ONE_MINUS_CONSTANT_COLOR'),
+				'mode_alpha' => array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'ONE_MINUS_CONSTANT_ALPHA'),
+				'color' => '#ffffffff',
+				'debug' => 'SRC * K + DST * (1 - K)',
 			);
 			return $blend;
 	} // switch ( $mode )

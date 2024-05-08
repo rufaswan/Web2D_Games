@@ -7,9 +7,9 @@
           "fogquad"  : "#ff0000ff"
         } ,
         {
+          "blend_id" : 0 ,
           "dstquad"  : [ 10 , -10 , 10 , 5 , 0 , 5 , 0 , -10 ] ,
-          "fogquad"  : "#00ff00ff" ,
-          "blend_id" : 0
+          "fogquad"  : "#00ff00ff"
         } ,
         {
           "dstquad"  : [ 10 , 10 , -5 , 10 , -5 , 0 , 10 , 0 ] ,
@@ -20,8 +20,7 @@
   ] ,
   "blend"    : [
     {
-      "name" : "addition" ,
-      "mode" : [ "FUNC_ADD" , "ONE" , "ONE" ]
+      "mode_rgb" : [ "FUNC_ADD" , "ONE" , "ONE" ]
     }
   ]
 }

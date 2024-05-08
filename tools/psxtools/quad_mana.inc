@@ -297,10 +297,7 @@ function mana_blend()
 {
 	// src = FG , dst = BG
 	return array(
-		array(
-			'name' => '00 = FG * a + BG * (1-a)',
-			'mode' => array('FUNC_ADD', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA'),
-		),
+		blend_modes('normal'),
 		psx_blend_mode( 1   ,  1 ),
 		psx_blend_mode(-1   ,  1 ),
 		psx_blend_mode(0.25 , 1.0),

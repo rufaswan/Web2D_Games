@@ -367,21 +367,14 @@ function QuadGL(Q){
 		var c = blend.color;
 		__.GL.blendColor(c[0], c[1], c[2], c[3]);
 
-		var mode = blend.mode;
-		if ( ! Array.isArray(mode) )
-			return __.GL.disable(__.GL.BLEND);
+		if ( ! blend.mode_alpha )
+			blend.mode_alpha = blend.mode_rgb;
 
-		if ( mode.length === 6 ){
-			__.GL.blendEquationSeperate(__.GL[ mode[0] ] , __.GL[ mode[1] ]);
-			__.GL.blendFuncSeperate    (__.GL[ mode[2] ] , __.GL[ mode[3] ] , __.GL[ mode[4] ] , __.GL[ mode[5] ]);
-			return __.GL.enable(__.GL.BLEND);
-		}
-		if ( mode.length === 3 ){
-			__.GL.blendEquation(__.GL[ mode[0] ]);
-			__.GL.blendFunc    (__.GL[ mode[1] ] , __.GL[ mode[2] ]);
-			return __.GL.enable(__.GL.BLEND);
-		}
-		return __.GL.disable(__.GL.BLEND);
+		var mc = blend.mode_rgb;
+		var ma = blend.mode_alpha;
+		__.GL.blendEquationSeparate(__.GL[ mc[0] ] , __.GL[ ma[0] ]);
+		__.GL.blendFuncSeparate    (__.GL[ mc[1] ] , __.GL[ mc[2] ] , __.GL[ ma[1] ] , __.GL[ ma[2] ]);
+		return __.GL.enable(__.GL.BLEND);
 	}
 
 	$.enable_depth = function( depth ){
@@ -420,12 +413,16 @@ function QuadGL(Q){
 		__.GL.flush();
 	}
 
-	$.is_valid_constant = function(){
-		for ( var i=0; i < arguments.length; i++ ){
-			if ( ! __.GL[ arguments[i] ] )
-				return false;
+	$.is_gl_enum = function( str ){
+		if ( Array.isArray(str) ){
+			for ( var i=0; i < str.length; i++ ){
+				str[i] = str[i].toUpperCase();
+				if ( ! __.GL[ str[i] ] )
+					return false;
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	//////////////////////////////

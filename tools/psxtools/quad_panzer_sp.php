@@ -212,15 +212,20 @@ function secthits( &$meta )
 					$pos += 4;
 				printf("  %2x-%2x : %s\n", $j, $k, printhex($sub));
 
-				$hx = sint8($sub[0]) + $b0f;
-				$hy = sint8($sub[1]) + $b10;
-				$hw = sint8($sub[2]);
-				$hh = sint8($sub[3]);
+				$hx1 = sint8($sub[0]);
+				$hy1 = sint8($sub[1]);
+				$hx2 = sint8($sub[2]);
+				$hy2 = sint8($sub[3]);
+				//if ( $hx2 < $hx1 )  php_notice('hit x %d - %d = %d', $hx1, $hx2, $hx2 - $hx1);
+				//if ( $hy2 < $hy1 )  php_notice('hit y %d - %d = %d', $hy1, $hy2, $hy2 - $hy1);
+
+				$hw = $hx2 - $hx1;
+				$hh = $hy2 - $hy1;
 				$hit = xywh_quad($hw, $hh);
-				xywh_move($hit, $hx, $hy);
+				xywh_move($hit, $hx1, $hy1);
 
 				$hent[$j][] = $hit;
-			}
+			} // for ( $k=0; $k < $cnt; $k++ )
 		} // for ( $j=0; $j < 4; $j++ )
 
 		list_add($hits, $i >> 2, $hent);
