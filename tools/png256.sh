@@ -30,7 +30,6 @@ while [ "$1" ]; do
 			"$t1"             \
 			+dither           \
 			-colors $color    \
-			-density 72x72    \
 			-interlace none   \
 			-strip            \
 			-define png:include-chunk=none,trns \

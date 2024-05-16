@@ -43,12 +43,12 @@ $gp_data = array();
 	$gp_data['ps2_grim'] = array(
 		'idtag' => 'ps2 grim grimoire',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver55'],
+		'sect' => &$gp_data['ver55'],
 	); // ps2_grim
 	$gp_data['ps2_odin'] = array(
 		'idtag' => 'ps2 odin sphere',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver55'],
+		'sect' => &$gp_data['ver55'],
 	); // ps2_odin
 	//////////////////////////////
 	$gp_data['ver66'] = array(
@@ -70,12 +70,12 @@ $gp_data = array();
 	$gp_data['nds_kuma'] = array(
 		'idtag' => 'nds kumatanchi',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver66'],
+		'sect' => &$gp_data['ver66'],
 	); // nds_kuma
 	$gp_data['wii_mura'] = array(
 		'idtag' => 'wii muramasa',
 		'ord'  => 'str2big',
-		'sect' => $gp_data['ver66'],
+		'sect' => &$gp_data['ver66'],
 	); // wii_mura
 	//////////////////////////////
 	// ver6e
@@ -118,17 +118,17 @@ $gp_data = array();
 	$gp_data['ps3_odin'] = array(
 		'idtag' => 'ps3 odin sphere rehd',
 		'ord'  => 'str2big',
-		'sect' => $gp_data['ver72'],
+		'sect' => &$gp_data['ver72'],
 	); // ps3_odin
 	$gp_data['ps4_odin'] = array(
 		'idtag' => 'ps4 odin sphere rehd',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver72'],
+		'sect' => &$gp_data['ver72'],
 	); // ps4_odin
 	$gp_data['ps4_drag'] = array(
 		'idtag' => 'ps4 dragon crown pro',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver72'],
+		'sect' => &$gp_data['ver72'],
 	); // ps4_drag
 	//////////////////////////////
 	// ver76
@@ -172,42 +172,42 @@ $gp_data = array();
 	$gp_data['swi_sent'] = array(
 		'idtag' => 'switch 13 sentinels',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // swi_sent
 	$gp_data['swi_grim'] = array(
 		'idtag' => 'switch grim grimoire hd',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // swi_grim
 	$gp_data['ps4_grim'] = array(
 		'idtag' => 'ps4 grim grimoire hd',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // ps4_grim
 	$gp_data['ps5_grim'] = array(
 		'idtag' => 'ps5 grim grimoire hd',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // ps5_grim
 	$gp_data['swi_unic'] = array(
 		'idtag' => 'switch unicorn overlord',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // swi_unic
 	$gp_data['ps4_unic'] = array(
 		'idtag' => 'ps4 unicorn overlord',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // ps4_unic
 	$gp_data['ps5_unic'] = array(
 		'idtag' => 'ps5 unicorn overlord',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // ps5_unic
 	$gp_data['xbx_unic'] = array(
 		'idtag' => 'xbsx unicorn overlord',
 		'ord'  => 'str2int',
-		'sect' => $gp_data['ver77'],
+		'sect' => &$gp_data['ver77'],
 	); // xbx_unic
 	//////////////////////////////
 	// ver55 -> ver66

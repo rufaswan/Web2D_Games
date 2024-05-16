@@ -140,33 +140,40 @@ function lsiso_r( $isop, $skip=0 )
 
 function lba2frame( $lba )
 {
+	// mfhi( v * 0x1b4e81b5 ) == v * 0.106666 =  8 / 75
+	// mfhi( v * 0x88888889 ) == v * 0.533333 = 32 / 60
+	// mfhi( v * 0x66666667 ) == v * 0.4      =  4 / 10
+
 	// frames starts at 00:02:00
 	$lba += (75 * 2);
 
 	$f = $lba % 75;
-	$f = ( $f > 9 ) ? "$f" : "0$f";
-		$lba = (int)($lba / 75);
+	$lba = (int)($lba / 75);
 
 	$s = $lba % 60;
-	$s = ( $s > 9 ) ? "$s" : "0$s";
-		$lba = (int)($lba / 60);
+	$lba = (int)($lba / 60);
 
 	$m = $lba;
-	$m = ( $m > 9 ) ? "$m" : "0$m";
-	return hex2bin( $m.$s.$f );
+	if ( $m > 99 )
+		return php_error('min > 99 = %d:%d:%d', $m, $s, $f);
+
+	$hex = sprintf('%02d%02d%02d', $m, $s, $f);
+	return hex2bin( $hex );
 }
 
 function frame2lba( $frame )
 {
-	$frame = bin2hex($frame);
-	$m = (int)( $frame[0].$frame[1] );
-	$s = (int)( $frame[2].$frame[3] );
-	$f = (int)( $frame[4].$frame[5] );
+	$m = ord( $frame[0] );
+	$s = ord( $frame[1] );
+	$f = ord( $frame[2] );
+
+	$mm = ($m >> 4) * 0xa + ($m & 0xf);
+	$ss = ($s >> 4) * 0xa + ($s & 0xf);
+	$ff = ($f >> 4) * 0xa + ($f & 0xf);
 
 	// frames starts at 00:02:00
-	$lba = ($m * 60 + $s) * 75 + $f;
-	$lba -= (75 * 2);
-	return $lba;
+	$lba = (($mm * 0x3c) + $ss) * 0x4b + $ff;
+	return $lba - 0x96;
 }
 
 function printframe( $frame )

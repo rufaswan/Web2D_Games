@@ -295,13 +295,16 @@ function sectanim( &$meta, &$quad )
 //////////////////////////////
 function mana_blend()
 {
-	// src = FG , dst = BG
+	// 0
+	// 1  SRC   + DST
+	// 2
+	// 3  SRC/4 + DST
 	return array(
 		blend_modes('normal'),
-		psx_blend_mode( 1   ,  1 ),
-		psx_blend_mode(-1   ,  1 ),
-		psx_blend_mode(0.25 , 1.0),
-		psx_blend_mode(0.5  , 0.5),
+		psx_blend_mode(   1 , 1),
+		0,
+		psx_blend_mode(0.25 , 1),
+		0,
 	);
 }
 

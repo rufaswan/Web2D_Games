@@ -496,27 +496,27 @@ function vanilla_blendmode( $tag )
 			// (A.rgb - B.rgb) * C.a + D.rgb
 			// ABCD are 2 bits
 			//   0=FG  1=BG  2=0  3=reserved
-			$b = ps2_blend_mode('FG' , 'BG' , 'FG' , 'BG');
+			$b = ps2_blend_mode('SRC' , 'DST' , 'SRC' , 'DST');
 			$b['debug'] = '44 = 0101';
 			list_add($blend, 0, $b);
 
-			$b = ps2_blend_mode('FG' , 0 , 'FG' , 'BG');
+			$b = ps2_blend_mode('SRC' , 0 , 'SRC' , 'DST');
 			$b['debug'] = '48 = 0201';
 			list_add($blend, 1, $b);
 
-			$b = ps2_blend_mode(0 , 'FG' , 'FG' , 'BG');
+			$b = ps2_blend_mode(0 , 'SRC' , 'SRC' , 'DST');
 			$b['debug'] = '42 = 2001';
 			list_add($blend, 2, $b);
 
-			$b = ps2_blend_mode('FG' , 'BG' , 'BG' , 'BG');
+			$b = ps2_blend_mode('SRC' , 'DST' , 'DST' , 'DST');
 			$b['debug'] = '54 = 0111';
 			list_add($blend, 3, $b);
 
-			$b = ps2_blend_mode('FG' , 0 , 'BG' , 'BG');
+			$b = ps2_blend_mode('SRC' , 0 , 'DST' , 'DST');
 			$b['debug'] = '58 = 0211';
 			list_add($blend, 4, $b);
 
-			$b = ps2_blend_mode(0 , 'FG' , 'BG' , 'BG');
+			$b = ps2_blend_mode(0 , 'SRC' , 'DST' , 'DST');
 			$b['debug'] = '52 = 2011';
 			list_add($blend, 5, $b);
 
@@ -537,9 +537,17 @@ function vanilla_blendmode( $tag )
 
 		case 'ps3_drag': // 0 1 2 6
 		case 'ps3_odin': // 0 1 2 6
+
 		case 'ps4_odin': // 0 1 2 6
 		case 'ps4_drag': // 0 1 2 5 6
 		case 'ps4_sent': // 0 1 2 3
+		case 'ps4_grim': // 0 1 2
+		case 'ps4_unic': // 0 1 2 3
+
+		case 'swi_sent': // 0 1 2 3
+		case 'swi_grim': // 0 1 2
+		case 'swi_unic': // 0 1 2 3
+
 		case 'vit_mura': // 0 1 2 6
 		case 'vit_drag': // 0 1 2 6
 		case 'vit_odin': // 0 1 2 6

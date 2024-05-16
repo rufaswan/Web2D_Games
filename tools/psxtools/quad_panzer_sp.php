@@ -186,9 +186,9 @@ function sectkeys( &$quad, &$atlas, &$keys )
 	return;
 }
 
-function secthits( &$meta )
+function sectslot( &$meta )
 {
-	$hits = array();
+	$slot = array();
 	$ed = str2big($meta, 0, 4);
 	for ( $i=0; $i < $ed; $i += 4 )
 	{
@@ -198,11 +198,9 @@ function secthits( &$meta )
 
 		$head = substr($meta, $pos, 0x11);
 			$pos += 0x11;
-		printf("hit %x = %s\n", $i >> 2, printhex($head));
-		$b0f = sint8($head[0x0f]);
-		$b10 = sint8($head[0x10]);
+		printf("slot %x = %s\n", $i >> 2, printhex($head));
 
-		$hent = array( array() , array() , array() , array() );
+		$body = array( array() , array() , array() , array() );
 		for ( $j=0; $j < 4; $j++ )
 		{
 			$cnt = ord($head[$j]);
@@ -212,102 +210,92 @@ function secthits( &$meta )
 					$pos += 4;
 				printf("  %2x-%2x : %s\n", $j, $k, printhex($sub));
 
-				$hx1 = sint8($sub[0]);
-				$hy1 = sint8($sub[1]);
-				$hx2 = sint8($sub[2]);
-				$hy2 = sint8($sub[3]);
-				//if ( $hx2 < $hx1 )  php_notice('hit x %d - %d = %d', $hx1, $hx2, $hx2 - $hx1);
-				//if ( $hy2 < $hy1 )  php_notice('hit y %d - %d = %d', $hy1, $hy2, $hy2 - $hy1);
+				$body[$j][$k] = $sub;
+			} // for ( $k=0; $k < $cnt; $k++ )
+		} // for ( $j=0; $j < 4; $j++ )
+
+		$sent = array(
+			'head' => $head,
+			'body' => $body,
+		);
+		list_add($slot, $i >> 2, $sent);
+	} // for ( $i=0; $i < $ed; $i += 4 )
+	return $slot;
+}
+
+function slot_keyhit( &$quad, &$slot, $slot_id, $flag )
+{
+	if ( ! isset($slot[$slot_id]) )
+		return php_error('slot[%x] not found', $slot_id);
+
+	$slhead = $slot[$slot_id]['head'];
+	$slbody = $slot[$slot_id]['body'];
+	$debug  = sprintf('%x,%x', $slot_id, $flag);
+	$hit_id = -1;
+	foreach ( $quad['hitbox'] as $hk => $hv )
+	{
+		if ( empty($hv) )
+			continue;
+		if ( $hv['debug'] === $debug )
+		{
+			$hit_id = $hk;
+			goto donehit;
+		}
+	} // foreach ( $quad['hitbox'] as $hk => $hv )
+
+	if ( $hit_id === -1 )
+	{
+		$layer = array();
+		for ( $i=0; $i < 4; $i++ )
+		{
+			if ( empty($slbody[$i]) )
+				continue;
+			if ( $flag & (1 << (3 + $i)) ) // 8 10 20 40
+				continue;
+
+			foreach ( $slbody[$i] as $k => $v )
+			{
+				$hx1 = sint8($v[0]);
+				$hy1 = sint8($v[1]);
+				$hx2 = sint8($v[2]);
+				$hy2 = sint8($v[3]);
 
 				$hw = $hx2 - $hx1;
 				$hh = $hy2 - $hy1;
 				$hit = xywh_quad($hw, $hh);
 				xywh_move($hit, $hx1, $hy1);
 
-				$hent[$j][] = $hit;
-			} // for ( $k=0; $k < $cnt; $k++ )
-		} // for ( $j=0; $j < 4; $j++ )
-
-		list_add($hits, $i >> 2, $hent);
-	} // for ( $i=0; $i < $ed; $i += 4 )
-	return $hits;
-}
-
-function quad_addslot( &$quad, $key_id, $hit_id )
-{
-	foreach ( $quad['slot'] as $sk => $sv )
-	{
-		if ( $sv[0]['id'] !== $key_id )
-			continue;
-		if ( $sv[1]['id'] !== $hit_id )
-			continue;
-		return $sk;
-	}
-
-	$slot_id = count($quad['slot']);
-	$sent = array(
-		 quad_attach('keyframe', $key_id),
-		 quad_attach('hitbox'  , $hit_id),
-	);
-	$quad['slot'][] = $sent;
-	return $hit_id;
-}
-
-function quad_addhit( &$quad, &$layer )
-{
-	$cur = json_encode($layer);
-	foreach ( $quad['hitbox'] as $hk => $hv )
-	{
-		$ent = json_encode($hv['layer']);
-		if ( $ent === $cur )
-			return $hk;
-	}
-
-	$hit_id = count($quad['hitbox']);
-	$hent = array(
-		'name'  => 'hitbox ' . $hit_id,
-		'layer' => $layer,
-	);
-	$quad['hitbox'][] = $hent;
-	return $hit_id;
-}
-
-function slot_keyhit( &$quad, &$hitbox, $key_id, $flag )
-{
-	$layer = array();
-	if ( isset($hitbox[$key_id]) )
-	{
-		$hv = $hitbox[$key_id];
-		for ( $i=0; $i < 4; $i++ )
-		{
-			if ( empty($hv[$i]) )
-				continue;
-			if ( $flag & (1 << (3 + $i)) ) // 8 10 20 40
-				continue;
-
-			foreach ( $hv[$i] as $k => $v )
-			{
 				$ent = array(
-					'debug'     => sprintf('0x%x,%d', $flag & 0x78, $i),
-					'hitquad'   => $v,
+					'hitquad'   => $hit,
 					'attribute' => 'hitbox ' . $i,
 				);
 				$layer[] = $ent;
-			}
+			} // foreach ( $slbody[$i] as $k => $v )
 		} // for ( $i=0; $i < 4; $i++ )
-	}
-	if ( empty($layer) )
-		return quad_attach('keyframe', $key_id);
 
-	$hit_id = quad_addhit($quad, $layer);
-	if ( ! isset( $quad['keyframe'][$key_id] ) )
-	return quad_attach('hitbox', $hit_id);
+		$hit_id = count($quad['hitbox']);
+		$hent = array(
+			'debug' => $debug,
+			'layer' => $layer,
+		);
+		$quad['hitbox'][] = $hent;
+	} // if ( $hit_id === -1 )
 
-	$slot_id = quad_addslot($quad, $key_id, $hit_id);
+donehit:
+	$key_id = ord($slhead[4]);
+	if ( ! isset($quad['keyframe'][$key_id]) )
+		return php_error('key[%x] not found', $key_id);
+
+	$slot_id = count($quad['slot']);
+	$sent = array(
+		quad_attach('keyframe', $key_id),
+		quad_attach('hitbox'  , $hit_id),
+	);
+	$quad['slot'][] = $sent;
 	return quad_attach('slot', $slot_id);
 }
 
-function sectanim( &$quad, &$meta, &$hits )
+function sectanim( &$quad, &$meta, &$slot )
 {
 	$quad['animation'] = array();
 	$quad['hitbox']    = array();
@@ -336,13 +324,13 @@ function sectanim( &$quad, &$meta, &$hits )
 				$pos += 8;
 			printf("  %2x : %s\n", $j, printhex($sub));
 
-			$kid = ord($sub[0]);
+			$sid = ord($sub[0]);
 			$fps = ord($sub[1]);
 			$flg = ord($sub[7]);
 
 			$tent = array(
 				'time'   => $fps,
-				'attach' => slot_keyhit($quad, $hits, $kid, $flg),
+				'attach' => slot_keyhit($quad, $slot, $sid, $flg),
 			);
 			$time[] = $tent;
 		} // for ( $j=0; $j < $cnt; $j++ )
@@ -389,12 +377,17 @@ function panzer( $fname )
 	$atlas = new atlas_tex;
 	$atlas->init();
 	$keys = sectatlas($atlas, $meta[2], $meta[3]);
-	$hits = secthits ($meta[1]);
+	$slot = sectslot ($meta[1]);
 
 	$atlas->sort();
 	$atlas->save("$dir.0");
 
 	$quad = load_idtagfile('psx panzer bandit');
+	// if alpha on
+	//   0  SRC/2 + DST/2
+	//   1  SRC   + DST
+	//   2  -SRC  + DST
+	//   3  SRC/4 + DST
 	$quad['blend'] = array(
 		blend_modes('normal'),
 		psx_blend_mode( 0.5 , 0.5),
@@ -403,7 +396,7 @@ function panzer( $fname )
 		psx_blend_mode(0.25 ,   1),
 	);
 	sectkeys($quad, $atlas, $keys);
-	sectanim($quad, $meta[0], $hits);
+	sectanim($quad, $meta[0], $slot);
 
 	save_quadfile($dir, $quad);
 	return;

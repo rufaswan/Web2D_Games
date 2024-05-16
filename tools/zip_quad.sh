@@ -10,7 +10,6 @@ while [ "$1" ]; do
 		*'.png')
 			if [ $(which mogrify) ]; then
 				mogrify -strip      \
-					-density 72x72  \
 					-interlace none \
 					-define png:include-chunk=none,trns \
 					-define png:compression-filter=0    \

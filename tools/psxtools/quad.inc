@@ -23,6 +23,47 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 if ( ! function_exists('json_pretty') )
 	exit("no json_pretty() [from common-json.inc]\n");
 
+//////////////////////////////
+function quad_attach( $type, $id )
+{
+	$attach = array(
+		'type' => $type,
+		'id'   => $id,
+	);
+	return $attach;
+}
+
+function list_add( &$list, $k, &$v )
+{
+	$k = (int)$k;
+	for ( $i=0; $i <= $k; $i++ )
+	{
+		if ( ! isset($list[$i]) )
+			$list[$i] = 0;
+		if ( $i === $k )
+			$list[$i] = $v;
+	}
+
+	// unorder keys is std::map, not std::vector
+	ksort($list);
+	return;
+}
+
+function empty_quad_section( &$quad, $section )
+{
+	if ( ! isset($quad[$section]) )
+		return true;
+	if ( ! is_array($quad[$section]) )
+		return empty($quad[$section]);
+
+	foreach ( $quad[$section] as $sk => $sv )
+	{
+		if ( ! empty($sv) )
+			return false;
+	}
+	return true;
+}
+//////////////////////////////
 // .quad file
 function load_idtagfile( $pfx )
 {
@@ -69,20 +110,11 @@ function load_idtagfile( $pfx )
 	return $data;
 }
 
-function quad_attach( $type, $id )
-{
-	$attach = array(
-		'type' => $type,
-		'id'   => $id,
-	);
-	return $attach;
-}
-
 function anim_allkeys( &$quad )
 {
 	if ( empty($quad) )
 		return;
-	if ( has_skeleton($quad) )
+	if ( ! empty_quad_section($quad, 'skeleton') )
 		return;
 	if ( ! isset( $quad['keyframe'] ) )
 		return;
@@ -107,37 +139,6 @@ function anim_allkeys( &$quad )
 	);
 	$quad['animation'][] = $anim;
 	return;
-}
-
-function list_add( &$list, $k, &$v )
-{
-	$k = (int)$k;
-	for ( $i=0; $i <= $k; $i++ )
-	{
-		if ( ! isset($list[$i]) )
-			$list[$i] = 0;
-		if ( $i === $k )
-			$list[$i] = $v;
-	}
-
-	// unorder keys is std::map, not std::vector
-	ksort($list);
-	return;
-}
-
-function has_skeleton( &$quad )
-{
-	if ( empty($quad) )
-		return false;
-	if ( ! isset($quad['skeleton']) )
-		return false;
-
-	foreach ( $quad['skeleton'] as $sk => $sv )
-	{
-		if ( $sv !== 0 )
-			return true;
-	}
-	return false;
 }
 
 function is_srcquad_prediv( &$quad )
@@ -480,23 +481,25 @@ function psx_blend_mode( $f, $b )
 		'mode_rgb'   => 0,
 		'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
 	);
-	$f = (int)($f * 100);
-	$b = (int)($b * 100);
-	if ( $f === 50 && $b === 50 ) // 0.5 , 0.5 / average
-		$blend['mode_rgb'] = array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'CONSTANT_ALPHA');
-		$blend['color']    = '#ffffff80';
-		return $blend;
-	if ( $f === 100 && $b === 100 ) // 1.0 , 1.0 / addition
-		$blend['mode_rgb'] = array('FUNC_ADD' , 'ONE' , 'ONE');
-		return $blend;
-	if ( $f === 25 && $b === 100 ) // 0.25 , 1.0 / partial addition
-		$blend['mode_rgb'] = array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'ONE');
-		$blend['color']    = '#ffffff40';
-		return $blend;
-	if ( $f === -100 && $b === 100 ) // -1.0 , 1.0 / subtraction
-		$blend['mode_rgb'] = array('FUNC_REVERSE_SUBTRACT' , 'ONE' , 'ONE');
-		return $blend;
-	return php_error('unknown f = %.2f , b = %.2f', $f * 0.01, $b * 0.01);
+	$mode = sprintf('%d,%d', $f*100, $b*100);
+	switch ( $mode )
+	{
+		case '50,50': // 0.5 , 0.5 / average
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'CONSTANT_ALPHA');
+			$blend['color']    = '#ffffff80';
+			return $blend;
+		case '100,100': // 1.0 , 1.0 / addition
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'ONE' , 'ONE');
+			return $blend;
+		case '25,100': // 0.25 , 1.0 / partial addition
+			$blend['mode_rgb'] = array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'ONE');
+			$blend['color']    = '#ffffff40';
+			return $blend;
+		case '-100,100': // -1.0 , 1.0 / subtraction
+			$blend['mode_rgb'] = array('FUNC_REVERSE_SUBTRACT' , 'ONE' , 'ONE');
+			return $blend;
+	} // switch ( $mode )
+	return php_error('unknown f = %.2f , b = %.2f', $f, $b);
 }
 
 function ps2_blend_mode( $a, $b, $c, $d )
@@ -597,7 +600,7 @@ function blend_modes( $mode )
 {
 	switch ( $mode )
 	{
-		case 'rgba': // linear
+		// rgba series
 		case 'normal':
 		case 'over':
 			$blend = array(
@@ -606,26 +609,71 @@ function blend_modes( $mode )
 				'mode_alpha' => array('FUNC_ADD' , 'ONE'       , 'ONE_MINUS_SRC_ALPHA'),
 				'debug' => array(
 					'SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a)',
-					'SRC.a + DST.a * (1 - SRC.a)',
+					'SRC.a           + DST.a   * (1 - SRC.a)',
 				),
 			);
 			return $blend;
 
-		case 'rgb': // linear
+		case 'mult':
+		case 'multiply':
 			$blend = array(
-				'name' => 'rgb normal',
-				'mode_rgb'   => array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE_MINUS_SRC_ALPHA'),
-				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
-				'debug' => 'SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a) , SRC.a + DST.a)',
+				'name' => 'multiply',
+				'mode_rgb'   => array('FUNC_ADD' , 'DST_COLOR' , 'ZERO'),
+				'mode_alpha' => array('FUNC_ADD' , 'DST_ALPHA' , 'ONE'),
+				'debug' => array(
+					'SRC.rgb * DST.rgb' ,
+					'SRC.a   * DST.a',
+				),
+			);
+			return $blend;
+
+		case 'fade in':
+			// K 0..1 => SRC * 0..1 + DST * 1..0
+			$blend = array(
+				'name' => 'fade in',
+				'mode_rgb'   => array('FUNC_ADD' , 'CONSTANT_COLOR' , 'ONE_MINUS_CONSTANT_COLOR'),
+				'mode_alpha' => array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'ONE_MINUS_CONSTANT_ALPHA'),
+				'color' => '#ffffffff', // to update
+				'debug' => 'SRC * K + DST * (1 - K)',
+			);
+			return $blend;
+
+		case 'fade out':
+			// K 0..1 => SRC * 1..0 + DST * 0..1
+			$blend = array(
+				'name' => 'fade out',
+				'mode_rgb'   => array('FUNC_ADD' , 'ONE_MINUS_CONSTANT_COLOR' , 'CONSTANT_COLOR'),
+				'mode_alpha' => array('FUNC_ADD' , 'ONE_MINUS_CONSTANT_ALPHA' , 'CONSTANT_ALPHA'),
+				'color' => '#ffffffff', // to update
+				'debug' => 'SRC * (1 - K) + DST * K',
+			);
+			return $blend;
+
+		// rgba + rgb series
+		case 'average':
+			$blend = array(
+				'name' => 'average',
+				'mode_rgb' => array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'CONSTANT_ALPHA'),
+				'color' => '#ffffff80',
+				'debug' => 'SRC * 0.5 + DST * 0.5',
 			);
 			return $blend;
 
 		case 'add':
 			$blend = array(
 				'name' => 'add',
-				'mode_rgb'   => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'mode_rgb' => array('FUNC_ADD' , 'ONE' , 'ONE'),
+				'debug' => 'SRC + DST',
+			);
+			return $blend;
+
+		// rgb solid.a series
+		case 'linear rgb':
+			$blend = array(
+				'name' => 'rgb normal',
+				'mode_rgb'   => array('FUNC_ADD' , 'SRC_ALPHA' , 'ONE_MINUS_SRC_ALPHA'),
 				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
-				'debug' => 'SRC.rgb + DST.rgb , SRC.a + DST.a',
+				'debug' => 'SRC.rgb * SRC.a + DST.rgb * (1 - SRC.a) , solid.a)',
 			);
 			return $blend;
 
@@ -635,28 +683,7 @@ function blend_modes( $mode )
 				'name' => 'subtract',
 				'mode_rgb'   => array('FUNC_REVERSE_SUBTRACT' , 'ONE' , 'ONE'),
 				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
-				'debug' => '-SRC.rgb + DST.rgb  , SRC.a + DST.a',
-			);
-			return $blend;
-
-		case 'mul':
-		case 'multiply':
-			$blend = array(
-				'name' => 'multiply',
-				'mode_rgb'   => array('FUNC_ADD' , 'DST_COLOR' , 'ZERO'),
-				'mode_alpha' => array('FUNC_ADD' , 'ONE' , 'ONE'),
-				'debug' => 'SRC.rgb * DST.rgb , SRC.a + DST.a',
-			);
-			return $blend;
-
-		case 'fade':
-		case 'proportional':
-			$blend = array(
-				'name' => 'fade',
-				'mode_rgb'   => array('FUNC_ADD' , 'CONSTANT_COLOR' , 'ONE_MINUS_CONSTANT_COLOR'),
-				'mode_alpha' => array('FUNC_ADD' , 'CONSTANT_ALPHA' , 'ONE_MINUS_CONSTANT_ALPHA'),
-				'color' => '#ffffffff',
-				'debug' => 'SRC * K + DST * (1 - K)',
+				'debug' => '-SRC.rgb + DST.rgb  , solid.a',
 			);
 			return $blend;
 	} // switch ( $mode )

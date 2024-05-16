@@ -395,6 +395,14 @@ RAM 801d4b40
 			a3 = sint8(v1)  -> 10(sp)
 		80042cbc  lhu  v1, b2(v0)
 			v0 = sint8(v1)  -> 14(sp)
+
+1-11 11-1
+= 801d4b40 + n * bd
+
+// a0 = s1
+// a1 = s0
+// a2 = s1 * bd
+// sub_800423b4(s2 , s0 , s1)
 ==============================
 11 --1- -1--
 = 801ddaa0 + n * 324
@@ -411,7 +419,7 @@ sub_80042adc()
 	2  20  18  2
 	1  40  1a  3
 
-801ddaa0
+[801ddaa0..801dddc3]?!!
 	00
 		80020408  lhu  v1, 0(s0)
 			if v1 === f0
@@ -432,14 +440,39 @@ sub_80042adc()
 	04
 		800204e4  lhu  v0, 4(s0)
 	...
+	82
+		8001ac48  lhu  v0, 82(s0)
+			v0 += v1
+		8001ac54  lhu  v0, 82(s0)
+			v0 += 1
+		8001ac60  sh   v0, 82(s0)
+		8001ac70  lhu  v0, 82(s0)
+		8001acb0  lhu  v0, 82(s0)
+		8001acc0  lhu  v0, 82(s0)
+		8001acd0  sh   v0, 82(s0)
+	84
+		8001ac6c  sh   v0, 84(s0)
+		8001acac  sh   v0, 84(s0)
+		8001acc8  sh   v1, 84(s0)
+	...
 	e8
+		8002028c  lw  v1, e8(v1)
+			if v1 < (a0-48)
+			else
+		800202b0  lw  v1, e8(v1)
+			if v1 < (a0+28)
+			else
 		80020470  lw  s4, e8(s0)
 			v0 = [8009ff6c] - 48
 		800204bc  sw  v0, e8(s0)
 			v0 = [8009ff6c] + 188
 		800204e0  sw  v0, e8(s0)
 		800204f4  lw  a0, e8(s0)
+			if s4 < (a0+10)
+			else
 		80020528  lw  a0, e8(s0)
+			if (a0-10) < s5
+			else
 	ec
 		80020474  lw  s6, ec(s0)
 		80020590  lw  v1, ec(s0)
@@ -451,3 +484,63 @@ sub_80042adc()
 	fc
 	100 // velocity x
 	104 // velocity y
+	...
+	300  hp
+		if v1 < 2
+			8001abac  lhu  v0, 300(s0)
+				v0 -= 1
+		else
+			8001aba0  lhu  v0, 300(s0)
+				v1 -= v1
+		8001abb8  sh   v0, 300(s0)
+		8001acd4  lh   v0, 300(s0)
+	302  draw hp
+	304  max hp
+		8001abd4  lhu  v0, 304(s0)
+			t2 = sint16(v0) * 0.166666
+			v0 = t2 - (v0 << 10 >> 1f)
+
+
+// koh max hp = c0
+//   v0 = c00000
+//   t2 = c0 * 0.166666
+//   v0 = sint16(20 - 0) = 20
+//   if hp < 20
+//   else
+
+// v1 = (pl hp * a / pl max hp) - (en hp * a / en max hp)
+// if v1 >= 0
+//   a2 = v1
+// else
+//   a2 = 0 - v1
+//
+// sub_8001a5bc(a0 , a1 , s3 , s2)
+// s0 = a0 * 324 + 801ddaa0 // player data
+// v0 = a1 * 324 + 801ddbd2
+// s4 = lh(v0) * 324 + 801ddaa0 // enemy data
+// if lh(800a0232) != 0
+/    return
+// if max hp < hp
+//   s6 = 0
+// else
+//   v0 = max hp - hp
+//   if v0 >= 0
+//     s6 = v0 >> 4
+//   else
+//     s6 = (v0 + f) >> 4
+// v0  = [
+//   64 , 61 , 5d , 59 ,
+//   54 , 51 , 4e , 4b ,
+//   48 , 44 , 40 , 3e ,
+//   34 , 32 , 28 , 20 ,
+//   18 , 10
+// ]
+// dmg = (s3 * v0[s6] * 0.32) >> 5
+// if dmg < 2
+//   hp -= 1
+// else
+//   hp -= dmg
+
+// s3
+//   throw,fireball = 3
+//   punch = 7
