@@ -185,9 +185,19 @@ RAM 800d6cfc = 2ab0 + 4550
 sect3  pix
 RAM 800db250 = 7004 + 18200
 ==============================
-RAM 801d4b40
+v1 = 1 << 1 + 1
+v1 << 4 - v1 << 2
+= 11 , 1-11 -1--
+= b4 , 5a*2 , 2d*4
+
+801d4b40 + n * b4
+801d4b4e + n * b4 or 801d4b40 +  e + n * b4
+801d4b64 + n * b4 or 801d4b40 + 24 + n * b4
+
+[801d4b40..801d4bf3]?!!
 	00  sect0 [0]
-		8004242c  lhu  v1, 0(s1)
+		80034e04  sh    0, v0(801d4b40)
+		8004242c  lhu  v1,  0(s1)
 			if  v1 == 1
 				if  a(s0) < ff && 6(s1) > 0
 					if  128(a0) > 0
@@ -200,6 +210,8 @@ RAM 801d4b40
 				sub_80042758( dc(s0) , 2(s0) , 6(s0) , s2 )
 				0(s1) = 1
 			else
+		80048184  sh   v0, t0(801d4b40)
+		80056134  sh   v0, t0(801d4b40)
 	02  sect0 [1] cnt
 		8004247c  lhu  v0, 2(s1)
 
@@ -208,6 +220,7 @@ RAM 801d4b40
 			v0 << 2 + sect1
 	06  sect0 + i*8 [1] fps
 		80042440  lhu  v0, 6(s1)
+		80034e3c  lhu  v0, v0(801d4b46)
 	08  sect0 + i*8 [2]
 		800393fc  lhu  s4, 8(s2) -> 2c(sp)
 		80039408  lhu  a0, 8(s2)
@@ -218,24 +231,139 @@ RAM 801d4b40
 		80036f70  lhu  v0, v1(801d4b4c)
 			if  v0 & 1
 			else
+		8003b868  sh  0, v0(801d4b4c)
+
+		switch  0(s0)
+			case 10
+				jal  8005b844
+				switch  72(s1)
+					case 8
+						8005b8e4  sh  0, v0(801d4b4c)
+					case 9
+						8005b918  sh  0, v0(801d4b4c)
+				hctiws
+			case 13
+				jal  8005bc1c
+				switch  72(s1)
+					case 8
+						8005bcbc  sh  0, v0(801d4b4c)
+					case 9
+						8005bce8  sh  0, v0(801d4b4c)
+				hctiws
+			case 11
+				jal  8005c3dc
+				switch  72(s1)
+					case 8
+						8005c47c  sh  0, v0(801d4b4c)
+				hctiws
+			case 1b
+				jal  8005c660
+				switch  72(s1)
+					case 8
+						8005c730  sh  0, v0(801d4b4c)
+				hctiws
+			case 12
+				jal  8005dd8c
+				switch  72(s1)
+					case 8
+						8005de64  sh  0, v0(801d4b4c)
+					case 9
+						8005de90  sh  0, v0(801d4b4c)
+					case a
+						8005debc  sh  0, v0(801d4b4c)
+					case b
+						8005dee8  sh  0, v0(801d4b4c)
+				hctiws
+			case 18
+				jal  8005e0cc
+				switch  72(s1)
+					case 8
+						8005e1b0  sh  0, v0(801d4b4c)
+					case 9
+						8005e1e4  sh  0, v0(801d4b4c)
+					case a
+						8005e210  sh  0, v0(801d4b4c)
+					case b
+						8005e23c  sh  0, v0(801d4b4c)
+				hctiws
+			case 15
+				jal  8005e4d8
+				switch  72(s1)
+					case 8
+						8005e5c0  sh  0, v0(801d4b4c)
+					case 9
+						8005e5ec  sh  0, v0(801d4b4c)
+					case a
+						8005e618  sh  0, v0(801d4b4c)
+					case b
+						8005e644  sh  0, v0(801d4b4c)
+				hctiws
+		hctiws
+
 	0e  sect0 + i*8 [5]
+		8003a2a4  sh   v0, v1(801d4b4e) // f ->
+		8003b85c  sh    0, v0(801d4b4e)
+		8004163c  sh   v0, v1(801d4b4e) // 7f ->
 		80041d58  lhu  v0, v1(801d4b4e)
 			if v0 > 0
 			else
-		80041f5c  lh  v0, 128(s5)
+		80041e90  lhu  v0, s2(801d4b4e)
+			s0 = 3
+			while  s0 >= 0
+				a0 = 1 << s0
+				if  (v0 & a0) == a0
+				else
+				s0--
+		80041eec  lhu  v0, s2(801d4b4e)
+			s0 = 3
+			while  s0 >= 0
+				a0 = 1 << s0
+				if  (v0 & a0) == a0
+				else
+				s0--
+		80041f5c  lh   v0, 128(s5)
 			if v0 > 0
 			else
+		80044918  sh   v0, v1(801d4b4e) // f ->
+		80044c3c  sh   v0, v1(801d4b4e) // f ->
+		80045648  sh   v0, v1(801d4b4e) // 60 ->
+
 	10  sect0 + i*8 [6]
 		8004165c  lhu  v0, v1(801d4b50)
 			if ( v0 == 0 )
 			else
+
+		8003b850  sh    0, v0(801d4b50)
+		8004162c  sh   v0, v1(801d4b50) // f ->
+		8004165c  lhu  v0, v1(801d4b50)
+			if v0 == 0
+			else
+		80041830  lhu  v0, v0(801d4b50)
+			s0 = 2
+			while  s0 >= 0
+				a0 = 1 << s0
+				if  (v0 & a0) == a0
+				else
+				s0--
+		80044908  sh   v0, v1(801d4b50) // 6 ->
+		80044c2c  sh   v0, v1(801d4b50) // 6 ->
+		80045658  sh   v0, v1(801d4b50) // 7 ->
+		80045b7c  sh   s0, v1(801d4b50) // 1 ->
+
 	12  sect0 + i*8 [7] flag
 		80018b38  lhu  v0, s2(801b4b52)
 			if  v0 & 4
-				sub_80034bb0(s1 , s0)
+				jal  80034bb0(s1 , s0)
 				80018b6c  lhu  v0, s2(801b4b52)
 					v0 &= fb
+				80018b70  sh   v0, s2(801d4b52)
 			else
+		80034a0c  lhu  v1, a1(801d4b52)
+			v1 |= 4
+		80034a20  sh   v1, a1(801d4b52)
+		80034a70  lhu  v0, v1(801d4b52)
+			v1 |= 1
+		80034a84  sh   v0, v1(801d4b52)
 		80039364  lhu  v0, 12(a3)
 			if  v0 & 4
 				return
@@ -312,18 +440,178 @@ RAM 801d4b40
 
 	1c  sect1 [4]  id / key id
 		8003966c  lhu  v0, 1c(s2) -> 24(sp)
+
 	1e  sect1 [5]
+		8003667c  lhu  v0, a1(801d4b5e)
+			128(s1) |= (v0 + 1)
+		80036698  lhu  v0, a1(801d4b5e)
+			128(s4) |= (v0 + 1)
+		800368cc  lhu  v0, a2(801d4b5e)
+			128(s4) |= (v0 + 1)
+		800371fc  lhu  v0, s1(801d4b5e)
+			128(s0) = v0
+		80037210  lhu  v0, s1(801d4b5e)
+			128(s4) = v0
+		80037448  lhu  v0, v0(801d4b5e)
+			128(s0) = v0
+			136(s0) = v0
+		80037c08  lhu  v0, a2(801d4b5e)
+			128(s0) = v0
+		80037c1c  lhu  v0, a2(801d4b5e)
+			128(s4) = v0
+		80037f80  lhu  v1, s1(801d4b5e)
+			128(s0) = v1
+		80038108  lhu  v0, a2(801d4b5e)
+			128(s0) = v0
+		8003811c  lhu  v0, a2(801d4b5e)
+			128(s3) = v0
+		800382c0  lhu  v0, v1(801d4b5e)
+			128(s0) = v0
+			136(s0) = v0
+
 	20  sect1 [6] sint8
+		80019aac  lh   v0, v1(801d4b60)
+		if  4(v0) == 0
+			80019e00  lh   v1, v0(801d4b60)
+		else
+			80019e20  lh   v1, v0(801d4b60)
+		if  4(v0) == 1
+			80036364  lh   v1, s2(801d4b60)
+		else
+			800363d8  lh   v1, v0(801d4b60)
+		80037ed0  lh   v0, a0(801d4b60)
+
 	22  sect1 [7] sint8
+		80019ab8  lh   v1, v1(801d4b62)
+		80019e54  lh   v0, v0(801d4b62)
+		800378bc  lh   v0, v0(801d4b62)
+			if  v0 > 0
+			else
+		8003799c  lh   v0, v0(801d4b62)
+			if  v0 > 0
+			else
+		80037b20  lh   v0, v0(801d4b62)
+			if  v0 > 0
+			else
+		80038650  lh   v1, v1(801d4b62)
+
 	24  sect1 [8]
+		80019a84  lhu  a0, v1(801d4b64)
+		800366b4  lhu  a2, a1(801d4b64)
+		800368e8  lhu  a2, a2(801d4b64)
+		80036a58  lhu  v0, v0(801d4b64)
+		80037d48  lhu  v1, a2(801d4b64)
+			t0 = v1 * 2/3
+			a2 = t0 >> 2
+		80037d80  lhu  a2, a2(801d4b64)
+			a2 >>= 3
+		8003824c  lhu  v1, a2(801d4b64)
+			t0 = v1 * 2/3
+			a2 = t0 >> 2
+		80038284  lhu  a2, a2(801d4b64)
+			a2 >>= 3
+		80043b38  lhu  v0, v0(801d4b64)
+			100(plwork) = -v0 << 1
+		80043b80  lhu  v0, v0(801d4b64)
+			100(plwork) = v0 << 1
+
 	26  sect1 [9]
+		80019a90  lhu  v0, v1(801d4b66)
+		800366c0  lhu  a3, a1(801d4b66)
+
 	28  sect1 [a]
+		8003684c  lhu  v0, v1(801d4b68)
+			v0 &= 10
+		80036934  lhu  v0, v0(801d4b68)
+			v1 = v0 >> 5
+		800376c4  lhu  v0, s1(801d4b68)
+			2(s0) = (v0 & f) + f
+		80037ea8  lhu  v0, a0(801d4b68)
+			v1 = v0 & f
+			if  v1 < 3
+				if  v1 == 0
+			else
+		800384c0  lhu  v0, v0(801d4b68)
+			s3 = v0 & f  // switch 6
+
 	2a  sect1 [b]
+		8001a728  lhu  v0, a1(801d4b6a)
+			v0 &= 3
+		8001b160  lhu  v0, v0(801d4b6a)
+			v0 &= 3
+		8001b1b4  lhu  v0, v0(801d4b6a)
+			v0 &= 3
+		80036324  lhu  v0, s2(801d4b6a)
+			v0 &= 4
+		80036bec  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		80036cd4  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		80037230  lhu  v0, s1(801d4b6a)
+			v0 &= 3
+		800373c0  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		800374b0  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		800377d0  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		800377f4  lhu  v0, s1(801d4b6a)
+			v0 &= 3
+		80037c88  lhu  v0, a2(801d4b6a)
+			v0 &= 3
+		80037e4c  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		80037fb0  lhu  v0, s1(801d4b6a)
+			v0 &= 3
+		80038188  lhu  v0, a2(801d4b6a)
+			v0 &= 3
+		800382d8  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		8003837c  lhu  v0, a0(801d4b6a)
+			v0 &= 3
+		80038594  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		800385fc  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		80038724  lhu  v0, v0(801d4b6a)
+			v0 >>= 4
+		80038840  lhu  v0, v1(801d4b6a)
+			v0 &= 3
+		8003893c  lhu  v0, v1(801d4b6a)
+			v0 >>= 4
+
 	2c  sect1 [c]
 		80042718  lhu  v1, 2c(s1)
 			136(s4) |= v1
+
 	2e  sect1 [d]
+		8001a78c  lhu  v1, a1(801d4b6e)
+		8001a848  lhu  v1, a1(801d4b6e)
+		80036c34  lhu  v1, v1(801d4b6e)
+		80036d1c  lhu  v1, v1(801d4b6e)
+		80036dc8  lhu  a2, v0(801d4b6e)
+		80037278  lhu  v1, s1(801d4b6e)
+		80037364  lhu  v1, v1(801d4b6e)
+		80037770  lhu  v1, s1(801d4b6e)
+		80037d20  lhu  v1, a2(801d4b6e)
+		80037dcc  lhu  v1, v1(801d4b6e)
+		80037ff8  lhu  v1, s1(801d4b6e)
+		80038220  lhu  v1, a2(801d4b6e)
+		800383c4  lhu  v1, a0(801d4b6e)
+		80038868  lhu  v0, v1(801d4b6e)
+
 	30  sect1 [e]
+		80035368  lhu  v0, v0(801d4b70)
+			v0 &= s6
+		80036fd4  lhu  v0, v1(801d4b70)
+			v0 &= 1
+		80037008  lhu  v0, v1(801d4b70)
+			v0 &= 2
+		8003703c  lhu  v0, v1(801d4b70)
+			v0 &= 4
+		800370d0  lhu  v0, v1(801d4b70)
+			v0 &= 4
+
 	34  sect1 [f]
 			lhu  v0, 801cc98a
 				v0 &= 3
@@ -389,23 +677,27 @@ RAM 801d4b40
 		0 : a8  ac  b0  b2
 		80042c38  lw  a1, a8(s2)
 			a1 = sint8(a1)
+			a1 += 34(s2)
 		80042c68  lw  a2, ac(s2)
 			a2 = sint8(a2)
+			a2 += 38(s2)
 		80042c94  lhu  v1, b0(v0)
 			a3 = sint8(v1)  -> 10(sp)
 		80042cbc  lhu  v1, b2(v0)
 			v0 = sint8(v1)  -> 14(sp)
 
-1-11 11-1
-= 801d4b40 + n * bd
-
 // a0 = s1
 // a1 = s0
-// a2 = s1 * bd
+// a2 = s1 * b4
 // sub_800423b4(s2 , s0 , s1)
+
 ==============================
-11 --1- -1--
-= 801ddaa0 + n * 324
+1 << 1 + 1 << 3 + 1 << 3 + 1 << 2
+= 11 --1- -1--
+= 324 , 192*2 , c9*4
+
+801ddaa0 + n * 324
+801ddb88 + n * 324 or 801ddaa0 + e8 + n * 324
 
 sub_80042adc()
 	s5 = a1
@@ -433,12 +725,37 @@ sub_80042adc()
 				break
 			if v1 === 80
 				break
-	02
+	02  // anim id
 		80020444  lhu  v0, 2(s0)
 			if v0 >= c0
 				break
-	04
+		80043a94  sh   v0, 2(s1) // 2 ->
+		80043ab4  sh   v0, 2(s1) // 6 ->
+		80043af8  sh   v0, 2(s1) // 5 ->
+		80043b20  sh   v0, 2(s1) // 4 ->
+		80043b68  sh   v0, 2(s1) // 4 ->
+		80043bdc  lhu  v1, 2(s1)
+		80043c64  sh   v0, 2(s1) // e ->
+		80043cc4  sh    0, 2(s1)
+	04  // flip x
 		800204e4  lhu  v0, 4(s0)
+		8003d9d8  lhu  a1, 4(a0)
+			if a1 == 0
+				if v0 == 1
+					8003da3c  sh  v1, 4(a0) // 1 ->
+				else
+					return
+			else
+				if v0 == 1
+					return
+				else
+					8003da70  sh   0, 4(a0)
+		800425ac  lhu  v1, 4(s4)
+	...
+	0c
+		8003da74  sh  0, c(a0)
+	0e
+		8003da7c  sh  0, e(a0)
 	...
 	82
 		8001ac48  lhu  v0, 82(s0)
@@ -455,7 +772,40 @@ sub_80042adc()
 		8001acac  sh   v0, 84(s0)
 		8001acc8  sh   v1, 84(s0)
 	...
-	e8
+	90  // dpad input
+		7 8 9
+		4 0 6
+		1 2 3
+		80017894  sh   0, 90(v1)
+		800179c8  sh  v0, 90(s1)
+	92
+	94  // button input
+		80017898  sh    0, 94(v1)
+		800179dc  sh   v0, 94(s1)
+		80017a04  sh   s2, 94(s1)
+		80017a14  lh   v0, 94(s1)
+		80017a6c  lhu  v0, 94(s1)
+	96  // button input
+		80017a28  lh   v0, 96(s1)
+		80017a44  lh   v0, 96(s1)
+		80017a74  sh   v0, 96(s1)
+	98
+		8001789c  sh    0, 98(v1)
+		80017a40  sh   a2, 98(a1)
+	...
+	a8
+		800178a0  sh    0, a8(v1)
+		80017a52  sh   a2, a8(v1)
+	...
+	e0
+	e2
+		80039644  lh  v0, e2(s1)
+		80043098  lh  a3, e2(s0)
+	e4
+		80039650  lh  v0, e4(s1)
+		800430b8  lh  v0, e4(s0)
+	e6
+	e8  // pos x
 		8002028c  lw  v1, e8(v1)
 			if v1 < (a0-48)
 			else
@@ -473,7 +823,7 @@ sub_80042adc()
 		80020528  lw  a0, e8(s0)
 			if (a0-10) < s5
 			else
-	ec
+	ec  // pos y
 		80020474  lw  s6, ec(s0)
 		80020590  lw  v1, ec(s0)
 	f0
@@ -485,7 +835,7 @@ sub_80042adc()
 	100 // velocity x
 	104 // velocity y
 	...
-	300  hp
+	300  // hp
 		if v1 < 2
 			8001abac  lhu  v0, 300(s0)
 				v0 -= 1
@@ -494,8 +844,8 @@ sub_80042adc()
 				v1 -= v1
 		8001abb8  sh   v0, 300(s0)
 		8001acd4  lh   v0, 300(s0)
-	302  draw hp
-	304  max hp
+	302  // draw hp
+	304  // max hp
 		8001abd4  lhu  v0, 304(s0)
 			t2 = sint16(v0) * 0.166666
 			v0 = t2 - (v0 << 10 >> 1f)
@@ -517,6 +867,7 @@ sub_80042adc()
 // sub_8001a5bc(a0 , a1 , s3 , s2)
 // s0 = a0 * 324 + 801ddaa0 // player data
 // v0 = a1 * 324 + 801ddbd2
+//    = a1 * 324 + 801ddaa0 + 132
 // s4 = lh(v0) * 324 + 801ddaa0 // enemy data
 // if lh(800a0232) != 0
 /    return
@@ -544,3 +895,171 @@ sub_80042adc()
 // s3
 //   throw,fireball = 3
 //   punch = 7
+
+sub_80042584
+	hitflag = 12(801d4b40)
+	plact8  =  8(801d4b40)
+	plwork4 =  4(801ddaa0)
+	switch  plwork4
+		case 0
+			s0 = plact8
+		case 1
+			switch  plact8
+				case 0  s0 = 1
+				case 1  s0 = 0
+				case 2  s0 = 3
+				case 3  s0 = 2
+			hctiws
+		case 2
+			s0 = (plact8 + 2) & 3
+		case 3
+			s0 = plwork4 - plact8
+	hctiws
+	if  (hitflag & 10) == 0
+		sub_80042adc(workid , 4 , s0 , plact)
+	if  (hitflag &  8) == 0
+		sub_80042adc(workid , 3 , s0 , plact)
+	if  (hitflag & 20) == 0
+		sub_80042adc(workid , 2 , s0 , plact)
+	if  (hitflag & 40) == 0
+		sub_80042adc(workid , 1 , s0 , plact)
+	if  hitflag & 80
+		136(plwork) |= 1
+	else
+		136(plwork) |= 2c(plact)
+
+sub_80042fac
+	a3 = e2(plwork) * b0(plact)
+	if a3 < 0
+		a3 += ff
+	a3 >>= 8
+
+	v0 = e4(plwork) * b2(plact)
+	if v0 < 0
+		v0 += ff
+	v0 >>= 8
+
+	switch  s4
+		case 0  v0 = e8(plwork  ) += a8(plact)
+		case 1  v0 = e8(plwork+2) -= a8(plact)
+		case 2  v0 = e8(plwork+2) += a8(plact)
+		case 3  v0 = e8(plwork  ) -= a8(plact)
+	hctiws
+	21c(plwork) = v0
+	v0 = ec(plwork) += ac(plact)
+	240(plwork) = v0
+==============================
+1 << 4 - 1 << 2
+= -11 11--
+= 3c , 1e*2 , f*4
+
+801e89f8 + n * 3c
+
+[801e89f8..801e8a33]?!!
+	0
+		800397c0  sh  a0, 0(v1) // 1 ->
+	...
+	800397c8  sh  t2, 1c(v1) // e2(plwork) ->
+	800397cc  sh  t3, 1e(v1) // e4(plwork) ->
+	800397d0  sw  t4, 20(v1) // 34(plact ) ->
+	800397d4  sw  t5, 24(v1) // 38(plact ) ->
+	800397d8  sh  t6, 28(v1) // dc(plwork) ->
+	800397dc  sh  t7, 2a(v1) // 1c(plact ) ->
+	800397e0  sh  t8, 2c(v1) // e0(plwork) ->
+	800397e4  sh  t9, 2e(v1) //  8(plact ) ->
+	800397e8  sh  t1, 32(v1) //  1 ->
+	800397ec  sh  s0, 30(v1) // e6(plwork) ->
+==============================
+1 << 3 + 1 << 2 + 1 << 2 + 1 << 2 + 1 << 2
+= 1--1 -1-1 -1--
+= 801b52e0 + n * 954
+
+input = 801cc968
+	01    L2
+	02    R2
+	04    L1
+	08    R1
+	10    triangle
+	20    circle
+	40    cross
+	80    square
+	0100  select
+	0200
+	0400
+	0800  start
+	1000  dpad up
+	2000  dpad right
+	4000  dpad down
+	8000  dpad left
+map action / dpad = 80085d5c
+	0=0 1=8 2=6 3=9
+	4=2 5=0 6=3 7=0
+	8=4 9=7 a=0 b=0
+	c=1 d=0 e=0 f=0
+		7 8 9   8|1  1  2|1
+		4 0 6 = 8    0  2
+		1 2 3   8|4  4  2|4
+
+[801b52e0..801b5c33]?!!
+	8001779c  lh  v0, 928(a2)
+	800177b0  lh  v0, 92a(a2)  // a0 |= 2
+	800177c8  lh  v0, 92c(a2)  // a0 |= 4
+	800177e0  lh  v0, 92e(a2)  // a0 |= 8
+	800177f8  lh  v0, 930(a2)  // a0 |= 10
+	80017810  lh  v0, 932(a2)  // a0 |= 20
+	80017828  lh  v0, 934(a2)  // a0 |= 40
+	80017840  lh  v0, 936(a2)  // a0 |= 80
+		a0 |= ((input >> c) & f) << 8
+
+option mode cheat
+all boss command list = 801ee48c
+	1000  dpad up
+	4000  dpad down
+	2000  dpad right
+	8000  dpad left
+	80  square
+	40  cross
+	10  triangle
+	20  circle
+set 800a0238 = 01
+
+sub_801ee2b0
+	a3 = 0(801ee4a0)
+	v0 = a3 << 1
+	801ee2d8  lhu  v1, v0(801ee48c) // command list
+	801ee2e4  lw   v0, a0(801cd388) // input flag
+		if  v1 & v0
+			801ee304  v0, a0(801cc968)
+				if  v0 & 100  // select is pressed
+					v0 = a3 + 1
+					v1 = v0 << 1 + 801ee48c
+					801ee320  lhu  v1, 0(v1)
+					801ee328  sw   v0, 0(801ee4a0)
+					if  v1 == 0  // command complete
+						801ee338  lhu  v0, 0(800a0238)
+							v0 ^= 1
+						801ee344  sh    0, 0(800a0378)
+						801ee350  sh   v0, 0(800a0238)
+						jal  sub_80017a94(5 , 7 , 801ee48c)
+						801ee360  sw    0, 0(801ee4a0)
+					else
+					v0 = 28
+					801ee36c  sw  v0, 0(801ee4a4)
+					return
+				else
+					v0 = 28
+					801ee36c  sw  v0, 0(801ee4a4)
+					return
+		else
+			801ee378  lw  v0, 0(a1) // a1=801cd388
+			if  v0 == 0
+				801ee388  lw  v0, 0(801ee4a4)
+					v0--
+				801ee39c  sw  v0, 0(801ee4a4)
+				if  v0 > 0
+					return
+			else
+			v0 = 28
+			801ee3ac  sw  v0, 0(801ee4a4) // command next wait
+			801ee3b4  sw   0, 0(801ee4a0) // command index
+==============================

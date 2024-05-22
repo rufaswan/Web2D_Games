@@ -145,20 +145,29 @@ function lba2frame( $lba )
 	// mfhi( v * 0x66666667 ) == v * 0.4      =  4 / 10
 
 	// frames starts at 00:02:00
-	$lba += (75 * 2);
+	$lba   += (75 * 2);
+	$size  = array(60 , 60 , 75);
+	$frame = ZERO . ZERO . ZERO;
+	$i = 3;
+	while ( $i > 0 )
+	{
+		$i--;
+		if ( $lba < 1 )
+			continue;
 
-	$f = $lba % 75;
-	$lba = (int)($lba / 75);
+		$div = (int)($lba / $size[$i]);
+		$rem = $lba - ($div * $size[$i]);
 
-	$s = $lba % 60;
-	$lba = (int)($lba / 60);
+		// in 4-bit hex
+		$hi = (int)($rem * 0.1);
+		$lo = $rem - ($hi * 10);
+		$hex = ($hi << 4) | $lo;
 
-	$m = $lba;
-	if ( $m > 99 )
-		return php_error('min > 99 = %d:%d:%d', $m, $s, $f);
+		$lba = $div;
+		$frame[$i] = chr($hex);
+	} // while ( $i > 0 )
 
-	$hex = sprintf('%02d%02d%02d', $m, $s, $f);
-	return hex2bin( $hex );
+	return $frame;
 }
 
 function frame2lba( $frame )

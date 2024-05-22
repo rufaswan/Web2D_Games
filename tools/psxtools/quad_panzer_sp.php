@@ -243,43 +243,41 @@ function slot_keyhit( &$quad, &$slot, $slot_id, $flag )
 		}
 	} // foreach ( $quad['hitbox'] as $hk => $hv )
 
-	if ( $hit_id === -1 )
+	// $hit_id === -1
+	$layer = array();
+	for ( $i=0; $i < 4; $i++ )
 	{
-		$layer = array();
-		for ( $i=0; $i < 4; $i++ )
+		if ( empty($slbody[$i]) )
+			continue;
+		if ( $flag & (1 << (3 + $i)) ) // 8 10 20 40
+			continue;
+
+		foreach ( $slbody[$i] as $k => $v )
 		{
-			if ( empty($slbody[$i]) )
-				continue;
-			if ( $flag & (1 << (3 + $i)) ) // 8 10 20 40
-				continue;
+			$hx1 = sint8($v[0]);
+			$hy1 = sint8($v[1]);
+			$hx2 = sint8($v[2]);
+			$hy2 = sint8($v[3]);
 
-			foreach ( $slbody[$i] as $k => $v )
-			{
-				$hx1 = sint8($v[0]);
-				$hy1 = sint8($v[1]);
-				$hx2 = sint8($v[2]);
-				$hy2 = sint8($v[3]);
+			$hw = 0x10;
+			$hh = 0x10;
+			$hit = xywh_quad($hw, $hh);
+			xywh_move($hit, $hx1, $hy1);
 
-				$hw = $hx2 - $hx1;
-				$hh = $hy2 - $hy1;
-				$hit = xywh_quad($hw, $hh);
-				xywh_move($hit, $hx1, $hy1);
+			$ent = array(
+				'hitquad'   => $hit,
+				'attribute' => 'hitbox ' . $i,
+			);
+			$layer[] = $ent;
+		} // foreach ( $slbody[$i] as $k => $v )
+	} // for ( $i=0; $i < 4; $i++ )
 
-				$ent = array(
-					'hitquad'   => $hit,
-					'attribute' => 'hitbox ' . $i,
-				);
-				$layer[] = $ent;
-			} // foreach ( $slbody[$i] as $k => $v )
-		} // for ( $i=0; $i < 4; $i++ )
-
-		$hit_id = count($quad['hitbox']);
-		$hent = array(
-			'debug' => $debug,
-			'layer' => $layer,
-		);
-		$quad['hitbox'][] = $hent;
-	} // if ( $hit_id === -1 )
+	$hit_id = count($quad['hitbox']);
+	$hent = array(
+		'debug' => $debug,
+		'layer' => $layer,
+	);
+	$quad['hitbox'][] = $hent;
 
 donehit:
 	$key_id = ord($slhead[4]);
