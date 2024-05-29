@@ -3,7 +3,7 @@ define('BIT16', (1<<16)-1);
 
 function hex16( $f )
 {
-	$h = (int)($f * (1 << 16));
+	$h = (int)($f * (BIT16 + 1));
 	if ( $h < 0 )
 		return sprintf('-%4x', -$h & BIT16);
 	else
@@ -18,3 +18,15 @@ for ( $h=0; $h < 0x100; $h++ )
 	//printf("%2x  rad %.6f  sin %.6f  cos %.6f\n", $h, $rad, $sin, $cos);
 	printf("%2x  sin %s  cos %s\n", $h, hex16($sin), hex16($cos));
 } // for ( $h=0; $h < 0x100; $h++ )
+
+/*
+.       <- sin ->
+.
+.  ^        0        ^
+.  |        |        |
+. cos  c0 --+-- 40  cos
+.  |        |        |
+.  \/      80       \/
+.
+.       <- sin ->
+*/

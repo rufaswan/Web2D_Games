@@ -141,7 +141,7 @@ function mana( $fname )
 	bpp4to8($pix);
 	$pal = pal555($pal);
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 
 	list($keys,$hits) = wmland_keys($dat, $atlas, $pal, $pix);

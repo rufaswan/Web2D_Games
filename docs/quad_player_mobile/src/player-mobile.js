@@ -222,6 +222,7 @@ function button_export_type( elem ){
 	var time = __.HTML.export_start.innerHTML | 0;
 	var zoom = 1.0 * __.HTML.export_zoom.innerHTML;
 	QUAD.export.export(fmt, QuadList[0], __.HTML.canvas, type, id, time, zoom);
+	__.HTML.logger.innerHTML = QUAD.func.console();
 }
 
 function viewer_btn_menu( qdata ){

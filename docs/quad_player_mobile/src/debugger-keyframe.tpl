@@ -105,11 +105,11 @@ var QuadList = [];
 			QuadList[ __.UPLOAD_ID ] = new QuadData(QuadList);
 		var qdata = QuadList[ __.UPLOAD_ID ];
 
-		var promises = [];
+		var proall = [];
 		for ( var up of this.files )
-			promises.push( QUAD.func.upload_promise(up, qdata) );
+			proall.push( QUAD.func.upload_promise(up, qdata) );
 
-		Promise.all(promises).then(function(resolve){
+		Promise.all(proall).then(function(resolve){
 			qdata_filetable(qdata, __.HTML.debugger_files);
 			if ( qdata.name ){
 				__.HTML.keylist.innerHTML = '';

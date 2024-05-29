@@ -55,17 +55,6 @@ function quad_keys( &$quad, &$meta, &$atlas )
 	} // foreach ( $meta as $mk => $mv )
 	return;
 }
-
-function sectquad( &$meta, &$anim, &$atlas, $dir )
-{
-	$quad = load_idtagfile('psx xenogears');
-	$quad['blend'] = array( blend_modes('normal') );
-
-	quad_keys($quad, $meta, $atlas);
-
-	save_quadfile($dir, $quad);
-	return;
-}
 //////////////////////////////
 function loadtex_256( &$file, $tex_off )
 {
@@ -311,15 +300,21 @@ function sectsprite( &$file, $met_off, &$tex, $dir )
 
 	save_file("$dir.meta.0", $anim);
 	save_file("$dir.meta.1", $meta);
+	save_palfile("$dir.pal.rgba", $pal, 0x10);
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	$meta = sectmeta($meta, $atlas, $tex, $pal);
 
 	$atlas->sort();
 	$atlas->save("$dir.0");
 
-	sectquad($meta, $anim, $atlas, $dir);
+	$quad = load_idtagfile('psx xenogears');
+	$quad['blend'] = array( blend_modes('normal') );
+
+	quad_keys($quad, $meta, $atlas);
+
+	save_quadfile($dir, $quad);
 	return;
 }
 

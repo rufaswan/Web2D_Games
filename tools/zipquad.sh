@@ -23,11 +23,12 @@ while [ "$1" ]; do
 			# skipped
 			;;
 		*'.quad')
-			# -0 store only
-			# -D do not add dir
-			# -X do not add file ext attr
+			# -0  store only
+			# -D  do not add dir
+			# -X  do not add file ext attr
+			# -j  store just file name
 			echo "added QUAD = $t1"
-			zip -0 -D -X "$t1.zip"  "${png[@]}"  "$t1"
+			zip  -0 -D -X -j  "$t1.zip"  "${png[@]}"  "$t1"
 			png=()
 			;;
 	esac

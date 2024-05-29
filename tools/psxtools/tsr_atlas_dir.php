@@ -33,7 +33,7 @@ function atlasdir( $dir )
 	$list = array();
 	lsfile_r($dir, $list);
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 
 	foreach ( $list as $fname )

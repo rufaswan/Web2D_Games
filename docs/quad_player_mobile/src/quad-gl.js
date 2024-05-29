@@ -332,6 +332,19 @@ function QuadGL(Q){
 		return pix;
 	}
 
+	$.to_uint8 = function(){
+		return new Promise(function(ok,err){
+			__.GL.canvas.toBlob(function(blob){
+				var reader = new FileReader;
+				reader.onload = function(){
+					var uint8 = new Uint8Array(reader.result);
+					ok(uint8);
+				};
+				reader.readAsArrayBuffer(blob);
+			}, 'image/png');
+		});
+	}
+
 	$.read_RGBA = function(){
 		var bw = __.GL.drawingBufferWidth;
 		var bh = __.GL.drawingBufferHeight;

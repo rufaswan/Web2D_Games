@@ -103,39 +103,64 @@ function QuadFunc(Q){
 		var ext = $.file_extension(up.name);
 		switch ( ext ){
 			case 'zip':
-				return new Promise(function(resolve, reject){
+				return new Promise(function(ok,err){
 					var reader = new FileReader;
 					reader.onload = function(){
 						var list = Q.binary.zipread( reader.result );
-						resolve(list);
+						ok(list);
 					}
 					reader.readAsArrayBuffer(up);
 				}).then(function(list){
 					var key = Object.keys(list);
-					var pro = [];
+					var proall = [];
 					for ( var i=0; i < key.length; i++ ){
 						var ext = $.file_extension( key[i] );
-						var dat = list[ key[i] ];
 
 						switch ( ext ){
 							case 'quad':
-								var text = Q.binary.uint2txt(dat);
-								pro[i] = __.upload_handler(qdata, 'quad', key[i], text);
+								var p = new Promise(function(ok,err){
+									var fn   = key[i];
+									var blob = new Blob(
+										[ list[fn] ],
+										{ type : 'text/plain' }
+									);
+									var reader = new FileReader;
+									reader.onload = function(){
+										ok([fn,reader.result]);
+									}
+									reader.readAsText(blob);
+								}).then(function(res){
+									return __.upload_handler(qdata, 'quad', res[0], res[1]);
+								});
+								proall.push(p);
 								break;
 							case 'png':
-								var data = 'data:image/png;base64,' + Q.binary.to_base64(dat);
-								pro[i] = __.upload_handler(qdata, 'image', key[i], data);
+								var p = new Promise(function(ok,err){
+									var fn   = key[i];
+									var blob = new Blob(
+										[ list[fn] ],
+										{ type : 'image/png' }
+									);
+									var reader = new FileReader;
+									reader.onload = function(){
+										ok([fn,reader.result]);
+									}
+									reader.readAsDataURL(blob);
+								}).then(function(res){
+									return __.upload_handler(qdata, 'image', res[0], res[1]);
+								});
+								proall.push(p);
 								break;
 						} // switch ( ext )
 					} // for ( var i=0; i < key.length; i++ )
-					return Promise.all(pro);
+					return Promise.all(proall);
 				});
 
 			case 'quad':
-				return new Promise(function(resolve, reject){
+				return new Promise(function(ok,err){
 					var reader = new FileReader;
 					reader.onload = function(){
-						resolve(reader.result);
+						ok(reader.result);
 					}
 					reader.readAsText(up);
 				}).then(function(text){
@@ -143,10 +168,10 @@ function QuadFunc(Q){
 				});
 
 			case 'png':
-				return new Promise(function(resolve, reject){
+				return new Promise(function(ok,err){
 					var reader = new FileReader;
 					reader.onload = function(){
-						resolve(reader.result);
+						ok(reader.result);
 					}
 					reader.readAsDataURL(up);
 				}).then(function(data){
@@ -207,14 +232,14 @@ function QuadFunc(Q){
 				return $.log('UPLOAD quad', fname);
 
 			case 'image':
-				return new Promise(function(resolve, reject){
+				return new Promise(function(ok,err){
 					var dummytex = Q.gl.create_pixel(255);
 					var fnm = fname.match(/\.([0-9]+)\./);
 					var tid = fnm[1];
 
 					var img = new Image;
 					img.onload = function(){
-						resolve([tid,img]);
+						ok([tid,img]);
 					}
 					img.src = data;
 				}).then(function(res){

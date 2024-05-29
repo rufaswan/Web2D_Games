@@ -34,15 +34,17 @@ function mobileparameter( mobile, base, list, table ){
 			for ( var i=0; i < lv.length; i++ ){
 				var tmp = curr[ lv[i] ];
 				var p2  = ( tmp ) ? 'ok' : 'fail';
-				name   += '.' + lv[i];
-				output += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
-				curr = tmp;
+				name    += '.' + lv[i];
+				output  += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
+				curr    = tmp;
+				if ( ! tmp )
+					return;
 			} // for ( var i=0; i < lv.length; i++ )
 		}
 		else {
 			var p2   = ( mobile[lv] ) ? 'ok' : 'fail';
 			var name = base + '.' + lv;
-			output  += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
+			output += '<tr><td>' + name + '</td><td>' + p2 + '</td></tr>';
 		}
 	});
 	table.innerHTML = output;

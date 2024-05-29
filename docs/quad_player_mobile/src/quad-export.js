@@ -266,7 +266,8 @@ function QuadExport(Q){
 			hit   : qdata.is_hits     ,
 			canvw : canvas.width  ,
 			canvh : canvas.height ,
-			fname : qdata.name + '_' + type + '_' + id + '_' + fps,
+			fname : qdata.name + '_' + type + '_' + id + '_' + fps ,
+			start : performance.now() ,
 		};
 		qdata.attach.type = type;
 		qdata.attach.id   = id;
@@ -276,7 +277,7 @@ function QuadExport(Q){
 		qdata.is_hits     = false;
 	}
 
-	__.restore = function( qdata, canvas ){
+	__.restore = function( qdata, canvas, fmt ){
 		qdata.attach.type = __.bak.type;
 		qdata.attach.id   = __.bak.id;
 		qdata.anim_fps    = __.bak.fps;
@@ -285,6 +286,7 @@ function QuadExport(Q){
 		qdata.is_hits     = __.bak.hit;
 		canvas.width      = __.bak.canvw;
 		canvas.height     = __.bak.canvh;
+		Q.func.log('download' , __.bak.fname , 'fmt' , fmt , 'time' , performance.now() - __.bak.start);
 	}
 
 	__.download = function( fname, dataurl ){
@@ -367,7 +369,8 @@ function QuadExport(Q){
 			} // for ( var dx = -halfpos[0]; dx < halfpos[0]; dx += sprwh[0] )
 		} // for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] )
 
-		return canvas.toDataURL('image/png');
+		var fn = __.bak.fname + '.sheet.png';
+		__.download(fn, canvas.toDataURL('image/png'));
 	}
 
 	__.export_zip = function( qdata, canvas, fmt ){
@@ -389,6 +392,7 @@ function QuadExport(Q){
 		camera[0+0] = ( qdata.is_flipx ) ? -qdata.zoom : qdata.zoom;
 		camera[4+1] = ( qdata.is_flipy ) ? -qdata.zoom : qdata.zoom;
 
+		var proall = [];
 		var i = 0;
 		while ( i < len ){
 			if ( qdata.anim_fps >= anim_time )
@@ -396,29 +400,47 @@ function QuadExport(Q){
 			Q.func.qdata_clear(qdata);
 			Q.func.qdata_draw (qdata, camera, color);
 
-			switch ( fmt ){
-				case 'png':
-					// %06d.png
-					var pad = '00000000' + qdata.anim_fps + '.png';
-					var fn  = pad.substring( pad.length - 10 );
-
-					list[fn] = QUAD.binary.from_base64( canvas.toDataURL('image/png') );
-					break;
-				case 'rgba':
-					// %06d.rgba
-					var pad = '00000000' + qdata.anim_fps + '.rgba';
-					var fn  = pad.substring( pad.length - 11 );
-
-					list[fn] = Q.gl.read_RGBA();
-					break;
-			} // switch ( fmt )
+			var p = new Promise(function(ok,err){
+				switch ( fmt ){
+					case 'png':
+						// %06d.png
+						var pad = '000000' + qdata.anim_fps + '.png';
+						var fn  = pad.substring( pad.length - 10 );
+						Q.gl.to_uint8().then(function(res){
+							ok([fn,res]);
+						});
+						break;
+					case 'rgba':
+						// %06d.rgba
+						var pad = '000000' + qdata.anim_fps + '.rgba';
+						var arg = [
+							pad.substring( pad.length - 11 ),
+							Q.gl.read_RGBA()
+						];
+						ok(arg);
+						break;
+				} // switch ( fmt )
+			}).then(function(res){
+				list[ res[0] ] = res[1];
+			});
+			proall.push(p);
 
 			qdata.anim_fps++;
 			i++;
 		} // while ( i < len )
 
-		var uint8 = Q.binary.zipwrite(list);
-		return 'data:application/zip;base64,' + Q.binary.to_base64(uint8);
+		return Promise.all(proall).then(function(res){
+			var blob = new Blob(
+				[ Q.binary.zipwrite(list) ],
+				{ type : 'application/zip' }
+			);
+			var reader = new FileReader;
+			reader.onload = function(){
+				var fn = __.bak.fname + '.' + fmt + '.zip';
+				__.download(fn, reader.result);
+			};
+			reader.readAsDataURL(blob);
+		});
 	}
 
 	//////////////////////////////
@@ -426,34 +448,22 @@ function QuadExport(Q){
 	$.export = function( fmt, qdata, canvas, type, id, fps, zoom ){
 		if ( zoom < 0.1 || zoom > 10.0 )
 			return;
-		var start = performance.now();
-		__.backup(qdata, canvas, type, id, fps, zoom);
 
-		switch ( fmt ){
-			case 'png':
-				var fname   = __.bak.fname + '.png';
-				var dataurl = __.export_sheet(qdata, canvas);
-				__.download(fname, dataurl);
-				break;
-			case 'zip':
-				var fname   = __.bak.fname + '.png.zip';
-				var dataurl = __.export_zip(qdata, canvas, 'png');
-				__.download(fname, dataurl);
-				break;
-			case 'rgba':
-				var fname   = __.bak.fname + '.rgba.zip';
-				var dataurl = __.export_zip(qdata, canvas, 'rgba');
-				__.download(fname, dataurl);
-				break;
-		} // switch ( fmt )
-
-		__.restore(qdata, canvas);
-		Q.func.log('QUAD export' , fmt , 'time' , performance.now()-start);
-
-		// performance
-		//   png    1193 ms   1,606,494 byte
-		//   zip    4893 ms   3,332,087 byte
-		//   rgba  62134 ms  59,437,722 byte
+		Promise.resolve().then(function(r){
+			__.backup(qdata, canvas, type, id, fps, zoom);
+			switch ( fmt ){
+				case 'png' :  return  __.export_sheet(qdata, canvas);
+				case 'zip' :  return  __.export_zip(qdata, canvas, 'png');
+				case 'rgba':  return  __.export_zip(qdata, canvas, 'rgba');
+				default:      return 0;
+			} // switch ( fmt )
+		}).then(function(r){
+			// performance
+			//   png     69 ms     24,178 byte
+			//   zip    121 ms     58,852 byte
+			//   rgba  1470 ms  1,355,530 byte
+			__.restore(qdata, canvas, fmt);
+		});
 	}
 
 	//////////////////////////////

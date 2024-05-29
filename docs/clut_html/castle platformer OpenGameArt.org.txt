@@ -1,0 +1,158 @@
+    castle platformer
+
+Author:
+Jetrel <https://opengameart.org/users/jetrel>
+Monday, April 16, 2012 - 00:29
+
+Art Type:
+2D Art <https://opengameart.org/art-search-advanced?field_art_type_tid%5B%5D=9>
+
+Tags:
+Fantasy <https://opengameart.org/art-search-advanced?field_art_tags_tid=Fantasy>
+pixel <https://opengameart.org/art-search-advanced?field_art_tags_tid=pixel>
+platform <https://opengameart.org/art-search-advanced?field_art_tags_tid=platform>
+side view <https://opengameart.org/art-search-advanced?field_art_tags_tid=side%20view>
+Sprite <https://opengameart.org/art-search-advanced?field_art_tags_tid=Sprite>
+knight <https://opengameart.org/art-search-advanced?field_art_tags_tid=knight>
+bat <https://opengameart.org/art-search-advanced?field_art_tags_tid=bat>
+mountain <https://opengameart.org/art-search-advanced?field_art_tags_tid=mountain>
+parallax <https://opengameart.org/art-search-advanced?field_art_tags_tid=parallax>
+tiling <https://opengameart.org/art-search-advanced?field_art_tags_tid=tiling>
+moon <https://opengameart.org/art-search-advanced?field_art_tags_tid=moon>
+moonlight <https://opengameart.org/art-search-advanced?field_art_tags_tid=moonlight>
+reflection <https://opengameart.org/art-search-advanced?field_art_tags_tid=reflection>
+light <https://opengameart.org/art-search-advanced?field_art_tags_tid=light>
+dark <https://opengameart.org/art-search-advanced?field_art_tags_tid=dark>
+column <https://opengameart.org/art-search-advanced?field_art_tags_tid=column>
+chandelier <https://opengameart.org/art-search-advanced?field_art_tags_tid=chandelier>
+wall <https://opengameart.org/art-search-advanced?field_art_tags_tid=wall>
+spikes <https://opengameart.org/art-search-advanced?field_art_tags_tid=spikes>
+
+License(s):
+CC0 <http://creativecommons.org/publicdomain/zero/1.0/>
+
+Collections:
+  * !CO Assets <https://opengameart.org/content/co-assets>
+  * 11. Pixel Art - Platformer <https://opengameart.org/content/11-pixel-art-platformer>
+  * 16bit FPS <https://opengameart.org/content/16bit-fps>
+  * 233 <https://opengameart.org/content/233>
+  * 2D - Complete Kit <https://opengameart.org/content/2d-complete-kit>
+  * 2D Pixels <https://opengameart.org/content/2d-pixels>
+  * 2D Platformer Pixel Art <https://opengameart.org/content/2d-platformer-pixel-art>
+  * 2D tiles <https://opengameart.org/content/2d-tiles-0>
+  * 2D::Tile::Sidescroll <https://opengameart.org/content/2dtilesidescroll>
+  * 2DPlatformRoguelike <https://opengameart.org/content/2dplatformroguelike>
+  * ??? <https://opengameart.org/node/109060>
+  * A Grave Song Visual References <https://opengameart.org/content/a-grave-song-visual-references>
+  * A Pool: Unsorted (GDN) <https://opengameart.org/content/a-pool-unsorted-gdn>
+  * A Simple Knight (considered graphics) <https://opengameart.org/content/a-simple-knight-considered-graphics>
+  * Amazing Stuff <https://opengameart.org/content/amazing-stuff>
+  * ANIMALS <https://opengameart.org/content/animals-0>
+  * Antur Resources <https://opengameart.org/content/antur-resources>
+  * assets for a a maze of Galious remake <https://opengameart.org/content/assets-for-a-a-maze-of-galious-remake>
+  * assets for a generic plateformer <https://opengameart.org/content/assets-for-a-generic-plateformer>
+  * Assets for making DOS games or games like in DOS in the early 90's <https://opengameart.org/content/assets-for-making-dos-games-or-games-like-in-dos-in-the-early-90s>
+  * ATFA: Redrak Ascending <https://opengameart.org/content/atfa-redrak-ascending>
+  * Avatar <https://opengameart.org/content/avatar>
+  * b.g <https://opengameart.org/content/bg>
+  * background assets <https://opengameart.org/content/background-assets>
+  * BACKGROUNDS <https://opengameart.org/content/backgrounds-6>
+  * Base pixel art for 3D pixelish RPG <https://opengameart.org/content/base-pixel-art-for-3d-pixelish-rpg>
+  * Battler <https://opengameart.org/content/battler-0>
+  * Best Orthogonal (rectangular) Tilesets for Tilemaps <https://opengameart.org/content/best-orthogonal-rectangular-tilesets-for-tilemaps>
+  * BinxQuest <https://opengameart.org/content/binxquest>
+  * BOSS <https://opengameart.org/content/boss-0>
+  * Broken Worlds <https://opengameart.org/content/broken-worlds>
+  * Castle Nosferatu <https://opengameart.org/content/castle-nosferatu-0>
+  * Castlevania Fan Game <https://opengameart.org/content/castlevania-fan-game>
+  * cc-by-3 possible game kits and gfx <https://opengameart.org/content/cc-by-3-possible-game-kits-and-gfx>
+  * CC0 artwork <https://opengameart.org/content/cc0-artwork>
+  * CC0 Backgrounds <https://opengameart.org/content/cc0-backgrounds>
+  * CC0 resources <https://opengameart.org/content/cc0-resources>
+  * CF Inspiration <https://opengameart.org/content/cf-inspiration>
+  * character animation <https://opengameart.org/content/character-animation>
+  * Chomp Classic <https://opengameart.org/content/chomp-classic>
+  * Collected <https://opengameart.org/content/collected>
+  * Game Art Packs <https://opengameart.org/content/game-art-packs>
+  * gargoyle <https://opengameart.org/content/gargoyle-1>
+  * Good 2D Art (CC0) <https://opengameart.org/content/good-2d-art-cc0>
+  * Good CC0-Art <https://opengameart.org/content/good-cc0-art>
+  * Good-looking side-view tilesets <https://opengameart.org/content/good-looking-side-view-tilesets>
+  * Gothic Platformer <https://opengameart.org/content/gothic-platformer>
+  * Heavy Is The Crown <https://opengameart.org/content/heavy-is-the-crown>
+  * Helgi 2 <https://opengameart.org/content/helgi-2>
+  * HEROES <https://opengameart.org/content/heroes>
+  * HQ 2D & Isometric <https://opengameart.org/content/hq-2d-isometric>
+  * HUMAN-LIKE ENEMIES <https://opengameart.org/content/human-like-enemies>
+  * H_V_ <https://opengameart.org/content/hv>
+  * LegendOfMomo <https://opengameart.org/content/legendofmomo>
+  * Library of 2D Game Art <https://opengameart.org/content/library-of-2d-game-art>
+  * Media in Varia <https://opengameart.org/content/media-in-varia>
+  * Metroidvania art <https://opengameart.org/content/metroidvania-art>
+  * Metroidvania Art <https://opengameart.org/content/metroidvania-art-0>
+  * MONSTERS <https://opengameart.org/content/monsters-3>
+  * Mourn prototype <https://opengameart.org/content/mourn-prototype>
+  * Must Use <https://opengameart.org/content/must-use>
+  * NPC <https://opengameart.org/content/npc>
+  * One Game a Month <https://opengameart.org/content/one-game-a-month>
+  * Open Surge <https://opengameart.org/content/open-surge-1>
+  * Pixel Art <https://opengameart.org/content/pixel-art-2>
+  * Pixel Platformer <https://opengameart.org/content/pixel-platformer>
+  * Pixel Platformers <https://opengameart.org/content/pixel-platformers>
+  * PLATAGO! Sir Blastalot Asset Pack <https://opengameart.org/content/platago-sir-blastalot-asset-pack>
+  * Platformer <https://opengameart.org/content/platformer-3>
+  * Platformer <https://opengameart.org/content/platformer-6>
+  * platformer <https://opengameart.org/content/platformer-9>
+  * Platformer Souls-like <https://opengameart.org/content/platformer-souls-like>
+  * Platformer/Sidescroller Characters and Enemies <https://opengameart.org/content/platformersidescroller-characters-and-enemies>
+  * Platformer/Sidescroller Tiles and Backgrounds <https://opengameart.org/content/platformersidescroller-tiles-and-backgrounds>
+  * platformer: Slash boxes <https://opengameart.org/content/platformer-slash-boxes>
+  * Platformers <https://opengameart.org/content/platformers>
+  * public domain packs/sets <https://opengameart.org/content/public-domain-packssets>
+  * Quality Backgrounds <https://opengameart.org/content/quality-backgrounds>
+  * Quality pieces <https://opengameart.org/content/quality-pieces>
+  * Ragnar's CC0 Bag of Holding <https://opengameart.org/content/ragnars-cc0-bag-of-holding>
+  * Sara's Quest <https://opengameart.org/content/saras-quest>
+  * SECRET <https://opengameart.org/content/secret>
+  * SETS <https://opengameart.org/content/sets>
+  * side scroll art <https://opengameart.org/content/side-scroll-art>
+  * Side Scrolling Art Collection <https://opengameart.org/content/side-scrolling-art-collection>
+  * Sonata <https://opengameart.org/content/sonata>
+  * Temple and Ruins Assets <https://opengameart.org/content/temple-and-ruins-assets>
+  * Testing <https://opengameart.org/content/testing>
+  * tile <https://opengameart.org/content/tile-0>
+  * Tile2Map <https://opengameart.org/content/tile2map>
+  * Tileset and backgrounds for platforme games <https://opengameart.org/content/tileset-and-backgrounds-for-platforme-games>
+  * Tilesets <https://opengameart.org/content/tilesets-5>
+  * Tilesets <https://opengameart.org/content/tilesets-6>
+  * Tilesets and Backgrounds (PixelArt) <https://opengameart.org/content/tilesets-and-backgrounds-pixelart>
+  * TPCL <https://opengameart.org/content/tpcl>
+  * Trevas <https://opengameart.org/content/trevas>
+  * Vania CC-BY <https://opengameart.org/content/vania-cc-by>
+  * Walk Cycles <https://opengameart.org/content/walk-cycles-0>
+  * Zed - Interesting Yet Unsorted <https://opengameart.org/content/zed-interesting-yet-unsorted>
+  * Zelda Like RPG <https://opengameart.org/content/zelda-like-rpg>
+
+Favorites:
+333
+
+Share Icons:
+<https://identi.ca//index.php?action=newnotice&status_textarea=castle+platformer+http%3A%2F%2Fopengameart.org%2Fcontent%2Fcastle-platformer> <http://www.reddit.com/submit?url=http%3A%2F%2Fopengameart.org%2Fcontent%2Fcastle-platformer&title=castle+platformer> <https://plus.google.com/share?url=http%3A%2F%2Fopengameart.org%2Fcontent%2Fcastle-platformer> <https://twitter.com/share?url=http%3A%2F%2Fopengameart.org%2Fcontent%2Fcastle-platformer&text=castle+platformer> <https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fopengameart.org%2Fcontent%2Fcastle-platformer>
+
+Preview:
+Preview <https://opengameart.org/sites/default/files/working-title1.png>
+Preview <https://opengameart.org/sites/default/files/working-title2.png>
+
+Assets for a castlevania-like platformer I mocked up quite some time
+ago.  Stiff and kinda crappy animation on the main character.  Includes
+tiles, two parallax backgrounds, a main character, and a really
+badly-done bat.  Colors on the exterior environment could use some love,
+but that was one of a whole bunch of things I didn't have the time to
+address.
+
+Two screenshots showing what you can do with it.
+
+File(s):
+working-title-assets.zip working-title-assets.zip
+<https://opengameart.org/sites/default/files/working-title-assets.zip>
+45.8 Kb [34783 download(s)]

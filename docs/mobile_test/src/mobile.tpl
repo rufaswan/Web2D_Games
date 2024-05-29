@@ -87,17 +87,22 @@ var list = [
 	'TouchEvent',
 	'PointerEvent',
 	'StorageEvent',
-	'File' , 'FileReader',
-	'XMLHttpRequest',
-	'MediaRecorder',
-	'WebAssembly',
+
+	'atob' , 'btoa',
+	'sessionStorage' , 'localStorage',
+	'Blob' , 'File' , 'FileReader',
+	'ArrayBuffer' , 'Uint8Array' , 'Float32Array',
+
 	['Promise' , 'all'],
 	['JSON'    , 'parse'],
+	//['JSON'  , 'stringify'],
 	['CSS'     , 'supports'],
-	'atob', 'btoa',
-	'sessionStorage' , 'localStorage',
-	'requestAnimationFrame',
+
 	'devicePixelRatio',
+	'requestAnimationFrame',
+	'MediaRecorder',
+	'WebAssembly',
+	'XMLHttpRequest',
 ];
 mobileparameter(window, 'window', list, HTML.listwindow);
 

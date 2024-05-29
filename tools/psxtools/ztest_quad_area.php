@@ -2,28 +2,6 @@
 require 'common.inc';
 require 'common-quad.inc';
 
-///// MATRIX TEST /////
-	$m = array(-3,1 , 5,-2);
-		matrix_dump($m, 'M2');
-	$minv = matrix_inv2($m);
-		matrix_dump($minv, 'Minv2');
-	$i = matrix_multi22($m, $minv);
-		matrix_dump($i, 'I2');
-
-	$m = array(3,0,2 , 2,0,-2 , 0,1,1);
-		matrix_dump($m, 'M3');
-	$minv = matrix_inv3($m);
-		matrix_dump($minv, 'Minv3');
-	$i = matrix_multi33($m, $minv);
-		matrix_dump($i, 'I3');
-
-	$m = array(5,0,0,0 , 0,0,3,0 , 0,1,3,0 , 1,0,0,1);
-		matrix_dump($m, 'M4');
-	$minv = matrix_inv4($m);
-		matrix_dump($minv, 'Minv4');
-	$i = matrix_multi44($m, $minv);
-		matrix_dump($i, 'I4');
-
 ///// QUAD AREA TEST /////
 function ascii_quad( $v4 )
 {

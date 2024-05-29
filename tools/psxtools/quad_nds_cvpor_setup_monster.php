@@ -424,7 +424,7 @@ function cvpor( $dir )
 		return php_warning('%s not so-sc-pal set', $dir);
 
 	echo "== $dir\n";
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	sect_soscpal($por, $atlas);
 

@@ -701,6 +701,23 @@ function save_clutfile( $fname, &$data )
 	return;
 }
 
+function save_palfile( $fname, &$pal, $col )
+{
+	if ( empty($fname) || empty($pal) )
+		return;
+	$len = strlen($pal);
+	if ( $len & 3 )
+		return;
+	$len >>= 2;
+	$row = (int)ceil($len / $col);
+	$img = array(
+		'w'   => $col,
+		'h'   => $row,
+		'pix' => $pal,
+	);
+	return save_clutfile($fname, $img);
+}
+
 function load_patchfile( $game_id )
 {
 	$patch_dir = __DIR__ . '/patch';

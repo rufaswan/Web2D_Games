@@ -259,7 +259,7 @@ function tm2sub( $fname )
 	sect_tim($file, $pix, $pal, $cnt_tim, $pos_tim);
 		$pal[3] = ZERO; // transparent background
 
-	$atlas = new AtlasTex;
+	$atlas = new atlas_tex;
 	$atlas->init();
 	$data = sect_data($file, $atlas, $pix, $pal, $cnt_dat, $pos_dat);
 

@@ -1,0 +1,69 @@
+<!doctype html>
+<html><head>
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>HTML Viewer</title>
+
+</head><body>
+<!--
+On mobile, HTML are opened at native scale, not 1x.
+
+You can zoom in to enlarge the text, but the paragraph didnt rewrap,
+causing you have to scroll horizontally, in addition to just scroll
+vertically to read normally.
+
+This is to view HTML file at scale 1x.
+-->
+<input type='file' id='htmlupload'>
+<section id='htmlarticle'></section>
+
+<script>
+document.getElementById('htmlupload').addEventListener('change', function(){
+	for ( var up of this.files ){
+		if ( up.type !== 'text/html' )
+			continue;
+
+		var p = new Promise(function(ok,err){
+			var reader = new FileReader;
+			reader.onload = function(){
+				ok(reader.result);
+			}
+			reader.readAsText(up);
+		}).then(function(res){
+			var dom = new DOMParser().parseFromString(res, 'text/html');
+			dom.querySelectorAll('body *').forEach(function(v,k){
+				var tagname = v.tagName.toLowerCase();
+				switch ( tagname ){
+					case 'script':
+					case 'style':
+					case 'iframe':
+					case 'video':
+					case 'audio':
+					case 'svg':
+					case 'button':
+					case 'input':
+					case 'form':
+					case 'link':
+					case 'meta':
+						v.remove();
+						return;
+					case 'a':
+						v.setAttribute('target', '_blank');
+					default:
+						v.removeAttribute('style');
+						v.removeAttribute('class');
+						v.removeAttribute('id');
+						v.removeAttribute('title');
+						v.removeAttribute('alt');
+						return;
+				} // switch ( tagname )
+			}); // dom.querySelectorAll('body *').forEach
+
+			document.getElementById('htmlarticle').innerHTML = dom.body.innerHTML;
+		});
+	} // for ( var up of this.files ){
+});
+</script>
+</body></html>
+
