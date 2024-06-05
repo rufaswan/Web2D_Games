@@ -265,6 +265,25 @@ done:
 	return;
 }
 //////////////////////////////
+function im_bc3( &$file, $pos, $w, $h, $size )
+{
+	printf("== im_bc3( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $size);
+
+	$bc3 = new s3tc_Texture;
+	$pix = $bc3->bc3($pix);
+	//$pix = $bc4->s3tc_debug($pix, $w, $h);
+
+	$ch = int_ceil_pow2($h);
+	tegra_x1_swizzled_16_bits($pix, $w, $ch);
+	$img = array(
+		'w'   => $w,
+		'h'   => $h,
+		'pix' => $pix,
+	);
+	return $img;
+}
+
 function im_bc4( &$file, $pos, $w, $h, $size )
 {
 	printf("== im_bc4( %x , %x , %x )\n", $pos, $w, $h);
@@ -320,6 +339,7 @@ function switnvt( &$file, $base, $pfx, $id )
 	$sz2 = str2int($file, $base + 32, 4);
 
 	$list_fmt = array(
+		0x44 => 'im_bc3',
 		0x49 => 'im_bc4',
 		0x4d => 'im_bc7',
 	);
@@ -375,6 +395,7 @@ argv_loopfile($argv, 'unicorn');
 
 /*
 13 sentinels
+	44  im_bc3
 	49  im_bc4
 	4d  im_bc7
 grim grimoire once again
@@ -385,6 +406,9 @@ unicorn overlord
 	4d  im_bc7
 
 13 sentinels
+	44  im_bc3
+		SecretFile_000.ftx
+		SecretFile_001.ftx
 	49  im_bc4
 		FontBt.ftx
 		FontDigi.ftx
