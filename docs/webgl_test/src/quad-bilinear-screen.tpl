@@ -80,13 +80,13 @@ QDFN.set_shader_program(vert_src, frag_src);
 QDFN.set_shader_loc('a_xy', 'u_pxsize', 'u_mat4', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
-__.texsize = 0;
+APP.texsize = 0;
 
 function quad_draw(){
 	QDFN.canvas_resize();
-	QDFN.set_vec4_size('u_pxsize', __.texsize[0], __.texsize[1]);
+	QDFN.set_vec4_size('u_pxsize', APP.texsize[0], APP.texsize[1]);
 
-	var mat4 = bilinearwarp(__.dst, __.texsize[0], __.texsize[1]);
+	var mat4 = bilinearwarp(APP.dst, APP.texsize[0], APP.texsize[1]);
 	QDFN.set_mat4fv('u_mat4', mat4);
 
 	var half = QDFN.get_drawing_half();
@@ -102,18 +102,18 @@ function quad_draw(){
 }
 
 function render(){
-	if ( __.is_click ){
+	if ( APP.is_click ){
 		get_dst_corner();
 		quad_draw();
-		__.is_click = false;
+		APP.is_click = false;
 	}
 	requestAnimationFrame(render);
 }
 
 QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
-	__.is_click = true;
-	__.texsize  = res;
-	__.src = QDFN.xywh2quad(res[0],res[1]);
+	APP.is_click = true;
+	APP.texsize  = res;
+	APP.src = QDFN.xywh2quad(res[0],res[1]);
 	requestAnimationFrame(render);
 });
 

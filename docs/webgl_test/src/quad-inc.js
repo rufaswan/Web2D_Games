@@ -227,20 +227,34 @@ function find_intersect_point( quad ){
 	return -1;
 }
 
-function quad_area( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
-	function triArea( ax,ay , bx,by , cx,cy )
-	{
-		var r1 = ax * (by - cy);
-		var r2 = bx * (cy - ay);
-		var r3 = cx * (ay - by);
+function quad_area(){
+	if ( arguments.length < 2 )
+		return -1;
+
+	function tri_area( p ){
+		var r1 = p[0][0] * (p[1][1] - p[2][1]);
+		var r2 = p[1][0] * (p[2][1] - p[0][1]);
+		var r3 = p[2][0] * (p[0][1] - p[1][1]);
 		var area = 0.5 * (r1 + r2 + r3);
 		return Math.abs(area);
 	}
 
-	// 0,1,2  0,2,3
-	var t1 = triArea(x1,y1 , x2,y2 , x3,y3);
-	var t2 = triArea(x1,y1 , x3,y3 , x4,y4);
-	return (t1 + t2);
+	var quad = arguments[0];
+	var size = 0;
+	for ( var i=1; i < arguments.length; i += 3 ){
+		if ( typeof arguments[i+3] === 'undefined' )
+			return -1;
+
+		var point = [];
+		for ( var j=0; j < 3; j++ ){
+			var id = arguments[i+j] << 1;
+			point.push([quad[id+0] , quad[id+1]]);
+		}
+
+		size += tri_area(point);
+	} // for ( var i=1; i < arguments.length; i += 4 ){
+
+	return size;
 }
 
 function quad_type( quad ){

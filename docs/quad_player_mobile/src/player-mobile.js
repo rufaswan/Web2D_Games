@@ -165,19 +165,19 @@ function qdata_listing( qdata, type, id ){
 // TODO : remove all global var
 
 function button_select( elem ){
-	if ( __.SELECTED )
-		__.SELECTED.classList.remove('current');
+	if ( APP.selected )
+		APP.selected.classList.remove('current');
 
-	__.SELECTED = elem;
-	__.SELECTED.classList.add('current');
+	APP.selected = elem;
+	APP.selected.classList.add('current');
 
 	var par2 = elem.parentElement.parentElement;
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
 	qdata_attach(QuadList[0], type, id);
-	display_viewer(__.HTML, true);
-	__.IS_REDRAW = true;
+	display_viewer(APP.html, true);
+	APP.is_redraw = true;
 }
 
 function button_expand( elem ){
@@ -198,19 +198,19 @@ function button_export( elem ){
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
-	var div = __.HTML.export_menu;
+	var div = APP.html.export_menu;
 	div.setAttribute('data-type', type);
 	div.setAttribute('data-id'  , id);
 	div.style.display = 'block';
 
-	__.HTML.export_name.innerHTML = type + ' , ' + id;
+	APP.html.export_name.innerHTML = type + ' , ' + id;
 
 	var qdata = QuadList[0];
 	var time  = QUAD.export.time_attach(qdata, type, id);
-	var range = __.HTML.export_range;
+	var range = APP.html.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
-	__.HTML.export_start.innerHTML = 0;
+	APP.html.export_start.innerHTML = 0;
 }
 
 function button_export_type( elem ){
@@ -219,44 +219,44 @@ function button_export_type( elem ){
 	var id   = par2.getAttribute('data-id') | 0;
 	var fmt  = elem.innerHTML.toLowerCase();
 
-	var time = __.HTML.export_start.innerHTML | 0;
-	var zoom = 1.0 * __.HTML.export_zoom.innerHTML;
-	QUAD.export.export(fmt, QuadList[0], __.HTML.canvas, type, id, time, zoom);
-	__.HTML.logger.innerHTML = QUAD.func.console();
+	var time = APP.html.export_start.innerHTML | 0;
+	var zoom = 1.0 * APP.html.export_zoom.innerHTML;
+	QUAD.export.export(fmt, QuadList[0], APP.html.canvas, type, id, time, zoom);
+	APP.html.logger.innerHTML = QUAD.func.console();
 }
 
 function viewer_btn_menu( qdata ){
-	__.HTML.btn_hitattr.style.display = 'none';
-	__.HTML.hitattr_list.innerHTML = '';
+	APP.html.btn_hitattr.style.display = 'none';
+	APP.html.hitattr_list.innerHTML = '';
 	if ( qdata.quad.hitbox.length > 0 )
-		__.HTML.btn_hitattr.style.display = 'block';
+		APP.html.btn_hitattr.style.display = 'block';
 
-	__.HTML.btn_keyattr.style.display = 'none';
-	__.HTML.keyattr_list.innerHTML = '';
+	APP.html.btn_keyattr.style.display = 'none';
+	APP.html.keyattr_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
 		qdata.keyattr = -1;
-		__.HTML.btn_keyattr.style.display = 'block';
+		APP.html.btn_keyattr.style.display = 'block';
 		var buffer = '';
 		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
 			var mask = 1 << ek;
 			buffer += '<button class="btn_on" onclick="qdata_attr(this,\'keyattr\',' + mask + ');">' + ev + '</button>';
 		});
-		__.HTML.keyattr_list.innerHTML = buffer;
+		APP.html.keyattr_list.innerHTML = buffer;
 		QUAD.func.log('keyframe attr', qdata.quad.__ATTR.keyframe);
 	}
 
-	__.HTML.btn_colorize.style.display = 'none';
-	__.HTML.colorize_list.innerHTML = '';
+	APP.html.btn_colorize.style.display = 'none';
+	APP.html.colorize_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.colorize.length > 0 ){
 		qdata.colorize = [];
-		__.HTML.btn_colorize.style.display = 'block';
+		APP.html.btn_colorize.style.display = 'block';
 		var buffer = '';
 		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
 			var mask = 1 << ck;
 			qdata.colorize[mask] = [1,1,1,1];
 			buffer += cv + ' = <input type="color" value="#ffffff" onchange="qdata_colorize(this,' + mask + ');">&nbsp;';
 		});
-		__.HTML.colorize_list.innerHTML = buffer;
+		APP.html.colorize_list.innerHTML = buffer;
 		QUAD.func.log('colorize attr', qdata.quad.__ATTR.colorize);
 	}
 }
@@ -270,7 +270,7 @@ function qdata_attr( elem, name, mask ){
 		button_toggle(elem, 1);
 		QuadList[0][name] |= mask;
 	}
-	__.IS_REDRAW = true;
+	APP.is_redraw = true;
 }
 
 function qdata_colorize( elem, id ){
@@ -283,5 +283,5 @@ function qdata_colorize( elem, id ){
 		1.0,
 	];
 	QuadList[0].colorize[id] = rgb;
-	__.IS_REDRAW = true;
+	APP.is_redraw = true;
 }

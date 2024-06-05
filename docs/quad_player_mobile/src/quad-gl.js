@@ -127,7 +127,7 @@ function QuadGL(Q){
 
 			highp  vec2  uv;
 			void main(void){
-				UV = v_uv * u_pxsize;
+				uv = v_uv * u_pxsize;
 				gl_FragColor = texture2D(u_tex, uv);
 			}
 		`;

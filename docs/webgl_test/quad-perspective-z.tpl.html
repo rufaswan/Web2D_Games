@@ -292,9 +292,9 @@ var QDFN = new QuadFunc;
 
 <script>
 QDFN.set_webgl_by_id('canvas');
-var __ = {};
-__.dst = [-1,1 , 1,1 , 1,-1 , -1,-1];
-__.src = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+var APP = {};
+APP.dst = [-1,1 , 1,1 , 1,-1 , -1,-1];
+APP.src = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
 
 function div_left_top( div, left, top ){
 	div.style.left = (left|0) + 'px';
@@ -325,21 +325,21 @@ function get_dst_corner(){
 	var box = QDFN.get_bounding_rect();
 	var hw  = box.width  * 0.5;
 	var hh  = box.height * 0.5;
-	__.dst = [];
+	APP.dst = [];
 	for ( var i=0; i < 4; i++ ){
 		var cnr = document.getElementById('corner'+i).getBoundingClientRect();
 		var x = cnr.left - box.left - hw;
 		var y = cnr.top  - box.top  - hh;
-		__.dst.push( x, y );
+		APP.dst.push( x, y );
 	}
 }
 
 init_corners();
 get_dst_corner();
 
-__.is_click  = true;
-__.corner    = 0;
-__.clickable = document.getElementsByClassName('clickable');
+APP.is_click  = true;
+APP.corner    = 0;
+APP.clickable = document.getElementsByClassName('clickable');
 window.addEventListener('click', function(e){
 	function xy_rect( x, y, rect ){
 		if ( x < rect.left   )  return false;
@@ -349,24 +349,24 @@ window.addEventListener('click', function(e){
 		return true;
 	}
 
-	if ( __.corner === 0 ){
-		for ( var i=0; i < __.clickable.length; i++ )
+	if ( APP.corner === 0 ){
+		for ( var i=0; i < APP.clickable.length; i++ )
 		{
-			var rect = __.clickable[i].getBoundingClientRect();
+			var rect = APP.clickable[i].getBoundingClientRect();
 			if ( xy_rect(e.pageX, e.pageY, rect) )
 			{
-				__.corner = __.clickable[i];
-				__.corner.classList.add('activebox');
+				APP.corner = APP.clickable[i];
+				APP.corner.classList.add('activebox');
 				return;
 			}
 		}
 		return;
 	}
 	else {
-		div_left_top(__.corner, e.pageX, e.pageY);
-		__.corner.classList.remove('activebox');
-		__.corner = 0;
-		__.is_click = true;
+		div_left_top(APP.corner, e.pageX, e.pageY);
+		APP.corner.classList.remove('activebox');
+		APP.corner = 0;
+		APP.is_click = true;
 		return;
 	}
 });
@@ -601,20 +601,34 @@ function find_intersect_point( quad ){
 	return -1;
 }
 
-function quad_area( x1,y1 , x2,y2 , x3,y3 , x4,y4 ){
-	function triArea( ax,ay , bx,by , cx,cy )
-	{
-		var r1 = ax * (by - cy);
-		var r2 = bx * (cy - ay);
-		var r3 = cx * (ay - by);
+function quad_area(){
+	if ( arguments.length < 2 )
+		return -1;
+
+	function tri_area( p ){
+		var r1 = p[0][0] * (p[1][1] - p[2][1]);
+		var r2 = p[1][0] * (p[2][1] - p[0][1]);
+		var r3 = p[2][0] * (p[0][1] - p[1][1]);
 		var area = 0.5 * (r1 + r2 + r3);
 		return Math.abs(area);
 	}
 
-	// 0,1,2  0,2,3
-	var t1 = triArea(x1,y1 , x2,y2 , x3,y3);
-	var t2 = triArea(x1,y1 , x3,y3 , x4,y4);
-	return (t1 + t2);
+	var quad = arguments[0];
+	var size = 0;
+	for ( var i=1; i < arguments.length; i += 3 ){
+		if ( typeof arguments[i+3] === 'undefined' )
+			return -1;
+
+		var point = [];
+		for ( var j=0; j < 3; j++ ){
+			var id = arguments[i+j] << 1;
+			point.push([quad[id+0] , quad[id+1]]);
+		}
+
+		size += tri_area(point);
+	} // for ( var i=1; i < arguments.length; i += 4 ){
+
+	return size;
 }
 
 function quad_type( quad ){
@@ -698,7 +712,7 @@ QDFN.set_shader_program(vert_src, frag_src);
 QDFN.set_shader_loc('a_xyz', 'a_uv', 'u_pxsize', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
-__.texsize = 0;
+APP.texsize = 0;
 
 function dst_perp( dst, src='' ){
 	if ( src === '' )
@@ -714,34 +728,34 @@ function dst_perp( dst, src='' ){
 
 function quad_draw(){
 	QDFN.canvas_resize();
-	QDFN.set_vec4_size('u_pxsize', __.texsize[0], __.texsize[1]);
-	var dst = dst_perp(__.dst);
+	QDFN.set_vec4_size('u_pxsize', APP.texsize[0], APP.texsize[1]);
+	var dst = dst_perp(APP.dst);
 
 	var xyz = [].concat(
 		dst[0] , dst[1] , dst[2] ,
 		dst[0] , dst[2] , dst[3] ,
 	);
-	var uv = QDFN.quad_getxy(__.src , 0,1,2 , 0,2,3);
+	var uv = QDFN.quad_getxy(APP.src , 0,1,2 , 0,2,3);
 
 	QDFN.v3_attrib('a_xyz', xyz);
 	QDFN.v2_attrib('a_uv' , uv);
-	//console.log('xyz',xyz,'uv',uv,'texsize',__.texsize);
+	//console.log('xyz',xyz,'uv',uv,'texsize',APP.texsize);
 	return QDFN.draw(6);
 }
 
 function render(){
-	if ( __.is_click ){
+	if ( APP.is_click ){
 		get_dst_corner();
 		quad_draw();
-		__.is_click = false;
+		APP.is_click = false;
 	}
 	requestAnimationFrame(render);
 }
 
 QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
-	__.is_click = true;
-	__.texsize  = res;
-	__.src = QDFN.xywh2quad(res[0],res[1]);
+	APP.is_click = true;
+	APP.texsize  = res;
+	APP.src = QDFN.xywh2quad(res[0],res[1]);
 	requestAnimationFrame(render);
 });
 </script>

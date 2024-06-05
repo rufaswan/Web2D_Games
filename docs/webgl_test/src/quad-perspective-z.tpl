@@ -56,7 +56,7 @@ QDFN.set_shader_program(vert_src, frag_src);
 QDFN.set_shader_loc('a_xyz', 'a_uv', 'u_pxsize', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
-__.texsize = 0;
+APP.texsize = 0;
 
 function dst_perp( dst, src='' ){
 	if ( src === '' )
@@ -72,34 +72,34 @@ function dst_perp( dst, src='' ){
 
 function quad_draw(){
 	QDFN.canvas_resize();
-	QDFN.set_vec4_size('u_pxsize', __.texsize[0], __.texsize[1]);
-	var dst = dst_perp(__.dst);
+	QDFN.set_vec4_size('u_pxsize', APP.texsize[0], APP.texsize[1]);
+	var dst = dst_perp(APP.dst);
 
 	var xyz = [].concat(
 		dst[0] , dst[1] , dst[2] ,
 		dst[0] , dst[2] , dst[3] ,
 	);
-	var uv = QDFN.quad_getxy(__.src , 0,1,2 , 0,2,3);
+	var uv = QDFN.quad_getxy(APP.src , 0,1,2 , 0,2,3);
 
 	QDFN.v3_attrib('a_xyz', xyz);
 	QDFN.v2_attrib('a_uv' , uv);
-	//console.log('xyz',xyz,'uv',uv,'texsize',__.texsize);
+	//console.log('xyz',xyz,'uv',uv,'texsize',APP.texsize);
 	return QDFN.draw(6);
 }
 
 function render(){
-	if ( __.is_click ){
+	if ( APP.is_click ){
 		get_dst_corner();
 		quad_draw();
-		__.is_click = false;
+		APP.is_click = false;
 	}
 	requestAnimationFrame(render);
 }
 
 QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
-	__.is_click = true;
-	__.texsize  = res;
-	__.src = QDFN.xywh2quad(res[0],res[1]);
+	APP.is_click = true;
+	APP.texsize  = res;
+	APP.src = QDFN.xywh2quad(res[0],res[1]);
 	requestAnimationFrame(render);
 });
 </script>

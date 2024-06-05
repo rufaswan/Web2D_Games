@@ -75,45 +75,45 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 'use strict';
 
-var __ = {
-	HTML      : get_html_id(),
-	UPLOAD_ID : -1,
-	ON_KEY    : -1,
-	ON_LAYER  : [],
-	IS_REDRAW : true,
-	AUTOZOOM  : 1.0,
-	CAMERA    : QUAD.math.matrix4(),
-	COLOR     : [1,1,1,1],
+var APP = {
+	html      : get_html_id(),
+	upload_id : -1,
+	on_key    : -1,
+	on_layer  : [],
+	is_redraw : true,
+	autozoom  : 1.0,
+	camera    : QUAD.math.matrix4(),
+	color     : [1,1,1,1],
 };
 var QuadList = [];
 
 (function(){
-	if ( ! QUAD.gl.init(__.HTML.canvas) )
+	if ( ! QUAD.gl.init(APP.html.canvas) )
 		return;
 
 	document.title += ' - ' + QUAD.version;
-	__.HTML.quad_version.innerHTML = document.title;
+	APP.html.quad_version.innerHTML = document.title;
 
 	// BETWEEN DEBUGGER-VIEWER
-	__.HTML.btn_upload.addEventListener('click', function(){
-		__.UPLOAD_ID = this.getAttribute('data-id');
-		__.HTML.input_file.click();
+	APP.html.btn_upload.addEventListener('click', function(){
+		APP.upload_id = this.getAttribute('data-id');
+		APP.html.input_file.click();
 	});
-	__.HTML.input_file.addEventListener('change', function(){
-		QUAD.func.log('QuadList[]', __.UPLOAD_ID);
-		if ( QUAD.func.is_undef( QuadList[ __.UPLOAD_ID ] ) )
-			QuadList[ __.UPLOAD_ID ] = new QuadData(QuadList);
-		var qdata = QuadList[ __.UPLOAD_ID ];
+	APP.html.input_file.addEventListener('change', function(){
+		QUAD.func.log('QuadList[]', APP.upload_id);
+		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
+			QuadList[ APP.upload_id ] = new QuadData(QuadList);
+		var qdata = QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, __.HTML.debugger_files);
+			qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
-				__.HTML.keylist.innerHTML = '';
-				document.title = '[' + qdata.name + '] ' + __.HTML.quad_version.innerHTML;
+				APP.html.keylist.innerHTML = '';
+				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
 
 				if ( ! qdata.quad.keyframe )
 					return;
@@ -126,47 +126,47 @@ var QuadList = [];
 					var name = v.name + ' (' + v.debug + ')';
 					buffer += '<li><p onclick="keyframe_select(' + k + ');">' + name + '</p></li>';
 				});
-				__.HTML.keylist.innerHTML = buffer;
+				APP.html.keylist.innerHTML = buffer;
 			} // if ( qdata.name )
-			__.AUTOZOOM  = 1.0;
-			__.IS_REDRAW = true;
+			APP.autozoom  = 1.0;
+			APP.is_redraw = true;
 		});
 	});
 
 	// VIEWER
-	__.HTML.btn_zoomin.addEventListener('click', function(){
-		__.AUTOZOOM *= 1.1;
-		if ( __.AUTOZOOM > 10.0 )
-			__.AUTOZOOM = 10.0;
-		__.IS_REDRAW = true;
+	APP.html.btn_zoomin.addEventListener('click', function(){
+		APP.autozoom *= 1.1;
+		if ( APP.autozoom > 10.0 )
+			APP.autozoom = 10.0;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_zoomout.addEventListener('click', function(){
-		__.AUTOZOOM /= 1.1;
-		if ( __.AUTOZOOM < 0.1 )
-			__.AUTOZOOM = 0.1;
-		__.IS_REDRAW = true;
+	APP.html.btn_zoomout.addEventListener('click', function(){
+		APP.autozoom /= 1.1;
+		if ( APP.autozoom < 0.1 )
+			APP.autozoom = 0.1;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_lines.addEventListener('click', function(){
+	APP.html.btn_lines.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
 		var qdata = QuadList[0];
 		qdata.is_lines = ! qdata.is_lines;
-		__.HTML.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
-		__.IS_REDRAW = true;
+		APP.html.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_selectall.addEventListener('click', function(){
-		var dbg = __.HTML.debuglist.value;
+	APP.html.btn_selectall.addEventListener('click', function(){
+		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
 		button_select_layers(dbg);
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_selectnone.addEventListener('click', function(){
-		var dbg = __.HTML.debuglist.value;
+	APP.html.btn_selectnone.addEventListener('click', function(){
+		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
 		button_unselect_layers(dbg);
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
 
 	function render(){
@@ -176,12 +176,12 @@ var QuadList = [];
 		var qdata = QuadList[0];
 
 		// update/redraw only when changed
-		if ( __.IS_REDRAW || QUAD.gl.is_canvas_resized() ){
-			__.CAMERA = QUAD.func.viewer_camera(qdata, __.AUTOZOOM);
+		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
+			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
 
 			QUAD.func.qdata_clear(qdata);
-			keydebug_draw(qdata, __.CAMERA, __.COLOR);
-			__.IS_REDRAW = false;
+			keydebug_draw(qdata, APP.camera, APP.color);
+			APP.is_redraw = false;
 		}
 	}
 	render();

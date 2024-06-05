@@ -26,18 +26,18 @@ function qdata_filetable( qdata, files ){
 // TODO : remove all global var
 
 function keyframe_select( key_id ){
-	__.HTML.layerdata.style.display      = 'block';
-	__.HTML.btn_selectall.style.display  = 'block';
-	__.HTML.btn_selectnone.style.display = 'block';
-	__.HTML.layerlist.innerHTML  = '';
-	__.HTML.layer_name.innerHTML = '';
+	APP.html.layerdata.style.display      = 'block';
+	APP.html.btn_selectall.style.display  = 'block';
+	APP.html.btn_selectnone.style.display = 'block';
+	APP.html.layerlist.innerHTML  = '';
+	APP.html.layer_name.innerHTML = '';
 
 	var key = QuadList[0].quad.keyframe[key_id];
 	if ( ! key )
 		return;
-	__.HTML.layer_name.innerHTML = key.name;
-	__.ON_KEY   = key_id;
-	__.ON_LAYER = [];
+	APP.html.layer_name.innerHTML = key.name;
+	APP.on_key   = key_id;
+	APP.on_layer = [];
 	QuadList[0].attach.id = key_id;
 
 	var buffer  = '';
@@ -45,7 +45,7 @@ function keyframe_select( key_id ){
 	key.layer.forEach(function(v,k){
 		if ( ! v )
 			return;
-		__.ON_LAYER.push(k);
+		APP.on_layer.push(k);
 
 		var dbg = '#' + v.debug.replace(/[^a-zA-Z0-9,]/g, '_');
 		if ( dbglist.indexOf(dbg) < 0 )
@@ -54,7 +54,7 @@ function keyframe_select( key_id ){
 		var name = 'layer ' + k + ' (' + dbg + ')';
 		buffer += '<li class="layer_on" data-id="' + k + '" data-debug="' + dbg + '"><p onclick="layer_select(this);">' + name + '</p></li>';
 	});
-	__.HTML.layerlist.innerHTML = buffer;
+	APP.html.layerlist.innerHTML = buffer;
 
 	dbglist.sort();
 	dbglist.unshift(0);
@@ -65,63 +65,63 @@ function keyframe_select( key_id ){
 		else
 			buffer += '<option>' + v + '</option>';
 	});
-	__.HTML.debuglist.innerHTML = buffer;
+	APP.html.debuglist.innerHTML = buffer;
 
-	__.AUTOZOOM  = QUAD.func.viewer_autozoom(QuadList[0]);
-	__.IS_REDRAW = true;
+	APP.autozoom  = QUAD.func.viewer_autozoom(QuadList[0]);
+	APP.is_redraw = true;
 }
 
 function layer_select( elem ){
 	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
-	var idx = __.ON_LAYER.indexOf(layer_id);
+	var idx = APP.on_layer.indexOf(layer_id);
 	if ( idx === -1 )
-		__.ON_LAYER.push(layer_id);
+		APP.on_layer.push(layer_id);
 	else
-		__.ON_LAYER.splice(idx, 1);
+		APP.on_layer.splice(idx, 1);
 
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id  = list[i].getAttribute('data-id') | 0;
-		var idx = __.ON_LAYER.indexOf(id);
+		var idx = APP.on_layer.indexOf(id);
 		if ( idx === -1 )
 			list[i].classList.remove('layer_on');
 		else
 			list[i].classList.add('layer_on');
 	}
-	__.IS_REDRAW = true;
+	APP.is_redraw = true;
 }
 
 function layer_close(){
-	__.HTML.layerdata.style.display      = 'none';
-	__.HTML.btn_selectall.style.display  = 'none';
-	__.HTML.btn_selectnone.style.display = 'none';
+	APP.html.layerdata.style.display      = 'none';
+	APP.html.btn_selectall.style.display  = 'none';
+	APP.html.btn_selectnone.style.display = 'none';
 }
 
 function button_select_layers( text ){
-	__.ON_LAYER = [];
+	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id = list[i].getAttribute('data-id') | 0;
 		if ( ! text ){ // select all
 			list[i].classList.add('layer_on');
-			__.ON_LAYER.push(id);
+			APP.on_layer.push(id);
 		}
 		else { // select matched
 			var debug = list[i].getAttribute('data-debug');
 			if ( debug === text ){
 				list[i].classList.add('layer_on');
-				__.ON_LAYER.push(id);
+				APP.on_layer.push(id);
 			}
 			else { // unmatched are unchanged
 				if ( list[i].classList.contains('layer_on') )
-					__.ON_LAYER.push(id);
+					APP.on_layer.push(id);
 			}
 		}
 	} // for ( var i=0; i < list.length; i++ )
 }
 
 function button_unselect_layers( text ){
-	__.ON_LAYER = [];
+	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id = list[i].getAttribute('data-id') | 0;
@@ -135,14 +135,14 @@ function button_unselect_layers( text ){
 			}
 			else { // unmatched are unchanged
 				if ( list[i].classList.contains('layer_on') )
-					__.ON_LAYER.push(id);
+					APP.on_layer.push(id);
 			}
 		}
 	} // for ( var i=0; i < list.length; i++ )
 }
 
 function keydebug_draw( qdata, mat4, color ){
-	var key = qdata.quad.keyframe[__.ON_KEY];
+	var key = qdata.quad.keyframe[APP.on_key];
 	if ( ! key )
 		return;
 	if ( qdata.is_lines )
@@ -159,7 +159,7 @@ function keydebug_drawline( qdata, key, mat4, color ){
 	key.layer.forEach(function(lv,lk){
 		if ( ! lv )
 			return;
-		if ( __.ON_LAYER.indexOf(lk) < 0 )
+		if ( APP.on_layer.indexOf(lk) < 0 )
 			return;
 
 		dbg_id = debug.indexOf(lv.debug);
@@ -203,7 +203,7 @@ function keydebug_drawtex( qdata, key, mat4, color ){
 		var lv = key.layer[ov];
 		if ( ! lv )
 			return;
-		if ( __.ON_LAYER.indexOf(ov) < 0 )
+		if ( APP.on_layer.indexOf(ov) < 0 )
 			return;
 		depth -= zrate;
 

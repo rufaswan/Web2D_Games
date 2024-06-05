@@ -204,18 +204,18 @@ function qdata_filetable( qdata, files ){
 // TODO : remove all global var
 
 function keyframe_select( key_id ){
-	__.HTML.layerdata.style.display      = 'block';
-	__.HTML.btn_selectall.style.display  = 'block';
-	__.HTML.btn_selectnone.style.display = 'block';
-	__.HTML.layerlist.innerHTML  = '';
-	__.HTML.layer_name.innerHTML = '';
+	APP.html.layerdata.style.display      = 'block';
+	APP.html.btn_selectall.style.display  = 'block';
+	APP.html.btn_selectnone.style.display = 'block';
+	APP.html.layerlist.innerHTML  = '';
+	APP.html.layer_name.innerHTML = '';
 
 	var key = QuadList[0].quad.keyframe[key_id];
 	if ( ! key )
 		return;
-	__.HTML.layer_name.innerHTML = key.name;
-	__.ON_KEY   = key_id;
-	__.ON_LAYER = [];
+	APP.html.layer_name.innerHTML = key.name;
+	APP.on_key   = key_id;
+	APP.on_layer = [];
 	QuadList[0].attach.id = key_id;
 
 	var buffer  = '';
@@ -223,7 +223,7 @@ function keyframe_select( key_id ){
 	key.layer.forEach(function(v,k){
 		if ( ! v )
 			return;
-		__.ON_LAYER.push(k);
+		APP.on_layer.push(k);
 
 		var dbg = '#' + v.debug.replace(/[^a-zA-Z0-9,]/g, '_');
 		if ( dbglist.indexOf(dbg) < 0 )
@@ -232,7 +232,7 @@ function keyframe_select( key_id ){
 		var name = 'layer ' + k + ' (' + dbg + ')';
 		buffer += '<li class="layer_on" data-id="' + k + '" data-debug="' + dbg + '"><p onclick="layer_select(this);">' + name + '</p></li>';
 	});
-	__.HTML.layerlist.innerHTML = buffer;
+	APP.html.layerlist.innerHTML = buffer;
 
 	dbglist.sort();
 	dbglist.unshift(0);
@@ -243,63 +243,63 @@ function keyframe_select( key_id ){
 		else
 			buffer += '<option>' + v + '</option>';
 	});
-	__.HTML.debuglist.innerHTML = buffer;
+	APP.html.debuglist.innerHTML = buffer;
 
-	__.AUTOZOOM  = QUAD.func.viewer_autozoom(QuadList[0]);
-	__.IS_REDRAW = true;
+	APP.autozoom  = QUAD.func.viewer_autozoom(QuadList[0]);
+	APP.is_redraw = true;
 }
 
 function layer_select( elem ){
 	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
-	var idx = __.ON_LAYER.indexOf(layer_id);
+	var idx = APP.on_layer.indexOf(layer_id);
 	if ( idx === -1 )
-		__.ON_LAYER.push(layer_id);
+		APP.on_layer.push(layer_id);
 	else
-		__.ON_LAYER.splice(idx, 1);
+		APP.on_layer.splice(idx, 1);
 
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id  = list[i].getAttribute('data-id') | 0;
-		var idx = __.ON_LAYER.indexOf(id);
+		var idx = APP.on_layer.indexOf(id);
 		if ( idx === -1 )
 			list[i].classList.remove('layer_on');
 		else
 			list[i].classList.add('layer_on');
 	}
-	__.IS_REDRAW = true;
+	APP.is_redraw = true;
 }
 
 function layer_close(){
-	__.HTML.layerdata.style.display      = 'none';
-	__.HTML.btn_selectall.style.display  = 'none';
-	__.HTML.btn_selectnone.style.display = 'none';
+	APP.html.layerdata.style.display      = 'none';
+	APP.html.btn_selectall.style.display  = 'none';
+	APP.html.btn_selectnone.style.display = 'none';
 }
 
 function button_select_layers( text ){
-	__.ON_LAYER = [];
+	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id = list[i].getAttribute('data-id') | 0;
 		if ( ! text ){ // select all
 			list[i].classList.add('layer_on');
-			__.ON_LAYER.push(id);
+			APP.on_layer.push(id);
 		}
 		else { // select matched
 			var debug = list[i].getAttribute('data-debug');
 			if ( debug === text ){
 				list[i].classList.add('layer_on');
-				__.ON_LAYER.push(id);
+				APP.on_layer.push(id);
 			}
 			else { // unmatched are unchanged
 				if ( list[i].classList.contains('layer_on') )
-					__.ON_LAYER.push(id);
+					APP.on_layer.push(id);
 			}
 		}
 	} // for ( var i=0; i < list.length; i++ )
 }
 
 function button_unselect_layers( text ){
-	__.ON_LAYER = [];
+	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
 		var id = list[i].getAttribute('data-id') | 0;
@@ -313,14 +313,14 @@ function button_unselect_layers( text ){
 			}
 			else { // unmatched are unchanged
 				if ( list[i].classList.contains('layer_on') )
-					__.ON_LAYER.push(id);
+					APP.on_layer.push(id);
 			}
 		}
 	} // for ( var i=0; i < list.length; i++ )
 }
 
 function keydebug_draw( qdata, mat4, color ){
-	var key = qdata.quad.keyframe[__.ON_KEY];
+	var key = qdata.quad.keyframe[APP.on_key];
 	if ( ! key )
 		return;
 	if ( qdata.is_lines )
@@ -337,7 +337,7 @@ function keydebug_drawline( qdata, key, mat4, color ){
 	key.layer.forEach(function(lv,lk){
 		if ( ! lv )
 			return;
-		if ( __.ON_LAYER.indexOf(lk) < 0 )
+		if ( APP.on_layer.indexOf(lk) < 0 )
 			return;
 
 		dbg_id = debug.indexOf(lv.debug);
@@ -381,7 +381,7 @@ function keydebug_drawtex( qdata, key, mat4, color ){
 		var lv = key.layer[ov];
 		if ( ! lv )
 			return;
-		if ( __.ON_LAYER.indexOf(ov) < 0 )
+		if ( APP.on_layer.indexOf(ov) < 0 )
 			return;
 		depth -= zrate;
 
@@ -561,7 +561,7 @@ var QUAD = {};
 
 			highp  vec2  uv;
 			void main(void){
-				UV = v_uv * u_pxsize;
+				uv = v_uv * u_pxsize;
 				gl_FragColor = texture2D(u_tex, uv);
 			}
 		`;
@@ -1852,8 +1852,8 @@ var QUAD = {};
 		while ( vec.length < len )
 			vec.push(1);
 		while ( vec.length > len ){
-			var last = vec.pop() || 0.0;
-			var z = ( last == 0.0 ) ? 0.0 : 1.0 / last;
+			var last = vec.pop() || 1.0;
+			var z = ( last == 0 ) ? 0 : 1.0 / last;
 			for ( var i=0; i < vec.length; i++ )
 				vec[i] *= z;
 		} // while ( vec.length > len )
@@ -2081,35 +2081,37 @@ var QUAD = {};
 		var c24  = $.cross( [quad[2],quad[3],1] , [quad[6],quad[7],1] );
 		var bary = $.cross( c13 , c24 );
 
-		var z = ( bary[2] == 0.0 ) ? 0.0 : 1.0 / bary[2];
+		if ( bary[2] == 0 )
+			return 0;
+		var z = 1.0 / bary[2];
 		return [ bary[0]*2 , bary[1]*z ];
 	}
 
-	$.is_point_in_quad = function( quad, point ){
-		function tri_area( x1,y1 , x2,y2 , x3,y3 ){
-			var t = [
-				x1 * (y2 - y3),
-				x2 * (y3 - y1),
-				x3 * (y1 - y2),
-			];
-			return Math.abs(0.5 * (t[0] + t[1] + t[2]));
-		}
+	$.is_convex_quad = function( quad, bary=0 ){
+		if ( ! bary )
+			bary = $.barycentric_quad(quad);
+		if ( ! bary )
+			return false;
 
-		var t = [
-			tri_area(quad[0],quad[1] , quad[2],quad[3] , quad[4],quad[5]),
-			tri_area(quad[0],quad[1] , quad[4],quad[5] , quad[6],quad[7]),
+		// barycentric is a point on the line from corner to corner
+		var corner = [
+			[0,1 , 4,5], // test line 1-3
+			[2,3 , 6,7], // test line 2-4
 		];
-		var quad_area = t[0] + t[1];
+		var x, y;
+		for ( var i=0; i < 2; i++ ){
+			var c = corner[i];
+			var x1 = Math.min(quad[ c[0] ] , quad[ c[2] ]);
+			var y1 = Math.min(quad[ c[1] ] , quad[ c[3] ]);
+			var x2 = Math.max(quad[ c[0] ] , quad[ c[2] ]);
+			var y2 = Math.max(quad[ c[1] ] , quad[ c[3] ]);
 
-		var t = [
-			tri_area(point[0],point[1] , quad[0],quad[1] , quad[2],quad[3]),
-			tri_area(point[0],point[1] , quad[2],quad[3] , quad[4],quad[5]),
-			tri_area(point[0],point[1] , quad[4],quad[5] , quad[6],quad[7]),
-			tri_area(point[0],point[1] , quad[6],quad[7] , quad[0],quad[1]),
-		];
-		var point_area = t[0] + t[1] + t[2] + t[3];
+			if ( bary[0] < x1 || bary[0] > x2 )  continue;
+			if ( bary[1] < y1 || bary[1] > y2 )  continue;
+			return true;
+		} // for ( var i=0; i < 2; i++ )
 
-		return ( point_area <= quad_area );
+		return false;
 	}
 
 	$.perspective_mat3 = function( quad ){
@@ -3017,7 +3019,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-6-2 (beta)';
+	$.version = 'ver 2024-6-4 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3107,45 +3109,45 @@ function QuadData(qlist){
 <script>
 'use strict';
 
-var __ = {
-	HTML      : get_html_id(),
-	UPLOAD_ID : -1,
-	ON_KEY    : -1,
-	ON_LAYER  : [],
-	IS_REDRAW : true,
-	AUTOZOOM  : 1.0,
-	CAMERA    : QUAD.math.matrix4(),
-	COLOR     : [1,1,1,1],
+var APP = {
+	html      : get_html_id(),
+	upload_id : -1,
+	on_key    : -1,
+	on_layer  : [],
+	is_redraw : true,
+	autozoom  : 1.0,
+	camera    : QUAD.math.matrix4(),
+	color     : [1,1,1,1],
 };
 var QuadList = [];
 
 (function(){
-	if ( ! QUAD.gl.init(__.HTML.canvas) )
+	if ( ! QUAD.gl.init(APP.html.canvas) )
 		return;
 
 	document.title += ' - ' + QUAD.version;
-	__.HTML.quad_version.innerHTML = document.title;
+	APP.html.quad_version.innerHTML = document.title;
 
 	// BETWEEN DEBUGGER-VIEWER
-	__.HTML.btn_upload.addEventListener('click', function(){
-		__.UPLOAD_ID = this.getAttribute('data-id');
-		__.HTML.input_file.click();
+	APP.html.btn_upload.addEventListener('click', function(){
+		APP.upload_id = this.getAttribute('data-id');
+		APP.html.input_file.click();
 	});
-	__.HTML.input_file.addEventListener('change', function(){
-		QUAD.func.log('QuadList[]', __.UPLOAD_ID);
-		if ( QUAD.func.is_undef( QuadList[ __.UPLOAD_ID ] ) )
-			QuadList[ __.UPLOAD_ID ] = new QuadData(QuadList);
-		var qdata = QuadList[ __.UPLOAD_ID ];
+	APP.html.input_file.addEventListener('change', function(){
+		QUAD.func.log('QuadList[]', APP.upload_id);
+		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
+			QuadList[ APP.upload_id ] = new QuadData(QuadList);
+		var qdata = QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, __.HTML.debugger_files);
+			qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
-				__.HTML.keylist.innerHTML = '';
-				document.title = '[' + qdata.name + '] ' + __.HTML.quad_version.innerHTML;
+				APP.html.keylist.innerHTML = '';
+				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
 
 				if ( ! qdata.quad.keyframe )
 					return;
@@ -3158,47 +3160,47 @@ var QuadList = [];
 					var name = v.name + ' (' + v.debug + ')';
 					buffer += '<li><p onclick="keyframe_select(' + k + ');">' + name + '</p></li>';
 				});
-				__.HTML.keylist.innerHTML = buffer;
+				APP.html.keylist.innerHTML = buffer;
 			} // if ( qdata.name )
-			__.AUTOZOOM  = 1.0;
-			__.IS_REDRAW = true;
+			APP.autozoom  = 1.0;
+			APP.is_redraw = true;
 		});
 	});
 
 	// VIEWER
-	__.HTML.btn_zoomin.addEventListener('click', function(){
-		__.AUTOZOOM *= 1.1;
-		if ( __.AUTOZOOM > 10.0 )
-			__.AUTOZOOM = 10.0;
-		__.IS_REDRAW = true;
+	APP.html.btn_zoomin.addEventListener('click', function(){
+		APP.autozoom *= 1.1;
+		if ( APP.autozoom > 10.0 )
+			APP.autozoom = 10.0;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_zoomout.addEventListener('click', function(){
-		__.AUTOZOOM /= 1.1;
-		if ( __.AUTOZOOM < 0.1 )
-			__.AUTOZOOM = 0.1;
-		__.IS_REDRAW = true;
+	APP.html.btn_zoomout.addEventListener('click', function(){
+		APP.autozoom /= 1.1;
+		if ( APP.autozoom < 0.1 )
+			APP.autozoom = 0.1;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_lines.addEventListener('click', function(){
+	APP.html.btn_lines.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
 		var qdata = QuadList[0];
 		qdata.is_lines = ! qdata.is_lines;
-		__.HTML.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
-		__.IS_REDRAW = true;
+		APP.html.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_selectall.addEventListener('click', function(){
-		var dbg = __.HTML.debuglist.value;
+	APP.html.btn_selectall.addEventListener('click', function(){
+		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
 		button_select_layers(dbg);
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_selectnone.addEventListener('click', function(){
-		var dbg = __.HTML.debuglist.value;
+	APP.html.btn_selectnone.addEventListener('click', function(){
+		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
 		button_unselect_layers(dbg);
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
 
 	function render(){
@@ -3208,12 +3210,12 @@ var QuadList = [];
 		var qdata = QuadList[0];
 
 		// update/redraw only when changed
-		if ( __.IS_REDRAW || QUAD.gl.is_canvas_resized() ){
-			__.CAMERA = QUAD.func.viewer_camera(qdata, __.AUTOZOOM);
+		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
+			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
 
 			QUAD.func.qdata_clear(qdata);
-			keydebug_draw(qdata, __.CAMERA, __.COLOR);
-			__.IS_REDRAW = false;
+			keydebug_draw(qdata, APP.camera, APP.color);
+			APP.is_redraw = false;
 		}
 	}
 	render();

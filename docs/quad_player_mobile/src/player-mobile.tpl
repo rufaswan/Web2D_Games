@@ -108,61 +108,61 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 'use strict';
 
-var __ = {
-	HTML          : get_html_id(),
-	SELECTED      : '',
-	UPLOAD_ID     : -1,
-	AUTOZOOM      : -1,
-	IS_BTN_CLICK  : 0,
-	IS_AUTONEXT   : false,
-	IS_REDRAW     : true,
-	IS_VIEWER_NAV : true,
-	FPS_DRAW      : 0,
-	CAMERA        : QUAD.math.matrix4(),
-	COLOR         : [1,1,1,1],
+var APP = {
+	html          : get_html_id(),
+	selected      : '',
+	upload_id     : -1,
+	autozoom      : -1,
+	is_btn_click  : 0,
+	is_autonext   : false,
+	is_redraw     : true,
+	is_viewer_nav : true,
+	fps_draw      : 0,
+	camera        : QUAD.math.matrix4(),
+	color         : [1,1,1,1],
 };
 var QuadList = [];
 
 (function(){
-	if ( ! QUAD.gl.init(__.HTML.canvas) )
+	if ( ! QUAD.gl.init(APP.html.canvas) )
 		return;
 
 	document.title += ' - ' + QUAD.version;
-	__.HTML.quad_version.innerHTML = document.title;
+	APP.html.quad_version.innerHTML = document.title;
 
 	// BETWEEN DEBUGGER-VIEWER
-	__.HTML.btn_view.addEventListener('click', function(){
-		display_viewer(__.HTML, true);
-		__.IS_REDRAW = true;
+	APP.html.btn_view.addEventListener('click', function(){
+		display_viewer(APP.html, true);
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_debug.addEventListener('click', function(){
-		display_viewer(__.HTML, false);
-		__.HTML.logger.innerHTML = QUAD.func.console();
+	APP.html.btn_debug.addEventListener('click', function(){
+		display_viewer(APP.html, false);
+		APP.html.logger.innerHTML = QUAD.func.console();
 	});
 
-	__.HTML.btn_upload.addEventListener('click', function(){
-		__.UPLOAD_ID = this.getAttribute('data-id');
-		__.HTML.input_file.click();
-		__.HTML.logger.innerHTML = QUAD.func.console();
+	APP.html.btn_upload.addEventListener('click', function(){
+		APP.upload_id = this.getAttribute('data-id');
+		APP.html.input_file.click();
+		APP.html.logger.innerHTML = QUAD.func.console();
 	});
-	__.HTML.input_file.addEventListener('change', function(){
-		QUAD.func.log('QuadList[]', __.UPLOAD_ID);
-		if ( QUAD.func.is_undef( QuadList[ __.UPLOAD_ID ] ) )
-			QuadList[ __.UPLOAD_ID ] = new QuadData(QuadList);
-		var qdata = QuadList[ __.UPLOAD_ID ];
+	APP.html.input_file.addEventListener('change', function(){
+		QUAD.func.log('QuadList[]', APP.upload_id);
+		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
+			QuadList[ APP.upload_id ] = new QuadData(QuadList);
+		var qdata = QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, __.HTML.debugger_files);
+			qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
-				__.HTML.quad_data.innerHTML = '';
-				document.title = '[' + qdata.name + '] ' + __.HTML.quad_version.innerHTML;
+				APP.html.quad_data.innerHTML = '';
+				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
 
 				var buffer = qdata_tagtable(qdata.quad.tag);
-				__.HTML.quad_data.innerHTML += buffer;
+				APP.html.quad_data.innerHTML += buffer;
 
 				var quad_main = quad_mainlist(qdata.quad);
 				if ( quad_main === -1 )
@@ -176,141 +176,141 @@ var QuadList = [];
 					buffer += qdata_listing(qdata, quad_main, k);
 				});
 				buffer += '</ul>';
-				__.HTML.quad_data.innerHTML += buffer;
+				APP.html.quad_data.innerHTML += buffer;
 
 				viewer_btn_menu(qdata);
 			} // if ( qdata.name )
-			__.HTML.logger.innerHTML = QUAD.func.console();
+			APP.html.logger.innerHTML = QUAD.func.console();
 		});
 	});
-	__.HTML.export_range.addEventListener('change', function(){
-		__.HTML.export_start.innerHTML = this.value;
+	APP.html.export_range.addEventListener('change', function(){
+		APP.html.export_start.innerHTML = this.value;
 	});
-	__.HTML.export_times.addEventListener('change', function(){
-		__.HTML.export_zoom.innerHTML = this.value;
+	APP.html.export_times.addEventListener('change', function(){
+		APP.html.export_zoom.innerHTML = this.value;
 	});
 
 	// VIEWER
-	__.HTML.canvas.addEventListener('click', function(){
-		if ( __.IS_VIEWER_NAV ) {
-			__.HTML.viewer_top_nav.style.display    = 'none';
-			__.HTML.viewer_bottom_nav.style.display = 'none';
+	APP.html.canvas.addEventListener('click', function(){
+		if ( APP.is_viewer_nav ) {
+			APP.html.viewer_top_nav.style.display    = 'none';
+			APP.html.viewer_bottom_nav.style.display = 'none';
 		} else {
-			__.HTML.viewer_top_nav.style.display    = 'flex';
-			__.HTML.viewer_bottom_nav.style.display = 'flex';
+			APP.html.viewer_top_nav.style.display    = 'flex';
+			APP.html.viewer_bottom_nav.style.display = 'flex';
 		}
-		__.IS_VIEWER_NAV = ! __.IS_VIEWER_NAV;
+		APP.is_viewer_nav = ! APP.is_viewer_nav;
 	});
-	__.HTML.btn_lines.addEventListener('click', function(){
+	APP.html.btn_lines.addEventListener('click', function(){
 		if ( ! QuadList[0] )
 			return;
 		QuadList[0].is_lines = ! QuadList[0].is_lines;
-		__.HTML.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
-		__.IS_REDRAW = true;
+		APP.html.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_hitattr.addEventListener('click', function(){
+	APP.html.btn_hitattr.addEventListener('click', function(){
 		qdata_toggle(QuadList[0], this, 'is_hits');
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_colorize.addEventListener('click', function(){
-		__.HTML.colorize_menu.style.display = 'block';
-		__.IS_REDRAW = true;
+	APP.html.btn_colorize.addEventListener('click', function(){
+		APP.html.colorize_menu.style.display = 'block';
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_keyattr.addEventListener('click', function(){
-		__.HTML.keyattr_menu.style.display = 'block';
-		__.IS_REDRAW = true;
+	APP.html.btn_keyattr.addEventListener('click', function(){
+		APP.html.keyattr_menu.style.display = 'block';
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_flipx.addEventListener('click', function(){
+	APP.html.btn_flipx.addEventListener('click', function(){
 		qdata_toggle(QuadList[0], this, 'is_flipx');
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_flipy.addEventListener('click', function(){
+	APP.html.btn_flipy.addEventListener('click', function(){
 		qdata_toggle(QuadList[0], this, 'is_flipy');
-		__.IS_REDRAW = true;
+		APP.is_redraw = true;
 	});
-	__.HTML.btn_autozoom.addEventListener('click', function(){
+	APP.html.btn_autozoom.addEventListener('click', function(){
 		if ( this.classList.contains('btn_on') ){
 			button_toggle(this, -1);
-			__.AUTOZOOM = 1;
+			APP.autozoom = 1;
 		} else {
 			button_toggle(this, 1);
-			__.AUTOZOOM = -1;
+			APP.autozoom = -1;
 		}
 		if ( QuadList[0] )
-			QuadList[0].zoom = __.AUTOZOOM;
-		__.IS_REDRAW = true;
+			QuadList[0].zoom = APP.autozoom;
+		APP.is_redraw = true;
 	});
 
-	__.HTML.btn_prev.addEventListener('click', function(){
-		if ( __.IS_AUTONEXT ){
-			button_toggle(__.HTML.btn_next, -1);
-			if ( __.HTML.btn_prev.classList.contains('btn_on') ){
-				button_toggle(__.HTML.btn_prev, -1);
-				__.IS_BTN_CLICK = 0;
+	APP.html.btn_prev.addEventListener('click', function(){
+		if ( APP.is_autonext ){
+			button_toggle(APP.html.btn_next, -1);
+			if ( APP.html.btn_prev.classList.contains('btn_on') ){
+				button_toggle(APP.html.btn_prev, -1);
+				APP.is_btn_click = 0;
 			} else {
-				button_toggle(__.HTML.btn_prev, 1);
-				__.IS_BTN_CLICK = -1;
+				button_toggle(APP.html.btn_prev, 1);
+				APP.is_btn_click = -1;
 			}
 		} else
-			__.IS_BTN_CLICK = -1;
+			APP.is_btn_click = -1;
 	});
-	__.HTML.btn_next.addEventListener('click', function(){
-		if ( __.IS_AUTONEXT ){
-			button_toggle(__.HTML.btn_prev, -1);
-			if ( __.HTML.btn_next.classList.contains('btn_on') ){
-				button_toggle(__.HTML.btn_next, -1);
-				__.IS_BTN_CLICK = 0;
+	APP.html.btn_next.addEventListener('click', function(){
+		if ( APP.is_autonext ){
+			button_toggle(APP.html.btn_prev, -1);
+			if ( APP.html.btn_next.classList.contains('btn_on') ){
+				button_toggle(APP.html.btn_next, -1);
+				APP.is_btn_click = 0;
 			} else {
-				button_toggle(__.HTML.btn_next, 1);
-				__.IS_BTN_CLICK = 1;
+				button_toggle(APP.html.btn_next, 1);
+				APP.is_btn_click = 1;
 			}
 		} else
-			__.IS_BTN_CLICK = 1;
+			APP.is_btn_click = 1;
 	});
-	__.HTML.btn_autonext.addEventListener('click', function(){
-		if ( __.IS_AUTONEXT ){
-			button_toggle(__.HTML.btn_prev, 0);
-			button_toggle(__.HTML.btn_next, 0);
-			__.IS_AUTONEXT = false;
+	APP.html.btn_autonext.addEventListener('click', function(){
+		if ( APP.is_autonext ){
+			button_toggle(APP.html.btn_prev, 0);
+			button_toggle(APP.html.btn_next, 0);
+			APP.is_autonext = false;
 		} else {
-			button_toggle(__.HTML.btn_prev, -1);
-			button_toggle(__.HTML.btn_next, -1);
-			__.IS_AUTONEXT = true;
+			button_toggle(APP.html.btn_prev, -1);
+			button_toggle(APP.html.btn_next, -1);
+			APP.is_autonext = true;
 		}
 	});
 
 	function render(){
 		requestAnimationFrame(render);
-		if ( __.HTML.viewer.style.display !== 'block' )
+		if ( APP.html.viewer.style.display !== 'block' )
 			return;
 		if ( ! QuadList[0] || ! QuadList[0].name )
 			return;
 		var qdata = QuadList[0];
 
 		// auto forward by 60/8 fps = 7.5 fps
-		if ( (__.FPS_DRAW & 7) === 0 ){
-			button_prev_next(qdata, __.IS_BTN_CLICK);
-			if ( __.IS_BTN_CLICK !== 0 )
-				__.IS_REDRAW = true;
-			if ( ! __.IS_AUTONEXT )
-				__.IS_BTN_CLICK = 0;
+		if ( (APP.fps_draw & 7) === 0 ){
+			button_prev_next(qdata, APP.is_btn_click);
+			if ( APP.is_btn_click !== 0 )
+				APP.is_redraw = true;
+			if ( ! APP.is_autonext )
+				APP.is_btn_click = 0;
 		}
 
 		// update/redraw only when changed
-		if ( __.IS_REDRAW || QUAD.gl.is_canvas_resized() ){
-			__.CAMERA = QUAD.func.viewer_camera(qdata, __.AUTOZOOM);
-			__.HTML.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
-			__.HTML.logger.innerHTML  = QUAD.func.console();
+		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
+			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
+			APP.html.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
+			APP.html.logger.innerHTML  = QUAD.func.console();
 
 			QUAD.func.qdata_clear(qdata);
-			QUAD.func.qdata_draw(qdata, __.CAMERA, __.COLOR);
+			QUAD.func.qdata_draw(qdata, APP.camera, APP.color);
 			if ( ! qdata.is_draw ){
-				__.HTML.btn_cur.innerHTML = 'END';
+				APP.html.btn_cur.innerHTML = 'END';
 			}
-			__.IS_REDRAW = false;
+			APP.is_redraw = false;
 		}
 
-		__.FPS_DRAW = (__.FPS_DRAW + 1) & 0xff;
+		APP.fps_draw = (APP.fps_draw + 1) & 0xff;
 	}
 	render();
 })();
