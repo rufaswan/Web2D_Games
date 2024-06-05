@@ -28,6 +28,8 @@ require 'common-quad.inc';
 function perspective_quad( &$srcquad, &$dstquad )
 {
 	echo "== perspective_quad() ==\n";
+
+	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
 	// M * SRC = DST
 	//       M = DST * SRC_INV
 	//     SRC = M_INV * DST

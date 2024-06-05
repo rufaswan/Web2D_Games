@@ -8,7 +8,7 @@
 @@<qdfn.js>@@
 
 </head><body>
-@@<mona_lisa.png>@@
+@@<mona_lisa.0.png>@@
 
 @@<quad-inc.inc>@@
 @@<quad-inc.js>@@
@@ -21,20 +21,20 @@ var vert_src = `
 	varying    highp  vec2   v_uv;
 	varying    highp  float  v_z;
 
-	highp  vec3   v3;
-	highp  vec2   v2;
+	highp  vec3   xyz;
+	highp  vec2   uv;
 	highp  float  z;
 	void main(void){
-		z  = 1.0 / a_xyz.z;
-		v3 = a_xyz * z;
-		v2 = a_uv  * z;
+		z = 1.0 / a_xyz.z;
+		xyz = a_xyz * z;
+		uv  = a_uv  * z;
 
-		v3.xy *= u_pxsize.xy;
-		v2.xy *= u_pxsize.zw;
+		xyz.xy *= u_pxsize.xy;
+		 uv.xy *= u_pxsize.zw;
 
 		v_z  = z;
-		v_uv = v2;
-		gl_Position = vec4(v3, 1.0);
+		v_uv = uv;
+		gl_Position = vec4(xyz.x, xyz.y, 1.0, 1.0);
 	}
 `;
 
@@ -43,12 +43,12 @@ var frag_src = `
 	varying  highp  vec2   v_uv;
 	varying  highp  float  v_z;
 
+	highp  vec2   uv;
 	highp  float  z;
 	void main(void){
-		if ( v_z == 0.0 )
-			discard;
-		z = 1.0 / v_z;
-		gl_FragColor = texture2D(u_tex, v_uv * z);
+		z  = 1.0 / v_z;
+		uv = v_uv * z;
+		gl_FragColor = texture2D(u_tex, uv);
 	}
 `;
 
@@ -56,12 +56,9 @@ QDFN.set_shader_program(vert_src, frag_src);
 QDFN.set_shader_loc('a_xyz', 'a_uv', 'u_pxsize', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
-var TEX_SIZE = [360,640];
+__.texsize = 0;
 
-SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
-
-function dst_perp( dst, src='' )
-{
+function dst_perp( dst, src='' ){
 	if ( src === '' )
 		src = [10,10 , 20,10 , 20,20 , 10,20];
 	var mat3 = get_perspective_mat3(src, dst, false);
@@ -69,40 +66,40 @@ function dst_perp( dst, src='' )
 	var v1 = matrix_multi31(mat3, [ src[2],src[3],1 ]);
 	var v2 = matrix_multi31(mat3, [ src[4],src[5],1 ]);
 	var v3 = matrix_multi31(mat3, [ src[6],src[7],1 ]);
-	console.log(dst, [v0,v1,v2,v3]);
+	//console.log('dst',dst, 'src',src, 'mat3',mat3, 'res',[v0,v1,v2,v3]);
 	return [v0,v1,v2,v3];
 }
 
 function quad_draw(){
 	QDFN.canvas_resize();
-	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
-	var dst = dst_perp(DST);
+	QDFN.set_vec4_size('u_pxsize', __.texsize[0], __.texsize[1]);
+	var dst = dst_perp(__.dst);
 
-	var xyz = [
-		dst[0][0],dst[0][1],dst[0][2] , dst[1][0],dst[1][1],dst[1][2] , dst[2][0],dst[2][1],dst[2][2] ,
-		dst[0][0],dst[0][1],dst[0][2] , dst[2][0],dst[2][1],dst[2][2] , dst[3][0],dst[3][1],dst[3][2] ,
-	];
-	var uv = [
-		SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-		SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-	];
+	var xyz = [].concat(
+		dst[0] , dst[1] , dst[2] ,
+		dst[0] , dst[2] , dst[3] ,
+	);
+	var uv = QDFN.quad_getxy(__.src , 0,1,2 , 0,2,3);
 
 	QDFN.v3_attrib('a_xyz', xyz);
 	QDFN.v2_attrib('a_uv' , uv);
+	//console.log('xyz',xyz,'uv',uv,'texsize',__.texsize);
 	return QDFN.draw(6);
 }
 
 function render(){
-	if ( IS_CLICK ){
+	if ( __.is_click ){
 		get_dst_corner();
 		quad_draw();
-		IS_CLICK = false;
+		__.is_click = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
-	IS_CLICK = true;
+QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
+	__.is_click = true;
+	__.texsize  = res;
+	__.src = QDFN.xywh2quad(res[0],res[1]);
 	requestAnimationFrame(render);
 });
 </script>

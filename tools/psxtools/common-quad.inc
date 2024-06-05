@@ -78,13 +78,12 @@ function cross_product_2d()
 	} // switch ( count($args) )
 
 	list($x,$y,$z) = $crx;
-	if ( $z == 0 )
-		return -1;
+	$z_inv = ( $z == 0.0 ) ? 0.0 : 1.0 / $z;
 
 	// convert x,y,z (3d) to x,y (2d)
-	$x /= $z;
-	$y /= $z;
-	//$z /= $z; // $z == 1
+	$x *= $z_inv;
+	$y *= $z_inv;
+	//$z *= $z_inv; // $z == 1
 	return array($x, $y);
 }
 

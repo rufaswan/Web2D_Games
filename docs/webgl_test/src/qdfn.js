@@ -11,7 +11,7 @@ function QuadFunc(){
 	$.set_webgl_by_id = function( id ){
 		var opt = {
 			alpha                 : true,
-			antialias             : true,
+			antialias             : false,
 			preserveDrawingBuffer : false,
 			depth                 : false,
 			stencil               : false,
@@ -119,16 +119,19 @@ function QuadFunc(){
 	}
 
 	$.bind_tex2D_id = function( bind, id ){
-		var p1 = Promise.resolve().then(function(){
+		var p = new Promise(function(ok,err){
+			// src=dataurl doesnt trigger img.onload event
+			// works only after reload
 			var img = document.getElementById(id);
-			// img.onload wont fired when img.src is data-url
+			ok([bind,img]);
+		}).then(function(res){
 			var tex = $.create_texture();
-			$.texImage2D(img);
-			__.GL.activeTexture( __.GL.TEXTURE0 + bind );
+			$.texImage2D(res[1]);
+			__.GL.activeTexture( __.GL.TEXTURE0 + res[0] );
 			__.GL.bindTexture  ( __.GL.TEXTURE_2D, tex );
-			return id;
+			return [res[1].width , res[1].height];
 		});
-		return p1;
+		return p;
 	}
 
 	$.set_tex_count = function( loc, cnt ){
@@ -186,6 +189,43 @@ function QuadFunc(){
 
 	$.get_bounding_rect = function(){
 		return __.GL.canvas.getBoundingClientRect();
+	}
+
+	$.xywh2quad = function( w, h, x=0, y=0 ){
+		return [
+			x   , y   ,
+			x+w , y   ,
+			x+w , y+h ,
+			x   , y+h ,
+		];
+	}
+
+	$.quad_getxy = function(){
+		if ( arguments.length < 2 )
+			return [];
+		var quad = arguments[0];
+		var res  = [];
+		for ( var i=1; i < arguments.length; i++ ){
+			var id = arguments[i] << 1;
+			res.push(quad[id+0] , quad[id+1]);
+		}
+		//console.log('arg',arguments,'res',res);
+		return res;
+	}
+
+	$.quad_tri4 = function( cen, quad ){
+		var vec = [
+			[ quad[0] , quad[1] ] ,
+			[ quad[2] , quad[3] ] ,
+			[ quad[4] , quad[5] ] ,
+			[ quad[6] , quad[7] ] ,
+		];
+		return [].concat(
+			cen , vec[0] , vec[1] ,
+			cen , vec[1] , vec[2] ,
+			cen , vec[2] , vec[3] ,
+			cen , vec[3] , vec[0] ,
+		);
 	}
 };
 var QDFN = new QuadFunc;

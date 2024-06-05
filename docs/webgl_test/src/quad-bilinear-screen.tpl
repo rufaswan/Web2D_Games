@@ -8,7 +8,7 @@
 @@<qdfn.js>@@
 
 </head><body>
-@@<mona_lisa.png>@@
+@@<mona_lisa.0.png>@@
 
 @@<quad-inc.inc>@@
 @@<quad-inc.js>@@
@@ -19,12 +19,12 @@ var vert_src = `
 	uniform    highp  vec4  u_pxsize;
 	varying    highp  vec2  v_xy;
 
+	highp  vec2  xy;
 	void main(void){
+		xy = a_xy.xy * u_pxsize.xy;
+
 		v_xy = a_xy;
-		gl_Position = vec4(
-			a_xy.x * u_pxsize.x ,
-			a_xy.y * u_pxsize.y ,
-			1.0 , 1.0);
+		gl_Position = vec4(xy.x , xy.y , 1.0 , 1.0);
 	}
 `;
 
@@ -80,14 +80,13 @@ QDFN.set_shader_program(vert_src, frag_src);
 QDFN.set_shader_loc('a_xy', 'u_pxsize', 'u_mat4', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
-var TEX_SIZE = [360,640];
+__.texsize = 0;
 
-SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
 function quad_draw(){
 	QDFN.canvas_resize();
-	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
+	QDFN.set_vec4_size('u_pxsize', __.texsize[0], __.texsize[1]);
 
-	var mat4 = bilinearwarp(DST, TEX_SIZE[0], TEX_SIZE[1]);
+	var mat4 = bilinearwarp(__.dst, __.texsize[0], __.texsize[1]);
 	QDFN.set_mat4fv('u_mat4', mat4);
 
 	var half = QDFN.get_drawing_half();
@@ -103,16 +102,18 @@ function quad_draw(){
 }
 
 function render(){
-	if ( IS_CLICK ){
+	if ( __.is_click ){
 		get_dst_corner();
 		quad_draw();
-		IS_CLICK = false;
+		__.is_click = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
-	IS_CLICK = true;
+QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
+	__.is_click = true;
+	__.texsize  = res;
+	__.src = QDFN.xywh2quad(res[0],res[1]);
 	requestAnimationFrame(render);
 });
 

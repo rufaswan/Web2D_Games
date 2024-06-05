@@ -18,116 +18,115 @@ function cross(){
 	return -1;
 }
 //////////////////////////////
-function matrix_inv3( M ){
-	function matrix_det2( M ){
-		return (M[0]*M[3] - M[1]*M[2]);
+function matrix_inv3( m ){
+	function matrix_det2( m ){
+		return (m[0]*m[3] - m[1]*m[2]);
 	}
 
-	var Mdet = [
-		matrix_det2( [ M[4],M[5] , M[7],M[8] ] ) ,
-		matrix_det2( [ M[3],M[5] , M[6],M[8] ] ) ,
-		matrix_det2( [ M[3],M[4] , M[6],M[7] ] ) ,
+	var mdet = [
+		matrix_det2( [ m[4],m[5] , m[7],m[8] ] ) ,
+		matrix_det2( [ m[3],m[5] , m[6],m[8] ] ) ,
+		matrix_det2( [ m[3],m[4] , m[6],m[7] ] ) ,
 
-		matrix_det2( [ M[1],M[2] , M[7],M[8] ] ) ,
-		matrix_det2( [ M[0],M[2] , M[6],M[8] ] ) ,
-		matrix_det2( [ M[0],M[1] , M[6],M[7] ] ) ,
+		matrix_det2( [ m[1],m[2] , m[7],m[8] ] ) ,
+		matrix_det2( [ m[0],m[2] , m[6],m[8] ] ) ,
+		matrix_det2( [ m[0],m[1] , m[6],m[7] ] ) ,
 
-		matrix_det2( [ M[1],M[2] , M[4],M[5] ] ) ,
-		matrix_det2( [ M[0],M[2] , M[3],M[5] ] ) ,
-		matrix_det2( [ M[0],M[1] , M[3],M[4] ] ) ,
+		matrix_det2( [ m[1],m[2] , m[4],m[5] ] ) ,
+		matrix_det2( [ m[0],m[2] , m[3],m[5] ] ) ,
+		matrix_det2( [ m[0],m[1] , m[3],m[4] ] ) ,
 	];
 
-	var Mco = [
-		 Mdet[0] , -Mdet[3] ,  Mdet[6] ,
-		-Mdet[1] ,  Mdet[4] , -Mdet[7] ,
-		 Mdet[2] , -Mdet[5] ,  Mdet[8] ,
+	var mco = [
+		 mdet[0] , -mdet[3] ,  mdet[6] ,
+		-mdet[1] ,  mdet[4] , -mdet[7] ,
+		 mdet[2] , -mdet[5] ,  mdet[8] ,
 	];
 
-	var d = M[0]*Mco[0] + M[1]*Mco[3] + M[2]*Mco[6];
-	var dinv = 1 / d;
+	var d = m[0]*mco[0] + m[1]*mco[3] + m[2]*mco[6];
+	var dinv = 1.0 / d;
 
 	for ( var i=0; i < 9; i++ )
-		Mco[i] *= dinv;
-	return Mco;
+		mco[i] *= dinv;
+	return mco;
 }
 
-function matrix_multi13( V, M ){
+function matrix_multi13( v, m ){
 	//            | a b c |
 	// | 0 1 2 |  | d e f | = | 0a+1d+2g  0b+1e+2h  0c+1f+2i |
 	//            | g h i |
-	var VM = [
-		V[0]*M[0] + V[1]*M[3] + V[2]*M[6] ,
-		V[0]*M[1] + V[1]*M[4] + V[2]*M[7] ,
-		V[0]*M[2] + V[1]*M[5] + V[2]*M[8] ,
+	var vm = [
+		v[0]*m[0] + v[1]*m[3] + v[2]*m[6] ,
+		v[0]*m[1] + v[1]*m[4] + v[2]*m[7] ,
+		v[0]*m[2] + v[1]*m[5] + v[2]*m[8] ,
 	];
-	return VM;
+	return vm;
 }
 
-function matrix_multi31( M, V ){
+function matrix_multi31( m, v ){
 	// | 0 1 2 |  | a |   | 0a+1b+2c |
 	// | 3 4 5 |  | b | = | 3a+4b+5c |
 	// | 6 7 8 |  | c |   | 6a+7b+8c |
-	var MV = [
-		M[0]*V[0] + M[1]*V[1] + M[2]*V[2] ,
-		M[3]*V[0] + M[4]*V[1] + M[5]*V[2] ,
-		M[6]*V[0] + M[7]*V[1] + M[8]*V[2] ,
+	var mv = [
+		m[0]*v[0] + m[1]*v[1] + m[2]*v[2] ,
+		m[3]*v[0] + m[4]*v[1] + m[5]*v[2] ,
+		m[6]*v[0] + m[7]*v[1] + m[8]*v[2] ,
 	];
-	return MV;
+	return mv;
 }
 
-function matrix_multi33( M1, M2 ){
+function matrix_multi33( m1, m2 ){
 	//            | 1 0 0 |
 	// M * Minv = | 0 1 0 | or identify matrix
 	//            | 0 0 1 |
-	var M = [
-		M1[0]*M2[0] + M1[1]*M2[3] + M1[2]*M2[6],
-		M1[0]*M2[1] + M1[1]*M2[4] + M1[2]*M2[7],
-		M1[0]*M2[2] + M1[1]*M2[5] + M1[2]*M2[8],
+	var m = [
+		m1[0]*m2[0] + m1[1]*m2[3] + m1[2]*m2[6],
+		m1[0]*m2[1] + m1[1]*m2[4] + m1[2]*m2[7],
+		m1[0]*m2[2] + m1[1]*m2[5] + m1[2]*m2[8],
 
-		M1[3]*M2[0] + M1[4]*M2[3] + M1[5]*M2[6],
-		M1[3]*M2[1] + M1[4]*M2[4] + M1[5]*M2[7],
-		M1[3]*M2[2] + M1[4]*M2[5] + M1[5]*M2[8],
+		m1[3]*m2[0] + m1[4]*m2[3] + m1[5]*m2[6],
+		m1[3]*m2[1] + m1[4]*m2[4] + m1[5]*m2[7],
+		m1[3]*m2[2] + m1[4]*m2[5] + m1[5]*m2[8],
 
-		M1[6]*M2[0] + M1[7]*M2[3] + M1[8]*M2[6],
-		M1[6]*M2[1] + M1[7]*M2[4] + M1[8]*M2[7],
-		M1[6]*M2[2] + M1[7]*M2[5] + M1[8]*M2[8],
+		m1[6]*m2[0] + m1[7]*m2[3] + m1[8]*m2[6],
+		m1[6]*m2[1] + m1[7]*m2[4] + m1[8]*m2[7],
+		m1[6]*m2[2] + m1[7]*m2[5] + m1[8]*m2[8],
 	];
-	return M;
+	return m;
 }
 
 function get_perspective_mat3( src, dst, inv=true ){
 	// 0,1  2,3
 	// 6,7  4,5
-	var H1 = cross( cross(src[0],src[1] , src[4],src[5]) , cross(src[2],src[3] , src[6],src[7]) ); // corner-corner
-	var H2 = cross( cross(src[0],src[1] , src[2],src[3]) , cross(src[6],src[7] , src[4],src[5]) ); //    top-bottom
-	var H3 = cross( cross(src[0],src[1] , src[6],src[7]) , cross(src[2],src[3] , src[4],src[5]) ); //   left-right
+	var cs1 = cross( cross(src[0],src[1] , src[4],src[5]) , cross(src[2],src[3] , src[6],src[7]) ); // corner-corner
+	var cs2 = cross( cross(src[0],src[1] , src[2],src[3]) , cross(src[6],src[7] , src[4],src[5]) ); //    top-bottom
+	var cs3 = cross( cross(src[0],src[1] , src[6],src[7]) , cross(src[2],src[3] , src[4],src[5]) ); //   left-right
 
-	var h1 = cross( cross(dst[0],dst[1] , dst[4],dst[5]) , cross(dst[2],dst[3] , dst[6],dst[7]) ); // corner-corner
-	var h2 = cross( cross(dst[0],dst[1] , dst[2],dst[3]) , cross(dst[6],dst[7] , dst[4],dst[5]) ); //    top-bottom
-	var h3 = cross( cross(dst[0],dst[1] , dst[6],dst[7]) , cross(dst[2],dst[3] , dst[4],dst[5]) ); //   left-right
+	var cd1 = cross( cross(dst[0],dst[1] , dst[4],dst[5]) , cross(dst[2],dst[3] , dst[6],dst[7]) ); // corner-corner
+	var cd2 = cross( cross(dst[0],dst[1] , dst[2],dst[3]) , cross(dst[6],dst[7] , dst[4],dst[5]) ); //    top-bottom
+	var cd3 = cross( cross(dst[0],dst[1] , dst[6],dst[7]) , cross(dst[2],dst[3] , dst[4],dst[5]) ); //   left-right
 
-	//   | H1x H2x H3x |   | h1x h2x h3x |
-	// M | H1y H2y H3y | = | h1y h2y h3y |
-	//   | H1z H2z H3z |   | h1z h2z h3z |
-	//                MH = h
-	//                M  = hH^-1
-	var H = [
-		H1[0] , H2[0] , H3[0] ,
-		H1[1] , H2[1] , H3[1] ,
-		H1[2] , H2[2] , H3[2] ,
+	// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
+	// matrix * SRC = DST
+	//       matrix = DST * SRC_inv
+	//          SRC = matrix_inv * DST
+	var src3 = [
+		cs1[0] , cs2[0] , cs3[0] ,
+		cs1[1] , cs2[1] , cs3[1] ,
+		cs1[2] , cs2[2] , cs3[2] ,
 	];
-	var h = [
-		h1[0] , h2[0] , h3[0] ,
-		h1[1] , h2[1] , h3[1] ,
-		h1[2] , h2[2] , h3[2] ,
+	var dst3 = [
+		cd1[0] , cd2[0] , cd3[0] ,
+		cd1[1] , cd2[1] , cd3[1] ,
+		cd1[2] , cd2[2] , cd3[2] ,
 	];
 
-	var Hinv = matrix_inv3(H);
-	var M    = matrix_multi33(h, Hinv);
+	var src_inv = matrix_inv3(src3);
+	var mat3    = matrix_multi33(dst3, src_inv);
 	if ( ! inv )
-		return M;
+		return mat3;
 	else
-		return matrix_inv3(M);
+		return matrix_inv3(mat3);
 }
 //////////////////////////////
 // http://www.fmwconcepts.com/imagemagick/bilinearwarp/index.php
@@ -203,12 +202,11 @@ function get_intersect_point(){
 	}
 
 	var intr = cross( cross(p1a,p1b) , cross(p2a,p2b) );
-	if ( intr[2] === 0 )
-		return -1;
+	var z    = intr.pop();
+	var zinv = ( z == 0 ) ? 0 : 1.0 / z;
 
-	intr[0] /= intr[2];
-	intr[1] /= intr[2];
-	intr[2] /= intr[2];
+	intr[0] *= zinv;
+	intr[1] *= zinv;
 	if ( ! isPointInLine(intr,p1a,p1b) || ! isPointInLine(intr,p2a,p2b) )
 		return -1;
 	return intr;

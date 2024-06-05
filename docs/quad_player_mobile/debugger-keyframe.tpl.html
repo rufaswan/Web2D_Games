@@ -476,10 +476,10 @@ var QUAD = {};
 			attribute  highp  vec2  a_xy;
 			uniform    highp  vec2  u_pxsize;
 
-			highp  vec2  XY;
+			highp  vec2  xy;
 			void main(void){
-				XY = a_xy * u_pxsize;
-				gl_Position = vec4(XY.x, XY.y, 1.0 , 1.0);
+				xy = a_xy * u_pxsize;
+				gl_Position = vec4(xy.x, xy.y, 1.0 , 1.0);
 			}
 		`;
 		frag_src = `
@@ -503,20 +503,20 @@ var QUAD = {};
 			varying    highp  vec2   v_uv;
 			varying    highp  float  v_z;
 
-			highp  vec4   FOG;
-			highp  vec2   XY;
-			highp  vec2   UV;
+			highp  vec4   fog;
+			highp  vec2   xy;
+			highp  vec2   uv;
 			highp  float  z;
 			void main(void){
 				z = 1.0 / a_xyz.z;
-				FOG = a_fog    * z;
-				XY  = a_xyz.xy * z * u_pxsize;
-				UV  = a_uv     * z;
+				fog = a_fog    * z;
+				xy  = a_xyz.xy * z * u_pxsize;
+				uv  = a_uv     * z;
 
-				v_fog = FOG;
-				v_uv  = UV;
+				v_fog = fog;
+				v_uv  = uv;
 				v_z   = z;
-				gl_Position = vec4(XY.x, XY.y, a_z, 1.0);
+				gl_Position = vec4(xy.x, xy.y, a_z, 1.0);
 			}
 		`;
 		frag_src = `
@@ -525,14 +525,14 @@ var QUAD = {};
 			varying  highp  vec2   v_uv;
 			varying  highp  float  v_z;
 
-			highp  vec4   FOG;
-			highp  vec2   UV;
+			highp  vec4   fog;
+			highp  vec2   uv;
 			highp  float  z;
 			void main(void){
 				z   = 1.0 / v_z;
-				FOG = v_fog * z;
-				UV  = v_uv  * z;
-				gl_FragColor = texture2D(u_tex, UV / ${vec2_vram}) * FOG;
+				fog = v_fog * z;
+				uv  = v_uv  * z;
+				gl_FragColor = texture2D(u_tex, uv / ${vec2_vram}) * fog;
 			}
 		`;
 		__.SHADER.keyframe = __.create_shader('draw keyframe', vert_src, frag_src);
@@ -544,14 +544,14 @@ var QUAD = {};
 			attribute  highp  vec2   a_uv;
 			varying    highp  vec2   v_uv;
 
-			highp  vec2   XY;
+			highp  vec2  xy;
 			void main(void){
 				v_uv = a_uv;
-				XY   = a_xy / ${vec2_vram};
+				xy   = a_xy / ${vec2_vram};
 
 				// convert 0.0 to 1.0 => -1.0 to +1.0
-				XY = (XY * 2.0) - 1.0;
-				gl_Position = vec4(XY.x, XY.y, 1.0, 1.0);
+				xy = (xy * 2.0) - 1.0;
+				gl_Position = vec4(xy.x, xy.y, 1.0, 1.0);
 			}
 		`;
 		frag_src = `
@@ -559,10 +559,10 @@ var QUAD = {};
 			uniform  highp  vec2   u_pxsize;
 			varying  highp  vec2   v_uv;
 
-			highp  vec2   UV;
+			highp  vec2  uv;
 			void main(void){
 				UV = v_uv * u_pxsize;
-				gl_FragColor = texture2D(u_tex, UV);
+				gl_FragColor = texture2D(u_tex, uv);
 			}
 		`;
 		__.SHADER.vram = __.create_shader('draw vram', vert_src, frag_src);
@@ -1852,11 +1852,11 @@ var QUAD = {};
 		while ( vec.length < len )
 			vec.push(1);
 		while ( vec.length > len ){
-			var last = vec.pop() || 0;
-			var z = ( last === 0 ) ? 0 : 1.0 / last;
+			var last = vec.pop() || 0.0;
+			var z = ( last == 0.0 ) ? 0.0 : 1.0 / last;
 			for ( var i=0; i < vec.length; i++ )
 				vec[i] *= z;
-		}
+		} // while ( vec.length > len )
 	}
 
 	$.vec_multi = function( v, f ){
@@ -2076,6 +2076,42 @@ var QUAD = {};
 		return [x,y,z];
 	}
 
+	$.barycentric_quad = function( quad ){
+		var c13  = $.cross( [quad[0],quad[1],1] , [quad[4],quad[5],1] );
+		var c24  = $.cross( [quad[2],quad[3],1] , [quad[6],quad[7],1] );
+		var bary = $.cross( c13 , c24 );
+
+		var z = ( bary[2] == 0.0 ) ? 0.0 : 1.0 / bary[2];
+		return [ bary[0]*2 , bary[1]*z ];
+	}
+
+	$.is_point_in_quad = function( quad, point ){
+		function tri_area( x1,y1 , x2,y2 , x3,y3 ){
+			var t = [
+				x1 * (y2 - y3),
+				x2 * (y3 - y1),
+				x3 * (y1 - y2),
+			];
+			return Math.abs(0.5 * (t[0] + t[1] + t[2]));
+		}
+
+		var t = [
+			tri_area(quad[0],quad[1] , quad[2],quad[3] , quad[4],quad[5]),
+			tri_area(quad[0],quad[1] , quad[4],quad[5] , quad[6],quad[7]),
+		];
+		var quad_area = t[0] + t[1];
+
+		var t = [
+			tri_area(point[0],point[1] , quad[0],quad[1] , quad[2],quad[3]),
+			tri_area(point[0],point[1] , quad[2],quad[3] , quad[4],quad[5]),
+			tri_area(point[0],point[1] , quad[4],quad[5] , quad[6],quad[7]),
+			tri_area(point[0],point[1] , quad[6],quad[7] , quad[0],quad[1]),
+		];
+		var point_area = t[0] + t[1] + t[2] + t[3];
+
+		return ( point_area <= quad_area );
+	}
+
 	$.perspective_mat3 = function( quad ){
 		var v = [
 			[ quad[0],quad[1],1 ],
@@ -2100,27 +2136,25 @@ var QUAD = {};
 	}
 
 	$.perspective_quad = function( dst ){
-		//   | H1x H2x H3x |   | h1x h2x h3x |
-		// M | H1y H2y H3y | = | h1y h2y h3y |
-		//   | H1z H2z H3z |   | h1z h2z h3z |
-		//                MH = h
-		//                M  = hH^-1
-		var h = $.perspective_mat3(dst);
+		// matrix * SRC = DST
+		//       matrix = DST * SRC_inv
+		//          SRC = matrix_inv * DST
+		var dst3 = $.perspective_mat3(dst);
 
-		// var H    = pre-computed
-		// var Hinv = pre-computed
-		var H_inv = [
+		// var SRC     = pre-computed
+		// var SRC_inv = pre-computed
+		var src3_inv = [
 			 0     , 0     ,  0.005 ,
 			-0.001 , 0     ,  0.015 ,
 			 0     , 0.001 , -0.015 ,
 		];
-		var M3 = $.matrix_multi33(h, H_inv);
+		var mat3 = $.matrix_multi33(dst3, src3_inv);
 
 		var t = [
-			$.matrix_multi31( M3, [10,10] ),
-			$.matrix_multi31( M3, [20,10] ),
-			$.matrix_multi31( M3, [20,20] ),
-			$.matrix_multi31( M3, [10,20] ),
+			$.matrix_multi31( mat3, [10,10] ),
+			$.matrix_multi31( mat3, [20,10] ),
+			$.matrix_multi31( mat3, [20,20] ),
+			$.matrix_multi31( mat3, [10,20] ),
 		];
 		return [].concat(t[0],t[1],t[2],t[3]);
 	}
@@ -2983,7 +3017,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-5-23 (beta)';
+	$.version = 'ver 2024-6-2 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);

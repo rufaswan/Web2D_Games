@@ -1,7 +1,6 @@
 #!/bin/bash
 [ $# = 0 ] && exit
 
-mkdir -p /tmp/new/meme
 while [ "$1" ]; do
 	t1="${1%/}"
 	shift
@@ -13,6 +12,7 @@ while [ "$1" ]; do
 	[[ "$(echo $t1 | grep '/')" ]] && continue
 	[[ "${t1:0:1}" == '-' ]] && continue
 
+	mkdir -p /tmp/new/meme
 	mime=$(file  --brief  --mime-type  "$t1")
 	case "$mime" in
 		'video/'* | 'audio/'*)
@@ -24,7 +24,7 @@ while [ "$1" ]; do
 				--script-opts="osc-visibility=always" \
 				--af="loudnorm=I=-14:TP=-1"           \
 				"$t1"
-			[ -f "$t1" ] && mv "$t1"  /tmp/new/meme
+			[ -f "$t1" ] && mv -n  "$t1"  /tmp/new/meme
 			;;
 	esac
 done

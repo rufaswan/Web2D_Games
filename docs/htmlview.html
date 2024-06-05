@@ -1,11 +1,4 @@
 <!doctype html>
-<html><head>
-
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>HTML Viewer</title>
-
-</head><body>
 <!--
 On mobile, HTML are opened at native scale, not 1x.
 
@@ -15,8 +8,48 @@ vertically to read normally.
 
 This is to view HTML file at scale 1x.
 -->
-<input type='file' id='htmlupload'>
+<html><head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<title>HTML Viewer</title>
+
+	<style>
+	body {
+		background-color : #444;
+		line-height      : 1.5em;
+	}
+	body * {
+		color : #ccc;
+	}
+	pre , td , th , blockquote {
+		padding : 0.5em;
+	}
+	pre        , pre        * ,
+	td         , td         * ,
+	blockquote , blockquote *
+	{
+		background-color : #eee;
+		color            : #111;
+	}
+	table {
+		border-collapse  : collapse;
+		margin-left      : auto;
+		margin-right     : auto;
+	}
+	th, td {
+		border : 1px solid #888;
+	}
+	</style>
+</head><body>
+
+<p><a id='gototop' href='#gotobtm'>-&gt; GO TO BOTTOM</a></p>
+<p><input type='file' id='htmlupload'></p>
+
+<hr>
 <section id='htmlarticle'></section>
+<hr>
+
+<p><a id='gotobtm' href='#gototop'>-&gt; GO TO TOP</a></p>
 
 <script>
 document.getElementById('htmlupload').addEventListener('change', function(){
@@ -32,30 +65,48 @@ document.getElementById('htmlupload').addEventListener('change', function(){
 			reader.readAsText(up);
 		}).then(function(res){
 			var dom = new DOMParser().parseFromString(res, 'text/html');
-			dom.querySelectorAll('body *').forEach(function(v,k){
-				var tagname = v.tagName.toLowerCase();
+
+			dom.querySelectorAll('body *').forEach(function(dv,dk){
+				var tagname = dv.tagName.toLowerCase();
 				switch ( tagname ){
 					case 'script':
 					case 'style':
+					case 'link':
+					case 'meta':
+
 					case 'iframe':
 					case 'video':
 					case 'audio':
 					case 'svg':
+					case 'use':
+
 					case 'button':
 					case 'input':
+					case 'select':
 					case 'form':
-					case 'link':
-					case 'meta':
-						v.remove();
+						dv.remove();
 						return;
 					case 'a':
-						v.setAttribute('target', '_blank');
+						dv.setAttribute('target', '_blank');
 					default:
-						v.removeAttribute('style');
-						v.removeAttribute('class');
-						v.removeAttribute('id');
-						v.removeAttribute('title');
-						v.removeAttribute('alt');
+						for ( var attrname of dv.getAttributeNames() ){
+							switch ( attrname.toLowerCase() ){
+								case 'target':
+								case 'src':
+								case 'href':
+
+								case 'colspan':
+								case 'rowspan':
+									break;
+								// remove style , class , id
+								// remove onclick      or on*
+								// remove data-current or data-*
+								// remove aria-current or aria-*
+								default:
+									dv.removeAttribute(attrname);
+									break;
+							} // switch ( attrname.toLowerCase() )
+						} // for ( var attrname of dv.getAttributeNames() )
 						return;
 				} // switch ( tagname )
 			}); // dom.querySelectorAll('body *').forEach
@@ -66,4 +117,3 @@ document.getElementById('htmlupload').addEventListener('change', function(){
 });
 </script>
 </body></html>
-

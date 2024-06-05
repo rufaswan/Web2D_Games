@@ -4,8 +4,9 @@
 nice='nice -n 19'
 
 s=2
-size=''
-orin=''
+size='300x200'
+orin='3:2'
+##############################
 function setsize
 {
 	if (( $2 > $1 )); then
@@ -21,9 +22,8 @@ function setsize
 	fi
 	size="${w}x${h}"
 }
+##############################
 
-size='300x200'
-orin='3:2'
 af='-af loudnorm=I=-14:TP=-1'
 SECONDS=0
 while [ "$1" ]; do

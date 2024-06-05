@@ -26,6 +26,13 @@ require 'common-json.inc';
 require 'class-atlas.inc';
 require 'quad.inc';
 
+$gp_def_anim = array(
+	0 => 'idle',   // default
+	1 => 'jump',   // press up
+	2 => 'crouch', // press down
+	3 => 'walk',   // press left/right
+);
+
 function sectpix( &$meta )
 {
 	$pal = substr($meta, 0, 0x200);
@@ -244,6 +251,8 @@ function slot_keyhit( &$quad, &$slot, $slot_id, $flag )
 	} // foreach ( $quad['hitbox'] as $hk => $hv )
 
 	// $hit_id === -1
+	$basex = sint8( $slhead[15] );
+	$basey = sint8( $slhead[16] );
 	$layer = array();
 	for ( $i=0; $i < 4; $i++ )
 	{
@@ -254,17 +263,16 @@ function slot_keyhit( &$quad, &$slot, $slot_id, $flag )
 
 		foreach ( $slbody[$i] as $k => $v )
 		{
-			$hx1 = sint8($v[0]);
-			$hy1 = sint8($v[1]);
-			$hx2 = sint8($v[2]);
-			$hy2 = sint8($v[3]);
+			$hx = sint8($v[0]) + $basex;
+			$hy = sint8($v[1]) + $basey;
+			$hw = ord($v[2]);
+			$hh = ord($v[3]);
 
-			$hw = 0x10;
-			$hh = 0x10;
-			$hit = xywh_quad($hw, $hh);
-			xywh_move($hit, $hx1, $hy1);
+			$hit = xywh_quad($hw*2, $hh*2);
+			xywh_move($hit, $hx-$hw, $hy-$hh);
 
 			$ent = array(
+				'debug'     => $i,
 				'hitquad'   => $hit,
 				'attribute' => 'hitbox ' . $i,
 			);
@@ -295,6 +303,7 @@ donehit:
 
 function sectanim( &$quad, &$meta, &$slot )
 {
+	global $gp_def_anim;
 	$quad['animation'] = array();
 	$quad['hitbox']    = array();
 	$quad['slot']      = array();
@@ -334,8 +343,13 @@ function sectanim( &$quad, &$meta, &$slot )
 		} // for ( $j=0; $j < $cnt; $j++ )
 
 		$aid = $i >> 2;
+		if ( isset($gp_def_anim[$aid]) )
+			$name = $gp_def_anim[$aid];
+		else
+			$name = 'animation ' . $aid;
+
 		$aent = array(
-			'name'     => 'animation ' . $aid,
+			'name'     => $name,
 			'timeline' => $time,
 			'loop_id'  => 0,
 		);
@@ -371,6 +385,7 @@ function panzer( $fname )
 		save_file("$dir/meta.$mk", $mv);
 
 	sectpix($meta[3]);
+	save_palfile("$dir.pal.rgba", $meta[3]['pal'], 0x10);
 
 	$atlas = new atlas_tex;
 	$atlas->init();

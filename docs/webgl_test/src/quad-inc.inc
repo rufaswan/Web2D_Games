@@ -6,18 +6,17 @@
 
 <script>
 QDFN.set_webgl_by_id('canvas');
-var DST = [-1,1 , 1,1 , 1,-1 , -1,-1];
-var SRC = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
+var __ = {};
+__.dst = [-1,1 , 1,1 , 1,-1 , -1,-1];
+__.src = [ 0,0 , 1,0 , 1, 1 ,  0, 1];
 
-function div_left_top( div, left, top )
-{
+function div_left_top( div, left, top ){
 	div.style.left = (left|0) + 'px';
 	div.style.top  = (top |0) + 'px';
 	return;
 }
 
-function init_corners()
-{
+function init_corners(){
 	var rect = QDFN.get_bounding_rect();
 	var box;
 	//console.log(rect);
@@ -36,27 +35,25 @@ function init_corners()
 	return;
 };
 
-function get_dst_corner()
-{
+function get_dst_corner(){
 	var box = QDFN.get_bounding_rect();
 	var hw  = box.width  * 0.5;
 	var hh  = box.height * 0.5;
-	DST = [];
-	for ( var i=0; i < 4; i++ )
-	{
+	__.dst = [];
+	for ( var i=0; i < 4; i++ ){
 		var cnr = document.getElementById('corner'+i).getBoundingClientRect();
 		var x = cnr.left - box.left - hw;
 		var y = cnr.top  - box.top  - hh;
-		DST.push( x, y );
+		__.dst.push( x, y );
 	}
 }
 
 init_corners();
 get_dst_corner();
 
-var IS_CLICK = true;
-var CORNER = 0;
-var CLICK  = document.getElementsByClassName('clickable');
+__.is_click  = true;
+__.corner    = 0;
+__.clickable = document.getElementsByClassName('clickable');
 window.addEventListener('click', function(e){
 	function xy_rect( x, y, rect ){
 		if ( x < rect.left   )  return false;
@@ -66,24 +63,24 @@ window.addEventListener('click', function(e){
 		return true;
 	}
 
-	if ( CORNER === 0 ){
-		for ( var i=0; i < CLICK.length; i++ )
+	if ( __.corner === 0 ){
+		for ( var i=0; i < __.clickable.length; i++ )
 		{
-			var rect = CLICK[i].getBoundingClientRect();
+			var rect = __.clickable[i].getBoundingClientRect();
 			if ( xy_rect(e.pageX, e.pageY, rect) )
 			{
-				CORNER = CLICK[i];
-				CORNER.classList.add('activebox');
+				__.corner = __.clickable[i];
+				__.corner.classList.add('activebox');
 				return;
 			}
 		}
 		return;
 	}
 	else {
-		div_left_top(CORNER, e.pageX, e.pageY);
-		CORNER.classList.remove('activebox');
-		CORNER = 0;
-		IS_CLICK = true;
+		div_left_top(__.corner, e.pageX, e.pageY);
+		__.corner.classList.remove('activebox');
+		__.corner = 0;
+		__.is_click = true;
 		return;
 	}
 });

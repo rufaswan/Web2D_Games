@@ -42,7 +42,7 @@ $gp_html = <<<_HTML
 		width  : 4px;
 		height : 4px;
 	}
-	@@STYLE@@
+@@STYLE@@
 	</style>
 </head>
 <body>
@@ -68,7 +68,7 @@ function clut2html( $fname )
 		$g = ord($clut['pal'][$i+1]);
 		$b = ord($clut['pal'][$i+2]);
 		$a = ord($clut['pal'][$i+3]);
-		$style .= sprintf('.lookup_%d { background-color : rgba(%d,%d,%d,%f); }', $i >> 2, $r, $g, $b, $a*$inv);
+		$style .= sprintf('.lookup_%d { background-color : rgba(%3d , %3d , %3d , %.2f); }', $i >> 2, $r, $g, $b, $a*$inv);
 		$style .= "\n";
 	} // for ( $i=0; $i < $len; $i += 4 )
 

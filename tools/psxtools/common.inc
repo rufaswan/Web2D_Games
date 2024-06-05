@@ -701,12 +701,12 @@ function save_clutfile( $fname, &$data )
 	return;
 }
 
-function save_palfile( $fname, &$pal, $col )
+function save_palfile( $fname, &$pal, $col=16 )
 {
-	if ( empty($fname) || empty($pal) )
+	if ( empty($fname) || empty($pal) || $col < 1 )
 		return;
 	$len = strlen($pal);
-	if ( $len & 3 )
+	if ( $len & 3 ) // in RGBA = 4 bytes
 		return;
 	$len >>= 2;
 	$row = (int)ceil($len / $col);

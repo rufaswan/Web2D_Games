@@ -8,7 +8,7 @@
 @@<qdfn.js>@@
 
 </head><body>
-@@<mona_lisa.png>@@
+@@<mona_lisa.0.png>@@
 
 @@<quad-inc.inc>@@
 @@<quad-inc.js>@@
@@ -20,15 +20,19 @@ var vert_src = `
 	uniform    highp  mat3  u_mat3;
 	varying    highp  vec2  v_uv;
 
-	highp  vec3  v3;
+	highp  vec3   xyz;
+	highp  vec2   uv;
+	highp  float  z;
 	void main(void){
-		v_uv = vec2(a_uv.x * u_pxsize.z , a_uv.y * u_pxsize.w);
+		xyz = vec3(a_uv, 1.0) * u_mat3;
+		z    = 1.0 / xyz.z;
+		xyz *= z;
 
-		v3 = vec3(a_uv, 1.0) * u_mat3;
-			v3.x *= u_pxsize.x;
-			v3.y *= u_pxsize.y;
-			v3.xyz /= v3.z;
-		gl_Position = vec4(v3, 1.0);
+		xyz.xy *= u_pxsize.xy;
+		uv      = a_uv.xy * u_pxsize.zw;
+
+		v_uv = uv;
+		gl_Position = vec4(xyz, 1.0);
 	}
 `;
 
@@ -45,26 +49,20 @@ QDFN.set_shader_program(vert_src, frag_src);
 QDFN.set_shader_loc('a_uv', 'u_pxsize', 'u_mat3', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
-var TEX_SIZE = [360,640];
+__.texsize = 0;
 
-SRC = [0,0 , TEX_SIZE[0],0 , TEX_SIZE[0],TEX_SIZE[1] , 0,TEX_SIZE[1]];
 function quad_draw(){
 	QDFN.canvas_resize();
-	QDFN.set_vec4_size('u_pxsize', TEX_SIZE[0], TEX_SIZE[1]);
-	var mat3 = get_perspective_mat3(SRC, DST, false);
+	QDFN.set_vec4_size('u_pxsize', __.texsize[0], __.texsize[1]);
+	var mat3 = get_perspective_mat3(__.src, __.dst, false);
 	QDFN.set_mat3fv('u_mat3', mat3);
 
-	var scx = find_intersect_point(SRC);
-	var dcx = find_intersect_point(DST);
+	var scx = find_intersect_point(__.src);
+	var dcx = find_intersect_point(__.dst);
 
 	// for simple and twisted
 	if ( dcx !== -1 ){
-		var uv = [
-			scx[0],scx[1] , SRC[0],SRC[1] , SRC[2],SRC[3] ,
-			scx[0],scx[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-			scx[0],scx[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-			scx[0],scx[1] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
-		];
+		var uv = QDFN.quad_tri4(scx, __.src);
 		QDFN.v2_attrib('a_uv', uv);
 
 		console.log('simple and twisted', dcx);
@@ -72,38 +70,32 @@ function quad_draw(){
 	}
 
 	// bended
-	var area1 = quad_area(DST[0],DST[1] , DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7]);
-	var area2 = quad_area(DST[2],DST[3] , DST[4],DST[5] , DST[6],DST[7] , DST[0],DST[1]);
+	var area1 = quad_area(__.dst[0],__.dst[1] , __.dst[2],__.dst[3] , __.dst[4],__.dst[5] , __.dst[6],__.dst[7]);
+	var area2 = quad_area(__.dst[2],__.dst[3] , __.dst[4],__.dst[5] , __.dst[6],__.dst[7] , __.dst[0],__.dst[1]);
 
-	if ( area1 < area2 ){
-		var uv = [
-			SRC[0],SRC[1] , SRC[2],SRC[3] , SRC[4],SRC[5] ,
-			SRC[0],SRC[1] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-		];
-	}
-	else {
-		var uv = [
-			SRC[2],SRC[3] , SRC[4],SRC[5] , SRC[6],SRC[7] ,
-			SRC[2],SRC[3] , SRC[6],SRC[7] , SRC[0],SRC[1] ,
-		];
-	}
+	if ( area1 < area2 )
+		var uv = QDFN.quad_getxy(__.src , 0,1,2 , 0,2,3);
+	else
+		var uv = QDFN.quad_getxy(__.src , 1,2,3 , 1,3,0);
+
 	QDFN.v2_attrib('a_uv', uv);
-
 	console.log('bended', dcx);
 	return QDFN.draw(6);
 }
 
 function render(){
-	if ( IS_CLICK ){
+	if ( __.is_click ){
 		get_dst_corner();
 		quad_draw();
-		IS_CLICK = false;
+		__.is_click = false;
 	}
 	requestAnimationFrame(render);
 }
 
-QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
-	IS_CLICK = true;
+QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
+	__.is_click = true;
+	__.texsize  = res;
+	__.src = QDFN.xywh2quad(res[0],res[1]);
 	requestAnimationFrame(render);
 });
 </script>

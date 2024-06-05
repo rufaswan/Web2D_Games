@@ -59,11 +59,11 @@ function QuadMath(Q){
 		while ( vec.length < len )
 			vec.push(1);
 		while ( vec.length > len ){
-			var last = vec.pop() || 0;
-			var z = ( last === 0 ) ? 0 : 1.0 / last;
+			var last = vec.pop() || 1.0;
+			var z = ( last == 0 ) ? 0 : 1.0 / last;
 			for ( var i=0; i < vec.length; i++ )
 				vec[i] *= z;
-		}
+		} // while ( vec.length > len )
 	}
 
 	$.vec_multi = function( v, f ){
@@ -283,6 +283,44 @@ function QuadMath(Q){
 		return [x,y,z];
 	}
 
+	$.barycentric_quad = function( quad ){
+		var c13  = $.cross( [quad[0],quad[1],1] , [quad[4],quad[5],1] );
+		var c24  = $.cross( [quad[2],quad[3],1] , [quad[6],quad[7],1] );
+		var bary = $.cross( c13 , c24 );
+
+		if ( bary[2] == 0 )
+			return 0;
+		var z = 1.0 / bary[2];
+		return [ bary[0]*2 , bary[1]*z ];
+	}
+
+	$.is_convex_quad = function( quad, bary=0 ){
+		if ( ! bary )
+			bary = $.barycentric_quad(quad);
+		if ( ! bary )
+			return false;
+
+		// barycentric is a point on the line from corner to corner
+		var corner = [
+			[0,1 , 4,5], // test line 1-3
+			[2,3 , 6,7], // test line 2-4
+		];
+		var x, y;
+		for ( var i=0; i < 2; i++ ){
+			var c = corner[i];
+			var x1 = Math.min(quad[ c[0] ] , quad[ c[2] ]);
+			var y1 = Math.min(quad[ c[1] ] , quad[ c[3] ]);
+			var x2 = Math.max(quad[ c[0] ] , quad[ c[2] ]);
+			var y2 = Math.max(quad[ c[1] ] , quad[ c[3] ]);
+
+			if ( bary[0] < x1 || bary[0] > x2 )  continue;
+			if ( bary[1] < y1 || bary[1] > y2 )  continue;
+			return true;
+		} // for ( var i=0; i < 2; i++ )
+
+		return false;
+	}
+
 	$.perspective_mat3 = function( quad ){
 		var v = [
 			[ quad[0],quad[1],1 ],
@@ -307,27 +345,25 @@ function QuadMath(Q){
 	}
 
 	$.perspective_quad = function( dst ){
-		//   | H1x H2x H3x |   | h1x h2x h3x |
-		// M | H1y H2y H3y | = | h1y h2y h3y |
-		//   | H1z H2z H3z |   | h1z h2z h3z |
-		//                MH = h
-		//                M  = hH^-1
-		var h = $.perspective_mat3(dst);
+		// matrix * SRC = DST
+		//       matrix = DST * SRC_inv
+		//          SRC = matrix_inv * DST
+		var dst3 = $.perspective_mat3(dst);
 
-		// var H    = pre-computed
-		// var Hinv = pre-computed
-		var H_inv = [
+		// var SRC     = pre-computed
+		// var SRC_inv = pre-computed
+		var src3_inv = [
 			 0     , 0     ,  0.005 ,
 			-0.001 , 0     ,  0.015 ,
 			 0     , 0.001 , -0.015 ,
 		];
-		var M3 = $.matrix_multi33(h, H_inv);
+		var mat3 = $.matrix_multi33(dst3, src3_inv);
 
 		var t = [
-			$.matrix_multi31( M3, [10,10] ),
-			$.matrix_multi31( M3, [20,10] ),
-			$.matrix_multi31( M3, [20,20] ),
-			$.matrix_multi31( M3, [10,20] ),
+			$.matrix_multi31( mat3, [10,10] ),
+			$.matrix_multi31( mat3, [20,10] ),
+			$.matrix_multi31( mat3, [20,20] ),
+			$.matrix_multi31( mat3, [10,20] ),
 		];
 		return [].concat(t[0],t[1],t[2],t[3]);
 	}
@@ -344,12 +380,12 @@ function QuadMath(Q){
 			= cross([-10,0,100] , [-10,0,200])
 			= [0,1000,0]
 
-		var H = [
+		var src3 = [
 			3000 , -1000 ,    0 ,
 			3000 ,     0 , 1000 ,
 			 200 ,     0 ,    0 ,
 		]
-		var Hinv = [
+		var src3_inv = [
 			 0     , 0     ,  0.005 ,
 			-0.001 , 0     ,  0.015 ,
 			 0     , 0.001 , -0.015 ,
