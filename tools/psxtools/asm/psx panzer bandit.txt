@@ -769,6 +769,14 @@ v1 << 4 - v1 << 2
 	0e
 		8003da7c  sh  0, e(a0)
 	...
+	7a
+		8001a670  lh  s5, 7a(s4)
+	7c
+		8001a670  lh  s7, 7c(s4)
+	7e
+	80
+		8001a670  lh  fp, 80(s4)
+	...
 	82
 		8001ac48  lhu  v0, 82(s0)
 			v0 += v1
@@ -853,7 +861,38 @@ v1 << 4 - v1 << 2
 	100 // velocity x
 	104 // velocity y
 	...
+	138
+	13a
+		8001a8c8  lhu  v1, 13a(s0)
+		8001a8f0  lhu  v1, 13a(s0)
+		8001a914  lhu  v0, 13a(s0)
+		8001a9b0  lhu  v1, 13a(s0)
+		8001aa2c  lhu  v1, 13a(s0)
+	13c
+		8001a7c8  lh  v0, 13c(s0)
+			v0 *= 3
+		8001a7f0  lh  v0, 13c(s0)
+			v0 *= 3
+		8001a818  lh  v0, 13c(s0)
+			v0 *= 3
+		8001a884  lh  v0, 13c(s0)
+		8001a890  lh  v0, 13c(s0)
+		8001a89c  lh  v0, 13c(s0)
+	13e
+	...
+	hitbox
+		0 : 21c  240  264  276
+		1 : 220  244  266  278
+		2 : 224  248  268  27a
+		3 : 228  24c  26a  27c
+		4 : 22c  250  26c  27e
+		5 : 230  254  26e  280
+		6 : 234  258  270  282
+		7 : 238  25c  272  284
+		8 : 23c  260  274  286
+	...
 	300  // hp
+		8001aa84  lh  v1, 300(s0)
 		if v1 < 2
 			8001abac  lhu  v0, 300(s0)
 				v0 -= 1
@@ -861,9 +900,13 @@ v1 << 4 - v1 << 2
 			8001aba0  lhu  v0, 300(s0)
 				v1 -= v1
 		8001abb8  sh   v0, 300(s0)
+		8001abec  lh   a0, 300(s0)
+		8001ac0c  lh   v0, 300(s4)
+		8001ac7c  lh   v1, 300(s4)
 		8001acd4  lh   v0, 300(s0)
 	302  // draw hp
 	304  // max hp
+		8001aa94  lh   a0, 304(s0)
 		8001abd4  lhu  v0, 304(s0)
 			t2 = sint16(v0) * 0.166666
 			v0 = t2 - (v0 << 10 >> 1f)
@@ -889,33 +932,39 @@ v1 << 4 - v1 << 2
 // else
 //   a2 = 0 - v1
 //
-// sub_8001a5bc(a0 , a1 , s3 , s2)
-// s0 = a0 * 324 + 801ddaa0 // player data
-// v0 = a1 * 324 + 801ddbd2
-//    = a1 * 324 + 801ddaa0 + 132
-// s4 = lh(v0) * 324 + 801ddaa0 // enemy data
-// if lh(800a0232) != 0
-/    return
-// if max hp < hp
-//   s6 = 0
-// else
-//   v0 = max hp - hp
-//   if v0 >= 0
-//     s6 = v0 >> 4
-//   else
-//     s6 = (v0 + f) >> 4
-// v0  = [
-//   64 , 61 , 5d , 59 ,
-//   54 , 51 , 4e , 4b ,
-//   48 , 44 , 40 , 3e ,
-//   34 , 32 , 28 , 20 ,
-//   18 , 10
-// ]
-// dmg = (s3 * v0[s6] * 0.32) >> 5
-// if dmg < 2
-//   hp -= 1
-// else
-//   hp -= dmg
+sub_8001a5bc(a0 , a1 , s3 , s2)
+	s0 = a0 * 324 + 801ddaa0 // player data
+	v0 = a1 * 324 + 801ddbd2
+		= a1 * 324 + 801ddaa0 + 132
+	s4 = lh(v0) * 324 + 801ddaa0 // enemy data
+	if lh(800a0232) != 0
+		return
+
+	if hp < 0
+	else
+		if max hp < hp
+			s6 = 0
+		else
+			v0 = max hp - hp
+			if v0 >= 0
+				s6 = v0 >> 4
+			else
+				s6 = (v0 + f) >> 4
+		v0 = [
+			64 , 61 , 5d , 59 , // 1.00 , 0.97 , 0.93 , 0.89
+			54 , 51 , 4e , 4b , // 0.84 , 0.81 , 0.78 , 0.75
+			48 , 44 , 40 , 3e , // 0.72 , 0.68 , 0.64 , 0.62
+			34 , 32 , 28 , 20 , // 0.52 , 0.5  , 0.4  , 0.32
+			18 , 10             // 0.24 , 0.16
+		]
+		// hi(n * 51eb851f) >> 5
+		// == 32/100 * 1/32
+		// == 0.01
+		dmg = 1 * v0[s6] * 0.01
+		if dmg < 2
+			hp -= 1
+		else
+			hp -= dmg
 
 // s3
 //   throw,fireball = 3
@@ -1086,22 +1135,22 @@ jal  80042758
 = 801b52e0 + n * 954
 
 input = 801cc968
-	01    L2
-	02    R2
-	04    L1
-	08    R1
-	10    triangle
-	20    circle
-	40    cross
-	80    square
-	0100  select
-	0200
-	0400
-	0800  start
-	1000  dpad up
-	2000  dpad right
-	4000  dpad down
-	8000  dpad left
+	01     L2
+	02     R2
+	04     L1
+	08     R1
+	10     triangle
+	20     circle
+	40     cross
+	80     square
+	00 01  select
+	00 02
+	00 04
+	00 08  start
+	00 10  dpad up
+	00 20  dpad right
+	00 40  dpad down
+	00 80  dpad left
 map action / dpad = 80085d5c
 	0=0 1=8 2=6 3=9
 	4=2 5=0 6=3 7=0

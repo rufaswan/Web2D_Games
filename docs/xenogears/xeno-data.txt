@@ -461,7 +461,7 @@ Effect Type
 ==============================
 Character Level
 2594.bin/43.bin (BLOCK = 0x110 or 272 bytes)
-2607.bin/0.bin 
+2607.bin/0.bin
  0 int8[] Spell Learning Level
 16 int8[] Deathblow Learning Level
 
@@ -626,11 +626,11 @@ Char Shop Data
 0x994  Item    Solaris 2nd Class, Solaris 3rd Class (Hammer), Snowfield Hideout
 0x9b4  Weapon  Snowfield Hideout
 0x9d2  Armor   Snowfield Hideout
-0xa4c  Item    Anima Dungeon 1 & 2 
+0xa4c  Item    Anima Dungeon 1 & 2
 0xa8a  Armor   Same as 0x91a
 0xb04  Item    Same as 0xa4c
-0xb24  Weapon  Anima Dungeon 1 & 2 
-0xb42  Armor   Anima Dungeon 1 & 2 
+0xb24  Weapon  Anima Dungeon 1 & 2
+0xb42  Armor   Anima Dungeon 1 & 2
 0xbbc  Item    Lighthouse
 0xbdc  Weapon  Unused
 0xbfa  Armor   Unused
@@ -650,7 +650,7 @@ Gear Shop Data
 
 0
 64   Dazil
-c8   Stalactite Cave 
+c8   Stalactite Cave
 12c  Bart's Lair, Aveh
 190  Unused
 1f4  Yggdrasil, Nisan, Aveh-Kislev Mountains
@@ -664,7 +664,7 @@ c8   Stalactite Cave
 514  Unused
 578  Snowfield Hideout, Yggdrasil 3
 5dc  Unused
-640  Anima Dungeon 1 & 2 
+640  Anima Dungeon 1 & 2
 6a4  Lighthouse
 708  Merkava
 76c  Deus

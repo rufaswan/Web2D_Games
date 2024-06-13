@@ -203,7 +203,9 @@ ul {
 </style>
 <script>'use strict';
 
-function get_html_id(){
+var APP = {};
+
+APP.get_html_id = function(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
@@ -213,7 +215,7 @@ function get_html_id(){
 	return html;
 }
 
-function display_viewer( html, toggle ){
+APP.display_viewer = function( html, toggle ){
 	if ( toggle )
 		html.viewer.style.display = 'block';
 	else
@@ -221,7 +223,7 @@ function display_viewer( html, toggle ){
 	html.export_menu.style.display = 'none';
 }
 
-function button_toggle( elem, turn ){
+APP.button_toggle = function( elem, turn ){
 	if ( turn > 0 ){ // +1 = turn ON
 		elem.classList.remove('btn_off');
 		elem.classList.add('btn_on');
@@ -237,7 +239,7 @@ function button_toggle( elem, turn ){
 	elem.classList.remove('btn_off');
 }
 
-function button_prev_next( qdata, adj ){
+APP.button_prev_next = function( qdata, adj ){
 	adj = adj | 0;
 	if ( ! qdata || adj === 0 )
 		return;
@@ -252,21 +254,21 @@ function button_close( elem ){
 	par2.style.display = 'none';
 }
 
-function qdata_toggle( qdata, elem, key ){
+APP.qdata_toggle = function( qdata, elem, key ){
 	var t = elem.classList.contains('btn_on');
 	if ( qdata )
 		t |= qdata[key];
 
 	if ( t ) // if ON, turn OFF
-		button_toggle(elem, -1);
+		APP.button_toggle(elem, -1);
 	else // if OFF, turn ON
-		button_toggle(elem, 1);
+		APP.button_toggle(elem, 1);
 
 	if ( qdata )
 		qdata[key] = !t;
 }
 
-function qdata_filetable( qdata, files ){
+APP.qdata_filetable = function( qdata, files ){
 	files.innerHTML = '';
 	if ( qdata.name )
 		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
@@ -278,7 +280,7 @@ function qdata_filetable( qdata, files ){
 	}
 }
 
-function qdata_tagtable( tag ){
+APP.qdata_tagtable = function( tag ){
 	if ( ! tag )
 		return '';
 	function wikilink( tagkey, tagval ){
@@ -314,13 +316,13 @@ function qdata_tagtable( tag ){
 	return buffer;
 }
 
-function qdata_attach( qdata, type, id ){
+APP.qdata_attach = function( qdata, type, id ){
 	qdata.attach.type = type;
 	qdata.attach.id   = id;
 	qdata.anim_fps    = 0;
 }
 
-function quad_mainlist( quad ){
+APP.quad_mainlist = function( quad ){
 	var type = ['skeleton','animation','slot','keyframe','hitbox'];
 	for ( var i=0; i < type.length; i++ ){
 		var tv = type[i];
@@ -330,7 +332,7 @@ function quad_mainlist( quad ){
 	return -1;
 }
 
-function qdata_listing( qdata, type, id ){
+APP.qdata_listing = function( qdata, type, id ){
 	if ( ! qdata.quad[type] || ! qdata.quad[type][id] )
 		return '';
 	var qchild = QUAD.export.list_attach(qdata, type, id);
@@ -356,7 +358,7 @@ function qdata_listing( qdata, type, id ){
 		html += '<ul style="display:none;">';
 		qchild.forEach(function(cv,ck){
 			cv = cv.split(',');
-			html += qdata_listing(qdata, cv[0], cv[1]);
+			html += APP.qdata_listing(qdata, cv[0], cv[1]);
 		});
 		html += '</ul>';
 	}
@@ -365,7 +367,8 @@ function qdata_listing( qdata, type, id ){
 	return html;
 }
 //////////////////////////////
-// TODO : remove all global var
+// function aaa()       + onclick='aaa();'
+// APP.aaa = function() + var a = APP.aaa();
 
 function button_select( elem ){
 	if ( APP.selected )
@@ -378,8 +381,8 @@ function button_select( elem ){
 	var type = par2.getAttribute('data-type');
 	var id   = par2.getAttribute('data-id') | 0;
 
-	qdata_attach(QuadList[0], type, id);
-	display_viewer(APP.html, true);
+	APP.qdata_attach(APP.QuadList[0], type, id);
+	APP.display_viewer(APP.html, true);
 	APP.is_redraw = true;
 }
 
@@ -408,7 +411,7 @@ function button_export( elem ){
 
 	APP.html.export_name.innerHTML = type + ' , ' + id;
 
-	var qdata = QuadList[0];
+	var qdata = APP.QuadList[0];
 	var time  = QUAD.export.time_attach(qdata, type, id);
 	var range = APP.html.export_range;
 	range.setAttribute('max', time - 1); // index 0
@@ -424,11 +427,11 @@ function button_export_type( elem ){
 
 	var time = APP.html.export_start.innerHTML | 0;
 	var zoom = 1.0 * APP.html.export_zoom.innerHTML;
-	QUAD.export.export(fmt, QuadList[0], APP.html.canvas, type, id, time, zoom);
+	QUAD.export.export(fmt, APP.QuadList[0], APP.html.canvas, type, id, time, zoom);
 	APP.html.logger.innerHTML = QUAD.func.console();
 }
 
-function viewer_btn_menu( qdata ){
+APP.viewer_btn_menu = function( qdata ){
 	APP.html.btn_hitattr.style.display = 'none';
 	APP.html.hitattr_list.innerHTML = '';
 	if ( qdata.quad.hitbox.length > 0 )
@@ -466,12 +469,12 @@ function viewer_btn_menu( qdata ){
 
 function qdata_attr( elem, name, mask ){
 	if ( elem.classList.contains('btn_on') ){
-		button_toggle(elem, -1);
-		QuadList[0][name] &= ~mask;
+		APP.button_toggle(elem, -1);
+		APP.QuadList[0][name] &= ~mask;
 	}
 	else {
-		button_toggle(elem, 1);
-		QuadList[0][name] |= mask;
+		APP.button_toggle(elem, 1);
+		APP.QuadList[0][name] |= mask;
 	}
 	APP.is_redraw = true;
 }
@@ -485,7 +488,7 @@ function qdata_colorize( elem, id ){
 		parseInt( color.substring(5,7) , 16 ) * div ,
 		1.0,
 	];
-	QuadList[0].colorize[id] = rgb;
+	APP.QuadList[0].colorize[id] = rgb;
 	APP.is_redraw = true;
 }
 </script>
@@ -3082,7 +3085,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-6-4 (beta)';
+	$.version = 'ver 2024-6-9 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3205,20 +3208,18 @@ function QuadData(qlist){
 <script>
 'use strict';
 
-var APP = {
-	html          : get_html_id(),
-	selected      : '',
-	upload_id     : -1,
-	autozoom      : -1,
-	is_btn_click  : 0,
-	is_autonext   : false,
-	is_redraw     : true,
-	is_viewer_nav : true,
-	fps_draw      : 0,
-	camera        : QUAD.math.matrix4(),
-	color         : [1,1,1,1],
-};
-var QuadList = [];
+APP.html          = APP.get_html_id();
+APP.selected      = '';
+APP.upload_id     = -1;
+APP.autozoom      = -1;
+APP.is_btn_click  = 0;
+APP.is_autonext   = false;
+APP.is_redraw     = true;
+APP.is_viewer_nav = true;
+APP.fps_draw      = 0;
+APP.camera        = QUAD.math.matrix4();
+APP.color         = [1,1,1,1];
+APP.QuadList      = [];
 
 (function(){
 	if ( ! QUAD.gl.init(APP.html.canvas) )
@@ -3229,11 +3230,11 @@ var QuadList = [];
 
 	// BETWEEN DEBUGGER-VIEWER
 	APP.html.btn_view.addEventListener('click', function(){
-		display_viewer(APP.html, true);
+		APP.display_viewer(APP.html, true);
 		APP.is_redraw = true;
 	});
 	APP.html.btn_debug.addEventListener('click', function(){
-		display_viewer(APP.html, false);
+		APP.display_viewer(APP.html, false);
 		APP.html.logger.innerHTML = QUAD.func.console();
 	});
 
@@ -3244,24 +3245,24 @@ var QuadList = [];
 	});
 	APP.html.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', APP.upload_id);
-		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
-			QuadList[ APP.upload_id ] = new QuadData(QuadList);
-		var qdata = QuadList[ APP.upload_id ];
+		if ( QUAD.func.is_undef( APP.QuadList[ APP.upload_id ] ) )
+			APP.QuadList[ APP.upload_id ] = new QuadData(APP.QuadList);
+		var qdata = APP.QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, APP.html.debugger_files);
+			APP.qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
 				APP.html.quad_data.innerHTML = '';
 				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
 
-				var buffer = qdata_tagtable(qdata.quad.tag);
+				var buffer = APP.qdata_tagtable(qdata.quad.tag);
 				APP.html.quad_data.innerHTML += buffer;
 
-				var quad_main = quad_mainlist(qdata.quad);
+				var quad_main = APP.quad_mainlist(qdata.quad);
 				if ( quad_main === -1 )
 					return;
 
@@ -3270,12 +3271,12 @@ var QuadList = [];
 				qdata.quad[quad_main].forEach(function(v,k){
 					if ( ! v )
 						return;
-					buffer += qdata_listing(qdata, quad_main, k);
+					buffer += APP.qdata_listing(qdata, quad_main, k);
 				});
 				buffer += '</ul>';
 				APP.html.quad_data.innerHTML += buffer;
 
-				viewer_btn_menu(qdata);
+				APP.viewer_btn_menu(qdata);
 			} // if ( qdata.name )
 			APP.html.logger.innerHTML = QUAD.func.console();
 		});
@@ -3299,14 +3300,14 @@ var QuadList = [];
 		APP.is_viewer_nav = ! APP.is_viewer_nav;
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
-		if ( ! QuadList[0] )
+		if ( ! APP.QuadList[0] )
 			return;
-		QuadList[0].is_lines = ! QuadList[0].is_lines;
-		APP.html.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
+		APP.QuadList[0].is_lines = ! APP.QuadList[0].is_lines;
+		APP.html.btn_lines.innerHTML = ( APP.QuadList[0].is_lines ) ? 'line' : 'tex';
 		APP.is_redraw = true;
 	});
 	APP.html.btn_hitattr.addEventListener('click', function(){
-		qdata_toggle(QuadList[0], this, 'is_hits');
+		APP.qdata_toggle(APP.QuadList[0], this, 'is_hits');
 		APP.is_redraw = true;
 	});
 	APP.html.btn_colorize.addEventListener('click', function(){
@@ -3318,34 +3319,34 @@ var QuadList = [];
 		APP.is_redraw = true;
 	});
 	APP.html.btn_flipx.addEventListener('click', function(){
-		qdata_toggle(QuadList[0], this, 'is_flipx');
+		APP.qdata_toggle(APP.QuadList[0], this, 'is_flipx');
 		APP.is_redraw = true;
 	});
 	APP.html.btn_flipy.addEventListener('click', function(){
-		qdata_toggle(QuadList[0], this, 'is_flipy');
+		APP.qdata_toggle(APP.QuadList[0], this, 'is_flipy');
 		APP.is_redraw = true;
 	});
 	APP.html.btn_autozoom.addEventListener('click', function(){
 		if ( this.classList.contains('btn_on') ){
-			button_toggle(this, -1);
+			APP.button_toggle(this, -1);
 			APP.autozoom = 1;
 		} else {
-			button_toggle(this, 1);
+			APP.button_toggle(this, 1);
 			APP.autozoom = -1;
 		}
-		if ( QuadList[0] )
-			QuadList[0].zoom = APP.autozoom;
+		if ( APP.QuadList[0] )
+			APP.QuadList[0].zoom = APP.autozoom;
 		APP.is_redraw = true;
 	});
 
 	APP.html.btn_prev.addEventListener('click', function(){
 		if ( APP.is_autonext ){
-			button_toggle(APP.html.btn_next, -1);
+			APP.button_toggle(APP.html.btn_next, -1);
 			if ( APP.html.btn_prev.classList.contains('btn_on') ){
-				button_toggle(APP.html.btn_prev, -1);
+				APP.button_toggle(APP.html.btn_prev, -1);
 				APP.is_btn_click = 0;
 			} else {
-				button_toggle(APP.html.btn_prev, 1);
+				APP.button_toggle(APP.html.btn_prev, 1);
 				APP.is_btn_click = -1;
 			}
 		} else
@@ -3353,12 +3354,12 @@ var QuadList = [];
 	});
 	APP.html.btn_next.addEventListener('click', function(){
 		if ( APP.is_autonext ){
-			button_toggle(APP.html.btn_prev, -1);
+			APP.button_toggle(APP.html.btn_prev, -1);
 			if ( APP.html.btn_next.classList.contains('btn_on') ){
-				button_toggle(APP.html.btn_next, -1);
+				APP.button_toggle(APP.html.btn_next, -1);
 				APP.is_btn_click = 0;
 			} else {
-				button_toggle(APP.html.btn_next, 1);
+				APP.button_toggle(APP.html.btn_next, 1);
 				APP.is_btn_click = 1;
 			}
 		} else
@@ -3366,12 +3367,12 @@ var QuadList = [];
 	});
 	APP.html.btn_autonext.addEventListener('click', function(){
 		if ( APP.is_autonext ){
-			button_toggle(APP.html.btn_prev, 0);
-			button_toggle(APP.html.btn_next, 0);
+			APP.button_toggle(APP.html.btn_prev, 0);
+			APP.button_toggle(APP.html.btn_next, 0);
 			APP.is_autonext = false;
 		} else {
-			button_toggle(APP.html.btn_prev, -1);
-			button_toggle(APP.html.btn_next, -1);
+			APP.button_toggle(APP.html.btn_prev, -1);
+			APP.button_toggle(APP.html.btn_next, -1);
 			APP.is_autonext = true;
 		}
 	});
@@ -3380,13 +3381,13 @@ var QuadList = [];
 		requestAnimationFrame(render);
 		if ( APP.html.viewer.style.display !== 'block' )
 			return;
-		if ( ! QuadList[0] || ! QuadList[0].name )
+		if ( ! APP.QuadList[0] || ! APP.QuadList[0].name )
 			return;
-		var qdata = QuadList[0];
+		var qdata = APP.QuadList[0];
 
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (APP.fps_draw & 7) === 0 ){
-			button_prev_next(qdata, APP.is_btn_click);
+			APP.button_prev_next(qdata, APP.is_btn_click);
 			if ( APP.is_btn_click !== 0 )
 				APP.is_redraw = true;
 			if ( ! APP.is_autonext )

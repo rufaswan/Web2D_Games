@@ -75,17 +75,15 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 'use strict';
 
-var APP = {
-	html      : get_html_id(),
-	upload_id : -1,
-	on_key    : -1,
-	on_layer  : [],
-	is_redraw : true,
-	autozoom  : 1.0,
-	camera    : QUAD.math.matrix4(),
-	color     : [1,1,1,1],
-};
-var QuadList = [];
+APP.html      = APP.get_html_id();
+APP.upload_id = -1;
+APP.on_key    = -1;
+APP.on_layer  = [];
+APP.is_redraw = true;
+APP.autozoom  = 1.0;
+APP.camera    = QUAD.math.matrix4();
+APP.color     = [1,1,1,1];
+APP.QuadList  = [];
 
 (function(){
 	if ( ! QUAD.gl.init(APP.html.canvas) )
@@ -101,16 +99,16 @@ var QuadList = [];
 	});
 	APP.html.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', APP.upload_id);
-		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
-			QuadList[ APP.upload_id ] = new QuadData(QuadList);
-		var qdata = QuadList[ APP.upload_id ];
+		if ( QUAD.func.is_undef( APP.QuadList[ APP.upload_id ] ) )
+			APP.QuadList[ APP.upload_id ] = new QuadData(APP.QuadList);
+		var qdata = APP.QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, APP.html.debugger_files);
+			APP.qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
 				APP.html.keylist.innerHTML = '';
 				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
@@ -147,9 +145,9 @@ var QuadList = [];
 		APP.is_redraw = true;
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
-		if ( ! QuadList[0] )
+		if ( ! APP.QuadList[0] )
 			return;
-		var qdata = QuadList[0];
+		var qdata = APP.QuadList[0];
 		qdata.is_lines = ! qdata.is_lines;
 		APP.html.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
 		APP.is_redraw = true;
@@ -158,29 +156,29 @@ var QuadList = [];
 		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
-		button_select_layers(dbg);
+		APP.button_select_layers(dbg);
 		APP.is_redraw = true;
 	});
 	APP.html.btn_selectnone.addEventListener('click', function(){
 		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
-		button_unselect_layers(dbg);
+		APP.button_unselect_layers(dbg);
 		APP.is_redraw = true;
 	});
 
 	function render(){
 		requestAnimationFrame(render);
-		if ( ! QuadList[0] || ! QuadList[0].name )
+		if ( ! APP.QuadList[0] || ! APP.QuadList[0].name )
 			return;
-		var qdata = QuadList[0];
+		var qdata = APP.QuadList[0];
 
 		// update/redraw only when changed
 		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
 			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
 
 			QUAD.func.qdata_clear(qdata);
-			keydebug_draw(qdata, APP.camera, APP.color);
+			APP.keydebug_draw(qdata, APP.camera, APP.color);
 			APP.is_redraw = false;
 		}
 	}

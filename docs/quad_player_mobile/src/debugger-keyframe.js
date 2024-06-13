@@ -1,6 +1,8 @@
 'use strict';
 
-function get_html_id(){
+var APP = {};
+
+APP.get_html_id = function(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
@@ -10,7 +12,7 @@ function get_html_id(){
 	return html;
 }
 
-function qdata_filetable( qdata, files ){
+APP.qdata_filetable = function( qdata, files ){
 	files.innerHTML = '';
 	if ( qdata.name )
 		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
@@ -23,7 +25,8 @@ function qdata_filetable( qdata, files ){
 }
 
 //////////////////////////////
-// TODO : remove all global var
+// function aaa()       + onclick='aaa();'
+// APP.aaa = function() + var a = APP.aaa();
 
 function keyframe_select( key_id ){
 	APP.html.layerdata.style.display      = 'block';
@@ -32,13 +35,13 @@ function keyframe_select( key_id ){
 	APP.html.layerlist.innerHTML  = '';
 	APP.html.layer_name.innerHTML = '';
 
-	var key = QuadList[0].quad.keyframe[key_id];
+	var key = APP.QuadList[0].quad.keyframe[key_id];
 	if ( ! key )
 		return;
 	APP.html.layer_name.innerHTML = key.name;
 	APP.on_key   = key_id;
 	APP.on_layer = [];
-	QuadList[0].attach.id = key_id;
+	APP.QuadList[0].attach.id = key_id;
 
 	var buffer  = '';
 	var dbglist = [];
@@ -67,7 +70,7 @@ function keyframe_select( key_id ){
 	});
 	APP.html.debuglist.innerHTML = buffer;
 
-	APP.autozoom  = QUAD.func.viewer_autozoom(QuadList[0]);
+	APP.autozoom  = QUAD.func.viewer_autozoom(APP.QuadList[0]);
 	APP.is_redraw = true;
 }
 
@@ -97,7 +100,7 @@ function layer_close(){
 	APP.html.btn_selectnone.style.display = 'none';
 }
 
-function button_select_layers( text ){
+APP.button_select_layers = function( text ){
 	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
@@ -120,7 +123,7 @@ function button_select_layers( text ){
 	} // for ( var i=0; i < list.length; i++ )
 }
 
-function button_unselect_layers( text ){
+APP.button_unselect_layers = function( text ){
 	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
@@ -141,17 +144,17 @@ function button_unselect_layers( text ){
 	} // for ( var i=0; i < list.length; i++ )
 }
 
-function keydebug_draw( qdata, mat4, color ){
+APP.keydebug_draw = function( qdata, mat4, color ){
 	var key = qdata.quad.keyframe[APP.on_key];
 	if ( ! key )
 		return;
 	if ( qdata.is_lines )
-		return keydebug_drawline(qdata, key, mat4, color);
+		return APP.keydebug_drawline(qdata, key, mat4, color);
 	else
-		return keydebug_drawtex (qdata, key, mat4, color);
+		return APP.keydebug_drawtex (qdata, key, mat4, color);
 }
 
-function keydebug_drawline( qdata, key, mat4, color ){
+APP.keydebug_drawline = function( qdata, key, mat4, color ){
 	var clines = [];
 
 	var debug = [];
@@ -190,7 +193,7 @@ function keydebug_drawline( qdata, key, mat4, color ){
 	});
 }
 
-function keydebug_drawtex( qdata, key, mat4, color ){
+APP.keydebug_drawtex = function( qdata, key, mat4, color ){
 	var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
 	var zrate = 1.0 / (key.layer.length + 1);

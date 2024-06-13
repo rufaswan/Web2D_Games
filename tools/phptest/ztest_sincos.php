@@ -29,4 +29,12 @@ for ( $h=0; $h < 0x100; $h++ )
 .  \/      80       \/
 .
 .       <- sin ->
+
+// cross = 0 parallel      , 1 perpendicular
+// dot   = 0 perpendicular , 1 parallel
+//   perpendicular = 90 or 270 degree (cos = 0)
+//   parallel      =  0 or 180 degree (sin = 0)
+//
+//   dot(x,y) = |x||y| cos Q
+// cross(x,y) = |x||y| sin Q
 */

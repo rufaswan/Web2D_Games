@@ -48,14 +48,13 @@ foreach ( $const as $v )
 	printf("%4x / int16 = %f [%4x]\n", $v, $f, $int16 * $f);
 }
 //////////////////////////////
-// int8
-$int8 = 1 << 8;
-$inv8 = 1.0 / $int8;
+$const = array(
+	 10 ,  25 ,  50 ,  75 ,
+	100 , 125 , 150 , 175 ,
+);
 foreach ( $const as $v )
 {
-	$v = ($v + 0x800000) >> 0x18;
-	$f = $v * $inv8;
-	$f = (int)($f * 1000000) * 0.000001;
-	printf("%2x / int8 = %f [%2x]\n", $v, $f, $int8 * $f);
+	$div = 1.0 / $v;
+	printf("1.0 / %4d.0 = %8x / int32 = %f\n", $v, $div*$int32, $div);
 }
 //////////////////////////////

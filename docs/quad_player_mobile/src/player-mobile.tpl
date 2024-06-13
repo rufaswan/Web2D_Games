@@ -108,20 +108,18 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 'use strict';
 
-var APP = {
-	html          : get_html_id(),
-	selected      : '',
-	upload_id     : -1,
-	autozoom      : -1,
-	is_btn_click  : 0,
-	is_autonext   : false,
-	is_redraw     : true,
-	is_viewer_nav : true,
-	fps_draw      : 0,
-	camera        : QUAD.math.matrix4(),
-	color         : [1,1,1,1],
-};
-var QuadList = [];
+APP.html          = APP.get_html_id();
+APP.selected      = '';
+APP.upload_id     = -1;
+APP.autozoom      = -1;
+APP.is_btn_click  = 0;
+APP.is_autonext   = false;
+APP.is_redraw     = true;
+APP.is_viewer_nav = true;
+APP.fps_draw      = 0;
+APP.camera        = QUAD.math.matrix4();
+APP.color         = [1,1,1,1];
+APP.QuadList      = [];
 
 (function(){
 	if ( ! QUAD.gl.init(APP.html.canvas) )
@@ -132,11 +130,11 @@ var QuadList = [];
 
 	// BETWEEN DEBUGGER-VIEWER
 	APP.html.btn_view.addEventListener('click', function(){
-		display_viewer(APP.html, true);
+		APP.display_viewer(APP.html, true);
 		APP.is_redraw = true;
 	});
 	APP.html.btn_debug.addEventListener('click', function(){
-		display_viewer(APP.html, false);
+		APP.display_viewer(APP.html, false);
 		APP.html.logger.innerHTML = QUAD.func.console();
 	});
 
@@ -147,24 +145,24 @@ var QuadList = [];
 	});
 	APP.html.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', APP.upload_id);
-		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
-			QuadList[ APP.upload_id ] = new QuadData(QuadList);
-		var qdata = QuadList[ APP.upload_id ];
+		if ( QUAD.func.is_undef( APP.QuadList[ APP.upload_id ] ) )
+			APP.QuadList[ APP.upload_id ] = new QuadData(APP.QuadList);
+		var qdata = APP.QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, APP.html.debugger_files);
+			APP.qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
 				APP.html.quad_data.innerHTML = '';
 				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
 
-				var buffer = qdata_tagtable(qdata.quad.tag);
+				var buffer = APP.qdata_tagtable(qdata.quad.tag);
 				APP.html.quad_data.innerHTML += buffer;
 
-				var quad_main = quad_mainlist(qdata.quad);
+				var quad_main = APP.quad_mainlist(qdata.quad);
 				if ( quad_main === -1 )
 					return;
 
@@ -173,12 +171,12 @@ var QuadList = [];
 				qdata.quad[quad_main].forEach(function(v,k){
 					if ( ! v )
 						return;
-					buffer += qdata_listing(qdata, quad_main, k);
+					buffer += APP.qdata_listing(qdata, quad_main, k);
 				});
 				buffer += '</ul>';
 				APP.html.quad_data.innerHTML += buffer;
 
-				viewer_btn_menu(qdata);
+				APP.viewer_btn_menu(qdata);
 			} // if ( qdata.name )
 			APP.html.logger.innerHTML = QUAD.func.console();
 		});
@@ -202,14 +200,14 @@ var QuadList = [];
 		APP.is_viewer_nav = ! APP.is_viewer_nav;
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
-		if ( ! QuadList[0] )
+		if ( ! APP.QuadList[0] )
 			return;
-		QuadList[0].is_lines = ! QuadList[0].is_lines;
-		APP.html.btn_lines.innerHTML = ( QuadList[0].is_lines ) ? 'line' : 'tex';
+		APP.QuadList[0].is_lines = ! APP.QuadList[0].is_lines;
+		APP.html.btn_lines.innerHTML = ( APP.QuadList[0].is_lines ) ? 'line' : 'tex';
 		APP.is_redraw = true;
 	});
 	APP.html.btn_hitattr.addEventListener('click', function(){
-		qdata_toggle(QuadList[0], this, 'is_hits');
+		APP.qdata_toggle(APP.QuadList[0], this, 'is_hits');
 		APP.is_redraw = true;
 	});
 	APP.html.btn_colorize.addEventListener('click', function(){
@@ -221,34 +219,34 @@ var QuadList = [];
 		APP.is_redraw = true;
 	});
 	APP.html.btn_flipx.addEventListener('click', function(){
-		qdata_toggle(QuadList[0], this, 'is_flipx');
+		APP.qdata_toggle(APP.QuadList[0], this, 'is_flipx');
 		APP.is_redraw = true;
 	});
 	APP.html.btn_flipy.addEventListener('click', function(){
-		qdata_toggle(QuadList[0], this, 'is_flipy');
+		APP.qdata_toggle(APP.QuadList[0], this, 'is_flipy');
 		APP.is_redraw = true;
 	});
 	APP.html.btn_autozoom.addEventListener('click', function(){
 		if ( this.classList.contains('btn_on') ){
-			button_toggle(this, -1);
+			APP.button_toggle(this, -1);
 			APP.autozoom = 1;
 		} else {
-			button_toggle(this, 1);
+			APP.button_toggle(this, 1);
 			APP.autozoom = -1;
 		}
-		if ( QuadList[0] )
-			QuadList[0].zoom = APP.autozoom;
+		if ( APP.QuadList[0] )
+			APP.QuadList[0].zoom = APP.autozoom;
 		APP.is_redraw = true;
 	});
 
 	APP.html.btn_prev.addEventListener('click', function(){
 		if ( APP.is_autonext ){
-			button_toggle(APP.html.btn_next, -1);
+			APP.button_toggle(APP.html.btn_next, -1);
 			if ( APP.html.btn_prev.classList.contains('btn_on') ){
-				button_toggle(APP.html.btn_prev, -1);
+				APP.button_toggle(APP.html.btn_prev, -1);
 				APP.is_btn_click = 0;
 			} else {
-				button_toggle(APP.html.btn_prev, 1);
+				APP.button_toggle(APP.html.btn_prev, 1);
 				APP.is_btn_click = -1;
 			}
 		} else
@@ -256,12 +254,12 @@ var QuadList = [];
 	});
 	APP.html.btn_next.addEventListener('click', function(){
 		if ( APP.is_autonext ){
-			button_toggle(APP.html.btn_prev, -1);
+			APP.button_toggle(APP.html.btn_prev, -1);
 			if ( APP.html.btn_next.classList.contains('btn_on') ){
-				button_toggle(APP.html.btn_next, -1);
+				APP.button_toggle(APP.html.btn_next, -1);
 				APP.is_btn_click = 0;
 			} else {
-				button_toggle(APP.html.btn_next, 1);
+				APP.button_toggle(APP.html.btn_next, 1);
 				APP.is_btn_click = 1;
 			}
 		} else
@@ -269,12 +267,12 @@ var QuadList = [];
 	});
 	APP.html.btn_autonext.addEventListener('click', function(){
 		if ( APP.is_autonext ){
-			button_toggle(APP.html.btn_prev, 0);
-			button_toggle(APP.html.btn_next, 0);
+			APP.button_toggle(APP.html.btn_prev, 0);
+			APP.button_toggle(APP.html.btn_next, 0);
 			APP.is_autonext = false;
 		} else {
-			button_toggle(APP.html.btn_prev, -1);
-			button_toggle(APP.html.btn_next, -1);
+			APP.button_toggle(APP.html.btn_prev, -1);
+			APP.button_toggle(APP.html.btn_next, -1);
 			APP.is_autonext = true;
 		}
 	});
@@ -283,13 +281,13 @@ var QuadList = [];
 		requestAnimationFrame(render);
 		if ( APP.html.viewer.style.display !== 'block' )
 			return;
-		if ( ! QuadList[0] || ! QuadList[0].name )
+		if ( ! APP.QuadList[0] || ! APP.QuadList[0].name )
 			return;
-		var qdata = QuadList[0];
+		var qdata = APP.QuadList[0];
 
 		// auto forward by 60/8 fps = 7.5 fps
 		if ( (APP.fps_draw & 7) === 0 ){
-			button_prev_next(qdata, APP.is_btn_click);
+			APP.button_prev_next(qdata, APP.is_btn_click);
 			if ( APP.is_btn_click !== 0 )
 				APP.is_redraw = true;
 			if ( ! APP.is_autonext )

@@ -19,7 +19,7 @@ Item ID
 0a Queen's Rod   Golden Vest   Zetasol       Chrono RodG   Lite Ar+1   -
 0b Dynamite Rod  *cloth*       Zetasol DX    Smoke RodG    Lite Ar+2   -
 0c Dark Rod      *cloth*       Physisol      Chaos RodG    Lite Ar+3   -
-0d Chaoes Rod    *cloth*       Mentsol                     Silver Ar   -
+0d Chaos Rod     *cloth*       Mentsol                     Silver Ar   -
 0e Psycho Rod    *cloth*       Physimentsol                Silver Ar+1 -
 0f Skull Rod     WeddingDress  White Star                  Lite Alloy  -
 
@@ -49,7 +49,7 @@ Item ID
 26 *gun*         Starlight     Weak vs Water               Fire Veil Ar-
 27 SengokuSword  Vivid Turban  Stop!         SengokuSword  WaterVeil Ar-
 28 Yamame Sword  Ladies'Bonne  Sleep!        Yamame Sword  Cast Ar     -
-29 Yamoto Sword  Blessed Helm  Weakling      Yamato Sword  Old Circuit -
+29 Yamato Sword  Blessed Helm  Weakling      Yamato Sword  Old Circuit -
 2a Mumyo  Sword  Stellar Cap   Confusion     Kijin Sword   Simp Circuit-
 2b *sword*       Red Mail      Armor Loss    Kishin Sword  Resp Circuit-
 2c *weapon*      Iron Mail     EXP Ball      *weapon*      Def Circuit -

@@ -178,7 +178,9 @@ main > nav {
 </style>
 <script>'use strict';
 
-function get_html_id(){
+var APP = {};
+
+APP.get_html_id = function(){
 	var html = {};
 	var eles = document.querySelectorAll('*[id]');
 	for ( var i=0; i < eles.length; i++ ) {
@@ -188,7 +190,7 @@ function get_html_id(){
 	return html;
 }
 
-function qdata_filetable( qdata, files ){
+APP.qdata_filetable = function( qdata, files ){
 	files.innerHTML = '';
 	if ( qdata.name )
 		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
@@ -201,7 +203,8 @@ function qdata_filetable( qdata, files ){
 }
 
 //////////////////////////////
-// TODO : remove all global var
+// function aaa()       + onclick='aaa();'
+// APP.aaa = function() + var a = APP.aaa();
 
 function keyframe_select( key_id ){
 	APP.html.layerdata.style.display      = 'block';
@@ -210,13 +213,13 @@ function keyframe_select( key_id ){
 	APP.html.layerlist.innerHTML  = '';
 	APP.html.layer_name.innerHTML = '';
 
-	var key = QuadList[0].quad.keyframe[key_id];
+	var key = APP.QuadList[0].quad.keyframe[key_id];
 	if ( ! key )
 		return;
 	APP.html.layer_name.innerHTML = key.name;
 	APP.on_key   = key_id;
 	APP.on_layer = [];
-	QuadList[0].attach.id = key_id;
+	APP.QuadList[0].attach.id = key_id;
 
 	var buffer  = '';
 	var dbglist = [];
@@ -245,7 +248,7 @@ function keyframe_select( key_id ){
 	});
 	APP.html.debuglist.innerHTML = buffer;
 
-	APP.autozoom  = QUAD.func.viewer_autozoom(QuadList[0]);
+	APP.autozoom  = QUAD.func.viewer_autozoom(APP.QuadList[0]);
 	APP.is_redraw = true;
 }
 
@@ -275,7 +278,7 @@ function layer_close(){
 	APP.html.btn_selectnone.style.display = 'none';
 }
 
-function button_select_layers( text ){
+APP.button_select_layers = function( text ){
 	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
@@ -298,7 +301,7 @@ function button_select_layers( text ){
 	} // for ( var i=0; i < list.length; i++ )
 }
 
-function button_unselect_layers( text ){
+APP.button_unselect_layers = function( text ){
 	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
 	for ( var i=0; i < list.length; i++ ){
@@ -319,17 +322,17 @@ function button_unselect_layers( text ){
 	} // for ( var i=0; i < list.length; i++ )
 }
 
-function keydebug_draw( qdata, mat4, color ){
+APP.keydebug_draw = function( qdata, mat4, color ){
 	var key = qdata.quad.keyframe[APP.on_key];
 	if ( ! key )
 		return;
 	if ( qdata.is_lines )
-		return keydebug_drawline(qdata, key, mat4, color);
+		return APP.keydebug_drawline(qdata, key, mat4, color);
 	else
-		return keydebug_drawtex (qdata, key, mat4, color);
+		return APP.keydebug_drawtex (qdata, key, mat4, color);
 }
 
-function keydebug_drawline( qdata, key, mat4, color ){
+APP.keydebug_drawline = function( qdata, key, mat4, color ){
 	var clines = [];
 
 	var debug = [];
@@ -368,7 +371,7 @@ function keydebug_drawline( qdata, key, mat4, color ){
 	});
 }
 
-function keydebug_drawtex( qdata, key, mat4, color ){
+APP.keydebug_drawtex = function( qdata, key, mat4, color ){
 	var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
 
 	var zrate = 1.0 / (key.layer.length + 1);
@@ -3019,7 +3022,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-6-4 (beta)';
+	$.version = 'ver 2024-6-9 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3109,17 +3112,15 @@ function QuadData(qlist){
 <script>
 'use strict';
 
-var APP = {
-	html      : get_html_id(),
-	upload_id : -1,
-	on_key    : -1,
-	on_layer  : [],
-	is_redraw : true,
-	autozoom  : 1.0,
-	camera    : QUAD.math.matrix4(),
-	color     : [1,1,1,1],
-};
-var QuadList = [];
+APP.html      = APP.get_html_id();
+APP.upload_id = -1;
+APP.on_key    = -1;
+APP.on_layer  = [];
+APP.is_redraw = true;
+APP.autozoom  = 1.0;
+APP.camera    = QUAD.math.matrix4();
+APP.color     = [1,1,1,1];
+APP.QuadList  = [];
 
 (function(){
 	if ( ! QUAD.gl.init(APP.html.canvas) )
@@ -3135,16 +3136,16 @@ var QuadList = [];
 	});
 	APP.html.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', APP.upload_id);
-		if ( QUAD.func.is_undef( QuadList[ APP.upload_id ] ) )
-			QuadList[ APP.upload_id ] = new QuadData(QuadList);
-		var qdata = QuadList[ APP.upload_id ];
+		if ( QUAD.func.is_undef( APP.QuadList[ APP.upload_id ] ) )
+			APP.QuadList[ APP.upload_id ] = new QuadData(APP.QuadList);
+		var qdata = APP.QuadList[ APP.upload_id ];
 
 		var proall = [];
 		for ( var up of this.files )
 			proall.push( QUAD.func.upload_promise(up, qdata) );
 
 		Promise.all(proall).then(function(resolve){
-			qdata_filetable(qdata, APP.html.debugger_files);
+			APP.qdata_filetable(qdata, APP.html.debugger_files);
 			if ( qdata.name ){
 				APP.html.keylist.innerHTML = '';
 				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
@@ -3181,9 +3182,9 @@ var QuadList = [];
 		APP.is_redraw = true;
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
-		if ( ! QuadList[0] )
+		if ( ! APP.QuadList[0] )
 			return;
-		var qdata = QuadList[0];
+		var qdata = APP.QuadList[0];
 		qdata.is_lines = ! qdata.is_lines;
 		APP.html.btn_lines.innerHTML = ( qdata.is_lines ) ? 'line' : 'tex';
 		APP.is_redraw = true;
@@ -3192,29 +3193,29 @@ var QuadList = [];
 		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
-		button_select_layers(dbg);
+		APP.button_select_layers(dbg);
 		APP.is_redraw = true;
 	});
 	APP.html.btn_selectnone.addEventListener('click', function(){
 		var dbg = APP.html.debuglist.value;
 		if ( dbg.indexOf('#') < 0 )
 			dbg = 0;
-		button_unselect_layers(dbg);
+		APP.button_unselect_layers(dbg);
 		APP.is_redraw = true;
 	});
 
 	function render(){
 		requestAnimationFrame(render);
-		if ( ! QuadList[0] || ! QuadList[0].name )
+		if ( ! APP.QuadList[0] || ! APP.QuadList[0].name )
 			return;
-		var qdata = QuadList[0];
+		var qdata = APP.QuadList[0];
 
 		// update/redraw only when changed
 		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
 			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
 
 			QUAD.func.qdata_clear(qdata);
-			keydebug_draw(qdata, APP.camera, APP.color);
+			APP.keydebug_draw(qdata, APP.camera, APP.color);
 			APP.is_redraw = false;
 		}
 	}

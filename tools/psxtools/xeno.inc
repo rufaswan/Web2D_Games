@@ -290,6 +290,24 @@ Save anywhere
 	XENO-JP-1  RAM 80058811  00 -> 01
 	XENO-US-1  RAM 80059171  00 -> 01
 //////////////////////////////
+button press
+	01     L2
+	02     R2
+	04     L1
+	08     R1
+	10     triangle
+	20     circle
+	40     cross
+	80     square
+	00 01  select
+	00 02
+	00 04
+	00 08  start
+	00 10  dpad up
+	00 20  dpad right
+	00 40  dpad down
+	00 80  dpad left
+//////////////////////////////
 MDEC_rest
 	19.bin
 	591.bin

@@ -272,7 +272,7 @@ function im_bc3( &$file, $pos, $w, $h, $size )
 
 	$bc3 = new s3tc_Texture;
 	$pix = $bc3->bc3($pix);
-	//$pix = $bc4->s3tc_debug($pix, $w, $h);
+	//$pix = $bc3->s3tc_debug($pix, $w, $h);
 
 	$ch = int_ceil_pow2($h);
 	tegra_x1_swizzled_16_bits($pix, $w, $ch);
