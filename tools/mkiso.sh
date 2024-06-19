@@ -19,37 +19,43 @@ options:
 [ $# = 0 ] && { echo "$msg"; exit; }
 nice='nice -n 19'
 
-mkiso=''
-function get_mkiso()
-{
-	[ "$mkiso" ] || mkiso=$(which $1)
+function get_mkiso {
+	# mkisofs     from cdrecord/cdrtools , GPL->CDDL v2.01.01a09+
+	# genisoimage from wodim   /cdrkit   , fork of cdrtools v2.01a38 GPL
+	if [ $(which mkisofs) ]; then
+		echo $(which mkisofs)
+		return 0
+	fi
+	if [ $(which genisoimage) ]; then
+		echo $(which genisoimage)
+		return 0
+	fi
+	exit
 }
-get_mkiso  mkisofs
-get_mkiso  genisoimage
+mkiso=$(get_mkiso)
 [ "$mkiso" ] || { echo "$msg"; exit; }
 
 opt='-l -J -r'
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	#tit="${t1%.*}"
 	#ext="${t1##*.}"
 	shift
 
 	if [ -d "$t1" ]; then
-		dir=$(readlink -f "$t1")
-		[ -f "$t1.iso" ] && rm -vf "$t1.iso"
+		dir=$(readlink -f  "$t1")
+		[ -f "$t1".iso ] && rm -vf "$t1".iso
 
 		cmd="$mkiso  $opt  -o $t1.iso  $dir"
 		echo "[$#] $cmd"
 		$nice  $mkiso  $opt  -o "$t1".iso  "$dir"
 	else
 		case "$t1" in
-			'-0')    opt='-l';;
-			'-dvd')  opt='-l -J -r -udf';;
-			'-psx')  opt='-l -xa';;
-			'-ps2')  opt='-l -udf';;
+			'0'|'-0')      opt='-l';;
+			'dvd'|'-dvd')  opt='-l -J -r -udf';;
+			'psx'|'-psx')  opt='-l -xa';;
+			'ps2'|'-ps2')  opt='-l -udf';;
 			*)       opt='-l -J -r';;
 		esac
 	fi
 done
-

@@ -6,25 +6,23 @@
 sf2="/tmp/win98_gm.sf2"
 
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	tit="${t1%.*}"
 	ext="${t1##*.}"
 	shift
 
 	[ -e "$sf2" ] || continue
 	[ -f "$t1"  ] || continue
-	fluidsynth \
-		-nli \
+	fluidsynth        \
+		-nli          \
 		-F "$tit".wav \
-		"$sf2" \
+		"$sf2"        \
 		"$t1"
 
-	oggenc \
-		-q -1 \
+	oggenc               \
+		-q -1            \
 		--resample 44100 \
 		"$tit".wav
 
-	rm -vf "$tit".wav
-
+	rm -vf  "$tit".wav
 done
-

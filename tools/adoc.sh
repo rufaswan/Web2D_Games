@@ -4,7 +4,7 @@ nice='nice -n 19'
 
 [ $# = 0 ] && exit
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	ext="${t1##*.}"
 	shift
 
@@ -13,6 +13,4 @@ while [ "$1" ]; do
 		-a stylesheet\!        \
 		-a last-update-label\! \
 		"$t1"
-
 done
-

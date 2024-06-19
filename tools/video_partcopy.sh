@@ -2,51 +2,42 @@
 [ $(which ffmpeg)  ] || exit
 nice='nice -n 19'
 ##############################
-sec=0
-function time_calc {
-	case $# in
-		3) sec=$(echo "($1*60*60)+($2*60)+$3" | bc);;
-		2) sec=$(echo "($1*60)+$2" | bc);;
-		1) sec=$1;;
-		*) sec=0;;
-	esac
-}
-
 function time2sec {
-	var=$(echo $1 | tr ':' ' ')
-	time_calc $var
+	var=( $(echo $1 | tr ':' ' ') )
+	case ${#var[@]} in
+		3)  echo "${var[2]}+(${var[1]}*60)+(${var[0]}*60*60)" | bc;;
+		2)  echo "${var[1]}+(${var[0]}*60)"                   | bc;;
+		1)  echo "${var[0]}";;
+		*)  echo 0;;
+	esac
+	return 0;
 }
 ##############################
 echo "${0##*/}  VIDEO  START  END  [START  END]..."
 
 (( $# < 3 )) && exit
+t1=./"$1"
+shift
 
 # arg[1] is video/audio file
-[ -f "$1" ] || exit
-mime=$(file  --brief  --mime-type  "$1")
+[ -f "$t1" ] || exit
+mime=$(file  --brief  --mime-type  "$t1")
 case "$mime" in
 	'video/'* | 'audio/'*)
-		video="$1"
+		video="$t1"
 		tit="${video%.*}"
 		ext="${video##*.}"
-		shift
 		;;
 	*)  exit;;
 esac
 
 while [ "$2" ]; do
-	time2sec  $1 ; fr=$sec
-	time2sec  $2 ; to=$sec
+	fr=$(time2sec $1)
+	to=$(time2sec $2)
 	shift 2
 
-	# swap from and to if reversed
-	if (( $fr > $to )); then
-		t=$fr
-		fr=$to
-		to=$t
-	fi
-
 	let dur=$to-$fr
+	(( $dur < 1 )) && continue
 	echo ">>> from $fr to $to ($dur sec)"
 
 	# -ss before -i = seek to relevant keyframe block, play until time and start from there

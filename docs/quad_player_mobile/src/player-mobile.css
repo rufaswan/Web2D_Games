@@ -1,29 +1,40 @@
-body {
-	background-color : #404040;
+:root {
+	--body-bg-color     : #121212;
+	--body-text-color   : #ededed;
+	--button-bg-color   : #ededed;
+	--button-text-color : #121212;
+	--border-color      : #808080;
+	--mobile-button-size-small   : 42px; /* 11mm */
+	--mobile-button-hspace-small : 18px; /* 36px-48px = 10mm-13mm */
+	--mobile-button-vspace-small :  9px;
 }
-body, a, a:hover, a:visited {
-	color       : #c0c0c0;
+body {
+	background-color : var(--body-bg-color);
+}
+body, a {
+	color       : var(--body-text-color);
 	font-family : sans-serif;
 }
 
 button {
-	background-color : rgba(255 , 255 , 255 , 0.5);
+	background-color : var(--button-bg-color);
+	color            : var(--button-text-color);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 9px 18px;
-	min-width        : 42px;
-	height           : 42px;
+	margin           : var(--mobile-button-vspace-small)  var(--mobile-button-hspace-small);
+	min-width        : var(--mobile-button-size-small);
+	height           : var(--mobile-button-size-small);
 	padding          : 0;
-	border           : 0;
+	border           : 1px var(--border-color) solid;
 	box-sizing       : border-box;
 }
 button.btn_on {
-	background-color : rgba(0 , 255 , 0 , 0.5);
+	background-color : #0f0;
 	color            : #000;
 }
 
 button.btn_off {
-	background-color : rgba(255 , 0 , 0 , 0.5);
+	background-color : #f00;
 	color            : #fff;
 }
 
@@ -32,14 +43,14 @@ textarea {
 	width            : 95%;
 	height           : 25em;
 	margin           : 0 auto 0;
-	background-color : #fff;
-	color            : #000;
+	background-color : var(--body-text-color);
+	color            : var(--body-bg-color);
 	resize           : none;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	text-transform : uppercase;
-	border-bottom  : 1px #808080 solid;
+	border-bottom  : 1px var(--border-color) solid;
 }
 
 ul {
@@ -49,15 +60,25 @@ ul {
 .hidden {
 	display : none;
 }
+.div_range {
+	display        : flex;
+	flex-direction : row;
+	flex-wrap      : nowrap;
+	padding        : 0.5em;
+}
+.div_range input {
+	flex-grow : 2;
+}
 
 #viewer {
-	position : fixed;
-	left     : 0;
-	top      : 0;
-	width    : 100vw;
-	height   : 100vh;
-	overflow : auto;
-	display  : none;
+	position         : fixed;
+	left             : 0;
+	top              : 0;
+	width            : 100vw;
+	height           : 100vh;
+	overflow         : auto;
+	display          : none;
+	background-color : var(--body-bg-color);
 }
 
 #viewer #canvas,
@@ -82,13 +103,17 @@ ul {
 #debugger_top_nav {
 	top              : 0;
 	left             : 0;
-	background-color : #404040;
-	border-bottom    : 2px #c0c0c0 solid;
+	background-color : var(--body-bg-color);
+	border-bottom    : 2px var(--border-color) solid;
 	flex-direction   : row;
 	flex-wrap        : nowrap;
 	justify-content  : space-between;
 	align-items      : center;
 	align-content    : flex-start;
+}
+#debugger_top_dummy {
+	display : block;
+	height  : 60px;
 }
 #viewer_top_nav {
 	top             : 0;
@@ -116,10 +141,10 @@ ul {
 #export_menu {
 	position         : fixed;
 	bottom           : 0;
-	background-color : #404040;
+	background-color : var(--body-bg-color);
 	display          : none;
 	text-align       : center;
-	border-top       : 2px #c0c0c0 solid;
+	border-top       : 2px var(--border-color) solid;
 	padding-top      : 1em;
 	width            : 100vw;
 }
@@ -127,12 +152,9 @@ ul {
 #export_menu button {
 	margin : 1em;
 }
-#export_menu input[type=range] {
-	width : 90%;
-}
 
 #quad_data p {
-	line-height     : 42px;
+	line-height     : var(--mobile-button-size-small);
 	display         : flex;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
@@ -144,34 +166,35 @@ ul {
 	padding : 0;
 }
 #quad_data ul ul {
-	padding-left : 42px;
+	padding-left : var(--mobile-button-size-small);
 }
 
 #quad_data .liexpand,
 #quad_data .liexport {
-	background-color : rgba(255 , 255 , 255 , 0.5);
-	color            : #000;
+	background-color : var(--button-bg-color);
+	color            : var(--button-text-color);
 	white-space      : nowrap;
 	text-transform   : uppercase;
 	text-align       : center;
-	min-height       : 42px;
+	min-height       : var(--mobile-button-size-small);
 	padding          : 0.5em;
+	border           : 1px var(--border-color) solid;
 }
 
 #quad_data .liname {
 	flex-grow : 2;
-	border    : 1px #c0c0c0 solid;
+	border    : 1px var(--border-color) solid;
 	padding   : 0 0.5em;
 }
 #quad_data .current {
-	background-color : #c0c0c0;
-	color            : #404040;
+	background-color : var(--body-text-color);
+	color            : var(--body-bg-color);
 }
 
 #quad_data_tags {
-	padding-left : 42px;
+	padding-left : var(--mobile-button-size-small);
 }
 #quad_data_tags p {
 	display      : block;
-	padding-left : 42px;
+	padding-left : var(--mobile-button-size-small);
 }

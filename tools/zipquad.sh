@@ -3,7 +3,7 @@
 
 png=()
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	shift
 
 	case "$t1" in
@@ -33,4 +33,3 @@ while [ "$1" ]; do
 			;;
 	esac
 done
-

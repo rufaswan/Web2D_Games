@@ -68,8 +68,15 @@ function mcrfile( $fname )
 
 	if ( $bak->filesize(1) !== 0x20000 ) // 128 KB
 		return;
-	if ( substr($bak->file,0,2) !== 'MC' )
-		return;
+	for ( $i=0; $i < 0x800; $i += 0x80 )
+	{
+		$sum = 0;
+		for ( $j=0; $j <= 0x7e; $j++ )
+			$sum ^= ord( $bak->file[$i + $j] );
+		$b = ord( $bak->file[$i + 0x7f] );
+		if ( $b !== $sum )
+			return;
+	} // for ( $i=0; $i < 0x800; $i += 0x80 )
 
 	// 1 + 15 blocks
 	for ( $i=1; $i < 16; $i++ )

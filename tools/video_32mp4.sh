@@ -7,8 +7,7 @@ s=2
 size='300x200'
 orin='3:2'
 ##############################
-function setsize
-{
+function setsize {
 	if (( $2 > $1 )); then
 		echo "$1 $2  set Portrait"
 		let w=$s*100
@@ -27,7 +26,7 @@ function setsize
 af='-af loudnorm=I=-14:TP=-1'
 SECONDS=0
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	dir="${t1%/*}"
 	bas="${t1##*/}"
 	tit="${bas%.*}"
@@ -40,7 +39,8 @@ while [ "$1" ]; do
 		t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
 		setsize $(echo "$t2" | tr ','  ' ')
 
-		$nice  ffmpeg -y -i "$t1"  \
+		$nice  ffmpeg -y    \
+			-i "$t1"        \
 			-s $size        \
 			-aspect $orin   \
 			-vcodec libx264 \
@@ -53,11 +53,11 @@ while [ "$1" ]; do
 			"$tmp"
 		[ -f "$tmp" ] && mv -vf "$tmp"  "$bas-$size".mp4
 	else
-		case "$t1" in
+		case "${t1:2}" in
 			'-af')  af='';;
 			'+af')  af='-af loudnorm=I=-14:TP=-1';;
 			*)
-				let s=$t1*1
+				let s=${t1:2}*1
 				if (( $s < 1 )); then
 					s=1
 				fi

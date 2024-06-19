@@ -23,32 +23,45 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Quad Player - Mobile</title>
-<style>body {
-	background-color : #404040;
+<style>:root {
+	--body-bg-color     : #121212;
+	--body-text-color   : #ededed;
+	--button-bg-color   : #ededed;
+	--button-text-color : #121212;
+	--border-color      : #808080;
+	--mobile-button-size-small   : 42px; 
+
+	--mobile-button-hspace-small : 18px; 
+
+	--mobile-button-vspace-small :  9px;
 }
-body, a, a:hover, a:visited {
-	color       : #c0c0c0;
+body {
+	background-color : var(--body-bg-color);
+}
+body, a {
+	color       : var(--body-text-color);
 	font-family : sans-serif;
 }
 
 button {
-	background-color : rgba(255 , 255 , 255 , 0.5);
+	background-color : var(--button-bg-color);
+	color            : var(--button-text-color);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 9px 18px;
-	min-width        : 42px;
-	height           : 42px;
+	margin           : var(--mobile-button-vspace-small)  var(--mobile-button-hspace-small);
+	min-width        : var(--mobile-button-size-small);
+	height           : var(--mobile-button-size-small);
 	padding          : 0;
-	border           : 0;
+	border           : 1px var(--border-color) solid;
 	box-sizing       : border-box;
 }
 button.btn_on {
-	background-color : rgba(0 , 255 , 0 , 0.5);
+	background-color : #0f0;
 	color            : #000;
 }
 
 button.btn_off {
-	background-color : rgba(255 , 0 , 0 , 0.5);
+	background-color : #f00;
 	color            : #fff;
 }
 
@@ -57,14 +70,14 @@ textarea {
 	width            : 95%;
 	height           : 25em;
 	margin           : 0 auto 0;
-	background-color : #fff;
-	color            : #000;
+	background-color : var(--body-text-color);
+	color            : var(--body-bg-color);
 	resize           : none;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	text-transform : uppercase;
-	border-bottom  : 1px #808080 solid;
+	border-bottom  : 1px var(--border-color) solid;
 }
 
 ul {
@@ -74,15 +87,25 @@ ul {
 .hidden {
 	display : none;
 }
+.div_range {
+	display        : flex;
+	flex-direction : row;
+	flex-wrap      : nowrap;
+	padding        : 0.5em;
+}
+.div_range input {
+	flex-grow : 2;
+}
 
 #viewer {
-	position : fixed;
-	left     : 0;
-	top      : 0;
-	width    : 100vw;
-	height   : 100vh;
-	overflow : auto;
-	display  : none;
+	position         : fixed;
+	left             : 0;
+	top              : 0;
+	width            : 100vw;
+	height           : 100vh;
+	overflow         : auto;
+	display          : none;
+	background-color : var(--body-bg-color);
 }
 
 #viewer #canvas,
@@ -107,13 +130,17 @@ ul {
 #debugger_top_nav {
 	top              : 0;
 	left             : 0;
-	background-color : #404040;
-	border-bottom    : 2px #c0c0c0 solid;
+	background-color : var(--body-bg-color);
+	border-bottom    : 2px var(--border-color) solid;
 	flex-direction   : row;
 	flex-wrap        : nowrap;
 	justify-content  : space-between;
 	align-items      : center;
 	align-content    : flex-start;
+}
+#debugger_top_dummy {
+	display : block;
+	height  : 60px;
 }
 #viewer_top_nav {
 	top             : 0;
@@ -141,10 +168,10 @@ ul {
 #export_menu {
 	position         : fixed;
 	bottom           : 0;
-	background-color : #404040;
+	background-color : var(--body-bg-color);
 	display          : none;
 	text-align       : center;
-	border-top       : 2px #c0c0c0 solid;
+	border-top       : 2px var(--border-color) solid;
 	padding-top      : 1em;
 	width            : 100vw;
 }
@@ -152,12 +179,9 @@ ul {
 #export_menu button {
 	margin : 1em;
 }
-#export_menu input[type=range] {
-	width : 90%;
-}
 
 #quad_data p {
-	line-height     : 42px;
+	line-height     : var(--mobile-button-size-small);
 	display         : flex;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
@@ -169,36 +193,37 @@ ul {
 	padding : 0;
 }
 #quad_data ul ul {
-	padding-left : 42px;
+	padding-left : var(--mobile-button-size-small);
 }
 
 #quad_data .liexpand,
 #quad_data .liexport {
-	background-color : rgba(255 , 255 , 255 , 0.5);
-	color            : #000;
+	background-color : var(--button-bg-color);
+	color            : var(--button-text-color);
 	white-space      : nowrap;
 	text-transform   : uppercase;
 	text-align       : center;
-	min-height       : 42px;
+	min-height       : var(--mobile-button-size-small);
 	padding          : 0.5em;
+	border           : 1px var(--border-color) solid;
 }
 
 #quad_data .liname {
 	flex-grow : 2;
-	border    : 1px #c0c0c0 solid;
+	border    : 1px var(--border-color) solid;
 	padding   : 0 0.5em;
 }
 #quad_data .current {
-	background-color : #c0c0c0;
-	color            : #404040;
+	background-color : var(--body-text-color);
+	color            : var(--body-bg-color);
 }
 
 #quad_data_tags {
-	padding-left : 42px;
+	padding-left : var(--mobile-button-size-small);
 }
 #quad_data_tags p {
 	display      : block;
-	padding-left : 42px;
+	padding-left : var(--mobile-button-size-small);
 }
 </style>
 <script>'use strict';
@@ -221,6 +246,27 @@ APP.display_viewer = function( html, toggle ){
 	else
 		html.viewer.style.display = 'none';
 	html.export_menu.style.display = 'none';
+}
+
+APP.bgcontrast = function( light ){
+	light &= 0xff;
+	var dark  = 0xff - light;
+	var root  = document.documentElement;
+	root.style.setProperty('--body-bg-color'   , `rgb(${light},${light},${light})`);
+	root.style.setProperty('--body-text-color' , `rgb(${dark} ,${dark} ,${dark} )`);
+	if ( light & 0x80 ){
+		root.style.setProperty('--button-bg-color'   , '#121212');
+		root.style.setProperty('--button-text-color' , '#ededed');
+	}
+	else {
+		root.style.setProperty('--button-bg-color'   , '#ededed');
+		root.style.setProperty('--button-text-color' , '#121212');
+	}
+}
+
+APP.divrange_span_value = function( elem ){
+	var span = elem.parentElement.getElementsByTagName('span');
+	span[0].innerHTML = elem.value;
 }
 
 APP.button_toggle = function( elem, turn ){
@@ -416,17 +462,20 @@ function button_export( elem ){
 	var range = APP.html.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
-	APP.html.export_start.innerHTML = 0;
+
+	APP.divrange_span_value(APP.html.export_range);
+	APP.divrange_span_value(APP.html.export_times);
 }
 
 function button_export_type( elem ){
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
 	var fmt  = elem.innerHTML.toLowerCase();
 
-	var time = APP.html.export_start.innerHTML | 0;
-	var zoom = 1.0 * APP.html.export_zoom.innerHTML;
+	var div  = APP.html.export_menu;
+	var type = div.getAttribute('data-type');
+	var id   = div.getAttribute('data-id') | 0;
+
+	var time = APP.html.export_range.value | 0;
+	var zoom = APP.html.export_times.value * 1.0;
 	QUAD.export.export(fmt, APP.QuadList[0], APP.html.canvas, type, id, time, zoom);
 	APP.html.logger.innerHTML = QUAD.func.console();
 }
@@ -3085,7 +3134,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-6-9 (beta)';
+	$.version = 'ver 2024-6-18 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3135,8 +3184,13 @@ function QuadData(qlist){
 		<button id='btn_upload' data-id='0'>upload</button>
 	</p>
 
-	<button>dummy</button>
+	<div id='debugger_top_dummy'>&nbsp;</div>
 	<h1 id='quad_version'></h1>
+	<div class='div_range'>
+		<label for='bgcontrast_range'>BG Contrast = </label>
+		<span>18</span>
+		<input id='bgcontrast_range' type='range' min='0' max='255' step='1' value='18'>
+	</div>
 	<h2>Files</h2>
 	<ol id='debugger_files'></ol>
 	<div id='quad_data'></div>
@@ -3151,14 +3205,16 @@ function QuadData(qlist){
 	<div id='export_menu' data-type='' data-id=''>
 		<p><button onclick='button_close(this);'>close</button> Export Menu</p>
 		<p><span id='export_name'></span></p>
-		<p>
-			START = <span id='export_start'>0</span>
+		<div class='div_range'>
+			<label for='export_range'>START = </label>
+			<span>0</span>
 			<input id='export_range' type='range' min='0' max='0' step='1' value='0'>
-		</p>
-		<p>
-			ZOOM = <span id='export_zoom'>1.0</span>
+		</div>
+		<div class='div_range'>
+			<label for='export_times'>ZOOM = </label>
+			<span>1.0</span>
 			<input id='export_times' type='range' min='0.1' max='10.0' step='0.1' value='1.0'>
-		</p>
+		</div>
 		<p>
 			<button onclick='button_export_type(this);'>png</button>
 			<button onclick='button_export_type(this);'>zip</button>
@@ -3168,7 +3224,7 @@ function QuadData(qlist){
 </div>
 
 <div id='viewer'>
-	<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAQMAAAC032DuAAAABlBMVEVAQEDAwMCo6TBpAAAAGklEQVQoz2NgAIEGBjgYZY4yB5r5Hw6Gnd8AoYMxdx81TTIAAAAASUVORK5CYII=">
+	<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAACVBMVEUAAABAQEDAwMCO7WBmAAAAAXRSTlMAQObYZgAAACFJREFUOMtjYIADBwYsYFRwVHBUcFRwWAiGYgGjoTSoBAHaCxpl1RiSCgAAAABJRU5ErkJggg==">
 	<canvas id='canvas'>Canvas not supported</canvas>
 	<p id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
@@ -3281,11 +3337,15 @@ APP.QuadList      = [];
 			APP.html.logger.innerHTML = QUAD.func.console();
 		});
 	});
+	APP.html.bgcontrast_range.addEventListener('change', function(){
+		APP.bgcontrast(this.value);
+		APP.divrange_span_value(this);
+	});
 	APP.html.export_range.addEventListener('change', function(){
-		APP.html.export_start.innerHTML = this.value;
+		APP.divrange_span_value(this);
 	});
 	APP.html.export_times.addEventListener('change', function(){
-		APP.html.export_zoom.innerHTML = this.value;
+		APP.divrange_span_value(this);
 	});
 
 	// VIEWER

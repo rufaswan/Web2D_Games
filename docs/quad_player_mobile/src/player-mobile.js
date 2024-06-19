@@ -20,6 +20,27 @@ APP.display_viewer = function( html, toggle ){
 	html.export_menu.style.display = 'none';
 }
 
+APP.bgcontrast = function( light ){
+	light &= 0xff;
+	var dark  = 0xff - light;
+	var root  = document.documentElement;
+	root.style.setProperty('--body-bg-color'   , `rgb(${light},${light},${light})`);
+	root.style.setProperty('--body-text-color' , `rgb(${dark} ,${dark} ,${dark} )`);
+	if ( light & 0x80 ){
+		root.style.setProperty('--button-bg-color'   , '#121212');
+		root.style.setProperty('--button-text-color' , '#ededed');
+	}
+	else {
+		root.style.setProperty('--button-bg-color'   , '#ededed');
+		root.style.setProperty('--button-text-color' , '#121212');
+	}
+}
+
+APP.divrange_span_value = function( elem ){
+	var span = elem.parentElement.getElementsByTagName('span');
+	span[0].innerHTML = elem.value;
+}
+
 APP.button_toggle = function( elem, turn ){
 	if ( turn > 0 ){ // +1 = turn ON
 		elem.classList.remove('btn_off');
@@ -213,17 +234,20 @@ function button_export( elem ){
 	var range = APP.html.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
-	APP.html.export_start.innerHTML = 0;
+
+	APP.divrange_span_value(APP.html.export_range);
+	APP.divrange_span_value(APP.html.export_times);
 }
 
 function button_export_type( elem ){
-	var par2 = elem.parentElement.parentElement;
-	var type = par2.getAttribute('data-type');
-	var id   = par2.getAttribute('data-id') | 0;
 	var fmt  = elem.innerHTML.toLowerCase();
 
-	var time = APP.html.export_start.innerHTML | 0;
-	var zoom = 1.0 * APP.html.export_zoom.innerHTML;
+	var div  = APP.html.export_menu;
+	var type = div.getAttribute('data-type');
+	var id   = div.getAttribute('data-id') | 0;
+
+	var time = APP.html.export_range.value | 0;
+	var zoom = APP.html.export_times.value * 1.0;
 	QUAD.export.export(fmt, APP.QuadList[0], APP.html.canvas, type, id, time, zoom);
 	APP.html.logger.innerHTML = QUAD.func.console();
 }

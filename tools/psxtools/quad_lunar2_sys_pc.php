@@ -22,12 +22,13 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-json.inc';
+require 'common-quad.inc';
 require 'quad.inc';
 require 'quad_lunar2.inc';
 
 define('METAFILE', true);
 
-$gp_clut = array();
+$gp_pal = array();
 
 // TODO animation
 
@@ -41,8 +42,8 @@ function syschaspr( $fname, $dir )
 	save_pck($spr, "$dir/meta/spr.%04d");
 	save_pck($cha, "$dir/meta/cha.%04d");
 
-	global $gp_clut;
-	$gp_clut = pal555($spr[4]);
+	global $gp_pal;
+	$gp_pal = pal555($spr[4]);
 
 	$pal = pal555($cha[1]);
 		$pal[3] = ZERO; // bgzero
@@ -72,8 +73,11 @@ function pckpc( $fname, $dir )
 
 	$cnt = count($pck) - 1;
 
-	global $gp_clut;
-	$pal = $gp_clut;
+	global $gp_pal;
+	if ( empty($gp_pal) )
+		return;
+
+	$pal = $gp_pal;
 		$pal[3] = ZERO; // bgzero
 	$pix = $pck[$cnt];
 	$img = array(

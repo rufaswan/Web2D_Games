@@ -23,43 +23,55 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Quad Debugger - Keyframe</title>
-<style>body {
-	background-color : #404040;
+<style>:root {
+	--body-bg-color     : #121212;
+	--body-text-color   : #ededed;
+	--button-bg-color   : #ededed;
+	--button-text-color : #121212;
+	--border-color      : #808080;
+	--mobile-button-size-small   : 42px; 
+
+	--mobile-button-hspace-small : 18px; 
+
+	--mobile-button-vspace-small :  9px;
+}
+body {
+	background-color : var(--body-bg-color);
 	overflow         : hidden;
 	margin           : 0;
 	padding          : 0;
 	overflow         : hidden;
 }
-body, a, a:hover, a:visited {
-	color       : #c0c0c0;
+body, a {
+	color       : var(--body-text-color);
 	font-family : sans-serif;
 }
 
 button {
-	background-color : rgba(255 , 255 , 255 , 0.5);
+	background-color : var(--button-bg-color);
+	color            : var(--button-text-color);
 	white-space      : nowrap;
 	text-transform   : uppercase;
-	margin           : 18px 9px;
-	min-width        : 42px;
-	height           : 42px;
+	margin           : var(--mobile-button-hspace-small)  var(--mobile-button-vspace-small);
+	min-width        : var(--mobile-button-size-small);
+	height           : var(--mobile-button-size-small);
 	padding          : 0;
-	border           : 0;
+	border           : 1px var(--border-color) solid;
 	box-sizing       : border-box;
 }
 button.btn_on {
-	background-color : rgba(0 , 255 , 0 , 0.5);
+	background-color : #0f0;
 	color            : #000;
 }
 
 button.btn_off {
-	background-color : rgba(255 , 0 , 0 , 0.5);
+	background-color : #f00;
 	color            : #fff;
 }
 
-
 h1, h2, h3, h4, h5, h6 {
 	text-transform : uppercase;
-	border-bottom  : 1px #808080 solid;
+	border-bottom  : 1px var(--border-color) solid;
 }
 
 ul {
@@ -92,7 +104,8 @@ main > nav {
 	left             : 0;
 	width            : 100%;
 	height           : 100%;
-	background-color : #404040;
+	background-color : var(--body-bg-color);
+	color            : var(--body-text-color);
 	overflow         : scroll;
 }
 #debugger #layerdata {
@@ -108,11 +121,12 @@ main > nav {
 }
 #debugger #layerdata select {
 	width  : 90%;
-	height : 42px;
+	height : var(--mobile-button-size-small);
 }
 #viewer {
-	position : relative;
-	overflow : hidden;
+	position         : relative;
+	overflow         : hidden;
+	background-color : var(--body-bg-color);
 }
 #viewer #canvas,
 #viewer img {
@@ -129,13 +143,13 @@ main > nav {
 }
 #keylist p,
 #layerlist p {
-	border      : 1px #c0c0c0 solid;
+	border      : 1px var(--border-color) solid;
 	padding     : 0 0.5em;
-	line-height : 42px;
+	line-height : var(--mobile-button-size-small);
 }
 #layerlist .layer_on {
-	background-color : #c0c0c0;
-	color            : #404040;
+	background-color : var(--body-text-color);
+	color            : var(--body-bg-color);
 }
 
 @media (orientation:landscape) {
@@ -3022,7 +3036,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-6-9 (beta)';
+	$.version = 'ver 2024-6-18 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3076,7 +3090,7 @@ function QuadData(qlist){
 	</nav>
 
 	<div id='viewer'>
-		<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAQMAAAC032DuAAAABlBMVEVAQEDAwMCo6TBpAAAAGklEQVQoz2NgAIEGBjgYZY4yB5r5Hw6Gnd8AoYMxdx81TTIAAAAASUVORK5CYII=">
+		<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAACVBMVEUAAABAQEDAwMCO7WBmAAAAAXRSTlMAQObYZgAAACFJREFUOMtjYIADBwYsYFRwVHBUcFRwWAiGYgGjoTSoBAHaCxpl1RiSCgAAAABJRU5ErkJggg==">
 		<canvas id='canvas'>Canvas not supported</canvas>
 	</div>
 

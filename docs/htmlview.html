@@ -9,38 +9,68 @@ vertically to read normally.
 This is to view HTML file at scale 1x.
 -->
 <html><head>
-	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width, initial-scale=1'>
-	<title>HTML Viewer</title>
 
-	<style>
-	body {
-		background-color : #444;
-		line-height      : 1.5em;
-	}
-	body * {
-		color : #ccc;
-	}
-	pre , td , th , blockquote {
-		padding : 0.5em;
-	}
-	pre        , pre        * ,
-	td         , td         * ,
-	blockquote , blockquote *
-	{
-		background-color : #eee;
-		color            : #111;
-	}
-	table {
-		border-collapse  : collapse;
-		margin-left      : auto;
-		margin-right     : auto;
-	}
-	th, td {
-		border : 1px solid #888;
-	}
-	</style>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>HTML Viewer</title>
+
+<style>
+:root {
+	--body-bg-color     : #121212;
+	--body-text-color   : #ededed;
+	--button-bg-color   : #ededed;
+	--button-text-color : #121212;
+	--border-color      : #808080;
+	--mobile-button-size-small   : 42px; /* 11mm */
+	--mobile-button-hspace-small : 18px; /* 36px-48px = 10mm-13mm */
+	--mobile-button-vspace-small :  9px;
+}
+body, a {
+	background-color : var(--body-bg-color);
+	color            : var(--body-text-color);
+	line-height      : 1.5em;
+	font-family      : sans-serif;
+}
+section , pre , td , th , blockquote {
+	padding : 1em;
+}
+pre , code , textarea {
+	background-color : var(--body-text-color);
+	color            : var(--body-bg-color);
+	line-height      : 1.2em;
+}
+table {
+	border-collapse : collapse;
+	margin-left     : auto;
+	margin-right    : auto;
+}
+th, td {
+	border : 1px solid var(--border-color);
+}
+.div_range {
+	display        : flex;
+	flex-direction : row;
+	flex-wrap      : nowrap;
+	padding        : 0.5em;
+}
+.div_range input {
+	flex-grow : 2;
+}
+#gototop , #gotobtm {
+	background-color : var(--button-bg-color);
+	color            : var(--button-text-color);
+	text-decoration  : none;
+	padding          : 0.2em 0.5em;
+}
+</style>
+
 </head><body>
+
+<div class='div_range'>
+	<label for='bgcontrast_range'>BG Contrast = </label>
+	<span>18</span>
+	<input id='bgcontrast_range' type='range' min='0' max='255' step='1' value='18'>
+</div>
 
 <p><a id='gototop' href='#gotobtm'>-&gt; GO TO BOTTOM</a></p>
 <p><input type='file' id='htmlupload'></p>
@@ -52,6 +82,25 @@ This is to view HTML file at scale 1x.
 <p><a id='gotobtm' href='#gototop'>-&gt; GO TO TOP</a></p>
 
 <script>
+document.getElementById('bgcontrast_range').addEventListener('change', function(){
+	var light = this.value & 0xff;
+	var dark  = 0xff - light;
+	var root  = document.documentElement;
+	root.style.setProperty('--body-bg-color'   , `rgb(${light},${light},${light})`);
+	root.style.setProperty('--body-text-color' , `rgb(${dark} ,${dark} ,${dark} )`);
+	if ( light & 0x80 ){
+		root.style.setProperty('--button-bg-color'   , '#121212');
+		root.style.setProperty('--button-text-color' , '#ededed');
+	}
+	else {
+		root.style.setProperty('--button-bg-color'   , '#ededed');
+		root.style.setProperty('--button-text-color' , '#121212');
+	}
+
+	var span = this.parentElement.getElementsByTagName('span');
+	span[0].innerHTML = this.value;
+});
+
 document.getElementById('htmlupload').addEventListener('change', function(){
 	for ( var up of this.files ){
 		if ( up.type !== 'text/html' )

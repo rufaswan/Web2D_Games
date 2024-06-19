@@ -106,12 +106,21 @@ function phpwget()
 		printf("> wget  '%s'\n", $fname);
 		$file .= "$input\n";
 
-		$wget  = 'wget';
-		$wget .= ' --quiet';
-		$wget .= ' --no-config';
-		$wget .= ' --no-check-certificate';
-		$wget .= ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"';
-		$cmd = sprintf('%s "%s" -O "%s"', $wget, $input, $fname);
+		$wget = array(
+			'wget'                   ,
+			'--quiet'                ,
+			'--no-config'            ,
+			'--no-hsts'              ,
+			'--no-check-certificate' ,
+			'--random-wait'          ,
+			'--timeout=60'           ,
+			'--tries=5'              ,
+			'--output-document="%s"' ,
+			'--user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"' ,
+			'"%s"'
+		);
+		$wget = implode(' ', $wget);
+		$cmd  = sprintf($wget, $fname, $input);
 		exec($cmd);
 
 		$fsz = filesize($fname);

@@ -4,7 +4,7 @@ nice='nice -n 19'
 
 ifps=60
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	tit="${t1%.*}"
 	ext="${t1##*.}"
 	shift
@@ -35,10 +35,9 @@ while [ "$1" ]; do
 					-r 10  "$tit".mov;;
 		esac
 	else
-		let ifps=$t1*1
+		let ifps=${t1:2}*1
 		if (( $ifps < 1 )); then
-			$ifps=60
+			ifps=60
 		fi
 	fi
 done
-

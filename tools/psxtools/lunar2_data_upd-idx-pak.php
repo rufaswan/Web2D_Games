@@ -24,6 +24,8 @@ require 'common.inc';
 
 function lunar2( $dir )
 {
+	$dir = rtrim($dir, '\//');
+
 	$upd = load_file("$dir/data.upd");
 	$idx = load_file("$dir/data.idx");
 	$pak = load_file("$dir/data.pak");

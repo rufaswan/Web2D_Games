@@ -35,8 +35,13 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 		<button id='btn_upload' data-id='0'>upload</button>
 	</p>
 
-	<button>dummy</button>
+	<div id='debugger_top_dummy'>&nbsp;</div>
 	<h1 id='quad_version'></h1>
+	<div class='div_range'>
+		<label for='bgcontrast_range'>BG Contrast = </label>
+		<span>18</span>
+		<input id='bgcontrast_range' type='range' min='0' max='255' step='1' value='18'>
+	</div>
 	<h2>Files</h2>
 	<ol id='debugger_files'></ol>
 	<div id='quad_data'></div>
@@ -51,14 +56,16 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<div id='export_menu' data-type='' data-id=''>
 		<p><button onclick='button_close(this);'>close</button> Export Menu</p>
 		<p><span id='export_name'></span></p>
-		<p>
-			START = <span id='export_start'>0</span>
+		<div class='div_range'>
+			<label for='export_range'>START = </label>
+			<span>0</span>
 			<input id='export_range' type='range' min='0' max='0' step='1' value='0'>
-		</p>
-		<p>
-			ZOOM = <span id='export_zoom'>1.0</span>
+		</div>
+		<div class='div_range'>
+			<label for='export_times'>ZOOM = </label>
+			<span>1.0</span>
 			<input id='export_times' type='range' min='0.1' max='10.0' step='0.1' value='1.0'>
-		</p>
+		</div>
 		<p>
 			<button onclick='button_export_type(this);'>png</button>
 			<button onclick='button_export_type(this);'>zip</button>
@@ -181,11 +188,15 @@ APP.QuadList      = [];
 			APP.html.logger.innerHTML = QUAD.func.console();
 		});
 	});
+	APP.html.bgcontrast_range.addEventListener('change', function(){
+		APP.bgcontrast(this.value);
+		APP.divrange_span_value(this);
+	});
 	APP.html.export_range.addEventListener('change', function(){
-		APP.html.export_start.innerHTML = this.value;
+		APP.divrange_span_value(this);
 	});
 	APP.html.export_times.addEventListener('change', function(){
-		APP.html.export_zoom.innerHTML = this.value;
+		APP.divrange_span_value(this);
 	});
 
 	// VIEWER

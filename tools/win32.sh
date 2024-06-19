@@ -28,13 +28,16 @@ export LIBGL_DRIVERS_PATH=/usr/lib/i386-linux-gnu/dri:/usr/lib32/dri:/lib32/dri:
 export WINEDEBUG='-all,err+module'
 
 # wiki.winehq.org/Wine_User%27s_Guide#DLL_Overrides
-dll="winemenubuilder.exe=d"   # Disable Desktop Icons
-dll="$dll;mshtml=d"    # Disable Gecko
-dll="$dll;mscoree=d"   # Disable Mono
-dll="$dll;quartz=n,b"  # MPEG-1 system streams
-dll="$dll;dsound=n,b"  # Touhou Vorbis DLL
-#dll="$dll;wininet=d;winhttp=d" # Disconnect from Internet
-export WINEDLLOVERRIDES="$dll"
+dll=(
+	'winemenubuilder.exe=d'
+	'mshtml=d'    # Disable Gecko
+	'mscoree=d'   # Disable Mono
+	'quartz=n,b'  # MPEG-1 system streams
+	'dsound=n,b'  # Touhou Vorbis DLL
+	#'wininet=d'  # Disconnect from Internet
+	#'winhttp=d'  # Disconnect from Internet
+)
+export WINEDLLOVERRIDES=$(IFS=';' ; echo "${dll[*]}")
 
 # wiki.winehq.org/FAQ
 export   WINEARCH='win32'
@@ -51,8 +54,7 @@ winecmd='wine cmd /c'
 desksize='900x600'
     desk="explorer /desktop=$WINEARCH-$deskid,$desksize"
 ########################################
-function mouselock()
-{
+function mouselock {
 	echo 'Mouse Lock'
 	cat << _REG  > /tmp/wine.reg
 REGEDIT4
@@ -64,6 +66,11 @@ _REG
 	regedit /tmp/mouselock.reg
 	rm /tmp/mouselock.reg
 }
+function symblink {
+	[ -e "$1" ] || return 1  # no target
+	[ -e "$2" ] && return 1  # existed
+	ln -s  "$1"  "$2"
+}
 ########################################
 
 if [ ! -d "$WINEPREFIX" ]; then
@@ -72,15 +79,15 @@ if [ ! -d "$WINEPREFIX" ]; then
 	winecfg
 fi
 USER=$(whoami)
-ln -s  "$WINEPREFIX/drive_c/users/$USER/Local Settings/Application Data"  "$HOME/appdata_xp"
-ln -s  "$WINEPREFIX/drive_c/users/$USER/AppData"                          "$HOME/appdata_vista"
+symblink  "$WINEPREFIX/drive_c/users/$USER/Local Settings/Application Data"  "$HOME/appdata_xp"
+symblink  "$WINEPREFIX/drive_c/users/$USER/AppData"                          "$HOME/appdata_vista"
 
 if [ $# = 0 ]; then
 	winecfg
 	wineserver -k
 else
 	while [ "$1" ]; do
-		t1="${1%/}"
+		t1=./"${1%/}"
 		tit="${t1%.*}"
 		ext="${t1##*.}"
 		shift
@@ -93,7 +100,7 @@ else
 				'msi' | 'MSI')  msiexec /i "$t1";;
 			esac
 		else
-			case "$t1" in
+			case "${t1:2}" in
 				'-k' | '-kill')   wineserver -k;;
 				'-h' | '-help')   wine --help;;
 				'-V' | '-ver')    wine --version;;

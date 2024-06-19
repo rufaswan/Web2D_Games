@@ -19,13 +19,13 @@ bpp:
 
 color=255
 while [ "$1" ]; do
-	t1="${1%/}"
+	t1=./"${1%/}"
 	#tit="${t1%.*}"
 	#ext="${t1##*.}"
 	shift
 
 	if [ -f "$t1" ]; then
-		echo "[$#] $t1"
+		echo "[$#] ${t1:2}"
 		$nice  convert -quiet \
 			"$t1"             \
 			+dither           \
@@ -38,7 +38,7 @@ while [ "$1" ]; do
 			"$t1".png
 	else
 		# bKGD (background color chunk) = +1 color
-		case "$t1" in
+		case "${t1:2}" in
 			'1')  color=1;;
 			'2')  color=3;;
 			'3')  color=7;;
