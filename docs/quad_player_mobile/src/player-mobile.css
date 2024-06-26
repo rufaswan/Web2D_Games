@@ -81,11 +81,24 @@ ul {
 	background-color : var(--body-bg-color);
 }
 
-#viewer #canvas,
-#viewer img {
+#viewer canvas,
+#viewer_xline,
+#viewer_yline {
 	position : absolute;
 	top      : 0;
 	left     : 0;
+}
+#viewer_xline {
+	width        :  50%;
+	height       : 100%;
+	border-right : 0.5em var(--border-color) solid;
+}
+#viewer_yline {
+	width         : 100%;
+	height        :  75%;
+	border-bottom : 0.5em var(--border-color) solid;
+}
+#viewer canvas {
 	width    : 100%;
 	height   : 100%;
 }

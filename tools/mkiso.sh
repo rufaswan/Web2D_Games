@@ -50,7 +50,7 @@ while [ "$1" ]; do
 		echo "[$#] $cmd"
 		$nice  $mkiso  $opt  -o "$t1".iso  "$dir"
 	else
-		case "$t1" in
+		case "${t1:2}" in
 			'0'|'-0')      opt='-l';;
 			'dvd'|'-dvd')  opt='-l -J -r -udf';;
 			'psx'|'-psx')  opt='-l -xa';;

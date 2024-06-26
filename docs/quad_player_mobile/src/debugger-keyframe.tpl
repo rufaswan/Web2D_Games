@@ -39,7 +39,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	</nav>
 
 	<div id='viewer'>
-		@@<bg-q3.png>@@
+		<div id='viewer_xline'></div>
+		<div id='viewer_yline'></div>
 		<canvas id='canvas'>Canvas not supported</canvas>
 	</div>
 

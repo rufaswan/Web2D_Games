@@ -108,11 +108,24 @@ ul {
 	background-color : var(--body-bg-color);
 }
 
-#viewer #canvas,
-#viewer img {
+#viewer canvas,
+#viewer_xline,
+#viewer_yline {
 	position : absolute;
 	top      : 0;
 	left     : 0;
+}
+#viewer_xline {
+	width        :  50%;
+	height       : 100%;
+	border-right : 0.5em var(--border-color) solid;
+}
+#viewer_yline {
+	width         : 100%;
+	height        :  75%;
+	border-bottom : 0.5em var(--border-color) solid;
+}
+#viewer canvas {
 	width    : 100%;
 	height   : 100%;
 }
@@ -3134,7 +3147,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-6-18 (beta)';
+	$.version = 'ver 2024-6-21 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3224,7 +3237,8 @@ function QuadData(qlist){
 </div>
 
 <div id='viewer'>
-	<img id="bg_q3_png" alt="bg_q3_png" title="bg_q3_png" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAACVBMVEUAAABAQEDAwMCO7WBmAAAAAXRSTlMAQObYZgAAACFJREFUOMtjYIADBwYsYFRwVHBUcFRwWAiGYgGjoTSoBAHaCxpl1RiSCgAAAABJRU5ErkJggg==">
+	<div id='viewer_xline'></div>
+	<div id='viewer_yline'></div>
 	<canvas id='canvas'>Canvas not supported</canvas>
 	<p id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
