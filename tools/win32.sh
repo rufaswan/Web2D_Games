@@ -146,7 +146,7 @@ else
 
 				'-mouselock')   mouselock;;
 
-				*)  $nice  wine  $desk  "$t1";;
+				*)  shift $#;;
 			esac
 		fi
 	done

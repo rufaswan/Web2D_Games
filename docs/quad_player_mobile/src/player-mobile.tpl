@@ -39,8 +39,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<h1 id='quad_version'></h1>
 	<div class='div_range'>
 		<label for='bgcontrast_range'>BG Contrast = </label>
-		<span>18</span>
-		<input id='bgcontrast_range' type='range' min='0' max='255' step='1' value='18'>
+		<span>-</span>
+		<input id='bgcontrast_range' type='range' onchange='div_range_span(this);' min='0' max='255' step='1' value='18'>
 	</div>
 	<h2>Files</h2>
 	<ol id='debugger_files'></ol>
@@ -58,13 +58,13 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 		<p><span id='export_name'></span></p>
 		<div class='div_range'>
 			<label for='export_range'>START = </label>
-			<span>0</span>
-			<input id='export_range' type='range' min='0' max='0' step='1' value='0'>
+			<span>-</span>
+			<input id='export_range' type='range' onchange='div_range_span(this);' min='0' max='0' step='1' value='0'>
 		</div>
 		<div class='div_range'>
 			<label for='export_times'>ZOOM = </label>
-			<span>1.0</span>
-			<input id='export_times' type='range' min='0.1' max='10.0' step='0.1' value='1.0'>
+			<span>-</span>
+			<input id='export_times' type='range' onchange='div_range_span(this);' min='0.25' max='4.0' step='0.01' value='1.0'>
 		</div>
 		<p>
 			<button onclick='button_export_type(this);'>png</button>
@@ -136,6 +136,10 @@ APP.QuadList      = [];
 	document.title += ' - ' + QUAD.version;
 	APP.html.quad_version.innerHTML = document.title;
 
+	div_range_span(APP.html.bgcontrast_range);
+	div_range_span(APP.html.export_range);
+	div_range_span(APP.html.export_times);
+
 	// BETWEEN DEBUGGER-VIEWER
 	APP.html.btn_view.addEventListener('click', function(){
 		APP.display_viewer(APP.html, true);
@@ -190,14 +194,19 @@ APP.QuadList      = [];
 		});
 	});
 	APP.html.bgcontrast_range.addEventListener('change', function(){
-		APP.bgcontrast(this.value);
-		APP.divrange_span_value(this);
-	});
-	APP.html.export_range.addEventListener('change', function(){
-		APP.divrange_span_value(this);
-	});
-	APP.html.export_times.addEventListener('change', function(){
-		APP.divrange_span_value(this);
+		var light = this.value & 0xff;
+		var dark  = 0xff - light;
+		var root  = document.documentElement;
+		root.style.setProperty('--body-bg-color'   , `rgb(${light},${light},${light})`);
+		root.style.setProperty('--body-text-color' , `rgb(${dark} ,${dark} ,${dark} )`);
+		if ( light & 0x80 ){
+			root.style.setProperty('--button-bg-color'   , '#121212');
+			root.style.setProperty('--button-text-color' , '#ededed');
+		}
+		else {
+			root.style.setProperty('--button-bg-color'   , '#ededed');
+			root.style.setProperty('--button-text-color' , '#121212');
+		}
 	});
 
 	// VIEWER

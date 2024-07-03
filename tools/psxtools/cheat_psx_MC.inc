@@ -28,7 +28,7 @@ function bislpm_86023( &$file, $off )
 {
 	// items amount
 	for ( $i = 0x25f; $i < 0x361; $i++ )
-		int_update($file, $off + $i, 80, 1);
+		int_update($file, $off + $i, 0x55, 1);
 
 	// item sub id
 	for ( $i=0; $i < 0xa8; $i++ )
@@ -152,35 +152,35 @@ function bislps_01160( &$file, $off )
 	// char weapons
 	for ( $i=0; $i < 0x48; $i++ )
 	{
-		int_update($file, $off + 0x163c + $i,   80, 1);
+		int_update($file, $off + 0x163c + $i, 0x55, 1);
 		int_update($file, $off + 0x16a0 + $i, $i+1, 1);
 	}
 
 	// char armors
 	for ( $i=0; $i < 0x8f; $i++ )
 	{
-		int_update($file, $off + 0x1704 + $i,   80, 1);
+		int_update($file, $off + 0x1704 + $i, 0x55, 1);
 		int_update($file, $off + 0x17cc + $i, $i+1, 1);
 	}
 
 	// char items
 	for ( $i=0; $i < 0x6c; $i++ )
 	{
-		int_update($file, $off + 0x1894 + $i,   80, 1);
+		int_update($file, $off + 0x1894 + $i, 0x55, 1);
 		int_update($file, $off + 0x192a + $i, $i+1, 1);
 	}
 
 	// gear weapons
 	for ( $i=0; $i < 0x48; $i++ )
 	{
-		int_update($file, $off + 0x19c0 + $i,   80, 1);
+		int_update($file, $off + 0x19c0 + $i, 0x55, 1);
 		int_update($file, $off + 0x1a24 + $i, $i+1, 1);
 	}
 
 	// gear armors
 	for ( $i=0; $i < 0x68; $i++ )
 	{
-		int_update($file, $off + 0x1a88 + $i,   80, 1);
+		int_update($file, $off + 0x1a88 + $i, 0x55, 1);
 		int_update($file, $off + 0x1b1e + $i, $i+1, 1);
 	}
 

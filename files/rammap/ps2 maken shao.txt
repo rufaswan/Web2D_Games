@@ -1,0 +1,89 @@
+================
+== Maken Shao ==
+================
+
+2cd678  Life
+	175de8  lw    v0, 128(s0)
+	175dec  addu  v0, a0
+	175df4  sw    v0, 128(s0)
+
+	Infinite Life
+	==> nop 175df4
+
+231630  Image Point
+Sync
+	18aaf4  li    v1, 231620
+	18aaf8  lw    v0, 10(v1)
+	18aafc  subu  v0, a0
+	18ab04  sw    v0, 10(v1)
+
+	135d30  lw    v1, 0(39e888) // lui(3a) - 1778
+	135d3c  subu  a0, v1, a0
+
+	12aeb8  jal  LV_GetBJCost  // 12b2f8
+		12b30b  jal  tnBattleView_GetControlRate // 135d48
+			135d58  jal  LV_GetSyncro  // 18ab20
+
+231640(current) * 64 / 27cc8e0(total) = syncro
+if  syncro < 65
+else
+	syncro = 64
+
+Cost = (cost) * (64 - syncro)
+
+	18aa48  lw    v0, 0(a0)
+	18aa4c  addu  v0, s0
+	18aa50  sw    v0, 0(a0)
+
+	18aa60  lw     v0, 0(v1)
+	18aa64  sltu   v0, a2, v0
+	18aa68  bnezl  v0, 18aa70
+	18aa6c  sw     a2, 0(v1)
+
+	. if  a2 < v1[0] | if  max_exp < exp
+	.   v1[0] = a2   |   exp = max_exp
+
+	1 kill 100% syncro
+	= 0 img cost
+	==> nop 18aa68
+//////////////////////////////
+Unlock Museum mode
+- Before Lisbon
+	Lee Fei Shan quest
+	- Hong Kong , meet and agree to help her
+	- Taj Mahal , BJ her to open the door
+	- Taj Mahal , defeat Hakke Shaja
+
+	Fukenshi Rumrod quest
+	- Amsterdam , meet and agree to help him
+	- Vienna    , defeat Hakke Marguerite
+
+	Fukenshi Badelaire quest
+	- Lyon    , meet and agree to help him
+	- London  , BJ him to open the cell and then BJ Samuel Smith
+	- Sicily  , BJ him to open the door
+	- Sicily  , defeat Hakke Malukala
+	- Vatican , BJ Malukala to open the door
+	- Vatican , defeat Hakke Ray
+
+	Fukenshi Acinaces quest
+	- Athens       , meet and agree to help her
+	- Istanbul     , find and BJ Bahlinka
+	- Transylvania , defeat Hakke Daru
+- After Lisbon
+	- Mecca      , defeat Hakke Youthfu
+	- Brasil
+	- Washington , defeat Hakke William
+	- Forbidden City
+	* must answer all Kei question correctly
+
+Unlock Trial mode
+- Amsterdam , meet and betray Fukenshi Rumrod   (bufu)
+- Lyon      , meet and betray Fukenshi Badelaire(zio )
+- Athens    , meet and betray Fukenshi Acinaces (garu)
+- Lisbon    , meet and betray Fukenshi Kati     (agi )
+- Mecca     , agree to Hakke Youthfu
+- Kun Lun
+
+Unlock Sound Test
+- Trial mode S rank (clear under 5 minutes)

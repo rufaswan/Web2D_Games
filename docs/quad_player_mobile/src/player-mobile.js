@@ -20,27 +20,6 @@ APP.display_viewer = function( html, toggle ){
 	html.export_menu.style.display = 'none';
 }
 
-APP.bgcontrast = function( light ){
-	light &= 0xff;
-	var dark  = 0xff - light;
-	var root  = document.documentElement;
-	root.style.setProperty('--body-bg-color'   , `rgb(${light},${light},${light})`);
-	root.style.setProperty('--body-text-color' , `rgb(${dark} ,${dark} ,${dark} )`);
-	if ( light & 0x80 ){
-		root.style.setProperty('--button-bg-color'   , '#121212');
-		root.style.setProperty('--button-text-color' , '#ededed');
-	}
-	else {
-		root.style.setProperty('--button-bg-color'   , '#ededed');
-		root.style.setProperty('--button-text-color' , '#121212');
-	}
-}
-
-APP.divrange_span_value = function( elem ){
-	var span = elem.parentElement.getElementsByTagName('span');
-	span[0].innerHTML = elem.value;
-}
-
 APP.button_toggle = function( elem, turn ){
 	if ( turn > 0 ){ // +1 = turn ON
 		elem.classList.remove('btn_off');
@@ -65,11 +44,6 @@ APP.button_prev_next = function( qdata, adj ){
 		qdata.attach.id += adj;
 	else
 		qdata.anim_fps  += adj;
-}
-
-function button_close( elem ){
-	var par2 = elem.parentElement.parentElement;
-	par2.style.display = 'none';
 }
 
 APP.qdata_toggle = function( qdata, elem, key ){
@@ -184,9 +158,57 @@ APP.qdata_listing = function( qdata, type, id ){
 	html += '</li>';
 	return html;
 }
+
+APP.viewer_btn_menu = function( qdata ){
+	APP.html.btn_hitattr.style.display = 'none';
+	APP.html.hitattr_list.innerHTML = '';
+	if ( qdata.quad.hitbox.length > 0 )
+		APP.html.btn_hitattr.style.display = 'block';
+
+	APP.html.btn_keyattr.style.display = 'none';
+	APP.html.keyattr_list.innerHTML = '';
+	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
+		qdata.keyattr = -1;
+		APP.html.btn_keyattr.style.display = 'block';
+		var buffer = '';
+		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
+			var mask = 1 << ek;
+			buffer += '<button class="btn_on" onclick="qdata_attr(this,\'keyattr\',' + mask + ');">' + ev + '</button>';
+		});
+		APP.html.keyattr_list.innerHTML = buffer;
+		QUAD.func.log('keyframe attr', qdata.quad.__ATTR.keyframe);
+	}
+
+	APP.html.btn_colorize.style.display = 'none';
+	APP.html.colorize_list.innerHTML = '';
+	if ( qdata.quad.__ATTR.colorize.length > 0 ){
+		qdata.colorize = [];
+		APP.html.btn_colorize.style.display = 'block';
+		var buffer = '';
+		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
+			var mask = 1 << ck;
+			qdata.colorize[mask] = [1,1,1,1];
+			buffer += cv + ' = <input type="color" value="#ffffff" onchange="qdata_colorize(this,' + mask + ');">&nbsp;';
+		});
+		APP.html.colorize_list.innerHTML = buffer;
+		QUAD.func.log('colorize attr', qdata.quad.__ATTR.colorize);
+	}
+}
+
 //////////////////////////////
 // function aaa()       + onclick='aaa();'
 // APP.aaa = function() + var a = APP.aaa();
+
+function div_range_span( elem ){
+	// this = undefined
+	var span = elem.parentElement.getElementsByTagName('span');
+	span[0].innerHTML = elem.value;
+}
+
+function button_close( elem ){
+	var par2 = elem.parentElement.parentElement;
+	par2.style.display = 'none';
+}
 
 function button_select( elem ){
 	if ( APP.selected )
@@ -234,9 +256,6 @@ function button_export( elem ){
 	var range = APP.html.export_range;
 	range.setAttribute('max', time - 1); // index 0
 	range.value = 0;
-
-	APP.divrange_span_value(APP.html.export_range);
-	APP.divrange_span_value(APP.html.export_times);
 }
 
 function button_export_type( elem ){
@@ -250,42 +269,6 @@ function button_export_type( elem ){
 	var zoom = APP.html.export_times.value * 1.0;
 	QUAD.export.export(fmt, APP.QuadList[0], APP.html.canvas, type, id, time, zoom);
 	APP.html.logger.innerHTML = QUAD.func.console();
-}
-
-APP.viewer_btn_menu = function( qdata ){
-	APP.html.btn_hitattr.style.display = 'none';
-	APP.html.hitattr_list.innerHTML = '';
-	if ( qdata.quad.hitbox.length > 0 )
-		APP.html.btn_hitattr.style.display = 'block';
-
-	APP.html.btn_keyattr.style.display = 'none';
-	APP.html.keyattr_list.innerHTML = '';
-	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
-		qdata.keyattr = -1;
-		APP.html.btn_keyattr.style.display = 'block';
-		var buffer = '';
-		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
-			var mask = 1 << ek;
-			buffer += '<button class="btn_on" onclick="qdata_attr(this,\'keyattr\',' + mask + ');">' + ev + '</button>';
-		});
-		APP.html.keyattr_list.innerHTML = buffer;
-		QUAD.func.log('keyframe attr', qdata.quad.__ATTR.keyframe);
-	}
-
-	APP.html.btn_colorize.style.display = 'none';
-	APP.html.colorize_list.innerHTML = '';
-	if ( qdata.quad.__ATTR.colorize.length > 0 ){
-		qdata.colorize = [];
-		APP.html.btn_colorize.style.display = 'block';
-		var buffer = '';
-		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
-			var mask = 1 << ck;
-			qdata.colorize[mask] = [1,1,1,1];
-			buffer += cv + ' = <input type="color" value="#ffffff" onchange="qdata_colorize(this,' + mask + ');">&nbsp;';
-		});
-		APP.html.colorize_list.innerHTML = buffer;
-		QUAD.func.log('colorize attr', qdata.quad.__ATTR.colorize);
-	}
 }
 
 function qdata_attr( elem, name, mask ){

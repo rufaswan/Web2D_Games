@@ -24,82 +24,6 @@ APP.qdata_filetable = function( qdata, files ){
 	}
 }
 
-//////////////////////////////
-// function aaa()       + onclick='aaa();'
-// APP.aaa = function() + var a = APP.aaa();
-
-function keyframe_select( key_id ){
-	APP.html.layerdata.style.display      = 'block';
-	APP.html.btn_selectall.style.display  = 'block';
-	APP.html.btn_selectnone.style.display = 'block';
-	APP.html.layerlist.innerHTML  = '';
-	APP.html.layer_name.innerHTML = '';
-
-	var key = APP.QuadList[0].quad.keyframe[key_id];
-	if ( ! key )
-		return;
-	APP.html.layer_name.innerHTML = key.name;
-	APP.on_key   = key_id;
-	APP.on_layer = [];
-	APP.QuadList[0].attach.id = key_id;
-
-	var buffer  = '';
-	var dbglist = [];
-	key.layer.forEach(function(v,k){
-		if ( ! v )
-			return;
-		APP.on_layer.push(k);
-
-		var dbg = '#' + v.debug.replace(/[^a-zA-Z0-9,]/g, '_');
-		if ( dbglist.indexOf(dbg) < 0 )
-			dbglist.push(dbg);
-
-		var name = 'layer ' + k + ' (' + dbg + ')';
-		buffer += '<li class="layer_on" data-id="' + k + '" data-debug="' + dbg + '"><p onclick="layer_select(this);">' + name + '</p></li>';
-	});
-	APP.html.layerlist.innerHTML = buffer;
-
-	dbglist.sort();
-	dbglist.unshift(0);
-	var buffer  = '';
-	dbglist.forEach(function(v,k){
-		if ( ! v )
-			buffer += '<option value="0">ALL</option>';
-		else
-			buffer += '<option>' + v + '</option>';
-	});
-	APP.html.debuglist.innerHTML = buffer;
-
-	APP.autozoom  = QUAD.func.viewer_autozoom(APP.QuadList[0]);
-	APP.is_redraw = true;
-}
-
-function layer_select( elem ){
-	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
-	var idx = APP.on_layer.indexOf(layer_id);
-	if ( idx === -1 )
-		APP.on_layer.push(layer_id);
-	else
-		APP.on_layer.splice(idx, 1);
-
-	var list = document.querySelectorAll('#layerlist li');
-	for ( var i=0; i < list.length; i++ ){
-		var id  = list[i].getAttribute('data-id') | 0;
-		var idx = APP.on_layer.indexOf(id);
-		if ( idx === -1 )
-			list[i].classList.remove('layer_on');
-		else
-			list[i].classList.add('layer_on');
-	}
-	APP.is_redraw = true;
-}
-
-function layer_close(){
-	APP.html.layerdata.style.display      = 'none';
-	APP.html.btn_selectall.style.display  = 'none';
-	APP.html.btn_selectnone.style.display = 'none';
-}
-
 APP.button_select_layers = function( text ){
 	APP.on_layer = [];
 	var list = document.querySelectorAll('#layerlist li');
@@ -249,4 +173,80 @@ APP.keydebug_drawtex = function( qdata, key, mat4, color ){
 		QUAD.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.vram );
 	} // for ( var i = -1; i < qdata.quad.blend.length; i++ )
 	QUAD.gl.enable_depth(0);
+}
+
+//////////////////////////////
+// function aaa()       + onclick='aaa();'
+// APP.aaa = function() + var a = APP.aaa();
+
+function keyframe_select( key_id ){
+	APP.html.layerdata.style.display      = 'block';
+	APP.html.btn_selectall.style.display  = 'block';
+	APP.html.btn_selectnone.style.display = 'block';
+	APP.html.layerlist.innerHTML  = '';
+	APP.html.layer_name.innerHTML = '';
+
+	var key = APP.QuadList[0].quad.keyframe[key_id];
+	if ( ! key )
+		return;
+	APP.html.layer_name.innerHTML = key.name;
+	APP.on_key   = key_id;
+	APP.on_layer = [];
+	APP.QuadList[0].attach.id = key_id;
+
+	var buffer  = '';
+	var dbglist = [];
+	key.layer.forEach(function(v,k){
+		if ( ! v )
+			return;
+		APP.on_layer.push(k);
+
+		var dbg = '#' + v.debug.replace(/[^a-zA-Z0-9,]/g, '_');
+		if ( dbglist.indexOf(dbg) < 0 )
+			dbglist.push(dbg);
+
+		var name = 'layer ' + k + ' (' + dbg + ')';
+		buffer += '<li class="layer_on" data-id="' + k + '" data-debug="' + dbg + '"><p onclick="layer_select(this);">' + name + '</p></li>';
+	});
+	APP.html.layerlist.innerHTML = buffer;
+
+	dbglist.sort();
+	dbglist.unshift(0);
+	var buffer  = '';
+	dbglist.forEach(function(v,k){
+		if ( ! v )
+			buffer += '<option value="0">ALL</option>';
+		else
+			buffer += '<option>' + v + '</option>';
+	});
+	APP.html.debuglist.innerHTML = buffer;
+
+	APP.autozoom  = QUAD.func.viewer_autozoom(APP.QuadList[0]);
+	APP.is_redraw = true;
+}
+
+function layer_select( elem ){
+	var layer_id = elem.parentElement.getAttribute('data-id') | 0;
+	var idx = APP.on_layer.indexOf(layer_id);
+	if ( idx === -1 )
+		APP.on_layer.push(layer_id);
+	else
+		APP.on_layer.splice(idx, 1);
+
+	var list = document.querySelectorAll('#layerlist li');
+	for ( var i=0; i < list.length; i++ ){
+		var id  = list[i].getAttribute('data-id') | 0;
+		var idx = APP.on_layer.indexOf(id);
+		if ( idx === -1 )
+			list[i].classList.remove('layer_on');
+		else
+			list[i].classList.add('layer_on');
+	}
+	APP.is_redraw = true;
+}
+
+function layer_close(){
+	APP.html.layerdata.style.display      = 'none';
+	APP.html.btn_selectall.style.display  = 'none';
+	APP.html.btn_selectnone.style.display = 'none';
 }

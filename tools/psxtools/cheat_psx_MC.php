@@ -75,7 +75,7 @@ function mcrfile( $fname )
 			$sum ^= ord( $bak->file[$i + $j] );
 		$b = ord( $bak->file[$i + 0x7f] );
 		if ( $b !== $sum )
-			return;
+			return php_warning('%x : expect checksum %x but get %x', $i, $sum, $b);
 	} // for ( $i=0; $i < 0x800; $i += 0x80 )
 
 	// 1 + 15 blocks

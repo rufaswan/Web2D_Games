@@ -66,36 +66,49 @@ function rex_sma02_table()
 	return $table;
 }
 
-function is_ecc_ps2card( &$sub, &$ecc )
+function ecc_ps2card( &$sub, &$ecc, &$bad_sect, $pos )
 {
-	$all_ecc = array();
+	$valid = '';
 	$table = rex_sma02_table();
-	for ( $i=0; $i < 0x200; $i += 0x80 )
+	for ( $i=0; $i < 4; $i++ )
 	{
-		$chunk = substr($sub, $i, 0x80);
+		$psub = substr($sub, $i * 0x80, 0x80);
+		$pecc = substr($ecc, $i * 3, 3);
 
-		$cur_ecc = array(0,0,0);
+		$cecc = array(0,0,0);
 		for ( $j=0; $j < 0x80; $j++ )
 		{
-			$b1 = ord($chunk[$j]);
+			$b1 = ord($psub[$j]);
 			$b2 = $table[$b1];
-			$cur_ecc[0] ^= $b2;
+			$cecc[0] ^= $b2;
 			if ( $b2 & 0x80 )
 			{
-				$cur_ecc[1] ^= ~$j;
-				$cur_ecc[2] ^=  $j;
+				$cecc[1] ^= ~$j;
+				$cecc[2] ^=  $j;
 			}
+		} // for ( $j=0; $j < 0x80; $j++ )
+		$cecc[0] = ~$cecc[0] & 0x77;
+		$cecc[1] = ~$cecc[1] & 0x7f;
+		$cecc[2] = ~$cecc[2] & 0x7f;
+
+		$t = 0;
+		$t |= ($cecc[0] !== ord($pecc[0]));
+		$t |= ($cecc[1] !== ord($pecc[1]));
+		$t |= ($cecc[2] !== ord($pecc[2]));
+
+		// PS2 MC erase = set the block to all 1s
+		//   while programming change 1s to 0s
+		if ( $t ) // invalid , bad block?
+		{
+			$bad_sect[] = $pos + ($i * 0x80);
+			$valid .= str_repeat(BYTE, 0x80);
 		}
-		$cur_ecc[0] = ~$cur_ecc[0] & 0x77;
-		$cur_ecc[1] = ~$cur_ecc[1] & 0x7f;
-		$cur_ecc[2] = ~$cur_ecc[2] & 0x7f;
+		else
+			$valid .= $psub;
+	} // for ( $i=0; $i < 4; $i++ )
 
-		$all_ecc[] = chr($cur_ecc[0]) . chr($cur_ecc[1]) . chr($cur_ecc[2]);
-	} // for ( $i=0; $i < 0x200; $i += 0x80 )
-
-	$all_ecc = implode('', $all_ecc);
-	printf("ecc calc : %s == %s\n", printhex($all_ecc), printhex($ecc));
-	return ( $all_ecc === $ecc );
+	$sub = $valid;
+	return;
 }
 
 function verify_ps2card( &$file )
@@ -107,19 +120,23 @@ function verify_ps2card( &$file )
 	if ( $len === 0x840000 )
 	{
 		$ps2 = '';
-		for ( $i=0; $i < 0x840000; $i += 0x210 )
+		$bad_sect = array();
+		for ( $i=0; $i < 0x4000; $i++ )
 		{
-			$sub = substr($file, $i, 0x200);
-			$ecc = substr($file, $i + 0x200, 12); // 4 byte left unused
-			if ( ! is_ecc_ps2card($sub, $ecc) )
-				goto error;
+			$pos = $i * 0x210;
+			$sub = substr($file, $pos, 0x200);
+			$ecc = substr($file, $pos + 0x200, 12); // 4 byte left unused
+			ecc_ps2card($sub, $ecc, $bad_sect, $i*0x200);
 			$ps2 .= $sub;
 		} // for ( $i=0; $i < 0x840000; $i += 0x210 )
+
+		//echo "bad sectors\n";
+		//foreach ( $bad_sect as $v )
+			//printf("  %6x\n", $v);
 		$file = $ps2;
 		return;
 	}
 
-error:
 	$file = 0;
 	return;
 }
@@ -135,8 +152,10 @@ function ps2card( $fname )
 	verify_ps2card($file);
 	if ( empty($file) )  return;
 
-	$dir = str_replace('.', '_', $fname);
-	$len = strlen($file);
+	save_file("$fname.bin", $file);
+
+	//$dir = str_replace('.', '_', $fname);
+	//$len = strlen($file);
 	// code template
 	return;
 }

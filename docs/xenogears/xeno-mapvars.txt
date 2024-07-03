@@ -1,9 +1,152 @@
 JP RAM 8006e5f4 / US RAM 8006ef64 <- SAVE DATA , 2595.bin
-JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
+JP RAM 800c2f3c / US RAM 800c3a68 <- active copy , used when inside a room and overwrite SAVE DATA above , cleared when running other overlays (battle/worldmap/arena/etc)
 
-	save_bitflag
-	== op3a( addr , sll )
-	== [addr] |= (1 << sll)
+	op35  [aaaa]  bbbb  40 | op35  [aaaa]  [bbbb]  --
+	-> [aaaa] = bbbb       | -> [aaaa] = [bbbb]
+	-> var_set( addr , value )
+
+	op38  [aaaa]  bbbb  40 | op38  [aaaa]  [bbbb]  --
+	-> [aaaa] += bbbb      | -> [aaaa] += [bbbb]
+	-> var_add( addr , value )
+
+	op39  [aaaa]  bbbb  40 | op39  [aaaa]  [bbbb]  --
+	-> [aaaa] -= bbbb      | -> [aaaa] -= [bbbb]
+	-> var_sub( addr , value )
+
+	op3a  [aaaa]  bbbb  40
+	-> [aaaa] |= (1 << bbbb)
+	-> bitflag_set( addr , sll )
+
+	op3b  [aaaa]  bbbb  40
+	-> [aaaa] &= ~(1 << bbbb)
+	-> bitflag_del( addr , sll )
+
+	op3c  [aaaa]
+	-> [aaaa]++
+	-> var_inc( addr )
+
+	op3d  [aaaa]
+	-> [aaaa]--
+	-> var_dec( addr )
+
+
+
+	Item ID (bbbb)
+	0xx  item
+	1xx  char weapon
+	2xx  char accessory
+	3xx  gear weapon
+	4xx  gear accessory
+
++0  Story Progress ID *refer below*
++2
++4  Previous Map ID
++6  Char Facing (0=north , 2=east , 4=south , 6=west)
++8
++a
++c  Play Time second
++d  Play Time minute
++e  Play Time hour
++f
+
++10
++12
++14
++16  Current Battle Point/copy
++18  Total Battle Point/copy
++1a
++1c
++1e  Char Pos X (west-- , east++)
+
++20  Char Pos Y (north++ , south--)
++22  Char Pos Z
++24
++26  0 , World Map Pos X
++28  0 , World Map Pos Y
++2a  Map ID
++2c  0 , World Map Pos X
++2e  0 , World Map Pos Y
+
++30  Map ID
++32  0 , World Map Pos X
++34  0 , World Map Pos Y
++36  Map ID
++38  0 , World Map Pos X
++3a  0 , World Map Pos Y
++3c  Map ID
++3e  Party Char ID 1
+
++40  Party Char ID 2
++42  Party Char ID 3
++44
++46
++48
++4a
++4c
++4e
+
++50
++52
++54
++56
++58
++5a
++5c
++5e
+
++60
++62
++64
++66
++68
++6a
++6c
++6e
+
++70
++72
++74
++76
++78
++7a
++7c
++7e
+
++80
++82
++84
++86
++88
++8a
++8c
++8e
+
++90
++92
++94
++96
++98
++9a
++9c
++9e
+
++a0
++a2
++a4
++a6
++a8
++aa
++ac
++ae
+
++b0
++b2
++b4
++b6
++b8
++ba
++bc
++be
 
 +c0
 	0 : 0734/map 64
@@ -59,6 +202,8 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : -
 
++c6
+
 +c8
 	0 : -
 	1 : -
@@ -78,13 +223,13 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	f : -
 
 +ca
-	0 : 0736/map 65  chest
-	1 : 0734/map 64  chest
+	0 : 0736/map 65  chest/Iron G Whip
+	1 : 0734/map 64  chest/Gold Nugget
 	2 : -
-	3 : 0956/map 175  chest
-	4 : 0956/map 175  chest
-	5 : 0952/map 173  chest
-	6 : 0952/map 173  chest
+	3 : 0956/map 175  chest/Magnetic Coat
+	4 : 0956/map 175  chest/Extra Ar+2
+	5 : 0952/map 173  chest/Gold Nugget
+	6 : 0952/map 173  chest/Rosesol S
 	7 : -
 	8 : 1278/map 336  chest
 	9 : 1282/map 338  chest
@@ -94,6 +239,18 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	d : 1280/map 337  chest
 	e : -
 	f : -
+
++cc
++ce
++d0
++d2
++d4
++d6
++d8
++da
++dc
++de
++e0
 
 +e2
 	0 : -
@@ -204,6 +361,18 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	f : -
 	200 :  , 1302/map 348
 
++ee
++f0
++f2
++f4
++f6
++f8
++fa
++fc
++fe
++100
++102
+
 +104
 	0 : -
 	1 : -
@@ -222,6 +391,9 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : 2050/map 722
 
++106
++108
+
 +10a
 	0 : -
 	1 : -
@@ -239,6 +411,40 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	d : 1430/map 412
 	e : -
 	f : -
+
++10c
++10e
++110
++112
++114
++116
++118
++11a
++11c
++11e
++120
++122
++124
++126
++128
++12a
++12c
++12e
++130
++132
++134
++136
++138
++13a
++13c
++13e
++140
++142
++144
++146
++148
++14a
++14c
 
 +14e
 	0 : -
@@ -276,6 +482,9 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : -
 
++152
++154
+
 +156
 	0 : 1412/map 403
 	1 : 1412/map 403
@@ -294,41 +503,61 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : 1410/map 402
 
++158
++15a
++15c
++15e
++160
+
 +162
-	0 : 1344/map 369  chest
-	1 : 1342/map 368  chest
-	2 : 1352/map 373  chest
-	3 : 1354/map 374  chest
-	4 : 0726/map 60  chest
-	5 : 0726/map 60  chest
-	6 : 0722/map 58  chest
-	7 : 0722/map 58  chest
+	0 : 1344/map 369  chest/Sleep Guard
+	1 : 1342/map 368  chest/B&J M686A Ammo
+	2 : 1352/map 373  chest/Black Snake
+	3 : 1354/map 374  chest/Panalphasol
+	4 : 0726/map 60  chest/Survival Tent
+	5 : 0726/map 60  chest/Rosesol
+	6 : 0722/map 58  chest/Leather Vest
+	7 : 0722/map 58  chest/Extra Ar+1
 	8 : 1814/map 604  chest if
-	9 : 1814/map 604  chest if
+	9 : 1814/map 604  chest if/Aquasol DX
 	a : 1812/map 603  chest if
-	b : 1812/map 603  chest if
-	c : 1816/map 605  chest
-	d : 1622/map 508  chest
+	b : 1812/map 603  chest if/Survival Tent
+	c : 1816/map 605  chest/ShotG70 Ammo
+	d : 1622/map 508  chest/Aquasol DX
 	e : -
 	f : 1818/map 606  chest
 
 +164
-	0 : 1808/map 601  chest
-	1 : 1390/map 392  chest
-	2 : 1412/map 403  chest
-	3 : 1412/map 403  chest
-	4 : 1400/map 397  chest
+	0 : 1808/map 601  chest/Panalphasol
+	1 : 1390/map 392  chest/DeathBlower 1
+	2 : 1412/map 403  chest/DeathBlower 2
+	3 : 1412/map 403  chest/DeathBlower 3
+	4 : 1400/map 397  chest/Z Charger
 	5 : -
 	6 : -
 	7 : -
 	8 : -
-	9 : 1396/map 395  chest
+	9 : 1396/map 395  chest/Survival Tent
 	a : 1412/map 403
 	b : -
 	c : -
 	d : -
 	e : -
 	f : -
+
++166
++168
++16a
++16c
++16e
++170
++172
++174
++176
++178
++17a
++17c
++17e
 
 +180
 	0 : 0700/map 47
@@ -379,7 +608,7 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	9 : 1114/map 254
 	a : 1106/map 250
 	b : 1106/map 250
-	c : 1118/map 256  chest
+	c : 1118/map 256  chest/Survival Tent
 	d : -
 	e : -
 	f : -
@@ -400,11 +629,11 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	c : 1136/map 265
 	d : 1136/map 265
 	e : 1126/map 260
-	f : 1134/map 264  chest
+	f : 1134/map 264  chest/O2 Cylinder
 
 +188
-	0 : 1126/map 260  chest
-	1 : 1132/map 263  chest
+	0 : 1126/map 260  chest/Gold Nugget
+	1 : 1132/map 263  chest/Extra Ar+3
 	2 : -
 	3 : -
 	4 : -
@@ -456,6 +685,8 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : 1230/map 312 , 2058/map 726
 
++18e
+
 +190
 	0 : 1878/map 636
 	1 : 1878/map 636
@@ -469,10 +700,12 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	9 : -
 	a : -
 	b : -
-	c : 1610/map 502  chest
-	d : 1614/map 504  chest
-	e : 1608/map 501  chest
-	f : 1614/map 504
+	c : 1610/map 502  chest/DeathBlower 2
+	d : 1614/map 504  chest/Dark Rod
+	e : 1608/map 501  chest/Mermaid Mail
+	f : 1614/map 504  chest/empty *sound*
+
++192
 
 +194
 	0 : -
@@ -492,11 +725,33 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : -
 
++196
++198
++19a
++19c
++19e
++1a0
++1a2
++1a4
++1a6
++1a8
++1aa
++1ac
++1ae
++1b0
++1b2
++1b4
++1b6
++1b8
++1ba
++1bc
++1be
+
 +1c0
 	0 : 0636/map 15
 	1 : 0636/map 15
-	2 : 0636/map 15  chest
-	3 : 0636/map 15  chest
+	2 : 0636/map 15  chest/Aquasol
+	3 : 0636/map 15  chest/Aquasol
 	4 : 0636/map 15
 	5 : 0636/map 15 , 0644/map 19
 	6 : 0636/map 15
@@ -602,10 +857,10 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 
 +1cc
 	0 : 1630/map 512  chest
-	1 : 1626/map 510  chest
-	2 : 1626/map 510  chest
-	3 : 1626/map 510  chest
-	4 : 0760/map 77  chest
+	1 : 1626/map 510  chest/Crimson Vest
+	2 : 1626/map 510  chest/Aquasol DX
+	3 : 1626/map 510  chest/Feathered Cap
+	4 : 0760/map 77  chest/Iron Whip
 	5 : 1684/map 539
 	6 : 1838/map 616
 	7 : -
@@ -617,6 +872,30 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	d : -
 	e : -
 	f : -
+
++1ce
++1d0
++1d2
++1d4
++1d6
++1d8
++1da
++1dc
++1de
++1e0
++1e2
++1e4
++1e6
++1e8
++1ea
++1ec
++1ee
++1f0
++1f2
++1f4
++1f6
++1f8
++1fa
 
 +1fc
 	0 : 0654/map 24 , 0676/map 35
@@ -668,21 +947,21 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	a : 1084/map 239 , 2060/map 727
 	b : 1088/map 241 , 2060/map 727
 	c : 1090/map 242 , 2060/map 727
-	d : 1090/map 242 , 2060/map 727  chest,-
+	d : 1090/map 242 , 2060/map 727  chest/Bell Amulet,-
 	e : 1086/map 240 , 2060/map 727
 	f : 1084/map 239 , 2060/map 727 , 2062/map 728
 
 +202
 	0 : 1090/map 242  chest
-	1 : 1084/map 239  chest
-	2 : 1084/map 239  chest
-	3 : 1086/map 240  chest
-	4 : 1088/map 241  chest
-	5 : 1088/map 241  chest
-	6 : 1086/map 240  chest
-	7 : 1086/map 240  chest
-	8 : 1088/map 241  chest
-	9 : 1086/map 240  chest
+	1 : 1084/map 239  chest/Aquasol S
+	2 : 1084/map 239  chest/Physisol
+	3 : 1086/map 240  chest/Mentsol
+	4 : 1088/map 241  chest/Knight Helm
+	5 : 1088/map 241  chest/Poison Guard
+	6 : 1086/map 240  chest/Gallant Belt
+	7 : 1086/map 240  chest/Zetasol DX
+	8 : 1088/map 241  chest/Cool Shades
+	9 : 1086/map 240  chest/Gold Nugget
 	a : 1084/map 239  chest
 	b : -
 	c : 1086/map 240
@@ -699,14 +978,18 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	5 : 1068/map 231 , 2060/map 727
 	6 : 1080/map 237 , 2060/map 727 , 2062/map 728
 	7 : 1066/map 230
-	8 : 1062/map 228  chest
-	9 : 1062/map 228  chest
+	8 : 1062/map 228  chest/Insulated Ar
+	9 : 1062/map 228  chest/Power Magic
 	a : 1080/map 237  chest
 	b : 1078/map 236
 	c : -
 	d : -
 	e : -
 	f : 2060/map 727
+
++206
++208
++20a
 
 +20c
 	0 : 1876/map 635
@@ -727,14 +1010,14 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	f : -
 
 +20e
-	0 : 1862/map 628  chest
-	1 : 1862/map 628  chest
-	2 : 1862/map 628  chest
-	3 : 1862/map 628  chest
-	4 : 1864/map 629  chest
-	5 : 1866/map 630  chest
-	6 : 1870/map 632  chest
-	7 : 1872/map 633  chest
+	0 : 1862/map 628  chest/Ether Guard
+	1 : 1862/map 628  chest/Zetasol DX
+	2 : 1862/map 628  chest/King's Helm
+	3 : 1862/map 628  chest/Starlight
+	4 : 1864/map 629  chest/Wizardry Ring
+	5 : 1866/map 630  chest/Zetasol DX
+	6 : 1870/map 632  chest/Gold Bullion
+	7 : 1872/map 633  chest/Survival Tent
 	8 : -
 	9 : -
 	a : -
@@ -763,13 +1046,13 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	f : -
 
 +212
-	0 : 1888/map 641 , 1890/map 642  chest,chest
-	1 : 1888/map 641 , 1890/map 642  chest,chest
-	2 : 1894/map 644 , 1908/map 651  chest,chest
-	3 : 1894/map 644 , 1908/map 651  chest,chest
-	4 : 1896/map 645  chest
-	5 : 1898/map 646  chest
-	6 : 1898/map 646  chest
+	0 : 1888/map 641 , 1890/map 642  chest/Aquasol DX
+	1 : 1888/map 641 , 1890/map 642  chest/Ether Guard
+	2 : 1894/map 644 , 1908/map 651  chest/King's Helm
+	3 : 1894/map 644 , 1908/map 651  chest/Ether Doubler
+	4 : 1896/map 645  chest/Survival Tent
+	5 : 1898/map 646  chest/Rose Tabard
+	6 : 1898/map 646  chest/Aquasol DX
 	7 : 1904/map 649  chest
 	8 : -
 	9 : -
@@ -806,33 +1089,33 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	4 : -
 	5 : 1440/map 417
 	6 : 1440/map 417
-	7 : 1440/map 417  chest
-	8 : 1442/map 418  chest
-	9 : 1442/map 418  chest
-	a : 1442/map 418  chest
-	b : 1444/map 419  chest
-	c : 1444/map 419  chest
-	d : 1444/map 419  chest
+	7 : 1440/map 417  chest/E Circuit
+	8 : 1442/map 418  chest/Stone Rod G
+	9 : 1442/map 418  chest/G-M10S Ammo
+	a : 1442/map 418  chest/Gold Bullion
+	b : 1444/map 419  chest/G-GG060 Ammo
+	c : 1444/map 419  chest/Flare Rod G
+	d : 1444/map 419  chest/Water Veil Ar
 	e : 1440/map 417 , 2060/map 727
 	f : 1428/map 411 , 2060/map 727
 
 +218
-	0 : 1418/map 406  chest
-	1 : 1418/map 406  chest
-	2 : 1418/map 406  chest
-	3 : 1418/map 406  chest
-	4 : 1422/map 408  chest
+	0 : 1418/map 406  chest/Lite Ar+1
+	1 : 1418/map 406  chest/Earth Veil Ar
+	2 : 1418/map 406  chest/Ether Ar
+	3 : 1418/map 406  chest/Thunder Rod G
+	4 : 1422/map 408  chest/Gold Nugget
 	5 : 1424/map 409  chest
 	6 : 1424/map 409  chest
-	7 : 1426/map 410  chest
-	8 : 1426/map 410  chest
-	9 : 1430/map 412  chest
-	a : 1434/map 414  chest
-	b : 1434/map 414  chest
-	c : 1438/map 416  chest
-	d : 1438/map 416  chest
-	e : 1440/map 417  chest
-	f : 1440/map 417  chest
+	7 : 1426/map 410  chest/Gold Nugget
+	8 : 1426/map 410  chest/Old Circuit
+	9 : 1430/map 412  chest/Ground
+	a : 1434/map 414  chest/Veil Doubler
+	b : 1434/map 414  chest/Wind Veil Ar
+	c : 1438/map 416  chest/Ice Rod G
+	d : 1438/map 416  chest/Fire Veil Ar
+	e : 1440/map 417  chest/O2 Cyclinder
+	f : 1440/map 417  chest/Gold Nugget
 
 +21a
 	0 : 1706/map 550
@@ -853,18 +1136,18 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	f : -
 
 +21c
-	0 : 1694/map 544  chest
+	0 : 1694/map 544  chest/Ivory
 	1 : 1696/map 545  chest
-	2 : 1700/map 547  chest
-	3 : 1702/map 548  chest
-	4 : 1704/map 549  chest
-	5 : 1704/map 549  chest
-	6 : 1706/map 550  chest
-	7 : 1706/map 550  chest
-	8 : 1708/map 551  chest
-	9 : 1708/map 551  chest
-	a : 1710/map 552  chest
-	b : 1710/map 552  chest
+	2 : 1700/map 547  chest/Aquasol DX
+	3 : 1702/map 548  chest/Hob-Steak
+	4 : 1704/map 549  chest/Hob-Jerky
+	5 : 1704/map 549  chest/Fang
+	6 : 1706/map 550  chest/Gold Nugget
+	7 : 1706/map 550  chest/Gold Bullion
+	8 : 1708/map 551  chest/Hob-Meat
+	9 : 1708/map 551  chest/Hob-Steak
+	a : 1710/map 552  chest/Zetasol
+	b : 1710/map 552  chest/Gold Nugget
 	c : 1742/map 568
 	d : -
 	e : -
@@ -892,37 +1175,37 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	0 : 1716/map 555  chest
 	1 : 1716/map 555  chest
 	2 : 1738/map 566
-	3 : 1740/map 567  chest
-	4 : 1742/map 568  chest
-	5 : 1742/map 568  chest
-	6 : 1744/map 569  chest
-	7 : 1746/map 570  chest
-	8 : 1746/map 570  chest
-	9 : 1746/map 570  chest
-	a : 1748/map 571  chest
-	b : 1748/map 571  chest
-	c : 1748/map 571  chest
-	d : 1752/map 573  chest
+	3 : 1740/map 567  chest/Aquasol DX
+	4 : 1742/map 568  chest/Ether Veiler
+	5 : 1742/map 568  chest/DeathBlower 3
+	6 : 1744/map 569  chest/Silver Ar+1
+	7 : 1746/map 570  chest/Hob-Meat
+	8 : 1746/map 570  chest/Muscle Belt
+	9 : 1746/map 570  chest/Scales
+	a : 1748/map 571  chest/Angelic Robe
+	b : 1748/map 571  chest/Eyeball
+	c : 1748/map 571  chest/Hob-Steak
+	d : 1752/map 573  chest/Aquasol DX
 	e : -
-	f : 1754/map 574  chest
+	f : 1754/map 574  chest/Survival Tent
 
 +222
-	0 : 1756/map 575  chest
-	1 : 1758/map 576  chest
-	2 : 1758/map 576  chest
-	3 : 1760/map 577  chest
-	4 : 1760/map 577  chest
-	5 : 1766/map 580  chest
+	0 : 1756/map 575  chest/Aquasol DX
+	1 : 1758/map 576  chest/Eyeball
+	2 : 1758/map 576  chest/Extra Ar+6
+	3 : 1760/map 577  chest/Hob-Meat
+	4 : 1760/map 577  chest/Gold Nugget
+	5 : 1766/map 580  chest/Speed Ring S
 	6 : -
-	7 : 1768/map 581  chest
-	8 : 1770/map 582  chest
-	9 : 1772/map 583  chest
-	a : 1774/map 584  chest
-	b : 1776/map 585  chest
-	c : 1778/map 586  chest
-	d : 1780/map 587  chest
-	e : 1782/map 588  chest
-	f : 1784/map 589  chest
+	7 : 1768/map 581  chest/Gold Nugget
+	8 : 1770/map 582  chest/Sonic Wave
+	9 : 1772/map 583  chest/Silver Ar+1
+	a : 1774/map 584  chest/Silver Ar+1
+	b : 1776/map 585  chest/Extra Ar+6
+	c : 1778/map 586  chest/Survival Tent
+	d : 1780/map 587  chest/B&J M686S Ammo
+	e : 1782/map 588  chest/Dark Armor
+	f : 1784/map 589  chest/Dark Helm
 
 +224
 	0 : 1746/map 570
@@ -941,6 +1224,20 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	d : 1742/map 568
 	e : 1742/map 568
 	f : 1742/map 568
+
++226
++228
++22a
++22c
++22e
++230
++232
++234
++236
++238
++23a
++23c
++23e
 
 +240
 	0 : 1006/map 200 , 2062/map 728
@@ -1036,12 +1333,12 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	0 : -
 	1 : 0998/map 196
 	2 : 1028/map 211
-	3 : 0996/map 195 , 1050/map 222
+	3 : 0996/map 195 , 1050/map 222  got M Disk , BP exchanged M Disk
 	4 : 1028/map 211
 	5 : -
 	6 : -
 	7 : -
-	8 : 1050/map 222
+	8 : 1050/map 222  BP exchanged DeathBlower 3
 	9 : -
 	a : -
 	b : -
@@ -1051,25 +1348,80 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	f : -
 
 +24c
-	0 : 1050/map 222
-	1 : 1050/map 222
-	2 : 1050/map 222
-	3 : 1050/map 222
-	4 : 1050/map 222
-	5 : 1050/map 222
-	6 : 1050/map 222
-	7 : 1050/map 222
-	8 : 1050/map 222
-	9 : 1050/map 222
-	a : 1050/map 222
-	b : 1050/map 222
-	c : 1050/map 222
-	d : 1050/map 222
-	e : 1050/map 222
-	f : 1050/map 222
+	0 : 1050/map 222  BP exchanged Power Ring S
+	1 : 1050/map 222  BP exchanged Stamina Ring S
+	2 : 1050/map 222  BP exchanged Speed Ring S
+	3 : 1050/map 222  BP exchanged Gallant Belt
+	4 : 1050/map 222  BP exchanged Fei Jr. Doll
+	5 : 1050/map 222  BP exchanged Bart Jr. Doll
+	6 : 1050/map 222  BP exchanged Billy Jr. Doll
+	7 : 1050/map 222  BP exchanged Body Guard
+	8 : 1050/map 222  BP exchanged Mind Guard
+	9 : 1050/map 222  BP exchanged Ether Doubler
+	a : 1050/map 222  BP exchanged Ether Guard
+	b : 1050/map 222  BP exchanged Life Stone
+	c : 1050/map 222  BP exchanged Speed Shoes
+	d : 1050/map 222  BP exchanged S Charger
+	e : 1050/map 222  BP exchanged X Charger
+	f : 1050/map 222  BP exchanged GNRS50
 
-+24e  Current Battle Points
-+250  Total Battle Points
++24e  Current Battle Points (max = 0x7530 or 30,000)
++250  Total Battle Points   (max = 0x7530 or 30,000)
++252
++254
++256
++258
++25a
++25c
++25e
++260
++262
++264
++266
++268
++26a
++26c
++26e
++270
++272
++274
++276
++278
++27a
++27c
++27e
++280
++282
++284
++286
++288
++28a
++28c
++28e
++290
++292
++294
++296
++298
++29a
++29c
++29e
++2a0
++2a2
++2a4
++2a6
++2a8
++2aa
++2ac
++2ae
++2b0
++2b2
++2b4
++2b6
++2b8
++2ba
++2bc
++2be
 
 +2c0
 	0 : 0608/map 1
@@ -1215,6 +1567,15 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	e : -
 	f : 0620/map 7
 
++2d0
++2d2
++2d4
++2d6
++2d8
++2da
++2dc
++2de
+
 +2e0
 	0 : 0640/map 17
 	1 : 0640/map 17
@@ -1232,6 +1593,150 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	d : -
 	e : -
 	f : -
+
++2e2
++2e4
++2e6
++2e8
++2ea
++2ec
++2ee
++2f0
++2f2
++2f4
++2f6
++2f8
++2fa
++2fc
++2fe
++300
++302
++304
++306
++308
++30a
++30c
++30e
++310
++312
++314
++316
++318
++31a
++31c
++31e
++320
++322
++324
++326
++328
++32a
++32c
++32e
++330
++332
++334
++336
++338
++33a
++33c
++33e
++340
++342
++344
++346
++348
++34a
++34c
++34e
++350
++352
++354
++356
++358
++35a
++35c
++35e
++360
++362
++364
++366
++368
++36a
++36c
++36e
++370
++372
++374
++376
++378
++37a
++37c
++37e
++380
++382
++384
++386
++388
++38a
++38c
++38e
++390
++392
++394
++396
++398
++39a
++39c
++39e
++3a0
++3a2
++3a4
++3a6
++3a8
++3aa
++3ac
++3ae
++3b0
++3b2
++3b4
++3b6
++3b8
++3ba
++3bc
++3be
++3c0
++3c2
++3c4
++3c6
++3c8
++3ca
++3cc
++3ce
++3d0
++3d2
++3d4
++3d6
++3d8
++3da
++3dc
++3de
++3e0
++3e2
++3e4
++3e6
++3e8
++3ea
++3ec
++3ee
++3f0
++3f2
++3f4
++3f6
++3f8
++3fa
++3fc
++3fe
 
 //////////////////////////////
 // begin different between 8006xxxx and 800cxxxx copy
@@ -1489,4 +1994,286 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- room copy , not used on world map
 	d : -
 	e : -
 	f : -
+//////////////////////////////
+Story Progress ID
 
+	op87  aaaa
+	-> [0] = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> set_story_id( aaaa )
+
+Lahan Village
+	  0 : 2048/map 721 , 2052/map 723 , 2060/map 727 , 2062/map 728
+	  1 : 2046/map 720
+	  3 : 0614/map 4 , 2046/map 720
+	  6 : 0634/map 14 , 2046/map 720
+	  7 : 0632/map 13 , 2058/map 726
+Mountain Path
+	  8 : 0630/map 12 , 2058/map 726
+	  9 : 2046/map 720
+House On a Hill
+	  a : 0644/map 19
+	  c : 0640/map 17 , 2046/map 720 , 2058/map 726
+	  d : 0648/map 21 , 2046/map 720
+Fallen Shadows
+	  f : 0640/map 17 , 2046/map 720 , 2058/map 726
+	 10 : 0636/map 15 , 2058/map 726
+Attack on Lahan
+	 14 : 2058/map 726
+	 15 : 0610/map 2
+Into the Woods
+	 18 : 0612/map 3 , 2048/map 721 , 2058/map 726
+Girl in Forest
+	 1b : 0652/map 23
+	 1e : 0662/map 28 , 2048/map 721
+Broken Silence
+	 1f : 0654/map 24 , 2048/map 721
+	 20 : 0652/map 23 , 2048/map 721
+Path to Aveh
+	 21 : 0654/map 24 , 2048/map 721
+	 22 : 0658/map 26 , 2048/map 721
+	 24 : 0654/map 24
+Dazil
+	 25 : 0654/map 24 , 2064/map 729
+	 26 : 0676/map 35
+	 27 : 0678/map 36 , 2056/map 725
+Desert Attack!
+	 2a : 0714/map 54 , 2054/map 724
+	 2b : 0718/map 56 , 2054/map 724
+	 2d : 0730/map 62
+Stalactite Cave
+	 30 : 0750/map 72
+	 33 : 0748/map 71
+	 34 : 0738/map 66 , 2052/map 723
+Pirate's Lair
+	 36 : 0752/map 73 , 2058/map 726
+	 37 : 0766/map 80 , 2058/map 726
+	 38 : 0754/map 74 , 2058/map 726
+	 39 : 0764/map 79 , 2058/map 726
+	 3a : 0764/map 79 , 2058/map 726
+	 3b : 0766/map 80 , 2058/map 726
+Operation Aveh
+	 3c : 0772/map 83 , 2048/map 721 , 2058/map 726
+	 3d : 0814/map 104
+	 3e : 0816/map 105
+	 3f : 0816/map 105 , 2048/map 721
+	 40 : 0816/map 105
+The Tournament
+	 41 : 0816/map 105 , 2048/map 721
+	 42 : 0904/map 149 , 2048/map 721
+	 43 : 0816/map 105
+	 46 : 0810/map 102 , 2048/map 721
+Margie's Rescue
+	 48 : 0914/map 154 , 2048/map 721
+	 49 : 0934/map 164 , 2048/map 721
+Road to Nisan
+	 4b : 0944/map 169 , 2048/map 721 , 2050/map 722 , 2054/map 724 , 2058/map 726
+City of Peace
+	 51 : 0798/map 96 , 2050/map 722 , 2058/map 726
+	 54 : 0802/map 98 , 2050/map 722
+Recapture Aveh
+	 57 : 0778/map 86 , 2048/map 721 , 2050/map 722 , 2054/map 724 , 2058/map 726
+	 5a : 0950/map 172 , 2048/map 721 , 2050/map 722 , 2054/map 724
+Desert Despair
+	 5d : 0874/map 134 , 2054/map 724
+	 60 : 0978/map 186 , 2054/map 724
+Kislev Capital
+	 63 : 1032/map 213 , 2046/map 720
+	 66 : 1040/map 217 , 2060/map 727 , 2062/map 728
+	 69 : 1042/map 218 , 2060/map 727 , 2062/map 728
+Brave Battlers
+	 6c : 1032/map 213 , 2060/map 727 , 2062/map 728
+Sewer Horror
+	 6f : 1052/map 223 , 2060/map 727 , 2062/map 728
+Battling Champ
+	 72 : 1084/map 239 , 2048/map 721 , 2054/map 724 , 2060/map 727 , 2062/map 728
+	 75 : 1052/map 223 , 2062/map 728
+Gear Dock Raid
+	 78 : 1048/map 221 , 2048/map 721 , 2056/map 725 , 2062/map 728
+	 7b : 0996/map 195 , 1006/map 200 , 2062/map 728
+Night Purge
+	 7e : 2062/map 728
+	 81 : 1056/map 225 , 2062/map 728
+	 84 : 1100/map 247 , 1102/map 248 , 2060/map 727 , 2062/map 728
+Secret Weapon
+	 87 : 1006/map 200 , 2056/map 725 , 2062/map 728
+Escape Ignas
+	 8a : 1146/map 270 , 1202/map 298 , 1222/map 308 , 2048/map 721 , 2054/map 724 , 2058/map 726 , 2060/map 727 , 2062/map 728
+Adrift at Sea
+	 8b : 1200/map 297 , 1222/map 308 , 2058/map 726
+Men of the Sea
+	 8c : 1244/map 319 , 2056/map 725
+	 8d : 1234/map 314 , 1236/map 315 , 2056/map 725
+	 8e : 1236/map 315 , 2056/map 725
+Friends Again
+	 8f : 1234/map 314 , 2056/map 725
+	 90 : 1230/map 312 , 2058/map 726
+Betrayal
+	 91 : 1186/map 290 , 1236/map 315 , 1256/map 325 , 2048/map 721 , 2056/map 725 , 2058/map 726
+	 92 : 1234/map 314 , 1236/map 315 , 2054/map 724 , 2058/map 726
+Ramsus'Attack
+	 93 : 1178/map 286 , 2058/map 726
+	 94 : 1232/map 313 , 2058/map 726
+A Young Priest
+	 95 : 1246/map 320 , 2054/map 724 , 2058/map 726
+	 97 : 1284/map 339
+The Orphanage
+	 98 : 1310/map 352 , 2058/map 726 , 2064/map 729
+	 99 : 1260/map 327 , 2058/map 726
+Reaper's Ship
+	 9a : 1258/map 326 , 2058/map 726
+	 9b : 1260/map 327 , 2058/map 726
+Burning Souls
+	 9e : 1276/map 335 , 2058/map 726 , 2064/map 729
+	 a0 : 1326/map 360 , 2058/map 726
+Ocean Floor
+	 a5 : 1238/map 316 , 2054/map 724 , 2056/map 725
+Deep Sea Girl
+	 a6 : 1364/map 379 , 2054/map 724 , 2058/map 726
+	 a7 : 1192/map 293 , 2058/map 726
+	 a8 : 1382/map 388 , 2054/map 724 , 2058/map 726 , 2060/map 727
+Babel Tower
+	 a9 : 1182/map 288 , 2058/map 726
+	 ab : 1416/map 405 , 2048/map 721 , 2060/map 727
+	 ae : 1428/map 411 , 2060/map 727
+Sky City Shevat
+	 af : 1446/map 420 , 2046/map 720 , 2060/map 727
+	 b0 : 1480/map 437
+	 b1 : 1452/map 423
+	 b2 : 1474/map 434 , 2046/map 720
+Intruder Alert!
+	 b3 : 1512/map 453 , 2046/map 720
+Raid of Shevat!
+	 b4 : 1488/map 441 , 2046/map 720
+	 b5 : 1552/map 473
+	 b6 : 1552/map 473 , 2046/map 720
+	 b7 : 1452/map 423 , 2046/map 720
+	 ba : 1490/map 442 , 2058/map 726 , 2062/map 728
+Protect Nisan!
+	 bb : 1514/map 454 , 2050/map 722 , 2058/map 726 , 2062/map 728
+	 bd : 1554/map 474 , 2050/map 722
+	 c3 : 2050/map 722
+Gate1 -Margie
+	 c6 : 0778/map 86 , 2050/map 722
+Gate2 -Babel
+	 c9 : 1596/map 495 , 2048/map 721 , 2058/map 726 , 2060/map 727 , 2062/map 728
+	 ca : 0908/map 151 , 2048/map 721 , 2060/map 727 , 2064/map 729
+	 cb : 1430/map 412 , 2050/map 722
+Gate3 -The Deep
+	 cc : 1212/map 303 , 2048/map 721 , 2050/map 722 , 2056/map 725
+	 cd : 1234/map 314 , 2056/map 725 , 2058/map 726
+	 cf : 1616/map 505 , 2046/map 720 , 2054/map 724
+Into Solaris
+	 d0 : 1512/map 453 , 2058/map 726
+	 d1 : 1510/map 452 , 2046/map 720
+	 d2 : 1628/map 511 , 2058/map 726
+	 d5 : 1664/map 529 , 2058/map 726
+Escape Solaris
+	 d8 : 1682/map 538 , 2058/map 726
+Lone Wolf
+	 db : 1688/map 541 , 2058/map 726
+Krelian's lab
+	 de : 1656/map 525 , 1692/map 543
+	 e4 : 1764/map 579 , 2060/map 727
+Tears for Fears
+	 e7 : 1788/map 591
+	 ea : 1792/map 593 , 1796/map 595 , 1820/map 607 , 2054/map 724
+Fall of Solaris
+	 f0 : 1828/map 611 , 2046/map 720 , 2054/map 724
+Shevat's Move
+	 f1 : 1764/map 579 , 2046/map 720
+	 f2 : 1526/map 460
+Broken Ties
+	 f3 : 1540/map 467
+Shot Down!
+	 f9 : 1830/map 612
+Break the Seal
+	 fc : 1830/map 612
+	102 : 1842/map 618
+Soul Vessel
+	107 : 1850/map 622
+	118 : 1882/map 638 , 2060/map 727
+The Stars Know
+	119 : 1152/map 273 , 1842/map 618 , 2048/map 721 , 2062/map 728
+	11b : 1886/map 640 , 2054/map 724 , 2060/map 727
+Above Mahanon
+	11d : 1636/map 515
+Paradise
+	120 : 1950/map 672
+Promised Land
+	122 : 1914/map 654
+Waiting Death
+	127 : 1152/map 273
+Merkava Calls
+	12a : 2024/map 709
+	12c : 2028/map 711
+	12d : 2032/map 713
+	12e : 2030/map 712
+	12f : 2032/map 713 , 2034/map 714
+	132 : 0646/map 20 , 2062/map 728
+Dreams...
+	136 : 1842/map 618
+	140 : 2002/map 698 , 2046/map 720
+Fallen Star
+	145 : 1942/map 668
+Xenogears Wakes
+	14a : 1942/map 668
+First and Last
+	154 : 1980/map 687 , 2048/map 721 , 2054/map 724 , 2058/map 726 , 2060/map 727
+	15e : 2012/map 703 , 2062/map 728
+
+	3e7 : unlocked Argento
+	[1c] : 2052/map 723
+
+
+
+Battling Gear unlocks by story progress
+	>=   0  Weltall
+	>=   0  Vierge
+	>=   0  Heimdal
+	>=   0  Brigandier
+	>=  99  Renmazuo
+	>=   0  Stier
+	>= 154  Bladegash
+	>=  ba  Siebzehn
+	>=  cf  Crescens
+	>=  ba  Chu-Chu
+	>= 122  Weltall-2
+	>= 12c  Xenogears
+	>= 15e  El-Regulus
+	>= 122  El-Fenrir
+	>=  c6  El-Andvari
+	>= 125  El-Renmazuo
+	>= 122  El-Stier
+	>=   0  Ganador
+	>=   0  Titan
+	>=   0  WindShaver
+	>=   0  Firewheel
+	>=   0  SilverStar
+	>= 3e7  Argento
+	>=   0  Musha
+	>=   0  Hatamoto
+	>=   0  Blowback
+	>=   0  Shinobi
+	>=   0  Wyrm
+	>=   0  Tin Robo
+	>=   0  Ranker
+	>=  ba  Etone
+	>=  ba  NeoEtone
+	>=  ba  Golem
+	>=  ba  Repair
+	>=  ba  Worker
+	>=  ba  Dozer
+	>=  ba  Death
+	>=  c9  Marman
+	>=  c9  Marine
+	>=  c9  Trooper
+	>=  c9  Twinburner
+	>=  c9  S-Trooper
+	>=  c9  S-Tripper
+	>= 104  Sufal
+	>= 104  EG-Gunner
+	>= 104  EG-Armor
+	>= 104  Pedestal
+	>= 104  Edin
+	>= 104  EG-Blade
+//////////////////////////////
