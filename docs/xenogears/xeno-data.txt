@@ -5,10 +5,14 @@ Special Thanks
 	Xenogears Shrine
 	http://shrines.rpgclassics.com/psx/xeno/
 		Ryuuhi
+Contributors
 	Xenogears Perfect Works Build
 	http://github.com/NoharOSP/Perfect_Works_Build/
+	(names in alphabetical order)
 		NoharOSP
 		rafael
+		Siris
+		Streetwize
 		Will Bill
 ==============================
 Character Base Stats (BLOCK = 0xa4 or 164 bytes)

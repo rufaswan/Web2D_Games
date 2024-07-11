@@ -59,7 +59,8 @@ function cmpfile( &$list, $act )
 					} // switch ( $act )
 				}
 				else
-					printf("DIFF %s != %s\n", $lv[$i], $lv[$j]);
+					echo "-\n";
+					//printf("DIFF %s != %s\n", $lv[$i], $lv[$j]);
 			} // for ( $j=$i+1; $j < $cnt; $j++ )
 		} // for ( $i=0; $i < ($cnt-1); $i++ )
 	} // foreach ( $list as $lk => $lv )

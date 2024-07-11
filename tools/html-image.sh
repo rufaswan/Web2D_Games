@@ -41,12 +41,12 @@ function loopent {
 }
 
 echo '<style>
-* {
-	margin  : 0;
-	padding : 0;
+body {
+	text-align       : center;
+	background-color : #111;
+	color            : #eee;
 }
 img {
-	border    : 3px #f00 solid;
 	max-width : 100%;
 }
 </style>'

@@ -9,8 +9,13 @@ while [ "$1" ]; do
 	# to join all .MPG into one file
 	#   cat  1.mpg 2.mpg 3.mpg  >  123.mpg
 	[ -f "$t1" ] || continue
-	$nice  ffmpeg -y \
-		-i "$t1"     \
-		-qscale 0    \
-		"$t1".mpg
+	mime=$(file  --brief  --mime-type  "$t1")
+	case "$mime" in
+		'video/'* | 'audio/'*)
+			$nice  ffmpeg -y \
+				-i "$t1"     \
+				-qscale 0    \
+				"$t1".mpg
+			;;
+	esac
 done

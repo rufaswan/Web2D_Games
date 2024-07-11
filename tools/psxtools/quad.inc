@@ -20,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-if ( ! function_exists('json_pretty') )
+if ( ! class_exists('json_pretty') )
 	exit("no json_pretty() [from common-json.inc]\n");
 
 //////////////////////////////
@@ -185,7 +185,7 @@ function save_quadfile( $pfx, &$quad )
 		return;
 	anim_allkeys($quad);
 
-	$json = json_pretty($quad, '');
+	$json = json_pretty::encode($quad);
 	if ( is_srcquad_prediv($quad) )
 	{
 		php_warning('%s srcquad is in 0.0 to 1.0 / pre-divided', $pfx);

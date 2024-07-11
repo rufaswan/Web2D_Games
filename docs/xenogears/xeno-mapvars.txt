@@ -1,5 +1,5 @@
 JP RAM 8006e5f4 / US RAM 8006ef64 <- SAVE DATA , 2595.bin
-JP RAM 800c2f3c / US RAM 800c3a68 <- active copy , used when inside a room and overwrite SAVE DATA above , cleared when running other overlays (battle/worldmap/arena/etc)
+JP RAM 800c2f3c / US RAM 800c3a68 <- active copy , used when map overlay is active and will overwrite SAVE DATA above , cleared when running other overlays (battle/worldmap/arena/etc)
 
 	op35  [aaaa]  bbbb  40 | op35  [aaaa]  [bbbb]  --
 	-> [aaaa] = bbbb       | -> [aaaa] = [bbbb]
@@ -44,9 +44,9 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- active copy , used when inside a room and o
 +6  Char Facing (0=north , 2=east , 4=south , 6=west)
 +8
 +a
-+c  Play Time second
-+d  Play Time minute
-+e  Play Time hour
++c  In Game Time second (00-3b)
++d  In Game Time minute
++e  In Game Time hour
 +f
 
 +10
@@ -56,23 +56,23 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- active copy , used when inside a room and o
 +18  Total Battle Point/copy
 +1a
 +1c
-+1e  Char Pos X (west-- , east++)
++1e  Map Char Pos X (west-- , east++)
 
-+20  Char Pos Y (north++ , south--)
-+22  Char Pos Z
++20  Map Char Pos Y (north++ , south--)
++22  Map Char Pos Z
 +24
-+26  0 , World Map Pos X
-+28  0 , World Map Pos Y
++26  0
++28  0
 +2a  Map ID
-+2c  0 , World Map Pos X
-+2e  0 , World Map Pos Y
++2c  0 , World Map Gear 1 Pos X
++2e  0 , World Map Gear 1 Pos Y
 
 +30  Map ID
-+32  0 , World Map Pos X
-+34  0 , World Map Pos Y
++32  0 , World Map Gear 2 Pos X
++34  0 , World Map Gear 2 Pos Y
 +36  Map ID
-+38  0 , World Map Pos X
-+3a  0 , World Map Pos Y
++38  0 , World Map Gear 3 Pos X
++3a  0 , World Map Gear 3 Pos Y
 +3c  Map ID
 +3e  Party Char ID 1
 
@@ -1997,6 +1997,14 @@ JP RAM 800c2f3c / US RAM 800c3a68 <- active copy , used when inside a room and o
 //////////////////////////////
 Story Progress ID
 
+	op84  aaaa  bbbb
+	-> id = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> (story < id) ? {...} : goto bbbb;
+
+	op85  aaaa  bbbb
+	-> id = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> (story > id) ? {...} : goto bbbb;
+
 	op87  aaaa
 	-> [0] = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
 	-> set_story_id( aaaa )
@@ -2227,6 +2235,8 @@ First and Last
 
 
 Battling Gear unlocks by story progress
+-> [LZ] 0047.bin + e28 + (n * 20) , where  n < 31
+-> lh  4(addr)
 	>=   0  Weltall
 	>=   0  Vierge
 	>=   0  Heimdal
@@ -2276,4 +2286,658 @@ Battling Gear unlocks by story progress
 	>= 104  Pedestal
 	>= 104  Edin
 	>= 104  EG-Blade
+
+
+
+World Map changes by story progress
+-> [LZ] 0037.bin + 2b7cc
+-> list = [0  18  36  87  95  ba  c6  cc  ed  ffff]
+	>=   0  dir 3963  Lahan - Blackmoon Forest
+	>=  18  dir 3974  Blackmoon Forest - Pirate's Lair
+	>=  36  dir 3985  Pirate's Lair - Goliant Factory
+	>=  87  dir 3996  Goliant Factory - Orphanage
+	>=  95  dir 4007  Orphanage - Shevat
+	>=  ba  dir 4018  Shevat - Gate 1
+	>=  c6  dir 4029  Gate 1 - Gate 3
+	>=  cc  dir 4040  Gate 3 - Solaris
+	>=  ed  dir 4051  Solaris - Merkava - Argento
+
+World Map POS
+	X = 0 (west ) to 7fff (east )
+	Y = 0 (north) to 7fff (south)
+
+	X     Y     name
+	74fb  2b43  Lahan Village
+	7580  2900  Mountain Path
+	73f2  2bc2  Blackmoon Forest (North)
+	6f53  30fa  Blackmoon Forest (South)
+	6975  2eaa  Dazil
+	-     -     Stalactite Cave
+	4614  2cfb  Bart's Lair
+	559d  381a  Bledavik (Aveh)
+	-     -     tree/Road to Nisan
+	4df8  1d09  Nisan
+	-     -     *Kislev Border*
+	6144  1c38  Nortune (Kislev)
+	-     -     Goliant Factory
+	 d80  7280  Thames (when on Ethos mission)
+	2614  6dce  Orphanage
+	13ba  4bfd  The 'Ethos' H.Q.
+	 de6  608a  Ethos' Dig Site
+	1f09  5ce0  Babel Tower
+	4800  1900  Ft. Jasper
+	44c6  1bb5  Ignas' Gate Cave
+	6e02  5cf1  Taura's House
+	7dc5  6c8d  Anima Relic 1
+	1639   84d  Anima Relic 2
+	4b2e  7680  Snowfield Hideout
+	2920  4d20  Lighthouse
+	39d2  3130  Duneman Isle
+	-     -     Merkava
+
+	Note :
+	- XY are POS when player exit back to world map.
+	- Can be used for wrapping without worry getting stuck inside town/dungeon object.
+
+//////////////////////////////
+
+opf7  aaaa  bbbb
+-> max = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+-> min = (bbbb & 8000) ? bbbb & 7fff : [bbbb]
+-> random_enc( max , min )
+
+	0636/map 15 : f7 f0 1
+	0650/map 22 : f7 258 1 , f7 258 0
+	0652/map 23 : f7 258 1 , f7 258 0
+	0654/map 24 : f7 1c2 1
+	0700/map 47 : f7 168 1
+	0702/map 48 : f7 168 1
+	0708/map 51 : f7 168 1
+	0712/map 53 : f7 12c 2
+	0720/map 57 : f7 258 2
+	0722/map 58 : f7 384 2
+	0734/map 64 : f7 384 1
+	0736/map 65 : f7 258 1
+	0738/map 66 : f7 384 1
+	0740/map 67 : f7 258 1
+	0742/map 68 : f7 258 1
+	0744/map 69 : f7 168 1 , f7 1 0 , f7 258 1
+	0950/map 172 : f7 f0 1
+	0952/map 173 : f7 f0 1
+	0956/map 175 : f7 f0 1
+	1084/map 239 : f7 12c 1
+	1086/map 240 : f7 168 1
+	1088/map 241 : f7 168 1
+	1118/map 256 : f7 10e 2
+	1120/map 257 : f7 10e 2
+	1122/map 258 : f7 10e 2
+	1124/map 259 : f7 12c 2
+	1130/map 262 : f7 1c2 2
+	1132/map 263 : f7 2ee 1
+	1134/map 264 : f7 168 2
+	1136/map 265 : f7 258 1
+	1138/map 266 : f7 258 1
+	1272/map 333 : f7 f0 0 , f7 f0 1
+	1278/map 336 : f7 f0 1 , f7 0 0
+	1280/map 337 : f7 f0 1
+	1282/map 338 : f7 f0 1
+	1284/map 339 : f7 f0 1
+	1288/map 341 : f7 f0 1
+	1292/map 343 : f7 f0 1
+	1294/map 344 : f7 f0 1
+	1296/map 345 : f7 f0 1
+	1298/map 346 : f7 f0 1
+	1300/map 347 : f7 f0 1
+	1302/map 348 : f7 f0 1
+	1304/map 349 : f7 f0 1
+	1306/map 350 : f7 f0 1
+	1312/map 353 : f7 f0 1
+	1316/map 355 : f7 f0 1
+	1342/map 368 : f7 384 2
+	1344/map 369 : f7 384 2
+	1346/map 370 : f7 384 2
+	1350/map 372 : f7 384 2
+	1352/map 373 : f7 384 2
+	1354/map 374 : f7 384 2
+	1356/map 375 : f7 384 2
+	1360/map 377 : f7 384 2
+	1374/map 384 : f7 384 2
+	1376/map 385 : f7 384 3
+	1380/map 387 : f7 384 2
+	1412/map 403 : f7 258 2
+	1420/map 407 : f7 168 1
+	1424/map 409 : f7 168 0 , f7 168 1
+	1430/map 412 : f7 12c 1 , f7 12c 0
+	1432/map 413 : f7 12c 1
+	1434/map 414 : f7 12c 1
+	1436/map 415 : f7 12c 1
+	1438/map 416 : f7 f0 1
+	1494/map 444 : f7 10e 1 , f7 10e 0
+	1496/map 445 : f7 10e 1 , f7 10e 0
+	1498/map 446 : f7 10e 1 , f7 10e 0
+	1500/map 447 : f7 10e 1 , f7 10e 0
+	1502/map 448 : f7 f0 1 , f7 10e 0
+	1504/map 449 : f7 12c 1 , f7 10e 0 , f7 10e 1
+	1506/map 450 : f7 12c 1 , f7 10e 0 , f7 10e 1
+	1582/map 488 : f7 384 0
+	1598/map 496 : f7 168 1
+	1600/map 497 : f7 168 1
+	1602/map 498 : f7 168 1
+	1604/map 499 : f7 12c 1
+	1606/map 500 : f7 258 1
+	1698/map 546 : f7 168 1
+	1702/map 548 : f7 12c 1
+	1708/map 551 : f7 12c 1
+	1710/map 552 : f7 12c 1
+	1716/map 555 : f7 12c 1
+	1718/map 556 : f7 12c 1
+	1720/map 557 : f7 12c 1
+	1722/map 558 : f7 12c 1
+	1724/map 559 : f7 12c 1
+	1726/map 560 : f7 12c 1
+	1728/map 561 : f7 168 1
+	1730/map 562 : f7 12c 1
+	1732/map 563 : f7 12c 1
+	1734/map 564 : f7 12c 1
+	1736/map 565 : f7 168 1
+	1738/map 566 : f7 168 1 , f7 168 0
+	1740/map 567 : f7 12c 1
+	1744/map 569 : f7 12c 1
+	1752/map 573 : f7 12c 1
+	1756/map 575 : f7 12c 1
+	1758/map 576 : f7 12c 1
+	1760/map 577 : f7 12c 1
+	1768/map 581 : f7 12c 1
+	1770/map 582 : f7 12c 1
+	1772/map 583 : f7 12c 1
+	1774/map 584 : f7 12c 1
+	1776/map 585 : f7 12c 1
+	1778/map 586 : f7 12c 1
+	1780/map 587 : f7 12c 1
+	1782/map 588 : f7 12c 1
+	1784/map 589 : f7 12c 1
+	1786/map 590 : f7 168 1
+	1800/map 597 : f7 168 1
+	1802/map 598 : f7 168 1
+	1804/map 599 : f7 168 1
+	1806/map 600 : f7 168 1
+	1808/map 601 : f7 168 1
+	1818/map 606 : f7 168 1
+	1870/map 632 : f7 12c 1
+	1872/map 633 : f7 12c 1
+	1874/map 634 : f7 f0 1
+	1888/map 641 : f7 f0 1
+	1890/map 642 : f7 f0 1
+	1894/map 644 : f7 168 0 , f7 f0 1
+	1906/map 650 : f7 f0 1
+	1908/map 651 : f7 168 0 , f7 f0 1
+	2012/map 703 : f7 1c2 1
+	2020/map 707 : f7 168 1
+	2022/map 708 : f7 168 1
+	2050/map 722 : f7 384 0
+	2052/map 723 : f7 384 0
+
+//////////////////////////////
+
+run_menu()
+	opfeXX = set menu type
+	opfe87 = execute menu
+
+opfeXX menu types
+	opfe55
+	-> set_menu_save()
+	opfe56  aaaa
+	-> listid = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> set_menu_party( listid )
+	opfe57
+	-> set_menu_load()
+	opfe58  aaaa
+	-> charid = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> set_menu_rename( charid )
+	opfe59  aaaa
+	-> listid = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> set_menu_char_shop( listid )
+	opfe5a  aaaa
+	-> listid = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> set_menu_gear_shop( listid )
+	opfecf  aaaa  bbbb
+	-> listid = (aaaa & 8000) ? aaaa & 7fff : [aaaa]
+	-> listid = (bbbb & 8000) ? bbbb & 7fff : [bbbb]
+	-> set_menu_party( listid , listid )
+	opfeda
+	-> set_menu_disc_2()
+
+0616/map 5 :
+	fe55          (card save)
+0618/map 6 :
+	fe59  1       (item shop)
+0636/map 15 :
+	fe55          (card save)
+0646/map 20 :
+	fe58  0       (rename)
+	fe58  1       (rename)
+	fe58  2       (rename)
+	fe58  3       (rename)
+	fe58  5       (rename)
+	fe58  4       (rename)
+	fe58  8       (rename)
+	fe58  7       (rename)
+	fe58  6       (rename)
+0650/map 22 :
+	fe55          (card save)
+0652/map 23 :
+	fe55          (card save)
+0676/map 35 :
+	fe59  2       (item shop)
+	fe59  3       (item shop)
+0694/map 44 :
+	fe5a  1       (gear shop)
+	fe55          (card save)
+0718/map 56 :
+	fe55          (card save)
+0720/map 57 :
+	fe55          (card save)
+0734/map 64 :
+	fe55          (card save)
+0738/map 66 :
+	fe55          (card save)
+0744/map 69 :
+	fe55          (card save)
+0748/map 71 :
+	fe5a  2       (gear shop)
+	fe59  1       (item shop)
+0756/map 75 :
+	fe59  8       (item shop) items
+	fe59  9       (item shop) accessories
+	fe5a  3       (gear shop)
+0758/map 76 :
+	fe55          (card save)
+0776/map 85 :
+	fe59  6       (item shop) [102] 0-40  items
+	fe59  7       (item shop) [102] 0-40  accessories
+	fe59  12      (item shop) [102] 42+   items
+	fe59  13      (item shop) [102] 42+   accessories
+	fe5a  a       (gear shop) [102] 42+
+	fe59  12      (item shop) [102] 25-41 items
+	fe59  13      (item shop) [102] 25-41 accessories
+	fe5a  5       (gear shop) from Yggdrasil
+	fe55          (card save)
+0814/map 104 :
+	fe55          (card save)
+0834/map 114 :
+	fe59  22      (item shop)
+0844/map 119 :
+	fe59  4       (item shop)
+0846/map 120 :
+	fe59  5       (item shop)
+0848/map 121 :
+	fe5a  3       (gear shop)
+0866/map 130 :
+	fe55          (card save)
+0872/map 133 :
+	fe55          (card save)
+0876/map 135 :
+	fe55          (card save)
+0878/map 136 :
+	fe55          (card save)
+0880/map 137 :
+	fe55          (card save)
+0882/map 138 :
+	fe55          (card save)
+0884/map 139 :
+	fe55          (card save)
+0886/map 140 :
+	fe55          (card save)
+0888/map 141 :
+	fe55          (card save)
+0890/map 142 :
+	fe55          (card save)
+0892/map 143 :
+	fe55          (card save)
+0894/map 144 :
+	fe55          (card save)
+0896/map 145 :
+	fe55          (card save)
+0898/map 146 :
+	fe55          (card save)
+0900/map 147 :
+	fe55          (card save)
+0906/map 150 :
+	fe55          (card save)
+0908/map 151 :
+	fe55          (card save)
+0910/map 152 :
+	fe55          (card save)
+0912/map 153 :
+	fe55          (card save)
+0914/map 154 :
+	fe55          (card save)
+0916/map 155 :
+	fe55          (card save)
+0918/map 156 :
+	fe55          (card save)
+0920/map 157 :
+	fe55          (card save)
+0922/map 158 :
+	fe55          (card save)
+0924/map 159 :
+	fe55          (card save)
+0950/map 172 :
+	fe5a  5       (gear shop)
+	fe59  1       (item shop)
+	fe55          (card save)
+0952/map 173 :
+	fe5a  5       (gear shop)
+	fe59  1       (item shop)
+	fe55          (card save)
+1004/map 199 :
+	fe55          (card save)
+1006/map 200 :
+	fe56  5       (party)
+	fe55          (card save)
+1016/map 205 :
+	fe56  2       (party)
+1018/map 206 :
+	fe59  d       (item shop)
+	fe59  b       (item shop)
+1020/map 207 :
+	fe59  a       (item shop)
+	fe59  c       (item shop)
+1024/map 209 :
+	fe5a  7       (gear shop)
+	fe5a  6       (gear shop)
+1032/map 213 :
+	fe59  a       (item shop)
+	fe59  b       (item shop)
+	fe55          (card save)
+1040/map 217 :
+	fe59  a       (item shop)
+	fe59  b       (item shop)
+1044/map 219 :
+	fe55          (card save)
+1048/map 221 :
+	fe59  a       (item shop)
+	fe5a  6       (gear shop)
+	fe55          (card save)
+1050/map 222 :
+	fe55          (card save)
+1086/map 240 :
+	fe55          (card save)
+1088/map 241 :
+	fe55          (card save)
+1100/map 247 :
+	fe55          (card save)
+	fe56  0       (party)
+1106/map 250 :
+	fe5a  7       (gear shop)
+	fe55          (card save)
+1108/map 251 :
+	fe55          (card save)
+1130/map 262 :
+	fe56  2       (party)
+	fe5a  7       (gear shop)
+1134/map 264 :
+	fe55          (card save)
+1136/map 265 :
+	fe55          (card save)
+1144/map 269 :
+	fe55          (card save)
+1146/map 270 :
+	fe55          (card save)
+1160/map 277 :
+	fe55          (card save)
+1170/map 282 :
+	fe55          (card save)
+1182/map 288 :
+	op85 [ 153 -> 9a -> 0 ]
+	fe59  1c      (item shop) story 154+   items
+	fe59  1b      (item shop) story 154+   weapons/accessories
+	fe59  8       (item shop) story 9b-153 items
+	fe59  f       (item shop) story 9b-153 weapons/accessories
+	fe59  8       (item shop) story 0-9a   items
+	fe59  9       (item shop) story 0-9a   weapons/accessories
+	fe56  7       (party)
+	fecf  111  3  (party ex)
+	fe55          (card save)
+1186/map 290 :
+	fe56  3       (party)
+	fecf  19c  4  (party ex)
+	fe55          (card save)
+1190/map 292 :
+	op85 [ 153 -> cc -> a8 -> 89 -> 3b -> 0 ]
+	fe5a  5       (gear shop)
+	fe5a  e       (gear shop) story 154+
+	fe5a  b       (gear shop) story cd-153
+	fe5a  9       (gear shop) story a9-cc
+	fe5a  8       (gear shop) story 8a-a8
+	fe5a  5       (gear shop) story 3c-89
+	fe5a  3       (gear shop) story 0-3b
+	fe58  13      (rename)
+1192/map 293 :
+	fe58  b       (rename)
+	fe58  c       (rename)
+	fe58  1a      (rename)
+	fe58  f       (rename)
+	fe58  17      (rename)
+	fe58  e       (rename)
+	fe58  16      (rename)
+	fecf  184  0  (party ex)
+1198/map 296 :
+	fe58  11      (rename)
+	fe58  19      (rename)
+	fe58  d       (rename)
+	fe58  10      (rename)
+	fe58  18      (rename)
+	fe58  14      (rename)
+1204/map 299 :
+	fe55          (card save)
+1208/map 301 :
+	fe58  7       (rename)
+	fe56  1       (party)
+1212/map 303 :
+	fe55          (card save)
+1236/map 315 :
+	fe55          (card save)
+1238/map 316 :
+	fe59  e       (item shop)
+	fe59  f       (item shop)
+	fe55          (card save)
+1242/map 318 :
+	op84 [ cc ]
+	fe5a  8       (gear shop) story 0-cb
+	fe5a  b       (gear shop) story cc+
+1272/map 333 :
+	fe55          (card save)
+1280/map 337 :
+	fe55          (card save)
+1354/map 374 :
+	fe55          (card save)
+1376/map 385 :
+	fe55          (card save)
+1392/map 393 :
+	fe59  20      (item shop)
+	fe5a  11      (gear shop)
+1396/map 395 :
+	fe55          (card save)
+1420/map 407 :
+	fe55          (card save)
+1428/map 411 :
+	fe55          (card save)
+1442/map 418 :
+	fe5a  0       (gear shop)
+1446/map 420 :
+	fe55          (card save)
+1452/map 423 :
+	fe55          (card save)
+1458/map 426 :
+	fe55          (card save)
+1466/map 430 :
+	fe59  12      (item shop)
+	fe59  13      (item shop)
+1478/map 436 :
+	fe5a  a       (gear shop)
+1502/map 448 :
+	fe55          (card save)
+1506/map 450 :
+	fe55          (card save)
+1508/map 451 :
+	fe59  12      (item shop)
+	fe59  13      (item shop)
+	fe5a  a       (gear shop)
+1538/map 466 :
+	fe56  2       (party)
+	fe55          (card save)
+1570/map 482 :
+	fe59  12      (item shop)
+	fe59  13      (item shop)
+	fe55          (card save)
+1580/map 487 :
+	fe55          (card save)
+1582/map 488 :
+	fe55          (card save)
+	fe58  0       (rename)
+	fe58  1       (rename)
+	fe58  2       (rename)
+	fe58  3       (rename)
+	fe58  4       (rename)
+	fe58  5       (rename)
+	fe58  6       (rename)
+	fe58  7       (rename)
+	fe59  0       (item shop)
+	fe5a  0       (gear shop)
+	fe57          (card load)
+1586/map 490 :
+	fe57          (card load)
+1608/map 501 :
+	fe55          (card save)
+1638/map 516 :
+	fe55          (card save)
+	fe56  0       (party)
+1646/map 520 :
+	fe55          (card save)
+1666/map 530 :
+	fe59  1a      (item shop)
+	fe59  23      (item shop)
+1674/map 534 :
+	fe55          (card save)
+1690/map 542 :
+	fe55          (card save)
+1708/map 551 :
+	fe55          (card save)
+1732/map 563 :
+	fe55          (card save)
+1740/map 567 :
+	fe55          (card save)
+1754/map 574 :
+	fe55          (card save)
+1798/map 596 :
+	fe59  1a      (item shop)
+	fe59  23      (item shop)
+	fe55          (card save)
+	fe56  0       (party)
+1812/map 603 :
+	fe55          (card save)
+	fe56  0       (party)
+1818/map 606 :
+	fe55          (card save)
+1820/map 607 :
+	fe56  0       (party)
+1830/map 612 :
+	feda          (disc change)
+1836/map 615 :
+	fe55          (card save)
+1842/map 618 :
+	fecf  274  0  (party ex)
+	fecf  281  0  (party ex)
+	fe55          (card save)
+	fe56  0       (party)
+1844/map 619 :
+	fe55          (card save)
+	fe56  0       (party)
+1850/map 622 :
+	fe55          (card save)
+	fe56  0       (party)
+1862/map 628 :
+	fe59  1e      (item shop)
+	fe59  1f      (item shop)
+	fe5a  10      (gear shop)
+	fe55          (card save)
+	fe56  0       (party)
+1874/map 634 :
+	fe55          (card save)
+1888/map 641 :
+	fe59  1e      (item shop)
+	fe59  1f      (item shop)
+	fe5a  10      (gear shop)
+	fe55          (card save)
+	fe56  0       (party)
+1890/map 642 :
+	fe59  1e      (item shop)
+	fe59  1f      (item shop)
+	fe5a  10      (gear shop)
+	fe55          (card save)
+	fe56  0       (party)
+1906/map 650 :
+	fe55          (card save)
+1912/map 653 :
+	fe55          (card save)
+	fe56  0       (party)
+1942/map 668 :
+	fe55          (card save)
+	fe56  0       (party)
+1980/map 687 :
+	fe55          (card save)
+1996/map 695 :
+	fe59  1a      (item shop)
+	fe59  1b      (item shop)
+	fe5a  e       (gear shop)
+2012/map 703 :
+	fe55          (card save)
+2024/map 709 :
+	fe55          (card save)
+	fe56  0       (party)
+2038/map 716 :
+	op84 [ 14a ]
+	fe59  1       (item shop) story 0-149
+	fe5a  12      (gear shop) story 0-149
+	fe59  1       (item shop) story 14a+
+	fe5a  13      (gear shop) story 14a+
+2040/map 717 :
+	fe56  1       (party)
+2046/map 720 :
+	fe5a  0       (gear shop)
+2048/map 721 :
+	fe55          (card save)
+2050/map 722 :
+	fe55          (card save)
+	fe58  0       (rename)
+	fe58  1       (rename)
+	fe58  2       (rename)
+	fe58  3       (rename)
+	fe58  4       (rename)
+	fe58  5       (rename)
+	fe58  6       (rename)
+	fe58  7       (rename)
+	fe59  0       (item shop)
+	fe5a  0       (gear shop)
+	fe57          (card load)
+2052/map 723 :
+	fe55          (card save)
+	fe58  0       (rename)
+	fe58  1       (rename)
+	fe58  2       (rename)
+	fe58  3       (rename)
+	fe58  4       (rename)
+	fe58  5       (rename)
+	fe58  6       (rename)
+	fe58  7       (rename)
+	fe59  0       (item shop)
+	fe5a  0       (gear shop)
+	fe57          (card load)
+2058/map 726 :
+	fe55          (card save)
+2062/map 728 :
+	fe56  2       (party)
+	fe55          (card save)
+
 //////////////////////////////

@@ -38,7 +38,7 @@ function jsonfile( $pretty, $fname )
 	{
 		//$file = json_encode($json, JSON_PRETTY_PRINT);
 		//$file = str_replace('    ', "\t", $file);
-		$file = json_pretty($json, '');
+		$file = json_pretty::encode($json);
 	}
 	else
 		$file = json_encode($json);
@@ -51,12 +51,8 @@ function jsonfile( $pretty, $fname )
 $pretty = true;
 for ( $i=1; $i < $argc; $i++ )
 {
-	switch ( $argv[$i] )
-	{
-		case '0':  $pretty = false; break;
-		case '1':  $pretty = true;  break;
-		default:
-			jsonfile( $pretty, $argv[$i] );
-			break;
-	}
+	if ( is_file($argv[$i]) )
+		jsonfile( $pretty, $argv[$i] );
+	else
+		$pretty = ( (int)$argv[$i] === 0 ) ? false : true;
 }

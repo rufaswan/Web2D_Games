@@ -20,142 +20,156 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function jval_keylen( &$val )
+class json_pretty
 {
-	$len = 0;
-	foreach ( $val as $k => $v )
+	private function jval_keylen( &$val )
 	{
-		if ( strlen($k) > $len )
-			$len = strlen($k);
-	}
-	return $len;
-}
-
-function jval_is_list( &$val )
-{
-	$cnt = count($val);
-	while ( $cnt > 0 )
-	{
-		$cnt--;
-		if ( ! isset($val[$cnt]) )
-			return false;
-	}
-	return true;
-}
-
-function jval_has_array( &$val )
-{
-	foreach ( $val as $v )
-	{
-		if ( is_array($v) )
-			return true;
-	}
-	return false;
-}
-
-function jval_str( &$val )
-{
-	// is string
-	if ( "$val" === $val )
-	{
-		// decode failed
-		//   escape the escape char
-		$val = str_replace('\\', '\\\\', $val);
-		return sprintf('"%s"', $val);
-	}
-
-	// is int/float
-	//   19.0000001
-	// = 19.000000
-	// = 19
-	$b1 = (int)($val * 1000000);
-	$b2 =  (int)$val * 1000000;
-	if ( $b1 === $b2 ) // is .000000 , whole number = int
-		return sprintf('%d', $val);
-	else // has decimals = float
-	{
-		// ERROR
-		// bf7fffff = -0.99999994039536
-		// if -999999 === 0 , not int
-		// else
-		//   %.6f = -1.000000 , rtrim() = -1. error
-		$b2 = sprintf('%.6f', $b1 * 0.000001);
-		return rtrim($b2, '0');
-	}
-}
-//////////////////////////////
-function json_pretty( &$json, $tab )
-{
-	if ( ! is_array($json) )
-		return jval_str($json);
-
-	if ( empty($json) )
-		return '[]';
-
-	$is_list   = jval_is_list  ($json);
-	$has_array = jval_has_array($json);
-	if ( $is_list && ! $has_array )
-	{
-		foreach ( $json as $jk => $jv )
-			$json[$jk] = jval_str($jv);
-		return sprintf('[ %s ]', implode(' , ', $json));
-	}
-
-	$func = __FUNCTION__;
-	$cnt  = count($json);
-	$pad  = $tab . '  ';
-
-	if ( $is_list )
-	{
-		$txt = '[';
-
-		foreach ( $json as $jv )
+		$len = 0;
+		foreach ( $val as $k => $v )
 		{
-			$jv = $func($jv, $pad);
-			$txt .= sprintf("\r\n%s%s", $pad, $jv);
-
-			$cnt--;
-			if ( $cnt > 0 )
-				$txt .= ' ,';
-		} // foreach ( $json as $jv )
-
-		$txt .= sprintf("\r\n%s%s", $tab, ']');
-		return $txt;
+			if ( strlen($k) > $len )
+				$len = strlen($k);
+		}
+		return $len;
 	}
-	else
+
+	private function jval_is_list( &$val )
 	{
-		$txt = '{';
-
-		$len = jval_keylen($json) + 2;
-		foreach ( $json as $jk => $jv )
+		$cnt = count($val);
+		while ( $cnt > 0 )
 		{
-			$jk = "\"$jk\"";
-			$jv = $func($jv, $pad);
-			$txt .= sprintf("\r\n%s%-{$len}s : %s", $pad, $jk, $jv);
-
 			$cnt--;
-			if ( $cnt > 0 )
-				$txt .= ' ,';
-		} // foreach ( $json as $jk => $jv )
-
-		$txt .= sprintf("\r\n%s%s", $tab, '}');
-		return $txt;
+			if ( ! isset($val[$cnt]) )
+				return false;
+		}
+		return true;
 	}
-}
 
-/*
-	Difference with PHP json_encode() -> json_pretty()
-	- "key" : value                   -> aligned
-	- simple array (no nested arrays) -> one line
-	- tabs = 4 spaces                 -> 2 spaces
-	- native LF or CRLF               -> always CRLF
- */
+	private function jval_has_array( &$val )
+	{
+		foreach ( $val as $v )
+		{
+			if ( is_array($v) )
+				return true;
+		}
+		return false;
+	}
 
+	private function jval_str( &$val )
+	{
+		// is string
+		if ( "$val" === $val )
+		{
+			// decode failed
+			//   escape the escape char
+			$val = str_replace('\\', '\\\\', $val);
+			return sprintf('"%s"', $val);
+		}
+
+		// is int/float
+		//   19.0000001
+		// = 19.000000
+		// = 19
+		$b1 = (int)($val * 1000000);
+		$b2 =  (int)$val * 1000000;
+		if ( $b1 === $b2 ) // is .000000 , whole number = int
+			return sprintf('%d', $val);
+		else // has decimals = float
+		{
+			// ERROR
+			// bf7fffff = -0.99999994039536
+			// if -999999 === 0 , not int
+			// else
+			//   %.6f = -1.000000 , rtrim() = -1. error
+			$b2 = sprintf('%.6f', $b1 * 0.000001);
+			return rtrim($b2, '0');
+		}
+	}
+
+	private function run( &$json, $tab )
+	{
+		if ( ! is_array($json) )
+			return $this->jval_str($json);
+
+		if ( empty($json) )
+			return '[]';
+
+		$is_list   = $this->jval_is_list  ($json); // check if keys are 0,1,2,...,n-1
+		$has_array = $this->jval_has_array($json); // check for nested array
+		if ( $is_list && ! $has_array )
+		{
+			// simple array []
+			// put everything in one-line
+			foreach ( $json as $jk => $jv )
+				$json[$jk] = $this->jval_str($jv);
+			return sprintf('[ %s ]', implode(' , ', $json));
+		}
+
+		$func = __FUNCTION__;
+		$cnt  = count($json);
+		$pad  = $tab . '  ';
+
+		if ( $is_list )
+		{
+			// nested array []
+			// put one item per line
+			$txt = '[';
+
+			foreach ( $json as $jv )
+			{
+				$jv = $this->$func($jv, $pad);
+				$txt .= sprintf("\r\n%s%s", $pad, $jv);
+
+				$cnt--;
+				if ( $cnt > 0 )
+					$txt .= ' ,';
+			} // foreach ( $json as $jv )
+
+			$txt .= sprintf("\r\n%s%s", $tab, ']');
+			return $txt;
+		}
+		else
+		{
+			// dictionary array {}
+			// put key=value per line
+			$txt = '{';
+
+			$len = $this->jval_keylen($json) + 2;
+			foreach ( $json as $jk => $jv )
+			{
+				$jk = "\"$jk\"";
+				$jv = $this->$func($jv, $pad);
+				$txt .= sprintf("\r\n%s%-{$len}s : %s", $pad, $jk, $jv);
+
+				$cnt--;
+				if ( $cnt > 0 )
+					$txt .= ' ,';
+			} // foreach ( $json as $jk => $jv )
+
+			$txt .= sprintf("\r\n%s%s", $tab, '}');
+			return $txt;
+		}
+	}
+
+	//////////////////////////////
+
+	static public function encode( &$json )
+	{
+		$class = new self;
+		return $class->run($json, '');
+	}
+} // class json_pretty
+
+// Difference with PHP json_encode() -> json_pretty->encode()
+// - "key" : value                   -> aligned
+// - simple array (no nested arrays) -> one line
+// - tabs = 4 spaces                 -> 2 spaces
+// - native LF or CRLF               -> always CRLF
 if ( ! function_exists('json_encode') )
 {
 	function json_encode($value, $option='', $depth=512)
 	{
-		return json_pretty($value, '');
+		return json_pretty::encode($value);
 	}
 }
 //////////////////////////////

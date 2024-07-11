@@ -36,18 +36,18 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 // https://datatracker.ietf.org/doc/html/rfc6234
 class merkel_damgard
 {
-	private $mLen;
+	private $m_len;
 
 	private function c_rotate_left( $a, $bit )
 	{
 		$l = $this->c_shift_left ($a, $bit);
-		$r = $this->c_shift_right($a, $this->mLen*8-$bit);
+		$r = $this->c_shift_right($a, $this->m_len*8-$bit);
 		return $this->c_or($l, $r);
 	}
 
 	private function c_rotate_right( $a, $bit )
 	{
-		$l = $this->c_shift_left ($a, $this->mLen*8-$bit);
+		$l = $this->c_shift_left ($a, $this->m_len*8-$bit);
 		$r = $this->c_shift_right($a, $bit);
 		return $this->c_or($l, $r);
 	}
@@ -86,22 +86,6 @@ class merkel_damgard
 		return $a;
 	}
 
-	private function c_not( $a )
-	{
-		foreach ( $a as $k => $v )
-			$a[$k] = (~$v) & BIT8;
-		$this->c_norm($a);
-		return $a;
-	}
-
-	private function c_and( $a, $b )
-	{
-		foreach ( $a as $k => $v )
-			$a[$k] &= $b[$k];
-		$this->c_norm($a);
-		return $a;
-	}
-
 	private function c_add()
 	{
 		$all = func_get_args();
@@ -109,36 +93,8 @@ class merkel_damgard
 
 		foreach ( $all as $arg )
 		{
-			for ( $i=0; $i < $this->mLen; $i++ )
+			for ( $i=0; $i < $this->m_len; $i++ )
 				$a[$i] += $arg[$i];
-		}
-		$this->c_norm($a);
-		return $a;
-	}
-
-	private function c_xor()
-	{
-		$all = func_get_args();
-		$a   = array_shift($all);
-
-		foreach ( $all as $arg )
-		{
-			for ( $i=0; $i < $this->mLen; $i++ )
-				$a[$i] ^= $arg[$i];
-		}
-		$this->c_norm($a);
-		return $a;
-	}
-
-	private function c_or()
-	{
-		$all = func_get_args();
-		$a   = array_shift($all);
-
-		foreach ( $all as $arg )
-		{
-			for ( $i=0; $i < $this->mLen; $i++ )
-				$a[$i] |= $arg[$i];
 		}
 		$this->c_norm($a);
 		return $a;
@@ -146,7 +102,7 @@ class merkel_damgard
 
 	private function c_norm( &$array )
 	{
-		while ( count($array) < $this->mLen )
+		while ( count($array) < $this->m_len )
 			$array[] = 0;
 
 		$carry = 0;
@@ -159,11 +115,51 @@ class merkel_damgard
 		if ( $carry !== 0 )
 			$array[] = $carry;
 
-		array_splice($array, $this->mLen);
+		array_splice($array, $this->m_len);
 		return;
 	}
+
+	private function c_not( $a )
+	{
+		foreach ( $a as $k => $v )
+			$a[$k] = (~$v) & BIT8;
+		return $a;
+	}
+
+	private function c_and( $a, $b )
+	{
+		foreach ( $a as $k => $v )
+			$a[$k] &= $b[$k];
+		return $a;
+	}
+
+	private function c_xor()
+	{
+		$all = func_get_args();
+		$a   = array_shift($all);
+
+		foreach ( $all as $arg )
+		{
+			for ( $i=0; $i < $this->m_len; $i++ )
+				$a[$i] ^= $arg[$i];
+		}
+		return $a;
+	}
+
+	private function c_or()
+	{
+		$all = func_get_args();
+		$a   = array_shift($all);
+
+		foreach ( $all as $arg )
+		{
+			for ( $i=0; $i < $this->m_len; $i++ )
+				$a[$i] |= $arg[$i];
+		}
+		return $a;
+	}
 	//////////////////////////////
-	private $mBig;
+	private $m_big;
 
 	private function ord_const( $const )
 	{
@@ -173,7 +169,7 @@ class merkel_damgard
 			$v = strrev($v);
 
 			$a = array();
-			for ( $i=0; $i < $this->mLen; $i++ )
+			for ( $i=0; $i < $this->m_len; $i++ )
 				$a[$i] = ord($v[$i]);
 			$const[$k] = $a;
 		}
@@ -182,12 +178,12 @@ class merkel_damgard
 
 	private function ord_chunk( &$str, $pos )
 	{
-		$s = substr($str, $pos, $this->mLen);
-		if ( $this->mBig )
+		$s = substr($str, $pos, $this->m_len);
+		if ( $this->m_big )
 			$s = strrev($s);
 
 		$a = array();
-		for ( $i=0; $i < $this->mLen; $i++ )
+		for ( $i=0; $i < $this->m_len; $i++ )
 			$a[$i] = ord( $s[$i] );
 		return $a;
 	}
@@ -197,7 +193,7 @@ class merkel_damgard
 		$s = '';
 		foreach ( $array as $v )
 			$s .= chr($v);
-		if ( $this->mBig )
+		if ( $this->m_big )
 			$s = strrev($s);
 		return $s;
 	}
@@ -212,7 +208,7 @@ class merkel_damgard
 			$siz .= chr($s);
 			$len >>= 8;
 		}
-		if ( $this->mBig )
+		if ( $this->m_big )
 			$siz = strrev($siz);
 
 		$str .= "\x80";
@@ -274,7 +270,7 @@ class merkel_damgard
 						//$h_f = ($h_d & $h_b) | (~$h_d & $h_c);
 						$h_xd  = $this->c_not($h_d);
 						$h_db  = $this->c_and($h_d, $h_b);
-						$h_xdc = $this->c_and($xD, $h_c);
+						$h_xdc = $this->c_and($h_xd, $h_c);
 
 						$h_f = $this->c_or($h_db, $h_xdc);
 						$h_g = ($j * 5 + 1) & BIT4;
@@ -310,29 +306,30 @@ class merkel_damgard
 		return;
 	}
 
-	public function md5( $str )
+	static public function md5( $str )
 	{
-		$this->mLen = 4; // 32-bit
-		$this->mBig = false; // little-endian
+		$class = new self;
+		$class->m_len = 4; // 32-bit
+		$class->m_big = false; // little-endian
 
 		// len   =  64-bit/ 8-byte
 		// chunk = 512-bit/64-byte
-		$this->padchunk($str, 8, 64);
+		$class->padchunk($str, 8, 64);
 
 		// h[4]
-		$h = $this->ord_const(array(
+		$h = $class->ord_const(array(
 			'67452301',
 			'efcdab89',
 			'98badcfe',
 			'10325476',
 		));
 
-		$this->md5_calc($str, $h);
+		$class->md5_calc($str, $h);
 		$sum  = '';
-		$sum .= $this->chr_chunk( $h[0] );
-		$sum .= $this->chr_chunk( $h[1] );
-		$sum .= $this->chr_chunk( $h[2] );
-		$sum .= $this->chr_chunk( $h[3] );
+		$sum .= $class->chr_chunk( $h[0] );
+		$sum .= $class->chr_chunk( $h[1] );
+		$sum .= $class->chr_chunk( $h[2] );
+		$sum .= $class->chr_chunk( $h[3] );
 		return $sum;
 	}
 	//////////////////////////////
@@ -408,17 +405,18 @@ class merkel_damgard
 		return;
 	}
 
-	public function sha1( $str )
+	static public function sha1( $str )
 	{
-		$this->mLen = 4; // 32-bit
-		$this->mBig = true; // big-endian
+		$class = new self;
+		$class->m_len = 4; // 32-bit
+		$class->m_big = true; // big-endian
 
 		// len   =  64-bit/ 8-byte
 		// chunk = 512-bit/64-byte
-		$this->padchunk($str, 8, 64);
+		$class->padchunk($str, 8, 64);
 
 		// h[5]
-		$h = $this->ord_const(array(
+		$h = $class->ord_const(array(
 			'67452301',
 			'efcdab89',
 			'98badcfe',
@@ -426,13 +424,13 @@ class merkel_damgard
 			'c3d2e1f0',
 		));
 
-		$this->sha1_calc($str, $h);
+		$class->sha1_calc($str, $h);
 		$sum  = '';
-		$sum .= $this->chr_chunk( $h[0] );
-		$sum .= $this->chr_chunk( $h[1] );
-		$sum .= $this->chr_chunk( $h[2] );
-		$sum .= $this->chr_chunk( $h[3] );
-		$sum .= $this->chr_chunk( $h[4] );
+		$sum .= $class->chr_chunk( $h[0] );
+		$sum .= $class->chr_chunk( $h[1] );
+		$sum .= $class->chr_chunk( $h[2] );
+		$sum .= $class->chr_chunk( $h[3] );
+		$sum .= $class->chr_chunk( $h[4] );
 		return $sum;
 	}
 	//////////////////////////////
@@ -538,18 +536,19 @@ class merkel_damgard
 		return;
 	}
 
-	public function sha256( $str )
+	static public function sha256( $str )
 	{
-		$this->mLen = 4; // 32-bit
-		$this->mBig = true; // big-endian
+		$class = new self;
+		$class->m_len = 4; // 32-bit
+		$class->m_big = true; // big-endian
 
 		// len   =  64-bit/ 8-byte
 		// chunk = 512-bit/64-byte
-		$this->padchunk($str, 8, 64);
+		$class->padchunk($str, 8, 64);
 
 		// h[8]
 		// first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19
-		$h = $this->ord_const(array(
+		$h = $class->ord_const(array(
 			'6a09e667',
 			'bb67ae85',
 			'3c6ef372',
@@ -560,31 +559,32 @@ class merkel_damgard
 			'5be0cd19',
 		));
 
-		$this->sha2_calc32($str, $h);
+		$class->sha2_calc32($str, $h);
 		$sum  = '';
-		$sum .= $this->chr_chunk( $h[0] );
-		$sum .= $this->chr_chunk( $h[1] );
-		$sum .= $this->chr_chunk( $h[2] );
-		$sum .= $this->chr_chunk( $h[3] );
-		$sum .= $this->chr_chunk( $h[4] );
-		$sum .= $this->chr_chunk( $h[5] );
-		$sum .= $this->chr_chunk( $h[6] );
-		$sum .= $this->chr_chunk( $h[7] );
+		$sum .= $class->chr_chunk( $h[0] );
+		$sum .= $class->chr_chunk( $h[1] );
+		$sum .= $class->chr_chunk( $h[2] );
+		$sum .= $class->chr_chunk( $h[3] );
+		$sum .= $class->chr_chunk( $h[4] );
+		$sum .= $class->chr_chunk( $h[5] );
+		$sum .= $class->chr_chunk( $h[6] );
+		$sum .= $class->chr_chunk( $h[7] );
 		return $sum;
 	}
 
-	public function sha224( $str )
+	static public function sha224( $str )
 	{
-		$this->mLen = 4; // 32-bit
-		$this->mBig = true; // big-endian
+		$class = new self;
+		$class->m_len = 4; // 32-bit
+		$class->m_big = true; // big-endian
 
 		// len   =  64-bit/ 8-byte
 		// chunk = 512-bit/64-byte
-		$this->padchunk($str, 8, 64);
+		$class->padchunk($str, 8, 64);
 
 		// h[8]
 		// second 32 bits of the fractional parts of the square roots of the 9th through 16th primes 23..53
-		$h = $this->ord_const(array(
+		$h = $class->ord_const(array(
 			'c1059ed8',
 			'367cd507',
 			'3070dd17',
@@ -595,15 +595,15 @@ class merkel_damgard
 			'befa4fa4',
 		));
 
-		$this->sha2_calc32($str, $h);
+		$class->sha2_calc32($str, $h);
 		$sum  = '';
-		$sum .= $this->chr_chunk( $h[0] );
-		$sum .= $this->chr_chunk( $h[1] );
-		$sum .= $this->chr_chunk( $h[2] );
-		$sum .= $this->chr_chunk( $h[3] );
-		$sum .= $this->chr_chunk( $h[4] );
-		$sum .= $this->chr_chunk( $h[5] );
-		$sum .= $this->chr_chunk( $h[6] );
+		$sum .= $class->chr_chunk( $h[0] );
+		$sum .= $class->chr_chunk( $h[1] );
+		$sum .= $class->chr_chunk( $h[2] );
+		$sum .= $class->chr_chunk( $h[3] );
+		$sum .= $class->chr_chunk( $h[4] );
+		$sum .= $class->chr_chunk( $h[5] );
+		$sum .= $class->chr_chunk( $h[6] );
 		return $sum;
 	}
 	//////////////////////////////
@@ -719,18 +719,19 @@ class merkel_damgard
 		return;
 	}
 
-	public function sha512( $str )
+	static public function sha512( $str )
 	{
-		$this->mLen = 8; // 64-bit
-		$this->mBig = true; // big-endian
+		$class = new self;
+		$class->m_len = 8; // 64-bit
+		$class->m_big = true; // big-endian
 
 		// len   =  128-bit/ 16-byte
 		// chunk = 1024-bit/128-byte
-		$this->padchunk($str, 16, 128);
+		$class->padchunk($str, 16, 128);
 
 		// h[8]
 		// first 64 bits of the fractional parts of the square roots of the first 8 primes 2..19
-		$h = $this->ord_const(array(
+		$h = $class->ord_const(array(
 			'6a09e667f3bcc908',
 			'bb67ae8584caa73b',
 			'3c6ef372fe94f82b',
@@ -741,31 +742,32 @@ class merkel_damgard
 			'5be0cd19137e2179',
 		));
 
-		$this->sha2_calc64($str, $h);
+		$class->sha2_calc64($str, $h);
 		$sum  = '';
-		$sum .= $this->chr_chunk( $h[0] );
-		$sum .= $this->chr_chunk( $h[1] );
-		$sum .= $this->chr_chunk( $h[2] );
-		$sum .= $this->chr_chunk( $h[3] );
-		$sum .= $this->chr_chunk( $h[4] );
-		$sum .= $this->chr_chunk( $h[5] );
-		$sum .= $this->chr_chunk( $h[6] );
-		$sum .= $this->chr_chunk( $h[7] );
+		$sum .= $class->chr_chunk( $h[0] );
+		$sum .= $class->chr_chunk( $h[1] );
+		$sum .= $class->chr_chunk( $h[2] );
+		$sum .= $class->chr_chunk( $h[3] );
+		$sum .= $class->chr_chunk( $h[4] );
+		$sum .= $class->chr_chunk( $h[5] );
+		$sum .= $class->chr_chunk( $h[6] );
+		$sum .= $class->chr_chunk( $h[7] );
 		return $sum;
 	}
 
-	public function sha384( $str )
+	static public function sha384( $str )
 	{
-		$this->mLen = 8; // 64-bit
-		$this->mBig = true; // big-endian
+		$class = new self;
+		$class->m_len = 8; // 64-bit
+		$class->m_big = true; // big-endian
 
 		// len   =  128-bit/ 16-byte
 		// chunk = 1024-bit/128-byte
-		$this->padchunk($str, 16, 128);
+		$class->padchunk($str, 16, 128);
 
 		// h[8]
 		// second 64 bits of the fractional parts of the square roots of the 9th through 16th primes 23..53
-		$h = $this->ord_const(array(
+		$h = $class->ord_const(array(
 			'cbbb9d5dc1059ed8',
 			'629a292a367cd507',
 			'9159015a3070dd17',
@@ -776,14 +778,14 @@ class merkel_damgard
 			'47b5481dbefa4fa4',
 		));
 
-		$this->sha2_calc64($str, $h);
+		$class->sha2_calc64($str, $h);
 		$sum  = '';
-		$sum .= $this->chr_chunk( $h[0] );
-		$sum .= $this->chr_chunk( $h[1] );
-		$sum .= $this->chr_chunk( $h[2] );
-		$sum .= $this->chr_chunk( $h[3] );
-		$sum .= $this->chr_chunk( $h[4] );
-		$sum .= $this->chr_chunk( $h[5] );
+		$sum .= $class->chr_chunk( $h[0] );
+		$sum .= $class->chr_chunk( $h[1] );
+		$sum .= $class->chr_chunk( $h[2] );
+		$sum .= $class->chr_chunk( $h[3] );
+		$sum .= $class->chr_chunk( $h[4] );
+		$sum .= $class->chr_chunk( $h[5] );
 		return $sum;
 	}
 	//////////////////////////////
@@ -793,8 +795,7 @@ class hmac
 {
 	private function hmacx( $hash, $key, $max, $msg )
 	{
-		$mer = new merkel_damgard;
-		if    ( strlen($key) > $max )  $key  = $mer->$hash($key);
+		if    ( strlen($key) > $max )  $key  = merkel_damgard::$hash($key);
 		while ( strlen($key) < $max )  $key .= ZERO;
 
 		$outer = $key;
@@ -810,15 +811,39 @@ class hmac
 			$inner[$i] = chr($b);
 		}
 
-		$dg1 = $mer->$hash( $inner.$msg );
-		$dg2 = $mer->$hash( $outer.$dg1 );
+		$dg1 = merkel_damgard::$hash( $inner.$msg );
+		$dg2 = merkel_damgard::$hash( $outer.$dg1 );
 		return $dg2;
 	}
 
-	function  md5  ( $key, $msg ) { return $this->hmacx( 'md5'  , $key,  64, $msg); }
-	function sha1  ( $key, $msg ) { return $this->hmacx('sha1'  , $key,  64, $msg); }
-	function sha256( $key, $msg ) { return $this->hmacx('sha256', $key,  64, $msg); }
-	function sha224( $key, $msg ) { return $this->hmacx('sha224', $key,  64, $msg); }
-	function sha512( $key, $msg ) { return $this->hmacx('sha512', $key, 128, $msg); }
-	function sha384( $key, $msg ) { return $this->hmacx('sha384', $key, 128, $msg); }
+	static public function md5( $key, $msg )
+	{
+		$class = new self;
+		return $class->hmacx('md5', $key, 64, $msg);
+	}
+	static public function sha1( $key, $msg )
+	{
+		$class = new self;
+		return $class->hmacx('sha1', $key, 64, $msg);
+	}
+	static public function sha256( $key, $msg )
+	{
+		$class = new self;
+		return $class->hmacx('sha256', $key, 64, $msg);
+	}
+	static public function sha224( $key, $msg )
+	{
+		$class = new self;
+		return $class->hmacx('sha224', $key, 64, $msg);
+	}
+	static public function sha512( $key, $msg )
+	{
+		$class = new self;
+		return $class->hmacx('sha512', $key, 128, $msg);
+	}
+	static public function sha384( $key, $msg )
+	{
+		$class = new self;
+		return $class->hmacx('sha384', $key, 128, $msg);
+	}
 } // class hmac

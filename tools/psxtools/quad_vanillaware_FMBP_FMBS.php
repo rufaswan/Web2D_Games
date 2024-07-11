@@ -1482,7 +1482,7 @@ function vanilla( $tag, $fname )
 	$json['id3'] = $gp_share['data']['idtag'];
 	$json['ver'] = '55';
 
-	$txt = json_pretty($json, '');
+	$txt = json_pretty::encode($json);
 	save_file("$fname.v55", $txt);
 	return;
 }

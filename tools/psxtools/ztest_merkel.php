@@ -1,9 +1,7 @@
 <?php
 require 'common.inc';
-require 'common-guest.inc';
 require 'class-merkel.inc';
 
-$mer = new Merkel_Damgard;
 $str = array(
 	'',
 	'The quick brown fox jumps over the lazy dog',
@@ -16,25 +14,25 @@ foreach ( $str as $s )
 	echo "STR = '$s'\n\n";
 
 	exec("echo -n '$s' | md5sum | cut -d ' ' -f 1", $b1);
-	$b2 = $mer->md5($s);
+	$b2 = merkel_damgard::md5($s);
 		printf("  md5 %s\n", array_shift($b1));
 		printf("  md5 %s\n", bin2hex($b2));
 	echo "\n";
 
 	exec("echo -n '$s' | sha1sum | cut -d ' ' -f 1", $b1);
-	$b2 = $mer->sha1($s);
+	$b2 = merkel_damgard::sha1($s);
 		printf("  sha1 %s\n", array_shift($b1));
 		printf("  sha1 %s\n", bin2hex($b2));
 	echo "\n";
 
 	exec("echo -n '$s' | sha256sum | cut -d ' ' -f 1", $b1);
-	$b2 = $mer->sha256($s);
+	$b2 = merkel_damgard::sha256($s);
 		printf("  sha256 %s\n", array_shift($b1));
 		printf("  sha256 %s\n", bin2hex($b2));
 	echo "\n";
 
 	exec("echo -n '$s' | sha224sum | cut -d ' ' -f 1", $b1);
-	$b2 = $mer->sha224($s);
+	$b2 = merkel_damgard::sha224($s);
 		printf("  sha224 %s\n", array_shift($b1));
 		printf("  sha224 %s\n", bin2hex($b2));
 	echo "\n";
@@ -42,13 +40,13 @@ foreach ( $str as $s )
 	if ( PHP_INT_SIZE >= 8 )
 	{
 		exec("echo -n '$s' | sha512sum | cut -d ' ' -f 1", $b1);
-		$b2 = $mer->sha512($s);
+		$b2 = merkel_damgard::sha512($s);
 			printf("  sha512 %s\n", array_shift($b1));
 			printf("  sha512 %s\n", bin2hex($b2));
 		echo "\n";
 
 		exec("echo -n '$s' | sha384sum | cut -d ' ' -f 1", $b1);
-		$b2 = $mer->sha384($s);
+		$b2 = merkel_damgard::sha384($s);
 			printf("  sha384 %s\n", array_shift($b1));
 			printf("  sha384 %s\n", bin2hex($b2));
 		echo "\n";
@@ -66,11 +64,10 @@ sha512('') = cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d
 sha384('') = 38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b
  */
 
-$hmac = new HMAC;
-$md5    = $hmac->md5   ("key", "The quick brown fox jumps over the lazy dog");
-$sha1   = $hmac->sha1  ("key", "The quick brown fox jumps over the lazy dog");
-$sha256 = $hmac->sha256("key", "The quick brown fox jumps over the lazy dog");
-//$sha512 = $hmac->sha512("key", "The quick brown fox jumps over the lazy dog");
+$md5    = hmac::md5   ("key", "The quick brown fox jumps over the lazy dog");
+$sha1   = hmac::sha1  ("key", "The quick brown fox jumps over the lazy dog");
+$sha256 = hmac::sha256("key", "The quick brown fox jumps over the lazy dog");
+//$sha512 = hmac::sha512("key", "The quick brown fox jumps over the lazy dog");
 	printf("HMAC  md5   %s\n", bin2hex($md5   ));
 	printf("HMAC sha1   %s\n", bin2hex($sha1  ));
 	printf("HMAC sha256 %s\n", bin2hex($sha256));

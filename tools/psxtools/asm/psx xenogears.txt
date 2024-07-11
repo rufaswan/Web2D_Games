@@ -88,7 +88,7 @@ Save Data = RAM 8006cf30
 	8006d63c   978       99c  // gear data
 	8006e30c  1648       e4c
 	8006e384  16c0       ec4
-	8006e4e4  1820      1024
+	8006e4e4  1820      1024  // world map camera
 	8006e5e4  1920      1124  // game data
 	8006f01c  2358      1b5c  // end
 
@@ -726,6 +726,40 @@ gear accessory data
 		a  56(s0) |= eff
 		b  57(s0) |= eff
 	esac
+//////////////////////////////
+world map camera/100
+	00  Char Pos X
+	02  Char Pos Y
+	04  Char Rotation
+	06  Gear 1 Rotation
+	08  Gear 2 Rotation
+	0a  Gear 3 Rotation
+	0c  Yggdrasil Pos X
+	0e
+	10  Yggdrasil Pos Y
+	12  Rotation
+	14
+	16
+	18
+	1a
+	1c  Gear 1 OFF/walk
+	1e  Gear 2 OFF/walk
+	20  Gear 3 OFF/walk
+	22
+	24  Thames Pos X
+	26  Thames Pos Y
+	28
+	2a
+	2c  Shevat
+	2e  Shevat Pos X
+	30  Shevat
+	32  Shevat Pos Y
+	34
+	36
+	38
+	3a
+	3c
+	3e
 //////////////////////////////
 game data/a38
 	[8006e5e4..8006f01b]?!!
