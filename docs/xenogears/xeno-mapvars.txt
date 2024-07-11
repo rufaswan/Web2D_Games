@@ -2667,7 +2667,7 @@ opfeXX menu types
 	fe55          (card save)
 1100/map 247 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [408]   (party)
 1106/map 250 :
 	fe5a  7       (gear shop)
 	fe55          (card save)
@@ -2803,8 +2803,8 @@ opfeXX menu types
 	fe58  5       (rename)
 	fe58  6       (rename)
 	fe58  7       (rename)
-	fe59  0       (item shop)
-	fe5a  0       (gear shop)
+	fe59  [16]    (item shop)
+	fe5a  [16]    (gear shop)
 	fe57          (card load)
 1586/map 490 :
 	fe57          (card load)
@@ -2812,7 +2812,7 @@ opfeXX menu types
 	fe55          (card save)
 1638/map 516 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [41a]   (party)
 1646/map 520 :
 	fe55          (card save)
 1666/map 530 :
@@ -2834,10 +2834,10 @@ opfeXX menu types
 	fe59  1a      (item shop)
 	fe59  23      (item shop)
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [422]   (party)
 1812/map 603 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [41c]   (party)
 1818/map 606 :
 	fe55          (card save)
 1820/map 607 :
@@ -2850,19 +2850,19 @@ opfeXX menu types
 	fecf  274  0  (party ex)
 	fecf  281  0  (party ex)
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [432]   (party)
 1844/map 619 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [430]   (party)
 1850/map 622 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [43c]   (party)
 1862/map 628 :
 	fe59  1e      (item shop)
 	fe59  1f      (item shop)
 	fe5a  10      (gear shop)
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [41e]   (party)
 1874/map 634 :
 	fe55          (card save)
 1888/map 641 :
@@ -2870,21 +2870,21 @@ opfeXX menu types
 	fe59  1f      (item shop)
 	fe5a  10      (gear shop)
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [42a]   (party)
 1890/map 642 :
 	fe59  1e      (item shop)
 	fe59  1f      (item shop)
 	fe5a  10      (gear shop)
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [424]   (party)
 1906/map 650 :
 	fe55          (card save)
 1912/map 653 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [408]   (party)
 1942/map 668 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [416]   (party)
 1980/map 687 :
 	fe55          (card save)
 1996/map 695 :
@@ -2895,7 +2895,7 @@ opfeXX menu types
 	fe55          (card save)
 2024/map 709 :
 	fe55          (card save)
-	fe56  0       (party)
+	fe56  [42a]   (party)
 2038/map 716 :
 	op84 [ 14a ]
 	fe59  1       (item shop) story 0-149
@@ -2918,8 +2918,8 @@ opfeXX menu types
 	fe58  5       (rename)
 	fe58  6       (rename)
 	fe58  7       (rename)
-	fe59  0       (item shop)
-	fe5a  0       (gear shop)
+	fe59  [16]    (item shop)
+	fe5a  [16]    (gear shop)
 	fe57          (card load)
 2052/map 723 :
 	fe55          (card save)
@@ -2931,8 +2931,8 @@ opfeXX menu types
 	fe58  5       (rename)
 	fe58  6       (rename)
 	fe58  7       (rename)
-	fe59  0       (item shop)
-	fe5a  0       (gear shop)
+	fe59  [16]    (item shop)
+	fe5a  [16]    (gear shop)
 	fe57          (card load)
 2058/map 726 :
 	fe55          (card save)
