@@ -20,7 +20,8 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-
+( exec('which wget') ) ? '' : trigger_error('command wget not found', E_USER_ERROR);
+//////////////////////////////
 function valid_name( $fnam, $fext )
 {
 	// filename limit 255 chars
@@ -106,20 +107,17 @@ function phpwget()
 		printf("> wget  '%s'\n", $fname);
 		$file .= "$input\n";
 
-		$wget = array(
-			'wget'                   ,
-			'--quiet'                ,
-			'--no-config'            ,
-			'--no-hsts'              ,
-			'--no-check-certificate' ,
-			'--random-wait'          ,
-			'--timeout=60'           ,
-			'--tries=5'              ,
-			'--output-document="%s"' ,
-			'--user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"' ,
-			'"%s"'
-		);
-		$wget = implode(' ', $wget);
+		$wget = 'wget'
+		. ' --quiet'
+		. ' --no-config'
+		. ' --no-hsts'
+		. ' --no-check-certificate'
+		. ' --random-wait'
+		. ' --timeout=60'
+		. ' --tries=5'
+		. ' --output-document="%s"'
+		. ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"'
+		. ' "%s"';
 		$cmd  = sprintf($wget, $fname, $input);
 		exec($cmd);
 

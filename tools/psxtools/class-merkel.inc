@@ -110,7 +110,7 @@ class merkel_damgard
 		{
 			$array[$ak] += $carry;
 			$carry = $array[$ak] >> 8;
-			$array[$ak] &= BIT8;
+			$array[$ak] &= 0xff;
 		}
 		if ( $carry !== 0 )
 			$array[] = $carry;
@@ -122,7 +122,7 @@ class merkel_damgard
 	private function c_not( $a )
 	{
 		foreach ( $a as $k => $v )
-			$a[$k] = (~$v) & BIT8;
+			$a[$k] = (~$v) & 0xff;
 		return $a;
 	}
 
@@ -204,7 +204,7 @@ class merkel_damgard
 		$siz = '';
 		for ( $i=0; $i < $plen; $i++ )
 		{
-			$s = $len & BIT8;
+			$s = $len & 0xff;
 			$siz .= chr($s);
 			$len >>= 8;
 		}
@@ -213,7 +213,7 @@ class merkel_damgard
 
 		$str .= "\x80";
 		while ( (strlen($str)+$plen) % $clen )
-			$str .= ZERO;
+			$str .= "\x00";
 
 		$str .= $siz;
 		return;
@@ -264,7 +264,7 @@ class merkel_damgard
 						$h_xbd = $this->c_and($h_xb, $h_d);
 
 						$h_f = $this->c_or($h_bc, $h_xbd);
-						$h_g = $j & BIT4;
+						$h_g = $j & 0xf;
 						break;
 					case 1: // 16-31
 						//$h_f = ($h_d & $h_b) | (~$h_d & $h_c);
@@ -273,19 +273,19 @@ class merkel_damgard
 						$h_xdc = $this->c_and($h_xd, $h_c);
 
 						$h_f = $this->c_or($h_db, $h_xdc);
-						$h_g = ($j * 5 + 1) & BIT4;
+						$h_g = ($j * 5 + 1) & 0xf;
 						break;
 					case 2: // 32-47
 						//$h_f = ($h_b ^ $h_c ^ $h_d);
 						$h_f = $this->c_xor($h_b, $h_c, $h_d);
-						$h_g = ($j * 3 + 5) & BIT4;
+						$h_g = ($j * 3 + 5) & 0xf;
 						break;
 					case 3: // 48-63
 						//$h_f = $h_c ^ ($h_b | ~$h_d);
 						$h_xd  = $this->c_not($h_d);
 						$h_bxd = $this->c_or($h_b, $h_xd);
 						$h_f = $this->c_xor($h_c, $h_bxd);
-						$h_g = ($j * 7) & BIT4;
+						$h_g = ($j * 7) & 0xf;
 						break;
 				} // switch ( $j >> 4 )
 
@@ -796,7 +796,7 @@ class hmac
 	private function hmacx( $hash, $key, $max, $msg )
 	{
 		if    ( strlen($key) > $max )  $key  = merkel_damgard::$hash($key);
-		while ( strlen($key) < $max )  $key .= ZERO;
+		while ( strlen($key) < $max )  $key .= "\x00";
 
 		$outer = $key;
 		$inner = $key;

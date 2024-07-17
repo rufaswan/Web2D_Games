@@ -587,8 +587,33 @@ function save_file( $fname, $str )
 		return;
 	if ( empty($str) )
 		return;
-	$fname = str_replace('\\', '/', $fname);
 
+	// if fname == data-%d.log
+	//   save as data-0.log if not existed
+	//   save as data-1.log if not existed
+	//   ...
+	$pos = strpos($fname, '%d');
+	if ( $pos !== false )
+	{
+		// found 2 * %d = no detection
+		if ( strpos($fname, '%d', $pos+2) !== false )
+			goto done;
+		$id = 0;
+		while (1)
+		{
+			$tmp = sprintf($fname, $id);
+			if ( ! is_file($tmp) )
+			{
+				$fname = $tmp;
+				goto done;
+			}
+			$id++;
+		} // while (1)
+	}
+
+done:
+	if ( strpos($fname, '\\') !== false )
+		$fname = str_replace('\\', '/', $fname);
 	if ( strpos($fname, '/') !== false )
 		@mkdir( dirname($fname), 0755, true );
 	file_put_contents($fname, $str);

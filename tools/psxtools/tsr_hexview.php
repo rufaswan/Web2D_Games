@@ -19,13 +19,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
-
-Linux ONLY , required exec() command
-	- stty
-	- tput
  */
-require 'common.inc';
-
+( exec('which stty') ) ? '' : trigger_error('command stty not found', E_USER_ERROR);
+( exec('which tput') ) ? '' : trigger_error('command tput not found', E_USER_ERROR);
+//////////////////////////////
 $gp_fps = array();
 $gp_opt = array(
 	'pos'  => 0,
@@ -70,7 +67,7 @@ function fp_read_hex( $fp, $off, $len )
 			continue;
 		}
 
-		if ( $sub[$i] === ZERO )
+		if ( $sub[$i] === "\x00" )
 		{
 			$txt .= ' --';
 			continue;

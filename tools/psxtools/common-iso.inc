@@ -104,6 +104,21 @@ function lsiso_r( $isop, $skip=0 )
 	return $list;
 }
 //////////////////////////////
+// cd mage
+// -                m1/2048  m1/2352  m2/2336  m2/2352
+// \x01CD001        8000     9310     9208     9318
+// sector           800      930      920      930
+// header    size
+// -cdsync   +  c   -        0        -        0
+// -min      +  3   -        c        -        c
+// -mode     +  1   -        f        -        f
+// -subhead  +  8   -        -        0        10
+// -data     +800   0        10       8        18
+// -edc      +  4   -        810      808      818
+// -pad      +  8   -        814      -        -
+// -ecc      +114   -        81c      80c      81c
+//
+//////////////////////////////
 // frame = min:sec:frame binary format
 //       = 3 byte BIN , as 00 02 00
 //

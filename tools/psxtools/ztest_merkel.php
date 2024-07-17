@@ -1,5 +1,4 @@
 <?php
-require 'common.inc';
 require 'class-merkel.inc';
 
 $str = array(
@@ -10,44 +9,43 @@ $str = array(
 
 foreach ( $str as $s )
 {
-	$b1 = array();
 	echo "STR = '$s'\n\n";
 
-	exec("echo -n '$s' | md5sum | cut -d ' ' -f 1", $b1);
+	$b1 = exec("echo -n '$s' | md5sum");
 	$b2 = merkel_damgard::md5($s);
-		printf("  md5 %s\n", array_shift($b1));
+		printf("  md5 %s\n", $b1);
 		printf("  md5 %s\n", bin2hex($b2));
 	echo "\n";
 
-	exec("echo -n '$s' | sha1sum | cut -d ' ' -f 1", $b1);
+	$b1 = exec("echo -n '$s' | sha1sum");
 	$b2 = merkel_damgard::sha1($s);
-		printf("  sha1 %s\n", array_shift($b1));
+		printf("  sha1 %s\n", $b1);
 		printf("  sha1 %s\n", bin2hex($b2));
 	echo "\n";
 
-	exec("echo -n '$s' | sha256sum | cut -d ' ' -f 1", $b1);
+	$b1 = exec("echo -n '$s' | sha256sum");
 	$b2 = merkel_damgard::sha256($s);
-		printf("  sha256 %s\n", array_shift($b1));
+		printf("  sha256 %s\n", $b1);
 		printf("  sha256 %s\n", bin2hex($b2));
 	echo "\n";
 
-	exec("echo -n '$s' | sha224sum | cut -d ' ' -f 1", $b1);
+	$b1 = exec("echo -n '$s' | sha224sum");
 	$b2 = merkel_damgard::sha224($s);
-		printf("  sha224 %s\n", array_shift($b1));
+		printf("  sha224 %s\n", $b1);
 		printf("  sha224 %s\n", bin2hex($b2));
 	echo "\n";
 
 	if ( PHP_INT_SIZE >= 8 )
 	{
-		exec("echo -n '$s' | sha512sum | cut -d ' ' -f 1", $b1);
+		$b1 = exec("echo -n '$s' | sha512sum");
 		$b2 = merkel_damgard::sha512($s);
-			printf("  sha512 %s\n", array_shift($b1));
+			printf("  sha512 %s\n", $b1);
 			printf("  sha512 %s\n", bin2hex($b2));
 		echo "\n";
 
-		exec("echo -n '$s' | sha384sum | cut -d ' ' -f 1", $b1);
+		$b1 = exec("echo -n '$s' | sha384sum");
 		$b2 = merkel_damgard::sha384($s);
-			printf("  sha384 %s\n", array_shift($b1));
+			printf("  sha384 %s\n", $b1);
 			printf("  sha384 %s\n", bin2hex($b2));
 		echo "\n";
 	}

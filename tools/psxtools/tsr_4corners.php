@@ -20,8 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
+( exec('which identify') ) ? '' : trigger_error('command identify not found', E_USER_ERROR);
+( exec('which convert' ) ) ? '' : trigger_error('command convert not found' , E_USER_ERROR);
+//////////////////////////////
 // https://en.m.wikipedia.org/wiki/Color_difference
-
 define('EUD_MAXD' , 1.0/442);
 define('LAB_MAXD' , 1.0/101);
 define('HEX_MAXD' , 1.0/2.55);
@@ -38,8 +40,13 @@ function binbash( $cmd )
 
 function mean_rgb( $fname, $w, $h, $x, $y )
 {
-	$cmd  = sprintf('convert "%s"  -crop %dx%d+%d+%d  +repage  -resize 1x1\!  ', $fname, $w, $h, $x, $y);
-	$cmd .= '-format "%[fx:int(255*r)],%[fx:int(255*g)],%[fx:int(255*b)]"  info:-';
+	$cmd  = 'convert "%s"'
+	. ' -crop %dx%d+%d+%d'
+	. ' +repage'
+	. ' -resize 1x1\!'
+	. ' -format "%[fx:int(255*r)],%[fx:int(255*g)],%[fx:int(255*b)]"'
+	. ' info:-';
+	$cmd = sprintf($cmd, $fname, $w, $h, $x, $y);
 	$rgb = binbash($cmd);
 	return explode(',', $rgb);
 }

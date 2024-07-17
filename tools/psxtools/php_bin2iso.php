@@ -57,11 +57,11 @@ function bin2iso( $fname )
 	$detect = array(
 		//    type               s-size  s-head  cd-head
 		array("iso/800+ 0"      , 0x800 ,    0  , 0      ),
-		array("psx/930+18"      , 0x930 , 0x18  , 0      ), // psx bin
-		array("sat/930+10"      , 0x930 , 0x10  , 0      ), // saturn bin
-		array("bin/920+ 8"      , 0x920 , 0x08  , 0      ),
-		array("bin/990+18"      , 0x990 , 0x18  , 0      ),
-		array("bin/990+10"      , 0x990 , 0x10  , 0      ), // mds+mdf
+		array("sat/930+10"      , 0x930 , 0x10  , 0      ), // mode 1/930 , saturn bin
+		array("psx/930+18"      , 0x930 , 0x18  , 0      ), // mode 2/930 , psx bin
+		array("psx/920+ 8"      , 0x920 , 0x08  , 0      ), // mode 2/920
+		array("bin/990+10"      , 0x990 , 0x10  , 0      ), // mode 1/930 + sub/60 , mds + mdf
+		array("bin/990+18"      , 0x990 , 0x18  , 0      ), // mode 2/930 + sub/60
 
 		array("bin/930+10+  930", 0x930 , 0x10  , 0x930  ),
 		array("cvm/800+ 0+ 1800", 0x800 ,    0  , 0x1800 ),
