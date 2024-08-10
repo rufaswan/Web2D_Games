@@ -1,0 +1,282 @@
+=====================================
+== Kuzunoha Raidou vs Souless Army ==
+=====================================
+	Pegan  Frost+Frost  Volt+Volt             Skill+Skill
+	Skill   Pyro+Pyro   Fury+Fury  Wind+Wind  Pegan+Pegan
+
+	Pagan + [Pyro -> Frost -> Fury -> Wind -> Volt ->]
+
+	10 Pyro    2 10 14 23 29 39 44 49 54 66
+	10 Frost   6 18 28 32 39 43 50 53 63        [23]
+	12 Fury    5 17 22 28 33 38 41 44 52 61 70  [36]
+	 9 Wind   10 15 26 33 38 41 45 51 74
+	 9 Volt    8 16 21 27 40 46 50 55 61
+	11 Pagan   3 13 24 27 35 42 48 51 58        [32 80]
+	 9 Skill  12 25 29 38 41 43 47 56           [51]
+	 5 Skill Legion                             [ 4  5 20 20 20]
+
+	Story Boss
+		EP 1 Wind  38 Ichimokuren
+		EP 2 - Red Cape
+		EP 4 - Rasputin
+		EP 5 Skill 41 Nagasunehiko
+		EP 5 Skill 43 Abihiko
+		EP 7 Wind  45 Hitokotonusi
+		EP 8 Volt  50 Mishaguji
+		EP 9 Volt  55 Oumitsunu
+		EP 9 Fury  70 Susano-o
+		EP 9 Frost 63 Orochi
+	Pegan 32 Alice
+		- Pyro  66 Belial   Tsukudo        Ginza phone box
+		- Pegan 42 Nebiros          Harumi Ginza phone box
+	Skill 51 Kudan
+		- EP 7+ random  Tsukudo/Ginza/Mt Sakurada/Mansion Basement
+	Fury  36 Yoshitsune
+	Pegan 80 Beelzebub
+		- Phantom Skull   5th Floor
+		- Tyrant Spawn    7th Floor SW New Moon
+		- Emblem of Hell  9th Floor NE Full Moon
+	Frost 23 Raiho
+		- Bancho Uniform/Second Cycle
+
+	Story NPC/Field Skill
+		+Pyro   EP  1     5          12
+		+Frost  EP      4 5          12
+		+Fury   EP    2         9 10 12
+		+Volt   EP  1     5 7        12
+		+Pagan  EP  1         8      12
+		Fly     EP    2   5
+		Sneak   EP        5
+		Allure  EP                   12
+
+		Intimate (lower encounter)
+			Frost 32 Oukuninushi
+			Fury  61 Siegfried
+			Pagan 80 Beelzebub
+
+	katana upgrade
+	Shakko -> Onmyo Kuzunoha (ATK 10 -> 60)
+		forge Skill 41 Nagasunehiko
+		forge Skill 43 Abihiko
+		forge Wind  45 Hitokotonusi
+		forge Volt  50 Mishaguji
+
+	5  -1 Frost 53 Arahabaki     Null Fire/Ice/Elec/Force/Death     Weak Phys
+	5  -2 Skill 38 Thoth         Drain Fire/Ice/Elec/Force/Mind     Weak Phys/Death
+	4  -1 Pyro  44 Throne        Drain Fire  Null Elec/Force/Death  Weak Ice
+	3+1-1 Pyro  23 Oshichi       Null Gun/Mind/Death  Resist Fire   Weak Ice
+	3  -1 Wind  45 Hitokotonusi  Drain Force  Null Gun/Death        Weak Fire
+	3+1-2 Wind  10 Poltergeist   Null Gun/Mind/Death  Resist Force  Weak Fire/Elec
+
+	Mahjong Tiles
+		EP 2+  Amazing Science Lab  Volt/Inspect
+		EP 3+  Daidouji Factory     Volt/Inspect
+		EP 4+  Training Hall-East
+		EP 5+  Harumi/Dark Harumi   neck itches quest
+
+=====================================
+== Raidou Kuzunoha vs King Abaddon ==
+=====================================
+	*same*  + *same*  -> Element
+	Element + Element -> Spirit
+		W 29 = 17 + 21
+		A 31 = 14 + 19
+		STR+/22 = 19 + 17/21  31 + 21  29 + 14
+		MGC+/30 = 29 + 17/21  31 + 14/19
+		VIT+/25 = 14 + 17/21  31 + 17  29 + 19
+		LUC+/32 = 29 + 31
+	Spirit fusion
+		-               Normal       Full Moon
+		stats           A++          A++
+		active skills   A/no change  Shuffle A + Spirit
+		inherit slots   A/no change  A + Spirit
+		inherit skills  A/no change  A + Spirit
+
+	-      E   W   A   F  | W   A
+	-      14  17  19  21 | 29  31
+	Pyro   --  ++  --  ++ | ++  ++
+	Frost  ++  --  ++  -- | ++  +2
+	Volt   --  ++  ++  -- | ++  ++
+	Wind   ++  ++  --  ++ | +2  --
+	Fury   ++  --  ++  ++ | --  +2
+	Pagan  ++  ++  --  -- | +2  ++
+	Skill  --  --  ++  ++ | ++  ++
+
+	17 Pyro      2  7 12 17 22 28 33 37 41 46 50 54 59 64 68              [75 80]
+	18 Frost     4  9 13 16 20 23 29 35 43 47 51 55 58 62 66 72           [32 40]
+	17 Volt      3 10 14 18 22 26 36 41 49 56 60 74                       [31 45 53 65 68]
+	17 Wind      4  8 13 18 23 27 30 34 38 42 46 55 60 73                 [50 64 69]
+	22 Fury      6 11 14 17 19 22 25 29 32 35 39 42 45 52 56 60 63 67 75  [ 1 49 78]
+	19 Pagan     5  7 12 15 19 24 27 30 34 40 44 48 52 58 66 70 75        [55 62]
+	20 Skill     2 10 15 20 24 26 28 31 55 59 65                          [17 35 39 43 47 48 51 62 71]
+	 6 Element  14 17 19 21 29 31
+	 4 Spirit   22 25 30 32
+	 7 Fiend                                                              [33 42 49 51 55 60 69]
+	 8 Evil                                                               [ 8 13 29 31 33 36 44 61]
+	 3 Evil Yomi Kugutsu                                                  [17 24 55]
+
+	-      Provoke      Intimidate
+	Pyro   46           28 41
+	Frost  -            35
+	Fury   17 29 45 63  56
+	Pagan  24 44        66 75
+
+	Business Card
+		make recruiting the same demon easier
+		fusion-only demon will give their card immediately after fusion
+	Fusion Count
+		level up music
+			remain = count % 100
+			if  (remain % 11) === 0
+			4 special inherit skill
+		mini-boss/event battle music
+			if  (count % 7) === 0
+			create Evil
+			create Fusion Accident
+		fiend battle music
+			if  New Moon && (count % 7) === 0
+			create Fiend
+			create Fusion Accident
+
+	Fusion Accident
+		Fury   1 Slime
+		Skill 17 Blob
+		Frost 32 Black Ooze
+	Story Boss/NPC
+		EP 1  Fiend 33 Binbou-gami
+		EP 3+ Fiend 49 White Rider      / random New Moon boss
+		EP 3  Volt  53 Cybele           / boss as Law
+		EP 3  Fury  49 Atavaka          / boss as Neutral/Chaos , need for File 8-7
+		EP 4+ Fiend 51 Red Rider        / random New Moon boss
+		EP 4  Fiend 55 Yakubyou-gami
+		EP 5+ Fiend 60 Black Rider      / random New Moon boss
+		EP 5  Volt  65 Kohryuu
+		EP 5  Skill 51 Amatsu Mikaboshi / unlock as Neutral/Chaos
+		EP 6+ Fiend 69 Pale Rider       / random New Moon boss
+		EP 6  Skill 62 Taotie
+		EP 7+ - Kageboushi              / random New Moon boss/repeat , Sword/Spear/Axe types
+		EP 7  Volt  68 Astaroth         / boss as Neutral/Law   , unlock as Neutral/Chaos
+		EP 7  Wind  69 Camael           / boss as Neutral/Chaos , unlock as Neutral/Law
+		EP 7  Wind  64 Ophanim
+	Case File Boss
+		File 1-8 Volt  31 Oboroguruma
+		File 4-7 unlock Confinement Chamber 333 F
+			Volt  45 Mishaguji    / unlock as join
+			Wind  50 Hitokotonusi / unlock as join
+			Skill 43 Nagasunehiko / unlock as join
+			Skill 47 Abihiko      / unlock as join
+		File 4-8 Skill 48 High Pixie   / EP 3 Nagi apologize to Geirin
+		File 4-9 Frost 40 Raiho
+		File 4-a Skill 35 Oberon
+		File 4-a Skill 39 Titania
+		File 6-9 Pagan 55 Black Frost
+		File 6-a Fiend 42 Alice        / Chaos
+		File 7-9 Skill 71 Belphegor
+		File 8-a -                     / Second Cycle + Chaos ending
+		File 9-8 Pagan 62 Mara
+		File 9-a -                     / Second Cycle + Chaos ending
+		File a-8 Pyro  75 Asura        / Law
+		File a-9 Pyro  80 Lucifer      / Second Cycle + Chaos ending
+		File a-a Fury  78 Masakado     / Neutral + All 99 Case File completed
+
+	Mahjong Tiles
+		Tsukudo
+		Fukogawa
+		Mannen
+		File 1-9
+
+	Riders  Null Gun/Mind/Death  Resist Phys
+		White  Null Fire   Weak Ice   == Kageboushi/Sword
+		Red    Null Ice    Weak Elec
+		Black  Null Elec   Weak Force == Kageboushi/Spear
+		Pale   Null Force  Weak Fire  == Kageboushi/Axe
+
+	Story NPC/Field Skill
+		+Pyro   EP
+		+Frost  EP     3 4 5   7
+		+Volt   EP   2         7
+		+Wind   EP 1   3 4 5   7
+		+Fury   EP 1         6
+		+Pagan  EP 1 2   4
+		+Skill  EP 1         6
+
+		Transformation
+			EP 1 Goro Tatsumi        *story*
+			EP 1 Kamanari            Mannen-Cho
+			EP 2 Antoine             Fukagawa-Cho
+			EP 4 Shizu Iida          Red-Light District
+			EP 5 Owner of Konnou-Ya  Harumi-Cho + Volt/Inspect
+			EP 6 Geirin Kuzunoha     *story*
+			EP 3 Louis Cyphre        Catholic Church/Second Cycle
+
+	Alignment - Raidou World Map icon
+		Neutral = no spinning
+		Law     = spin clockwise
+		Chaos   = spin counter-clockwise
+
+		Case 2-8 (EP 3+, drop and redo)
+			Poor guy Let's help him  +1 Law
+			Sounds dirty             +1 Chaos
+
+		Transform to Shizu Iida and enter Fukagawa-Cho bathhouse (EP 4+)
+			Of course    +1 Chaos
+			Actually no  +1 Law
+
+		Last part of Infinite Abyss Abaddon
+		2 doors at Sphere of Crown (4 questions door)
+		finalized your alignment
+			Law     = Akane
+			Chaos   = Dahn
+			Neutral = Louis
+
+	5  -2  Skill   31 Thoth        Drain Fire/Ice/Elec/Force/Mind                   Weak Death/Phys
+	5  -3  Frost   62 Arahabaki    Null Fire/Ice/Elec/Force/Death                   Weak Phys/Gun/Mind
+	4  -1  Pagan   52 Arachne      Drain Death  Null Gun/Fire/Mind                  Weak Ice
+	4  -1  Wind    38 Baek Yong    Drain Force  Null Gun/Death/Mind                 Weak Fire
+	4  -4  Pyro    41 Throne       Drain Fire  Null Elec/Force/Death                Weak Ice/Phys/Gun/Mind
+	3+2-1  Wind    73 Metatron     Drain Force  Null Death/Mind  Resist Ice/Elec    Weak Gun
+	3+2-1  Frost   72 Arioch       Drain Ice  Null Gun/Death     Resist Phys/Force  Weak Elec
+	3+2-1  Wind    55 Decarabia    Drain Force  Null Gun/Death   Resist Ice/Elec    Weak Fire
+	3+2-1  Pyro    54 Vritra       Drain Fire  Null Death/Mind   Resist Elec/Force  Weak Ice
+	3+1-1  Frost   47 Seiryuu      Drain Ice  Null Death/Mind                       Weak Elec
+	3+1-1  Frost   35 Okuninushi   Null Gun/Ice/Death            Resist Mind        Weak Elec
+	3+1-1  Pyro    28 Oshichi      Null Gun/Death/Mind           Resist Fire        Weak Ice
+	3  -1  Frost   29 Alraune      Drain Ice  Null Death/Mind                       Weak Elec
+	3+1-2  Skill   15 Selket       Null Death/Gun/Mind           Resist Phys        Weak Ice/Force
+	3+1-2  Wind     4 Poltergeist  Null Force/Gun/Mind           Resist Death       Weak Fire/Elec
+	3  -2  Element 31 Undine       Drain Ice  Null Elec/Death                       Weak Fire/Force
+	3  -2  Element 29 Sylph        Drain Force  Null Fire/Death                     Weak Ice/Elec
+	3  -2  Volt    26 Nandi        Drain Force  Null Elec/Gun                       Weak Ice/Fire
+	3  -2  Pagan    7 Sandman      Drain Death  Null Gun/Mind                       Weak Fire/Force
+
+	-           1 2 3 4 5 6 7   8   9   a
+	Tsukudo     1 - - - - - -   -   -   -+1   1+1 / req 1-7
+	Fukagawa    - 1 1 - 1 - 1   -   -   -     4
+	Mannen      1 - 1 - - - -   -   -   -     2
+	Kasumidai   1 2 2 - 1 1 1   2   1   2    13
+	Ginza       5 3 4 5 4 3 4   3   5   5    41
+	Harumi      - - - - 1 2 1   1+1 -+1 -+1   5+3
+
+	Yatagarasu  1 2 - 1 2 2 2   3   1   1    15   / req 2-8
+	Tsukigata   - - - 1 - - -   -   -   -     1
+
+	event       - 1 - 1 - 1 -   -   -   -     3
+	demon       1 1 2 2 1 1 1   -   2   -    11
+
+	Demon Negotiation
+		File 1-5
+		File 2-4
+		File 3-5  3-7
+		File 4-3  4-4
+		File 5-5
+		File 6-4
+		File 7-5
+		File 9-5  9-7
+	use Demon with Charisma
+		Evil  33 Hiruko
+		Fury  39 Cu Chulainn
+		Skill 51 Mikaboshi
+		Fury  60 Fenrir
+		Wind  69 Camael
+		Pyro  80 Lucifer
+	if no effect, use Fiend Demons

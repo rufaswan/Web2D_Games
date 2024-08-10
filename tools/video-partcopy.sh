@@ -40,8 +40,12 @@ while [ "$2" ]; do
 	(( $dur < 1 )) && continue
 	echo ">>> from $fr to $to ($dur sec)"
 
-	# -ss before -i = seek to relevant keyframe block, play until time and start from there
-	# -ss after  -i = seek to time, skip until next keyframe and start from there
+	# http://trac.ffmpeg.org/wiki/Seeking
+	# -ss before -i
+	#    The input will be parsed by keyframe, which is very fast.
+	# -ss after  -i
+	#    The input is decoded (and discarded) until it reaches the position indicated by "-ss".
+	#    This will be done relatively slow, frame-by-frame.
 	$nice  ffmpeg -y \
 		-v quiet     \
 		-ss $fr      \

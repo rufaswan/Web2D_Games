@@ -1,0 +1,438 @@
+=====================================
+== Kuzunoha Raidou vs Souless Army ==
+=====================================
+Raidou Stats
+	00  level (max=63)
+	04
+	06  total royalty
+	08
+	0c  total exp (max=ef421)
+	10  hp     (max=3b6)
+	14  max hp (max=3b6)
+	18
+	1c
+	20  str (max=28)
+	22  mgc (max=28)
+	24  vit (max=28)
+	26  luc (max=28)
+	28
+	2c
+	30
+	34
+	38  str (max=28)
+	3a  mgc (max=28)
+	3c  vit (max=28)
+	3e  luc (max=28)
+Demon Stats (BLOCK=110)
+	00  flags
+		08  learned combination
+		10  learned passive skill 1
+		20  learned passive skill 2
+	04
+	06  Demon ID
+	08  level       (max=63)
+	0c
+	0e  royalty     (max=64)
+	10  max royalty (max=64)
+	14  exp (max=bbea3)
+	18  hp
+	1c  max hp
+	20  mp
+	24  max mp
+	28  str (max=28)
+	2a  mgc (max=28)
+	2c  vit (max=28)
+	2e  luc (max=28)
+	30
+	34  hp
+	38
+	3c
+	40  str (max=28)
+	42  mgc (max=28)
+	44  vit (max=28)
+	46  luc (max=28)
+	48
+	4c
+	...
+	90  active  skill ID 1
+	94  active  skill ID 2
+	98  passive skill ID 1
+	9c  passive skill ID 2
+	a0  combination
+Demon Registered (BLOCK=40)
+	00  Demon ID
+	04
+	08  royalty (max=64)
+	0c  level   (max=63)
+	0d
+	0e
+	0f  flags
+		01  learned combination
+		02  learned passive skill 1
+		04  learned passive skill 2
+	10  active  skill ID 1
+	12  active  skill ID 2
+	14  passive skill ID 1
+	16  passive skill ID 2
+	18  combination
+	1c  max hp
+	20  max mp
+	24+5  str
+	29+5  mgc
+	2e+5  vit
+	33+5  luc
+	38
+	3c
+
+Skill ID
+	00      none
+	01-ef   active skill
+		01-0f  Agi   series
+		10-1f  Bufu  series
+		20-2f  Zio   series
+		30-3f  Zan   series
+		40-4f  combination skill
+		50-5f  Mudo  series
+		60-6f  Mind  series
+		70-7f  Dia   series
+			73  Media
+			75  Dia Aura
+		80-8f  -kaja series
+		90-9f  phys  series
+		a0-af  gun   series
+		b0+  dummy
+	f0-10d  passive skill
+		f0  Retribution
+		f1  First Aid
+		f2  Regenerate
+		f3  Hex
+		f4  Curse
+		f5  Endure
+		f6  Fast Escape
+		f7  Money Find
+		f8  Item Find
+		f9  Quick Study
+		fa  Devotion
+		fb  Life Bonus
+		fc  Life Gain
+		fd  Life Surge
+		fe  Mana Bonus
+		ff  Mana Gain
+		100  Mana Surge
+		101  Hero's Might
+		102  Mage's Craft
+		103  Fire  Boost
+		104  Ice   Boost
+		105  Elec  Boost
+		106  Force Boost
+		107  Heal  Boost
+		108  Mind  Boost
+		109  Fire  Resist
+		10a  Ice   Resist
+		10b  Elec  Resist
+		10c  Force Resist
+		10d  Phys  Resist
+
+Demon ID
+	00 Raidou
+	01-08  Pyro
+		07  Wind  45 Hitokotonusi
+	09-12  Frost
+		0d  Pyro   2 Ukobach
+	13-1b  Volt
+	1c-24  Wind
+		21  Skill Legion/-
+	25-30  Fury
+		2d  Pyro  49 Cerberus
+	31-3a  Pagan
+	3b-4b  Skill
+		42  Frost 23 Raiho
+		45  Pagan 32 Alice
+		46  Fury  36 Yoshitsune
+		47  Pyro  14 Orthrus
+		48  Skill Legion/Provoke
+		49  Skill Legion/Allure
+		4a  Skill Legion/Intimate
+		4b  Skill Legion/Zenny Cut
+
+FILE READ
+	RAM 508d00-533580 [2a880]
+	36b7ac  lw   v0, 8(s3) // ( size < 0 ) ? dir    : file
+	36b7b0  lw   v1, 4(s3) // ( dir      ) ? dd3ddt : dd3img * 800
+	36b7f4  lw   a1, 0(s3) //   name
+	36b7f8  jal  3894fc
+		389544  ld   v0, 0(a1)
+		389550  lq   v0, 0(a1)
+		389610  lb   v1, 0(a1)
+			a1++
+		389634  lbu  v0, 0(a1)
+	36b814  lw   v1, 4(s3)
+
+inside detective office
+	/map/mname/t.tmx
+	/map/mname/sinnyu_waku.tmx
+	/jimusyo/jms_mes.bmd
+	/jimusyo/jms_file.bmd
+	/jimusyo/jms_evt.bf
+	/jimusyo/jms_evt2.bf
+	/jimusyo/jms_talk.bf
+	/model/npc/s_jimusyo_00.PB
+	/jimusyo/jimusho.spr
+	/soundat3/jimusho.at3
+	/event/e680/e685/e685_002/E685_002.PM1
+	/event/e680/e685/e685_002/E685_002.PM2
+	/event/e680/e685/e685_002/E685_002.PM3
+outside detective office
+	/battle/panel/battle_waku.spr
+	/map/mname/m_name001_00.tmx
+	/map/mname/sinnyu_waku.tmx
+	/model/field/000.LB
+	/map/map01/PAC00Y.LB
+	/model/npc_lb/EVE01C.LB
+	/model/npc_lb/EVE024.LB
+	/model/npc_lb/EVE02B.LB
+	/model/npc_lb/EVE02C.LB
+	/model/npc_lb/EVE02D.LB
+	/model/npc_lb/EVE033.LB
+	/model/npc_lb/EVE034.LB
+	/model/npc_lb/EVE035.LB
+	/model/npc_lb/EVE054.LB
+	/map/all/GENBA_T.EPL
+	/model/field_lb/FIELD012.LB
+	/model/npc_lb/EVE04F.LB
+	/model/field_lb/FIELD020.LB
+	/model/devil_lb/DEVIL02F.LB
+	/map/map01/MAP01.CTN
+	/map/map01/MAP01.CTZ
+	/map/map01/neko.NEK
+	/model/npc_lb/EVE01A.LB
+	/model/npc_lb/EVE023.LB
+	/model/npc_lb/EVE032.LB
+	/model/npc_lb/EVE03B.LB
+	/model/npc_lb/EVE01E.LB
+	/model/npc_lb/EVE037.LB
+	/model/npc_lb/EVE05B.LB
+	/model/npc_lb/EVE06F.LB
+	/model/npc_lb/EVE06C.LB
+	/model/npc_lb/EVE06D.LB
+	/map/all/map_mei.spr
+	/map/map01/PAC33.LB
+	/soundat3/map01.at3
+battle (zombie * 2 + 5)
+	/soundat3/battle01.at3
+	/map/map39/PAC00B.LB
+	/map/map39/PAC00.LB
+	/map/map39/PAC03.LB
+	/battle/SB_PACK.LB
+	/battle/event/sbbtlevent.bf
+	/model_lb/devil_b/092.LB
+	/model_lb/battle/001.LB
+	/sobed/0B0.SAB
+	/sound/MIDI0004.SMG
+	/sobed/097.SAB
+	/sound/MIDI0797.SMG
+battle result
+	/result/result.spr
+	/result/rs_haikei.spr
+	/model/field/000.LB
+	/model/devil_lb/DEVIL02F.LB
+
+=====================================
+== Raidou Kuzunoha vs King Abaddon ==
+=====================================
+Raidou Stats
+	00  level (max=63)
+	04
+	06  total royalty
+	08
+	0c  total exp (max=ef421)
+	10  hp     (max=3b6)
+	14  max hp (max=3b6)
+	18
+	1c
+	20  str (max=28)
+	22  mgc (max=28)
+	24  vit (max=28)
+	26  luc (max=16)
+	28
+	2c
+	30
+	34
+	38  str (max=28)
+	3a  mgc (max=28)
+	3c  vit (max=28)
+	3e  luc (max=16)
+Demon Stats (BLOCK=178)
+	00
+	04  Order ID
+	06  Demon ID
+	08  level   (max=63)
+	0c
+	0e  loyalty (max=64)
+	10
+	14
+	18  hp     + bonus
+	1c  max hp + bonus
+	20
+	24
+	28  str + bonus
+	2a  mgc + bonus
+	2c  vit + bonus
+	2e  luc + bonus
+	30  hp
+	34  max hp
+	38
+	3c
+	40  str
+	42  mgc
+	44  vit
+	46  luc
+	48
+	4c
+	...
+	14e  inherit skill 1
+	150  inherit skill 2
+	152  inherit skill 3
+	154  inherit skill 4
+	156  inherit skill 5
+	158  inherit skill 6
+	15a  fusion skill 1
+	15c  fusion skill 2
+	15e
+	160+e  inherit skill flags
+	16e
+	170  inherit slot (max=6)
+	174
+Demon Registered (BLOCK=60)
+	00  level     (max=63)
+	02  encounter (0=??? , 1=summon)
+	03  flags
+		02  disable battle skill 2
+		04  disable battle skill 3
+		08  disable battle skill 4
+		10  disable battle skill 5
+		20  disable battle skill 6
+		40  disable battle skill 7
+	04
+	05  inherit slot (max=6)
+	06  Demon ID
+	08
+	0a  loyalty (max=64)
+	0c
+	0e  battle skill 1
+	10  battle skill 2
+	12  battle skill 3
+	14  battle skill 4
+	16  battle skill 5
+	18  battle skill 6
+	1a  battle skill 7
+	1c  inherit skill 1
+	1e  inherit skill 2
+	20  inherit skill 3
+	22  inherit skill 4
+	24  inherit skill 5
+	26  inherit skill 6
+	28
+	2c+5  str (0=base , 2=bonus , 4=, max=)
+	31+5  mgc (0=base , 2=bonus , 4=, max=)
+	36+5  vit (0=base , 2=bonus , 4=, max=)
+	3b+5  luc (0=base , 2=bonus , 4=, max=)
+	40+e  inherit skill flags
+		0-02  Retribution
+		0-08  Capital's Fury
+		0-10  Endure
+		0-20  Fast Escape
+		0-40  Life Bonus
+		0-80  Life Gain
+		1-01  Life Surge
+		1-02  Hero's Might
+		1-04  Mage's Craft
+		1-08  Fire Boost
+		1-10  Ice Boost
+		1-20  Elec Boost
+		1-40  Force Boost
+		1-80  Heal Boost
+		2-01  Mind Boost
+		2-02  Fire Resist
+		2-04  Ice Resist
+		2-08  Elec Resist
+		2-10  Force Resist
+		2-20  Phys Resist
+			3
+		4-80  Desperate Power
+		5-01  Unreachable Soul
+		5-40  Power Chakra
+		5-80  Magic Chakra
+		6-01  Halve Death
+		6-02  Halve Mind
+		6-04  Stamina Chakra
+		6-08  Luck Chakra
+		6-10  Magic Boost
+		6-20  Sink or Swim
+		6-40  Halve Mortal
+		6-80  Null Mortal
+		7-01  Orienteering
+		7-80  Vengeance Seal
+		8-01  First Aid
+		8-02  Whimsy Aid
+		8-04  Money-Getter
+		8-10  Finders Keepers
+		9-04  Agni's Blessing
+		9-08  Moonlight Rage
+		9-40  Skill Extension
+		a-01  Drain
+		a-02  Lucky Strike
+		a-40  EXP Boost
+		b-10  Growth
+		b-20  Lucky Capote
+		c-20  Demon's Blessing
+		c-80  Destructive Joy
+			d
+			e
+			f
+		fa ff 3f --  80 c1 ff 81
+		17 4c 43 30  a0 -- -- --
+	4e
+	50
+	54
+	58
+	5c
+
+Skill ID
+	00     *none*
+	01-0f  Agi    series
+		04  Maragidyne
+	10-1f  Bufu   series
+		13  Mabufudyne
+	20-2f  Zio    series
+		23  Maziodyne
+	30-3f  Zan    series
+		33  Mazandyne
+	40-4f  Megido series
+		40   Megidoraon/combination
+		1b2  Megido
+	50-5f  Mudo   series
+		52  Mamudoon
+	60-6f  Mind   series
+	70-7f  Dia    series
+		73  Media
+		79  Mediarama
+	80-8f  -kaja  series
+	90-af  phys   series
+	b0-cf  gun    series
+	d0-df  ally/mag
+	e0+    *dummy*
+
+ID
+	Order  Demon
+	00     00     Raidou
+	01     01-15  Pyro
+	02     16-2b  Frost
+	03     2c-40  Volt
+	04     41-55  Wind
+	05     56-6f  Fury
+	06     70-86  Pagan
+	07     87-a1  Skill
+	08     a2-ab  Element
+	09     ac-b3  Spirit
+	0a     b4-bf  Fiend

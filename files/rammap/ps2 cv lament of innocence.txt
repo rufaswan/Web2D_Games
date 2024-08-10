@@ -1,0 +1,142 @@
+Equip List Whip
+	02  Whip of Flames
+	03  Whip of Ice
+	04  Whip of Lightning
+	05  Vampire Killer
+Equip List Armor
+	06
+	07
+	08
+	09
+Equip List Accessory
+	0a  Draupnir
+	0b  Aroma Earring
+	0f  Bloody Cape
+	13  Ring of Fire
+	14  Arctic Ring
+	15  Ring of Thunder
+	17  Heart Brooch
+	18  Mobius Brooch
+	19
+	1a
+	1d  Jewel Crush
+	1e  Mejingjord
+	20  Brisingamen
+Item List
+	2a  Potion
+	2b  Hi Potion
+	2c  Ex Potion
+	2d  Heart Repair
+	2e  Mana Prism
+	2f  Serum
+	30  Uncurse
+	31  Magical Ticket
+	32  Memorial Ticket
+	3c  Diamond
+	3d  Ruby
+	3e  Sapphire
+	3f  Opal
+	40  Tarcoz
+	41  Zircon
+	42  Curtain Time Bell
+	43
+	48  Short Cake
+	4a  Curry
+Event Item
+	58  Unlock Jewel
+	59  White Tiger Key
+	5a  Blue Dragon Key
+	5b  Red Phoenix Key
+	5c  Black Turtle Key
+	5d  Yellow Dragon Key
+	5e  Dragon Crest
+	5f  Tool Bag
+	61  Ancient Text 1
+	62  Ancient Text 2
+	63  Map 1
+	64  Map 2
+	65  Map 3
+	66  Map 4
+	67  Map 5
+	6a  Marker Stone 1
+	6b  Marker Stone 2
+	6c  Marker Stone 3
+	6d  Marker Stone 4
+	6e  Marker Stone 5
+	6f  Marker Stone 6
+	70  Marker Stone 7
+	71  Marker Stone 8
+	72  Ancient Text 3
+	73  Ancient Text 4
+Orb
+	7f  Red Orb
+	80  Blue Orb
+	81  Yellow Orb
+	82  Green Orb
+	83  White Orb
+	84  Black Orb
+Relic
+	86  Wolf's Foot
+	87  Saisei Incense
+	88  ride get all crystals -> Meditative Incense
+	89  drop Mirage Skeleton  -> Invincible Jar
+	8a  drop Phantom          -> Crystal Skull
+	8b  Black Bishop
+	8c  White Bishop
+	8d  Lucifer Sword
+	8e  Svarog Statue
+	8f  Little Hammer
+//////////////////////////////
+Entrace
+	Unlock Jewel -> BOSS 79 Forgotten One
+
+Cathedral of Resonance
+House of Sacred Remains
+	3 switch/line      -> BOSS 74 Undead Parasite
+	Yellow Dragon Door -> Black Bishop relic
+	3 switch/triangle  -> White Tiger key
+	(crystal room = double jump + turn + whip the railing)
+
+The Tower of Alchemist
+Anti-Soul Mysteries Lab
+	e Tablet                     -> BOSS 75 Golem
+	BOSS 69 Flame Elemental
+	Yellow Dragon Key
+	Red Phoenix Door             -> Wolf's Foot relic
+	bridge + Wolf's Foot         -> Mejingjord
+	statue + Whip of Flame + Ice -> White Orb
+	(secret wall on 3F 4 rooms hallway)
+	(secret floor on 2F in front of 3F stairs)
+
+No Appause No Performance
+Ghostly Theathre
+	dark room               -> Curtain Time Bell
+	Curtain Time Bell       -> BOSS 76 Succubus
+	Black Turtle Key
+	White Tiger Door        -> Heart Brooch
+	dark room + Wolf's Foot -> Brisingamen
+
+Forgotten Gardens
+Garden Forgotten By Time
+	BOSS 77 Medusa
+	BOSS 71 Lightning Elemental
+	Blue Dragon Door  -> Tool Bag
+	3 switch/line     -> Ring of Fire
+	3 switch/triangle -> Red Phoenix Key
+	gap + Wolf's Foot -> Saisei Incense
+	(big flower enemy can be used as platform)
+
+The Labyrinth
+Dark Palace of Waterfalls
+	waterflow + bridge switch   -> BOSS 78 Joachim
+	BOSS 70 Frost Elemental
+	Frozen Door + Whip of Flame -> Little Hammer relic
+	Black Turtle Dooe           -> Draupnir
+	waterflow switch            -> Blue Dragon Key
+
+The Palace of Moonlight
+Pagoda of Misty Moon
+	VI Tablet + Dragon Crest -> BOSS 80 + 81
+	dark room                -> Unlock Jewel
+	(use the machine to reverse VI Tablet into IV Tablet)
+	(before final boss = Map 99.6 % completed)
