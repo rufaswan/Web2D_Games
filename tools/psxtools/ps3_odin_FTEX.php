@@ -26,6 +26,19 @@ require 'class-s3tc.inc';
 
 //define('DRY_RUN', true);
 
+function im_dxt1( &$file, $pos, $w, $h )
+{
+	printf("== im_dxt1( %x , %x , %x )\n", $pos, $w, $h);
+	$pix = substr($file, $pos, $w*$h);
+	$w = int_ceil_pow2($w);
+	$h = int_ceil_pow2($h);
+
+	$dxt1 = new s3tc_texture;
+	$pix  = $dxt1->dxt1($pix);
+	$pix  = $dxt1->s3tc_debug($pix, $w, $h);
+	return $pix;
+}
+
 function im_dxt3( &$file, $pos, $w, $h )
 {
 	printf("== im_dxt3( %x , %x , %x )\n", $pos, $w, $h);
@@ -154,6 +167,7 @@ function ps3gtf( &$file, $base, $pfx, $id )
 
 	$list_fmt = array(
 		0x85 => 'im_argb',
+		0x86 => 'im_dxt1',
 		0x87 => 'im_dxt3',
 		0x88 => 'im_dxt5',
 		0xa6 => 'im_dxt1p2',
