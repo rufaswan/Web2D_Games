@@ -436,3 +436,333 @@ ID
 	08     a2-ab  Element
 	09     ac-b3  Spirit
 	0a     b4-bf  Fiend
+
+==================================================================
+== Shin Megami Tensei III - Nocturne Maniax - Chronicle Edition ==
+==================================================================
+Demi-Fiend Stats
+	00
+	02
+	04
+	06  hp
+	08  max hp
+	0a  mp
+	0c  max mp
+	0e  effect flags
+		01
+		02
+		04
+		08
+		10
+		20  mute
+		40  poison
+		80
+		0100  paralyze
+		0200
+		0400
+		0800  death
+		1000
+		2000
+		4000
+		8000  curse
+	10  exp
+	14  level
+	16  STR + bonus + base 1 (max=28+n)
+	17  ??? + bonus + base 1 (max=28+n)
+	18  MGC + bonus (max=28+n)
+	19  VIT + bonus (max=28+n)
+	1a  AGI + bonus (max=28+n)
+	1b  LUC + bonus (max=28+n)
+	1c
+	1e
+	20
+	22
+	24
+	26
+	28
+	2a
+	2c
+	2e
+	30
+	32
+	34
+	36
+	38  Skill Slots (max=8)
+	3a  Skill ID 1
+	3c  Skill ID 2
+	3e  Skill ID 3
+	40  Skill ID 4
+	42  Skill ID 5
+	44  Skill ID 6
+	46  Skill ID 7
+	48  Skill ID 8
+Demon Stats (BLOCK=ec)
+	00  flags
+		01  exist
+		02  summoned
+		04
+		08
+		10
+		20
+		40
+		80
+	01
+	02
+	04  Demon ID
+	06  hp
+	08  max hp
+	0a  mp
+	0c  max mp
+	0e  effect flags
+		01
+		02
+		04
+		08
+		10
+		20  mute
+		40  poison
+		80
+		0100  paralyze
+		0200
+		0400
+		0800  death
+		1000
+		2000
+		4000
+		8000
+	10  exp
+	14  level
+	16  STR
+	17
+	18  MGC
+	19  VIT
+	1a  AGI
+	1b  LUC
+	1c
+	1e
+	20
+	22
+	24
+	26
+	28
+	2a
+	2c
+	2e
+	30
+	32
+	34
+	36
+	38  Skill Slots (max=8)
+	3a  Skill ID 1
+	3c  Skill ID 2
+	3e  Skill ID 3
+	40  Skill ID 4
+	42  Skill ID 5
+	44  Skill ID 6
+	46  Skill ID 7
+	48  Skill ID 8
+Demon Registered (BLOCK=)
+	Skill ID 1
+	Skill ID 2
+	Skill ID 3
+	Skill ID 4
+	Skill ID 5
+	Skill ID 6
+	Skill ID 7
+	Skill ID 8
+
+Demon ID
+	00  dummy
+	01-06  Deity
+	07-0b  Megami
+	0c-0f  Fury
+	10-14  Lady
+	15-1c  Kishin
+	1d-23  Holy
+	24-27  Element
+	28-2b  Mitama
+	2c-34  Yoma
+	35-3d  Fairy
+	3e-44  Divine
+	45-4a  Fallen
+	4b-50  Snake
+	51-56  Beast
+	57-5c  Jirae
+	5d-61  Brute
+	62-67  Femme
+	68-6c  Vile
+	6d-71  Tyrant
+	72-78  Night
+	79-7e  Wilder
+	7f-83  Haunt
+	84-89  Foul
+	8a-8d  Seraph
+	8e-8f  Wargod
+	90-b2
+	b3-bf  *dummy*
+		c0/Kuzunoha Raidou the XIV
+		c1/Seraph Metatron
+		c2/Tyrant Beelzebub - fly form
+		ce/Night  Black Frost
+	c3-cb  Fiend
+	d0+  *dummy*
+
+
+Skill ID
+	BOSS Demi-Fiend Signature Skills
+		0b  Nirvana /88  Divine Shot
+		0f  Muspell /85  Xeros Beat    DDS
+		10  Gehenna /a1  Magma Axis        SMT4
+		11  Kamurogi/90  Oni-Kagura
+		12  Satan   /83  Deadly Fury       SMT4 SMT5
+		14  Vimana  /8f  Javelin Rain  DDS      SMT5
+		15  Gundari /a0  Spiral Viper
+		17  Gaia    /a3  Gaea Rage     DDS SMT4 SMT5
+		18  Kailash /93  Freikugel         SMT4 SMT5
+
+	Digital Devil Saga: Avatar Tuner
+		summon
+			Cu Chulainn
+			Girimehkala
+			Pixie
+			Arahabaki
+			Titania
+			Parvati
+
+		03  Agidyne              GI
+		06  Meragidyne                    TI
+		0c  Mabufudyne                    TI
+		12  Maziodyne               PI    TI
+		18  Mazandyne
+		1b  Megidolaon              PI
+		1f  Mahamaon                         PA
+		23  Mamudoon             GI
+		25  Diarama                 PI
+		28  Mediarama                        PA
+		29  Mediarahan     DE CU GI PI AR TI PA
+		33  Recarmdra         CU GI PI AR TI PA
+		34  Takunda
+		35  Sukunda                       TI
+		36  Rakunda                       TI
+		39  Dekaja            CU GI PI AR TI PA
+		3c  Dormina                 PI       PA
+		40  Tarukaja                         PA
+		41  Sukukaja                         PA
+		42  Rakukaja                         PA
+		43  Makakaja                         PA
+		49  Estoma
+		4b  Liftoma
+		4c  Lightoma
+		4d  Dekunda           CU GI PI AR TI PA
+
+		65  Heat Wave      DE
+		a4  Counter           CU
+		a5  Counterstrike     CU
+		b3  Ragnarok                   AR
+		cd  Taunt             CU
+		ce  Debilitate           GI    AR
+		Sakura Rage       CU
+		Skull Cleave      CU
+		Executioner       CU
+		Demon Rage        CU GI
+		Bloodbath         CU
+		Blood Curse                AR
+		Revelation        CU
+		Vanity                  PI
+		Gate of Hell               AR
+
+	-      Bst  Rst  Nul  Drn  Rpl
+	Phys     -  139  143  14d  152
+	Fire   135  13a  144  14e  153
+	Ice    136  13b  145  14f  154
+	Elec   137  13c  146  150  155
+	Force  138  13d  147  151  156
+	Expel    -  13e  148    -    -
+	Death    -  13f  149    -    -
+	Curse    -  140  14a    -    -
+	Nerve    -  141  14b    -    -
+	Mind     -  142  14c    -    -
+
+	12b  Might
+	130  Attack All
+	15c  Victory Cry
+	15d  Life Refill
+	15e  Mana Refill
+	165  Pierce
+	22e+  *end*
+
+
+Kalpa Broker Demons
+1st Kalpa = 15,000 macca
+	a7/Haunt 28 Pisaca + 8 0 a 11 7 6
+		c0/Life Drain  48/Trafuri   49/Estoma       4a/Riberama
+		4b/Liftoma     4c/Lightoma  161/Lucky Find  162/Watchful
+2nd Kalpa = 30,000 macca
+	7c/Wilder 31 Nue + e 0 9 c 8 8
+		da/Prayer    2c/Me Patra  2d/Mutudi      2e/Posumudi
+		2f/Paraladi  30/Petradi   32/Samarecarm  15e/Mana Refill
+3rd Kalpa = 70,000 macca
+	90/Vile 50 Arabahaki + 12 0 e 17 a d
+		12e/Drain Attack  46/Tetrakarn  45/Makarakarn  44/Tetraja
+		42/Rakukaja       41/Sukukaja   39/Dekaja      4d/Dekunda
+4th Kalpa , LAW door = 50,000 macca
+	7a/Wilder 60 Mothman + e 0 1a 14 a a
+		6/Maragidyne  c/Mabufudyne  12/Maziodyne   18/Mazandyne
+		1f/Mahamaon   23/Mamudon    1b/Megidolaon  15e/Mana Refill
+4th Kalpa , CHAOS door = 150,000 macca
+	83/Haunt 4 Preta + 5 0 4 5 6 4
+		19/Megido      1a/Megidola   1b/Megidolaon  29/Mediarahan
+		32/Samarecarm  46/Tetrakarn  45/Makarakarn  33/Recarmdra
+5th Kalpa , Old Friend door
+	3d/Fairy 80 Pixie + 1e 0 1e 1e 1e 1e
+		12/Maziodyne  1b/Megidolaon  29/Mediarahan  32/Samarecarm
+		159/Endure
+5th Kalpa , Metatron door = 200,000 macca
+	69/Vile 58 Girimehkala + 16 0 11 15 d d
+		d3/Binding Cry  6e/Chaos Blade  12b/Might  12c/Bright Might
+		12d/Dark Might  130/Attack All  e0/Focus   165/Pierce
+
+
+Kuzuhona Raidou the XIV
+	106  Boogie-Woogie    - (gun)
+	107  Enter Yoshitsune - Fury  Yoshitsune
+	10b  Mishaguji Raiden - Volt  Mishaguji
+	10c  Hitokoto Storm   - Wind  Hitokotonusi
+	112  Raptor Guardian  - Wind  Moh Shuvuu
+	109  Provoke
+	168  Endure
+	19a  Arbitration
+	108  Mokoi Boomerang  - Pagan Mokoi
+	10a  Tekisatsu        - (katana)
+	169  Raidou the Eternal
+	10d  Jiraiya Dance    - Volt  Tsuchigumo
+
+Magatama
+	01/6   60   47  122   62  131  165
+	02/5   b4  125  136   cc  13b
+	03/3   24  128   27
+	04/4   34   35   36  15a
+	05/4   b0  135   cd  13a
+	06/5   b9  138   cb  13d  147
+	07/4   65   e0  12a  12b
+	08/4   b6  137  13c  146
+
+	09/5   bf  13f   22   c7   23
+	0a/4   f9  145   b5  14f
+	0b/4   c1  13e   88  148
+	0c/4  14c  14b   6e  14a
+	0d/6   25  15d   44   28   26  15e
+	0e/5   40   41   43   42   39
+	0f/3   3f   38   85
+	10/5   b1  144  126  14e   a1
+
+	11/5   66  123   7e  132   90
+	12/5  1a5  149  15b  163   83
+	13/3   b7  127  150
+	14/5  159   63   8f  124   64
+	15/3   ba  151   a0
+	16/5   bc   32  12e   29   bd
+	17/4   6c  133   a3  130
+	18/5   45   19   46   93   1a
+
+	19/7   1b   c3  153  154  155  156  152

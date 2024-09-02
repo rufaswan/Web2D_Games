@@ -37,7 +37,7 @@ dll=(
 	#'wininet=d'  # Disconnect from Internet
 	#'winhttp=d'  # Disconnect from Internet
 )
-export WINEDLLOVERRIDES=$(IFS=';' ; echo "${dll[*]}")
+export WINEDLLOVERRIDES=$(IFS=$';'; echo ${dll[*]})
 
 # wiki.winehq.org/FAQ
 export   WINEARCH='win32'

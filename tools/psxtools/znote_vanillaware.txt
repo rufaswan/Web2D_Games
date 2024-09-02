@@ -11,12 +11,12 @@
 2013  VITA  Dragon's Crown
 2013  PS3   Dragon's Crown
 2014  VITA  Muramasa Rebirth DLC
+
 2016  VITA  Odin Sphere Leifthsar
 2016  PS3   Odin Sphere Leifthsar
 2016  PS4   Odin Sphere Leifthsar
 2018  PS4   Dragon's Crown Pro
 2019  PS4   13 Sentinels: Aegis Rim
-
 2022  SWIT  13 Sentinels: Aegis Rim
 2022  SWIT  GrimGrimoire OnceMore
 2022  PS4   GrimGrimoire OnceMore
@@ -128,7 +128,7 @@ ps4 odin  72   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*10  s1*
 ps4 sent  76   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
 swi sent  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
 swi grim  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
-ps4 grim
+ps4 grim  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
 ps5 grim
 swi unic  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
 ps4 unic  77   le   120  b0   12   s9*30  sa*18  s8*20  s7*24  s6*1c  s4*14  s1*30  s2*30  s0*18  s3*50 s5*8 sb*14
@@ -151,7 +151,7 @@ ps4 odin  50   4+ 0 1 2 3 5 7  8 6 9 a - b
 ps4 sent  50   4+ 0 1 2 3 5 7  8 6 9 a - b
 swi sent  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
 swi grim  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
-ps4 grim
+ps4 grim  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
 ps5 grim
 swi unic  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
 ps4 unic  50   4+ 0+ 1+ 2+  3+ 5 7 8 6 9 a  - b
@@ -161,7 +161,7 @@ xbx unic
 grim
 	ps2  *base*       , 256 color
 	swi  size=2x ps2  , BC4 + BC7   , prediv
-	ps4
+	ps4  size=2x ps2  , BC4 + BC7   , prediv
 	ps5
 odin
 	ps2  *base*       , 256 color

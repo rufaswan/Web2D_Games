@@ -245,6 +245,8 @@ odin sphere leifthsar
 	29  im_bc7
 dragon crown pro
 	29  im_bc7
+grim grimoire once more
+	25  im_bc3
 13 sentinels
 	29  im_bc7
 

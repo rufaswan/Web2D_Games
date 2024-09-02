@@ -148,7 +148,7 @@ class pixel_lines
 		return;
 	}
 	//////////////////////////////
-	function addquad()
+	public function addquad()
 	{
 		$qd = '';
 		$arg = func_get_args();
@@ -170,7 +170,7 @@ class pixel_lines
 		return;
 	}
 
-	function addline()
+	public function addline()
 	{
 		$ln = '';
 		$arg = func_get_args();
@@ -192,7 +192,7 @@ class pixel_lines
 		return;
 	}
 
-	function addpoint()
+	public function addpoint()
 	{
 		$pt = '';
 		$arg = func_get_args();
@@ -214,16 +214,7 @@ class pixel_lines
 		return;
 	}
 
-	function new()
-	{
-		$this->quad   = array();
-		$this->line   = array();
-		$this->point  = array();
-		$this->canvas = array();
-		return;
-	}
-
-	function draw()
+	public function draw()
 	{
 		$this->normalize();
 		$this->canvas_grid();
@@ -238,5 +229,20 @@ class pixel_lines
 			$this->drawpoint($pt[0] , $pt[1] , $pt[2]);
 
 		return $this->canvas;
+	}
+	//////////////////////////////
+	public function __construct()
+	{
+		$this->clear();
+		return;
+	}
+
+	public function clear()
+	{
+		$this->quad   = array();
+		$this->line   = array();
+		$this->point  = array();
+		$this->canvas = array();
+		return;
 	}
 } // class pixel_lines

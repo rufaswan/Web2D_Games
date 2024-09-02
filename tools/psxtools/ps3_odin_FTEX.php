@@ -229,6 +229,7 @@ argv_loopfile($argv, 'odin');
 
 /*
 dragon crown
+	86 im_dxt1
 	87 im_dxt3
 	88 im_dxt5
 odin sphere leifthsar

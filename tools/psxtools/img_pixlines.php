@@ -23,7 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'class-pixlines.inc';
 
-function pjoint( &$pix, $pos )
+function pjoint( &$grid, $pos )
 {
 	if ( strpos($pos, ',') === false )
 		return;
@@ -32,22 +32,21 @@ function pjoint( &$pix, $pos )
 	switch ( count($pos) )
 	{
 		case 2: // x,y
-			return $pix->addpoint($pos, "\x0e");
+			return $grid->addpoint($pos, "\x0e");
 		case 4: // x1,y1,x2,y2
-			return $pix->addline ($pos, "\x0e");
+			return $grid->addline ($pos, "\x0e");
 		case 8: // x1,y1,x2,y2,x3,y3,x4,y4
-			return $pix->addquad ($pos, "\x0e");
+			return $grid->addquad ($pos, "\x0e");
 	} // switch ( count($pos) )
 	return;
 }
 
-$pix = new pixel_lines;
+$grid = new pixel_lines;
 
-$pix->new();
 for ( $i=1; $i < $argc; $i++ )
-	pjoint( $pix, $argv[$i] );
+	pjoint( $grid, $argv[$i] );
 
-$img = $pix->draw();
+$img = $grid->draw();
 save_clutfile('pixlines.clut', $img);
 
 /*

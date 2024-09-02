@@ -280,3 +280,244 @@
 		Wind  69 Camael
 		Pyro  80 Lucifer
 	if no effect, use Fiend Demons
+
+==================================================================
+== Shin Megami Tensei III - Nocturne Maniax - Chronicle Edition ==
+==================================================================
+MAP
+	Shinjuka Medical Center
+		Room B-204  Fiend Black Rider
+	Shibuya
+		B1F  Cathedral of Shadows = unlock 2 Demon Fusion
+		Crossroad   Defeat Mara on FULL = MUSPELL
+	Ginza
+		B1F  Cathedral of Shadows = unlock 3 Demon Fusion on FULL (2 Demon + 1 Sacrifice)
+	Great Underpass of Ginza
+		B1F  Fiend Metador
+		B2F  Fiend Red Rider
+	Ikebukuro
+		B1F  Cathedral of Shadows = unlock Demon Compendium
+		B1F  Fiend Daisoujou
+		Mantra HQ
+			B1F  Heavy Door/require 25 STR = GAIA
+			64F  Gozu-Tennoh = +2 Demon Slots (10)
+	Kabukicho Prison
+		5F  Defeat Black Jack Frost = SATAN
+	Ikebukuro Tunnel
+		B2F  Defeat Kin-Ki/Sui-Ki/Fuu-Ki + Ongyo-Ki = MURAKUMO
+	Asakusa
+		B1F-2  Puzzle Boy Game/20 levels = GEIS
+		1F   Fiend White Rider
+		B1F  Fiend Pale Rider
+		Northern Temple/require Kimon Stone
+			Defeat of Bishamonten = GUNDARI
+	Mifunshiro
+		3F-C  REASON Yosuga
+	Assembly of Nihilo : Marunouchi
+		Obelisk
+			142F  Aradia = +2 Demon Slots (12)
+			150F  -> Tower of Kagutsuchi
+		Masakado Grave/require Lord's Sword
+			-> Bandou Shrine
+			Defeat 4 Kishin kings = MASAKADUS
+				Zouchouten   -            Weak Force
+				Koumokuten   Repel Force  Weak Elec
+				Jikokuten    Repel Ice    Weak Fire
+				Bishamonten  Repel Fire   Weak Ice
+	Yoyogi Park
+		West Courtyard  Fiend Harlot
+	Amala Temple
+		1F   REASON Musubi
+	Yurakucho Station
+		B1F  Fiend Trumpeter
+		B2F  Digging/require 1 demon = Kimon Stone
+	Diet Building
+		6F   REASON Shijima
+	Tower of Kagutsuchi
+		ENDING LOCKED = Labyrinth of Amala/Kalpa events stopped
+			175F=1  302F=2  402F=3
+		223F  Shijima BOSS Ahriman
+		329F  Musubi  BOSS Noah
+		402F  Shop = KAILASH , final Magatama
+			-> can start Bandou Shrine quest
+		418F  BOSS Kishin Thor
+			-> can 100% Demon Compendium
+		462F  Yosuga  BOSS Baal Avatar
+		666F  FINAL   BOSS Kagutsuchi (+ Lucifer)
+	Labyrinth of Amala
+		2th Kalpa  Cursed Zone/defeated Beelzebub at 4th Kalpa
+			-> Ginza bar
+			-> Asakusa Collector Shop = Moon Key
+		3rd Kalpa
+			B2F  require SATAN = join/unlock Night Black Frost
+		4th Kalpa
+			0  Hell Hall = BOSS Tyrant Beelzebub
+			1 3 5 7
+			2 6  Hell Maze (5x5) , center = EXIT/soul
+				-> Zoshigaya Cementery = Afterlife Bell
+				-> Hell Maze/NW old soul + SE young soul
+				-> any peephole = unlock Kishin Futomimi + Foul Sakahagi
+			4 8  Hell Vault
+		5th Kalpa
+			1F  join/PERMENANT Kuzunoha Raidou the XIV
+			LOCKED True Demon ending
+
+Magatama
+	c - l l c - - l
+	c c l - l - c -
+	l c l - c l c -
+	ULT
+
+	8 Black   Chaos    MAROGAREH , ...
+	8 Green   Neutral  WADATSUMI , ...
+	8 White   Law      ANKH      , ...
+	1 Orange  Neutral  MASAKADUS
+
+	Mastered Law >  Chaos = Open LAW     door
+	Mastered Law <  Chaos = Open CHAOS   door
+	Mastered Law == Chaos = Open NEUTRAL door
+
+	Cathedral of Shadows
+		reached Ginza         = Sacrific Fusion
+		reached Ikeburo       = Demon Compendium
+		get all 24 Magatama   = Lord's Sword
+		100% Demon Compendium = half price all demon summons
+
+
+	-----------    7 11 15 20 |
+	6=20 Holy     -- -- -- ++ | 13 21 36 43 55           [27]
+	9=15 Yoma     -- ++ ++ -- |  8 14 19 23 37 44 48     [28 52]
+	9=11 Fairy    ++ -- ++ -- |  2  7 19 26 38 43 46 57  [10]
+	7=11 Divine   -- -- ++ ++ | 11 18 28 33 41 50 64
+	6=7  Fallen   -- ++ -- ++ | 20 29 37 45 58 68
+	6=15 Snake    -- -- ++ ++ | 14 28 34 55 66           [37]
+	6=11 Beast    -- ++ -- ++ | 13 18 23 34 54 61
+	6=7  Jirae    ++ ++ -- -- |  3  5 13 35 49 55
+	9=7  Brute    ++ -- ++ ++ |  4 20 25 44 54           [59 62 66 81]
+	9=15 Femme    ++ -- ++ ++ |  7 20 32 43 52 72        [58 63 67]
+	a=7  Night    -- ++ -- -- |  8 18 25 37 53 70        [47 56 66 80]
+	6=11 Wilder   -- -- ++ ++ |  6 15 25 31 43 75
+	5=20 Seraph   ============|                          [73 84 87 90 95]
+
+	4=vv Element  ============|  7 11 15 20
+	4=-  Mitama   ============| 25 29 32 35
+
+	6=-  Deity    -- -- -- -- | 38 47 65 78 93           [56]
+	5=-  Megami   -- -- -- -- | 18 30 48 54 64
+	4=-  Fury     -- -- -- -- | 44 61                    [54 95]
+	5=-  Lady     ++ -- -- -- | 24 41 67                 [57 74]
+	9=-  Kishin   ++ -- -- -- | 17 27 33 39 45 52        [63 72 76]
+	7=-  Vile     -- -- -- -- | 33 45 65 83              [30 58 73]
+	7=-  Tyrant   -- -- -- -- | 52 69                    [74 77 84 91 95]
+	7=-  Haunt    -- ++ -- -- |  4 11 17 20 28 49 63
+	8=-  Foul     -- -- ++ -- |  1  6  7 16 28 42 52     [45]
+	2=-  Wargod   ============|                          [33 58]
+	3=-  Genma    ============|                          [38 46 52]
+	2=-  Dragon   ============|                          [30 44]
+	4=-  Avatar   ============| 26 46 60                 [22]
+	1=-  Avian    ============|                          [63]
+	1=-  Raptor   ============|                          [63]
+	1=-  Entity   ============|                          [64]
+	9=-  Fiend    ============|                          [30 37 42 52 55 61 63 69 77]
+
+
+	Megami = Holy   + Fairy , Fairy  + Divine , Seraph + Yoma , Seraph + Divine
+	Lady   = Holy   + Femme , Seraph + Fallen
+	Kishin = Holy   + Snake , Snake  + Femme  , Brute  + Night
+	Vile   = Divine + Fallen
+	Haunt  = Fairy  + Femme , Fallen + Night
+	Foul   = Beast  + Femme , Jirae  + Night
+	Avatar = Holy   + Beast
+
+	Deity  = Seraph + Megami
+		Fury + Megami/Divine/Tyrant , Wargod + Megami
+	Fury   = Vile + Megami , Lady + Megami/Kishin/Fallen/Brute
+		Vile + Tyrant
+	Tyrant = Fury + Vile
+		Raptor + Deity/Megami/Fury/Kishin
+
+	Yoma   = Fairy + Jirae , Fairy + Wilder
+	Fairy  = Brute + Jirae , Brute + Wilder
+	Divine = Yoma  + Night , Fairy + Beast
+	Beast  = Yoma  + Jirae , Yoma  + Wilder
+	Night  = Fairy + Brute
+
+	Deathstone Fusion
+		result Yoma   in phase 0/White Rider , 1-4/Metador
+		result Fairy  in phase 0/Red Rider   , 4-7/Hell Biker
+		result Night  in phase 0/Black Rider , 5-8/Daisoujou
+		result Tyrant in phase 0/Pale Rider  , 4/Harlot , 8/Trumpeter
+	phase 0=Silent/New , 4=Half , 8=Full
+
+	Special Fusion
+		Seraph 84 Raphael   = Seraph 73 Uriel      + Divine 50 Dominion
+		Seraph 87 Gabriel   = Seraph 84 Raphael    + Divine 64 Throne
+		Fury   95 Shiva     = Avatar 60 Barong     + Femme  72 Rangda
+		Deity  56 Amaterasu = Avatar 46 Yatagarasu + Kishin 45 Mikazuchi + Megami 18 Uzume
+		Brute  81 Ongyo-Ki  = Brute  59 Kin-Ki     + Brute  62 Sui-Ki    + Brute  66 Fuu-Ki
+		Seraph 90 Michael   = Seraph 73 Uriel      + Seraph 84 Raphael   + Seraph 87 Gabriel
+
+		Vile   58 Girimehkala = ->Yoma   48 Purski + Vile
+		Raptor 63 Gurr        = ->Beast  54 Sparna + Tyrant
+		Vile   73 Samael      = ->Divine 64 Throne + Vile
+
+		Seraph 95 Metatron    = Seraph 90 Michael + Divine/Seraph + Tyrant
+
+	Yoma   48 Purski   -> Wargod 58 Ganesha
+	Yoma   44 Jinn     -> Yoma   52 Efreet
+	Yoma   37 Onkot    -> Genma  46 Hanuman     -> Fury  54 Wu Kong
+	Yoma   23 Dis      -> Wargod 33 Valkyrie
+	Yoma   19 Koppa    -> Yoma   28 Karasu      -> Genma 38 Kurama
+	Fairy  43 Setanta  -> Genma  52 Cu Chulainn
+	Fairy   2 Pixie    -> Fairy  10 High Pixie  -> Night 56 Queen Mab
+	Divine 64 Throne   -> Seraph 73 Uriel/BOSS
+	Snake  34 Mizuchi  -> Dragon 44 Long
+	Snake  28 Naga     -> Snake  37 Raja Naga
+	Snake  14 Nozuchi  -> Dragon 24 Gui Xian
+	Beast  54 Sparna   -> Avian  63 Garuda
+	Beast  18 Nekomata -> Holy   27 Senri
+	Beast  13 Inugami  -> Avatar 22 Makami
+	Jirae  55 Gogmagog -> Entity 64 Albion/BOSS
+	Brute  20 Momunofu -> Vile   30 Arahabaki
+	Night   8 Lilim    -> Night  80 Lilith
+
+	Megami 64 Scathach  -> Lady   74 Skadi/BOSS
+	Megami 48 Sati      -> Lady   57 Parvati
+	Tyrant 84 Beezlebub -> Tyrant 95 Beezlebub/BOSS
+	Tyrant 69 Abaddon   -> Tyrant 77 Aciel/BOSS
+
+
+	# https://megamitensei.fandom.com/wiki/List_of_Shin_Megami_Tensei_III:_Nocturne_Skills
+	Ice   = damage + Freeze
+	Elec  = damage + Shock
+	Death = damage + Stone
+	Curse = damage + Poison/Mute/Fly
+	Nerve = damage + Stun/Bind
+	Mind  = damage + Sleep/Charm/Panic
+	Ailments = Freeze + Shock + Poison/Mute/Fly + Stun/Bind + Sleep/Charm/Panic
+
+	7     Fiend  69 Harlot       Repel Phys  Drain Elec  Null Expel/Death/Curse/Mind/Nerve
+	5     Fiend  37 Daisoujou    Repel Expel/Death  Drain Curse/Mind  Null Nerve
+	4+1   Night  66 Black Frost  Repel Fire/Death  Drain Ice  Null Expel  Resist Phys
+	4     Seraph 87 Gabriel      Repel Expel  Null Fire/Elec/Force
+	4  -1 Brute  81 Ongyo-Ki     Null Phys/Death/Curse/Mind                            Weak Expel
+	4  -1 Tyrant 74 Surt         Drain Fire  Null Death/Nerve/Mind                     Weak Ice
+
+	5     Fiend  55 Red Rider    Null Elec/Force/Expel/Death/Ailment
+	5     Fiend  42 Hell Biker   Drain Force  Null Fire/Expel/Death/Ailment
+	4     Fiend  63 Pale Rider   Null Ice/Expel/Death/Ailment
+	4     Fiend  61 Black Rider  Drain Ice  Null Expel/Death/Ailment
+	4     Fiend  52 White Rider  Null Fire/Expel/Death/Ailment
+	4     Fiend  30 Metador      Null Force/Expel/Death/Ailment
+	3+1   Kishin 63 Futomimi     Null Expel/Death/Ailment                 Resist Phys
+	3     Seraph 95 Metatron     Null Expel/Death/Ailment
+	3     Tyrant 95 Beelzebub    Repel Expel/Death  Null Ailment
+	3     Tyrant 84 Beelzebub    Repel Expel/Death  Null Ailment
+	3     Fiend  77 Trumpeter    Null Expel/Death/Ailment
+	3     Foul   45 Sakahagi     Null Expel/Death/Ailment
+	3     Mitama any             Null Expel/Death/Ailment
+	3  -1 Tyrant 91 Mot          Null Expel/Death/Ailment                              Weak Elec
+
+	4  -x Vile   30 Arahabaki    Repel Ice  Null Phys/Expel/Death                      Weak magic
+	x     Seraph 90 Michael      Repel Expel  Null magic
+	x  -1 Snake  66 Yurlunger    Null magic                                            Weak Ailment

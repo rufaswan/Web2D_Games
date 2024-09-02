@@ -139,7 +139,7 @@ function s6s4_lines( $dir )
 		printf("s6[%d].flags  %s\n", $s6k, $s6v['bits']);
 
 		$fn = sprintf('%s/%04d.clut', $dir, $s6k);
-		$grid->new();
+		$grid->clear();
 
 		for ( $i=0; $i < $s6v['s4'][1]; $i++ )
 		{
@@ -171,6 +171,44 @@ function s6s4_lines( $dir )
 
 	$txt = ob_get_clean();
 	save_file("$dir/pixlines.txt", $txt);
+	return;
+}
+
+function texsrc_lines( $dir )
+{
+	$tex = array();
+	global $gp_json;
+
+	foreach ( $gp_json['s4'] as $s4k => $s4v )
+	{
+		$tid = $s4v['tex'];
+		if ( ! isset($tex[$tid]) )
+			$tex[$tid] = new pixel_lines;
+
+		$s1k = $s4v['s0s1s2'][1];
+		$s1v = $gp_json['s1'][$s1k];
+
+		$tex[$tid]->addquad($s1v, "\x0e");
+	} // foreach ( $gp_json['s4'] as $s4k => $s4v )
+
+	foreach ( $tex as $tk => $tv )
+	{
+		$img = $tv->draw();
+
+		$pix = '';
+		for ( $y=0; $y < $img['hh']; $y++ )
+		{
+			$dy = ($img['hh'] + $y) * $img['w'];
+			$dx = $dy + $img['hw'];
+			$pix .= substr($img['pix'], $dx, $img['hw']);
+		}
+		$img['w'] = $img['hw'];
+		$img['h'] = $img['hh'];
+		$img['pix'] = $pix;
+
+		$fn = sprintf('%s/tex.%d.clut', $dir, $tk);
+		save_clutfile($fn, $img);
+	} // foreach ( $tex as $tk => $tv )
 	return;
 }
 
@@ -558,7 +596,7 @@ function vanilla_blendmode( $tag )
 			$b = blend_modes('normal');
 			list_add($blend, 0, $b);
 			return $blend;
-	} // switch ( $cons )
+	} // switch ( $tag )
 
 	return $blend;
 }
@@ -577,23 +615,23 @@ function vanilla( $line, $fname )
 
 	$quad = load_idtagfile( $gp_json['id3'] );
 	$quad['blend'] = vanilla_blendmode( $gp_json['tag'] );
-	if ( $line )
-		s6s4_lines($dir);
 
+	if ( $line & 1 )  s6s4_lines($dir);
+	if ( $line & 2 )  texsrc_lines($dir);
 	s6_loop($quad);
-	$sa = sas8_loop();
 
+	$sa = sas8_loop();
 	q3D_sas8s9_loop($sa, $quad);
 
 	save_quadfile($fname, $quad);
 	return;
 }
 
-$line = false;
+$line = 0;
 for ( $i=1; $i < $argc; $i++ )
 {
 	if ( is_file($argv[$i]) )
 		vanilla( $line, $argv[$i] );
 	else
-		$line = $argv[$i];
+		$line = (int)$argv[$i];
 }

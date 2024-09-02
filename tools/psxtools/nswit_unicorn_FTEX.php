@@ -414,7 +414,7 @@ unicorn overlord
 		FontDigi.ftx
 		Font.ftx
 
-grim grimoire once again
+grim grimoire once more
 	49  im_bc4
 		Font.ftx
 		Font_Spell.ftx

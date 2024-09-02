@@ -122,15 +122,25 @@ function anim_allkeys( &$quad )
 		$quad['animation'] = array();
 
 	$time = array();
+	$rep  = 0;
 	foreach ( $quad['keyframe'] as $kk => $kv )
 	{
 		if ( empty($kv) )
-			continue;
-		$en = array(
-			'time'   => 1,
-			'attach' => quad_attach('keyframe',$kk),
-		);
-		$time[] = $en;
+			$rep++;
+		else
+		{
+			if ( $rep > 0 )
+			{
+				$time[] = array('time' => $rep);
+				$rep = 0;
+			}
+
+			$en = array(
+				'time'   => 1,
+				'attach' => quad_attach('keyframe',$kk),
+			);
+			$time[] = $en;
+		}
 	} // foreach ( $quad['keyframe'] as $kk => $kv )
 
 	$anim = array(
