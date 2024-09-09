@@ -121,26 +121,33 @@ function anim_allkeys( &$quad )
 	if ( ! isset( $quad['animation'] ) )
 		$quad['animation'] = array();
 
+	// to keep export the same numbering
 	$time = array();
 	$rep  = 0;
 	foreach ( $quad['keyframe'] as $kk => $kv )
 	{
-		if ( empty($kv) )
-			$rep++;
-		else
+		if ( ! isset($kv['layer']) )
 		{
-			if ( $rep > 0 )
-			{
-				$time[] = array('time' => $rep);
-				$rep = 0;
-			}
-
-			$en = array(
-				'time'   => 1,
-				'attach' => quad_attach('keyframe',$kk),
-			);
-			$time[] = $en;
+			$rep++;
+			continue;
 		}
+		if ( count($kv['layer']) === 1 && empty($kv['layer'][0]) )
+		{
+			$rep++;
+			continue;
+		}
+
+		if ( $rep > 0 )
+		{
+			$time[] = array('time' => $rep);
+			$rep = 0;
+		}
+
+		$en = array(
+			'time'   => 1,
+			'attach' => quad_attach('keyframe',$kk),
+		);
+		$time[] = $en;
 	} // foreach ( $quad['keyframe'] as $kk => $kv )
 
 	$anim = array(

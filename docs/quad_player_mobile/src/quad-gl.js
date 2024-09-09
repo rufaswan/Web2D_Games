@@ -288,12 +288,19 @@ function QuadGL(Q){
 	//////////////////////////////
 
 	$.create_texture = function(){
+		// BUG
+		//   https://github.com/rufaswan/Web2D_Games/issues/21
+		//   many animations have 1 pixel-wide seams, or extra pixels appearing on the edge of fully transparent parts of a quad
+		// FIX
+		//   https://www.khronos.org/opengl/wiki/Sampler_Object
+		//   If __.GL.NEAREST is used, the implementation will select the texel nearest the texture coordinate; this is commonly called "point sampling".
+		//   If __.GL.LINEAR  is used, the implementation will perform a weighted linear blend between the nearest adjacent samples.
 		var tex = __.GL.createTexture();
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
 		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
 		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.NEAREST);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.NEAREST);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.LINEAR);
+		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
 		return tex;
 	}
 

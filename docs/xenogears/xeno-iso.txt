@@ -1008,6 +1008,18 @@ SLPS 011.60 JP disc 1 [3771]
 	2612  [4]
 		2613  seds
 		2614  [PAK-LZ] Data
+			.0
+			.1  Battle UI (mix 4-bpp and 8-bpp)
+			.2  Items
+			.3
+			.4  - .14  Char Skill + Spell
+			.15
+			.16 - .32  Gear Skill + Spell
+			.33
+			.34
+			.35
+			.36  Char Weapons
+			.37
 		2615  [OVER]
 		2616  smds/midi data
 	2617  Enemies [152] [76 pairs]

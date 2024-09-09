@@ -27,7 +27,7 @@ if [ -f src/mame/neogeo/neogeo.cpp ]; then
 	)
 
 	make clean
-	"${make[@]}"  SUBTARGET=capsnk  SOURCES=$(IFS=$','; echo ${src[*]})
+	"${make[@]}"  SUBTARGET=capsnk  SOURCES=$(IFS=\,; echo "${src[*]}")
 	exit
 fi
 
@@ -41,7 +41,7 @@ if [ -f src/mame/drivers/neogeo.cpp ]; then
 	)
 
 	make clean
-	"${make[@]}"  SUBTARGET=capsnk  SOURCES=$(IFS=$','; echo ${src[*]})
+	"${make[@]}"  SUBTARGET=capsnk  SOURCES=$(IFS=\,; echo "${src[*]}")
 	exit
 fi
 
@@ -55,7 +55,7 @@ if [ -f src/mame/drivers/neogeo.c ]; then
 	)
 
 	make clean
-	"${make[@]}"  SUBTARGET=capsnk  SOURCES=$(IFS=$','; echo ${src[*]})
+	"${make[@]}"  SUBTARGET=capsnk  SOURCES=$(IFS=\,; echo "${src[*]}")
 	exit
 fi
 
