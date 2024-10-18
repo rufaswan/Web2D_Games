@@ -158,11 +158,14 @@ ul {
 	top             : 0;
 	left            : 0;
 	flex-direction  : row;
-	flex-wrap       : nowrap;
+	flex-wrap       : wrap;
 	justify-content : space-between;
 	align-items     : center;
 	align-content   : flex-start;
-	overflow        : scroll hidden;
+}
+#viewer_top_nav nav {
+	flex       : 0 0 100%;
+	text-align : right;
 }
 #viewer_bottom_nav {
 	bottom          : 0;
@@ -403,13 +406,13 @@ APP.viewer_btn_menu = function( qdata ){
 	APP.html.btn_hitattr.style.display = 'none';
 	APP.html.hitattr_list.innerHTML = '';
 	if ( qdata.quad.hitbox.length > 0 )
-		APP.html.btn_hitattr.style.display = 'block';
+		APP.html.btn_hitattr.style.display = '';
 
 	APP.html.btn_keyattr.style.display = 'none';
 	APP.html.keyattr_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
 		qdata.keyattr = -1;
-		APP.html.btn_keyattr.style.display = 'block';
+		APP.html.btn_keyattr.style.display = '';
 		var buffer = '';
 		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
 			var mask = 1 << ek;
@@ -423,7 +426,7 @@ APP.viewer_btn_menu = function( qdata ){
 	APP.html.colorize_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.colorize.length > 0 ){
 		qdata.colorize = [];
-		APP.html.btn_colorize.style.display = 'block';
+		APP.html.btn_colorize.style.display = '';
 		var buffer = '';
 		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
 			var mask = 1 << ck;
@@ -831,26 +834,34 @@ var QUAD = {};
 
 	//////////////////////////////
 
-	$.create_texture = function(){
-		// BUG
-		//   https://github.com/rufaswan/Web2D_Games/issues/21
-		//   many animations have 1 pixel-wide seams, or extra pixels appearing on the edge of fully transparent parts of a quad
-		// FIX
-		//   https://www.khronos.org/opengl/wiki/Sampler_Object
-		//   If __.GL.NEAREST is used, the implementation will select the texel nearest the texture coordinate; this is commonly called "point sampling".
-		//   If __.GL.LINEAR  is used, the implementation will perform a weighted linear blend between the nearest adjacent samples.
+	$.create_texture = function( pow2=true ){
 		var tex = __.GL.createTexture();
-		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.LINEAR);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
+		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
+		if ( pow2 ){
+			// power of 2 textures defaults + mipmap support
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.REPEAT);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.REPEAT);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.NEAREST_MIPMAP_LINEAR);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
+		} else {
+			// BUG
+			//   https://github.com/rufaswan/Web2D_Games/issues/21
+			//   many animations have 1 pixel-wide seams, or extra pixels appearing on the edge of fully transparent parts of a quad
+			// FIX
+			//   https://www.khronos.org/opengl/wiki/Sampler_Object
+			//   If __.GL.NEAREST is used, the implementation will select the texel nearest the texture coordinate; this is commonly called "point sampling".
+			//   If __.GL.LINEAR  is used, the implementation will perform a weighted linear blend between the nearest adjacent samples.
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.LINEAR);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
+		}
 		return tex;
 	}
 
 	$.update_texture = function( tex, img ){
 		if ( ! tex )
-			tex = $.create_texture();
+			return Q.func.error('update_texture() has no tex');
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 		__.GL.texImage2D(
 			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level , internalformat
@@ -858,21 +869,24 @@ var QUAD = {};
 		img);
 	}
 
-	$.create_pixel = function( hex, w=1, h=1 ){
-		hex = Q.math.clamp(hex, 0, 255) | 0;
-		if ( w < 0 )  w = __.MAX_TEX_SIZE;
-		if ( h < 0 )  h = __.MAX_TEX_SIZE;
-
-		var size  = w * h * 4;
-		var uint8 = new Uint8Array(size);
-		for ( var i=0; i < size; i++ )
-			uint8[i] = hex;
-
+	$.create_vram = function( rgb , alp ){
+		rgb = Q.math.clamp(rgb, 0, 255) | 0;
+		alp = Q.math.clamp(alp, 0, 255) | 0;
 		var pix = {
-			w : w ,
-			h : h ,
-			tex : $.create_texture() ,
+			w : __.MAX_TEX_SIZE ,
+			h : __.MAX_TEX_SIZE ,
+			tex : $.create_texture(1) ,
 		};
+
+		var size  = pix.w * pix.h * 4;
+		var uint8 = new Uint8Array(size);
+		for ( var i=0; i < size; i += 4 ){
+			uint8[i+0] = rgb;
+			uint8[i+1] = rgb;
+			uint8[i+2] = rgb;
+			uint8[i+3] = alp;
+		}
+
 		__.GL.bindTexture(__.GL.TEXTURE_2D, pix.tex);
 		__.GL.texImage2D(
 			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level  , internalformat
@@ -880,6 +894,7 @@ var QUAD = {};
 			__.GL.RGBA       , __.GL.UNSIGNED_BYTE , // format , type
 			uint8
 		);
+		__.GL.generateMipmap(__.GL.TEXTURE_2D);
 		return pix;
 	}
 
@@ -996,10 +1011,12 @@ var QUAD = {};
 	}
 
 	$.detect_max_texsize = function(){
-		var tex = $.create_texture();
+		var tex = $.create_texture(0);
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 
 		var maxsz = __.GL.getParameter( __.GL.MAX_TEXTURE_SIZE ) >> 1;
+		while ( ! Q.math.is_int_pow2(maxsz) )
+			maxsz--;
 		var bw = __.GL.canvas.width;
 		var bh = __.GL.canvas.height;
 
@@ -1299,7 +1316,6 @@ var QUAD = {};
 
 			case 'image':
 				return new Promise(function(ok,err){
-					var dummytex = Q.gl.create_pixel(255);
 					var fnm = fname.match(/\.([0-9]+)\./);
 					var tid = fnm[1];
 
@@ -1312,7 +1328,7 @@ var QUAD = {};
 					var tid = res[0];
 					var img = res[1];
 
-					var tex = Q.gl.create_texture();
+					var tex = Q.gl.create_texture(0);
 					Q.gl.update_texture(tex, img);
 					return [tid,tex,img.width,img.height];
 				}).then(function(res){
@@ -2255,6 +2271,7 @@ var QUAD = {};
 	}
 
 	$.perspective_quad = function( dst ){
+		// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
 		// matrix * SRC = DST
 		//       matrix = DST * SRC_inv
 		//          SRC = matrix_inv * DST
@@ -2337,6 +2354,7 @@ var QUAD = {};
 		for ( var i=0; i < 4; i += 2 ){
 			var x = rect[i+0];
 			var y = rect[i+1];
+			//         x           y           z=1       w=1
 			xy2[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
 			xy2[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
 		}
@@ -2349,6 +2367,7 @@ var QUAD = {};
 		for ( var i=0; i < 8; i += 2 ){
 			var x = quad[i+0];
 			var y = quad[i+1];
+			//         x           y           z=1       w=1
 			xy4[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
 			xy4[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
 		}
@@ -3136,7 +3155,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2024-9-9 (beta)';
+	$.version = 'ver 2024-9-27 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3156,7 +3175,7 @@ function QuadData(qlist){
 	$.name = '';
 	$.quad  = {};
 	$.image = []; // { pos:rect , name:string }
-	$.vram  = QUAD.gl.create_pixel(255,-1,-1); // white texture
+	$.vram  = QUAD.gl.create_vram(255,255); // white solid texture
 
 	// activated data
 	$.is_wait  = true;
@@ -3229,39 +3248,42 @@ function QuadData(qlist){
 	<div id='viewer_xline'></div>
 	<div id='viewer_yline'></div>
 	<canvas id='canvas'>Canvas not supported</canvas>
-	<p id='viewer_top_nav'>
+	<nav id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
 		<button id='btn_lines'>line</button>
 
-		<button id='btn_hitattr'  class='btn_on' title='hitbox layers'>hits</button>
-		<button id='btn_keyattr'  title='keyframe layers' >keys</button>
-		<button id='btn_colorize' title='custom colors'>color</button>
+		<button id='btn_ellip'>&vellip;</button>
+		<nav class='hidden'>
+			<button id='btn_hitattr'  class='btn_on' title='hitbox layers'>hits</button>
+			<button id='btn_keyattr'  title='keyframe layers' >keys</button>
+			<button id='btn_colorize' title='custom colors'>color</button>
 
-		<button id='btn_flipx' class='btn_off'>X</button>
-		<button id='btn_flipy' class='btn_off'>Y</button>
-		<button id='btn_autozoom' class='btn_on' title='autozoom'>zoom</button>
-	</p>
-	<p id='viewer_bottom_nav'>
+			<button id='btn_flipx' class='btn_off'>X</button>
+			<button id='btn_flipy' class='btn_off'>Y</button>
+			<button id='btn_autozoom' class='btn_on' title='autozoom'>zoom</button>
+		</nav>
+	</nav>
+	<nav id='viewer_bottom_nav'>
 		<button id='btn_prev'>&lt;&lt;</button>
 
 		<button id='btn_autonext'>auto</button>
 		<button id='btn_cur'>0</button>
 
 		<button id='btn_next'>&gt;&gt;</button>
-	</p>
+	</nav>
 
-	<div id='colorize_menu'>
+	<nav id='colorize_menu'>
 		<p><button onclick='button_close(this);'>close</button> Colorize Menu</p>
 		<p id='colorize_list'></p>
-	</div>
-	<div id='keyattr_menu'>
+	</nav>
+	<nav id='keyattr_menu'>
 		<p><button onclick='button_close(this);'>close</button> Keyframe Attribute Menu</p>
 		<p id='keyattr_list'></p>
-	</div>
-	<div id='hitattr_menu'>
+	</nav>
+	<nav id='hitattr_menu'>
 		<p><button onclick='button_close(this);'>close</button> Hitbox Attribute Menu</p>
 		<p id='hitattr_list'></p>
-	</div>
+	</nav>
 </div>
 
 <script>
@@ -3370,6 +3392,14 @@ APP.QuadList      = [];
 			APP.html.viewer_bottom_nav.style.display = 'flex';
 		}
 		APP.is_viewer_nav = ! APP.is_viewer_nav;
+	});
+	APP.html.btn_ellip.addEventListener('click', function(){
+		var nav = APP.html.viewer_top_nav.getElementsByTagName('nav');
+		if ( nav[0].classList.contains('hidden') )
+			nav[0].classList.remove('hidden');
+		else
+			nav[0].classList.add('hidden');
+		console.log(nav[0]);
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
 		if ( ! APP.QuadList[0] )

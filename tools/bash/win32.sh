@@ -47,7 +47,7 @@ export       HOME="/tmp/home-dummy"
 
 # wineconsole cmd.bat
 # wine cmd /c cmd.bat
-#winecmd="$nice wineconsole"
+#winecmd='wineconsole'
 winecmd='wine cmd /c'
 
 # virtual desktop setting
@@ -56,16 +56,17 @@ desksize='900x600'
     desk="explorer /desktop=$WINEARCH-$deskid,$desksize"
 ########################################
 function mouselock {
+	reg='/tmp/mouselock.reg'
 	echo 'Mouse Lock'
-	cat << _REG  > /tmp/wine.reg
+	cat << _REG  > $reg
 REGEDIT4
 
 [HKEY_CURRENT_USER\\Software\\Wine\\DirectInput]
 "MouseWarpOverride"="force"
 
 _REG
-	regedit /tmp/mouselock.reg
-	rm /tmp/mouselock.reg
+	regedit  $reg
+	rm       $reg
 }
 function symblink {
 	[ -e "$1" ] || return 1  # no target
@@ -88,68 +89,89 @@ if [ $# = 0 ]; then
 	wineserver -k
 else
 	while [ "$1" ]; do
-		t1=./"${1%/}"
-		tit="${t1%.*}"
-		ext="${t1##*.}"
+		t1="${1%/}"
 		shift
 
+		# handle file
 		if [ -f "$t1" ]; then
+			BAKDIR="$PWD"
+			cd "$(dirname -- "$t1")"
+
+			# sp handle = ./-filename.exe
+			t1=./"$(basename -- "$t1")"
+
+			tit="${t1%.*}"
+			ext="${t1##*.}"
 			case "$ext" in
-				'exe' | 'EXE')  $nice  wine  $desk "$t1" "$@"; shift $#;;
-				'bat' | 'BAT')  $nice  $winecmd  "$t1";;
-				'reg' | 'REG')  regedit    "$t1";;
-				'msi' | 'MSI')  msiexec /i "$t1";;
+				'exe' | 'EXE')  $nice  wine  $desk  "$t1" "$@"; shift $#;;
+				'bat' | 'BAT')  $nice  $winecmd     "$t1" "$@"; shift $#;;
+				'reg' | 'REG')  regedit     "$t1";;
+				'msi' | 'MSI')  msiexec /i  "$t1";;
 			esac
-		else
-			case "${t1:2}" in
-				'-k' | '-kill')   wineserver -k;;
-				'-h' | '-help')   wine --help;;
-				'-V' | '-ver')    wine --version;;
 
-				'-desk' | '-size' | '-s')
-					desksize="$1"
-					shift
-					desk="explorer /desktop=wine-$deskid,$desksize";;
-				'-nodesk' | '-quiet' | '-q')
-					desk='';;
-
-				'-path')
-					case "$1" in
-						*'/'*)   winepath --windows "$1";; #  dos2unix
-						*'\\'*)  winepath --unix    "$1";; # unix2dos
-					esac
-					shift;;
-
-				'-cmd' | '-bat')     $nice  $winecmd  "$@"; shift $#;;
-				'-reg' | 'regedit')  regedit;;
-				'-txt' | 'notepad')  notepad;;
-
-				'-sjis')
-					sjis='/usr/share/i18n/charmaps/SHIFT_JIS.gz'
-					if [ -f "$sjis" ]; then
-						mkdir -p '/tmp/sjisdef'
-						localedef -c -f SHIFT_JIS -i ja_JP '/tmp/sjisdef/ja_JP.SJIS'
-						export LOCPATH='/tmp/sjisdef'
-						export LANG='ja_JP.SJIS'
-					else
-						echo "NOT FOUND : $sjis"
-						echo "REQUIRED : locales_*_all.deb"
-					fi
-					;;
-
-				'-cfg')     winecfg;;
-				'-file')    winefile;;
-				'-server')  wineserver;;
-				'-boot')    wineboot -h;;
-				'-msi')     msiexec /h;;
-				'-uninst')  uninstaller;;
-				'-ctrl')    control;;
-
-				'-mouselock')   mouselock;;
-
-				*)  shift $#;;
-			esac
+			cd "$BAKDIR"
+			continue
 		fi
+
+		# parse options
+		case "$t1" in
+			'-k' | '-kill')   wineserver -k;;
+			'-h' | '-help')   wine --help;;
+			'-V' | '-ver')    wine --version;;
+
+			'-desk' | '-size' | '-s')
+				desksize="$1"
+				shift
+				desk="explorer /desktop=wine-$deskid,$desksize";;
+			'-nodesk' | '-quiet' | '-q')
+				desk='';;
+
+			'-path')
+				case "$1" in
+					*'/'*)   winepath --windows "$1";; #  dos2unix
+					*'\\'*)  winepath --unix    "$1";; # unix2dos
+				esac
+				shift;;
+
+			'-sjis')
+				sjis='/usr/share/i18n/charmaps/SHIFT_JIS.gz'
+				if [ -f "$sjis" ]; then
+					mkdir -p '/tmp/sjisdef'
+					localedef -c -f SHIFT_JIS -i ja_JP '/tmp/sjisdef/ja_JP.SJIS'
+					export LOCPATH='/tmp/sjisdef'
+					export LANG='ja_JP.SJIS'
+				else
+					echo "NOT FOUND : $sjis"
+					echo "REQUIRED : locales_*_all.deb"
+				fi
+				;;
+			'-ms932')
+				ms932='/usr/share/i18n/charmaps/WINDOWS-31J.gz'
+				if [ -f "$ms932" ]; then
+					mkdir -p '/tmp/ms932def'
+					localedef -c -f WINDOWS-31J -i ja_JP '/tmp/ms932def/ja_JP.MS932'
+					export LOCPATH='/tmp/ms932def'
+					export LANG='ja_JP.MS932'
+				else
+					echo "NOT FOUND : $ms932"
+					echo "REQUIRED : locales_*_all.deb"
+				fi
+				;;
+
+			'-reg' | 'regedit')  regedit;;
+			'-txt' | 'notepad')  notepad;;
+			'-cfg'   )  winecfg;;
+			'-file'  )  winefile;;
+			'-server')  wineserver;;
+			'-boot'  )  wineboot -h;;
+			'-msi'   )  msiexec /h;;
+			'-uninst')  uninstaller;;
+			'-ctrl'  )  control;;
+
+			'-mouselock')   mouselock;;
+
+			*)  shift $#;;
+		esac
 	done
 fi
 

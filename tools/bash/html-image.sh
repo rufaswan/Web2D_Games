@@ -2,8 +2,10 @@
 [ $# = 0 ] && exit
 
 function loopent {
-	fil=()
-	dir=()
+	local fil=()
+	local dir=()
+	local mime=''
+	local i=0
 	for i in "$1"/*; do
 		if [ -f "$i" ]; then
 			mime=$(file  --brief  --mime-type  "$i")
@@ -25,6 +27,7 @@ function loopent {
 	dir=( $(sort --version-sort <<< ${dir[*]}) )
 	unset IFS
 
+	local f=''
 	if (( ${#fil[@]} > 0 )); then
 		echo "<h1>$1</h1>"
 		for f in "${fil[@]}"; do
@@ -33,6 +36,7 @@ function loopent {
 		echo "<hr>"
 	fi
 
+	local d=''
 	if (( ${#dir[@]} > 0 )); then
 		for d in "${dir[@]}"; do
 			loopent "$d"
@@ -58,4 +62,3 @@ while [ "$1" ]; do
 	[ -d "$t1" ] || continue
 	loopent "$t1"
 done
-

@@ -1,14 +1,56 @@
-# https://developer.mozilla.org/en-US/docs/Web/CSS/%40page/size
-# https://pixelcalculator.com/en
+# https://en.wikipedia.org/wiki/Paper_size
+	The international paper size standard is ISO 216.
+	It is based on the German DIN 476 standard for paper sizes.
+	Each ISO paper size is one half of the area of the next larger size in the same series.
+	ISO paper sizes are all based on a single aspect ratio of the square root of 2, or approximately 1:1.41421.
 
--       mm       in         px@72 dpi  px@300 dpi
-A5      148x210   5.8x 8.3  420x 595   1748x2480
-A4      210x297   8.3x11.7  595x 842   2480x3508
-A3      297x420  11.7x16.5  842x1191   3508x4961
-B5      176x250   6.9x 9.8  499x 709   2079x2953
-B4      250x353   9.8x13.9  709x1001   2953x4169
-JIS-B5  182x257   7.1x10.1  516x 729   2150x3035
-JIS-B4  257x364  10.1x14.3  729x1032   3035x4299
-letter  216x279   8.5x11    612x 792   2550x3300
-legal   216x356   8.5x14    612x1008   2550x4200
-ledger  279x432  11  x17    792x1224   3300x5100
+# https://en.wikipedia.org/wiki/ISO_216
+	All ISO 216, ISO 217 and ISO 269 paper sizes (except some envelopes) have the same aspect ratio, sqrt(2):1,
+	within rounding to millimetres.
+	This ratio has the unique property that when cut or folded in half widthways,
+	the halves also have the same aspect ratio.
+	Each ISO paper size is one half of the area of the next larger size in the same series.
+
+# https://developer.mozilla.org/en-US/docs/Web/CSS/%40page/size
+	-       mm         inches
+	A5      148 x 210       -
+	A4      210 x 297       -
+	A3      297 x 420       -
+	B5      176 x 250       -
+	B4      250 x 353       -
+	JIS-B5  182 x 257       -
+	JIS-B4  257 x 364       -
+	letter      -       8.5 x 11
+	legal       -       8.5 x 14
+	ledger      -      11   x 17
+
+# https://pixelsconverter.com/a-paper-sizes-to-pixels
+	-    mm           inches       px=72 ppi    px=96 ppi    px=300 ppi
+	A0   841 x 1189   33.1 x 46.8  2384 x 3370  3179 x 4494  9933 x 14043
+	A1   594 x  841   23.4 x 33.1  1684 x 2384  2245 x 3179  7016 x  9933
+	A2   420 x  594   16.5 x 23.4  1191 x 1684  1587 x 2245  4960 x  7016
+	A3   297 x  420   11.7 x 16.5   842 x 1191  1123 x 1587  3508 x  4960
+	A4   210 x  297    8.3 x 11.7   595 x  842   794 x 1123  2480 x  3508
+	A5   148 x  210    5.8 x  8.3   420 x  595   559 x  794  1748 x  2480
+	A6   105 x  148    4.1 x  5.8   298 x  420   397 x  559  1240 x  1748
+	A7    74 x  105    2.9 x  4.1   210 x  298   280 x  397   874 x  1240
+	A8    52 x   74    2   x  2.9   147 x  210   197 x  280   614 x   874
+	A9    37 x   52    1.5 x  2     105 x  147   140 x  197   437 x   614
+	A10   26 x   37    1   x  1.5    74 x  105    98 x  140   307 x   437
+	A11   18 x   26    0.7 x  1      74 x   74    68 x   98   213 x   307
+	A12   13 x   18    0.5 x  0.7    37 x   51    49 x   68   154 x   213
+	A13    9 x   13    0.4 x  0.5    26 x   37    34 x   49   106 x   154
+
+# https://pixelsconverter.com/b-paper-sizes-to-pixels
+	-    mm           inches       px=72 ppi    px=96 ppi    px=300 ppi
+	B0   1000 x 1414  39.4 x 55.7  2835 x 4008  3780 x 5344  11811 x 16701
+	B1    707 x 1000  27.8 x 39.4  2004 x 2835  2672 x 3780   8350 x 11811
+	B2    500 x  707  19.7 x 27.8  1417 x 2004  1890 x 2672   5906 x  8350
+	B3    353 x  500  13.9 x 19.7  1001 x 1417  1334 x 1890   4169 x  5906
+	B4    250 x  353   9.8 x 13.9   709 x 1001   945 x 1334   2953 x  4169
+	B5    176 x  250   6.9 x  9.8   499 x  709   665 x  945   2079 x  2953
+	B6    125 x  176   4.9 x  6.9   354 x  499   472 x  665   1476 x  2079
+	B7     88 x  125   3.5 x  4.9   249 x  354   333 x  472   1039 x  1476
+	B8     62 x   88   2.4 x  3.5   176 x  249   234 x  333    732 x  1039
+	B9     44 x   62   1.7 x  2.4   125 x  176   166 x  234    520 x   732
+	B10    31 x   44   1.2 x  1.7    88 x  125   117 x  166    366 x   520

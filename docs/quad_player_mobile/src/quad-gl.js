@@ -287,26 +287,34 @@ function QuadGL(Q){
 
 	//////////////////////////////
 
-	$.create_texture = function(){
-		// BUG
-		//   https://github.com/rufaswan/Web2D_Games/issues/21
-		//   many animations have 1 pixel-wide seams, or extra pixels appearing on the edge of fully transparent parts of a quad
-		// FIX
-		//   https://www.khronos.org/opengl/wiki/Sampler_Object
-		//   If __.GL.NEAREST is used, the implementation will select the texel nearest the texture coordinate; this is commonly called "point sampling".
-		//   If __.GL.LINEAR  is used, the implementation will perform a weighted linear blend between the nearest adjacent samples.
+	$.create_texture = function( pow2=true ){
 		var tex = __.GL.createTexture();
-		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.LINEAR);
-		__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
+		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
+		if ( pow2 ){
+			// power of 2 textures defaults + mipmap support
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.REPEAT);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.REPEAT);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.NEAREST_MIPMAP_LINEAR);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
+		} else {
+			// BUG
+			//   https://github.com/rufaswan/Web2D_Games/issues/21
+			//   many animations have 1 pixel-wide seams, or extra pixels appearing on the edge of fully transparent parts of a quad
+			// FIX
+			//   https://www.khronos.org/opengl/wiki/Sampler_Object
+			//   If __.GL.NEAREST is used, the implementation will select the texel nearest the texture coordinate; this is commonly called "point sampling".
+			//   If __.GL.LINEAR  is used, the implementation will perform a weighted linear blend between the nearest adjacent samples.
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_S    , __.GL.CLAMP_TO_EDGE);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_WRAP_T    , __.GL.CLAMP_TO_EDGE);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MIN_FILTER, __.GL.LINEAR);
+			__.GL.texParameteri(__.GL.TEXTURE_2D, __.GL.TEXTURE_MAG_FILTER, __.GL.LINEAR);
+		}
 		return tex;
 	}
 
 	$.update_texture = function( tex, img ){
 		if ( ! tex )
-			tex = $.create_texture();
+			return Q.func.error('update_texture() has no tex');
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 		__.GL.texImage2D(
 			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level , internalformat
@@ -314,21 +322,24 @@ function QuadGL(Q){
 		img);
 	}
 
-	$.create_pixel = function( hex, w=1, h=1 ){
-		hex = Q.math.clamp(hex, 0, 255) | 0;
-		if ( w < 0 )  w = __.MAX_TEX_SIZE;
-		if ( h < 0 )  h = __.MAX_TEX_SIZE;
-
-		var size  = w * h * 4;
-		var uint8 = new Uint8Array(size);
-		for ( var i=0; i < size; i++ )
-			uint8[i] = hex;
-
+	$.create_vram = function( rgb , alp ){
+		rgb = Q.math.clamp(rgb, 0, 255) | 0;
+		alp = Q.math.clamp(alp, 0, 255) | 0;
 		var pix = {
-			w : w ,
-			h : h ,
-			tex : $.create_texture() ,
+			w : __.MAX_TEX_SIZE ,
+			h : __.MAX_TEX_SIZE ,
+			tex : $.create_texture(1) ,
 		};
+
+		var size  = pix.w * pix.h * 4;
+		var uint8 = new Uint8Array(size);
+		for ( var i=0; i < size; i += 4 ){
+			uint8[i+0] = rgb;
+			uint8[i+1] = rgb;
+			uint8[i+2] = rgb;
+			uint8[i+3] = alp;
+		}
+
 		__.GL.bindTexture(__.GL.TEXTURE_2D, pix.tex);
 		__.GL.texImage2D(
 			__.GL.TEXTURE_2D , 0 , __.GL.RGBA      , // target , level  , internalformat
@@ -336,6 +347,7 @@ function QuadGL(Q){
 			__.GL.RGBA       , __.GL.UNSIGNED_BYTE , // format , type
 			uint8
 		);
+		__.GL.generateMipmap(__.GL.TEXTURE_2D);
 		return pix;
 	}
 
@@ -436,13 +448,16 @@ function QuadGL(Q){
 	$.is_gl_enum = function( str ){
 		if ( Array.isArray(str) ){
 			for ( var i=0; i < str.length; i++ ){
-				str[i] = str[i].toUpperCase();
-				if ( ! __.GL[ str[i] ] )
-					return false;
+				str[i] = $.is_gl_enum(str[i]);
+				if ( ! str[i] ) // return when one failed
+					return 0;
 			}
-			return true;
+			return str; // all ok
 		}
-		return false;
+		if ( typeof str !== 'string' )
+			return 0;
+		var t = str.toUpperCase();
+		return ( __.GL[t] ) ? t : 0;
 	}
 
 	//////////////////////////////
@@ -452,10 +467,12 @@ function QuadGL(Q){
 	}
 
 	$.detect_max_texsize = function(){
-		var tex = $.create_texture();
+		var tex = $.create_texture(0);
 		__.GL.bindTexture(__.GL.TEXTURE_2D, tex);
 
 		var maxsz = __.GL.getParameter( __.GL.MAX_TEXTURE_SIZE ) >> 1;
+		while ( ! Q.math.is_int_pow2(maxsz) )
+			maxsz--;
 		var bw = __.GL.canvas.width;
 		var bh = __.GL.canvas.height;
 

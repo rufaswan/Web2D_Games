@@ -1,0 +1,64 @@
+00  USE
+04
+08
+0c
+10
+14
+18
+1c
+20
+24
+28
+2c  hp
+30  max hp
+34  level
+38  max level
+3c  exp
+40  tech
+44  strength
+48  magic
+4c
+50
+54
+58
+5c  unlocked passive skill
+
+Level UP (final LV 50+)
+	-        HP   STR  MAG  TEC  =   Passive/AlicemanLady
+	Rance    +21  +4   +1   +2   14  *story - Chaos*
+	Sill     +15  +1   +4   +2   12  Volcano Mine - C
+	Ria      +15  +2   +1   +1    9  Leazas Castle - Courtyard - A
+	Maris    +18  +3   +4   +4   17  Leazas Capital - Sewer
+	Kanami   +15  +3   +1   +4   13  Devil Corridor - West
+
+	Feliss   +24  +5   +4   +3   20  Leazas Capital - Sewer
+	Maria    +18  +3   +2   +3   14  Hyper Building - 2F
+	Shizuka  +12  +1   +5   +2   12  Leazas Town North - Hani Building - 2F
+	Milli    +15  +4   +2   +3   14  Lost Wood - South?
+	Mill     +12  +1   +3   +3   11  Leazas Castle - East Tower - 2F
+
+	Sel      +12  +2   +4   +1   11  Bakyumarad Den
+	Barres   +12  +1   +1   +2    8  Leazas Castle - B1F
+	Sioux    +18  +3   +1   +5   15  Hooho Valley
+	Rick     +24  +5   +1   +3   17  Leazas Capital - Prison
+	Menad    +18  +4   +1   +2   13  Bakyumarad Den
+
+	Yulang   +15  +4   +1   +3   13
+	Leira    +18  +3   +2   +3   14  Leazas Castle - West Tower - 2F
+	Julia    +18  +1   +1   +1    9
+	Aden     +12  +1   +4   +1   10  Leazas Castle - 2F
+	Necai    +12  +2   +2   +5   13  Ghost Town Go
+
+	Burning  +18  +2   +1   +1   10
+	Jericho  +12  +1   +1   +1    7  Lighthouse - Lowest Floor
+	-        +  +   +   +
+	-        +  +   +   +
+	-        +  +   +   +
+
+	Final Weapons
+		5 Stars/shop
+		6 Stars/Chest @ M-Land Tower Bonus Dungeon
+	Recruit Ticket
+		1  Jericho
+		2  Burning
+		3  Necai

@@ -1,0 +1,41 @@
+key item
+material - field
+material - male monster
+item - field
+item - essence
+	ant      USE  1c69  1c6a  cnt   2  0  0  38
+	dog      USE  1c6f  1c70  cnt   2  0  0  38
+	fish     USE  1c75  1c76  cnt   2  0  0  38
+	lava     USE  1c7b  1c7c  cnt   2  0  0  38
+	worm     USE  1c81  1c82  cnt   2  0  0  38
+	sky      USE  1c87  1c88  cnt   2  0  0  38
+	iron     USE  1c8d  1c8e  cnt   2  0  0  38
+
+	ant+     USE  1c6c  1c6d  cnt   2  0  0  38
+	dog+     USE  1c72  1c73  cnt   2  0  0  38
+	fish+    USE  1c78  1c79  cnt   2  0  0  38
+	lava+    USE  1c7e  1c7f  cnt   2  0  0  38
+	worm+    USE  1c84  1c85  cnt   2  0  0  38
+	sky+     USE  1c8a  1c8b  cnt   2  0  0  38
+	iron+    USE  1c90  1c91  cnt   2  0  0  38
+item - auto
+	bento    USE  1c4e  1c4f  cnt   9  0  0  38
+item - status
+	love++   USE  1c06  1c07  cnt  14  0  0  38
+	exp**    USE  1c09  1c0a  cnt  14  0  0  38
+	vit**    USE  1c0c  1c0d  cnt  14  0  0  38
+	atk**    USE  1c0f  1c10  cnt  14  0  0  38
+	def**    USE  1c12  1c13  cnt  14  0  0  38
+	mag**    USE  1c15  1c16  cnt  14  0  0  38
+	mdef**   USE  1c18  1c19  cnt  14  0  0  38
+	eva**    USE  1c1b  1c1c  cnt  14  0  0  38
+	vit+20   USE  1c3f  1c40  cnt  14  0  1  38
+	atk+2    USE  1c42  1c43  cnt  14  0  1  38
+	mag+2    USE  1c45  1c46  cnt  14  0  1  38
+	skill+1  USE  1c48  1c49  cnt  14  0  0  38
+item - battle
+	poison   USE  1c30  1c31  cnt  15  0  0  38
+equipment
+	kid-era  USE  1c9f  1ca0  cnt  1e  0  0  38
+	cheat    USE  1d5c  1d5d  cnt  1e  0  0  38
+	no-sick  USE  1db0  1db1  cnt  1e  0  0  38

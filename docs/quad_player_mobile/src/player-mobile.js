@@ -163,13 +163,13 @@ APP.viewer_btn_menu = function( qdata ){
 	APP.html.btn_hitattr.style.display = 'none';
 	APP.html.hitattr_list.innerHTML = '';
 	if ( qdata.quad.hitbox.length > 0 )
-		APP.html.btn_hitattr.style.display = 'block';
+		APP.html.btn_hitattr.style.display = '';
 
 	APP.html.btn_keyattr.style.display = 'none';
 	APP.html.keyattr_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
 		qdata.keyattr = -1;
-		APP.html.btn_keyattr.style.display = 'block';
+		APP.html.btn_keyattr.style.display = '';
 		var buffer = '';
 		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
 			var mask = 1 << ek;
@@ -183,7 +183,7 @@ APP.viewer_btn_menu = function( qdata ){
 	APP.html.colorize_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.colorize.length > 0 ){
 		qdata.colorize = [];
-		APP.html.btn_colorize.style.display = 'block';
+		APP.html.btn_colorize.style.display = '';
 		var buffer = '';
 		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
 			var mask = 1 << ck;

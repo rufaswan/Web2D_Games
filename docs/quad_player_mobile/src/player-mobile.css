@@ -131,11 +131,14 @@ ul {
 	top             : 0;
 	left            : 0;
 	flex-direction  : row;
-	flex-wrap       : nowrap;
+	flex-wrap       : wrap;
 	justify-content : space-between;
 	align-items     : center;
 	align-content   : flex-start;
-	overflow        : scroll hidden;
+}
+#viewer_top_nav nav {
+	flex       : 0 0 100%;
+	text-align : right;
 }
 #viewer_bottom_nav {
 	bottom          : 0;

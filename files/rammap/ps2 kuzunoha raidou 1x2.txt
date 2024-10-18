@@ -390,8 +390,9 @@ Demon Registered (BLOCK=60)
 			d
 			e
 			f
-		fa ff 3f --  80 c1 ff 81
-		17 4c 43 30  a0 -- -- --
+		# All unlocked
+		#   fa ff 3f --  80 c1 ff 81
+		#   17 4c 43 30  a0 -- -- --
 	4e
 	50
 	54
@@ -440,63 +441,7 @@ ID
 ==================================================================
 == Shin Megami Tensei III - Nocturne Maniax - Chronicle Edition ==
 ==================================================================
-Demi-Fiend Stats
-	00
-	02
-	04
-	06  hp
-	08  max hp
-	0a  mp
-	0c  max mp
-	0e  effect flags
-		01
-		02
-		04
-		08
-		10
-		20  mute
-		40  poison
-		80
-		0100  paralyze
-		0200
-		0400
-		0800  death
-		1000
-		2000
-		4000
-		8000  curse
-	10  exp
-	14  level
-	16  STR + bonus + base 1 (max=28+n)
-	17  ??? + bonus + base 1 (max=28+n)
-	18  MGC + bonus (max=28+n)
-	19  VIT + bonus (max=28+n)
-	1a  AGI + bonus (max=28+n)
-	1b  LUC + bonus (max=28+n)
-	1c
-	1e
-	20
-	22
-	24
-	26
-	28
-	2a
-	2c
-	2e
-	30
-	32
-	34
-	36
-	38  Skill Slots (max=8)
-	3a  Skill ID 1
-	3c  Skill ID 2
-	3e  Skill ID 3
-	40  Skill ID 4
-	42  Skill ID 5
-	44  Skill ID 6
-	46  Skill ID 7
-	48  Skill ID 8
-Demon Stats (BLOCK=ec)
+Demi-Fiend + Demon Stats (BLOCK=ec)
 	00  flags
 		01  exist
 		02  summoned
@@ -529,15 +474,15 @@ Demon Stats (BLOCK=ec)
 		1000
 		2000
 		4000
-		8000
+		8000  curse (demi-fiend only)
 	10  exp
 	14  level
-	16  STR
-	17
-	18  MGC
-	19  VIT
-	1a  AGI
-	1b  LUC
+	16  STR (demi-fiend = after magatama bonus)
+	17  *INT = removed*
+	18  MGC (demi-fiend = after magatama bonus)
+	19  VIT (demi-fiend = after magatama bonus)
+	1a  AGI (demi-fiend = after magatama bonus)
+	1b  LUC (demi-fiend = after magatama bonus)
 	1c
 	1e
 	20
@@ -620,57 +565,6 @@ Skill ID
 		17  Gaia    /a3  Gaea Rage     DDS SMT4 SMT5
 		18  Kailash /93  Freikugel         SMT4 SMT5
 
-	Digital Devil Saga: Avatar Tuner
-		summon
-			Cu Chulainn
-			Girimehkala
-			Pixie
-			Arahabaki
-			Titania
-			Parvati
-
-		03  Agidyne              GI
-		06  Meragidyne                    TI
-		0c  Mabufudyne                    TI
-		12  Maziodyne               PI    TI
-		18  Mazandyne
-		1b  Megidolaon              PI
-		1f  Mahamaon                         PA
-		23  Mamudoon             GI
-		25  Diarama                 PI
-		28  Mediarama                        PA
-		29  Mediarahan     DE CU GI PI AR TI PA
-		33  Recarmdra         CU GI PI AR TI PA
-		34  Takunda
-		35  Sukunda                       TI
-		36  Rakunda                       TI
-		39  Dekaja            CU GI PI AR TI PA
-		3c  Dormina                 PI       PA
-		40  Tarukaja                         PA
-		41  Sukukaja                         PA
-		42  Rakukaja                         PA
-		43  Makakaja                         PA
-		49  Estoma
-		4b  Liftoma
-		4c  Lightoma
-		4d  Dekunda           CU GI PI AR TI PA
-
-		65  Heat Wave      DE
-		a4  Counter           CU
-		a5  Counterstrike     CU
-		b3  Ragnarok                   AR
-		cd  Taunt             CU
-		ce  Debilitate           GI    AR
-		Sakura Rage       CU
-		Skull Cleave      CU
-		Executioner       CU
-		Demon Rage        CU GI
-		Bloodbath         CU
-		Blood Curse                AR
-		Revelation        CU
-		Vanity                  PI
-		Gate of Hell               AR
-
 	-      Bst  Rst  Nul  Drn  Rpl
 	Phys     -  139  143  14d  152
 	Fire   135  13a  144  14e  153
@@ -683,16 +577,14 @@ Skill ID
 	Nerve    -  141  14b    -    -
 	Mind     -  142  14c    -    -
 
-	12b  Might
-	130  Attack All
+	ce   Debilitate
 	15c  Victory Cry
 	15d  Life Refill
 	15e  Mana Refill
-	165  Pierce
 	22e+  *end*
 
 
-Kalpa Broker Demons
+Kalpa Demon Brokers
 1st Kalpa = 15,000 macca
 	a7/Haunt 28 Pisaca + 8 0 a 11 7 6
 		c0/Life Drain  48/Trafuri   49/Estoma       4a/Riberama
@@ -737,7 +629,8 @@ Kuzuhona Raidou the XIV
 	169  Raidou the Eternal
 	10d  Jiraiya Dance    - Volt  Tsuchigumo
 
-Magatama
+
+Magatama Skill IDs
 	01/6   60   47  122   62  131  165
 	02/5   b4  125  136   cc  13b
 	03/3   24  128   27

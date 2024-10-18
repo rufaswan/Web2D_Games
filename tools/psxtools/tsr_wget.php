@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 ( exec('which wget') ) ? '' : trigger_error('command wget not found', E_USER_ERROR);
+( exec('which df'  ) ) ? '' : trigger_error('command df   not found', E_USER_ERROR);
 //////////////////////////////
 function valid_name( $fnam, $fext )
 {
@@ -60,7 +61,11 @@ function phpwget()
 	$file = '';
 	while ( ! $is_done )
 	{
+		$cmd  = 'df  --block-size=m  --output=avail . | tail -1';
+		$free = exec($cmd);
+
 		echo "> type 'q' to quit\n";
+		echo "> Disk Free = $free\n";
 		echo "> URL =\n";
 		$input = trim( fgets(STDIN) );
 		if ( $input === 'q' )

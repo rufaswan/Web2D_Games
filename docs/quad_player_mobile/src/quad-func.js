@@ -233,7 +233,6 @@ function QuadFunc(Q){
 
 			case 'image':
 				return new Promise(function(ok,err){
-					var dummytex = Q.gl.create_pixel(255);
 					var fnm = fname.match(/\.([0-9]+)\./);
 					var tid = fnm[1];
 
@@ -246,7 +245,7 @@ function QuadFunc(Q){
 					var tid = res[0];
 					var img = res[1];
 
-					var tex = Q.gl.create_texture();
+					var tex = Q.gl.create_texture(0);
 					Q.gl.update_texture(tex, img);
 					return [tid,tex,img.width,img.height];
 				}).then(function(res){
@@ -312,6 +311,8 @@ function QuadFunc(Q){
 			if ( ! Q.gl.is_gl_enum(bv.mode_rgb) )
 				bv.mode_rgb = 0;
 			if ( ! $.is_array(bv.mode_rgb, 3) )
+				bv.mode_rgb = 0;
+			if ( ! bv.mode_rgb )
 				return nullent(quad.blend, bk);
 			ent = {
 				'mode_rgb'   : bv.mode_rgb,
@@ -322,6 +323,8 @@ function QuadFunc(Q){
 			if ( ! Q.gl.is_gl_enum(bv.mode_alpha) )
 				bv.mode_alpha = 0;
 			if ( $.is_array(bv.mode_alpha, 3) )
+				bv.mode_alpha = 0;
+			if ( ! bv.mode_alpha )
 				ent.mode_alpha = bv.mode_alpha;
 			quad.blend[bk] = ent;
 		}); // quad.blend.forEach

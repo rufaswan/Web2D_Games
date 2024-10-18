@@ -345,6 +345,7 @@ function QuadMath(Q){
 	}
 
 	$.perspective_quad = function( dst ){
+		// https://mrl.nyu.edu/~dzorin/ug-graphics/lectures/lecture7/sld024.html
 		// matrix * SRC = DST
 		//       matrix = DST * SRC_inv
 		//          SRC = matrix_inv * DST
@@ -449,6 +450,7 @@ function QuadMath(Q){
 		for ( var i=0; i < 4; i += 2 ){
 			var x = rect[i+0];
 			var y = rect[i+1];
+			//         x           y           z=1       w=1
 			xy2[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
 			xy2[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
 		}
@@ -461,6 +463,7 @@ function QuadMath(Q){
 		for ( var i=0; i < 8; i += 2 ){
 			var x = quad[i+0];
 			var y = quad[i+1];
+			//         x           y           z=1       w=1
 			xy4[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
 			xy4[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
 		}

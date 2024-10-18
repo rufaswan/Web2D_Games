@@ -78,39 +78,42 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<div id='viewer_xline'></div>
 	<div id='viewer_yline'></div>
 	<canvas id='canvas'>Canvas not supported</canvas>
-	<p id='viewer_top_nav'>
+	<nav id='viewer_top_nav'>
 		<button id='btn_debug'>debug</button>
 		<button id='btn_lines'>line</button>
 
-		<button id='btn_hitattr'  class='btn_on' title='hitbox layers'>hits</button>
-		<button id='btn_keyattr'  title='keyframe layers' >keys</button>
-		<button id='btn_colorize' title='custom colors'>color</button>
+		<button id='btn_ellip'>&vellip;</button>
+		<nav class='hidden'>
+			<button id='btn_hitattr'  class='btn_on' title='hitbox layers'>hits</button>
+			<button id='btn_keyattr'  title='keyframe layers' >keys</button>
+			<button id='btn_colorize' title='custom colors'>color</button>
 
-		<button id='btn_flipx' class='btn_off'>X</button>
-		<button id='btn_flipy' class='btn_off'>Y</button>
-		<button id='btn_autozoom' class='btn_on' title='autozoom'>zoom</button>
-	</p>
-	<p id='viewer_bottom_nav'>
+			<button id='btn_flipx' class='btn_off'>X</button>
+			<button id='btn_flipy' class='btn_off'>Y</button>
+			<button id='btn_autozoom' class='btn_on' title='autozoom'>zoom</button>
+		</nav>
+	</nav>
+	<nav id='viewer_bottom_nav'>
 		<button id='btn_prev'>&lt;&lt;</button>
 
 		<button id='btn_autonext'>auto</button>
 		<button id='btn_cur'>0</button>
 
 		<button id='btn_next'>&gt;&gt;</button>
-	</p>
+	</nav>
 
-	<div id='colorize_menu'>
+	<nav id='colorize_menu'>
 		<p><button onclick='button_close(this);'>close</button> Colorize Menu</p>
 		<p id='colorize_list'></p>
-	</div>
-	<div id='keyattr_menu'>
+	</nav>
+	<nav id='keyattr_menu'>
 		<p><button onclick='button_close(this);'>close</button> Keyframe Attribute Menu</p>
 		<p id='keyattr_list'></p>
-	</div>
-	<div id='hitattr_menu'>
+	</nav>
+	<nav id='hitattr_menu'>
 		<p><button onclick='button_close(this);'>close</button> Hitbox Attribute Menu</p>
 		<p id='hitattr_list'></p>
-	</div>
+	</nav>
 </div>
 
 <script>
@@ -219,6 +222,14 @@ APP.QuadList      = [];
 			APP.html.viewer_bottom_nav.style.display = 'flex';
 		}
 		APP.is_viewer_nav = ! APP.is_viewer_nav;
+	});
+	APP.html.btn_ellip.addEventListener('click', function(){
+		var nav = APP.html.viewer_top_nav.getElementsByTagName('nav');
+		if ( nav[0].classList.contains('hidden') )
+			nav[0].classList.remove('hidden');
+		else
+			nav[0].classList.add('hidden');
+		console.log(nav[0]);
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
 		if ( ! APP.QuadList[0] )

@@ -10,7 +10,7 @@ var QUAD = {};
 	@@quad-export.js@@
 	@@binary-reader.js@@
 
-	$.version = 'ver 2024-9-9 (beta)';
+	$.version = 'ver 2024-9-27 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -30,7 +30,7 @@ function QuadData(qlist){
 	$.name = '';
 	$.quad  = {};
 	$.image = []; // { pos:rect , name:string }
-	$.vram  = QUAD.gl.create_pixel(255,-1,-1); // white texture
+	$.vram  = QUAD.gl.create_vram(255,255); // white solid texture
 
 	// activated data
 	$.is_wait  = true;

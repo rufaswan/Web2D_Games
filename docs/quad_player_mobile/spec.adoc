@@ -515,7 +515,8 @@ It is to define alpha blending formula to handle transparency and semi-transpare
   "mode_rgb"   : [ string mode , string src_factor , string dst_factor ],
   "mode_alpha" : [ string mode , string src_factor , string dst_factor ],
   "color"      : string rgba,
-  "logic_op"   : [ string opcode_r , string opcode_g , string opcode_b , string opcode_a ],
+  "logic_op"   : [ string opcode_r   , string opcode_g , string opcode_b , string opcode_a ],
+  "logic_op"   : [ string opcode_rgb , string opcode_a ],
   "logic_op"   : string opcode,
 }
 ----
@@ -529,13 +530,13 @@ name::
 
 mode_rgb (required)::
 	* Accepts a 3 strings array
-	** `mode` is enum for `blendEquation()`
+	** `mode` is enum for `blendEquation()`, and string can be case-insensitive.
 	*** `FUNC_ADD` is math operation `SRC + DST`
 	*** `FUNC_SUBTRACT` is math operation `SRC - DST`
 	*** `FUNC_REVERSE_SUBTRACT` is math operation `-SRC + DST`
 	***  `MIN` is `min(SRC.r, DST.r)`,  `min(SRC.g, DST.g)`,  `min(SRC.b, DST.b)` and `min(SRC.a, DST.a)`
 	***  `MAX` is `max(SRC.r, DST.r)`,  `max(SRC.g, DST.g)`,  `max(SRC.b, DST.b)` and `max(SRC.a, DST.a)`
-	** `src_factor` and `dst_factor` are enum for `blendFunc()`
+	** `src_factor` and `dst_factor` are enum for `blendFunc()`, and string can be case-insensitive.
 	*** Static value
 	**** `ZERO` is value `0.0`
 	**** `ONE` is value `1.0`
@@ -565,11 +566,11 @@ color::
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
 logic_op::
-	* Can only be used for integer draw buffer. It has no effect for floating-point draw buffer.
-	* When it is set, normal blending is disabled. Hence `mode_rgb`, `mode_alpha` and `color` are ignored.
+	* Has higher priority than normal blending is disabled. Hence when it is set, `mode_rgb`, `mode_alpha` and `color` are ignored.
 	* Accepts 4 strings array for each RGBA components.
-	** Can be shorthand to 1 string when all 4 RGBA components are the same.
-	** `opcode` is enum for `logicOp()`
+	** Can be shorthand to 2 string for RGB and Alpha components.
+	** Can be shorthand to 1 string for all 4 RGBA components.
+	** `opcode` is enum for `logicOp()`, and string can be case-insensitive.
 	*** `CLEAR` as value 0
 	*** `SET` as value 1
 	*** `COPY` as bitwise operation `SRC`
@@ -586,6 +587,7 @@ logic_op::
 	*** `AND_INVERTED` as bitwise operation `~SRC & DST`
 	*** `OR_REVERSE` as bitwise operation `SRC | ~DST`
 	*** `OR_INVERTED` as bitwise operation `~SRC | DST`
+	* Logic Operation can only be used for integer draw buffer. It invalid for floating-point draw buffer.
 	* If omitted or invalid, then it is default to `0` (use normal blending).
 
 
@@ -615,9 +617,7 @@ id (required)::
 
 v0.x::
 	* `keyframe_layer_object` : define `blend_id` == -1 as disable alpha blending
-	* `blend_object` : removed `mode`
-	* `blend_object` : added `mode_rgb`
-	* `blend_object` : added `mode_alpha`
+	* `blend_object` : separate `mode` into `mode_rgb` and `mode_alpha`
 	* `blend_object` : added `logic_op`
 
 v0.5 (2024-4-3)::
@@ -654,17 +654,24 @@ v0.1 (2021-03-01)::
 
 == Terminology
 
-Canvas XY::
-	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
-	* 0,0 is at the center of canvas.
-	* For Canvas size 320x240, X is -160px to +160px , and Y is -120px to +120px.
-	* It is then normalized to -1.0 to +1.0.
-
-Texture UV::
-	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
+SRC::
+	* As in "Source", pixels READ from texture.
+	* On image editor, it is the top layer.
+	* [U,V] is used when accessing vectors that represent texture coordinates.
 	* 0,0 is at top-left of texture.
-	* For Texture size 320x240, X is 0px to 320px , and Y is 0px to 240px.
+	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
+	* For Texture size 320x240, X is 0px (left) to 320px (right) , and Y is 0px (top) to 240px (bottom).
 	* It is then normalized to 0.0 to 1.0.
+
+DST::
+	* As in "Destination", pixels WRITE to canvas.
+	* On alpha blending operation, pixels are READ and WRITE back to canvas.
+	* On image editor, it is the bottom layer.
+	* [X,Y] is used when accessing vectors that reporesent canvas points.
+	* 0,0 is at the center of canvas.
+	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
+	* For Canvas size 320x240, X is -160px (left) to +160px (right) , and Y is -120px (top) to +120px (bottom).
+	* It is then normalized to -1.0 to +1.0.
 
 
 

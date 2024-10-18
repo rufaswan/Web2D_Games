@@ -837,7 +837,7 @@ loc_40D375:                             ; CODE XREF: code_inst+A3^j
 										; code_inst+A9^j ...
 				push    eax             ; default
 										; jumptable 0040B909 case 43
-				push    offset undef_d  ; "[未定義 : %d]"
+				push    offset undef_d  ; "[??? : %d]"
 ; ---------------------------------------------------------------------------
 loc_40D58A:                             ; CODE XREF: code_inst+1C0F^j
 				jmp     loop_8E0        ; Jump
@@ -1017,7 +1017,7 @@ crlf            db 0Dh,0Ah,0            ; DATA XREF: code_inst+1D2E^r
 a6d             db '%6d : ',0           ; DATA XREF: code_inst+1B3E^o
 asc_497364      db '       : ',0        ; DATA XREF: code_inst+C9^o
 										; code_inst+F6^o ...
-undef_d         db '[未定義 : %d]',0    ; DATA XREF: code_inst+1B1D^o
+undef_d         db '[??? : %d]',0    ; DATA XREF: code_inst+1B1D^o
 aGotoS          db 'GOTO %s',0          ; DATA XREF: code_inst+1AE1^o
 aGotolabelS     db '<GOTOLABEL : %s>',0 ; DATA XREF: code_inst+1AA5^o
 aS              db '// %s',0            ; DATA XREF: code_inst+1A7E^o
