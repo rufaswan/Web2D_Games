@@ -988,6 +988,36 @@ SLPS 011.60 JP disc 1 [3771]
 		.6
 		.7
 	2594  [PAK-LZ] Data
+		.0 Items
+		.1 Character Weapons
+		.2 Character Accessory
+		.3  - .13  Char Skill + Spell
+		.14 Item descriptions
+		.15 Ether descriptions
+		.16 Gear Frames
+		.17 Gear Armor
+		.18 Gear Engine
+		.19 Gear Accessory
+		.20 Gear Ether descriptions
+		.21 Special Option descriptions
+		.22 - .38  Gear Skill + Spell
+		.39 Character Weapon shop description
+		.40 Character Accessory shop description
+		.41 Item shop description
+		.42 Gear Weapons
+		.43 Character Level
+		.44 Gear Armor names
+		.45 Gear Frame names
+		.46 Gear Engine names
+		.47 Gear Armor shop description
+		.48 Gear Frame shop description
+		.49 Gear Engine shop description
+		.50 Gear Weapon shop description
+		.51 Gear Accessory shop description
+		.52 Character Weapon menu description
+		.53 Character Accessory menu description
+		.54 Gear Weapon menu description
+		.55 Gear Accessory menu description
 	2595  Base Stats
 	2596  [OVER]
 	2597  [OVER]
@@ -1001,6 +1031,7 @@ SLPS 011.60 JP disc 1 [3771]
 	2605  [SJIS] Save Data Message
 	2606  [OVER] Start to Battle
 	2607  [PAK-LZ]
+		.0 Character Level
 	2608
 	2609  [PAK]
 	2610  seds
@@ -1174,13 +1205,13 @@ SLPS 011.60 JP disc 1 [3771]
 	3088  [PAK-LZ]
 	3089  [PAK-LZ]
 	3090  seds
-	3091
+	3091  Ether descriptions
 	3092-3093  wds/sample data
 	3094  seds
 	3095  smds/midi data
-	3096
-	3097
-	3098
+	3096  Ether descriptions
+	3097  Gear Ether descriptions
+	3098  Special Option descriptions
 	3099
 	3100
 	3101
