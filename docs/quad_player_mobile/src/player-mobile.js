@@ -1,17 +1,5 @@
 'use strict';
 
-var APP = {};
-
-APP.get_html_id = function(){
-	var html = {};
-	var eles = document.querySelectorAll('*[id]');
-	for ( var i=0; i < eles.length; i++ ) {
-		var id   = eles[i].id;
-		html[id] = eles[i];
-	}
-	return html;
-}
-
 APP.display_viewer = function( html, toggle ){
 	if ( toggle )
 		html.viewer.style.display = 'block';
@@ -60,16 +48,35 @@ APP.qdata_toggle = function( qdata, elem, key ){
 		qdata[key] = !t;
 }
 
-APP.qdata_filetable = function( qdata, files ){
-	files.innerHTML = '';
-	if ( qdata.name )
-		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
-	for ( var i=0; i < qdata.image.length; i++ ){
-		if ( ! qdata.image[i] || ! qdata.image[i].name )
-			continue;
-		var img = qdata.image[i];
-		files.innerHTML += '<li>[IMAGE][' + i + '] ' + img.name + ' (' + JSON.stringify(img.pos) + ')</li>';
-	}
+APP.process_uploads_done = function(){
+	var qdata = APP.QuadList[ APP.upload_id ];
+
+	APP.qdata_filetable(qdata, APP.html.debugger_files);
+	if ( qdata.name ){
+		APP.html.quad_data.innerHTML = '';
+		document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
+
+		var buffer = APP.qdata_tagtable(qdata.quad.tag);
+		APP.html.quad_data.innerHTML += buffer;
+
+		var quad_main = APP.quad_mainlist(qdata.quad);
+		if ( quad_main === -1 )
+			return;
+
+		var buffer = '<h2>' + quad_main + '</h2>';
+		buffer += '<ul>';
+		qdata.quad[quad_main].forEach(function(v,k){
+			if ( ! v )
+				return;
+			buffer += APP.qdata_listing(qdata, quad_main, k);
+		});
+		buffer += '</ul>';
+		APP.html.quad_data.innerHTML += buffer;
+
+		APP.viewer_btn_menu(qdata);
+	} // if ( qdata.name )
+
+	APP.html.logger.innerHTML = QUAD.func.console();
 }
 
 APP.qdata_tagtable = function( tag ){
@@ -85,8 +92,7 @@ APP.qdata_tagtable = function( tag ){
 	var buffer = '<h2>tag</h2>';
 	buffer += '<div id="quad_data_tags">';
 
-	var keys = Object.keys(tag);
-	keys.forEach(function(k){
+	Object.keys(tag).forEach(function(k){
 		var t = {};
 		t.l = k;
 		if ( Array.isArray(tag[k]) ){

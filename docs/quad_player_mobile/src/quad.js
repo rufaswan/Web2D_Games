@@ -7,13 +7,15 @@ var QUAD = {};
 	@@quad-gl.js@@
 	@@quad-func.js@@
 	@@quad-math.js@@
+	@@quad-verify.js@@
 	@@quad-export.js@@
 	@@binary-reader.js@@
 
-	$.version = 'ver 2024-9-27 (beta)';
+	$.version = 'ver 2024-11-4 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
+	$.verify = new QuadVerify($);
 	$.export = new QuadExport($);
 	$.binary = new BinaryReader();
 

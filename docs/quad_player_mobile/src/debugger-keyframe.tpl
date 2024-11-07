@@ -23,6 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Quad Debugger - Keyframe</title>
+@@<common.js>@@
 @@<debugger-keyframe.css>@@
 @@<debugger-keyframe.js>@@
 @@<quad.js>@@
@@ -76,15 +77,17 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 'use strict';
 
-APP.html      = APP.get_html_id();
-APP.upload_id = -1;
-APP.on_key    = -1;
-APP.on_layer  = [];
-APP.is_redraw = true;
-APP.autozoom  = 1.0;
-APP.camera    = QUAD.math.matrix4();
-APP.color     = [1,1,1,1];
-APP.QuadList  = [];
+APP.html         = APP.get_html_id();
+APP.upload_queue = []; // { id:int , name:string , data:string }
+APP.upload_id    = -1;
+APP.autozoom     = 1.0;
+APP.is_redraw    = true;
+APP.camera       = QUAD.math.matrix4();
+APP.color        = [1,1,1,1];
+APP.QuadList     = [];
+
+APP.on_key       = -1;
+APP.on_layer     = [];
 
 (function(){
 	if ( ! QUAD.gl.init(APP.html.canvas) )
@@ -100,35 +103,15 @@ APP.QuadList  = [];
 	});
 	APP.html.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', APP.upload_id);
-		if ( QUAD.func.is_undef( APP.QuadList[ APP.upload_id ] ) )
-			APP.QuadList[ APP.upload_id ] = new QuadData(APP.QuadList);
-		var qdata = APP.QuadList[ APP.upload_id ];
 
 		var proall = [];
-		for ( var up of this.files )
-			proall.push( QUAD.func.upload_promise(up, qdata) );
+		for ( var up of this.files ){
+			var p = QUAD.func.upload_promise(up, APP.upload_id, APP.upload_queue);
+			proall.push(p);
+		}
 
-		Promise.all(proall).then(function(resolve){
-			APP.qdata_filetable(qdata, APP.html.debugger_files);
-			if ( qdata.name ){
-				APP.html.keylist.innerHTML = '';
-				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
-
-				if ( ! qdata.quad.keyframe )
-					return;
-				qdata.attach.type = 'keyframe';
-
-				var buffer = '';
-				qdata.quad.keyframe.forEach(function(v,k){
-					if ( ! v )
-						return;
-					var name = v.name + ' (' + v.debug + ')';
-					buffer += '<li><p onclick="keyframe_select(' + k + ');">' + name + '</p></li>';
-				});
-				APP.html.keylist.innerHTML = buffer;
-			} // if ( qdata.name )
-			APP.autozoom  = 1.0;
-			APP.is_redraw = true;
+		Promise.all(proall).then(function(res){
+			return APP.process_uploads();
 		});
 	});
 

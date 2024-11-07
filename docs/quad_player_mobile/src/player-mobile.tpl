@@ -23,6 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>Quad Player - Mobile</title>
+@@<common.js>@@
 @@<player-mobile.css>@@
 @@<player-mobile.js>@@
 @@<quad.js>@@
@@ -120,17 +121,19 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 'use strict';
 
 APP.html          = APP.get_html_id();
-APP.selected      = '';
+APP.upload_queue  = []; // { id:int , name:string , data:string }
 APP.upload_id     = -1;
 APP.autozoom      = -1;
-APP.is_btn_click  = 0;
-APP.is_autonext   = false;
 APP.is_redraw     = true;
-APP.is_viewer_nav = true;
-APP.fps_draw      = 0;
 APP.camera        = QUAD.math.matrix4();
 APP.color         = [1,1,1,1];
 APP.QuadList      = [];
+
+APP.selected      = '';
+APP.is_btn_click  = 0;
+APP.is_autonext   = false;
+APP.is_viewer_nav = true;
+APP.fps_draw      = 0;
 
 (function(){
 	if ( ! QUAD.gl.init(APP.html.canvas) )
@@ -160,40 +163,15 @@ APP.QuadList      = [];
 	});
 	APP.html.input_file.addEventListener('change', function(){
 		QUAD.func.log('QuadList[]', APP.upload_id);
-		if ( QUAD.func.is_undef( APP.QuadList[ APP.upload_id ] ) )
-			APP.QuadList[ APP.upload_id ] = new QuadData(APP.QuadList);
-		var qdata = APP.QuadList[ APP.upload_id ];
 
 		var proall = [];
-		for ( var up of this.files )
-			proall.push( QUAD.func.upload_promise(up, qdata) );
+		for ( var up of this.files ){
+			var p = QUAD.func.upload_promise(up, APP.upload_id, APP.upload_queue);
+			proall.push(p);
+		}
 
-		Promise.all(proall).then(function(resolve){
-			APP.qdata_filetable(qdata, APP.html.debugger_files);
-			if ( qdata.name ){
-				APP.html.quad_data.innerHTML = '';
-				document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
-
-				var buffer = APP.qdata_tagtable(qdata.quad.tag);
-				APP.html.quad_data.innerHTML += buffer;
-
-				var quad_main = APP.quad_mainlist(qdata.quad);
-				if ( quad_main === -1 )
-					return;
-
-				var buffer = '<h2>' + quad_main + '</h2>';
-				buffer += '<ul>';
-				qdata.quad[quad_main].forEach(function(v,k){
-					if ( ! v )
-						return;
-					buffer += APP.qdata_listing(qdata, quad_main, k);
-				});
-				buffer += '</ul>';
-				APP.html.quad_data.innerHTML += buffer;
-
-				APP.viewer_btn_menu(qdata);
-			} // if ( qdata.name )
-			APP.html.logger.innerHTML = QUAD.func.console();
+		Promise.all(proall).then(function(res){
+			return APP.process_uploads();
 		});
 	});
 	APP.html.bgcontrast_range.addEventListener('change', function(){
@@ -229,7 +207,6 @@ APP.QuadList      = [];
 			nav[0].classList.remove('hidden');
 		else
 			nav[0].classList.add('hidden');
-		console.log(nav[0]);
 	});
 	APP.html.btn_lines.addEventListener('click', function(){
 		if ( ! APP.QuadList[0] )

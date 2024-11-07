@@ -1,27 +1,29 @@
 'use strict';
 
-var APP = {};
+APP.process_uploads_done = function(){
+	var qdata = APP.QuadList[ APP.upload_id ];
 
-APP.get_html_id = function(){
-	var html = {};
-	var eles = document.querySelectorAll('*[id]');
-	for ( var i=0; i < eles.length; i++ ) {
-		var id   = eles[i].id;
-		html[id] = eles[i];
-	}
-	return html;
-}
+	APP.qdata_filetable(qdata, APP.html.debugger_files);
+	if ( qdata.name ){
+		APP.html.keylist.innerHTML = '';
+		document.title = '[' + qdata.name + '] ' + APP.html.quad_version.innerHTML;
 
-APP.qdata_filetable = function( qdata, files ){
-	files.innerHTML = '';
-	if ( qdata.name )
-		files.innerHTML += '<li>[QUAD] ' + qdata.name + '</li>';
-	for ( var i=0; i < qdata.image.length; i++ ){
-		if ( ! qdata.image[i] || ! qdata.image[i].name )
-			continue;
-		var img = qdata.image[i];
-		files.innerHTML += '<li>[IMAGE][' + i + '] ' + img.name + ' (' + JSON.stringify(img.pos) + ')</li>';
-	}
+		if ( ! qdata.quad.keyframe )
+			return;
+		qdata.attach.type = 'keyframe';
+
+		var buffer = '';
+		qdata.quad.keyframe.forEach(function(v,k){
+			if ( ! v )
+				return;
+			var name = v.name + ' (' + v.debug + ')';
+			buffer += '<li><p onclick="keyframe_select(' + k + ');">' + name + '</p></li>';
+		});
+		APP.html.keylist.innerHTML = buffer;
+	} // if ( qdata.name )
+
+	APP.autozoom  = 1.0;
+	APP.is_redraw = true;
 }
 
 APP.button_select_layers = function( text ){

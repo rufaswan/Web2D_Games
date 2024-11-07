@@ -566,7 +566,7 @@ color::
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
 logic_op::
-	* Has higher priority than normal blending is disabled. Hence when it is set, `mode_rgb`, `mode_alpha` and `color` are ignored.
+	* Has higher priority than normal blending. Hence when it is set, `mode_rgb`, `mode_alpha` and `color` are ignored.
 	* Accepts 4 strings array for each RGBA components.
 	** Can be shorthand to 2 string for RGB and Alpha components.
 	** Can be shorthand to 1 string for all 4 RGBA components.

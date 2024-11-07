@@ -107,7 +107,6 @@ ul {
 #debugger_top_nav {
 	position : fixed;
 	width    : 100vw;
-	display  : block;
 	margin   : 0;
 	padding  : 0;
 	display  : flex;

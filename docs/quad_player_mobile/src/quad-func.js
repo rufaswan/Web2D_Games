@@ -79,27 +79,10 @@ function QuadFunc(Q){
 	$.copy_object = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
 	}
-	$.attr_bitflag = function( attrib, enumlist ){
-		if ( Array.isArray(attrib) ){
-			var bitflag = 0;
-			for ( var i=0; i < attrib.length; i++ )
-				bitflag |= $.attr_bitflag(attrib[i], enumlist);
-			return bitflag;
-		}
-		if ( typeof attrib === 'string' ){
-			var idx = enumlist.indexOf(attrib);
-			if ( idx < 0 ){
-				idx = enumlist.length;
-				enumlist.push(attrib);
-			}
-			return (1 << idx);
-		}
-		return 0;
-	}
 
 	//////////////////////////////
 
-	$.upload_promise = function( up, qdata ){
+	$.upload_promise = function( up, id, queue ){
 		var ext = $.file_extension(up.name);
 		switch ( ext ){
 			case 'zip':
@@ -111,15 +94,12 @@ function QuadFunc(Q){
 					}
 					reader.readAsArrayBuffer(up);
 				}).then(function(list){
-					var key = Object.keys(list);
 					var proall = [];
-					for ( var i=0; i < key.length; i++ ){
-						var ext = $.file_extension( key[i] );
-
+					Object.keys(list).forEach(function(fn){
+						var ext = $.file_extension(fn);
 						switch ( ext ){
 							case 'quad':
 								var p = new Promise(function(ok,err){
-									var fn   = key[i];
 									var blob = new Blob(
 										[ list[fn] ],
 										{ type : 'text/plain' }
@@ -130,13 +110,12 @@ function QuadFunc(Q){
 									}
 									reader.readAsText(blob);
 								}).then(function(res){
-									return __.upload_handler(qdata, 'quad', res[0], res[1]);
+									queue.push({ id : id , name : res[0] , data : res[1] });
 								});
 								proall.push(p);
 								break;
 							case 'png':
 								var p = new Promise(function(ok,err){
-									var fn   = key[i];
 									var blob = new Blob(
 										[ list[fn] ],
 										{ type : 'image/png' }
@@ -147,12 +126,12 @@ function QuadFunc(Q){
 									}
 									reader.readAsDataURL(blob);
 								}).then(function(res){
-									return __.upload_handler(qdata, 'image', res[0], res[1]);
+									queue.push({ id : id , name : res[0] , data : res[1] });
 								});
 								proall.push(p);
 								break;
 						} // switch ( ext )
-					} // for ( var i=0; i < key.length; i++ )
+					});
 					return Promise.all(proall);
 				});
 
@@ -164,7 +143,7 @@ function QuadFunc(Q){
 					}
 					reader.readAsText(up);
 				}).then(function(text){
-					return __.upload_handler(qdata, 'quad', up.name, text);
+					queue.push({ id : id , name : up.name , data : text });
 				});
 
 			case 'png':
@@ -175,10 +154,9 @@ function QuadFunc(Q){
 					}
 					reader.readAsDataURL(up);
 				}).then(function(data){
-					return __.upload_handler(qdata, 'image', up.name, data);
+					queue.push({ id : id , name : up.name , data : data });
 				});
 		} // switch ( ext )
-		return 0;
 	}
 
 	__.is_rect_collide = function( rect, list ){
@@ -223,24 +201,28 @@ function QuadFunc(Q){
 		return 0;
 	}
 
-	__.upload_handler = function( qdata, type, fname, data ){
-		switch( type ){
+	$.queue_promise = function( up, qdata ){
+		var ext = $.file_extension(up.name);
+		switch ( ext ){
 			case 'quad':
-				var quad   = JSON.parse(data);
-				qdata.quad = __.quadfile_check(quad);
-				qdata.name = fname.replace(/[^A-Za-z0-9]/g, '_');
-				return $.log('UPLOAD quad', fname);
+				var quad   = JSON.parse(up.data);
+				qdata.quad = Q.verify.verify_quadfile(quad);
+				qdata.name = up.name.replace(/[^A-Za-z0-9]/g, '_');
+				return $.log('UPLOAD quad', up.name);
 
-			case 'image':
+			case 'png':
+				var name = up.name.match(/\.([0-9]+)\./);
+				if ( ! name )
+					return 0;
+
 				return new Promise(function(ok,err){
-					var fnm = fname.match(/\.([0-9]+)\./);
-					var tid = fnm[1];
+					var tid = name[1];
 
 					var img = new Image;
 					img.onload = function(){
 						ok([tid,img]);
 					}
-					img.src = data;
+					img.src = up.data;
 				}).then(function(res){
 					var tid = res[0];
 					var img = res[1];
@@ -264,189 +246,11 @@ function QuadFunc(Q){
 					Q.gl.draw_vram(qdata.vram, tex, pos);
 					qdata.image[tid] = {
 						pos  : pos,
-						name : fname,
+						name : up.name,
 					};
 					return $.log('UPLOAD image', tid, qdata.image[tid]);
 				});
-		} // switch( type )
-		return 0;
-	}
-
-	__.key_fogquad = function( fog ){
-		if ( typeof fog === 'string' ){
-			var c = Q.math.css_color(fog);
-			return [].concat(c, c, c, c);
-		}
-		if ( $.is_array(fog, 4) ){
-			var c0 = Q.math.css_color( fog[0] );
-			var c1 = Q.math.css_color( fog[1] );
-			var c2 = Q.math.css_color( fog[2] );
-			var c3 = Q.math.css_color( fog[3] );
-			return [].concat(c0, c1, c2, c3);
-		}
-		// default solid white
-		return [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1];
-	}
-
-	__.quadfile_check = function( quad ){
-		quad.blend     = quad.blend     || [];
-		quad.slot      = quad.slot      || [];
-		quad.hitbox    = quad.hitbox    || [];
-		quad.keyframe  = quad.keyframe  || [];
-		quad.animation = quad.animation || [];
-		quad.skeleton  = quad.skeleton  || [];
-		quad.__MIX     = [];
-		quad.__ATTR    = {
-			keyframe : [],
-			hitbox   : [],
-			colorize : [],
-		};
-
-		var ent;
-		function nullent(arr,k){
-			arr[k] = 0;
-		}
-
-		quad.blend.forEach(function(bv,bk){
-			if ( ! Q.gl.is_gl_enum(bv.mode_rgb) )
-				bv.mode_rgb = 0;
-			if ( ! $.is_array(bv.mode_rgb, 3) )
-				bv.mode_rgb = 0;
-			if ( ! bv.mode_rgb )
-				return nullent(quad.blend, bk);
-			ent = {
-				'mode_rgb'   : bv.mode_rgb,
-				'mode_alpha' : 0,
-				'name'       : bv.name || 'blend ' + bk,
-				'color'      : Q.math.css_color( bv.color ),
-			};
-			if ( ! Q.gl.is_gl_enum(bv.mode_alpha) )
-				bv.mode_alpha = 0;
-			if ( $.is_array(bv.mode_alpha, 3) )
-				bv.mode_alpha = 0;
-			if ( ! bv.mode_alpha )
-				ent.mode_alpha = bv.mode_alpha;
-			quad.blend[bk] = ent;
-		}); // quad.blend.forEach
-
-		quad.hitbox.forEach(function(hv,hk){
-			if ( ! Array.isArray(hv.layer) )
-				return nullent(quad.hitbox, hk);
-			var is_null = true;
-			hv.layer.forEach(function(lv,lk){
-				if ( ! $.is_array(lv.hitquad, 8) )
-					return nullent(hv.layer, lk);
-				is_null = false;
-				hv.layer[lk] = {
-					'debug'     : JSON.stringify(lv.debug || 0),
-					'hitquad'   : lv.hitquad,
-					'attribute' : $.attr_bitflag( lv.attribute, quad.__ATTR.hitbox ),
-				};
-			}); // hv.layer.forEach
-			if ( is_null )
-				return nullent(quad.hitbox, hk);
-			ent = {
-				'debug' : JSON.stringify(hv.debug || 0),
-				'name'  : hv.name  || 'hitbox '+ hk,
-				'layer' : hv.layer,
-			};
-			quad.hitbox[hk] = ent;
-		}); // quad.hitbox.forEach
-
-		quad.keyframe.forEach(function(kv,kk){
-			if ( ! Array.isArray(kv.layer) )
-				return nullent(quad.keyframe, kk);
-			var is_null = true;
-			kv.layer.forEach(function(lv,lk){
-				if ( ! $.is_array(lv.dstquad, 8) )
-					return nullent(kv.layer, lk);
-				is_null = false;
-				ent = {
-					'debug'     : JSON.stringify(lv.debug || 0),
-					'dstquad'   : lv.dstquad,
-					'blend_id'  : -1,
-					'fogquad'   : __.key_fogquad( lv.fogquad ),
-					'attribute' : $.attr_bitflag( lv.attribute, quad.__ATTR.keyframe ),
-					'colorize'  : $.attr_bitflag( lv.colorize , quad.__ATTR.colorize ),
-					'tex_id'    : -1,
-					'srcquad'   : 0,
-				};
-				if ( ! $.is_undef(lv.blend_id)   )  ent.blend_id = lv.blend_id | 0; // 0 is valid
-				if ( ! $.is_undef(lv.tex_id  )   )  ent.tex_id   = lv.tex_id   | 0; // 0 is valid
-				if ( ent.blend_id < 0 )  ent.blend_id = -1;
-				if ( ent.tex_id   < 0 )  ent.tex_id   = -1;
-				if (   $.is_array(lv.srcquad, 8) )  ent.srcquad  = lv.srcquad;
-				kv.layer[lk] = ent;
-			}); // kv.layer.forEach
-			if ( is_null )
-				return nullent(quad.keyframe, kk);
-			ent = {
-				'debug'  : JSON.stringify(kv.debug || 0),
-				'name'   : kv.name  || 'keyframe '+ kk,
-				'layer'  : kv.layer,
-				'order'  : kv.order,
-				'__RECT' : 0,
-			};
-			if ( ! $.is_array_unique(ent.order) )
-				ent.order = $.array_number( kv.layer.length );
-			quad.keyframe[kk] = ent;
-		}); // quad.keyframe.forEach
-
-		quad.animation.forEach(function(av,ak){
-			if ( ! Array.isArray(av.timeline) )
-				return nullent(quad.animation, ak);
-			av.timeline.forEach(function(tv,tk){
-				if ( tv.time < 1 )
-					return nullent(av.timeline, tk);
-				ent = {
-					'debug'        : JSON.stringify(tv.debug  || 0),
-					'time'         : tv.time,
-					'attach'       : tv.attach || 0 ,
-					'matrix'       : 0,
-					'color'        : Q.math.css_color(tv.color),
-					'matrix_mix'   : ( tv.matrix_mix   ) ? true : false,
-					'color_mix'    : ( tv.color_mix    ) ? true : false,
-					'keyframe_mix' : ( tv.keyframe_mix ) ? true : false,
-					'hitbox_mix'   : ( tv.hitbox_mix   ) ? true : false,
-				};
-				if ( $.is_array(tv.matrix, 16) )
-					ent.matrix = tv.matrix;
-				av.timeline[tk] = ent;
-			}); // av.timeline.forEach
-			$.array_clean_null(av.timeline);
-			if ( av.timeline.length < 1 )
-				return nullent(quad.animation, ak);
-			ent = {
-				'debug'    : JSON.stringify(av.debug || 0),
-				'name'     : av.name  || 'animation' + ak,
-				'timeline' : av.timeline,
-				'loop_id'  : -1,
-				'__RECT'   : 0,
-			};
-			if ( ! $.is_undef(av.loop_id) )  ent.loop_id = av.loop_id | 0; // 0 is valid
-			quad.animation[ak] = ent;
-		}); // quad.animation.forEach
-
-		quad.skeleton.forEach(function(sv,sk){
-			if ( ! Array.isArray(sv.bone) || sv.bone.length < 1 )
-				return nullent(quad.skeleton, sk);
-			sv.bone.forEach(function(bv,bk){
-				ent = {
-					'debug'     : JSON.stringify(bv.debug  || 0),
-					'name'      : bv.name   || 'bone ' + bk,
-					'attach'    : bv.attach || 0,
-				};
-				sv.bone[bk] = ent;
-			}); // sv.bone.forEach
-			quad.skeleton[sk] = {
-				'debug'  : JSON.stringify(sv.debug || 0),
-				'name'   : sv.name  || 'skeleton ' + sk,
-				'bone'   : sv.bone,
-				'__RECT' : 0,
-			};
-		}); // quad.skeleton.forEach
-
-		return quad;
+		} // switch ( ext )
 	}
 
 	//////////////////////////////
@@ -573,85 +377,92 @@ function QuadFunc(Q){
 
 	__.draw_MIX = function( qdata, id, mat4, color ){
 		var mix = qdata.quad.__MIX[id];
-		if ( mix.keyframe ){
+		if ( mix.key ){
 			if ( qdata.is_lines )
-				__.draw_lines(qdata, mix.keyframe.layer, mat4, 'dstquad');
+				__.draw_lines(qdata, mix.key.layer, mat4, 'dstquad');
 			else
-				__.draw_keyframe_tex(qdata, mix.keyframe.layer, mix.keyframe.order, mat4, color);
+				__.draw_keyframe_tex(qdata, mix.key.layer, mix.key.order, mat4, color);
 		}
-		if ( mix.hitbox && qdata.is_hits )
-			__.draw_lines(qdata, mix.hitbox.layer, mat4, 'hitquad');
+		if ( mix.hit && qdata.is_hits )
+			__.draw_lines(qdata, mix.hit.layer, mat4, 'hitquad');
+	}
+
+	__.attach_keyhit_id = function( qdata, attach ){
+		var def = {
+			key : -1,
+			hit   : -1,
+		};
+		if ( ! attach )
+			return def;
+
+		switch ( attach.type ){
+			case 'keyframe':
+				def.key = attach.id;
+				break;
+			case 'hitbox':
+				def.hit = attach.id;
+				break;
+			case 'slot':
+				var slot = qdata.quad.slot[ attach.id ];
+				if ( ! slot )
+					break;
+				slot.forEach(function(sv,sk){
+					var t = __.attach_keyhit_id(qdata, sv);
+					if ( t.key >= 0 )  def.key = t.key;
+					if ( t.hit >= 0 )  def.hit = t.hit;
+				});
+				break;
+		} // switch ( attach.type )
+		return def;
 	}
 
 	__.mix_attach = function( qdata, cur, nxt, rate, keymix, hitmix ){
-		function getmixed( mixed, attach ){
-			switch ( attach.type ){
-				case 'slot':
-					if ( ! qdata.quad.slot[ attach.id ] )
-						return;
-					qdata.quad.slot[ attach.id ].forEach(function(sv,sk){
-						getmixed(mixed, sv);
-					});
-					return;
-				case 'keyframe':
-					if ( ! qdata.quad.keyframe[ attach.id ] )
-						return;
-					if ( ! mixed.keyframe )
-						mixed.keyframe = qdata.quad.keyframe[ attach.id ];
-					return;
-				case 'hitbox':
-					if ( ! qdata.quad.hitbox[ attach.id ] )
-						return;
-					if ( ! mixed.hitbox )
-						mixed.hitbox   = qdata.quad.hitbox[ attach.id ];
-					return;
-			} // switch ( attach.type )
-		}
-		function is_canmixed( is_mix, objcur, objnxt ){
-			if ( ! is_mix )  return false;
-			if ( ! objcur )  return false;
-			if ( ! objnxt )  return false;
-			if ( objcur.layer.length !== objnxt.layer.length )
-				return false;
-			return true;
-		}
+		var cur_id = __.attach_keyhit_id(qdata, cur);
+		var nxt_id = __.attach_keyhit_id(qdata, nxt);
 
-		var mixcur = {
-			keyframe : 0,
-			hitbox   : 0,
-		};
-		var mixnxt = {
-			keyframe : 0,
-			hitbox   : 0,
-		};
-		getmixed( mixcur, cur );
-		getmixed( mixnxt, nxt );
-		var mixent = $.copy_object(mixcur);
+		var mixcur = { key : 0 , hit : 0 };
+		var mixnxt = { key : 0 , hit : 0 };
 
-		if ( is_canmixed(keymix, mixcur.keyframe, mixnxt.keyframe) ){
-			for ( var i=0; i < mixcur.keyframe.layer.length; i++ ){
-				if ( ! mixcur.keyframe.layer[i] )
-					continue;
-				if ( ! mixnxt.keyframe.layer[i] )
-					continue;
-				mixent.keyframe.layer[i].dstquad = Q.math.quad_mix( rate , mixcur.keyframe.layer[i].dstquad , mixnxt.keyframe.layer[i].dstquad );
-				mixent.keyframe.layer[i].fogquad = Q.math.fog_mix ( rate , mixcur.keyframe.layer[i].fogquad , mixnxt.keyframe.layer[i].fogquad );
-			} // for ( var i=0; i < mixcur.keyframe.length; i++ )
+		// duplicate current for updated values
+		if ( cur_id.key >= 0 )
+			mixcur.key = $.copy_object( qdata.quad.keyframe[cur_id.key] );
+		if ( cur_id.hit >= 0 )
+			mixcur.hit = $.copy_object( qdata.quad.hitbox  [cur_id.hit] );
+
+		// next is read-only, so reference is fine
+		if ( nxt_id.key >= 0 )
+			mixnxt.key = qdata.quad.keyframe[nxt_id.key];
+		if ( nxt_id.hit >= 0 )
+			mixnxt.hit = qdata.quad.hitbox  [nxt_id.hit];
+
+		if ( keymix && mixcur.key && mixnxt.key ){
+			if ( mixcur.key.layer.length === mixnxt.key.layer.length ){
+				for ( var i=0; i < mixcur.key.layer.length; i++ ){
+					if ( ! mixcur.key.layer[i] )
+						continue;
+					if ( ! mixnxt.key.layer[i] )
+						continue;
+					mixcur.key.layer[i].dstquad = Q.math.quad_mix( rate , mixcur.key.layer[i].dstquad , mixnxt.key.layer[i].dstquad );
+					mixcur.key.layer[i].fogquad = Q.math.fog_mix ( rate , mixcur.key.layer[i].fogquad , mixnxt.key.layer[i].fogquad );
+				} // for ( var i=0; i < mixcur.key.layer.length; i++ )
+			}
 		}
 
-		if ( is_canmixed(hitmix, mixcur.hitbox, mixnxt.hitbox) ){
-			for ( var i=0; i < mixcur.hitbox.layer.length; i++ ){
-				if ( ! mixcur.hitbox.layer[i] )
-					continue;
-				if ( ! mixnxt.hitbox.layer[i] )
-					continue;
-				mixent.hitbox.layer[i].hitquad = Q.math.quad_mix( rate , mixcur.hitbox.layer[i].hitquad , mixnxt.hitbox.layer[i].hitquad );
-			} // for ( var i=0; i < mixcur.hitbox.length; i++ )
+		if ( hitmix && mixcur.hit && mixnxt.hit ){
+			if ( mixcur.hit.layer.length === mixnxt.hit.layer.length ){
+				for ( var i=0; i < mixcur.hit.layer.length; i++ ){
+					if ( ! mixcur.hit.layer[i] )
+						continue;
+					if ( ! mixnxt.hit.layer[i] )
+						continue;
+					mixcur.hit.layer[i].hitquad = Q.math.quad_mix( rate , mixcur.hit.layer[i].hitquad , mixnxt.hit.layer[i].hitquad );
+				} // for ( var i=0; i < mixcur.hit.layer.length; i++ )
+			}
 		}
 
 		// return attach object
 		var id = qdata.quad.__MIX.length;
-		qdata.quad.__MIX.push(mixent);
+		qdata.quad.__MIX.push(mixcur);
 		return {
 			'type' : '__MIX',
 			'id'   : id,
