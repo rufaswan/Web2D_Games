@@ -1,0 +1,211 @@
+====================
+== Princess Crown ==
+====================
+
+Food
+	Heart  Fruit      (10 + Lv/2) HP
+	Elixir Fruit      (20 + Lv/2) HP + seed
+	Hamburger         (30 + Lv/2) HP
+	Fruit Cake        (50 + Lv/2) HP
+	Yggdrasill Fruit  Full HP + POWER boost
+
+	Dodo Egg    -> Fried Egg     40% HP
+	Corn        -> Grilled Corn  50% HP
+	Fish        -> Grilled Fish  60% HP + fishbone
+	Meat        -> Grilled Meat  70% HP + bone
+	Dragon Meat -> Dragon Steak  90% HP + bone
+
+	HEAL  Flower Seed
+	POWER Flower Seed
+
+	QUEST ITEMS
+	- All consumables need to be unused (full 3 charges) to be given to fullfil a request
+	- (Gradriel) Spike Grass (leaf togatta herb)
+	- (Gradriel) Vulcan RED Ruby = Ruby/Vulcan Gem + Mana Potion
+	- (Edward)   Dragon Soup     = Dragon Meat     + Soup Seasoning + Pot  #MISSABLE#
+
+Town Specialty
+	- G E -  000    Valenadine Castle     -
+	- G E -  002    Valenadine City       Fried Egg     40G
+	W G - -  004    Nutsbill              Fruit Cake    16G
+	- G - -  007    Yggdrasill Tree       -
+	W G - -  009    Worn Hut              -
+	W G - -  012    Goblin Market         Goblin Juice  26G (mystery shop)
+	W G - -  014    Witch House           -
+	W G E -  015    Dorangora             Grilled Meat  52G
+	- G - -  019    Dragon Nest           -
+	W G E -  020    Cemeteryth            -
+	W G - -  022    Pumpkin House         Grilled Corn  44G
+	W G - -  024    Seal Cave             -
+	W G - -  026    Lowgrove              Fresh Milk    24G  Fried Egg     40G
+	- G - -  029    Forgotten Tower       -
+	- G - -  031    Amberstep             Grilled Corn  44G
+	- G - -  035    Southwest Cave        -
+	- G - -  038    Black Wood Tower      -
+	- G E P  039    Leeland               Grilled Fish  48G
+	- G - -  03903  Ghost House           -
+	W G E P  041    Cadho Badho soldier   Fried Egg     40G
+	W G E P  043    Cadho Badho trader    Hamburger     24G (secret shop)
+	W G E P  045    Cadho Badho sorcerer  -
+	- G E -  048    Titania Lake          -
+	- G - -  050    Southeast Cave        -
+	- G - -  052    Frogger Pond          -
+	- G - -  055    Dwarf Land            -
+	- G - P  057    Evil Wood Tower       -
+	- G E P  061    Knelt                 Grilled Meat  52G
+	- G - -  06102  Dontuan Hiding Place  -
+	- G E P  063    Oracle Cave           -
+	- G - -  068    Sea Board Cave        -
+	- G E -  071    Baindfear Gate        -
+	- G E -  073    Demon Tower           -
+	- G - -  074    Sagon                 Grilled Fish  48G
+	- G - -  076    Sword Mine            -
+	- G - -  079    Volga Castle          -
+	- G - -  081    Volga City            Fruit Cake    16G
+	- G - -  083    Hiding Bar            Dragon Steak  56G
+	- - E -  089    Ancient Cave          -
+	- - - P  093    Treasure Isle Cave    -
+	- G - -  100    Trial Labyrinth       -
+	- G - -  102    Dungeon of Soldier    -
+	- G - -  103    Dungeon of Sorcerer   -
+	- G - -  105    Unicorn Wood          -
+
+	Teleport Shop
+	002  Valenadine City
+	020  Cemeteryth
+	045  Cadho Badho sorcerer
+	061  Knelt
+	081  Volga City
+
+	After final book, go to Teleport Shop at Cadho Badho sorcerer, stand on center of megic circle
+	* (Saturn)   ...and press XYZ
+	* (PSP, PS4) ...and press Cross + Square + Circle
+	for special battles with all enemies.
+
+Hindel Gems
+	Sun    Edward    BOSS Ancient Cave
+	Moon   -
+	Earth  Gradriel  BOSS Drawf Land
+	Sea    Portgas   BOSS Treasure Isle Cave
+
+GRADRIEL
+	init  BAG 1
+
+	Valenadine City         (3 * Music Note) DROP Cure , END confirm
+	|-Valenadine Castle     -
+	  |-Trial Labyrinth     #MISSABLE# BOSS DROP Trust
+	Nutsbill                -
+	|-Worn Hut              -
+	|-Yggdrasill Tree       (story) DROP Battle + BAG 2 , BOSS BAG 3
+	Goblin Market           -
+	|-Witch House           -
+	Dorangora               -
+	Dragon Nest             BOSS Music Note 1
+	Cemeteryth              -
+	|-Pumpkin House         -
+	  |-Seal Cave           (Ancient Key) BOSS Music Note 2
+	Lowgrove                -
+	Unicorn Wood            -
+	Forgotten Tower         BOSS DROP Notice
+	Amberstep               (old man) Yggdrasill Tree
+	Southwest Cave          -
+	Cadho Badho soldier     (parrot) Dontuan Hiding Place
+	|-Dungeon of Soldier    BOSS (+sorcerer) DROP Unit
+	Cadho Badho sorcerer    (Memento Ring) DROP Attack
+	|-Dungeon of Sorcerer   BOSS (+soldier ) DROP Unit
+	Cadho Badho trader      -
+	Titania Lake            (siren) Southeast Cave
+	Southeast Cave          BOSS DROP Kind
+	Leeland                 -
+	|-Ghost House           -
+	|-Sea Board Cave        -
+	|-Baindfear Gate        -
+	  |-Demon Tower         -
+	Black Wood Tower        -
+
+	Frogger Pond            BOSS Ancient Key
+	Dwarf Land              BOSS SWORD+
+	|-Evil Wood Tower       -
+	Knelt                   (Spike Grass) Music Note 3
+	|-Oracle Cave           (Vulcan RED Ruby) Forgotten Tower
+	|-Dontuan Hiding Place  BOSS Memento Ring
+
+	Sagon                   -
+	Sword Mine              BOSS Broken Sword
+	Volga Castle            -
+	Volga City              (Broken Sword) Hiding Bar
+	|-Hiding Bar            (all 15 specialty) DROP Remove
+
+	* Cadho Badho trader secret shop
+		* Cadho Badho trader - Lady
+		* Dwarf Land         - Maid
+		* Cadho Badho trader - Lady
+
+EDWARD
+	init  DROP Battle + Kind + Trust + Attack
+	init  BAG 1
+
+	Cadho Badho soldier   (story) BAG 2
+	Cadho Badho sorcerer  -
+	|-Titania Lake        (siren) -> END
+	  |-Baindfear Gate    END
+	    |-Demon Tower     END
+	Cadho Badho trader    -
+	Ancient Cave          -
+	Knelt                 -
+	|-Oracle Cave         -
+	Leeland               -
+	Valenadine City       #MISSABLE# (Dragon Soup) DROP Unit , #MISSABLE# BAG 3
+	|-Valenadine Castle   -
+	Dorangora             -
+	Cemeteryth            -
+
+PROSERPINA / WITCH
+	init  DROP Battle + Kind + Trust + Remove
+
+	Witch House           (all material) END
+	Goblin Market         BAG 1  300G , BAG 2  500G , BAG 3  700G
+	Worn Hut              -
+	Nutsbill              -
+	Dorangora             -
+	Cemeteryth            -
+	|-Pumpkin House       -
+	  |-Seal Cave         POWER Flower Seed trade
+	Lowgrove              BOSS Fresh Milk
+	Cadho Badho soldier   -
+	Cadho Badho sorcerer  Insect Power
+	Cadho Badho trader    Round Leaf Grass  6G, POWER Flower Seed  2000G
+
+	item                        shop
+	8 * Insect Power               0
+	5 * Round Leaf Grass        5* 6G
+	8 * Goblin Juice            8*26G = 208G
+	5 * Fresh Milk                 0
+	1 * POWER Flower Seed          0  or 2000G
+		1 * Fried Egg             40G
+		1 * Grilled Corn        -
+		1 * Grilled Fish        -
+		1 * Grilled Meat          52G
+		1 * Elixir Fruit          20G
+	5 * Mana Potion             5*50G = 250G
+	3 * Dragon Meat             -
+	1 * Vulcan RED    Ruby      -
+	1 * Tundra BLUE   Sapphire  -
+	1 * Thor   PURPLE Amethyst  -
+	1 * Gorgon BROWN  Opal      -
+	1 * Stars  GREEN  Emerald   -
+	1 * Holy   WHITE  Diamond   -
+
+PORTGAS / PIRATE
+	init  DROP Battle + Kind + Trust + Unit
+	init  extra BAG 1 + 2
+
+	Leeland               -
+	|-Treasure Isle Cave  -
+	Cadho Badho soldie    -
+	Cadho Badho sorcerer  -
+	Cadho Badho trader    BAG 3  1000G
+	Knelt                 -
+	|-Oracle Cave         -
+	Evil Wood Tower       END
+

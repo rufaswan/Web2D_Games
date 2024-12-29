@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 2.0.17"/>
+<meta name="author" content="Rufas Wan"/>
+<title>Ripping Tutorial</title>
+</head>
+<body class="book">
+<div id="header">
+<h1>Ripping Tutorial</h1>
+<div class="details">
+<span id="author" class="author">Rufas Wan</span><br/>
+<span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">2024-12-28</span>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#prereq">Prerequisites</a></li>
+<li><a href="#overview">The Method Overview</a></li>
+<li><a href="#example">Examples</a>
+<ul class="sectlevel2">
+<li><a href="#guide_sprite">Sprite Data</a></li>
+<li><a href="#guide_sprite_alt1">Sprite Data (no Cheat Engine)</a></li>
+<li><a href="#guide_meta">Meta Data</a></li>
+<li><a href="#guide_loadfile">Loading Files</a></li>
+</ul>
+</li>
+<li><a href="#fun_terms">Fundamental Terminology</a>
+<ul class="sectlevel2">
+<li><a href="#ram_memory">RAM Memory</a></li>
+<li><a href="#raw_image">Raw Image Data</a></li>
+<li><a href="#pixel_space">Pixel Space</a></li>
+</ul>
+</li>
+<li><a href="#_links">Links</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="prereq">Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The most common mistake newbies make is to decompile the whole EXE and try to understand everything from the start. But we are not trying to rewrite the whole engine from scratch, so there are no need to know everything. We only need the part that will get what we want, or the relevant part.</p>
+</div>
+<div class="paragraph">
+<p>This tutorial is about locating the ASM code to help us to understand and to work with data. Naturally, the reader is expected to be able to recognize the ASM code the game is executing as.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>PSX/PS2/PSP is running MIPS code.</p>
+</li>
+<li>
+<p>Saturn is running SH-2 code.</p>
+</li>
+<li>
+<p>GBA/NDS is running ARM code.</p>
+</li>
+<li>
+<p>etc&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The readers is also expected to understand the basic 4 main data types:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>int</p>
+</li>
+<li>
+<p>float</p>
+</li>
+<li>
+<p>bool or bitflags</p>
+</li>
+<li>
+<p>text string or binary AOB (array of byte)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>And understand the fixed data size varieties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>int</code> is read/parse from a text file. It is native register size as the operating system.</p>
+</li>
+<li>
+<p><code>int16</code> is read from a binary file. It is <code>int</code> in 16-bits or 2 bytes.</p>
+</li>
+<li>
+<p><code>int32</code> is read from a binary file. It is <code>int</code> in 32-bits or 4 bytes.</p>
+</li>
+<li>
+<p><code>int64</code> is read from a binary file. It is <code>int</code> in 64-bits or 8 bytes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When exploring the data with a hex editor, this is how they are represented as Array of Byte (AOB):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">endianness</th>
+<th class="tableblock halign-left valign-top">int32 0x123456 as AOB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">big endian byte order</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>00 12 34 56</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">little endian byte order</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>56 34 12 00</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The nonsense ASM code jargons in different architecture:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Able to distinguish <code>doubleword</code> (int) and <code>double</code> (float).</p>
+</li>
+<li>
+<p>On DOS,  <code>byte</code> is int8, <code>word</code>     is in16, and <code>doubleword</code> is int32.</p>
+</li>
+<li>
+<p>On MIPS, <code>byte</code> is int8, <code>halfword</code> is in16, and <code>word</code>       is int32.</p>
+</li>
+<li>
+<p>On SH-2, <code>byte</code> is int8, <code>word</code>     is in16, and <code>longword</code>   is int32.</p>
+</li>
+<li>
+<p>On MIPS, <code>lb</code>   is <code>load signed byte</code>   and <code>lbu</code>   is <code>load unsigned byte</code>.</p>
+</li>
+<li>
+<p>On ARM,  <code>ldrb</code> is <code>load unsigned byte</code> and <code>ldrsb</code> is <code>load signed byte</code>.</p>
+</li>
+<li>
+<p>etc&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+Be careful about shorthands! If <code>longword</code> shorten to <code>long</code>, and <code>halfword</code> shorten to <code>half</code>, then <code>doubleword</code> will shorten to <code>double</code>&#8230;&#8203;
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Lastly, know your tools! Study and learn the features of the tool you&#8217;re using. Try to find a workaround if required feature is not available. In worst case, the tool is not good enough, you will need to replace it with something better.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overview">The Method Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="#ram_memory">RAM Memory</a> holds many things, including the stuff you want. Any ASM code reading or writing those data must also be the relevant ASM code working on it.</p>
+</div>
+<div class="paragraph">
+<p>Why would the code want to read compressed data? Most likely it is trying to decompress it. So you&#8217;ll find the decompression function.</p>
+</div>
+<div class="paragraph">
+<p>Why would the code want to read animation data? Most likely it is trying to transform drawing XY coordinates on the screen. So you&#8217;ll find the transformation function.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/ram-read-write.png"><img src="pt-overview/ram-read-write.png" alt="ram read write" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Hence, the basic steps are</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Identify the data you are looking for. It can be anything, including texture data, animation data, dialogue text, etc.</p>
+</li>
+<li>
+<p>Run the game until the data is loaded to memory. Pause the game and look for the RAM address (or user memory address) that holds the data.</p>
+</li>
+<li>
+<p>Put a READ/WRITE breakpoint on that RAM Address region and resume running the game. The game will automatic break when executing the ASM code working with the data. That region of ASM code is the relevant function.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A visual example on 3 steps above:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">With Input Data</th>
+<th class="tableblock halign-left valign-top">With Output Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-input-data.png"><img src="pt-overview/over-input-data.png" alt="over input data" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>From compressed data (game file) to RAM address <code>0x8007d160</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-output-data.png"><img src="pt-overview/over-output-data.png" alt="over output data" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>From decompressed data to RAM address <code>0x801a067c</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-input-break-1.png"><img src="pt-overview/over-input-break-1.png" alt="over input break 1" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Use RAM Address <code>0x8007d160</code> to put a READ breakpoint</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-output-break-1.png"><img src="pt-overview/over-output-break-1.png" alt="over output break 1" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Use RAM Address <code>0x801a067c</code> to put a WRITE breakpoint</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-input-break-2.png"><img src="pt-overview/over-input-break-2.png" alt="over input break 2" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Game breaks on ASM code <code>0x8002896c</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-output-break-2.png"><img src="pt-overview/over-output-break-2.png" alt="over output break 2" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Game breaks on ASM code <code>0x800289e8</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Using 2 "jr ra" (return), the ASM code <code>from 0x80028960 to 0x80028a8c</code> is identified as the "decompression function".</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>After that, you can then use a decompiler to help understanding the ASM code, such as Ghidra <a href="#ghidra">[ghidra]</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="pt-overview/over-ghidra.png"><img src="pt-overview/over-ghidra.png" alt="over ghidra" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Some notes about workarounds</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If your tool doesn&#8217;t have the ability to explore RAM, try to find a way to dump the RAM to a file and explore it with a hex editor.</p>
+</li>
+<li>
+<p>Save state (not in-game Save File) will have a copy of the RAM dump. Starts from there!</p>
+</li>
+<li>
+<p>You can also use Cheat Engine <a href="#cheat">[cheat]</a>, but unless you are working on PC game, the RAM address you get is for the emulator. You&#8217;ll need to find the base address and do some math to match the address back to the game.</p>
+</li>
+<li>
+<p>Your tool must have the ability to put Memory READ or WRITE breakpoints!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example">Examples</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="guide_sprite">Sprite Data</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Game</dt>
+<dd>
+<p>PSX Choujin Gakuen - Gowcaizer</p>
+</dd>
+<dt class="hdlist1">Debugger</dt>
+<dd>
+<p>nocash PSX <a href="#nopsx">[nopsx]</a> + Cheat Engine <a href="#cheat">[cheat]</a></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s start with something simple - we are trying to rip a character sprite. Using nocash PSX VRAM Viewer, we can see the sprite is a complete sprite.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite/decode-vram.png"><img src="ex-sprite/decode-vram.png" alt="decode vram" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>Remember - data need to be read to RAM before it can be transfer to VRAM. So we need to explore RAM for traces of the sprite.</p>
+</div>
+<div class="paragraph">
+<p>Unfortunately, while nocash psx is very useful, it doesn&#8217;t have some necessary features to help us explore RAM. so we use Cheat Engine to workaround its limitations.</p>
+</div>
+<div class="paragraph">
+<p>The first thing we need to find is the base RAM address. We need to tie Cheat Engine address back to nocash PSX address. So we go to Cheat Engine Scan Settings and turn on MEM_MAPPED.</p>
+</div>
+<div class="paragraph">
+<p>Now make a Save State at nocash PSX. Then goto RAM 80010000 and edit in byte sequence "41 79 61" (Aya). Use Cheat Engine to search for this byte sequence.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Always make a save state before editing RAM. If something went wrong, you can always revert back by using load state.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite/decode-aya-1.png"><img src="ex-sprite/decode-aya-1.png" alt="decode aya 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite/decode-aya-2.png"><img src="ex-sprite/decode-aya-2.png" alt="decode aya 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>So we get an address <code>b09100</code> from Cheat Engine, and that is correspond to <code>80010000</code> on nocash PSX.</p>
+</div>
+<div class="paragraph">
+<p>The size of PSX RAM is 2MB, from <code>80000000</code> to <code>80200000</code>. That would translate into Cheat Engine address as:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>PSX 80000000 = CE b09100 - 10000
+	= CE af9100
+
+PSX 80200000 = CE af9100 + 200000
+	= CE cf9100</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we can use Cheat Engine to explore PSX RAM. We are looking for graphic data, so we open Memory Viewer subwindow, and select View &#8594; Graphical memory view.</p>
+</div>
+<div class="paragraph">
+<p>We will need to look for anything suspicious at address <code>from af9100 to cf9100</code>. Refer <a href="#raw_image">Raw Image Data</a> for more details.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite/decode-cheat-1.png"><img src="ex-sprite/decode-cheat-1.png" alt="decode cheat 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite/decode-cheat-2.png"><img src="ex-sprite/decode-cheat-2.png" alt="decode cheat 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>We found the graphic data at <code>c9f5a</code>. Using the base address, we can translate it back to PSX address.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>CE c9f05a = c9f05a - af9100 + PSX 80000000
+	= PSX 801a5f50</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s go back to nocash and double-check if we are doing it correctly and looking at the same data.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite/decode-cheat-3.png"><img src="ex-sprite/decode-cheat-3.png" alt="decode cheat 3" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite/decode-cheat-4.png"><img src="ex-sprite/decode-cheat-4.png" alt="decode cheat 4" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>YES! They are both indeed the same!</p>
+</div>
+<div class="paragraph">
+<p>Now we can put a WRITE breakpoint to look for the decompression function:</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite/decode-break-1.png"><img src="ex-sprite/decode-break-1.png" alt="decode break 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite/decode-break-2.png"><img src="ex-sprite/decode-break-2.png" alt="decode break 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>The data is READ from <code>t2</code> at RAM 8004ef70 and WRITE to <code>a0</code> at RAM 801a5f50. Now we can use the data at <code>t2</code> to locate the original game file.</p>
+</div>
+<div class="paragraph">
+<p>Since the game files still have their original names, the task becomes very easy. The character name is Karin, so obviously the file is <code>data/act/kari.act</code>. The data is then located at offset 0x4f1e9.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite/decode-break-3.png"><img src="ex-sprite/decode-break-3.png" alt="decode break 3" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite/decode-break-4.png"><img src="ex-sprite/decode-break-4.png" alt="decode break 4" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>With the original game file and the decompression function found, and also have decompressed data to verify against with, we have pretty much everything we need to start coding.</p>
+</div>
+<div class="paragraph">
+<p>Here is the result with all sprites decompressed and packed into a texture atlas:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-sprite/kari.act.png"><img src="ex-sprite/kari.act.png" alt="kari.act" height="240"/></a>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+This example starts from output data (VRAM) and work its way back to input data (game file). Try do the steps in reverse to link data from game file to VRAM.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="guide_sprite_alt1">Sprite Data (no Cheat Engine)</h3>
+<div class="paragraph">
+<p>It is an alternative method to explore RAM when Cheat Engine is not available, didn&#8217;t work or could not be used.</p>
+</div>
+<div class="paragraph">
+<p>A save state will make a backup for the whole program. It will have a copy of RAM dump in it. So the first step is to find a way to extract the RAM dump from save state.</p>
+</div>
+<div class="paragraph">
+<p>Luckily, nocash PSX has the option to make uncompressed save state:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-sprite-alt1/save-aya-1.png"><img src="ex-sprite-alt1/save-aya-1.png" alt="save aya 1" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Just like Cheat Engine before, we need to find the base RAM address. Goto RAM 80010000, edit in byte sequence "41 79 61" (Aya) and then make a save state.</p>
+</div>
+<div class="paragraph">
+<p>Since the save state is not compressed, we can simply use a hex editor and look for "Aya" (as string or byte sequence).</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite-alt1/save-aya-2.png"><img src="ex-sprite-alt1/save-aya-2.png" alt="save aya 2" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite-alt1/save-aya-3.png"><img src="ex-sprite-alt1/save-aya-3.png" alt="save aya 3" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>We found "Aya" at <code>99064</code>. Convert it back to PSX RAM address from <code>80000000</code> to <code>80200000</code>:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>PSX 80000000 = FILE 99064 - 10000
+	= FILE 89064
+
+PSX 80200000 = FILE 89064 + 200000
+	= FILE 289064</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With that, we can start exploring RAM dump for sprite data. Refer to <a href="#raw_image">Raw Image Data</a> for more details.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-sprite-alt1/save-sprite-1.png"><img src="ex-sprite-alt1/save-sprite-1.png" alt="save sprite 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-sprite-alt1/save-sprite-2.png"><img src="ex-sprite-alt1/save-sprite-2.png" alt="save sprite 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>We discover the graphic data on save state offset <code>22efe0</code>. Using the base address, we can translate it back to PSX RAM at:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>FILE 22efe0 = 22efe0 - 89064 + PSX 80000000
+	= PSX 801a5f7c</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+It never hurt to go back to nocash PSX to double-check if both address has the same data.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And then we can put WRITE breakpoint to look for the decompression function. Everything is the same after that.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Other Emulators</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>PCSX2 save state is a normal ZIP file. Just rename the extension <code>from .p2s to .zip</code>, the <code>eeMemory.bin</code> file is the RAM dump.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="guide_meta">Meta Data</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Game</dt>
+<dd>
+<p>PS2 Odin Sphere</p>
+</dd>
+<dt class="hdlist1">Debugger</dt>
+<dd>
+<p>PCSX2 <a href="#pcsx2">[pcsx2]</a></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Starting with output data is only possible for visual data. Meta data like texture atlas, hitbox, and animation data, you&#8217;ll want to start from input data instead.</p>
+</div>
+<div class="paragraph">
+<p>The process is mostly the same. Start from a game file (or a section of it), look for it on RAM, and then put a READ breakpoint on the whole thing.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If the game file is compressed, then you&#8217;ll need to do it 2 times. The first time is to find the decompression function. When you have the data decompressed, you can look for it on RAM and put READ breakpoint as usual.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-meta/meta-file-1.png"><img src="ex-meta/meta-file-1.png" alt="meta file 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-meta/meta-file-2.png"><img src="ex-meta/meta-file-2.png" alt="meta file 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>The file is loaded at RAM da8c00. Offsets for each sections are at 0x54 to 0x80. The data we&#8217;re interested in is on section[8] (or <code>s8</code>), from offset 0x13b440 to 0x157080 (size = 0x1bc40).</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Noticed the offsets are updated on RAM? So <strong>DO NOT</strong> use offsets for Array of Byte search!
+</td>
+</tr>
+</table>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>offset start = 54 + PS2 da8c00
+= PS2 da8c54
+
+offset end = 80 + PS2 da8c00
+= PS2 da8c80
+
+s8 start = 13b440 + PS2 da8c00
+= PS2 ee4040
+
+s8 end = 157080 + PS2 da8c00
+= PS2 effc80</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With that, we can put a READ breakpoint on the whole section[8].</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-meta/meta-break.png"><img src="ex-meta/meta-break.png" alt="meta break" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>By noting down the ASM code on every break, we have a very good idea how the data is read.</p>
+</div>
+<div class="paragraph">
+<p>Remember - we are looking for relevant function for further analysis later. So write down the ASM address along the way.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;"/>
+<col style="width: 25%;"/>
+<col style="width: 25%;"/>
+<col style="width: 25%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Data[]</th>
+<th class="tableblock halign-left valign-top">ASM</th>
+<th class="tableblock halign-left valign-top">data</th>
+<th class="tableblock halign-left valign-top">note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">00</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lhu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int16</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172488 , <code>n * 18 + section[6] offset</code></p>
+</li>
+<li>
+<p>17248c , <code>n * 18 + section[6] offset</code></p>
+</li>
+<li>
+<p>172494 , <code>n * 18 + section[6] offset</code></p>
+</li>
+<li>
+<p>1724c8 , <code>n * 18 + section[6] offset</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">02</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">03</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">04</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lhu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int16</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172500 , <code>n * 30 + section[7] offset</code></p>
+</li>
+<li>
+<p>172504 , <code>n * 30 + section[7] offset</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">06</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lhu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int16</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172278</p>
+</li>
+<li>
+<p>172394</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">08</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lw</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int32</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172060 , <code>AND 80</code></p>
+</li>
+<li>
+<p>1720f0 , <code>AND 100 , 4 , 8</code></p>
+</li>
+<li>
+<p>17232c , <code>AND 40</code></p>
+</li>
+<li>
+<p>172a44 , <code>AND 1</code></p>
+</li>
+<li>
+<p>172a50 , <code>AND 2</code></p>
+</li>
+<li>
+<p>172a64 , <code>AND 2</code></p>
+</li>
+<li>
+<p>172c28 , <code>AND 400</code></p>
+</li>
+<li>
+<p>172ecc , <code>AND 20 , 10</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lhu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int16</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172160</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lbu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int8</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172820 , <code>== 2 , == 1</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0f</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lbu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int8</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>17239c</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lbu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int8</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>1724c4 , <code>== 2 , == 1</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lbu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int8</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>1725bc , <code>== 2 , == 1</code></p>
+</li>
+<li>
+<p>172f7c</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lbu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int8</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172f74</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lb</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int8</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>17246c</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lw</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int32</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172084</p>
+</li>
+<li>
+<p>17209c</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">18</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lhu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int16</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172088</p>
+</li>
+<li>
+<p>1720a8</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1a</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lhu</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int16</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>17208c</p>
+</li>
+<li>
+<p>1720ac</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lw</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">int32</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>172080</p>
+</li>
+<li>
+<p>1720b8</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Using the ASM address above, we can conclude there are 3 function parsing the data.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>function A from 171fc0 to 1722c0</p>
+</li>
+<li>
+<p>function B from 1722d0 to 1723f0</p>
+</li>
+<li>
+<p>function C from 1723f0 to 173020</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Function A seems to be doing End of Animation + Looping check. It also have SFX/voice playback.</p>
+</div>
+<div class="paragraph">
+<p>Function B seems to be doing math to normalize animation rate from FPS to value between 0.0 to 1.0.</p>
+</div>
+<div class="paragraph">
+<p>Function C is a rather huge function and seems to be drawing function with a final draw call to GPU.</p>
+</div>
+<hr/>
+<div class="paragraph">
+<p>With the ASM address, we can have a proper understanding how certain things work. For example, data[10] read at ASM address 1724c4 will lead us to 2 if&#8217;s and 2 function.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-meta/meta-ghidra-s7.png"><img src="ex-meta/meta-ghidra-s7.png" alt="meta ghidra s7" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>When data[10] is 2 or 1, each will lead us to a function. For anything else, use the current frame only.</p>
+</div>
+<div class="paragraph">
+<p>Let us examine what these 2 function do:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-meta/meta-ghidra-s7-2.png"><img src="ex-meta/meta-ghidra-s7-2.png" alt="meta ghidra s7 2" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The function accepts 4 frames as arguments. Based on the code using power of 2 and power of 3, we can guess the intepolation is based on polynomial formula:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>P(t) = at^3 + bt^2 + ct + d]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Arrange the algorithm from the screenshot according to Polynomial formula above:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>result =   prev * (-0.5t^3 +  1.0t^2 + -0.5t + 0)
+         + cur  * ( 1.5t^3 + -2.5t^2 +     0 + 1)
+         + nxt1 * (-1.5t^3 +  2.0t^2 +  0.5t + 0)
+         + nxt2 * ( 0.5t^3 + -0.5t^2 +     0 + 0)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then convert it to matrix form:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\$"result" =
+	[t^3  t^2  t  1]
+	* [
+		[-0.5 ,  1.5 , -1.5 ,  0.5] ,
+		[ 1.0 , -2.5 ,  2.0 , -0.5] ,
+		[-0.5 ,  0   ,  0.5 ,  0  ] ,
+		[ 0   ,  1.0 ,  0   ,  0  ]
+	]
+	* [
+		["prev"] ,
+		["cur" ] ,
+		["nxt1"] ,
+		["nxt2"]
+	]\$
+</div>
+</div>
+<div class="paragraph">
+<p>The 4x4 matrix is the Characteristic Matrix, and it matched Catmull-Rom Spline <a href="#catmull">[catmull]</a>.</p>
+</div>
+<div class="paragraph">
+<p>We can say for certain - when data[10] is 2, do 4-frames Catmull-Rom Spline interpolation.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-meta/meta-ghidra-s7-1.png"><img src="ex-meta/meta-ghidra-s7-1.png" alt="meta ghidra s7 1" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This function is a lot more simple. The formula is just:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>result = cur * (1.0 - t) + next * t</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So when data[10] is 1, do 2-frames Linear interpolation.</p>
+</div>
+<hr/>
+<div class="paragraph">
+<p>Meta data can be something hard to observe with videos and screenshots. And game can lag and skip frame to maintain performance further complicate things. Having the ability to refer to ASM code will help eliminate a lot of these guesswork.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="guide_loadfile">Loading Files</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Game</dt>
+<dd>
+<p>PSP Princess Crown</p>
+</dd>
+<dt class="hdlist1">Debugger</dt>
+<dd>
+<p>PPSSPP <a href="#ppsspp">[ppsspp]</a></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>To be able to start from input data, you&#8217;ll need to know which files is actually loaded for the scene.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s start by looking for a file list on RAM using a file name from the game</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+File names can be case insensitive matched. So try all uppercase, all lowercase, and/or mixed case.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+You can start with file extension.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-load-file/load-file-1.png"><img src="ex-load-file/load-file-1.png" alt="load file 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-load-file/load-file-2.png"><img src="ex-load-file/load-file-2.png" alt="load file 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>We found the the file at RAM 8aeb410. By observing the pattern, the file entry is an array <code>["FILE.NAME", int32 LBA, int32 file size]</code> and has fixed 0x1c bytes size.</p>
+</div>
+<div class="paragraph">
+<p>Looking for where the list begins and ends, we discovered the area for the whole list is <code>from RAM 8ae6ae4 to RAM 8af51e4</code> (size = 0xe700).</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-load-file/load-break-1.png"><img src="ex-load-file/load-break-1.png" alt="load break 1" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>As usual, when we have something we want to inspect, we&#8217;ll put a READ breakpoint on the whole thing.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-load-file/load-break-2.png"><img src="ex-load-file/load-break-2.png" alt="load break 2" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-load-file/load-break-3.png"><img src="ex-load-file/load-break-3.png" alt="load break 3" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>As the game search by file name, the ASM code is about comparing every character for a match. Even PPSSPP able to recognize this function as <code>strcmp()</code> (string compare).</p>
+</div>
+<div class="paragraph">
+<p>We are no interest for <code>strcmp()</code> itself, but the function that called it. We will use "Step Into" until the function returned. We end up at ASM address <code>89e38e4</code>.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><a class="image" href="ex-load-file/load-ghidra-1.png"><img src="ex-load-file/load-ghidra-1.png" alt="load ghidra 1" height="240"/></a></span>
+<span class="image"><a class="image" href="ex-load-file/load-ghidra-2.png"><img src="ex-load-file/load-ghidra-2.png" alt="load ghidra 2" height="240"/></a></span></p>
+</div>
+<div class="paragraph">
+<p>With that, we can use Ghidra <a href="#ghidra">[ghidra]</a> to decompile the function.</p>
+</div>
+<div class="paragraph">
+<p><code>SUB_001ecdbc</code> is <code>strcmp()</code>, so basically the function is about looping a list of 3000 file entries and return the one that matched.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You can skip this step with Ghidra if you can understand the ASM code directly. This is a very simple function to begin with.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Since READ breakpoint will always break at <code>strcmp()</code>, on every file entries, with a list of 3000 entries, it is no longer usefule for us.</p>
+</div>
+<div class="paragraph">
+<p>This is where we&#8217;ll disable the READ breakpoint. and use EXECUTE breakpoint instead.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="ex-load-file/load-opcode.png"><img src="ex-load-file/load-opcode.png" alt="load opcode" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>We will put EXECUTE breakpoint when the file entry matched and ready for return, at this 2 ASM address:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>89e3904  lw  s2, 18(v0)
+89e39a0  lw  s2, 18(v0)</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+EXECUTE breakpoint is for discover inner workings of the function, which is something possible only after the ASM code is discovered by READ or WRITE breakpoint.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>By keeping track of value at <code>v0</code>, we will get a list of file names the game trying to load. For example, when Gradriel went into Valenadine City Pub, the game will look for these files (in order):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">v0</th>
+<th class="tableblock halign-left valign-top">filename</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8af1d2c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TORUNEKO.VOL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8aed0d4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GODY.VOL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8aea00c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BABA.VOL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8aed294</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GORO.VOL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8af4b1c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WINE.VOL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8af4dbc</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WN1C.VOL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8ae7388</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">002_01_4.EVN</p></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Other Usage</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>When the game files are a bunch of meaningless numbers, like <code>000_00_0.EVN</code>.</p>
+</li>
+<li>
+<p>When the game files are in sets, it can be in 2&#8217;s (texture + atlas) or in 3&#8217;s (texture + atlas + palette)</p>
+</li>
+<li>
+<p>When the game files are shared and has very weird or unknown combinations.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="fun_terms">Fundamental Terminology</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="ram_memory">RAM Memory</h3>
+<div class="paragraph">
+<p>Some interesting facts about RAM (Random Access Memory)</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>It hold pretty much everything currently active on the screen.</p>
+</li>
+<li>
+<p>Executable data is loaded to RAM, hence PC (program counter) is also a RAM address.</p>
+</li>
+<li>
+<p>Breakpoint is triggered by ASM code on CPU side. DMA (Direct Memory Access) transfers will not trigger any breakpoints.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>DMA from CD-ROM to RAM will not trigger any WRITE breakpoints.</p>
+</li>
+<li>
+<p>DMA from RAM to GPU and SPU will not trigger any READ breakpoints.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Data read from CD-ROM cannot directly transfer to GPU and SPU. The (partial) data will need to be loaded to RAM first, then transfer to GPU and SPU for video/audio streaming playback.</p>
+</li>
+<li>
+<p>That also means you cannot transfer any custom format data to GPU/SPU. These files will need to be converted first, so raw pixel data to GPU and raw audio data to SPU.</p>
+</li>
+<li>
+<p>Modern GPU/SPU may accepts compressed texture/audio file format, but for certain few file formats. And you&#8217;ll need to test for its support first before transferring.</p>
+</li>
+<li>
+<p>Compressed data are decompressed within RAM, from one RAM address to another RAM address.</p>
+</li>
+<li>
+<p>Emulator Save State has a full dump of the whole RAM.</p>
+</li>
+<li>
+<p>By removing every temporary data and data loaded from game files, RAM can trimmed down and backup as in-game Save File.</p>
+</li>
+<li>
+<p>C Dynamic Memory Allocation affect data only. Hence the variables, texture atlas, animation data and stuff are always at different RAM address when loaded.</p>
+</li>
+<li>
+<p>ASM code from main executable is only load once, hence they&#8217;ll always at the same RAM address.</p>
+</li>
+<li>
+<p>ASM code from overlays has a fixed RAM address to load to, but like data, they can be unload anytime when not needed.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="raw_image">Raw Image Data</h3>
+<div class="paragraph">
+<p>In essence, image data is like an ASCII art, with 1 character representing 1 pixel. Example:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>+---------------------+
+| BBBB   IIII    GGGG |
+| BB  B   II    GG    |
+| BBBB    II    GG GG |
+| BB  B   II    GG  G |
+| BBBB   IIII    GGG  |
++---------------------+</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The ASCII art "BIG" above has 21 characters per line and it has 5 lines. If converted to an image data, you&#8217;ll get a 21x5 pixels image, with each letter "B","I","G" is 7x5 pixels image.</p>
+</div>
+<div class="paragraph">
+<p>Here is an interactive example for raw image data:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">PNG image</th>
+<th class="tableblock halign-left valign-top">HTML text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="fn-raw-image/elisa-sprite-24.png"><img src="fn-raw-image/elisa-sprite-24.png" alt="elisa sprite 24" height="240"/></a>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="fn-raw-image/elisa-sprite-24.clut.html" class="bare">fn-raw-image/elisa-sprite-24.clut.html</a></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Try inspect every pixel for the terms "Color", "LookUp", and "Table" (CLUT).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Raw Image is pretty much a giant pixel <strong>table</strong>. You can either use a "class" to <strong>lookup</strong> a <strong>color</strong> (Palette Image), or use a "style" to define a <strong>color</strong> directly (True Color Image).
+</td>
+</tr>
+</table>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Here&#8217;s how the same raw image data looks on different apps:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;"/>
+<col style="width: 50%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">App</th>
+<th class="tableblock halign-left valign-top">Screenshot</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HxD <a href="#hxd">[hxd]</a> hex editor</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="fn-raw-image/raw-image-hxd.png"><img src="fn-raw-image/raw-image-hxd.png" alt="raw image hxd" height="240"/></a>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HexView , from <code>psxtools/tsr_hexview.php</code>.</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="fn-raw-image/raw-image-hexview.png"><img src="fn-raw-image/raw-image-hexview.png" alt="raw image hexview" height="240"/></a>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cheat Engine <a href="#cheat">[cheat]</a></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="fn-raw-image/raw-image-cheat.png"><img src="fn-raw-image/raw-image-cheat.png" alt="raw image cheat" height="240"/></a>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nana <a href="#nana">[nana]</a> raw image viewer</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<a class="image" href="fn-raw-image/raw-image-nana.png"><img src="fn-raw-image/raw-image-nana.png" alt="raw image nana" height="240"/></a>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GIMP <a href="#gimp">[gimp]</a> photo editor</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><span class="image"><a class="image" href="fn-raw-image/raw-image-gimp-1.png"><img src="fn-raw-image/raw-image-gimp-1.png" alt="raw image gimp 1" height="240"/></a></span>
+<span class="image"><a class="image" href="fn-raw-image/raw-image-gimp-2.png"><img src="fn-raw-image/raw-image-gimp-2.png" alt="raw image gimp 2" height="240"/></a></span></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="pixel_space">Pixel Space</h3>
+<div class="paragraph">
+<p>The drawing XY are in space-like coordinates, similar to 3D space. The XY can be from -infinite to +infinite px. So all sprite are aligned with <code>[0,0]</code>.</p>
+</div>
+<div class="paragraph">
+<p>Basically, like 3D models, <code>[0,0]</code> makes the sprite coordinate self-contained. The game can then "transform" the sprite to its in-game entity position.</p>
+</div>
+<div class="paragraph">
+<p>Some people refer <code>[0,0]</code> as "origin" or "root". I call it "center point". And here is an article referring it as "hot spots" <a href="#mckids">[mckids]</a>.</p>
+</div>
+<div class="paragraph">
+<p>Here is the process how I convert XY from pixel space to canvas position:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="fn-pixel-space/elise-space-1.png"><img src="fn-pixel-space/elise-space-1.png" alt="elise space 1" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>From the image above, the drawing XY for sprite is <code>[-130,-160 , -130,10 , 150,10 , 150,-160]</code></p>
+</div>
+<div class="paragraph">
+<p>First, we&#8217;ll need to prepare a canvas large enough to hold the full sprite. We will use the absolute value <a href="#absval">[absval]</a> of the drawing XY to calculate the size.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The absolute value of a number may be thought of as its distance from zero. It is thus always either a positive number or zero, but never negative.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The absolute values for X are <code>[130,130,150,150]</code>. So the canvas width is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>max value * 2 = 150 px * 2 = 300 px</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The absolute values for Y are <code>[160,10,160,10]</code>. So the canvas height is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>max value * 2 = 160 px * 2 = 320 px</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With that we will prepare a 300x320 px canvas, with <code>[150,160]</code> represent <code>[0,0]</code> in pixel space. The sprite will be drawn at</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[-130+150 , -160+160] = [ 20 ,   0]
+[-130+150 ,   10+160] = [ 20 , 170]
+[ 150+150 ,   10+160] = [300 , 170]
+[ 150+150 , -160+160] = [300 ,   0]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The result drawing position on the canvas is <code>[20,0 , 20,170 , 300,170 , 300,0]</code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="fn-pixel-space/elise-space-2.png"><img src="fn-pixel-space/elise-space-2.png" alt="elise space 2" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also very simple to revert canvas position back to pixel space - just subtract <code>[150,160]</code>.</p>
+</div>
+<div class="paragraph">
+<p>Since everything is aligned to <code>[0,0]</code> in pixel space, it doesn&#8217;t matter what the final canvas size is, they will all align together correctly for animations.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_links">Links</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Debugger</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="winehq"></a>]  <a href="https://gitlab.winehq.org/wine/wine/-/wikis/Download" class="bare">https://gitlab.winehq.org/wine/wine/-/wikis/Download</a></p>
+</li>
+<li>
+<p>[<a id="cheat"></a>]   <a href="https://cheatengine.org/downloads.php" class="bare">https://cheatengine.org/downloads.php</a></p>
+</li>
+<li>
+<p>[<a id="nopsx"></a>]   <a href="https://problemkaputt.de/psx.htm" class="bare">https://problemkaputt.de/psx.htm</a></p>
+</li>
+<li>
+<p>[<a id="pcsx2"></a>]   <a href="https://github.com/PCSX2/pcsx2/releases" class="bare">https://github.com/PCSX2/pcsx2/releases</a></p>
+</li>
+<li>
+<p>[<a id="ppsspp"></a>]  <a href="https://github.com/hrydgard/ppsspp/releases" class="bare">https://github.com/hrydgard/ppsspp/releases</a></p>
+</li>
+<li>
+<p>[<a id="dolphin"></a>] <a href="https://github.com/dolphin-emu/dolphin/releases" class="bare">https://github.com/dolphin-emu/dolphin/releases</a></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Tool</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="hxd"></a>]  <a href="https://mh-nexus.de/en/hxd/" class="bare">https://mh-nexus.de/en/hxd/</a></p>
+</li>
+<li>
+<p>[<a id="gimp"></a>] <a href="https://gimp.org/downloads/" class="bare">https://gimp.org/downloads/</a></p>
+</li>
+<li>
+<p>[<a id="nana"></a>] <a href="https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/" class="bare">https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/</a></p>
+</li>
+<li>
+<p>[<a id="yed"></a>]  <a href="https://yworks.com/products/yed/download" class="bare">https://yworks.com/products/yed/download</a></p>
+</li>
+<li>
+<p>[<a id="isobuster"></a>] <a href="https://www.isobuster.com/download.php" class="bare">https://www.isobuster.com/download.php</a></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Ghidra + Java</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="openjdk"></a>] <a href="https://jdk.java.net" class="bare">https://jdk.java.net</a></p>
+</li>
+<li>
+<p>[<a id="gradle"></a>]  <a href="https://github.com/gradle/gradle/releases" class="bare">https://github.com/gradle/gradle/releases</a></p>
+</li>
+<li>
+<p>[<a id="ghidra"></a>]  <a href="https://github.com/NationalSecurityAgency/ghidra/releases" class="bare">https://github.com/NationalSecurityAgency/ghidra/releases</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="ghpsx"></a>] <a href="https://github.com/lab313ru/ghidra_psx_ldr/releases" class="bare">https://github.com/lab313ru/ghidra_psx_ldr/releases</a></p>
+</li>
+<li>
+<p>[<a id="ghps2"></a>] <a href="https://github.com/beardypig/ghidra-emotionengine/releases" class="bare">https://github.com/beardypig/ghidra-emotionengine/releases</a></p>
+</li>
+<li>
+<p>[<a id="ghgcn"></a>] <a href="https://github.com/Cuyler36/Ghidra-GameCube-Loader/releases" class="bare">https://github.com/Cuyler36/Ghidra-GameCube-Loader/releases</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Art + Assert</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="opgame"></a>] <a href="https://opengameart.org" class="bare">https://opengameart.org</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="opelisa"></a>] <a href="https://opengameart.org/content/castle-platformer" class="bare">https://opengameart.org/content/castle-platformer</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Extra Readings</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>[<a id="mckids"></a>]  <a href="https://web.archive.org/web/20240927044154/https://games.greggman.com/game/programming_m_c__kids/" class="bare">https://web.archive.org/web/20240927044154/https://games.greggman.com/game/programming_m_c__kids/</a></p>
+</li>
+<li>
+<p>[<a id="catmull"></a>] <a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline" class="bare">https://en.wikipedia.org/wiki/Cubic_Hermite_spline</a></p>
+</li>
+<li>
+<p>[<a id="x86asm"></a>]  <a href="https://en.wikipedia.org/wiki/X86_instruction_listings" class="bare">https://en.wikipedia.org/wiki/X86_instruction_listings</a></p>
+</li>
+<li>
+<p>[<a id="cdynmem"></a>] <a href="https://en.wikipedia.org/wiki/C_dynamic_memory_allocation" class="bare">https://en.wikipedia.org/wiki/C_dynamic_memory_allocation</a></p>
+</li>
+<li>
+<p>[<a id="absval"></a>]  <a href="https://en.wikipedia.org/wiki/Absolute_value" class="bare">https://en.wikipedia.org/wiki/Absolute_value</a></p>
+</li>
+<li>
+<p>[<a id="winedbg"></a>] <a href="https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/Debugging-Wine" class="bare">https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/Debugging-Wine</a></p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: { equationNumbers: { autoNumber: "none" } }
+})
+MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
+  MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
+    if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains("stemblock")) {
+      data.math.root.display = "block"
+    }
+    return data
+  })
+})
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+</body>
+</html>

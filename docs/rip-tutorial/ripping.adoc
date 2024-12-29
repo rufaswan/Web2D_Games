@@ -1,0 +1,165 @@
+= Ripping Tutorial
+Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
+v1.0 , 2024-12-28
+:toc:
+
+
+
+[#prereq]
+== Prerequisites
+
+The most common mistake newbies make is to decompile the whole EXE and try to understand everything from the start. But we are not trying to rewrite the whole engine from scratch, so there are no need to know everything. We only need the part that will get what we want, or the relevant part.
+
+This tutorial is about locating the ASM code to help us to understand and to work with data. Naturally, the reader is expected to be able to recognize the ASM code the game is executing as.
+
+* PSX/PS2/PSP is running MIPS code.
+* Saturn is running SH-2 code.
+* GBA/NDS is running ARM code.
+* etc...
+
+The readers is also expected to understand the basic 4 main data types:
+
+* int
+* float
+* bool or bitflags
+* text string or binary AOB (array of byte)
+
+And understand the fixed data size varieties:
+
+* `int` is read/parse from a text file. It is native register size as the operating system.
+* `int16` is read from a binary file. It is `int` in 16-bits or 2 bytes.
+* `int32` is read from a binary file. It is `int` in 32-bits or 4 bytes.
+* `int64` is read from a binary file. It is `int` in 64-bits or 8 bytes.
+
+When exploring the data with a hex editor, this is how they are represented as Array of Byte (AOB):
+
+|===
+|endianness |int32 0x123456 as AOB
+
+|big endian byte order
+|`00 12 34 56`
+
+|little endian byte order
+|`56 34 12 00`
+|===
+
+The nonsense ASM code jargons in different architecture:
+
+* Able to distinguish `doubleword` (int) and `double` (float).
+* On DOS,  `byte` is int8, `word`     is in16, and `doubleword` is int32.
+* On MIPS, `byte` is int8, `halfword` is in16, and `word`       is int32.
+* On SH-2, `byte` is int8, `word`     is in16, and `longword`   is int32.
+* On MIPS, `lb`   is `load signed byte`   and `lbu`   is `load unsigned byte`.
+* On ARM,  `ldrb` is `load unsigned byte` and `ldrsb` is `load signed byte`.
+* etc...
+
+WARNING: Be careful about shorthands! If `longword` shorten to `long`, and `halfword` shorten to `half`, then `doubleword` will shorten to `double`...
+
+Lastly, know your tools! Study and learn the features of the tool you're using. Try to find a workaround if required feature is not available. In worst case, the tool is not good enough, you will need to replace it with something better.
+
+
+
+:rel: pt-overview
+include::pt-overview/pt-overview.adoc[]
+
+
+
+[#example]
+== Examples
+
+:rel: ex-sprite
+include::ex-sprite/ex-sprite.adoc[]
+
+:rel: ex-sprite-alt1
+include::ex-sprite-alt1/ex-sprite-alt1.adoc[]
+
+:rel: ex-meta
+include::ex-meta/ex-meta.adoc[]
+
+:rel: ex-load-file
+include::ex-load-file/ex-load-file.adoc[]
+
+
+
+
+[#fun_terms]
+== Fundamental Terminology
+
+[#ram_memory]
+=== RAM Memory
+
+Some interesting facts about RAM (Random Access Memory)
+
+. It hold pretty much everything currently active on the screen.
+
+. Executable data is loaded to RAM, hence PC (program counter) is also a RAM address.
+
+. Breakpoint is triggered by ASM code on CPU side. DMA (Direct Memory Access) transfers will not trigger any breakpoints.
+.. DMA from CD-ROM to RAM will not trigger any WRITE breakpoints.
+.. DMA from RAM to GPU and SPU will not trigger any READ breakpoints.
+
+. Data read from CD-ROM cannot directly transfer to GPU and SPU. The (partial) data will need to be loaded to RAM first, then transfer to GPU and SPU for video/audio streaming playback.
+
+. That also means you cannot transfer any custom format data to GPU/SPU. These files will need to be converted first, so raw pixel data to GPU and raw audio data to SPU.
+
+. Modern GPU/SPU may accepts compressed texture/audio file format, but for certain few file formats. And you'll need to test for its support first before transferring.
+
+. Compressed data are decompressed within RAM, from one RAM address to another RAM address.
+
+. Emulator Save State has a full dump of the whole RAM.
+
+. By removing every temporary data and data loaded from game files, RAM can trimmed down and backup as in-game Save File.
+
+. C Dynamic Memory Allocation affect data only. Hence the variables, texture atlas, animation data and stuff are always at different RAM address when loaded.
+
+. ASM code from main executable is only load once, hence they'll always at the same RAM address.
+
+. ASM code from overlays has a fixed RAM address to load to, but like data, they can be unload anytime when not needed.
+
+
+
+:rel: fn-raw-image
+include::fn-raw-image/fn-raw-image.adoc[]
+
+:rel: fn-pixel-space
+include::fn-pixel-space/fn-pixel-space.adoc[]
+
+
+
+[bibliography]
+== Links
+
+Debugger::
+* [[[winehq]]]  https://gitlab.winehq.org/wine/wine/-/wikis/Download
+* [[[cheat]]]   https://cheatengine.org/downloads.php
+* [[[nopsx]]]   https://problemkaputt.de/psx.htm
+* [[[pcsx2]]]   https://github.com/PCSX2/pcsx2/releases
+* [[[ppsspp]]]  https://github.com/hrydgard/ppsspp/releases
+* [[[dolphin]]] https://github.com/dolphin-emu/dolphin/releases
+
+Tool::
+* [[[hxd]]]  https://mh-nexus.de/en/hxd/
+* [[[gimp]]] https://gimp.org/downloads/
+* [[[nana]]] https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/
+* [[[yed]]]  https://yworks.com/products/yed/download
+* [[[isobuster]]] https://www.isobuster.com/download.php
+
+Ghidra + Java::
+* [[[openjdk]]] https://jdk.java.net
+* [[[gradle]]]  https://github.com/gradle/gradle/releases
+* [[[ghidra]]]  https://github.com/NationalSecurityAgency/ghidra/releases
+** [[[ghpsx]]] https://github.com/lab313ru/ghidra_psx_ldr/releases
+** [[[ghps2]]] https://github.com/beardypig/ghidra-emotionengine/releases
+** [[[ghgcn]]] https://github.com/Cuyler36/Ghidra-GameCube-Loader/releases
+
+Art + Assert::
+* [[[opgame]]] https://opengameart.org
+** [[[opelisa]]] https://opengameart.org/content/castle-platformer
+
+Extra Readings::
+* [[[mckids]]]  https://web.archive.org/web/20240927044154/https://games.greggman.com/game/programming_m_c__kids/
+* [[[catmull]]] https://en.wikipedia.org/wiki/Cubic_Hermite_spline
+* [[[x86asm]]]  https://en.wikipedia.org/wiki/X86_instruction_listings
+* [[[cdynmem]]] https://en.wikipedia.org/wiki/C_dynamic_memory_allocation
+* [[[absval]]]  https://en.wikipedia.org/wiki/Absolute_value
+* [[[winedbg]]] https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/Debugging-Wine

@@ -167,6 +167,7 @@ function parse_options( $argv, $i )
 			$fsz = filesize($argv[$i]);
 			if ( $fsz < 1 )
 				break;
+			printf("\033]0;[HEXVIEW] %s\007", $argv[$i]);
 			$fp = fopen($argv[$i], 'rb');
 			if ( ! $fp )
 				break;

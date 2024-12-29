@@ -1,0 +1,85 @@
+[#guide_sprite]
+=== Sprite Data
+ifndef::rel[:rel: .]
+
+Game::
+	PSX Choujin Gakuen - Gowcaizer
+Debugger::
+	nocash PSX <<nopsx>> + Cheat Engine <<cheat>>
+
+Let's start with something simple - we are trying to rip a character sprite. Using nocash PSX VRAM Viewer, we can see the sprite is a complete sprite.
+
+
+image:{rel}/decode-vram.png[link={rel}/decode-vram.png,height=240]
+
+Remember - data need to be read to RAM before it can be transfer to VRAM. So we need to explore RAM for traces of the sprite.
+
+Unfortunately, while nocash psx is very useful, it doesn't have some necessary features to help us explore RAM. so we use Cheat Engine to workaround its limitations.
+
+The first thing we need to find is the base RAM address. We need to tie Cheat Engine address back to nocash PSX address. So we go to Cheat Engine Scan Settings and turn on MEM_MAPPED.
+
+Now make a Save State at nocash PSX. Then goto RAM 80010000 and edit in byte sequence "41 79 61" (Aya). Use Cheat Engine to search for this byte sequence.
+
+TIP: Always make a save state before editing RAM. If something went wrong, you can always revert back by using load state.
+
+
+image:{rel}/decode-aya-1.png[link={rel}/decode-aya-1.png,height=240]
+image:{rel}/decode-aya-2.png[link={rel}/decode-aya-2.png,height=240]
+
+So we get an address `b09100` from Cheat Engine, and that is correspond to `80010000` on nocash PSX.
+
+The size of PSX RAM is 2MB, from `80000000` to `80200000`. That would translate into Cheat Engine address as:
+
+....
+PSX 80000000 = CE b09100 - 10000
+	= CE af9100
+
+PSX 80200000 = CE af9100 + 200000
+	= CE cf9100
+....
+
+Now we can use Cheat Engine to explore PSX RAM. We are looking for graphic data, so we open Memory Viewer subwindow, and select View -> Graphical memory view.
+
+We will need to look for anything suspicious at address `from af9100 to cf9100`. Refer <<raw_image>> for more details.
+
+
+image:{rel}/decode-cheat-1.png[link={rel}/decode-cheat-1.png,height=240]
+image:{rel}/decode-cheat-2.png[link={rel}/decode-cheat-2.png,height=240]
+
+We found the graphic data at `c9f5a`. Using the base address, we can translate it back to PSX address.
+
+....
+CE c9f05a = c9f05a - af9100 + PSX 80000000
+	= PSX 801a5f50
+....
+
+Let's go back to nocash and double-check if we are doing it correctly and looking at the same data.
+
+
+image:{rel}/decode-cheat-3.png[link={rel}/decode-cheat-3.png,height=240]
+image:{rel}/decode-cheat-4.png[link={rel}/decode-cheat-4.png,height=240]
+
+YES! They are both indeed the same!
+
+Now we can put a WRITE breakpoint to look for the decompression function:
+
+
+image:{rel}/decode-break-1.png[link={rel}/decode-break-1.png,height=240]
+image:{rel}/decode-break-2.png[link={rel}/decode-break-2.png,height=240]
+
+The data is READ from `t2` at RAM 8004ef70 and WRITE to `a0` at RAM 801a5f50. Now we can use the data at `t2` to locate the original game file.
+
+Since the game files still have their original names, the task becomes very easy. The character name is Karin, so obviously the file is `data/act/kari.act`. The data is then located at offset 0x4f1e9.
+
+
+image:{rel}/decode-break-3.png[link={rel}/decode-break-3.png,height=240]
+image:{rel}/decode-break-4.png[link={rel}/decode-break-4.png,height=240]
+
+With the original game file and the decompression function found, and also have decompressed data to verify against with, we have pretty much everything we need to start coding.
+
+Here is the result with all sprites decompressed and packed into a texture atlas:
+
+
+image::{rel}/kari.act.png[link={rel}/kari.act.png,height=240]
+
+TIP: This example starts from output data (VRAM) and work its way back to input data (game file). Try do the steps in reverse to link data from game file to VRAM.

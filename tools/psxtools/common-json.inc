@@ -55,6 +55,26 @@ class json_pretty
 		return false;
 	}
 
+	// https://learn.microsoft.com/en-us/sql/relational-databases/json/how-for-json-escapes-special-characters-and-control-characters-sql-server?view=sql-server-ver16
+	// Escape of special characters
+	//   x22  \"  Quotation mark (")
+	//   x5c  \\  Backslash (\)
+	//   x2f  \/  Slash (/)
+	//   x08  \b  Backspace
+	//   x0c  \f  Form feed
+	//   x0a  \n  New line
+	//   x0d  \r  Carriage return
+	//   x09  \t  Horizontal tab
+	private function escape_str( &$str )
+	{
+		// PHP bug : \b become \x5c\x62 , instead \x08
+		$str = str_replace("\x5c", "\x5c\x5c", $str);
+		$fr = array("\x22" , "\x2f" , "\x08" , "\x0c" , "\x0a" , "\x0d" , "\x09");
+		$to = array('\\"'  , '\\/'  , '\\b'  , '\\f'  , '\\n'  , '\\r'  , '\\t' );
+		$str = str_replace($fr, $to, $str);
+		return;
+	}
+
 	private function jval_str( &$val )
 	{
 		// is string
@@ -62,7 +82,7 @@ class json_pretty
 		{
 			// decode failed
 			//   escape the escape char
-			$val = str_replace('\\', '\\\\', $val);
+			$this->escape_str($val);
 			return sprintf('"%s"', $val);
 		}
 

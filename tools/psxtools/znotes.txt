@@ -443,3 +443,14 @@ problemkaputt.de/psxspx-cdrom-iso-file-and-directory-descriptors.htm
 		13  IS_INTERLEAVED  (0=No, 1=Yes...?) (by file and/or channel?)
 		14  IS_CDDA         (0=Data or ADPCM, 1=CD-DA Audio Track)
 		15  IS_DIRECTORY    (0=File or CD-DA, 1=Directory Record)
+
+https://learn.microsoft.com/en-us/cpp/build/reference/base-base-address?view=msvc-170
+
+	The default base address for an EXE file is 0x400000 for 32-bit images
+	or 0x140000000 for 64-bit images.
+	For a DLL, the default base address is 0x10000000 for 32-bit images
+	or 0x180000000 for 64-bit images.
+
+	-    32          64
+	EXE    40 << 10  140 << 18
+	DLL  1000 << 10  180 << 18

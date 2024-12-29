@@ -1,6 +1,6 @@
-============================
-=== Clock Tower 1st Fear ===
-============================
+==========================
+== Clock Tower 1st Fear ==
+==========================
 
 - West Key (random @ 1F box or 2F bird cage)
 - Pesticide -> Gold Key -> Silver Key
@@ -39,9 +39,9 @@ RITUAL
 DESK
 	Silver Key -> read books on the desk
 
-=====================
-=== Clock Tower 2 ===
-=====================
+===================
+== Clock Tower 2 ==
+===================
 
 Ending A-E
 	E     = Scene 2 bad end
@@ -155,9 +155,9 @@ Library Key -> Mansion Key -> (Copper Book[A/D]) -> Fireplace Key[B/C]
 -> (Door Spell[B+])
 -> HINT 10 -> Mansion Map
 
-=============================
-=== Clock Tower Ghosthead ===
-=============================
+===========================
+== Clock Tower Ghosthead ==
+===========================
 
 ENDING A-M
 	M L K J I     = chapter 1 bad ends

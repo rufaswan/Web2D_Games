@@ -1,6 +1,6 @@
-===================
-=== Discworld 1 ===
-===================
+=================
+== Discworld 1 ==
+=================
 
 =====
 Act 1
@@ -211,9 +211,9 @@ POWERUP (use M16 , any 3)
 	Dark Wood
 use Custard Tart
 
-===================
-=== Discworld 2 ===
-===================
+=================
+== Discworld 2 ==
+=================
 
 =====
 Act 1
@@ -386,9 +386,9 @@ EPILOGUE
 	get Broom
 	use Bladders+Canteen(water) , use Broom
 
-======================
-=== Discworld Noir ===
-======================
+====================
+== Discworld Noir ==
+====================
 
 =====
 Act 1

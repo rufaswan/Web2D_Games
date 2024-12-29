@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.17">
-<meta name="author" content="by Rufas Wan">
-<title>QUAD Format Specification v0.5</title>
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 2.0.17"/>
+<meta name="author" content="Rufas Wan"/>
+<title>QUAD Format Specification</title>
 </head>
-<body class="article">
+<body class="book">
 <div id="header">
-<h1>QUAD Format Specification v0.5</h1>
+<h1>QUAD Format Specification</h1>
 <div class="details">
-<span id="author" class="author">by Rufas Wan</span><br>
+<span id="author" class="author">Rufas Wan</span><br/>
+<span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
+<span id="revnumber">version 0.5.x</span>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -114,7 +116,7 @@
 <div class="sectionbody">
 <div class="imageblock">
 <div class="content">
-<img src="spec-rel.png" alt="spec-rel.png">
+<img src="spec-rel.png" alt="spec-rel.png"/>
 </div>
 </div>
 <div class="paragraph">
@@ -468,17 +470,17 @@
 <div class="ulist">
 <ul>
 <li>
-<p>All strings is in "#rrggbbaa" format.</p>
-</li>
-<li>
-<p>Accepts a string, or 4 strings array.</p>
+<p>Accepts 4 RGBA strings for 4 corners of a quad.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>For a string, it is duplicated 3 times to become 4 strings array.</p>
+<p>Can be shorthand to 1 RGBA string when all 4 corners are the same color.</p>
 </li>
 </ul>
 </div>
+</li>
+<li>
+<p>RGBA string is in "#rrggbbaa" format.</p>
 </li>
 <li>
 <p>If omitted, then it is default to "#ffffffff" (white solid).</p>
@@ -1089,8 +1091,9 @@
   "mode_rgb"   : [ string mode , string src_factor , string dst_factor ],
   "mode_alpha" : [ string mode , string src_factor , string dst_factor ],
   "color"      : string rgba,
+  "logic_op"   : [ string opcode_r   , string opcode_g , string opcode_b , string opcode_a ],
+  "logic_op"   : [ string opcode_rgb , string opcode_a ],
   "logic_op"   : string opcode,
-  "logic_op"   : [ string opcode_r , string opcode_g , string opcode_b , string opcode_a ],
 }</pre>
 </div>
 </div>
@@ -1128,29 +1131,29 @@
 <div class="ulist">
 <ul>
 <li>
-<p><code>mode</code> is enum for <code>blendEquation()</code></p>
+<p><code>mode</code> is enum for <code>blendEquation()</code>, and string can be case-insensitive.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>FUNC_ADD</code> as math operation <code>SRC + DST</code></p>
+<p><code>FUNC_ADD</code> is math operation <code>SRC + DST</code></p>
 </li>
 <li>
-<p><code>FUNC_SUBTRACT</code> as math operation <code>SRC - DST</code></p>
+<p><code>FUNC_SUBTRACT</code> is math operation <code>SRC - DST</code></p>
 </li>
 <li>
-<p><code>FUNC_REVERSE_SUBTRACT</code> as math operation <code>-SRC + DST</code></p>
+<p><code>FUNC_REVERSE_SUBTRACT</code> is math operation <code>-SRC + DST</code></p>
 </li>
 <li>
-<p><code>MIN</code> as <code>min(SRC.r, DST.r)</code>,  <code>min(SRC.g, DST.g)</code>,  <code>min(SRC.b, DST.b)</code> and <code>min(SRC.a, DST.a)</code></p>
+<p><code>MIN</code> is <code>min(SRC.r, DST.r)</code>,  <code>min(SRC.g, DST.g)</code>,  <code>min(SRC.b, DST.b)</code> and <code>min(SRC.a, DST.a)</code></p>
 </li>
 <li>
-<p><code>MAX</code> as <code>max(SRC.r, DST.r)</code>,  <code>max(SRC.g, DST.g)</code>,  <code>max(SRC.b, DST.b)</code> and <code>max(SRC.a, DST.a)</code></p>
+<p><code>MAX</code> is <code>max(SRC.r, DST.r)</code>,  <code>max(SRC.g, DST.g)</code>,  <code>max(SRC.b, DST.b)</code> and <code>max(SRC.a, DST.a)</code></p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p><code>src_factor</code> and <code>dst_factor</code> are enum for <code>blendFunc()</code></p>
+<p><code>src_factor</code> and <code>dst_factor</code> are enum for <code>blendFunc()</code>, and string can be case-insensitive.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1158,10 +1161,10 @@
 <div class="ulist">
 <ul>
 <li>
-<p><code>ZERO</code> as value <code>0.0</code></p>
+<p><code>ZERO</code> is value <code>0.0</code></p>
 </li>
 <li>
-<p><code>ONE</code> as value <code>1.0</code></p>
+<p><code>ONE</code> is value <code>1.0</code></p>
 </li>
 </ul>
 </div>
@@ -1266,20 +1269,20 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Can only be used for integer draw buffer. It has no effect for floating-point draw buffer.</p>
+<p>Has higher priority than normal blending. Hence when it is set, <code>mode_rgb</code>, <code>mode_alpha</code> and <code>color</code> are ignored.</p>
 </li>
 <li>
-<p>When it is set, normal blending is disabled. Hence <code>mode_rgb</code>, <code>mode_alpha</code> and <code>color</code> are ignored.</p>
-</li>
-<li>
-<p>Accepts a string, or 4 strings array</p>
+<p>Accepts 4 strings array for each RGBA components.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>For a string, it is duplicated 3 times to become 4 strings array, for each RGBA values.</p>
+<p>Can be shorthand to 2 string for RGB and Alpha components.</p>
 </li>
 <li>
-<p>opcode is enum for <code>logicOp()</code></p>
+<p>Can be shorthand to 1 string for all 4 RGBA components.</p>
+</li>
+<li>
+<p><code>opcode</code> is enum for <code>logicOp()</code>, and string can be case-insensitive.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1337,6 +1340,9 @@
 </div>
 </li>
 <li>
+<p>Logic Operation can only be used for integer draw buffer. It invalid for floating-point draw buffer.</p>
+</li>
+<li>
 <p>If omitted or invalid, then it is default to <code>0</code> (use normal blending).</p>
 </li>
 </ul>
@@ -1390,7 +1396,7 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">v0.x</dt>
+<dt class="hdlist1">v0.5.x</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -1398,13 +1404,7 @@
 <p><code>keyframe_layer_object</code> : define <code>blend_id</code> == -1 as disable alpha blending</p>
 </li>
 <li>
-<p><code>blend_object</code> : removed <code>mode</code></p>
-</li>
-<li>
-<p><code>blend_object</code> : added <code>mode_rgb</code></p>
-</li>
-<li>
-<p><code>blend_object</code> : added <code>mode_alpha</code></p>
+<p><code>blend_object</code> : separate <code>mode</code> into <code>mode_rgb</code> and <code>mode_alpha</code></p>
 </li>
 <li>
 <p><code>blend_object</code> : added <code>logic_op</code></p>
@@ -1516,40 +1516,61 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Canvas XY</dt>
+<dt class="hdlist1">SRC</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>+X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
+<p>As in "Source", pixels READ from texture.</p>
 </li>
 <li>
-<p>0,0 is at the center of canvas.</p>
+<p>On image editor, it is the top layer.</p>
 </li>
 <li>
-<p>For Canvas size 320x240, X is -160px to +160px , and Y is -120px to +120px.</p>
-</li>
-<li>
-<p>It is then normalized to -1.0 to +1.0.</p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">Texture UV</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>+X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
+<p>[U,V] is used when accessing vectors that represent texture coordinates.</p>
 </li>
 <li>
 <p>0,0 is at top-left of texture.</p>
 </li>
 <li>
-<p>For Texture size 320x240, X is 0px to 320px , and Y is 0px to 240px.</p>
+<p>+X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
+</li>
+<li>
+<p>For Texture size 320x240, X is 0px (left) to 320px (right) , and Y is 0px (top) to 240px (bottom).</p>
 </li>
 <li>
 <p>It is then normalized to 0.0 to 1.0.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">DST</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>As in "Destination", pixels WRITE to canvas.</p>
+</li>
+<li>
+<p>On alpha blending operation, pixels are READ and WRITE back to canvas.</p>
+</li>
+<li>
+<p>On image editor, it is the bottom layer.</p>
+</li>
+<li>
+<p>[X,Y] is used when accessing vectors that reporesent canvas points.</p>
+</li>
+<li>
+<p>0,0 is at the center of canvas.</p>
+</li>
+<li>
+<p>+X is right direction, +Y is down direction, and they are measured in px (pixels).</p>
+</li>
+<li>
+<p>For Canvas size 320x240, X is -160px (left) to +160px (right) , and Y is -120px (top) to +120px (bottom).</p>
+</li>
+<li>
+<p>It is then normalized to -1.0 to +1.0.</p>
 </li>
 </ul>
 </div>
@@ -1570,7 +1591,7 @@
 <p><a href="sample-depth.quad">sample-depth.quad (567 bytes)</a></p>
 </li>
 <li>
-<p><a href="sample-keymix.quad">sample-keymix.quad (1299 bytes)</a></p>
+<p><a href="sample-keymix.quad">sample-keymix.quad (943 bytes)</a></p>
 </li>
 <li>
 <p><a href="sample-mat4mix.quad">sample-mat4mix.quad (1461 bytes)</a></p>
@@ -1615,10 +1636,6 @@
 </ul>
 </div>
 </div>
-</div>
-</div>
-<div id="footer">
-<div id="footer-text">
 </div>
 </div>
 </body>

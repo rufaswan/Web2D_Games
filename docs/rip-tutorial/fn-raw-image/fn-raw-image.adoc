@@ -1,0 +1,53 @@
+[#raw_image]
+=== Raw Image Data
+ifndef::rel[:rel: .]
+
+In essence, image data is like an ASCII art, with 1 character representing 1 pixel. Example:
+
+....
++---------------------+
+| BBBB   IIII    GGGG |
+| BB  B   II    GG    |
+| BBBB    II    GG GG |
+| BB  B   II    GG  G |
+| BBBB   IIII    GGG  |
++---------------------+
+....
+
+The ASCII art "BIG" above has 21 characters per line and it has 5 lines. If converted to an image data, you'll get a 21x5 pixels image, with each letter "B","I","G" is 7x5 pixels image.
+
+Here is an interactive example for raw image data:
+
+|===
+|PNG image |HTML text
+
+a|image::{rel}/elisa-sprite-24.png[link={rel}/elisa-sprite-24.png,height=240]
+a|link:{rel}/elisa-sprite-24.clut.html[]
+
+TIP: Try inspect every pixel for the terms "Color", "LookUp", and "Table" (CLUT).
+
+NOTE: Raw Image is pretty much a giant pixel *table*. You can either use a "class" to *lookup* a *color* (Palette Image), or use a "style" to define a *color* directly (True Color Image).
+|===
+
+Here's how the same raw image data looks on different apps:
+
+|===
+|App |Screenshot
+
+|HxD <<hxd>> hex editor
+a|image::{rel}/raw-image-hxd.png[link={rel}/raw-image-hxd.png,height=240]
+
+|HexView , from `psxtools/tsr_hexview.php`.
+a|image::{rel}/raw-image-hexview.png[link={rel}/raw-image-hexview.png,height=240]
+
+|Cheat Engine <<cheat>>
+a|image::{rel}/raw-image-cheat.png[link={rel}/raw-image-cheat.png,height=240]
+
+|Nana <<nana>> raw image viewer
+a|image::{rel}/raw-image-nana.png[link={rel}/raw-image-nana.png,height=240]
+
+|GIMP <<gimp>> photo editor
+a|
+image:{rel}/raw-image-gimp-1.png[link={rel}/raw-image-gimp-1.png,height=240]
+image:{rel}/raw-image-gimp-2.png[link={rel}/raw-image-gimp-2.png,height=240]
+|===
