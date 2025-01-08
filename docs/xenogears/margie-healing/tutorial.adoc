@@ -136,7 +136,7 @@ With that, we can use this formula to calculate the file id
 = 0174.bin
 ----
 
-NOTE: Make sure there are no remainder after the divide!
+CAUTION: Make sure there are no remainder after the divide!
 
 Noting down every `v1` starting from #BEFORE MAP state# until Margie heals Bart. The content of each file is then identified by referring to `xeno-iso.txt` as notes.
 
