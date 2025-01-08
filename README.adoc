@@ -20,5 +20,13 @@
 
 == Tutorials
 
-. psxtools +
-  {ghrepo}/blob/master/docs/psxtools-steps.adoc
+psxtools::
+. {ghrepo}/blob/master/docs/psxtools-steps.adoc
+
+Margie Healing (Xenogears)
+. {ghrepo}/blob/master/docs/xenogears/margie-healing/tutorial.adoc
+. {ghpage}/xenogears/margie-healing/tutorial.html
+
+Ripping Tutorial
+. {ghrepo}/blob/master/docs/rip-tutorial/ripping.adoc
+. {ghpage}/rip-tutorial/ripping.html

@@ -14,7 +14,8 @@
 <div class="details">
 <span id="author" class="author">Rufas Wan</span><br/>
 <span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
-<span id="revnumber">version 0.5.x</span>
+<span id="revnumber">version 0.5.x,</span>
+<span id="revdate">living draft</span>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -42,7 +43,7 @@
 <li><a href="#_terminology">Terminology</a></li>
 <li><a href="#_example">Example</a></li>
 <li><a href="#_contributors">Contributors</a></li>
-<li><a href="#_online_ver">Online Ver</a></li>
+<li><a href="#_links">Links</a></li>
 </ul>
 </div>
 </div>
@@ -186,39 +187,95 @@
 <div class="sect2">
 <h3 id="tag_object">Tag Object</h3>
 <div class="paragraph">
-<p>It is to define the metadata for current QUAD file, that includes:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Author</p>
-</li>
-<li>
-<p>Copyright</p>
-</li>
-<li>
-<p>Date created</p>
-</li>
-<li>
-<p>Version number</p>
-</li>
-<li>
-<p>Exported by <code>SOFTWARE</code></p>
-</li>
-<li>
-<p>Comments</p>
-</li>
-<li>
-<p>etc&#8230;&#8203;</p>
-</li>
-</ul>
+<p>It is to define the metadata for current QUAD file.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre>{
   tag : [ any , any ... ],
-  tag : any
+  tag : any,
 }</pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_tags_reference">Tags Reference</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">MPEG Audio Tag ID3v1 <a href="#mp3tag">[mp3tag]</a></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Title</p>
+</li>
+<li>
+<p>Artist</p>
+</li>
+<li>
+<p>Album</p>
+</li>
+<li>
+<p>Year</p>
+</li>
+<li>
+<p>Comment</p>
+</li>
+<li>
+<p>Genre</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">ISO9660 &#8594; The Primary Volume Descriptor <a href="#isotag">[isotag]</a></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>System Identifier</p>
+</li>
+<li>
+<p>Volume Identifier</p>
+</li>
+<li>
+<p>Volume Sequence Number</p>
+</li>
+<li>
+<p>Volume Set Identifier</p>
+</li>
+<li>
+<p>Publisher Identifier</p>
+</li>
+<li>
+<p>Data Preparer Identifier</p>
+</li>
+<li>
+<p>Application Identifier</p>
+</li>
+<li>
+<p>Copyright File Identifier</p>
+</li>
+<li>
+<p>Abstract File Identifier</p>
+</li>
+<li>
+<p>Bibliographic File Identifier</p>
+</li>
+<li>
+<p>Volume Creation Date and Time</p>
+</li>
+<li>
+<p>Volume Modification Date and Time</p>
+</li>
+<li>
+<p>Volume Expiration Date and Time</p>
+</li>
+<li>
+<p>Volume Effective Date and Time</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -1623,8 +1680,12 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_online_ver">Online Ver</h2>
+<h2 id="_links">Links</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Online Ver</dt>
+<dd>
 <div class="ulist">
 <ul>
 <li>
@@ -1634,6 +1695,28 @@
 <p><a href="https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html" class="bare">https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html</a></p>
 </li>
 </ul>
+</div>
+</dd>
+<dt class="hdlist1">Extra Readings</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://asciimath.org/" class="bare">https://asciimath.org/</a></p>
+</li>
+<li>
+<p>[<a id="mp3tag"></a>] <a href="https://web.archive.org/web/20241209074817/http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm#MPEGTAG" class="bare">https://web.archive.org/web/20241209074817/http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm#MPEGTAG</a></p>
+</li>
+<li>
+<p>[<a id="isotag"></a>] <a href="https://web.archive.org/web/20241231230351/https://wiki.osdev.org/ISO_9660" class="bare">https://web.archive.org/web/20241231230351/https://wiki.osdev.org/ISO_9660</a></p>
+</li>
+<li>
+<p>[<a id="psftag"></a>] <a href="https://web.archive.org/web/20060420042053/http://www.neillcorlett.com/psf/psf_format.txt" class="bare">https://web.archive.org/web/20060420042053/http://www.neillcorlett.com/psf/psf_format.txt</a></p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>

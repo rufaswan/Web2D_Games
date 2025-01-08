@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <license>
 Copyright (C) 2019 by Rufas Wan
 
@@ -18,10 +18,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 </license>
-<html><head>
+<html xmlns='http://www.w3.org/1999/xhtml'><head>
 
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
 <title>Quad Player - Mobile</title>
 @@<common.js>@@
 @@<player-mobile.css>@@
@@ -31,17 +31,17 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 <div id='debugger'>
 	<p id='debugger_top_nav'>
-		<input type='file' id='input_file' multiple class='hidden'>
+		<input type='file' id='input_file' multiple class='hidden' />
 		<button id='btn_view'>view</button>
 		<button id='btn_upload' data-id='0'>upload</button>
 	</p>
 
 	<div id='debugger_top_dummy'>&nbsp;</div>
-	<h1 id='quad_version'></h1>
+	<h1 id='quad_version'>version</h1>
 	<div class='div_range'>
 		<label for='bgcontrast_range'>BG Contrast = </label>
 		<span>-</span>
-		<input id='bgcontrast_range' type='range' onchange='div_range_span(this);' min='0' max='255' step='1' value='18'>
+		<input id='bgcontrast_range' type='range' onchange='div_range_span(this);' min='0' max='255' step='1' value='18' />
 	</div>
 	<h2>Files</h2>
 	<ol id='debugger_files'></ol>
@@ -60,12 +60,12 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 		<div class='div_range'>
 			<label for='export_range'>START = </label>
 			<span>-</span>
-			<input id='export_range' type='range' onchange='div_range_span(this);' min='0' max='0' step='1' value='0'>
+			<input id='export_range' type='range' onchange='div_range_span(this);' min='0' max='0' step='1' value='0' />
 		</div>
 		<div class='div_range'>
 			<label for='export_times'>ZOOM = </label>
 			<span>-</span>
-			<input id='export_times' type='range' onchange='div_range_span(this);' min='0.25' max='4.0' step='0.01' value='1.0'>
+			<input id='export_times' type='range' onchange='div_range_span(this);' min='0.25' max='4.0' step='0.01' value='1.0' />
 		</div>
 		<p>
 			<button onclick='button_export_type(this);'>png</button>

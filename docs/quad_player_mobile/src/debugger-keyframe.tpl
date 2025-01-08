@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <license>
 Copyright (C) 2019 by Rufas Wan
 
@@ -18,10 +18,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 </license>
-<html><head>
+<html xmlns='http://www.w3.org/1999/xhtml'><head>
 
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
 <title>Quad Debugger - Keyframe</title>
 @@<common.js>@@
 @@<debugger-keyframe.css>@@
@@ -31,7 +31,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 <main>
 	<nav>
-		<input type='file' id='input_file' multiple class='hidden'>
+		<input type='file' id='input_file' multiple class='hidden' />
 		<button id='btn_upload' data-id='0'>upload</button>
 
 		<button id='btn_lines'  >line</button>
@@ -48,7 +48,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<div id='debugger'>
 
 		<div id='quad_data'>
-			<h1 id='quad_version'></h1>
+			<h1 id='quad_version'>version</h1>
 			<h2>Files</h2>
 			<ol id='debugger_files'></ol>
 			<ul id='keylist'></ul>

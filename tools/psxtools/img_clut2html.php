@@ -23,11 +23,11 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 
 $gp_html = <<<_HTML
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
 <head>
-	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<meta charset='utf-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1' />
 	<title>@@TITLE@@</title>
 	<style>
 	body {

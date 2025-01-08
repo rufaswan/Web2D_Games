@@ -53,39 +53,39 @@ function htmlhead( $title )
 
 	$html = <<<_HTML
 <!DOCTYPE html>
-<html><head>
-
-<title>$title</title>
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<style>
-* {
-	margin   : 0;
-	padding  : 0;
-	position : absolute;
-	left     : 0;
-	top      : 0;
-}
-body {
-	$grid
-	background-color : #000;
-}
-img:hover {
-	background-color : #fff;
-}
-img.sprite:hover {
-	z-index : 99;
-}
-.none {
-	width       : 16px;
-	height      : 16px;
-	margin-top  : -8px;
-	margin-left : -8px;
-	background  : url('$none') no-repeat center center;
-}
-</style>
-
-</head><body>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+	<title>$title</title>
+	<meta charset='utf-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1' />
+	<style>
+	* {
+		margin   : 0;
+		padding  : 0;
+		position : absolute;
+		left     : 0;
+		top      : 0;
+	}
+	body {
+		$grid
+		background-color : #000;
+	}
+	img:hover {
+		background-color : #fff;
+	}
+	img.sprite:hover {
+		z-index : 99;
+	}
+	.none {
+		width       : 16px;
+		height      : 16px;
+		margin-top  : -8px;
+		margin-left : -8px;
+		background  : url('$none') no-repeat center center;
+	}
+	</style>
+</head>
+<body>
 
 _HTML;
 	echo $html;
@@ -125,9 +125,9 @@ function imghtml( &$img, $png, $tab, $class=false )
 
 	// javascript to auto-center the image with 'sprite' class
 	if ( $class )
-		$img = "$tab<img class='sprite' src='$png' title='$png'>";
+		$img = sprintf('%s<img class="sprite" src="%s" title="%s" />', $tab, $png, $png);
 	else
-		$img = "$tab<img src='$png' title='$png'>";
+		$img = sprintf('%s<img src="%s" title="%s" />', $tab, $png, $png);
 	return;
 }
 
@@ -149,10 +149,10 @@ function htmldiv( &$layout, $dir, $room, $tab_no = 0 )
 			list($z,$x,$y) = explode('+', $v);
 
 			$zz = substr($z, 0, strpos($z, '_'));
-			echo "$tab<div class='$z $zz' style='left:{$x}px;top:{$y}px;'>\n";
+			printf('%s<div class="%s %s" style="left:%dpx;top:%dpx;">'."\n", $tab, $z, $zz, $x, $y);
 
 			$func($layout, $dir, $z, $tab_no+1);
-			echo "$tab</div>\n";
+			printf('%s</div>'."\n", $tab);
 		}
 		return;
 	}
@@ -175,7 +175,7 @@ function htmldiv( &$layout, $dir, $room, $tab_no = 0 )
 
 	// nothing matched
 	// display centered 'X'
-	echo "$tab<div class='sprite none' title='$room'></div>\n";
+	printf('%s<div class="sprite none" title="%s"></div>'."\n", $tab, $room);
 	return;
 }
 //////////////////////////////

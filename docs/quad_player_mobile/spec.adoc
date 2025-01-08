@@ -1,6 +1,6 @@
 = QUAD Format Specification
 Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
-v0.5.x
+v0.5.x , living draft
 :hardbreaks-option:
 :toc:
 
@@ -95,23 +95,41 @@ A QUAD file consists of multiple sub objects:
 [#tag_object]
 === Tag Object
 
-It is to define the metadata for current QUAD file, that includes:
-
-* Author
-* Copyright
-* Date created
-* Version number
-* Exported by ``SOFTWARE``
-* Comments
-* etc...
+It is to define the metadata for current QUAD file.
 
 [subs="specialchars,macros"]
 ----
 {
   tag : [ any , any ... ],
-  tag : any
+  tag : any,
 }
 ----
+
+==== Tags Reference
+
+MPEG Audio Tag ID3v1 <<mp3tag>>::
+* Title
+* Artist
+* Album
+* Year
+* Comment
+* Genre
+
+ISO9660 -> The Primary Volume Descriptor <<isotag>>::
+* System Identifier
+* Volume Identifier
+* Volume Sequence Number
+* Volume Set Identifier
+* Publisher Identifier
+* Data Preparer Identifier
+* Application Identifier
+* Copyright File Identifier
+* Abstract File Identifier
+* Bibliographic File Identifier
+* Volume Creation Date and Time
+* Volume Modification Date and Time
+* Volume Expiration Date and Time
+* Volume Effective Date and Time
 
 
 
@@ -692,7 +710,14 @@ In alphabetical order::
 	* tombmonkey
 
 
-== Online Ver
+== Links
 
+Online Ver::
 * https://github.com/rufaswan/Web2D_Games/blob/master/docs/quad_player_mobile/spec.adoc
 * https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html
+
+Extra Readings::
+* https://asciimath.org/
+* [[[mp3tag]]] https://web.archive.org/web/20241209074817/http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm#MPEGTAG
+* [[[isotag]]] https://web.archive.org/web/20241231230351/https://wiki.osdev.org/ISO_9660
+* [[[psftag]]] https://web.archive.org/web/20060420042053/http://www.neillcorlett.com/psf/psf_format.txt

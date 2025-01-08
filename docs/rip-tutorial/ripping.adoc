@@ -140,7 +140,7 @@ Debugger::
 Tool::
 * [[[hxd]]]  https://mh-nexus.de/en/hxd/
 * [[[gimp]]] https://gimp.org/downloads/
-* [[[nana]]] https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/
+* [[[nana]]] https://web.archive.org/web/*/http://www.neillcorlett.com/nana/
 * [[[yed]]]  https://yworks.com/products/yed/download
 * [[[isobuster]]] https://www.isobuster.com/download.php
 
@@ -157,7 +157,8 @@ Art + Assert::
 ** [[[opelisa]]] https://opengameart.org/content/castle-platformer
 
 Extra Readings::
-* [[[mckids]]]  https://web.archive.org/web/20240927044154/https://games.greggman.com/game/programming_m_c__kids/
+* [[[mckids]]]  https://web.archive.org/web/20241230132023/https://games.greggman.com/game/programming_m_c__kids/
+* [[[psfrip]]]  https://web.archive.org/web/20240229214551/https://www.angelfire.com/tx5/someone42/psfrip.txt
 * [[[catmull]]] https://en.wikipedia.org/wiki/Cubic_Hermite_spline
 * [[[x86asm]]]  https://en.wikipedia.org/wiki/X86_instruction_listings
 * [[[cdynmem]]] https://en.wikipedia.org/wiki/C_dynamic_memory_allocation
