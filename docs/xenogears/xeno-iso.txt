@@ -1025,7 +1025,7 @@ SLPS 011.60 JP disc 1 [3771]
 	2599  [OVER]
 	2600  [OVER]
 	2601  [OVER]
-	2602  [OVER]
+	2602  [OVER] Gear shop executable
 	2603  [OVER]
 	2604  [OVER]
 	2605  [SJIS] Save Data Message
