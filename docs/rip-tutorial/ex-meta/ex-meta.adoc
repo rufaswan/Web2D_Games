@@ -24,16 +24,16 @@ CAUTION: Noticed the offsets are updated on RAM? So *DO NOT* use offsets for Arr
 
 ....
 offset start = 54 + PS2 da8c00
-= PS2 da8c54
+	= PS2 da8c54
 
 offset end = 80 + PS2 da8c00
-= PS2 da8c80
+	= PS2 da8c80
 
 s8 start = 13b440 + PS2 da8c00
-= PS2 ee4040
+	= PS2 ee4040
 
 s8 end = 157080 + PS2 da8c00
-= PS2 effc80
+	= PS2 effc80
 ....
 
 With that, we can put a READ breakpoint on the whole section[8].

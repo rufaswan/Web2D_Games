@@ -22,13 +22,15 @@ NOTE: The absolute value of a number may be thought of as its distance from zero
 The absolute values for X are `[130,130,150,150]`. So the canvas width is:
 
 ....
-max value * 2 = 150 px * 2 = 300 px
+max value * 2 = 150 px * 2
+	= 300 px
 ....
 
 The absolute values for Y are `[160,10,160,10]`. So the canvas height is:
 
 ....
-max value * 2 = 160 px * 2 = 320 px
+max value * 2 = 160 px * 2
+	= 320 px
 ....
 
 With that we will prepare a 300x320 px canvas, with `[150,160]` represent `[0,0]` in pixel space. The sprite will be drawn at

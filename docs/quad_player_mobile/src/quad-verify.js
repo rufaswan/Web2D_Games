@@ -32,7 +32,7 @@ function QuadVerify(Q){
 		if ( Array.isArray(attrib) ){
 			var bitflag = 0;
 			for ( var i=0; i < attrib.length; i++ )
-				bitflag |= $.attr_bitflag(attrib[i], enumlist);
+				bitflag |= __.attr_bitflag(attrib[i], enumlist);
 			return bitflag;
 		}
 		if ( typeof attrib === 'string' ){

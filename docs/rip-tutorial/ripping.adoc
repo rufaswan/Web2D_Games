@@ -1,6 +1,6 @@
 = Ripping Tutorial
 Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
-v1.0 , 2024-12-28
+v1.1.0 , 2025-1-8
 :toc:
 
 
@@ -140,7 +140,7 @@ Debugger::
 Tool::
 * [[[hxd]]]  https://mh-nexus.de/en/hxd/
 * [[[gimp]]] https://gimp.org/downloads/
-* [[[nana]]] https://web.archive.org/web/*/http://www.neillcorlett.com/nana/
+* [[[nana]]] https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/
 * [[[yed]]]  https://yworks.com/products/yed/download
 * [[[isobuster]]] https://www.isobuster.com/download.php
 

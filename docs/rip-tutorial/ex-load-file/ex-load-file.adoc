@@ -34,7 +34,7 @@ image:{rel}/load-break-3.png[link={rel}/load-break-3.png,height=240]
 
 As the game search by file name, the ASM code is about comparing every character for a match. Even PPSSPP able to recognize this function as `strcmp()` (string compare).
 
-We are no interest for `strcmp()` itself, but the function that called it. We will use "Step Into" until the function returned. We end up at ASM address `89e38e4`.
+We are no interest for `strcmp()` itself, but the parent function that called it. We will use "Step Into" until the function returned. We end up at ASM address `89e38e4`.
 
 
 image:{rel}/load-ghidra-1.png[link={rel}/load-ghidra-1.png,height=240]
@@ -42,11 +42,11 @@ image:{rel}/load-ghidra-2.png[link={rel}/load-ghidra-2.png,height=240]
 
 With that, we can use Ghidra <<ghidra>> to decompile the function.
 
-`SUB_001ecdbc` is `strcmp()`, so basically the function is about looping a list of 3000 file entries and return the one that matched.
+`SUB_001ecdbc` is `strcmp()`, so basically the function is about looping a list of 3000 file entries and return the file entry when it matched.
 
 NOTE: You can skip this step with Ghidra if you can understand the ASM code directly. This is a very simple function to begin with.
 
-Since READ breakpoint will always break at `strcmp()`, on every file entries, with a list of 3000 entries, it is no longer usefule for us.
+Since READ breakpoint will always break at `strcmp()` on every file entries, with a list of 3000 entries, it is no longer usefule for us.
 
 This is where we'll disable the READ breakpoint. and use EXECUTE breakpoint instead.
 
@@ -60,7 +60,7 @@ We will put EXECUTE breakpoint when the file entry matched and ready for return,
 89e39a0  lw  s2, 18(v0)
 ....
 
-NOTE: EXECUTE breakpoint is for discover inner workings of the function, which is something possible only after the ASM code is discovered by READ or WRITE breakpoint.
+NOTE: EXECUTE breakpoint is for discover inner workings of the function, which is something only possible after the ASM code is discovered by using READ or WRITE breakpoint.
 
 By keeping track of value at `v0`, we will get a list of file names the game trying to load. For example, when Gradriel went into Valenadine City Pub, the game will look for these files (in order):
 
@@ -76,8 +76,10 @@ By keeping track of value at `v0`, we will get a list of file names the game try
 |8ae7388 |002_01_4.EVN
 |===
 
+When the file loading order is known, we also reduced the number of files we are working with from 2000+ files to just 7 files.
 
-Other Usage::
-* When the game files are a bunch of meaningless numbers, like `000_00_0.EVN`.
-* When the game files are in sets, it can be in 2's (texture + atlas) or in 3's (texture + atlas + palette)
-* When the game files are shared and has very weird or unknown combinations.
+This technique is also useful on these situations
+
+. When the game files are a bunch of meaningless numbers, like `000_00_0.EVN`.
+. When the game files are in sets, it can be in 2's (texture + atlas) or in 3's (texture + atlas + palette)
+. When the game files are shared and has very weird or unknown combinations.

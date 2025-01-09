@@ -14,8 +14,8 @@
 <div class="details">
 <span id="author" class="author">Rufas Wan</span><br/>
 <span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
-<span id="revnumber">version 1.0,</span>
-<span id="revdate">2024-12-28</span>
+<span id="revnumber">version 1.1.0,</span>
+<span id="revdate">2025-1-8</span>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -585,16 +585,16 @@ Noticed the offsets are updated on RAM? So <strong>DO NOT</strong> use offsets f
 <div class="literalblock">
 <div class="content">
 <pre>offset start = 54 + PS2 da8c00
-= PS2 da8c54
+	= PS2 da8c54
 
 offset end = 80 + PS2 da8c00
-= PS2 da8c80
+	= PS2 da8c80
 
 s8 start = 13b440 + PS2 da8c00
-= PS2 ee4040
+	= PS2 ee4040
 
 s8 end = 157080 + PS2 da8c00
-= PS2 effc80</pre>
+	= PS2 effc80</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1058,7 +1058,7 @@ You can start with file extension.
 <p>As the game search by file name, the ASM code is about comparing every character for a match. Even PPSSPP able to recognize this function as <code>strcmp()</code> (string compare).</p>
 </div>
 <div class="paragraph">
-<p>We are no interest for <code>strcmp()</code> itself, but the function that called it. We will use "Step Into" until the function returned. We end up at ASM address <code>89e38e4</code>.</p>
+<p>We are no interest for <code>strcmp()</code> itself, but the parent function that called it. We will use "Step Into" until the function returned. We end up at ASM address <code>89e38e4</code>.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><a class="image" href="ex-load-file/load-ghidra-1.png"><img src="ex-load-file/load-ghidra-1.png" alt="load ghidra 1" height="240"/></a></span>
@@ -1068,7 +1068,7 @@ You can start with file extension.
 <p>With that, we can use Ghidra <a href="#ghidra">[ghidra]</a> to decompile the function.</p>
 </div>
 <div class="paragraph">
-<p><code>SUB_001ecdbc</code> is <code>strcmp()</code>, so basically the function is about looping a list of 3000 file entries and return the one that matched.</p>
+<p><code>SUB_001ecdbc</code> is <code>strcmp()</code>, so basically the function is about looping a list of 3000 file entries and return the file entry when it matched.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1083,7 +1083,7 @@ You can skip this step with Ghidra if you can understand the ASM code directly. 
 </table>
 </div>
 <div class="paragraph">
-<p>Since READ breakpoint will always break at <code>strcmp()</code>, on every file entries, with a list of 3000 entries, it is no longer usefule for us.</p>
+<p>Since READ breakpoint will always break at <code>strcmp()</code> on every file entries, with a list of 3000 entries, it is no longer usefule for us.</p>
 </div>
 <div class="paragraph">
 <p>This is where we&#8217;ll disable the READ breakpoint. and use EXECUTE breakpoint instead.</p>
@@ -1109,7 +1109,7 @@ You can skip this step with Ghidra if you can understand the ASM code directly. 
 <div class="title">Note</div>
 </td>
 <td class="content">
-EXECUTE breakpoint is for discover inner workings of the function, which is something possible only after the ASM code is discovered by READ or WRITE breakpoint.
+EXECUTE breakpoint is for discover inner workings of the function, which is something only possible after the ASM code is discovered by using READ or WRITE breakpoint.
 </td>
 </tr>
 </table>
@@ -1159,12 +1159,14 @@ EXECUTE breakpoint is for discover inner workings of the function, which is some
 </tr>
 </tbody>
 </table>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Other Usage</dt>
-<dd>
-<div class="ulist">
-<ul>
+<div class="paragraph">
+<p>When the file loading order is known, we also reduced the number of files we are working with from 2000+ files to just 7 files.</p>
+</div>
+<div class="paragraph">
+<p>This technique is also useful on these situations</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>When the game files are a bunch of meaningless numbers, like <code>000_00_0.EVN</code>.</p>
 </li>
@@ -1174,10 +1176,7 @@ EXECUTE breakpoint is for discover inner workings of the function, which is some
 <li>
 <p>When the game files are shared and has very weird or unknown combinations.</p>
 </li>
-</ul>
-</div>
-</dd>
-</dl>
+</ol>
 </div>
 </div>
 </div>
@@ -1410,7 +1409,8 @@ The absolute value of a number may be thought of as its distance from zero. It i
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>max value * 2 = 150 px * 2 = 300 px</pre>
+<pre>max value * 2 = 150 px * 2
+	= 300 px</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1418,7 +1418,8 @@ The absolute value of a number may be thought of as its distance from zero. It i
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>max value * 2 = 160 px * 2 = 320 px</pre>
+<pre>max value * 2 = 160 px * 2
+	= 320 px</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1490,7 +1491,7 @@ The absolute value of a number may be thought of as its distance from zero. It i
 <p>[<a id="gimp"></a>] <a href="https://gimp.org/downloads/" class="bare">https://gimp.org/downloads/</a></p>
 </li>
 <li>
-<p>[<a id="nana"></a>] <a href="https://web.archive.org/web/*/http://www.neillcorlett.com/nana/" class="bare">https://web.archive.org/web/*/http://www.neillcorlett.com/nana/</a></p>
+<p>[<a id="nana"></a>] <a href="https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/" class="bare">https://web.archive.org/web/20140320175114/http://www.neillcorlett.com/nana/</a></p>
 </li>
 <li>
 <p>[<a id="yed"></a>]  <a href="https://yworks.com/products/yed/download" class="bare">https://yworks.com/products/yed/download</a></p>
