@@ -1754,50 +1754,50 @@ PAPX 900.22 JP demo - Yoi Ko to Yoi Otona no. PlayStation Taikenban Vol. 1 [2457
 	768  Maps [982] [491 pairs]
 		# ID+0 is the packed map data
 		# ID+1 is the texture data
-		769
-		771
-		773
-		775
-		777
-		779
-		781-784  *dummy 24*
-		785
-		787
-		789
-		791
-		793
-		795
-		797
-		799
-		801
-		803
-		805
-		807
-		809-812  *dummy 24*
-		813
-		815
-		817-860  *dummy 24*
-		861
-		863-904  *dummy 24*
-		905
-		907-922  *dummy 24*
-		923
-		925-1040  *dummy 24*
-		1041
-		1043-1074  *dummy 24*
-		1075
-		1077-1120  *dummy 24*
-		1121
-		1123-1410  *dummy 24*
-		1411
-		1413-1524  *dummy 24*
-		1525
-		1527-1602  *dummy 24*
-		1603
-		1605
-		1607-1746  *dummy 24*
-		1747
-		1749
+		769/map  0  debug map
+		771/map  1  Lahan
+		773/map  2  [DRM] Lahan
+		775/map  3  [DRM] Mountain Path
+		777/map  4  Lahan - Lucca house
+		779/map  5  Lahan - Shop
+		781-783  *dummy 24*
+		785/map  8  Lahan - Bar
+		787/map  9  Lahan - Bar - 2F
+		789/map 10  Lahan - Alice house
+		791/map 11  Lahan - Alice house - 2F
+		793/map 12  Lahan - Chief house
+		795/map 13  Lahan - Chief house - 2F
+		797/map 14  Mountain Path [ENC]
+		799/map 15  Citan house
+		801/map 16  Citan house - 2F Bedroom
+		803/map 17  Citan house - 1F
+		805/map 18 Citan house - 3F Ladder to Telescope
+		807/map 19  Citan house - Musicbox room
+		809-811  *dummy 24*
+		813/map 22  [DRM] Blackmoon Forest
+		815/map 23  [DRM] Blackmoon Forest
+		817-859  *dummy 24*
+		861/map 46  [DRM] Desert 
+		863-903  *dummy 24*
+		905/map 68  Nisan - Monastery - Hall
+		907-921  *dummy 24*
+		923/map 77  Aveh - Market
+		925-1039  *dummy 24*
+		1041/map 136  [DRM] Bart's Hideout - Yggdrasil Dock
+		1043-1073  *dummy 24*
+		1075/map 153  [DRM] Kislev - D Block - Train
+		1077-1119  *dummy 24*
+		1121/map 176  Yggdrasil - Gear Dock - Gear
+		1123-1409  *dummy 24*
+		1411/map 321  Orphanage
+		1413-1523  *dummy 24*
+		1525/map 378  Thames - 1F Deck - Map
+		1527-1601  *dummy 24*
+		1603/map 417  Mountain Path [ENC]
+		1605/map 418  Shevat - City
+		1607-1745  *dummy 24*
+		1747/map 489  Demo credits
+		1749/map 490  Title screen
 	2305  [77]
 		# ID+0 is
 		# ID+1 is the model data
