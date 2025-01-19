@@ -1,0 +1,39 @@
+<!doctype html>
+<html><head>
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>localhost main</title>
+
+<style>
+body {
+	background : #000;
+}
+iframe {
+	border     : 5px solid #f00;
+	margin     : 5px;
+	padding    : 5px;
+	background : #fff;
+}
+</style>
+</head><body>
+
+<iframe id='iframe' src='server-iframe.html'></iframe>
+
+<script>
+var APP  = {};
+APP.ifrm = document.getElementById('iframe');
+APP.json = {
+	a : 123,
+	b : 234,
+	c : 345,
+}
+
+console.log('main log', APP);
+APP.ifrm.onload = function(){
+	var emb = APP.ifrm.contentWindow;
+	emb.APP.q = APP.json;
+	emb.APP.log();
+}
+</script>
+</body></html>

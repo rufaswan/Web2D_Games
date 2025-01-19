@@ -1,0 +1,43 @@
+https://en.wikipedia.org/wiki/ASCII
+
+00  \0  Null
+01  -   Start of Heading
+02  -   Start of Text
+03  -   End of Text
+04  -   End of Transmission
+05  -   Enquiry
+06  -   Acknowledgement
+07  \a  Bell
+08  \b  Backspace
+09  \t  Horizontal Tab
+0a  \n  Line Feed
+0b  \v  Vertical Tab
+0c  \f  Form Feed
+0d  \r  Carriage Return
+0e  -   Shift Out
+0f  -   Shift In
+
+10  -   Data Link Escape
+11  -   Device Control 1 (XON)
+12  -   Device Control 2
+13  -   Device Control 3 (XOFF)
+14  -   Device Control 4
+15  -   Negative Acknowledgement
+16  -   Synchronous Idle
+17  -   End of Transmission Block
+18  -   Cancel
+19  -   End of Medium
+1a  -   Substitute
+1b  \e  Escape
+1c  -   File Separator
+1d  -   Group Separator
+1e  -   Record Separator
+1f  -   Unit Separator
+
+7f  -   Delete
+
+
+
+JSON valid
+	22 \"  2f \/  5c \\
+	08 \b  09 \t  0a \n  0c \f  0d \r

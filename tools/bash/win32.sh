@@ -14,8 +14,8 @@
 [ $(which wine) ] || { echo 'WINE (32-bit) not installed.'; exit; }
 nice='nice -n 19'
 
-BAK_LIB="$LD_LIBRARY_PATH"
-BAK_GL="$LIBGL_DRIVERS_PATH"
+ BAK_LIB="$LD_LIBRARY_PATH"
+  BAK_GL="$LIBGL_DRIVERS_PATH"
 BAK_HOME="$HOME"
 
 # look for 32-bit LIB for WINE
@@ -29,13 +29,13 @@ export WINEDEBUG='-all,err+module'
 
 # wiki.winehq.org/Wine_User%27s_Guide#DLL_Overrides
 dll=(
-	'winemenubuilder.exe=d'
-	'mshtml=d'    # Disable Gecko
-	'mscoree=d'   # Disable Mono
-	'quartz=n,b'  # MPEG-1 system streams
-	'dsound=n,b'  # Touhou Vorbis DLL
-	#'wininet=d'  # Disconnect from Internet
-	#'winhttp=d'  # Disconnect from Internet
+	winemenubuilder.exe=d
+	mshtml=d    # Disable Gecko
+	mscoree=d   # Disable Mono
+	quartz=d    # MPEG-1 system streams
+	dsound=n,b  # Touhou Vorbis DLL
+	#wininet=d  # Disconnect from Internet
+	#winhttp=d  # Disconnect from Internet
 )
 #export WINEDLLOVERRIDES=$(echo ${dll[*]} | tr ' ' \;)
 export WINEDLLOVERRIDES=$(IFS=\;; echo "${dll[*]}")
@@ -45,10 +45,13 @@ export   WINEARCH='win32'
 export WINEPREFIX="/tmp/$WINEARCH"
 export       HOME="/tmp/home-dummy"
 
-# wineconsole cmd.bat
-# wine cmd /c cmd.bat
+# wine  wineconsole  cmd.bat
+# wine  cmd /c       cmd.bat
 #winecmd='wineconsole'
-winecmd='wine cmd /c'
+winecmd='cmd /c'
+
+# is gdb debug
+winedbg=''
 
 # virtual desktop setting
   deskid=$(date +"%s")
@@ -68,6 +71,25 @@ _REG
 	regedit  $reg
 	rm       $reg
 }
+function langloc {
+	sjis="/usr/share/i18n/charmaps/$1.gz"
+	if [ -f "$sjis" ]; then
+		mkdir -p '/tmp/sjisdef'
+		# -c  --force
+		# -f  --charmap=FILE
+		# -i  --inputfile=FILE
+		localedef             \
+			--force           \
+			--charmap=$1      \
+			--inputfile=ja_JP \
+			"/tmp/sjisdef/ja_JP.$1"
+		export LOCPATH="/tmp/sjisdef"
+		export    LANG="ja_JP.$1"
+	else
+		echo "NOT FOUND : $sjis"
+		echo "REQUIRED  : locales_*_all.deb"
+	fi
+}
 function symblink {
 	[ -e "$1" ] || return 1  # no target
 	[ -e "$2" ] && return 1  # existed
@@ -85,6 +107,9 @@ symblink  "$WINEPREFIX/drive_c/users/$USER/Local Settings/Application Data"  "$H
 symblink  "$WINEPREFIX/drive_c/users/$USER/AppData"                          "$HOME/appdata_vista"
 
 if [ $# = 0 ]; then
+	echo "            HOME : $HOME"
+	echo "       WINEDEBUG : $WINEDEBUG"
+	echo "WINEDLLOVERRIDES : $WINEDLLOVERRIDES"
 	winecfg
 	wineserver -k
 else
@@ -103,8 +128,8 @@ else
 			tit="${t1%.*}"
 			ext="${t1##*.}"
 			case "$ext" in
-				'exe' | 'EXE')  $nice  wine  $desk  "$t1" "$@"; shift $#;;
-				'bat' | 'BAT')  $nice  $winecmd     "$t1" "$@"; shift $#;;
+				'exe' | 'EXE')  $nice  wine  $winedbg  $desk  "$t1" "$@"; shift $#;;
+				'bat' | 'BAT')  $nice  wine  $winecmd         "$t1" "$@"; shift $#;;
 				'reg' | 'REG')  regedit     "$t1";;
 				'msi' | 'MSI')  msiexec /i  "$t1";;
 			esac
@@ -122,9 +147,12 @@ else
 			'-desk' | '-size' | '-s')
 				desksize="$1"
 				shift
-				desk="explorer /desktop=wine-$deskid,$desksize";;
-			'-nodesk' | '-quiet' | '-q')
-				desk='';;
+				if [ $(echo $desksize | grep [0-9]x[0-9]) ]; then
+					desk="explorer /desktop=wine-$deskid,$desksize"
+				else
+					desk=''
+				fi
+				;;
 
 			'-path')
 				case "$1" in
@@ -133,30 +161,8 @@ else
 				esac
 				shift;;
 
-			'-sjis')
-				sjis='/usr/share/i18n/charmaps/SHIFT_JIS.gz'
-				if [ -f "$sjis" ]; then
-					mkdir -p '/tmp/sjisdef'
-					localedef -c -f SHIFT_JIS -i ja_JP '/tmp/sjisdef/ja_JP.SJIS'
-					export LOCPATH='/tmp/sjisdef'
-					export LANG='ja_JP.SJIS'
-				else
-					echo "NOT FOUND : $sjis"
-					echo "REQUIRED : locales_*_all.deb"
-				fi
-				;;
-			'-ms932')
-				ms932='/usr/share/i18n/charmaps/WINDOWS-31J.gz'
-				if [ -f "$ms932" ]; then
-					mkdir -p '/tmp/ms932def'
-					localedef -c -f WINDOWS-31J -i ja_JP '/tmp/ms932def/ja_JP.MS932'
-					export LOCPATH='/tmp/ms932def'
-					export LANG='ja_JP.MS932'
-				else
-					echo "NOT FOUND : $ms932"
-					echo "REQUIRED : locales_*_all.deb"
-				fi
-				;;
+			'-sjis' )  langloc  'SHIFT_JIS';;
+			'-ms932')  langloc  'WINDOWS-31J';;
 
 			'-reg' | 'regedit')  regedit;;
 			'-txt' | 'notepad')  notepad;;
@@ -167,6 +173,7 @@ else
 			'-msi'   )  msiexec /h;;
 			'-uninst')  uninstaller;;
 			'-ctrl'  )  control;;
+			'-dbg'   )  winedbg='winedbg';;
 
 			'-mouselock')   mouselock;;
 
@@ -175,6 +182,6 @@ else
 	done
 fi
 
-export LD_LIBRARY_PATH="$BAK_LIB"
+export    LD_LIBRARY_PATH="$BAK_LIB"
 export LIBGL_DRIVERS_PATH="$BAK_GL"
-export HOME="$BAK_HOME"
+export               HOME="$BAK_HOME"

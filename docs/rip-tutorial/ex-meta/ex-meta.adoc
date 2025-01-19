@@ -1,0 +1,174 @@
+[#guide_meta]
+=== Meta Data
+ifndef::rel[:rel: .]
+:stem:
+
+Game::
+	PS2 Odin Sphere
+Debugger::
+	PCSX2 <<pcsx2>>
+
+Starting with output data is only possible for visual data. Meta data like texture atlas, hitbox, and animation data, you'll want to start from input data instead.
+
+The process is mostly the same. Start from a game file (or a section of it), look for it on RAM, and then put a READ breakpoint on the whole thing.
+
+NOTE: If the game file is compressed, then you'll need to do it 2 times. The first time is to find the decompression function. When you have the data decompressed, you can look for it on RAM and put READ breakpoint as usual.
+
+
+image:{rel}/meta-file-1.png[link={rel}/meta-file-1.png,height=240]
+image:{rel}/meta-file-2.png[link={rel}/meta-file-2.png,height=240]
+
+The file is loaded at RAM da8c00. Offsets for each sections are at 0x54 to 0x80. The data we're interested in is on section[8] (or `s8`), from offset 0x13b440 to 0x157080 (size = 0x1bc40).
+
+CAUTION: Noticed the offsets are updated on RAM? So *DO NOT* use offsets for Array of Byte search!
+
+....
+offset start = 54 + PS2 da8c00
+	= PS2 da8c54
+
+offset end = 80 + PS2 da8c00
+	= PS2 da8c80
+
+s8 start = 13b440 + PS2 da8c00
+	= PS2 ee4040
+
+s8 end = 157080 + PS2 da8c00
+	= PS2 effc80
+....
+
+With that, we can put a READ breakpoint on the whole section[8].
+
+
+image::{rel}/meta-break.png[link={rel}/meta-break.png,height=240]
+
+By noting down the ASM code on every break, we have a very good idea how the data is read.
+
+Remember - we are looking for relevant function for further analysis later. So write down the ASM address along the way.
+
+|===
+|Data[] |ASM |data |note
+
+|00  |lhu  |int16  a|
+* 172488 , `n * 18 + section[6] offset`
+* 17248c , `n * 18 + section[6] offset`
+* 172494 , `n * 18 + section[6] offset`
+* 1724c8 , `n * 18 + section[6] offset`
+|02  |-    |-      a|-
+|03  |-    |-      a|-
+|04  |lhu  |int16  a|
+* 172500 , `n * 30 + section[7] offset`
+* 172504 , `n * 30 + section[7] offset`
+|06  |lhu  |int16  a|
+* 172278
+* 172394
+|08  |lw   |int32  a|
+* 172060 , `AND 80`
+* 1720f0 , `AND 100 , 4 , 8`
+* 17232c , `AND 40`
+* 172a44 , `AND 1`
+* 172a50 , `AND 2`
+* 172a64 , `AND 2`
+* 172c28 , `AND 400`
+* 172ecc , `AND 20 , 10`
+|0c  |lhu  |int16  a|* 172160
+|0e  |lbu  |int8   a|* 172820 , `== 2 , == 1`
+|0f  |lbu  |int8   a|* 17239c
+|10  |lbu  |int8   a|* 1724c4 , `== 2 , == 1`
+|11  |lbu  |int8   a|
+* 1725bc , `== 2 , == 1`
+* 172f7c
+|12  |lbu  |int8   a|* 172f74
+|13  |lb   |int8   a|* 17246c
+|14  |lw   |int32  a|
+* 172084
+* 17209c
+|18  |lhu  |int16  a|
+* 172088
+* 1720a8
+|1a  |lhu  |int16  a|
+* 17208c
+* 1720ac
+|1c  |lw   |int32  a|
+* 172080
+* 1720b8
+|===
+
+Using the ASM address above, we can conclude there are 3 function parsing the data.
+
+. function A from 171fc0 to 1722c0
+. function B from 1722d0 to 1723f0
+. function C from 1723f0 to 173020
+
+Function A seems to be doing End of Animation + Looping check. It also have SFX/voice playback.
+
+Function B seems to be doing math to normalize animation rate from FPS to value between 0.0 to 1.0.
+
+Function C is a rather huge function and seems to be drawing function with a final draw call to GPU.
+
+'''
+
+With the ASM address, we can have a proper understanding how certain things work. For example, data[10] read at ASM address 1724c4 will lead us to 2 if's and 2 function.
+
+
+image::{rel}/meta-ghidra-s7.png[link={rel}/meta-ghidra-s7.png,height=240]
+
+When data[10] is 2 or 1, each will lead us to a function. For anything else, use the current frame only.
+
+Let us examine what these 2 function do:
+
+
+image::{rel}/meta-ghidra-s7-2.png[link={rel}/meta-ghidra-s7-2.png,height=240]
+
+The function accepts 4 frames as arguments. Based on the code using power of 2 and power of 3, we can guess the intepolation is based on polynomial formula:
+
+....
+P(t) = at^3 + bt^2 + ct + d]
+....
+
+Arrange the algorithm from the screenshot according to Polynomial formula above:
+
+....
+result =   prev * (-0.5t^3 +  1.0t^2 + -0.5t + 0)
+         + cur  * ( 1.5t^3 + -2.5t^2 +     0 + 1)
+         + nxt1 * (-1.5t^3 +  2.0t^2 +  0.5t + 0)
+         + nxt2 * ( 0.5t^3 + -0.5t^2 +     0 + 0)
+....
+
+Then convert it to matrix form:
+
+[asciimath]
+++++
+"result" =
+	[t^3  t^2  t  1]
+	* [
+		[-0.5 ,  1.5 , -1.5 ,  0.5] ,
+		[ 1.0 , -2.5 ,  2.0 , -0.5] ,
+		[-0.5 ,  0   ,  0.5 ,  0  ] ,
+		[ 0   ,  1.0 ,  0   ,  0  ]
+	]
+	* [
+		["prev"] ,
+		["cur" ] ,
+		["nxt1"] ,
+		["nxt2"]
+	]
+++++
+
+The 4x4 matrix is the Characteristic Matrix, and it matched Catmull-Rom Spline <<catmull>>.
+
+We can say for certain - when data[10] is 2, do 4-frames Catmull-Rom Spline interpolation.
+
+
+image::{rel}/meta-ghidra-s7-1.png[link={rel}/meta-ghidra-s7-1.png,height=240]
+
+This function is a lot more simple. The formula is just:
+
+....
+result = cur * (1.0 - t) + next * t
+....
+
+So when data[10] is 1, do 2-frames Linear interpolation.
+
+'''
+
+Meta data can be something hard to observe with videos and screenshots. And game can lag and skip frame to maintain performance further complicate things. Having the ability to refer to ASM code will help eliminate a lot of these guesswork.

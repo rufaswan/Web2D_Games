@@ -1,3 +1,6 @@
+:ghrepo: http://github.com/rufaswan/Web2D_Games
+:ghpage: http://rufaswan.github.io/Web2D_Games
+
 = Web2D_Games
 
 == Prerequisites
@@ -14,3 +17,16 @@
 ** php7ts.dll or php7nts.dll
 ** php.ini (renamed from php.ini-development)
 *** edit the value for 'memory_limit' from `128M` to a higher value, e.g. `2048M`
+
+== Tutorials
+
+psxtools::
+. {ghrepo}/blob/master/docs/psxtools-steps.adoc
+
+Margie Healing (Xenogears)::
+. {ghrepo}/blob/master/docs/xenogears/margie-healing/tutorial.adoc
+. {ghpage}/xenogears/margie-healing/tutorial.html
+
+Ripping Tutorial::
+. {ghrepo}/blob/master/docs/rip-tutorial/ripping.adoc
+. {ghpage}/rip-tutorial/ripping.html

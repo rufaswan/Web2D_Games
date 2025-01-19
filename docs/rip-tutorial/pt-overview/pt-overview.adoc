@@ -1,0 +1,58 @@
+[#overview]
+== The Method Overview
+ifndef::rel[:rel: .]
+
+<<ram_memory>> holds many things, including the stuff you want. Any ASM code reading or writing those data must also be the relevant ASM code working on it.
+
+Why would the code want to read compressed data? Most likely it is trying to decompress it. So you'll find the decompression function.
+
+Why would the code want to read animation data? Most likely it is trying to transform drawing XY coordinates on the screen. So you'll find the transformation function.
+
+
+image::{rel}/ram-read-write.png[link={rel}/ram-read-write.png,height=240]
+
+Hence, the basic steps are
+
+. Identify the data you are looking for. It can be anything, including texture data, animation data, dialogue text, etc.
+
+. Run the game until the data is loaded to memory. Pause the game and look for the RAM address (or user memory address) that holds the data.
+
+. Put a READ/WRITE breakpoint on that RAM Address region and resume running the game. The game will automatic break when executing the ASM code working with the data. That region of ASM code is the relevant function.
+
+A visual example on 3 steps above:
+
+|===
+|With Input Data |With Output Data
+
+a|image::{rel}/over-input-data.png[link={rel}/over-input-data.png,height=240]
+From compressed data (game file) to RAM address `0x8007d160`
+a|image::{rel}/over-output-data.png[link={rel}/over-output-data.png,height=240]
+From decompressed data to RAM address `0x801a067c`
+
+a|image::{rel}/over-input-break-1.png[link={rel}/over-input-break-1.png,height=240]
+Use RAM Address `0x8007d160` to put a READ breakpoint
+a|image::{rel}/over-output-break-1.png[link={rel}/over-output-break-1.png,height=240]
+Use RAM Address `0x801a067c` to put a WRITE breakpoint
+
+a|image::{rel}/over-input-break-2.png[link={rel}/over-input-break-2.png,height=240]
+Game breaks on ASM code `0x8002896c`
+a|image::{rel}/over-output-break-2.png[link={rel}/over-output-break-2.png,height=240]
+Game breaks on ASM code `0x800289e8`
+
+2+|Using 2 "jr ra" (return), the ASM code `from 0x80028960 to 0x80028a8c` is identified as the "decompression function".
+|===
+
+After that, you can then use a decompiler to help understanding the ASM code, such as Ghidra <<ghidra>>.
+
+
+image::{rel}/over-ghidra.png[link={rel}/over-ghidra.png,height=240]
+
+Some notes about workarounds
+
+* If your tool doesn't have the ability to explore RAM, try to find a way to dump the RAM to a file and explore it with a hex editor.
+
+* Save state (not in-game Save File) will have a copy of the RAM dump. Starts from there!
+
+* You can also use Cheat Engine <<cheat>>, but unless you are working on PC game, the RAM address you get is for the emulator. You'll need to find the base address and do some math to match the address back to the game.
+
+* Your tool must have the ability to put Memory READ or WRITE breakpoints!

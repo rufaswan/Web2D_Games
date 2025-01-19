@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.17">
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="generator" content="Asciidoctor 2.0.17"/>
+<meta name="author" content="Rufas Wan"/>
 <title>Margie Healing Tutorial</title>
 </head>
-<body class="article">
+<body class="book">
 <div id="header">
 <h1>Margie Healing Tutorial</h1>
+<div class="details">
+<span id="author" class="author">Rufas Wan</span><br/>
+<span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
+<span id="revnumber">version 2.0,</span>
+<span id="revdate">2024-12-28</span>
+</div>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_setup">Setup</a></li>
+<li><a href="#_backtracing_for_a_value">Backtracing For A Value</a></li>
+<li><a href="#_locating_the_relevant_files">Locating the Relevant Files</a></li>
+<li><a href="#_potential_bug">Potential Bug</a></li>
+</ul>
+</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -17,16 +33,21 @@
 <div class="paragraph">
 <p>This is a simple tutorial to look for Margie&#8217;s Healing Spell Value.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_setup">Setup</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>For a start, we have no idea what value to look for, but we <strong>DO know</strong> what the spell do:</p>
+<p>For a start, we have no idea what value to look for, but we <strong>do know</strong> what the spell do:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>It heals 40 HP.</p>
+<p>It targets an ally.</p>
 </li>
 <li>
-<p>The target gains +40 HP as a result.</p>
+<p>It heals 40 HP. The target gains +40 HP as a result.</p>
 </li>
 </ol>
 </div>
@@ -36,13 +57,13 @@
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>A save state on Margie&#8217;s room. We&#8217;ll call it <strong>"BEFORE MAP state"</strong></p>
+<p>A save state on Margie&#8217;s room. We&#8217;ll call it <mark>BEFORE MAP state</mark>.</p>
 </li>
 <li>
-<p>A save state in the middle of dialog, right before the battle starts. We&#8217;ll call it <strong>"BEFORE BATTLE state"</strong></p>
+<p>A save state in the middle of dialog, right before the battle starts. We&#8217;ll call it <mark>BEFORE BATTLE state</mark>.</p>
 </li>
 <li>
-<p>A save state before Margie&#8217;s turn. We&#8217;ll call it <strong>"BEFORE TURN state"</strong></p>
+<p>A save state before Margie&#8217;s turn. We&#8217;ll call it <mark>BEFORE TURN state</mark>.</p>
 </li>
 </ol>
 </div>
@@ -55,22 +76,30 @@
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If you emulator has "cheat search" function (e.g. mednafen), you can use that.</p>
+<p>If you emulator has "cheat search" or "memory search" function (e.g. mednafen), you can use that.</p>
 </li>
 <li>
-<p>You can also find it by opening <strong>uncompressed</strong> save states with any hex editor. You&#8217;ll want to know where RAM 80010000 is located within the save state, and then adjust the search result accordingly.</p>
+<p>You can use Cheat Engine to scan for the value, but the result address is for the emulator, so you&#8217;ll need to do some math to adjust it back.</p>
 </li>
 <li>
-<p>Or you can export the RAM part to a new file, if you don&#8217;t want the trouble to use a calculator everytime.</p>
+<p>You can also find it by opening <strong>uncompressed</strong> save states with any hex editor. Similar to Cheat Engine above, you also need to do some adjustment to the result address.</p>
+</li>
+<li>
+<p>But unlike Cheat Engine, save state is a normal file. You can extract the RAM part to a new file first and avoid the need to do math later.</p>
 </li>
 </ol>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_backtracing_for_a_value">Backtracing For A Value</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>In any case, Bart&#8217;s HP is at RAM 800ccd34 duing battle. Put a WRITE breakpoint there, you&#8217;ll get this on Margie&#8217;s turn.</p>
+<p>In any case, Bart&#8217;s HP is at <code>RAM 800ccd34</code> duing battle. Put a WRITE breakpoint there, you&#8217;ll get this on Margie&#8217;s turn.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-1.png"><img src="margie-heal-1.png" alt="margie heal 1" width="320" height="240"></a>
+<a class="image" href="margie-heal-1.png"><img src="margie-heal-1.png" alt="margie heal 1" height="240"/></a>
 </div>
 </div>
 <div class="literalblock">
@@ -92,19 +121,19 @@ at = 10000 + s4 - 717c
 <p>So <code>v0</code> is Bart&#8217;s HP, and <code>v1</code> is Margie&#8217;s +40 HP healing we are looking for. It is loaded from <code>s3</code>.</p>
 </div>
 <div class="paragraph">
-<p>Load back BEFORE TURN state and put a WRITE breakpoint on RAM 800c4078 to see where it came from.</p>
+<p>Load back <mark>BEFORE TURN state</mark> and put a WRITE breakpoint on <code>RAM 800c4078</code> to see where it came from.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-2.png"><img src="margie-heal-2.png" alt="margie heal 2" width="320" height="240"></a>
+<a class="image" href="margie-heal-2.png"><img src="margie-heal-2.png" alt="margie heal 2" height="240"/></a>
 </div>
 </div>
 <div class="paragraph">
-<p>The value is copied from <code>t0</code>. Again, load back BEFORE TURN state and put a WRITE breakpoint on RAM 800d2c54 to backtrace it.</p>
+<p>The value is copied from <code>t0</code>. Again, load back <mark>BEFORE TURN state</mark> and put a WRITE breakpoint on <code>RAM 800d2c54</code> to backtrace it.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-3.png"><img src="margie-heal-3.png" alt="margie heal 3" width="320" height="240"></a>
+<a class="image" href="margie-heal-3.png"><img src="margie-heal-3.png" alt="margie heal 3" height="240"/></a>
 </div>
 </div>
 <div class="paragraph">
@@ -118,52 +147,64 @@ at = 10000 + s4 - 717c
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-4a.png"><img src="margie-heal-4a.png" alt="margie heal 4a" width="320" height="240"></a>
+<a class="image" href="margie-heal-4a.png"><img src="margie-heal-4a.png" alt="margie heal 4a" height="240"/></a>
 </div>
 </div>
 <div class="paragraph">
 <p>As you scrolling up, you&#8217;ll keep seeing <code>a1</code> is from <code>v1</code> and <code>v0</code>, but then <code>v1</code> is from <code>a1</code>, and <code>v0</code> is from <code>v1</code>. So it&#8217;s a bunch of nothing.</p>
 </div>
 <div class="paragraph">
-<p>Eventually, you&#8217;ll reach this part, where <code>a1</code> is <code>v1 * v0</code>, and <code>v1</code> and <code>v0</code> are values loaded from somewhere else. <strong>BOOKMARK THIS</strong></p>
+<p>Eventually, you&#8217;ll reach this part, where <code>a1</code> is <code>v1 * v0</code>, and <code>v1</code> and <code>v0</code> are values loaded from somewhere else.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+Bookmark this ASM address!
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Following <code>v1</code>, we follow the pointer at <code>a0</code>, and reached RAM 800cd138 + 5b, we get the value 2. Looking at the data struct, it seems like character stats. Margie has Ether = 2.</p>
+<p>Following <code>v1</code>, we follow the pointer at <code>a0</code>, and reached <code>RAM 800cd138 + 5b</code>, we get the value 2. Looking at the data struct, it seems like character stats. Margie has Ether = 2.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-4b.png"><img src="margie-heal-4b.png" alt="margie heal 4b" width="320" height="240"></a>
+<a class="image" href="margie-heal-4b.png"><img src="margie-heal-4b.png" alt="margie heal 4b" height="240"/></a>
 </div>
 </div>
 <div class="paragraph">
-<p>Following <code>v0</code>, we follow the pointer at <code>v0</code>, and reached RAM 800d0388 + 11, we get the value 0x14.</p>
+<p>Following <code>v0</code>, we follow the pointer at <code>v0</code>, and reached <code>RAM 800d0388 + 11</code>, we get the value 0x14.</p>
 </div>
 <div class="paragraph">
-<p><strong>IT FITS!</strong> 2 * 0x14 = 0x28. So the formula is Margie&#8217;s Ether 2 * Spell Power 0x14 = 0x28 HP Heal!</p>
+<p><mark>IT FITS!</mark> 2 * 0x14 = 0x28. So the formula is Margie&#8217;s Ether 2 * Spell Power 0x14 = 0x28 HP Heal!</p>
 </div>
 <div class="paragraph">
-<p>Now we are getting somewhere! Load back BEFORE TURN state and put a WRITE breakpoint here to see where 0x14 came from!</p>
+<p>Now we are getting somewhere! Load back <mark>BEFORE TURN state</mark> and put a WRITE breakpoint here to see where 0x14 came from!</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-5b.png"><img src="margie-heal-5b.png" alt="margie heal 5b" width="320" height="240"></a>
+<a class="image" href="margie-heal-5b.png"><img src="margie-heal-5b.png" alt="margie heal 5b" height="240"/></a>
 </div>
 </div>
 <div class="paragraph">
-<p>Unfortunately the breakpoint didn&#8217;t triggered. It means the data doesn&#8217;t update during the battle.</p>
+<p>Unfortunately the breakpoint didn&#8217;t triggered. It means the data wasn&#8217;t update during the battle.</p>
 </div>
 <div class="paragraph">
-<p>It also means we have go further back to BEFORE BATTLE state and re-trigger the battle from the start.</p>
+<p>It also means we need to go further back to <mark>BEFORE BATTLE state</mark> and re-trigger the battle from the start.</p>
 </div>
 <div class="paragraph">
 <p>Indeed, the breakpoint is triggered! The 0x14 is copied from <code>a1</code>.</p>
 </div>
 <div class="paragraph">
-<p>Load back BEFORE BATTLE state again and put (yet another) WRITE breakpoint at RAM 801c3f7a</p>
+<p>Load back <mark>BEFORE BATTLE state</mark> again and put (yet another) WRITE breakpoint at <code>RAM 801c3f7a</code></p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="margie-heal-6b.png"><img src="margie-heal-6b.png" alt="margie heal 6b" width="320" height="240"></a>
+<a class="image" href="margie-heal-6b.png"><img src="margie-heal-6b.png" alt="margie heal 6b" height="240"/></a>
 </div>
 </div>
 <div class="paragraph">
@@ -172,21 +213,309 @@ at = 10000 + s4 - 717c
 <div class="paragraph">
 <p>You can use this data to find the correct game file from the disc.</p>
 </div>
-<div class="paragraph">
-<p>There are also many ways to do it:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Extract all files to a folder, then write a custom tool to loop through all files for a match.</p>
-</li>
-<li>
-<p>Remove all ECC/ECM data by convert the BIN/CUE to normal 2048 iso. Find the bytes pattern with a hex editor, and then use Xenogears TOC (it has file offset and file size) to see which file the search result landed between.</p>
-</li>
-</ol>
+</div>
+<div class="sect1">
+<h2 id="_locating_the_relevant_files">Locating the Relevant Files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Xenogears looks for its game files by LBA (Logical Block Address) or CD sector address. The list of LBA for the whole game is on SLPS/SLUS main executable at offset 0x804 to 0x8800. It is then loaded to RAM at 0x80010004 to 0x80018000. So we put an READ breakpoint to the entire area.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="xeno-file-1.png"><img src="xeno-file-1.png" alt="xeno file 1" height="240"/></a>
+</div>
 </div>
 <div class="paragraph">
-<p>And with that, I located the file is 2614.bin , offset 0x7022.</p>
+<p>The LBA list is 7 bytes per entry. Byte 0,1,2 is an int24 for LBA, and byte 3,4,5,6 is an int32 for its filesize. If the filesize is negative, then the entry is an directory.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="xeno-file-2.png"><img src="xeno-file-2.png" alt="xeno file 2" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Basically, the ASM is checking if it is going to load a subfile. You can ignore lbu (load byte unsigned) instructions when it is on byte 3,4,5,6.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="xeno-file-3.png"><img src="xeno-file-3.png" alt="xeno file 3" height="240"/></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Byte 0,1,2 is the actual attempt to load the file. The value you need to take note is <code>v1</code>, and it has value 0x800104c6.</p>
+</div>
+<div class="paragraph">
+<p>With that, we can use this formula to calculate the file id</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(v1 - entry start) / entry size
+= (800104c6 - 80010004) / 7
+= 0174.bin</pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+Make sure there are no remainder after the divide!
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Noting down every <code>v1</code> starting from <mark>BEFORE MAP state</mark> until Margie heals Bart. The content of each file is then identified by referring to <code>xeno-iso.txt</code> as notes.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;"/>
+<col style="width: 33.3333%;"/>
+<col style="width: 33.3334%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">v1</th>
+<th class="tableblock halign-left valign-top">file</th>
+<th class="tableblock halign-left valign-top">notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">BEFORE MAP state</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">800118e6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">910</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">map data    - map 152  Aveh Palace</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">800118ed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">911</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">map texture - map 152  Aveh Palace</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">Map fully loaded. Player in control.</p></th>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">Cutscene triggered</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e2e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">518</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Margie</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010dfd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">511</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Bart</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e04</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Bart</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010ea5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">532</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Ramsus</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">BEFORE BATTLE state</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">800104c6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">174</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wds/sample data - bgm 20  Crimson Knight</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">800104cd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">175</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">smds/midi   data - bgm 20  Crimson Knight</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001010e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">38</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[LZ][OVER] Battle executable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80014777</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2613</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001477e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2614</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[PAK-LZ] Data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80014785</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2615</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[OVER]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80014a10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2708</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">stats/name      - mon 45  Miang, Ramsus, Margie, Fei</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80014a17</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2709</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">texture/animation - mon 45  Miang, Ramsus, Margie, Fei</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">Battle Transition Effect start</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80014c9b</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2801</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3d model data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80014ca2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2802</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3d model data</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">Battle Transition Effect end</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">800151c6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2990</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bart battle sprites</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001543c</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3080</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[PAK]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015443</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3081</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[PAK]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001544a</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3082</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001546d</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3087</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[OVER]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015474</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3088</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[PAK-LZ]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001547b</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3089</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[PAK-LZ]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015482</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3090</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015458</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3084</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wds/sample data</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">pre-Battle Dialogue</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e9e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">534</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Miang</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e04</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Bart</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e2e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">518</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Margie</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e9e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">534</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Miang</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001532b</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3041</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">seds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015332</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3042</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wds/sample data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e04</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Bart</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010ea5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">535</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Ramsus</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010dfd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">511</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Bart</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010e2e</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">518</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Margie</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80010dfd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">511</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Face - Bart</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">Battle fully loaded. Player in control.</p></th>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="3"><p class="tableblock">BEFORE TURN state</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015466</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3086</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wds/sample data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80015458</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3084</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">wds/sample data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8001523d</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3007</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bart battle sprites - Deathblows</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>And with that, we have limit our search from the whole game 3700+ files to about 40 files.</p>
+</div>
+<div class="paragraph">
+<p>Checking the files between "BEFORE BATTLE state" and "pre-Battle Dialogue", excluding any known irrelevant files, I can get a match on file 2614.bin , offset 0x7022.</p>
+</div>
+<div class="paragraph">
+<p>There might be duplicates on other game files. You can use this method to find them. If you cannot trigger certain file to load no matter what you do, most likely that file is a leftover dummy.</p>
 </div>
 </div>
 </div>
@@ -194,8 +523,8 @@ at = 10000 + s4 - 717c
 <h2 id="_potential_bug">Potential Bug</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><a class="image" href="heal-200-margie.png"><img src="heal-200-margie.png" alt="heal 200 margie" width="320" height="240"></a></span>
-<span class="image"><a class="image" href="heal-200-miang.png"><img src="heal-200-miang.png" alt="heal 200 miang" width="320" height="240"></a></span></p>
+<p><span class="image"><a class="image" href="heal-200-margie.png"><img src="heal-200-margie.png" alt="heal 200 margie" height="240"/></a></span>
+<span class="image"><a class="image" href="heal-200-miang.png"><img src="heal-200-miang.png" alt="heal 200 miang" height="240"/></a></span></p>
 </div>
 <div class="paragraph">
 <p>When I changed the spell value from 20 to 100, I noticed not only Margie heals Bart 200 HP, but Miang also heals Ramsus 200 HP.</p>
@@ -206,14 +535,7 @@ at = 10000 + s4 - 717c
 <div class="paragraph">
 <p>Hope it helps!</p>
 </div>
-<div class="paragraph">
-<p><em>Rufas</em></p>
 </div>
-</div>
-</div>
-</div>
-<div id="footer">
-<div id="footer-text">
 </div>
 </div>
 </body>

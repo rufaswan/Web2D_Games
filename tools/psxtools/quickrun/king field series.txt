@@ -1,6 +1,6 @@
-====================
-=== King's Field ===
-====================
+==================
+== King's Field ==
+==================
 B1F
 	MAP Commoner
 	Wright Key
@@ -17,9 +17,9 @@ B4F
 	Magician Key  chest
 B5F
 
-======================
-=== King's Field 2 ===
-======================
+====================
+== King's Field 2 ==
+====================
 .     6/7 - 8
 .     |
 .     5
@@ -91,9 +91,9 @@ Map 7 colosseum
 
 Map 8 cyber-space
 
-======================
-=== King's Field 3 ===
-======================
+====================
+== King's Field 3 ==
+====================
 .      K
 .      |
 .  J - I -[H]- G -[E]-[F]
@@ -183,9 +183,9 @@ Map J KF1 cementary
 Map K castle
 	Phantom Crown    drop/Dragon Master
 
-======================
-=== King's Field 4 ===
-======================
+====================
+== King's Field 4 ==
+====================
 
 Surface
 .    |--Palace--- EV

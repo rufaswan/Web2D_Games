@@ -1,5 +1,8 @@
 = Steps-by-steps psxtools Tutorial
+Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
 :toc:
+
+
 
 == Setup
 
@@ -24,6 +27,8 @@ php  psxtools/img_clut2png.php  .CLUT/.RGBA
 Sprites rip in .QUAD format can be open with link:quad_player_mobile/player-mobile.tpl.html[Quad Player]. Individual frames can then be exported from there.
 
 '''
+
+
 == Xenogears (PS1)
 
 === Extracting Files
@@ -68,6 +73,8 @@ php  psxtools/zinfo_xeno_map5_opcode.php  605/EVEN_FILE/5.dec
 ....
 
 '''
+
+
 == Rusty (PC-98)
 
 All game files are compressed. Decode them running this first
@@ -89,6 +96,8 @@ php  psxtools/pc98_rusty_mag-ani.php  vs1_02.mag  vs1.ani
 ....
 
 '''
+
+
 == MS Gundam Battle Master series (PS1)
 
 Also known as MS Gundam Battle Assault in US.
@@ -105,6 +114,8 @@ php  psxtools/quad_gbattmw_data_mspac.php  DIR
 ....
 
 '''
+
+
 == Gunvolt series (PC)
 
 Game files are packed in .IRLST and .IRARC file pair. Then use the correct IDTAG to convert extracted subfiles to .QUAD format.
@@ -120,6 +131,8 @@ php  psxtools/quad_pc_gunvolt_IOBJ.php  -gv/-gv2/gva/-mgv  OUTPUT_DIR/*all subfi
 ....
 
 '''
+
+
 == Vanillaware series
 
 === Extracting Files

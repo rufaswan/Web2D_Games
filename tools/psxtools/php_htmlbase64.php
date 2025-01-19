@@ -150,7 +150,7 @@ function html64( $fname )
 		switch ( substr($mime,0,5) )
 		{
 			case 'image':
-				return sprintf('<img id="%s" alt="%s" title="%s" src="%s">', $meta['s'], $meta['s'], $meta['s'], $data);
+				return sprintf('<img id="%s" alt="%s" title="%s" src="%s" />', $meta['s'], $meta['s'], $meta['s'], $data);
 			case 'video':
 				return sprintf('<video id="%s" src="%s" controls loop></video>', $meta['s'], $data);
 			case 'audio':
@@ -230,6 +230,6 @@ style.css
 index.html
 	@@<script.js>@@  -> <script id=''>...</script>
 	@@<style.css>@@  -> <style  id=''>...</style>
-	@@<image.png>@@  -> <img id='' src='data:image/png;base64,...'  alt='' title=''>
-	@@<image.jpg>@@  -> <img id='' src='data:image/jpeg;base64,...' alt='' title=''>
+	@@<image.png>@@  -> <img id='' src='data:image/png;base64,...'  alt='' title='' />
+	@@<image.jpg>@@  -> <img id='' src='data:image/jpeg;base64,...' alt='' title='' />
  */

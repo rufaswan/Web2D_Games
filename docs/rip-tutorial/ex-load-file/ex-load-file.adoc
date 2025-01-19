@@ -1,0 +1,85 @@
+[#guide_loadfile]
+=== Loading Files
+ifndef::rel[:rel: .]
+
+Game::
+	PSP Princess Crown
+Debugger::
+	PPSSPP <<ppsspp>>
+
+To be able to start from input data, you'll need to know which files is actually loaded for the scene.
+
+Let's start by looking for a file list on RAM using a file name from the game
+
+TIP: File names can be case insensitive matched. So try all uppercase, all lowercase, and/or mixed case.
+
+TIP: You can start with file extension.
+
+
+image:{rel}/load-file-1.png[link={rel}/load-file-1.png,height=240]
+image:{rel}/load-file-2.png[link={rel}/load-file-2.png,height=240]
+
+We found the the file at RAM 8aeb410. By observing the pattern, the file entry is an array `["FILE.NAME", int32 LBA, int32 file size]` and has fixed 0x1c bytes size.
+
+Looking for where the list begins and ends, we discovered the area for the whole list is `from RAM 8ae6ae4 to RAM 8af51e4` (size = 0xe700).
+
+
+image::{rel}/load-break-1.png[link={rel}/load-break-1.png,height=240]
+
+As usual, when we have something we want to inspect, we'll put a READ breakpoint on the whole thing.
+
+
+image:{rel}/load-break-2.png[link={rel}/load-break-2.png,height=240]
+image:{rel}/load-break-3.png[link={rel}/load-break-3.png,height=240]
+
+As the game search by file name, the ASM code is about comparing every character for a match. Even PPSSPP able to recognize this function as `strcmp()` (string compare).
+
+We are no interest for `strcmp()` itself, but the parent function that called it. We will use "Step Into" until the function returned. We end up at ASM address `89e38e4`.
+
+
+image:{rel}/load-ghidra-1.png[link={rel}/load-ghidra-1.png,height=240]
+image:{rel}/load-ghidra-2.png[link={rel}/load-ghidra-2.png,height=240]
+
+With that, we can use Ghidra <<ghidra>> to decompile the function.
+
+`SUB_001ecdbc` is `strcmp()`, so basically the function is about looping a list of 3000 file entries and return the file entry when it matched.
+
+NOTE: You can skip this step with Ghidra if you can understand the ASM code directly. This is a very simple function to begin with.
+
+Since READ breakpoint will always break at `strcmp()` on every file entries, with a list of 3000 entries, it is no longer usefule for us.
+
+This is where we'll disable the READ breakpoint. and use EXECUTE breakpoint instead.
+
+
+image::{rel}/load-opcode.png[link={rel}/load-opcode.png,height=240]
+
+We will put EXECUTE breakpoint when the file entry matched and ready for return, at this 2 ASM address:
+
+....
+89e3904  lw  s2, 18(v0)
+89e39a0  lw  s2, 18(v0)
+....
+
+NOTE: EXECUTE breakpoint is for discover inner workings of the function, which is something only possible after the ASM code is discovered by using READ or WRITE breakpoint.
+
+By keeping track of value at `v0`, we will get a list of file names the game trying to load. For example, when Gradriel went into Valenadine City Pub, the game will look for these files (in order):
+
+|===
+|v0 |filename
+
+|8af1d2c |TORUNEKO.VOL
+|8aed0d4 |GODY.VOL
+|8aea00c |BABA.VOL
+|8aed294 |GORO.VOL
+|8af4b1c |WINE.VOL
+|8af4dbc |WN1C.VOL
+|8ae7388 |002_01_4.EVN
+|===
+
+When the file loading order is known, we also reduced the number of files we are working with from 2000+ files to just 7 files.
+
+This technique is also useful on these situations
+
+. When the game files are a bunch of meaningless numbers, like `000_00_0.EVN`.
+. When the game files are in sets, it can be in 2's (texture + atlas) or in 3's (texture + atlas + palette)
+. When the game files are shared and has very weird or unknown combinations.

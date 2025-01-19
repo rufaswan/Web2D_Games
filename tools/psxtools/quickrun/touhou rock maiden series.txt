@@ -1,6 +1,6 @@
-===================
-=== Rock Maiden ===
-===================
+=================
+== Rock Maiden ==
+=================
 CHAR
 	TH06-s2 Cirno
 	TH06-s6 Remilia Scarlet
@@ -55,9 +55,9 @@ item/shot
 	item:mudeki = *same room as nazrin*
 	item:charge = item:mudeki  SLIDE  aya  (suika room , slide on spikes)
 
-=====================
-=== Rock Maiden 2 ===
-=====================
+===================
+== Rock Maiden 2 ==
+===================
 CHAR
 	TH07-s6 Saigyouji Yuyuko
 	FIG     Ibuki Suika
@@ -173,9 +173,9 @@ item/shot
 	item:charge = *same room as doll*
 	item:energy = sp:nazrin  BLOCK  flandre  shot-noblock  (remilia portrait)
 
-=====================
-=== Rock Maiden 3 ===
-=====================
+===================
+== Rock Maiden 3 ==
+===================
 CHAR
 	TH06-s5 Izayoi Sakuya
 	TH11-ex Komeiji Koishi
@@ -299,9 +299,9 @@ item/shot
 	item:charge = sp:broom  TOP-RIGHT  hina  (waterfall spike pit)
 	item:energy = sp:broom  LADDER+RIGHT  yuka
 
-======================
-=== Rock Maiden FC ===
-======================
+====================
+== Rock Maiden FC ==
+====================
 CHAR
 	TH06-s1 Rumia
 	TH05-s3 Alice Margatroid
@@ -343,9 +343,9 @@ flandre
 	4/re <- marisa
 	5 <- alice
 
-========================
-=== Rock Maiden FC 2 ===
-========================
+======================
+== Rock Maiden FC 2 ==
+======================
 CHAR
 	TH12-s2 Tatara Kogasa
 	TH10-s5 Kotiya Sanae
@@ -393,9 +393,9 @@ reimu
 	4/re <- marisa
 	5 <- minamitsu/kogasa
 
-==================
-=== Rockmen R2 ===
-==================
+================
+== Rockmen R2 ==
+================
 BOSS
 	Hide    Penetrate  Eruption
 	Deluge             Hail
@@ -453,9 +453,9 @@ item/shot
 	item:shield = sp:rushjet  BOTTOM-RIGHT  analysis  (BOSS blues)
 		* stand in front of rush jet to trigger screen scroll
 
-====================
-=== Cheat Engine ===
-====================
+==================
+== Cheat Engine ==
+==================
 	+ 0 int32 Lives
 	+ 4 int32 Blue Potion / E-tank / E-bottle
 	+ 8 int32 Red  Potion / W-tank / W-bottle

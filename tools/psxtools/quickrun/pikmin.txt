@@ -1,6 +1,6 @@
-================
-=== Pikmin 2 ===
-================
+==============
+== Pikmin 2 ==
+==============
 Valley of Repose
 	2  ----  Emergence Cave
 		2  2x Purple (< 20)

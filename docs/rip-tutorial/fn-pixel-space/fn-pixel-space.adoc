@@ -1,0 +1,52 @@
+[#pixel_space]
+=== Pixel Space
+ifndef::rel[:rel: .]
+
+The drawing XY are in space-like coordinates, similar to 3D space. The XY can be from -infinite to +infinite px. So all sprite are aligned with `[0,0]`.
+
+Basically, like 3D models, `[0,0]` makes the sprite coordinate self-contained. The game can then "transform" the sprite to its in-game entity position.
+
+Some people refer `[0,0]` as "origin" or "root". I call it "center point". And here is an article referring it as "hot spots" <<mckids>>.
+
+Here is the process how I convert XY from pixel space to canvas position:
+
+
+image::{rel}/elise-space-1.png[link={rel}/elise-space-1.png,height=240]
+
+From the image above, the drawing XY for sprite is `[-130,-160 , -130,10 , 150,10 , 150,-160]`
+
+First, we'll need to prepare a canvas large enough to hold the full sprite. We will use the absolute value <<absval>> of the drawing XY to calculate the size.
+
+NOTE: The absolute value of a number may be thought of as its distance from zero. It is thus always either a positive number or zero, but never negative.
+
+The absolute values for X are `[130,130,150,150]`. So the canvas width is:
+
+....
+max value * 2 = 150 px * 2
+	= 300 px
+....
+
+The absolute values for Y are `[160,10,160,10]`. So the canvas height is:
+
+....
+max value * 2 = 160 px * 2
+	= 320 px
+....
+
+With that we will prepare a 300x320 px canvas, with `[150,160]` represent `[0,0]` in pixel space. The sprite will be drawn at
+
+....
+[-130+150 , -160+160] = [ 20 ,   0]
+[-130+150 ,   10+160] = [ 20 , 170]
+[ 150+150 ,   10+160] = [300 , 170]
+[ 150+150 , -160+160] = [300 ,   0]
+....
+
+The result drawing position on the canvas is `[20,0 , 20,170 , 300,170 , 300,0]`.
+
+
+image::{rel}/elise-space-2.png[link={rel}/elise-space-2.png,height=240]
+
+It is also very simple to revert canvas position back to pixel space - just subtract `[150,160]`.
+
+Since everything is aligned to `[0,0]` in pixel space, it doesn't matter what the final canvas size is, they will all align together correctly for animations.
