@@ -208,6 +208,10 @@ function QuadVerify(Q){
 			return 0;
 		__.object_lowercase_keys(obj);
 
+		var concave = {
+			dstquad : 0,
+			srcquad : 0,
+		};
 		Object.keys(def).forEach(function(tag){
 			switch(tag){
 				case 'debug':
@@ -217,7 +221,11 @@ function QuadVerify(Q){
 				case 'srcquad':
 					if ( ! __.is_num_array(obj[tag], 8) ) // 4 xy
 						break;
-					def[tag] = obj[tag];
+					var cen = Q.math.quad_center(obj[tag]);
+					if ( cen.type === 3 )
+						def[tag] = obj[tag];
+					else
+						concave[tag] = obj[tag];
 					break;
 				case 'fogquad':
 					if ( __.is_str(obj.fogquad) ){
@@ -248,6 +256,10 @@ function QuadVerify(Q){
 			} // switch(tag)
 		});
 
+		if ( concave.dstquad !== 0 )
+			Q.func.error('removed concave dstquad', concave.dstquad);
+		if ( concave.srcquad !== 0 )
+			Q.func.error('removed concave srcquad', concave.srcquad);
 		if ( ! def.dstquad )
 			return 0;
 		return def;

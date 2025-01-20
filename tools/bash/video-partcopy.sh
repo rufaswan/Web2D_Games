@@ -47,7 +47,7 @@ while [ "$2" ]; do
 	#    The input is decoded (and discarded) until it reaches the position indicated by "-ss".
 	#    This will be done relatively slow, frame-by-frame.
 	$nice  ffmpeg -y \
-		-v quiet     \
+		-v 0         \
 		-ss $fr      \
 		-i "$video"  \
 		-vcodec copy \

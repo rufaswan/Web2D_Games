@@ -3,7 +3,7 @@
 
 <meta charset='utf-8' />
 <meta name='viewport' content='width=device-width, initial-scale=1' />
-<title>Quad Perspective Test (SRC * M)</title>
+<title>Quad Affine (4 Triangles) Test</title>
 @@<quad-inc.css>@@
 @@<qdfn.js>@@
 
@@ -15,24 +15,19 @@
 
 <script>
 var vert_src = `
+	attribute  highp  vec2  a_xy;
 	attribute  highp  vec2  a_uv;
 	uniform    highp  vec4  u_pxsize;
-	uniform    highp  mat3  u_mat3;
 	varying    highp  vec2  v_uv;
 
-	highp  vec3   xyz;
-	highp  vec2   uv;
-	highp  float  z;
+	highp  vec2  xy;
+	highp  vec2  uv;
 	void main(void){
-		xyz = vec3(a_uv, 1.0) * u_mat3;
-		z    = 1.0 / xyz.z;
-		xyz *= z;
-
-		xyz.xy *= u_pxsize.xy;
-		uv      = a_uv.xy * u_pxsize.zw;
+		xy = a_xy.xy * u_pxsize.xy;
+		uv = a_uv.xy * u_pxsize.zw;
 
 		v_uv = uv;
-		gl_Position = vec4(xyz, 1.0);
+		gl_Position = vec4(xy.x , xy.y , 1.0 , 1.0);
 	}
 `;
 
@@ -46,7 +41,7 @@ var frag_src = `
 `;
 
 QDFN.set_shader_program(vert_src, frag_src);
-QDFN.set_shader_loc('a_uv', 'u_pxsize', 'u_mat3', 'u_tex');
+QDFN.set_shader_loc('a_xy', 'a_uv', 'u_pxsize', 'u_tex');
 
 QDFN.set_tex_count('u_tex', 1);
 APP.texsize = 0;
@@ -54,8 +49,6 @@ APP.texsize = 0;
 function quad_draw(){
 	QDFN.canvas_resize();
 	QDFN.set_vec4_size('u_pxsize', APP.texsize[0], APP.texsize[1]);
-	var mat3 = get_perspective_mat3(APP.src, APP.dst, false);
-	QDFN.set_mat3fv('u_mat3', mat3);
 
 	var dcx = quad_center(APP.dst);
 	var scx = quad_center(APP.src);
@@ -65,18 +58,24 @@ function quad_draw(){
 	//console.log('dcx',dcx,'scx',scx);
 	switch ( dcx.type ){
 		case 3: // 11  simple
+		case 0: // --  twisted
+			var xy = QDFN.quad_tri4(dcx.center, APP.dst);
+			var uv = QDFN.quad_tri4(scx.center, APP.src);
+			QDFN.v2_attrib('a_xy', xy);
+			QDFN.v2_attrib('a_uv', uv);
+			return QDFN.draw(12);
 		case 2: // 1-  bended , ok
+			var xy = QDFN.quad_getxy(APP.dst , 0,1,2 , 0,2,3);
 			var uv = QDFN.quad_getxy(APP.src , 0,1,2 , 0,2,3);
+			QDFN.v2_attrib('a_xy', xy);
 			QDFN.v2_attrib('a_uv', uv);
 			return QDFN.draw(6);
 		case 1: // -1  bended , reorder
+			var xy = QDFN.quad_getxy(APP.dst , 1,2,3 , 1,3,0);
 			var uv = QDFN.quad_getxy(APP.src , 1,2,3 , 1,3,0);
+			QDFN.v2_attrib('a_xy', xy);
 			QDFN.v2_attrib('a_uv', uv);
 			return QDFN.draw(6);
-		case 0: // --  twisted
-			var uv = QDFN.quad_tri4(scx.center, APP.src);
-			QDFN.v2_attrib('a_uv', uv);
-			return QDFN.draw(12);
 	} // switch ( dcx.type )
 }
 

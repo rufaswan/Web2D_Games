@@ -105,7 +105,7 @@ It is to define the metadata for current QUAD file.
 }
 ----
 
-==== Tags Reference
+For reference, here are some suggestions for tag fields.
 
 MPEG Audio Tag ID3v1 <<mp3tag>>::
 * Title
@@ -700,6 +700,7 @@ DST::
 * link:sample-depth.quad[sample-depth.quad (567 bytes)]
 * link:sample-keymix.quad[sample-keymix.quad (943 bytes)]
 * link:sample-mat4mix.quad[sample-mat4mix.quad (1461 bytes)]
+* link:sample-keyattr.quad[sample-keyattr.quad (985 bytes)]
 
 
 

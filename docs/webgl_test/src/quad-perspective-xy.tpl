@@ -59,30 +59,27 @@ function quad_draw(){
 	var mat3 = get_perspective_mat3(APP.src, APP.dst, true);
 	QDFN.set_mat3fv('u_mat3', mat3);
 
-	var scx = find_intersect_point(APP.src);
-	var dcx = find_intersect_point(APP.dst);
+	var dcx = quad_center(APP.dst);
+	var scx = quad_center(APP.src);
+	if ( dcx.center === 0 || scx.center === 0 )
+		return;
 
-	// for simple and twisted
-	if ( dcx !== -1 ){
-		var xy = QDFN.quad_tri4(dcx, APP.dst);
-		QDFN.v2_attrib('a_xy', xy);
-
-		console.log('simple and twisted', dcx);
-		return QDFN.draw(12);
-	}
-
-	// bended
-	var area1 = quad_area(APP.dst , 0,1,2 , 0,2,3);
-	var area2 = quad_area(APP.dst , 1,2,3 , 1,3,0);
-
-	if ( area1 < area2 )
-		var xy = QDFN.quad_getxy(APP.dst , 0,1,2 , 0,2,3);
-	else
-		var xy = QDFN.quad_getxy(APP.dst , 1,2,3 , 1,3,0);
-
-	QDFN.v2_attrib('a_xy', xy);
-	console.log('bended', dcx);
-	return QDFN.draw(6);
+	//console.log('dcx',dcx,'scx',scx);
+	switch ( dcx.type ){
+		case 3: // 11  simple
+		case 2: // 1-  bended , ok
+			var xy = QDFN.quad_getxy(APP.dst , 0,1,2 , 0,2,3);
+			QDFN.v2_attrib('a_xy', xy);
+			return QDFN.draw(6);
+		case 1: // -1  bended , reorder
+			var xy = QDFN.quad_getxy(APP.dst , 1,2,3 , 1,3,0);
+			QDFN.v2_attrib('a_xy', xy);
+			return QDFN.draw(6);
+		case 0: // --  twisted
+			var xy = QDFN.quad_tri4(dcx.center, APP.dst);
+			QDFN.v2_attrib('a_xy', xy);
+			return QDFN.draw(12);
+	} // switch ( dcx.type )
 }
 
 function render(){

@@ -1,0 +1,33 @@
+{
+  "keyframe" : [
+    {
+      "layer" : [
+        {
+          "dstquad"   : [ -100 , -100 , 100 , -100 , 100 , 100 , -100 , 100 ] ,
+          "fogquad"   : "#ff0000ff" ,
+          "attribute" : "simple"
+        } ,
+        {
+          "dstquad"   : [ -100 , -100 , 100 , -100 , -100 , 100 , 100 , 100 ] ,
+          "fogquad"   : "#00ff00ff" ,
+          "attribute" : "twisted top-bottom"
+        } ,
+        {
+          "dstquad"   : [ -100 , -100 , 100 , 100 , 100 , -100 , -100 , 100 ] ,
+          "fogquad"   : "#0000ffff" ,
+          "attribute" : "twisted left-right"
+        } ,
+        {
+          "dstquad"   : [ 0 , 0 , -100 , -100 , 100 , 0 , -100 , 100 ] ,
+          "fogquad"   : "#00ffffff" ,
+          "attribute" : "bended part-big"
+        } ,
+        {
+          "dstquad"   : [ -100 , -100 , 100 , 0 , -100 , 100 , 0 , 0 ] ,
+          "fogquad"   : "#ff00ffff" ,
+          "attribute" : "bended big-part"
+        }
+      ]
+    }
+  ]
+}

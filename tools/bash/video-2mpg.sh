@@ -13,6 +13,7 @@ while [ "$1" ]; do
 	case "$mime" in
 		'video/'* | 'audio/'*)
 			$nice  ffmpeg -y \
+				-v 0         \
 				-i "$t1"     \
 				-qscale 0    \
 				"$t1".mpg

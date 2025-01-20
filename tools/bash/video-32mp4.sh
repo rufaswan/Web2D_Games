@@ -33,10 +33,36 @@ while [ "$1" ]; do
 	#ext="${bas##*.}"
 	shift
 
-	if [ ! -f "$t1" ]; then
+	if [ -f "$t1" ]; then
+		mime=$(file  --brief  --mime-type  "$t1")
+		tmp="/tmp/$$.mp4"
+		case "$mime" in
+			'video/'* | 'audio/'*)
+				[ -f "$tmp" ] && rm -vf "$tmp"
+				t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
+				setsize $(echo "$t2" | tr ','  ' ')
+
+				echo "   s=$size"
+				echo "  af=$af"
+				$nice  ffmpeg -y    \
+					-v 0            \
+					-i "$t1"        \
+					-s $size        \
+					-aspect $orin   \
+					-vcodec libx264 \
+					-q:v 0          \
+					-b:a 24k        \
+					-r 15 -g 150    \
+					-ac 1 -ar 44100 \
+					$af             \
+					-max_muxing_queue_size 2048 \
+					"$tmp"
+				[ -f "$tmp" ] && mv -vf "$tmp"  "$bas-$size".mp4
+				;;
+		esac
+	else
 		case "${t1:2}" in
-			'-af')  af='';;
-			'+af')  af='-af loudnorm=I=-14:TP=-1';;
+			'af')  af='-af loudnorm=I=-14:TP=-1';;
 			*)
 				let s=${t1:2}*1
 				if (( $s < 1 )); then
@@ -46,30 +72,6 @@ while [ "$1" ]; do
 		esac
 		continue
 	fi
-
-	mime=$(file  --brief  --mime-type  "$t1")
-	tmp="/tmp/$$.mp4"
-	case "$mime" in
-		'video/'* | 'audio/'*)
-			[ -f "$tmp" ] && rm -vf "$tmp"
-			t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
-			setsize $(echo "$t2" | tr ','  ' ')
-
-			$nice  ffmpeg -y    \
-				-i "$t1"        \
-				-s $size        \
-				-aspect $orin   \
-				-vcodec libx264 \
-				-q:v 0          \
-				-b:a 24k        \
-				-r 15 -g 150    \
-				-ac 1 -ar 44100 \
-				$af             \
-				-max_muxing_queue_size 2048 \
-				"$tmp"
-			[ -f "$tmp" ] && mv -vf "$tmp"  "$bas-$size".mp4
-			;;
-	esac
 done
 echo "[${0##*/}] total $SECONDS secs"
 

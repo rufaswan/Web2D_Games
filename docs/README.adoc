@@ -13,7 +13,8 @@
 *** {ghpage}/mobile_test/screen.tpl.html
 *** {ghpage}/filetype_test/input-file.tpl.html
 *** {ghpage}/filetype_test/audio-player.tpl.html
-*** {ghpage}/webgl_test/quad-affine.tpl.html
+*** {ghpage}/webgl_test/quad-affine-2tri.tpl.html
+*** {ghpage}/webgl_test/quad-affine-4tri.tpl.html
 *** {ghpage}/webgl_test/quad-perspective-uv.tpl.html
 *** {ghpage}/webgl_test/quad-perspective-xy.tpl.html
 *** {ghpage}/webgl_test/quad-perspective-screen.tpl.html

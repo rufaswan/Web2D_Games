@@ -283,42 +283,45 @@ function QuadMath(Q){
 		return [x,y,z];
 	}
 
+	$.point_in_rect = function( c, a, b ){
+		var x1 = Math.min(a[0], b[0]);
+		var y1 = Math.min(a[1], b[1]);
+		var x2 = Math.max(a[0], b[0]);
+		var y2 = Math.max(a[1], b[1]);
+
+		if ( c[0] < x1 || c[0] > x2 )
+			return 0;
+		if ( c[1] < y1 || c[1] > y2 )
+			return 0;
+		return 1;
+	}
+
 	$.barycentric_quad = function( quad ){
 		var c13  = $.cross( [quad[0],quad[1],1] , [quad[4],quad[5],1] );
 		var c24  = $.cross( [quad[2],quad[3],1] , [quad[6],quad[7],1] );
 		var bary = $.cross( c13 , c24 );
 
 		if ( bary[2] == 0 )
-			return 0;
+			return [0,0];
 		var z = 1.0 / bary[2];
-		return [ bary[0]*2 , bary[1]*z ];
+		return [ bary[0]*z , bary[1]*z ];
 	}
 
-	$.is_convex_quad = function( quad, bary=0 ){
-		if ( ! bary )
-			bary = $.barycentric_quad(quad);
-		if ( ! bary )
-			return false;
-
-		// barycentric is a point on the line from corner to corner
-		var corner = [
-			[0,1 , 4,5], // test line 1-3
-			[2,3 , 6,7], // test line 2-4
-		];
-		var x, y;
-		for ( var i=0; i < 2; i++ ){
-			var c = corner[i];
-			var x1 = Math.min(quad[ c[0] ] , quad[ c[2] ]);
-			var y1 = Math.min(quad[ c[1] ] , quad[ c[3] ]);
-			var x2 = Math.max(quad[ c[0] ] , quad[ c[2] ]);
-			var y2 = Math.max(quad[ c[1] ] , quad[ c[3] ]);
-
-			if ( bary[0] < x1 || bary[0] > x2 )  continue;
-			if ( bary[1] < y1 || bary[1] > y2 )  continue;
-			return true;
-		} // for ( var i=0; i < 2; i++ )
-
-		return false;
+	$.quad_center = function( quad ){
+		if ( ! quad )
+			return 0;
+		var res = {
+			center : 0 ,
+			type   : 0,
+		};
+		// 11  3  simple
+		// 1-  2  bended , ok
+		// -1  1  bended , reorder
+		// --  0  twisted
+		res.center = $.barycentric_quad(quad);
+		res.type  |= $.point_in_rect( res.center , [quad[0],quad[1]] , [quad[4],quad[5]] ) << 0;
+		res.type  |= $.point_in_rect( res.center , [quad[2],quad[3]] , [quad[6],quad[7]] ) << 1;
+		return res;
 	}
 
 	$.perspective_mat3 = function( quad ){

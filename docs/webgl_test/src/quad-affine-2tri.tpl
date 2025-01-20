@@ -3,7 +3,7 @@
 
 <meta charset='utf-8' />
 <meta name='viewport' content='width=device-width, initial-scale=1' />
-<title>Quad Affine Test</title>
+<title>Quad Affine (2 Triangles) Test</title>
 @@<quad-inc.css>@@
 @@<qdfn.js>@@
 
@@ -50,40 +50,33 @@ function quad_draw(){
 	QDFN.canvas_resize();
 	QDFN.set_vec4_size('u_pxsize', APP.texsize[0], APP.texsize[1]);
 
-	var type = quad_type(APP.dst);
-	console.log('DST', type, quad_normal(type));
-	var scx = find_intersect_point(APP.src);
-	var dcx = find_intersect_point(APP.dst);
+	var dcx = quad_center(APP.dst);
+	var scx = quad_center(APP.src);
+	if ( dcx.center === 0 || scx.center === 0 )
+		return;
 
-	// for simple and twisted
-	if ( dcx !== -1 ){
-		var xy = QDFN.quad_tri4(dcx, APP.dst);
-		QDFN.v2_attrib('a_xy', xy);
-
-		var uv = QDFN.quad_tri4(scx, APP.src);
-		QDFN.v2_attrib('a_uv', uv);
-
-		console.log('simple and twisted', dcx);
-		return QDFN.draw(12);
-	}
-
-	// bended
-	var area1 = quad_area(APP.dst , 0,1,2 , 0,2,3);
-	var area2 = quad_area(APP.dst , 1,2,3 , 1,3,0);
-
-	if ( area1 < area2 ){
-		var xy = QDFN.quad_getxy(APP.dst , 0,1,2 , 0,2,3);
-		var uv = QDFN.quad_getxy(APP.src , 0,1,2 , 0,2,3);
-	}
-	else {
-		var xy = QDFN.quad_getxy(APP.dst , 1,2,3 , 1,3,0);
-		var uv = QDFN.quad_getxy(APP.src , 1,2,3 , 1,3,0);
-	}
-
-	QDFN.v2_attrib('a_xy', xy);
-	QDFN.v2_attrib('a_uv', uv);
-	console.log('bended', dcx);
-	return QDFN.draw(6);
+	//console.log('dcx',dcx,'scx',scx);
+	switch ( dcx.type ){
+		case 3: // 11  simple
+		case 2: // 1-  bended , ok
+			var xy = QDFN.quad_getxy(APP.dst , 0,1,2 , 0,2,3);
+			var uv = QDFN.quad_getxy(APP.src , 0,1,2 , 0,2,3);
+			QDFN.v2_attrib('a_xy', xy);
+			QDFN.v2_attrib('a_uv', uv);
+			return QDFN.draw(6);
+		case 1: // -1  bended , reorder
+			var xy = QDFN.quad_getxy(APP.dst , 1,2,3 , 1,3,0);
+			var uv = QDFN.quad_getxy(APP.src , 1,2,3 , 1,3,0);
+			QDFN.v2_attrib('a_xy', xy);
+			QDFN.v2_attrib('a_uv', uv);
+			return QDFN.draw(6);
+		case 0: // --  twisted
+			var xy = QDFN.quad_tri4(dcx.center, APP.dst);
+			var uv = QDFN.quad_tri4(scx.center, APP.src);
+			QDFN.v2_attrib('a_xy', xy);
+			QDFN.v2_attrib('a_uv', uv);
+			return QDFN.draw(12);
+	} // switch ( dcx.type )
 }
 
 function render(){
