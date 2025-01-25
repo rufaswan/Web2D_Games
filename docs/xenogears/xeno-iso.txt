@@ -9,7 +9,55 @@ SLPS 011.60 JP disc 1 [3771]
 	23  [6]
 		24-27  wds/sample data
 		28  [LZ] Font 1-bpp 16x3297
-		29  [LZ-PAK]
+		29  [LZ-PAK] Kernel
+			.1 Fei Deathblows
+			.2 Elly Deathblows
+			.3 Citan Deathblows
+			.4 Bart Deathblows
+			.5 Billy Deathblows
+			.6 Rico Deathblows
+			.7 Emeralda Deathblows
+			.8 *dummy*
+			.9 *blank*
+			.10 Citan/Sword Deathblows
+			.11 Emeralda/Adult Deathblows
+			.13 - 17 *blank*
+			.18 Character Accessories
+			.19 Menu text
+			.20 *blank*
+			.21 Character Ether abilities
+			.22 *blank*
+			.23 Items
+			.24 Character Weapons
+			.25 *unk*
+			.26 *unk*
+			.27 *unk*
+			.28 *out of memory*
+			.29 Weltall Deathblows
+			.30 Weltall 2 Deathblows
+			.31 Vierge Deathblows
+			.32 Heimdal Deathblows
+			.33 Brigandier Deathblows
+			.34 Renmazuo Deathblows
+			.35 Stier Deathblows
+			.36 *dummy*
+			.37 Seibzehn Deathblows
+			.38 Crescens Deathblows
+			.39 *dummy*
+			.40 Fenrir Deathblows
+			.41 Andvari Deathblows
+			.42 El-Renmazuo Deathblows
+			.43 El-Stier
+			.44 Xenogears Deathblows
+			.45 Heimdal/Sword Deathblows
+			.46 *dummy*
+			.47 *dummy*
+			.48 *blank*
+			.49 Gear Ether abilities
+			.50 Button symbols
+			.51 Gear Accessories
+			.52 Gear Weapons
+			.53 Special Options
 	34  Overlay [6]
 		35  [LZ][OVER] Battling
 		36  [LZ][OVER] Field executable
