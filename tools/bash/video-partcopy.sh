@@ -1,6 +1,5 @@
 #!/bin/bash
 [ $(which ffmpeg)  ] || exit
-nice='nice -n 19'
 ##############################
 function time2sec {
 	var=( $(echo $1 | tr ':' ' ') )
@@ -46,7 +45,7 @@ while [ "$2" ]; do
 	# -ss after  -i
 	#    The input is decoded (and discarded) until it reaches the position indicated by "-ss".
 	#    This will be done relatively slow, frame-by-frame.
-	$nice  ffmpeg -y \
+	nice -n 19  ffmpeg -y \
 		-v 0         \
 		-ss $fr      \
 		-i "$video"  \

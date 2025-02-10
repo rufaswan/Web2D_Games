@@ -17,7 +17,6 @@ options:
 "
 
 [ $# = 0 ] && { echo "$msg"; exit; }
-nice='nice -n 19'
 
 function get_mkiso {
 	# mkisofs     from cdrecord/cdrtools , GPL->CDDL v2.01.01a09+
@@ -48,7 +47,10 @@ while [ "$1" ]; do
 
 		cmd="$mkiso  $opt  -o $t1.iso  $dir"
 		echo "[$#] $cmd"
-		$nice  $mkiso  $opt  -o "$t1".iso  "$dir"
+		nice -n 19  $mkiso \
+			$opt         \
+			-o "$t1".iso \
+			"$dir"
 	else
 		case "${t1:2}" in
 			'0'|'-0')      opt='-l';;

@@ -20,7 +20,8 @@ function mpvplay {
 			sz=$(wc -c < ./"$t1")
 			let mb=$sz/1000/1000
 
-			mpv  --quiet           \
+			nice -n 19  mpv        \
+				--quiet            \
 				--really-quiet     \
 				--window-maximized \
 				--geometry="+0+0"  \
@@ -35,15 +36,15 @@ function mpvplay {
 
 		# file renamed/moved during watching
 		if [ -f "$t1" ]; then
-			mkdir -p      /tmp/new/meme
-			mv -n  "$t1"  /tmp/new/meme
+			mkdir -p      /tmp/new/meme/
+			mv -n  "$t1"  /tmp/new/meme/
 		fi
 	done
 }
 
 vid=()
 snd=()
-sort=1
+sort='--sort=size'
 while [ "$1" ]; do
 	t1=./"${1%/}"
 	shift
@@ -59,8 +60,9 @@ while [ "$1" ]; do
 		esac
 	else
 		case "${t1:2}" in
-			'sort')  sort=1;;
-			*)       sort='';;
+			'x')  sort='';;
+			'r')  sort='-Sr';;  # --sort=size  --reverse
+			*)    sort='-S ';;  # --sort=size
 		esac
 	fi
 done
@@ -69,9 +71,10 @@ done
 # ERROR = cannot sort list when list is empty
 #         $(ls  ) === $(ls *)
 if (( ${#vid[@]} > 0 )); then
+	echo "video sort=$sort"
 	if [ "$sort" ]; then
 		IFS=$'\n'
-		vid=( $(ls --sort=size -1  "${vid[@]}") )
+		vid=( $(ls  -1  $sort  "${vid[@]}") )
 		unset IFS
 	fi
 	mpvplay  "${vid[@]}"

@@ -225,7 +225,10 @@ function QuadVerify(Q){
 					if ( cen.type === 3 )
 						def[tag] = obj[tag];
 					else
-						concave[tag] = obj[tag];
+						concave[tag] = {
+							type : cen.type,
+							quad : obj[tag],
+						};
 					break;
 				case 'fogquad':
 					if ( __.is_str(obj.fogquad) ){

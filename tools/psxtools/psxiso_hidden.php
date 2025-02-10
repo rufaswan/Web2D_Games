@@ -22,7 +22,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 
-define('XASTRH', "x60x01x01x80");
 //define('DRY_RUN', true);
 
 function chrbase10( $chr )
@@ -47,6 +46,57 @@ function cdpos2int( $min , $sec , $frame )
 	return $f * 0x800;
 }
 
+
+
+function file_ext( &$str )
+{
+	$len = strlen($str);
+	if ( $len < 4 )
+		return '0';
+
+	$mgc = bin2hex( substr($str,0,4) );
+	switch ( $mgc )
+	{
+		// ascii magic
+		case '50532d58':  return 'psx';
+		case '424f4f54':  return 'boot';
+
+		case '414b414f':  return 'akao';
+		case '77647320':  return 'wds';
+		case '73656473':  return 'seds';
+		case '736d6473':  return 'smds';
+		case '70424156':  return 'pbav';
+		case '70514553':  return 'pqes';
+		case '64727000':  return 'drp';
+
+		// known magic
+		case '60010180':  return 'str';
+		case '10000000':
+			$b1 = str2int($str, 4, 4);
+			$b2 = str2int($str, 8, 4);
+			if ( $b1 === 9 && $b2 === 0x20c )
+				return 'tim9';
+			if ( $b1 === 8 && $b2 === 0x2c )
+				return 'tim8';
+			break;
+
+		// dummies
+		case '64756d6d': // dummy
+		case '49742773': // It's CDMAKE Dummy
+			$mgc = substr($str, 0, 0x18);
+			if ( stripos($mgc, 'dummy') !== false )
+				return 'dummy';
+			break;
+	} // switch ( $mgc )
+
+	# no match
+	for ( $i=0; $i < $len; $i++ )
+	{
+		if ( $str[$i] !== ZERO )
+			return 'bin';
+	}
+	return '0';
+}
 //////////////////////////////
 function valkyrie_decrypt( &$str, &$dic, $key )
 {
@@ -93,7 +143,6 @@ function valkyrie_toc( $fp, $dir, &$toc )
 		list($no,$lba) = $list[$st];
 		$txt .= sprintf("%4x , %8x\n", $no, $lba);
 
-		$fn = sprintf('%s/%06d.bin', $dir, $no);
 		if ( isset( $list[$st+1] ) )
 			$sz = $list[$st+1][1] - $lba;
 		else
@@ -101,9 +150,12 @@ function valkyrie_toc( $fp, $dir, &$toc )
 			fseek($fp, 0, SEEK_END);
 			$sz = ftell($fp) - $lba;
 		}
-
 		$sub = fp2str($fp, $lba, $sz);
-		if ( substr($sub, 0, 4) === XASTRH )
+
+		$ext = file_ext($str);
+		$fn  = sprintf('%s/%06d.%s', $dir, $no, $ext);
+
+		if ( $ext === 'str' )
 			$sub = ZERO;
 		save_file($fn, $sub);
 		$st++;
@@ -115,7 +167,7 @@ function valkyrie_toc( $fp, $dir, &$toc )
 	return;
 }
 //////////////////////////////
-function iso_valkyrie($fp, $dir)
+function iso_valkyrie( $fp, $dir )
 {
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 
@@ -129,7 +181,7 @@ function iso_valkyrie($fp, $dir)
 	return;
 }
 
-function iso_starocean2nd1($fp, $dir)
+function iso_starocean2nd1( $fp, $dir )
 {
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 
@@ -142,9 +194,9 @@ function iso_starocean2nd1($fp, $dir)
 	valkyrie_toc($fp, $dir, $toc);
 	return;
 }
-function iso_starocean2nd2($fp, $dir)  { return iso_starocean2nd1($fp, $dir); }
+function iso_starocean2nd2( $fp, $dir )  { return iso_starocean2nd1($fp, $dir); }
 
-function iso_xenogears($fp, $dir)
+function iso_xenogears( $fp, $dir )
 {
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 	$str = fp2str($fp, 0xc000, 0x8000);
@@ -170,11 +222,13 @@ function iso_xenogears($fp, $dir)
 		}
 		else
 		{
-			$fn = sprintf('%s/%06d.bin', $dn, $no);
+			$sub = fp2str($fp, $lba*0x800, $siz);
+
+			$ext = file_ext($str);
+			$fn  = sprintf('%s/%06d.%s', $dn, $no, $ext);
 			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba*0x800, $siz, $fn);
 
-			$sub = fp2str($fp, $lba*0x800, $siz);
-			if ( substr($sub, 0, 4) === XASTRH )
+			if ( $ext === 'str' )
 				$sub = ZERO;
 			save_file("$dir/$fn", $sub);
 		}
@@ -186,7 +240,43 @@ function iso_xenogears($fp, $dir)
 	return;
 }
 
-function iso_dewprism($fp, $dir)
+function iso_chronocross( $fp, $dir )
+{
+	printf("%s [%s]\n", $dir, __FUNCTION__);
+	$str = fp2str($fp, 0xc000, 0x6800);
+
+	$txt = '';
+	for ( $i=0; $i < 0x67fc; $i += 4 )
+	{
+		$pos = str2int($str, $i, 3);
+		if ( $pos === 0 )
+			goto done;
+		if ( $pos & 0x800000 )
+			continue;
+
+		$nxt = str2int($str, $i+4, 3);
+		$nxt &= (~0x800000);
+
+		$siz = $nxt - $pos;
+		$sub = fp2str($fp, $pos*0x800, $siz*0x800);
+
+		$ext = file_ext($sub);
+		$fn  = sprintf('%s/%06d.%s', $ext, $i >> 2, $ext);
+		$txt .= sprintf("%8x , FILE , %8x , %s\n", $pos*0x800, $siz*0x800, $fn);
+
+		if ( $ext === 'str' )
+			$sub = ZERO;
+		save_file("$dir/$fn", $sub);
+	} // for ( $i=0; $i < 0x67fc; $i += 4 )
+
+done:
+	echo "$txt\n";
+	save_file("$dir/toc.bin", $str);
+	save_file("$dir/toc.txt", $txt);
+	return;
+}
+
+function iso_dewprism( $fp, $dir )
 {
 	printf("%s [%s]\n", $dir, __FUNCTION__);
 	$str = fp2str($fp, 0xc000, 0x4cd8);
@@ -205,11 +295,13 @@ function iso_dewprism($fp, $dir)
 		$sz = $lba2 - $lba1;
 		if ( $sz > 0 )
 		{
-			$fn = sprintf('%s/%06d.bin', $dn, $no);
+			$sub = fp2str($fp, $lba1*0x800, $sz*0x800);
+
+			$ext = file_ext($str);
+			$fn  = sprintf('%s/%06d.%s', $dn, $no, $ext);
 			$txt .= sprintf("%8x , FILE , %8x , %s\n", $lba1*0x800, $sz*0x800, $fn);
 
-			$sub = fp2str($fp, $lba1*0x800, $sz*0x800);
-			if ( substr($sub, 0, 4) === XASTRH )
+			if ( $ext === 'str' )
 				$sub = ZERO;
 			save_file("$dir/$fn", $sub);
 		}
@@ -238,7 +330,7 @@ function isofile( $fname )
 	$dir = str_replace('.', '_', $fname);
 
 	$mgc = substr($root, 0x28, 0x20);
-	$mgc = strtolower( trim($mgc, " ".ZERO) );
+	$mgc = strtolower( trim($mgc, ' '.ZERO) );
 
 	$func = "iso_" . $mgc;
 	if ( ! function_exists($func) )

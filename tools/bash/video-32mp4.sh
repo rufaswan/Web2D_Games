@@ -1,7 +1,6 @@
 #!/bin/bash
 [ $(which ffprobe) ] || exit
 [ $(which ffmpeg)  ] || exit
-nice='nice -n 19'
 
 s=2
 size='300x200'
@@ -23,7 +22,7 @@ function setsize {
 }
 ##############################
 
-af='-af loudnorm=I=-14:TP=-1'
+af=''
 SECONDS=0
 while [ "$1" ]; do
 	t1=./"${1%/}"
@@ -42,9 +41,8 @@ while [ "$1" ]; do
 				t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
 				setsize $(echo "$t2" | tr ','  ' ')
 
-				echo "   s=$size"
-				echo "  af=$af"
-				$nice  ffmpeg -y    \
+				echo "s=$size  af=$af"
+				nice -n 19  ffmpeg -y \
 					-v 0            \
 					-i "$t1"        \
 					-s $size        \

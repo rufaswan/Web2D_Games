@@ -1,0 +1,236 @@
+==================
+== Wild Arms XF ==
+==================
+Char Stats (BLOCK=19c)
+	00
+	02  max hp [auto]
+	04  max mp [auto]
+	06  max vp [auto]
+	08
+	0a
+	0c
+	0d
+	0e
+	10  level [auto]
+	11
+	12
+	14  exp   (max=98967f)
+	18
+
+	1a
+	1b  clv Secutor       [auto]
+	1c  clv Elementalist  [auto]
+	1d  clv Fantastica    [auto]
+	1e  clv Gadgeteer     [auto]
+	1f  clv Sentinel      [auto]
+	20  clv Sacred Slayer [auto]
+	21  clv Excavator     [auto]
+	22  clv Geomancer     [auto]
+	23  clv Berserker     [auto]
+	24  clv Enigmancer    [auto]
+	25  clv Strider       [auto]
+	26  clv Grappler      [auto]
+	27  clv Nightstalker  [auto]
+	28  clv Emulator      [auto]
+	29  clv Extremist     [auto]
+	2a  clv High Cavalier [auto]
+	2b  clv Dandelion Shot / Clarissa   [auto]
+	2c  clv Halberdier     / Felius     [auto]
+	2d  clv Arcanist       / Labrynthia [auto]
+	2e  clv Martial Mage   / Levin      [auto]
+	2f  clv Stormrider     / Ragnar     [auto]
+	30  clv Royal Fencer   / Alexia     [auto]
+	31  clv Crossbreed     / Tony       [auto]
+	32
+	33
+	34
+	35
+	36
+	37
+	38
+	39
+
+	3a
+	3c  psp Secutor       (max=3e7)
+	3e  psp Elementalist  (max=3e7)
+	40  psp Fantastica    (max=3e7)
+	42  psp Gadgeteer     (max=3e7)
+	44  psp Sentinel      (max=3e7)
+	46  psp Sacred Slayer (max=3e7)
+	48  psp Excavator     (max=3e7)
+	4a  psp Geomancer     (max=3e7)
+	4c  psp Berserker     (max=3e7)
+	4e  psp Enigmancer    (max=3e7)
+	50  psp Strider       (max=3e7)
+	52  psp Grappler      (max=3e7)
+	54  psp Nightstalker  (max=3e7)
+	56  psp Emulator      (max=3e7)
+	58  psp Extremist     (max=3e7)
+	5a  psp High Cavalier (max=3e7)
+	5c  psp Dandelion Shot / Clarissa   (max=3e7)
+	5e  psp Halberdier     / Felius     (max=3e7)
+	60  psp Arcanist       / Labrynthia (max=3e7)
+	62  psp Martial Mage   / Levin      (max=3e7)
+	64  psp Stormrider     / Ragnar     (max=3e7)
+	66  psp Royal Fencer   / Alexia     (max=3e7)
+	68  psp Crossbreed     / Tony       (max=3e7)
+	6a
+	6c
+	6e
+	70
+	72
+	74
+	76
+	78
+
+	7a
+	7c
+	7e  atp = class + equip [auto]
+	80  def = class + equip [auto]
+	82  sor = class + equip [auto]
+	84  mgr = class + equip [auto]
+	86  aim = class + equip [auto]
+	88  pry = class + equip [auto]
+	8a  rst = class + equip [auto]
+	8c  mov = class + equip [auto]
+	8e  clm = class + equip [auto]
+	90  wgt = class + equip [auto]
+	92  elem earth = class + equip [auto]
+	94  elem water = class + equip [auto]
+	96  elem fire  = class + equip [auto]
+	98  elem wind  = class + equip [auto]
+	9a  max hp = class + equip [auto]
+	9c  max mp = class + equip [auto]
+	9e  max vp = class + equip [auto]
+	a0
+
+	a2
+	a4
+	a6  atp = class [auto]
+	a8  def = class [auto]
+	aa  sor = class [auto]
+	ac  mgr = class [auto]
+	ae  aim = class [auto]
+	b0  pry = class [auto]
+	b2  rst = class [auto]
+	b4  mov = class [auto]
+	b6  clm = class [auto]
+	b8  wgt = class [auto]
+	ba  elem earth = class [auto]
+	bc  elem water = class [auto]
+	be  elem fire  = class [auto]
+	c0  elem wind  = class [auto]
+	c2  max hp = class [auto]
+	c4  max mp = class [auto]
+	c6  max vp = class [auto]
+	c8
+
+	ca
+	cc
+	ce  atp base
+	d0  def base
+	d2  sor base
+	d4  mgr base
+	d6  aim base
+	d8  pry base
+	da  rst base
+	dc  mov base
+	de  clm base
+	e0  wgt base
+	e2  elem earth base
+	e4  elem water base
+	e6  elem fire  base
+	e8  elem wind  base
+	ea  max hp base
+	ec  max mp base
+	ee  max vp base
+	f0
+
+	f2
+	f4
+	f6  char sjis name[8]
+	106
+	108
+	10a
+	10c
+	10e
+	110
+	112
+	114
+	116
+	118
+	11a
+	11c
+
+	11e  skill slot 1
+	120  skill slot 2
+	122  skill slot 3
+	124  skill slot 4
+	126  skill slot 5
+	128  skill slot 6
+	12a  skill slot 7
+	12c  skill slot 8
+	12e  skill slot 9
+	130  skill slot 10
+	132  skill slot 11
+	134  skill slot 12
+	136  skill slot 13
+	138  skill slot 14
+	13a  skill slot 15
+	13c  skill slot 16
+	13e
+	140
+	142
+	144
+	146
+	148
+	14a
+	14c
+	14e
+	150
+	152
+	154
+	156
+	158
+	15a
+	15c
+
+	15e
+	160
+	162
+	164
+	166
+
+	168
+	16a
+	16c  atp = class + equip [auto]
+	16e  def = class + equip [auto]
+	170  sor = class + equip [auto]
+	172  mgr = class + equip [auto]
+	174  aim = class + equip [auto]
+	176  pry = class + equip [auto]
+	178  rst = class + equip [auto]
+	17a  mov = class + equip [auto]
+	17c  clm = class + equip [auto]
+	17e  wgt = class + equip [auto]
+	180  elem earth = class + equip [auto]
+	182  elem water = class + equip [auto]
+	184  elem fire  = class + equip [auto]
+	186  elem wind  = class + equip [auto]
+	188  max hp = class + equip [auto]
+	18a  max mp = class + equip [auto]
+	18c  max vp = class + equip [auto]
+	18e
+
+	190
+	192
+	194
+	196
+	198
+	19a
+
+Missable
+	Chapter 4-7 or before
+	- Unlock Volcano from Richala Rose
+	- Defeat BOSS Ragu O Ragla
+	- get Sheriff Star from Crestabelde

@@ -1,6 +1,5 @@
 #!/bin/bash
 [ $(which asciidoctor) ] || exit
-nice='nice -n 19'
 
 [ $# = 0 ] && exit
 css='--attribute  stylesheet!'
@@ -14,7 +13,7 @@ while [ "$1" ]; do
 		ext="${t1##*.}"
 		case "$ext" in
 			'adoc'|'asciidoc')
-				$nice  asciidoctor        \
+				nice -n 19  asciidoctor   \
 					--backend    $back    \
 					--doctype    $doc     \
 					--attribute  toc      \

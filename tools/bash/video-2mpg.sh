@@ -1,6 +1,5 @@
 #!/bin/bash
 [ $(which ffmpeg)  ] || exit
-nice='nice -n 19'
 
 while [ "$1" ]; do
 	t1=./"${1%/}"
@@ -12,10 +11,10 @@ while [ "$1" ]; do
 	mime=$(file  --brief  --mime-type  "$t1")
 	case "$mime" in
 		'video/'* | 'audio/'*)
-			$nice  ffmpeg -y \
-				-v 0         \
-				-i "$t1"     \
-				-qscale 0    \
+			nice -n 19  ffmpeg -y \
+				-v 0      \
+				-i "$t1"  \
+				-qscale 0 \
 				"$t1".mpg
 			;;
 	esac

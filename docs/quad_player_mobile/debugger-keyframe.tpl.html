@@ -2407,7 +2407,10 @@ var QUAD = {};
 					if ( cen.type === 3 )
 						def[tag] = obj[tag];
 					else
-						concave[tag] = obj[tag];
+						concave[tag] = {
+							type : cen.type,
+							quad : obj[tag],
+						};
 					break;
 				case 'fogquad':
 					if ( __.is_str(obj.fogquad) ){
@@ -3487,7 +3490,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2025-1-13 (beta)';
+	$.version = 'ver 2025-1-28 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);

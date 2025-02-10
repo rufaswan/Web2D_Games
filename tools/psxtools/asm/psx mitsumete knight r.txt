@@ -1,0 +1,130 @@
+jal 8003099c
+= mrgfile( a0=int32 flag , a1=char fname[] , a2=int32 ram , a3=lba )
+67 c2 00 0c
+
+no  ram       a0        a1                    a2                   a3
+ 0  80019d48   400  4a  data/mrg/mapdat.mrg   8016e000               33 + lhu
+ 1  80019db8   400  4a  data/mrg/mapdat.mrg   8016e000               33 + lhu
+ 2  80019e18   400  4a  data/mrg/mapdat.mrg   8016e000               37 + lbu + lhu + s6 * 41
+ 3  80019eec        4a  a0                    8016e000                0
+ 4  8001a050   400  4a  data/mrg/mapdat.mrg   8016e000
+ 5  8001a168   400  42  data/mrg/mapdat.mrg   801b0000                0 + lhu
+ 6  8001a1d4   400  42  data/mrg/mapdat.mrg   801b0000                0 + lhu
+ 7  8001a254   400  4a  data/mrg/mapdat.mrg   8016e000               37 + lbu + lhu + s2 * 41
+ 8  8001a57c  4000  42  data/mrg/wa_mrg.mrg   801a0000               ed + lb  * 10
+ 9  8001a760  4000  42  data/mrg/wa_mrg.mrg   801c4800              1b5 + lbu * 17
+ a  8001d144  4000  4a  data/mrg/wa_mrg.mrg   8016e000               2c
+ b  8001d198  4000  4a  data/mrg/wa_mrg.mrg   8016e000               a6
+ c  8001dcd4  4000  4a  data/mrg/wa_mrg.mrg   8016e000                0
+ d  8001dd10  4000  4a  data/mrg/wa_mrg.mrg   8016e000               54
+ e  80036e48  4000  4a  data/mrg/wa_mrg.mrg   8016e000               a6
+ f  8004241c  4000  4a  data/mrg/wa_mrg.mrg   8016e000               a6
+10  80054db0  2000  4a  data/mrgM/merge.mrg   8016e000              6bf + v0 * 8c
+11  80057808  2000  4a  data/mrgM/merge.mrg   8016e000                0
+12  800594cc
+	-c0       2000  4a  data/mrgM/merge.mrg   8016e000             1fee + t0 * ae
+	-c1       2000   a  data/mrgM/merge.mrg   8016e000             1fbe + t0 * ae
+	-c2       2000   a  data/mrgM/merge.mrg   8016e000             1fd6 + t0 * ae
+13  80059560
+	-c4       2000  4a  data/mrgM/merge.mrg   8016e000             1fee + t0 * ae
+14  800595fc
+	-c6       2000  4a  data/mrgM/merge.mrg   8016e000             1fee + t0 * ae
+15  80059684
+	-c5       2000  42  data/mrgM/merge.mrg   80190000/801a0000    1fab + t0 * ae
+16  80059804
+	-c0       2000   a  data/mrgM/merge.mrg   8016e000             2325 + t0 * 51
+	-c1       2000   a  data/mrgM/merge.mrg   8016e000             2311 + t0 * 51
+	-c2       2000   a  data/mrgM/merge.mrg   8016e000             231b + t0 * 51
+17  800598e0
+	-c4,6     2000  4a  data/mrgM/merge.mrg   8016e000             2325 + t0 * 51
+	-c5       2000  4a  data/mrgM/merge.mrg   8016e000             2311 + t0 * 51
+18  80059aec  2000   2  data/mrgM/merge.mrg   0(800a7dfc) + 58000  1123
+19  80059b2c  2000   2  data/mrgM/merge.mrg   8016e000             118e
+1a  80059bc8  2000  42  data/mrgM/merge.mrg   0(800a7dfc) + 10000  2311 + s3 * 51
+1b  80059c68  2000  4a  data/mrgM/merge.mrg   8016e000             40cf + s4 * 19
+1c  80059d14  2000  4a  data/mrgM/merge.mrg   8016e000             42f5 + s1 * 1a
+1d  80059d90  2000  42  data/mrgM/merge.mrg   0(800a7dfc) + 58000  114d + s0 * 7c
+1e  80059e14  2000  4a  data/mrgM/merge.mrg   8016e000             42fe + s1 * 1a
+1f  80059e7c  2000  42  data/mrgM/merge.mrg   801dc000             1123 + s0 * 7c
+20  80059ed8  2000  42  data/mrgM/merge.mrg   801dc000             1123 + s0 * 7c
+21  80059f60  2000  4a  data/mrgM/merge.mrg   8016e000             2331 + s3 * 51
+22  80059fd8  2000  42  data/mrgM/merge.mrg   0(800a7dfc) + 10000  2311 + s3 * 51
+23  8005a068  2000  4a  data/mrgM/merge.mrg   8016e000             40cf + s4 * 19
+24  8005a0e4  2000  4a  data/mrgM/merge.mrg   8016e000             42f5 + s1 * 1a
+25  8005a4e0  2000  42  data/mrgM/merge.mrg   8016e000              4e3 + t0 * 22
+26  80063b78  2000  4a  data/mrgM/merge.mrg   8016e000               ad + s2 * 31
+27  800642ac  2000  4a  data/mrgM/merge.mrg   8016e000               85
+28  80067a58
+	-          800  42  data/mrgM/PicEvt.mrg  80164000               97 + s0 * b8
+	-          800  4a  data/mrgM/PicEvt.mrg  8016e000                0 + s0 * b8
+29  80067b40   800  4a  data/mrgM/PicEvt.mrg  800c2330             3ba8
+2a  80067bc8
+	-          800   2  data/mrgM/PicEvt.mrg  0(800a7dfc)          3cd4 + v0 * 180
+	-          800  4a  data/mrgM/PicEvt.mrg  800c2330             45d4
+2b  8006b244  1000  42  data/mrga/batdat.mrg  0(800107e8)             0
+2c  8006b2ec  1000  42  data/mrga/batdat.mrg  0(8001267c)             0 + s4
+2d  8006b4f8  1000  42  data/mrga/batdat.mrg  0(800107e8)            57
+2e  8006b5c4  1000  42  data/mrga/batdat.mrg  0(8001267c)             0 + lw / 391e / 3932
+
+
+
+flag  file                  size     lba
+ 400  data/mrg/mapdat.mrg   6afd000  d5fa
+	.  0
+	.  33
+	.  37 + n * 41
+ 800  data/mrgM/PicEvt.mrg  23b8000  4770
+	.   0 + [53] * b8  event pic --
+	.  97 + [53] * b8  meta -------
+	.3ba8  true ending pic
+	.3cd4 + [ 6] * 180  normal ending pic
+	.45d4  true credits roll pic
+1000  data/mrga/batdat.mrg  1dd7000  3bae
+	.   0
+	.  57
+	.391e  mips +
+	.3932  mips +
+2000  data/mrgM/merge.mrg   3152800  62a5
+	.   0  world map
+	.  85  dialog ui
+	.  ad + [ 16] * 31  post cards
+	. 4e3 + [  e] * 22  [talk] npc
+	. 6bf + [ 13] * 8c  traveling bg
+	.1123 + [ 1e] * 7c  meta + mitsumete bg ---------
+	.114d + [ 1e] * 7c  [full] weapons              |- 5 girls * 6 weapons set
+	.118e + [ 1e] * 7c  [full] girl -----------------
+	.1fab + [  5] * ae  meta ------------------------
+	.1fbe + [  5] * ae  [talk] girl/side            |- 5 girls npc set
+	.1fd6 + [  5] * ae  [talk] girl/back            |
+	.1fee + [  5] * ae  [talk] girl/front -----------
+	.2311 + [ 5e] * 51  [talk] dress/side -----------
+	.231b + [ 5e] * 51  [talk] dress/back           |
+	.2325 + [ 5e] * 51  [talk] dress/front          |
+	.2331 + [ 5e] * 51  [full] dress/upper,fullset --
+	.40cf + [ 16] * 19  [full] dress/lower
+	.42f5 + [138] * 1a  [full] dress/shoe -----------
+	.42fe + [138] * 1a  [full] dress/shield ---------
+4000  data/mrg/wa_mrg.mrg     fd000   1fa
+	.   0
+	.  2c  8bpp 128x title menu
+	.  54  4bpp 256x dialog
+	.  a6  4bpp 256x font
+	.  ed + n * 10
+	. 1b5 + n * 17  palette
+
+
+data/mrg/wa_mrg.mrg  80010124
+data/mrgM/merge.mrg  80010d2c
+
+ra        mrgfile
+reset
+8001dcdc  4000004a  data/mrg/wa_mrg.mrg  8016e000   0
+8001dd18  4000004a  data/mrg/wa_mrg.mrg  8016e000  54
+logo
+8001d14c  4000004a  data/mrg/wa_mrg.mrg  8016e000  2c
+8001d1a0  4000004a  data/mrg/wa_mrg.mrg  8016e000  a6
+title screen
+80059568  2000004a  data/mrgM/merge.mrg  8016e000  1fee
+800598e8  2000004a  data/mrgM/merge.mrg  8016e000  2325
+
+80  1  data/mrgM/.mrg  80

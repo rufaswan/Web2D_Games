@@ -1,6 +1,5 @@
 #!/bin/bash
 [ $(which convert) ] || exit
-nice='nice -n 19'
 
 usage="
 usage: ${0##*/}  [bpp]  IMG_FILE...
@@ -43,12 +42,13 @@ while [ "$1" ]; do
 	case "$mime" in
 		'image/'*)
 			echo "[$#] ${t1:2}"
-			$nice  convert -quiet \
-				"$t1"             \
-				+dither           \
-				-colors $color    \
-				-interlace none   \
-				-strip            \
+			nice -n 19  convert  \
+				-quiet           \
+				"$t1"            \
+				+dither          \
+				-colors $color   \
+				-interlace none  \
+				-strip           \
 				-define png:include-chunk=none,trns \
 				-define png:compression-filter=0    \
 				-define png:compression-level=9     \
