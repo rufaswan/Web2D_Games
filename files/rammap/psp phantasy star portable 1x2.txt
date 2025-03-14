@@ -1,0 +1,169 @@
+============================
+== Phantasy Star Portable ==
+============================
+
+meseta 6,388,033
+= 0x617941
+= "Aya"
+
+=======================================
+== Phantasy Star Portable 2 Infinity ==
+=======================================
+
+int16  Type extend C-B-A-S points
+int8   ability slots 01-12
+
+Ability ID
+	x Boost/Hi-Boost
+		HP    1   2
+		PP    3   4
+		ATK   5   6
+		DEF   7   8
+		ACC   9   a
+		EVA   b   c
+		TEC   d   e
+		MND   f  10
+		STA  11  12
+	PP x Save
+		13=Skill  14=Bullet  15=Tech
+	x Restore Rate
+		16=HP  17=PP
+	x Protect
+		18=Burn    19=Poison   1a=Infect
+		1b=Shock   1c=Freeze   1d=Sleep
+		1e=Stun    1f=Confuse
+		21=Jellen  22=Zalure
+	20  Escape Master
+
+	23  Healing Item Boost
+	24  Full-Charge Shot
+	25  Escape Advance
+	26  PP Escape Save
+	27  Super Armor
+	28  Damage Resist
+	29  Photon Barrier
+	2a  Half Defense
+	2b  Adverse Spirit
+	2c  Professional
+	2d  Precision Attacker
+	2e  Elemental Hit
+	2f  Adverse Attacker
+	30  Burst Bomber
+	31  Wild Blast
+	32  Partnership
+	33  Full-Custom Power
+	34  Critical Power
+
+	x Advance/Strike
+		Sword        35  36
+		Knuckle      37  38
+		Spear        39  3a
+		Doublesaber  3b  3c
+		Axe          3d  3e
+		Twinsaber    3d  40
+		Twindagger   41  42
+		Twinclaw     43  44
+		Saber        45  46
+		Dagger       47  48
+		Claw         49  4a
+		Whip         4b  4c
+		Slicer       4d  4e
+		Rifle        4f  50
+		Shotgun      51  52
+		Longbow      53  54
+		Grenade      55  56
+		Lasercannon  57  58
+		Twinhandgun  59  5a
+		Handgun      5b  5c
+		Crossbow     5d  5e
+		Card         5f  60
+		Machinegun   61  62
+		Shadoogs     63  64
+
+	65  PP Defense Save
+	66  Perfect Block Plus
+	x Advance
+		67=Fire    68=Ice     69=Lightning
+		6a=Earth   6b=Light   6c=Dark
+		6d=Assist  6e=Follow
+	6f  Long-Range Support
+	x Hi-Speed
+		70=Fire    71=Ice     72=Lightning
+		73=Earth   74=Light   75=Dark
+		76=Assist  77=Follow
+	x Strike
+		78=Rod  79=Wand  7a=Madoogs
+	x Boost
+		7b=EXP  7c=Meseta  7d=Rare Item
+
+	???  7f
+	x Super Boost
+		7e=HP
+		80=HU/ATK  81=DEF     82=RA/ACC
+		83=VA/EVA  84=FO/TEC  85=MND
+		86=STA
+	???  87  88
+	89  Healing Item Hi-Boost
+	???  8a  8b  8c
+	8d  VA/Full Burst Bomber
+	???  8e  8f  90  91  92  93
+	94  Technic Advance +
+	95  Long-Range Support +
+	96  Technic Hi-Speed +
+	???  97  98  99
+	9a  Auto-Heal Half
+	9b  Auto-Heal Critical
+	9c  FO/Reverser
+	x Strike
+		9d=Burn     9e=Shock   9f=Freeze
+		a0=Confuse  a1=Poison  a2=Stun
+		a3=Sleep    a4=Charm
+	a5  HU/Attack Booster
+	a6  RA/Burst Shooter
+	???  a7
+	a8  Trap Breaker
+	a9  Attribute Boost
+	aa  HP Absorb
+	ab  PP Absorb
+	ac  Sharpshooter
+	ad  Convert Dmg to PP
+	ae  Perfect Block Master
+	af  Soaking Guard
+	b0  Calm of Mind
+	b1  Daredevil
+	b2  GRM Fan
+	b3  Yohmei Fan
+	b4  Tenora Fan
+	???  b5
+	b6  Toughness
+	b7  RA/Hi-Speed Charge
+	b8  Angel's Breath
+	b9  Friendly Defense
+	ba  HU/Shield Smash
+	bb  FO/Spellslinger
+	bc  VA/Ignited Arts
+
+Specific Type only
+	80  hu35  ATK Super Boost
+	ba  hu40  Shield Smash
+	a5  hu50  Attack Booster
+	82  ra35  ACC Super Boost
+	b7  ra40  Hi-Speed Charge
+	a6  ra50  Burst Shooter
+	84  fo35  TEC Super Boost
+	9c  fo40  Reverser
+	bb  fo50  Spellslinger
+	83  va35  EVA Super Boost
+	8d  va40  Full Burst Bomber
+	bc  va50  Ignited Arts
+
+41  Twindagger Advance
+79  Wand Strike
+61  Machinegun Advance
+= "Aya"
+
+all = 16 17 28 7d  33 34  b1 2b
+HU += ba a5 13  2c
+RA += b7 a6  24 ac
+FO += bb 15  94 96
+VA += bc

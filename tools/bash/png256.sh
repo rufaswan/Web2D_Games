@@ -23,7 +23,21 @@ while [ "$1" ]; do
 	#ext="${t1##*.}"
 	shift
 
-	if [ ! -f "$t1" ]; then
+	mime=$(file  --brief  --mime-type  "$t1" | grep 'image/')
+	if [ "$mime" ]; then
+		echo "[$#] ${t1:2}"
+		nice -n 19  convert  \
+			-quiet           \
+			"$t1"            \
+			+dither          \
+			-colors $color   \
+			-interlace none  \
+			-strip           \
+			-define png:include-chunk=none,trns \
+			-define png:compression-filter=0    \
+			-define png:compression-level=9     \
+			"$t1".png
+	else
 		# bKGD (background color chunk) = +1 color
 		case "${t1:2}" in
 			'1')  color=1;;
@@ -35,26 +49,7 @@ while [ "$1" ]; do
 			'7')  color=127;;
 			*)    color=255;;
 		esac
-		continue
 	fi
-
-	mime=$(file  --brief  --mime-type  "$t1")
-	case "$mime" in
-		'image/'*)
-			echo "[$#] ${t1:2}"
-			nice -n 19  convert  \
-				-quiet           \
-				"$t1"            \
-				+dither          \
-				-colors $color   \
-				-interlace none  \
-				-strip           \
-				-define png:include-chunk=none,trns \
-				-define png:compression-filter=0    \
-				-define png:compression-level=9     \
-				"$t1".png
-			;;
-	esac
 done
 
 <<'////'

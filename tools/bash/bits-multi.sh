@@ -23,24 +23,23 @@ while [ "$1" ]; do
 		let pos++
 
 		case $c in
-
 			# shift left logical
-			'0')  let val=$val;;
-			'1')  let val=$val*2;;
-			'2')  let val=$val*2*2;;
-			'3')  let val=$val*2*2*2;;
-			'4')  let val=$val*2*2*2*2;;
-			'5')  let val=$val*2*2*2*2*2;;
-			'6')  let val=$val*2*2*2*2*2*2;;
-			'7')  let val=$val*2*2*2*2*2*2*2;;
-			'8')  let val=$val*2*2*2*2*2*2*2*2;;
-			'9')  let val=$val*2*2*2*2*2*2*2*2*2;;
-			'a')  let val=$val*2*2*2*2*2*2*2*2*2*2;;
-			'b')  let val=$val*2*2*2*2*2*2*2*2*2*2*2;;
-			'c')  let val=$val*2*2*2*2*2*2*2*2*2*2*2*2;;
-			'd')  let val=$val*2*2*2*2*2*2*2*2*2*2*2*2*2;;
-			'e')  let val=$val*2*2*2*2*2*2*2*2*2*2*2*2*2*2;;
-			'f')  let val=$val*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2;;
+			'0')  let val=$val*2**0;;
+			'1')  let val=$val*2**1;;
+			'2')  let val=$val*2**2;;
+			'3')  let val=$val*2**3;;
+			'4')  let val=$val*2**4;;
+			'5')  let val=$val*2**5;;
+			'6')  let val=$val*2**6;;
+			'7')  let val=$val*2**7;;
+			'8')  let val=$val*2**8;;
+			'9')  let val=$val*2**9;;
+			'a')  let val=$val*2**10;;
+			'b')  let val=$val*2**11;;
+			'c')  let val=$val*2**12;;
+			'd')  let val=$val*2**13;;
+			'e')  let val=$val*2**14;;
+			'f')  let val=$val*2**15;;
 
 			# add or subtract
 			'+')  let val=$val+1;;

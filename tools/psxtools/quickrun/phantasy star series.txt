@@ -1,0 +1,299 @@
+============================
+== Phantasy Star Portable ==
+============================
+
+GUARDIANS Colony
+	1  Plant Recovery
+	8  Dark Satellite
+	8  SEED Awakened        Poison/Resist , S=Virus/Resist (+story 8)
+Parum
+	2  Plains Overlord      Burn/Resist    (+story 2)
+	2  Train Rescue
+	5  AMF HQ Recovery
+	5  Endrum Remnants
+	7  Sleeping Warriors
+	7  The Dual Sentinel    Solid/Anti Up  (+story 7)
+	7  Eco Protection
+	8  Lightning Beasts
+Neudaiz
+	4  Demons Above         Silence/Resist (+story 4)
+	4  Rainbow Beast
+	4  The Holy Ground
+	6  Grove of Fanatics    Sleep/Resist   (+story 6)
+	6  Hill of Spores
+	6  Moonlight Beast      Cati/Rainbow
+	8  Dancing Birds
+	multi  Claws & Bullets  Confuse/Resist
+Moatoob
+	3  Caves of Ice
+	3  Desert Terror        Shock/Resist
+	5  Awoken Serpent       Freeze/Resist  (+story 5)
+	8  Desert Goliath       Stun/Resist
+	multi  Flaming Horns    Cati/Anti Down (+story 3)
+
+http://re-psupedia.info/PSP:Title_system
+      MES  DRP  EXP
+ 4 *  +2%    -  +2%  Defeated x creatures             100/500/1,000/10,000
+ 5 *    -    -  +3%  Cleared free missions x times    3/10/25/50/100
+ 9 *  +2%    -  +2%  Reached level x                  10/20/30/40/50/60/70/80/90
+      +2%  +2%    -  Reached level 100
+16 *    -  +2%    -  Reached x level 5/10             Hunter/Ranger/Force/Fighmaster/Gunmaster/Masterforce/Acromaster/Protranser
+ 8 *  +2%  +2%    -  Cleared Chapter x in story mode  1/2/3/4/5/6/7/8
+      +3%    -    -  Total Meseta reached 1,000,000
+ 4 *    -    -  +2%  Completed all x free missions    G.Colony/Parum/Neudaiz/Moatoob
+===> +47% +50% +49%
+
+Photon-Arts/PA growth rate
+	2x skill     Raised 10 skills   to level 30
+	2x bullet    Raised 10 bullets  to level 30
+	2x technic   Raised 10 technics to level 30
+
+S weapons
+	Beast  + Fighmaster
+	Cast   + Gunmaster
+	Newman + Masterforce
+	Human  + Acromaster/Protranser
+
+10+    total shop     80%+     -            GRM        Yohmei     Tenora     Kubara
+fi/pr  33/54 = 61.1% (44,+11)  Sword        ---------  ---------  ---------  ------
+fi/pr  29/35 = 82.9% (28,  -)  Knuckle      ------789  ---------  ---------  -a----
+fi/pr  29/40 = 72.5% (32, +3)  Spear        ------789  ---------  ---------  -a----
+fi/pr   8/22 = 36.4% (18,+10)  Doublesaber  123456---  123456---  123456789  b-b-ba
+fi/pr   8/22 = 36.4% (18,+10)  Axe          123456789  123456---  123456---  bab-b-
+fi/ac  33/48 = 68.8% (39, +6)  Twinsaber    ---------  ---------  ---------  ------
+ma/ac  29/44 = 65.9% (36, +7)  Twindagger   ---------  ---------  ------789  -----a
+ac/pr   8/20 = 40%   (16, +8)  Twinclaw     123456789  123456---  123456---  bab-b-
+fi/ac  33/51 = 64.7% (41, +8)  Saber        ---------  ---------  ---------  ------
+ma/ac  29/42 = 69%   (34, +5)  Dagger       ---------  ---------  ------789  -----a
+ac      8/15 = 53.3% (12, +5)  Claw         123456789  123456---  123456---  bab-b-
+ma/ac  15/23 = 65.2% (19, +4)  Whip         123456---  123456789  ---------  b-ba--
+fi/ac  11/17 = 64.7% (14, +3)  Slicer       123456789  ---------  123456789  ba--ba
+gu/pr  22/34 = 64.7% (28, +6)  Rifle        ---------  ---------  123456789  ----ba
+gu/pr  18/26 = 69.2% (21, +3)  Shotgun      123456789  ------789  ---------  ba-a--
+ma/pr  18/26 = 69.2% (21, +3)  Longbow      ------789  ---------  123456789  -a--ba
+gu/pr   8/18 = 44.4% (15, +7)  Grenade      123456---  123456789  123456---  b-bab-
+gu/pr   8/17 = 47.1% (14, +6)  Lasercannon  123456---  123456---  123456789  b-b-ba
+gu/ac  33/42 = 78.6% (34, +1)  Twinhandgun  ---------  ---------  ---------  ------
+gu/ac  33/42 = 78.6% (34, +1)  Handgun      ---------  ---------  ---------  ------
+gu      8/15 = 53.3% (12, +4)  Crossbow     123456789  123456---  123456---  bab-b-
+ma      8/14 = 57.1% (12, +4)  Card         123456---  123456---  123456789  b-b-ba
+gu/ac  22/28 = 78.6% (23, +1)  Machinegun   ---------  123456789  ---------  --ba--
+gu/ac  22/33 = 66.7% (27, +5)  Shadoogs     ---------  123456789  ---------  --ba--
+ma/pr  18/28 = 64.3% (23, +5)  Rod          ------789  ---------  123456789  -a--ba
+ma/ac  29/42 = 69%   (34, +5)  Wand         ---------  ---------  ------789  -----a
+ma/ac  22/35 = 62.9% (28, +6)  Madoogs      ---------  ---------  123456789  ----ba
+
+123456789  123456789  123456789  bababa
+
+=======================================
+== Phantasy Star Portable 2 Infinity ==
+=======================================
+
+True Ending
+	Emilia S-rating
+		EP1-1  > 20 min
+		EP1-2  5 riddle                          , > 15 min
+		EP1-3  10-5-5-0 Astark                   , > 20 min
+		EP1-4  remain 15+ min                    , 2-4-6-8 terminals
+		EP1-5  > 15 min                          , 10-20-23 people
+		EP1-6  50-160-400-450-590-950-1000 point , 50-150-210-450-600-800-1000 point
+		EP1-7  x-x-14-[30-50-51]-57 seed         , > 12 min
+		EP1-8  20-50-80-100% search              , > 12 min
+		EP1-9  > 13 min                          , > 25 min
+	Nagisa choice
+		EP2-1-1  1,2,2,2,1,1,1,1
+		EP2-2-1  1,1,2,2
+		EP2-2-2  2,2,1,1,1
+		EP2-3-1  1,2,2
+		EP2-3-2  1,1,1,1,1,1
+		EP2-4-1  1,2,1,1,1,2
+		EP2-4-2  1,1,1,1,1
+		EP2-5-1  1,1,1
+		EP2-5-2  1
+		EP2-5-3  1
+
+		EP2-1-1 start  a-I won't leave you alone
+			clear  Key Scene 1
+		EP2-2-2 clear  a-That's right
+			clear  Key Scene 2
+		EP2-3-2 map 1-2  a-Someone indispensable / b-A friend
+			clear  Key Scene 3
+		EP2-4-1 clear  b-I would trust you / c-I wonldn't do anything
+			clear  Key Scene 4
+		EP2-5-1 clear  a-I will never abandon her
+			EP2-5-2 start  Key Scene 5 -> Best Ending
+
+	TIP: hold START to skip dialog cutscene
+
+Partner Card + Portrait
+	EP1-1  Emilia
+	EP1-2  Tonnio , Liina
+	EP1-3  Yut
+	EP1-6  Lumia ,
+	EP1-7  Maya
+	EP1-8  Kraz
+	EP1-9  Ursula , Chelsea ,
+	end1   *Shizuru
+	EP2-1  Nagisa
+	EP2-2  Hyuga
+	EP2-3  Tylor
+	EP2-4  Kunoh
+	= 13+1
+
+	Extra Mission -> Clad 6 -> Side Story
+	EP1-6  White Traveller     Vivienne
+	EP1-9  Crimson Warrior     (3 terminals) Lou , Magashi
+	end1   Hero Rondo          Ethan , Karen
+	end2   *Beyond Space-Time  Rico
+	= 5+1
+
+	Vasque   all Training Missions
+	Flowen   Extra Mission -> Clad 6 -> Max Attack II S/INF (S-rating)
+	Rapico   (DLC) Rapico Outlet
+	= 3
+
+Partner Card only
+	Curtz    all Curtz's Client Request
+	Colonel  KFC shop
+	Extra Mission -> Parum -> Toro and Kuro PS Adventure Diary
+		Toro , Kuro
+	= 4
+
+Portrait only
+	Mika    end1
+	Wynarl  end2 true
+	Hal     all lobby actions
+	= 3
+
+Portrait Sets
+	Emilia    Shizuru  Maya     Kraz
+	Nagisa    Yut      Ursula   Tylor
+	Vivienne  Hyuga    Chelsea  Magashi
+	Karen     Ethan    Mika     Leo
+------------------------------
+Photon Arts
+	Skill   = 4 + 5 + 4 + 5 + 4 + 5 + 5 + 5 + 4 + 4 + 4 + 3 + 4
+		= 3*1 + 4*7 + 5*5
+		= 56 , shop=56
+	Bullet  = (4 + 1) * 10
+		= 50 , shop=40 (special for each 10 guns)
+	Technic = 7 + 7 + 5 + 6 + 5 + 6
+		= 36 , shop=33 (nos-zonde/diga/megid)
+
+	Total = 56 + 50 + 36
+	= 142
+
+PA Bullet stats mod
+	-               LV     ATK       ACC       Range
+	Power            1-30  110%+30%   80%       80%
+	Hit              1-30  100%      110%+30%   90%
+	Range            1-10  100%       80%+10%  120%
+	.               11-30  100%       90%+10%  125%
+	.               21-30  100%+10%  100%      130%
+	Save             1-30   70%+30%  100%       70%
+
+	sp Rifle         1-20   80%+20%   80%       40%  x       Aim
+	.               21-30  100%       90%+10%   40%
+	sp Shotgun       1-30  100%+30%  100%      100%  x       x
+	sp Longbow       1-30  100%+30%  100%      100%  x       Aim
+	sp Grenade       1-30  130%+30%   75%       60%  x       x
+	sp Lasercannon   1-30  100%+30%   70%+30%   50%  x       Aim
+	sp Twinhandgun   1-10  100%+10%  100%       80%  Lockon  Aim
+	.               11-20  110%+10%  100%       90%
+	.               21-30  120%+10%  100%      100%
+	sp Handgun       1-30  100%+30%  100%      100%  Lockon  Aim
+	sp Crossbow      1-30  100%+30%  100%       50%  Lockon  x
+	sp Card          1-30  100%+30%  100%      100%  Lockon  x
+	sp Machinegun    1-30  100%+30%  100%      100%  Lockon  x
+------------------------------
+Grinding
+	-            1-3  4-6  7-9  10+
+	Sword        +70  +80  +80  +90
+	Knuckle      +40  +40  +40  +50
+	Spear        +60  +70  +70  +80
+	Doublesaber  +40  +40  +40  +50
+	Axe          +80  +90  +90  +100
+	Twinsaber    +40  +40  +40  +50
+	Twindagger   +40  +40  +40  +50
+	Twinclaw     +50  +50  +50  +60
+	Saber        +50  +50  +50  +60
+	Dagger       +50  +50  +50  +60
+	Claw         +60  +70  +70  +80
+	Whip         +30  +30  +30  +30
+	Slicer       +40  +40  +40  +50
+	Rifle        +80  +90  +90  +100
+	Shotgun      +30  +30  +30  +30
+	Longbow      +70  +80  +80  +90
+	Grenade      +100 +100 +110 +120
+	Lasercannon  +110 +110 +120 +130
+	Twinhandgun  +40  +40  +40  +50
+	Handgun      +40  +40  +40  +50
+	Crossbow     +30  +30  +30  +30
+	Card         +40  +40  +40  +50
+	Machinegun   +20  +20  +20  +20
+	Shadoogs     +60  +60  +60  +70
+	Rod          +70  +80  +80  +90
+	Wand         +60  +70  +70  +80
+	Madoogs      +50  +50  +50  +60
+	Shield       +50  +50  +50  +60
+
+	star  level
+	1-3    1, 5,10
+	4-6   20,25,30
+	7-9   40,50,60
+	10+   70,80,90,100,110,130,150,160
+
+Location Specific
+	-        Spellstone  3 stamps = 1 stamp card exchange
+	Parum    Heart Key   Naura's Cake Shop       Happy Noel            Female fullset cloth
+	Neudaiz  Iritista    ^
+	Moatoob  Blood Moon  Pizza Hut               Pizza Hut Uniform     Female fullset cloth
+	Clad 6   Phantomite  Kentucky Fried Chicken  Colonel Sanders Suit  Male   fullset cloth/part
+
+Free Mission + Boss
+	De Ragnus          Parum/The Dual Sentinel , Parum/Duel in the Ruins
+	De Ragan           Parum/Plains Overlord   , Parum/Crimson Beast
+	Onmagoug           Neudaiz/Demons Above      , Neudaiz/The Eastern Peril
+	Dimmagolus         Moatoob/Desert Terror
+	Adahna Degahna     Neudaiz/Grove of Fanatics , Neudaiz/Woodland Raid
+	Magas Maggahna     Moatoob/Stolen Weapon  , Moatoob/Desert Goliath
+	Dulk Fakis         Clad 6/SEED Awakened
+	Dulk Fakis Final   Clad 6/Terror Revisited , Clad 6/True Darkness
+	Zoal Goug          Neudaiz/Moonlight Beast   , Neudaiz/Price of Knowledge
+	Alterazgohg        Neudaiz/White Beast
+	De Rol Le          Moatoob/Awoken Serpent
+	Bil De Golus       Moatoob/Flaming Horns
+	Mother Brain       Clad 6/Electronic Brain , Clad 6/SEED Express
+	Dark Falz          Clad 6/The Dark God
+	Dark Falz Final    -
+	Reol Badia         Parum/Seabed Echoes     , Parum/Multiped Threat
+	Duga Dunga         Moatoob/Grotto Tempest , Moatoob/Polar Rumblings
+	Faz'ntar Seg'ntar  Parum/Twin Demons
+	Azn'gom Gijn'gom   Neudaiz/Spore Eaters
+	Orga Spritos       Clad 6/Forgotten Castle
+	Dol Vaveer         Moatoob/The Valley's Guardian
+	Orga Angelus       Clad 6/Ancient Invader
+	Orga Anastasis     ^rare
+	Dragon             -
+	Orga Dyran         random/mission without boss
+	Dyla Bravas        Parum/Hurricane Subversion
+	Olga Flow          Clad 6/Like in a Dream
+	Olga Flow Final    Clad 6/Like in a Dream
+	Giel Zohg          Clad 6/The Shelled Giant
+	Dark Falz Dios     Clad 6/Galaxy's Demise
+	Volna Gravka       Parum/Machinery Mayhem
+	Yaoroz             Neudaiz/Festive Brawl
+
+Units
+	1 Burn    Resist  5x Dragon
+	2 Poison  Resist  5x Azn'gom Giin'gom
+	3 Virus   Resist  5x Dark Falz 1st
+	4 Shock   Resist  5x Faz'ntar Seg'ntar
+	5 Ice     Resist  5x Dark Falz 2nd
+	6 Sleep   Resist  5x Orga Dyran
+	7 Stun    Resist  5x Orga Spritose
+	8 Confuse Resist  5x Mother Brain
+	9
+	a Anti Up         5x Dol Vaveer
+	b Anti Down       5x Orga Angeluse
+	Charm

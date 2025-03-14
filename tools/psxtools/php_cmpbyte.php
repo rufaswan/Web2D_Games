@@ -71,23 +71,27 @@ function listbyte( &$list, $pos, $fname )
 
 function clutbyte( &$list, $size, $fname )
 {
-	$size = int_ceil($size, 0x100);
-	$pix  = str_repeat(ZERO, $size);
+	$img = array(
+		'cc'  => 0x100,
+		'w'   => 1 << 4,
+		'h'   => 0,
+		'pal' => grayclut(0x100),
+		'pix' => '',
+	);
+	if ( $size > (1 <<  4) )  $img['w'] = 1 << 10;
+	if ( $size > (1 << 10) )  $img['w'] = 1 << 20;
+	if ( $size > (1 << 20) )  $img['w'] = 1 << 30;
+
+	$size       = int_ceil($size , $img['w']);
+	$img['h']   =    (int)($size / $img['w']);
+	$img['pix'] = str_repeat(ZERO , $size);
 
 	foreach ( $list as $v )
 	{
 		$d = abs($v['d']);
 		$p = $v['p'];
-		$pix[$p] = chr($d);
+		$img['pix'][$p] = chr($d);
 	}
-
-	$img = array(
-		'cc'  => 0x100,
-		'w'   => 0x100,
-		'h'   => $size >> 8,
-		'pal' => grayclut(0x100),
-		'pix' => $pix,
-	);
 	save_clutfile($fname, $img);
 	return;
 }

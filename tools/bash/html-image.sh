@@ -8,10 +8,8 @@ function loopent {
 	local i=0
 	for i in "$1"/*; do
 		if [ -f "$i" ]; then
-			mime=$(file  --brief  --mime-type  "$i")
-			case "$mime" in
-				'image/'*)  fil+=("$i");;
-			esac
+			mime=$(file  --brief  --mime-type  "$i" | grep 'image/')
+			[ "$mime" ] && fil+=("$i")
 			continue
 		fi
 

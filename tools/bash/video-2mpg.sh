@@ -1,5 +1,5 @@
 #!/bin/bash
-[ $(which ffmpeg)  ] || exit
+[ $(which ffmpeg) ] || exit
 
 while [ "$1" ]; do
 	t1=./"${1%/}"
