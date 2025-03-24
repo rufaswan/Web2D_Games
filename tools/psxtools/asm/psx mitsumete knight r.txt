@@ -74,8 +74,8 @@ flag  file                  size     lba
 	.  33
 	.  37 + n * 41
  800  data/mrgM/PicEvt.mrg  23b8000  4770
-	.   0 + [53] * b8  event pic --
-	.  97 + [53] * b8  meta -------
+	.   0 + [53] * b8  event pic --  0+ 0 --
+	.  97 + [53] * b8  meta -------  0+97 --
 	.3ba8  true ending pic
 	.3cd4 + [ 6] * 180  normal ending pic
 	.45d4  true credits roll pic
@@ -90,20 +90,20 @@ flag  file                  size     lba
 	.  ad + [ 16] * 31  post cards
 	. 4e3 + [  e] * 22  [talk] npc
 	. 6bf + [ 13] * 8c  traveling bg
-	.1123 + [ 1e] * 7c  meta + mitsumete bg ---------
-	.114d + [ 1e] * 7c  [full] weapons              |- 5 girls * 6 weapons set
-	.118e + [ 1e] * 7c  [full] girl -----------------
-	.1fab + [  5] * ae  meta ------------------------
-	.1fbe + [  5] * ae  [talk] girl/side            |- 5 girls npc set
-	.1fd6 + [  5] * ae  [talk] girl/back            |
-	.1fee + [  5] * ae  [talk] girl/front -----------
-	.2311 + [ 5e] * 51  [talk] dress/side -----------
-	.231b + [ 5e] * 51  [talk] dress/back           |
-	.2325 + [ 5e] * 51  [talk] dress/front          |
-	.2331 + [ 5e] * 51  [full] dress/upper,fullset --
+	.1123 + [ 1e] * 7c  meta + mitsumete bg -- 1123+ 0 --
+	.114d + [ 1e] * 7c  [full] weapons         1123+2a  |- 5 girls * 6 weapons set
+	.118e + [ 1e] * 7c  [full] girl ---------- 1123+6b --
+	.1fab + [  5] * ae  meta ----------------- 1fab+ 0 --
+	.1fbe + [  5] * ae  [talk] girl/side       1fab+13  |- 5 girls npc set
+	.1fd6 + [  5] * ae  [talk] girl/back       1fab+2b  |
+	.1fee + [  5] * ae  [talk] girl/front ---- 1fab+43 --
+	.2311 + [ 5e] * 51  [talk] dress/side ---  2311+ 0 --
+	.231b + [ 5e] * 51  [talk] dress/back      2311+ a  |
+	.2325 + [ 5e] * 51  [talk] dress/front     2311+14  |
+	.2331 + [ 5e] * 51  [full] dress/upper --- 2311+20 --
 	.40cf + [ 16] * 19  [full] dress/lower
-	.42f5 + [138] * 1a  [full] dress/shoe -----------
-	.42fe + [138] * 1a  [full] dress/shield ---------
+	.42f5 + [138] * 1a  [full] dress/shoe ---- 42f5+ 0 --
+	.42fe + [138] * 1a  [full] dress/shield -- 42f5+ 9 --
 4000  data/mrg/wa_mrg.mrg     fd000   1fa
 	.   0
 	.  2c  8bpp 128x title menu

@@ -722,3 +722,4 @@ Extra Readings::
 * [[[mp3tag]]] https://web.archive.org/web/20241209074817/http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm#MPEGTAG
 * [[[isotag]]] https://web.archive.org/web/20241231230351/https://wiki.osdev.org/ISO_9660
 * [[[psftag]]] https://web.archive.org/web/20060420042053/http://www.neillcorlett.com/psf/psf_format.txt
+* [[[json5]]]  https://spec.json5.org/

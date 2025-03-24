@@ -1,5 +1,5 @@
 #!/bin/bash
-[ $(which ffmpeg)  ] || exit
+[ $(which ffmpeg) ] || exit
 ##############################
 function time2sec {
 	var=( $(echo $1 | tr ':' ' ') )

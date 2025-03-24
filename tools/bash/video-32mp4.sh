@@ -1,6 +1,6 @@
 #!/bin/bash
 [ $(which ffprobe) ] || exit
-[ $(which ffmpeg)  ] || exit
+[ $(which ffmpeg ) ] || exit
 
 s=2
 size='300x200'

@@ -44,7 +44,7 @@ function mpvplay {
 
 vid=()
 snd=()
-sort='--sort=size'
+sort=9
 while [ "$1" ]; do
 	t1=./"${1%/}"
 	shift
@@ -59,11 +59,7 @@ while [ "$1" ]; do
 			*)  echo "skip [$mime] ${t1:2}";;
 		esac
 	else
-		case "${t1:2}" in
-			'x')  sort='';;
-			'r')  sort='-Sr';;  # --sort=size  --reverse
-			*)    sort='-S ';;  # --sort=size
-		esac
+		sort="${t1:2}"
 	fi
 done
 
@@ -74,7 +70,12 @@ if (( ${#vid[@]} > 0 )); then
 	echo "video sort=$sort"
 	if [ "$sort" ]; then
 		IFS=$'\n'
-		vid=( $(ls  -1  $sort  "${vid[@]}") )
+		case "$sort" in
+			'0')  vid=( $(ls  -1  --sort=size     --reverse  "${vid[@]}") );; # smallest first
+			'9')  vid=( $(ls  -1  --sort=size                "${vid[@]}") );; # largest  first
+			'a')  vid=( $(ls  -1  --sort=version             "${vid[@]}") );; # natural sort desc
+			'z')  vid=( $(ls  -1  --sort=version  --reverse  "${vid[@]}") );; # natural sort asc
+		esac
 		unset IFS
 	fi
 	mpvplay  "${vid[@]}"
