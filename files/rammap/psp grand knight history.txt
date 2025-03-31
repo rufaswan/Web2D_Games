@@ -1,0 +1,226 @@
+==========================
+== Grand Knight History ==
+==========================
+Gold = RAM 8d14acc
+
+hp 8d15330
+sbger
+
+char stats
+	jal memcpy  a0  a1=s4  a2=148
+
+	00
+	04
+	08
+	0c  name - sjis[8]
+	1c
+		88fe954  lh  v1, 1c(a1)
+		896faf4  lh  a0, 1c(s1)
+	1e
+		88fe960  lb  v1, 1e(a1)
+	1f
+		88fe968  lb  v1, 1f(a1)
+	20
+		88fe970  lb  v1, 20(a1)
+	21
+		88fe978  lb  v1, 21(a1)
+	22
+		88fe980  lb  v1, 22(a1)
+	23
+		88fe988  lb  v1, 23(a1)
+	24
+		88fe990  lb  v1, 24(a1)
+	25
+		88fe998  lb  v1, 25(a1)
+	26
+		88fe9a0  lb  v1, 26(a1)
+	27
+		88fe9a8  lb  v1, 27(a1)
+	28
+		88fe9b0  lb  v1, 28(a1)
+	29
+		88fe9b8  lb  v1, 29(a1)
+	2a
+	2b
+	2c  exp
+		88fe9c0  lw  v1, 2c(a1)
+	30  max hp
+		88fe9c8  lw  v1, 30(a1)
+	34  max hp - real
+		88fe9d0  lw  v1, 34(a1)
+		896fad8  lw  v1, 34(s1)
+	38
+		88fe9d8  lhu  v1, 38(a1)
+		896fad4  lhu  a0, 38(s1)
+	3a  str
+		88fe9e0  lbu  v1, 3a(a1)
+	3b  vit
+		88fe9e8  lbu  v1, 3b(a1)
+	3c  tec
+		88fe9f0  lbu  v1, 3c(a1)
+	3d  mag
+		88fe9f8  lbu  v1, 3d(a1)
+	3e  pry
+		88fea00  lbu  v1, 3e(a1)
+	3f  agi
+		88fea08  lbu  v1, 3f(a1)
+	40
+		88fea10  lbu  v1, 40(a1)
+	41
+		88fea18  lbu  v1, 41(a1)
+	42
+		88fea20  lbu  v1, 42(a1)
+	43
+		88fea28  lbu  v1, 43(a1)
+	44
+		88fea30  lbu  v1, 44(a1)
+	45
+		88fea38  lbu  v1, 45(a1)
+	46
+		88fea40  lbu  v1, 46(a1)
+	47
+		88fea48  lbu  v1, 47(a1)
+	48  level (00=lv 1 , max=62)
+		88fea50  lbu  v1, 48(a1)
+	49  brave (max=64)
+		88fea58  lb  v1, 49(a1)
+	4a
+	4b
+	4c  weapon slot
+		88fea60  lhu  v1, 4c(a1)
+	4e  armor slot 1
+		88fea68  lh  a3, 4e(a1)
+	50  armor slot 2
+		88fea6c  lh  a2, 50(a1)
+	52  armor slot 3
+		88fea70  lh  v1, 52(a1)
+	54  stone slot 1
+		88fea80  lh  t0, 54(a1)
+	56  stone slot 2
+		88fea84  lh  a3, 56(a1)
+	58  stone slot 3
+		88fea88  lh  a2, 58(a1)
+	5a  stone slot 4
+		88fea8c  lh  v1, 5a(a1)
+	5c  item slot 1
+		88feaa0  lh  t0, 5c(a1)
+	5e  item slot 2
+		88feaa4  lh  a3, 5e(a1)
+	60  item slot 3
+		88feaa8  lh  a2, 60(a1)
+	62  item slot 4
+		88feaac  lh  v1, 62(a1)
+	64  item amount 1
+		88feac0  lbu  t0, 64(a1)
+	65  item amount 2
+		88feac4  lbu  a3, 65(a1)
+	66  item amount 3
+		88feac8  lbu  a2, 66(a1)
+	67  item amount 4
+		88feacc  lbu  v1, 67(a1)
+	68  action skill slot 1
+		88feae0  lh  t0, 68(a1)
+	6a  action skill slot 2
+		88feae4  lh  a3, 6a(a1)
+	6c  action skill slot 3
+		88feae8  lh  a2, 6c(a1)
+	6e  action skill slot 4
+		88feaec  lh  v1, 6e(a1)
+	70  support skill slot 1
+		88feb00  lh  a2, 70(a1)
+	72  support skill slot 2
+		88feb04  lh  v1, 72(a1)
+	74
+		88feb10  lh  a3, 74(a1)
+	76
+		88feb14  lh  a2, 76(a1)
+	78
+		88feb18  lh  v1, 78(a1)
+	7a
+		88feb28  lb  v1, 7a(a1)
+	7b
+		88feb38  lbu  v1, 7b(a1)
+	7c
+	80
+	82  "sbger"
+	84
+	88
+	8c
+	90
+	94
+	98
+	9c
+	a0
+	a4
+	a8
+	ac
+	b0
+	b4
+	b8
+	bc
+	c0
+	c4
+	c8-da  [bitflag] learned action  skills
+	db-e2  [bitflag] learned support skills
+	e3
+	e4
+	e8
+	ec
+	f0
+	f4
+	f8
+	fc
+	100
+	104
+	108  mastery 1 (in 1/100) rapier   bow    fire
+	10a  mastery 2 (in 1/100) sword    x-bow  water
+	10c  mastery 3 (in 1/100) b-sword  gun    wind
+	10e  mastery 4 (in 1/100) spear    -      earth
+	110  mastery 5 (in 1/100) -        -      -
+	112  mastery 6 (in 1/100) support
+	113
+	114
+	118
+	11c
+	120
+	124
+	128
+	12c
+	130
+	134
+	138
+	13c
+	140
+	144
+
+move cost = RAM 8d254d4
+	8abf3a4  addiu  v1, v1, -1
+	8abf3b0  sh     v1, a44(v0)
+brave = RAM 8d15d85 <- 8de4371
+	8a464ac  lb     a1, 49(v0)
+	8a464b0  addiu  a1, a1, -6
+	8a464f8  sb     a1, 49(v0)
+
+
+Avalon      -
+. forest    16 step  21/19/23/18 , 22/20/23 , 21/20
+. seaside   -
+	5 step  50 gem = gem exchange
+. plain     -
+	9 step  13 stone tablet
+Union       -
+. cliff     -
+	15 step  13+x sealed gem
+. lake      -
+. basin     5 step  69/65/76/61 , 72/67/70 , 72/68
+	14 step  xx weapon =
+Logres      -
+. mountain  2 step  93/88/102/83 , 97/91/94 , 96/92
+. mine      -
+	12 step  xx ore =
+. warfield  6 step  45/42/50/40 , 47/44/45 , 46/44
+	10 step  300 open chest
+HOLE        -
+	dungeon
+
+/// , // , /

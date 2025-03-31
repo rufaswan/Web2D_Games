@@ -1,0 +1,266 @@
+========================
+== Crisis Core FF VII ==
+========================
+SP = RAM 8a3eb54
+
+Zack Stats
+	int32  exp
+	int32  next exp
+	int32  sp
+	int32  hp
+	int32  max hp
+	int32  max hp - real
+	int32  mp
+	int32  max mp
+	int32  max mp - real
+	int32  ap
+	int32  max ap
+	int32  max ap - real
+	int16
+	int8   level
+	int8   [auto] ATK
+	int8   [auto] VIT
+	int8   [auto] MAG
+	int8   [auto] SPR
+	int8   [auto] LCK
+
+Item (BLOCK=4)
+	00 id
+	02 amount
+	03
+
+	ID
+		[00-xx] 30  Key Items
+		35 30  Keyholder (Accessory Slot +1)
+		36 30  Backpack  (Accessory Slot +1)
+		[00-6b] 50  Accessories
+		66 50  Genji Helm   (Soul of Thamasa + Laurel Crown     + [Libra]     )
+		67 50  Genji Armor  (Adaman Bangle   + Twisted Headband + Faerie Ring )
+		68 50  Genji Shield (Protect Ring    + Wizard Bracelet  + Super Ribbon)
+		69 50  Genji Glove  (Brutal          + Sniper Eye)
+
+Material (BLOCK=c)
+	00 id
+	02 00=deleted , 01=exists
+	03
+	04
+	05
+	06  level (master=5)
+	07  0=equipped , ff=free
+	08  BONUS type
+		00=HP   01=MP   02=AP
+		03=STR  04=VIT  05=MAG
+		06=SPR  07=LCK
+	0a  BONUS value (max=64 , HP/MP/AP in 10%s)
+
+	ID
+		00 40  MAG  Fire
+		01 40  MAG  Blizzard
+		02 40  MAG  Thunder
+		03 40  MAG  Fira
+		04 40  MAG  Blizzara
+		05 40  MAG  Thundara
+		06 40  MAG  Firaga
+		07 40  MAG  Blizzaga
+		08 40  MAG  Thundaga
+		09 40  SPR  Cure
+		0a 40  SPR  Cura
+		0b 40  SPR  Curaga
+		0c 40  SPR  Full Cure
+		0d 40  SPR  Regen
+		0e 40  SPR  Esuna
+		0f 40  SPR  Dispel
+		10 40  SPR  Barrier
+		11 40  SPR  Magic Barrier
+		12 40  SPR  Wall
+		13 40  HP   Drain
+		14 40  HP   Drainra
+		15 40  HP   Drainga
+		16 40  MP   Osmose
+		17 40  MP   Osmoga
+		18 40  MAG  Poison
+		19 40  MAG  Silence
+		1a 40  MAG  Stop
+		1b 40  MAG  Death
+		1c 40       Dark Fire
+		1d 40       Dark Blizzard
+		1e 40       Dark Thunder
+		1f 40       Dark Fira
+		20 40       Dark Blizzara
+		21 40       Dark Thundara
+		22 40       Dark Firaga
+		23 40       Dark Blizzaga
+		24 40       Dark Thundaga
+		25 40  MAG  Hell Firaga
+		26 40  MAG  Hell Blizzaga
+		27 40  MAG  Hell Thundaga
+		28 40  MAG  Gravity
+		29 40  MAG  Graviga
+		2a 40  MAG  Quake
+		2b 40  MP   Tri-Thundaga
+		2c 40  MP   Tri-Fire
+		2d 40  MP   Electrocute
+		2e 40  MP   Flare
+		2f 40  MP   Energy
+		30 40  MP   Ultima
+		31 40  HP   Darkness
+		32 40  STR  Jump
+		33 40  STR  Hi-Jump
+		34 40  STR  Aerial Poison
+		35 40  STR  Aerial Silence
+		36 40  STR  Jump + Death
+		37 40  STR  Assault Twitter
+		38 40  STR  Assault Twitter kai
+		39 40  STR  Turn + Poison
+		3a 40  STR  Turn + Stop
+		3b 40  STR  Turn + Death
+		3c 40  STR  Power Attack
+		3d 40  STR  Vital Slash
+		3e 40  STR  Exploder Blade
+		3f 40  STR  Blast Wave
+		40 40  STR  Blade + Poison
+		41 40  STR  Blade + Silence
+		42 40  STR  Blade + Stop
+		43 40  STR  Blade + Death
+		44 40  MAG  Blade + Dispel
+		45 40  MAG  Blade + Fire
+		46 40  MAG  Blade + Blizzard
+		47 40  MAG  Blade + Thunder
+		48 40  MAG  Blade + Fira
+		49 40  MAG  Blade + Blizzara
+		4a 40  MAG  Blade + Thundara
+		4b 40  MAG  Blade + Firaga
+		4c 40  MAG  Blade + Blizzaga
+		4d 40  MAG  Blade + Thundaga
+		4e 40  HP   Blade + Drain
+		4f 40  HP   Power Drain
+		50 40  HP   Aerial Drain
+		51 40  MP   Blade + Osmose
+		52 40       Power + Osmose
+		53 40  AP   Steal
+		54 40  AP   Mug
+		55 40  STR  Gil Toss
+		56 40  STR  Punch + Iron
+		57 40  STR  Punch + Goblin
+		58 40  MP   Punch + Magical
+		59 40  AP   Punch + Hammer
+		5a 40  STR  Punch + Costly
+		5b 40  HP up
+		5c 40  HP up kai
+		5d 40  HP up kai 2
+		5e 40  MP up
+		5f 40  MP up kai
+		60 40  MP up kai 2
+		61 40  AP up
+		62 40  AP up kai
+		63 40  AP up kai 2
+		64 40  STR up
+		65 40  STR up kai
+		66 40  STR up kai 2
+		67 40  VIT up
+		68 40  VIT up kai
+		69 40  VIT up kai 2
+		6a 40  MAG up
+		6b 40  MAG up kai
+		6c 40  MAG up kai 2
+		6d 40  SPR up
+		6e 40  SPR up kai
+		6f 40  SPR up kai 2
+		70 40  STR  Libra
+		71 40  MAG  Status Attack
+		72 40  SPR  Status Defend
+		73 40  MAG  Elemental Strike
+		74 40  SPR  Elemental Ward
+		75 40  AP   Dash
+		76 40  MP   Doublecast
+		77 40  AP   Smart Consumer
+		78 40  MAG  SP Turbo Magic
+		79 40  STR  SP Turbo Attack
+		7a 40  HP   SP Turbo
+		7b 40  VIT  SP Barrier
+		7c 40  HP   SP Master
+		7d 40  STR  DMW Sephiroth
+		7e 40  STR  DMW Angeal
+		7f 40  VIT  DMW Tseng
+		80 40  VIT  DMW Cloud
+		81 40  SPR  DMW Aerith
+		82 40  SPR  DMW Cissnei
+		83 40  MAG  DMW Genesis
+		84 40  MAG  DMW Ifrit
+		85 40  MAG  DMW Bahamut
+		86 40  VIT  DMW Odin
+		87 40  SPR  DMW Phoenix
+		88 40  MAG  DMW Bahamut Fury
+		89 40  AP   DMW Chocobo
+		8a 40  AP   DMW Cactuar
+		8b 40  HP   DMW Tonberry
+		8c 40  MP   DMW Cait Sith
+		8d 40  MP   DMW Moogle
+		8e 40  HP   DMW Magic Pot
+		8f 40
+
+HP   Darkness
+STR  Costly Punch
+VIT
+MAG  Hell Firaga
+SPR  Curaga
+LCK
+
+
+Dispel
+Flare
+
+
+Mission Reward
+	QUEST  ch  3  1-2-1 - Shinra Captain in Loveless Street
+	QUEST  ch  3  8-2-1 - researcher in Material Room
+	QUEST  ch  4  2-1-1 - man in Fountain area
+	QUEST  ch  4  2-1-2 - fanclub woman in Loveless Street
+	QUEST  ch  4  7-1-1 - Soldier 3rd in Shinra HQ
+	QUEST  ch  4  8-4-1 - [mail - spam]
+	end    ch  4  Research Dept QMC
+	QUEST  ch  5  2-1-3  2-1-4 - girl in Slum Market
+	QUEST  ch  6  2-1-5 - Shinra Soldier in Shinra HQ
+	QUEST  ch  6  2-1-6 - Shinra Researcher in Vechicle Display Room
+	QUEST  ch  6  4-3-x - 6x Wutai Spy
+	end    4-3-6  The Happy Turtle
+	QUEST  ch  6  6-2-1 - Shinra Manager in Shinra HQ
+	* missable after ch 8 - leaving to Nibelheim
+	chest  ch  9  Phoenix Materia    - Wonder of Nibelheim - Water Tower
+	chest  ch 10  Research Dept QMC+ - Gongaga
+
+	end    2-3-1  Gongaga Trading
+	chest  2-4-1  Junon Souvenirs
+	end    2-4-5  Mythril Mine Traders
+	QUEST  3-1-3  10-1-1 - Kactuar
+	end    4-2-6  Wutai Secret Shop
+	chest  4-4-3  Sector 7 - Shop
+	QUEST  6-1-5  10-2-1 - Tonberry
+	end    6-2-1  Sector 8 - Materia Shop
+	end    6-2-3  Sector 5 - Materia Shop
+	end    6-2-6  Sector 6 - Accessory Shop
+	chest  6-4-4  Nibel Accessories
+	end    7-2-1  Item Fusion Tome
+	end    7-2-2  Keychain
+	end    7-2-5  Backpack
+	chest  7-5-3  Bone Village Commerce
+	end    8-1-1  Ifrit Materia
+	end    8-1-4  Bahamut Materia
+	end    8-1-6  Odin Materia
+	chest  8-4-1  Chocobo Feather
+	chest  8-4-3  Cait Sith's Megaphone
+	chest  8-4-4  Moogle's Amulet
+	end    8-5-6  Bahamut Fury Materia
+	chest  9-3-3  Network Shop Duo
+	chest  9-5-4  Net Shop Shade
+	end   10-1-3  Cactus Thorn
+	end   10-2-3  Tonberry's Knife
+	any           Magic Pot Tricks
+		lv96  2-5-4  2-5-5  2-5-6
+			Ultima , Triple Fire , Iron Punch , Electrocute
+		lv97  7-6-6
+			Gil Toss , Costly Punch , 99999 Damage , Octaslash
+		lv98  10-2-3
+			Jump , Fira , Gravity , Assault Twister
+		lv99  2-2-6
+			Blizzaga , Firaga , Thundaga , Gravity

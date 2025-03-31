@@ -32,3 +32,11 @@ done
 
 # strip all debug symbols
 find "$tmp" -type f -exec strip {} \;
+
+# result - 5.6.40
+#   bin/php | bin/php-cgi
+#     libdl.so.2
+#     libresolv.so.2
+#     libc.so.6
+#     libm.so.6
+#   stripped 4,460,128 | 4,433,600
