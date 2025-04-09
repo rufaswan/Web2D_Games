@@ -17,76 +17,84 @@ Contributors
 ==============================
 Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 2595.bin
--0x4c int32 weapon effect type
--0x48 int8  +weapon attack
+26b int32 weapon effect type
+26f int8  weapon attack
 
--0x24 int8  +total accessory attack
--0x23 int8  +total accessory defense
--0x22 int8  +total accessory agility
--0x21 int8  +total accessory ether
--0x20 int8  +total accessory eth def
--0x1f int8  +total accessory base defense
--0x1e int8  +total accessory hit %
--0x1d int8  +total accessory evade %
--0x1c int16 accessory type 8 effect
--0x1a int16 accessory type 5 effect
+293 int8  accessory + bonus attack/8000
+294 int8  accessory + bonus defense/4000
+295 int8  accessory + bonus agility/2000
+296 int8  accessory + bonus ether/1000
+297 int8  accessory + bonus ethdef/800
+298 int8  accessory + defense + bonus defense/100
+299 int8  accessory + bonus hit/400
+29a int8  accessory + bonus evade/200
+29b int16 accessory/08,09 + max HP effect
+29d int16 accessory/05 + support effect
 
--0x14 int8  element effect (battle only)
+2a3 int8  element effect (battle only)
 
--0x10 int32 EXP
--0x0c int32 EXP
--0x08 int32 next EXP
--0x04 int32 next EXP
-+0x00 int16 HP
-+0x02 int16 max HP
-+0x04 int16 EP
-+0x06 int16 max EP
-+0x08
-+0x09 int8  Deathblow Learning Rate
-+0x0a
-+0x0b
-+0x0c int8  Attack
-+0x0d int8  Defense
-+0x0e int8  Agility
-+0x0f int8  Ether
-+0x10 int8  Ether Defense
-+0x11 int8  Base Defense
-+0x12 int8  Hit %
-+0x13 int8  Evade %
+2a8 int32 EXP total
+2ac int32 EXP before total (for count up)
+2b0 int32 next EXP total
+2b4 int32 next EXP loaded (updated per multiple level ups)
+2b7 int16 HP
+2b9 int16 max HP
+2bb int16 EP
+2bd int16 max EP
 
-+0x16 int8  Level
+2c1 int8  Deathblow Learning Rate
 
-+0x1e int8  Weapon Slot
+2c4 int8  Attack
+2c5 int8  Defense
+2c6 int8  Agility
+2c7 int8  Ether
+2c8 int8  Ether Defense
+2c9 int8  Base Defense
+2ca int8  Hit %
+2cb int8  Evade %
 
-+0x28 int8  Accessory Slot 1
-+0x29 int8  Accessory Slot 2
-+0x2a int8  Accessory Slot 3
-+0x2b int8  Weight (in 2.2 lbs)
-+0x2c int8  Weight (in 2.2 lbs)
+2ce int8  Level
 
-+0x2e int24 play dead
-+0x31 int8  physical effect (battle only)
-+0x32 int16 accessory type 1 effect
+2d5 int8  Weapon Slot
+2d6 int8  Weapon id
+2d7 int8  Pistol id 1
+2d8 int8  Pistol id 2
+2d9 int8  Shotgun id
 
-+0x35 int8  mental effect (battle only)
-+0x36 int16 accessory type 2 effect
+2db int8  Gun ammo id
+2dc int8  Pistol ammo id 1
+2dd int8  Pistol ammo id 2
+2de int8  Shotgun ammo id
 
-+0x39 int8  stat 1 effect
-+0x3a int16 accessory type 3 effect
-+0x3c int8  stat 2 effect
+2e0 int8  Accessory Slot 1
+2e1 int8  Accessory Slot 2
+2e2 int8  Accessory Slot 3
+2e3 int8  Weight (in 2.2 lbs)
+2e4 int8  Weight (in 2.2 lbs)
+2e5 int24 play dead
 
-+0x3e int16 accessory type 4 effect
+2e8 int8  physical effect (battle only)
+2e9 int16 accessory/01 + physical effect
 
-+0x42 int16 accessory type 7 effect
-+0x44 int16 Deathblow Mastery 1
-+0x46 int16 Deathblow Mastery 2
-+0x48 int16 Deathblow Mastery 3
-+0x4a int16 Deathblow Mastery 4
-+0x4c int16 Deathblow Mastery 5
-+0x4e int16 Deathblow Mastery 6
-+0x50 int16 Deathblow Mastery 7
+2ec int8  mental effect (battle only)
+2ed int16 accessory/02 + mental effect
 
-+0x55 int8  Deathblow Modifier
+2f0 int8  stat 1 effect
+2f1 int16 accessory/03 + stats effect
+2f3 int8  stat 2 effect
+
+2f5 int16 accessory/4 + EP effect
+
+2f9 int16 accessory/7 + element defense
+2fb int16 deathblow exp weak 1
+2fd int16 deathblow exp weak 2
+2ff int16 deathblow exp weak 3
+301 int16 deathblow exp weak 4
+303 int16 deathblow exp mid 1
+305 int16 deathblow exp mid 2
+307 int16 deathblow exp hard
+30c int8  gear id
+30d int8  accessory/a + deathblow rate
 
 Battle Only
 	+0xf1   Defense Down
@@ -135,74 +143,95 @@ Order / bitflag
 ==============================
 Gear Base Stats (BLOCK = 0xa4 or 164 bytes)
 2595.bin
--0x5c int8  gear frame
--0x5d int8  gear engine
+97a int8  gear frame id
+97b int8  gear engine id
+97c int8  gun ammo id
+97d int8  pistol ammo id
 
--0x58 int8  gear armor
--0x57 int8  gear accessory slot 1
--0x56 int8  gear accessory slot 2
--0x55 int8  gear accessory slot 3
--0x54 int8  gear weapon slot
+97f int8  gatling ammo id
+980 int8  gear armor id
+981 int8  gear accessory slot 1
+982 int8  gear accessory slot 2
+983 int8  gear accessory slot 3
+984 int8  gear weapon slot
 
--0x50 int16 gear weapon type effect
--0x4e int8  +gear weapon attack
--0x4d int16 gear weapon type
+987 int8  gatling id
+988 int16 weapon/gun ammo + effect
+98a int8  weapon/gun ammo + effect
+98b int8  weapon/gun ammo + effect
+98c int8  weapon/gun ammo + effect
 
--0x28 int16 fuel
--0x26 int16 max fuel
+990 int16 pistol ammo + effect
+992 int8  pistol ammo + effect
+993 int8  pistol ammo + effect
+994 int8  pistol ammo + effect
 
--0x24 int8  power output multiplier
+998 int16 gatling ammo + effect
+99a int8  gatling ammo + effect
+99b int8  gatling ammo + effect
+99c int8  gatling ammo + effect
 
--0x21 int8  power output
--0x20 int16 +gear accessory defense
--0x1e int16 +gear accessory eth def
--0x1c int16 gear real weight (heavier = slower)
+9b0 int16 fuel
+9b2 int16 max fuel
+9b4 int8  engine output
+9b5 int8  engine power multiplier %
+9b6 int8  engine power output
+9b7 int8  engine power output
+9b8 int16 +gear accessory defense
+9ba int16 +gear accessory eth def
+9bc int16 +gear carry penalty
 
--0x16 int8  gear accessory level
+9c0 int16 accessory/9 + save fuel
+9c2 int8  gear accessory level
 
--0x14 int8  +gear accessory defense
--0x13 int8  +gear response
+9c4 int8  +gear accessory defense
+9c5 int8  +gear response
 
--0x11 int8  restore frame HP (in 10%s)
--0x10 int8  +agility in barrens
--0x0f int8  +agility in snow
--0x0e int8  +agility in desert
--0x0d int8  +agility in water
+9c7 int8  accessory/5 + repair frame
+9c8 int8  +agility in barrens
+9c9 int8  +agility in snow
+9ca int8  +agility in desert
+9cb int8  +agility in water
+9cc int8  engine output up (in 10%s)
+9cd int8  charge restore fuel (in 10s)
 
--0x0a int8  engine output up (in 10%s)
--0x09 int8  charge restore fuel (in 10s)
+9d4 int8  gear weapon level
+9d5 int8  gun ammo level
+9d6 int8  pistol ammo level
+9d7 int8  gatling ammo level
+9d8 int32 HP
+9dc int32 max HP
+9e0 int32 weight
 
--0x04 int8  gear weapon level
+9e6 int16 accessory/4 + damage down
 
-+0x00 int32 HP
-+0x04 int32 max HP
-+0x08 int32 weight
-+0x10 int16 gear defense
-+0x12 int16 gear ether defense
+9e8 int16 gear defense
+9ea int16 gear ether defense
 
-+0x1e int16 gear accessory type 1+4 effect [0-1]
-+0x20 int8  stat 2 effect
+9ec int8  power output
+9ed int8  carry limit
 
-+0x22 int16 gear accessory type 2 effect
+9f6 int16 accessory/1 + prevent status
 
-+0x26 int16 gear accessory type 3 effect [0-1 OR 80]
-+0x28
-+0x29 int8  seal damage (in 5%s)
-+0x2a
-+0x2b
-+0x2c
-+0x2d
-+0x2e int8  gel damage (in 5%s)
-+0x2f int8  electric damage (in 5%s)
-+0x30
-+0x31 int8  stress damage (in 5%s)
-+0x32
-+0x33 int8  beam damage (in 5%s)
-+0x34 int8  angel damage (in 5%s)
+9fa int16 accessory/2 + charge status
 
-+0x38 int8  gear agility
+9f8 int16 booster
 
-+0x3e int8  gear eth amp
+9fe int16 accessory/3 + element defense
+
+a01 int8  seal damage (in 5%s)
+
+a06 int8  gel damage (in 5%s)
+a07 int8  electric damage (in 5%s)
+
+a09 int8  stress damage (in 5%s)
+
+a0b int8  beam damage (in 5%s)
+a0c int8  angel damage (in 5%s)
+
+a10 int8  gear agility
+
+a16 int8  gear eth amp
 
 Battle Only
 	+0x44 Attack Level (04=infinity)

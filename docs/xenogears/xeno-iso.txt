@@ -21,7 +21,7 @@ SLPS 011.60 JP disc 1 [3771]
 			.9 *blank*
 			.10 Citan/Sword Deathblows
 			.11 Emeralda/Adult Deathblows
-			.13 - 17 *blank*
+			.12 - 17 *blank*
 			.18 Character Accessories
 			.19 Menu text
 			.20 *blank*
@@ -47,7 +47,7 @@ SLPS 011.60 JP disc 1 [3771]
 			.40 Fenrir Deathblows
 			.41 Andvari Deathblows
 			.42 El-Renmazuo Deathblows
-			.43 El-Stier
+			.43 El-Stier Deathblows
 			.44 Xenogears Deathblows
 			.45 Heimdal/Sword Deathblows
 			.46 *dummy*
@@ -1709,12 +1709,57 @@ SLPS 012.35 JP demo - Fushigi na Data Disc [2457]
 PAPX 900.22 JP demo - Yoi Ko to Yoi Otona no. PlayStation Taikenban Vol. 1 [2457]
 	0  X.EXE / PSX_CD.EXE
 	1  [6]
-		2  wds/sample data
-		3  wds/sample data
-		4  wds/sample data
-		5  wds/sample data
-		6
-		7
+		2-5  wds/sample data
+		6   [LZ] Font 1-bpp
+		7	[LZ-PAK] Kernel
+				.1 Fei Deathblows
+				.2 Elly Deathblows
+				.3 Citan Deathblows
+				.4 Bart Deathblows
+				.5 Billy Deathblows
+				.6 Rico Deathblows
+				.7 Emeralda Deathblows
+				.8 *dummy*
+				.9 *blank*
+				.10 Citan/Sword Deathblows
+				.11 Emeralda/Adult Deathblows
+				.12 - 17 *blank*
+				.18 Character Accessories
+				.19 Menu text
+				.20 *blank*
+				.21 Character Ether abilities
+				.22 *blank*
+				.23 Items
+				.24 Character Weapons
+				.25 *unk*
+				.26 *unk*
+				.27 *unk*
+				.28 *out of memory*
+				.29 Weltall Deathblows
+				.30 Weltall 2 Deathblows
+				.31 Vierge Deathblows
+				.32 Heimdal Deathblows
+				.33 Brigandier Deathblows
+				.34 Renmazuo Deathblows
+				.35 Stier Deathblows
+				.36 *dummy*
+				.37 Seibzehn Deathblows
+				.38 Crescens Deathblows
+				.39 *dummy*
+				.40 Fenrir Deathblows
+				.41 Andvari Deathblows
+				.42 El-Renmazuo Deathblows
+				.43 El-Stier Deathblows
+				.44 Xenogears Deathblows
+				.45 Heimdal/Sword Deathblows
+				.46 *dummy*
+				.47 *dummy*
+				.48 *blank*
+				.49 Gear Ether abilities
+				.50 Button symbols
+				.51 Gear Accessories
+				.52 Gear Weapons
+				.53 Special Options
 	12  Overlay [6]
 		13  [LZ][OVER]
 		14  [LZ][OVER]
