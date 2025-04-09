@@ -23,6 +23,7 @@ function setsize {
 ##############################
 
 af=''
+srt=''
 SECONDS=0
 while [ "$1" ]; do
 	t1=./"${1%/}"
@@ -41,10 +42,11 @@ while [ "$1" ]; do
 				t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
 				setsize $(echo "$t2" | tr ','  ' ')
 
-				echo "s=$size  af=$af"
+				echo "s=$size  af=$af  srt=$srt"
 				nice -n 19  ffmpeg -y \
 					-v 0            \
 					-i "$t1"        \
+					$srt            \
 					-s $size        \
 					-aspect $orin   \
 					-vcodec libx264 \
@@ -60,7 +62,8 @@ while [ "$1" ]; do
 		esac
 	else
 		case "${t1:2}" in
-			'af')  af='-af loudnorm=I=-14:TP=-1';;
+			'af' )   af='-af loudnorm=I=-14:TP=-1';;
+			'srt')  srt='-map 0:v  -map 0:a  -map 0:s? -scodec copy';;
 			*)
 				let s=${t1:2}*1
 				if (( $s < 1 )); then

@@ -1,0 +1,185 @@
+====================
+== Princess Crown ==
+====================
+
+VD11.VOL
+	ISO = lba 14d30 , size 4201
+	RAM = 8af1f50
+	data  = 8ae6ae4-8af51e4 = e700 = 840*1c
+	sound = 8ae4a14-8ae5670 =  c5c =  71*1c
+		00  c[14]  fname
+		14  int32  lba
+		18  int32  size
+
+sub 89e381c  // get data file size
+	89e3904  lw  s2, 18(v0)
+	89e39a0  lw  s2, 18(v0)
+	89e3adc  lw  s2, 18(v0)
+	89e3bac  lw  s2, 18(v0)
+
+	if strcmp "data" == 0  // 8a52db8
+		while s0 < bb8
+			a0 = 8ae6ae4 + s0 * 1c  // data/*
+			if strcmp == 0 // same
+				return 18(a0)
+			s0++
+	if strcmp "sound" == 0  // 8a52dc0
+		while s0 < 12c
+			a0 = 8ae4a14 + s0 * 1c  // sound/*
+			if strcmp == 0 // same
+				return 18(a0)
+			s0++
+	return 0
+
+*reset*
+	8ae53b4  seat3.dat
+	8af01b8  p_start.dat
+	8af0180  p_game.dat
+	8ae9ae8  arel.vol
+	8ae9ff0  atlus_psp.tmx
+	8af01d4  p_title.dat
+Atlus Logo
+Game Start - Continue menu (idle)
+	8aea824  demo.clb
+	8aea7ec  demo.chb
+	8aea840  demo.mpb
+	8aea258  book1k.mpb
+	8aea808  demo.chr
+	8aea85c  demo.pak
+Princess Crown Logo
+	8ae514c  opening2.at3
+Opening Movie
+	8aef71c  opening0.evn
+	8af3360  vldn3k2f.chb
+	8af3168  vldn3c2f.chb
+	8aec734  evvd3k2.mcb
+	8aec6fc  evvd3c2f.mcb
+	8aea300  card.vol
+	8aedb70  jestelfa.vol
+	8aea7d0  demn.vol
+	8ae4b80  card_dem.svl
+	8af1f78  vd12.vol
+	8ae4a30  aseru.at3
+Queen vs Demon Opening
+	8ae4abc  battle3.at3
+Game Start - Continue menu
+	goto LOOP
+
+select CONTINUE
+	8af1098  slct.chr
+	8af10b4  slct.pak
+	8ae5494  s_filesl.svl
+	8af10d0  slct1e.chb
+	8af10ec  slct1e.mcb
+	8aea69c  chap.vol
+	8aef540  obaa.vol
+	8af0a5c  select.evn
+	8ae4f54  k_file.at3
+Girl and Grandma
+
+vol = chr + pak
+//////////////////////////////
+sub_880e83c  be2le_16
+sub_880e868  be2le_32
+
+chap.pak = RAM 99c6180 (=12704)
+	00  // unkn -> OVER
+	04  // file size
+	08  // ptr s0
+	0c  // ptr s1
+	10  // ptr s2
+	14  // ptr s3
+	18  // ptr s4
+		882031c  lw  a0, 18(v0)
+			+ n * c // 1+2
+	1c
+
+	20  // count s0
+	22
+	24
+	26
+		88202d8  lh  v0, 6(v0) // += 20
+	28
+	2c  // ptr s5
+		8914d64  lw  a0, c(v0) // += 20
+		891a8bc  lw  a0, c(v0) // += 20
+	30  // ptr s6
+		8914d34  lw  a0, 10(v0) // += 20
+		891a88c  lw  a0, 10(v0) // += 20
+	34
+	38
+	3c
+
+	s0 (8)
+		00
+		01
+		02
+		03
+		04
+		05
+		06
+			88256b8  lhu  a1, 6(v0)
+	s1 (c)
+		00
+			88251a4  lh  a0, 0(a3)
+		02-09  // quad or 4 xy set
+			for s0 < 4
+				8825250  lb  v1, 0(s4) // += 2 + (s0 << 1)
+				882525c  lb  a1, 1(s4) // += 2 + (s0 << 1)
+		0a  // quad signed flag
+			88251fc  lhu  v1, a(a0)
+	s2 (c)
+		00
+			8823c5c  lw  v1, 0(a0)
+		04
+			88256b0  lw  v1, 4(a1)
+		08
+			8823c68  lhu  a0, 8(a1)
+		0a
+			8825160  lhu  a0, a(a2)
+	s3 (8)
+		00
+			8820634  lhu  a0, 0(s0)
+			88206a8  lhu  a0, 0(s0)
+		02
+			8820580  lb  v0, 2(s0)
+		03
+			8820604  lb  v1, 3(s0)
+		04
+			8820658  lhu  a0, 4(s0)
+			8820690  lhu  a0, 4(s0)
+		06
+			8820408  lhu  a0, 6(v0)
+			8823348  lhu  a0, 6(v0)
+	s4 (8)
+		00
+			8820400  lw  v0, 0(v0)
+			882055c  lw  v0, 0(a0)
+			8823334  lw  s3, 0(v0)
+		04
+			8a097c4  lw  a0, 4(a1)
+	s5 (4)
+		00
+			8819a8c  lhu  a0, 0(v1)
+			881b1c4  lhu  v0, 0(v1)
+		02
+			8819aa8  lbu  v1, 2(v1)
+			881b1dc  lbu  v1, 2(a1)
+		03
+	s6 (8)
+		00
+			8819ad4  lhu  a0, 0(a1)
+			881b27c  lhu  a0, 0(a0)
+		02
+			8819b30  lh  v1, 2(v1)
+			881b2a0  lh  v0, 2(v1)
+		04
+			8819eb0  lh  v0, 4(v0)
+			881b2d0  lh  v0, 4(v1)
+		06
+			8819bd4  lbu  v1, 6(v1)
+			881b4e8  lbu  a0, 6(t4)
+		07
+			8819f4c  lbu  v1, 7(v1)
+			881b748  lbu  v0, 7(v1)
+//////////////////////////////

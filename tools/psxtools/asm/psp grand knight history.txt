@@ -1,0 +1,420 @@
+==========================
+== Grand Knight History ==
+==========================
+
+RAM 95f3b80 = Muse_A00.mbs
+	00  // FMBS
+	04  // s0-s8 size
+	08  // header size
+	0c
+	10
+	14  // version
+	16
+	18
+	1c
+	20
+	24
+	28
+	2c
+	30
+	34
+	38
+	3c
+	40
+	44
+	48
+	4c
+	50
+	54
+	56  // count s1
+	58  // count s0
+	5a  // count s2
+	5c  // count s4
+	5e  // count s5
+	60  // count s3
+	62  // count s6
+	64  // count s7
+	66
+	68  // count s8
+	6a
+	6c
+	70
+	74
+	78
+	7c
+	80
+	84  // ptr s0
+		88a757c  lw  a3, 84(fp)
+	88  // ptr s1
+		88c0d7c  lw  v0, 88(a2)
+	8c  // ptr s2
+		88a7584  lw  a2, 8c(fp)
+	90  // ptr s3
+		88a7084  lw  v0, 90(fp)
+	94  // ptr s4
+		88a70d4  lw  t1, 94(fp)
+	98  // ptr s5
+		88a7f5c  lw  a2, 98(v1)
+		88a8114  lw  a0, 98(a0)
+	9c  // ptr s6
+		88a9fe0  lw  v0, 9c(a2)
+		88aa100  lw  v0, 9c(a2)
+	a0  // ptr s7
+		88a7f4c  lw  a2, a0(a2)
+		88a8104  lw  a1, a0(a1)
+	a4  // ptr s8
+		88c0d74  lw  v1, a4(a2)
+	a8
+	ac
+	b0
+	b4
+	b8  // mbs filename
+
+	s0 => s3 (50)
+		00
+		04
+		08
+		0c
+		10
+		14
+		18
+		1c
+		20
+		24
+		28
+		2c
+		30
+		34
+		38
+		3c
+		40
+		44
+		48
+		4c
+	s1 => s4 layer (c)
+		00  // flag
+			88c12c4  lhu  a1, 0(s6)
+				v1 = a1 & 2
+				v0 = a1 & 8
+				v0 = a1 & 4
+			88c1334  lhu  v0, 0(s6)
+				v0 &= 1
+			88c14f4  lhu  v0, 0(s6)
+				v0 &= 1
+			88c1874  lhu  v0, 0(s6)
+				v0 &= 20
+		02  // blend id
+			88c1574  lbu  s2, 2(s6)
+		03  // tex id
+			88c132c  lbu  v1, 3(s6)
+		04  // attribute
+			88c12d4  lhu  a0, 4(s6)
+		06  // s1 id => unused
+		08  // s0 id => unused
+		0a  // s2 id => s8[s0 s1 s2] id
+			88c1870  lhu  a0, a(s6)
+	s2 => s5 (8)
+		00
+		04
+	s3 => s6 key (18)
+		00  // x1
+			88a71c4  lwc1  f0, 0(s5)
+		04  // y1
+			88a71cc  lwc1  f0, 4(s5)
+		08  // x2
+			88a71d4  lwc1  f0, 8(s5)
+		0c  // y2
+			88a71dc  lwc1  f0, c(s5)
+		10  // s1[s4] set id
+			88c0d68  lhu  a1, 10(v1)
+				v1 = a1 * c  // 1+2
+			88c0d70  lhu  a0, 10(v0)
+				v1 = a0 * c  // 1+2
+			88c0db4  lhu  a2, 10(a1)
+				v1 = a2 * c  // 1+2
+			88c0dd0  lhu  a0, 10(a0)
+				v0 = a0 * c  // 1+2
+		12  // s2[s5] set id
+		14  // s1[s4] set no
+			88c19e4  lhu  a0, 14(v1)
+		16  // s2[s5] set no
+		17  // flags
+			88c0ea0  lbu  v1, 17(v1)
+				v1 &= 4
+			88c16e4  lbu  v0, 17(v0)
+				v0 &= 8
+			88c1864  lbu  v0, 17(v0)
+				v0 &= 10
+	s4 => s7 mat4 (24)
+		00  // move x
+			88a5cd8  lwc1  f1,   0(a2)
+			88a5cdc  lwc1  f0,   0(a3)
+			88a7490  lwc1  f0,   0(s3)
+		04  // move y
+			88a5cf0  lwc1  f1,   4(a2)
+			88a5cf4  lwc1  f0,   4(a3)
+			88a748c  lwc1  f1,   4(s3)
+		08  // move z
+			88a5d08  lwc1  f1,   8(a2)
+			88a5d0c  lwc1  f0,   8(a3)
+			88a7488  lwc1  f2,   8(s3)
+		0c  // rotate x
+			88a5c90  lwc1  f1,   c(a2)
+			88a5c94  lwc1  f0,   c(a3)
+			88a7474  lwc1  f12,  c(s3)
+		10  // rotate y
+			88a5ca8  lwc1  f1,  10(a2)
+			88a5cac  lwc1  f0,  10(a3)
+			88a7478  lwc1  f13, 10(s3)
+		14  // rotate z
+			88a5cc0  lwc1  f1,  14(a2)
+			88a5cc4  lwc1  f0,  14(a3)
+			88a747c  lwc1  f14, 14(s3)
+		18  // scale x
+			88a5c60  lwc1  f1,  18(a2)
+			88a5c64  lwc1  f0,  18(a3)
+			88a7464  lwc1  f12, 18(s3)
+		1c  // scale y
+			88a5c78  lwc1  f1,  1c(a2)
+			88a5c7c  lwc1  f0,  1c(a3)
+			88a7468  lwc1  f13, 1c(s3)
+		20  // red
+			88a5d20  lbu  v1, 20(a2)
+			88a5d4c  lbu  v1, 20(a3)
+			88a7790  lbu  v1, 20(s3)
+			88a7880  lbu  a2, 20(s3)
+		21  // green
+			88a5dbc  lbu  v1, 21(a2)
+			88a5de8  lbu  v1, 21(a3)
+			88a7798  lbu  a0, 21(s3)
+			88a7868  lbu  t2, 21(s3)
+		22  // blue
+			88a5e58  lbu  v1, 22(a2)
+			88a5e84  lbu  v1, 22(a3)
+			88a7794  lbu  a1, 22(s3)
+			88a7854  lbu  v1, 22(s3)
+		23  // alpha
+			88a5ef4  lbu  v1, 23(a2)
+			88a5f20  lbu  v1, 23(a3)
+			88a77a4  lbu  a2, 23(s3)
+			88a782c  lbu  a0, 23(s3)
+	s5 => s8 frame (20)
+		00  // s3[s6] id
+			88a7060  lhu  t1, 0(a1)
+			88a706c  lhu  v0, 0(a2)
+			88a70a0  lhu  t4, 0(a3)
+			88a70a4  lhu  t3, 0(t0)
+		02
+		03
+		04  // s4[s7] id
+			88a70f8  lhu  a2, 4(s1)
+			88a70fc  lhu  v1, 4(s1)
+			88a7114  lhu  v1, 4(a3)
+		06  // fps , in 1000 ms?
+			88a7ff4  lhu  t2, 6(a2)
+			88a8258  lhu  v1, 6(v1)
+				v1 *= 3e8 // 5-2+3
+		08  // flags
+			88a6618  lw  a1, 8(a1)
+				a1 = (a1 & 3) << 4
+			88a74a0  lw  v0, 8(s1)
+				v0 &= 1
+			88a74ac  lw  v0, 8(s1)
+				v0 &= 2
+			88a74c0  lw  v0, 8(s1)
+				v0 &= 2
+			88a7a04  lw  v1, 8(s1)
+				v1 &= 400
+			88a7b00  lw  v0, 8(s1)
+				v0 &= 20
+			88a7f7c  lw  v1, 8(a2)
+				v1 &= 40
+			88a817c  lw  v1, 8(s0)
+				v1 &= 80
+			88a81c0  lw  a0, 8(s0)
+				v1 = a0 & 100
+				v1 = a0 & 4
+				v1 = a0 & 8
+				v1 = a0 & 1800
+			88a8350  lw  v1, 8(a3)
+				v1 &= 80
+			88a8380  lw  v1, 8(s0)
+				v1 &= 2000
+		0c  // loop s5[s8] id
+			88a81ec  lhu  v1, c(s0)
+			88a81f4  lhu  v1, c(s0)
+		0e  // s0 s2[s3 s5] interp
+			88a7578  lbu  a0, e(s1)
+		0f  // interp rate
+			88a7fe4  lbu  t3, f(a2)
+		10  // s4[s7] interp
+			88a707c  lbu  t2, 10(a2)
+		11  // s3[s6] interp
+			88a71a8  lbu  v1, 11(s1)
+			88a7ca0  lbu  v1, 11(s1)
+		12  // s8[s0 s1 s2] interp
+			88a7c70  lbu  v0, 12(s1)
+		13  //
+			88a796c  lb  a0, 13(s1)
+		14
+			88a8190  lw  a1, 14(s0)
+			88a8368  lw  a1, 14(a3)
+		18
+			88a8198  lhu  a2, 18(s0)
+			88a836c  lhu  a2, 18(a3)
+		1a
+			88a819c  lhu  a3, 1a(s0)
+			88a837c  lhu  a3, 1a(a3)
+		1c
+			88a81a8  lw  t0, 1c(s0)
+			88a8364  lw  t0, 1c(a3)
+	s6 => s9 anim (30)
+		00
+		04
+		08
+		0c
+		10
+		14
+		18
+		1c
+		20
+		24
+		28
+		29
+		2a
+		2b
+			88a9fec  lbu  a1, 2b(v0)
+				// 1+2+4
+			88aa10c  lbu  a1, 2b(v0)
+				// 1+2+4
+		2c
+	s7 => sa track (14)
+		00
+			88a7f60  lhu  a3, 0(t0)
+			88a8110  lhu  a1, 0(s2)
+		02
+			88a7fa4  lhu  t0, 2(t0)
+			88a8224  lhu  v1, 2(s2)
+		04
+		08
+		0c
+		10
+	s8 => s0 s1 s2 clr src dst (60)
+		00  // src x
+		02  // src y
+		04  // red
+		05  // green
+		06  // blue
+		07  // alpha
+		08  // dst x
+		0a  // dst y
+		0c
+		10
+		14
+		18
+		1c
+		20
+		24
+		28
+		2c
+		30
+		34
+		38
+		3c
+		40
+		44
+		48
+		4c
+		50
+		54
+		58
+		5c
+//////////////////////////////
+CPK entries = RAM 8c4f1b0-8c58620 (=9470)
+sub_8814a38 = strcmp()
+	8881718  jal strcmp
+		8814a8c  lbu  a2, 0(a1)
+
+TOC @UTF = RAM 8c3e3b0-8c58610 (=1a260)
+	8881718  jal strcmp
+		8814a8c  lbu  a2, 0(a1)
+	88821a8  lbu  v1, 0(v0)
+	88821ac  lbu  a0, 1(v0)
+	88821b0  lbu  a1, 2(v0)
+	88821bc  lbu  a2, 3(v0)
+		v1 = v1 << 18 | a0 << 10 | a1 << 8 | a2
+	88821d8  lw  v0, 1c(a3) // entries start
+
+	=> EXECUTE break at RAM 88821d0
+	.  keep track `v1` for entry dir/file name
+
+ b83  E_character/
+5523  gui/
+6b19  scene_bg/
+705d  script/
+7fe7  snd/
+
+*reset*
+	 155  CPKMC2.18.04, DLL2.78.04
+	4a5f  Spear_B00.ftx
+	6fd6  scene_bg46.mbs
+	7f9f  Tips15.vsb
+	8a43  se_chara6900.acb
+	84d9  se_chara21900.acb
+	821b  se_chara12800.acb
+	80c5  se_chara10900.acb
+	8015  se_battle.acb
+	7fcb  Tips19.vsb
+	7feb  bgm.acb
+	7ff3  bgm_streamfiles.awb
+	8007  gkh_sound.acf
+
+Training Mode
+	4a5f  Spear_B00.ftx
+	6fd6  scene_bg46.mbs
+	5ce4  worldmap_15.mbs
+	53ad  Witch_Cloak11.ftx
+	5898  GUI_Force00.mbs
+	5aac  Opening04.ftx
+	5999  Logo.mbs
+	5906  home02_00.mbs
+	58cf  home00.mbs
+	58b6  GUI_SNS00.mbs
+	58c4  home00.ftx
+Homebase -> Open Menu
+	4a5f  Spear_B00.ftx
+	6fd6  scene_bg46.mbs
+	5ce4  worldmap_15.mbs
+	53ad  Witch_Cloak11.ftx
+	5898  GUI_Force00.mbs
+	55f6  Effect00.mbs
+	5739  Effect_Mimic01.ftx
+	5687  Effect_Fairy.ftx
+	56e2  Effect_Golem.mbs
+	5703  Effect_menu.mbs
+	56f3  Effect_menu.ftx
+Open Menu -> Witch status
+	4a5f  Spear_B00.ftx
+	6fd6  scene_bg46.mbs
+	5ce4  worldmap_15.mbs
+	53ad  Witch_Cloak11.ftx
+	5898  GUI_Force00.mbs
+	55f6  Effect00.mbs
+	54eb  Witch_K03.ftx
+	544f  Witch_Cloak20.ftx
+	54a5  Witch_K00.mbs
+
+Enter Audience Hall
+	4a5f  Spear_B00.ftx
+	6fd6  scene_bg46.mbs
+	7f9f  Tips15.vsb
+	77f3  Main002.vsb
+	7408  Event043.vsb
+	720d  Event004.vsb
+	70fa  Audience14.vsb
+	7181  Audience31.vsb
+	7136  Audience22.vsb
+	7154  Audience24.vsb
+	7163  Audience25.vsb
+	7172  Audience30.vsb
+//////////////////////////////
