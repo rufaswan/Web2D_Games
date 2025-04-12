@@ -7,7 +7,58 @@
 #
 # /bin/wine   = for 32-bit EXE + DLL only
 # /bin/wine64 = for 64-bit EXE + DLL only
+########################################
+function w32_vdesksize {
+	local dim=( $(xrandr | grep current | tr -c '[0-9a-zA-Z]' ' ') )
+	local w=300
+	local h=200
 
+	# Screen 0  minimum 320 x 240  current 1024 x 768  maximum 4096 x 4096
+	if [[ ${dim[6]} == 'current' ]]; then
+		let w=${dim[7]}*9/10
+		let h=${dim[9]}*9/10
+	fi
+
+	printf '%dx%d'  $w  $h
+}
+function w32_mouselock {
+	local reg='/tmp/mouselock.reg'
+	echo 'Mouse Lock'
+	cat << _REG  > $reg
+REGEDIT4
+
+[HKEY_CURRENT_USER\\Software\\Wine\\DirectInput]
+"MouseWarpOverride"="force"
+
+_REG
+	regedit  $reg
+	rm       $reg
+}
+function w32_langloc {
+	local sjis="/usr/share/i18n/charmaps/$1.gz"
+	if [ -f "$sjis" ]; then
+		mkdir -p '/tmp/sjisdef'
+		# -c  --force
+		# -f  --charmap=FILE
+		# -i  --inputfile=FILE
+		localedef             \
+			--force           \
+			--charmap=$1      \
+			--inputfile=ja_JP \
+			"/tmp/sjisdef/ja_JP.$1"
+		export LOCPATH="/tmp/sjisdef"
+		export    LANG="ja_JP.$1"
+	else
+		echo "NOT FOUND : $sjis"
+		echo "REQUIRED  : locales_*_all.deb"
+	fi
+}
+function w32_symblink {
+	[ -e "$1" ] || return 1  # no target
+	[ -e "$2" ] && return 1  # existed
+	ln -s  "$1"  "$2"
+}
+########################################
 # Nice-scale goes from -20 (greedy) to 19 (nice)
 # greedy takes and demand more CPU
 # nice   gives and wait   for  CPU
@@ -54,57 +105,18 @@ winecmd='cmd /c'
 winedbg=''
 
 # virtual desktop setting
-  deskid=$(date +"%s")
-desksize='900x600'
+  deskid=$(date +%s)
+desksize=$(w32_vdesksize)
     desk="explorer /desktop=$WINEARCH-$deskid,$desksize"
 ########################################
-function mouselock {
-	reg='/tmp/mouselock.reg'
-	echo 'Mouse Lock'
-	cat << _REG  > $reg
-REGEDIT4
-
-[HKEY_CURRENT_USER\\Software\\Wine\\DirectInput]
-"MouseWarpOverride"="force"
-
-_REG
-	regedit  $reg
-	rm       $reg
-}
-function langloc {
-	sjis="/usr/share/i18n/charmaps/$1.gz"
-	if [ -f "$sjis" ]; then
-		mkdir -p '/tmp/sjisdef'
-		# -c  --force
-		# -f  --charmap=FILE
-		# -i  --inputfile=FILE
-		localedef             \
-			--force           \
-			--charmap=$1      \
-			--inputfile=ja_JP \
-			"/tmp/sjisdef/ja_JP.$1"
-		export LOCPATH="/tmp/sjisdef"
-		export    LANG="ja_JP.$1"
-	else
-		echo "NOT FOUND : $sjis"
-		echo "REQUIRED  : locales_*_all.deb"
-	fi
-}
-function symblink {
-	[ -e "$1" ] || return 1  # no target
-	[ -e "$2" ] && return 1  # existed
-	ln -s  "$1"  "$2"
-}
-########################################
-
 if [ ! -d "$WINEPREFIX" ]; then
 	echo "New HOME = $HOME"
 	mkdir -p "$HOME"
 	winecfg
 fi
 USER=$(whoami)
-symblink  "$WINEPREFIX/drive_c/users/$USER/Local Settings/Application Data"  "$HOME/appdata_xp"
-symblink  "$WINEPREFIX/drive_c/users/$USER/AppData"                          "$HOME/appdata_vista"
+w32_symblink  "$WINEPREFIX/drive_c/users/$USER/Local Settings/Application Data"  "$HOME/appdata_xp"
+w32_symblink  "$WINEPREFIX/drive_c/users/$USER/AppData"                          "$HOME/appdata_vista"
 
 if [ $# = 0 ]; then
 	echo "            HOME : $HOME"
@@ -138,31 +150,22 @@ else
 			continue
 		fi
 
+		# update virtual desktop size
+		if [ $(echo $t1 | grep [0-9]x[0-9]) ]; then
+			desk="explorer /desktop=$WINEARCH-$deskid,$t1"
+			continue
+		fi
+
 		# parse options
 		case "$t1" in
 			'-k' | '-kill')   wineserver -k;;
 			'-h' | '-help')   wine --help;;
-			'-V' | '-ver')    wine --version;;
+			'-V' | '-ver' )   wine --version;;
 
-			'-desk' | '-size' | '-s')
-				desksize="$1"
-				shift
-				if [ $(echo $desksize | grep [0-9]x[0-9]) ]; then
-					desk="explorer /desktop=wine-$deskid,$desksize"
-				else
-					desk=''
-				fi
-				;;
-
-			'-path')
-				case "$1" in
-					*'/'*)   winepath --windows "$1";; #  dos2unix
-					*'\\'*)  winepath --unix    "$1";; # unix2dos
-				esac
-				shift;;
-
-			'-sjis' )  langloc  'SHIFT_JIS';;
-			'-ms932')  langloc  'WINDOWS-31J';;
+			'-sjis' )  w32_langloc  'SHIFT_JIS';;
+			'-ms932')  w32_langloc  'WINDOWS-31J';;
+			'-dbg'  )  winedbg='winedbg';;
+			'-desk' )  desk='';;
 
 			'-reg' | 'regedit')  regedit;;
 			'-txt' | 'notepad')  notepad;;
@@ -173,9 +176,15 @@ else
 			'-msi'   )  msiexec /h;;
 			'-uninst')  uninstaller;;
 			'-ctrl'  )  control;;
-			'-dbg'   )  winedbg='winedbg';;
 
-			'-mouselock')   mouselock;;
+			'-path')
+				case "$1" in
+					*'/'*)   winepath --windows "$1";; #  dos2unix
+					*'\\'*)  winepath --unix    "$1";; # unix2dos
+				esac
+				shift;;
+
+			'-mouselock')   w32_mouselock;;
 
 			*)  shift $#;;
 		esac
