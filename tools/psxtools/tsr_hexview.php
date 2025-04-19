@@ -32,7 +32,7 @@ $gp_opt = array(
 
 function hexdigit( $int )
 {
-	$hx = 0;
+	$hx = 1;
 	while ( $int > 0 )
 	{
 		$int >>= 4;
@@ -41,6 +41,14 @@ function hexdigit( $int )
 	return $hx;
 }
 //////////////////////////////
+function term_title( &$fps )
+{
+	$name = array();
+	foreach ( $fps as $v )
+		$name[] = $v[0];
+	return implode(' | ', $name);
+}
+
 function term_opt( $hx, $cnt_fps )
 {
 	$tx = exec('tput cols');
@@ -85,6 +93,8 @@ function hexview()
 	$cnt_fps = count($gp_fps);
 	if ( $cnt_fps < 1 )
 		return;
+	printf("\033]0;[HEXVIEW] %s\007", term_title($gp_fps));
+
 	system('stty cbreak -echo');
 
 	$hx = hexdigit($gp_opt['size']);
@@ -102,7 +112,8 @@ function hexview()
 		for ( $y=0; $y < $ty; $y++ )
 		{
 			$sy = $gp_opt['pos'] + ($y * $gp_opt['col']);
-			printf("%{$hx}x", $sy);
+			$row = '        ' . dechex($sy);
+			echo substr($row, strlen($row) - $hx);
 
 			foreach ( $gp_fps as $fp )
 				echo fp_read_hex($fp[1], $sy, $byread);
@@ -167,7 +178,6 @@ function parse_options( $argv, $i )
 			$fsz = filesize($argv[$i]);
 			if ( $fsz < 1 )
 				break;
-			printf("\033]0;[HEXVIEW] %s\007", $argv[$i]);
 			$fp = fopen($argv[$i], 'rb');
 			if ( ! $fp )
 				break;

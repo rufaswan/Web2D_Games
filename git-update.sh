@@ -1,90 +1,91 @@
 #!/bin/bash
-
-git=$(cat repo.git)
-ups=$(cat repo.fork)
+function load_repo {
+	if [ -f $2 ]; then
+		local url=$(cat $2)
+		git remote rm  $1
+		git remote add $1 "$url"
+		echo "$url"
+	fi
+}
+##############################
+git=$(load_repo  origin    repo.git )
+ups=$(load_repo  upstream  repo.fork)
 [ "$git" ] || exit
-
-git remote rm  origin
-git remote add origin "$git"
-if [ "$ups" ]; then
-	git remote rm  upstream
-	git remote add upstream "$ups"
-fi
-
-msg="
-usage: ${0##*/}  COMMAND  [files]...
-
-command
-  -push   COMMENT  commit + push updates to repo
-  -pull   ID       accept pull request to repo
-  -force  CONFIRM  overwrite the repo
-  -repush  retry push updates to repo [SKIP commit]
-  -tag    VERSION  (after -push) set current progress as release
-
-  -update  fetch updates from upstream
-  -last    view the last 5 commits
-
-if no command, list changes for upcoming update
-"
-##############################
-if [ $# = 0 ]; then
-	git diff HEAD
-	exit
-fi
-##############################
-git add .
-git ls-files --deleted -z | xargs -0 git rm
-git reflog expire --expire=now --all
-git gc --prune=now
+echo "git=$git  ups=$ups"
 
 cmd="$1"
-shift
+opt="$2"
+shift 2
 
-case "$cmd" in
-	'push'|'-push')
-		echo "git push $git : $@"
-		git commit -m "$@"
-		git push origin master
-		;;
-	'pull'|'-pull')
-		[ "$1" ] || echo "pull request has no ID"
-		echo "git pull $git : # $1"
-		git pull origin pull/$1/head
-		git push origin master
-		;;
+[ "$cmd" ] || exit
+[ "$opt" ] || exit
+echo "cmd=$cmd  opt=$opt"
 
-	'-force')
-		[[ "$2" == 'i_really_want_to_do_this' ]] || exit
-		echo "git push --force $git : master"
-		git push --force origin master
-		;;
-	'repush'|'-repush')
-		echo "git push/retry $git"
-		git push origin master
-		;;
-	'tag'|'-tag')
-		echo "git tag $git : $@"
-		git tag "$@"
-		git push origin --tags
-		;;
-	'rmtag'|'-rmtag')
-		echo "git remove tag $git : $@"
-		git push --delete origin "$@"
-		git tag -d "$@"
-		;;
+#git diff HEAD
+#git ls-files --modified
+mod=$(git status --short)
+if [ "$mod" ]; then
+	echo "[$git] push/commit"
+	echo $mod
 
-	'update'|'-update')
-		if [ "$ups" ]; then
-			echo "git fetch $ups"
-			git fetch upstream
-			git checkout master
-			git merge upstream/master
-		fi
-		;;
-	'last'|'-last')
-		git log --pretty=oneline -5
-		;;
-	*)
-		echo "$msg"
-		;;
-esac
+	{
+		git add .
+		git ls-files --deleted -z | xargs -0 git rm -q
+		git reflog expire --expire=now --all
+		git gc --prune=now
+	} &> /dev/null
+
+	case "$cmd" in
+		'push')
+			echo "[$git] git $cmd = $opt"
+			git commit -m "$opt"
+			git push origin master
+			;;
+		*)  echo "[ERROR] unknown $cmd = $opt";;
+	esac
+else
+	echo "[$git] pull/fetch fork"
+
+	# get file from pull request
+	case "$cmd" in
+		'push')
+			echo "[$git] git $cmd"
+			git push origin master
+			;;
+		'log')
+			echo "[$git] git $cmd"
+			git log --pretty=oneline -5
+			;;
+
+		'pull')
+			echo "[$git] git $cmd = $opt"
+			git pull origin pull/$opt/head
+			git push origin master
+			;;
+		'tag')
+			echo "[$git] git $cmd = $opt"
+			git tag "$opt"
+			git push origin --tags
+			;;
+		'rmtag')
+			echo "[$git] git $cmd = $opt"
+			git push --delete origin "$opt"
+			git tag -d "$@"
+			;;
+		'force')
+			[[ "$opt" == 'i_really_want_to_do_this' ]] || exit
+			echo "[$git] git $cmd = $opt"
+			git push --force origin master
+			;;
+
+		'fetch')
+			if [ "$ups" ]; then
+				echo "[$ups] git $cmd"
+				git fetch upstream
+				git checkout master
+				git merge upstream/master
+			fi
+			;;
+		*)  echo "[ERROR] unknown $cmd = $opt";;
+	esac
+fi
