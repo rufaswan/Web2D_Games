@@ -1053,7 +1053,7 @@ SLPS 011.60 JP disc 1 [3771]
 		.40 Character Accessory shop description
 		.41 Item shop description
 		.42 Gear Weapons
-		.43 Character Level
+		.43 Character stat growth and learning level
 		.44 Gear Armor names
 		.45 Gear Frame names
 		.46 Gear Engine names
@@ -1079,7 +1079,7 @@ SLPS 011.60 JP disc 1 [3771]
 	2605  [SJIS] Save Data Message
 	2606  [OVER] Start to Battle
 	2607  [PAK-LZ]
-		.0 Character Level
+		.0 Character stat growth and learning level
 	2608
 	2609  [PAK]
 	2610  seds
