@@ -156,35 +156,38 @@ else
 			continue
 		fi
 
+		[[ "${t1:0:1}" == '-' ]] && t1="${t1:1}"
+
 		# parse options
 		case "$t1" in
-			'-k' | '-kill')   wineserver -k;;
-			'-h' | '-help')   wine --help;;
-			'-V' | '-ver' )   wine --version;;
+			'k' | 'kill')   wineserver -k;;
+			'h' | 'help')   wine --help;;
+			'V' | 'ver' )   wine --version;;
 
-			'-sjis' )  w32_langloc  'SHIFT_JIS';;
-			'-ms932')  w32_langloc  'WINDOWS-31J';;
-			'-dbg'  )  winedbg='winedbg';;
-			'-desk' )  desk='';;
+			'sjis' )  w32_langloc  SHIFT_JIS;;
+			'ms932')  w32_langloc  WINDOWS-31J;;
+			'euc'  )  w32_langloc  EUC-JP;;
+			'dbg'  )  winedbg='winedbg';;
+			'desk' )  desk='';;
 
-			'-reg' | 'regedit')  regedit;;
-			'-txt' | 'notepad')  notepad;;
-			'-cfg'   )  winecfg;;
-			'-file'  )  winefile;;
-			'-server')  wineserver;;
-			'-boot'  )  wineboot -h;;
-			'-msi'   )  msiexec /h;;
-			'-uninst')  uninstaller;;
-			'-ctrl'  )  control;;
+			'reg' | 'regedit')  regedit;;
+			'txt' | 'notepad')  notepad;;
+			'cfg'   )  winecfg;;
+			'file'  )  winefile;;
+			'server')  wineserver;;
+			'boot'  )  wineboot -h;;
+			'msi'   )  msiexec /h;;
+			'uninst')  uninstaller;;
+			'ctrl'  )  control;;
 
-			'-path')
+			'path')
 				case "$1" in
 					*'/'*)   winepath --windows "$1";; #  dos2unix
 					*'\\'*)  winepath --unix    "$1";; # unix2dos
 				esac
 				shift;;
 
-			'-mouselock')   w32_mouselock;;
+			'mouselock')   w32_mouselock;;
 
 			*)  shift $#;;
 		esac

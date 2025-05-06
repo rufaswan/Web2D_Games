@@ -46,9 +46,9 @@ When exploring the data with a hex editor, this is how they are represented as A
 The nonsense ASM code jargons in different architecture:
 
 * Able to distinguish `doubleword` (int) and `double` (float).
-* On DOS,  `byte` is int8, `word`     is in16, and `doubleword` is int32.
-* On MIPS, `byte` is int8, `halfword` is in16, and `word`       is int32.
-* On SH-2, `byte` is int8, `word`     is in16, and `longword`   is int32.
+* On DOS,  `byte` is int8, `word`     is int16, and `doubleword` is int32.
+* On MIPS, `byte` is int8, `halfword` is int16, and `word`       is int32.
+* On SH-2, `byte` is int8, `word`     is int16, and `longword`   is int32.
 * On MIPS, `lb`   is `load signed byte`   and `lbu`   is `load unsigned byte`.
 * On ARM,  `ldrb` is `load unsigned byte` and `ldrsb` is `load signed byte`.
 * etc...

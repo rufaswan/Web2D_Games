@@ -126,66 +126,66 @@ SLPS 011.60 JP disc 1 [3771]
 	133  Music [146] [73 pairs]
 		# ID+0 is the  wds/sample data
 		# ID+1 is the smds/midi data
-		135-141/bgm 0-3  My Village is Number One!
-		143/bgm  4  The Gentle Breeze Sings
-		145/bgm  5  My Village is Number One!
-		147/bgm  6  The Blackmoon Forest
-		149/bgm  7  Valley Where the Wind is Born
-		151/bgm  8  Faraway Promise
-		153/bgm  9  Night
-		155/bgm 10  Our Wounded Bodies Shall Advance Towards the Light
-		157/bgm 11  Steel Giant
-		159/bgm 12  Dozing Off (Short)
-		161/bgm 13  Dozing Off (Long)
-		163/bgm 14  In a Dark Slumber...
-		165/bgm 15  The Sky, the Clouds and You
-		167/bgm 16  Nature
-		169/bgm 17  Sewer
-		171/bgm 18  Sewer 2
-		173/bgm 19  Premonition
-		175/bgm 20  Crimson Knight
-		177/bgm 21  Wind
-		179/bgm 22  After the Soldiers' Dreams
-		181/bgm 23  Strong Wind
-		183/bgm 24  Goliath Factory
-		185/bgm 25  October Mermaid
-		187/bgm 26  Zeboim
-		189/bgm 27  Ambient noise 1
-		191/bgm 28  Ambient noise 2
-		193/bgm 29  Stage of Death
-		195/bgm 30  Where the Egg of Dreams Hatches
-		197-203/bgm 31-34  Dummy tracks
-		205/bgm 35  Tears of the Stars, Thoughts of the People
-		207/bgm 36  Reaper ship
-		209/bgm 37  Underwater
-		211/bgm 38  Aveh, The Ancient Dance
-		213/bgm 39  lost... Broken Shards
-		215/bgm 40  Aspiration
-		217/bgm 41  Bonds of Sea and Flame
-		219/bgm 42  Dazil, Town of Burning Sands
-		221/bgm 43  Gathering of Stars in the Night Sky
-		223/bgm 44  Flight
-		225/bgm 45  Thames, Spirit of the Men of the Sea
-		227/bgm 46  Unstealable Jewel
-		229/bgm 47  A Prayer for the Joy Man Desires
-		231-245/bgm 48-55  Dummy tracks
-		247/bgm 56  Premonition (Omen)
-		249/bgm 57  In a Prison of Peace and Regret
-		251/bgm 58  Fuse
-		253/bgm 59  After the Soldiers' Dreams (no intro)
-		255/bgm 60  Invasion
-		257/bgm 61  Jaws of Ice
-		259/bgm 62  The One Who is Torn Apart
-		261/bgm 63  The Blue Traveller
-		263/bgm 64  Wings
-		265/bgm 65  One Who Bares Fangs at God
-		267/bgm 66  Grahf, Ruler of Darkness
-		269/bgm 67  The Blackmoon Forest (no ambience)
-		271/bgm 68  Awakening
-		273/bgm 69  The Wind Calls to Shevat in the Blue Sky
-		275/bgm 70  After the Soldiers' Dreams
-		277/bgm 71  Invasion
-		279/bgm 72  Solaris, Celestial Paradise
+		134-141/bgm 0-3  My Village is Number One!
+		142/bgm  4  The Gentle Breeze Sings
+		144/bgm  5  My Village is Number One!
+		146/bgm  6  The Blackmoon Forest
+		148/bgm  7  Valley Where the Wind is Born
+		150/bgm  8  Faraway Promise
+		152/bgm  9  Night
+		154/bgm 10  Our Wounded Bodies Shall Advance Towards the Light
+		156/bgm 11  Steel Giant
+		158/bgm 12  Dozing Off (Short)
+		160/bgm 13  Dozing Off (Long)
+		162/bgm 14  In a Dark Slumber...
+		164/bgm 15  The Sky, the Clouds and You
+		166/bgm 16  Nature
+		168/bgm 17  Sewer
+		170/bgm 18  Sewer 2
+		172/bgm 19  Premonition
+		174/bgm 20  Crimson Knight
+		176/bgm 21  Wind
+		178/bgm 22  After the Soldiers' Dreams
+		180/bgm 23  Strong Wind
+		182/bgm 24  Goliath Factory
+		184/bgm 25  October Mermaid
+		186/bgm 26  Zeboim
+		188/bgm 27  Ambient noise 1
+		190/bgm 28  Ambient noise 2
+		192/bgm 29  Stage of Death
+		194/bgm 30  Where the Egg of Dreams Hatches
+		196-203/bgm 31-34  Dummy tracks
+		204/bgm 35  Tears of the Stars, Thoughts of the People
+		206/bgm 36  Reaper ship
+		208/bgm 37  Underwater
+		210/bgm 38  Aveh, The Ancient Dance
+		212/bgm 39  lost... Broken Shards
+		214/bgm 40  Aspiration
+		216/bgm 41  Bonds of Sea and Flame
+		218/bgm 42  Dazil, Town of Burning Sands
+		220/bgm 43  Gathering of Stars in the Night Sky
+		222/bgm 44  Flight
+		224/bgm 45  Thames, Spirit of the Men of the Sea
+		226/bgm 46  Unstealable Jewel
+		228/bgm 47  A Prayer for the Joy Man Desires
+		230-245/bgm 48-55  Dummy tracks
+		246/bgm 56  Premonition (Omen)
+		248/bgm 57  In a Prison of Peace and Regret
+		250/bgm 58  Fuse
+		252/bgm 59  After the Soldiers' Dreams (no intro)
+		254/bgm 60  Invasion
+		256/bgm 61  Jaws of Ice
+		258/bgm 62  The One Who is Torn Apart
+		260/bgm 63  The Blue Traveller
+		262/bgm 64  Wings
+		264/bgm 65  One Who Bares Fangs at God
+		266/bgm 66  Grahf, Ruler of Darkness
+		268/bgm 67  The Blackmoon Forest (no ambience)
+		270/bgm 68  Awakening
+		272/bgm 69  The Wind Calls to Shevat in the Blue Sky
+		274/bgm 70  After the Soldiers' Dreams
+		276/bgm 71  Invasion
+		278/bgm 72  Solaris, Celestial Paradise
 	390  [11]
 		391-401  seds
 	423  [2]
@@ -1825,7 +1825,7 @@ PAPX 900.22 JP demo - Yoi Ko to Yoi Otona no. PlayStation Taikenban Vol. 1 [2457
 		813/map 22  [DRM] Blackmoon Forest
 		815/map 23  [DRM] Blackmoon Forest
 		817-859  *dummy 24*
-		861/map 46  [DRM] Desert 
+		861/map 46  [DRM] Desert
 		863-903  *dummy 24*
 		905/map 68  Nisan - Monastery - Hall
 		907-921  *dummy 24*

@@ -9,7 +9,6 @@
 !.gitignore
 !*/
 
-!*.git
 !*.md
 !*.adoc
 
