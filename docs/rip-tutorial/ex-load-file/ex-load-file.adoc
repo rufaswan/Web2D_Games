@@ -46,7 +46,7 @@ With that, we can use Ghidra <<ghidra>> to decompile the function.
 
 NOTE: You can skip this step with Ghidra if you can understand the ASM code directly. This is a very simple function to begin with.
 
-Since READ breakpoint will always break at `strcmp()` on every file entries, with a list of 3000 entries, it is no longer usefule for us.
+Since READ breakpoint will always break at `strcmp()` on every file entries, with a list of 3000 entries, it is no longer useful for us.
 
 This is where we'll disable the READ breakpoint. and use EXECUTE breakpoint instead.
 

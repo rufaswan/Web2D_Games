@@ -14,78 +14,69 @@ ups=$(load_repo  upstream  repo.fork)
 echo "git=$git  ups=$ups"
 
 cmd="$1"
-opt="$2"
-shift 2
+shift
+opt="$@"
 
 [ "$cmd" ] || exit
 [ "$opt" ] || exit
 echo "cmd=$cmd  opt=$opt"
+echo "=========="
 
 #git diff HEAD
 #git ls-files --modified
 mod=$(git status --short)
-if [ "$mod" ]; then
-	echo "[$git] push/commit"
-	echo $mod
+echo $mod
 
-	{
-		git add .
-		git ls-files --deleted -z | xargs -0 git rm -q
-		git reflog expire --expire=now --all
-		git gc --prune=now
-	} &> /dev/null
-
-	case "$cmd" in
-		'push')
-			echo "[$git] git $cmd = $opt"
+case "$cmd" in
+	'push')
+		if [ "$mod" ]; then
+			echo "[$git] git commit = $opt"
+			{
+				git add .
+				git ls-files --deleted -z | xargs -0 git rm -q
+				git reflog expire --expire=now --all
+				git gc --prune=now
+			} &> /dev/null
 			git commit -m "$opt"
-			git push origin master
-			;;
-		*)  echo "[ERROR] unknown $cmd = $opt";;
-	esac
-else
-	echo "[$git] pull/fetch fork"
+		fi
 
-	# get file from pull request
-	case "$cmd" in
-		'push')
-			echo "[$git] git $cmd"
-			git push origin master
-			;;
-		'log')
-			echo "[$git] git $cmd"
-			git log --pretty=oneline -5
-			;;
+		echo "[$git] git push"
+		git push origin master
+		;;
+	'log')
+		echo "[$git] git $cmd"
+		git log --pretty=oneline -5
+		;;
 
-		'pull')
-			echo "[$git] git $cmd = $opt"
-			git pull origin pull/$opt/head
-			git push origin master
-			;;
-		'tag')
-			echo "[$git] git $cmd = $opt"
-			git tag "$opt"
-			git push origin --tags
-			;;
-		'rmtag')
-			echo "[$git] git $cmd = $opt"
-			git push --delete origin "$opt"
-			git tag -d "$@"
-			;;
-		'force')
-			[[ "$opt" == 'i_really_want_to_do_this' ]] || exit
-			echo "[$git] git $cmd = $opt"
-			git push --force origin master
-			;;
+	'pull')
+		echo "[$git] git $cmd = $opt"
+		git pull origin pull/$opt/head
+		git push origin master
+		;;
+	'tag')
+		echo "[$git] git $cmd = $opt"
+		git tag "$opt"
+		git push origin --tags
+		;;
+	'rmtag')
+		echo "[$git] git $cmd = $opt"
+		git push --delete origin "$opt"
+		git tag -d "$opt"
+		;;
+	'force')
+		[[ "$opt" == 'i_really_want_to_do_this' ]] || exit
+		echo "[$git] git $cmd = $opt"
+		git push --force origin master
+		;;
 
-		'fetch')
-			if [ "$ups" ]; then
-				echo "[$ups] git $cmd"
-				git fetch upstream
-				git checkout master
-				git merge upstream/master
-			fi
-			;;
-		*)  echo "[ERROR] unknown $cmd = $opt";;
-	esac
-fi
+	'fetch')
+		if [ "$ups" ]; then
+			echo "[$ups] git $cmd"
+			git fetch upstream
+			git checkout master
+			git merge upstream/master
+		fi
+		;;
+	*)  echo "[ERROR] unknown $cmd = $opt";;
+esac
+echo "=========="

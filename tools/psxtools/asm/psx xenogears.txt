@@ -841,26 +841,23 @@ pointer
 
 memcopy a0/dst=800cc858 , a1/src=800e841a , a2/size=170
 	8003f88c  lbu  v0, 0(a1)  // -> a0=800cc858
-[800cc858..800cc9c7]?
+[800cc858..800cc8fb]?
+[800cc8fc..800cc99f]?
+[800cc9a0..800cc9c7]?
 
 monster data/170
-	00
+	00  // char[00]
 	02
-	04
+	04  // char[04]
+		800951b4  lbu  v0, 4(v0)
+	05
 	06
 	08
-	0a  // char[0a]
-		800934f4  lhu  v0, a(v0)
-			v0 &= 400
-		80093524  lhu  v0, a(v0)
-			v0 &= 100
-		8009579c  lhu  v0, a(v0)
-			v0 &= 100
+	0a
 	0c
 	0e
 	10
-	12  // char[12]
-		8009512c  lbu  v0, 12(v0)
+	12
 	13
 	14
 	16
@@ -884,6 +881,8 @@ monster data/170
 			v0 &=   80
 		80092b18  lhu  v0, 32(v0)
 			v0 &=   20
+		800948b8  lhu  v0, 32(v0)
+			v0 &=   10
 		800948f8  lhu  v0, 32(v0)
 			v0 &=   10
 		80095974  lhu  v0, 32(v0)
@@ -892,29 +891,19 @@ monster data/170
 			v0 &=    2
 		80095a34  lhu  v0, 32(v0)
 			v0 &=    1
-		8009a8f4  lhu  v0, 32(v1)
-			v0 &=   80
-		8009a9c8  lhu  v0, 32(v0)
-			v0 &=   20
 	34  -3bc4  // char[34]
 		80093090  lhu  v0, 34(v0)
 			v0 &= 8000
 	36  -3bc2  // char[36]
 		80092c8c  lhu  v0, 36(v0)
 			v0 &= 8000
-		8009a174  lhu  v0, 36(a3)
-			v0 &=    1
 	38  // char[38]
 		8009461c  lbu  v1, 38(v1)
 			t2 = v1 & 3f
 	39
 	3a
-	3c  // char[3c]
-		80095154  lbu  v1, 3c(a0)
-	3d
+	3c
 	3e
-	3f  // char[3f]
-		80095158  lbu  v0, 3f(a0)
 	40
 	42
 	44
@@ -929,15 +918,17 @@ monster data/170
 		80098260  lhu  v1, 4e(a1)
 	50
 	52  // char[52]
-		80098eec  lhu  v0, 52(a0)
 	54
 	56  // char[56]
-		80092a58  lbu  v0, 56(v1)
+		800924b4  lbu  v1, 56(a0)
+		8009278c  lbu  v1, 56(v0)
 		80092bf8  lbu  v1, 56(a0)
+		80094c5c  lbu  v1, 56(a0)
 		8009a36c  lbu  v1, 56(v0)
-		8009b5a8  lbu  v1, 56(a0)
+		8009a548  lbu  v1, 56(v0)
 	57
-	58
+	58  // char[58]
+		800951dc  lbu  a3, 58(v0)
 	59  // char[59]
 		80095784  lbu  a2, 59(v0)
 	5a  // char[5a]
@@ -949,27 +940,24 @@ monster data/170
 		800957a0  lbu  a1, 5c(a0)
 			a1 = ((a1 << 1) + a1) >> 1  // a1 * 1.5
 	5d
-	5e
-		8009b560  lbu  a2, 5e(a0)
+	5e  // char[5e]
+		80094c00  lbu  t0, 5e(v1)
 	5f  // char[5f]
 		80094c04  lbu  t1, 5f(a0)
-		8009b544  lbu  a1, 5f(a0)
-	60  // char[60]
-		8009a150  lw   v1, 60(a1)
-	64  // char[64]
-		8009a15c  lw   v0, 64(a1)
+	60
+	62
+	64
+	66
 	68
 	6a
 	6c
 	6e
-	70  // char[70]
-		8009576c  lhu  t0, 70(v0)
+	70
 	72
 	74
 	76
 	78
-	7a  // char[7a]
-		80092be8  sh   v0, 7a(v1) // <- a1(800c31d0)
+	7a
 	7c  -3b7c  // char[7c]
 		80092bc0  lhu  a0, 7c(v1)
 			v0 &=    2
@@ -978,36 +966,12 @@ monster data/170
 			v0 &= 2000  // v0 = 1
 		80094e10  lhu  v0, 7c(v1)
 			v0 &=  400
-		80097dc4  lhu  v0, 7c(a0)
+		80095384  lhu  v0, 7c(a2)
 			v0 &=  200
-		80097df8  lhu  v0, 7c(a0)
-			v0 &= fdff  // ~200 , -> 7c(a0)
-		80097e08  lhu  v0, 7c(a0)
-			v0 &=  100
-		80097e3c  lhu  v0, 7c(a0)
-			v0 &= feff  // ~100 , -> 7c(a0)
-		80097e4c  lhu  v0, 7c(a0)
-			v0 &=   80
-		80097e80  lhu  v0, 7c(a0)
-			v0 &= ff7f  // ~80 , -> 7c(a0)
-		80097e90  lhu  v0, 7c(a0)
-			v0 &=   20
-		80097ec4  lhu  v0, 7c(a0)
-			v0 &= ffdf  // ~20 , -> 7c(a0)
-		80097ed4  lhu  v0, 7c(a0)
-			v0 &= efff  // ~1000 , -> 7c(a0)
-		80097ee4  lhu  v0, 7c(a0)
-			v0 &=   10
-		80097f18  lhu  v0, 7c(a0)
-			v0 &= ffef  // ~10 , -> 7c(a0)
-		80097f28  lhu  v0, 7c(a0)
-			v0 &= f000
-		80097f5c  lhu  v0, 7c(a0)
-			v0 &=  fff  // -> 7c(a0)
-		80097f6c  lhu  v0, 7c(a0)
-			v0 &=  f00
-		80097fa0  lhu  v0, 7c(a0)
-			v0 &= f0ff  // -> 7c(a0)
+		800979c8  lhu  v0, 7c(a1)
+			v0 &= 1000
+		800979fc  lhu  v0, 7c(a1)
+			v0 &= efff // ~1000 , -> 7c(a1)
 		800981d4  lhu  v1, 7c(a1)
 			v0 = v1 & 4000  // v0 = 8
 			v0 = v1 & 8000  // v0 = 1
@@ -1021,21 +985,10 @@ monster data/170
 		80098e8c  lhu  v1, 7c(a0)
 			v0 = v1 & 8000
 			v0 = v1 &  800
-		8009a14c  lhu  v0, 7c(a1)
-			v0 &=  400
-		8009b508  lhu  v0, 7c(a0)
-			v0 &= 2000  // v0 = 1
-		8009b658  lhu  v0, 7c(a0)
-			v0 &=   10
-		8009b70c  lhu  v1, 7c(a0)
-			v0 = v1 &   10
-			v0 = v1 &  c00
-		8009b748  lhu  v0, 7c(a0)
-			v0 &= 2000
-		8009ba4c  lhu  v0, 7c(v1)
-			v0 &=  100
 	7e
 	80  -3b78  // char[80]
+		80092518  lhu  v0, 80(v0)
+			v0 &=   20
 		800928fc  lhu  v1, 80(v0)
 			a0  = v1 & efff  // ~1000 , -> 80(v0)
 			v1 &= 2000
@@ -1049,21 +1002,14 @@ monster data/170
 			v0 &= ff7f  // ~80 , -> 80(a1)
 		80094dd8  lhu  v0, 80(a0)
 			v0 &= 1000  // v0 = 1
-		80095164  lhu  v0, 80(a0)
 		800952c0  lhu  v0, 80(a2)
 			v0 &=  400
-		80097fb0  lhu  v0, 80(a0)
+		80097a0c  lhu  v0, 80(a1)
 			v0 &= 1000
-		80097fe4  lhu  v0, 80(a0)
-			v0 &= efff  // ~1000 , -> 80(a0)
-		80097ff4  lhu  v0, 80(a0)
-			v0 &=   40
-		80098028  lhu  v0, 80(a0)
-			v0 &= ffbf  // ~40 , -> 80(a0)
-		80098038  lhu  v0, 80(a0)
-			v0 &=   20
-		8009806c  lhu  v0, 80(a0)
-			v0 &= ffdf  // ~20 , -> 80(a0)
+		80097a40  lhu  v0, 80(a1)
+			v0 &= efff // ~1000 , -> 80(a1)
+		80097a50  lhu  v0, 80(a1)
+			v0 &=  800
 		80098200  lhu  a0, 80(a1)
 			v0 = a0 & 1000  // v0 = 3
 			v0 = a0 & 2000  // v0 = 4
@@ -1072,91 +1018,73 @@ monster data/170
 			v0 = v1 & 2000
 		80098ed4  lhu  v0, 80(a0)
 			v0 &=  200
-		8009a7e4  lhu  v0, 80(a0)
-			v0 &= 2000
-		8009ac58  lhu  v1, 80(v1)
-			v1 &=  200
-		8009addc  lhu  v0, 80(a0)
-		8009ae18  lhu  v0, 80(a0)
-		8009ae54  lhu  v0, 80(a0)
-		8009ae90  lhu  v0, 80(a0)
-		8009b074  lhu  v0, 80(a1)
-			v0 &=   40
-		8009b090  lhu  a0, 80(a1)
-			v0 &= ffbf  // ~40 , -> 80(a1)
-		8009b51c  lhu  v0, 80(a0)
-			v0 &= 1000  // v0 = 1
-		8009b628  lhu  v0, 80(a0)
-		8009b6dc  lhu  v0, 80(a0)
-		8009b75c  lhu  v0, 80(a0)
-			v0 &= 1000  // v0 = 1
-		8009ba90  lhu  v1, 80(v0)
-	82  // char[82]
-		80095168  lhu  v1, 82(a0)
-			(v0 | v1) & 1000
-		80095b84  lhu  v0, 82(v0)
-		8009ade0  lhu  v1, 82(a0)
-			(v1 | v0) &    4
-		8009ae1c  lhu  v1, 82(a0)
-			(v1 | v0) &    1
-		8009ae58  lhu  v1, 82(a0)
-			(v1 | v0) &    8
-		8009ae94  lhu  v1, 82(a0)
-			(v1 | v0) &    2
-		8009b628  lhu  v1, 82(a0)
-			(v1 | v0) &  800
-		8009b6e0  lhu  v1, 82(a0)
-			(v1 | v0) &  400
-		8009ba94  lhu  v0, 82(v0)
-			(v1 | v0) &   40
+		8009b0b4  lhu  v0, 80(a1)
+			v0 &=   80
+		8009b0d0  lhu  a0, 80(a1)
+			v0 &= ff7f  // ~80 , -> 80(a1)
+	82
 	84  -3b74  // char[84]
-		80094654  lhu  v1, 84(v0)
-		8009473c  lhu  v0, 84(v1)
 		80094da8  lhu  v0, 84(a0)
 		80094e28  lhu  v0, 84(v1)
 		80094f6c  lhu  v1, 84(v0)
+		80095364  lhu  v1, 84(a2)
 		80095818  lhu  v0, 84(a0)
+		80097aa4  lw   v1, 84(a1)
+			v1 &= 80008000
+		80097af0  lw   v1, 84(a1)
+			v1 &= 40004000
+		80097b3c  lw   v1, 84(a1)
+			v1 &= 20002000
+		80097b88  lw   v1, 84(a1)
+			v1 &= 10001000
+		80097bd4  lw   v1, 84(a1)
+			v1 &= 08000800
 		80098244  lhu  v0, 84(a1)
-		8009aab0  lhu  a0, 84(a0)
-		8009ac78  lhu  v0, 84(a0)
-			v0 &= ffdf  // ~20 , -> 84(a0)
-		8009b4ec  lhu  v0, 84(a0)
-		8009b770  lhu  v0, 84(a0)
-		8009b848  lhu  a0, 84(v1)
 	86  -3b72  // char[86]
 		80092d20  lhu  v0, 86(v0)
 			v0 &=   80
-		80094658  lhu  v0, 86(v0)
-			(v1 | v0) >> c  // & f000
-		80094740  lhu  v1, 86(v1)
-			(v1 | v0) &  f00
 		80094dac  lhu  v1, 86(a0)
 			(v0 | v1) &  100  // v0 = 3
 		80094e2c  lhu  v1, 86(v1)
 			(v0 | v1) & 1000
 		80094f70  lhu  v0, 86(v0)
 			(v0 | v1) &   40
+		80095368  lhu  v0, 86(a2)
+			(v1 | v0) & 2000
 		8009581c  lhu  v1, 86(a0)
 			(v0 | v1) &  100
 		80098248  lhu  v1, 86(a1)
 			(v0 | v1) & 8000  // v0 = 7
-		8009b4f0  lhu  v1, 86(a0)
-			(v0 | v1) &  100
-		8009b774  lhu  v1, 86(a0)
-			(v0 | v1) &  800
-		8009b84c  lhu  v1, 86(v1)
-			(a0 | v1) &   20
 	88  // char[88]
-		80092d7c  lhu  v0, 88(v0)
-			v0 &=  200
+		800930e8  lhu  v1, 88(a1)
+		80093128  lhu  v0, 88(a1)
+		80093164  lhu  v0, 88(a1)
+		800931a0  lhu  v0, 88(a1)
 		800931e8  lhu  v0, 88(a0)
 		80093220  lhu  v0, 88(a0)
 		8009325c  lhu  v0, 88(a0)
 		80093298  lhu  v0, 88(a0)
 		800952a0  lhu  v0, 88(a2)
 		800952fc  lhu  v1, 88(v0)
-		800957b0  lhu  v0, 88(a0)
+		80097c20  lw   v1, 88(a1)
+			v1 &= 80008000
+		80097c6c  lw   v1, 88(a1)
+			v1 &= 40004000
+		80097cb8  lw   v1, 88(a1)
+			v1 &= 10001000
+		80098c50  lhu  v0, 88(v1)
+			v0 &=  400
 	8a  // char[8a]
+		80092d7c  lhu  v0, 8a(v0)
+			v0 &=  200
+		800930ec  lhu  a0, 8a(a1)
+			(v1 | a0) &    8
+		8009312c  lhu  v1, 8a(a1)
+			(v0 | v1) &    2
+		80093168  lhu  v1, 8a(a1)
+			(v0 | v1) &    4
+		800931a4  lhu  v1, 8a(a1)
+			(v0 | v1) &    1
 		800931ec  lhu  v1, 8a(a0)
 			(v0 | v1) &    4
 		80093224  lhu  v1, 8a(a0)
@@ -1169,14 +1097,16 @@ monster data/170
 			(v0 | v1) & 8000
 		80095300  lhu  v0, 8a(v0)
 			(v1 | v0) & 2000
-		800957b4  lhu  v1, 8a(a0)
-			(v0 | v1) & 4000
-		8009aa34  lhu  v0, 8a(v0)
-			v0 &=  200
+		8009aab4  lhu  a1, 8a(a1)
 	8c  // char[8c]
 		80094638  lhu  v1, 8c(v0)
 		80094708  lhu  v0, 8c(v1)
 		80095268  lhu  v0, 8c(a2)
+		80097d00  lhu  v0, 8c(a1)
+			v0 &= f000
+		80097d58  lhu  v0, 8c(a1)
+			v0 &=  f00
+		800980a0  lhu  a1, 8c(v1)
 		800982f0  lhu  v1, 8c(a1)
 	8e  // char[8e]
 		8009463c  lhu  v0, 8e(v0)
@@ -1185,6 +1115,8 @@ monster data/170
 			(v1 | v0) &  f00
 		8009526c  lhu  v1, 8e(a2)
 			(v0 | v1) &    1
+		800980a4  lhu  a2, 8e(v1)
+			5fbe(a0) |= (a1 | a2) >> c
 		800982f4  lhu  v0, 8e(a1)
 			(v0 | v1) &  f00
 			(v0 | v1) & f000
@@ -1193,20 +1125,16 @@ monster data/170
 	94
 	96
 	98
-	99  // char[99]
-		8009bbcc  lbu  a0, 99(v0)
+	99
 	9a
 	9c
-	9e  // char[9e]
-		8009ba50  lbu  v1, 9e(v1)
-	9f  // char[9f]
-		8009b584  lbu  v0, 9f(v0)
+	9e
 	a0  // char[a0]
 		8009a390  lbu  v1, a0(v0)
 	a1
 	a2
-
-	a4
+	------------------------------
+	a4  // gear[00]
 	a6
 	a8
 	aa
@@ -1215,7 +1143,8 @@ monster data/170
 	b0
 	b2
 	b4
-	b6
+	b6  // gear[12]
+		8009512c  lbu  v0, 12(v0)
 	b8
 	ba
 	bc
@@ -1238,8 +1167,11 @@ monster data/170
 	de  // gear[3a]
 		80098f5c  lhu  v0, de(a0)
 		80098f90  lhu  v0, de(a0)
-	e0
+	e0  // gear[3c]
+		80095154  lbu  v1, 3c(a0)
 	e2
+	e3  // gear[3f]
+		80095158  lbu  v0, 3f(a0)
 	e4
 	e6
 	e8
@@ -1256,33 +1188,130 @@ monster data/170
 	fe
 	100
 	102
-	104  -3af4  // gear[60]
-	108
-	10a
+	104  -3af4  // gear[60] - frame hp
+		8009a150  lw   v1, 60(a1)
+	108  // gear[64] - frame max hp
+		8009a15c  lw   v0, 64(a1)
 	10c
 	10e
 	110
 	112
-	114
-	116
+	114  // gear[70]
+		8009576c  lhu  t0, 70(v0)
+	116  // gear[72]
+		8009bb0c  lhu  a0, 72(v0)
 	118
 	11a
 	11c
 	11e
 	120  -3ad8  // gear[7c]
-		80098f0c  lhu  v0, 120(a0)
+		80097dc4  lhu  v0, 7c(a0)
 			v0 &=  200
-		80098f48  lhu  v0, 120(a0)
+		80097df8  lhu  v0, 7c(a0)
+			v0 &= fdff  // ~200 , -> 7c(a0)
+		80097e08  lhu  v0, 7c(a0)
+			v0 &=  100
+		80097e3c  lhu  v0, 7c(a0)
+			v0 &= feff  // ~100 , -> 7c(a0)
+		80097e4c  lhu  v0, 7c(a0)
 			v0 &=   80
+		80097e80  lhu  v0, 7c(a0)
+			v0 &= ff7f  // ~80 , -> 7c(a0)
+		80097e90  lhu  v0, 7c(a0)
+			v0 &=   20
+		80097ec4  lhu  v0, 7c(a0)
+			v0 &= ffdf  // ~20 , -> 7c(a0)
+		80097ed4  lhu  v0, 7c(a1)
+			v0 &= efff  // ~1000 , -> 7c(a1)
+		80097ee4  lhu  v0, 7c(a0)
+			v0 &=   10
+		80097f18  lhu  v0, 7c(a0)
+			v0 &= ffef  // ~10 , -> 7c(a0)
+		80097f28  lhu  v0, 7c(a0)
+			v0 &= f000
+		80097f5c  lhu  v0, 7c(a0)
+			v0 &=  fff  // -> 7c(a0)
+		80097f6c  lhu  v0, 7c(a0)
+			v0 &=  f00
+		80097fa0  lhu  v0, 7c(a0)
+			v0 &= f0ff  // -> 7c(a0)
+		80098f0c  lhu  v0, 120(a0) // +char act
+			v0 &=  200
+		80098f48  lhu  v0, 120(a0) // +char act
+			v0 &=   80
+		8009a14c  lhu  v0, 7c(a1)
+			v0 &=  400
+		8009b70c  lhu  v1, 7c(a0)
+			v0 = v1 &   10
+			v0 = v1 &  c00
+		8009ba4c  lhu  v0, 7c(v1)
+			v0 &=  100
 	122
 	124  // gear[80]
+		80095164  lhu  v0, 80(a0)
+		80097fb0  lhu  v0, 80(a0)
+			v0 &= 1000
+		80097fe4  lhu  v0, 80(a0)
+			v0 &= efff  // ~1000 , -> 80(a0)
+		80097ff4  lhu  v0, 80(a0)
+			v0 &=   40
+		80098028  lhu  v0, 80(a0)
+			v0 &= ffbf  // ~40 , -> 80(a0)
+		80098038  lhu  v0, 80(a0)
+			v0 &=   20
+		80098c44  lhu  v0, 124(v1)
+			v0 &= 2000
 		80098d70  lhu  v0, 124(v1)
 			v0 &= 2000
-		80098f7c  lhu  v0, 124(a0)
+		80098f7c  lhu  v0, 124(a0) // +char act
 			v0 &= 8000
-	126
-	128
-	12a
+		8009ac58  lhu  v1, 80(v1)
+			v1 &=  200
+		8009ace0  lhu  v0, 80(a0)
+		8009ad1c  lhu  v0, 80(a0)
+		8009ad58  lhu  v0, 80(a0)
+		8009ad94  lhu  v0, 80(a0)
+		8009addc  lhu  v0, 80(a0)
+		8009ae18  lhu  v0, 80(a0)
+		8009ae54  lhu  v0, 80(a0)
+		8009ae90  lhu  v0, 80(a0)
+		8009b6dc  lhu  v0, 80(a0)
+		8009ba90  lhu  v1, 80(v0)
+		8009bb98  lhu  v1, 80(v0)
+	126  // gear[82]
+		80095168  lhu  v1, 82(a0)
+			(v0 | v1) & 1000
+		8009ace4  lhu  v1, 82(a0)
+			(v0 | v1) &    8
+		8009ad20  lhu  v1, 82(a0)
+			(v0 | v1) &    2
+		8009ad5c  lhu  v1, 82(a0)
+			(v0 | v1) &    4
+		8009ad98  lhu  v1, 82(a0)
+			(v0 | v1) &    1
+		8009ade0  lhu  v1, 82(a0)
+			(v1 | v0) &    4
+		8009ae1c  lhu  v1, 82(a0)
+			(v1 | v0) &    1
+		8009ae58  lhu  v1, 82(a0)
+			(v1 | v0) &    8
+		8009ae94  lhu  v1, 82(a0)
+			(v1 | v0) &    2
+		8009b6e0  lhu  v1, 82(a0)
+			(v1 | v0) &  400
+		8009ba94  lhu  v0, 82(v0)
+			(v1 | v0) &   40
+		8009bb9c  lhu  v0, 82(v0)
+			(v1 | v0) &   20
+	128  // gear[84]
+		80094654  lhu  v1, 84(v0)
+		8009473c  lhu  v0, 84(v1)
+		8009aab0  lhu  a0, 84(a0)
+	12a  // gear[86]
+		80094658  lhu  v0, 86(v0)
+			(v1 | v0) >> c  // & f000
+		80094740  lhu  v1, 86(v1)
+			(v1 | v0) &  f00
 	12c
 	12e
 	130
@@ -1292,15 +1321,21 @@ monster data/170
 	138
 	13a
 	13c
+	13d  // gear[99]
+		8009bb08  lbu  a2, 99(v0)
+		8009bbcc  lbu  a0, 99(v0)
 	13e
 	140
-	142
+	142  // gear[9e]
+		8009ba50  lbu  v1, 9e(v1)
+	143  // gear[9f]
+		8009b584  lbu  v0, 9f(v0)
 	144
 	146
-
+	------------------------------
 	148  // ex[00]
 		8009a18c  lbu  v1, 0(a0) // a0=80cc9a0
-			return ( v1 == 4 ) ? 4 : 7c(a1)
+			return ( v1 == 4 ) ? 4 : 7c(a1) & 400
 	149
 	14a
 	14b
@@ -1321,6 +1356,8 @@ monster data/170
 	158
 	159
 	15a  -3a9e  // ex[12] - flags
+		8009238c  lbu  v0, 15a(v0)
+			v0 &=   80
 		800945d8  lbu  v0, 15a(v0)
 			t5 = v0 >> 7  // & 80
 		80094618  lbu  v0, 15a(a0)
@@ -1337,12 +1374,20 @@ monster data/170
 			v0 &=   80
 		80095908  lbu  v0, 15a(v1)
 			v0 &=   80
+		80098c30  lbu  v0, 15a(v1)
+			v0 &=   80
+		80098d5c  lbu  v0, 15a(v1)
+			v0 &=   80
+		8009aba0  lbu  v0, 15a(v1)
+			v0 &=   80
 		8009abfc  lbu  v0, 15a(v1)
 			v0 &=   80
 		8009b6bc  lbu  v0, 15a(v1)
 			v0 &=   80
 		8009b7cc  lbu  v0, 15a(v1)
 			v0 &=    1
+		8009bb74  lbu  v0, 15a(v1)
+			v0 &=   80
 	15b
 	15c  -3a9c  // ex[14]
 	15d
