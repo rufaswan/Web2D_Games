@@ -1,0 +1,49 @@
+=========================
+== Tokimeki Memorial 4 ==
+=========================
+
+player_basic  xxx_init  xxx_max  xxx_min  [float32]
+xxx
+	condition  - stats
+	humanities - stats
+	science    - stats
+	art        - stats
+	appearance - stats
+	sports     - stats
+	guts       - stats
+	rich       - stats
+	skill      - stats
+	drive      - stats , show as best-good-normal-bad-worst
+	student    - club , hidden
+	baseball   - club , hidden
+	soccer     - club , hidden
+	swimming   - club , hidden
+	kendo      - club , hidden
+	literature - club , hidden
+	chemistry  - club , hidden
+	broadcast  - club , hidden
+	wind_music - club , hidden
+	comic      - club , hidden
+	book       - part-time , hidden
+	debug      - part-time , hidden
+	cd         - part-time , hidden
+	convenient - part-time , hidden
+	tea        - part-time , hidden
+	construct  - part-time , hidden
+	battle_exp
+	moral      - stats , hidden
+	battery    - stats
+	debt
+	debt_yami
+player_gfactor  xxx_init  xxx_max  xxx_min  [float32]
+xxx
+	skill
+	drive
+	growing
+
+ event_flag_event_flag
+   sys_flag_sys_flag
+event_value_event_value
+  sys_value_sys_value
+
+440f4000   573.0  Konami

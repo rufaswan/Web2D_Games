@@ -17,19 +17,26 @@ bpp:
 [ $# = 0 ] && { echo "$usage"; exit; }
 
 color=255
+resize=''
 while [ "$1" ]; do
-	t1=./"${1%/}"
+	t1="${1%/}"
 	#tit="${t1%.*}"
 	#ext="${t1##*.}"
 	shift
 
-	mime=$(file  --brief  --mime-type  "$t1" | grep 'image/')
-	if [ "$mime" ]; then
-		echo "[$#] ${t1:2}"
+	if [ -f "$t1" ]; then
+		grep=$(echo "$t1" | grep \^[0-9a-zA-Z])
+		[ "$grep" ] || t1=./"$t1"
+
+		mime=$(file  --brief  --mime-type  "$t1" | grep 'image/')
+		[ "$mime" ] || continue
+
+		echo "[$#] $t1"
 		nice -n 19  convert  \
 			-quiet           \
 			"$t1"            \
 			+dither          \
+			$resize          \
 			-colors $color   \
 			-interlace none  \
 			-strip           \
@@ -38,17 +45,22 @@ while [ "$1" ]; do
 			-define png:compression-level=9     \
 			"$t1".png
 	else
-		# bKGD (background color chunk) = +1 color
-		case "${t1:2}" in
-			'1')  color=1;;
-			'2')  color=3;;
-			'3')  color=7;;
-			'4')  color=15;;
-			'5')  color=31;;
-			'6')  color=63;;
-			'7')  color=127;;
-			*)    color=255;;
-		esac
+		grep=$(echo "$t1" | grep [0-9]x[0-9])
+		if [ "$grep" ]; then
+			resize="-resize $grep"
+		else
+			# bKGD (background color chunk) = +1 color
+			case "$t1" in
+				'1')  color=1;;
+				'2')  color=3;;
+				'3')  color=7;;
+				'4')  color=15;;
+				'5')  color=31;;
+				'6')  color=63;;
+				'7')  color=127;;
+				*)    color=255;;
+			esac
+		fi
 	fi
 done
 

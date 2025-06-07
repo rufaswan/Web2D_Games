@@ -31,6 +31,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-guest.inc';
 require 'common-64bit.inc';
+require 'class-iee754.inc';
 
 define('NO_TRACE', true);
 
@@ -125,7 +126,7 @@ function cpklist( &$meta )
 							break;
 						case 8:
 							$v = substrrev($meta, $pos, 4);
-							$v = float32($v);
+							$v = iee754_decode::float32($v);
 							$list[$r][$cnam] = $v;
 							break;
 						case 9:

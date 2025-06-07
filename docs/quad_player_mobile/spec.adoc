@@ -610,7 +610,6 @@ logic_op::
 	* If omitted or invalid, then it is default to `0` (use normal blending).
 
 
-
 [#link_object]
 === Link Object
 

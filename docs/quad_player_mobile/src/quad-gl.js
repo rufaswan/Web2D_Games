@@ -59,6 +59,9 @@ function QuadGL(Q){
 
 		//////////////////////////////
 
+		// lowp    = min  8 bit
+		// mediump = min 10 bit
+		// highp   = min 16 bit
 		vert_src = `
 			attribute  highp  vec4   a_fog;
 			attribute  highp  vec3   a_xyz;

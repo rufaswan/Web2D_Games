@@ -9,8 +9,8 @@ function fmbp_s7_matrix( &$s7_row )
 	$float = array();
 	for ( $i=0; $i < 0x30; $i += 4 )
 	{
-		$b = str2int($s7_row, $i, 4);
-		$float[$i] = float32($b);
+		$b = substr($s7_row, $i, 4);
+		$float[$i] = iee754_decode::float32($b);
 	}
 
 	// r g b a  mx my mz  rx ry rz  sx sy
@@ -56,8 +56,8 @@ function fmbp_s6_s4rect( &$ram, $sx_off, $s6_row )
 	$float = array();
 	for ( $i=0; $i < 0x10; $i += 4 )
 	{
-		$b = str2int($s6_row, $i, 4);
-		$float[$i] = float32($b);
+		$b = substr($s6_row, $i, 4);
+		$float[$i] = iee754_decode::float32($b);
 	}
 	printf("    s6  x1,y1 <-> x2,y2\n");
 	printf("      %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[0], $float[4], $float[8], $float[12]);
@@ -106,8 +106,8 @@ function sect_ctrl( &$ram, $ctrl_off, &$sx_off )
 	$float = array();
 	for ( $i=0; $i < 0x70; $i += 4 )
 	{
-		$b = str2int($ram, $ctrl_off + $i, 4);
-		$float[$i] = float32($b);
+		$b = substr($ram, $ctrl_off + $i, 4);
+		$float[$i] = iee754_decode::float32($b);
 	}
 
 	printf("  CTRL matrix 4x4\n");
@@ -131,8 +131,8 @@ function sect_ctrl( &$ram, $ctrl_off, &$sx_off )
 	$float = array();
 	for ( $i=0; $i < 0x10; $i += 4 )
 	{
-		$b = str2int($s9_row, $i, 4);
-		$float[$i] = float32($b);
+		$b = substr($s9_row, $i, 4);
+		$float[$i] = iee754_decode::float32($b);
 	}
 
 	printf("    s9  name = %s\n", substr0($s9_row, 0x10));
@@ -144,8 +144,8 @@ function sect_ctrl( &$ram, $ctrl_off, &$sx_off )
 	$float = array();
 	for ( $i=0; $i < 0x10; $i += 4 )
 	{
-		$b = str2int($ram, $ctrl_off + 0xc0 + $i, 4);
-		$float[$i] = float32($b);
+		$b = substr($ram, $ctrl_off + 0xc0 + $i, 4);
+		$float[$i] = iee754_decode::float32($b);
 	}
 	printf("  CTRL  x1,y1 <-> x2,y2\n");
 	printf("    %10.2f,%10.2f <-> %10.2f,%10.2f\n", $float[0], $float[4], $float[8], $float[12]);
@@ -158,8 +158,8 @@ function sect_work( &$ram, $work_off, &$sx_off )
 	$float = array();
 	for ( $i=0; $i < 0x60; $i += 4 )
 	{
-		$b = str2int($ram, $work_off + $i, 4);
-		$float[$i] = float32($b);
+		$b = substr($ram, $work_off + $i, 4);
+		$float[$i] = iee754_decode::float32($b);
 	}
 
 	printf("  WORK matrix 4x4\n");

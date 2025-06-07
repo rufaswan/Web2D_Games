@@ -69,57 +69,6 @@ function big2little32( &$be )
 	return $le;
 }
 //////////////////////////////
-function iee754_float( $int, $exp_bit, $man_bit, $bias )
-{
-	if ( "$int" === $int )
-		$int = ordint($int);
-
-	// https://en.m.wikipedia.org/wiki/IEEE_754
-	$m = (1 << $man_bit) - 1;
-	$e = (1 << $exp_bit) - 1;
-	$man = $int & $m;  $int >>= $man_bit;
-	$exp = $int & $e;  $int >>= $exp_bit;
-	$sig = $int;
-
-	// e=0 m=0 zero
-	// e=0 m=1 denormalized
-	// e=1 m=0 infinity
-	// e=1 m=1 not a number
-	if ( $exp == $e )
-		return 0.0; // infinite or not-a-number
-	if ( $exp == 0 && $man == 0 )
-		return 0.0; // exact zero
-
-	//   normalized = leading 1.0
-	// denormalized = leading 0.0
-	$norm = ( $exp == 0 ) ? 0 : 1 << $man_bit;
-	$man += $norm;
-
-	$exp -= $bias;
-	$man *= (2 ** ($exp - $man_bit));
-	return ( $sig ) ? -$man : $man;
-}
-
-function float16( $int )
-{
-	// IEEE 754 half precision
-	//   signed   bit  = 1
-	//   exponent bits = 5
-	//   mantissa bits = 10
-	//   bias = 2^4-1 = 15
-	return iee754_float($int, 5, 10, 0x0f);
-}
-
-function float32( $int )
-{
-	// IEEE 754 single precision
-	//   signed   bit  = 1
-	//   exponent bits = 8
-	//   mantissa bits = 23
-	//   bias = 2^7-1 = 127
-	return iee754_float($int, 8, 23, 0x7f);
-}
-
 function cmp_float( $fl1, $fl2, $dec=1 )
 {
 	$f1 = (int)($fl1 * (10 ** $dec));

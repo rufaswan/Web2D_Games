@@ -23,6 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-guest.inc';
 require 'common-json.inc';
+require 'class-iee754.inc';
 require 'quad.inc';
 
 function is_textile8( &$quad )
@@ -93,12 +94,12 @@ function textile8_fix( &$quad )
 
 function sectquad( &$file, $off, $w, $h, &$dqd, &$sqd )
 {
-	$float =array();
+	$float = array();
 	for ( $i=0; $i < 0x40; $i += 4 )
 	{
 		$p = $off + $i;
 		$b = substr($file, $p, 4);
-		$float[] = float32($b);
+		$float[] = iee754_decode::float32($b);
 	}
 
 	// dqd    sqd

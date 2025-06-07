@@ -23,6 +23,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-guest.inc';
 require 'common-json.inc';
+require 'class-iee754.inc';
 require 'quad_vanillaware.inc';
 
 $gp_share = array();
@@ -38,7 +39,6 @@ $gp_share = array();
 function FMBS_s0( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -83,7 +83,6 @@ function FMBS_s0( $id )
 function FMBS_s1( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -99,7 +98,7 @@ function FMBS_s1( $id )
 		{
 			case 'ps2_grim':
 			case 'ps2_odin':
-				$s1 = ps2_quad20p($s, $ord);
+				$s1 = ps2_quad20p($s);
 				break;
 
 			case 'nds_kuma':
@@ -113,7 +112,7 @@ function FMBS_s1( $id )
 			case 'swi_grim':
 			case 'swi_unic':
 			case 'ps4_unic':
-				$s1 = nds_quad30p($s, $ord);
+				$s1 = nds_quad30p($s);
 				break;
 		} // switch ( $gp_share['tag'] )
 
@@ -128,7 +127,6 @@ function FMBS_s1( $id )
 function FMBS_s2( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -144,7 +142,7 @@ function FMBS_s2( $id )
 		{
 			case 'ps2_grim':
 			case 'ps2_odin':
-				$s2 = ps2_quad20p($s, $ord);
+				$s2 = ps2_quad20p($s);
 				break;
 
 			case 'nds_kuma':
@@ -158,7 +156,7 @@ function FMBS_s2( $id )
 			case 'swi_grim':
 			case 'swi_unic':
 			case 'ps4_unic':
-				$s2 = nds_quad30p($s, $ord);
+				$s2 = nds_quad30p($s);
 				break;
 		} // switch ( $gp_share['tag'] )
 
@@ -173,7 +171,6 @@ function FMBS_s2( $id )
 function FMBS_s0s1s2( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$dat0 = array();
@@ -190,13 +187,13 @@ function FMBS_s0s1s2( $id )
 		switch ( $gp_share['tag'] )
 		{
 			case 'psp_gran':
-				list($s0,$s1,$s2) = psp_quad60pc($s, $ord);
+				list($s0,$s1,$s2) = psp_quad60pc($s);
 				break;
 
 			case 'vit_mura':
 			case 'vit_drag':
 			case 'vit_odin':
-				list($s0,$s1,$s2) = vit_quad78pc($s, $ord);
+				list($s0,$s1,$s2) = vit_quad78pc($s);
 				break;
 		} // switch ( $gp_share['tag'] )
 
@@ -214,7 +211,6 @@ function FMBS_s0s1s2( $id )
 function FMBS_s3( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -287,26 +283,26 @@ function FMBS_s3( $id )
 			case 'swi_grim': // 50
 			case 'swi_unic': // 50
 			case 'ps4_unic': // 50
-				$b00 = float32( $ord($s,0x00,4) ); // x1
-				$b04 = float32( $ord($s,0x04,4) ); // y1
-				$b08 = float32( $ord($s,0x08,4) ); // x2
-				$b0c = float32( $ord($s,0x0c,4) ); // y2
-				$b10 = float32( $ord($s,0x10,4) ); // x3
-				$b14 = float32( $ord($s,0x14,4) ); // y3
-				$b18 = float32( $ord($s,0x18,4) ); // x4
-				$b1c = float32( $ord($s,0x1c,4) ); // y4
-				$b20 = float32( $ord($s,0x20,4) ); // nx1
-				$b24 = float32( $ord($s,0x24,4) ); // ny1
-				$b28 = float32( $ord($s,0x28,4) ); // nz1 = 0
-				$b2c = float32( $ord($s,0x2c,4) ); // nx2
-				$b30 = float32( $ord($s,0x30,4) ); // ny2
-				$b34 = float32( $ord($s,0x34,4) ); // nz2 = 0
-				$b38 = float32( $ord($s,0x38,4) ); // nx3
-				$b3c = float32( $ord($s,0x3c,4) ); // ny3
-				$b40 = float32( $ord($s,0x40,4) ); // nz3 = 0
-				$b44 = float32( $ord($s,0x44,4) ); // nx4
-				$b48 = float32( $ord($s,0x48,4) ); // ny4
-				$b4c = float32( $ord($s,0x4c,4) ); // nz4 = 0
+				$b00 = van_float32($s, 0x00); // x1
+				$b04 = van_float32($s, 0x04); // y1
+				$b08 = van_float32($s, 0x08); // x2
+				$b0c = van_float32($s, 0x0c); // y2
+				$b10 = van_float32($s, 0x10); // x3
+				$b14 = van_float32($s, 0x14); // y3
+				$b18 = van_float32($s, 0x18); // x4
+				$b1c = van_float32($s, 0x1c); // y4
+				$b20 = van_float32($s, 0x20); // nx1
+				$b24 = van_float32($s, 0x24); // ny1
+				$b28 = van_float32($s, 0x28); // nz1 = 0
+				$b2c = van_float32($s, 0x2c); // nx2
+				$b30 = van_float32($s, 0x30); // ny2
+				$b34 = van_float32($s, 0x34); // nz2 = 0
+				$b38 = van_float32($s, 0x38); // nx3
+				$b3c = van_float32($s, 0x3c); // ny3
+				$b40 = van_float32($s, 0x40); // nz3 = 0
+				$b44 = van_float32($s, 0x44); // nx4
+				$b48 = van_float32($s, 0x48); // ny4
+				$b4c = van_float32($s, 0x4c); // nz4 = 0
 
 				$rect = array(
 					$b00,$b04 ,
@@ -338,7 +334,7 @@ function FMBS_s3( $id )
 function FMBS_s4( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
+	$big = $gp_share['data']['bigend'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -369,19 +365,19 @@ function FMBS_s4( $id )
 			case 'ps2_odin': // 18
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
 				// 1 - 1 1 2   - - 2   2   2   2   2   2   2   2
-				$b00 = $ord($s, 0x00, 2); // flags
-				$b02 = $ord($s, 0x02, 1); // 0 1 2  blend id
-				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2); // s1 id
+				$b00 = van_int($s, 0x00, 2); // flags
+				$b02 = van_int($s, 0x02, 1); // 0 1 2  blend id
+				$b03 = van_int($s, 0x03, 1); // tex id
+				$b04 = van_int($s, 0x04, 2); // s1 id
 				// 00 00
-				$b08 = $ord($s, 0x08, 2); // s0 id *inter 0 1 2*
-				$b0a = $ord($s, 0x0a, 2); // s0 id *inter     2*
-				$b0c = $ord($s, 0x0c, 2); // s0 id *inter   1 2*
-				$b0e = $ord($s, 0x0e, 2); // s0 id *inter     2*
-				$b10 = $ord($s, 0x10, 2); // s2 id *inter 0 1 2*
-				$b12 = $ord($s, 0x12, 2); // s2 id *inter     2*
-				$b14 = $ord($s, 0x14, 2); // s2 id *inter   1 2*
-				$b16 = $ord($s, 0x16, 2); // s2 id *inter     2*
+				$b08 = van_int($s, 0x08, 2); // s0 id *inter 0 1 2*
+				$b0a = van_int($s, 0x0a, 2); // s0 id *inter     2*
+				$b0c = van_int($s, 0x0c, 2); // s0 id *inter   1 2*
+				$b0e = van_int($s, 0x0e, 2); // s0 id *inter     2*
+				$b10 = van_int($s, 0x10, 2); // s2 id *inter 0 1 2*
+				$b12 = van_int($s, 0x12, 2); // s2 id *inter     2*
+				$b14 = van_int($s, 0x14, 2); // s2 id *inter   1 2*
+				$b16 = van_int($s, 0x16, 2); // s2 id *inter     2*
 
 				$flags    = $b00;
 				$blend_id = $b02;
@@ -395,13 +391,13 @@ function FMBS_s4( $id )
 			case 'wii_mura': // c
 				// 0 1 2 3 4 5 6 7 8 9 a b
 				// - 1 1 1 2   - - 2   2
-				$b00 = $ord($s, 0x00, 2); // flags
-				$b02 = $ord($s, 0x02, 1); // blend id
-				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2); // s1 id
+				$b00 = van_int($s, 0x00, 2); // flags
+				$b02 = van_int($s, 0x02, 1); // blend id
+				$b03 = van_int($s, 0x03, 1); // tex id
+				$b04 = van_int($s, 0x04, 2); // s1 id
 				// 00 00
-				$b08 = $ord($s, 0x08, 2); // s0 id
-				$b0a = $ord($s, 0x0a, 2); // s2 id
+				$b08 = van_int($s, 0x08, 2); // s0 id
+				$b0a = van_int($s, 0x0a, 2); // s2 id
 
 				$flags    = $b00;
 				$blend_id = $b02;
@@ -418,13 +414,13 @@ function FMBS_s4( $id )
 			case 'vit_drag': // c
 				// 0 1 2 3 4 5 6 7 8 9 a b
 				// 1 - 1 1 2   2   2   2
-				$b00 = $ord($s, 0x00, 2); // flags
-				$b02 = $ord($s, 0x02, 1); // blend id
-				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2); // attrib
-				$b06 = $ord($s, 0x06, 2); // s1 id *unused*
-				$b08 = $ord($s, 0x08, 2); // s0 id *unused*
-				$b0a = $ord($s, 0x0a, 2); // s2 id
+				$b00 = van_int($s, 0x00, 2); // flags
+				$b02 = van_int($s, 0x02, 1); // blend id
+				$b03 = van_int($s, 0x03, 1); // tex id
+				$b04 = van_int($s, 0x04, 2); // attrib
+				$b06 = van_int($s, 0x06, 2); // s1 id *unused*
+				$b08 = van_int($s, 0x08, 2); // s0 id *unused*
+				$b0a = van_int($s, 0x0a, 2); // s2 id
 
 				$flags    = $b00;
 				$blend_id = $b02;
@@ -436,13 +432,13 @@ function FMBS_s4( $id )
 			case 'ps3_drag': // c
 				// 0 1 2 3 4 5 6 7 8 9 a b
 				// - 1 1 1 2   2   2   2
-				$b00 = $ord($s, 0x00, 2); // flags
-				$b02 = $ord($s, 0x02, 1); // 0 1 2 6  blend id
-				$b03 = $ord($s, 0x03, 1); // tex id
-				$b04 = $ord($s, 0x04, 2); // attrib
-				$b06 = $ord($s, 0x06, 2); // s1 id
-				$b08 = $ord($s, 0x08, 2); // s0 id
-				$b0a = $ord($s, 0x0a, 2); // s2 id
+				$b00 = van_int($s, 0x00, 2); // flags
+				$b02 = van_int($s, 0x02, 1); // 0 1 2 6  blend id
+				$b03 = van_int($s, 0x03, 1); // tex id
+				$b04 = van_int($s, 0x04, 2); // attrib
+				$b06 = van_int($s, 0x06, 2); // s1 id
+				$b08 = van_int($s, 0x08, 2); // s0 id
+				$b0a = van_int($s, 0x0a, 2); // s2 id
 
 				$flags    = $b00;
 				$blend_id = $b02;
@@ -454,15 +450,15 @@ function FMBS_s4( $id )
 			case 'vit_odin': // 10
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// 2   - - - 1 1 1 1 - 2   2   2
-				$b00 = $ord($s, 0x00, 4);
-				$b04 = $ord($s, 0x04, 1); // color id
-				$b05 = $ord($s, 0x05, 1); // flags
-				$b06 = $ord($s, 0x06, 1); // 0 1 2 6  blend id
-				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 2); // attrib
-				$b0a = $ord($s, 0x0a, 2); // s1 id *unused*
-				$b0c = $ord($s, 0x0c, 2); // s0 id *unused*
-				$b0e = $ord($s, 0x0e, 2); // s2 id
+				$b00 = van_int($s, 0x00, 4);
+				$b04 = van_int($s, 0x04, 1); // color id
+				$b05 = van_int($s, 0x05, 1); // flags
+				$b06 = van_int($s, 0x06, 1); // 0 1 2 6  blend id
+				$b07 = van_int($s, 0x07, 1); // tex id
+				$b08 = van_int($s, 0x08, 2); // attrib
+				$b0a = van_int($s, 0x0a, 2); // s1 id *unused*
+				$b0c = van_int($s, 0x0c, 2); // s0 id *unused*
+				$b0e = van_int($s, 0x0e, 2); // s2 id
 
 				$flags    = $b05;
 				$blend_id = $b06;
@@ -481,15 +477,15 @@ function FMBS_s4( $id )
 			case 'ps4_odin': // 10
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// 2   - - 1 1 1 1 1 - 2   2   2
-				$b00 = $ord($s, 0x00, 4);
-				$b04 = $ord($s, 0x04, 1); // color id
-				$b05 = $ord($s, 0x05, 1); // flags
-				$b06 = $ord($s, 0x06, 1); // blend id
-				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 2); // attrib
-				$b0a = $ord($s, 0x0a, 2); // s1 id
-				$b0c = $ord($s, 0x0c, 2); // s0 id
-				$b0e = $ord($s, 0x0e, 2); // s2 id
+				$b00 = van_int($s, 0x00, 4);
+				$b04 = van_int($s, 0x04, 1); // color id
+				$b05 = van_int($s, 0x05, 1); // flags
+				$b06 = van_int($s, 0x06, 1); // blend id
+				$b07 = van_int($s, 0x07, 1); // tex id
+				$b08 = van_int($s, 0x08, 2); // attrib
+				$b0a = van_int($s, 0x0a, 2); // s1 id
+				$b0c = van_int($s, 0x0c, 2); // s0 id
+				$b0e = van_int($s, 0x0e, 2); // s2 id
 
 				$flags    = $b05;
 				$blend_id = $b06;
@@ -514,15 +510,15 @@ function FMBS_s4( $id )
 			case 'ps4_unic': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// 4       1 1 1 1 4       2   2   2   - -
-				$b00 = $ord($s, 0x00, 4);
-				$b04 = $ord($s, 0x04, 1); // color id
-				$b05 = $ord($s, 0x05, 1); // flags
-				$b06 = $ord($s, 0x06, 1); // 0 1 2 3  blend id
-				$b07 = $ord($s, 0x07, 1); // tex id
-				$b08 = $ord($s, 0x08, 4); // attrib
-				$b0c = $ord($s, 0x0c, 2); // s1 id
-				$b0e = $ord($s, 0x0e, 2); // s0 id
-				$b10 = $ord($s, 0x10, 2); // s2 id
+				$b00 = van_int($s, 0x00, 4);
+				$b04 = van_int($s, 0x04, 1); // color id
+				$b05 = van_int($s, 0x05, 1); // flags
+				$b06 = van_int($s, 0x06, 1); // 0 1 2 3  blend id
+				$b07 = van_int($s, 0x07, 1); // tex id
+				$b08 = van_int($s, 0x08, 4); // attrib
+				$b0c = van_int($s, 0x0c, 2); // s1 id
+				$b0e = van_int($s, 0x0e, 2); // s0 id
+				$b10 = van_int($s, 0x10, 2); // s2 id
 
 				$flags    = $b05;
 				$blend_id = $b06;
@@ -552,7 +548,6 @@ function FMBS_s4( $id )
 function FMBS_s5( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -612,10 +607,10 @@ function FMBS_s5( $id )
 			case 'swi_grim': // 8
 			case 'swi_unic': // 8
 			case 'ps4_unic': // 8
-				$b00 = $ord($s, 0x00, 2); // s3 id
-				$b02 = $ord($s, 0x02, 1);
-				$b03 = $ord($s, 0x03, 1);
-				$b04 = $ord($s, 0x04, 4); // flags
+				$b00 = van_int($s, 0x00, 2); // s3 id
+				$b02 = van_int($s, 0x02, 1);
+				$b03 = van_int($s, 0x03, 1);
+				$b04 = van_int($s, 0x04, 4); // flags
 
 				$s3_id = $b00;
 				$flags = $b04;
@@ -637,7 +632,6 @@ function FMBS_s5( $id )
 function FMBS_s6( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -671,15 +665,15 @@ function FMBS_s6( $id )
 			case 'wii_mura': // 18
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
 				// f4      f4      f4      f4      2   2   1 1 - 1
-				$b00 = float32( $ord($s,0x00,4) ); // rect.left
-				$b04 = float32( $ord($s,0x04,4) ); // rect.top
-				$b08 = float32( $ord($s,0x08,4) ); // rect.right
-				$b0c = float32( $ord($s,0x0c,4) ); // rect.bottom
-				$b10 = $ord($s, 0x10, 2); // s4 set id
-				$b12 = $ord($s, 0x12, 2); // s5 set id
-				$b14 = $ord($s, 0x14, 1); // s4 set no
-				$b15 = $ord($s, 0x15, 1); // s5 set no
-				$b16 = $ord($s, 0x16, 2); // flags
+				$b00 = van_float32($s, 0x00); // rect.left
+				$b04 = van_float32($s, 0x04); // rect.top
+				$b08 = van_float32($s, 0x08); // rect.right
+				$b0c = van_float32($s, 0x0c); // rect.bottom
+				$b10 = van_int($s, 0x10, 2); // s4 set id
+				$b12 = van_int($s, 0x12, 2); // s5 set id
+				$b14 = van_int($s, 0x14, 1); // s4 set no
+				$b15 = van_int($s, 0x15, 1); // s5 set no
+				$b16 = van_int($s, 0x16, 2); // flags
 
 				$rect = array($b00,$b04,$b08,$b0c);
 				$s4   = array($b10,$b14);
@@ -693,15 +687,15 @@ function FMBS_s6( $id )
 			case 'vit_mura': // 18
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7
 				// f4      f4      f4      f4      2   2   1 - 1 1
-				$b00 = float32( $ord($s,0x00,4) ); // rect.left
-				$b04 = float32( $ord($s,0x04,4) ); // rect.top
-				$b08 = float32( $ord($s,0x08,4) ); // rect.right
-				$b0c = float32( $ord($s,0x0c,4) ); // rect.bottom
-				$b10 = $ord($s, 0x10, 2); // s4 set id
-				$b12 = $ord($s, 0x12, 2); // s5 set id
-				$b14 = $ord($s, 0x14, 2); // s4 set no
-				$b16 = $ord($s, 0x16, 1); // s5 set no
-				$b17 = $ord($s, 0x17, 1); // flags
+				$b00 = van_float32($s, 0x00); // rect.left
+				$b04 = van_float32($s, 0x04); // rect.top
+				$b08 = van_float32($s, 0x08); // rect.right
+				$b0c = van_float32($s, 0x0c); // rect.bottom
+				$b10 = van_int($s, 0x10, 2); // s4 set id
+				$b12 = van_int($s, 0x12, 2); // s5 set id
+				$b14 = van_int($s, 0x14, 2); // s4 set no
+				$b16 = van_int($s, 0x16, 1); // s5 set no
+				$b17 = van_int($s, 0x17, 1); // flags
 
 				$rect = array($b00,$b04,$b08,$b0c);
 				$s4   = array($b10,$b14);
@@ -734,15 +728,15 @@ function FMBS_s6( $id )
 			case 'swi_grim': // 1c
 			case 'swi_unic': // 1c
 			case 'ps4_unic': // 1c
-				$b00 = float32( $ord($s,0x00,4) ); // rect.left
-				$b04 = float32( $ord($s,0x04,4) ); // rect.top
-				$b08 = float32( $ord($s,0x08,4) ); // rect.right
-				$b0c = float32( $ord($s,0x0c,4) ); // rect.bottom
-				$b10 = $ord($s, 0x10, 4); // s4 set id
-				$b14 = $ord($s, 0x14, 2); // s5 set id
-				$b16 = $ord($s, 0x16, 2); // s4 set no
-				$b18 = $ord($s, 0x18, 1); // s5 set no
-				$b19 = $ord($s, 0x19, 1); // flags
+				$b00 = van_float32($s, 0x00); // rect.left
+				$b04 = van_float32($s, 0x04); // rect.top
+				$b08 = van_float32($s, 0x08); // rect.right
+				$b0c = van_float32($s, 0x0c); // rect.bottom
+				$b10 = van_int($s, 0x10, 4); // s4 set id
+				$b14 = van_int($s, 0x14, 2); // s5 set id
+				$b16 = van_int($s, 0x16, 2); // s4 set no
+				$b18 = van_int($s, 0x18, 1); // s5 set no
+				$b19 = van_int($s, 0x19, 1); // flags
 
 				$rect = array($b00,$b04,$b08,$b0c);
 				$s4   = array($b10,$b16);
@@ -768,7 +762,6 @@ function FMBS_s6( $id )
 function FMBS_s7( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -795,18 +788,18 @@ function FMBS_s7( $id )
 			case 'ps2_odin': // 30
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// f4      f4      f4      f4      f4      f4      - - - - f4      f4      f4      f4      f4
-				$b00 = float32( $ord($s,0x00,4) ); // red
-				$b04 = float32( $ord($s,0x04,4) ); // green
-				$b08 = float32( $ord($s,0x08,4) ); // blue
-				$b0c = float32( $ord($s,0x0c,4) ); // alpha
-				$b10 = float32( $ord($s,0x10,4) ); // move x
-				$b14 = float32( $ord($s,0x14,4) ); // move y
-				$b18 = float32( $ord($s,0x18,4) ); // move z
-				$b1c = float32( $ord($s,0x1c,4) ); // rotate x
-				$b20 = float32( $ord($s,0x20,4) ); // rotate y
-				$b24 = float32( $ord($s,0x24,4) ); // rotate z
-				$b28 = float32( $ord($s,0x28,4) ); // scale x
-				$b2c = float32( $ord($s,0x2c,4) ); // scale y
+				$b00 = van_float32($s, 0x00); // red
+				$b04 = van_float32($s, 0x04); // green
+				$b08 = van_float32($s, 0x08); // blue
+				$b0c = van_float32($s, 0x0c); // alpha
+				$b10 = van_float32($s, 0x10); // move x
+				$b14 = van_float32($s, 0x14); // move y
+				$b18 = van_float32($s, 0x18); // move z
+				$b1c = van_float32($s, 0x1c); // rotate x
+				$b20 = van_float32($s, 0x20); // rotate y
+				$b24 = van_float32($s, 0x24); // rotate z
+				$b28 = van_float32($s, 0x28); // scale x
+				$b2c = van_float32($s, 0x2c); // scale y
 
 				$move   = array($b10,$b14,$b18);
 				$rotate = array($b1c,$b20,$b24);
@@ -855,14 +848,14 @@ function FMBS_s7( $id )
 			case 'swi_grim': // 24
 			case 'swi_unic': // 24
 			case 'ps4_unic': // 24
-				$b00 = float32( $ord($s,0x00,4) ); // move x
-				$b04 = float32( $ord($s,0x04,4) ); // move y
-				$b08 = float32( $ord($s,0x08,4) ); // move z
-				$b0c = float32( $ord($s,0x0c,4) ); // rotate x
-				$b10 = float32( $ord($s,0x10,4) ); // rotate y
-				$b14 = float32( $ord($s,0x14,4) ); // rotate z
-				$b18 = float32( $ord($s,0x18,4) ); // scale x
-				$b1c = float32( $ord($s,0x1c,4) ); // scale y
+				$b00 = van_float32($s, 0x00); // move x
+				$b04 = van_float32($s, 0x04); // move y
+				$b08 = van_float32($s, 0x08); // move z
+				$b0c = van_float32($s, 0x0c); // rotate x
+				$b10 = van_float32($s, 0x10); // rotate y
+				$b14 = van_float32($s, 0x14); // rotate z
+				$b18 = van_float32($s, 0x18); // scale x
+				$b1c = van_float32($s, 0x1c); // scale y
 				$b20 = substr($s,0x20,4);
 
 				$move   = array($b00,$b04,$b08);
@@ -889,7 +882,6 @@ function FMBS_s7( $id )
 function FMBS_s8( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -957,22 +949,22 @@ function FMBS_s8( $id )
 			case 'swi_grim': // 20
 			case 'swi_unic': // 20
 			case 'ps4_unic': // 20
-				$b00 = $ord($s, 0x00, 2); // s6 id
+				$b00 = van_int($s, 0x00, 2); // s6 id
 				// 00 00
-				$b04 = $ord($s, 0x04, 2); // s7 id
-				$b06 = $ord($s, 0x06, 2); // frames
-				$b08 = $ord($s, 0x08, 4); // flags
-				$b0c = $ord($s, 0x0c, 2); // loop s8 id
-				$b0e = $ord($s, 0x0e, 1); // 0 1 2  s5s3 interpolation
-				$b0f = $ord($s, 0x0f, 1); // interpolation rate
-				$b10 = $ord($s, 0x10, 1); // 0 1 2  s7 interpolation
-				$b11 = $ord($s, 0x11, 1); // 0 1 2  s6 interpolation
-				$b12 = $ord($s, 0x12, 1); // 0 1 2  s0s1s2 interpolation
-				$b13 = $ord($s, 0x13, 1); // n*180
-				$b14 = $ord($s, 0x14, 4);
-				$b18 = $ord($s, 0x18, 2);
-				$b1a = $ord($s, 0x1a, 2); // 0 1  sfx mute
-				$b1c = $ord($s, 0x1c, 4); // sfx id
+				$b04 = van_int($s, 0x04, 2); // s7 id
+				$b06 = van_int($s, 0x06, 2); // frames
+				$b08 = van_int($s, 0x08, 4); // flags
+				$b0c = van_int($s, 0x0c, 2); // loop s8 id
+				$b0e = van_int($s, 0x0e, 1); // 0 1 2  s5s3 interpolation
+				$b0f = van_int($s, 0x0f, 1); // interpolation rate
+				$b10 = van_int($s, 0x10, 1); // 0 1 2  s7 interpolation
+				$b11 = van_int($s, 0x11, 1); // 0 1 2  s6 interpolation
+				$b12 = van_int($s, 0x12, 1); // 0 1 2  s0s1s2 interpolation
+				$b13 = van_int($s, 0x13, 1); // n*180
+				$b14 = van_int($s, 0x14, 4);
+				$b18 = van_int($s, 0x18, 2);
+				$b1a = van_int($s, 0x1a, 2); // 0 1  sfx mute
+				$b1c = van_int($s, 0x1c, 4); // sfx id
 
 				$s6_id = $b00;
 				$s7_id = $b04;
@@ -1011,7 +1003,6 @@ function FMBS_s8( $id )
 function FMBS_s9( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -1055,15 +1046,15 @@ function FMBS_s9( $id )
 			case 'ps3_drag': // 30
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// f4      f4      f4      f4      c[18]                                           2   1 1 1 - - -
-				$b00 = float32( $ord($s,0x00,4) ); // rect.left
-				$b04 = float32( $ord($s,0x04,4) ); // rect.top
-				$b08 = float32( $ord($s,0x08,4) ); // rect.right
-				$b0c = float32( $ord($s,0x0c,4) ); // rect.bottom
+				$b00 = van_float32($s, 0x00); // rect.left
+				$b04 = van_float32($s, 0x04); // rect.top
+				$b08 = van_float32($s, 0x08); // rect.right
+				$b0c = van_float32($s, 0x0c); // rect.bottom
 				$b10 = substr0($s, 0x10);
-				$b28 = $ord($s, 0x28, 2); // sa_set_id
-				$b2a = $ord($s, 0x2a, 1); // sa_set_no
-				$b2b = $ord($s, 0x2b, 1); // sa_set_main
-				$b2c = $ord($s, 0x2c, 1); // 0 1
+				$b28 = van_int($s, 0x28, 2); // sa_set_id
+				$b2a = van_int($s, 0x2a, 1); // sa_set_no
+				$b2b = van_int($s, 0x2b, 1); // sa_set_main
+				$b2c = van_int($s, 0x2c, 1); // 0 1
 
 				$rect = array($b00 , $b04 , $b08 , $b0c);
 				$name = $b10;
@@ -1089,17 +1080,17 @@ function FMBS_s9( $id )
 			case 'swi_grim': // 30
 			case 'swi_unic': // 30
 			case 'ps4_unic': // 30
-				$b00 = float32( $ord($s,0x00,4) ); // rect.left
-				$b04 = float32( $ord($s,0x04,4) ); // rect.top
-				$b08 = float32( $ord($s,0x08,4) ); // rect.right
-				$b0c = float32( $ord($s,0x0c,4) ); // rect.bottom
+				$b00 = van_float32($s, 0x00); // rect.left
+				$b04 = van_float32($s, 0x04); // rect.top
+				$b08 = van_float32($s, 0x08); // rect.right
+				$b0c = van_float32($s, 0x0c); // rect.bottom
 				$b10 = substr0($s, 0x10);
-				$b28 = $ord($s, 0x28, 2); // sa_set_id
-				$b2a = $ord($s, 0x2a, 1); // sa_set_no
-				$b2b = $ord($s, 0x2b, 1); // sa_set_main
-				$b2c = $ord($s, 0x2c, 2); // sa_sb_set_id
-				$b2e = $ord($s, 0x2e, 1); // sa_sb_set_no
-				$b2f = $ord($s, 0x2f, 1); // 0 1
+				$b28 = van_int($s, 0x28, 2); // sa_set_id
+				$b2a = van_int($s, 0x2a, 1); // sa_set_no
+				$b2b = van_int($s, 0x2b, 1); // sa_set_main
+				$b2c = van_int($s, 0x2c, 2); // sa_sb_set_id
+				$b2e = van_int($s, 0x2e, 1); // sa_sb_set_no
+				$b2f = van_int($s, 0x2f, 1); // 0 1
 
 				$rect = array($b00 , $b04 , $b08 , $b0c);
 				$name = $b10;
@@ -1123,7 +1114,6 @@ function FMBS_s9( $id )
 function FMBS_sa( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	list($sp,$sc,$sk) = sect_head($id);
 	$data = array();
@@ -1152,10 +1142,10 @@ function FMBS_sa( $id )
 			case 'ps2_odin': // 8
 				// 0 1 2 3 4 5 6 7
 				// 2   2   2   1 -
-				$b00 = $ord($s, 0x00, 2); // s8_set_id
-				$b02 = $ord($s, 0x02, 2); // s8_set_no
-				$b04 = $ord($s, 0x04, 2); // s8_set_sum
-				$b06 = $ord($s, 0x06, 1); // 0 1  s8_set_st
+				$b00 = van_int($s, 0x00, 2); // s8_set_id
+				$b02 = van_int($s, 0x02, 2); // s8_set_no
+				$b04 = van_int($s, 0x04, 2); // s8_set_sum
+				$b06 = van_int($s, 0x06, 1); // 0 1  s8_set_st
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1169,11 +1159,11 @@ function FMBS_sa( $id )
 			case 'wii_mura': // 10
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f
 				// 2   - 1 - - 2   4       1 - - -
-				$b00 = $ord($s, 0x00, 2); // s8_set_id
-				$b02 = $ord($s, 0x02, 2); // s8_set_no
-				$b04 = $ord($s, 0x04, 4); // s8_set_sum
-				$b08 = $ord($s, 0x08, 4, true); // s8_set_sum_once
-				$b0c = $ord($s, 0x0c, 1); // 0 1  s8_set_st
+				$b00 = van_int($s, 0x00, 2); // s8_set_id
+				$b02 = van_int($s, 0x02, 2); // s8_set_no
+				$b04 = van_int($s, 0x04, 4); // s8_set_sum
+				$b08 = van_int($s, 0x08, 4, true); // s8_set_sum_once
+				$b0c = van_int($s, 0x0c, 1); // 0 1  s8_set_st
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1193,12 +1183,12 @@ function FMBS_sa( $id )
 			case 'ps3_drag': // 14
 				// 0 1 2 3 4 5 6 7 8 9 a b c d e f 0 1 2 3
 				// 2   2   - - 2   4       4       1 - - -
-				$b00 = $ord($s, 0x00, 2); // s8_set_id
-				$b02 = $ord($s, 0x02, 2); // s8_set_no
-				$b04 = $ord($s, 0x04, 4); // s8_set_sum
-				$b08 = $ord($s, 0x08, 4, true); // s8_set_sum_once
-				$b0c = $ord($s, 0x0c, 4, true); //
-				$b10 = $ord($s, 0x10, 1); // 0 1  s8_set_st
+				$b00 = van_int($s, 0x00, 2); // s8_set_id
+				$b02 = van_int($s, 0x02, 2); // s8_set_no
+				$b04 = van_int($s, 0x04, 4); // s8_set_sum
+				$b08 = van_int($s, 0x08, 4, true); // s8_set_sum_once
+				$b0c = van_int($s, 0x0c, 4, true); //
+				$b10 = van_int($s, 0x10, 1); // 0 1  s8_set_st
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1225,15 +1215,15 @@ function FMBS_sa( $id )
 			case 'swi_grim': // 18
 			case 'swi_unic': // 18
 			case 'ps4_unic': // 18
-				$b00 = $ord($s, 0x00, 2); // s8_set_id
-				$b02 = $ord($s, 0x02, 2); // s8_set_no
-				$b04 = $ord($s, 0x04, 4); // s8_set_sum
-				$b08 = $ord($s, 0x08, 4, true); // s8_set_sum_once
-				$b0c = $ord($s, 0x0c, 4, true); //
-				$b10 = $ord($s, 0x10, 2); // sb_set_id
-				$b12 = $ord($s, 0x12, 1); // sb_set_no
-				$b13 = $ord($s, 0x13, 1); // 0 1  s8_set_st
-				$b14 = $ord($s, 0x14, 2);
+				$b00 = van_int($s, 0x00, 2); // s8_set_id
+				$b02 = van_int($s, 0x02, 2); // s8_set_no
+				$b04 = van_int($s, 0x04, 4); // s8_set_sum
+				$b08 = van_int($s, 0x08, 4, true); // s8_set_sum_once
+				$b0c = van_int($s, 0x0c, 4, true); //
+				$b10 = van_int($s, 0x10, 2); // sb_set_id
+				$b12 = van_int($s, 0x12, 1); // sb_set_no
+				$b13 = van_int($s, 0x13, 1); // 0 1  s8_set_st
+				$b14 = van_int($s, 0x14, 2);
 
 				$s8_set_id  = $b00;
 				$s8_set_no  = $b02;
@@ -1260,7 +1250,6 @@ function FMBS_sa( $id )
 function FMBS_sb( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
 	if ( ! isset( $gp_share['data']['sect'][$id] ) )
 	{
@@ -1299,13 +1288,13 @@ function FMBS_sb( $id )
 			case 'swi_grim': // 14
 			case 'swi_unic': // 14
 			case 'ps4_unic': // 14
-				$b00 = $ord($s, 0x00, 4);
-				$b04 = $ord($s, 0x04, 2);
+				$b00 = van_int($s, 0x00, 4);
+				$b04 = van_int($s, 0x04, 2);
 				// 00 00
-				$b08 = $ord($s, 0x08, 4);
-				$b0c = $ord($s, 0x0c, 2);
-				$b0e = $ord($s, 0x0e, 2);
-				$b10 = $ord($s, 0x10, 4);
+				$b08 = van_int($s, 0x08, 4);
+				$b0c = van_int($s, 0x0c, 2);
+				$b0e = van_int($s, 0x0e, 2);
+				$b10 = van_int($s, 0x10, 4);
 
 				break;
 		} // switch ( $gp_share['tag'] )
@@ -1407,6 +1396,9 @@ function vanilla( $tag, $fname )
 	$gp_share['data'] = $gp_data[$tag];
 	$gp_share['tag']  = $tag;
 	$gp_share['dir']  = str_replace('.', '_', $fname);
+
+	global $gp_big;
+	$gp_big = $gp_share['data']['bigend'];
 
 	switch ( $gp_share['tag'] )
 	{

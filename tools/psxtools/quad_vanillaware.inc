@@ -41,14 +41,14 @@ $gp_data = array();
 	); // ver55
 
 	$gp_data['ps2_grim'] = array(
-		'idtag' => 'ps2 grim grimoire',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver55'],
+		'idtag'  => 'ps2 grim grimoire',
+		'bigend' => false,
+		'sect'  => &$gp_data['ver55'],
 	); // ps2_grim
 	$gp_data['ps2_odin'] = array(
-		'idtag' => 'ps2 odin sphere',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver55'],
+		'idtag'  => 'ps2 odin sphere',
+		'bigend' => false,
+		'sect'  => &$gp_data['ver55'],
 	); // ps2_odin
 	//////////////////////////////
 	$gp_data['ver66'] = array(
@@ -68,21 +68,21 @@ $gp_data = array();
 	); // ver66
 
 	$gp_data['nds_kuma'] = array(
-		'idtag' => 'nds kumatanchi',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver66'],
+		'idtag'  => 'nds kumatanchi',
+		'bigend' => false,
+		'sect'  => &$gp_data['ver66'],
 	); // nds_kuma
 	$gp_data['wii_mura'] = array(
-		'idtag' => 'wii muramasa',
-		'ord'  => 'str2big',
-		'sect' => &$gp_data['ver66'],
+		'idtag'  => 'wii muramasa',
+		'bigend' => true,
+		'sect'   => &$gp_data['ver66'],
 	); // wii_mura
 	//////////////////////////////
 	// ver6e
 	$gp_data['ps3_drag'] = array(
-		'idtag' => 'ps3 dragon crown',
-		'ord'  => 'str2big',
-		'sect' => array(
+		'idtag'  => 'ps3 dragon crown',
+		'bigend' => true,
+		'sect'   => array(
 			// 50  4+  0 1 2 3 4 5 7  8 - 6 9 a
 			array('p'=>0x74 , 'k'=>0x18 , 'c'=>array(0x54,2)), // s0
 			array('p'=>0x78 , 'k'=>0x30 , 'c'=>array(0x56,2)), // s1
@@ -116,26 +116,26 @@ $gp_data = array();
 	); // ver72
 
 	$gp_data['ps3_odin'] = array(
-		'idtag' => 'ps3 odin sphere rehd',
-		'ord'  => 'str2big',
-		'sect' => &$gp_data['ver72'],
+		'idtag'  => 'ps3 odin sphere rehd',
+		'bigend' => true,
+		'sect'   => &$gp_data['ver72'],
 	); // ps3_odin
 	$gp_data['ps4_odin'] = array(
-		'idtag' => 'ps4 odin sphere rehd',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver72'],
+		'idtag'  => 'ps4 odin sphere rehd',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver72'],
 	); // ps4_odin
 	$gp_data['ps4_drag'] = array(
-		'idtag' => 'ps4 dragon crown pro',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver72'],
+		'idtag'  => 'ps4 dragon crown pro',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver72'],
 	); // ps4_drag
 	//////////////////////////////
 	// ver76
 	$gp_data['ps4_sent'] = array(
-		'idtag' => 'ps4 13 sentinels',
-		'ord'  => 'str2int',
-		'sect' => array(
+		'idtag'  => 'ps4 13 sentinels',
+		'bigend' => false,
+		'sect'   => array(
 			// 50  4+ 0 1 2 3 5 7  8 6 9 a - b
 			array('p'=>0xb0  , 'k'=>0x18 , 'c'=>array(0x54,2)), // s0
 			array('p'=>0xb8  , 'k'=>0x30 , 'c'=>array(0x56,2)), // s1
@@ -170,44 +170,44 @@ $gp_data = array();
 	); // ver77
 
 	$gp_data['swi_sent'] = array(
-		'idtag' => 'switch 13 sentinels',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'switch 13 sentinels',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // swi_sent
 	$gp_data['swi_grim'] = array(
-		'idtag' => 'switch grim grimoire hd',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'switch grim grimoire hd',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // swi_grim
 	$gp_data['ps4_grim'] = array(
-		'idtag' => 'ps4 grim grimoire hd',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'ps4 grim grimoire hd',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // ps4_grim
 	$gp_data['ps5_grim'] = array(
-		'idtag' => 'ps5 grim grimoire hd',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'ps5 grim grimoire hd',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // ps5_grim
 	$gp_data['swi_unic'] = array(
-		'idtag' => 'switch unicorn overlord',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'switch unicorn overlord',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // swi_unic
 	$gp_data['ps4_unic'] = array(
-		'idtag' => 'ps4 unicorn overlord',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'ps4 unicorn overlord',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // ps4_unic
 	$gp_data['ps5_unic'] = array(
-		'idtag' => 'ps5 unicorn overlord',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'ps5 unicorn overlord',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // ps5_unic
 	$gp_data['xbx_unic'] = array(
-		'idtag' => 'xbsx unicorn overlord',
-		'ord'  => 'str2int',
-		'sect' => &$gp_data['ver77'],
+		'idtag'  => 'xbsx unicorn overlord',
+		'bigend' => false,
+		'sect'   => &$gp_data['ver77'],
 	); // xbx_unic
 	//////////////////////////////
 	// ver55 -> ver66
@@ -233,9 +233,9 @@ $gp_data = array();
 	//////////////////////////////
 	// ver6b-m
 	$gp_data['psp_gran'] = array(
-		'idtag' => 'psp grand knights history',
-		'ord'  => 'str2int',
-		'sect' => array(
+		'idtag'  => 'psp grand knights history',
+		'bigend' => false,
+		'sect'   => array(
 			// 56  1 0 2 4 5  3 6 7 - - 8
 			array('p'=>0x84 , 'k'=>0x50 , 'c'=>array(0x58,2)), // s0 bg=0
 			array('p'=>0x88 , 'k'=>0xc  , 'c'=>array(0x56,2)), // s1
@@ -251,9 +251,9 @@ $gp_data = array();
 	//////////////////////////////
 	// ver6d-m
 	$gp_data['vit_mura'] = array(
-		'idtag' => 'vita muramasa rebirth',
-		'ord'  => 'str2int',
-		'sect' => array(
+		'idtag'  => 'vita muramasa rebirth',
+		'bigend' => false,
+		'sect'   => array(
 			// 56  1 0 2 4 5  3 6 7 - - 8
 			array('p'=>0x7c , 'k'=>0x50 , 'c'=>array(0x58,2)), // s0 bg=0
 			array('p'=>0x80 , 'k'=>0xc  , 'c'=>array(0x56,2)), // s1
@@ -269,9 +269,9 @@ $gp_data = array();
 	//////////////////////////////
 	// ver6e-m
 	$gp_data['vit_drag'] = array(
-		'idtag' => 'vita dragon crown',
-		'ord'  => 'str2int',
-		'sect' => array(
+		'idtag'  => 'vita dragon crown',
+		'bigend' => false,
+		'sect'   => array(
 			// 50  1+ - - - 0 2 4  5 - 3 6 7 - 8
 			array('p'=>0x80 , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s0 bg=0
 			array('p'=>0x84 , 'k'=>0xc  , 'c'=>array(0x50,4)), // s1
@@ -287,9 +287,9 @@ $gp_data = array();
 	//////////////////////////////
 	// ver72-m
 	$gp_data['vit_odin'] = array(
-		'idtag' => 'vita odin sphere resd',
-		'ord'  => 'str2int',
-		'sect' => array(
+		'idtag'  => 'vita odin sphere resd',
+		'bigend' => false,
+		'sect'   => array(
 			// 50  1+ - - - 0 2 4  5 3 6 7 - 8 - 9
 			array('p'=>0xc8  , 'k'=>0x50 , 'c'=>array(0x5a,2)), // s0 bg=0
 			array('p'=>0xd0  , 'k'=>0x10 , 'c'=>array(0x50,4)), // s1
@@ -303,6 +303,23 @@ $gp_data = array();
 			array('p'=>0x118 , 'k'=>0x78 , 'c'=>array(0x6e,2)), // s9
 		),
 	); // vit_odin
+//////////////////////////////
+$gp_big = false;
+function van_float32( &$file, $pos )
+{
+	global $gp_big;
+	$sub = ( $gp_big ) ? substrrev($file,$pos,4) : substr($file,$pos,4);
+	return iee754_decode::float32($sub);
+}
+function van_int( &$file, $pos, $byte, $sign=false )
+{
+	global $gp_big;
+	$sub = substr($file,$pos,$byte);
+	if ( $gp_big )
+		$sub = strrev($sub);
+	$int = ordint($sub);
+	return ( $sign ) ? sint_bit($int, $byte << 3) : $int;
+}
 //////////////////////////////
 function fog_quad( &$s, $p1, $p2, $p3, $p4 )
 {
@@ -318,12 +335,12 @@ function fog_quad( &$s, $p1, $p2, $p3, $p4 )
 	return $quad[0];
 }
 
-function ps2_quad20p( &$mbp, $ord )
+function ps2_quad20p( &$mbp )
 {
 	$float = array();
 	for ( $i=0; $i < 0x20; $i += 2 )
 	{
-		$b = $ord($mbp, $i, 2, true);
+		$b = van_int($mbp, $i, 2, true);
 		$float[] = $b / 0x10;
 	}
 
@@ -365,14 +382,11 @@ function ps2_quad20c( &$mbp )
 	return $quad;
 }
 
-function nds_quad30p( &$mbs, $ord ) // +wii,ps3,ps4
+function nds_quad30p( &$mbs ) // +wii,ps3,ps4
 {
 	$float = array();
 	for ( $i=0; $i < 0x30; $i += 4 )
-	{
-		$b = $ord($mbs, $i, 4);
-		$float[] = float32($b);
-	}
+		$float[] = van_float32($mbs, $i);
 
 	//  0  1  center
 	//  2  3  c0
@@ -401,12 +415,12 @@ function nds_quad18c( &$mbs ) // +wii,ps3,ps4
 	return $quad;
 }
 
-function psp_quad60pc( &$mbs, $ord )
+function psp_quad60pc( &$mbs )
 {
 	$float = array();
 	for ( $i=0; $i < 0x60; $i += 2 )
 	{
-		$b = $ord($mbs, $i, 2, true);
+		$b = van_int($mbs, $i, 2, true);
 		$float[] = $b / 0x10;
 	}
 
@@ -441,14 +455,11 @@ function psp_quad60pc( &$mbs, $ord )
 	return array($clr, $src, $dst);
 }
 
-function vit_quad78pc( &$mbs, $ord )
+function vit_quad78pc( &$mbs )
 {
 	$float = array();
 	for ( $i=0; $i < 0x78; $i += 4 )
-	{
-		$b = $ord($mbs, $i, 4);
-		$float[] = float32($b);
-	}
+		$float[] = van_float32($mbs, $i);
 
 	// dst        src
 	//  0  1   2   3  4  center
@@ -484,10 +495,9 @@ function vit_quad78pc( &$mbs, $ord )
 function sect_head( $id )
 {
 	global $gp_share;
-	$ord = $gp_share['data']['ord'];
 
-	$sp = $ord($gp_share['file'], $gp_share['data']['sect'][$id]['p']   , 4);
-	$sc = $ord($gp_share['file'], $gp_share['data']['sect'][$id]['c'][0], $gp_share['data']['sect'][$id]['c'][1]);
+	$sp = van_int($gp_share['file'], $gp_share['data']['sect'][$id]['p'] , 4);
+	$sc = van_int($gp_share['file'], $gp_share['data']['sect'][$id]['c'][0], $gp_share['data']['sect'][$id]['c'][1]);
 	$sk = $gp_share['data']['sect'][$id]['k'];
 
 	$idx = $sc;

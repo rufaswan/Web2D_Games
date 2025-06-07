@@ -27,9 +27,9 @@ The readers is also expected to understand the basic 4 main data types:
 And understand the fixed data size varieties:
 
 * `int` is read/parse from a text file. It is native register size as the operating system.
-* `int16` is read from a binary file. It is `int` in 16-bits or 2 bytes.
-* `int32` is read from a binary file. It is `int` in 32-bits or 4 bytes.
-* `int64` is read from a binary file. It is `int` in 64-bits or 8 bytes.
+* `int16` is read from a binary file. It is `int` in fixed 16-bits or 2 bytes.
+* `int32` is read from a binary file. It is `int` in fixed 32-bits or 4 bytes.
+* `int64` is read from a binary file. It is `int` in fixed 64-bits or 8 bytes.
 
 When exploring the data with a hex editor, this is how they are represented as Array of Byte (AOB):
 
@@ -164,3 +164,5 @@ Extra Readings::
 * [[[cdynmem]]] https://en.wikipedia.org/wiki/C_dynamic_memory_allocation
 * [[[absval]]]  https://en.wikipedia.org/wiki/Absolute_value
 * [[[winedbg]]] https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/Debugging-Wine
+* [[[kernint]]] https://kernelnewbies.org/InternalKernelDataTypes
+* [[[cstdint]]] https://en.cppreference.com/w/cpp/types/integer.html

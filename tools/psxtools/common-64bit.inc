@@ -30,7 +30,7 @@ function sint64 ( $s )  { return sint_bit($s, 0x40); }
 function sint128( $s )  { return sint_bit($s, 0x80); }
 function sint256( $s )  { return sint_bit($s, 0x100); }
 
-function float64( $int )
+function float64( $bin )
 {
 	php_req_bytes(8);
 	// IEEE 754 double precision
@@ -38,10 +38,10 @@ function float64( $int )
 	//   exponent bits = 11
 	//   mantissa bits = 52
 	//   bias = 2^10-1 = 1023
-	return iee754_float($int, 11, 52, 0x3ff);
+	return iee754_decode::dec($bin, 11, 52, 0x3ff);
 }
 
-function float128( $int )
+function float128( $bin )
 {
 	php_req_bytes(16);
 	// IEEE 754 quadruple precision
@@ -49,10 +49,10 @@ function float128( $int )
 	//   exponent bits = 15
 	//   mantissa bits = 112
 	//   bias = 2^14-1 = 16383
-	return iee754_float($int, 15, 112, 0x3fff);
+	return iee754_decode::dec($bin, 15, 112, 0x3fff);
 }
 
-function float256( $int )
+function float256( $bin )
 {
 	php_req_bytes(32);
 	// IEEE 754 octuple precision
@@ -60,5 +60,5 @@ function float256( $int )
 	//   exponent bits = 19
 	//   mantissa bits = 236
 	//   bias = 2^18-1 = 262143
-	return iee754_float($int, 19, 236, 0x3ffff);
+	return iee754_decode::dec($bin, 19, 236, 0x3ffff);
 }

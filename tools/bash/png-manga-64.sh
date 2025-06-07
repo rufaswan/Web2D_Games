@@ -13,7 +13,7 @@ while [ "$1" ]; do
 	echo "[$#] $t1"
 	mkdir -p "$t1-64"
 
-	for img in *.*; do
+	for img in ./*.*; do
 		mime=$(file  --brief  --mime-type  "$img" | grep 'image/')
 		[ "$mime" ] || continue
 
