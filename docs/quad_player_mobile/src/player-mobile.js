@@ -9,19 +9,15 @@ APP.display_viewer = function( html, toggle ){
 }
 
 APP.button_toggle = function( elem, turn ){
-	if ( turn > 0 ){ // +1 = turn ON
-		elem.classList.remove('btn_off');
-		elem.classList.add('btn_on');
-		return;
-	}
-	if ( turn < 0 ){ // -1 = turn OFF
-		elem.classList.remove('btn_on');
-		elem.classList.add('btn_off');
-		return;
-	}
-	// 0 = not a ON/OFF button
+	//  0 = not a ON/OFF button
+	// +1 = turn ON
+	// -1 = turn OFF
 	elem.classList.remove('btn_on');
 	elem.classList.remove('btn_off');
+	if ( turn > 0 )
+		return elem.classList.add('btn_on');
+	if ( turn < 0 )
+		return elem.classList.add('btn_off');
 }
 
 APP.button_prev_next = function( qdata, adj ){
@@ -174,12 +170,10 @@ APP.viewer_btn_menu = function( qdata ){
 	APP.html.btn_keyattr.style.display = 'none';
 	APP.html.keyattr_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.keyframe.length > 0 ){
-		qdata.keyattr = -1;
 		APP.html.btn_keyattr.style.display = '';
 		var buffer = '';
 		qdata.quad.__ATTR.keyframe.forEach(function(ev,ek){
-			var mask = 1 << ek;
-			buffer += '<button class="btn_on" onclick="qdata_attr(this,\'keyattr\',' + mask + ');">' + ev + '</button>';
+			buffer += '<button class="btn_on" onclick="qdata_attr(this,\'keyattr\',' + ek + ');">' + ev + '</button>';
 		});
 		APP.html.keyattr_list.innerHTML = buffer;
 		QUAD.func.log('keyframe attr', qdata.quad.__ATTR.keyframe);
@@ -188,13 +182,10 @@ APP.viewer_btn_menu = function( qdata ){
 	APP.html.btn_colorize.style.display = 'none';
 	APP.html.colorize_list.innerHTML = '';
 	if ( qdata.quad.__ATTR.colorize.length > 0 ){
-		qdata.colorize = [];
 		APP.html.btn_colorize.style.display = '';
 		var buffer = '';
 		qdata.quad.__ATTR.colorize.forEach(function(cv,ck){
-			var mask = 1 << ck;
-			qdata.colorize[mask] = [1,1,1,1];
-			buffer += cv + ' = <input type="color" value="#ffffff" onchange="qdata_colorize(this,' + mask + ');">&nbsp;';
+			buffer += cv + ' = <input type="color" value="#ffffff" onchange="qdata_colorize(this,' + ck + ');">&nbsp;';
 		});
 		APP.html.colorize_list.innerHTML = buffer;
 		QUAD.func.log('colorize attr', qdata.quad.__ATTR.colorize);
@@ -277,15 +268,14 @@ function button_export_type( elem ){
 	APP.html.logger.innerHTML = QUAD.func.console();
 }
 
-function qdata_attr( elem, name, mask ){
-	if ( elem.classList.contains('btn_on') ){
+function qdata_attr( elem, name, key ){
+	var attr = APP.QuadList[0][name];
+	var bool = attr[key];
+	if ( bool )
 		APP.button_toggle(elem, -1);
-		APP.QuadList[0][name] &= ~mask;
-	}
-	else {
+	else
 		APP.button_toggle(elem, 1);
-		APP.QuadList[0][name] |= mask;
-	}
+	attr[key] = ! bool;
 	APP.is_redraw = true;
 }
 

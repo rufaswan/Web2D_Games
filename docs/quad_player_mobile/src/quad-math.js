@@ -284,15 +284,10 @@ function QuadMath(Q){
 	}
 
 	$.point_in_rect = function( c, a, b ){
-		var x1 = Math.min(a[0], b[0]);
-		var y1 = Math.min(a[1], b[1]);
-		var x2 = Math.max(a[0], b[0]);
-		var y2 = Math.max(a[1], b[1]);
-
-		if ( c[0] < x1 || c[0] > x2 )
-			return 0;
-		if ( c[1] < y1 || c[1] > y2 )
-			return 0;
+		if ( c[0] < Math.min(a[0], b[0]) )  return 0;
+		if ( c[0] > Math.max(a[0], b[0]) )  return 0;
+		if ( c[1] < Math.min(a[1], b[1]) )  return 0;
+		if ( c[1] > Math.max(a[1], b[1]) )  return 0;
 		return 1;
 	}
 

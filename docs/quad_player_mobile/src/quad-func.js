@@ -62,11 +62,14 @@ function QuadFunc(Q){
 				list.splice(len, 1);
 		} // while ( len > 0 )
 	}
-	$.array_number = function( size ){
-		var array = [];
-		for ( var i=0; i < size; i++ )
-			array.push(i);
-		return array;
+	$.array_repeat = function( size, value, step=0 ){
+		var res = [];
+		for ( var i=0; i < size; i++ ){
+			res.push(value);
+			if ( step )
+				value += step;
+		}
+		return res;
 	}
 
 	$.is_undef = function( a ){
@@ -78,6 +81,17 @@ function QuadFunc(Q){
 	}
 	$.copy_object = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
+	}
+
+	$.is_attr_on = function( onlist, attrlist ){
+		if ( ! Array.isArray(attrlist) )
+			return true;
+		for ( var i=0; i < attrlist.length; i++ ){
+			var ind = attrlist[i];
+			if ( ! onlist[ind] )
+				return false;
+		}
+		return true;
 	}
 
 	//////////////////////////////
@@ -207,7 +221,11 @@ function QuadFunc(Q){
 			case 'quad':
 				var quad   = JSON.parse(up.data);
 				qdata.quad = Q.verify.verify_quadfile(quad);
-				qdata.name = up.name.replace(/[^A-Za-z0-9]/g, '_');
+				qdata.name = Q.verify.safename(up.name);
+
+				qdata.colorize = $.array_repeat(qdata.quad.__ATTR.colorize.length , [1.0 ,1.0 , 1.0 , 1.0]);
+				qdata.keyattr  = $.array_repeat(qdata.quad.__ATTR.keyframe.length , true);
+				qdata.hitattr  = $.array_repeat(qdata.quad.__ATTR.hitbox.length   , true);
 				return $.log('UPLOAD quad', up.name);
 
 			case 'png':
@@ -313,7 +331,7 @@ function QuadFunc(Q){
 			var lv = layer[ov];
 			if ( ! lv )
 				return;
-			if ( (qdata.keyattr & lv.attribute) !== lv.attribute )
+			if ( ! $.is_attr_on(qdata.keyattr, lv.attribute) )
 				return;
 			depth -= zrate;
 

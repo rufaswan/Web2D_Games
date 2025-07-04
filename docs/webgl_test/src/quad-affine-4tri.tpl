@@ -8,7 +8,7 @@
 @@<qdfn.js>@@
 
 </head><body>
-@@<mona_lisa.0.png>@@
+@@<mona-lisa.png>@@
 
 @@<quad-inc.inc>@@
 @@<quad-inc.js>@@
@@ -88,7 +88,7 @@ function render(){
 	requestAnimationFrame(render);
 }
 
-QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(res){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(res){
 	APP.is_click = true;
 	APP.texsize  = res;
 	APP.src = QDFN.xywh2quad(res[0],res[1]);

@@ -31,9 +31,9 @@ function cpu90kill {
 	#   WebExtensions     $path/firefox-bin -contentproc -childID 2 -isForBrowser ... tab
 	#   Isolated Web Co   $path/firefox-bin -contentproc -childID 3 -isForBrowser ... tab
 	#   Web Content       $path/firefox-bin -contentproc -childID 4 -isForBrowser ... tab
-	echo "[cpu90kill] $@"
 	kill    -15 $pid
 	killall -15 $com
+	echo "[cpu90kill] $@"
 }
 export -f cpu90kill
 

@@ -27,23 +27,32 @@ function QuadVerify(Q){
 			obj[low] = obj[tag];
 		});
 	}
+	$.safename = function( str ){
+		return str.replace(/[^0-9a-zA-Z\u{0080}\u{ffff}]+/gu, ' ');
+	}
 
-	__.attr_bitflag = function( attrib, enumlist ){
-		if ( Array.isArray(attrib) ){
-			var bitflag = 0;
-			for ( var i=0; i < attrib.length; i++ )
-				bitflag |= __.attr_bitflag(attrib[i], enumlist);
-			return bitflag;
-		}
-		if ( typeof attrib === 'string' ){
-			var idx = enumlist.indexOf(attrib);
-			if ( idx < 0 ){
-				idx = enumlist.length;
-				enumlist.push(attrib);
+	__.attrib_list = function( attrib, enumlist ){
+		var ret = [];
+		function addlist( str ){
+			if ( __.is_str(str) ){
+				var t   = $.safename(str);
+				var idx = enumlist.indexOf(t);
+				if ( idx < 0 ){
+					idx = enumlist.length;
+					enumlist.push(t);
+				}
+				ret.push(idx);
 			}
-			return (1 << idx);
+		} // function addlist( str )
+
+		if ( Array.isArray(attrib) ){
+			attrib.forEach(function(av){
+				addlist(av);
+			});
 		}
-		return 0;
+		else
+			addlist(attrib);
+		return ( ret.length > 0 ) ? ret : 0;
 	}
 
 	__.is_str = function( str ){
@@ -93,7 +102,7 @@ function QuadVerify(Q){
 			switch ( tag ){
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'mode_rgb':
 				case 'mode_alpha':
@@ -147,7 +156,7 @@ function QuadVerify(Q){
 					def.hitquad = obj.hitquad;
 					break;
 				case 'attribute':
-					def.attribute = __.attr_bitflag(obj.attribute, __.ATTR.hitbox);
+					def.attribute = __.attrib_list(obj.attribute, __.ATTR.hitbox);
 					break;
 			} // switch(tag)
 		});
@@ -177,7 +186,7 @@ function QuadVerify(Q){
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'layer':
 					if ( ! Array.isArray(obj.layer) )
@@ -251,10 +260,10 @@ function QuadVerify(Q){
 						def[tag] = obj[tag] | 0;
 					break;
 				case 'attribute':
-					def.attribute = __.attr_bitflag(obj.attribute, __.ATTR.keyframe);
+					def.attribute = __.attrib_list(obj.attribute, __.ATTR.keyframe);
 					break;
 				case 'colorize':
-					def.colorize  = __.attr_bitflag(obj.colorize , __.ATTR.colorize);
+					def.colorize  = __.attrib_list(obj.colorize , __.ATTR.colorize);
 					break;
 			} // switch(tag)
 		});
@@ -289,7 +298,7 @@ function QuadVerify(Q){
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'layer':
 					if ( ! Array.isArray(obj.layer) )
@@ -387,7 +396,7 @@ function QuadVerify(Q){
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'loop_id':
 					if ( typeof obj.loop_id === 'number' )
@@ -451,7 +460,7 @@ function QuadVerify(Q){
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'bone':
 					if ( ! Array.isArray(obj.bone) )

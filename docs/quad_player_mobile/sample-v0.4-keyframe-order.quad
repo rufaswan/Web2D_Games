@@ -1,0 +1,36 @@
+{
+  "keyframe" : [
+    {
+      "layer" : [
+        {
+          "dstquad" : [ -200 , -400 , -100 , -400 , -100 , 0 , -200 , 0 ] ,
+          "fogquad" : "#ff0000ff"
+        } ,
+        {
+          "dstquad" : [ 200 , -400 , 100 , -400 , 100 , 0 , 200 , 0 ] ,
+          "fogquad" : "#00ff00ff"
+        } ,
+        {
+          "dstquad" : [ -200 , -400 , 200 , -400 , 200 , -300 , -200 , -300 ] ,
+          "fogquad" : "#0000ffff"
+        } ,
+        {
+          "dstquad" : [ -200 , 0 , 200 , 0 , 200 , -100 , -200 , -100 ] ,
+          "fogquad" : "#eeeeeeff"
+        } ,
+        {
+          "dstquad"  : [ 50 , -50 , 150 , -50 , 150 , -150 , 50 , -150 ] ,
+          "fogquad"  : "#004488ff" ,
+          "blend_id" : 0
+        }
+      ] ,
+      "order" : [ 3 , 4 , 1 , 2 , 0 ]
+    }
+  ] ,
+  "blend"    : [
+    {
+      "mode_rgb"   : [ "FUNC_REVERSE_SUBTRACT" , "ONE" , "ONE" ] ,
+      "mode_alpha" : [ "FUNC_ADD" , "ONE" , "ONE" ]
+    }
+  ]
+}

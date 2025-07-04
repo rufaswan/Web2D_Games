@@ -695,11 +695,12 @@ DST::
 
 == Example
 
-* link:sample-colorize.quad[sample-colorize.quad (352 bytes)]
-* link:sample-depth.quad[sample-depth.quad (567 bytes)]
-* link:sample-keymix.quad[sample-keymix.quad (943 bytes)]
-* link:sample-mat4mix.quad[sample-mat4mix.quad (1461 bytes)]
-* link:sample-keyattr.quad[sample-keyattr.quad (985 bytes)]
+* link:sample-v0.3-animation-keyframe-mix.quad[]
+* link:sample-v0.3-animation-matrix-mix.quad[]
+* link:sample-v0.4-keyframe-order.quad[]
+* link:sample-v0.5-keyframe-attribute.quad[]
+* link:sample-v0.5-keyframe-colorize.quad[]
+* link:sample-concave.quad[]
 
 
 

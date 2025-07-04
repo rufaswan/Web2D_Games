@@ -27,11 +27,11 @@ function loopent {
 
 	local f=''
 	if (( ${#fil[@]} > 0 )); then
-		echo "<h1>$1</h1>"
+		echo "<h1>$1</h1><ol>"
 		for f in "${fil[@]}"; do
-			echo "<img src='$f' title='$f'>"
+			echo "<li><img src='$f' title='$f'></li>"
 		done
-		echo "<hr>"
+		echo "</ol><hr>"
 	fi
 
 	local d=''
@@ -48,8 +48,18 @@ body {
 	background-color : #111;
 	color            : #eee;
 }
+ol {
+	display         : flex;
+	flex-direction  : row;
+	flex-wrap       : wrap;
+	justify-content : space-around;
+	align-items     : center;
+	margin          : 0;
+	padding         : 0;
+}
 img {
 	max-width : 100%;
+	border    : 2px #eee solid;
 }
 </style>'
 

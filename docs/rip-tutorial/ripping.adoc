@@ -1,6 +1,6 @@
 = Ripping Tutorial
 Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
-v1.1.0 , 2025-1-8
+v1.1.1 , 2025-7-1
 :toc:
 
 

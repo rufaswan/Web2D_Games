@@ -20,8 +20,10 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-( exec('which wget') ) ? '' : trigger_error('command wget not found', E_USER_ERROR);
-( exec('which df'  ) ) ? '' : trigger_error('command df   not found', E_USER_ERROR);
+require 'class-sh.inc';
+sh::which('wget');
+sh::which('df');
+
 //////////////////////////////
 function valid_name( $fnam, $fext )
 {
@@ -58,11 +60,11 @@ function save_logfile( &$file )
 function phpwget()
 {
 	$is_done = false;
-	$file = '';
+	$logfile = '';
 	while ( ! $is_done )
 	{
 		$cmd  = 'df  --block-size=m  --output=avail . | tail -1';
-		$free = exec($cmd);
+		$free = sh::exec($cmd);
 
 		echo "> type 'q' to quit\n";
 		echo "> Disk Free = $free\n";
@@ -110,33 +112,16 @@ function phpwget()
 
 		$fname = $fnam . '.' . $fext;
 		printf("> wget  '%s'\n", $fname);
-		$file .= "$input\n";
+		$logfile .= "$input\n";
 
-		$wget = 'wget'
-		. ' --quiet'
-		. ' --no-config'
-		. ' --no-hsts'
-		. ' --no-check-certificate'
-		. ' --random-wait'
-		. ' --timeout=60'
-		. ' --tries=5'
-		. ' --output-document="%s"'
-		. ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"'
-		. ' "%s"';
-		$cmd  = sprintf($wget, $fname, $input);
-		exec($cmd);
-
-		$fsz = filesize($fname);
+		$fsz = sh::wget($input, $fname);
 		if ( $fsz < 1 )
-		{
-			echo "> ERROR : empty file. Deleted\n";
-			unlink($fname);
-		}
+			printf("> ERROR : empty file. Deleted\n");
 		else
 			printf("> DONE : size %x bytes\n", $fsz);
 	} // while ( ! $is_done )
 
-	save_logfile($file);
+	save_logfile($logfile);
 	return;
 }
 

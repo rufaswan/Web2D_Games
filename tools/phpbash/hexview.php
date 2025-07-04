@@ -20,26 +20,16 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-( exec('which stty') ) ? '' : trigger_error('command stty not found', E_USER_ERROR);
-( exec('which tput') ) ? '' : trigger_error('command tput not found', E_USER_ERROR);
-//////////////////////////////
+require 'class-sh.inc';
+sh::which('stty');
+sh::which('tput');
+
 $gp_fps = array();
 $gp_opt = array(
 	'pos'  => 0,
 	'col'  => 0x10,
 	'size' => 1,
 );
-
-function hexdigit( $int )
-{
-	$hx = 1;
-	while ( $int > 0 )
-	{
-		$int >>= 4;
-		$hx++;
-	}
-	return $hx;
-}
 //////////////////////////////
 function term_title( &$fps )
 {
@@ -51,8 +41,8 @@ function term_title( &$fps )
 
 function term_opt( $hx, $cnt_fps )
 {
-	$tx = exec('tput cols');
-	$ty = exec('tput lines');
+	$tx = sh::exec('tput cols');
+	$ty = sh::exec('tput lines');
 
 	$fps_area = (int)(($tx - $hx) / $cnt_fps);
 	$byread = (int)(($fps_area - 2) / 3);
@@ -95,9 +85,9 @@ function hexview()
 		return;
 	printf("\033]0;[HEXVIEW] %s\007", term_title($gp_fps));
 
-	system('stty cbreak -echo');
+	sh::exec('stty cbreak -echo');
 
-	$hx = hexdigit($gp_opt['size']);
+	$hx = sh::hexdigit($gp_opt['size']);
 	$is_done = false;
 
 	// xxxx | aa bb cc | aa bb cc | aa bb cc
@@ -151,7 +141,7 @@ function hexview()
 			$gp_opt['pos'] = $gp_opt['size'] - 1;
 	} // while ( ! $is_done )
 
-	system('stty -cbreak echo');
+	sh::exec('stty -cbreak echo');
 	foreach ( $gp_fps as $fp )
 		fclose( $fp[1] );
 	return;

@@ -5,14 +5,17 @@ https://en.wikipedia.org/wiki/History_of_the_Opera_web_browser
 https://en.wikipedia.org/wiki/Google_Chrome_version_history
 https://en.wikipedia.org/wiki/Safari_version_history
 
-https://user-agents.net/browsers/opera-mobile/versions/%s
+https://user-agents.net/browsers/opera-mobile/versions/%d
+https://whatmyuseragent.com/browser/om/opera-mobile/%d
+https://blogs.opera.com/mobile/category/opera-for-android/
 /lib/arm*/libopera.so -> 'Chrome/' 'OPR/'
 
 Chrome based
 	Desktop
-		OPR /20-68 Chrome/33-81 (+13)
-		OPR /69-   Chrome/83-   (+14)
-		Edge/79-   Chrome/79-   (same)
+		OPR / 20- 68  Chrome/ 33- 81 (+13) skip  82
+		OPR / 69-114  Chrome/ 83-128 (+14) skip 129
+		OPR /115-     Chrome/130-    (+15)
+		Edge/ 79-     Chrome/ 79-    (same)
 	Mobile
 		OPR/Chrome
 		-         -        -        -        14/26    15/28    16/29    -        18/31    19/32
@@ -21,7 +24,9 @@ Chrome based
 		-         -        42/55    43/59    44/60    45/61    46/63    47/66    48/69    49/70
 		 50/71    51/72    52/73    53/74    54/76    55/77    56/78    57/80    58/81    59/83
 		 60/85    61/86    62/87    63/89    64/91    65/92    -        67/96    68/99    69/100
-		 70/102   71/104   72/106
+		 70/102   71/104   72/106   73/   74/   75/  -  77/  78/  79/119
+		 80/  81/  82/  83/  84/  85/129  86/  87/  88/  89/
+		 90/
 
 Engine Changes
 	Chrome  27 (WebKit)   -> 28 (Blink) (WebKit/537.36)
@@ -50,8 +55,9 @@ Latest stable version available on January 1st
 	2021   84     78esr   73( 87)   61( 86)  14
 	2022   95     91esr   82( 96)   65( 92)  15
 	2023  108    102esr   94(108)   72(106)  16
-	2024    -      -esr    -(  -)    -(  -)   -
-	2025    -      -esr    -(  -)    -(  -)   -
+	2024  121    115esr  106(120)   79(119)   -
+	2025  133    128esr  115(130)   85(129)   -
+	2026    -      -esr    -(  -)    -(  -)   -
 
 Can I Use?
 	Ffox  Oper  Safa
@@ -264,7 +270,8 @@ Last stable version by Android OS
 
 	https://en.wikipedia.org/wiki/Firefox_for_Android
 	https://www.opera.com/mobile/download/versions
-	https://dev.opera.com/articles/browsers-modes-engines/
+	https://groups.google.com/a/chromium.org/g/chromium-dev/search?q=psa%20android%20Chromium%20code%20base
+	https://issues.chromium.org/issues?q=title:%22meta%20bug%22%20title:android%20title:cleanup
 
 	Android
 	1   1.0
@@ -276,46 +283,53 @@ Last stable version by Android OS
 	7   2.1    Eclair
 	8   2.2    Froyo
 	9   2.3    Gingerbread
-		9+   Firefox 37-47
 	10  2.3.3  Gingerbread
 	11  3.0    Honeycomb
-		11+  Firefox 37-45
 	12  3.1    Honeycomb
 	13  3.2    Honeycomb
 	14  4.0    Ice Cream Sandwich
+		+OpenGL ES 2.0
+		+Support Library v26
+		14+  Firefox  37- 55
 	15  4.0.3  Ice Cream Sandwich
-		15+  Chrome  18-42
-		15+  Opera   15-29
-		15+  Firefox 46-55
 	16  4.1    Jelly Bean
-		16+  Chrome  43-71
-		16+  Opera   30-50
-		16+  Firefox 56-68
+		16+  Opera    14- 50 (Mobile) , 21-46 (Mini) , 14-58 (Desktop)
+		14+  Chrome    x- 71
+		16+  Firefox  56- 68
 	17  4.2    Jelly Bean
 	18  4.3    Jelly Bean
-	19  4.4    Kitkat
-		19+  Chrome  72-82
-		19+  Opera   51-58
-	20  4.4W   Kitkat
-	21  5.0    Lollipop
-		21+  Chrome  83-95
-		21+  Opera   59-65
-		21+  Firefox 79-now
-	22  5.1    Lollipop
-	23  6.0    Marshmallow
-		23+  Chrome  96-now
-		23+  Opera   67-now
-	24  7.0    Nougat
-	25  7.1    Nougat
-	26  8.0    Oreo
-	27  8.1    Oreo
+	19  4.4    Kitkat [Key Lime Pie]
+		19+  Opera    51- 58 (Mobile) , 47-60 (Mini) , 59-68 (Desktop)
+		19+  Chrome   72- 81
+	20  4.4W   Kitkat [Key Lime Pie]
+	21  5.0    Lollipop [Lemon Meringue Pie]
+		21+  Opera    59- 65 (Mobile) , 61-90 (Mini) , 69-81 (Desktop)
+		21+  Chrome   82- 95
+		21+  Firefox  79-  y
+	22  5.1    Lollipop [Lemon Meringue Pie]
+	23  6.0    Marshmallow [Macadamia Nut Cookie]
+		23+  Opera    63- 72 (Mobile) , 82-92 (Desktop)
+		23+  Chrome   96-106
+	24  7.0    Nougat [New York Cheesecake]
+		24+  Opera    73- 79 (Mobile) , 93-105 (Desktop)
+		24+  Chrome  107-119
+	25  7.1    Nougat [New York Cheesecake]
+	26  8.0    Oreo [Oatmeal Cookie]
+		26+  Opera    80-  y (Mobile) , 106- y (Desktop)
+		26+  Chrome  120-138
+	27  8.1    Oreo [Oatmeal Cookie]
 		+Android Go Edition
-	28  9      Pie
-	29  10     Q
-	30  11     R
-	31  12     S
-	32  12L    S
-	33  13     T
+	28  9      Pie [Pistachio Ice Cream]
+	29  10     [Quince Tart]
+		29+  Opera     y-  y (Mobile) , y-y (Desktop)
+		29+  Chrome  139-  y
+	30  11     [Red Velvet Cake]
+	31  12     [Snow Cone]
+	32  12L    [Snow Cone]
+	33  13     [Tiramisu]
+	34  14     [Upside Down Cake]
+	35  15     [Vanilla Ice Cream]
+	36  16     [Baklava]
 
 	https://web.archive.org/web/20141010074412/http://source.android.com/devices/graphics.html
 	Beginning in Android 4.0, hardware-accelerated Canvas is enabled by default.
@@ -328,8 +342,8 @@ Last stable version by Android OS
 	https://source.android.com/docs/compatibility/cdd
 	Memory  = RAM
 	Storage = ROM , /data partition
-	-     Memory                    Storage
-	-     32 bit/64 bit/low         normal/low
+	-     Memory                    Storage            Screen
+	-     32 bit /64 bit /low       normal /low        short x long
 	 2.1   92 MB+                   150 MB+
 	 2.2   92 MB+                   150 MB+
 	 2.3  128 MB+                   150 MB+
@@ -337,8 +351,8 @@ Last stable version by Android OS
 	 4.1  340 MB+                   350 MB+
 	 4.2  340 MB+                   350 MB+
 	 4.3  340 MB+                   512 MB+
-	 4.4  340 MB+/-/512 MB          1.0 GB+
-	 5.0  512 MB+/832 MB+           1.5 GB+
+	 4.4  340 MB+/-      /512 MB    1.0 GB+
+	 5.0  512 MB+/832 MB+/-         1.5 GB+
 	 5.1  424 MB+/704 MB+/512 MB    1.5 GB+
 	 6.0  424 MB+/704 MB+/512 MB    1.5 GB+
 	 7.0  512 MB+/816 MB+/512 MB    3.0 GB+
@@ -347,9 +361,12 @@ Last stable version by Android OS
 	 8.1  416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
 	 9    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
 	10    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
-	11    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
-	12    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
-	13    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+
+	11    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.0" x 2.7"
+	12    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.0" x 2.7"
+	13    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.0" x 2.7"
+	14    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.2" x 3.4"
+	15    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.2" x 3.4"
+	16    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.2" x 3.4"
 
 	https://en.wikipedia.org/wiki/MacOS
 	https://en.wikipedia.org/wiki/MacOS_version_history

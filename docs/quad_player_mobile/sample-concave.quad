@@ -1,0 +1,67 @@
+{
+  "keyframe" : [
+    {
+      "name"  : "simple" ,
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , -100 , 100 , 100 , -100 , 100 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    } ,
+    {
+      "name"  : "twisted , AC x BD , center @ none" ,
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , -100 , -100 , 100 , 100 , 100 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    } ,
+    {
+      "name"  : "twisted , AB x CD , center @ none" ,
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , 100 , 100 , -100 , -100 , 100 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    } ,
+    {
+      "name"  : "bended , ABC < BCD , center @ BD" ,
+      "layer" : [
+        {
+          "dstquad" : [ 0 , 0 , -100 , -100 , 100 , 0 , -100 , 100 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    } ,
+    {
+      "name"  : "bended , ABC > BCD , center @ AC" ,
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , 0 , -100 , 100 , 0 , 0 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    } ,
+    {
+      "name"  : "simple , triangle" ,
+      "layer" : [
+        {
+          "dstquad" : [ 0 , -100 , 0 , -100 , 100 , 100 , -100 , 100 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    } ,
+    {
+      "name"  : "simple , line" ,
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , -100 , -100 , 100 , 100 , 100 , 100 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    }
+  ]
+}

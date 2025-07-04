@@ -5,16 +5,18 @@ ifndef::rel[:rel: .]
 In essence, image data is like an ASCII art, with 1 character representing 1 pixel. Example:
 
 ....
-+---------------------+
-| BBBB   IIII    GGGG |
-| BB  B   II    GG    |
-| BBBB    II    GG GG |
-| BB  B   II    GG  G |
-| BBBB   IIII    GGG  |
-+---------------------+
++-----------------------------------+
+|  AAA   BBBB    CCCC  DDDD   EEEEE |
+| A   A  BB  B  CC     DD  D  EE    |
+| A   A  BBBB   CC     DD  D  EEEEE |
+| AAAAA  BB  B  CC     DD  D  EE    |
+| A   A  BBBB    CCCC  DDDD   EEEEE |
++-----------------------------------+
+|12345671234567123456712345671234567|
++-----------------------------------+
 ....
 
-The ASCII art "BIG" above has 21 characters per line and it has 5 lines. If converted to an image data, you'll get a 21x5 pixels image, with each letter "B","I","G" is 7x5 pixels image.
+The ASCII art "ABCDE" above has 21 characters per line and it has 5 lines. If converted to an image data, you'll get a 21x5 pixels image, with each letter is 7x5 pixels image.
 
 Here is an interactive example for raw image data:
 
@@ -37,7 +39,7 @@ Here's how the same raw image data looks on different apps:
 |HxD <<hxd>> hex editor
 a|image::{rel}/raw-image-hxd.png[link={rel}/raw-image-hxd.png,height=240]
 
-|HexView , from `psxtools/tsr_hexview.php`.
+|HexView , from `phpbash/hexview.php`.
 a|image::{rel}/raw-image-hexview.png[link={rel}/raw-image-hexview.png,height=240]
 
 |Cheat Engine <<cheat>>

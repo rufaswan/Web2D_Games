@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <!--
+[license]
 Copyright (C) 2019 by Rufas Wan
 
 This file is part of Web2D Games.
@@ -17,7 +18,9 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
+[/license]
 -->
+
 <html xmlns='http://www.w3.org/1999/xhtml'><head>
 
 <meta charset='utf-8' />
@@ -78,10 +81,8 @@ APP.process_uploads = function(){
 	--button-bg-color   : #ededed;
 	--button-text-color : #121212;
 	--border-color      : #808080;
-	--mobile-button-size-small   : 42px; 
-
-	--mobile-button-hspace-small : 18px; 
-
+	--mobile-button-size-small   : 42px; /* 11mm */
+	--mobile-button-hspace-small : 18px; /* 36px-48px = 10mm-13mm */
 	--mobile-button-vspace-small :  9px;
 }
 body {
@@ -575,6 +576,9 @@ var QUAD = {};
 
 		//////////////////////////////
 
+		// lowp    = min  8 bit
+		// mediump = min 10 bit
+		// highp   = min 16 bit
 		vert_src = `
 			attribute  highp  vec4   a_fog;
 			attribute  highp  vec3   a_xyz;
@@ -1117,11 +1121,14 @@ var QUAD = {};
 				list.splice(len, 1);
 		} // while ( len > 0 )
 	}
-	$.array_number = function( size ){
-		var array = [];
-		for ( var i=0; i < size; i++ )
-			array.push(i);
-		return array;
+	$.array_repeat = function( size, value, step=0 ){
+		var res = [];
+		for ( var i=0; i < size; i++ ){
+			res.push(value);
+			if ( step )
+				value += step;
+		}
+		return res;
 	}
 
 	$.is_undef = function( a ){
@@ -1133,6 +1140,17 @@ var QUAD = {};
 	}
 	$.copy_object = function( obj ){
 		return JSON.parse( JSON.stringify(obj) );
+	}
+
+	$.is_attr_on = function( onlist, attrlist ){
+		if ( ! Array.isArray(attrlist) )
+			return true;
+		for ( var i=0; i < attrlist.length; i++ ){
+			var ind = attrlist[i];
+			if ( ! onlist[ind] )
+				return false;
+		}
+		return true;
 	}
 
 	//////////////////////////////
@@ -1262,7 +1280,11 @@ var QUAD = {};
 			case 'quad':
 				var quad   = JSON.parse(up.data);
 				qdata.quad = Q.verify.verify_quadfile(quad);
-				qdata.name = up.name.replace(/[^A-Za-z0-9]/g, '_');
+				qdata.name = Q.verify.safename(up.name);
+
+				qdata.colorize = $.array_repeat(qdata.quad.__ATTR.colorize.length , [1.0 ,1.0 , 1.0 , 1.0]);
+				qdata.keyattr  = $.array_repeat(qdata.quad.__ATTR.keyframe.length , true);
+				qdata.hitattr  = $.array_repeat(qdata.quad.__ATTR.hitbox.length   , true);
 				return $.log('UPLOAD quad', up.name);
 
 			case 'png':
@@ -1368,7 +1390,7 @@ var QUAD = {};
 			var lv = layer[ov];
 			if ( ! lv )
 				return;
-			if ( (qdata.keyattr & lv.attribute) !== lv.attribute )
+			if ( ! $.is_attr_on(qdata.keyattr, lv.attribute) )
 				return;
 			depth -= zrate;
 
@@ -1997,15 +2019,10 @@ var QUAD = {};
 	}
 
 	$.point_in_rect = function( c, a, b ){
-		var x1 = Math.min(a[0], b[0]);
-		var y1 = Math.min(a[1], b[1]);
-		var x2 = Math.max(a[0], b[0]);
-		var y2 = Math.max(a[1], b[1]);
-
-		if ( c[0] < x1 || c[0] > x2 )
-			return 0;
-		if ( c[1] < y1 || c[1] > y2 )
-			return 0;
+		if ( c[0] < Math.min(a[0], b[0]) )  return 0;
+		if ( c[0] > Math.max(a[0], b[0]) )  return 0;
+		if ( c[1] < Math.min(a[1], b[1]) )  return 0;
+		if ( c[1] > Math.max(a[1], b[1]) )  return 0;
 		return 1;
 	}
 
@@ -2084,8 +2101,30 @@ var QUAD = {};
 		];
 		return [].concat(t[0],t[1],t[2],t[3]);
 	}
-	
+	/*
+	dummy src = [10,10 , 20,10 , 20,20 , 10,20]
 
+		var a = cross( cross([10,10,1] , [20,20,1]) , cross([20,10,1] , [10,20,1]) );
+			= cross([-10,10,0] , [-10,10,300])
+			= [3000,3000,200]
+		var b = cross( cross([10,10,1] , [20,10,1]) , cross([10,20,1] , [20,20,1]) );
+			= cross([0,10,-100] , [0,10,-200])
+			= [-1000,0,0]
+		var c = cross( cross([10,10,1] , [10,20,1]) , cross([20,10,1] , [20,20,1]) );
+			= cross([-10,0,100] , [-10,0,200])
+			= [0,1000,0]
+
+		var src3 = [
+			3000 , -1000 ,    0 ,
+			3000 ,     0 , 1000 ,
+			 200 ,     0 ,    0 ,
+		]
+		var src3_inv = [
+			 0     , 0     ,  0.005 ,
+			-0.001 , 0     ,  0.015 ,
+			 0     , 0.001 , -0.015 ,
+		]
+	 */
 
 	//////////////////////////////
 
@@ -2209,23 +2248,32 @@ var QUAD = {};
 			obj[low] = obj[tag];
 		});
 	}
+	$.safename = function( str ){
+		return str.replace(/[^0-9a-zA-Z\u{0080}\u{ffff}]+/gu, ' ');
+	}
 
-	__.attr_bitflag = function( attrib, enumlist ){
-		if ( Array.isArray(attrib) ){
-			var bitflag = 0;
-			for ( var i=0; i < attrib.length; i++ )
-				bitflag |= __.attr_bitflag(attrib[i], enumlist);
-			return bitflag;
-		}
-		if ( typeof attrib === 'string' ){
-			var idx = enumlist.indexOf(attrib);
-			if ( idx < 0 ){
-				idx = enumlist.length;
-				enumlist.push(attrib);
+	__.attrib_list = function( attrib, enumlist ){
+		var ret = [];
+		function addlist( str ){
+			if ( __.is_str(str) ){
+				var t   = $.safename(str);
+				var idx = enumlist.indexOf(t);
+				if ( idx < 0 ){
+					idx = enumlist.length;
+					enumlist.push(t);
+				}
+				ret.push(idx);
 			}
-			return (1 << idx);
+		} // function addlist( str )
+
+		if ( Array.isArray(attrib) ){
+			attrib.forEach(function(av){
+				addlist(av);
+			});
 		}
-		return 0;
+		else
+			addlist(attrib);
+		return ( ret.length > 0 ) ? ret : 0;
 	}
 
 	__.is_str = function( str ){
@@ -2275,7 +2323,7 @@ var QUAD = {};
 			switch ( tag ){
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'mode_rgb':
 				case 'mode_alpha':
@@ -2329,7 +2377,7 @@ var QUAD = {};
 					def.hitquad = obj.hitquad;
 					break;
 				case 'attribute':
-					def.attribute = __.attr_bitflag(obj.attribute, __.ATTR.hitbox);
+					def.attribute = __.attrib_list(obj.attribute, __.ATTR.hitbox);
 					break;
 			} // switch(tag)
 		});
@@ -2359,7 +2407,7 @@ var QUAD = {};
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'layer':
 					if ( ! Array.isArray(obj.layer) )
@@ -2433,10 +2481,10 @@ var QUAD = {};
 						def[tag] = obj[tag] | 0;
 					break;
 				case 'attribute':
-					def.attribute = __.attr_bitflag(obj.attribute, __.ATTR.keyframe);
+					def.attribute = __.attrib_list(obj.attribute, __.ATTR.keyframe);
 					break;
 				case 'colorize':
-					def.colorize  = __.attr_bitflag(obj.colorize , __.ATTR.colorize);
+					def.colorize  = __.attrib_list(obj.colorize , __.ATTR.colorize);
 					break;
 			} // switch(tag)
 		});
@@ -2471,7 +2519,7 @@ var QUAD = {};
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'layer':
 					if ( ! Array.isArray(obj.layer) )
@@ -2569,7 +2617,7 @@ var QUAD = {};
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'loop_id':
 					if ( typeof obj.loop_id === 'number' )
@@ -2633,7 +2681,7 @@ var QUAD = {};
 					break;
 				case 'name':
 					if ( __.is_str(obj.name) )
-						def.name = obj.name;
+						def.name = $.safename(obj.name);
 					break;
 				case 'bone':
 					if ( ! Array.isArray(obj.bone) )
@@ -3490,7 +3538,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2025-1-28 (beta)';
+	$.version = 'ver 2025-7-3 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.math = new QuadMath($);
@@ -3506,8 +3554,8 @@ function QuadData(qlist){
 
 	// uploaded files
 	$.colorize = [];
-	$.keyattr  = -1;
-	$.hitattr  = -1;
+	$.keyattr  = [];
+	$.hitattr  = [];
 	$.name = '';
 	$.quad  = {};
 	$.image = []; // { pos:rect , name:string }
@@ -3536,7 +3584,7 @@ function QuadData(qlist){
 
 <main>
 	<nav>
-		<input type='file' id='input_file' multiple class='hidden' />
+		<input type='file' id='input_file' multiple='multiple' class='hidden' />
 		<button id='btn_upload' data-id='0'>upload</button>
 
 		<button id='btn_lines'  >line</button>

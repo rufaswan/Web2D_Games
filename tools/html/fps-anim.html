@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'><head>
+
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<title>DUMMY</title>
+
+</head><body>
+
+<ol id='loglist'></ol>
+
+<script>
+'use strict';
+
+var APP = {};
+APP.log = document.getElementById('loglist');
+APP.fps = 12;
+APP.fps_cnt = 0;
+APP.fps_raf = 0;
+APP.fps_skp = 0;
+
+function raf(){
+	if ( (APP.fps_raf & APP.fps_skp) === 0 ){
+		APP.fps_cnt++;
+	}
+	APP.fps_raf++;
+	requestAnimationFrame(raf);
+}
+raf();
+
+setInterval(function(){
+	var li = document.createElement('li');
+	li.innerHTML = 'FPS = ' + APP.fps_cnt + ' , SKIP = ' + APP.fps_skp;
+	APP.log.prepend(li);
+
+	if ( APP.fps_cnt < APP.fps ){
+		APP.fps_skp <<= 1;
+		APP.fps_skp  |= 1;
+	}
+	else
+		APP.fps_skp >>= 1;
+
+	APP.fps_cnt = 0;
+	APP.fps_raf = 0;
+}, 1000);
+</script>
+</body></html>

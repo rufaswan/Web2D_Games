@@ -1,23 +1,5 @@
 <!DOCTYPE html>
-<license>
-Copyright (C) 2019 by Rufas Wan
-
-This file is part of Web2D Games.
-    <https://github.com/rufaswan/Web2D_Games>
-
-Web2D Games is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Web2D Games is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
-</license>
+@@license.txt@@
 <html xmlns='http://www.w3.org/1999/xhtml'><head>
 
 <meta charset='utf-8' />
@@ -31,7 +13,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 
 <div id='debugger'>
 	<p id='debugger_top_nav'>
-		<input type='file' id='input_file' multiple class='hidden' />
+		<input type='file' id='input_file' multiple='multiple' class='hidden' />
 		<button id='btn_view'>view</button>
 		<button id='btn_upload' data-id='0'>upload</button>
 	</p>
@@ -47,7 +29,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 	<ol id='debugger_files'></ol>
 	<div id='quad_data'></div>
 	<h3>Logs</h3>
-	<textarea id='logger' disabled></textarea>
+	<textarea id='logger' disabled='disabled'></textarea>
 	<p>
 		<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/player-mobile.tpl.html' target='_blank'>Latest version</a> -
 		<a href='https://rufaswan.github.io/Web2D_Games/quad_player_mobile/spec.html' target='_blank'>QUAD File Spec</a> -

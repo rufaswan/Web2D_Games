@@ -1,0 +1,78 @@
+{
+  "keyframe" : [
+    {
+      "layer" : [
+        {
+          "dstquad"   : [ -250 , -100 , -50 , -100 , -50 , 0 , -250 , 0 ] ,
+          "fogquad"   : "#ff0000ff" ,
+          "attribute" : [ "shoe" , "leg" , "right" ]
+        } ,
+        {
+          "dstquad"   : [ 250 , -100 , 50 , -100 , 50 , 0 , 250 , 0 ] ,
+          "fogquad"   : "#ff0000ff" ,
+          "attribute" : [ "shoe" , "leg" , "left" ]
+        } ,
+        {
+          "dstquad"   : [ -150 , -300 , -50 , -300 , -50 , -100 , -150 , -100 ] ,
+          "fogquad"   : "#00ff00ff" ,
+          "attribute" : [ "leg" , "right" ]
+        } ,
+        {
+          "dstquad"   : [ -150 , -400 , -50 , -400 , -50 , -300 , -150 , -300 ] ,
+          "fogquad"   : "#008800ff" ,
+          "attribute" : [ "leg" , "right" ]
+        } ,
+        {
+          "dstquad"   : [ 150 , -300 , 50 , -300 , 50 , -100 , 150 , -100 ] ,
+          "fogquad"   : "#00ff00ff" ,
+          "attribute" : [ "leg" , "left" ]
+        } ,
+        {
+          "dstquad"   : [ 150 , -400 , 50 , -400 , 50 , -300 , 150 , -300 ] ,
+          "fogquad"   : "#008800ff" ,
+          "attribute" : [ "leg" , "left" ]
+        } ,
+        {
+          "dstquad"   : [ -150 , -500 , 150 , -500 , 150 , -400 , -150 , -400 ] ,
+          "fogquad"   : "#0000ffff" ,
+          "attribute" : "body"
+        } ,
+        {
+          "dstquad"   : [ -100 , -600 , 100 , -600 , 100 , -500 , -100 , -500 ] ,
+          "fogquad"   : "#0000ffff" ,
+          "attribute" : "body"
+        } ,
+        {
+          "dstquad"   : [ -150 , -800 , 150 , -800 , 150 , -600 , -150 , -600 ] ,
+          "fogquad"   : "#0000ffff" ,
+          "attribute" : "body"
+        } ,
+        {
+          "dstquad"   : [ -50 , -900 , 50 , -900 , 50 , -800 , -50 , -800 ] ,
+          "fogquad"   : "#ffff00ff" ,
+          "attribute" : "head"
+        } ,
+        {
+          "dstquad"   : [ -450 , -800 , -250 , -800 , -250 , -700 , -450 , -700 ] ,
+          "fogquad"   : "#ff00ffff" ,
+          "attribute" : [ "arm" , "right" ]
+        } ,
+        {
+          "dstquad"   : [ -250 , -800 , -150 , -800 , -150 , -700 , -250 , -700 ] ,
+          "fogquad"   : "#880088ff" ,
+          "attribute" : [ "arm" , "right" ]
+        } ,
+        {
+          "dstquad"   : [ 450 , -800 , 250 , -800 , 250 , -700 , 450 , -700 ] ,
+          "fogquad"   : "#ff00ffff" ,
+          "attribute" : [ "arm" , "left" ]
+        } ,
+        {
+          "dstquad"   : [ 250 , -800 , 150 , -800 , 150 , -700 , 250 , -700 ] ,
+          "fogquad"   : "#880088ff" ,
+          "attribute" : [ "arm" , "left" ]
+        }
+      ]
+    }
+  ]
+}

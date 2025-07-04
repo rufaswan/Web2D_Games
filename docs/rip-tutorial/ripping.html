@@ -14,8 +14,8 @@
 <div class="details">
 <span id="author" class="author">Rufas Wan</span><br/>
 <span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
-<span id="revnumber">version 1.1.0,</span>
-<span id="revdate">2025-1-8</span>
+<span id="revnumber">version 1.1.1,</span>
+<span id="revdate">2025-7-1</span>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -95,13 +95,13 @@
 <p><code>int</code> is read/parse from a text file. It is native register size as the operating system.</p>
 </li>
 <li>
-<p><code>int16</code> is read from a binary file. It is <code>int</code> in 16-bits or 2 bytes.</p>
+<p><code>int16</code> is read from a binary file. It is <code>int</code> in fixed 16-bits or 2 bytes.</p>
 </li>
 <li>
-<p><code>int32</code> is read from a binary file. It is <code>int</code> in 32-bits or 4 bytes.</p>
+<p><code>int32</code> is read from a binary file. It is <code>int</code> in fixed 32-bits or 4 bytes.</p>
 </li>
 <li>
-<p><code>int64</code> is read from a binary file. It is <code>int</code> in 64-bits or 8 bytes.</p>
+<p><code>int64</code> is read from a binary file. It is <code>int</code> in fixed 64-bits or 8 bytes.</p>
 </li>
 </ul>
 </div>
@@ -139,13 +139,13 @@
 <p>Able to distinguish <code>doubleword</code> (int) and <code>double</code> (float).</p>
 </li>
 <li>
-<p>On DOS,  <code>byte</code> is int8, <code>word</code>     is in16, and <code>doubleword</code> is int32.</p>
+<p>On DOS,  <code>byte</code> is int8, <code>word</code>     is int16, and <code>doubleword</code> is int32.</p>
 </li>
 <li>
-<p>On MIPS, <code>byte</code> is int8, <code>halfword</code> is in16, and <code>word</code>       is int32.</p>
+<p>On MIPS, <code>byte</code> is int8, <code>halfword</code> is int16, and <code>word</code>       is int32.</p>
 </li>
 <li>
-<p>On SH-2, <code>byte</code> is int8, <code>word</code>     is in16, and <code>longword</code>   is int32.</p>
+<p>On SH-2, <code>byte</code> is int8, <code>word</code>     is int16, and <code>longword</code>   is int32.</p>
 </li>
 <li>
 <p>On MIPS, <code>lb</code>   is <code>load signed byte</code>   and <code>lbu</code>   is <code>load unsigned byte</code>.</p>
@@ -1083,7 +1083,7 @@ You can skip this step with Ghidra if you can understand the ASM code directly. 
 </table>
 </div>
 <div class="paragraph">
-<p>Since READ breakpoint will always break at <code>strcmp()</code> on every file entries, with a list of 3000 entries, it is no longer usefule for us.</p>
+<p>Since READ breakpoint will always break at <code>strcmp()</code> on every file entries, with a list of 3000 entries, it is no longer useful for us.</p>
 </div>
 <div class="paragraph">
 <p>This is where we&#8217;ll disable the READ breakpoint. and use EXECUTE breakpoint instead.</p>
@@ -1247,17 +1247,19 @@ EXECUTE breakpoint is for discover inner workings of the function, which is some
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>+---------------------+
-| BBBB   IIII    GGGG |
-| BB  B   II    GG    |
-| BBBB    II    GG GG |
-| BB  B   II    GG  G |
-| BBBB   IIII    GGG  |
-+---------------------+</pre>
+<pre>+-----------------------------------+
+|  AAA   BBBB    CCCC  DDDD   EEEEE |
+| A   A  BB  B  CC     DD  D  EE    |
+| A   A  BBBB   CC     DD  D  EEEEE |
+| AAAAA  BB  B  CC     DD  D  EE    |
+| A   A  BBBB    CCCC  DDDD   EEEEE |
++-----------------------------------+
+|12345671234567123456712345671234567|
++-----------------------------------+</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The ASCII art "BIG" above has 21 characters per line and it has 5 lines. If converted to an image data, you&#8217;ll get a 21x5 pixels image, with each letter "B","I","G" is 7x5 pixels image.</p>
+<p>The ASCII art "ABCDE" above has 21 characters per line and it has 5 lines. If converted to an image data, you&#8217;ll get a 21x5 pixels image, with each letter is 7x5 pixels image.</p>
 </div>
 <div class="paragraph">
 <p>Here is an interactive example for raw image data:</p>
@@ -1334,7 +1336,7 @@ Raw Image is pretty much a giant pixel <strong>table</strong>. You can either us
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HexView , from <code>psxtools/tsr_hexview.php</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HexView , from <code>phpbash/hexview.php</code>.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
 <div class="content">
 <a class="image" href="fn-raw-image/raw-image-hexview.png"><img src="fn-raw-image/raw-image-hexview.png" alt="raw image hexview" height="240"/></a>
@@ -1572,6 +1574,12 @@ The absolute value of a number may be thought of as its distance from zero. It i
 </li>
 <li>
 <p>[<a id="winedbg"></a>] <a href="https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/Debugging-Wine" class="bare">https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Developer%27s-Guide/Debugging-Wine</a></p>
+</li>
+<li>
+<p>[<a id="kernint"></a>] <a href="https://kernelnewbies.org/InternalKernelDataTypes" class="bare">https://kernelnewbies.org/InternalKernelDataTypes</a></p>
+</li>
+<li>
+<p>[<a id="cstdint"></a>] <a href="https://en.cppreference.com/w/cpp/types/integer.html" class="bare">https://en.cppreference.com/w/cpp/types/integer.html</a></p>
 </li>
 </ul>
 </div>

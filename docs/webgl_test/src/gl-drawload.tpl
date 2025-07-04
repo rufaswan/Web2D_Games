@@ -22,7 +22,7 @@ body {
 	z-index  : -1;
 }
 
-#mona_lisa_0_png {
+#mona_lisa_png {
 	position : absolute;
 	top      : -999px;
 	left     : -999px;
@@ -40,7 +40,7 @@ body {
 @@<qdfn.js>@@
 
 </head><body>
-@@<mona_lisa.0.png>@@
+@@<mona-lisa.png>@@
 <canvas id='canvas'>Canvas not supported</canvas>
 <div id='message'><p>DEBUG TEXT HERE</p></div>
 
@@ -86,7 +86,7 @@ QDFN.v2_attrib('a_pos', pos);
 var MESSAGE = document.getElementById('message');
 //var TEX = QDFN.create_texture();
 
-QDFN.bind_tex2D_id(0, 'mona_lisa_0_png').then(function(){
+QDFN.bind_tex2D_id(0, 'mona_lisa_png').then(function(){
 	function drawload(){
 		var prev = performance.now();
 		var count = 0;
