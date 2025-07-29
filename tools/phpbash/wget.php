@@ -22,7 +22,6 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'class-sh.inc';
 sh::which('wget');
-sh::which('df');
 
 //////////////////////////////
 function valid_name( $fnam, $fext )
@@ -63,11 +62,10 @@ function phpwget()
 	$logfile = '';
 	while ( ! $is_done )
 	{
-		$cmd  = 'df  --block-size=m  --output=avail . | tail -1';
-		$free = sh::exec($cmd);
+		$free = disk_free_space('.') >> 20;
 
 		echo "> type 'q' to quit\n";
-		echo "> Disk Free = $free\n";
+		echo "> Disk Free = $free MB\n";
 		echo "> URL =\n";
 		$input = trim( fgets(STDIN) );
 		if ( $input === 'q' )

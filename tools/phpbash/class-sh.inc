@@ -35,7 +35,15 @@ class sh
 		$args = func_get_args();
 		$fmt = array_shift($args);
 		$cmd = vsprintf($fmt, $args);
-		return exec($cmd);
+
+		$out = array();
+		exec($cmd, $out);
+
+		if ( ! isset($out[0]) ) // empty array
+			return 0;
+		if ( ! isset($out[1]) ) // one item only
+			return $out[0];
+		return $out;
 	}
 
 	public static function which( $cmd, $is_err=true )
@@ -84,10 +92,10 @@ class sh
 		$dom = parse_url($url);
 		if ( ! isset($dom['host']) )
 			return '';
-		$sh = self::which('wget');
+		self::which('wget');
 
 		$tmp = ( empty($outp) ) ? tempnam(sys_get_temp_dir(), 'wget') : $outp;
-		$wget = '%s'
+		$wget = 'wget'
 			. ' --quiet'
 			. ' --random-wait'
 			. ' --no-config'
@@ -97,10 +105,10 @@ class sh
 			. ' --tries=5'
 			. ' --max-redirect=1'
 			. ' --user-agent="Mozilla/5.0 (Linux; Android 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36"'
-			. ' --output-document=%s'
+			. ' --output-document="%s"'
 			. ' --referer="%s"'
 			. ' "%s"';
-		$t = self::exec($wget, $sh, $tmp, $url, $url);
+		self::exec($wget, $tmp, $url, $url);
 
 		// download failed = false
 		$size = filesize($tmp);
@@ -124,11 +132,67 @@ class sh
 
 	public static function xprop()
 	{
-		$sh = self::which('xprop');
-		$xprop = '%s'
+		self::which('xprop');
+		$xprop = 'xprop'
 			. ' -root'
 			. ' -notype _NET_CURRENT_DESKTOP';
-		return self::exec($xprop, $sh);
+		return self::exec($xprop);
+	}
+
+	public static function ffprobe( $fname )
+	{
+		$dur = array('format'=>-1 , 'stream'=>-1);
+		if ( ! is_file($fname) )
+			return $ret;
+		self::which('ffprobe');
+
+		$ffprobe = 'ffprobe'
+			. ' -loglevel        quiet'
+			. ' -select_streams  v:0'
+			. ' -show_entries    format=duration:stream=duration'
+			. ' -print_format    default=nokey=1:noprint_wrappers=0'
+			. ' "%s"';
+		$res = self::exec($ffprobe, $fname);
+		if ( empty($res) )
+			return $dur;
+		//print_r($res);
+
+		// [STREAM]
+		//   13.533856
+		//   [SIDE_DATA]
+		//   [/SIDE_DATA]
+		// [/STREAM]
+		// [FORMAT]
+		//   13.533856
+		// [/FORMAT]
+		while ( ! empty($res) )
+		{
+			$wrap = array_shift($res);
+			if ( substr($wrap,0,2) === '[/' )
+				continue;
+
+			switch( $wrap )
+			{
+				case '[FORMAT]':
+					$val = 1.0 * array_shift($res);
+					if ( $val > 0.1 )
+						$dur['format'] = $val;
+					break;
+				case '[STREAM]':
+					$val = 1.0 * array_shift($res);
+					if ( $val > 0.1 )
+						$dur['stream'] = $val;
+					break;
+				case '[SIDE_DATA]':
+					printf('skip %s = %s'."\n", $wrap, $fname);
+					break;
+				default:
+					self::error('UNKNOWN wrapper %s = %s', $wrap, $fname);
+					break;
+			} // switch( $res[0] )
+		} // while ( ! empty($res) )
+
+		return $dur;
 	}
 
 	public static function pwddir()
@@ -176,6 +240,7 @@ class sh
 		file_put_contents($fname, $bin);
 
 		// in case stopped halfway , or run out of disk space
+		// delete the incomplete/corrupted file
 		if ( filesize($fname) !== strlen($bin) )
 		{
 			unlink($fname);
@@ -192,9 +257,8 @@ class sh
 
 	public static function move( $src, $dst )
 	{
-		$r = self::copy($src, $dst);
-		// do not remove src if save failed
-		if ( ! $r )
+		// DO NOT delete original file if copy failed
+		if ( ! self::copy($src,$dst) )
 			return false;
 
 		unlink($src);

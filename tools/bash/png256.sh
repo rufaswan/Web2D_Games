@@ -25,7 +25,7 @@ while [ "$1" ]; do
 	shift
 
 	if [ -f "$t1" ]; then
-		grep=$(echo "$t1" | grep \^[0-9a-zA-Z])
+		grep=$(grep \^[0-9a-zA-Z] <<< "$t1")
 		[ "$grep" ] || t1=./"$t1"
 
 		mime=$(file  --brief  --mime-type  "$t1" | grep 'image/')
@@ -45,7 +45,7 @@ while [ "$1" ]; do
 			-define png:compression-level=9     \
 			"$t1".png
 	else
-		grep=$(echo "$t1" | grep [0-9]x[0-9])
+		grep=$(grep [0-9]x[0-9] <<< "$t1")
 		if [ "$grep" ]; then
 			resize="-resize $grep"
 		else

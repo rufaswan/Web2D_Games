@@ -23,7 +23,7 @@ button {
 	text-transform   : uppercase;
 	margin           : var(--mobile-button-vspace-small)  var(--mobile-button-hspace-small);
 	min-width        : var(--mobile-button-size-small);
-	height           : var(--mobile-button-size-small);
+	min-height       : var(--mobile-button-size-small);
 	padding          : 0;
 	border           : 1px var(--border-color) solid;
 	box-sizing       : border-box;
@@ -106,7 +106,6 @@ ul {
 #viewer_bottom_nav,
 #debugger_top_nav {
 	position : fixed;
-	width    : 100vw;
 	margin   : 0;
 	padding  : 0;
 	display  : flex;
@@ -114,6 +113,7 @@ ul {
 #debugger_top_nav {
 	top              : 0;
 	left             : 0;
+	width            : 100vw;
 	background-color : var(--body-bg-color);
 	border-bottom    : 2px var(--border-color) solid;
 	flex-direction   : row;
@@ -129,7 +129,8 @@ ul {
 #viewer_top_nav {
 	top             : 0;
 	left            : 0;
-	flex-direction  : row;
+	max-height      : 80vh;
+	flex-direction  : column;
 	flex-wrap       : wrap;
 	justify-content : space-between;
 	align-items     : center;
@@ -142,6 +143,7 @@ ul {
 #viewer_bottom_nav {
 	bottom          : 0;
 	left            : 0;
+	width           : 100vw;
 	flex-direction  : row;
 	flex-wrap       : nowrap;
 	justify-content : space-between;

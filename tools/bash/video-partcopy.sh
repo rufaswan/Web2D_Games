@@ -2,7 +2,7 @@
 [ $(which ffmpeg) ] || exit
 ##############################
 function time2sec {
-	var=( $(echo $1 | tr ':' ' ') )
+	var=( $(tr ':' ' ' <<< "$1") )
 	case ${#var[@]} in
 		3)  echo "${var[2]}+(${var[1]}*60)+(${var[0]}*60*60)" | bc;;
 		2)  echo "${var[1]}+(${var[0]}*60)"                   | bc;;

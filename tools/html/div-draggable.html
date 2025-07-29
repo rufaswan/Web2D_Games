@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'><head>
+
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<title>Draggable Base</title>
+<style>
+body {
+	width            : 100vw;
+	height           : 100vh;
+	margin           : 0;
+	padding          : 0;
+	background-color : #000;
+	color            : #000;
+	font-family      : sans-serif;
+	text-align       : center;
+}
+
+.corner {
+	position         : fixed;
+	padding          : 0.5em;
+	background-color : #fff;
+	text-transform   : uppercase;
+	opacity          : 0.75;
+}
+
+#canvas {
+	position : relative;
+	left     : 25vw;
+	top      : 25vh;
+	width    : 50vw;
+	height   : 50vh;
+	z-index  : -999;
+}
+
+#canvas * {
+	position         : absolute;
+	left             : 0;
+	top              : 0;
+	width            : 100%;
+	height           : 100%;
+	background-color : #0ff;
+	display          : inline;
+}
+</style>
+</head><body ondrop='on_drop(event);' ondragover='on_over(event);'>
+
+<section id='canvas'>
+	<div    id='canvas_bg'></div>
+	<canvas id='canvas_main'></canvas>
+</section>
+
+<div class='corner' id='corner_a' draggable='true' ondragstart='on_drag(event);'>a</div>
+<div class='corner' id='corner_b' draggable='true' ondragstart='on_drag(event);'>b</div>
+<div class='corner' id='corner_c' draggable='true' ondragstart='on_drag(event);'>c</div>
+<div class='corner' id='corner_d' draggable='true' ondragstart='on_drag(event);'>d</div>
+
+<script>
+'use strict';
+
+var APP = {};
+APP.w = window.innerWidth  | 0;
+APP.h = window.innerHeight | 0;
+APP.quad = [];
+
+APP.int_clamp = function( inum, imin, imax ){
+	if ( inum < imin )  return (imin | 0);
+	if ( inum > imax )  return (imax | 0);
+	return (inum | 0);
+}
+
+APP.update_corner = function( id , x , y ){
+	//console.log('APP.update_corner',id,x,y);
+	x = APP.int_clamp(x, 0, APP.w);
+	y = APP.int_clamp(y, 0, APP.h);
+
+	var el = document.getElementById('corner_'+id);
+	el.style.left = x + 'px';
+	el.style.top  = y + 'px';
+
+	x -= (APP.w >> 1);
+	y -= (APP.h >> 1);
+	var pos = '( ' + x + ' , ' + y + ' )';
+	el.innerHTML  = id + '<br>' + pos;
+}
+
+function on_drop( ev ){
+	//console.log('on_drop',ev);
+	ev.preventDefault();
+	// ev.x and ev.y is the position drop event / mouse release
+	// but we normally do not drag the div from top-left corner
+	// it is to re-adjust to the position drag start
+	var id = ev.dataTransfer.getData('og_id');
+	var x  = ev.dataTransfer.getData('og_x') | 0;
+	var y  = ev.dataTransfer.getData('og_y') | 0;
+	//console.log(id,x,y);
+	APP.update_corner(id, ev.x - x, ev.y - y);
+}
+
+function on_over( ev ){
+	//console.log('on_over',ev);
+	ev.preventDefault();
+}
+
+function on_drag( ev ){
+	//console.log('on_drag',ev);
+	//ev.preventDefault();
+	if ( ev.target.id.match(/^corner_[a-d]$/) ){
+		// ev.x and ev.y is the position drag event / mouse start
+		// it is to calculate the relative position inside the div
+		ev.dataTransfer.setData('og_id', ev.target.id[7]);
+		ev.dataTransfer.setData('og_x', ev.x - parseInt(ev.target.style.left,10) );
+		ev.dataTransfer.setData('og_y', ev.y - parseInt(ev.target.style.top ,10) );
+		//console.log(ev.dataTransfer);
+	}
+}
+
+(function(){
+	//console.log(APP);
+	var size = {
+		a : [25 , 25],
+		b : [75 , 25],
+		c : [75 , 75],
+		d : [25 , 75],
+	};
+	['a','b','c','d'].forEach(function(sk){
+		var sv = size[sk];
+		var x  = sv[0] * 0.01 * APP.w;
+		var y  = sv[1] * 0.01 * APP.h;
+		APP.update_corner(sk, x, y);
+	});
+})();
+
+/*
+RESULT
+	desktop = mouse work
+	mobile  = touch not trigger
+*/
+</script>
+</body></html>

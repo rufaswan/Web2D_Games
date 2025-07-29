@@ -25,6 +25,13 @@ function setsize {
 af=''
 srt=''
 SECONDS=0
+ffprobe=(
+	ffprobe
+	-loglevel        quiet
+	-select_streams  v:0
+	-show_entries    stream=width,height
+	-print_format    default=nokey=1:noprint_wrappers=1
+)
 while [ "$1" ]; do
 	t1=./"${1%/}"
 	dir="${t1%/*}"
@@ -39,8 +46,7 @@ while [ "$1" ]; do
 		case "$mime" in
 			'video/'* | 'audio/'*)
 				[ -f "$tmp" ] && rm -vf "$tmp"
-				t2=$(ffprobe  -v error  -select_streams v:0  -show_entries stream=width,height  -of csv=s=,:p=0  "$t1")
-				setsize $(echo "$t2" | tr ','  ' ')
+				setsize $(${ffprobe[@]}  "$t1")
 
 				echo "s=$size  af=$af  srt=$srt"
 				nice -n 19  ffmpeg -y \

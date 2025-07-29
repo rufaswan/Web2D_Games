@@ -3,263 +3,32 @@ BROWSER VERSION
 https://en.wikipedia.org/wiki/Firefox_version_history
 https://en.wikipedia.org/wiki/History_of_the_Opera_web_browser
 https://en.wikipedia.org/wiki/Google_Chrome_version_history
-https://en.wikipedia.org/wiki/Safari_version_history
-
-https://user-agents.net/browsers/opera-mobile/versions/%d
-https://whatmyuseragent.com/browser/om/opera-mobile/%d
-https://blogs.opera.com/mobile/category/opera-for-android/
-/lib/arm*/libopera.so -> 'Chrome/' 'OPR/'
-
-Chrome based
-	Desktop
-		OPR / 20- 68  Chrome/ 33- 81 (+13) skip  82
-		OPR / 69-114  Chrome/ 83-128 (+14) skip 129
-		OPR /115-     Chrome/130-    (+15)
-		Edge/ 79-     Chrome/ 79-    (same)
-	Mobile
-		OPR/Chrome
-		-         -        -        -        14/26    15/28    16/29    -        18/31    19/32
-		 20/33    21/34    22/35    -        24/37    25/38    26/39    27/40    28/41    29/42
-		 30/43    -        32/45    33/46    34/47    35/48    36/49    37/50    -        -
-		-         -        42/55    43/59    44/60    45/61    46/63    47/66    48/69    49/70
-		 50/71    51/72    52/73    53/74    54/76    55/77    56/78    57/80    58/81    59/83
-		 60/85    61/86    62/87    63/89    64/91    65/92    -        67/96    68/99    69/100
-		 70/102   71/104   72/106   73/   74/   75/  -  77/  78/  79/119
-		 80/  81/  82/  83/  84/  85/129  86/  87/  88/  89/
-		 90/
-
-Engine Changes
-	Chrome  27 (WebKit)   -> 28 (Blink) (WebKit/537.36)
-	Opera   12 (Presto)   -> 15 (Blink)
-	MS Edge 44 (EdgeHTML) -> 79 (Blink)
 
 Latest stable version available on January 1st
-	-     Firefox        Opera               Safari
-	-     pc/apk         pc        apk       iOS
-	2005    1.0    -       -         -        -
-	2006    1.5    -       -         -        -
-	2007    2.0    -       -         -        -
-	2008    2.0    -       -         -        3
-	2009    3.0    -       -         -        3
-	2010    3.5    -       -         -        4
-	2011    3.6    -       -         -        5
-	2012    9      -       -         -        5
-	2013   17     17esr    -         -        6
-	2014   26     24esr   18( 31)   18( 31)   7
-	2015   34     31esr   26( 39)   26( 39)   8
-	2016   43     38esr   34( 47)   34( 47)   9
-	2017   50     45esr   42( 55)   37( 50)  10
-	2018   57     52esr   49( 62)   44( 60)  11
-	2019   64     60esr   57( 70)   49( 70)  12
-	2020   71     68esr   65( 78)   55( 77)  13
-	2021   84     78esr   73( 87)   61( 86)  14
-	2022   95     91esr   82( 96)   65( 92)  15
-	2023  108    102esr   94(108)   72(106)  16
-	2024  121    115esr  106(120)   79(119)   -
-	2025  133    128esr  115(130)   85(129)   -
-	2026    -      -esr    -(  -)    -(  -)   -
-
-Can I Use?
-	Ffox  Oper  Safa
-	  3     9     3.2  CSS Table display
-	  2    10     3.2  CSS at-rule: @media
-	  2    10     3.2  CSS at-rule: @media: width media feature
-	  2    10     3.2  CSS at-rule: @media: height media feature
-	  2    10     3.2  CSS at-rule: @media: color media feature
-	  3.5  10     5    CSS at-rule: @media: aspect-ratio media feature
-	  3.5  10     3.2  CSS selector: :nth-child()
-	  3.5  10     3.2  CSS selector: :nth-of-type()
-	  3.5  10     3.2  CSS selector: :nth-last-child()
-	  3.5  10     3.2  CSS selector: :nth-last-of-type()
-	  3.5  10     3.2  CSS3 selectors
-	  3.5  10     7    CSS3 Media Queries
-	  3.5  10.5   3.2  CSS3 2D Transforms
-	  2    11.5   5    CSS at-rule: @media: orientation media feature
-	 50    11.5   9    CSS property: column-width
-	 52    11.5   9    CSS property: column-count
-	  2    11.6   3.2  CSS outline properties
-	 11    12.1   7    CSS at-rule: @media: Nested media queries
-	  3.6  15     4    CSS pointer-events (for HTML)
-	  5    15     -    CSS resize property
-	 10    15     4    CSS3 3D Transforms
-	  -    15     4    CSS zoom
-	  8    16     -    CSS at-rule: @media: resolution media feature
-	 28    17     9    CSS Flexible Box Layout Module
-	 57    23     -    CSS touch-action property
-	 16    30     9    CSS Animation
-	 41    35    11    CSS writing-mode property
-	 31    36     9.3  CSS property: --*: var()
-	 72    42     -    CSS property: offset
-	 51    44    10.3  ::placeholder CSS pseudo-element
-	 52    44    10.3  CSS Grid Layout (level 1)
-	 59    53    12    CSS at-rule: @media: calc() expressions
-	 62    55    16    Media Queries: resolution feature
-	 75    66    13.4  CSS math functions min(), max() and clamp()
-	 69    69    14.5  CSS at-rule: @supports: selector()
-	  -    71     -    CSS at-rule: @page: page-orientation descriptor
-	 66    73    14.5  CSS property: inset
-	 62    76     -    CSS display: contents
-	 63     -     -    CSS at-rule: @media: Range syntax from Media Queries Level 4
-	 71     -     -    CSS Subgrid
-	 72     -    14.5  CSS property: rotate
-	 72     -    14.5  CSS property: scale
-	 89     -     -    CSS image-set
-
-	  3.6  11.6   6    rem (root em) units
-	  2    15     7    ch (character) unit
-	 16    15     7    calc() as CSS unit value
-	 19    15     8    Viewport units: vw/vh/vmin/vmax
-
-	  3.5  11.5   -    Ogg Vorbis audio format
-	  3.5  11.5   4    Wav audio format
-	 22    15     4    MP3 audio format
-	  -    15     4    AAC audio file format
-	 51    42    13    FLAC audio format
-
-	  3.5  10.5   -    Ogg/Theora video format
-	 28    16     -    WebM video format
-	 35    25     3.2  MPEG-4/H.264 video format
-
-	  3.5  10     4.2  TTF/OTF - TrueType and OpenType font support
-	  3.6  11.1   5.1  WOFF - Web Open Font Format
-	 65    19     -    WebP image format
-	 39    23    12    WOFF 2.0 - Web Open Font Format
-	  3.0  46     8    Animated PNG (APNG)
-
-	  2    10     3.2  HTMLCanvasElement API: getContext: `2d` context
-	 24    19     8    HTMLCanvasElement API: getContext: WebGL context
-	 46    43     -    HTMLCanvasElement API: getContext: `bitmaprenderer` context
-	 51    43    15.1  HTMLCanvasElement API: getContext: WebGL2 context
-
-	  2     9     3.2  Data URIs
-	  2    10.6   3.2  Base64 encoding and decoding
-	  3.6  10.6   6    Multiple file selection
-	  3.6  11.1   6    FileReader API
-	  8    11.6   6    FileReaderSync
-	 37    15     -    accept attribute for file input
-	 50    17     -    Directory selection from file input
-	 28    25    10    File API
-
-	 12    18     8    XMLHttpRequest advanced features
-	 29    20     8    Promises
-	 52    42    10.3  JavaScript operator: await
-	 52    42    11    Async functions
-	 89    75    15    JavaScript operator: await: Use at module top level
-
-	 20    10.5   4    Audio element
-	 20    10.5   4    Video element
-	 25    22    14.5  Web Audio API
-	 29    36    14.5  MediaRecorder API
-	 36    40    11    getUserMedia/Stream API
-	 66    60     -    MediaDevices API: getDisplayMedia()
-
-
-
-	  4    11.6   6    Typed Arrays
-	  4    11.6   6    ECMAScript 5 Strict Mode
-	  3.5  15     5    defer attribute for external scripts
-	  3.6  15     5.1  async attribute for external scripts
-	 21    15     6    ECMAScript 5
-	 31    21     9    JavaScript built-in: Number: MAX_SAFE_INTEGER
-	 31    21     9    JavaScript built-in: Number: MIN_SAFE_INTEGER
-	 32    21     9    ES6 Number
-	 26    26    10    ES6 Generators
-	 34    29    12.2  ES6 Template Literals (Template Strings)
-	 31    32     8    JavaScript built-in: Array: fill
-	 36    36    11    const
-	 44    36    11    let
-	 45    36     9    ES6 classes
-	 54    38    10    ECMAScript 2015 (ES6)
-	 60    48    11    JavaScript modules via script tag
-	 67    50    11.1  JavaScript modules: dynamic import()
-
-	  4     9.5  10.3  Pattern attribute for input fields
-	  2    10     3.2  HTML element: input: type="hidden"
-	  2    10     3.2  HTML element: input: type="password"
-	  4    10     6    disabled attribute of the fieldset element
-	 57    10    14.1  HTML element: input: type="time"
-	  2    10.5   -    Spellcheck attribute
-	  2    11.5   3.2  HTML element: input: type="url"
-	  2    11.5   3.2  HTML element: input: type="file"
-	  2    11.5   5    HTML element: input: type="email"
-	  4    11.5   5    input placeholder attribute
-	  4    11.5   5    HTML element: input: type="search"
-	 23    11.5   5    HTML element: input: type="range"
-	 57    11.5  14.1  HTML element: input: type="date"
-	 93    11.5  14.1  HTML element: input: type="datetime-local"
-	117    11.5   4    HTML element: input: type="tel"
-	  -    11.5   -    HTML element: input: type="week"
-	  -    11.5   -    HTML element: input: type="month"
-	 29    12.1  12.2  HTML element: input: type="color"
-	  2    15     3.2  HTML element: input: type="text"
-	  2    15     3.2  HTML element: input: type="radio"
-	  2    15     3.2  HTML element: input: type="image"
-	  2    15     3.2  HTML element: input: type="reset"
-	  2    15     3.2  HTML element: input: type="button"
-	  2    15     3.2  HTML element: input: type="submit"
-	  2    15     3.2  HTML element: input: type="checkbox"
-	  4    15     7    readonly attribute of input and textarea elements
-	  4    15     9    maxlength attribute for input and textarea elements
-	 29    15     5.1  HTML element: input: type="number"
-	  -    15    12.2  HTML element: input: type="color"
-	 51    27    10.3  Minimum length attribute for input fields
-	 95    53     -    inputmode attribute
-
-	 25    15     6    srcdoc attribute for iframes
-	 28    15     5    sandbox attribute for iframes
-	  -    64     -    Lazy loading via attribute for images & iframes
-
-	  3.5  10.6   5    Web Workers
-	 29    10.6   -    Shared Web Workers
-	 44    32    11.3  Service Workers
-
-	 16    12.1   -    Media Queries: resolution feature
-	 64    28     9    Media Queries: interaction media features
-
-	  2     9     3.2  naturalWidth & naturalHeight image properties
-	  3.5  10     3.2  querySelector/querySelectorAll
-	  4    11.5   5    getComputedStyle
-	 18    11.6   3.2  Window.devicePixelRatio
-	  2    12.1   3.2  Element API: scrollIntoView
-	 11    15     6    requestAnimationFrame
-	 16    15     7    calc() as CSS unit value
-	 55    15     9    CSS.supports() API
-	 65    28    10    Crisp edges/pixelated images
-	 64    58     -    Element API: requestFullscreen
-	  -    64     -    OffscreenCanvas
-	 75    71    13.4  Web Animations API
-	 63    73    14.5  gap property for Flexbox
-
-	  4     9.5   5.1  tabindex global attribute
-	  4     9.5   5.1  Form attribute
-	  4    11.1   5.1  hidden attribute
-	  6    11.1   5.1  dataset & data-* attributes
-	 20    15    13    Download attribute
-
-	  3.5  10.5   4    Web Storage - name/value pairs
-	 22    25     -    Web Notifications
-	 44    42     -    Push API
-	 59    42    13.2  Pointer events
-	 52    44    11    WebAssembly
-	 38     -     -    Ruby annotation
-
-Desktop vs Mobile
-	https://wiki.mozilla.org/Mobile/Platforms
-	Firefox for Android is built on the same engine as Firefox desktop,
-	with extensive changes to optimize performance and user experience on mobile devices.
-
-	https://developer.chrome.com/docs/multidevice/faq/
-	Chrome for Android is derived from Chromium.
-	They share the same release cycle and release numbering.
-	Not2 all features in desktop Chrome are available in the corresponding version of Chrome for Android, however.
-
-	https://developer.apple.com/documentation/safari-release-notes
-	Safari is a web browser app and web technology platform available on iOS and macOS.
-	It’s built on WebKit, a fast, open-source web rendering engine that implements web standards.
-
-	https://developer.chrome.com/docs/multidevice/webview/
-	Chrome for Android is separate from WebView.
-	They're both based on the same code, including a common JavaScript engine and rendering engine.
+	-     Firefox        Opera(Chrome)
+	-     pc/apk         pc        apk
+	2005    1.0    -       -         -
+	2006    1.5    -       -         -
+	2007    2.0    -       -         -
+	2008    2.0    -       -         -
+	2009    3.0    -       -         -
+	2010    3.5    -       -         -
+	2011    3.6    -       -         -
+	2012    9      -       -         -
+	2013   17     17esr    -         -
+	2014   26     24esr   18( 31)   18( 31)
+	2015   34     31esr   26( 39)   26( 39)
+	2016   43     38esr   34( 47)   34( 47)
+	2017   50     45esr   42( 55)   37( 50)
+	2018   57     52esr   49( 62)   44( 60)
+	2019   64     60esr   57( 70)   49( 70)
+	2020   71     68esr   65( 78)   55( 77)
+	2021   84     78esr   73( 87)   61( 86)
+	2022   95     91esr   82( 96)   65( 92)
+	2023  108    102esr   94(108)   72(106)
+	2024  121    115esr  106(120)   79(119)
+	2025  133    128esr  115(130)   85(129)
+	2026    -      -esr    -(  -)    -(  -)
 
 
 
@@ -290,11 +59,11 @@ Last stable version by Android OS
 	14  4.0    Ice Cream Sandwich
 		+OpenGL ES 2.0
 		+Support Library v26
-		14+  Firefox  37- 55
+		14+  Firefox   x- 55
 	15  4.0.3  Ice Cream Sandwich
 	16  4.1    Jelly Bean
 		16+  Opera    14- 50 (Mobile) , 21-46 (Mini) , 14-58 (Desktop)
-		14+  Chrome    x- 71
+		16+  Chrome    x- 71
 		16+  Firefox  56- 68
 	17  4.2    Jelly Bean
 	18  4.3    Jelly Bean
@@ -368,55 +137,324 @@ Last stable version by Android OS
 	15    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.2" x 3.4"
 	16    416 MB+/816 MB+/1.0 GB    4.0 GB+/1.1 GB+    2.2" x 3.4"
 
-	https://en.wikipedia.org/wiki/MacOS
-	https://en.wikipedia.org/wiki/MacOS_version_history
-	https://en.wikipedia.org/wiki/IOS
 
-	Darwin
-	6   macOS   10.2   Jaguar
-	7   macOS   10.3   Panther
-	8   macOS   10.4   Tiger
-	9   macOS   10.5   Leopard
-		iOS      1.0-2.2
-	10  macOS   10.6   Snow Leopard
-		iOS      3.0-4.2
-	11  macOS   10.7   Lion
-		iOS      4.3-5
-	12  macOS   10.8   Mountain Lion
-	13  macOS   10.9   Mavericks
-		iOS 6
-	14  macOS   10.10  Yosemite
-		iOS      7-8
-		watchOS  1
-	15  macOS   10.11  El Capitan
-		iOS      9
-		watchOS  2
-	16  macOS   10.12  Sierra
-		iOS     10
-		watchOS  3
-	17  macOS   10.13  High Sierra
-		iOS     11
-		watchOS  4
-	18  macOS   10.14  Mojave
-		iOS     12
-		watchOS  5
-	19  macOS   10.15  Catalina
-		iOS     13
-		watchOS  6
-	20  macOS   11     Big Sur
-		iOS     14
-		watchOS  7
-	21  macOS   12     Monterey
-		iOS     15
-		watchOS  8
 
-	http://m.webapps-online.com/page52094
-	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand573714/playstation-3
-	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand575321/playstation-4
-	http://m.webapps-online.com/online-tools/user-agent-strings/dv/brand728810/playstation-vita
-	PS3   Chrome 27-46
-	PS4   Chrome 59-72
-	Vita  Chrome 53
+Desktop vs Mobile
+	https://wiki.mozilla.org/Mobile/Platforms
+	Firefox for Android is built on the same engine as Firefox desktop,
+	with extensive changes to optimize performance and user experience on mobile devices.
+
+	https://developer.chrome.com/docs/multidevice/faq/
+	Chrome for Android is derived from Chromium.
+	They share the same release cycle and release numbering.
+	Not2 all features in desktop Chrome are available in the corresponding version of Chrome for Android, however.
+
+	https://developer.chrome.com/docs/multidevice/webview/
+	Chrome for Android is separate from WebView.
+	They're both based on the same code, including a common JavaScript engine and rendering engine.
+
+
+
+Chrome based
+	https://user-agents.net/browsers/opera-mobile/versions/%d
+	https://whatmyuseragent.com/browser/om/opera-mobile/%d
+	https://blogs.opera.com/mobile/category/opera-for-android/
+	/lib/arm*/libopera.so -> 'Chrome/' 'OPR/'
+
+	Desktop
+		OPR / 20- 68  Chrome/ 33- 81 (+13) skip  82
+		OPR / 69-114  Chrome/ 83-128 (+14) skip 129
+		OPR /115-     Chrome/130-    (+15)
+		Edge/ 79-     Chrome/ 79-    (same)
+	Mobile
+		OPR/Chrome
+		-         -        -        -        14/26    15/28    16/29    -        18/31    19/32
+		 20/33    21/34    22/35    -        24/37    25/38    26/39    27/40    28/41    29/42
+		 30/43    -        32/45    33/46    34/47    35/48    36/49    37/50    -        -
+		-         -        42/55    43/59    44/60    45/61    46/63    47/66    48/69    49/70
+		 50/71    51/72    52/73    53/74    54/76    55/77    56/78    57/80    58/81    59/83
+		 60/85    61/86    62/87    63/89    64/91    65/92    -        67/96    68/99    69/100
+		 70/102   71/104   72/106   73/   74/   75/  -  77/  78/  79/119
+		 80/  81/  82/  83/  84/  85/129  86/  87/  88/  89/
+		 90/
+
+Engine Changes
+	Chrome  27 (WebKit)   -> 28 (Blink) (WebKit/537.36)
+	Opera   12 (Presto)   -> 15 (Blink)
+	MS Edge 44 (EdgeHTML) -> 79 (Blink)
+
+
+
+Can I Use?
+(Full support + no issue only)
+	Blink      71  81  95  106  119  138  x
+	Gecko  55  68                         x
+
+	Blink  Gecko
+	  4      3.5  Ogg Vorbis audio format
+	  4     22    MP3 audio format
+	  8      3.5  Wav audio format
+	 33     15    Opus audio format
+	 56     51    FLAC audio format
+	 12      -    AAC audio file format
+
+	  4     35    MPEG-4/H.264 video format
+	 25     28    WebM video format
+	 70     67    AV1 video format
+	  -      -    HEVC/H.265 video format
+	  4      3.5  [removed] Ogg/Theora video format
+
+	 32     65    WebP image format
+	 85    113    AVIF image format
+	  -      -    HEIF/HEIC image format
+	  -      -    JPEG XL image format
+	  -      -    JPEG XR image format
+	  -      -    JPEG 2000 image format
+
+	  4      3.5  TTF/OTF - TrueType and OpenType font support
+	  5      3.6  WOFF - Web Open Font Format
+	 36     39    WOFF 2.0 - Web Open Font Format
+	 98    107    COLR/CPAL(v1) Font Formats
+	110     32    COLR/CPAL(v0) Font Formats
+
+	  4      2    HTMLCanvasElement API: getContext: `2d` context
+	 17     96    HTMLCanvasElement API: toDataURL: type parameter supports "image/webp"
+	 33     24    HTMLCanvasElement API: getContext: WebGL context
+	 50     18    HTMLCanvasElement API: toDataURL: type parameter supports "image/png"
+	 50     18    HTMLCanvasElement API: toDataURL: type parameter supports "image/jpeg"
+	 50     18    HTMLCanvasElement API: toBlob: type parameter supports "image/png"
+	 50     18    HTMLCanvasElement API: toBlob: type parameter supports "image/jpeg"
+	 50     96    HTMLCanvasElement API: toBlob: type parameter supports "image/webp"
+	 56     51    HTMLCanvasElement API: getContext: WebGL2 context
+	 66     46    HTMLCanvasElement API: getContext: `bitmaprenderer` context
+	  -      -    HTMLCanvasElement API: getContext: webgpu context
+
+	  4     23    HTML element: input: type="range"
+	  5      2    HTML element: input: type="email"
+	  5      4    HTML element: input: type="search"
+	 20     29    HTML element: input: type="color"
+	 20     57    HTML element: input: type="date"
+	 20     57    HTML element: input: type="time"
+	  -      -    HTML element: input: type="number"
+	  -      4    HTML element: input: type="tel"
+	  4      -    HTML element: input: type="file"
+	  4      -    HTML element: input: type="reset"
+	  4      -    HTML element: input: type="submit"
+	 20      -    HTML element: input: type="week"
+	 20      -    HTML element: input: type="month"
+	 20      -    HTML element: input: type="datetime-local"
+
+	  4      3.5  CSS at-rule: @media: aspect-ratio media feature
+	 29      8    CSS at-rule: @media: resolution media feature
+	 41     64    CSS at-rule: @media: pointer media feature
+	 41     64    CSS at-rule: @media: any-hover media feature
+	 41     64    CSS at-rule: @media: any-pointer media feature
+	 58    110    CSS at-rule: @media: color-gamut media feature
+	 74     63    CSS at-rule: @media: prefers-reduced-motion media feature
+	 76     67    CSS at-rule: @media: prefers-color-scheme media feature
+	 89     89    CSS at-rule: @media: forced-colors media feature
+	 96    101    CSS at-rule: @media: prefers-contrast media feature
+	 98    100    CSS at-rule: @media: dynamic-range media feature
+	113     66    CSS at-rule: @media: overflow-inline media feature
+	113     66    CSS at-rule: @media: overflow-block media feature
+	113    102    CSS at-rule: @media: update media feature
+	120    113    CSS at-rule: @media: scripting media feature
+	  -      -    CSS at-rule: @media: inverted-colors media feature
+	  -      -    CSS at-rule: @media: prefers-reduced-data media feature
+	  -    100    CSS at-rule: @media: video-dynamic-range media feature
+	  -     64    CSS at-rule: @media: hover media feature
+	 29      -    CSS at-rule: @media: color-index media feature
+	 42      -    CSS at-rule: @media: display-mode media feature
+	118      -    CSS at-rule: @media: prefers-reduced-transparency media feature
+	123      -    CSS at-rule: @media: display-mode media feature: picture-in-picture value
+	132      -    CSS at-rule: @media: device-posture media feature
+
+	 26     11    CSS at-rule: @media: Nested media queries
+	 66     59    CSS at-rule: @media: calc() expressions
+	 66     59    CSS at-rule: @media: Media query value support
+	138      -    CSS at-rule: @media: vertical-viewport-segments
+	138      -    CSS at-rule: @media: horizontal-viewport-segments
+
+	  4      3    CSS property: display: inline-table
+	 29     16    CSS property: display: flex
+	 29     16    CSS property: display: inline-flex
+	 57     52    CSS property: display: grid
+	 57     52    CSS property: display: inline-grid
+	 58     53    CSS property: display: flow-root
+	 65     37    CSS property: display: contents
+	121     38    CSS property: display: ruby
+	121     38    CSS property: display: ruby-text
+	  -      2    CSS property: display: none
+	  -     38    CSS property: display: ruby-base
+	  -     38    CSS property: display: ruby-base-container
+	  -     38    CSS property: display: ruby-text-container
+	109      -    CSS property: display: math
+
+	  9     15    JavaScript built-in: DataView: DataView() constructor
+	 32      -    JavaScript built-in: Promise: Promise() constructor
+	 36      6    JavaScript built-in: WeakMap: WeakMap() constructor
+	 36     34    JavaScript built-in: WeakSet: WeakSet() constructor
+	 38     13    JavaScript built-in: Set: Set() constructor
+	 38     13    JavaScript built-in: Map: Map() constructor
+	 38     36    JavaScript built-in: Symbol: Symbol() constructor
+	 49     18    JavaScript built-in: Proxy: Proxy() constructor
+	 67     68    JavaScript built-in: BigInt: BigInt() constructor
+	 84     79    JavaScript built-in: WeakRef: WeakRef() constructor
+
+	 42     45    JavaScript operator: class
+	 46     16    JavaScript operator: Spread syntax (...)
+	 55     52    JavaScript operator: await
+	 55     52    JavaScript operator: async function expression
+	 63     55    JavaScript operator: async function* expression
+	 63     67    JavaScript operator: import
+	 89     89    JavaScript operator: await: Use at module top level
+	 49      -    JavaScript operator: Destructuring assignment
+
+	  4      2    CSS 2.1 selectors
+				* (universal selector)
+				> (child selector)
+				:first-child
+				:link
+				:visited
+				:active
+				:hover
+				:focus
+				:lang()
+				+ (adjacent sibling selector)
+				[attr]
+				[attr="val"]
+				[attr~="val"]
+				[attr|="bar"]
+				.foo (class selector)
+				#foo (id selector)
+	  4      3.5  CSS3 selectors
+				[foo^="bar"]
+				[foo$="bar"]
+				[foo*="bar"]
+				:root
+				:nth-child()
+				:nth-last-child()
+				:nth-of-type()
+				:nth-last-of-type()
+				:last-child
+				:first-of-type
+				:last-of-type
+				:only-child
+				:only-of-type
+				:empty
+				:target
+				:enabled
+				:disabled
+				:checked
+				:not()
+				~ (general sibling)
+
+	  4      3.6  rem (root em) units
+	 26     19    Viewport units: vw/vh/vmin/vmax
+	 27      2    ch (character) unit
+	108    101    Small, Large, and Dynamic viewport units
+
+	  4      4    input placeholder attribute
+	  4     51    maxlength attribute for input and textarea elements
+	  5     28    sandbox attribute for iframes
+	  6      4    hidden attribute
+	  7      6    dataset & data-* attributes
+	  8      3.6  async attribute for external scripts
+	  8     31    defer attribute for external scripts
+	  9      2    Spellcheck attribute
+	 10      4    Form attribute
+	 10      4    Pattern attribute for input fields
+	 14     20    Download attribute
+	 15      4    Attributes for form submission
+	 20      4    disabled attribute of the fieldset element
+	 20     18    Reversed attribute of ordered lists
+	 20     25    srcdoc attribute for iframes
+	 26      4    readonly attribute of input and textarea elements
+	 38     38    Srcset and sizes attributes
+	 40     51    Minimum length attribute for input fields
+	 66     95    inputmode attribute
+	 77    121    Lazy loading via attribute for images & iframes
+	  -      -    autocomplete attribute: on & off values
+	  -     60 '  SameSite' cookie attribute
+	 15      -    Ping attribute
+	 15      -    tabindex global attribute
+	  -     21    [removed] Scoped attribute
+	  -      -    [removed] seamless attribute for iframes
+
+	  5     11    WebSocket API
+	 34     25    Web Audio API
+	 43    108    Web MIDI API
+	 84     81    Web Animations API
+	 94    130    WebCodecs API
+	 97    114    WebTransport API
+	  -      -    WebVR API
+	  -      -    WebXR Device API
+	 67      -    Web Authentication API
+	 89      -    WebHID API
+	 89      -    Web Serial API
+	124      -    WebSocketError API
+	128      -    Web Share API
+	  4      -    [removed] WebKitPoint API
+
+	 15     52    Selection API
+	 32     26    URL API
+	 43     46    Permissions API
+	 49     29    MediaRecorder API
+	 53     42    getUserMedia/Stream API
+	 69     96    Lock API
+	 87    140    Cookie Store API
+	  -      -    Push API
+	 59      -    ImageCapture API
+	105      -    File System Access API
+
+	 43     16    CSS Animation
+	 49     31    CSS Variables (Custom Properties)
+	 61     55    CSS.supports() API
+	 79     75    CSS math functions min(), max() and clamp()
+	 84     67    CSS revert value
+	114    113    CSS image-set
+
+	 34     32    ES6 Number
+	 39     26    ES6 Generators
+	 41     34    ES6 Template Literals (Template Strings)
+	 49     45    ES6 classes
+
+	  4      2    Base64 encoding and decoding
+	  4      2    Data URIs
+	  4      2    naturalWidth & naturalHeight image properties
+	  4      2    Element API: scrollIntoView
+	  4      3.5  querySelector/querySelectorAll
+	  4      3.5  Web Storage - name/value pairs
+	  4     18    Window.devicePixelRatio
+	  4     20    Audio element
+	  4     20    Video element
+	  5      3.6  Multiple file selection
+	  6      3.6  FileReader API
+	  7      4    Typed Arrays
+	 22     22    Web Notifications
+	 23     21    ECMAScript 5
+	 24     23    requestAnimationFrame
+	 26     16    calc() as CSS unit value
+	 26     37    accept attribute for file input
+	 30     50    Directory selection from file input
+	 38     28    File API
+	 42     40    Fetch
+	 45     22    Arrow functions
+	 47     15    Rest parameters
+	 49     15    JavaScript function: Default parameters
+	 49     36    const
+	 49     44    let
+	 50     47    XMLHttpRequest advanced features
+	 55     59    Pointer events
+	 57     53    WebAssembly
+	 59      3.0  Animated PNG (APNG)
+	 61     60    JavaScript modules via script tag
+	 69    105    OffscreenCanvas
+	 71     64    Element API: requestFullscreen
+	 72     66    MediaDevices API: getDisplayMedia()
+	  -     22    asm.js
+	  -     93    Crisp edges/pixelated images
+	  4      -    Window API: getComputedStyle
 
 
 

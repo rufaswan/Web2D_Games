@@ -202,3 +202,6 @@ lab_dist('kg', $labk, $labg);
 lab_dist('kw', $labk, $labw);
 lab_dist('ww', $labw, $labw);
 
+/*
+convert  $img  -resize 2x2\!  txt:
+*/

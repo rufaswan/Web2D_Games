@@ -24,7 +24,7 @@ while [ "$1" ]; do
 	shift
 
 	# invalid = dir/filename.png
-	sep=$(echo "$t1" | grep '/')
+	sep=$(grep '/' <<< "$t1")
 	[ "$sep" ] && continue
 
 	# image file only
@@ -32,13 +32,13 @@ while [ "$1" ]; do
 	[ "$mime" ] || continue
 
 	# convert return float
-	#   perc=$(echo "$mean * 1000 / $max" | bc)
+	#   perc=$(bc <<< "$mean * 1000 / $max")
 	mean=$($con  "$t1"  -colorspace Gray  -format '%[mean]'  info:)
 	let perc="${mean%.*}"*1000/"$max"
 	echo "mean=$mean  perc=$perc"
 
 	# update existing mean percentage
-	check=$(echo "$t1" | grep '^[0-9][0-9][0-9] ')
+	check=$(grep '^[0-9][0-9][0-9] ' <<< "$t1")
 	fn="$t1"
 	[ "$check" ] && fn="${t1:4}"
 

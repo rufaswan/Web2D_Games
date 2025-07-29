@@ -11,8 +11,8 @@ function cpu90kill {
 	local cpu=${1%.*}  # float to int
 	local mem=${2%.*}  # float to int
 	local pid=$3
-	local com=$4
-	#echo "CPU = $cpu , MEM = $mem , PID = $pid , COMM = $com"
+	local cmd=${4##*/}
+	#echo "CPU = $cpu , MEM = $mem , PID = $pid , CMD = $cmd"
 
 	# CPU MEM
 	#   0   0  skip
@@ -32,7 +32,7 @@ function cpu90kill {
 	#   Isolated Web Co   $path/firefox-bin -contentproc -childID 3 -isForBrowser ... tab
 	#   Web Content       $path/firefox-bin -contentproc -childID 4 -isForBrowser ... tab
 	kill    -15 $pid
-	killall -15 $com
+	killall -15 $cmd
 	echo "[cpu90kill] $@"
 }
 export -f cpu90kill
@@ -41,12 +41,12 @@ ps=(
 	ps
 	-A
 	--no-headers
-	--format %cpu,%mem,pid,comm
+	--format %cpu,%mem,pid,cmd
 	--sort   %cpu
 )
 while [ '1' ]; do
 	cpu90kill  $(${ps[@]} | tail -1)
-	sleep 15
+	sleep 5
 done
 
 <<'////'

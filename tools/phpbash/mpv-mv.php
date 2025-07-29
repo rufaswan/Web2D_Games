@@ -24,9 +24,12 @@ require 'class-sh.inc';
 sh::which('xprop');
 sh::which('ffprobe');
 sh::which('mpv');
-sh::which('sleep');
 
+// MB = 1024 * 1024
+// mb = 1000 * 1000
 $gp_work = sh::xprop();
+define('MB10', 1 * 0.001 * 0.001);
+define('MIN' , 1.0 / 60);
 //////////////////////////////
 function sort_by_time( $a, $b )
 {
@@ -37,6 +40,20 @@ function sort_by_time( $a, $b )
 		return $b['time'] - $a['time'];
 }
 
+function calc_remain_timesize( &$list )
+{
+	$sum = array(
+		'time' => 0.0,
+		'size' => 0.0,
+	);
+	foreach ( $list as $ent )
+	{
+		$sum['time'] += $ent['time'];
+		$sum['size'] += $ent['size'];
+	}
+	return $sum;
+}
+
 function mpvplay( &$list, $type )
 {
 	if ( empty($list) )
@@ -44,52 +61,49 @@ function mpvplay( &$list, $type )
 	usort($list, 'sort_by_time');
 
 	global $gp_work;
-	$sh = sh::which('mpv');
 	while ( ! empty($list) )
 	{
 		// paused when moved to different workspace
 		while ( sh::xprop() !== $gp_work )
-			sh::exec('sleep 0.5');
+			sleep(1);
 
 		// process list
+		$sum = calc_remain_timesize($list);
+		$rem = sprintf('[%d] (rem=%d min|%d mb)', count($list), $sum['time'] * MIN, $sum['size'] * MB10);
+
 		$ent = array_shift($list);
 
-		$mib = $ent['size'] * 0.001 * 0.001;
 		$tmp = sprintf('%s/meme/%s/%s', sys_get_temp_dir(), $type, $ent['name']);
-		$tit = sprintf('[%d] %s (%d mib)', count($list), $ent['name'], $mib);
+		$tit = sprintf('%s (%d min|%d mb)', $ent['name'], $ent['time'] * MIN, $ent['size'] * MB10);
 
-		$mpv = '%s'
+		$mpv = 'mpv'
 			. ' --quiet'
 			. ' --really-quiet'
 			. ' --window-maximized'
 			. ' --geometry="+0+0"'
-			. ' --title="%s"'
+			. ' --title="%s %s"'
 			. ' --script-opts="osc-visibility=always"'
 			. ' --af="loudnorm=I=-14:TP=-1"'
 			. ' "%s"';
-		echo "$tit\n";
-		sh::exec($mpv, $sh, $tit, $ent['name']);
-		sh::exec('sleep 0.5');
+		sh::exec($mpv, $rem, $tit, $ent['name']);
 
+		// already moved = do nothing
+		echo "$tit\n";
 		if ( ! file_exists($tmp) )
 			sh::move($ent['name'], $tmp);
+
+		sleep(1);
 	} // while ( ! empty($list) )
 	return;
 }
 
-$media = array();
 $video = array();
-$audio = array();
-$ffcmd = 'ffprobe'
-	. ' -loglevel        quiet'
-	. ' -select_streams  %s'
-	. ' -show_entries    stream=duration'
-	. ' -print_format    default=nokey=1:noprint_wrappers=1'
-	. ' "%s"';
+$media = array();
 for ( $i=1; $i < $argc; $i++ )
 {
 	if ( ! is_file($argv[$i]) )
 		continue;
+	echo '.';
 
 	$t = array(
 		'name' => $argv[$i],
@@ -99,30 +113,39 @@ for ( $i=1; $i < $argc; $i++ )
 	if ( $t['name'][0] === '-' )
 		$t['name'] = './' . $t['name'];
 
-	$vdur = 10.0 * sh::exec($ffcmd, 'v:0', $t['name']);
-	$adur = 10.0 * sh::exec($ffcmd, 'a:0', $t['name']);
-	if ( $vdur > 1.0 && $adur > 1.0 )
+	$dur = sh::ffprobe($t['name']);
+	if ( $dur['stream'] > 1.0 )
 	{
-		$t['time'] = $vdur + $adur;
-		$media[] = $t;
-		continue;
-	}
-
-	if ( $vdur > 1.0 )
-	{
-		$t['time'] = $vdur;
+		// has video stream
+		$t['time'] = $dur['stream'];
 		$video[] = $t;
 		continue;
 	}
 
-	if ( $adur > 1.0 )
+	if ( $dur['format'] > 1.0 )
 	{
-		$t['time'] = $adur;
-		$audio[] = $t;
+		// general media file
+		$t['time'] = $dur['format'];
+		$media[] = $t;
 		continue;
 	}
 } // for ( $i=1; $i < $argc; $i++ )
+echo "\n";
 
-mpvplay($media, 'media');
+//echo "video\n"; print_r($video);
+//echo "media\n"; print_r($media);
 mpvplay($video, 'video');
-mpvplay($audio, 'audio');
+mpvplay($media, 'media');
+
+/*
+format=duration      == ss.sssssssss       , for both video and audio files
+stream=duration      == ss.sssssssss       , with select_streams , N/A for *.webm *.mkv
+stream_tags=duration == hh:mm:ss.sssssssss , with select_streams
+
+return     format  stream:v  stream:a  tags:v  tags:a
+non-media  ''      ''        ''        ''      ''
+image      N/A     N/A       ''        ''      ''
+video      1.0     1.0       ''        ''      ''
+audio      1.0     ''        1.0       ''      ''
+*.webm     1.0     N/A       N/A       0:00    0:00
+ */

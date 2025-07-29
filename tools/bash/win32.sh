@@ -88,7 +88,7 @@ dll=(
 	#wininet=d  # Disconnect from Internet
 	#winhttp=d  # Disconnect from Internet
 )
-#export WINEDLLOVERRIDES=$(echo ${dll[*]} | tr ' ' \;)
+#export WINEDLLOVERRIDES=$(tr ' ' \; <<< "${dll[*]}")
 export WINEDLLOVERRIDES=$(IFS=\;; echo "${dll[*]}")
 
 # wiki.winehq.org/FAQ
@@ -151,7 +151,7 @@ else
 		fi
 
 		# update virtual desktop size
-		if [ $(echo $t1 | grep [0-9]x[0-9]) ]; then
+		if [ $(grep [0-9]x[0-9] <<< "$t1")]; then
 			desk="explorer /desktop=$WINEARCH-$deskid,$t1"
 			continue
 		fi
