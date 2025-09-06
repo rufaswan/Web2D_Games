@@ -14,8 +14,8 @@
 <div class="details">
 <span id="author" class="author">Rufas Wan</span><br/>
 <span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
-<span id="revnumber">version 1.1.1,</span>
-<span id="revdate">2025-7-1</span>
+<span id="revnumber">version 1.1.2,</span>
+<span id="revdate">2025-8-3</span>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
@@ -943,24 +943,7 @@ s8 end = 157080 + PS2 da8c00
 <div class="paragraph">
 <p>Then convert it to matrix form:</p>
 </div>
-<div class="stemblock">
-<div class="content">
-\$"result" =
-	[t^3  t^2  t  1]
-	* [
-		[-0.5 ,  1.5 , -1.5 ,  0.5] ,
-		[ 1.0 , -2.5 ,  2.0 , -0.5] ,
-		[-0.5 ,  0   ,  0.5 ,  0  ] ,
-		[ 0   ,  1.0 ,  0   ,  0  ]
-	]
-	* [
-		["prev"] ,
-		["cur" ] ,
-		["nxt1"] ,
-		["nxt2"]
-	]\$
-</div>
-</div>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mstyle displaystyle="true"><mrow><mtext>result</mtext></mrow><mo>=</mo><mrow><mo>[</mo><msup><mi>t</mi><mn>3</mn></msup><msup><mi>t</mi><mn>2</mn></msup><mi>t</mi><mn>1</mn><mo>]</mo></mrow><mo>⋅</mo><mrow><mo>[</mo><mtable columnlines="none none none none"><mtr><mtd><mo>-</mo><mn>0.5</mn></mtd><mtd><mn>1.5</mn></mtd><mtd><mo>-</mo><mn>1.5</mn></mtd><mtd><mn>0.5</mn></mtd></mtr><mtr><mtd><mn>1.0</mn></mtd><mtd><mo>-</mo><mn>2.5</mn></mtd><mtd><mn>2.0</mn></mtd><mtd><mo>-</mo><mn>0.5</mn></mtd></mtr><mtr><mtd><mo>-</mo><mn>0.5</mn></mtd><mtd><mn>0</mn></mtd><mtd><mn>0.5</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1.0</mn></mtd><mtd><mn>0</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable><mo>]</mo></mrow><mo>⋅</mo><mrow><mo>[</mo><mtable><mtr><mtd><mrow><mtext>prev</mtext></mrow></mtd></mtr><mtr><mtd><mrow><mtext>cur</mtext></mrow></mtd></mtr><mtr><mtd><mrow><mtext>nxt1</mtext></mrow></mtd></mtr><mtr><mtd><mrow><mtext>nxt2</mtext></mrow></mtd></mtr></mtable><mo>]</mo></mrow></mstyle></math>
 <div class="paragraph">
 <p>The 4x4 matrix is the Characteristic Matrix, and it matched Catmull-Rom Spline <a href="#catmull">[catmull]</a>.</p>
 </div>
@@ -1589,29 +1572,5 @@ The absolute value of a number may be thought of as its distance from zero. It i
 </div>
 </div>
 </div>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  messageStyle: "none",
-  tex2jax: {
-    inlineMath: [["\\(", "\\)"]],
-    displayMath: [["\\[", "\\]"]],
-    ignoreClass: "nostem|nolatexmath"
-  },
-  asciimath2jax: {
-    delimiters: [["\\$", "\\$"]],
-    ignoreClass: "nostem|noasciimath"
-  },
-  TeX: { equationNumbers: { autoNumber: "none" } }
-})
-MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
-  MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
-    if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains("stemblock")) {
-      data.math.root.display = "block"
-    }
-    return data
-  })
-})
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 </body>
 </html>

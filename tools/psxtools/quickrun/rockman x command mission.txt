@@ -103,3 +103,57 @@ eternal forest
 	3 -  rrrrrrrb   bone key
 	3 -  rrrrrrrr
 	box = 32 , token = 8
+------------------------------
+Yellow Chest = Subtank Energy +x%
+- cannot collect when full
+- cannot use at menu   with full HP
+- can be use at battle with full HP
+
+Tianna Camp
+- BR
+- BRY  , YRB=room
+- YBR  , RYB=room , BYR=chest
+- YRGB , GBRY=chest
+
+Vanallia Desert
+- Beam hit default green pad
+- hit other green pad = unlock chest   at 2F
+- hit switch          = unlock console at 2F (can change beam before go to 2F)
+- hit emblem          = trigger battle
+- chest count
+	0 - 2
+	|   |
+	2   1
+
+
+-        exp + key
+ruin     18  +  3  = 21
+tower    28  + 35  = 63 (key=clear data)
+camp     41  +  4  = 45
+lab	     35  + 32  = 67 (key=eternal forest)
+factory  39  +  -  = 39
+mine     34  +  3  = 37
+desert   37  +  -  = 37
+plant    29  +  4  = 33
+base     35  +  -  = 35
+hq       15  +  -  = 15
+
+figure set
+- part 1- 4  vending machine - figure token * 2
+- part 5- 8  vending machine - figure token * 2
+- part 9-10  vending machine - figure token * 2 - clear data
+- deluxe
+- special 1  mettaur    defeat     100+ mettaur
+- special 2  preon 1    defeat     100+ enemies
+- special 3  preon 2    defeat     500+ enemies
+- special 4  preon 3    defeat   1,000+ enemies
+- special 5  mini mech  gain   100,000+ EXP
+- special 6  retromech  exec       100+ final strike
+- password 1-2  vending machine
+.               set 1
+.               set 2
+- treasure 1-3  [gamecube] vending machine - treasure token * 2
+- treasure 4-6  [gamecube] vending machine - treasure token * 2
+
+figure   token = 10 * 6 * 2 = 120/0x78
+treasure token =  6 * 6 * 2 =  72/0x48

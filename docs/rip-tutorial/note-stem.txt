@@ -1,0 +1,44 @@
+PROBLEM :
+
+	:stem: will include
+
+	<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		messageStyle : "none",
+		tex2jax      : {
+			inlineMath  : [["\\(", "\\)"]] ,
+			displayMath : [["\\[", "\\]"]] ,
+			ignoreClass : "nostem|nolatexmath"
+		} ,
+		asciimath2jax   : {
+			delimiters  : [["\\$", "\\$"]] ,
+			ignoreClass : "nostem|noasciimath"
+		} ,
+		TeX             : {
+			equationNumbers : {
+				autoNumber : "none"
+			}
+		}
+	})
+	MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function(){
+		MathJax.InputJax.AsciiMath.postfilterHooks.Add(function(data, node){
+			if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains("stemblock")) {
+				data.math.root.display = "block"
+			}
+			return data
+		})
+	})
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+
+	to parse [asciimath] block.
+
+	It also means the result HTML webpage needs to be online for the math formula to display correctly.
+
+WORKAROUND:
+
+	Use browser's developer tool to find the generated <math> block.
+
+	Comment out the original [asciimath] block with '////'
+
+	Copy and paste the <math> block to a passthrough block with '++++'

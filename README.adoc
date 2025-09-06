@@ -1,6 +1,9 @@
 :ghrepo: http://github.com/rufaswan/Web2D_Games
 :ghpage: http://rufaswan.github.io/Web2D_Games
 
+* Reddit  : https://old.reddit.com/r/QuadViewer/
+* Discord : https://discord.gg/r2hD4wzQQe
+
 = Web2D_Games
 
 == Prerequisites
@@ -30,3 +33,6 @@ Margie Healing (Xenogears)::
 Ripping Tutorial::
 . {ghrepo}/blob/master/docs/rip-tutorial/ripping.adoc
 . {ghpage}/rip-tutorial/ripping.html
+
+Hacking Tools::
+. {ghpage}/rockx_cmd_pass/passfind.html["Rockman X Command Mission Password"]

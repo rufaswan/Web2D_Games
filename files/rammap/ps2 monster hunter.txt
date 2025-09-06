@@ -1,0 +1,214 @@
+======================
+== Monster Hunter G ==
+======================
+
+Item Struct
+	int16  Item ID
+	int16  Item count
+
+Item ID
+	00       *none*
+	01-06    mixing book
+	07-14    potion
+	15-19    fluid
+	1a-20    medicine
+	21-24    amulet
+	25-2d    meat
+	2e-31    throw knife
+	32-35    throw ball
+	36-37    shit
+	38-3a    smoke
+	3b-3c    web
+	3d-3e    pit trap
+	3f-45    barrel
+	46-48    casing
+	49-67    bowgun bullet
+	68-6f    fishing bait
+	70-72    pickaxe
+	73-75    bugnet
+	76-77    bbq set
+	78       sharping stone
+	79       binocular
+	7a       mixing failed
+	7b-7f    flute
+	80       honey
+	81-8a    herb
+	8b-91    mushroom
+	92-98    fruit
+	99-a9    ore
+	aa-b3    fish
+	b4-bd    insect
+	be-c8    monster liver
+	c9-ca    essence
+	cb-d2    bone
+	d3-d4    Wyvern
+	d5-d6    Moss
+	d7-d8    Fango
+	d9-da    Kelbi
+	db-df    Ranpos
+	e0-e1    Dos Ranpos
+	e2-e3    White Ranpos
+	e4-e8    Genepos
+	e9       Dos Genepos
+	ea-ee    Ios
+	ef       Dos Ios
+	f0-fa    Strange Bird
+	fb-fd    Blue Strange Bird
+	fe-102   Rubbery/Poison Strange Bird
+	103-105  Fish Wyvern
+	106-10a  Water Wyvern
+	10b-10c  Green Water Wyvern
+	10d-113  Sand Wyvern
+	114-11c  Female Fire Dragon
+	11d-124  Sakura Female Fire Dragon
+	125-12a  Gold Female Fire Dragon
+	12b-136,13e  Fire Dragon
+	137-13d,13f-141  Azure Fire Dragon
+	142-149  Silver Fire Dragon
+	14a-150  furufuru/Albino
+	151-155  Rock Dragon
+	156-15d  Armor Dragon
+	15e-161  Black Armor Dragon
+	162-16b  Horned Dragon
+	16c-16f  Black Horned Dragon
+	170-175  Queen Bug/Land Custa
+	176-17b  Kandaros
+	17c-17e  ebi
+	17f-183  One Horned Dragon
+	184-186  White One Horned Dragon
+	187-18c  Kirin
+	18d-198  Lao Shan Long
+	199-19e  Azure Lao Shan Long
+	19f-1b6  Black Dragon
+	1b7-1cb  ticket
+	1cc-1d7  broken item
+	1d8-1d9  magazine     (+MENU)
+	1da-1f7  monster info (+MENU)
+	1f8-1f9  egg
+	1fa-201  item (supply box)
+
+	8b   Special Mushroom
+	104  Piscine Livers
+	203  Wyvern Egg    (useless)
+	204  Herbivore Egg (useless)
+
+
+Equipment Struct
+	00  =01
+	01  type
+		0  Armor Leg
+		1
+		2  Armor Head
+		3  Armor Body
+		4  Armor Arm
+		5  Armor Wrist
+		6  Weapon Hunter
+		7  Weapon Gunner
+	02  sub-id
+	04  (bowgun) upgrades
+		& 0f  +level (max=04/level 5)
+		& 10  Silencer
+		& 20  Long Barrel
+		& 40  Zoom Scope
+
+	Weapon Hunter sub-id
+		01-36   cf-d3    10a-125  Sword
+		37-66   d4-d7    126-139  Hammer
+		67-9b   d8-db    13a-14f  Lance
+		9c-ce   dc-df    150-164  Knife
+		e0-e9   103-109  16e-17c  misc
+		ea-102  165-16d  Twin Knife
+		17d+  *error*
+
+		rank 7
+		1 6 17 1 0 0  龍刀【火焔】
+		1 6 18 1 0 0  龍刀【朧火】
+		1 6 1b 1 0 0  ジークリンデＧ
+		1 6 1c 1 0 0  ジークムントＧ
+		1 6 1e 1 0 0  クロームデスレイザー
+		1 6 1f 1 0 0  封龍剣【超滅一門】
+		1 6 24 1 0 0  いにしえの大剣
+		1 6 25 1 0 0  エピタフプレート
+		1 6 2d 1 0 0  ウォーバッシュ
+		1 6 2e 1 0 0  ダークバニッシャー
+		1 6 2f 1 0 0  龍壊棍
+		1 6 41 1 0 0  真・黒龍槍
+		1 6 42 1 0 0  黒滅龍槍
+		1 6 45 1 0 0  レッドプロミネンス
+		1 6 47 1 0 0  ブループロミネンス
+		1 6 4e 1 0 0  いにしえの重槍
+		1 6 4f 1 0 0  マテンロウ
+		1 6 57 1 0 0  真・黒龍剣
+		1 6 58 1 0 0  黒滅龍剣
+		1 6 5d 1 0 0  ゴールドマロウ
+		1 6 63 1 0 0  ニンジャソードG
+		1 6 65 1 0 0  双龍剣【天地】
+		1 6 69 1 0 0  ゲキリュウノツガイ
+		1 6 6c 1 0 0  いにしえの双剣
+		1 6 6d 1 0 0  封龍剣【超絶一門】
+		1 6 73 1 0 0  イシリアルエッジ
+		1 6 77 1 0 0  ドゥーム
+		1 6 7b 1 0 0  双雷剣キリン
+	Weapon Gunner sub-id
+		01-0c  1c-3c  Light Bowgun
+		0d-17  3d-4c  Heavy Bowgun
+		18-1b  4d   misc
+		4e+  *error*
+
+		rank 7
+		1 7 1a 0 64 0  グラビモスロア
+		1 7 1b 0 64 0  超イャンクック砲
+		1 7 20 0 64 0  ゴールドヴァルキリー
+		1 7 23 0 64 0  ソウルスパルタカス
+		1 7 24 0 64 0  シルバースパルタカス
+		1 7 28 0 64 0  蒼桜の対弩・覇
+		1 7 29 0 64 0  繚乱の対弩
+		1 7 2d 0 64 0  レインバレッツ・白
+		1 7 31 0 64 0  サンドフォール
+		1 7 34 0 64 0  クロノスグレネード
+		1 7 36 0 64 0  クックレイジ
+		1 7 39 0 64 0  神ヶ島
+		1 7 3a 0 64 0  デッドフリルパラソル
+		1 7 3c 0 64 0  ピンクフリルパラソル
+		1 7 3f 0 64 0  バストンメイジ
+		1 7 40 0 64 0  クイックキャスト改
+		1 7 44 0 64 0  モノデビルキャスト改
+		1 7 45 0 64 0  メテオバスター
+		1 7 46 0 64 0  ヴォルキャノン改
+		1 7 47 0 64 0  ディスティハーダ
+		1 7 49 0 64 0  老山龍砲・覇
+		1 7 4a 0 64 0  老山龍砲・皇
+		1 7 4d 0 64 0  百花繚乱の対弩
+
+	1 2 c3 0  0 0  Armor Head メイドS
+	1 2 c4 0  0 0  Armor Head プライベートS
+	1 2 de 0  0 0  Armor Head ミラバルカン Hunter
+	1 2 df 0  0 0  Armor Head ミラバルカン Gunner
+	1 3 c1 0  0 0  Armor Body メイドS
+	1 3 c2 0  0 0  Armor Body プライベートS
+	1 3 d7 0  0 0  Armor Body ミラバルカン Hunter
+	1 3 d8 0  0 0  Armor Body ミラバルカン Gunner
+	1 4 be 0  0 0  Armor Arm メイドS
+	1 4 bf 0  0 0  Armor Arm プライベートS
+	1 4 d4 0  0 0  Armor Arm ミラバルカン Hunter
+	1 4 d5 0  0 0  Armor Arm ミラバルカン Gunner
+	1 5 b2 0  0 0  Armor Wrist メイドS
+	1 5 b3 0  0 0  Armor Wrist プライベートS
+	1 5 c6 0  0 0  Armor Wrist ミラバルカン Hunter
+	1 5 c7 0  0 0  Armor Wrist ミラバルカン Gunner
+	1 0 af 0  0 0  Armor Leg メイドS
+	1 0 b0 0  0 0  Armor Leg プライベートS
+	1 0 c5 0  0 0  Armor Leg ミラバルカン Hunter
+	1 0 c6 0  0 0  Armor Leg ミラバルカン Gunner
+
+
+Offline Chart
+- Clear all 1 Star Quest -> Urgent Quest (2 Star) = BOSS Velociprey x3
+- Clear all 2 Star Quest -> Urgent Quest (3 Star) = BOSS Velocidrome
+- Clear all 3 Star Quest -> Urgent Quest (4 Star) = BOSS Cephadrome
+- buy Magazine 1 for 30,000 (+1 ITEM BOX page)
+- Clear all 4 Star Quest -> Urgent Quest (5 Star) = BOSS Rathalos
+- pull the sword = Hero's Blade
+- Clear all 5 Star Quest -> Urgent Quest (6 Star) = BOSS Monoblos
+- unlock GALLERY End Credits
+- buy Magazine 2 for 100,000 (+1 ITEM BOX page)

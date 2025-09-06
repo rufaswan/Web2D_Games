@@ -162,7 +162,7 @@ function htmlclean( $fname )
 	$file = implode("\n", $dom);
 	$file = preg_replace("|[\r\n]+|", "\n", trim($file));
 	//echo $file;
-	file_put_contents("$fname.t", $file);
+	file_put_contents("$fname.html", $file);
 	return;
 }
 

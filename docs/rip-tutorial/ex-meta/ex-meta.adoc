@@ -1,7 +1,6 @@
 [#guide_meta]
 === Meta Data
 ifndef::rel[:rel: .]
-:stem:
 
 Game::
 	PS2 Odin Sphere
@@ -136,6 +135,8 @@ result =   prev * (-0.5t^3 +  1.0t^2 + -0.5t + 0)
 
 Then convert it to matrix form:
 
+////
+:stem:
 [asciimath]
 ++++
 "result" =
@@ -152,6 +153,11 @@ Then convert it to matrix form:
 		["nxt1"] ,
 		["nxt2"]
 	]
+++++
+////
+
+++++
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mstyle displaystyle="true"><mrow><mtext>result</mtext></mrow><mo>=</mo><mrow><mo>[</mo><msup><mi>t</mi><mn>3</mn></msup><msup><mi>t</mi><mn>2</mn></msup><mi>t</mi><mn>1</mn><mo>]</mo></mrow><mo>⋅</mo><mrow><mo>[</mo><mtable columnlines="none none none none"><mtr><mtd><mo>-</mo><mn>0.5</mn></mtd><mtd><mn>1.5</mn></mtd><mtd><mo>-</mo><mn>1.5</mn></mtd><mtd><mn>0.5</mn></mtd></mtr><mtr><mtd><mn>1.0</mn></mtd><mtd><mo>-</mo><mn>2.5</mn></mtd><mtd><mn>2.0</mn></mtd><mtd><mo>-</mo><mn>0.5</mn></mtd></mtr><mtr><mtd><mo>-</mo><mn>0.5</mn></mtd><mtd><mn>0</mn></mtd><mtd><mn>0.5</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1.0</mn></mtd><mtd><mn>0</mn></mtd><mtd><mn>0</mn></mtd></mtr></mtable><mo>]</mo></mrow><mo>⋅</mo><mrow><mo>[</mo><mtable><mtr><mtd><mrow><mtext>prev</mtext></mrow></mtd></mtr><mtr><mtd><mrow><mtext>cur</mtext></mrow></mtd></mtr><mtr><mtd><mrow><mtext>nxt1</mtext></mrow></mtd></mtr><mtr><mtd><mrow><mtext>nxt2</mtext></mrow></mtd></mtr></mtable><mo>]</mo></mrow></mstyle></math>
 ++++
 
 The 4x4 matrix is the Characteristic Matrix, and it matched Catmull-Rom Spline <<catmull>>.

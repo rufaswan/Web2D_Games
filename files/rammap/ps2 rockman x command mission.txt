@@ -1,0 +1,254 @@
+===============================
+== Rockman X Command Mission ==
+===============================
+
+SAVE  RAM
+   0  556d7c  start SAVE
+
+   8  556d84  int32 chapter (max=a)
+
+ 46c  5571e8  d-unit[18]
+ 5bc  557338  d-place  ruin
+ 62c  5573a8  d-place  tower
+ 69c  557418  d-place  camp
+ 70c  557488  d-place  lab
+ 77c  5574f8  d-place  factory
+ 7ec  557568  d-place  mine
+ 85c  5575d8  d-place  desert
+ 8cc  557648  d-place  plant
+ 93c  5576b8
+
+ 96c  5576e8  time[24]  challenge      (cha=5265c0+)
+ 9fc  557778  int32 total zenny battle (cha=186a0+)
+ a00  55777c  int32 total zenny field  (cha=186a0+)
+ a04  557780  int32 total zenny deploy (cha=186a0+)
+ a08  557784
+ a0c  557788  int32 total shop item count (cha=64+)
+ a10  55778c  int32 total shop item zenny (cha=186a0+)
+ a14  557790  int32 total shop weapon count (cha=64+)
+ a18  557794  int32 total shop weapon zenny (cha=186a0+)
+ a1c  557798  int32 total shop weapon count (cha=64+)
+ a20  55779c  int32 total shop weapon zenny (cha=186a0+)
+ a24  5577a0  int32 total shop force metal count (cha=64+)
+ a28  5577a4  int32 total shop force metal zenny (cha=186a0+)
+ a2c  5577a8
+ a30  5577ac  int16[72]  figure get (>0=on else off)
+ b14  557890
+
+ bd0  55794c  int32 zenny (max=98967f)
+ bd4  557950  int32 fme   (max=98967f)
+ bd8  557954
+ bdc  557958  int32 coin  (max=78)
+ be0  55795c
+ be4  557960  char x
+ cb8  557a34  char zero
+ d8c  557b08  char spider
+ e60  557bdc  char massimo
+ f34  557cb0  char char marino
+1008  557d84  char cinnamon
+10dc  557e58  char axl
+11b0  557f2c
+
+11e4  557f60  item[20] item
+1264  557fe0  item[64] force metal
+13f4  558170  item[78] main weapon
+15d4  558350  item[32] sub  weapon
+169c  558418  int32 total battle (cha=1f4+)
+16a0  55841c
+16a4  558420
+16a8  558424
+16ac  558428
+16b0  55842c
+16b4  558430
+16b8  558434
+16bc  558438
+16c0  55843c
+16c4  558440
+16c8  558444
+16cc  558448
+16d0  55844c
+16d4  558450
+16d8  558454  int32[7] char total battle       (cha=1f4+)
+16f4  558470  int32[7] char total defeat enemy (cha=3e8+)
+1710  55878c  int32[7] char max damage         (cha=270f+)
+172c  5584a8  int32[7] char total critical     (cha=64+)
+1748  5584c4
+174c  5584c8
+1750  5584cc
+1754  5584d0
+1a58  5587d4  end SAVE
+
+5587d8  int32 final strike total      (cha=64+)
+5587dc  int32 final strike max hit    (cha=96+)
+5587e0  int32 final strike max damage (cha=270f+)
+------------------------------
+
+time = int32 in 60 fps
+
+	time ffff = 65535.0
+	= 1092 sec 15 frame
+	= 18 min 12 sec 15 frame
+
+	 1 min =  e10
+	10 min = 8ca0
+
+d-unit (BLOCK=e)
+	00  0=none  1=exist
+	02  level    (max= a)
+	04  Vitality (max=6d)
+	06  Battle   (max= a)
+	08  Search   (max= a)
+	0a  Hack     (max= a)
+	0c  Move     (max= a)
+
+	Default Stats
+	. 20 3 1 1 2    1c 1 3 2 3    14 1 2 3 5
+	. 24 4 2 1 2    20 1 3 1 2    16 1 2 3 5
+	. 2e 4 2 2 1    22 2 4 2 3    18 2 2 4 6
+	. 32 5 2 1 3    28 3 4 1 5    1a 1 3 4 3
+	.[28 5 2 2 4]   2c 1 5 1 2    14 1 2 4 4
+	. 34 6 2 3 1    30 2 4 1 1    1a 1 3 4 3
+	. 38 6 3 3 2   [28 2 8 5 2]  [30 2 5 6 5]
+	.[3c 7 3 2 1]   2c 3 6 1 6    2c 5 4 7 7
+
+	RAM 5571f8
+		18398c  li    v0, 556d60
+			a0 = v1 + s4
+			//v1 = ((a0 << 3) - a0) << 2
+			v1 *= 1c
+		1839a0  addu  v0, v1
+		1839a4  lh    v0, 48a(v0)
+
+d-place (BLOCK=70)
+	00  time
+
+	RAM 557648
+	when enter deployment center
+		180b4c  lw  a1,   0(556d68) // time
+		180b58  lw  v1, 5d8(t2)
+			v1 = a1 - v1
+			//v1 = (88888889 * v1) >> 20 >> 5
+			v1 = 0.016667 * v1
+			v1 = 0.016667 * v1
+
+	when send d-unit to d-place
+		134764  sb  a1, 0(v1)
+
+		17ed5c  lw  v1, 0(556D68) // time
+		17ed60  sw  v1, 0(s1)
+
+char (BLOCK=d4)
+	00  level (max=63)
+	04
+	08  EXP (max=98967f)
+	0c  HP  (max=270f)
+	10  max  HP (max=270f)
+	14  real HP (max=270f)
+	18  WE (max=64)
+	1c  WE (max=64)
+	20  Power  (max=3e7)
+	24  Armor  (max=3e7)
+	28  Shield (max=3e7)
+	2c  Speed  (max=c8)
+	30
+	34
+	38
+	3c
+	40
+	44
+	48
+	4c
+	50
+	54
+	58
+	5c
+	60
+	64
+	68
+	6c
+	70
+	74
+	78
+	7c
+	80
+	84
+	88
+	8c
+	90
+	94
+	98
+	9c
+	a0
+	a4
+	a8
+	ac
+	b0
+	b4
+	b8  main weapon id
+	ba  sub  weapon id 1 (none=ffff)
+	bc  sub  weapon id 2 (none=ffff)
+	be
+	c0  fm slot 1 (none=ffff)
+	c2  fm slot 2 (none=ffff)
+	c4  fm slot 3 (none=ffff)
+	c6  fm slot 4 (none=ffff)
+	c8  fm resist (max=63)
+	cc
+	d0  hyper
+	d2  max hyper
+
+item
+	00  int16 id
+	02  int8  count - inventory
+	03  int8  count - equipped
+------------------------------
+file loading
+	RAM 4c2b00 = data/worldmap.arc
+	RAM 4d6000 = data/worldmap.arc
+	RAM 51d490 = data/worldmap.arc
+
+f01.afs (cnt=f0e)
+	common.arc - sy09.adx
+	51c780-541c98 = 25518
+		sub_1372a0  strcmp
+			1372a4  lb   a3, 0(t0)
+			1372e8  lbu  a1, 0(t0)
+			1372f4  lb   a2, 0(t0)
+			137338  lbu  a1, 0(t0)
+
+		140b68  lw  a0, 0(s4) // s4=namelist
+		140b6c  jal 1372a0
+		a1 = s1 // s1=5586b2
+
+		s4 = RAM 4a3ad0-4a7708
+
+	figure machine - part 1-4 - map east square
+		data/s0206.arc
+		data/npc/f38.arc
+		data/npc/f3b.arc
+		data/npc/f79.arc
+		data/npc/f78.arc
+	figure machine - part 5-8 - map south square
+		data/s0204.arc
+		data/npc/f39.arc
+		data/npc/f16.arc
+		data/npc/f33.arc
+		data/npc/f38.arc
+		data/npc/f78.arc
+	figure machine - part 9-10 - map sealed area
+		data/s0202.arc
+	figure machine - password - map hallway e-1
+		data/s0225.arc
+		movie/BGM_STREAM/s02.adx
+
+	skyroom room - artwork
+		data/subwin/terminal_win.arc
+		data/design/OG[xxx].arc  [xxx=001-100]
+	skyroom room - figure
+		data/figure/fd00.arc
+		data/figure/fd47.arc
+		data/figure/fe1b.arc
+		data/figure/fe15.arc
+		data/figure/fe07.arc
+		data/figure/fd90.arc
+------------------------------

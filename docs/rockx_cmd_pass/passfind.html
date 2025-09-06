@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'><head>
+
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<title>Rockman X Command Mission Password</title>
+<style>
+body {
+	text-align  : center;
+	font-family : sans-serif;
+}
+section {
+	display : block;
+}
+mark {
+	font-family : monospace;
+}
+
+#sect-input ol {
+	font-family : monospace;
+	font-size   : 2em;
+}
+#sect-image img {
+	max-width : 80%;
+}
+</style>
+</head><body>
+
+<section id='sect-input'>
+	<h2>Rockman X Command Mission</h2>
+	<p>Vending machine is located at Central Tower, Hallway E-1.</p>
+	<p>Instead of accepting Figure Token (or Treasure Token - Gamecube only), this vending machine requires 8 digit password.</p>
+	<p>Has 2 sets of figurines, with each set has 6 figurines. Totaling 12 passwords.</p>
+	<p>This is to find and list all 12 passwords to get these figurines.</p>
+	<p>Instruction :</p>
+	<ul>
+	<li><p><strong>PlayStation 2</strong> : Extract and upload the main executable file <mark>SLPM_656.43</mark></p></li>
+	<li><p><strong>Gamecube     </strong> : Extract and upload the main executable file <mark>main.dol   </mark></p></li>
+	</ul>
+	<input type='file' id='pass-file'>
+	<div id='pass-div'></div>
+</section>
+
+<hr />
+
+<section id='sect-image'>
+	<h2>Gallery</h2>
+
+	<img src='GXRJ08-1-a.png' />
+	<img src='GXRJ08-1-b.png' />
+	<img src='GXRJ08-1-c.png' />
+	<img src='GXRJ08-1-d.png' />
+
+	<img src='passfind-gcn.png' />
+
+	<img src='GXRJ08-11-a.png' />
+	<img src='GXRJ08-11-b.png' />
+	<img src='GXRJ08-11-c.png' />
+	<img src='GXRJ08-11-d.png' />
+	<img src='GXRJ08-11-e.png' />
+	<img src='GXRJ08-11-f.png' />
+
+	<img src='GXRJ08-12-a.png' />
+	<img src='GXRJ08-12-b.png' />
+	<img src='GXRJ08-12-c.png' />
+	<img src='GXRJ08-12-d.png' />
+	<img src='GXRJ08-12-e.png' />
+	<img src='GXRJ08-12-f.png' />
+
+	<img src='GXRJ08-21-a.png' />
+	<img src='GXRJ08-21-b.png' />
+</section>
+
+<script>
+'use strict';
+
+var APP = {};
+APP.upload = 0;
+
+APP.passlist = function( pos ){
+	// password is 8 digit SJIS string + '\0' + padding
+	//   8 * 2 + 1 + (4-1) = 20 bytes
+	// 1 set has 6 figurines
+	// total 2 sets
+	//   6 * 2 * 20 = 240 bytes / 0xf0
+	var end = pos + 0xf0;
+	if ( end > APP.upload.byteLength )
+		return 0;
+
+	var i, j, k, pass;
+	var ret = {
+		off  : pos,
+		pass : [],
+	}
+
+	var ah = [0x82,0x82,0x82,0x82 , 0x82,0x82,0x82,0x82 , 0,0];
+	for ( i=0; i < 12; i++ ){
+		for ( j=0; j < 10; j++ ){
+			if ( APP.upload[pos] !== ah[j] )
+				return 0;
+			pos += 2;
+		}
+	} // for ( i=0; i < 12; i++ )
+
+	pos = ret.off;
+	for ( i=0; i < 12; i++ ){
+		pass = 'p';
+		// 824f=0  8250=1  8251=2  8252=3
+		// 8253=4  8254=5  8255=6  8256=7
+		// 8257=8  8258=9
+		for ( j=0; j < 8; j++ ){
+			k = APP.upload[pos + (j << 1) + 1];
+			k -= 0x4f;
+			pass += k;
+		}
+		pos += 20;
+		ret.pass.push(pass);
+	} // for ( i=0; i < 12; i++ )
+
+	return ret;
+}
+
+APP.passscan = function(){
+	var pos = 0;
+	while ( pos < APP.upload.byteLength ){
+		var res = APP.passlist(pos);
+		if ( res )
+			return res;
+		pos += 4;
+	} // while ( pos < uint8.byteLength ){
+}
+
+document.getElementById('pass-file').addEventListener('change', function(){
+	var proall = [];
+	for ( var up of this.files ){
+		var p = new Promise(function(ok,err){
+			var reader = new FileReader;
+			reader.onload = function(){
+				var uint8 = new Uint8Array(reader.result);
+				ok(uint8);
+			}
+			reader.readAsArrayBuffer(up);
+		}).then(function(res){
+			APP.upload = res;
+		});
+		proall.push(p);
+	}
+
+	Promise.all(proall).then(function(res){
+		var div = document.getElementById('pass-div');
+		div.innerHTML = '';
+
+		var res = APP.passscan();
+		if ( ! res ){
+			div.innerHTML = '<h3>Password not found<h3>';
+			return;
+		}
+
+		var html = '<h3>Password found @ 0x' + res.off.toString(16) + ' !</h3>';
+		html += '<ol>';
+		res.pass.forEach(function(v){
+			html += '<li><p>' + v.substring(1) + '</p></li>';
+		});
+		html += '</ol>';
+		div.innerHTML = html;
+	});
+});
+
+/*
+SLPM_656.43
+	19670801  33515937  20040729  44527839  32603260  10950508
+	78523511  31415926  46925056  69203600  82536252  19780506
+GXRJ-08
+	19670801  33515937  20040729  44527839  32603260  10950508
+	78523511  31415926  46925056  69203600  82536252  19780506
+*/
+</script>
+</body></html>

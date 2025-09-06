@@ -63,6 +63,7 @@ while [ "$1" ]; do
 					$af             \
 					-max_muxing_queue_size 2048 \
 					"$tmp"
+				[ -s "$tmp" ] || rm -v  "$tmp"  # remove 0 byte file
 				[ -f "$tmp" ] && mv -vf "$tmp"  "$bas-$size".mp4
 				;;
 		esac
