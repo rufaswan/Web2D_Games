@@ -1,0 +1,88 @@
+===================================
+== Kingdom Hearts Birth By Sleep ==
+===================================
+
+Xehanort Report
+	Terra   2  8 11=auto  5=MA
+	Ventus  -  9 10=auto  1=DS  12=KG
+	Aqua    6  4  7=auto  3=RG
+	clear with all 12
+	=> Final Episode save
+		clear => KG Vanita Spirit     - Void Gear Keyblade
+		clear => LD Mysterious Figure - No Name Keyblade
+	MA=Mirage Arena
+	DS=Deep Space         / Lilo & Stich
+	KG=Keyblade Graveyard / final
+	RG=Radiant Garden     / mid-point
+	LD=Land of Departure  / start
+
+
+Command Meld
+A  Fire
+B  Blizzard  Aero
+C  Thunder   Stop
+D  Cure      ZeroGravity  Magnet
+E  [SlidingDash+Fire]
+F
+G
+H  [Cure+Aero]
+I  [SlidingDash+Fira]
+J  [Blizzard+Aero]
+K  Slow
+L  [Magnet+Aero]
+M  Fira
+N  Blizzara
+O  Thundara  Magnera      Magnega  Stopra
+P  Cura      ZeroGravira  Aerora
+	A-M  B-N  C-O  D-P
+	E-I  F-J  G-K  H-L
+NOTE = keep 2+ Thunder for Disney Town - Pete's Pinball
+
+Shimmering  element damage up
+Fleeting    reload time shorten
+Pulsing     attack damage up
+Wellspring  combo increase
+Soothing    max hp up
+Hungry      hp prize up + draw
+Abounding   prize + exp up
+Chaos       *any*                Keyblade Graveyard
+
+Prize
+	5 Treasure Magnet  Hungry + Thunder/Cure/Thundara/Cura
+	3 HP   Prize Plus  Hungry + Fire/Blizzard/Fira/Blizzara
+	3 Link Prize Plus  Abounding + Fire/Thunder
+	5 Lucky Strike     Abounding + Blizzard/Cure/Blizzara/Cura
+Stats
+	3 HP       Boost   Soothing + Fire/Thunder
+	3 Fire     Boost   Shimmering + Fire/Fira
+	3 Blizzard Boost   Shimmering + Blizzard/Blizzara
+	3 Thunder  Boost   Shimmering + Thunder/Thundara
+	3 Cure     Boost   Shimmering + Cure/Cura
+	3 Item     Boost   Soothing + Blizzard/Cure
+	5 Attack Haste     Fleeting + Slow
+	5 Magic  Haste     Fleeting + Fire/Blizzard/Thunder/Cure
+	2 Combo F Boost    Pulsing + Thunder/Cure/Cura
+	2 Finish  Boost    Pulsing + Fira
+	2 Fire     Screen  Shimmering + [SlidingDash+Fire]
+	2 Blizzard Screen  Shimmering + [Blizzard+Aero]
+	2 Thunder  Screen  Shimmering + Slow
+	2 Dark     Screen  Shimmering + [Cure+Aero]
+	1 Reload Boost     Fleeting + Fira/Blizzara/Thundara/Cura
+	1 Defender         Soothing + Thundara/Cura
+Support
+	3 Combo Plus       Wellspring + Blizzard/Cure/Cura
+	3 Air Combo Plus   Wellspring + Fire/Thunder/Blizzara
+	1 EXP Chance       Abounding + Fira/Thundara
+	1 EXP Walker       Abounding + [Blizzard+Aero]
+	1 Damage Syphon    Soothing + Fira/Blizzara
+	1 Second Chance    Pulsing + Blizzara/Cura
+	1 Once More        Wellspring + Fira/Thundara
+	1 Scan             -
+	1 Leaf Bracer      Pulsing + Fire/Blizzard
+Shotlocks
+	Lightning Ray      Thundara
+	Bio Barrage        [SlidingDash+Poison]
+	Meteor Shower
+
+MISSABLE
+- 4 chest at Land of Departure , after Never Land

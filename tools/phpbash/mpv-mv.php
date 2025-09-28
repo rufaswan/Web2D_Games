@@ -28,8 +28,6 @@ sh::which('mpv');
 // MB = 1024 * 1024
 // mb = 1000 * 1000
 $gp_work = sh::xprop();
-define('MB10', 1 * 0.001 * 0.001);
-define('MIN' , 1.0 / 60);
 //////////////////////////////
 function sort_by_time( $a, $b )
 {
@@ -40,7 +38,7 @@ function sort_by_time( $a, $b )
 		return $b['time'] - $a['time'];
 }
 
-function calc_remain_timesize( &$list )
+function calc_timesize( &$list )
 {
 	$sum = array(
 		'time' => 0.0,
@@ -51,7 +49,16 @@ function calc_remain_timesize( &$list )
 		$sum['time'] += $ent['time'];
 		$sum['size'] += $ent['size'];
 	}
-	return $sum;
+
+	// round up = > 0.5 is min , else sec
+	if ( $list[0]['time'] > 30 )
+		$time = sprintf('%d/%d min', $list[0]['time'] / 60, $sum['time'] / 60);
+	else
+		$time = sprintf('%d/%d sec', $list[0]['time']     , $sum['time']     );
+
+	$mb = 0.001 * 0.001;
+	$rem = sprintf('(%s|%d/%d mb)', $time, $list[0]['size'] * $mb, $sum['size'] * $mb);
+	return $rem;
 }
 
 function mpvplay( &$list, $type )
@@ -68,13 +75,11 @@ function mpvplay( &$list, $type )
 			sleep(1);
 
 		// process list
-		$sum = calc_remain_timesize($list);
-		$rem = sprintf('[%d] (rem=%d min|%d mb)', count($list), $sum['time'] * MIN, $sum['size'] * MB10);
-
+		$rem = calc_timesize($list);
 		$ent = array_shift($list);
 
 		$tmp = sprintf('%s/meme/%s/%s', sys_get_temp_dir(), $type, $ent['name']);
-		$tit = sprintf('%s (%d min|%d mb)', $ent['name'], $ent['time'] * MIN, $ent['size'] * MB10);
+		$tit = sprintf('[%s] %s', count($list), $ent['name']);
 
 		$mpv = 'mpv'
 			. ' --quiet'
@@ -85,7 +90,7 @@ function mpvplay( &$list, $type )
 			. ' --script-opts="osc-visibility=always"'
 			. ' --af="loudnorm=I=-14:TP=-1"'
 			. ' "%s"';
-		sh::exec($mpv, $rem, $tit, $ent['name']);
+		sh::exec($mpv, substr($tit,0,0x20), $rem, $ent['name']);
 
 		// already moved = do nothing
 		echo "$tit\n";
@@ -114,15 +119,16 @@ for ( $i=1; $i < $argc; $i++ )
 		$t['name'] = './' . $t['name'];
 
 	$dur = sh::ffprobe($t['name']);
-	if ( $dur['stream'] > 1.0 )
+/*
+	if ( $dur['stream'] > 0.1 )
 	{
 		// has video stream
 		$t['time'] = $dur['stream'];
 		$video[] = $t;
 		continue;
 	}
-
-	if ( $dur['format'] > 1.0 )
+*/
+	if ( $dur['format'] > 0.1 )
 	{
 		// general media file
 		$t['time'] = $dur['format'];

@@ -1,0 +1,264 @@
+================
+== Rockman X7 ==
+================
+
+life tank   - seahorse
+life tank   - kangaroo
+weapon tank - boar
+ex tank     - gorilla , need zero
+
+new game plus
+= reset rescue list
+= reset life/weapon up
+= reset life/weapon/ex tank
+= keep chip ability
+
+SAVE FILE
+	24  stats x
+	2a  stats zero
+	30  stats axl
+	36
+	38  int8  x armor
+		01  leg  - gorilla
+		02  body - raven
+		04  arm  - hyena
+		08  head - anteater
+	3c  bool[20]  ability x    (all=17-0f-f)
+	40  bool[20]  ability zero (all= f-74-f)
+	44  bool[20]  ability axl  (all=27-87-f)
+	...
+	4c  int8[80] rescue list
+		00 = not found
+		01 = rescued
+		02 = died
+		[72]  [75,76]  [7b]  [7f]
+
+stats
+	00  int8  life   up (max=30+20=50)
+	01  int8  weapon up (max=37+19=50)
+	02
+	03
+	04  rank (d=00 c=01 b=02 a=03 s=04 sa=05)
+	05
+	// RAM arranged as
+	// x[0] zero[0] axl[0] x[1] zero[1] axl[1]
+	// reset on new game plus
+
+ability
+	01  power   x zero axl
+	02  power   x zero axl
+	04  power   x zero axl
+	08  power   x zero axl
+
+	01  speed   x      axl
+	02  speed   x      axl
+	04  speed   x zero axl
+	08  speed   x
+	10  speed     zero
+	20  speed     zero
+	40  speed     zero
+	80  speed          axl
+
+	01  special x zero axl
+	02  special x zero axl
+	04  special x zero axl
+	08  special   zero
+	10  special x
+	20  special        axl
+	// carry over to new game plus
+	// thus can fully upgrade all 3 chars
+
+RAM e408fc  rescue list
+	result screen
+		17ce10  lbu  t2,  0( e06ea8) // dfc1f0+10000-5348
+		17ce18  sb   t2, 7c(t1)
+RAM e40984  stats[6]
+	12bb2c  lbu  a0,  0(a0)
+		a0 += 20
+	12bb34  sh   a0, 38(s1) // s1=4e7940
+	12bb40  lbu  v1,  0(v1)
+		v1 += 19
+	12bb48  sh   v1, 6e(s1)
+	12bb50  lh   v0, 38(s1)
+	if v0 >= 51
+		38(s1) = 50
+	12bb68  lh   v0, 6e(s1)
+	if v0 >= 51
+		6e(s1) = 50
+
+RAM e06e78  rescue list - stage
+	00  int8  rescue
+	01  =ff
+	02  =00
+	03  =00
+	04  ptr
+	2f96e0  li a1, 2
+	2f96f8  sb a1, 0(v0)
+	// li a1, 0 => 0x24050000
+	// reset on new game plus
+
+RAM 4e7978 = max life
+	12bc1c  lh  a0, 38(s1)
+	12bc34  sw  a0,  0(e4eb4c) // e50000-14b4
+
+	12c054  jal 148b80( s1+850 , s0 , 38(s1) , 6e(s1) )
+
+	2b4ac0  lh  a0, 0(a0)
+	2b4ac4  sw  a0, 0(e6b348) // e70000-4cb8
+RAM 4e79ae = max weapon
+RAM e4eb4c = life p1
+RAM e4ebcc = life p2
+	22dd84  lwc1     f00, 3c(s4)
+	22dd90  cvt.s.w  f00, f00
+	22dd98  sub.s    f00, f00, f01
+	22dd9c  cvt.w.s  f00, f00
+	22dda0  mfc1      v1, f00
+	22dda8  sw        v1, 3c(s4)
+
+
+
+================
+== Rockman X8 ==
+================
+
+life tank   - sunflower - top 5-7
+life tank   - mantis    - axl/a-trans + jelly weapon + shell weapon + x/arm
+weapon tank - rooster   - axl/hover
+
+new game plus
+= keep metal
+= keep shop
+= keep rare metal + x armor parts
+= 100% x    = ultimate armor
+= 100% zero = black zero
+= 100% axl  = white axl (+defeat final boss)
+= unlock alia/layer/pallette
+
+RAM
+653974  metal
+653978  metal - display/countdown
+
+653ce8  00  life tank 1   (max=24)
+653cf4  00  life tank 2   (max=24)
+653d00  01  weapon tank   (max=90)
+653d0c
+653d18  02  life bottle 1 (max=12)
+653d24  02  life bottle 2 (max=12)
+653d30  03  weapon bottle (max=48)
+	00  int8  has
+	01  int8  id (none=ff)
+	02
+	03
+	04  int32  max value
+	08  int32  value
+
+	s4 = 653cf0 + n * c
+	230e90  lw  a0, 0(s4)
+	230f3c  lw  v0, 0(s4)
+	230fac  sw   0, 0(s4)
+	230fb4  sw   0, 0(s4)
+		s1 = max hp
+		s2 = hp
+		1efebc  sw  s0, 2c(s1) // s1=6555d0
+
+	v1 = 653ce8 + a1 * c
+	1985e4  jal 198630
+		198650  sb  0, 0(v1)
+
+	a0 = 653cf0 + s7 * c
+	231060  lw    v1, 0(a0)
+	231064  subu  v1, s5
+	231068  sw    v1, 0(a0)
+
+	s3 = sub 231170
+		v0 = s1 + a1 * 2 // s1=8b7df0
+		231160  lh  v0, 808(v0)
+	s2 = sub 231150
+		v0 = s1 + a1 * 2 // s1=8b7df0
+		231180  lh  v0, 7e6(v0)
+	2310c0  subu  v1, s3, s2
+	2310d4  s5 = v1
+
+active stats
+6555d0  =1e player 1
+6557e0  =1e player 2
+6559f0  =1e player 3/intro-stage event
+655c00  =1e rider zero
+655e10  =1e rider rock
+656020  =a
+656230  =1
+656440  =a
+656650  =a
+656860  =a
+656a70  =1
+656c80  =1
+656e90  =a
+6570a0  =0
+	00  ptr
+	04  ptr
+	08  int32  block id
+	0c  ptr
+	10  ptr
+	14  ptr
+	...
+	2c  int32  hp
+	30  int32  max hp
+	...
+	68  ptr
+	...
+	7c  ptr
+	80  ptr
+	84  ptr
+	88  ptr
+
+16a284  lw    v0, 2c(s2)
+16a288  lw    v1, 1c(v1)
+16a28c  subu  v0, v1
+16a290  sw    v0, 2c(s2)
+// also affects enemy
+// unless damage > hp , enemy dies normally
+subu v0,v0 = 0x421023
+
+	x weapon id -4
+		case 1 5 7 8
+			221698  lbu   v1, 7e4(a0)
+				a0 += v1 * 2
+			2216a4  lh    v1, 808(a0)
+			2216a8  subu  v1, a1
+			2216b0  sh    v1, 808(a0)
+		case 2 3 6 8
+			2217a4  lh    v0, 0(a1)
+			2217a8  subu  v0, t0
+			2217b0  sh    v0, 0(a1)
+
+	197538  jal 1986f0
+		v0 = 653ce8 + a1 * c
+		198710  lbu v0, 0(v0)
+	if v0 != 0
+		a1 = 5
+		a0 = 84f360
+		a2 = 4
+		197554  jal 349150
+
+	349198  jal  198660
+		v0 = 653ce8 + a1 * c
+		19867c  lbu v0, 0(v0)
+		if v0 == 0
+			return 0
+		else
+			v0 = 653cf0 + a1 * c
+			198698  lw  v0, 0(v0)
+			return v0
+	mtc1  v0, f00
+
+	3491b0  jal  349530
+		v0 = 653ce8 + a1 * c
+		34954c  lbu  v0, 0(v0)
+		if v0 == 0
+			return 0
+		else
+			v0 = 653cec + a1 * c
+			349568  lw  v0, 0(v0)
+			return v0
+	mtc1  v0, f00
+

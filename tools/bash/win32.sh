@@ -94,7 +94,7 @@ export WINEDLLOVERRIDES=$(IFS=\;; echo "${dll[*]}")
 # wiki.winehq.org/FAQ
 export   WINEARCH='win32'
 export WINEPREFIX="/tmp/$WINEARCH"
-export       HOME="/tmp/home-dummy"
+export       HOME="/tmp/home-$WINEARCH"
 
 # wine  wineconsole  cmd.bat
 # wine  cmd /c       cmd.bat

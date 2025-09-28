@@ -1,9 +1,6 @@
 :ghrepo: http://github.com/rufaswan/Web2D_Games
 :ghpage: http://rufaswan.github.io/Web2D_Games
 
-* Reddit  : https://old.reddit.com/r/QuadViewer/
-* Discord : https://discord.gg/r2hD4wzQQe
-
 = Web2D_Games
 
 == Prerequisites
@@ -35,4 +32,9 @@ Ripping Tutorial::
 . {ghpage}/rip-tutorial/ripping.html
 
 Hacking Tools::
-. {ghpage}/rockx_cmd_pass/passfind.html["Rockman X Command Mission Password"]
+. {ghpage}/rockx_cmd_pass/passfind.html[Rockman X Command Mission Password]
+
+== Contact
+
+* (public)  Reddit  : https://old.reddit.com/r/QuadViewer/
+* (private) Discord : https://discord.gg/r2hD4wzQQe

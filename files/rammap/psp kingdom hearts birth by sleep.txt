@@ -1,0 +1,85 @@
+===================================
+== Kingdom Hearts Birth By Sleep ==
+===================================
+
+stats
+	00  int32  exp   (max=232a9a)
+	04  int32  munny (max= f423f)
+	08
+	09
+	0a
+	0b
+	0c  level (max=63)
+	0e  int16  max hp
+	10  int16  hp
+command (BLOCK=a)
+	00  int16  command id
+	02  int8   level
+	03  int8
+	04  int16  exp
+	06  int16  ability id
+	08  int
+	// consumable (potion) level = amount , all other zero'd
+
+RAM 8b5b0b4  stats
+	88fa8a0  sw  t3, 0(v0) // 0(t2) ->
+	88fa8a4  sw  t2, 4(v0) // 4(t2) ->
+		9f2a96c + 2258 -> 8b58e5c + 2258
+		9f2cbc4        -> 8b5b0b4
+RAM 9f2cbc4
+RAM 9f1c1a0
+	8991904  sw  a0, 0(9f1c1a0) // 9f20000-3e60
+
+RAM 9f2a96c  command[]
+	8a54b04  lhu  a2, 4(a2) // a2=9f1c1e8
+	8a54b08  sh   a2, 4(t0)
+RAM 9f1c1ec
+	88dff60  lhu  a2, 4(a0)
+	a2 += a1
+	88dffb0  sh   a2, 4(a0)
+
+RAM 8b33238  EXP table
+	lv 1       0      5a      be     12e     1ac
+	lv 6     23a     2da     38e     458     53a
+	lv11     636     750     88c     9ee     87a
+	lv16     d34     f20    1143    13a2    1642
+	lv21    1928    1c59    1fda    23b0    27e0
+	lv26    2c6e    3162    36c3    3c9c    4301
+	lv31    4a06    51c9    5a68    640b    6eda
+	lv36    7b07    88c4    9875    aa7e    bfa7
+	lv41    d8b8    f679   119b2   1432b   173ac
+	lv46   1abfd   1e836   22857   26c60   2b451
+	lv51   3002a   34feb   3a394   3fb25   4569e
+	lv56   4b5ff   51948   58079   5eb92   65a93
+	lv61   6cd7c   7444d   7bf06   83da7   8c030
+	lv66   946a1   9d0fa   a5f3b   af164   b8775
+	lv71   c216e   cbf4f   d6118   e06c9   eb062
+	lv76   f5de3  100f4c  10c49d  117dd6  123af7
+	lv81  12fc00  13c0f1  1489ca  15568b  162734
+	lv86  16fbc5  17d43e  18b09f  1990e8  1a7519
+	lv91  1b5d32  1c4933  1d391c  1e2ced  1f24a6
+	lv96  202047  211fd0  222341  232a9a
+RAM 8b51c20 Command table (BLOCK=1e)
+
+
+char level up
+	8991930  jal 89912bc // get remain exp
+		89912e4  jal 8991298
+			a0 = 8b33238 + a0 * 4
+			89912b0  lw  v0, 0(a0)
+		89912ec  lw  a0, 0(9f1c1a0) // 9f20000-3e60
+		v0 = v0 - a0
+		89912f4  sw  v0, 18(s0)
+	if v0 <= 0
+		8991940  a0, 31(s4)
+		a0++
+		8991948  a0, 31(s4)
+	// 89912ee  lw a0/8e24 -> sw v0/ae22
+
+command level up
+	88dff40  lbu  a3, 2(a0)
+	if a3 == 0
+		return -1
+	if  a2 >= a1
+		a3++
+		88dffcc  sb  a3, 2(a0)

@@ -28,6 +28,20 @@ function sortlba( $a, $b )
 	return $a['lba'] - $b['lba'];
 }
 
+function iso_substr( $sect, &$sub, $pos, $len )
+{
+	$str = substr($sub, $pos, $len);
+	if ( strlen($str) !== $len )
+		$str = '_';
+
+	$str = str_replace(' ', '_', $str);
+	$str = rtrim($str, '_');
+
+	if ( empty($str) )
+		$str = '_';
+	return "$sect $str\n";
+}
+
 function isolist( $fname )
 {
 	$fp = fopen_file($fname);
@@ -88,16 +102,16 @@ function isolist( $fname )
 
 		$sub = fp2str($fp, $skip+0x8000, 0x800);
 		$txt  = '';
-		$txt .= sprintf("system             = %s\n", substr($sub,0x08 ,0x20));
-		$txt .= sprintf("volume             = %s\n", substr($sub,0x28 ,0x20));
-		$txt .= sprintf("volume set         = %s\n", substr($sub,0xbe ,0x80));
-		$txt .= sprintf("publisher          = %s\n", substr($sub,0x13e,0x80));
-		$txt .= sprintf("data preparer      = %s\n", substr($sub,0x1be,0x80));
-		$txt .= sprintf("application        = %s\n", substr($sub,0x23e,0x80));
-		$txt .= sprintf("copyright file     = %s\n", substr($sub,0x2be,0x26));
-		$txt .= sprintf("abstract file      = %s\n", substr($sub,0x2e4,0x24));
-		$txt .= sprintf("bibliographic file = %s\n", substr($sub,0x308,0x25));
-		save_file("$dir/__CDXA__/meta.txt", $txt);
+		$txt .= iso_substr('-sysid    ', $sub, 0x08 , 0x20);
+		$txt .= iso_substr('-volid    ', $sub, 0x28 , 0x20);
+		$txt .= iso_substr('-volset   ', $sub, 0xbe , 0x80);
+		$txt .= iso_substr('-publisher', $sub, 0x13e, 0x80);
+		$txt .= iso_substr('-preparer ', $sub, 0x1be, 0x80);
+		$txt .= iso_substr('-appid    ', $sub, 0x23e, 0x80);
+		$txt .= iso_substr('-copyright', $sub, 0x2be, 0x26);
+		$txt .= iso_substr('-abstract ', $sub, 0x2e4, 0x24);
+		$txt .= iso_substr('-biblio   ', $sub, 0x308, 0x25);
+		save_file("$dir/__CDXA__/mkisofs.txt", $txt);
 		return;
 	} // foreach ( $detect as $type => $skip )
 	fclose($fp);

@@ -55,7 +55,12 @@ function isofile_r( $isop, &$sub, &$list, $par, $skip=0 )
 			}
 			else // is_file
 			{
-				$s = substr($lfn, 0, strrpos($lfn, ';'));
+				$ver = strrpos($lfn, ';');
+				if ( $ver === false )
+					$s = $lfn;
+				else
+					$s = substr($lfn, 0, $ver);
+
 				$ent = array(
 					'lba'  => $lba,
 					'size' => $lsz,
