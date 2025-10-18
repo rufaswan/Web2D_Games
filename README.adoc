@@ -31,6 +31,11 @@ Ripping Tutorial::
 . {ghrepo}/blob/master/docs/rip-tutorial/ripping.adoc
 . {ghpage}/rip-tutorial/ripping.html
 
+Quad Player::
+. {ghpage}/quad_player_mobile/player-mobile.tpl.html
+. {ghpage}/quad_player_mobile/debugger-keyframe.tpl.html
+. {ghpage}/quad_player_mobile/iframe-player.html
+
 Hacking Tools::
 . {ghpage}/rockx_cmd_pass/passfind.html[Rockman X Command Mission Password]
 

@@ -26,16 +26,6 @@ function QuadMath(Q){
 		return [ maxx , maxy ];
 	}
 
-	$.vram_srcquad = function( quad, pos ){
-		if ( ! quad )  return 0; // fog color only
-		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
-		for ( var i=0; i < 8; i += 2 ){
-			xy4[i+0] = quad[i+0] + pos[0];
-			xy4[i+1] = quad[i+1] + pos[1];
-		}
-		return xy4;
-	}
-
 	$.css_color = function( css ){
 		// css = '#rrggbbaa'
 		if ( typeof css !== 'string' || ! /^#[0-9a-fA-F]{8}$/.test(css) )

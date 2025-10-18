@@ -11,6 +11,9 @@ function cpu95kill {
 
 	# whitelist
 	[[ "$cmd" == 'ffmpeg' ]] && return
+	[[ "$cmd" == 'unrar'  ]] && return
+	[[ "$cmd" == '7z'     ]] && return
+	[[ "$cmd" == 'unar'   ]] && return
 
 	# [BUG] firefox-bin
 	#   comm              cmd

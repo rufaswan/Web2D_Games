@@ -25,8 +25,6 @@ sh::which('xprop');
 sh::which('ffprobe');
 sh::which('mpv');
 
-// MB = 1024 * 1024
-// mb = 1000 * 1000
 $gp_work = sh::xprop();
 //////////////////////////////
 function sort_by_time( $a, $b )
@@ -51,14 +49,22 @@ function calc_timesize( &$list )
 	}
 
 	// round up = > 0.5 is min , else sec
-	if ( $list[0]['time'] > 30 )
-		$time = sprintf('%d/%d min', $list[0]['time'] / 60, $sum['time'] / 60);
-	else
+	if ( $list[0]['time'] < 30 )
 		$time = sprintf('%d/%d sec', $list[0]['time']     , $sum['time']     );
+	else
+		$time = sprintf('%d/%d min', $list[0]['time'] / 60, $sum['time'] / 60);
 
+	// MB = 1024 * 1024
+	// mb = 1000 * 1000
 	$mb = 0.001 * 0.001;
 	$rem = sprintf('(%s|%d/%d mb)', $time, $list[0]['size'] * $mb, $sum['size'] * $mb);
 	return $rem;
+}
+
+function ascii_name( $name )
+{
+	$name = preg_replace('|[^0-9a-zA-Z]+|', ' ', $name);
+	return substr($name, 0, 0x20);
 }
 
 function mpvplay( &$list, $type )
@@ -79,7 +85,7 @@ function mpvplay( &$list, $type )
 		$ent = array_shift($list);
 
 		$tmp = sprintf('%s/meme/%s/%s', sys_get_temp_dir(), $type, $ent['name']);
-		$tit = sprintf('[%s] %s', count($list), $ent['name']);
+		$tit = sprintf('[%s] %s', count($list), ascii_name($ent['name']));
 
 		$mpv = 'mpv'
 			. ' --quiet'
@@ -90,7 +96,7 @@ function mpvplay( &$list, $type )
 			. ' --script-opts="osc-visibility=always"'
 			. ' --af="loudnorm=I=-14:TP=-1"'
 			. ' "%s"';
-		sh::exec($mpv, substr($tit,0,0x20), $rem, $ent['name']);
+		sh::exec($mpv, $tit, $rem, $ent['name']);
 
 		// already moved = do nothing
 		echo "$tit\n";

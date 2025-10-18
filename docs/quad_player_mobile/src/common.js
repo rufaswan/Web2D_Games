@@ -36,7 +36,7 @@ APP.process_uploads = function(){
 		if ( up.id < 0 )
 			continue;
 		if ( ! APP.QuadList[up.id] )
-			APP.QuadList[up.id] = new QuadData(APP.QuadList);
+			APP.QuadList[up.id] = new QUAD.QuadData(APP.QuadList);
 
 		var pro = QUAD.func.queue_promise(up, APP.QuadList[up.id]);
 		proall.push(pro);
@@ -45,4 +45,9 @@ APP.process_uploads = function(){
 	return Promise.all(proall).then(function(res){
 		return APP.process_uploads_done();
 	});
+}
+
+APP.remove_upload = function(){
+	document.getElementById('input_file').remove();
+	document.getElementById('btn_upload').remove();
 }

@@ -195,11 +195,22 @@ game_id
     ps4_unic  PS4   Unicorn Overlord
 ....
 
+++++
+<del>
+++++
+
 From version 0x76 (PS4 13 Sentinels) onwards, Vanillaware pre-divided the texture UV (or srcquad) to Normalized Device Coordinates (NDC). They are now in 0.0 to 1.0, so you'll get .PREDIV.QUAD instead.
 
 One additional step is needed to revert them back to px using the the original texture(s) size. Accept textures in .PNG and .CLUT/.RGBA format.
+
 ....
 php  psxtools/quad_prediv.php  TEXTURE.0.PNG  [TEXTURE.1.PNG]...  .PREDIV.QUAD
 ....
 
+++++
+</del>
+++++
+
+REMOVED as 2025-10-14::
+	Updated Quad Player to auto-detect and convert srcquad from 1.0 to px. This step is optional now.
 '''

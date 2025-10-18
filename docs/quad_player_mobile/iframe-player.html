@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<title>Quad Player Embedded</title>
+<style>
+body {
+	font-family : sans-serif;
+	margin      : 0;
+	padding     : 0;
+	width       : 100vw;
+	height      : 100vh;
+	line-height : 1.5em;
+}
+
+table {
+	border-collapse : collapse;
+	width           : 100%;
+	height          : 100%;
+	margin          : 0 auto;
+	overflow        : hidden;
+}
+
+td {
+	width          : 50%;
+	border         : 1px solid #000000;
+	vertical-align : top;
+}
+
+#quadlist,
+#pnglist {
+	height  : 50%;
+	padding : 1em;
+}
+
+#quadplayer {
+	height  : 100%;
+	padding : 0;
+}
+
+#quadplayer iframe {
+	width  : 100%;
+	height : 100%;
+}
+</style>
+<body>
+
+<table>
+<tr>
+	<td id='quadlist'>
+		<button onclick='listfile("quad");'>QUAD</button>
+		<ul>
+			<li data-type='quad' onclick='getfile(this);'>sample-v0.3-animation-keyframe-mix.quad</li>
+			<li data-type='quad' onclick='getfile(this);'>sample-v0.3-animation-matrix-mix.quad</li>
+			<li data-type='quad' onclick='getfile(this);'>sample-v0.4-keyframe-order.quad</li>
+			<li data-type='quad' onclick='getfile(this);'>sample-v0.5-keyframe-attribute.quad</li>
+			<li data-type='quad' onclick='getfile(this);'>sample-v0.5-keyframe-colorize.quad</li>
+			<li data-type='quad' onclick='getfile(this);'>sample-dungeon.quad</li>
+		</ul>
+	</td>
+	<td id='quadplayer' rowspan='2'>
+		<iframe src='player-mobile.tpl.html' sandbox='allow-scripts allow-same-origin'></iframe>
+	</td>
+</tr>
+<tr>
+	<td id='pnglist'>
+		<button onclick='listfile("png");'>PNG</button>
+		<ul>
+			<li data-type='png' onclick='getfile(this);'>sample-dungeon.0.png</li>
+		</ul>
+	</td>
+</tr>
+</table>
+
+<script>
+'use strict';
+
+function listfile( type ){
+	var url = window.location.href.replace('.html','.php') + `?${type}`;
+	window.fetch(url).then(function(res){
+		if ( ! res.ok )
+			return 0;
+		return res.json(); // return promise
+	}).then(function(res){
+		if ( ! res )
+			return 0;
+		var html = '';
+		res.forEach(function(v,k){
+			var li = document.createElement('li');
+			li.setAttribute('data-type' , type);
+			li.setAttribute('onclick'   , 'getfile(this);');
+			li.innerHTML = v;
+			html += li.outerHTML;
+		});
+		var ul = document.querySelector(`#${type}list ul`);
+		ul.innerHTML = html;
+	});
+}
+
+function getfile( elem ){
+	var type = elem.getAttribute('data-type');
+	var name = elem.innerText;
+
+	function qapp_add_queue( data ){
+		TEST.qapp.upload_queue.push({
+			id   : 0,
+			name : name,
+			data : data,
+		});
+		TEST.qapp.upload_id = 0;
+		TEST.qapp.process_uploads();
+	}
+
+	switch ( type ){
+		case 'quad':
+			window.fetch(name).then(function(res){
+				if ( ! res.ok )
+					return 0;
+				return res.text(); // promise resolves to Response object
+			}).then(function(res){
+				if ( ! res )
+					return 0;
+				qapp_add_queue(res);
+			});
+			return;
+		case 'png':
+			window.fetch(name).then(function(res){
+				if ( ! res.ok )
+					return 0;
+				return res.blob(); // promise resolves to Response object
+			}).then(function(res){
+				if ( ! res )
+					return 0;
+				var reader = new FileReader;
+				reader.onload = function(){
+					qapp_add_queue(reader.result);
+				};
+				reader.readAsDataURL(res);
+			});
+			return;
+	}
+}
+
+var TEST = {};
+TEST.iframe = document.querySelector('#quadplayer iframe');
+TEST.iframe.onload = function(){
+	TEST.qapp = TEST.iframe.contentWindow.APP;
+	TEST.qapp.remove_upload();
+	listfile('quad');
+	listfile('png');
+}
+</script>
+</body>
+</html>

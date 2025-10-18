@@ -70,113 +70,6 @@ APP.button_unselect_layers = function( text ){
 	} // for ( var i=0; i < list.length; i++ )
 }
 
-APP.keydebug_draw = function( qdata, mat4, color ){
-	var key = qdata.quad.keyframe[APP.on_key];
-	if ( ! key )
-		return;
-	if ( qdata.is_lines )
-		return APP.keydebug_drawline(qdata, key, mat4, color);
-	else
-		return APP.keydebug_drawtex (qdata, key, mat4, color);
-}
-
-APP.keydebug_drawline = function( qdata, key, mat4, color ){
-	var clines = [];
-
-	var debug = [];
-	var dbg_id;
-	key.layer.forEach(function(lv,lk){
-		if ( ! lv )
-			return;
-		if ( APP.on_layer.indexOf(lk) < 0 )
-			return;
-
-		dbg_id = debug.indexOf(lv.debug);
-		if ( dbg_id < 0 ){
-			dbg_id = debug.length;
-			debug.push(lv.debug);
-			clines[dbg_id] = [];
-		}
-
-		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
-		clines[dbg_id] = clines[dbg_id].concat(dst);
-	});
-
-	var color = [
-		[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
-		[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
-		[0,0,0,1] , [1,1,1,1] ,             // black white
-		[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
-		[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
-		[0.5,0.5,0.5,1] , // gray
-	];
-
-	QUAD.gl.enable_blend(0);
-	clines.forEach(function(cv,ck){
-		var cid = qdata.line_index % color.length;
-		QUAD.gl.draw_line(cv, color[cid]);
-		qdata.line_index++;
-	});
-}
-
-APP.keydebug_drawtex = function( qdata, key, mat4, color ){
-	var dummysrc = [0,0 , 0,0 , 0,0 , 0,0];
-
-	var zrate = 1.0 / (key.layer.length + 1);
-	var buf_list = {};
-	var depth = 1.0;
-	//console.log('key.order',key.order);
-
-	// draw layers by keyframe order
-	key.order.forEach(function(ov){
-		var lv = key.layer[ov];
-		if ( ! lv )
-			return;
-		if ( APP.on_layer.indexOf(ov) < 0 )
-			return;
-		depth -= zrate;
-
-		var bid = lv.blend_id | 0;
-		if ( ! buf_list[bid] )
-			buf_list[bid] = { dst:[] , src:[] , fog:[] , z:[] };
-		var ent = buf_list[bid];
-
-		if ( lv.tex_id < 0 || ! qdata.image[lv.tex_id] )
-			var src = dummysrc;
-		else
-			var src = QUAD.math.vram_srcquad(lv.srcquad, qdata.image[lv.tex_id].pos);
-		ent.src = ent.src.concat(src);
-
-		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
-		var xyz = QUAD.math.perspective_quad(dst);
-		ent.dst = ent.dst.concat(xyz);
-
-		var clr = QUAD.math.fog_multi4(color, lv.fogquad);
-		ent.fog = ent.fog.concat(clr);
-
-		ent.z = ent.z.concat([depth , depth , depth , depth]);
-	});
-	//console.log('buf_list',buf_list);
-
-	QUAD.gl.enable_depth('LESS');
-	for ( var i = -1; i < qdata.quad.blend.length; i++ ){
-		if ( ! buf_list[i] ) // no data to draw
-			continue;
-
-		if ( i < 0 ) // disable blending
-			QUAD.gl.enable_blend(0);
-		else {
-			if ( ! qdata.quad.blend[i] ) // invalid or unknown blending
-				continue;
-			QUAD.gl.enable_blend( qdata.quad.blend[i] );
-		}
-
-		var bv = buf_list[i];
-		QUAD.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.vram );
-	} // for ( var i = -1; i < qdata.quad.blend.length; i++ )
-	QUAD.gl.enable_depth(0);
-}
-
 //////////////////////////////
 // function aaa()       + onclick='aaa();'
 // APP.aaa = function() + var a = APP.aaa();
@@ -252,3 +145,123 @@ function layer_close(){
 	APP.html.btn_selectall.style.display  = 'none';
 	APP.html.btn_selectnone.style.display = 'none';
 }
+
+//////////////////////////////
+// hook to overwrite default function with debug one
+
+/*
+QUAD.draw.hook('qdata_draw', function( qdata, mat4, color ){
+	if ( ! qdata.quad )
+		return;
+	var m4 = QUAD.math.matrix_multi44( mat4, qdata.matrix );
+	var c4 = QUAD.math.vec4_multi(color, qdata.color);
+	qdata.attach.type = 'keyframe';
+	return __.draw_keyframe(qdata, qdata.attach.id, m4, c4);
+
+});
+
+APP.keydebug_draw =
+*/
+
+APP.keydebug_draw = function( qdata, mat4, color ){
+	var key = qdata.quad.keyframe[APP.on_key];
+	if ( ! key )
+		return;
+	if ( qdata.is_lines )
+		return APP.keydebug_drawline(qdata, key, mat4, color);
+	else
+		return APP.keydebug_drawtex (qdata, key, mat4, color);
+}
+
+APP.keydebug_drawline = function( qdata, key, mat4, color ){
+	var clines = [];
+
+	var debug = [];
+	var dbg_id;
+	key.layer.forEach(function(lv,lk){
+		if ( ! lv )
+			return;
+		if ( APP.on_layer.indexOf(lk) < 0 )
+			return;
+
+		dbg_id = debug.indexOf(lv.debug);
+		if ( dbg_id < 0 ){
+			dbg_id = debug.length;
+			debug.push(lv.debug);
+			clines[dbg_id] = [];
+		}
+
+		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
+		clines[dbg_id] = clines[dbg_id].concat(dst);
+	});
+
+	var color = [
+		[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
+		[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
+		[0,0,0,1] , [1,1,1,1] ,             // black white
+		[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
+		[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
+		[0.5,0.5,0.5,1] , // gray
+	];
+
+	QUAD.gl.enable_blend(0);
+	clines.forEach(function(cv,ck){
+		var cid = qdata.line_index % color.length;
+		QUAD.gl.draw_line(cv, color[cid]);
+		qdata.line_index++;
+	});
+}
+
+APP.keydebug_drawtex = function( qdata, key, mat4, color ){
+	var zrate = 1.0 / (key.layer.length + 1);
+	var buf_list = {};
+	var depth = 1.0;
+	//console.log('key.order',key.order);
+
+	// draw layers by keyframe order
+	key.order.forEach(function(ov){
+		var lv = key.layer[ov];
+		if ( ! lv )
+			return;
+		if ( APP.on_layer.indexOf(ov) < 0 )
+			return;
+		depth -= zrate;
+
+		var bid = lv.blend_id | 0;
+		if ( ! buf_list[bid] )
+			buf_list[bid] = { dst:[] , src:[] , fog:[] , z:[] };
+		var ent = buf_list[bid];
+
+		var src = QUAD.func.vram_srcquad(lv.srcquad, lv.tex_id, qdata.image);
+		ent.src = ent.src.concat(src);
+
+		var dst = QUAD.math.quad_multi4(mat4, lv.dstquad);
+		var xyz = QUAD.math.perspective_quad(dst);
+		ent.dst = ent.dst.concat(xyz);
+
+		var clr = QUAD.math.fog_multi4(color, lv.fogquad);
+		ent.fog = ent.fog.concat(clr);
+
+		ent.z = ent.z.concat([depth , depth , depth , depth]);
+	});
+	//console.log('buf_list',buf_list);
+
+	QUAD.gl.enable_depth('LESS');
+	for ( var i = -1; i < qdata.quad.blend.length; i++ ){
+		if ( ! buf_list[i] ) // no data to draw
+			continue;
+
+		if ( i < 0 ) // disable blending
+			QUAD.gl.enable_blend(0);
+		else {
+			if ( ! qdata.quad.blend[i] ) // invalid or unknown blending
+				continue;
+			QUAD.gl.enable_blend( qdata.quad.blend[i] );
+		}
+
+		var bv = buf_list[i];
+		QUAD.gl.draw_keyframe( bv.dst, bv.src, bv.fog, bv.z, qdata.vram );
+	} // for ( var i = -1; i < qdata.quad.blend.length; i++ )
+	QUAD.gl.enable_depth(0);
+}
+

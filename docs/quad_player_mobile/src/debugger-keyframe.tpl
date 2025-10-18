@@ -144,7 +144,8 @@ APP.on_layer     = [];
 			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
 
 			QUAD.func.qdata_clear(qdata);
-			APP.keydebug_draw(qdata, APP.camera, APP.color);
+			//APP.keydebug_draw(qdata, APP.camera, APP.color);
+			QUAD.draw.qdata_draw(qdata, APP.camera, APP.color);
 			APP.is_redraw = false;
 		}
 	}

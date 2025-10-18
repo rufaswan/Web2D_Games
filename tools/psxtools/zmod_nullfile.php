@@ -23,13 +23,31 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 require 'common.inc';
 require 'common-guest.inc';
 
+function null_RIFF( $fname, &$file )
+{
+	if ( substr($file,8,8) !== 'WAVEfmt ' )
+		return;
+
+	$pos  = strpos($file, 'data', 0x10);
+	if ( $pos === false )
+		return;
+
+	$size = $pos + 8;
+	$sub  = substr($file, 0, $size);
+
+	str_update($sub, 4,      chrint($pos,4));
+	str_update($sub, $pos+4, chrint(   0,4));
+
+	file_put_contents($fname, $sub);
+	return;
+}
+
 function null_PSMF( $fname, &$file )
 {
 	$size = str2big($file, 8, 4);
 	$sub  = substr ($file, 0, $size);
 
-	$int = chrint(0, 4);
-	str_update($sub, 12, $int);
+	str_update($sub, 12, chrint(0,4));
 
 	file_put_contents($fname, $sub);
 	return;

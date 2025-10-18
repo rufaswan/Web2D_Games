@@ -1,23 +1,17 @@
+:ghrepo: http://github.com/rufaswan/Web2D_Games
 :ghpage: http://rufaswan.github.io/Web2D_Games
 
 == Tools (HTML/JS) and Docs
 
-* WebGL Quad Player is one-page web app, using only Javascript and HTML5
-** updates is located at `docs/quad_player_mobile`
-** Online version :
-*** {ghpage}/quad_player_mobile/player-mobile.tpl.html
-*** {ghpage}/quad_player_mobile/debugger-keyframe.tpl.html
-
-** Dev Test
-*** {ghpage}/mobile_test/mobile.tpl.html
-*** {ghpage}/mobile_test/screen.tpl.html
-*** {ghpage}/filetype_test/input-file.tpl.html
-*** {ghpage}/filetype_test/audio-player.tpl.html
-*** {ghpage}/webgl_test/quad-affine-2tri.tpl.html
-*** {ghpage}/webgl_test/quad-affine-4tri.tpl.html
-*** {ghpage}/webgl_test/quad-perspective-uv.tpl.html
-*** {ghpage}/webgl_test/quad-perspective-xy.tpl.html
-*** {ghpage}/webgl_test/quad-perspective-screen.tpl.html
-*** {ghpage}/webgl_test/quad-bilinear-screen.tpl.html
-*** {ghpage}/webgl_test/quad-perspective-z.tpl.html
-*** {ghpage}/webgl_test/gl-drawload.tpl.html
+* {ghpage}/mobile_test/mobile.tpl.html
+* {ghpage}/mobile_test/screen.tpl.html
+* {ghpage}/filetype_test/input-file.tpl.html
+* {ghpage}/filetype_test/audio-player.tpl.html
+* {ghpage}/webgl_test/quad-affine-2tri.tpl.html
+* {ghpage}/webgl_test/quad-affine-4tri.tpl.html
+* {ghpage}/webgl_test/quad-perspective-uv.tpl.html
+* {ghpage}/webgl_test/quad-perspective-xy.tpl.html
+* {ghpage}/webgl_test/quad-perspective-screen.tpl.html
+* {ghpage}/webgl_test/quad-bilinear-screen.tpl.html
+* {ghpage}/webgl_test/quad-perspective-z.tpl.html
+* {ghpage}/webgl_test/gl-drawload.tpl.html

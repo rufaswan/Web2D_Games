@@ -34,7 +34,11 @@ function predivsize( &$imgsize, &$file, $fname )
 		return;
 	if ( ! isset($quad['keyframe']) )
 		return;
-	printf("PREDIV.QUAD\n");
+	printf("QUAD = %s\n", $fname);
+
+	$mult = array();
+	foreach ( $imgsize as $ik => $iv )
+		$mult[$ik] = true;
 
 	foreach ( $quad['keyframe'] as $kk => $kv )
 	{
@@ -50,19 +54,45 @@ function predivsize( &$imgsize, &$file, $fname )
 				continue;
 			if ( ! isset($lv['tex_id']) )
 				continue;
+
 			$tex_id = $lv['tex_id'];
 			if ( ! isset($imgsize[$tex_id]) )
-				return php_error('[%s] require tex_id %d not found', $fname, $tex_id);
+				continue;
 
-			list($tw,$th) = $imgsize[$tex_id];
-			$srcquad = &$quad['keyframe'][$kk]['layer'][$lk]['srcquad'];
-			for ( $i=0 ; $i < 8; $i += 2 )
+			$src = &$quad['keyframe'][$kk]['layer'][$lk]['srcquad'];
+			$img = &$imgsize[$tex_id];
+			for ( $i=0 ; $i < 8; $i++ )
 			{
-				$srcquad[$i+0] *= $tw;
-				$srcquad[$i+1] *= $th;
+				if ( $src[$i] > 1.0 )
+					$mult[$tex_id] = false;
+			}
+
+			if ( $mult[$tex_id] )
+			{
+				for ( $i=0 ; $i < 8; $i += 2 )
+				{
+					$src[$i+0] *= $img[0];
+					$src[$i+1] *= $img[1];
+				}
+			}
+			else
+			{
+				for ( $i=0 ; $i < 8; $i += 2 )
+				{
+					$src[$i+0] /= $img[0];
+					$src[$i+1] /= $img[1];
+				}
 			}
 		} // foreach ( $kv['layer'] as $lk => $lv )
 	} // foreach ( $quad['keyframe'] as $kk => $kv )
+
+	foreach ( $imgsize as $ik => $iv )
+	{
+		if ( $iv )
+			printf("srcquad[%d] = multiply 1.0 to px\n", $ik);
+		else
+			printf("srcquad[%d] = divide   px  to 1.0\n", $ik);
+	}
 
 	$fn = str_replace('.prediv.quad', '', $fname);
 	save_quadfile($fn, $quad);
@@ -94,7 +124,7 @@ function predivquad( &$imgsize, $fname )
 	$base = strtolower($base);
 
 	$file = file_get_contents($fname);
-	if ( strpos($base,'.prediv.quad') !== false )
+	if ( strpos($base,'.quad') !== false )
 		return predivsize($imgsize, $file, $fname);
 
 

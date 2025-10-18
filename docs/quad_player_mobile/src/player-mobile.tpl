@@ -282,7 +282,7 @@ APP.fps_draw      = 0;
 			APP.html.logger.innerHTML  = QUAD.func.console();
 
 			QUAD.func.qdata_clear(qdata);
-			QUAD.func.qdata_draw(qdata, APP.camera, APP.color);
+			QUAD.draw.qdata_draw(qdata, APP.camera, APP.color);
 			if ( ! qdata.is_draw ){
 				APP.html.btn_cur.innerHTML = 'END';
 			}
