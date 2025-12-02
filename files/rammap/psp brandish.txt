@@ -1,0 +1,34 @@
+============================
+== Brandish Dark Revenant ==
+============================
+
+Item Durability
+	RAM 8b39b92
+
+	int16  item id
+	int16  item durability
+
+	item id
+		01  h.potion
+		05  large hammer
+		08  keys
+		14  EXP+
+		25  PIT DAMAGE--
+		3d  short sword
+		46  broken sword
+		47  leather armor
+		51  leather shield
+
+	881ce58  lhu    v1, 2(a0)
+	881ce6c  addiu  v0, v1, -1
+	881ce74  max    v0, v0, v1=0
+	881ce94  sh     v1, 2(a0)
+
+f32 MP = CE cbdd130 = PSP 8bdd130
+	100.0 = 42c8----
+
+	auto-healing
+	881bbd0  lwc1   f0, 0(89629a0)
+	881bbdc  mul.s  f20, f12, f0
+	881bc00  mov.s  f12, f20
+	881bc0c  jal 8815f9c

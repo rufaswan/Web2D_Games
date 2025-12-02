@@ -141,22 +141,36 @@ class sh
 
 	public static function ffprobe( $fname )
 	{
+		// auto-detect
+		//   stream for video
+		//   format for non-video / audio
 		$dur = array('format'=>-1 , 'stream'=>-1);
 		if ( ! is_file($fname) )
 			return $ret;
 		self::which('ffprobe');
 
+			//. ' -select_streams  v:0'
+			//. ' -show_entries    format=duration:stream=duration'
+			//. ' -print_format    default=nokey=1:noprint_wrappers=0'
+		// removed stream
+		// - MP3  can have cover art PNG as video
+		// - WEBM doesnt have STREAM.duration , but STREAM_TAG.duration
+		// - WEBM STREAM_TAG.duration is in hh:mm:ss.ssss format , instead ss.ssss format
+		// return is changed from array (multi-line) to string (one-line)
 		$ffprobe = 'ffprobe'
 			. ' -loglevel        quiet'
-			. ' -select_streams  v:0'
-			. ' -show_entries    format=duration:stream=duration'
-			. ' -print_format    default=nokey=1:noprint_wrappers=0'
+			. ' -show_entries    format=duration'
+			. ' -print_format    default=nokey=1:noprint_wrappers=1'
 			. ' "%s"';
 		$res = self::exec($ffprobe, $fname);
 		if ( empty($res) )
 			return $dur;
-		//print_r($res);
 
+		// [PROGRAM]
+		//   [STREAM]
+		//     13.533856
+		//   [/STREAM]
+		// [/PROGRAM]
 		// [STREAM]
 		//   13.533856
 		//   [SIDE_DATA]
@@ -165,33 +179,11 @@ class sh
 		// [FORMAT]
 		//   13.533856
 		// [/FORMAT]
-		while ( ! empty($res) )
-		{
-			$wrap = array_shift($res);
-			if ( substr($wrap,0,2) === '[/' )
-				continue;
 
-			switch( $wrap )
-			{
-				case '[FORMAT]':
-					$val = 1.0 * array_shift($res);
-					if ( $val > 0.1 )
-						$dur['format'] = $val;
-					break;
-				case '[STREAM]':
-					$val = 1.0 * array_shift($res);
-					if ( $val > 0.1 )
-						$dur['stream'] = $val;
-					break;
-				case '[SIDE_DATA]':
-					printf('skip %s = %s'."\n", $wrap, $fname);
-					break;
-				default:
-					self::error('UNKNOWN wrapper %s = %s', $wrap, $fname);
-					break;
-			} // switch( $res[0] )
-		} // while ( ! empty($res) )
-
+		//self::error('%s = %s', __FUNCTION__, print_r($res,true));
+		$res *= 1.0;
+		if ( $res > 0.1 )
+			$dur['format'] = $res;
 		return $dur;
 	}
 
@@ -263,6 +255,38 @@ class sh
 
 		unlink($src);
 		return true;
+	}
+
+	public static function sec2time( $sec )
+	{
+		// 01:39:20
+		// 01:39:00
+		// 01:00:20
+		//    39:20
+		//    39:00
+		//       20
+		$time = '';
+
+		$t = 0;
+		while ( $sec >= 3600 ) // hour
+		{
+			$t++;
+			$sec -= 3600;
+		}
+		if ( $t > 0 || ! empty($time)  )
+			$time .= sprintf('%02d:', $t);
+
+		$t = 0;
+		while ( $sec >= 60 ) // min
+		{
+			$t++;
+			$sec -= 60;
+		}
+		if ( $t > 0 || ! empty($time) )
+			$time .= sprintf('%02d:', $t);
+
+		$time .= sprintf('%02d',$sec);
+		return $time;
 	}
 
 	public static function decdigit( $int )

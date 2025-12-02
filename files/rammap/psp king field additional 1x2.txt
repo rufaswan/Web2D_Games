@@ -1,0 +1,124 @@
+=============================
+== King Field Additional 1 ==
+=============================
+
+8dce600  MBLK
+
+8dceca4  [d1] level  (max=63)
+8dcecac  [d2] EXP
+8dcecb4  [d3] Next EXP *auto*
+8dcecbc  [d4] Gold   (max=1869f)
+8dcecc4  [d5]
+8dceccc  [d6] max HP (max=  3e7)
+8dcecd4  [d7] HP     (max=  3e7)
+8dcecdc  [d8] max MP (max=   c8)
+8dcece4  [d9] MP     (max=   c8)
+// NOTE = max 6 level up per battle
+// stats are look-up table or formula-based
+
+[13f-142]  magic fire
+[143-146]  magic earth (heal 1)
+[147-14a]  magic wind  (escape)
+[14b-14e]  magic water (de-poison)
+[14f-152]  magic light (heal 2)
+[153-156]  magic dark
+
+[15d-160]  item 1
+[161-164]  item 2
+[165-168]  item 3
+[169-16c]  item 4
+[16d-170]  item 5
+[171-174]  item 6
+[175-178]  item 7
+[179-17c]  item 8
+[17d-180]  item 9
+[181-184]  item 10
+[185-188]  item 11
+[189-18c]  item 12
+	0  item id
+	1  count
+	2  max durability (weapon only , else=00)
+	3  durability     (weapon only , else=00)
+	// 6/3c = 10%
+
+	item id
+		00-11  weapon sword 1h
+			10  moonlight
+			11  dark slayer
+		12-1b  weapon axe 2h
+		1c-20  weapon rod
+			1f  saint staff
+		21-26  weapon axe 2h
+		27-2e  weapon daggar 1h
+		2f-35  weapon bow
+		36-4d  shield
+			47  elven shield
+		4e-65  armor
+			5d  elven armor
+		66-79  helmet
+			6e-6f  elven crown
+		7a-8d  glove
+			85  elven glove
+		8e-a1  boots
+			9a-9b  elven boots
+		a2-b7  accessory
+			ae  heal ring
+			b0  olradin ring
+			b7  miko amulet
+		b8-bf  *dummy*
+		c0-e1  item
+			c0  herb
+			c1  potion
+			c2  antidote
+			c3  blood stone
+			c4  moon stone
+			c5-c7  crystal bottle
+			c8-ca  healing water - blue
+			cb-cd  healing water - gold
+			ce  dragon fruit
+			cf  arrow
+			d0-d2  fire  magicstone
+			d3-d5  earth magicstone
+			d6-d8  wind  magicstone
+			d9-db  water magicstone
+			dc-de  light magicstone
+			df-e1  dark  magicstone
+
+equip
+	[18f] weapon
+	[190] shield
+	[191] armor
+	[192] helmet
+	[193] glove
+	[194] boots
+	[195] accessory
+	[196] item
+	[197]
+	[198] weapon max durability
+	[199] weapon durability
+
+[514-549]  shop inventory weapon
+[54a-561]  shop inventory shield
+[562-579]  shop inventory armor
+[57a-58d]  shop inventory helmet
+[58e-5a1]  shop inventory glove
+[5a2-5b5]  shop inventory boots
+[5b6-5cb]  shop inventory accessory
+[5cc-5d3]  *dummy*
+[5d4-5f5] shop inventory item
+
+=============================
+== King Field Additional 2 ==
+=============================
+
+8d6ce00  MBLK
+
+8d6d4a4  [d1] level  (max=63)
+8d6d4ac  [d2] EXP
+8d6d4b4  [d3] Next EXP *auto*
+8d6d4bc  [d4] Gold   (max=1869f)
+8d6d4c4  [d5]
+8d6d4cc  [d6] max HP (max=  3e7)
+8d6d4d4  [d7] HP     (max=  3e7)
+8d6d4dc  [d8] max MP (max=   c8)
+8d6d4e4  [d9] MP     (max=   c8)

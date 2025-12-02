@@ -1,0 +1,57 @@
+==============
+== Prinny 1 ==
+==============
+
+Boss HP = CE cf66890 = PSP 8b66890
+	int32 tutorial 2 boss HP =
+
+	884915c  lw    v1, 120(s2)
+	8849160  subu  v1, v1, s0
+	8849164  sw    v1, 120(s2)
+	// [1-1- -1][11 -1-][- --11]
+	// ae43 120 -> ae40 120
+
+Pos X = CE cf65c6c = PSP 8b65c6c
+	left-- right++
+
+	PSP 8b65ce8 = 2x jump
+		885c46c  lh     v1, 128(s2)
+		885c470  addiu  v1, v1, 1
+		885c474  sh     v1, 128(s2)
+
+		885ceb0  sh     0,  128(a0)
+
+Time is int32 in 60 fps
+	2a30 = 10800.0
+		/ 60.0 = 180.0 sec
+		/ 60.0 =   3.0 min
+
+==============
+== Prinny 2 ==
+==============
+
+Boss HP = CE d0a29c0 = PSP 8ca29c0
+	int32 tutorial 2 boss HP = 9c4
+
+	8875620  lw    v0, 140(s5)
+	8875624  subu  v0, v0, s2
+	887562c  sw    v0, 140(s5)
+	// [1-1- 11][1- 1-1][- --1-]
+	// aea2 140 -> aea0 140
+
+Pos X = CE d09bd9c = PSP 8c9bd9c
+	left-- right++
+
+	PSP 8c9be28 = 2x jump - prinny
+		890aedc  lh     v1, 148(s2)
+		890aee0  addiu  v1, v1, 1
+		890aee4  sh     v1, 148(s2)
+
+		8894bb0  sh     0,  148(a0)
+
+	PSP 8c9be28 = 2x jump - asagi
+		8894574  lh     v1, 148(s2)
+		8894578  addiu  v1, v1, 1
+		889457c  sh     v1, 148(s2)
+
+		88f67a8  sh     0,  148(a0)

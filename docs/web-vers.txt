@@ -437,6 +437,7 @@ Can I Use?
 	 26     16    calc() as CSS unit value
 	 26     37    accept attribute for file input
 	 30     50    Directory selection from file input
+	 33     18    Page Visibility
 	 38     28    File API
 	 42     40    Fetch
 	 45     22    Arrow functions

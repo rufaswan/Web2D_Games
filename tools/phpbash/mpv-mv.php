@@ -25,6 +25,8 @@ sh::which('xprop');
 sh::which('ffprobe');
 sh::which('mpv');
 
+define('TMP_DIR', sys_get_temp_dir());
+
 $gp_work = sh::xprop();
 //////////////////////////////
 function sort_by_time( $a, $b )
@@ -48,16 +50,13 @@ function calc_timesize( &$list )
 		$sum['size'] += $ent['size'];
 	}
 
-	// round up = > 0.5 is min , else sec
-	if ( $list[0]['time'] < 30 )
-		$time = sprintf('%d/%d sec', $list[0]['time']     , $sum['time']     );
-	else
-		$time = sprintf('%d/%d min', $list[0]['time'] / 60, $sum['time'] / 60);
-
 	// MB = 1024 * 1024
 	// mb = 1000 * 1000
 	$mb = 0.001 * 0.001;
-	$rem = sprintf('(%s|%d/%d mb)', $time, $list[0]['size'] * $mb, $sum['size'] * $mb);
+	$rem = sprintf('(%s/%s|%d/%d MB)' ,
+		sh::sec2time($list[0]['time']) , sh::sec2time($sum['time']),
+		$list[0]['size'] >> 20         , $sum['size'] >> 20
+	);
 	return $rem;
 }
 
@@ -84,7 +83,11 @@ function mpvplay( &$list, $type )
 		$rem = calc_timesize($list);
 		$ent = array_shift($list);
 
-		$tmp = sprintf('%s/meme/%s/%s', sys_get_temp_dir(), $type, $ent['name']);
+		// if file is renamed or moved
+		if ( ! file_exists($ent['name']) )
+			continue;
+
+		$tmp = sprintf('%s/meme/%s/%s', TMP_DIR, $type, $ent['name']);
 		$tit = sprintf('[%s] %s', count($list), ascii_name($ent['name']));
 
 		$mpv = 'mpv'
@@ -97,9 +100,10 @@ function mpvplay( &$list, $type )
 			. ' --af="loudnorm=I=-14:TP=-1"'
 			. ' "%s"';
 		sh::exec($mpv, $tit, $rem, $ent['name']);
-
-		// already moved = do nothing
 		echo "$tit\n";
+
+		// if file has the same generic name
+		// or already moved to tmp
 		if ( ! file_exists($tmp) )
 			sh::move($ent['name'], $tmp);
 

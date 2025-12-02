@@ -29,16 +29,18 @@ php_req_extension('json_decode', 'json');
 
 function predivsize( &$imgsize, &$file, $fname )
 {
+	if ( empty($imgsize) )
+		return;
+	$mult = array();
+	foreach ( $imgsize as $ik => $iv )
+		$mult[$ik] = true;
+
 	$quad = json_decode($file, true);
 	if ( empty($quad) )
 		return;
 	if ( ! isset($quad['keyframe']) )
 		return;
 	printf("QUAD = %s\n", $fname);
-
-	$mult = array();
-	foreach ( $imgsize as $ik => $iv )
-		$mult[$ik] = true;
 
 	foreach ( $quad['keyframe'] as $kk => $kv )
 	{
@@ -94,8 +96,7 @@ function predivsize( &$imgsize, &$file, $fname )
 			printf("srcquad[%d] = divide   px  to 1.0\n", $ik);
 	}
 
-	$fn = str_replace('.prediv.quad', '', $fname);
-	save_quadfile($fn, $quad);
+	save_quadfile($fname, $quad);
 	return;
 }
 

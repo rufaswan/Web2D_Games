@@ -1,48 +1,80 @@
-== Releases
--     Nintendo  Sega    Sony    Microsoft
-1983  NES/-             x       x
-1984                    x       x
-1985            SMS/-   x       x
-1986                    x       x
-1987                    x       x
-1988            GEN/-   x       x
-1989  -/GB              x       x
-1990  SNES/-    SAT/GG  x       x
-1991                    x       x
-1992                    x       x
-1993                    x       x
-1994                    PSX/-   x
-1995                            x
-1996  N64/-                     x
-1997                            x
-1998            DC/-            x
-1999                            x
-2000                    PS2/-   x
-2001  GCN/GBA                   XB/-
-2002
-2003
-2004  -/NDS             -/PSP
-2005                            360/-
-2006  Wii/-             PS3/-
-2007
-2008
-2009
-2010
-2011  -/3DS             -/Vita
-2012  WiiU/-
-2013                    PS4/-   One/-
-2014
-2015
-2016
-2017  Switch
-2018
-2019
-2020                    PS5/-   XBSX,S/-
-2021
-2022
-2023
+## Releases
+	-     Nintendo  Sega    Sony    Microsoft
+	1983  NES/-             x       x
+	1984                    x       x
+	1985            SMS/-   x       x
+	1986                    x       x
+	1987                    x       x
+	1988            GEN/-   x       x
+	1989  -/GB              x       x
+	1990  SNES/-    SAT/GG  x       x
+	1991                    x       x
+	1992                    x       x
+	1993                    x       x
+	1994                    PSX/-   x
+	1995                            x
+	1996  N64/-                     x
+	1997                            x
+	1998            DC/-            x
+	1999                            x
+	2000                    PS2/-   x
+	2001  GCN/GBA                   XB/-
+	2002
+	2003
+	2004  -/NDS             -/PSP
+	2005                            360/-
+	2006  Wii/-             PS3/-
+	2007
+	2008
+	2009
+	2010
+	2011  -/3DS             -/Vita
+	2012  WiiU/-
+	2013                    PS4/-   One/-
+	2014
+	2015
+	2016
+	2017  Switch
+	2018
+	2019
+	2020                    PS5/-   XBSX,S/-
+	2021
+	2022
+	2023
 
-== ROM header ==
+## Resolutions (in px)
+	NES     256x240
+	SNES    256x224
+	N64     256x224 320x240 640x480
+	GCN     480i 480p
+	Wii     480i 576i
+	WiiU    480i 480p 576i 720p 1080i 1080p
+	GB      160x144
+	GBA     240x160
+	NDS     256x192
+	3DS     2*400x240/upper 320x240/lower
+	Switch  480p 720p 1080p/dock
+
+	SMS     256x192
+	GEN     256x224p 320x224p 256x240p 320x240p 256x448i 320x448i 256x480i 320x480i
+	SAT     320x224 704x224
+	DC      640x480
+	GG      160x144
+
+	PSX     240p  480i
+	PS2     240p  480i  480p 1080i
+	PS3     480i  480p  576i  576p  720p  1080i  1080p
+	PS4     480p  720p 1080i 1080p 4K/Pro
+	PS5     720p 1080i 1080p 1440p 4K 8K/Pro
+	PSP     480x272
+	Vita    960x540
+
+	XB      480i  480p  576i  576p  720p 1080i
+	360     480i  480p  576i  720p 1080i 1080p
+	One     720p 1080p 1440p/S+X 4K/S+X
+	XBSX,S  720p 1080p 1440p 4K
+
+## ROM header
 PlayStation ONE EXE header
 	00  8  "PS-X EXE"
 	10  4  mips start()
@@ -52,20 +84,20 @@ PlayStation ONE EXE header
 	# RAM 8000 0000-8020 0000 (2 MB , first 10000 = bios)
 
 Saturn ISO boot header
-	00   16  "SEGA SEGASATURN"
-	10   16  "SEGA TP T-" + version
-	20   10  Game ID
-	2a    6  Game Version
-	30    8  yyyymmdd
-	38    8  "CD-1/1"
-	40   16  "J"
-	50   16  "J"
-	60  128  Game Title
-	e0    4  sh-2 start()
-	e8    4  init stack master
-	ec    4  init stack slave
-	f0    4  sh-2 ram
-	f4    4  sh-2 size
+	00  10  "SEGA SEGASATURN"
+	10  10  "SEGA TP T-" + version
+	20   a  Game ID
+	2a   6  Game Version
+	30   8  yyyymmdd
+	38   8  "CD-1/1"
+	40  10  "J"
+	50  10  "J"
+	60  80  Game Title
+	e0   4  sh-2 start()
+	e8   4  init stack master
+	ec   4  init stack slave
+	f0   4  sh-2 ram
+	f4   4  sh-2 size
 	# RAM 600 2000-610 0000 (~1 MB)
 
 Nintendo Gameboy/Color ROM header
@@ -90,7 +122,7 @@ Nintendo GBA ROM header
 	# RAM 200 0000-204 0000 (256 KB)
 
 Nintendo DS ROM header
-	00   12  Game Title
+	00    c  Game Title
 	0c    4  Game ID (NTR-xxxx)
 	1e    1  ROM Version
 	20    4  arm9.bin offset
@@ -149,13 +181,13 @@ Nintendo DS ROM header
 
 	Gameboy  00
 
-== ASM Endian ==
+## ASM Endian
 	Little  PSX  PS2  PSP  VITA  GBA  NDS  PC98
 	Big     SATURN  WII
 	NONE
 	???     PS3  PS4  PS5  NES  SNES  N64  GCN  WII-U  SWITCH  GB  3DS  XBOX  XB360  XBONE  XBSX/S  DREAMCAST
 
-== CDVD ==
+## CDVD
 	* from cdmage
 	min  sector         bytes
 	18   13c68/ 81,000   9e34000/165,888,000
@@ -163,7 +195,7 @@ Nintendo DS ROM header
 	74   514c8/333,000  28a64000/681,984,000
 	80   57e40/360,000  2bf20000/737,280,000
 
-== IEEE 754 Int Precision ==
+## IEEE 754 Int Precision
 	format = sign  exponent  mantissa
 
 	float  exp  man  bias    max man        1.0
@@ -174,11 +206,11 @@ Nintendo DS ROM header
 	256    19   236  262143  (64 << 230)-1  3f ff f0  seee eeee eeee eeee eeee
 
 	WebGL
-	lowp      8    ff    255.0
-	mediump  10   3ff   1023.0
-	highp    16  ffff  65535.0
+	lowp      8.0    ff    255.0
+	mediump  10.0   3ff   1023.0
+	highp    16.0  ffff  65535.0
 
-=== Matrix ===
+## Matrix
 	3x3 Affine Matrix
 	column major - by hand
 		| cos  -sin  tx |
@@ -201,7 +233,7 @@ Nintendo DS ROM header
 		| sin   -sin  cos   0 |
 		| tx    ty    tz    1 |
 
-=== GitHub Tags ===
+## GitHub Tags
 	pcsx2-v1.7.2484-linux-AppImage-32bit.AppImage
 	pcsx2-v1.7.2761-linux-AppImage-64bit.AppImage
 	pcsx2-v1.7.3771-linux-AppImage-64bit-wxWidgets.AppImage
