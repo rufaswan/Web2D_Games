@@ -23,3 +23,6 @@
 *.quad  diff
 
 *.c     diff=cpp
+
+*.pnach  diff
+*.ini    diff

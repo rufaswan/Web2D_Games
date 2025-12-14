@@ -12,11 +12,17 @@
 
 *ubuntu*
 	adb shell
-		pm list packages
+		pm list packages | grep -i TERM
+
+		# uninstall system apps
 		pm uninstall -k --user 0 APK
+
+		# re-install system apps
+		pm dump APK | grep -i system/app/
+		pm install --user 0 system/app/PATH/APK
+
+		pm install-existing APK
 
 		pm disable APK
 
-		pm install-existing APK
-		pm dump APK | grep -i path
-		pm install --user 0 PATH/APK
+	logcat

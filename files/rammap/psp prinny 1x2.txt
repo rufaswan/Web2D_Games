@@ -21,6 +21,28 @@ Pos X = CE cf65c6c = PSP 8b65c6c
 
 		885ceb0  sh     0,  128(a0)
 
+Music CD
+	10 * Lucky Dolls
+		 10=2    20=1    30=3    40=15   50=25
+		 60=4    70=--   80=29   90=28  100=--
+		110=30  120=23
+	5 * Asagi
+		1=--  2=21  3=--  4=20
+		5=27  6=22  7=26
+	5 * Martial Tower
+		11 12 13 14 19
+
+	17  10h Demon Sea Aria    - Dawn
+	7   9h Magma Hideout      - Morning
+	8   8h Moab Fortress      - Noon
+	5   7h High Tome Forest   - Evening
+	6   6h Death's Watchtower - Dusk
+	24  5h Nethergrasslands   - Midnight
+	16  4h Aged Sage Altar
+	10  3h Black Dessert Desert
+	9   2h Sweet Palace
+	18  1h Sweet Garden
+
 Time is int32 in 60 fps
 	2a30 = 10800.0
 		/ 60.0 = 180.0 sec
@@ -55,3 +77,36 @@ Pos X = CE d09bd9c = PSP 8c9bd9c
 		889457c  sh     v1, 148(s2)
 
 		88f67a8  sh     0,  148(a0)
+
+Music CD
+	10 * Lucky Doll
+		 10=17   20=2    30=28   40=18   50=27
+		 60=24   70=--   80=23   90=25  100=--
+		110=30  120=26
+	3 * Martial Temple
+		16  20  21
+	3 * Martial Tower - Abyss
+		3  12  22
+
+	4   Tutorial 1
+	1   Tutorial 2
+	9   10h Unlucky Swamp
+	10  9h Sakura Palace
+	8   8h Nethersea Volcano
+	6   7h Sandwich Palace
+	7   6h Demonland
+	5   5h Nethervalley
+	11  4h Phantom Battle
+	13  3h Rocky Dragon Hideout
+	14  2h Junkie Mansion
+	15  1h Junkie Rage
+	19 29  AW-0h Shining Road
+
+Presenter = Invitation
+	Tutorial 2            Creepy Invite      [Prinny Memorial]
+	10h Nethervalley      Justice Invite     [Rescue Squad HQ]
+	9h Nethersea Volcano  Mushroom Invite    [Eryngi Nest]
+	8h Sandwich Palace    Worn Invite        [Laharl's House]
+	7h Demonland          Lucky Invite       [Lucky Lab]
+	6h Sakura Palace      Demon Lord Invite  [Sting Radar]
+	5h Unlucky Swamp      Unfortunate Invite [Skylight Room]

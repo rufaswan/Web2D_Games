@@ -39,3 +39,6 @@
 !*.bak
 !*.c
 !*.ttf
+
+!*.pnach
+!*.ini

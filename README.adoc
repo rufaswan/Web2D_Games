@@ -41,5 +41,6 @@ Hacking Tools::
 
 == Contact
 
-* (public)  Reddit  : https://old.reddit.com/r/QuadViewer/
-* (private) Discord : https://discord.gg/r2hD4wzQQe
+* Twitter/X : https://x.com/RufasWan
+* Reddit    : https://old.reddit.com/r/QuadViewer/
+* Discord   : https://discord.gg/r2hD4wzQQe

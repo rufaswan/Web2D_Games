@@ -214,7 +214,7 @@ function QuadGL(Q){
 		var sw = rect[2] - rect[0];
 		var sh = rect[3] - rect[1];
 
-		// to be used with canvas - DO NOT flipy !
+		// to be used with canvas - DO NOT flip-y !
 		var pxsz = [ 1.0/sw , 1.0/sh ];
 		__.GL.activeTexture(__.GL.TEXTURE0);
 		__.GL.bindTexture  (__.GL.TEXTURE_2D, tex);
@@ -235,6 +235,12 @@ function QuadGL(Q){
 		$.enable_framebuffer(vram.tex);
 		__.indice_quad(4);
 		$.enable_framebuffer(0);
+
+		// BUG
+		//   https://github.com/rufaswan/Web2D_Games/issues/34#issuecomment-3645316467
+		// the issue with the white textures when zoomed out was mipmaps weren't being regenerated in the VRAM.
+		__.GL.bindTexture   (__.GL.TEXTURE_2D, vram.tex);
+		__.GL.generateMipmap(__.GL.TEXTURE_2D);
 	}
 
 	__.indice_line = function( len ){
