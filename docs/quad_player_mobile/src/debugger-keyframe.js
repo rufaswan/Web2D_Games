@@ -70,6 +70,16 @@ APP.button_unselect_layers = function( text ){
 	} // for ( var i=0; i < list.length; i++ )
 }
 
+APP.viewer_camera = function(){
+	if ( APP.autozoom < 0.25 )  APP.autozoom = 0.25;
+	if ( APP.autozoom > 4.0  )  APP.autozoom = 4.0;
+
+	var m4 = QUAD.math.matrix4();
+	m4[0+0] = APP.autozoom;
+	m4[4+1] = APP.autozoom;
+	return m4;
+}
+
 //////////////////////////////
 // function aaa()       + onclick='aaa();'
 // APP.aaa = function() + var a = APP.aaa();
@@ -116,7 +126,6 @@ function keyframe_select( key_id ){
 	});
 	APP.html.debuglist.innerHTML = buffer;
 
-	APP.autozoom  = QUAD.func.viewer_autozoom(APP.QuadList[0]);
 	APP.is_redraw = true;
 }
 

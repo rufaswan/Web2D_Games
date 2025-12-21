@@ -170,14 +170,14 @@ ul {
 	left     : 0;
 }
 #viewer_xline {
-	width        :  50%;
-	height       : 100%;
-	border-right : 0.5em var(--border-color) solid;
+	width            : 0.5em;
+	height           : 100%;
+	background-color : var(--border-color);
 }
 #viewer_yline {
-	width         : 100%;
-	height        :  75%;
-	border-bottom : 0.5em var(--border-color) solid;
+	width            : 100%;
+	height           : 0.5em;
+	background-color : var(--border-color);
 }
 #viewer canvas {
 	width    : 100%;
@@ -299,12 +299,12 @@ ul {
 </style>
 <script>'use strict';
 
-APP.display_viewer = function( html, toggle ){
+APP.display_viewer = function( toggle ){
 	if ( toggle )
-		html.viewer.style.display = 'block';
+		APP.html.viewer.style.display = 'block';
 	else
-		html.viewer.style.display = 'none';
-	html.export_menu.style.display = 'none';
+		APP.html.viewer.style.display = 'none';
+	APP.html.export_menu.style.display = 'none';
 }
 
 APP.button_toggle = function( elem, turn ){
@@ -371,6 +371,7 @@ APP.process_uploads_done = function(){
 		APP.viewer_btn_menu(qdata);
 	} // if ( qdata.name )
 
+	APP.display_viewer(false);
 	APP.html.logger.innerHTML = QUAD.func.console();
 }
 
@@ -491,6 +492,49 @@ APP.viewer_btn_menu = function( qdata ){
 	}
 }
 
+APP.viewer_camera = function( qdata ){
+	var canvsz = QUAD.gl.canvas_size();
+	var rectsz = QUAD.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+
+	// default
+	var zx = APP.autozoom;
+	var zy = APP.autozoom;
+	var mx = 0;
+	var my = 0;
+
+	// zoom
+	if ( APP.autozoom < 0 ){
+		if ( rectsz ){
+			var rw = (rectsz[2] - rectsz[0]) * 0.5;
+			var rh = (rectsz[3] - rectsz[1]) * 0.5;
+
+			var zoom = Math.min(canvsz[0]/rw , canvsz[1]/rh);
+			zx = zoom;
+			zy = zoom;
+		}
+	} // if ( APP.autozoom < 0 )
+
+	// move
+	if ( rectsz ){
+		mx = (rectsz[0] + rectsz[2]) * -0.5 * zx;
+		my = (rectsz[1] + rectsz[3]) * -0.5 * zy;
+	}
+
+	// flip
+	if ( qdata.is_flipx )  { zx = -zx; mx = -mx; }
+	if ( qdata.is_flipy )  { zy = -zy; my = -my; }
+
+	// display + return
+	APP.html.viewer_xline.style.left = ((canvsz[0] + mx)|0) + 'px';
+	APP.html.viewer_yline.style.top  = ((canvsz[1] + my)|0) + 'px';
+	return [
+		zx , 0  , 0 , mx ,
+		0  , zy , 0 , my ,
+		0  , 0  , 1 , 0  ,
+		0  , 0  , 0 , 1  ,
+	];
+}
+
 //////////////////////////////
 // function aaa()       + onclick='aaa();'
 // APP.aaa = function() + var a = APP.aaa();
@@ -518,7 +562,7 @@ function button_select( elem ){
 	var id   = par2.getAttribute('data-id') | 0;
 
 	APP.qdata_attach(APP.QuadList[0], type, id);
-	APP.display_viewer(APP.html, true);
+	APP.display_viewer(true);
 	APP.is_redraw = true;
 }
 
@@ -1462,7 +1506,7 @@ var QUAD = {};
 	__.attach_keyhit_id = function( qdata, attach ){
 		var def = {
 			key : -1,
-			hit   : -1,
+			hit : -1,
 		};
 		if ( ! attach )
 			return def;
@@ -1488,7 +1532,26 @@ var QUAD = {};
 		return def;
 	}
 
-	__.mix_attach = function( qdata, cur, nxt, rate, keymix, hitmix ){
+	__.mix_layers = function( qdata, mix_id, rate, tag, cur, nxt ){
+		if ( ! cur || ! cur[tag] )  return;
+		if ( ! nxt || ! nxt[tag] )  return;
+		if ( mix_id < 0 )
+			return;
+		if ( ! qdata.quad.mix[mix_id] )
+			return;
+		switch ( tag ){
+			case 'dstquad':
+			case 'srcquad':
+			case 'hitquad':
+				cur[tag] = Q.math.quad_mix( rate , cur[tag] , nxt[tag] );
+				return;
+			case 'fogquad':
+				cur[tag] = Q.math.fog_mix ( rate , cur[tag] , nxt[tag] );
+				return;
+		} // switch ( tag )
+	}
+
+	__.mix_attach = function( qdata, cur, nxt, rate, mix ){
 		var cur_id = __.attach_keyhit_id(qdata, cur);
 		var nxt_id = __.attach_keyhit_id(qdata, nxt);
 
@@ -1507,27 +1570,20 @@ var QUAD = {};
 		if ( nxt_id.hit >= 0 )
 			mixnxt.hit = qdata.quad.hitbox  [nxt_id.hit];
 
-		if ( keymix && mixcur.key && mixnxt.key ){
+		if ( mixcur.key && mixnxt.key ){
 			if ( mixcur.key.layer.length === mixnxt.key.layer.length ){
 				for ( var i=0; i < mixcur.key.layer.length; i++ ){
-					if ( ! mixcur.key.layer[i] )
-						continue;
-					if ( ! mixnxt.key.layer[i] )
-						continue;
-					mixcur.key.layer[i].dstquad = Q.math.quad_mix( rate , mixcur.key.layer[i].dstquad , mixnxt.key.layer[i].dstquad );
-					mixcur.key.layer[i].fogquad = Q.math.fog_mix ( rate , mixcur.key.layer[i].fogquad , mixnxt.key.layer[i].fogquad );
+					__.mix_layers( qdata, mix.dst, rate, 'dstquad', mixcur.key.layer[i], mixnxt.key.layer[i]);
+					__.mix_layers( qdata, mix.src, rate, 'srcquad', mixcur.key.layer[i], mixnxt.key.layer[i]);
+					__.mix_layers( qdata, mix.fog, rate, 'fogquad', mixcur.key.layer[i], mixnxt.key.layer[i]);
 				} // for ( var i=0; i < mixcur.key.layer.length; i++ )
 			}
 		}
 
-		if ( hitmix && mixcur.hit && mixnxt.hit ){
+		if ( mixcur.hit && mixnxt.hit ){
 			if ( mixcur.hit.layer.length === mixnxt.hit.layer.length ){
 				for ( var i=0; i < mixcur.hit.layer.length; i++ ){
-					if ( ! mixcur.hit.layer[i] )
-						continue;
-					if ( ! mixnxt.hit.layer[i] )
-						continue;
-					mixcur.hit.layer[i].hitquad = Q.math.quad_mix( rate , mixcur.hit.layer[i].hitquad , mixnxt.hit.layer[i].hitquad );
+					__.mix_layers( qdata, mix.hit, rate, 'hitquad', mixcur.hit.layer[i], mixnxt.hit.layer[i]);
 				} // for ( var i=0; i < mixcur.hit.layer.length; i++ )
 			}
 		}
@@ -1599,25 +1655,36 @@ var QUAD = {};
 		var m4, c4;
 		var rate = t[1] / cur.time;
 
+		// TODO : mix object
 		// mix matrix
-		if ( cur.matrix_mix )
-			m4 = Q.math.matrix_mix( rate, cur.matrix, nxt.matrix );
-		else
+		if ( cur.matrix_mix_id < 0 || ! qdata.quad.mix[cur.matrix_mix_id] )
 			m4 = cur.matrix;
+		else {
+			// qdata.quad.mix[cur.matrix_mix_id]
+			m4 = Q.math.matrix_mix( rate, cur.matrix, nxt.matrix );
+		}
 		ret.mat4 = Q.math.matrix_multi44( ret.mat4 , m4 );
 
 		// mix color
-		if ( cur.color_mix )
-			c4 = Q.math.color_mix( rate, cur.color , nxt.color  );
-		else
+		if ( cur.matrix_mix_id < 0 || ! qdata.quad.mix[cur.color_mix_id] )
 			c4 = cur.color;
+		else {
+			// qdata.quad.mix[cur.color_mix_id]
+			c4 = Q.math.color_mix( rate, cur.color , nxt.color  );
+		}
 		ret.color = Q.math.vec4_multi( ret.color, c4 );
 
 		// layer mixing test
-		if ( ! cur.keyframe_mix && ! cur.hitbox_mix )
+		var mix = {
+			dst : cur.dstquad_mix_id ,
+			src : cur.srcquad_mix_id ,
+			fog : cur.fogquad_mix_id ,
+			hit : cur.hitquad_mix_id ,
+		};
+		if ( mix.dst < 0 && mix.src < 0 && mix.fog < 0 && mix.hit < 0 )
 			return ret;
 
-		ret.attach = __.mix_attach(qdata, cur.attach, nxt.attach, rate, cur.keyframe_mix, cur.hitbox_mix);
+		ret.attach = __.mix_attach(qdata, cur.attach, nxt.attach, rate, mix);
 		return ret;
 	}
 
@@ -1640,41 +1707,6 @@ var QUAD = {};
 		qdata.quad.__MIX = [];
 	}
 
-	$.viewer_autozoom = function( qdata ){
-		var canvsz  = Q.gl.canvas_size();
-		var sprsize = Q.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
-		if ( ! sprsize )
-			return 1.0;
-
-		var symm = Q.math.rect_symmetry(sprsize);
-		var zoomx = (canvsz[0] * 1.0) / symm[0];
-		var zoomy = (canvsz[1] * 1.5) / symm[1];
-		return ( zoomx < zoomy ) ? zoomx : zoomy;
-	}
-
-	$.viewer_camera = function( qdata, autozoom ){
-		var canvsz = Q.gl.canvas_size();
-
-		qdata.zoom = 1.0;
-		var movex = canvsz[0] * 0  ; // no change
-		var movey = canvsz[1] * 0.5; // half downward
-
-		if ( autozoom > 0.0 )
-			qdata.zoom = autozoom;
-		else
-			qdata.zoom = $.viewer_autozoom(qdata);
-
-		var m4 = Q.math.matrix4();
-		m4[0+3] = movex;
-		m4[4+3] = movey;
-
-		m4[0+0] = qdata.zoom;
-		m4[4+1] = qdata.zoom;
-		if ( qdata.is_flipx )  m4[0+0] = -m4[0+0];
-		if ( qdata.is_flipy )  m4[4+1] = -m4[4+1];
-		return m4;
-	}
-
 	//////////////////////////////
 
 } // function QuadFunc(Q)
@@ -1684,6 +1716,15 @@ var QUAD = {};
 	var __ = {};  // private
 
 	//////////////////////////////
+
+	__.color = [
+		[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
+		[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
+		[0,0,0,1] , [1,1,1,1] ,             // black white
+		[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
+		[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
+		[0.5,0.5,0.5,1] , // gray
+	];
 
 	__.draw_lines = function( qdata, layer, mat4, quad ){
 		var clines = [];
@@ -1704,21 +1745,12 @@ var QUAD = {};
 			clines[dbg_id] = clines[dbg_id].concat(dst);
 		});
 
-		var color = [
-			[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
-			[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
-			[0,0,0,1] , [1,1,1,1] ,             // black white
-			[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
-			[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
-			[0.5,0.5,0.5,1] , // gray
-		];
-
 		Q.gl.enable_blend(0);
 		clines.forEach(function(cv,ck){
-			var cid = qdata.line_index % color.length;
-			Q.gl.draw_line(cv, color[cid]);
+			var clr = __.color[qdata.line_index];
+			Q.gl.draw_line(cv, clr);
 
-			qdata.line_index++;
+			qdata.line_index = (qdata.line_index + 1) & 7; // 0-7
 			qdata.is_draw = true;
 		});
 	}
@@ -2333,9 +2365,12 @@ var QUAD = {};
 		if ( ! mat4 )  return quad; // mat4=0 is identidy matrix , quad=no change
 		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
 		for ( var i=0; i < 8; i += 2 ){
+			// | a b c d |   | x |   | a*x + b*y + c + d |
+			// | e f g h |   | y |   | e*x + f*y + g + h |
+			// | i j k l | * | 1 | = | =skip             |
+			// | m n o p |   | 1 |   | =skip             |
 			var x = quad[i+0];
 			var y = quad[i+1];
-			//         x           y           z=1       w=1
 			xy4[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
 			xy4[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
 		}
@@ -2447,6 +2482,14 @@ var QUAD = {};
 
 	//////////////////////////////
 
+	__.verify_mix = function( obj, id ){
+		// TODO
+		var def = JSON.stringify(obj);
+		if ( ! obj )
+			def = 0;
+		return def;
+	}
+
 	__.verify_blend = function( obj, id ){
 		var def = {
 			name       : 'blend ' + id,
@@ -2498,6 +2541,7 @@ var QUAD = {};
 	__.verify_hitbox_layer = function( obj ){
 		var def = {
 			debug     : 0,
+			concave   : [],
 			hitquad   : 0,
 			attribute : 0,
 		};
@@ -2511,9 +2555,17 @@ var QUAD = {};
 					def.debug = JSON.stringify(obj.debug || 0);
 					break;
 				case 'hitquad':
-					if ( ! __.is_num_array(obj.hitquad, 8) ) // 4 xy
+					if ( ! __.is_num_array(obj[tag], 8) ) // 4 xy
 						break;
-					def.hitquad = obj.hitquad;
+					var cen = Q.math.quad_center(obj[tag]);
+					if ( cen.type === 3 )
+						def[tag] = obj[tag];
+					else
+						def.concave.push({
+							type : cen.type,
+							tag  : tag,
+							quad : obj[tag],
+						});
 					break;
 				case 'attribute':
 					def.attribute = __.attrib_list(obj.attribute, __.ATTR.hitbox);
@@ -2521,6 +2573,8 @@ var QUAD = {};
 			} // switch(tag)
 		});
 
+		if ( def.concave.length > 0 )
+			Q.func.error('removed concave hitbox', def.concave);
 		if ( ! def.hitquad )
 			return 0;
 		return def;
@@ -2552,7 +2606,7 @@ var QUAD = {};
 					if ( ! Array.isArray(obj.layer) )
 						break;
 					obj.layer.forEach(function(v,k){
-						def.layer[k] = __.verify_keyframe_layer(v);
+						def.layer[k] = __.verify_hitbox_layer(v);
 					});
 					obj.layer = 0;
 					break;
@@ -2565,6 +2619,7 @@ var QUAD = {};
 	__.verify_keyframe_layer = function( obj ){
 		var def = {
 			debug     : 0,
+			concave   : [],
 			dstquad   : 0,
 			srcquad   : 0,
 			fogquad   : [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1],
@@ -2577,10 +2632,6 @@ var QUAD = {};
 			return 0;
 		__.object_lowercase_keys(obj);
 
-		var concave = {
-			dstquad : 0,
-			srcquad : 0,
-		};
 		Object.keys(def).forEach(function(tag){
 			switch(tag){
 				case 'debug':
@@ -2594,10 +2645,11 @@ var QUAD = {};
 					if ( cen.type === 3 )
 						def[tag] = obj[tag];
 					else
-						concave[tag] = {
+						def.concave.push({
 							type : cen.type,
+							tag  : tag,
 							quad : obj[tag],
-						};
+						});
 					break;
 				case 'fogquad':
 					if ( __.is_str(obj.fogquad) ){
@@ -2628,10 +2680,8 @@ var QUAD = {};
 			} // switch(tag)
 		});
 
-		if ( concave.dstquad !== 0 )
-			Q.func.error('removed concave dstquad', concave.dstquad);
-		if ( concave.srcquad !== 0 )
-			Q.func.error('removed concave srcquad', concave.srcquad);
+		if ( def.concave.length > 0 )
+			Q.func.error('removed concave hitbox', def.concave);
 		if ( ! def.dstquad )
 			return 0;
 		return def;
@@ -2687,15 +2737,17 @@ var QUAD = {};
 
 	__.verify_animation_timeline = function( obj ){
 		var def = {
-			debug        : 0,
-			time         : -1,
-			attach       : 0,
-			matrix       : 0,
-			color        : [1,1,1,1],
-			matrix_mix   : 0,
-			color_mix    : 0,
-			keyframe_mix : 0,
-			hitbox_mix   : 0,
+			debug          : 0,
+			time           : -1,
+			attach         : 0,
+			matrix         : 0,
+			color          : [1,1,1,1],
+			matrix_mix_id  : -1,
+			color_mix_id   : -1,
+			dstquad_mix_id : -1,
+			srcquad_mix_id : -1,
+			fogquad_mix_id : -1,
+			hitquad_mix_id : -1,
 		};
 		if ( typeof def !== typeof obj )
 			return 0;
@@ -2721,11 +2773,14 @@ var QUAD = {};
 				case 'color':
 					def.color = Q.math.css_color(obj.color);
 					break;
-				case 'matrix_mix':
-				case 'color_mix':
-				case 'keyframe_mix':
-				case 'hitbox_mix':
-					def[tag] = obj[tag] | 0;
+				case 'matrix_mix_id':
+				case 'color_mix_id':
+				case 'dstquad_mix_id':
+				case 'srcquad_mix_id':
+				case 'fogquad_mix_id':
+				case 'hitquad_mix_id':
+					if ( typeof obj[tag] === 'number' )
+						def[tag] = obj[tag] | 0;
 					break;
 			} // switch(tag)
 		});
@@ -2878,6 +2933,7 @@ var QUAD = {};
 	$.verify_quadfile = function( quad ){
 		var valid = {
 			blend     : [],
+			mix       : [],
 			slot      : [],
 			hitbox    : [],
 			keyframe  : [],
@@ -3072,10 +3128,12 @@ var QUAD = {};
 				for ( var i=0; i < time.length; i++ ){
 					var tv = time[i];
 					var mix = 0;
-					mix |= tv.matrix_mix;
-					mix |= tv.color_mix;
-					mix |= tv.keyframe_mix;
-					mix |= tv.hitbox_mix;
+					mix |= (tv.matrix_mix_id  >= 0);
+					mix |= (tv.color_mix_id   >= 0) ;
+					mix |= (tv.dstquad_mix_id >= 0);
+					mix |= (tv.srcquad_mix_id >= 0);
+					mix |= (tv.fogquad_mix_id >= 0);
+					mix |= (tv.hitquad_mix_id >= 0);
 					if ( mix )
 						return true;
 				}
@@ -3278,7 +3336,7 @@ var QUAD = {};
 				m4 = Q.math.matrix_multi44(camera, m4);
 
 				qdata.is_draw = false;
-				Q.func.qdata_draw(qdata, m4, color);
+				Q.draw.qdata_draw(qdata, m4, color);
 				qdata.anim_fps++;
 			} // for ( var dx = -halfpos[0]; dx < halfpos[0]; dx += sprwh[0] )
 		} // for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] )
@@ -3312,7 +3370,7 @@ var QUAD = {};
 			if ( qdata.anim_fps >= anim_time )
 				break;
 			Q.func.qdata_clear(qdata);
-			Q.func.qdata_draw (qdata, camera, color);
+			Q.draw.qdata_draw (qdata, camera, color);
 
 			var p = new Promise(function(ok,err){
 				switch ( fmt ){
@@ -3677,7 +3735,7 @@ var QUAD = {};
 } // function BinaryReader
 
 
-	$.version = 'ver 2025-12-13 (beta)';
+	$.version = 'ver 2025-12-20 (beta)';
 	$.gl   = new QuadGL  ($);
 	$.func = new QuadFunc($);
 	$.draw = new QuadDraw($);
@@ -3700,13 +3758,11 @@ var QUAD = {};
 		$.vram  = QUAD.gl.create_vram(255,255); // white solid texture
 
 		// activated data
-		$.is_wait  = true;
-		$.is_draw  = false;
 		$.is_hits  = true;
 		$.is_lines = true;
 		$.is_flipx = false;
 		$.is_flipy = false;
-		$.zoom   = 1;
+		$.is_draw  = false; // nothing drawn = END/skipped
 		$.matrix = [1,0,0,0 , 0,1,0,0 , 0,0,1,0 , 0,0,0,1];
 		$.color  = [1,1,1,1];
 
@@ -3715,10 +3771,13 @@ var QUAD = {};
 			id   : 0
 		};
 		$.anim_fps = 0;
-		$.line_index = 0;
+
+		// internal use
+		//$.is_wait  = true; // ???
+		$.zoom       = 1; // for QUAD.export
+		$.line_index = 0; // for QUAD.draw.draw_lines()
 	}
 })(QUAD);
-
 </script>
 </head><body>
 
@@ -3815,7 +3874,7 @@ APP.upload_queue  = []; // { id:int , name:string , data:string }
 APP.upload_id     = -1;
 APP.autozoom      = -1;
 APP.is_redraw     = true;
-APP.camera        = QUAD.math.matrix4();
+APP.camera        = 0;
 APP.color         = [1,1,1,1];
 APP.QuadList      = [];
 
@@ -3838,11 +3897,11 @@ APP.fps_draw      = 0;
 
 	// BETWEEN DEBUGGER-VIEWER
 	APP.html.btn_view.addEventListener('click', function(){
-		APP.display_viewer(APP.html, true);
+		APP.display_viewer(true);
 		APP.is_redraw = true;
 	});
 	APP.html.btn_debug.addEventListener('click', function(){
-		APP.display_viewer(APP.html, false);
+		APP.display_viewer(false);
 		APP.html.logger.innerHTML = QUAD.func.console();
 	});
 
@@ -3988,7 +4047,7 @@ APP.fps_draw      = 0;
 
 		// update/redraw only when changed
 		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
-			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
+			APP.camera = APP.viewer_camera(qdata);
 			APP.html.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			APP.html.logger.innerHTML  = QUAD.func.console();
 

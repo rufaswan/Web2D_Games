@@ -134,10 +134,10 @@ function sectkeypose( &$quad, &$pose )
 		list_add($quad['slot'], $kid, $sent);
 
 		$tent = array(
-			'time'         => 10,
-			'keyframe_mix' => 1,
-			'hitbox_mix'   => 1,
-			'attach'       => quad_attach('slot', $kid),
+			'time'           => 10,
+			'dstquad_mix_id' => 1,
+			'hitquad_mix_id' => 1,
+			'attach'         => quad_attach('slot', $kid),
 		);
 		$time[] = $tent;
 	} // foreach ( $pose as $pk => $pv )
@@ -388,6 +388,7 @@ function gbatmas1( $dir )
 
 	$quad = load_idtagfile('ps1 gundam battle master 1');
 	$quad['blend'] = array( blend_modes('normal') );
+	$quad['mix'] = array(0,'LINEAR');
 
 	sectlayer  ($quad, $atlas, $keys);
 	sectkeypose($quad, $pose);
@@ -424,6 +425,7 @@ function gbatmas2( $dir )
 
 	$quad = load_idtagfile('psx gundam battle master 2');
 	$quad['blend'] = array( blend_modes('normal') );
+	$quad['mix'] = array(0,'LINEAR');
 
 	sectlayer  ($quad, $atlas, $keys);
 	sectkeypose($quad, $pose);

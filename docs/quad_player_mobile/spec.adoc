@@ -1,6 +1,6 @@
 = QUAD Format Specification
 Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
-v0.5.x , living draft
+v0.6.x , living draft
 :hardbreaks-option:
 :toc:
 
@@ -80,6 +80,11 @@ A QUAD file consists of multiple sub objects:
   "blend"     : [
     <<blend_object>>,
     <<blend_object>>,
+    ...
+  ],
+  "mix"       : [
+    <<mix_object>>,
+    <<mix_object>>,
     ...
   ],
   "link"      : [
@@ -400,15 +405,17 @@ loop_id::
 [subs="specialchars,macros"]
 ----
 {
-  "debug"        : any,
-  "time"         : int fps,
-  "attach"       : <<attach_object>>,
-  "matrix"       : [ a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p ],
-  "color"        : string rgba,
-  "matrix_mix"   : bool,
-  "color_mix"    : bool,
-  "keyframe_mix" : bool,
-  "hitbox_mix"   : bool,
+  "debug"          : any,
+  "time"           : int fps,
+  "attach"         : <<attach_object>>,
+  "matrix"         : [ a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p ],
+  "color"          : string rgba,
+  "matrix_mix_id"  : int id,
+  "color_mix_id"   : int id,
+  "dstquad_mix_id" : int id,
+  "fogquad_mix_id" : int id,
+  "srcquad_mix_id" : int id,
+  "hitquad_mix_id" : int id,
 }
 ----
 
@@ -416,7 +423,18 @@ debug::
 	* Additional notes and/or comments.
 
 time (required)::
-	* Measured in frames. For 60 FPS (frames per second), 1 frame is 16.67 milliseconds.
+	* Measured in FPS (Frames Per Seconds).
+	* 1 second is 1000 milliseconds.
+	* Standards
+	** Hand drawn 2D animation is 24 FPS
+	*** on ones (24 FPS) is 41.67 milliseconds.
+	*** on twos (12 FPS) is 83.33 milliseconds.
+	** NTSC is 60 FPS
+	*** 60 FPS is 16.67 milliseconds.
+	*** 30 FPS is 33.33 milliseconds.
+	** PAL is 50 FPS
+	*** 50 FPS is 20 milliseconds.
+	*** 25 FPS is 40 milliseconds.
 
 attach::
 	* If omitted, then nothing is drawn.
@@ -429,41 +447,35 @@ color::
 	* String is in "#rrggbbaa" format.
 	* If omitted, then it is default to "#ffffffff" (white solid).
 
-matrix_mix::
-	* Marks if current matrix is interpolated with the next matrix.
-	** rate = t / time , t++
-	** matrix = (current * (1.0 - rate)) + (next * rate)
-	* If omitted, then it is default to `0` (`false`)
+matrix_mix_id::
+	* Index of <<mix_object>> to generate in-betweens for 2 or more matrix.
+	* If omitted or <<mix_object>> is invalid, then it is  default to -1.
+	* -1 means no mixing. Only current matrix is used.
 
-color_mix::
-	* Marks if current color is interpolated with the next color.
-	** rate = t / time , t++
-	** color = (current * (1.0 - rate)) + (next * rate)
-	* If omitted, then it is default to `0` (`false`)
+color_mix_id::
+	* Index of <<mix_object>> to generate in-betweens for 2 or more color.
+	* If omitted or <<mix_object>> is invalid, then it is  default to -1.
+	* -1 means no mixing. Only current color is used.
 
-keyframe_mix::
-	* Marks if current <<keyframe_layer_object>> is interpolated with the next <<keyframe_layer_object>>.
-	* Affects `dstquad` and `fogquad`.
-	** rate = t / time , t++
-	** layer = (current * (1.0 - rate)) + (next * rate)
-	* If omitted, then it is default to `0` (`false`)
-	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
-	*** If current keyframe layer count is not the same as next keyframe layer count.
-	*** If current keyframe layer is empty.
-	*** If next keyframe layer is empty.
-	** If `false`, only current keyframe layer is used, next keyframe layer is ignored.
+dstquad_mix_id , srcquad_mix_id and fogquad_mix_id::
+	* Index of <<mix_object>> to generate in-betweens for 2 or more keyframes.
+	* Affects `dstquad`, `srcquad` and `fogquad` respectively, from attached <<keyframe_layer_object>>.
+	* If omitted or <<mix_object>> is invalid, then it is  default to -1.
+	** Mixing will also default to -1 when all attached keyframe are:
+	*** does not have the same layer count.
+	*** one of the keyframe is empty.
+	*** one of the keyframe has empty quad
+	* -1 means no mixing. Only current quad is used.
 
-hitbox_mix::
-	* Marks if current <<hitbox_layer_object>> is interpolated with the next <<hitbox_layer_object>>.
-	* Affects `hitquad`.
-	** rate = t / time , t++
-	** layer = (current * (1.0 - rate)) + (next * rate)
-	* If omitted, then it is default to `0` (`false`)
-	** Mixing is impossible under the following conditions, and this setting is default to `0` (`false`).
-	*** If current hitbox layer count is not the same as next hitbox layer count.
-	*** If current hitbox layer is empty.
-	*** If next hitbox layer is empty.
-	** If `false`, only current hitbox layer is used, next hitbox layer is ignored.
+hitquad_mix_id::
+	* Index of <<mix_object>> to generate in-betweens for 2 or more hitbox.
+	* Affects `hitquad` respectively, from attached <<hitbox_layer_object>>.
+	* If omitted or <<mix_object>> is invalid, then it is  default to -1.
+	** Mixing will also default to -1 when all attached hitbox are:
+	*** does not have the same layer count.
+	*** one of the hitbox is empty.
+	*** one of the hitbox has empty quad
+	* -1 means no mixing. Only current quad is used.
 
 
 
@@ -610,6 +622,19 @@ logic_op::
 	* If omitted or invalid, then it is default to `0` (use normal blending).
 
 
+
+[#mix_object]
+=== Mix Object
+
+NOTICE: This section is WIP
+
+[subs="specialchars,macros"]
+----
+WIP
+----
+
+
+
 [#link_object]
 === Link Object
 
@@ -633,10 +658,18 @@ id (required)::
 
 == Revision History
 
-v0.5.x::
+v0.6.x::
+	* wip
+
+v0.6 (2025-12-20)::
 	* `keyframe_layer_object` : define `blend_id` == -1 as disable alpha blending
 	* `blend_object` : separate `mode` into `mode_rgb` and `mode_alpha`
 	* `blend_object` : added `logic_op`
+	* Added `mix` objects
+	* `animation_timeline_object` : replaced `keyframe_mix` with `dstquad_mix_id`, `fogquad_mix_id` and `srcquad_mix_id`
+	* `animation_timeline_object` : replaced `hitbox_mix`   with `hitquad_mix_id`
+	* `animation_timeline_object` : replaced `matrix_mix`   with `matrix_mix_id`
+	* `animation_timeline_object` : replaced `color_mix`    with `color_mix_id`
 
 v0.5 (2024-4-3)::
 	* `quad_object` : renamed to `link_object`
@@ -683,23 +716,23 @@ SRC::
 
 DST::
 	* As in "Destination", pixels WRITE to canvas.
-	* On alpha blending operation, pixels are READ and WRITE back to canvas.
 	* On image editor, it is the bottom layer.
 	* [X,Y] is used when accessing vectors that reporesent canvas points.
 	* 0,0 is at the center of canvas.
 	* +X is right direction, +Y is down direction, and they are measured in px (pixels).
 	* For Canvas size 320x240, X is -160px (left) to +160px (right) , and Y is -120px (top) to +120px (bottom).
 	* It is then normalized to -1.0 to +1.0.
+	* On alpha blending operation, pixels are READ and WRITE back to canvas.
 
 
 
 == Example
 
-* link:sample-v0.3-animation-keyframe-mix.quad[]
 * link:sample-v0.3-animation-matrix-mix.quad[]
 * link:sample-v0.4-keyframe-order.quad[]
 * link:sample-v0.5-keyframe-attribute.quad[]
 * link:sample-v0.5-keyframe-colorize.quad[]
+* link:sample-v0.6-animation-keyframe-mix.quad[]
 * link:sample-concave.quad[]
 
 

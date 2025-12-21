@@ -85,12 +85,12 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 				$x =  $x - $w;
 				$y = -$y - $h;
 
-			$hit = xywh_quad($w, $h);
-			xywh_move($hit, $x, $y);
+			$hitq = xywh_quad($w, $h);
+			xywh_move($hitq, $x, $y);
 
 			$lent = array(
 				'debug'   => "damage $bx1 $i",
-				'hitquad' => $hit,
+				'hitquad' => $hitq,
 			);
 			$layer[] = $lent;
 		} // for ( $i=0; $i < 4; $i++ )
@@ -157,8 +157,10 @@ function sectquad( &$quad, &$atlas, &$keys, &$anim, &$hit )
 //////////////////////////////
 function sectanim_set( &$anm, $pos, $name, &$anim, &$slot )
 {
-	$id = -1;
-	$done = array();
+	printf("== sectanim_set( %x , %s )\n", $pos, $name);
+	$id     = -1;
+	$done   = array();
+	$maxlen = strlen($anm);
 	while (1)
 	{
 		$off = str2int($anm, $pos, 3);
@@ -175,6 +177,8 @@ function sectanim_set( &$anm, $pos, $name, &$anim, &$slot )
 		$loop = -1;
 		while (1)
 		{
+			if ( ($off+0x14) >= $maxlen )
+				break;
 			if ( isset($line[$off]) )
 			{
 				$loop = $line[$off];
@@ -203,13 +207,13 @@ function sectanim_set( &$anm, $pos, $name, &$anim, &$slot )
 			);
 			$time[] = $ent;
 
-			if ( $flg & 0x80 )
+			if ( $flg & 0x80 ) // jump
 			{
 				$b = str2int($anm, $off, 3);
 				$off = $b;
 				continue;
 			}
-			if ( $flg & 0x40 )
+			if ( $flg & 0x40 ) // end
 				break;
 		} // while (1)
 

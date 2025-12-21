@@ -154,10 +154,10 @@ end_layer:
 		list_add($quad['slot'], $kid, $sent);
 
 		$tent = array(
-			'time'         => 10,
-			'keyframe_mix' => 1,
-			'hitbox_mix'   => 1,
-			'attach'       => quad_attach('slot', $kid),
+			'time'           => 10,
+			'dstquad_mix_id' => 1,
+			'hitquad_mix_id' => 1,
+			'attach'         => quad_attach('slot', $kid),
 		);
 		$time[] = $tent;
 	} // for ( $ipose=0; $ipose < $cnt_pose; $ipose++ )
@@ -339,6 +339,7 @@ function godwing( $dir )
 
 	$quad = load_idtagfile('psx gundam battle master gw');
 	$quad['blend'] = array( blend_modes('normal') );
+	$quad['mix'] = array(0,'LINEAR');
 
 	sectlayer($quad, $atlas, $keys);
 	sectkeypose($quad, $keys, $m[7]);

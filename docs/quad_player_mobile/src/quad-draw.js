@@ -4,6 +4,15 @@ function QuadDraw(Q){
 
 	//////////////////////////////
 
+	__.color = [
+		[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
+		[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
+		[0,0,0,1] , [1,1,1,1] ,             // black white
+		[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
+		[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
+		[0.5,0.5,0.5,1] , // gray
+	];
+
 	__.draw_lines = function( qdata, layer, mat4, quad ){
 		var clines = [];
 
@@ -23,21 +32,12 @@ function QuadDraw(Q){
 			clines[dbg_id] = clines[dbg_id].concat(dst);
 		});
 
-		var color = [
-			[1,0,0,1] , [0,1,0,1] , [0,0,1,1] , // rgb
-			[0,1,1,1] , [1,0,1,1] , [1,1,0,1] , // cmy
-			[0,0,0,1] , [1,1,1,1] ,             // black white
-			[0.5,0  ,0  ,1] , [0  ,0.5,0  ,1] , [0  ,0  ,0.5,1] , // 0.5 rgb
-			[0  ,0.5,0.5,1] , [0.5,0  ,0.5,1] , [0.5,0.5,0  ,1] , // 0.5 cmy
-			[0.5,0.5,0.5,1] , // gray
-		];
-
 		Q.gl.enable_blend(0);
 		clines.forEach(function(cv,ck){
-			var cid = qdata.line_index % color.length;
-			Q.gl.draw_line(cv, color[cid]);
+			var clr = __.color[qdata.line_index];
+			Q.gl.draw_line(cv, clr);
 
-			qdata.line_index++;
+			qdata.line_index = (qdata.line_index + 1) & 7; // 0-7
 			qdata.is_draw = true;
 		});
 	}

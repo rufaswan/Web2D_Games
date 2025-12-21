@@ -1,0 +1,32 @@
+================================
+== Star Ocean First Departure ==
+================================
+
+RAM 94a5c9a  Roddick SP
+	8904b2c  lh    a2, 1a(8a2caf4)
+	8904b34  subu  a0, a2, a0
+	8904b38  sh    a0, 1a(8a2caf4)
+
+RAM 94a9050  Roddick EXP
+	8851818  lw    a3, 10(t1)
+	885181c  addu  a3, a3, t2
+	8851820  sw    a3, 10(t1)
+	t1 = a3 + 10
+	885182c  lw    a3, 10(t1)
+	8851830  slt   at, a3, at
+	8851834  bne   at, 0, 8851840
+	885183c  sw    t0,  0(t1)  // t0=3b9ac9ff
+
+RAM 94a6398  Fol
+	88516e4  lw    a2,  0(8a2d114)
+	88516ec  lw    v1, 44(a0)
+	88516f0  lw    a1, 18(a2)
+	88516fc  addu  v1, a1, v1
+	8851700  sw    v1, 18(a2)
+	8851704  lw    v0,  0(8a2d114)
+	v1 = v0 + 18
+	885170c  lw    v0, 18(v0)
+	8851710  slt   at, v0, at
+	8851714  bne   at, 0, 8851728
+	v0 = 3b9ac9ff
+	8851724  sw    v0,  0(v1)

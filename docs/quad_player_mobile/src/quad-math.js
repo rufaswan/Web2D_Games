@@ -449,9 +449,12 @@ function QuadMath(Q){
 		if ( ! mat4 )  return quad; // mat4=0 is identidy matrix , quad=no change
 		var xy4 = [0,0 , 0,0 , 0,0 , 0,0];
 		for ( var i=0; i < 8; i += 2 ){
+			// | a b c d |   | x |   | a*x + b*y + c + d |
+			// | e f g h |   | y |   | e*x + f*y + g + h |
+			// | i j k l | * | 1 | = | =skip             |
+			// | m n o p |   | 1 |   | =skip             |
 			var x = quad[i+0];
 			var y = quad[i+1];
-			//         x           y           z=1       w=1
 			xy4[i+0] = mat4[0]*x + mat4[1]*y + mat4[2] + mat4[3];
 			xy4[i+1] = mat4[4]*x + mat4[5]*y + mat4[6] + mat4[7];
 		}

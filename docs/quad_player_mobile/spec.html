@@ -14,7 +14,7 @@
 <div class="details">
 <span id="author" class="author">Rufas Wan</span><br/>
 <span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
-<span id="revnumber">version 0.5.x,</span>
+<span id="revnumber">version 0.6.x,</span>
 <span id="revdate">living draft</span>
 </div>
 <div id="toc" class="toc">
@@ -36,6 +36,7 @@
 <li><a href="#skeleton_object">Skeleton Object</a></li>
 <li><a href="#skeleton_bone_object">Skeleton Bone Object</a></li>
 <li><a href="#blend_object">Blend Object</a></li>
+<li><a href="#mix_object">Mix Object</a></li>
 <li><a href="#link_object">Link Object</a></li>
 </ul>
 </li>
@@ -173,6 +174,11 @@
   "blend"     : [
     <a href="#blend_object">Blend Object</a>,
     <a href="#blend_object">Blend Object</a>,
+    ...
+  ],
+  "mix"       : [
+    <a href="#mix_object">Mix Object</a>,
+    <a href="#mix_object">Mix Object</a>,
     ...
   ],
   "link"      : [
@@ -813,15 +819,17 @@
 <div class="listingblock">
 <div class="content">
 <pre>{
-  "debug"        : any,
-  "time"         : int fps,
-  "attach"       : <a href="#attach_object">Attach Object</a>,
-  "matrix"       : [ a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p ],
-  "color"        : string rgba,
-  "matrix_mix"   : bool,
-  "color_mix"    : bool,
-  "keyframe_mix" : bool,
-  "hitbox_mix"   : bool,
+  "debug"          : any,
+  "time"           : int fps,
+  "attach"         : <a href="#attach_object">Attach Object</a>,
+  "matrix"         : [ a,b,c,d , e,f,g,h , i,j,k,l , m,n,o,p ],
+  "color"          : string rgba,
+  "matrix_mix_id"  : int id,
+  "color_mix_id"   : int id,
+  "dstquad_mix_id" : int id,
+  "fogquad_mix_id" : int id,
+  "srcquad_mix_id" : int id,
+  "hitquad_mix_id" : int id,
 }</pre>
 </div>
 </div>
@@ -842,7 +850,56 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Measured in frames. For 60 FPS (frames per second), 1 frame is 16.67 milliseconds.</p>
+<p>Measured in FPS (Frames Per Seconds).</p>
+</li>
+<li>
+<p>1 second is 1000 milliseconds.</p>
+</li>
+<li>
+<p>Standards</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Hand drawn 2D animation is 24 FPS</p>
+<div class="ulist">
+<ul>
+<li>
+<p>on ones (24 FPS) is 41.67 milliseconds.</p>
+</li>
+<li>
+<p>on twos (12 FPS) is 83.33 milliseconds.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>NTSC is 60 FPS</p>
+<div class="ulist">
+<ul>
+<li>
+<p>60 FPS is 16.67 milliseconds.</p>
+</li>
+<li>
+<p>30 FPS is 33.33 milliseconds.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>PAL is 50 FPS</p>
+<div class="ulist">
+<ul>
+<li>
+<p>50 FPS is 20 milliseconds.</p>
+</li>
+<li>
+<p>25 FPS is 40 milliseconds.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -883,146 +940,112 @@
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">matrix_mix</dt>
+<dt class="hdlist1">matrix_mix_id</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Marks if current matrix is interpolated with the next matrix.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>rate = t / time , t++</p>
+<p>Index of <a href="#mix_object">Mix Object</a> to generate in-betweens for 2 or more matrix.</p>
 </li>
 <li>
-<p>matrix = (current * (1.0 - rate)) + (next * rate)</p>
-</li>
-</ul>
-</div>
+<p>If omitted or <a href="#mix_object">Mix Object</a> is invalid, then it is  default to -1.</p>
 </li>
 <li>
-<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
+<p>-1 means no mixing. Only current matrix is used.</p>
 </li>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">color_mix</dt>
+<dt class="hdlist1">color_mix_id</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Marks if current color is interpolated with the next color.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>rate = t / time , t++</p>
+<p>Index of <a href="#mix_object">Mix Object</a> to generate in-betweens for 2 or more color.</p>
 </li>
 <li>
-<p>color = (current * (1.0 - rate)) + (next * rate)</p>
-</li>
-</ul>
-</div>
+<p>If omitted or <a href="#mix_object">Mix Object</a> is invalid, then it is  default to -1.</p>
 </li>
 <li>
-<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
+<p>-1 means no mixing. Only current color is used.</p>
 </li>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">keyframe_mix</dt>
+<dt class="hdlist1">dstquad_mix_id , srcquad_mix_id and fogquad_mix_id</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Marks if current <a href="#keyframe_layer_object">Keyframe Layer Object</a> is interpolated with the next <a href="#keyframe_layer_object">Keyframe Layer Object</a>.</p>
+<p>Index of <a href="#mix_object">Mix Object</a> to generate in-betweens for 2 or more keyframes.</p>
 </li>
 <li>
-<p>Affects <code>dstquad</code> and <code>fogquad</code>.</p>
+<p>Affects <code>dstquad</code>, <code>srcquad</code> and <code>fogquad</code> respectively, from attached <a href="#keyframe_layer_object">Keyframe Layer Object</a>.</p>
+</li>
+<li>
+<p>If omitted or <a href="#mix_object">Mix Object</a> is invalid, then it is  default to -1.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>rate = t / time , t++</p>
+<p>Mixing will also default to -1 when all attached keyframe are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>does not have the same layer count.</p>
 </li>
 <li>
-<p>layer = (current * (1.0 - rate)) + (next * rate)</p>
+<p>one of the keyframe is empty.</p>
+</li>
+<li>
+<p>one of the keyframe has empty quad</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Mixing is impossible under the following conditions, and this setting is default to <code>0</code> (<code>false</code>).</p>
-<div class="ulist">
-<ul>
-<li>
-<p>If current keyframe layer count is not the same as next keyframe layer count.</p>
-</li>
-<li>
-<p>If current keyframe layer is empty.</p>
-</li>
-<li>
-<p>If next keyframe layer is empty.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>If <code>false</code>, only current keyframe layer is used, next keyframe layer is ignored.</p>
-</li>
-</ul>
-</div>
+<p>-1 means no mixing. Only current quad is used.</p>
 </li>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">hitbox_mix</dt>
+<dt class="hdlist1">hitquad_mix_id</dt>
 <dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Marks if current <a href="#hitbox_layer_object">Hitbox Layer Object</a> is interpolated with the next <a href="#hitbox_layer_object">Hitbox Layer Object</a>.</p>
+<p>Index of <a href="#mix_object">Mix Object</a> to generate in-betweens for 2 or more hitbox.</p>
 </li>
 <li>
-<p>Affects <code>hitquad</code>.</p>
+<p>Affects <code>hitquad</code> respectively, from attached <a href="#hitbox_layer_object">Hitbox Layer Object</a>.</p>
+</li>
+<li>
+<p>If omitted or <a href="#mix_object">Mix Object</a> is invalid, then it is  default to -1.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>rate = t / time , t++</p>
+<p>Mixing will also default to -1 when all attached hitbox are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>does not have the same layer count.</p>
 </li>
 <li>
-<p>layer = (current * (1.0 - rate)) + (next * rate)</p>
+<p>one of the hitbox is empty.</p>
+</li>
+<li>
+<p>one of the hitbox has empty quad</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>If omitted, then it is default to <code>0</code> (<code>false</code>)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Mixing is impossible under the following conditions, and this setting is default to <code>0</code> (<code>false</code>).</p>
-<div class="ulist">
-<ul>
-<li>
-<p>If current hitbox layer count is not the same as next hitbox layer count.</p>
-</li>
-<li>
-<p>If current hitbox layer is empty.</p>
-</li>
-<li>
-<p>If next hitbox layer is empty.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>If <code>false</code>, only current hitbox layer is used, next hitbox layer is ignored.</p>
-</li>
-</ul>
-</div>
+<p>-1 means no mixing. Only current quad is used.</p>
 </li>
 </ul>
 </div>
@@ -1409,6 +1432,17 @@
 </div>
 </div>
 <div class="sect2">
+<h3 id="mix_object">Mix Object</h3>
+<div class="paragraph">
+<p>NOTICE: This section is WIP</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>WIP</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="link_object">Link Object</h3>
 <div class="paragraph">
 <p>It is to connect with another QUAD file, allowing interaction between QUAD files.</p>
@@ -1453,7 +1487,17 @@
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">v0.5.x</dt>
+<dt class="hdlist1">v0.6.x</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>wip</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">v0.6 (2025-12-20)</dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -1465,6 +1509,21 @@
 </li>
 <li>
 <p><code>blend_object</code> : added <code>logic_op</code></p>
+</li>
+<li>
+<p>Added <code>mix</code> objects</p>
+</li>
+<li>
+<p><code>animation_timeline_object</code> : replaced <code>keyframe_mix</code> with <code>dstquad_mix_id</code>, <code>fogquad_mix_id</code> and <code>srcquad_mix_id</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code> : replaced <code>hitbox_mix</code>   with <code>hitquad_mix_id</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code> : replaced <code>matrix_mix</code>   with <code>matrix_mix_id</code></p>
+</li>
+<li>
+<p><code>animation_timeline_object</code> : replaced <code>color_mix</code>    with <code>color_mix_id</code></p>
 </li>
 </ul>
 </div>
@@ -1609,9 +1668,6 @@
 <p>As in "Destination", pixels WRITE to canvas.</p>
 </li>
 <li>
-<p>On alpha blending operation, pixels are READ and WRITE back to canvas.</p>
-</li>
-<li>
 <p>On image editor, it is the bottom layer.</p>
 </li>
 <li>
@@ -1629,6 +1685,9 @@
 <li>
 <p>It is then normalized to -1.0 to +1.0.</p>
 </li>
+<li>
+<p>On alpha blending operation, pixels are READ and WRITE back to canvas.</p>
+</li>
 </ul>
 </div>
 </dd>
@@ -1642,9 +1701,6 @@
 <div class="ulist">
 <ul>
 <li>
-<p><a href="sample-v0.3-animation-keyframe-mix.quad" class="bare">sample-v0.3-animation-keyframe-mix.quad</a></p>
-</li>
-<li>
 <p><a href="sample-v0.3-animation-matrix-mix.quad" class="bare">sample-v0.3-animation-matrix-mix.quad</a></p>
 </li>
 <li>
@@ -1655,6 +1711,9 @@
 </li>
 <li>
 <p><a href="sample-v0.5-keyframe-colorize.quad" class="bare">sample-v0.5-keyframe-colorize.quad</a></p>
+</li>
+<li>
+<p><a href="sample-v0.6-animation-keyframe-mix.quad" class="bare">sample-v0.6-animation-keyframe-mix.quad</a></p>
 </li>
 <li>
 <p><a href="sample-concave.quad" class="bare">sample-concave.quad</a></p>
@@ -1676,7 +1735,13 @@
 <p>Cloud2333</p>
 </li>
 <li>
+<p>Gawidev</p>
+</li>
+<li>
 <p>tombmonkey</p>
+</li>
+<li>
+<p>ViolinKen</p>
 </li>
 </ul>
 </div>

@@ -1,0 +1,115 @@
+{
+  "keyframe"  : [
+    {
+      "layer" : [
+        {
+          "dstquad" : [ -50 , -50 , 50 , -50 , 50 , 50 , -50 , 50 ] ,
+          "srcquad" : [ 0 , 0.25 , 0.1 , 0.25 , 0.1 , 0.5 , 0 , 0.5 ] ,
+          "tex_id"  : 0
+        }
+      ]
+    } ,
+    {
+      "layer" : [
+        {
+          "dstquad" : [ -50 , -50 , 50 , -50 , 50 , 50 , -50 , 50 ] ,
+          "srcquad" : [ 0.9 , 0.25 , 1 , 0.25 , 1 , 0.5 , 0.9 , 0.5 ] ,
+          "tex_id"  : 0
+        }
+      ]
+    } ,
+    {
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , -100 , 100 , 0 , -100 , 0 ] ,
+          "srcquad" : [ 0 , 0.25 , 1 , 0.25 , 1 , 0.5 , 0 , 0.5 ] ,
+          "tex_id"  : 0
+        }
+      ]
+    } ,
+    {
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , -100 , 100 , 0 , -100 , 0 ] ,
+          "srcquad" : [ 0 , 0.25 , 1 , 0.25 , 1 , 0.5 , 0 , 0.5 ] ,
+          "tex_id"  : 0
+        } ,
+        {
+          "dstquad" : [ -100 , -100 , 100 , -100 , 100 , 100 , -100 , 100 ] ,
+          "srcquad" : [ 0.3 , 0.5 , 0.7 , 0.5 , 0.7 , 0.75 , 0.3 , 0.75 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#808080ff" ] ,
+          "tex_id"  : 0
+        }
+      ]
+    } ,
+    {
+      "layer" : [
+        {
+          "dstquad" : [ -100 , -100 , 100 , -100 , 100 , 0 , -100 , 0 ] ,
+          "srcquad" : [ 0 , 0.25 , 1 , 0.25 , 1 , 0.5 , 0 , 0.5 ] ,
+          "tex_id"  : 0
+        } ,
+        {
+          "dstquad" : [ -50 , 0 , 50 , 0 , 50 , 100 , -50 , 100 ] ,
+          "srcquad" : [ 0.3 , 0.5 , 0.7 , 0.5 , 0.7 , 0.75 , 0.3 , 0.75 ] ,
+          "fogquad" : [ "#808080ff" , "#ff0000ff" , "#00ff00ff" , "#0000ffff" ] ,
+          "tex_id"  : 0
+        }
+      ]
+    }
+  ] ,
+  "animation" : [
+    {
+      "name"     : "title" ,
+      "timeline" : [
+        {
+          "time"           : 11 ,
+          "attach"         : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "srcquad_mix_id" : 1
+        } ,
+        {
+          "time"           : 11 ,
+          "attach"         : {
+            "type" : "keyframe" ,
+            "id"   : 1
+          } ,
+          "dstquad_mix_id" : 1 ,
+          "srcquad_mix_id" : 1
+        } ,
+        {
+          "time"           : 11 ,
+          "attach"         : {
+            "type" : "keyframe" ,
+            "id"   : 2
+          }
+        } ,
+        {
+          "time"           : 11 ,
+          "attach"         : {
+            "type" : "keyframe" ,
+            "id"   : 3
+          } ,
+          "dstquad_mix_id" : 1,
+          "fogquad_mix_id" : 1
+        } ,
+        {
+          "time"           : 11 ,
+          "attach"         : {
+            "type" : "keyframe" ,
+            "id"   : 4
+          }
+        }
+      ] ,
+      "loop_id"  : -1
+    }
+  ] ,
+  "mix"       : [
+    "dummy" ,
+    {
+      "name" : "LINEAR"
+    }
+  ]
+}

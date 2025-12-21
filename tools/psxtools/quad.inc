@@ -28,7 +28,7 @@ function quad_attach( $type, $id )
 {
 	$attach = array(
 		'type' => $type,
-		'id'   => $id,
+		'id'   => (int)$id,
 	);
 	return $attach;
 }

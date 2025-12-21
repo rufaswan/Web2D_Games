@@ -482,12 +482,13 @@ function q3D_sas8s9_loop( &$salist, &$quad )
 				$matrix = s7_matrix( $gp_json['s7'][$s7k], $flipx, $flipy );
 
 				$ent = array(
-					'debug'        => $s8v['bits'],
-					'time'         => $s8v['time'],
-					'matrix_mix'   => $s8v['in_s7'],
-					'color_mix'    => $s8v['in_s7'],
-					'keyframe_mix' => $s8v['in_s6'],
-					'hitbox_mix'   => $s8v['in_s5s3'],
+					'debug'          => $s8v['bits'],
+					'time'           => $s8v['time'],
+					'matrix_mix_id'  => $s8v['in_s7'],
+					'color_mix_id'   => $s8v['in_s7'],
+					'dstquad_mix_id' => $s8v['in_s6'],
+					'fogquad_mix_id' => $s8v['in_s6'],
+					'hitquad_mix_id' => $s8v['in_s5s3'],
 				);
 
 				if ( ! empty($attach) )
@@ -524,6 +525,53 @@ function q3D_sas8s9_loop( &$salist, &$quad )
 	return;
 }
 //////////////////////////////
+function vanilla_mixing( $tag )
+{
+	$mix = array(0,0,0);
+	switch ( $tag )
+	{
+		case 'ps2_grim': // 0 1 2
+		case 'ps2_odin': // 0 1 2
+			// time is 1.0 to 0.0
+			// 1 = cur * time + next * (1.0 - time)
+			// 2 = at^3 + bt^2 + ct + d
+			// * = cur
+			$mix[1] = 'LINEAR';
+			$mix[2] = 'CATMULL ROM';
+			return $mix;
+
+		case 'nds_kuma': // 0
+			return $mix;
+
+		case 'wii_mura': // 0 1 2
+		case 'ps3_drag': // 0 1 2
+		case 'ps3_odin': // 0 1 2
+
+		case 'ps4_odin': // 0 1 2
+		case 'ps4_drag': // 0 1 2
+		case 'ps4_sent': // 0 1 2
+		case 'ps4_grim': // 0 1 2
+		case 'ps4_unic': // 0 1 2
+
+		case 'swi_sent': // 0 1 2
+		case 'swi_grim': // 0 1 2
+		case 'swi_unic': // 0 1 2
+
+		case 'psp_gran': // 0 1 2
+		case 'vit_mura': // 0 1 2
+		case 'vit_drag': // 0 1 2
+		case 'vit_odin': // 0 1 2
+		//case 'swi': //
+
+		default:
+			list_add($mix, 1, 'LINEAR');
+			list_add($mix, 2, 'LINEAR');
+			return $mix;
+	} // switch ( $tag )
+
+	return $mix;
+}
+
 function vanilla_blendmode( $tag )
 {
 	$blend = array();
@@ -615,6 +663,7 @@ function vanilla( $line, $fname )
 
 	$quad = load_idtagfile( $gp_json['id3'] );
 	$quad['blend'] = vanilla_blendmode( $gp_json['tag'] );
+	$quad['mix']   = vanilla_mixing($gp_json['tag']);
 
 	if ( $line & 1 )  s6s4_lines($dir);
 	if ( $line & 2 )  texsrc_lines($dir);

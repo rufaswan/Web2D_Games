@@ -1,11 +1,11 @@
 'use strict';
 
-APP.display_viewer = function( html, toggle ){
+APP.display_viewer = function( toggle ){
 	if ( toggle )
-		html.viewer.style.display = 'block';
+		APP.html.viewer.style.display = 'block';
 	else
-		html.viewer.style.display = 'none';
-	html.export_menu.style.display = 'none';
+		APP.html.viewer.style.display = 'none';
+	APP.html.export_menu.style.display = 'none';
 }
 
 APP.button_toggle = function( elem, turn ){
@@ -72,6 +72,7 @@ APP.process_uploads_done = function(){
 		APP.viewer_btn_menu(qdata);
 	} // if ( qdata.name )
 
+	APP.display_viewer(false);
 	APP.html.logger.innerHTML = QUAD.func.console();
 }
 
@@ -192,6 +193,49 @@ APP.viewer_btn_menu = function( qdata ){
 	}
 }
 
+APP.viewer_camera = function( qdata ){
+	var canvsz = QUAD.gl.canvas_size();
+	var rectsz = QUAD.export.rect_attach(qdata, qdata.attach.type, qdata.attach.id);
+
+	// default
+	var zx = APP.autozoom;
+	var zy = APP.autozoom;
+	var mx = 0;
+	var my = 0;
+
+	// zoom
+	if ( APP.autozoom < 0 ){
+		if ( rectsz ){
+			var rw = (rectsz[2] - rectsz[0]) * 0.5;
+			var rh = (rectsz[3] - rectsz[1]) * 0.5;
+
+			var zoom = Math.min(canvsz[0]/rw , canvsz[1]/rh);
+			zx = zoom;
+			zy = zoom;
+		}
+	} // if ( APP.autozoom < 0 )
+
+	// move
+	if ( rectsz ){
+		mx = (rectsz[0] + rectsz[2]) * -0.5 * zx;
+		my = (rectsz[1] + rectsz[3]) * -0.5 * zy;
+	}
+
+	// flip
+	if ( qdata.is_flipx )  { zx = -zx; mx = -mx; }
+	if ( qdata.is_flipy )  { zy = -zy; my = -my; }
+
+	// display + return
+	APP.html.viewer_xline.style.left = ((canvsz[0] + mx)|0) + 'px';
+	APP.html.viewer_yline.style.top  = ((canvsz[1] + my)|0) + 'px';
+	return [
+		zx , 0  , 0 , mx ,
+		0  , zy , 0 , my ,
+		0  , 0  , 1 , 0  ,
+		0  , 0  , 0 , 1  ,
+	];
+}
+
 //////////////////////////////
 // function aaa()       + onclick='aaa();'
 // APP.aaa = function() + var a = APP.aaa();
@@ -219,7 +263,7 @@ function button_select( elem ){
 	var id   = par2.getAttribute('data-id') | 0;
 
 	APP.qdata_attach(APP.QuadList[0], type, id);
-	APP.display_viewer(APP.html, true);
+	APP.display_viewer(true);
 	APP.is_redraw = true;
 }
 

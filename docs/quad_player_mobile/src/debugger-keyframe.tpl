@@ -64,7 +64,7 @@ APP.upload_queue = []; // { id:int , name:string , data:string }
 APP.upload_id    = -1;
 APP.autozoom     = 1.0;
 APP.is_redraw    = true;
-APP.camera       = QUAD.math.matrix4();
+APP.camera       = 0;
 APP.color        = [1,1,1,1];
 APP.QuadList     = [];
 
@@ -141,7 +141,7 @@ APP.on_layer     = [];
 
 		// update/redraw only when changed
 		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
-			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
+			APP.camera = APP.viewer_camera();
 
 			QUAD.func.qdata_clear(qdata);
 			APP.keydebug_draw(qdata, APP.camera, APP.color);

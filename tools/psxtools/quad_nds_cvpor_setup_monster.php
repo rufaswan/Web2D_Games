@@ -116,9 +116,9 @@ end_layer:
 		list_add($quad['keyframe'], $kid, $kent);
 
 		$tent = array(
-			'time'         => 10,
-			'keyframe_mix' => 1,
-			'attach'       => quad_attach('keyframe', $kid),
+			'time'           => 10,
+			'dstquad_mix_id' => 1,
+			'attach'         => quad_attach('keyframe', $kid),
 		);
 		$time[] = $tent;
 	} // foreach ( $jnt['pose'] as $pk => $pv )
@@ -137,9 +137,9 @@ end_layer:
 		{
 			$kid = $cnt_key + $tv['pose'];
 			$tent = array(
-				'time'         => $tv['time'],
-				'keyframe_mix' => 1,
-				'attach'       => quad_attach('keyframe', $kid),
+				'time'           => $tv['time'],
+				'dstquad_mix_id' => 1,
+				'attach'         => quad_attach('keyframe', $kid),
 			);
 			$time[] = $tent;
 		} // foreach ( $av as $tk => $tv )
@@ -434,6 +434,8 @@ function cvpor( $dir )
 	$quad = load_idtagfile($por['tag']);
 	$quad['blend'] = array( blend_modes('normal') );
 	sect_quad_so($por, $atlas, $quad);
+
+	$quad['mix'] = array(0,'LINEAR');
 
 	if ( ! empty($por['jnt']) )
 		sect_quad_jnt($por, $quad);

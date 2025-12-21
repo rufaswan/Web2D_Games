@@ -104,7 +104,7 @@ APP.upload_queue  = []; // { id:int , name:string , data:string }
 APP.upload_id     = -1;
 APP.autozoom      = -1;
 APP.is_redraw     = true;
-APP.camera        = QUAD.math.matrix4();
+APP.camera        = 0;
 APP.color         = [1,1,1,1];
 APP.QuadList      = [];
 
@@ -127,11 +127,11 @@ APP.fps_draw      = 0;
 
 	// BETWEEN DEBUGGER-VIEWER
 	APP.html.btn_view.addEventListener('click', function(){
-		APP.display_viewer(APP.html, true);
+		APP.display_viewer(true);
 		APP.is_redraw = true;
 	});
 	APP.html.btn_debug.addEventListener('click', function(){
-		APP.display_viewer(APP.html, false);
+		APP.display_viewer(false);
 		APP.html.logger.innerHTML = QUAD.func.console();
 	});
 
@@ -277,7 +277,7 @@ APP.fps_draw      = 0;
 
 		// update/redraw only when changed
 		if ( APP.is_redraw || QUAD.gl.is_canvas_resized() ){
-			APP.camera = QUAD.func.viewer_camera(qdata, APP.autozoom);
+			APP.camera = APP.viewer_camera(qdata);
 			APP.html.btn_cur.innerHTML = qdata.attach.id + '/' + qdata.anim_fps;
 			APP.html.logger.innerHTML  = QUAD.func.console();
 

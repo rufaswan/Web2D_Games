@@ -87,6 +87,14 @@ function QuadVerify(Q){
 
 	//////////////////////////////
 
+	__.verify_mix = function( obj, id ){
+		// TODO
+		var def = JSON.stringify(obj);
+		if ( ! obj )
+			def = 0;
+		return def;
+	}
+
 	__.verify_blend = function( obj, id ){
 		var def = {
 			name       : 'blend ' + id,
@@ -138,6 +146,7 @@ function QuadVerify(Q){
 	__.verify_hitbox_layer = function( obj ){
 		var def = {
 			debug     : 0,
+			concave   : [],
 			hitquad   : 0,
 			attribute : 0,
 		};
@@ -151,9 +160,17 @@ function QuadVerify(Q){
 					def.debug = JSON.stringify(obj.debug || 0);
 					break;
 				case 'hitquad':
-					if ( ! __.is_num_array(obj.hitquad, 8) ) // 4 xy
+					if ( ! __.is_num_array(obj[tag], 8) ) // 4 xy
 						break;
-					def.hitquad = obj.hitquad;
+					var cen = Q.math.quad_center(obj[tag]);
+					if ( cen.type === 3 )
+						def[tag] = obj[tag];
+					else
+						def.concave.push({
+							type : cen.type,
+							tag  : tag,
+							quad : obj[tag],
+						});
 					break;
 				case 'attribute':
 					def.attribute = __.attrib_list(obj.attribute, __.ATTR.hitbox);
@@ -161,6 +178,8 @@ function QuadVerify(Q){
 			} // switch(tag)
 		});
 
+		if ( def.concave.length > 0 )
+			Q.func.error('removed concave hitbox', def.concave);
 		if ( ! def.hitquad )
 			return 0;
 		return def;
@@ -192,7 +211,7 @@ function QuadVerify(Q){
 					if ( ! Array.isArray(obj.layer) )
 						break;
 					obj.layer.forEach(function(v,k){
-						def.layer[k] = __.verify_keyframe_layer(v);
+						def.layer[k] = __.verify_hitbox_layer(v);
 					});
 					obj.layer = 0;
 					break;
@@ -205,6 +224,7 @@ function QuadVerify(Q){
 	__.verify_keyframe_layer = function( obj ){
 		var def = {
 			debug     : 0,
+			concave   : [],
 			dstquad   : 0,
 			srcquad   : 0,
 			fogquad   : [1,1,1,1 , 1,1,1,1 , 1,1,1,1 , 1,1,1,1],
@@ -217,10 +237,6 @@ function QuadVerify(Q){
 			return 0;
 		__.object_lowercase_keys(obj);
 
-		var concave = {
-			dstquad : 0,
-			srcquad : 0,
-		};
 		Object.keys(def).forEach(function(tag){
 			switch(tag){
 				case 'debug':
@@ -234,10 +250,11 @@ function QuadVerify(Q){
 					if ( cen.type === 3 )
 						def[tag] = obj[tag];
 					else
-						concave[tag] = {
+						def.concave.push({
 							type : cen.type,
+							tag  : tag,
 							quad : obj[tag],
-						};
+						});
 					break;
 				case 'fogquad':
 					if ( __.is_str(obj.fogquad) ){
@@ -268,10 +285,8 @@ function QuadVerify(Q){
 			} // switch(tag)
 		});
 
-		if ( concave.dstquad !== 0 )
-			Q.func.error('removed concave dstquad', concave.dstquad);
-		if ( concave.srcquad !== 0 )
-			Q.func.error('removed concave srcquad', concave.srcquad);
+		if ( def.concave.length > 0 )
+			Q.func.error('removed concave hitbox', def.concave);
 		if ( ! def.dstquad )
 			return 0;
 		return def;
@@ -327,15 +342,17 @@ function QuadVerify(Q){
 
 	__.verify_animation_timeline = function( obj ){
 		var def = {
-			debug        : 0,
-			time         : -1,
-			attach       : 0,
-			matrix       : 0,
-			color        : [1,1,1,1],
-			matrix_mix   : 0,
-			color_mix    : 0,
-			keyframe_mix : 0,
-			hitbox_mix   : 0,
+			debug          : 0,
+			time           : -1,
+			attach         : 0,
+			matrix         : 0,
+			color          : [1,1,1,1],
+			matrix_mix_id  : -1,
+			color_mix_id   : -1,
+			dstquad_mix_id : -1,
+			srcquad_mix_id : -1,
+			fogquad_mix_id : -1,
+			hitquad_mix_id : -1,
 		};
 		if ( typeof def !== typeof obj )
 			return 0;
@@ -361,11 +378,14 @@ function QuadVerify(Q){
 				case 'color':
 					def.color = Q.math.css_color(obj.color);
 					break;
-				case 'matrix_mix':
-				case 'color_mix':
-				case 'keyframe_mix':
-				case 'hitbox_mix':
-					def[tag] = obj[tag] | 0;
+				case 'matrix_mix_id':
+				case 'color_mix_id':
+				case 'dstquad_mix_id':
+				case 'srcquad_mix_id':
+				case 'fogquad_mix_id':
+				case 'hitquad_mix_id':
+					if ( typeof obj[tag] === 'number' )
+						def[tag] = obj[tag] | 0;
 					break;
 			} // switch(tag)
 		});
@@ -518,6 +538,7 @@ function QuadVerify(Q){
 	$.verify_quadfile = function( quad ){
 		var valid = {
 			blend     : [],
+			mix       : [],
 			slot      : [],
 			hitbox    : [],
 			keyframe  : [],

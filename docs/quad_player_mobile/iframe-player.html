@@ -50,11 +50,11 @@ td {
 	<td id='quadlist'>
 		<button onclick='listfile("quad");'>QUAD</button>
 		<ul>
-			<li data-type='quad' onclick='getfile(this);'>sample-v0.3-animation-keyframe-mix.quad</li>
 			<li data-type='quad' onclick='getfile(this);'>sample-v0.3-animation-matrix-mix.quad</li>
 			<li data-type='quad' onclick='getfile(this);'>sample-v0.4-keyframe-order.quad</li>
 			<li data-type='quad' onclick='getfile(this);'>sample-v0.5-keyframe-attribute.quad</li>
 			<li data-type='quad' onclick='getfile(this);'>sample-v0.5-keyframe-colorize.quad</li>
+			<li data-type='quad' onclick='getfile(this);'>sample-v0.6-animation-keyframe-mix.quad</li>
 			<li data-type='quad' onclick='getfile(this);'>sample-dungeon.quad</li>
 		</ul>
 	</td>
@@ -66,6 +66,7 @@ td {
 	<td id='pnglist'>
 		<button onclick='listfile("png");'>PNG</button>
 		<ul>
+			<li data-type='png' onclick='getfile(this);'>sample-v0.6-animation-keyframe-mix.0.png</li>
 			<li data-type='png' onclick='getfile(this);'>sample-dungeon.0.png</li>
 		</ul>
 	</td>
@@ -74,28 +75,6 @@ td {
 
 <script>
 'use strict';
-
-function listfile( type ){
-	var url = window.location.href.replace('.html','.php') + `?${type}`;
-	window.fetch(url).then(function(res){
-		if ( ! res.ok )
-			return 0;
-		return res.json(); // return promise
-	}).then(function(res){
-		if ( ! res )
-			return 0;
-		var html = '';
-		res.forEach(function(v,k){
-			var li = document.createElement('li');
-			li.setAttribute('data-type' , type);
-			li.setAttribute('onclick'   , 'getfile(this);');
-			li.innerHTML = v;
-			html += li.outerHTML;
-		});
-		var ul = document.querySelector(`#${type}list ul`);
-		ul.innerHTML = html;
-	});
-}
 
 function getfile( elem ){
 	var type = elem.getAttribute('data-type');
@@ -139,6 +118,28 @@ function getfile( elem ){
 			});
 			return;
 	}
+}
+//////////////////////////////
+function listfile( type ){
+	var url = window.location.href.replace('.html','.php') + `?${type}`;
+	window.fetch(url).then(function(res){
+		if ( ! res.ok )
+			return 0;
+		return res.json(); // return promise
+	}).then(function(res){
+		if ( ! res )
+			return 0;
+		var html = '';
+		res.forEach(function(v,k){
+			var li = document.createElement('li');
+			li.setAttribute('data-type' , type);
+			li.setAttribute('onclick'   , 'getfile(this);');
+			li.innerHTML = v;
+			html += li.outerHTML;
+		});
+		var ul = document.querySelector(`#${type}list ul`);
+		ul.innerHTML = html;
+	});
 }
 
 var TEST = {};

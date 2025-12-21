@@ -158,10 +158,12 @@ function QuadExport(Q){
 				for ( var i=0; i < time.length; i++ ){
 					var tv = time[i];
 					var mix = 0;
-					mix |= tv.matrix_mix;
-					mix |= tv.color_mix;
-					mix |= tv.keyframe_mix;
-					mix |= tv.hitbox_mix;
+					mix |= (tv.matrix_mix_id  >= 0);
+					mix |= (tv.color_mix_id   >= 0) ;
+					mix |= (tv.dstquad_mix_id >= 0);
+					mix |= (tv.srcquad_mix_id >= 0);
+					mix |= (tv.fogquad_mix_id >= 0);
+					mix |= (tv.hitquad_mix_id >= 0);
 					if ( mix )
 						return true;
 				}
@@ -364,7 +366,7 @@ function QuadExport(Q){
 				m4 = Q.math.matrix_multi44(camera, m4);
 
 				qdata.is_draw = false;
-				Q.func.qdata_draw(qdata, m4, color);
+				Q.draw.qdata_draw(qdata, m4, color);
 				qdata.anim_fps++;
 			} // for ( var dx = -halfpos[0]; dx < halfpos[0]; dx += sprwh[0] )
 		} // for ( var dy = -halfpos[1]; dy < halfpos[1]; dy += sprwh[1] )
@@ -398,7 +400,7 @@ function QuadExport(Q){
 			if ( qdata.anim_fps >= anim_time )
 				break;
 			Q.func.qdata_clear(qdata);
-			Q.func.qdata_draw (qdata, camera, color);
+			Q.draw.qdata_draw (qdata, camera, color);
 
 			var p = new Promise(function(ok,err){
 				switch ( fmt ){
