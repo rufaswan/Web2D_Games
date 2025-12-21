@@ -728,12 +728,11 @@ DST::
 
 == Example
 
-* link:sample-v0.3-animation-matrix-mix.quad[]
 * link:sample-v0.4-keyframe-order.quad[]
 * link:sample-v0.5-keyframe-attribute.quad[]
 * link:sample-v0.5-keyframe-colorize.quad[]
+* link:sample-v0.6-animation-matrix-mix.quad[]
 * link:sample-v0.6-animation-keyframe-mix.quad[]
-* link:sample-concave.quad[]
 
 
 

@@ -1,0 +1,56 @@
+{
+  "keyframe"  : [
+    {
+      "layer" : [
+        {
+          "dstquad" : [ 10 , -10 , 30 , -60 , 40 , -60 , 60 , -10 ] ,
+          "fogquad" : [ "#ff0000ff" , "#00ff00ff" , "#0000ffff" , "#888888ff" ]
+        }
+      ]
+    }
+  ] ,
+  "animation" : [
+    {
+      "timeline" : [
+        {
+          "time"          : 11 ,
+          "attach"        : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"        : [ 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix_id" : 1
+        } ,
+        {
+          "time"          : 11 ,
+          "attach"        : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"        : [ 1 , 0 , 0 , 0 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix_id" : 1
+        } ,
+        {
+          "time"          : 11 ,
+          "attach"        : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"        : [ -1 , 0 , 0 , 0 , 0 , -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix_id" : 1
+        } ,
+        {
+          "time"          : 11 ,
+          "attach"        : {
+            "type" : "keyframe" ,
+            "id"   : 0
+          } ,
+          "matrix"        : [ -1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 1 ] ,
+          "matrix_mix_id" : 1
+        }
+      ] ,
+      "loop_id"  : 0
+    }
+  ] ,
+  "mix"       : [ 0 , "LINEAR" ]
+}
