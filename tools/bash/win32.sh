@@ -168,7 +168,7 @@ else
 			'ms932')  w32_langloc  WINDOWS-31J;;
 			'euc'  )  w32_langloc  EUC-JP;;
 			'dbg'  )  winedbg='winedbg';;
-			'desk' )  desk='';;
+			'x'    )  desk='';;
 
 			'reg' | 'regedit')  regedit;;
 			'txt' | 'notepad')  notepad;;

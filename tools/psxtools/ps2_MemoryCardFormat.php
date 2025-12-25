@@ -58,6 +58,17 @@ $gp_dirmode = array(
 	0x8000 => 'DF_EXISTS',
 );
 //////////////////////////////
+function psu_mdate( &$psu )
+{
+	$ord = array();
+	for ( $i = 0x18; $i < 0x20; $i++ )
+		$ord[$i] = ord($psu[$i]);
+
+	$year = $ord[0x1f] << 8 | $ord[0x1e];
+	$mod = sprintf('%04d%02d%02d-%02d%02d', $year, $ord[0x1d], $ord[0x1c], $ord[0x1b], $ord[0x1a]);
+	return $mod;
+}
+//////////////////////////////
 function bitint_convert( $bit, &$enum )
 {
 	if ( (int)$bit === $bit )
@@ -302,7 +313,8 @@ function ps2card( $fname )
 		if ( $name[0] === '.' )
 			continue;
 
-		save_file("$dir/$name.psu", $rv);
+		$mod = psu_mdate($rv);
+		save_file("$dir/$name-$mod.psu", $rv);
 	} // foreach ( $root as $rk => $rv )
 
 	save_file("$dir/list.txt", $gp_txt);

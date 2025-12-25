@@ -564,8 +564,8 @@ function vanilla_mixing( $tag )
 		//case 'swi': //
 
 		default:
-			list_add($mix, 1, 'LINEAR');
-			list_add($mix, 2, 'LINEAR');
+			$mix[1] = 'LINEAR';
+			$mix[2] = 'LINEAR';
 			return $mix;
 	} // switch ( $tag )
 

@@ -27,6 +27,7 @@ class sh
 		$args = func_get_args();
 		$fmt = array_shift($args);
 		$cmd = vsprintf($fmt, $args);
+		debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,10);
 		return trigger_error($cmd, E_USER_ERROR);
 	}
 
