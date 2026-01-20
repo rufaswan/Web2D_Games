@@ -204,7 +204,7 @@ From version 0x76 (PS4 13 Sentinels) onwards, Vanillaware pre-divided the textur
 One additional step is needed to revert them back to px using the the original texture(s) size. Accept textures in .PNG and .CLUT/.RGBA format.
 
 ....
-php  psxtools/quad_prediv.php  TEXTURE.0.PNG  [TEXTURE.1.PNG]...  .PREDIV.QUAD
+php  psxtools/quadfile_prediv.php  TEXTURE.0.PNG  [TEXTURE.1.PNG]...  .PREDIV.QUAD
 ....
 
 ++++

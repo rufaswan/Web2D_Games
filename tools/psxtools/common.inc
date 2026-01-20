@@ -100,7 +100,6 @@ function php_notice()
 	$args = func_get_args();
 	$fmt = array_shift($args);
 	$err = vsprintf("PHP : $fmt\n", $args);
-	debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,10);
 	return trigger_error($err, E_USER_NOTICE);
 }
 

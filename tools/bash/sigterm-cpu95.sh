@@ -1,6 +1,12 @@
 #!/bin/bash
 [ $(which ps) ] || exit
 
+export WHITELIST=(
+	ffmpeg   oggenc   sox        # video/audio
+	unrar    unzip    7z   unar  # archive
+	convert  mogrify             # image
+)
+
 echo "start $0"
 function cpu95kill {
 	local cpu=${1%.*}  # float to int
@@ -9,11 +15,9 @@ function cpu95kill {
 	local cmd=${4##*/}
 	#echo "CPU = $cpu , MEM = $mem , PID = $pid , CMD = $cmd"
 
-	# whitelist
-	[[ "$cmd" == 'ffmpeg' ]] && return
-	[[ "$cmd" == 'unrar'  ]] && return
-	[[ "$cmd" == '7z'     ]] && return
-	[[ "$cmd" == 'unar'   ]] && return
+	for wh in ${WHITELIST[@]}; do
+		[[ "$cmd" == "$wh"  ]] && return
+	done
 
 	# [BUG] firefox-bin
 	#   comm              cmd

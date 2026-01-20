@@ -1,0 +1,133 @@
+===============
+== Disgaea 1 ==
+===============
+
+EXP = RAM 28cce8
+	kill an enemy
+		16ba0c  lw     v1, 170(sp)
+		16ba10  lw     v1, 1d8(v1)
+		16ba14  ld     v1,   0(v1)
+		16ba18  daddu  s5, v1, v0
+		16ba38  lw     v0, 170(sp)
+		16ba3c  lw     v1, 1d8(v0)
+		16ba40  sd     s5,   0(v1)
+
+	on every turn
+		19fb64  slti  v1, v0, 270f
+		19fb68  bnez  v1, 19f8b4
+
+		19fba4  lw    v1, 1d0(sp)
+		19fba8  sd    v0,   0(v1) // 11bf848d86
+
+	on resurrection
+		s0 = 28c140 + ba8
+		1d3028  ld  v0, 0(456d10) // =0
+		1d302c  sd  v0, 0(s0)
+
+Mana = RAM 28d380
+	on resurrection
+		1d32c0  lw  v0, 0(4573a8) // =0
+		1d32c4  sw  v0, 698(s0)
+
+Rank = RAM 28d3e9
+	on resurrection
+		1d35a0  lbu  v0, 0(457411) // =0
+		1d35a4  sb   v0, 701(s0)
+
+M/F Brawler   init/5/12/25/50/100
+M/F Warrior   init/5/12/25/50/100
+M/F Cleric    init/5/12/25/50/100
+Scout         Brawler+Warrior 5/6/14/30/60/120
+Rogue         Brawler+Warrior 5/6/14/30/60/120
+Ninja         M Brawler+M Warrior 10/7/18/37/75/150
+Ronin         F Brawler+F Warrior 10/7/18/37/75/150
+Knight        F Warrior+Mage 10/7/18/37/75/150
+Angel         F Cleric +Knight   +Archer 100/10/25/50/100/200
+Majin         M Brawler+M Warrior+Ninja+Scout+Rogue 200/28/56/120/250/500
+Skull/Mage    =
+	Red,Green,Blue  init
+	Star            Red+Green+Blue 5
+	Prism           Star  35
+	Galaxy          Prism 50
+Archer        Bow  3/6/14/30/60/120
+Recruit       Gun 30/10/25/50/100/200
+
+0    -5   10
+1    41   56 (+46)
+2    61   76 (+20)
+3    81   96 (+20)
+4    98  113 (+17)
+5   108  123 (+10)
+6   118  133 (+10)
+7   128  143 (+10)
+8   138  153 (+10)
+9   146  161 (+8)
+10  151  166 (+5)
+11  156  171 (+5)
+12  161  176 (+5)
+13  166  181 (+5)
+14  171  186 (+5)
+15  176  191 (+5)
+16  181  196 (+5)
+17  186  201 (+5)
+18  191  206 (+5)
+19  195  210 (+4)
+20  195  210 (+0 maxed)
+
+===============
+== Disgaea 2 ==
+===============
+
+on resurrection
+	a1 = 3d1690
+	//v0 = 3419c0 + (a0 << 4 + a0 << 7)
+	v0 = 3419c0 + (a0 * 880)
+	s0 = v0 + bc8
+	a0 = s0
+	1cb4c0  jal 16ef00
+		EXP = RAM 342588
+			v0 = sp[10] // a1
+			16ef10  ld  v1, 0(v0)
+			v0 = sp[0]  // a0
+			16ef18  sd  v1, 0(v0)
+		Mana = RAM 342d44
+			v0 = sp[10] // a1
+			16f200  lw  v1, 7bc(v0)
+			v0 = sp[0]  // a0
+			16f208  sw  v1, 7bc(v0)
+
+M/F Fighter    init/10/20/40/80/160
+Thief          init/10/20/40/80/160
+Cleric         init/10/20/40/80/160
+Ronin          Sword 5/15/30/60/120/240
+Heavy Knight   Spear 3/12/24/48/96/192
+Archer         Bow   5/15/30/60/120/240
+Gunner         Gun   5/15/30/60/120/240
+Magic Knight   Sword+Staff 3/12/24/48/96/192
+Genin          Fist +Sword 5/15/30/60/120/240
+Hanakage       Fist +Staff 5/15/30/60/120/240
+	* do not need to be the same char
+Mage/Skull     =
+	Red,Green,Blue  init
+	Star            Red+Green+Blue 20
+	Prism           Star 60
+	Galaxy          Prism 160
+Togabito       felony  /12/24/48/96/192
+Druid          geopanel/12/24/48/96/192
+Beast Master   capture /12/24/48/96/192
+Chaos Soldier  clear   /60/120/240/480/960
+	throw monster to base = capture
+	story 3-4 felony tutorial before stage
+	story 6-2 solution results geopanel 500+
+
+unwinnable
+	story Etna   at  3-4/last
+	story Laharl at 11-7/last
+	unlock dark world 1-3 = ally damaged
+	unlock dark world 5-1 = ally killed
+	* make 10 new char at lv 1 before fight
+
+unlock dark world 6-4 = prinny bowling
+	line up 4 prinny connect enemy to base
+	lift and throw 1 prinny to cause chain explosion
+	* "Prevent Lift" geo-effect DO NOT affect the lifter, but the object to be lifted
