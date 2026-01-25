@@ -1068,13 +1068,13 @@ SLPS 011.60 JP disc 1 [3771]
 		.55 Gear Accessory menu description
 	2595  Base Stats
 	2596  [OVER]
-	2597  [OVER]
-	2598  [OVER]
-	2599  [OVER]
+	2597  [OVER] Main menu executable
+	2598  [OVER] Character selection executable
+	2599  [OVER] *same as 2597*
 	2600  [OVER]
 	2601  [OVER]
 	2602  [OVER] Gear shop executable
-	2603  [OVER]
+	2603  [OVER] *same as 2597*
 	2604  [OVER]
 	2605  [SJIS] Save Data Message
 	2606  [OVER] Start to Battle
@@ -1616,7 +1616,7 @@ SLPS 011.60 JP disc 1 [3771]
 		3954/gear 15  Xenogears
 		3955/gear 16  Heimdal/Sword
 	3956  [2]
-		3957  [LZ]
+		3957  [LZ] *same as 2597*
 		3958  *same as 2593* [PAK-LZ]
 	3959  [3]
 		3960  [OVER]

@@ -17,10 +17,10 @@ Contributors
 ==============================
 Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 2595.bin
-00 int32 weapon + gun ammo effect
-04 int8  weapon power
+00 int32 weapon + gun ammo effect 
+04 int8  weapon power 
  
-06 int8  gun type
+06 int8  gun type 
 
 0c int8  pistol ammo effect
  
@@ -47,7 +47,6 @@ Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 
 37 int8  element effect (battle only)
 
-3b 
 3c int32 EXP total
 40 int32 EXP before total (for count up)
 44 int32 next EXP total
@@ -72,8 +71,6 @@ Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 62 int8  Level
 63 int8  Level
 
-68 
-69 
 6a int8  Weapon id
 6b int8  Pistol id 1
 6c int8  Pistol id 2
@@ -113,12 +110,6 @@ Character Base Stats (BLOCK = 0xa4 or 164 bytes)
 
 a0 int8  gear id
 a1 int8  accessory/a + deathblow rate
-
-Battle Only
-	+0xf1   Defense Down
-	+0x110  Physical Effect Countdown
-	+0x114  Speed Up Countdown
-	+0x11d  Element Effect Countdown
 
 Element Effect
 	01 weak vs water
@@ -252,9 +243,6 @@ a1 int8  +agility in snow
 a2 int8  +agility in desert
 a3 int8  +agility in water
 
-Battle Only
-	+0x44 Attack Level (04=infinity)
-
 Stat 2 Effect
 	04 Def UP / Atk DOWN
 	08 Atk UP / Def DOWN
@@ -281,19 +269,16 @@ Order / bitflag
 Items
 2594.bin/0.bin (BLOCK = 0x10 or 16 bytes)
 2614.bin/2.bin
- 0 int16 always fc ff
- 2 int16 buying price
- 4
- 5
- 6
- 7 int8  always 00
- 8 int8  value
- 9
-10
-11 int8  bitflag (hp-ep-phy-mnt-inc-??-elem-ko)
-12
-13 int8  bitflag (speed-def-??-??-earth-wind-water-fire)
-14 int16
+00 int16 always fc ff
+02 int16 buying price
+
+07 int8  always 00
+08 int8  value
+
+0b int8  bitflag (hp-ep-phy-mnt-inc-??-elem-ko)
+0c
+0d int8  bitflag (speed-def-??-??-earth-wind-water-fire)
+0e int16
 
 for HP , value * 50 (1=50, 3=150, a=500, 28=full)
 for EP , value * 10 (1=10, 2=20, 3=30, a=100)
@@ -301,17 +286,17 @@ for EP , value * 10 (1=10, 2=20, 3=30, a=100)
 Character Weapons
 2594.bin/1.bin (BLOCK = 0x10 or 16 bytes)
 2614.bin/36.bin
- 0 int16 bitflag for wearable character
- 2 int8  always 00
- 3 int8  bullets (64 = normal, ff = infinite , 00 = the rest)
- 4 int16 buying price
- 6 int8  gun type (for gun/bullet pairing, 00 = the rest)
- 7 int8  always 00
- 8 int32 effects type
-12 int8  +attack
-13 int8  always 00
-14 int8  always 00
-15 int8  always 00
+00 int16 bitflag for wearable character
+02 int8  always 00
+03 int8  bullets (64 = normal, ff = infinite , 00 = the rest)
+04 int16 buying price
+06 int8  gun type (for gun/bullet pairing, 00 = the rest)
+07 int8  always 00
+08 int32 effects type
+0c int8  +attack
+0d int8  always 00
+0e int8  always 00
+0f int8  always 00
 
 Effect Type
 	00 80 00 64  wind element
@@ -328,16 +313,16 @@ Effect Type
 ==============================
 Character Accessory
 2594.bin/2.bin (BLOCK = 0x10 or 16 bytes)
- 0 int16 bitflag for wearable character
- 2 int32 buying price
- 6 int8  always 22
- 7 int8  ID
- 8 int8  +defense
- 9 int24 effects type
-12 int8  +bonus value
-13 int8  +bonus bitflags (atk-def-agi-eth-edef-hit-evd-??)
-14 int8  type (00 accessory , 01=armor , 02=helmet)
-15 int8  always 00
+00 int16 bitflag for wearable character
+02 int32 buying price
+06 int8  always 22
+07 int8  ID
+08 int8  +defense
+09 int24 effects type
+0c int8  +bonus value
+0d int8  +bonus bitflags (atk-def-agi-eth-edef-hit-evd-??)
+0e int8  type (00 accessory , 01=armor , 02=helmet)
+0f int8  always 00
 
 Effects Type
 	01 7c 3f  block physical effects
@@ -385,57 +370,57 @@ momento chain (rico only)
 ==============================
 Gear Frames
 2594.bin/16.bin (BLOCK = 0x18 or 24 bytes)
- 0 int32 bitflag for wearable gear
- 4 int32 HP
- 8 int16
-10 int16 buying price
-12 int32 always 00 00 00 00
-16 int32 always 00 00 00 00
-20 int8
-21 int8  type (0a=gear , 64=yggdrasil 4)
-22 int16 always 00 00
+00 int32 bitflag for wearable gear
+04 int32 HP
+08 int16
+0a int16 buying price
+0c int32 always 00 00 00 00
+10 int32 always 00 00 00 00
+14 int8
+15 int8  type (0a=gear , 64=yggdrasil 4)
+16 int16 always 00 00
 ==============================
 Gear Armor
 2594.bin/17.bin (BLOCK = 0x14 or 20 bytes)
- 0 int32 always ff ff ff ff
- 4 int16 buying price
- 6 int8  type (0a=gear)
- 7 int8  always 00
- 8 int16 +gear defense
-10 int16 +gear ether defense
-12 int32 always 00 00 00 00
-16 int32 always 00 00 00 00
+00 int32 always ff ff ff ff
+04 int16 buying price
+06 int8  type (0a=gear)
+07 int8  always 00
+08 int16 +gear defense
+0a int16 +gear ether defense
+0c int32 always 00 00 00 00
+10 int32 always 00 00 00 00
 ==============================
 Gear Engine
 2594.bin/18.bin (BLOCK = 0x10 or 16 bytes)
- 0 int32 always ff ff ff ff
- 4 int16 gear fuel
- 6 int16 gear fuel
- 8 int16 always 00 00
-10 int16 buying price
-12 int8  gear output
-13 int8  always 0a
-14 int8  always 0a
-15 int8  always 00
+00 int32 always ff ff ff ff
+04 int16 gear fuel
+06 int16 gear fuel
+08 int16 always 00 00
+0a int16 buying price
+0c int8  gear output
+0d int8  always 0a
+0e int8  always 0a
+0f int8  always 00
 ==============================
 Gear Accessory
 2594.bin/19.bin (BLOCK = 0x1c or 28 bytes)
- 0 int32 always 7f ff ff ff
- 4 int16 buying price
- 6 int16 weight
- 8 int32 always 00 00 00 00
-12 int8  always 00
-13 int8  +gear defense
-14 int8  +gear ether defense
-15 int8  always 00
-16 int8  +gear agility on barrens
-17 int8  +gear agility on snow
-18 int8  +gear agility on desert
-19 int8  +gear agility on water
-20 int8  +gear response
-21 int40 effects type
-26 int8  effects value (in 5%s , so 2 == 10% , f == 75%)
-27 int8  +gear ether
+00 int32 always 7f ff ff ff
+04 int16 buying price
+06 int16 weight
+08 int32 always 00 00 00 00
+0c int8  always 00
+0d int8  +gear defense
+0e int8  +gear ether defense
+0f int8  always 00
+10 int8  +gear agility on barrens
+11 int8  +gear agility on snow
+12 int8  +gear agility on desert
+13 int8  +gear agility on water
+14 int8  +gear response
+15 int40 effects type
+1a int8  effects value (in 5%s , so 2 == 10% , f == 75%)
+1b int8  +gear ether
 
 Effects Type
 	00 00 00 05 00 increase defense & response (old circuit)
@@ -480,17 +465,17 @@ Effects Type
 ==============================
 Gear Weapon
 2594.bin/42.bin (BLOCK = 0x14 or 20 bytes)
- 0 int8  weapon level
- 1 int8  weapon level
- 2 int8  always 00
- 3 int8  weapon level
- 4 int32 bitflag for wearable gear
- 8 int32 buying price
-12 int8  bullets (ff = infinite , 00 = the rest)
-13 int8  always 00
-14 int8  +gear attack
-15 int8  gun type (for gun/buttet pairing, 00 = the rest)
-16 int32 effect type
+00 int8  weapon level
+01 int8  weapon level
+02 int8  always 00
+03 int8  weapon level
+04 int32 bitflag for wearable gear
+08 int32 buying price
+0c int8  bullets (ff = infinite , 00 = the rest)
+0d int8  always 00
+0e int8  +gear attack
+0f int8  gun type (for gun/bullet pairing, 00 = the rest)
+10 int32 effect type
 
 for weapon level
 - column 0 is for gear weapons
@@ -514,20 +499,65 @@ Effect Type
 Character Level
 2594.bin/43.bin (BLOCK = 0x110 or 272 bytes)
 2607.bin/0.bin
- 0 int8[] Spell Learning Level
-16 int8[] Deathblow Learning Level
+ 00 int16[] Level 5 Deathblow experience
+ 0e int16[] Level 10 Deathblow experience
+ 1c int16[] Level 16 Deathblow experience
+ 2a int16[] Level 22 Deathblow experience
+ 38 int16[] Level 30 Deathblow experience
+ 46 int16[] Level 38 Deathblow experience
+ 54 int16[] Level 46 Deathblow experience
+ 62 int16[] Level 50 Deathblow 1 experience
+ 70 int16[] Level 50 Deathblow 2 experience
+ 7e int16[] Level 50 Deathblow 3 experience
+ 8c int16[] Level 50 Deathblow 4 experience
+ 9a int16[] Level 70 Deathblow experience
+ a8 int16[] Level 80 Deathblow experience
+ b8 int16 HP growth table 1
+ ba int16 HP table 2
+ bc int8 Attack growth table 1
+ bd int8 Attack table 2
+ be int8 Defense growth table 1
+ bf int8 Defense table 2
+ c0 int8 Hit growth table 1
+ c1 int8 Hit table 2
+ c2 int8 Evade growth table 1
+ c3 int8 Evade table 2
+ c4 int8 Ether growth table 1
+ c5 int8 Ether table 2
+ c6 int8 Ether Defense growth table 1
+ c7 int8 Ether Defense table 2
+ c8 int8 EP growth table 1
+ c9 int8 EP table 2
+ 
+ cc int8 AP increased to 4
+ cd int8 AP increased to 5
+ ce int8 AP increased to 6
+ 
+ d0 int8 Character Deathblow needed for TT (Maria learns at level 5)
+ d1 int8 Character Deathblow needed for TS (Maria learns at level 10)
+ d2 int8 Character Deathblow needed for TX (fe for Maria, 0f for everyone else) 
+ d3 int8 Character Deathblow needed for ST (Maria learns at level 16)
+ d4 int8 Character Deathblow needed for SS (Maria learns at level 22)
+ d5 int8 Character Deathblow needed for SX (fe for Maria, 0f for everyone else) 
+ d6 int8 Character Deathblow needed for XT (Maria learns at level 30)
+ d7 int8 Character Deathblow needed for XS (Maria learns at level 38)
+ d8 int8 Character Deathblow needed for XX (fe for Maria, 0f for everyone else)
 
-	0xf0  Fei
-	0x200 Elly
-	0x310 Citan
-	0x420 Bart
-	0x530 Billy
-	0x640 Rico
-	0x750 Emerald
-	0x860 Chu-chu
-	0x970 Maria
-	0xa80 Citan/Sword
-	0xb90 Emerald/Adult
+ e0 int8[]  Character Ethers used by gears
+ f0 int8[]  Spell Learning Level
+100 int8[]  Deathblow Learning Level
+
+	0x00  Fei
+	0x110 Elly
+	0x220 Citan
+	0x330 Bart
+	0x440 Billy
+	0x550 Rico
+	0x660 Emeralda
+	0x770 Chu-chu
+	0x880 Maria
+	0x990 Citan/Sword
+	0xaa0 Emeralda/Adult
 ==============================
 Character Skill + Spells
 2594.bin/3.bin - 13.bin (BLOCK = 0x28 or 40 bytes)
@@ -542,7 +572,7 @@ Character Skill + Spells
 	10  11  Chu-chu
 	11  12  Maria
 	12  13  Citan/Sword
-	13  14  Emerald/Adult
+	13  14  Emeralda/Adult
 BLOCK 0x0   / Deathblow Area
 BLOCK 0x370 / Spell Area
 ==============================
@@ -566,27 +596,36 @@ Gear Skill + Spells
 	36  30  El-Stier
 	37  31  Xenogears
 	38  32  Heimdal/Sword
-	--  33  ?xenogear hyper/weltall-2 id?
-	--  34  ?xenogear hyper/weltall-2 id?
+	--  33  Barthos
+	--  34  Yggdrasil IV
 BLOCK 0x0   / Deathblow Area
 BLOCK 0x348 / Spell Area
 BLOCK 0x5c8 / Option Area
 ==============================
 Deathblow Area
-0x00 int16 always 00 20
-0x11 int8  deathblow power
-0x17 int8  AP cost
-0x20 int16 action
-0x22 int16 element
+00 int16 always 00 20
+
+11 int8  attack power
+
+17 int8  AP cost
+
+20 int16 action
+22 int16 element
+24 int16 fuel cost
+27 int8  attack level
 
 Spell Area
 Option Area
-0x00 int16 targeting
-0x11 int8  spell power
-0x13 int8  EP cost
-0x20 int16 action
-0x22 int16 element
-0x24 int32 fuel cost
+00 int16 targeting
+
+11 int8  spell power
+13 int8  EP cost
+
+1c int8  effect accuracy
+1d int24 spell effect
+20 int16 action
+22 int16 element
+24 int32 fuel cost
 
 Targeting
 	00 10  single enemy
@@ -615,80 +654,99 @@ Monster Data
 # NOTE : Even + Odd file pair
 #        Odd file has 256x256 pixel data
 
-+0x00 int16 Char HP
-+0x02 int16 Char max HP
+ 4c int16 Char HP
+ 4e int16 Char max HP
 
-+0x0c int8
-+0x0d int8
-+0x0e int8
-+0x0f int8
-+0x10 int8
-+0x11 int8
-+0x12 int8
-+0x13 int8
-+0x14 int8
-+0x15 int8
+ 58 int8  Char Attack
+ 59 int8  Char Defense
+ 5a int8  Agility
+ 5b int8  Ether
+ 5c int8  Ether Defense (against char Ether)
 
-+0xb8 int32 Gear HP
-+0xbc int32 Gear max HP
+ 5e int8  Hit %
+ 5f int8  Evade %
 
-+0x100 int32 drop EXP
-+0x104 int16 drop item rate (max=0x64)
-+0x106 int16 drop item ID
-+0x108 int16 drop item type
-+0x10a int16 drop gil
+ e0 int8  Gear Attack
+
+ e3 int8  always 0a
+
+104 int16 Gear HP
+108 int16 Gear max HP
+
+110 int8  always 01
+
+114 int16 Gear Defense
+116 int16 Gear Ether Defense
+
+141 int8  always 0a (gear)
+142 int8  always 0a (gear)
+
+144 int8  always 01 (gear)
+145 int8  always 01 (gear)
+
+14c int32 drop EXP
+150 int8  drop item 1 rate (max=0x64)
+151 int8  drop item 2 rate (max=0x64)
+152 int8  drop item 1 ID
+153 int8  drop item 2 ID
+154 int8  drop type item 1
+155 int8  drop type item 2
+156 int16 drop gil
+
+15a int8  always 40 (ground), always 80 (gear)
+
 ==============================
 Char Shop Data
 2593.bin/6.bin (BLOCK = 0x5c or 92 bytes)
 3958.bin/6.bin
 
-0x98   Item    Lahan, Stalactite Cave, Aveh-Kislev Mountains, Merkava, Deus
-0xf4   Item    Dazil
-0x114  Weapon  Dazil
-0x132  Armor   Dazil
-0x1ac  Item    Aveh
-0x1cc  Weapon  Aveh
-0x264  Items   Nisan
-0x2a2  Armor   Nisan
-0x31c  Item    Yggdrasil/Maison, Bart's Lair, Yggdrasil 2/Maison, Yggdrasil 3/Maison
-0x35a  Armor   Yggdrasil/Maison, Yggdrasil 2/Maison
-0x3d4  Item    Kislev D Block, Kislev A Block
-0x412  Armor   Kislev D Block, Kislev A Block
-0x48c  Item    Kislev A Block (after Hecht)
-0x4ac  Weapon  Kislev A Block (after Hecht)
-0x4ca  Armor   Kislev A Block (after Hecht)
-0x544  Item    Thames Deck, Thames Deck 2
-0x564  Weapon  Thames Deck, Yggdrasil 2/Maison, Yggdrasil 3/Maison  +Armor
-0x582  Armor   Thames Deck, Yggdrasil 2/Maison
-0x5fc  Item    Same as 0x544
-0x61c  Weapon  Unused
-0x63a  Armor   Same as 0x35a
-0x6b4  Item    Shevat/Chu-chu, Nisan 2
-0x6d4  Weapon  Shevat/Chu-chu, Nisan 2
-0x6f2  Armor   Shevat/Chu-chu, Nisan 2
-0x76c  Item    Unused
-0x78c  Weapon  Unused
-0x7aa  Armor   Unused
-0x824  Item    Same as 0x76c
-0x844  Weapon  Unused
-0x862  Armor   Unused
-0x8dc  Item    Unused
-0x8fc  Weapon  Unused
-0x91a  Armor   Unused
-0x994  Item    Solaris 2nd Class, Solaris 3rd Class (Hammer), Snowfield Hideout
-0x9b4  Weapon  Snowfield Hideout
-0x9d2  Armor   Snowfield Hideout
-0xa4c  Item    Anima Dungeon 1 & 2
-0xa8a  Armor   Same as 0x91a
-0xb04  Item    Same as 0xa4c
-0xb24  Weapon  Anima Dungeon 1 & 2
-0xb42  Armor   Anima Dungeon 1 & 2
-0xbbc  Item    Lighthouse
-0xbdc  Weapon  Unused
-0xbfa  Armor   Unused
-0xc56  Armor   Aveh
-0xc94  Weapon  Solaris 2nd Class, Solaris 3rd Class (Hammer)
-0xcb2  Armor   Solaris 2nd Class, Solaris 3rd Class (Hammer)
+98   Item    Lahan, Stalactite Cave, Aveh-Kislev Mountains, Merkava, Deus
+f4   Item    Dazil
+114  Weapon  Dazil
+132  Armor   Dazil
+1ac  Item    Aveh
+1cc  Weapon  Aveh
+264  Items   Nisan
+2a2  Armor   Nisan
+31c  Item    Yggdrasil/Maison, Bart's Lair, Yggdrasil 2/Maison, Yggdrasil 3/Maison
+35a  Armor   Yggdrasil/Maison, Yggdrasil 2/Maison
+3d4  Item    Kislev D Block, Kislev A Block
+412  Armor   Kislev D Block, Kislev A Block
+48c  Item    Kislev A Block (after Hecht)
+4ac  Weapon  Kislev A Block (after Hecht)
+4ca  Armor   Kislev A Block (after Hecht)
+544  Item    Thames Deck, Thames Deck 2
+564  Weapon  Thames Deck, Yggdrasil 2/Maison, Yggdrasil 3/Maison  +Armor
+582  Armor   Thames Deck, Yggdrasil 2/Maison
+5fc  Item    Same as 544
+61c  Weapon  Unused
+63a  Armor   Same as 35a
+6b4  Item    Shevat/Chu-chu, Nisan 2
+6d4  Weapon  Shevat/Chu-chu, Nisan 2
+6f2  Armor   Shevat/Chu-chu, Nisan 2
+76c  Item    Unused
+78c  Weapon  Unused
+7aa  Armor   Unused
+824  Item    Same as 76c
+844  Weapon  Unused
+862  Armor   Unused
+8dc  Item    Unused
+8fc  Weapon  Unused
+91a  Armor   Unused
+994  Item    Solaris 2nd Class, Solaris 3rd Class (Hammer), Snowfield Hideout
+9b4  Weapon  Snowfield Hideout
+9d2  Armor   Snowfield Hideout
+a4c  Item    Anima Dungeon 1 & 2
+a8a  Armor   Same as 91a
+b04  Item    Same as a4c
+b24  Weapon  Anima Dungeon 1 & 2
+b42  Armor   Anima Dungeon 1 & 2
+bbc  Item    Lighthouse
+bdc  Weapon  Unused
+bfa  Armor   Unused
+c56  Armor   Aveh
+c94  Weapon  Solaris 2nd Class, Solaris 3rd Class (Hammer)
+cb2  Armor   Solaris 2nd Class, Solaris 3rd Class (Hammer)
 ==============================
 Gear Shop Data
 2593.bin/7.bin (BLOCK = 0x64 or 100 bytes)
