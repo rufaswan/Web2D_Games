@@ -29,13 +29,22 @@ define('TMP_DIR', sys_get_temp_dir());
 
 $gp_work = sh::xprop();
 //////////////////////////////
-function sort_by_time( $a, $b )
+function sort_by_time_desc( $a, $b )
 {
 	// by time DESC ,  then by size DESC
 	if ( $b['time'] === $a['time'] )
 		return $b['size'] - $a['size'];
 	else
 		return $b['time'] - $a['time'];
+}
+
+function sort_by_time_asc( $a, $b )
+{
+	// by time ASC ,  then by size ASC
+	if ( $b['time'] === $a['time'] )
+		return $a['size'] - $b['size'];
+	else
+		return $a['time'] - $b['time'];
 }
 
 function calc_timesize( &$list )
@@ -65,12 +74,12 @@ function ascii_name( $name )
 	$name = preg_replace('|[^0-9a-zA-Z]+|', ' ', $name);
 	return substr($name, 0, 0x20);
 }
-
+//////////////////////////////
 function mpvplay( &$list, $type )
 {
 	if ( empty($list) )
 		return;
-	usort($list, 'sort_by_time');
+	usort($list, 'sort_by_time_desc');
 
 	global $gp_work;
 	while ( ! empty($list) )
@@ -111,9 +120,12 @@ function mpvplay( &$list, $type )
 	} // while ( ! empty($list) )
 	return;
 }
-
-$video = array();
+//////////////////////////////
+// video = large size , short time
+// audio = small size , long  time
 $media = array();
+$video = array();
+$audio = array();
 for ( $i=1; $i < $argc; $i++ )
 {
 	if ( ! is_file($argv[$i]) )
@@ -129,32 +141,30 @@ for ( $i=1; $i < $argc; $i++ )
 		$t['name'] = './' . $t['name'];
 
 	$dur = sh::ffprobe($t['name']);
-/*
-	if ( $dur['stream'] > 0.1 )
-	{
-		// has video stream
-		$t['time'] = $dur['stream'];
-		$video[] = $t;
+
+	if ( $dur['duration'] < 1 )
 		continue;
-	}
-*/
-	if ( $dur['format'] > 0.1 )
-	{
-		// general media file
-		$t['time'] = $dur['format'];
+
+	$t['time'] = $dur['duration'];
+	if ( $dur['video'] && $dur['audio'] )
 		$media[] = $t;
-		continue;
+	else
+	{
+		if ( $dur['video'] )  $video[] = $t;
+		if ( $dur['audio'] )  $audio[] = $t;
 	}
 } // for ( $i=1; $i < $argc; $i++ )
 echo "\n";
 
-//echo "video\n"; print_r($video);
 //echo "media\n"; print_r($media);
-mpvplay($video, 'video');
-mpvplay($media, 'media');
+//echo "video\n"; print_r($video);
+//echo "audio\n"; print_r($audio);
+mpvplay($media , 'media');
+mpvplay($video , 'video');
+mpvplay($audio , 'audio');
 
 /*
-format=duration      == ss.sssssssss       , for both video and audio files
+format=duration      == ss.sssssssss       , for container
 stream=duration      == ss.sssssssss       , with select_streams , N/A for *.webm *.mkv
 stream_tags=duration == hh:mm:ss.sssssssss , with select_streams
 

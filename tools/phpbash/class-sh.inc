@@ -143,48 +143,48 @@ class sh
 	public static function ffprobe( $fname )
 	{
 		// auto-detect
-		//   stream for video
-		//   format for non-video / audio
-		$dur = array('format'=>-1 , 'stream'=>-1);
+		//   duration  > 0 = video + audio
+		//   level     > 0 = video , < 0 = cover png , 0 = audio
+		$dur = array(
+			'duration' => 0 ,
+			'video'    => 0 ,
+			'audio'    => 0 ,
+			'pic'      => 0 ,
+		);
 		if ( ! is_file($fname) )
 			return $ret;
 		self::which('ffprobe');
 
-			//. ' -select_streams  v:0'
-			//. ' -show_entries    format=duration:stream=duration'
-			//. ' -print_format    default=nokey=1:noprint_wrappers=0'
-		// removed stream
-		// - MP3  can have cover art PNG as video
-		// - WEBM doesnt have STREAM.duration , but STREAM_TAG.duration
-		// - WEBM STREAM_TAG.duration is in hh:mm:ss.ssss format , instead ss.ssss format
-		// return is changed from array (multi-line) to string (one-line)
+		//. ' -show_format'  // format_name=<container>
+		//. ' -show_streams' //  codec_type=video audio subtitle
 		$ffprobe = 'ffprobe'
 			. ' -loglevel        quiet'
-			. ' -show_entries    format=duration'
-			. ' -print_format    default=nokey=1:noprint_wrappers=1'
+			. ' -show_entries    format=duration:stream=codec_type,codec_time_base'
+			. ' -print_format    default=noprint_wrappers=1:nokey=1'
 			. ' "%s"';
 		$res = self::exec($ffprobe, $fname);
 		if ( empty($res) )
 			return $dur;
 
-		// [PROGRAM]
-		//   [STREAM]
-		//     13.533856
-		//   [/STREAM]
-		// [/PROGRAM]
-		// [STREAM]
-		//   13.533856
-		//   [SIDE_DATA]
-		//   [/SIDE_DATA]
-		// [/STREAM]
-		// [FORMAT]
-		//   13.533856
-		// [/FORMAT]
+		//var_dump($res);
+		while ( ! empty($res) )
+		{
+			$val = array_shift($res);
+			switch ( $val )
+			{
+				case 'audio':  $dur['audio'] = 1; break; // stream=codec_type
+				case 'video':  $dur['video'] = 1; break; // stream=codec_type
+				case '0/1'  :  $dur['pic'  ] = 1; break; // stream=codec_time_base
+				default: // format=duration
+					if ( strpos($val,'/') === false )
+						$dur['duration'] += (int)$val;
+					break;
+			} // switch ( $val )
+		} // while ( ! empty($res) )
 
-		//self::error('%s = %s', __FUNCTION__, print_r($res,true));
-		$res *= 1.0;
-		if ( $res > 0.1 )
-			$dur['format'] = $res;
+		// mp3 has cover.png as video
+		if ( $dur['pic'] )
+			$dur['video'] = 0;
 		return $dur;
 	}
 
@@ -224,19 +224,23 @@ class sh
 		return @mkdir($dir, 0755, true);
 	}
 
-	public static function save( $fname, &$bin )
+	public static function save( $dst, &$bin )
 	{
 		if ( empty($bin) )
 			return false;
 
-		self::mkdir($fname);
-		file_put_contents($fname, $bin);
+		self::mkdir($dst);
+		$fp = @fopen($dst, 'wb');
+		if ( ! $fp )
+			return false;
+		fwrite($fp, $bin);
+		fclose($fp);
 
 		// in case stopped halfway , or run out of disk space
 		// delete the incomplete/corrupted file
-		if ( filesize($fname) !== strlen($bin) )
+		if ( filesize($dst) !== strlen($bin) )
 		{
-			unlink($fname);
+			unlink($dst);
 			return false;
 		}
 		return true;
@@ -244,16 +248,32 @@ class sh
 
 	public static function copy( $src, $dst )
 	{
-		$bin = file_get_contents($src);
+		$fp = @fopen($src, 'rb');
+		if ( ! $fp )
+			return false;
+
+		fseek($fp, 0, SEEK_END);
+		$size = ftell($fp);
+
+		fseek($fp, 0, SEEK_SET);
+		$bin = fread($fp, $size);
+		fclose($fp);
+
+		// expected size NOT MATCH byte read size
+		if ( $size !== strlen($bin) )
+			return false;
 		return self::save($dst, $bin);
 	}
 
 	public static function move( $src, $dst )
 	{
-		// DO NOT delete original file if copy failed
-		if ( ! self::copy($src,$dst) )
+		// DO NOT overwrite DST_FILE
+		if ( is_file($dst) )
 			return false;
 
+		// DO NOT delete SRC_FILE if copy failed
+		if ( ! self::copy($src,$dst) )
+			return false;
 		unlink($src);
 		return true;
 	}
