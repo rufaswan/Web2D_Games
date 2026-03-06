@@ -68,8 +68,9 @@ while [ "$1" ]; do
 				"$tmp"
 			[ -s "$tmp" ] || rm -v  "$tmp"  # remove 0 byte file
 			[ -f "$tmp" ] && mv -vf "$tmp"  "$bas-$size".mp4
+			df -m .
 		fi
-		if [[ $fmt == 'png' ]]; then
+		if [[ $fmt == 'jpg' ]]; then
 			tmp=$(tr -c '[0-9a-zA-Z]' \_ <<< "$t1")
 			[ -d "$tmp" ] && rm -vfr "$tmp"
 			mkdir -p "$tmp"
@@ -90,14 +91,14 @@ while [ "$1" ]; do
 				-qscale 0     \
 				-r 1          \
 				-an           \
-				"$tmp"/%05d.png
+				"$tmp"/%05d.jpg
 		fi
 	else
 		case "${t1:2}" in
 			'af' )   af='-af loudnorm=I=-14:TP=-1';;
 			'srt')  srt='-map 0:v  -map 0:a  -map 0:s? -scodec copy';;
 			'mp4')  fmt='mp4';;
-			'png')  fmt='png';;
+			'jpg')  fmt='jpg';;
 			*)
 				let s=${t1:2}*1
 				if (( $s < 1 )); then

@@ -1,0 +1,81 @@
+====================
+== Parasite Eve 2 ==
+====================
+
+int8   item id
+int8
+int16  item amount
+
+item id
+	80  9mm/po8 submech
+	81  9mm/m93r
+	82  9mm/m950
+	83  9mm/po8
+	84  9mm/p229
+	85  -
+	86  -
+	87  -
+	88  .44Mag/mangoose
+	89  -
+	8a  40mm/grenade pistol
+	8b  40mm/mm1
+	8c  12/pa3
+	8d  12/sp12
+	8e  12/as12
+	8f  5.56mm/m4a1
+
+	90  5.56mm/m249
+	91  -
+	92  tonfa baton
+	93  5.56mm/m4a1 +1
+	94  5.56mm/m4a1 +2
+	95  20mm/hyper velocity
+	96  gunblade
+	97  -
+	98  m4a1 hammer
+	99  m4a1 bayonett
+	9a  m4a1 grenade
+	9b  m4a1 pike
+	9c  m4a1 javelin
+	9d  9mm/mp5a5
+	9e  9mm/mp5a5 +1
+	9f  9mm/mp5a5 +2
+
+	a0  9mm 10/500
+	a1  9mm 15/500
+	a2  9mm 20/500
+	a3  -
+	a4  -
+	a5  -
+	a6  .44Mag  40/500
+	a7  .44Mag  70/500 poison
+	a8  .44Mag 999/999 poison
+	a9  40mm 270/100 burst
+	aa  40mm 220/100 explosion
+	ab  40mm  60/100 flash
+	ac  12ga 40/200 explosion
+	ad  12ga 70/200 incindiary
+	ae  12ga 90/200 piercing
+	af  5.56mm 22/800
+
+	b0  5.56mm 1/999
+	b1  5.56mm 1/999 flash
+	b2  -
+	b3  -
+	b4  -
+	b5  battery
+	b6  -
+	b7  -
+	b8  -
+	b9  battery
+	ba  -
+	bb  battery
+	bc  -
+	bd  fuel
+	be  battery
+	bf  -
+
+b6
+w2
+r3
+y5

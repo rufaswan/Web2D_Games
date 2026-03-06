@@ -33,6 +33,12 @@ sh::save(__FILE__ .'.json', $json);
 
 
 /*
+# SJIS  Windows encoding of JIS
+# CP932 NEC expand of SJIS (add 8740-879f)
+# CP932 IBM expand of SJIS (add fa40-faff,fb40-fbff,fc40-fc4f)
+# CP932 NEC expand of IBM CP932 (add ed40-edff,ee40-eeff)
+# MS932 Microsoft unified CP932 (aka Windows-31J)
+
 echo    '\x41' = \x41
 echo -e '\x41' = A
 printf  '\x41' = A

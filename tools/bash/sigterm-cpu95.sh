@@ -57,7 +57,16 @@ while [ '1' ]; do
 done
 
 <<'////'
-ps -C <command> --no-headers --format %cpu,%mem,pid,cmd,comm
-ps -p <pid>     --no-headers --format %cpu,%mem,pid,cmd,comm
+ps -C <command> --no-headers --format FORMAT
+ps -p <pid>     --no-headers --format FORMAT
 pidof <command>
+
+FORMAT
+	c      33
+	%cpu   33.3 == pcpu
+	%mem   11.1 == pmem
+	pid    9999
+	state  S
+	comm   Socket Process
+	cmd    $path/firefox-bin -contentproc ... socket
 ////

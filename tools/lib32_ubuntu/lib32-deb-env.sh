@@ -1,3 +1,4 @@
+#!/bin/bash
 [ "$ROOT" ] || exit
 
 so="/usr/lib32:/lib32"

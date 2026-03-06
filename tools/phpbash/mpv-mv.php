@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'class-sh.inc';
+require 'class-misc.inc';
 sh::which('xprop');
 sh::which('ffprobe');
 sh::which('mpv');
@@ -63,7 +64,7 @@ function calc_timesize( &$list )
 	// mb = 1000 * 1000
 	$mb = 0.001 * 0.001;
 	$rem = sprintf('(%s/%s|%d/%d MB)' ,
-		sh::sec2time($list[0]['time']) , sh::sec2time($sum['time']),
+		misc::sec2time($list[0]['time']) , misc::sec2time($sum['time']),
 		$list[0]['size'] >> 20         , $sum['size'] >> 20
 	);
 	return $rem;

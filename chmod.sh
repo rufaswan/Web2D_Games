@@ -1,21 +1,34 @@
 #!/bin/bash
-real=$(realpath "$0")
-d=$(dirname "$real")
-
 function chmodfile {
-	local mime=$(file  --brief  --mime-type  "$1")
-	case "$mime" in
-		'application/x-executable')
-			chmod -c 755  "$1";;
-		'application/x-sharedlib')
-			chmod -c 755  "$1";;
-		'text/x-shellscript')
-			chmod -c 755  "$1";;
-		*)
-			chmod -c 644  "$1";;
-	esac
+	local ext="${1##*.}"
+	[[ "$ext" == sh ]] && return
+	chmod -c 644 "$1"
 }
 export -f chmodfile
 
-find "$d" -type f -print0 | xargs -0 -I {} bash  -c 'chmodfile "$@"' _ {}
-find "$d" -type d -print0 | xargs -0 -I {} chmod -c 755 {}
+function chmodsh {
+	local ext="${1##*.}"
+	[[ "$ext" == sh ]] || return
+	chmod -c 755 "$1"
+}
+export -f chmodsh
+
+function chmodent {
+	[ -e "$1" ] || return
+	if [ -d "$1" ]; then
+		# BUG chmod -c UPDATE file already 644 to 644
+		# -> use find -not -perm 644 -exec chmod
+		find "$1" -type d -not -perm 755 -print0 \
+			| xargs -0 -I {} chmod -c 755 {}
+		find "$1" -type f -not -perm 644 -print0 \
+			| xargs -0 -I {} bash -c 'chmodfile "$@"' _ {}
+		find "$1" -type f -not -perm 755 -print0 \
+			| xargs -0 -I {} bash -c 'chmodsh "$@"' _ {}
+		return
+	fi
+	chmodfile "$1"
+}
+
+REAL=$(realpath "$0")
+ ENT=$(dirname "$REAL")
+chmodent "$ENT"

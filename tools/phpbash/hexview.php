@@ -21,6 +21,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
 require 'class-sh.inc';
+require 'class-misc.inc';
 sh::which('stty');
 sh::which('tput');
 
@@ -87,7 +88,7 @@ function hexview()
 
 	sh::exec('stty cbreak -echo');
 
-	$hx = sh::hexdigit($gp_opt['size']);
+	$hx = misc::hexdigit($gp_opt['size']);
 	$is_done = false;
 
 	// xxxx | aa bb cc | aa bb cc | aa bb cc

@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 function lba2min {

@@ -1,0 +1,134 @@
+====================
+== Parasite Eve 2 ==
+====================
+
+DISC 1
+- B1 Mist Center - talk Pierce
+- Tower - Square - talk Telephone
+- Tower - East Elevator Hall - get Cafeteria Key
+- Tower - Cafeteria - BOSS - get Implant Part
+- Tower - Square - talk Telephone
+- Tower - Cafeteria hallway - get Blue Key
+- Tower - Cafeteria office - use Blue Key
+- Tower - Santuary
+- Tower - Bridge
+	cafeteria office music note hint
+	= if C D E = 1 2 3 , then G A C = 5 6 1
+- Heliport - BOSS
+
+- B1 Mist Center - talk Pierce
+- 1F Dryfield - Factory - puzzle
+- 1F Dryfield - Garage - get Motel Room 6 Key
+- 2F Dryfield - Motel Room 6 - ladder
+- 1F Dryfield - Water Tower - puzzle
+- 2F Dryfield - Water Tank - get G&R Saloon Key
+- 1F Dryfield - G&R Saloon storeroom - get Magnet
+- 1F Dryfield - Water Tower alley - use Magnet - get Factory Key
+- 1F Dryfield - Trailer Coach - talk Douglas
+- 1F Dryfield - Junk Yard - get Wire Rope
+- 1F Dryfield - Driveway - use Wire Rope
+- B1F Dryfield - Underpass - ladder
+- 1F Dryfield - middle Dilapidated House
+- 1F Dryfield - Trailer Coach - talk Douglas
+- 1F Dryfield - Garage - get Monkey Wrench
+- 1F Dryfield - middle Dilapidated House - use Monkey Wrench
+- 1F Dryfield - right Dilapidated House - BOSS
+
+- 1F Dryfield - Gas Station
+- 1F Dryfield - Trailer Coach - talk Douglas - get Lobby Key
+- 1F Dryfield - Motel Lobby - puzzle - get Master Key
+	room 1 portrait hint = Doc Holliday born 1851
+	room 2 portrait hint = Wyatt Earp   born 1848
+	= if Earp=30 , then Holliday=33
+	= #3033
+- 2F Dryfield - Motel Loft - get Jerry Can
+- 1F Dryfield - Gas Station - use Jerry Can - get Gasoline
+- 1F Dryfield - Garage - talk Douglas
+- 2F Dryfield - Motel Room 6 - BOSS
+	* defeat BOSS < 3 min = saved Flint
+- 1F Dryfield - Main Street - talk Douglas - get Truck Key
+- 1F Dryfield - Garage - talk Kyle
+
+DISC 2
+- East Mine - Gorge
+- East Mine - Forked Tunnel - get Oak Plank
+- East Mine - Gorge - use Oak Plank
+- East Mine - Refuge - puzzle
+	line 2
+- West Mine - Cavern - BOSS - get Jumper - Gate 2 switch
+- East Mine - Refuge - use Jumper - puzzle
+	line 1 + 4
+- West Mine - Secret Passage
+
+- B1 Shelter - Steriliation Room in
+- B2 Shelter - Breeding Room hallway
+- B1 Shelter - Steriliation Room out
+- B3 Shelter - Dumping Hole + Garbage Incinerator - BOSS
+- B4 Shelter - Water Supply - puzzle
+	Flood Gate = Rat 4 + Spider 8 + Cockroach 6
+		= 18
+	Fullmoon Gate = Moon phase cycle ~29.5 days , Fullmoon 14.8 day
+		= 15
+	*- 1F Dryfield - Driveway - follow Flint
+	*- 2F Dryfield - Water Tank - saved Pierce - get RV Key
+	*- 1F Dryfield - Main Street - get Bag of Ice
+	*- 2F Dryfield - Water Tank - talk Pierce (repeat)
+		1x=Cola  2x=MP Recovery 2  3x=Ofuda
+
+- B1 Shelter - Sleeping Quarters hallway - BOSS - get Bowman Card
+- B2 Shelter - Laboratory
+- B1 Shelter - Sleeping Quarters - get Aeris September Issue
+- B2 Shelter - Laboratory - puzzle - quiz
+	melissamaya
+	=aaaeilmmssy (abc...)
+	=a3eilm2s2y  (dups->num)
+	*- Telephone - Pierce
+	*- B1 Shelter - Pod Service Gantry
+
+- B2 Shelter - Main Corridor - lift north
+- Shambala - Shrine - puzzle
+	Red   tile bottom-left to top-right
+	empty tile bottom-right
+- Shambala - Power Plant south - BOSS
+- Shambala - Observatory
+- Shambala - Pyramid - puzzle
+	garden hint
+		by  a2
+		by  5b
+		by  38
+		rw  19
+		rw  76
+		rw  c4
+	= rybw bwryw byr
+- Shambala - Power Plant north - BOSS
+- B2 Shelter - Main Corridor - lift south
+- B6 Shelter - Training Room - BOSS
+- B6 Shelter - Nursery - talk Telephone + Kyle
+- B6 Shelter - Growth Room - look ICSC58M + talk Eve
+	*- after escape = Pierce call
+- Shambala - Submarine Tunnel
+- B1 Shelter - Pod Service Gantry
+	*- Telephone - get Memo -> Pierce Message
+	*- Telephone - Jodie
+	*- WATCH Man - Camera A=Open E=Security Off
+- B1 Shelter - Underground Parking - get Car Key - puzzle
+	- Car  = Call 3
+	- Gate = use Bowman Card
+- 1F Shelter - Vehicular Air Lock - get Teddy Bear
+
+- 1F Shelter - Heliport
+	*- talk Jodie
+	*- talk Flink - get Capsule -> Dougla Letter
+	*- use Teddy Bear - follow Flint
+- B1 Shelter - Underground Parking - talk Telephone
+- B1 Shelter - Golem Freezer
+	*- if follow Flint , it's opposite side door
+	*- talk Pierce = saved Pierce
+- B1 Shelter - Steriliation Room
+	*- follow Flint = saved Private
+- FINAL SAVE
+- B1 Shelter - Pod Service Gantry
+- B2 Shelter - Pod Bottom
+	- BOSS
+	- south card reader - use Bowman Card
+	- FINAL BOSS

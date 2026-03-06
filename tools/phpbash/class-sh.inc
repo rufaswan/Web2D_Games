@@ -51,7 +51,7 @@ class sh
 	{
 		$sh = self::exec('which %s', $cmd);
 		if ( empty($sh) && $is_err )
-			return sh::error('cmd %s not found', $cmd);
+			return self::error('cmd %s not found', $cmd);
 		return $sh;
 	}
 
@@ -75,7 +75,7 @@ class sh
 			} // foreach ( $ver as $vv )
 		} // foreach ( $bit => $bv )
 
-		return sh::error('imagemagick [%s] not found', $cmd);
+		return self::error('imagemagick [%s] not found', $cmd);
 	}
 
 	public static function im_mean( $fname, $im )
@@ -188,16 +188,31 @@ class sh
 		return $dur;
 	}
 
-	public static function pwddir()
+	public static function cd( $dir )
 	{
-		$real = realpath('.');
-		if ( $real === false )
-			return '';
-		$base = basename($real);
+		$t = chdir($dir);
+		if ( ! $t )
+			self::error('[FAILED] sh::cd( %s )', $dir);
+		return;
+	}
 
-		$base = trim($base);
-		if ( empty($base) || $base[0] === '.' )
-			return '';
+	public static function pwd()
+	{
+		$t = realpath('.');
+		if ( ! $t )
+			self::error('[FAILED] sh::pwd()', $dir);
+		return $t;
+	}
+
+	public static function realbase( $ent )
+	{
+		$real = realpath($ent);
+		if ( ! $real )
+			return 0;
+
+		$base = basename($real);
+		if ( empty($base)     )  return 0;
+		if ( $base[0] === '.' )  return 0;
 		return $base;
 	}
 
@@ -276,69 +291,5 @@ class sh
 			return false;
 		unlink($src);
 		return true;
-	}
-
-	public static function sec2time( $sec )
-	{
-		// 01:39:20
-		// 01:39:00
-		// 01:00:20
-		//    39:20
-		//    39:00
-		//       20
-		$time = '';
-
-		$t = 0;
-		while ( $sec >= 3600 ) // hour
-		{
-			$t++;
-			$sec -= 3600;
-		}
-		if ( $t > 0 || ! empty($time)  )
-			$time .= sprintf('%02d:', $t);
-
-		$t = 0;
-		while ( $sec >= 60 ) // min
-		{
-			$t++;
-			$sec -= 60;
-		}
-		if ( $t > 0 || ! empty($time) )
-			$time .= sprintf('%02d:', $t);
-
-		$time .= sprintf('%02d',$sec);
-		return $time;
-	}
-
-	public static function decdigit( $int )
-	{
-		$dig = 1;
-		if ( $int < 0 )
-		{
-			$dig++;
-			$int = -$int;
-		}
-		while ( $int > 0 )
-		{
-			$dig++;
-			$int = (int)($int * 0.1);
-		}
-		return $dig;
-	}
-
-	public static function hexdigit( $int )
-	{
-		$dig = 1;
-		if ( $int < 0 )
-		{
-			$dig++;
-			$int = -$int;
-		}
-		while ( $int > 0 )
-		{
-			$dig++;
-			$int >>= 4;
-		}
-		return $dig;
 	}
 } // class sh
