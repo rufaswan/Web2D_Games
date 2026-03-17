@@ -94,6 +94,29 @@ function im_bc3( &$file, $pos, $w, $h )
 	return $pix;
 }
 
+function im_bc4( &$file, $pos, $w, $h )
+{
+	printf("== im_bc4( %x , %x , %x )\n", $pos, $w, $h);
+	// BC4 uses 8 bytes per 4x4 block (half of BC3/BC7)
+	$pix = substr($file, $pos, ($w * $h) >> 1);
+
+	$bc4 = new s3tc_texture;
+	$pix = $bc4->bc4($pix);
+	//$pix = $bc4->s3tc_debug($pix, $w, $h);
+
+	// BC4 outputs single-channel grayscale, convert to RGBA
+	$rgba = '';
+	$len = strlen($pix);
+	for ($i = 0; $i < $len; $i++) {
+		$g = $pix[$i];
+		$rgba .= $g . $g . $g . BYTE; // R=G=B=gray, A=255
+	}
+	$pix = $rgba;
+
+	gnf_swizzled_bc($pix, $w, $h);
+	return $pix;
+}
+
 function im_bc7( &$file, $pos, $w, $h )
 {
 	printf("== im_bc7( %x , %x , %x )\n", $pos, $w, $h);
@@ -183,6 +206,7 @@ function ps4gnf( &$file, $base, $pfx, $id )
 
 	$list_fmt = array(
 		0x25 => 'im_bc3',
+		0x26 => 'im_bc4',
 		0x29 => 'im_bc7',
 	);
 	if ( ! isset($list_fmt[$fmt]) )
@@ -210,30 +234,82 @@ function aegis( $fname )
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
+	// FTEX Format:
+	// 0x00: "FTEX" magic
+	// 0x04: version (usually 0x00010000)
+	// 0x08: hdsz = header size (where first FTX0 chunk starts)
+	// 0x0C: cnt = number of textures
+	// 0x10: padding to 0x20
+	// 0x20+: filename entries (0x30 bytes each: 0x20 name + 0x10 padding)
+	// hdsz+: FTX0 chunks (texture data)
 	if ( substr($file, 0, 4) !== 'FTEX' )
 		return;
 
 	$pfx = substr($fname, 0, strrpos($fname, '.'));
+	$ver  = str2int($file,  4, 4);
 	$hdsz = str2int($file,  8, 4);
 	$cnt  = str2int($file, 12, 4);
 
+	printf("======================================\n");
+	printf("FTEX File: %s\n", basename($fname));
+	printf("  Version:      0x%08x\n", $ver);
+	printf("  Header Size:  0x%x (%d bytes)\n", $hdsz, $hdsz);
+	printf("  Texture Count: %d\n", $cnt);
+	printf("  File Size:    0x%x (%d bytes)\n", strlen($file), strlen($file));
+	printf("======================================\n\n");
+
+	// Parse filename entries
+	printf("Texture Names:\n");
+	for ($i = 0; $i < $cnt; $i++) {
+		$p1 = 0x20 + ($i * 0x30);
+		$fn = substr($file, $p1, 0x20);
+		$fn = rtrim($fn, ZERO);
+		printf("  [%d] 0x%04x: %s\n", $i, $p1, $fn);
+	}
+	printf("\n");
+
+	// Process each FTX0 chunk
 	$st = $hdsz;
 	for ( $i=0; $i < $cnt; $i++ )
 	{
+		// Get texture name from filename table
 		$p1 = 0x20 + ($i * 0x30);
 		$fn = substr($file, $p1, 0x20);
-			$fn = rtrim($fn, ZERO);
+		$fn = rtrim($fn, ZERO);
 
+		printf("------ Texture %d: %s ------\n", $i, $fn);
+		printf("FTX0 Chunk Start: 0x%x\n", $st);
+
+		// FTX0 chunk structure:
+		// 0x00: "FTX0" magic
+		// 0x04: sz1 = size of GNF header + pixel data
+		// 0x08: sz2 = offset from FTX0 start to GNF header
+		// 0x0C+: padding to sz2
+		// sz2+: GNF header + pixel data
 		if ( substr($file, $st, 4) !== 'FTX0' )
 			return php_error('%s 0x%x not FTX0', $fname, $st);
 
 		$sz1 = str2int($file, $st+4, 4);
 		$sz2 = str2int($file, $st+8, 4);
-		printf("GNF  %x , %x , %s\n", $st, $sz1, $fn);
 
+		printf("  FTX0 Header:\n");
+		printf("    sz1 (data size):    0x%x (%d bytes)\n", $sz1, $sz1);
+		printf("    sz2 (GNF offset):   0x%x (%d bytes)\n", $sz2, $sz2);
+		printf("    Total chunk size:   0x%x (%d bytes)\n", $sz1 + $sz2, $sz1 + $sz2);
+		printf("  GNF Position: 0x%x\n", $st + $sz2);
+
+		// Extract GNF texture
 		ps4gnf($file, $st+$sz2, $pfx, $i);
+
+		// Move to next FTX0 chunk
+		// Total size = FTX0 header (sz2) + GNF data (sz1)
 		$st += ($sz1 + $sz2);
+		printf("  Next Chunk: 0x%x\n\n", $st);
 	} // for ( $i=0; $i < $cnt; $i++ )
+
+	printf("======================================\n");
+	printf("Extraction complete!\n");
+	printf("======================================\n");
 	return;
 }
 
