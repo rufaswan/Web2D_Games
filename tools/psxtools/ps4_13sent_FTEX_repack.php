@@ -26,13 +26,57 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 require 'common.inc';
 require 'common-guest.inc';
-require 'class-bptc.inc';
 require 'class-s3tc.inc';
 
 //define('DRY_RUN', true);
 
+// GNF surface format constants
+define('GNF_FMT_BC4',  0x26);
+define('GNF_FMT_ARGB', 0x0a); // kSurfaceFormat8_8_8_8
+
+//////////////////////////////
+// GNF header helpers
+//
+// GNF header layout (0x100 bytes):
+//   0x00: "GNF " magic
+//   0x04: offset from byte 8 to pixel data
+//   0x08: version
+//   0x09: count
+//   0x14: $b1 = ccccccss ssssmmmm mmmmmmmm --------
+//          s = surface format (bits 25:20)
+//          c = channel type (bits 31:26)
+//   0x18: $b2 = -ssshhhh hhhhhhhh hhwwwwww wwwwwwww
+//          w = width (bits 13:0), h = height (bits 27:14)
+
+function gnf_detect_format($gnf_header)
+{
+	if (substr($gnf_header, 0, 4) !== 'GNF ')
+		return -1;
+	$b1 = str2int($gnf_header, 0x14, 4);
+	return ($b1 >> 20) & 0x3f;
+}
+
+function gnf_update_format(&$gnf_header, $fmt)
+{
+	$b1 = str2int($gnf_header, 0x14, 4);
+	$b1 = ($b1 & ~(0x3f << 20)) | (($fmt & 0x3f) << 20);
+	str_update($gnf_header, 0x14, chrint($b1, 4));
+}
+
+function gnf_format_name($fmt)
+{
+	$names = array(
+		GNF_FMT_BC4  => 'BC4',
+		GNF_FMT_ARGB => 'ARGB',
+	);
+	if (isset($names[$fmt]))
+		return $names[$fmt];
+	return sprintf('UNKNOWN(0x%02x)', $fmt);
+}
+
 //////////////////////////////
 // Reverse of gnf_swizzled_bc - re-swizzle RGBA back to swizzled order
+// Operates on 4x4 pixel tiles arranged in 8x8 tile groups with morton order
 function gnf_reswizzle_bc(&$pix, $ow, $oh)
 {
 	printf("== gnf_reswizzle_bc( %x , %x )\n", $ow, $oh);
@@ -77,6 +121,8 @@ function gnf_reswizzle_bc(&$pix, $ow, $oh)
 }
 
 //////////////////////////////
+// Channel conversion functions
+
 // Convert RGBA to grayscale (take R channel since R=G=B for BC4 output)
 function rgba_to_gray(&$rgba)
 {
@@ -88,8 +134,23 @@ function rgba_to_gray(&$rgba)
 	return $gray;
 }
 
+// Convert RGBA channel order to ARGB channel order
+function rgba_to_argb(&$rgba)
+{
+	printf("== rgba_to_argb\n");
+	$argb = '';
+	$len = strlen($rgba);
+	for ($i = 0; $i < $len; $i += 4) {
+		$argb .= $rgba[$i + 3]; // A
+		$argb .= $rgba[$i + 0]; // R
+		$argb .= $rgba[$i + 1]; // G
+		$argb .= $rgba[$i + 2]; // B
+	}
+	return $argb;
+}
+
 //////////////////////////////
-// BC4 encoder - compress grayscale to BC4 format
+// BC4 encoder - compress grayscale to BC4 format (8 bytes per 4x4 block)
 function bc4_encode(&$gray)
 {
 	$enc = '';
@@ -103,9 +164,11 @@ function bc4_encode(&$gray)
 	return $enc;
 }
 
+// Encode a single 4x4 block of single-channel data (16 bytes -> 8 bytes)
+// Used by BC4 (grayscale)
 function bc4_encode_block(&$block)
 {
-	// Find min and max alpha values in the block
+	// Find min and max values in the block
 	$min = 255;
 	$max = 0;
 	for ($i = 0; $i < 16; $i++) {
@@ -183,12 +246,14 @@ function bc4_encode_block(&$block)
 }
 
 //////////////////////////////
-// Repack BC4 texture back to PS4 GNF/FTX0/FTEX format
+// Format-specific repack functions
+// Each takes RGBA pixel data and returns compressed/formatted pixel data
+
 function im_bc4_repack(&$rgba, $w, $h)
 {
 	printf("== im_bc4_repack( %x , %x )\n", $w, $h);
 
-	// Re-swizzle RGBA data
+	// Re-swizzle RGBA data into BC tile order
 	gnf_reswizzle_bc($rgba, $w, $h);
 
 	// Convert RGBA to grayscale
@@ -200,58 +265,17 @@ function im_bc4_repack(&$rgba, $w, $h)
 	return $bc4;
 }
 
-//////////////////////////////
-// Build GNF header for BC4 texture
-function build_gnf_header($w, $h, $fmt)
+function im_argb_repack(&$rgba, $w, $h)
 {
-	// GNF header is 0x100 bytes total
-	// Offset stored is 0xF8 because decoder does base+=8 before using offset
-	// So pixel_pos = (gnf_start + 8) + 0xF8 = gnf_start + 0x100
-	$gnf = 'GNF ';
-	$gnf .= chrint(0xF8, 4); // offset to pixel data (0x100 - 8)
+	printf("== im_argb_repack( %x , %x )\n", $w, $h);
 
-	// Texture descriptor (from GFD Studio / PS4 GNF format)
-	$gnf .= chr(0x01); // version
-	$gnf .= chr(0x01); // texture count = 1
-	$gnf .= chr(0x01); // alignment
-	$gnf .= chr(0x00); // unused
-	$gnf .= chrint(0, 4); // unused
+	// Re-swizzle using same 4x4-tile / 8x8-macro-block / morton layout as BC
+	gnf_reswizzle_bc($rgba, $w, $h);
 
-	// b0 - unused for our purposes
-	$gnf .= chrint(0, 4);
+	// Convert RGBA channel order to ARGB
+	$argb = rgba_to_argb($rgba);
 
-	// b1 - format info
-	// ccccccss ssssmmmm mmmmmmmm --------
-	// s = surface format (0x26 = BC4)
-	// c = channel type
-	$b1 = ($fmt << 20);
-	$gnf .= chrint($b1, 4);
-
-	// b2 - dimensions
-	// -ssshhhh hhhhhhhh hhwwwwww wwwwwwww
-	$b2 = (($w - 1) & 0x3fff) | ((($h - 1) & 0x3fff) << 14);
-	$gnf .= chrint($b2, 4);
-
-	// b3 - tile mode, mip levels, etc
-	// Use default tile mode for swizzled
-	$b3 = 0x0d000000; // tile mode
-	$gnf .= chrint($b3, 4);
-
-	// b4 - depth and pitch
-	$gnf .= chrint(0, 4);
-
-	// b5 - array slices
-	$gnf .= chrint(0, 4);
-
-	// b6 - misc flags
-	$gnf .= chrint(0, 4);
-
-	// Pad to 0x100 bytes (offset where pixel data starts)
-	while (strlen($gnf) < 0x100) {
-		$gnf .= ZERO;
-	}
-
-	return $gnf;
+	return $argb;
 }
 
 //////////////////////////////
@@ -284,13 +308,43 @@ function build_ftx0($gnf_header, $pixel_data)
 // Main repack function - process input .gnf files
 function aegis_repack($argv)
 {
+	// Parse --force-format flag from arguments
+	$force_format = null;
+	$filtered = array();
+	$filtered[] = $argv[0]; // script name
+	$i = 1;
+	while ($i < count($argv)) {
+		if ($argv[$i] === '--force-format') {
+			if ($i + 1 >= count($argv)) {
+				printf("ERROR: --force-format requires a value (BC4 or ARGB)\n");
+				return;
+			}
+			$fmt_name = strtoupper($argv[$i + 1]);
+			$fmt_map = array(
+				'BC4'  => GNF_FMT_BC4,
+				'ARGB' => GNF_FMT_ARGB,
+			);
+			if (!isset($fmt_map[$fmt_name])) {
+				printf("ERROR: Unknown format '%s'. Supported: BC4, ARGB\n", $argv[$i + 1]);
+				return;
+			}
+			$force_format = $fmt_map[$fmt_name];
+			$i += 2;
+		} else {
+			$filtered[] = $argv[$i];
+			$i++;
+		}
+	}
+	$argv = $filtered;
+
 	if (count($argv) < 4) {
-		printf("Usage: php %s <source.ftx> <output.ftx> <input1.gnf> [input2.gnf ...]\n", $argv[0]);
+		printf("Usage: php %s [--force-format FORMAT] <source.ftx> <output.ftx> <input1.gnf> [input2.gnf ...]\n", $argv[0]);
 		printf("  Repacks .gnf texture files into a .ftx asset file\n");
 		printf("  <source.ftx>  - Original FTEX file (used as header template)\n");
 		printf("  <output.ftx>  - Output FTEX file with repacked textures\n");
 		printf("  <inputN.gnf>  - Input texture files (must match count in source.ftx)\n");
-		printf("  Currently supports BC4 format only\n");
+		printf("  --force-format FORMAT  Force output format: BC4 or ARGB\n");
+		printf("  Supported formats: BC4, ARGB\n");
 		return;
 	}
 
@@ -321,6 +375,8 @@ function aegis_repack($argv)
 	printf("  Version:      0x%08x\n", $ver);
 	printf("  Header Size:  0x%x (%d bytes)\n", $hdsz, $hdsz);
 	printf("  Texture Count: %d\n", $cnt);
+	if ($force_format !== null)
+		printf("  Force Format: %s\n", gnf_format_name($force_format));
 	printf("======================================\n\n");
 
 	// Validate input file count matches
@@ -337,8 +393,9 @@ function aegis_repack($argv)
 	$ftex_header = substr($source, 0, $hdsz);
 	printf("Extracted FTEX header: 0x%x bytes\n\n", strlen($ftex_header));
 
-	// Parse source FTX0 chunks to extract GNF headers
+	// Parse source FTX0 chunks to extract GNF headers and detect formats
 	$source_gnf_headers = array();
+	$source_formats = array();
 	$st = $hdsz;
 	for ($i = 0; $i < $cnt; $i++) {
 		if (substr($source, $st, 4) !== 'FTX0') {
@@ -353,7 +410,17 @@ function aegis_repack($argv)
 		$gnf_header = substr($source, $st + $sz2, 0x100);
 		$source_gnf_headers[$i] = $gnf_header;
 
-		printf("Extracted GNF header %d from 0x%x (0x%x bytes)\n", $i, $st + $sz2, strlen($gnf_header));
+		// Detect format from GNF header
+		$det_fmt = gnf_detect_format($gnf_header);
+		$source_formats[$i] = $det_fmt;
+
+		printf(
+			"Extracted GNF header %d from 0x%x - format: %s (0x%02x)\n",
+			$i,
+			$st + $sz2,
+			gnf_format_name($det_fmt),
+			$det_fmt
+		);
 
 		// Move to next FTX0 chunk
 		$st += ($sz1 + $sz2);
@@ -366,6 +433,9 @@ function aegis_repack($argv)
 		$trailing_bytes = substr($source, $st, 16);
 		printf("Extracted trailing bytes: 0x%x bytes from 0x%x\n\n", strlen($trailing_bytes), $st);
 	}
+
+	// Supported format list for repack
+	$supported_formats = array(GNF_FMT_BC4, GNF_FMT_ARGB);
 
 	$textures = array();
 
@@ -383,21 +453,60 @@ function aegis_repack($argv)
 		$w = $data['w'];
 		$h = $data['h'];
 		$rgba = $data['pix'];
+		$input_type = isset($data['t']) ? $data['t'] : 'UNKNOWN';
 
+		printf("  Input type: %s\n", $input_type);
 		printf("  Size: %d x %d\n", $w, $h);
 
-		// Repack to BC4
-		$bc4_data = im_bc4_repack($rgba, $w, $h);
+		// Determine output format: forced or detected from source
+		$fmt = ($force_format !== null) ? $force_format : $source_formats[$idx];
 
-		// Use the original GNF header from source (not building a new one)
+		// Validate format is supported
+		if (!in_array($fmt, $supported_formats)) {
+			printf("ERROR: Unsupported format %s (0x%02x) for texture %d\n", gnf_format_name($fmt), $fmt, $idx);
+			printf(
+				"  Supported: BC4 (0x%02x), ARGB (0x%02x)\n",
+				GNF_FMT_BC4,
+				GNF_FMT_ARGB
+			);
+			continue;
+		}
+
+		printf("  Output format: %s\n", gnf_format_name($fmt));
+
+		// If input is RGBA type (magic "RGBA") and output is ARGB, the conversion
+		// is handled inside im_argb_repack. For BC formats, RGBA order is correct.
+		// (All clut files from this toolchain are RGBA-ordered)
+
+		// Encode according to format
+		switch ($fmt) {
+			case GNF_FMT_BC4:
+				$pixel_data = im_bc4_repack($rgba, $w, $h);
+				break;
+			case GNF_FMT_ARGB:
+				$pixel_data = im_argb_repack($rgba, $w, $h);
+				break;
+		}
+
+		// Use the original GNF header from source
 		if (!isset($source_gnf_headers[$idx])) {
 			printf("ERROR: No source GNF header for texture %d\n", $idx);
 			continue;
 		}
 		$gnf_header = $source_gnf_headers[$idx];
 
-		// Build FTX0 chunk with original GNF header
-		$ftx0 = build_ftx0($gnf_header, $bc4_data);
+		// Update GNF header format if forcing a different format
+		if ($force_format !== null && $force_format != $source_formats[$idx]) {
+			printf(
+				"  Updating GNF header format: %s -> %s\n",
+				gnf_format_name($source_formats[$idx]),
+				gnf_format_name($force_format)
+			);
+			gnf_update_format($gnf_header, $force_format);
+		}
+
+		// Build FTX0 chunk with GNF header
+		$ftx0 = build_ftx0($gnf_header, $pixel_data);
 
 		$textures[] = array(
 			'ftx0' => $ftx0,
@@ -405,9 +514,9 @@ function aegis_repack($argv)
 			'h'    => $h,
 		);
 
-		printf("  BC4 compressed size: 0x%x (%d bytes)\n", strlen($bc4_data), strlen($bc4_data));
-		printf("  Using original GNF header: 0x%x (%d bytes)\n", strlen($gnf_header), strlen($gnf_header));
-		printf("  FTX0 chunk size:     0x%x (%d bytes)\n\n", strlen($ftx0), strlen($ftx0));
+		printf("  Compressed size: 0x%x (%d bytes)\n", strlen($pixel_data), strlen($pixel_data));
+		printf("  GNF header:      0x%x (%d bytes)\n", strlen($gnf_header), strlen($gnf_header));
+		printf("  FTX0 chunk:      0x%x (%d bytes)\n\n", strlen($ftx0), strlen($ftx0));
 	}
 
 	if (empty($textures)) {
@@ -448,20 +557,32 @@ aegis_repack($argv);
 
 /*
 Usage:
-  php ps4_13sent_FTEX_repack.php <source.ftx> <output.ftx> <input1.gnf> [input2.gnf ...]
+  php ps4_13sent_FTEX_repack.php [--force-format FORMAT] <source.ftx> <output.ftx> <input1.gnf> [input2.gnf ...]
 
 Description:
   Repacks .gnf texture files into a FTEX (.ftx) asset file.
   Uses an existing FTEX file as a template for the header structure.
   The number of input .gnf files must match the texture count in source.ftx.
 
+  The format for each texture is auto-detected from the source .ftx GNF headers.
+  Use --force-format to override and force all textures to a specific format.
+
 Parameters:
-  <source.ftx>   - Original FTEX file (used as header template)
-  <output.ftx>   - Output FTEX file with repacked textures
-  <inputN.gnf>   - Input texture files (extracted .gnf or .rgba/.clut format)
+  <source.ftx>         - Original FTEX file (used as header template)
+  <output.ftx>         - Output FTEX file with repacked textures
+  <inputN.gnf>         - Input texture files (extracted .gnf or .rgba/.clut format)
+  --force-format FMT   - Force output format for all textures (BC4 or ARGB)
 
 Supported formats:
-  0x26 = BC4 (grayscale/alpha)
+  0x26 = BC4  (grayscale/alpha, 8 bytes per 4x4 block)
+  0x0a = ARGB (raw uncompressed 32bpp, 4 bytes per pixel)
+
+Notes:
+  - Input .gnf files with RGBA magic header have pixels in RGBA order.
+    For ARGB output, channel order is automatically converted to ARGB.
+  - When --force-format changes the format, the GNF header's surface format
+    field is updated. Other header fields (tile mode, etc.) are preserved
+    from the source and may need manual adjustment for non-BC formats.
 
 Example:
   # Extract textures from original
@@ -473,6 +594,9 @@ Example:
   # Edit CongenialFont.0.gnf.png...
   php img_png2clut.php CongenialFont.0.gnf.png CongenialFont.0.gnf
 
-  # Repack using original as template
+  # Repack using detected format from source
   php ps4_13sent_FTEX_repack.php CongenialFont.ftx CongenialFont_modified.ftx CongenialFont.0.gnf
+
+  # Repack as raw ARGB (uncompressed)
+  php ps4_13sent_FTEX_repack.php --force-format ARGB source.ftx output.ftx input.0.gnf
  */
