@@ -231,6 +231,7 @@ function dir2epub( $dir )
 
 	if ( empty($meta['html']) )
 		return;
+	usort($meta['html'], 'version_compare');
 	epub_file($list, $meta, $base);
 
 	$zip->save($base.'.epub', $list, $dir);
