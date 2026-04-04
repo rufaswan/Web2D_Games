@@ -91,7 +91,7 @@ class json_pretty
 		// = 19.000000
 		// = 19
 		$b1 = (int)($val * 1000000);
-		$b2 =  (int)$val * 1000000;
+		$b2 = (int) $val * 1000000 ;
 		if ( $b1 === $b2 ) // is .000000 , whole number = int
 			return sprintf('%d', $val);
 		else // has decimals = float
