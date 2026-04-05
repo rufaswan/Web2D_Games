@@ -783,8 +783,6 @@ If you aren't sure where the dimensions are stored, you can use a [Hex Editor](h
 
 Do you know the exact byte offsets where your specific file format stores its width and height?
 
-# ---
-
 # Since I cannot run GIMP Scheme code, I will use Python to explain the binary offset logic # and provide the exact Scheme snippet.
 
 ```

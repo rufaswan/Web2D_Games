@@ -373,6 +373,8 @@ When the enemy becomes a "bone" of the attacker, their Physics Capsule often nee
 
 Does your current project use a 3D skeletal system (like FBX/glTF) or is it 2D sprite-based with manual offsets?
 
+# ---
+
 In a 2D sprite-based game, you don't have a physical 3D skeleton to "parent" to, so you have to recreate that relationship mathematically. This is usually done using Offset Data (often called "Bind Points" or "Hotspots").
 
 ## 1. The "Bind Point" System
@@ -625,6 +627,8 @@ If your Lerp speed is too low, the victim will look like they are attached by a 
 * Solution: Once the "Snap-In" phase is over (usually after 0.1 seconds), switch to Direct Parenting (Hard Link) to ensure they stay perfectly synced during fast animations.
 
 Do you want a code snippet showing how to automatically switch from Lerp-Snapping to Hard-Linking?
+
+# ---
 
 In game development and computer graphics, interpolation methods are used to determine values between known data points. These methods range from simple linear transitions to complex curves that ensure smoothness across multiple segments. [1, 2]
 
@@ -1300,9 +1304,7 @@ In this setup, your Coefficients ($a, b, c, d$) are no longer just numbers; they
 
 To calculate a position ($Pos$) at time ($t$), the standard formula used by game engines is:
 
-```
 $$Pos(t) = [t^3, t^2, t, 1] \times \mathbf{M} \times \begin{bmatrix} P_0 \\ P_1 \\ P_2 \\ P_3 \end{bmatrix}$$
-```
 
 * $[t^3, t^2, t, 1]$: Your time vector.
 * $\mathbf{M}$: The 4x4 Basis Matrix (This is the "Method Identifier").

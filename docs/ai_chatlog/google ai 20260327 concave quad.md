@@ -4,9 +4,7 @@ To perform a quad-to-quad bilinear transformation, you map points from a source 
 
 A bilinear mapping between a unit square with coordinates $(\xi, \eta) \in [0, 1]^2$ and a general quadrilateral in physical space $(x, y)$ is defined by the following equations: [1, 2, 4]
 
-```
 $$x(\xi, \eta) = a_0 + a_1\xi + a_2\eta + a_3\xi\eta$$ $$y(\xi, \eta) = b_0 + b_1\xi + b_2\eta + b_3\xi\eta$$
-```
 
 Where the coefficients are derived from the four vertex coordinates $(x_1, y_1)$ through $(x_4, y_4)$ of the quadrilateral: [2]
 
@@ -30,9 +28,7 @@ Step 2: Map Reference Square to Destination (Forward Mapping)
 
 Once you have $(\xi, \eta)$, map these coordinates to the destination quadrilateral $(x_d, y_d)$ using the forward bilinear equations with the destination's specific coefficients $(a'_i, b'_i)$: [2]
 
-```
 $$x_d = a'_0 + a'_1\xi + a'_2\eta + a'_3\xi\eta$$ $$y_d = b'_0 + b'_1\xi + b'_2\eta + b'_3\xi\eta$$
-```
 
 3. Key Implementation Details
 
@@ -336,9 +332,7 @@ A Perspective Transform (also known as a Homography) is a transformation that ma
 
 To transform a point $(x, y)$, you first convert it to homogeneous coordinates by adding a 1, $(x, y, 1)$, and then multiply it by the 3×3 Homography Matrix $H$: [8, 9]
 
-```
 $$\begin{bmatrix} x' \\ y' \\ w' \end{bmatrix} = \begin{bmatrix} h_{11} & h_{12} & h_{13} \\ h_{21} & h_{22} & h_{23} \\ h_{31} & h_{32} & h_{33} \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
-```
 
 The final screen coordinates are found via the Perspective Divide: [7, 10]
 
@@ -821,8 +815,6 @@ glDisable(GL_CULL_FACE);
 ```
 
 Do you want to see how to calculate the exact crossing point of the bowtie to center your grid more accurately?
-
-# ---
 
 ```
 import numpy as np

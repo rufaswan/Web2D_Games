@@ -156,8 +156,8 @@ To fix this, you must ensure the link points to the internal file path within th
 
 Instead of a full URL, use a simple relative path. If your image is in the same folder as your Markdown file, do not include any slashes at the start.
 
-* Wrong: [![](map.jpg)](/map.jpg) or [![](map.jpg)](http://map.jpg)
-* Right: [![](map.jpg)](map.jpg)
+* Wrong: `[![](map.jpg)](/map.jpg)` or `[![](map.jpg)](http://map.jpg)`
+* Right: `[![](map.jpg)](map.jpg)`
 
 ## 2. Pandoc-Specific Fix (Implicit Header References)
 
@@ -181,8 +181,8 @@ Since you are creating a detailed fantasy map, the most professional way to hand
 
    1. Open your EPUB in the editor.
    2. Locate the HTML file containing your map.
-   3. Ensure the link tag (<a>) uses a relative path to the image in the Images (or OEBPS/Images) folder:
-   * Correct HTML: <a href="../Images/world-map.jpg"><img src="../Images/world-map.jpg" alt="Map" /></a>
+   3. Ensure the link tag (`<a>`) uses a relative path to the image in the Images (or OEBPS/Images) folder:
+   * Correct HTML: `<a href="../Images/world-map.jpg"><img src="../Images/world-map.jpg" alt="Map" /></a>`
    4. Crucial Step: In the EPUB's content.opf file, make sure the image is listed in the Manifest. If the image isn't in the manifest, the e-reader won't know it's a "local" file and will try to open it as a website.
 
 ## 4. Alternative: The "Cover Image" Technique
@@ -274,10 +274,10 @@ To make this work universally:
 
 ## 2. Fixing the "Broken Link" Error
 
-The error http://ebps/world-map.jpg happens because the reader thinks a link <a> is an external website. To fix this for all readers: [9]
+The error http://ebps/world-map.jpg happens because the reader thinks a link `<a>` is an external website. To fix this for all readers: [9]
 
-* Avoid the Link: Use the method in Step 1. Most readers have a built-in zoom tool that doesn't require an <a> tag.
-* Check Folder Structure: If you must use a link, ensure your image is in an Images folder and the path is relative: <a href="../Images/world-map.jpg">. If the reader sees http://, it will always fail.
+* Avoid the Link: Use the method in Step 1. Most readers have a built-in zoom tool that doesn't require an `<a>` tag.
+* Check Folder Structure: If you must use a link, ensure your image is in an Images folder and the path is relative: `<a href="../Images/world-map.jpg">`. If the reader sees http://, it will always fail.
 
 ## 3. The "Full-Page" CSS Rule
 
