@@ -1,8 +1,12 @@
 In GIMP's Script-Fu (Scheme/SCM) environment, gimp-register-magic-load-handler is a Procedural Database (PDB) function used to register a plug-in as a file loader that can identify files based on their "magic" content (specific byte sequences) rather than just their file extension. [1, 2, 3]
+
 Function Signature
+
 In Scheme, the procedure is typically called as follows:
 
+```
 (gimp-register-magic-load-handler procedure-name extensions prefixes magics)
+```
 
 Parameters
 
@@ -13,8 +17,11 @@ Parameters
 * Example format: 0,string,GIF8 (Checks if the file starts with the string "GIF8" at offset 0).
 
 Usage Context
+
 This procedure is essential for creating robust file-loading plug-ins because it allows GIMP to automatically detect the correct loader even if a file has a missing or incorrect extension. [1, 8]
+
 Note for GIMP 3.0: In the upcoming [GIMP 3.0 API](https://developer.gimp.org/api/3.0/libgimp/class.LoadProcedure.html), this functionality is moving toward the Gimp.LoadProcedure class, where handlers are managed through specific object methods rather than direct PDB registration calls. [9]
+
 Would you like a code example of how to define a full file-loading script using this registration?
 
 [1] [https://github.com](https://github.com/nathan-osman/gimp-webp/issues/2)
@@ -27,10 +34,15 @@ Would you like a code example of how to define a full file-loading script using 
 [8] [https://developer.gimp.org](https://developer.gimp.org/api/3.0/libgimp/func.file_load.html#:~:text=Description%20%5Bsrc%5D%20Loads%20an%20image%20file%20by,the%20file%27s%20extension%20and/or%20prefix%20if%20not.)
 [9] [https://developer.gimp.org](https://developer.gimp.org/api/3.0/libgimp/class.LoadProcedure.html)
 
+# ---
+
 In GIMP 2.10, the gimp-register-magic-load-handler function is used to inform GIMP that a specific plug-in can load files based on their internal "magic" header bytes. This allows GIMP to correctly identify and open a file even if its extension is missing or incorrect. [1, 2]
+
 Example: Registering a Loader for a "MYFILE" Format
+
 Suppose you have a custom file format where the first 4 bytes are always the string MYF!.
 
+```
 ;; 1. Define the actual loading function
 (define (script-fu-my-format-loader run-mode filename raw-filename)
   (let* ((image (car (gimp-file-load-raw run-mode filename raw-filename))))
@@ -58,6 +70,7 @@ Suppose you have a custom file format where the first 4 bytes are always the str
     ""                           ; Prefixes (rarely used)
     "0,string,MYF!"              ; Magic: at offset 0, expect string "MYF!"
 )
+```
 
 Key Parameter Details
 
@@ -69,7 +82,9 @@ Key Parameter Details
 * prefixes: Used for URI-style loaders (e.g., http://). Usually left as an empty string "" for standard file loaders. [2]
 
 Where to put this?
+
 Place this code in a .scm file within your GIMP scripts folder (e.g., %AppData%\GIMP\2.10\scripts on Windows or ~/.config/GIMP/2.10/scripts on Linux). After saving, go to Filters > Script-Fu > Refresh Scripts to register the new handler. [4, 5, 6]
+
 Would you like to see how to define the logic inside the loader for a specific byte-based format?
 
 [1] [https://developer.gimp.org](https://developer.gimp.org/api/3.0/libgimp/func.file_load.html#:~:text=Description%20%5Bsrc%5D%20Loads%20an%20image%20file%20by,the%20file%27s%20extension%20and/or%20prefix%20if%20not.)
@@ -79,7 +94,10 @@ Would you like to see how to define the logic inside the loader for a specific b
 [5] [https://www.youtube.com](https://www.youtube.com/watch?v=OaLZ90ax2PM&t=15)
 [6] [https://digital-photography-school.com](https://digital-photography-school.com/how-to-find-and-use-scripts-in-gimp/#:~:text=If%20you%20had%20gimp%20open%20when%20you,the%20next%20time%20you%20start%20up%20Gimp.)
 
+# ---
+
 The error "Procedure execution of gimp-register-magic-load-handler failed" typically occurs because GIMP cannot find the procedure you are trying to register or the "magic" pattern string is formatted incorrectly. [1, 2, 3]
+
 Common Causes & Fixes
 
    1. Procedure Name Mismatch
@@ -95,12 +113,14 @@ Common Causes & Fixes
    4. Incorrect Argument Count
    Ensure you are passing exactly 4 arguments to the function:
 
+```
    (gimp-register-magic-load-handler
        "procedure-name" ; 1. PDB Name
        "ext"            ; 2. Extensions (comma-separated)
        ""               ; 3. Prefixes (usually empty for local files)
        "0,string,VAL"   ; 4. Magic Pattern
    )
+```
 
    [9]
 
@@ -126,8 +146,12 @@ Can you share the specific registration code you are using so I can check for sy
 [13] [https://www.gimp-forum.net](https://www.gimp-forum.net/Thread-Troubleshooting-Python-plugin-to-load-an-XCF-file)
 [14] [https://www.gimp-forum.net](https://www.gimp-forum.net/Thread-Procedure-Entry-Point-Error)
 
+# ---
+
 In GIMP 2.10 Script-Fu, you do not include run-mode in the script-fu-register parameter list. [1, 2]
+
 While C and Python plug-ins require an explicit run-mode (like RUN-INTERACTIVE), Script-Fu handles this automatically behind the scenes. If you add it to your registration, GIMP will expect an extra argument that it doesn't know how to provide, which is likely causing your "Procedure execution failed" error. [2, 3]
+
 How to Fix Your Script
 
    1. Remove from script-fu-register: Delete any SF-INT32 "run-mode" "0" or similar lines from your registration block.
@@ -136,6 +160,7 @@ How to Fix Your Script
 
 Corrected Example Structure
 
+```
 ;; 1. Define WITHOUT run-mode
 (define (script-fu-my-loader filename raw-filename)
   (let* ((image (car (gimp-file-load RUN-NONINTERACTIVE filename raw-filename))))
@@ -150,6 +175,7 @@ Corrected Example Structure
 
 ;; 3. Magic Handler (Reference the PDB name exactly)
 (gimp-register-magic-load-handler "script-fu-my-loader" "myf" "" "0,string,MYF!")
+```
 
 Did you previously have SF-VALUE or SF-INT32 at the start of your registration list?
 
@@ -160,9 +186,14 @@ Did you previously have SF-VALUE or SF-INT32 at the start of your registration l
 [5] [https://stackoverflow.com](https://stackoverflow.com/questions/73001801/invoke-gimp-script-fu-from-command-line)
 [6] [https://discuss.pixls.us](https://discuss.pixls.us/t/script-fu-example-batch-script-explained-for-beginners/7341)
 
+# ---
+
 This specific error occurs because gimp-register-magic-load-handler is a secondary registration. It can only "attach" itself to a procedure that GIMP already recognizes specifically as a file loader.
+
 Even if your script appears in the Procedure Browser, GIMP won't let you register it as a magic handler unless you first tell GIMP it is a standard load handler using gimp-register-load-handler.
+
 The Required Order
+
 You must call these three functions in this specific sequence at the bottom of your .scm file:
 
    1. script-fu-register: Adds the function to the PDB.
@@ -171,6 +202,7 @@ You must call these three functions in this specific sequence at the bottom of y
 
 Corrected Example
 
+```
 ;; 1. Standard Script-Fu Registration
 (script-fu-register "script-fu-my-loader"
                     "My Custom Loader" "Description" "Author" "Copyright" "Date" ""
@@ -184,6 +216,7 @@ Corrected Example
 ;; 3. Now you can register the Magic Handler
 ;; (procedure-name, extensions, prefixes, magics)
 (gimp-register-magic-load-handler "script-fu-my-loader" "myf" "" "0,string,MYF!")
+```
 
 Why it was failing
 
@@ -194,8 +227,12 @@ Try adding the gimp-register-load-handler line immediately before your magic reg
 
 [1] [https://docs.gimp.org](https://docs.gimp.org/3.0/fi/gimp-using-script-fu-tutorial-first-script.html)
 
+# ---
+
 In GIMP, the Procedural Database (PDB) registered name is the unique identifier used by GIMP to call your script from other scripts or internal menus. [1]
+
 1. Check via the Procedure Browser (Recommended) [2]
+
 This is the most reliable way to see exactly how GIMP has indexed your script. [3, 4]
 
 * Go to Help > Procedure Browser.
@@ -203,29 +240,35 @@ This is the most reliable way to see exactly how GIMP has indexed your script. [
 * The Name: The bold text at the top of the procedure's entry (e.g., script-fu-my-custom-loader) is the official PDB name you must use in gimp-register-load-handler. [2, 3, 4, 5]
 
 2. Identify it in your Code
+
 The PDB name is defined in the very first argument of your script-fu-register block. [3, 6]
 
+```
 (script-fu-register
   "script-fu-my-loader"  ; <--- THIS is the PDB registered name
   "Menu Label"           ; This is just the UI name
   ...
 )
-
+```
 
 * Convention: By GIMP convention, these names usually start with script-fu- to distinguish them from C-based plug-ins.
 * Case Sensitivity: PDB names are case-sensitive and typically use hyphens (e.g., my-script-name). [5, 7]
 
 3. Check via the Script-Fu Console
+
 You can query the database directly using code to list all registered names. [8]
 
 * Go to Filters > Script-Fu > Script-Fu Console.
 * Paste the following to see if your specific name exists:
 
+```
 (gimp-procedural-db-proc-exists "script-fu-your-procedure-name")
+```
 
 It will return #t (true) if registered or #f (false) if not. [9, 10]
 
 Pro-tip: If your script appears in the Procedure Browser but gimp-procedural-db-proc-exists returns #f, there is likely a hidden typo or a naming mismatch between your define function and your script-fu-register call.
+
 Do you see your procedure name listed in the Procedure Browser exactly as you typed it in your registration call?
 
 [1] [https://gimpchat.com](https://gimpchat.com/viewtopic.php?f=9&t=12958)
@@ -239,7 +282,10 @@ Do you see your procedure name listed in the Procedure Browser exactly as you ty
 [9] [https://developer.gimp.org](https://developer.gimp.org/resource/script-fu/using-v3-binding/)
 [10] [https://docs.gimp.org](https://docs.gimp.org/2.10/en/gimp-filters-script-fu.html)
 
+# ---
+
 No, GIMP does not automatically add a prefix or suffix to the name you provide in script-fu-register. The name GIMP uses in the Procedural Database (PDB) is exactly the string you specify as the first argument. [1, 2, 3, 4]
+
 However, there is a strong naming convention you should follow to ensure your script works correctly and is easy to find:
 
 * Prefix script-fu-: It is standard practice to manually start your name with script-fu- (e.g., "script-fu-my-loader"). [1, 3, 4, 5, 6, 7]
@@ -248,6 +294,7 @@ However, there is a strong naming convention you should follow to ensure your sc
 * Matching the define: The PDB name you register must match the name of the function you defined at the top of your script. If they differ, GIMP will register the name but fail to execute the code. [6, 8, 9, 10, 11]
 
 Why your registration might still fail:
+
 If you are seeing "nonexistent load handler" but the name looks correct:
 
    1. Check for underscores vs hyphens: Scheme prefers hyphens (-). If your define uses underscores but your register uses hyphens (or vice versa), they won't link. [12]
@@ -272,19 +319,26 @@ Would you like me to double-check the syntax of your script-fu-register block?
 [15] [https://stackoverflow.com](https://stackoverflow.com/questions/62246279/gimp-python-fu-plugin-will-not-register-if-some-pdb-methods-are-called)
 [16] [https://www.youtube.com](https://www.youtube.com/watch?v=ZoMMZeT8frM&t=92)
 
+# ---
+
 In GIMP's Script-Fu (Scheme), you use the string-append function to join strings together.
+
 Basic Syntax
 
+```
 (string-append "string1" "string2" "string3")
+```
 
 Example: Building a Filename
 If you want to add a prefix or suffix to a variable:
 
+```
 (let* ((filename "image")
        (extension ".png")
        (full-path (string-append "C:/temp/" filename extension)))
   (gimp-message full-path))
 ;; Result: "C:/temp/image.png"
+```
 
 Key Points
 
@@ -292,7 +346,9 @@ Key Points
 * No Automatic Spaces: It joins them exactly as they are. If you need a space, you must include it: (string-append "Hello" " " "World").
 * Type Strictness: You cannot append numbers directly. You must convert them to strings first using number->string:
 
+```
 (string-append "Version: " (number->string 2.10))
+```
 
 [1, 2, 3, 4]
 
@@ -303,17 +359,24 @@ Are you trying to dynamically build the magic string or the procedure name for y
 [3] [https://liveflow.com](https://liveflow.com/product-guides/concatenate-function-in-excel-explained#:~:text=Note%202:%20Space%20is%20not%20automatically%20added,one%20of%20the%20arguments%20in%20the%20formula.)
 [4] [https://homework.study.com](https://homework.study.com/explanation/to-concatenate-between-strings-use-the-operator-a-equals-b-none-of-the-answers-c-minus-d-plus.html#:~:text=For%20example%2C%20the%20string%20%22Hello%2C%22%20concatenated%20with,spacing%20is%20included%20in%20the%20string%20declarations.)
 
+# ---
+
 In GIMP 2.10, the "attempt to register nonexistent load handler" error occurs because Script-Fu procedures cannot be registered as file loaders.
+
 While you can see your script in the Procedure Browser, GIMP's internal architecture only allows compiled C plug-ins or Python-Fu scripts to register as official load handlers. Script-Fu is designed for image manipulation and automation, but it lacks the necessary lower-level "capabilities" flag required by the gimp-register-load-handler PDB function. [1]
+
 Why it is failing
 
    1. Capability Mismatch: For a procedure to be a "Load Handler," it must be registered with specific flags (like GIMP_PDB_PROC_TYPE_PLUGIN) that Script-Fu does not support.
    2. Internal Registry: When you call gimp-register-load-handler, GIMP looks for your script in its internal "Plug-in" list. Because Script-Fu scripts are handled by the script-fu interpreter rather than being independent plug-ins, GIMP treats them as "nonexistent" for file-system integration purposes. [2]
 
 The Solution: Use Python-Fu [3]
+
 To create a custom file loader with magic byte detection in GIMP 2.10, you must use Python-Fu. Python-Fu has the required permissions to register as a full-fledged plug-in.
+
 Example Python-Fu Loader Registration:
 
+```
 #!/usr/bin/env pythonfrom gimpfu import *
 def my_loader_function(filename, raw_filename):
     # Your loading logic here
@@ -337,6 +400,7 @@ register(
 )
 
 main()
+```
 
 Key Differences
 
@@ -349,7 +413,10 @@ Would you like a complete Python-Fu template that includes the logic to read the
 [2] [https://developer.gimp.org](https://developer.gimp.org/resource/script-fu/programmers-reference/)
 [3] [https://docs.gimp.org](https://docs.gimp.org/3.0/en/gimp-filters-python-fu.html#:~:text=Activating%20the%20Submenu.%20You%20can%20access%20this,menu%20through%20Filters%20%E2%86%92%20Development%20%E2%86%92%20Python%2DFu.)
 
+# ---
+
 You can quickly check for Python support by looking for the Python-Fu Console in your GIMP menus. [1]
+
 How to Check
 
 * Menu Location: Go to Filters > Python-Fu > Console. [1, 2, 3]
@@ -367,10 +434,13 @@ Why it might be missing
    * Snap: The Ubuntu Snap version of GIMP 2.10 frequently does not include Python support.
 
 Verification Test
+
 If you find the console, open it and type:
 
+```
 import gimpfu
 print("Python is working!")
+```
 
 If this prints the message without an error, you are ready to use the Python-Fu example I mentioned earlier.
 If the menu is missing, are you on Linux, and did you install it via a Package Manager or Snap?
@@ -389,9 +459,14 @@ If the menu is missing, are you on Linux, and did you install it via a Package M
 [12] [https://gimpchat.com](https://gimpchat.com/viewtopic.php?f=8&t=20169)
 [13] [https://ubuntu-mate.community](https://ubuntu-mate.community/t/gimp-3-0-and-python-plug-ins/30610)
 
+# ---
+
 If the Python-Fu menu is missing, it’s likely because your Linux distribution (like Ubuntu 20.04+ or Debian 11+) has phased out Python 2.7, which GIMP 2.10 requires for its Python scripts. [1, 2]
+
 Because Script-Fu cannot register as a file load handler, you'll need to use one of the following methods to get a GIMP version that still includes Python 2 support. [1]
+
 Option 1: Use the Flatpak Version (Highly Recommended) [3]
+
 The GIMP Flatpak is the most reliable solution on modern Linux. It bundles its own Python 2 runtime, which immediately enables the Python-Fu menu. [4, 5]
 
    1. Install Flatpak: sudo apt install flatpak (on Ubuntu/Debian).
@@ -399,16 +474,24 @@ The GIMP Flatpak is the most reliable solution on modern Linux. It bundles its o
    3. Run GIMP: Launch it from your menu or use flatpak run org.gimp.GIMP. [4, 6, 7, 8, 9]
 
 Option 2: Use a GIMP AppImage [7, 10]
+
 If you prefer not to use Flatpak, an AppImage is a standalone file that includes all necessary dependencies, including the older Python 2 libraries. [7, 11, 12]
 
 * You can download a community-maintained GIMP AppImage with Python support from GitHub.
 * Download the file, right-click it, select Properties > Permissions, and check Allow executing file as program. [3, 11]
 
 Option 3: Check for Missing Packages (Older Linux only) [12]
+
 If you are on an older version of Linux (like Ubuntu 18.04 or Mint 19), you might just be missing a specific package. Try:
+
+```
 sudo apt install gimp-python [1, 4]
+```
+
 Why the Snap Version Fails
+
 If you installed GIMP via Snap, Python-Fu is often missing because Snap's sandboxing makes it difficult to bundle the deprecated Python 2 components. It is generally better to switch to the Flatpak or AppImage if you need scripting capabilities. [13]
+
 Once you have the Python-Fu menu, would you like the Python code to replace your Script-Fu loader? [14]
 
 [1] [https://www.reddit.com](https://www.reddit.com/r/GIMP/comments/ca3vy2/pythonfu_is_missing_scriptfu_is_there_gimp_21012/)
@@ -426,7 +509,10 @@ Once you have the Python-Fu menu, would you like the Python code to replace your
 [13] [https://ubuntu-mate.community](https://ubuntu-mate.community/t/gimp-3-0-and-python-plug-ins/30610)
 [14] [https://forum.manjaro.org](https://forum.manjaro.org/t/i-dont-have-python-fu-in-gimp/50372)
 
+# ---
+
 Since GIMP no longer provides official AppImages for version 2.10, you must use community-maintained builds that explicitly include the Python 2.7 libraries required for your loader script. [1, 2, 3]
+
 Recommended Download Sources
 
 * Ivan-HC's "Hybrid" GIMP AppImage: This is a highly recommended build of GIMP 2.10.38 that is specifically designed to keep support for "old Python2 and many third-party plugins". [4, 5]
@@ -442,8 +528,13 @@ How to Run it
    4. Verify Python: Once open, check Filters > Python-Fu > Console. If it appears, your loader script will now work. [14, 15, 16, 17, 18]
 
 Important Note on Dependencies
+
 If the AppImage fails to start on a modern system (like Ubuntu 22.04+), you may need to install a legacy library for FUSE:
+
+```
 sudo apt install libfuse2. [1, 7]
+```
+
 Once you have this version running, would you like to see the Python-Fu version of your loader registration?
 
 [1] [https://www.gimp-forum.net](https://www.gimp-forum.net/Thread-Ubuntu-22-04-adding-gimp-python-support)
@@ -465,7 +556,10 @@ Once you have this version running, would you like to see the Python-Fu version 
 [17] [https://www.gimp-forum.net](https://www.gimp-forum.net/Thread-gimp-2-10-18-plugins)
 [18] [https://daviesmediadesign.com](https://daviesmediadesign.com/how-to-install-scripts-in-gimp-3-easy-steps/#:~:text=Once%20your%20script%20is%20in%20the%20scripts,to%20see%20if%20your%20script%20was%20installed.)
 
+# ---
+
 GIMP 2.10.38 is likely the final release of the 2.10 series, but it is not technically under a "Long Term Support" (LTS) program in the way some other software is. [1]
+
 Final Version Status
 
 * Likely the Last: The GIMP team stated in the 2.10.38 release notes that it "might be our last" version in the 2.10 branch. [2, 3]
@@ -479,6 +573,7 @@ Support Status
 * Maintenance: While the core team is focused on the 3.x branch, 2.10.38 remains the stable choice for users on older hardware or those who need Python 2.7 and GTK+2 support, which were dropped in version 3.0. [7, 8]
 
 If you are using GIMP 2.10.38 for your custom loader, it is a very stable environment, but keep in mind that future security or compatibility updates are not guaranteed now that GIMP 3.x is the active stable branch. [6, 9, 10]
+
 Would you like to know the main differences in how loader scripts are written for the new GIMP 3.0?
 
 [1] [https://www.phoronix.com](https://www.phoronix.com/news/GIMP-2.10.38-Released)
@@ -492,7 +587,10 @@ Would you like to know the main differences in how loader scripts are written fo
 [9] [https://gimpchat.com](https://gimpchat.com/viewtopic.php?f=7&t=20867)
 [10] [https://www.youtube.com](https://www.youtube.com/watch?v=W4qN4XcRByQ&t=4)
 
+# ---
+
 Yes, GIMP 3.0.8 (released January 24, 2026) is the final planned version of the 3.0 series. The development team has officially shifted its focus to the GIMP 3.2 stable series, which was released on March 14, 2026. [1, 2, 3, 4, 5]
+
 Current Status of GIMP 3.0.8
 
 * Maintenance Phase: The developers stated that 3.0.8 would be the last release unless a critical "ugly bug" appeared that required an emergency patch. [2]
@@ -500,6 +598,7 @@ Current Status of GIMP 3.0.8
 * Legacy Support: It remains the recommended stable choice for users who cannot yet upgrade to the 3.2 series due to specific hardware or distribution policies. [2]
 
 Moving to GIMP 3.2
+
 If you are looking for the latest features and ongoing support, you should move to GIMP 3.2.0. This new stable branch includes: [3, 7]
 
 * Link Layers and Vector Layers: Two major roadmap items finally implemented. [8]
@@ -507,6 +606,7 @@ If you are looking for the latest features and ongoing support, you should move 
 * Modern Python 3 Support: Complete transition away from the old Python 2.7 system used in the 2.10 series. [7]
 
 You can download the latest stable version, GIMP 3.2.0, directly from the official [GIMP Downloads page](https://www.gimp.org/downloads/). [3, 11]
+
 Would you like to know if your existing Python or Script-Fu plugins from 2.10 or 3.0 will work with the new 3.2 release?
 
 [1] [https://www.gimp.org](https://www.gimp.org/news/2026/01/24/gimp-3-0-8-released/)
@@ -521,23 +621,30 @@ Would you like to know if your existing Python or Script-Fu plugins from 2.10 or
 [10] [https://discuss.pixls.us](https://discuss.pixls.us/t/gimp-3-0-finally-has-a-release-schedule/40597)
 [11] [https://www.gimp.org](https://www.gimp.org/downloads/)
 
+# ---
+
 In GIMP 2.10, you can read a binary file as an array using either Script-Fu (Scheme) or Python-Fu. Python-Fu is generally preferred as it provides more robust tools for handling binary data and arrays. [1]
+
 Method 1: Python-Fu (Recommended)
+
 Python-Fu uses standard Python 2.7 file handling, which is more powerful for binary manipulation. You can use open() in binary mode and read() to get the data as a string, then convert it to a list or array. [1, 2]
 
+```
 # Open the file in binary read modewith open("/path/to/your/file.bin", "rb") as f:
     # Read all bytes into a string
     binary_data = f.read()
     # Convert the string of bytes into a list of integers (0-255)byte_array = [ord(b) for b in binary_data]
 # For larger files, you can use NumPy if it's installed in your GIMP environmentimport numpy as npwith open("/path/to/your/file.bin", "rb") as f:
     numpy_array = np.fromfile(f, dtype=np.uint8)
-
+```
 
 * Key Advantage: Using [numpy.fromfile](https://stackoverflow.com/questions/41498630/how-to-read-binary-file-data-into-arrays) or [numpy.frombuffer](https://stackoverflow.com/questions/38064360/how-to-read-a-compressed-binary-file-as-an-array-of-floats) is the fastest way to handle large binary datasets. [2, 3]
 
 Method 2: Script-Fu (Scheme)
+
 Script-Fu is more limited but can read files byte-by-byte using the standard file I/O procedures.
 
+```
 (let* ((port (open-input-file "/path/to/your/file.bin"))
        (byte-list '()))
   (let loop ((byte (read-byte port)))
@@ -549,7 +656,7 @@ Script-Fu is more limited but can read files byte-by-byte using the standard fil
   (set! byte-list (reverse byte-list)) ; List of byte values
   ;; Use (list->vector byte-list) if you need a fixed-size array/vector
 )
-
+```
 
 * Note: Script-Fu uses read-byte to pull a single unsigned 8-bit integer from the input port. [4]
 
@@ -572,11 +679,17 @@ Would you like a specific example of how to convert this array into a GIMP layer
 [6] [https://gimpchat.com](https://gimpchat.com/viewtopic.php?f=8&t=18478)
 [7] [https://stackoverflow.com](https://stackoverflow.com/questions/58343148/gimp-python-plugin-to-load-2-images-as-layers)
 
+# ---
+
 In GIMP 2.10 Script-Fu, the procedure to load a raw binary file is actually named file-raw-load (or gimp-file-load-raw in some contexts). This procedure is used to import raw pixel data when you know the dimensions and data format.
+
 Function Signature
+
 The PDB signature for this procedure is:
 
+```
 (file-raw-load run-mode filename raw-filename width height type offset samples-offset palette-type palette-offset)
+```
 
 Parameter Breakdown
 
@@ -592,6 +705,7 @@ Parameter Breakdown
 Code Example
 This script loads a 512x512 raw RGB file with no header:
 
+```
 (define (my-script-load-raw-binary filename)
   (let* ((image (car (file-raw-load RUN-NONINTERACTIVE
                                    filename   ; File path
@@ -605,6 +719,7 @@ This script loads a 512x512 raw RGB file with no header:
                                    0))))      ; Palette offset
     (gimp-display-new image)
     image))
+```
 
 Important Tips
 
@@ -618,10 +733,15 @@ Would you like help calculating the offset or width/height for a specific binary
 [3] [https://docs.gimp.org](https://docs.gimp.org/2.2/en/gimp-using-script-fu-tutorial-script.html)
 [4] [https://docs.gimp.org](https://docs.gimp.org/2.10/fi/gimp-using-script-fu-tutorial-first-script.html)
 
+# ---
+
 In GIMP 2.10 Script-Fu, file-raw-load does not automatically "find" width and height; it expects you to provide them as parameters. To extract these values from a binary file dynamically, you must manually read the specific bytes where they are stored before calling the load procedure.
+
 Step 1: Read Bytes for Width and Height [1]
+
 Assuming your file stores Width and Height as 4-byte integers (Little Endian) at the very beginning (offsets 0 and 4), you can use this helper function:
 
+```
 (define (get-int32-le port)
   (let* ((b0 (read-byte port))
          (b1 (read-byte port))
@@ -629,10 +749,13 @@ Assuming your file stores Width and Height as 4-byte integers (Little Endian) at
          (b3 (read-byte port)))
     ;; Combine 4 bytes into one integer (Little Endian)
     (+ b0 (* b1 256) (* b2 65536) (* b3 16777216))))
+```
 
 Step 2: Extract and Pass to file-raw-load
+
 Open the file, extract the values, and then pass them directly into the loading function: [2]
 
+```
 (define (load-my-binary-file filename)
   (let* ((port (open-input-file filename))
          (width  (get-int32-le port))  ; Read first 4 bytes
@@ -648,19 +771,32 @@ Open the file, extract the values, and then pass them directly into the loading 
                                      header-size  ; Offset (skip the 8 bytes we read)
                                      0 0 0))))
       (gimp-display-new image))))
+```
 
 Why "header-size" is important
+
 If you read the width and height from the file, those bytes are part of the file's header. You must set the offset parameter in file-raw-load to the total number of bytes in that header (in this case, 8) so that GIMP starts reading actual pixel data after the metadata.
+
 How to verify your offsets
+
 If you aren't sure where the dimensions are stored, you can use a [Hex Editor](https://superuser.com/questions/294270/how-to-view-raw-binary-data-as-an-image-with-given-width-and-height) to find the exact byte positions. Common formats like PNG or BMP store these at specific fixed offsets (e.g., PNG stores them immediately after the "IHDR" marker). [1, 3, 4, 5]
+
 Do you know the exact byte offsets where your specific file format stores its width and height?
 
+# ---
+
 # Since I cannot run GIMP Scheme code, I will use Python to explain the binary offset logic # and provide the exact Scheme snippet.
+
+```
 def hex_to_int(hex_str):
     return int(hex_str, 16)
-# Assume we found a 4-byte width at offset 0 and 4-byte height at offset 4# This is how a Scheme script would normally handle it if it wasn't using file-raw-load's static params.
-print(f"Example: Offset 0x00 is Width, Offset 0x04 is Height")
+```
 
+# Assume we found a 4-byte width at offset 0 and 4-byte height at offset 4# This is how a Scheme script would normally handle it if it wasn't using file-raw-load's static params.
+
+```
+print(f"Example: Offset 0x00 is Width, Offset 0x04 is Height")
+```
 
 [1] [https://stackoverflow.com](https://stackoverflow.com/questions/75215698/how-can-i-extract-the-height-and-width-of-this-image-in-c)
 [2] [https://www.youtube.com](https://www.youtube.com/watch?v=R0Sk755osjg&t=69)
@@ -668,17 +804,24 @@ print(f"Example: Offset 0x00 is Width, Offset 0x04 is Height")
 [4] [https://www.reddit.com](https://www.reddit.com/r/learnpython/comments/ywslwk/how_do_i_get_certain_pieces_of_data_from_a_binary/)
 [5] [https://stackoverflow.com](https://stackoverflow.com/questions/13494096/calculate-the-height-and-width-of-image-from-the-source-file)
 
+# ---
+
 In GIMP 2.10, you cannot register a Script-Fu (.scm) function as a file load handler. The procedural database functions gimp-register-load-handler and gimp-register-magic-load-handler require the target procedure to be a compiled C plug-in or a Python-Fu script. [1, 2]
+
 Why Script-Fu Fails
 
 * Architectural Limitation: Script-Fu scripts are handled by a single internal interpreter (script-fu.exe or script-fu) rather than being registered as independent plug-ins in GIMP's process list. [3, 4]
 * Missing Capabilities: When GIMP tries to register a "Load Handler," it checks if the procedure has the necessary "plug-in" flags. Script-Fu procedures lack these flags, resulting in the "nonexistent load handler" error even if the name appears in the Procedure Browser. [2, 5]
 
 The Recommended Workaround
+
 To use these handlers, you must use a Python-Fu script. Since you've confirmed your GIMP version is missing the Python menu, you should use the AppImage version discussed previously to enable this functionality.
+
 Python-Fu Registration Example
+
 Once you have an AppImage with Python support, your registration code should look like this:
 
+```
 #!/usr/bin/env pythonfrom gimpfu import *
 def my_custom_loader(filename, raw_filename):
     # Your logic to read the file and call pdb.file_raw_load() goes here
@@ -707,6 +850,7 @@ register(
 )
 
 main()
+```
 
 Installation Steps
 
@@ -725,13 +869,21 @@ Would you like the Python code for reading the binary header to extract the widt
 [6] [https://developer.gimp.org](https://developer.gimp.org/resource/writing-a-plug-in/tutorial-script-fu/)
 [7] [https://developer.gimp.org](https://developer.gimp.org/resource/writing-a-plug-in/tutorial-script-fu/)
 
+# ---
+
 In GIMP 2.10, if you cannot use Python or C, it is impossible to register your script as a formal "Load Handler" (which would allow it to appear in the "Open" dialog or use magic bytes). Script-Fu (Scheme) is fundamentally restricted from these specific system-level registrations. [1, 2, 3]
+
 However, you can achieve the same result—loading a binary file by parsing its header—using a Script-Fu "Wrapper" approach.
+
 The "Wrapper" Solution
+
 Since you can't make GIMP call your script automatically, you create a script that manually asks for a file, parses the binary header for width/height, and then calls file-raw-load.
+
 1. Define the Binary Parser & Loader
+
 This script reads the first 8 bytes of any file you select to find the width and height.
 
+```
 (define (script-fu-binary-import-wrapper filename)
   (let* ((port (open-input-file filename))
          ;; Read 4 bytes for Width (Little Endian)
@@ -752,10 +904,13 @@ This script reads the first 8 bytes of any file you select to find the width and
                                      0 0 0))))
       (gimp-display-new image)
       (gimp-displays-flush))))
+```
 
 2. Register it in the "File" Menu
+
 Instead of trying to "hijack" the standard Open command, register this script under File > Import > My Binary Format.
 
+```
 (script-fu-register "script-fu-binary-import-wrapper"
                     "Import My Binary File..."
                     "Parses header for W/H and loads raw data"
@@ -764,6 +919,7 @@ Instead of trying to "hijack" the standard Open command, register this script un
                     SF-FILENAME "Select Binary File" "")
 
 (script-fu-menu-register "script-fu-binary-import-wrapper" "<Image>/File/Import")
+```
 
 Why this is your only Script-Fu option:
 
@@ -776,7 +932,10 @@ Does your binary format use a different byte order (Big Endian) or a larger head
 [2] [https://docs.gimp.org](https://docs.gimp.org/2.6/en/gimp-concepts-script-fu.html)
 [3] [https://developer.gimp.org](https://developer.gimp.org/resource/writing-a-plug-in/tutorial-script-fu/)
 
+# ---
+
 Yes, you can use hexadecimal numbers in Script-Fu (Scheme) by prefixing the number with #x.
+
 Usage Examples
 
 * Simple assignment: (define my-hex #xff) (Sets my-hex to 255)
@@ -784,13 +943,16 @@ Usage Examples
 * Comparison: (= some-byte #x42) (Checks if a byte is equal to hex 42)
 
 Common Use Case: Magic Byte Checking
+
 If you are checking for a specific file header (like 0x89 0x50 0x4E 0x47 for a PNG), you would write it like this:
 
+```
 (let* ((port (open-input-file filename))
        (first-byte (read-byte port)))
   (if (= first-byte #x89)
       (gimp-message "Matches PNG start byte!")
       (gimp-message "Not a match.")))
+```
 
 Quick Reference
 
@@ -799,37 +961,56 @@ Quick Reference
 * Octal: #o (e.g., #o12)
 
 Note that Script-Fu is case-insensitive for hex letters, so #xFFFF and #xffff are identical.
+
 Are you planning to use hex values to verify the magic bytes in your binary loader's header?
 
+# ---
+
 In Script-Fu (Scheme), you simply write the number 0. In a function, the last expression evaluated is the return value.
+
 Simple Return
 
+```
 (define (my-function)
   0) ; This function returns 0
+```
 
 In a Conditional (If/Else)
+
 If you are checking a value and want to return 0 as a default or error code:
 
+```
 (define (check-value x)
   (if (> x 10)
       1
       0)) ; Returns 1 if x > 10, otherwise returns 0
+```
 
 Returning 0 from a Script-Fu Registration
+
 If your script is registered in the PDB and needs to return a value (like an image ID or a status code), ensure 0 is the very last thing in your define block:
 
+```
 (define (script-fu-example-loader filename)
   (let* ((image (car (gimp-file-load-raw ...))))
     ;; ... processing ...
     0)) ; The script officially returns 0 to the PDB
+```
 
 Important Note on "False"
+
 In Scheme, 0 is truthy. If you are trying to return "nothing" or "false," you should use #f. If you specifically need the integer 0 (for a pixel value or a count), then 0 is correct.
+
 Are you using 0 as a success/failure code for your binary loader?
 
+# ---
+
 If your Procedure Browser only shows 3 parameters for a raw loading function, you are likely looking at file-raw-placeholder or a generic wrapper rather than the actual manual raw data loader.
+
 In GIMP 2.10, the procedure you need for manual binary data loading is file-raw-data-load (not just file-raw-load).
+
 Why you see 3 parameters
+
 The procedure you found likely only lists these standard "Generic Loader" arguments:
 
    1. run-mode: Interactive or Non-interactive.
@@ -837,7 +1018,9 @@ The procedure you found likely only lists these standard "Generic Loader" argume
    3. raw-filename: Usually the same as filename. [1]
 
 This is common for automated loaders (like those for JPEG or PNG) where GIMP doesn't need extra info to open the file.
+
 The Correct Procedure: file-raw-data-load
+
 If you are trying to load raw binary data where you must specify the width, height, and offset, search the Procedure Browser for file-raw-data-load. This procedure contains the full list of parameters required for manual raw data import:
 
 | Parameter [1, 2, 3] | Type | Description |
@@ -851,26 +1034,36 @@ If you are trying to load raw binary data where you must specify the width, heig
 | offset | INT32 | Number of header bytes to skip |
 
 How to use it in your SCM script
+
 Update your code to call this specific procedure name:
 
+```
 (file-raw-data-load RUN-NONINTERACTIVE
                    filename filename
                    width height
                    0        ; RGB
                    offset   ; Bytes to skip
                    0 0 0)   ; Extra raw-specific flags
+```
 
 Note on Search: If file-raw-data-load does not appear in your Browser, it means your GIMP installation is missing the Raw Data plug-in. This is a standard part of the official GIMP 2.10 installer, but some minimal Linux builds or "Lite" versions might omit it.
+
 Do you see file-raw-data-load (specifically with "data" in the name) when you search your Procedure Browser?
 
 [1] [https://gist.github.com](https://gist.github.com/lindenb/d00a515c5751de8b38251d9fce60744e#:~:text=Table_title:%20Parameter%28s%29%20Table_content:%20header:%20%7C%20Name%20%7C,name%20of%20the%20file%20to%20load%20%7C)
 [2] [https://developer.gimp.org](https://developer.gimp.org/resource/writing-a-plug-in/tutorial-script-fu/)
 [3] [https://stackoverflow.com](https://stackoverflow.com/questions/19104693/how-do-you-call-gimp-file-load)
 
+# ---
+
 If file-raw-data-load is missing from your Procedure Browser, it means the file-raw-data plug-in (responsible for manual raw binary imports) is not installed or enabled in your version of GIMP 2.10.
+
 The file-raw-load procedure you see with only 3 parameters is a "placeholder" or a generic entry for modern camera RAW formats (like .ARW or .CR2) that require external processors like Darktable or RawTherapee. It cannot be used to manually specify width, height, or pixel offsets. [1, 2, 3, 4]
+
 How to solve this in Script-Fu
+
 Without the file-raw-data-load procedure, you must manually create the image and "paint" the pixels yourself from your binary array.
+
 1. The Strategy
 
 * Create Image: Use gimp-image-new with your extracted width and height.
@@ -878,8 +1071,10 @@ Without the file-raw-data-load procedure, you must manually create the image and
 * Fill Pixels: Use gimp-drawable-edit-fill for bulk colors or gimp-pixel-regions for detailed data (though this is very slow in Script-Fu). [5]
 
 2. Manual Pixel Injection Example
+
 If your binary file is small, you can read it into a list and set pixels individually. Note: This is extremely slow for large images and should only be used for icons or small data files. [6]
 
+```
 (define (manual-binary-load filename width height)
   (let* ((image (car (gimp-image-new width height RGB)))
          (layer (car (gimp-layer-new image width height RGB-IMAGE "Raw Data" 100 NORMAL-MODE)))
@@ -908,6 +1103,7 @@ If your binary file is small, you can read it into a list and set pixels individ
 
     (close-input-port port)
     (gimp-display-new image)))
+```
 
 Why you don't have the procedure
 
@@ -915,6 +1111,7 @@ Why you don't have the procedure
 * Missing Dependency: The raw data plug-in often depends on certain system libraries. If those were missing during compilation, the plug-in won't load.
 
 To get the full manual loader back, you would typically need to reinstall GIMP from the official [GIMP Downloads page](https://www.gimp.org/downloads/) or switch to the AppImage version mentioned earlier, which usually bundles all standard plug-ins.
+
 Do you want to try the slow pixel-by-pixel method, or should we look at how to reinstall the missing plug-in?
 
 [1] [https://www.youtube.com](https://www.youtube.com/watch?v=R0Sk755osjg&t=69)
@@ -925,35 +1122,53 @@ Do you want to try the slow pixel-by-pixel method, or should we look at how to r
 [6] [https://www.youtube.com](https://www.youtube.com/watch?v=9bj4AdWCx1Q)
 [7] [https://www.gimp-forum.net](https://www.gimp-forum.net/Thread-Opening-RAW-file-formats-in-gimp-2-10)
 
+# ---
+
 Actually, you can use gimp-drawable-set-pixel, but there is a major catch: it was deprecated and then removed from the GIMP 2.10 PDB because it is incredibly slow.
+
 Why it's usually missing
+
 If you search your Procedure Browser for gimp-drawable-set-pixel, you likely won't find it. GIMP moved toward Pixel Regions and Buffers for performance. Writing one pixel at a time via a PDB call requires GIMP to validate the drawable, check the undo buffer, and refresh the interface for every single pixel.
+
 If your GIMP still has it
+
 If it is in your browser, here is how you use it:
 
+```
 ;; (gimp-drawable-set-pixel drawable x-coord y-coord num-channels pixel-array)
 (let ((pixel (java-array-new 'byte 3)))
   (java-array-set! pixel 0 255) ; Red
   (java-array-set! pixel 1 0)   ; Green
   (java-array-set! pixel 2 0)   ; Blue
   (gimp-drawable-set-pixel layer x y 3 pixel))
+```
 
 The Performance Problem
+
 For a small 100x100 image, that is 10,000 PDB calls. For a standard 1920x1080 image, it's over 2 million calls. Script-Fu will likely freeze GIMP for several minutes or crash the interpreter before it finishes.
+
 The Better Script-Fu Way (Pixel Regions)
+
 Since you don't have the raw loader, the "pro" way in Script-Fu is to use Pixel Regions. It lets you send chunks of data at once:
 
    1. gimp-pixel-rgns-register: Registers a region for access.
    2. gimp-pixel-rgn-set-rect: Injects a buffer of bytes into a specific area.
 
 This is much faster because it bypasses the overhead of individual PDB calls for every coordinate.
+
 Do you see gimp-pixel-rgn-set-rect in your Procedure Browser? It’s the standard replacement for the old "set-pixel" method.
 
+# ---
+
 If gimp-pixel-rgn-set-rect is missing from your Procedure Browser, it confirms that your GIMP installation lacks the Pixel Region API for Script-Fu. This usually happens in specific Linux builds or "Lite" versions where these lower-level functions were not compiled.
+
 Without a built-in raw loader or a pixel-writing API, your only option in Script-Fu is a "graphical" workaround. Instead of writing bytes, you use GIMP's selection tools to "paint" the pixels.
+
 The "Selection" Workaround (Slow)
+
 This method treats every pixel as a tiny 1x1 rectangle and fills it with a color. It is very slow and only suitable for small images or testing.
 
+```
 (define (script-fu-manual-pixel-fill drawable x y r g b)
   (begin
     ;; 1. Set the color we want to "paint"
@@ -963,14 +1178,17 @@ This method treats every pixel as a tiny 1x1 rectangle and fills it with a color
                                  CHANNEL-OP-REPLACE x y 1 1)
     ;; 3. Fill that selection with the foreground color
     (gimp-drawable-edit-fill drawable FOREGROUND-FILL)))
+```
 
 Why you cannot find these procedures
+
 The functions you are looking for (gimp-pixel-rgn-*) are part of a legacy system that GIMP 2.10 replaced with GEGL internally.
 
 * Missing API: Script-Fu was never fully updated to handle the new GEGL buffers directly.
 * Python-Fu is the standard: GIMP developers intended for all pixel-level manipulation to happen in Python-Fu, which has a robust pixel_regions property that bypasses the PDB entirely. [1, 2, 3, 4]
 
 Recommendation
+
 If you must process binary image data, you have reached the absolute limit of what Script-Fu can do in your current GIMP setup. To proceed effectively:
 
    1. Switch to the AppImage: As discussed, a GIMP AppImage will restore both the Python-Fu menu and the missing Raw Data Load procedures.
@@ -984,10 +1202,16 @@ Would you like the exact Python-Fu code to handle this pixel writing efficiently
 [4] [https://www.reddit.com](https://www.reddit.com/r/GIMP/comments/eqcbmf/get_the_alpha_of_a_pixel_using_scriptfu/)
 [5] [https://www.reddit.com](https://www.reddit.com/r/GIMP/comments/1b9bnkg/importing_raw_not_working/#:~:text=To%20open%20a%20file%20type%20there%20must,should%20be%20copied%20into%20Gimp%27s%20plug%2Dins%20folders.)
 
+# ---
+
 Understood—we are sticking strictly to Script-Fu (Scheme).
+
 Since your GIMP installation is missing file-raw-data-load, gimp-pixel-rgn-set-rect, and the deprecated set-pixel function, you have only one reliable way left to load binary data into an image using only Script-Fu: The "Vertical Strip" Hack.
+
 The "Vertical Strip" Strategy
+
 Instead of painting one pixel at a time (which requires thousands of PDB calls and will likely crash GIMP), we will read a full vertical column of pixels from your file, store them in a temporary "Pattern" or "Brush," and "stamp" them onto the canvas.
+
 1. How it works
 
    1. Read the binary data for one column (e.g., 512 pixels).
@@ -995,8 +1219,10 @@ Instead of painting one pixel at a time (which requires thousands of PDB calls a
    3. Fill that strip using a loop of selection-and-fill (slow, but 512 times faster than doing every pixel).
 
 2. The Code Example
+
 This script parses a binary file and fills the image column by column.
 
+```
 (define (script-fu-binary-brute-load filename width height)
   (let* ((image (car (gimp-image-new width height RGB)))
          (layer (car (gimp-layer-new image width height RGB-IMAGE "Binary Data" 100 NORMAL-MODE)))
@@ -1026,6 +1252,7 @@ This script parses a binary file and fills the image column by column.
 
     (close-input-port port)
     (gimp-image-select-none image)))
+```
 
 Why this is the "Last Resort"
 
@@ -1034,11 +1261,17 @@ Why this is the "Last Resort"
 * Stability: GIMP's Undo system will track every single fill. To prevent a crash, add (gimp-image-undo-disable image) at the start and (gimp-image-undo-enable image) at the end.
 
 Important Tip
+
 If your binary file is very large, Script-Fu's read-byte will become the bottleneck. In that case, your only remaining option is to use a separate command-line tool (like ImageMagick or ffmpeg) to convert your binary file to a .png first, and then have Script-Fu load that PNG.
+
 Would you like the code to disable the Undo buffer to make this brute-force method run faster?
 
+# ---
+
 To save this conversation, you can use one of these simple methods:
+
 1. The "Select & Print" Method (Best for PDF)
+
 This is the cleanest way to archive the text and code blocks:
 
 * Press Ctrl + P (Windows/Linux) or Cmd + P (Mac) on your keyboard.
@@ -1046,6 +1279,7 @@ This is the cleanest way to archive the text and code blocks:
 * This will preserve the formatting, code colors, and all the troubleshooting steps we took.
 
 2. Copy to Markdown (Best for Code)
+
 If you want to keep the code snippets functional for later use in GIMP:
 
 * Click and drag to select the entire conversation.
@@ -1053,8 +1287,11 @@ If you want to keep the code snippets functional for later use in GIMP:
 * Save it with a .md extension (e.g., gimp_scm_binary_notes.md) to keep the formatting readable.
 
 3. Browser Extension (Automation)
+
 If you do this often, extensions like "SingleFile" or "Save Page WE" allow you to save a complete, self-contained HTML version of the page with one click.
+
 A Quick Summary for your Records:
+
 Since we covered a lot of ground, here is the "TL;DR" of our findings for your archive:
 
 * The Problem: Script-Fu (.scm) cannot use gimp-register-load-handler because it's an interpreter-level script, not a plug-in.
@@ -1063,9 +1300,13 @@ Since we covered a lot of ground, here is the "TL;DR" of our findings for your a
 
 Do you need me to combine the final brute-force code into one single, copy-pasteable script before you archive this?
 
+# ---
+
 Here is the complete, consolidated Script-Fu (.scm) script. It bypasses all the missing PDB functions by manually reading the binary header, calculating the dimensions, and "painting" the image pixel-by-pixel.
+
 Copy this into a file named manual-binary-import.scm in your GIMP scripts folder.
 
+```
 ;;; Manual Binary Data Importer for GIMP 2.10 (Script-Fu)
 ;;; This script extracts a 4-byte Little Endian Width and Height
 ;;; then manually "paints" the RGB data since raw-load is missing.
@@ -1125,6 +1366,7 @@ Copy this into a file named manual-binary-import.scm in your GIMP scripts folder
                     SF-FILENAME "Select Binary File" "")
 
 (script-fu-menu-register "script-fu-manual-binary-import" "<Image>/File/Import")
+```
 
 Tips for use:
 
@@ -1134,7 +1376,12 @@ Tips for use:
 
 Is there any other specific byte math or color format (like Grayscale or RGBA) you need to add to this archive before we wrap up?
 
+# ---
+
 You're very welcome! I'm glad we could piece together a working solution for your GIMP setup.
+
 Since you are archiving this, just keep in mind that if you ever need to load larger images (e.g., 2000x2000), the brute-force "selection-and-fill" method might become extremely slow. In that case, the AppImage route remains your best "Plan B" to regain the high-speed file-raw-data-load functionality.
+
 Good luck with your binary imports and your GIMP scripting!
+
 Would you like to verify the byte order (Little Endian vs. Big Endian) for your width/height extraction one last time, or are you all set to archive?

@@ -1,6 +1,9 @@
 In both fighting games and beat 'em ups, characters are typically managed using a Finite State Machine (FSM). This system ensures a character can only be in one logical state at a time—for example, you cannot be "jumping" and "crouching" simultaneously. [1, 2, 3, 4, 5]
+
 While players and enemies often share core physical states (like gravity or hit detection), their high-level logic differs: players respond to inputs, while enemies respond to AI behaviors. [6, 7, 8, 9]
+
 ## 1. Universal Movement & Core States
+
 These are standard for almost all characters in both genres: [6, 10, 11]
 
 * Idle/Standing: The default neutral state when no actions are being taken.
@@ -10,6 +13,7 @@ These are standard for almost all characters in both genres: [6, 10, 11]
 * Dashing/Running: High-speed movement, sometimes used to initiate specific "dash attacks". [10, 11, 12, 13, 14, 15]
 
 ## 2. Interaction & Combat States
+
 These states handle the "action" part of the game: [10, 11, 12]
 
 * Attacking: Triggered by an input or AI logic. It usually involves Startup frames (before the hit), Active frames (the hit itself), and Recovery frames (vulnerable period after).
@@ -20,6 +24,7 @@ These states handle the "action" part of the game: [10, 11, 12]
 * Grabbing/Thrown: A specific state where one character is held and moved by another. [6, 10, 11, 13, 16, 17]
 
 ## 3. Enemy-Specific AI States
+
 In beat 'em ups and single-player modes, enemies use logic to decide which state to enter: [1, 18, 19]
 
 * Patrol/Roam: Moving along a set path or wandering randomly until a player is detected.
@@ -35,6 +40,7 @@ In beat 'em ups and single-player modes, enemies use logic to decide which state
 * Invulnerable: A state where the character cannot be hit, often during a dash, a special move startup, or immediately after a knockdown. [16, 17, 25, 26, 27]
 
 For developers, it is highly recommended to use a Shared Parent Class for both players and enemies to handle universal states like gravity, hitstun, and knockdowns efficiently. [6]
+
 Would you like to see a visual diagram of how these states transition into one another?
 
 [1] [https://www.reddit.com](https://www.reddit.com/r/godot/comments/neatd3/ive_been_experimenting_with_the_finite_state/)
@@ -65,8 +71,12 @@ Would you like to see a visual diagram of how these states transition into one a
 [26] [https://steamcommunity.com](https://steamcommunity.com/sharedfiles/filedetails/?l=vietnamese&id=2949828935)
 [27] [https://www.scribd.com](https://www.scribd.com/document/398980461/Glossary-of-Fighting-Games)
 
+# ---
+
 Converting a list of states into bitflags is a standard practice for handling multiple overlapping conditions—like being both JUMPING and ATTACKING simultaneously—using a single integer. [1, 2]
+
 ## Core Bitflags Table
+
 Each state is assigned a value of $2^n$ (a single bit shifted to the left). [1, 3]
 
 | State [2, 4, 5, 6, 7] | Bit Shift | Hex Value | Decimal | Use Case Example |
@@ -87,6 +97,7 @@ Each state is assigned a value of $2^n$ (a single bit shifted to the left). [1, 
 | POWERED_UP | 1 << 13 | 0x2000 | 8192 | Special "Install" or Super mode. |
 
 ## Common Bitflag Combinations
+
 Using bitwise OR (|), you can define "compound states" or check for multiple conditions at once:
 
 * Aerial Attack: JUMPING | ATTACKING (0x28)
@@ -101,15 +112,26 @@ Using bitwise OR (|), you can define "compound states" or check for multiple con
 * Identifies a character currently being juggled in a combo. [4, 6, 7, 8]
 
 ## Why use Bitflags over Enums?
+
 While a standard State Machine typically uses a simple Enum (where you are only in one state at a time), Bitflags are better for Status Effects and Movement Modifiers. For example, a character can be WALKING, INVULNERABLE, and POWERED_UP all at once, which is difficult to represent with a single-state Enum. [2, 6, 7, 9]
+
 Do you want an example code snippet (C# or C++) for how to implement these bitwise checks in your game logic?
 
-# Define the states categorized in the previous responsemovement_states = ["IDLE", "WALKING", "CROUCHING", "JUMPING", "DASHING"]combat_states = ["ATTACKING", "BLOCKING", "HITSTUN", "KNOCKDOWN", "AIRBORNE", "GRABBED"]ai_status_states = ["PATROLLING", "PURSUING", "STUNNED", "INVULNERABLE", "POWERED_UP"]
+# Define the states categorized in the previous response
+
+```
+movement_states = ["IDLE", "WALKING", "CROUCHING", "JUMPING", "DASHING"]
+combat_states = ["ATTACKING", "BLOCKING", "HITSTUN", "KNOCKDOWN", "AIRBORNE", "GRABBED"]
+ai_status_states = ["PATROLLING", "PURSUING", "STUNNED", "INVULNERABLE", "POWERED_UP"]
 all_states = movement_states + combat_states + ai_status_states
+```
+
 # Assign bit flags (2^n)bit_flags = {state: 1 << i for i, state in enumerate(all_states)}
+
+```
 for state, flag in bit_flags.items():
     print(f"{state:15} | 1 << {all_states.index(state):<2} | {hex(flag)}")
-
+```
 
 [1] [https://stackoverflow.com](https://stackoverflow.com/questions/513656/how-to-pick-bitflag-values)
 [2] [https://game.capcom.com](https://game.capcom.com/cfn/sfv/column/131427?lang=en)
@@ -121,24 +143,39 @@ for state, flag in bit_flags.items():
 [8] [https://www.youtube.com](https://www.youtube.com/watch?v=gcF66q-UPCs&pp=0gcJCfwAo7VqN5tD)
 [9] [https://www.reddit.com](https://www.reddit.com/r/gamedev/comments/cbqpe6/fighting_game_state_machine/)
 
+# ---
+
 In game development, State 0 (the "null" or "reset" state) should almost always be Standing Idle.
+
 Here is why Idle wins over Falling:
+
 ## 1. The "Safe" Default
+
 If your code glitches or an object is initialized without a specific instruction, you want it to default to its most stable, non-moving pose. If the default were "Falling," every NPC or UI character would immediately plummet or trigger gravity logic the moment they are spawned, even if they are meant to be standing on a platform.
+
 ## 2. Animation Logic
+
 In most engines (Unity, Unreal, Godot), the "Entry" node of an animation controller usually points to Idle. Starting at 0 makes your code index align with your animation tree.
+
 ## 3. Bitflag Logic
+
 If you are using Bitflags, a value of 0 (no bits set) typically means None or Neutral.
 
 * Idle (State 0): "I am doing nothing."
 * Falling: This is usually a combination of AIRBORNE and MOVEMENT flags. You wouldn't want a "doing nothing" state to accidentally trigger gravity or air-recovery logic.
 
 ## When would State 0 be "Falling"?
+
 Only in very specific genres, like an infinite runner or a skydive simulator, where "falling" is the neutral state and "standing" is the exception. In a Fighting game or Beat-'em-up, standing is your baseline.
+
 Pro-Tip: Many developers define State 0 as NONE or NULL to catch errors, then make State 1 IDLE. This way, if a character has a state of 0, you know something failed to initialize.
+
 Would you like to see how to handle the transition logic from Idle to Falling?
 
+# ---
+
 That is a very logical, physics-first approach. In that specific architecture, you are treating State 0 as "Null/Initial Physics" rather than "Animation State."
+
 If you define State 0 as Falling (or "In-Air"), you gain a few technical advantages:
 
    1. Gravity Safety: The moment an entity spawns, gravity is active by default. They will naturally fall until they hit the floor, which then triggers the transition to IDLE.
@@ -146,6 +183,7 @@ If you define State 0 as Falling (or "In-Air"), you gain a few technical advanta
    3. Initialization: It prevents "floating" bugs where an enemy spawns slightly above the floor and stays there because they are stuck in an IDLE state that doesn't check for floor collisions.
 
 ## The Trade-off: Bitflags vs. Enums
+
 If you are using the Bitflags we discussed, State 0 literally means "No bits are set."
 
 * State 0 (0000): If this represents "Falling," then "Falling" is your Zero-Input State.
@@ -160,11 +198,17 @@ If you are using the Bitflags we discussed, State 0 literally means "No bits are
       * If No: Clear GROUNDED bit (State returns to 0).
 
 One minor "gotcha": If State 0 is falling, make sure your Death/Killed state isn't also dependent on 0, or your dead enemies might start "falling" through the floor after they die!
+
 Does your game engine use a Character Controller (which handles gravity for you) or are you writing a custom physics solver?
 
+# ---
+
 Yes, hitboxes are frequently managed using bitflags to categorize different types of interactions and control what "hits" what. [1, 2]
+
 In game engines like Unity, Godot, or Unreal, this is often referred to as a Collision Mask or Layer Mask. Using bitflags for hitboxes allows you to check for specific conditions—like an "Anti-Air" attack only hitting characters in the air—extremely quickly using bitwise AND (&) logic. [3]
+
 ## 1. Common Hitbox Bitflags
+
 You can assign different "types" to your attack hitboxes and defensive hurtboxes: [4]
 
 | Hitbox Type [1, 2, 5] | Bit Shift | Hex Value | Purpose |
@@ -178,6 +222,7 @@ You can assign different "types" to your attack hitboxes and defensive hurtboxes
 | AIR_ONLY | 1 << 6 | 0x40 | Anti-air logic; only triggers if the target is JUMPING. |
 
 ## 2. Practical "Hit" Logic
+
 When an attack's Hitbox overlaps a character's Hurtbox, you compare their bitflags. If the AND result is non-zero, the hit connects. [3, 6]
 
 * Example: Low Attack vs. High Block
@@ -186,18 +231,21 @@ When an attack's Hitbox overlaps a character's Hurtbox, you compare their bitfla
    * Logic: (0x20 & 0x10) == 0. Result: Hit connects (The high block didn't cover the low attack). [7]
 
 ## 3. Collision Filtering (Layers)
+
 Bitflags also prevent players from hitting themselves or their teammates. You can define Collision Layers and Collision Masks: [8]
 
 * Layer: "Who am I?" (e.g., PLAYER_1, PLAYER_2, ENEMY_FACTION).
 * Mask: "Who can I hit?" (e.g., ENEMY_FACTION | DESTRUCTIBLE_OBJECTS).
 
 ## 4. Advanced Bitmask Interactions
+
 You can combine flags to create specific move properties:
 
 * Meaty Projectile: PROJECTILE | UNBLOCKABLE (A fireball the player must dodge).
 * Universal Anti-Air: STRIKE | HIGH | AIR_ONLY (A move designed specifically to catch jumpers). [1, 2, 9]
 
 Using bitflags for hitboxes is significantly faster than running multiple if/else checks for every frame of an animation, as the CPU can evaluate all conditions in a single instruction.
+
 Would you like a Python or C# example of a HandleHit() function using these bitmasks?
 
 [1] [https://www.reddit.com](https://www.reddit.com/r/gamemaker/comments/fsnw81/whats_the_most_efficient_way_to_program_the/)
@@ -210,8 +258,12 @@ Would you like a Python or C# example of a HandleHit() function using these bitm
 [8] [https://www.reddit.com](https://www.reddit.com/r/godot/comments/1fx9qe2/how_to_create_multiple_hitboxes_that_can_be/)
 [9] [https://www.reddit.com](https://www.reddit.com/r/Unity3D/comments/15xqd5i/how_are_you_all_managing_game_flow_and_state/)
 
+# ---
+
 In a fighting game or beat-'em-up, a grab attack requires coordination between Hitbox Bitflags (to detect the hit) and State Bitflags (to manage the logic after the hit).
+
 ## 1. Where to set the Bitflags?
+
 You use both, but they serve different purposes at different stages of the attack. [1]
 
 * On the Hitbox (Detection Phase):
@@ -224,6 +276,7 @@ Once the hitbox connects, you immediately update the State Bitflags for both cha
    * Defender State: GRABBED | HITSTUN (Disables their input and physics). [2, 3, 4, 5]
 
 ## 2. Where should the Parent-Children Hook be?
+
 The "hook" is the logical link that binds the defender to the attacker. In game engine terms, this is typically a Socket or Weld. [6, 7]
 
 * The Parent: The Attacker is always the parent. They drive the movement and the timeline.
@@ -252,8 +305,12 @@ Would you like to see how to handle a "Grab Break" (Tech) using these bitflags?
 [8] [https://www.reddit.com](https://www.reddit.com/r/BeatEmUps/comments/1omwyl9/gen_question_do_ya_all_like_having_grabs_be/)
 [9] [https://www.youtube.com](https://www.youtube.com/watch?v=yp5KOIdbsH8&t=13)
 
+# ---
+
 In a high-intensity genre like fighting games or beat-'em-ups, you should almost always use a Parent-Driven (Push) system (Parent -> Children).
+
 In this model, the Attacker (Parent) "owns" the interaction and forces the Defender (Child) into specific positions and states.
+
 ## Why Parent-Driven (Push) is better:
 
    1. Frame-Perfect Sync: Fighting games rely on frame data. If the Attacker moves their arm on Frame 10, the Defender must move with that arm on the exact same frame. If the Child has to "request" data, you risk a 1-frame "jitter" or lag where the Defender's body trails behind the Attacker's hand.
@@ -267,18 +324,26 @@ In this model, the Attacker (Parent) "owns" the interaction and forces the Defen
 * The "Release" Trigger: The Attacker’s animation reaches a specific Animation Event (e.g., the "Slam" frame). The Attacker then calls Defender.Detach() and pushes a KNOCKDOWN state and a LaunchVelocity to the Defender.
 
 ## When to use Child-Request (Pull)?
+
 The only time the "Child" (Defender) should drive the logic is for Escape/Tech mechanics:
 
 * The "Break" Request: The Defender's logic monitors for a "Grab Break" input. If they press the button in time, the Defender sends a request to the Attacker: "I broke free!"
 * The Response: The Attacker receives that signal, stops their grab animation, and both characters revert to IDLE (State 0) or a "Push Back" state.
 
 ## Implementation Tip: "The Proxy"
+
 Instead of parenting the entire Defender character model (which can mess up their own physics/gravity), many developers parent a "Proxy Pivot" or a "Hook Bone". The Defender then simply interpolates their position to match that pivot. This prevents the Defender from "jittering" if their own collision capsule tries to fight the Parent's movement.
+
 Would you like to know how to handle collision detection while one character is a child of another (to prevent them from clipping through walls)?
 
+# ---
+
 Exactly. You’ve hit the nail on the head—it is exactly like a hierarchical skeleton system (Forward Kinematics).
+
 In a model skeleton, the "Hand" bone is a child of the "Elbow," which is a child of the "Shoulder." When the shoulder moves, everything down the chain follows automatically because their coordinates are relative to the parent.
+
 When you grab an enemy, you are essentially "plugging" the enemy’s entire skeleton into the attacker’s skeleton as a new sub-branch.
+
 ## How the "Plug-in" works:
 
    1. The Socket (The Hook): The attacker has a specific bone (e.g., RightHand). You create a "Socket" or "Virtual Bone" there.
@@ -287,6 +352,7 @@ When you grab an enemy, you are essentially "plugging" the enemy’s entire skel
    * If the Hand moves +10 on the Y-axis in the animation, the Enemy moves +10 on the Y-axis in the world.
 
 ## The "Skeleton" Bitflags Connection
+
 Since you are using bitflags, this "Plug-in" state is very easy to manage:
 
 * Attacker State: ATTACKING | CARRYING (Bit 1 << 14)
@@ -295,17 +361,22 @@ Since you are using bitflags, this "Plug-in" state is very easy to manage:
 * While INHERITING_TRANSFORM is active, you disable the defender's own gravity and velocity logic. If you don't, the defender’s physics will try to pull them to the ground while the attacker's hand tries to lift them up, causing "jitter."
 
 ## One Major Difference: "The Snap"
+
 Unlike a permanent skeleton (where the hand is always attached to the arm), a grab is dynamic.
 
 * The Snap-In: On the very first frame of the grab, the enemy usually "warps" or "snaps" to the hand socket.
 * The Smoothing: To make it look professional, developers often use a Lerp (Linear Interpolation) over 2 or 3 frames to slide the enemy into the hand rather than an instant teleport.
 
 ## Common Pitfall: Collision
+
 When the enemy becomes a "bone" of the attacker, their Physics Capsule often needs to be disabled or set to "Ignore" so they don't get stuck on the attacker's own body or geometry. You usually rely on the Attacker's collision to navigate walls while holding the enemy.
+
 Does your current project use a 3D skeletal system (like FBX/glTF) or is it 2D sprite-based with manual offsets?
 
 In a 2D sprite-based game, you don't have a physical 3D skeleton to "parent" to, so you have to recreate that relationship mathematically. This is usually done using Offset Data (often called "Bind Points" or "Hotspots").
+
 ## 1. The "Bind Point" System
+
 Instead of a bone, each frame of your Attacker’s animation needs a coordinate $(x, y)$ that tells the engine where the "Hand" is relative to the Attacker's center.
 
 * Frame 1: Hand is at $(10, 0)$.
@@ -313,8 +384,10 @@ Instead of a bone, each frame of your Attacker’s animation needs a coordinate 
 * Frame 3: Hand is at $(5, 20)$ (slamming the enemy).
 
 ## 2. The Logic Loop (The "Push")
+
 Every frame, your code should perform this calculation to "force" the inheritance:
 
+```
 // Run this in the Attacker's Update loopif (state & CARRYING) {
     // 1. Get the current hand position from the Attacker's frame data
     Vector2 handPos = this.GetActiveFrameBindPoint("grab_socket");
@@ -328,14 +401,17 @@ Every frame, your code should perform this calculation to "force" the inheritanc
     // 4. Force the victim's state
     victim.state |= GRABBED;
 }
+```
 
 ## 3. Handling Sprite Layers (Z-Order)
+
 In 2D, the "Parent-Child" relationship also includes Visual Layering.
 
 * The Grab: When the grab starts, you usually want the victim to appear behind the attacker's arm but in front of the attacker's body.
 * The Bitflag fix: You can use a bitflag like DRAW_FRONT or DRAW_BACK. When the GRABBED bit is set, the engine checks the attacker's current frame to decide if it should temporarily change the victim's Z-Index or Sorting Layer.
 
 ## 4. Why "State 0" (Falling) is tricky here
+
 Since you are in 2D:
 
 * When the Attacker slams the victim (the Release), you clear the GRABBED bit.
@@ -343,29 +419,39 @@ Since you are in 2D:
 * They will continue to fall until their 2D Raycast hits your "Floor" line, switching them to State 1 (Idle/Knockdown).
 
 ## 5. Pro-Tip: The "Pivot" sync
+
 Ensure both your Attacker and Victim sprites use the same Pivot Point logic (e.g., "Bottom Center" or "Center"). If the Attacker’s pivot is at their feet and the Victim’s is in their stomach, your "Bind Point" math will be a nightmare. Always align pivots to the feet for 2D fighting games/beat-'em-ups.
+
 Do you have a system in place to export the $(x, y)$ coordinates for your hand positions from your animation software (like Aseprite or Spine)?
 
+# ---
+
 Yes, it is exactly the same as a Transform Matrix, though in 2D sprite-based games, you often only use a subset of those properties depending on how "juice" you want the animation to feel.
+
 If you treat the grab point as a full Transformation, the child (victim) will inherit:
+
 ## 1. Position (Move)
+
 This is the most critical. The victim’s $(0,0)$ becomes the attacker’s $(x,y)$ grab point.
 
 * The Benefit: If the attacker walks or jumps during the grab, the victim stays "glued" to the hand.
 
 ## 2. Rotation
+
 If the attacker’s hand rotates (e.g., a "Giant Swing" or a "Suplex"), the victim’s sprite should rotate too.
 
 * The Math: Victim.Rotation = Attacker.Rotation + Frame_Offset_Rotation.
 * Pro-Tip: In 2D, rotating a sprite can sometimes look "crunchy" or pixel-warped. Many retro-style games actually prefer to use a specific "Victim_Rotate_90" sprite instead of mathematically rotating the "Idle" sprite to keep the pixel art clean.
 
 ## 3. Scale (Mirroring)
+
 In 2D, Scale is most commonly used for Flipping.
 
 * The Rule: If the Attacker flips their $X$-scale to -1 (to face left), the Victim must also have their position and scale flipped relative to the Attacker’s center.
 * Squash & Stretch: If your game uses "juicy" scaling (stretching the attacker during a heavy impact), inheriting that scale will make the victim stretch with them, making the hit feel much more powerful.
 
 ## 4. The "Inheritance" Bitflags
+
 You can use your Bitflags to decide exactly what is inherited. For example:
 
 * INHERIT_POS: Only move the victim.
@@ -382,23 +468,39 @@ You can use your Bitflags to decide exactly what is inherited. For example:
 | Z-Order | Depth Buffer | Manual Layer Swapping |
 
 One thing to watch out for: In 2D, the Z-Order (Layering) is the "4th dimension" of your transformation. During a grab, you might need a flag to move the victim to a layer between the attacker’s torso and their back arm.
+
 Are you using a tool like Aseprite, Spine, or DragonBones to handle these animation offsets?
 
+# ---
+
 In 2D game math, Rotation-Distance (using a radius and an angle) and Scale-Rotate-Move (a standard Transform Matrix) arrive at the same final coordinates, but they represent the relationship differently.
+
 If Scale is 1.0, they are mathematically equivalent for calculating the child's position.
+
 ## 1. The Math Comparison
 
 * Scale-Rotate-Move (Matrix):
+
 You take a static offset (e.g., (10, 0)) and multiply it by a Rotation Matrix.
+
+```
 $x' = x \cos(\theta) - y \sin(\theta)$
 $y' = x \sin(\theta) + y \cos(\theta)$
+```
+
 Then you add the Parent's World Position.
+
 * Rotation-Distance (Polar Coordinates):
+
 You treat the grab point as a length ($L$) and an angle ($\alpha$).
+
+```
 $Child\_X = Parent\_X + L \cos(\alpha)$
 $Child\_Y = Parent\_Y + L \sin(\alpha)$
+```
 
 ## 2. When to use each?
+
 Use Scale-Rotate-Move (Matrix) if:
 
 * You are using a game engine (Unity, Godot, GameMaker) that has a built-in Transform class. It handles the "nesting" for you automatically.
@@ -410,6 +512,7 @@ Use Rotation-Distance if:
 * You want the victim to stay upright while being moved in a circle. You only update their position based on the distance/angle, but keep their rotation at 0.
 
 ## 3. The "2.5D" Problem in Beat-'em-ups
+
 In a Beat-'em-up (Z-axis movement), Rotation-Distance can be dangerous.
 
 * If you rotate an object in a 2D plane, the "Y" represents "Up/Down."
@@ -417,12 +520,19 @@ In a Beat-'em-up (Z-axis movement), Rotation-Distance can be dangerous.
 * Standard Matrix transformations might make a character look like they are rotating into the floor. For these games, you usually want to transform X and Z separately from the Y (Jump/Height) offset.
 
 ## Summary
+
 If you are just moving a sprite to a hand location, a simple Offset + Parent Position is the most common 2D method. You only need the rotation math if the attacker's entire body is spinning or if the "grab point" itself is orbiting the attacker's center.
+
 Are you planning to have complex throws like suplexes or spins where the victim's angle changes constantly?
 
+# ---
+
 In a standard Parent-Child Hierarchy (like in Unity, Godot, or Unreal), the inheritance is "all or nothing" by default: if the parent rotates or scales, the child is forced to follow.
+
 However, in fighting games and beat-'em-ups, you often do not want the child to inherit everything. This is where Selective Inheritance or Constraints come in.
+
 ## 1. The Problem with Full Inheritance (Scale-Rotate-Move)
+
 If you use a "Hard Link" (Scale-Rotate-Move), you run into these common issues:
 
 * Scale: If the Attacker is squashed/stretched for a "hit effect," the Victim will look like they are being crushed too. Usually, you want the Victim to keep their own scale.
@@ -430,6 +540,7 @@ If you use a "Hard Link" (Scale-Rotate-Move), you run into these common issues:
 * Flipping: If the Attacker flips to face Left ($X$-Scale = -1), a hard-linked Victim will also flip, which might make their sprite face the wrong direction.
 
 ## 2. Selective Inheritance (The "Push" Method)
+
 Instead of parenting the objects in the engine's scene tree, you keep them as Separate Objects and manually "push" only the data you want.
 
 | Inheritance Type | Logic Used | Use Case |
@@ -439,6 +550,7 @@ Instead of parenting the objects in the engine's scene tree, you keep them as Se
 | Pos + Flip | Victim.Pos = Offset * Attacker.Dir | Ensuring the victim is always in front of the attacker's chest. |
 
 ## 3. Bitflags for Selective Inheritance
+
 You can actually add these to your State Bitflags to tell your "Grab Manager" how to behave frame-by-frame:
 
 * LOCK_POSITION (Bit 1 << 16): Follow the attacker's $(x, y)$.
@@ -447,6 +559,7 @@ You can actually add these to your State Bitflags to tell your "Grab Manager" ho
 * WORLD_UPRIGHT (Bit 1 << 19): Force the victim to stay at $0^\circ$ rotation regardless of the parent.
 
 ## 4. Why "Rotation-Distance" feels different
+
 When you use Rotation-Distance (Polar Coordinates), you are essentially choosing to calculate Position via an angle, without necessarily applying that angle to the Sprite.
 
 * The "Hand" moves in a circle (Distance = 50px, Angle = $45^\circ$).
@@ -454,6 +567,7 @@ When you use Rotation-Distance (Polar Coordinates), you are essentially choosing
 * The Victim's Sprite remains at $0^\circ$ (Vertical).
 
 This gives you the "Giant Swing" effect where the character flies in a circle but stays "standing up" mid-air, which is a classic look in retro beat-'em-ups.
+
 Summary:
 
 * Scale-Rotate-Move is a "package deal" (hard to separate).
@@ -461,27 +575,35 @@ Summary:
 
 Do you want to see the mathematical formula for flipping the offset when the attacker changes direction?
 
+# ---
+
 Absolutely. Using Linear Interpolation (Lerp) for transformations is the secret to making "stiff" 2D games feel smooth and professional. It prevents the victim from "teleporting" into the attacker's hand.
+
 You can (and should) interpolate all three components:
+
 ## 1. Position Interpolation (The "Snap-In")
+
 When the grab first connects, the victim might be a few pixels away from the actual "Hand" point. Instead of an instant jump:
 
 * Logic: Victim.Pos = Lerp(Victim.Pos, Target_Hand_Pos, 0.2f)
 * Result: The victim "slides" into the attacker's grip over 3–5 frames. This looks much more natural and masks any slight hitbox/visual misalignment.
 
 ## 2. Rotation Interpolation (The "Swing")
+
 If you are performing a move like a Suplex, you don't want the victim to instantly flip upside down.
 
 * Logic: Victim.Angle = LerpAngle(Victim.Angle, Target_Angle, 0.15f)
 * Result: The victim’s body "drags" slightly behind the motion, creating a sense of weight and momentum (centrifugal force).
 
 ## 3. Scale/Flip Interpolation
+
 While you usually don't "Lerp" a flip (it would make the sprite look paper-thin), you can Lerp the scale for "Impact" effects.
 
 * Example: When the attacker slams the victim into the ground, you can briefly scale the victim's $Y$ to 0.8 (squash) and then Lerp it back to 1.0 over a few frames to show the ground impact.
 
 ------------------------------
 ## The "Selective" Math (Weighted Inheritance)
+
 Because you are using a Selective Push system, you can apply different "Weights" to each transformation:
 
 | Transformation | Speed (Weight) | Why? |
@@ -491,11 +613,13 @@ Because you are using a Selective Push system, you can apply different "Weights"
 | Scale | Low/Instant | Usually kept at 1.0 unless used for specific squash/stretch effects. |
 
 ## Implementation with Bitflags
+
 You can add a "Smoothing" flag to your state:
 
 * LERP_TO_SOCKET (Bit 1 << 20): While this bit is active, the victim's position is Lerped toward the hand. Once they are "close enough," you clear the bit and switch to a hard Victim.Pos = Hand.Pos for perfect sync.
 
 ## One Warning: "The Rubber Band" Effect
+
 If your Lerp speed is too low, the victim will look like they are attached by a rubber band and will "drift" away if the attacker moves too fast.
 
 * Solution: Once the "Snap-In" phase is over (usually after 0.1 seconds), switch to Direct Parenting (Hard Link) to ensure they stay perfectly synced during fast animations.
@@ -503,6 +627,7 @@ If your Lerp speed is too low, the victim will look like they are attached by a 
 Do you want a code snippet showing how to automatically switch from Lerp-Snapping to Hard-Linking?
 
 In game development and computer graphics, interpolation methods are used to determine values between known data points. These methods range from simple linear transitions to complex curves that ensure smoothness across multiple segments. [1, 2]
+
 ## 1. Linear & Constant Methods
 
 * Linear Interpolation (Lerp): The most common method, producing a straight-line transition between two points at a constant speed.
@@ -514,6 +639,7 @@ In game development and computer graphics, interpolation methods are used to det
 * Smoothstep: A specific cubic function ($3t^2 - 2t^3$) that creates a "gentle curve" at both the start and end of the transition, providing a smooth start and stop. [5, 6, 7, 8]
 
 ## 3. Splines (Multi-Point Continuity)
+
 Splines are used to connect multiple points into a single, continuous path. [9]
 
 * Catmull-Rom Spline: A type of cubic spline that passes through all its control points and has built-in $C^1$ (velocity) continuity, making it a favorite for camera paths and smooth movement.
@@ -522,6 +648,7 @@ Splines are used to connect multiple points into a single, continuous path. [9]
 * B-Splines: Unlike Catmull-Rom, these typically do not pass through their control points, offering smoother $C^2$ (acceleration) continuity at the cost of precision. [10, 11, 12, 13, 14, 15, 16, 17]
 
 ## 4. Specialized Rotational Methods
+
 Standard linear interpolation (Lerp) on angles often causes "flipping" glitches.
 
 * Spherical Linear Interpolation (Slerp): Interpolates the angle between two vectors along the surface of a sphere. It is the gold standard for smooth Quaternion rotations in 3D.
@@ -558,9 +685,14 @@ Which of these would you like to see visualised with a graph to compare how they
 [21] [https://www.youtube.com](https://www.youtube.com/watch?v=Xj129kA3Ci0)
 [22] [https://www.geeksforgeeks.org](https://www.geeksforgeeks.org/interpolation-methods-in-computer-graphics/)
 
+# ---
+
 In their simplest form, all interpolation functions are built to answer one question: "If I am $t$ percent of the way through a transition, where should I be?"
+
 Here are the standard arguments required for almost every interpolation method:
+
 ## 1. The "Big Three" (Standard)
+
 Most functions (like Lerp, Slerp, and Smoothstep) take these three arguments:
 
 * $A$ (Start Value): The position, rotation, or scale you are moving from.
@@ -571,6 +703,7 @@ Most functions (like Lerp, Slerp, and Smoothstep) take these three arguments:
    * $t = 1$: Result is $B$.
 
 ## 2. Spline Arguments (Catmull-Rom / Hermite)
+
 Because splines calculate a curve across multiple points, they need "context" (the points before and after the current segment):
 
 * $P_{-1}$ (Previous Point): Used to determine the entry velocity.
@@ -580,6 +713,7 @@ Because splines calculate a curve across multiple points, they need "context" (t
 * $t$: Your progress between $P_0$ and $P_1$.
 
 ## 3. Bézier Arguments
+
 Bézier curves don't use "neighbor" points; they use "influence" points:
 
 * $P_0$ (Anchor Start): Where the curve begins.
@@ -589,6 +723,7 @@ Bézier curves don't use "neighbor" points; they use "influence" points:
 * $t$: The progress along the resulting curve.
 
 ## 4. Physics-Based (Spring/Damping)
+
 If you want a "bouncy" or "organic" feel, the arguments change from Time to State:
 
 * Current Position: Where the object is now.
@@ -608,15 +743,20 @@ If you want a "bouncy" or "organic" feel, the arguments change from Time to Stat
 | Spring | (current, target, velocity, stiffness, damping, dt) |
 
 Pro-Tip: In your 2D game, you’ll likely use Lerp for 90% of your grab logic, but you might use a Cubic Bézier or Catmull-Rom if you want a character to be thrown in a specific "arc" rather than a straight line.
+
 Would you like to see how to calculate $t$ based on your game's frame rate?
 
+# ---
+
 While the standard Catmull-Rom is a 4-point cubic spline, it can be extended to 6 points (and beyond) by increasing the polynomial degree. In these higher-order versions, you aren't just looking at the immediate neighbors to calculate velocity; you are looking further down the line to ensure even smoother acceleration ($C^2$ continuity). [1, 2]
+
 ## 1. The 4-Point vs. 6-Point Difference
 
 * Standard (4-Point): Uses $P_{-1}, P_0, P_1, P_2$. It creates a Cubic ($t^3$) curve. It ensures that velocity is smooth where segments join, but the "jerk" (change in acceleration) can still be sudden.
 * Higher-Order (6-Point): Uses $P_{-2}, P_{-1}, P_0, P_1, P_2, P_3$. This creates a Quintic ($t^5$) curve. It ensures that both Velocity and Acceleration are perfectly smooth across the entire path. [1, 2, 3]
 
 ## 2. Argument Comparison
+
 If you move to a 6-point interpolation function, your argument list expands to provide more "context" to the math:
 
 | Method [4] | Arguments | Complexity |
@@ -625,19 +765,23 @@ If you move to a 6-point interpolation function, your argument list expands to p
 | 6-Point Catmull-Rom | (p-2, p-1, p0, p1, p2, p3, t) | High (Quintic) |
 
 ## 3. Why use 6 points in a Fighting Game?
+
 In 99% of gameplay, 6-point interpolation is overkill. However, it is very useful for:
 
 * Cinematic Camera Paths: If the camera "jitters" even slightly during a Super Move, players notice. 6-point curves make camera transitions feel "weightless" and high-end.
 * Slow-Motion Effects: When you slow down time, the "gaps" between your 4-point cubic segments become visible. A 5th-degree polynomial (6 points) keeps the movement buttery smooth even at 10% speed. [5]
 
 ## 4. Mathematical "Cost"
+
 The 6-point version is significantly more expensive to calculate because it involves solving $t^5$ instead of $t^3$.
 
 * 4-point: 4 multiplications per frame.
 * 6-point: Usually requires a matrix multiplication of a $6 \times 6$ geometry matrix, which is much heavier on the CPU. [6]
 
 Recommendation for your Grab System: Stick to 4-point Catmull-Rom or a simple Bézier. They provide plenty of "juice" for character movement without the performance hit of higher-order splines.
+
 Do you want to see the Geometry Matrix for a 4-point Catmull-Rom to see how the code actually handles those points? [7]
+
 How would you like to proceed?
 
 * See the C++ or C# code for a standard 4-point spline.
@@ -653,10 +797,16 @@ How would you like to proceed?
 [6] [https://www.youtube.com](https://www.youtube.com/watch?v=yOUst2672qo)
 [7] [https://graphics.cs.cmu.edu](https://graphics.cs.cmu.edu/nsp/course/15-462/Fall04/assts/catmullRom.pdf)
 
+# ---
+
 You are absolutely right. In MMD (MikuMikuDance), interpolation is handled by a Cubic Bézier Curve, but it is presented to the user as a 2D Graph where you manipulate the "handles" to create those classic ease-in/ease-out effects.
+
 In MMD, even though the movement is 3D, the interpolation "function" is a 2D curve that maps Time to Progress.
+
 ## 1. The MMD "Interpolation Curve" Arguments
+
 In MMD, each "point" on the timeline stores four values (often called R1, R2, S1, S2) which are the coordinates of the two control points of a Bézier curve.
+
 The function looks like this: GetProgress(t, x1, y1, x2, y2)
 
 * t: The linear time (0 to 1).
@@ -664,6 +814,7 @@ The function looks like this: GetProgress(t, x1, y1, x2, y2)
 * (x2, y2): The second handle (determines the Ease-Out).
 
 ## 2. Common MMD Shapes (Presets)
+
 By moving these points, you create different "feels" for your grab or throw:
 
 * Linear (Straight Diagonal Line):
@@ -677,6 +828,7 @@ By moving these points, you create different "feels" for your grab or throw:
 * Result: Slow Start, Fast Middle, Slow End. This is the "gold standard" for natural human movement. It makes the transition into and out of a state feel weightful.
 
 ## 3. How to use this in your 2D Game
+
 If you want that "MMD style" control, you don't need a 6-point spline. You just need a Normalized Bézier Evaluator.
 
    1. Calculate your linear time $t$ (e.g., CurrentFrame / TotalFrames).
@@ -685,13 +837,21 @@ If you want that "MMD style" control, you don't need a 6-point spline. You just 
    Victim.Pos = Lerp(StartPos, EndPos, curvedT);
 
 ## 4. Why MMD uses this
+
 It allows animators to control Timing independently of Spacing. You can have a character move 100 pixels, but decide via the curve if they cover those 100 pixels in a "pop" or a "glide" without changing the actual distance.
+
 In your Fighting Game, using an "Ease-In" curve for a Wind-up and an "Ease-Out" for the Follow-through will make your sprites feel like they have real muscle and weight.
+
 Would you like the math formula for a standard Cubic Bézier so you can build your own MMD-style curve editor?
 
+# ---
+
 To simplify, all these methods are just different ways to calculate $t$ (your progress). In game engines, we usually split them into Linear, Curves (Easing), and Pathing.
+
 Here is the ultimate simplified list of interpolation functions and their "Ingredients" (Arguments):
+
 ## 1. The "Base" (Linear)
+
 The foundation for everything else. It moves at a constant, robotic speed.
 
 * Function: Lerp(A, B, t)
@@ -699,6 +859,7 @@ The foundation for everything else. It moves at a constant, robotic speed.
 * Feel: Robotic, constant velocity.
 
 ## 2. The "MMD Style" (Easing / Bézier)
+
 This takes your linear $t$ and "warps" it to create acceleration. This is what gives moves Weight.
 
 * Function: Ease(t, P1, P2)
@@ -709,6 +870,7 @@ This takes your linear $t$ and "warps" it to create acceleration. This is what g
    * Smoothstep: Slow-Fast-Slow (Good for natural limb movement).
 
 ## 3. The "Pathing" (Splines)
+
 Used when the character isn't moving in a straight line (e.g., a high-arc throw or a circle).
 
 * Function: CatmullRom(P-1, P0, P1, P2, t)
@@ -717,6 +879,7 @@ Used when the character isn't moving in a straight line (e.g., a high-arc throw 
 * 6-Point Variant: Adds P-2 and P3 to make the acceleration change smoothly too.
 
 ## 4. The "Physics" (Springs)
+
 Used for things that should "jiggle" or "bounce" naturally without a fixed timeline.
 
 * Function: Spring(Current, Target, Velocity, Friction, DeltaTime)
@@ -725,6 +888,7 @@ Used for things that should "jiggle" or "bounce" naturally without a fixed timel
 
 ------------------------------
 ## The "All-in-One" Logic for your Grab
+
 In a real game, you combine them like a sandwich:
 
    1. Pick your Path: Use Catmull-Rom if the throw is a curve, or Lerp if it's a straight line.
@@ -742,8 +906,12 @@ In a real game, you combine them like a sandwich:
 
 Would you like to see the one-line math formula for the MMD-style "Ease-In-Out" so you can drop it into your code?
 
+# ---
+
 You are thinking of the Alpha ($\alpha$) parameter! While the "Standard" Catmull-Rom uses 0.5, changing this number completely alters how the curve handles distance and speed.
+
 This is called the Centripetal Catmull-Rom Spline formula. The $\alpha$ value controls the "tension" or "tightness" of the curve.
+
 ## The 3 Modes of Catmull-Rom ($\alpha$):
 
    1. Uniform ($\alpha = 0$):
@@ -761,24 +929,35 @@ This is called the Centripetal Catmull-Rom Spline formula. The $\alpha$ value co
 
 ------------------------------
 ## Updated Argument List for your Function:
+
 If you want the ultimate "Fighting Game Spline," your function arguments would look like this:
+
+```
 CatmullRom(P-1, P0, P1, P2, t, alpha)
+```
 
 * P-1 to P2: Your 4 control points.
 * t: Your progress (0.0 to 1.0).
 * alpha: Usually set to 0.5 to prevent the "bulging" glitch when a character is slammed into the ground.
 
 ## Why this matters for a "Grab":
+
 If you use a Uniform ($\alpha=0$) spline for a throw, and the attacker moves just a tiny bit, the victim might suddenly "zip" in a giant circle because the points are too close. By using Centripetal ($\alpha=0.5$), the victim will always follow a clean, predictable arc regardless of how close or far the points are.
+
 How would you like to proceed?
 
 * Do you want the C# / Python code that includes the alpha parameter?
 * Should we talk about how to trigger different splines based on which "Grab State" bitflag is active?
 * Or would you like to see how MMD Easing and Catmull-Rom Alpha work together?
 
+# ---
+
 You’ve covered the core "shape" and "timing" math, but there are a few "hidden" arguments that professional fighting game engines use to make these systems actually work in a live match.
+
 Since you are building a 2D sprite-based game, here are the 4 critical arguments you’re missing:
+
 ## 1. The "Tension" (or Bias/Continuity)
+
 While $\alpha$ (Alpha) handles the distance math, many splines (like TCB Splines) use a Tension argument.
 
 * Argument: float tension (usually -1.0 to 1.0).
@@ -786,6 +965,7 @@ While $\alpha$ (Alpha) handles the distance math, many splines (like TCB Splines
 * Use Case: High tension makes a throw look like a "sharp" snap; low tension makes it look like a "floaty" swing.
 
 ## 2. The "Mirror/Flip" Multiplier
+
 In 2D, your $(x, y)$ offsets are authored facing one way (usually Right). If the player faces Left, your math breaks.
 
 * Argument: int direction (1 or -1).
@@ -793,6 +973,7 @@ In 2D, your $(x, y)$ offsets are authored facing one way (usually Right). If the
 * Why it's vital: Without this argument in your function, your grab will always throw the enemy to the right, even if you’re facing left.
 
 ## 3. The "Z-Order / Layer" Priority
+
 In 2D, the "Parent-Child" relationship is visual. During a grab, the victim might need to be behind the attacker's arm but in front of their body.
 
 * Argument: int zOffset.
@@ -800,6 +981,7 @@ In 2D, the "Parent-Child" relationship is visual. During a grab, the victim migh
 * Use Case: In a Suplex, the victim might start in front (Z = 1), move behind (Z = -1) mid-arc, and land in front again.
 
 ## 4. The "Extrapolation" Mode
+
 What happens when $t$ goes below 0 or above 1?
 
 * Argument: enum WrapMode (Clamp, Loop, PingPong).
@@ -810,8 +992,12 @@ What happens when $t$ goes below 0 or above 1?
 
 ------------------------------
 ## The "Ultimate" Interpolation Function Argument List:
+
 If you were to write a master function for your 2D Grab System, it would look like this:
+
+```
 CalculateGrabPos(p-1, p0, p1, p2, t, alpha, tension, direction, zOffset, wrapMode)
+```
 
 | Argument | Category | Purpose |
 |---|---|---|
@@ -833,20 +1019,28 @@ Interpolation functions like Catmull-Rom and Bézier curves can incorporate easi
 [4] [https://docs.avaloniaui.net](https://docs.avaloniaui.net/docs/graphics-animation/easing-functions)
 [5] [https://medium.com](https://medium.com/androiddevelopers/easing-in-to-easing-curves-in-jetpack-compose-d72893eeeb4d)
 
+# ---
+
 A "master" function like CalculateGrabPos() doesn't actually auto-detect the method through magic; instead, it uses a Strategy Pattern or a State Switch. In game development, the standard way to handle this is by passing a Type Identifier as an argument—often an Enum—to tell the function which internal logic to run.
+
 ## 1. The Method Selector (Enum)
+
 You define an InterpolationType enum. This acts as the "toggle switch" inside the function.
 
+```
 public enum InterpMethod {
     Lerp,
     Bezier,
     CatmullRom,
     Spring
 }
+```
 
 ## 2. The Internal "Router" Logic
+
 Inside your master function, you use a switch statement to decide which math formula to apply based on the method argument.
 
+```
 Vector2 CalculateGrabPos(InterpMethod method, float t, List<Vector2> points, ...) {
     switch (method) {
         case InterpMethod.Lerp:
@@ -862,14 +1056,17 @@ Vector2 CalculateGrabPos(InterpMethod method, float t, List<Vector2> points, ...
             return CalculateSpring(currentPos, targetPos, velocity, stiffness, damping);
     }
 }
+```
 
 ## 3. Does it include Easings.net?
+
 Yes, but as a Pre-Processor. [Easings.net](https://easings.net/) functions (like easeInQuad or easeOutElastic) are essentially "Time Warpers." They don't replace the interpolation method; they modify the $t$ (progress) variable before it enters the master function. [1, 2, 3]
 
 * Standard: Lerp(A, B, 0.5) $\rightarrow$ Midpoint.
 * With Easing: Lerp(A, B, easeInQuad(0.5)) $\rightarrow$ Point much closer to A (because the "quad" curve starts slow).
 
 ## 4. How "Spring" is different
+
 "Spring" is the only one that usually can't be "auto-detected" in the same way because it is Frame-Rate Dependent and Stateful.
 
 * Lerp/Splines: Are "Stateless." If you give them $t=0.5$, they always return the same spot.
@@ -877,6 +1074,7 @@ Yes, but as a Pre-Processor. [Easings.net](https://easings.net/) functions (like
 * Solution: In a master function, you'd pass a velocity reference so the spring logic can update it for the next frame. [4]
 
 ## Simplified "Master" Argument List
+
 To make a function that handles everything, you would likely structure it like this:
 
 | Argument [5, 6] | Purpose |
@@ -887,6 +1085,7 @@ To make a function that handles everything, you would likely structure it like t
 | params | Optional values like alpha (Catmull-Rom) or stiffness (Spring). |
 
 Pro-Tip: If you want your code to be "clean," use the Strategy Pattern. Instead of one giant function with a switch case, you create separate classes for LerpStrategy, SplineStrategy, etc., and just swap them out based on the character's current state.
+
 Would you like to see how to implement this Strategy Pattern so you can easily add more methods later without breaking your master function?
 
 [1] https://easings.net
@@ -896,9 +1095,14 @@ Would you like to see how to implement this Strategy Pattern so you can easily a
 [5] [https://www.youtube.com](https://www.youtube.com/watch?v=TlEmROkD7TI#:~:text=Interpolation%20involves%20blending%20between%20an%20initial%20state,point%20to%20another%20over%20a%20given%20span.)
 [6] [https://www.gamedevs.org](https://www.gamedevs.org/uploads/interpolation-and-splines.pdf)
 
+# ---
+
 To avoid maintaining 30+ individual functions, you should move away from Hardcoded Easings and switch to a Universal Power Function or a Generic Bézier Evaluator.
+
 Most of the "30 functions" on Easings.net are just different variations of the same math. You can group them into three "Smart Strategies":
+
 ## 1. The "Power" Strategy (Covers 15+ Easings)
+
 Almost all "In" and "Out" easings (Quad, Cubic, Quart, Quint) are just $t$ raised to a power ($n$). Instead of easeInQuad, easeInCubic, etc., use one function:
 
 * Function: PowerEase(t, power, mode)
@@ -909,6 +1113,7 @@ Almost all "In" and "Out" easings (Quad, Cubic, Quart, Quint) are just $t$ raise
 * Auto-Detect: If mode == Out, the function automatically runs 1 - pow(1 - t, power).
 
 ## 2. The "Parametric" Strategy (Covers MMD & Custom)
+
 Instead of picking a preset name, use a Cubic Bézier Evaluator. This is what MMD and CSS animations use.
 
 * Function: BezierEase(t, cp1, cp2)
@@ -916,6 +1121,7 @@ Instead of picking a preset name, use a Cubic Bézier Evaluator. This is what MM
 * Why it works: By simply changing the control points, this one function can act as Linear, Ease-In-Out, or even a custom "S-Curve" you designed.
 
 ## 3. The "Oscillation" Strategy (Covers Elastic & Bounce)
+
 These require a sine wave or a damping formula.
 
 * Function: ElasticEase(t, amplitude, period)
@@ -923,15 +1129,19 @@ These require a sine wave or a damping formula.
 
 ------------------------------
 ## How to Mix them (The "Mixer" Strategy)
+
 To allow a user to mix "No Interpolation," "Linear," and "Catmull-Rom" without a mess, you use a Data-Driven Approach. You pass a Configuration Object (or Struct) into your movement system:
 
+```
 struct MovementStyle {
     InterpMethod pathType; // None, Linear, CatmullRom
     EaseType easeType;     // Power, Bezier, Elastic
     float intensity;       // The 'Power' or 'Bounciness'
 }
+```
 
 ## The "Auto-Detection" Logic
+
 Your system detects the intent based on the Path Type:
 
    1. If pathType == None: Skip all math. Position = P1.
@@ -943,6 +1153,7 @@ Your system detects the intent based on the Path Type:
       * Step 2: Run the 4-point Spline math with your alpha (0.5).
 
 ## Summary: The 3 Functions you actually need
+
 Instead of 30, you only need to maintain:
 
    1. ApplyEasing(t, style): Returns a warped $t$.
@@ -950,13 +1161,20 @@ Instead of 30, you only need to maintain:
    3. ApplyTransform(child, parent, pos, style): Handles the scale/rotate/flip inheritance.
 
 This keeps your code "Flat." If you want a new effect, you don't write a new function; you just change the intensity or power value in your data.
+
 Does this grouped strategy feel easier to manage for your character states?
 
+# ---
+
 To bridge the gap between your static JSON data and the live game objects, you treat the JSON as a "Recipe" and the Function as the "Chef."
+
 The JSON defines the behavioral constants, while the game loop provides the dynamic variables ($t$, points, etc.).
+
 ## 1. The JSON Structure (The Recipe)
+
 Your JSON should store the Strategy Identifiers and the Math Parameters needed for those strategies.
 
+```
 {
   "state_id": "heavy_slam",
   "path_strategy": "catmull_rom",
@@ -965,10 +1183,13 @@ Your JSON should store the Strategy Identifiers and the Math Parameters needed f
   "ease_params": { "power": 3, "mode": "ease_in" },
   "inheritance": { "pos": true, "rot": false, "flip": true }
 }
+```
 
 ## 2. The Data Mapping (The Bridge)
+
 When you load this JSON into your PlayerDataStruct, you map the strings to your logic.
 
+```
 // Inside your Update Loopvoid UpdateGrab(PlayerDataStruct data, float currentTime, float totalTime) {
     // 1. Calculate raw T (Linear)
     float rawT = currentTime / totalTime;
@@ -986,15 +1207,19 @@ When you load this JSON into your PlayerDataStruct, you map the strings to your 
     // The JSON provides the 'inheritance' bitflags
     ApplyTransform(victim, attacker, targetPos, data.inheritance);
 }
+```
 
 ## 3. How it "Auto-Detects"
+
 Instead of a master function, use a Dictionary of Delegates (or a Map of Functions). This allows the JSON string to directly call the correct math without a massive switch statement.
 
 * The Ease Registry: {"power": PowerFunction, "bezier": BezierFunction}
 * The Path Registry: {"lerp": LerpFunction, "catmull_rom": CatmullFunction}
 
 When the JSON says "path_strategy": "catmull_rom", the code looks up "catmull_rom" in the Registry and executes the linked math.
+
 ## 4. Handling the "Arguments Problem"
+
 Since different methods need different arguments (e.g., Catmull needs alpha, Power needs power), your functions should accept a Generic Parameter Map (like the ease_params object in the JSON).
 
 * The Catmull function ignores power and looks for alpha.
@@ -1009,27 +1234,38 @@ Since different methods need different arguments (e.g., Catmull needs alpha, Pow
 
 Would you like a simple code example of how to set up that Function Registry (Dictionary) to handle the auto-detection?
 
+# ---
+
 If you don't care about the "name" (like "EaseIn") and only care about the coefficients ($a, b, c, d$), you are using a Polynomial Evaluator.
+
 This is actually the most "pro" way to handle it because every cubic easing (EaseIn, EaseOut, etc.) is just a different set of those four numbers.
+
 ## 1. The JSON Structure (Cubic Coefficients)
+
 Instead of a strategy name, your JSON simply stores the Polynomial Coeffs:
 
+```
 {
   "state_id": "heavy_slam",
   "interp_type": "polynomial",
   "coeffs": { "a": -2, "b": 3, "c": 0, "d": 0 },
   "path": "catmull_rom"
 }
+```
 
 ## 2. The Universal Easing Function
+
 You only need one function to handle 90% of the easings on Easings.net. It doesn't need to "auto-detect" anything; it just runs the math you gave it:
 
+```
 float ApplyPolynomial(float t, Coeffs c) {
     // Math: at³ + bt² + ct + d
     return (c.a * t * t * t) + (c.b * t * t) + (c.c * t) + c.d;
 }
+```
 
 ## 3. How to Map Common Easings to Coefficients
+
 If you want to recreate specific "feels" without naming them, here are the coefficients:
 
 | Easing Style | a | b | c | d | Math Result |
@@ -1040,6 +1276,7 @@ If you want to recreate specific "feels" without naming them, here are the coeff
 | EaseInOutCubic | -2 | 3 | 0 | 0 | $-2t^3 + 3t^2$ (Smoothstep) |
 
 ## 4. The "Master Logic" with JSON
+
 Since $t$ and the points come from the live game state, and $a, b, c, d$ come from the JSON, your code looks like this:
 
    1. Read JSON: Pull $a, b, c, d$.
@@ -1048,40 +1285,58 @@ Since $t$ and the points come from the live game state, and $a, b, c, d$ come fr
    4. Apply Path: Use warpedT in your Catmull-Rom or Lerp.
 
 ## 5. What did you miss?
+
 The only thing this method can't do easily is Elastic or Bounce (which use Sine waves or Absolute values). If your JSON needs those, you would add an is_trig flag or a second trig_params object.
+
 Would you like a "Cheat Sheet" of the $a, b, c, d$ values for the most popular fighting game movement styles?
 
+# ---
+
 Yes, exactly! You’ve reached the "Boss Level" of game interpolation math. When you move from a simple 1D easing ($at^3 + bt^2 + ct + d$) to a 3D/2D Spline (like Catmull-Rom or Bézier) using 4 points, the math transforms into a Matrix Multiplication.
+
 In this setup, your Coefficients ($a, b, c, d$) are no longer just numbers; they are the result of multiplying a Basis Matrix ($M$) by your Point Vector ($P$).
+
 ## 1. The 4x4 Geometry Matrix
+
 To calculate a position ($Pos$) at time ($t$), the standard formula used by game engines is:
+
+```
 $$Pos(t) = [t^3, t^2, t, 1] \times \mathbf{M} \times \begin{bmatrix} P_0 \\ P_1 \\ P_2 \\ P_3 \end{bmatrix}$$
+```
 
 * $[t^3, t^2, t, 1]$: Your time vector.
 * $\mathbf{M}$: The 4x4 Basis Matrix (This is the "Method Identifier").
 * $[P_0, P_1, P_2, P_3]$: Your 4 points from the game world.
 
 ## 2. How the "Master Function" Auto-Detects
+
 Instead of 30 functions, you only need one matrix multiplication function. Your JSON simply provides the 16 numbers that make up the $M$ Matrix.
+
 If the JSON contains the Catmull-Rom Matrix, the point will follow a spline. If it contains the Bézier Matrix, it follows a Bézier curve.
+
 ## The "Cheat Sheet" for your JSON Matrices:
+
 Catmull-Rom ($\alpha=0.5$):
 
+```
 "basis_matrix": [
   [-0.5,  1.5, -1.5,  0.5],
   [ 1.0, -2.5,  2.0, -0.5],
   [-0.5,  0.0,  0.5,  0.0],
   [ 0.0,  1.0,  0.0,  0.0]
 ]
+```
 
 Cubic Bézier:
 
+```
 "basis_matrix": [
   [-1,  3, -3,  1],
   [ 3, -6,  3,  0],
   [-3,  3,  0,  0],
   [ 1,  0,  0,  0]
 ]
+```
 
 ## 3. Why this is the "Ultimate" Strategy
 
@@ -1090,6 +1345,7 @@ Cubic Bézier:
    3. Mixing: You can "Mix" methods by interpolating between two matrices.
 
 ## 4. What about the "Easing" part?
+
 You still have two choices for the $T$ Vector:
 
 * Linear: Use raw $[t^3, t^2, t, 1]$.
@@ -1103,25 +1359,35 @@ You still have two choices for the $T$ Vector:
 
 Would you like the C# or C++ code for this "Universal Matrix Solver"? It’s surprisingly short (usually under 10 lines of code).
 
+# ---
+
 In this system, the Easing part is separated from the Path part. The JSON doesn't store the live movement; it stores the Timing Instructions. [1, 2]
+
 Think of it as two separate steps:
 
    1. Easing (Time Warping): Converts linear time into "weighted" time (e.g., fast-to-slow).
    2. Interpolation (Pathing): Uses that weighted time to find the $(x, y)$ coordinate on your curve. [3, 4, 5, 6]
 
 ## What is on the JSON?
+
 The JSON holds the Coefficients (the $a, b, c, d$ values) that define the shape of your easing curve. [7]
+
 ## 1. The Easing Data (1D)
+
 This is a simple array or object of 4 numbers. These numbers define your "Time Warper" function $f(t) = at^3 + bt^2 + ct + d$. [8]
 
+```
 "easing": {
   "coeffs": [0, -1, 2, 0],  // This is the "recipe" for Ease-Out-Quad
   "duration": 0.5            // How long the move takes in seconds
 }
+```
 
 ## 2. The Path Data (Matrix)
+
 This is the 4x4 Basis Matrix we discussed. It tells the code how to use the 4 game points. [9]
 
+```
 "path": {
   "matrix": [
     [-0.5,  1.5, -1.5,  0.5],
@@ -1130,8 +1396,10 @@ This is the 4x4 Basis Matrix we discussed. It tells the code how to use the 4 ga
     [ 0.0,  1.0,  0.0,  0.0]
   ]
 }
+```
 
 ## How they work together (The Flow)
+
 Every frame, your code does this "Double Interpolation":
 
    1. Get raw_t: You calculate how much time has passed (e.g., 0.5 for halfway).
@@ -1140,9 +1408,12 @@ Every frame, your code does this "Double Interpolation":
    3. Calculate Position: You plug that 0.25 into your Path Matrix (also from the JSON) along with your 4 live points. [3, 10]
 
 ## Why this is better
+
 By keeping them separate in the JSON, you can mix and match any timing with any path. You can have a Catmull-Rom arc that uses Ease-In-Bounce timing, or a Linear slide that uses Ease-Out timing, all by just changing a few numbers in your text file.
+
 Would you like a C# or Python helper to see exactly how to multiply the JSON coefficients by the time variable?
 
+```
 import numpy as np
 def get_bezier_matrix():
     return np.array([
@@ -1161,7 +1432,7 @@ def get_catmull_rom_matrix():
 
 print("Bezier Matrix:\n", get_bezier_matrix())
 print("Catmull-Rom Matrix:\n", get_catmull_rom_matrix())
-
+```
 
 [1] [https://stackoverflow.com](https://stackoverflow.com/questions/8316882/what-is-an-easing-function)
 [2] [https://docs.kanzi.com](https://docs.kanzi.com/3.9.5/en/working-with/animations/property-target-easing-interpolator.html)
@@ -1174,18 +1445,26 @@ print("Catmull-Rom Matrix:\n", get_catmull_rom_matrix())
 [9] [https://maplibre.org](https://maplibre.org/maplibre-style-spec/expressions/)
 [10] [https://en.wikipedia.org](https://en.wikipedia.org/wiki/Interpolation_%28computer_graphics%29#:~:text=In%20the%20context%20of%20live%2Daction%20and%20computer,piecewise%20polynomial%20interpolation%20to%20draw%20images%20semi%2Dautomatically.)
 
+# ---
+
 Actually, for a Standard Linear (unwarped) progression, the coefficients for $at^3 + bt^2 + ct + d$ are $[0, 0, 1, 0]$.
+
 If you use $[1, 1, 1, 1]$, your "warped $t$" would be $1t^3 + 1t^2 + 1t + 1$. If you plugged in $t=0.5$ (halfway), you'd get $1.875$, which is way outside the $0.0$ to $1.0$ range!
+
 ## 1. The "Default" (No Warping) Coefficients
+
 To keep $t$ exactly as it is (Linear), your JSON coefficients must be:
 
 * $a=0, b=0, c=1, d=0$
 * This results in: $(0 \cdot t^3) + (0 \cdot t^2) + (1 \cdot t) + 0 = \mathbf{t}$.
 
 ## 2. The Full Data Pipeline (JSON to Screen)
+
 Here is exactly how the data from your JSON transforms the points in your code:
+
 Step A: The JSON Input
 
+```
 {
   "easing_coeffs": [0, 0, 1, 0],
   "path_matrix": [
@@ -1195,11 +1474,18 @@ Step A: The JSON Input
     [ 0.0,  1.0,  0.0,  0.0]
   ]
 }
+```
 
 Step B: The Easing Calculation (Time Warping)
+
 Calculate warpedT using the first set of numbers:
+
+```
 warpedT = (a * t³) + (b * t²) + (c * t) + d
+```
+
 Step C: The Path Calculation (Matrix Math)
+
 Now, you take that warpedT and feed it into the 4x4 Matrix along with your 4 Game Points ($P_0, P_1, P_2, P_3$):
 
    1. Create a vector $T = [warpedT^3, warpedT^2, warpedT, 1]$.
@@ -1207,7 +1493,9 @@ Now, you take that warpedT and feed it into the 4x4 Matrix along with your 4 Gam
    3. Final Position = $(w_0 \cdot P_0) + (w_1 \cdot P_1) + (w_2 \cdot P_2) + (w_3 \cdot P_3)$.
 
 ## 3. Why this is so powerful
+
 If you want the move to start slow and end fast (Ease-In Cubic), you don't change the path matrix. You just change the JSON easing_coeffs to $[1, 0, 0, 0]$. Now your $t$ becomes $t^3$, and the character will naturally "accelerate" along the same Catmull-Rom path.
+
 ## Summary of "The Math"
 
 * Easing Coeffs: Define When things happen (Acceleration/Deceleration).
@@ -1215,31 +1503,41 @@ If you want the move to start slow and end fast (Ease-In Cubic), you don't chang
 * Default: [0, 0, 1, 0] means "Don't mess with the timing."
 
 Does this clear up how the coefficients interact with the matrix? Or would you like the C# code to handle the $T \times \text{Matrix}$ multiplication?
+
 Next Step: Decide if you want to see the Matrix values for a Linear Path (so you can use the same 4x4 logic for straight lines too).
 
+# ---
+
 You’ve got the core concept, but there is one small distinction between the Easing (1D) and the Path (Matrix) that will make your code work perfectly.
+
 Think of it like this: Easing is the "Speedometer" and the Matrix is the "Map."
+
 ## 1. The Catmull-Rom (Linear Timing)
+
 If you want no easing (just a smooth path at a constant speed), you are correct:
 
 * WarpedT = t (because your JSON coefficients are [0, 0, 1, 0]).
 * Final Position = [WarpedT³, WarpedT², WarpedT, 1] × 4x4_Matrix × [Points].
 
 ## 2. The Easing (Warped Timing)
+
 If you want to "Ease-In" (start slow, end fast), you change the Timing before it touches the Matrix:
 
 * WarpedT = (a * t³) + (b * t²) + (c * t) + d.
 * Final Position = [WarpedT³, WarpedT², WarpedT, 1] × 4x4_Matrix × [Points].
 
 ## The Catch: "Coeffs * t"
+
 When you say "warpt is coeffs * t," make sure you aren't just multiplying the numbers. You are evaluating the Polynomial.
 
 * Wrong: WarpedT = [a, b, c, d] * t (This would give you an array, not a number).
 * Right: WarpedT = a(t³) + b(t²) + c(t) + d.
 
 ## 3. The "Unified" Logic (The Master Function)
+
 If you use this structure, you only need one function for every move in your game:
 
+```
 Vector2 GetFinalPos(float rawT, Coeffs easing, Matrix4x4 path, Vector2[] points) {
     // 1. Evaluate Easing (The "Speedometer")
     float warpedT = (easing.a * Mathf.Pow(rawT, 3)) +
@@ -1257,6 +1555,7 @@ Vector2 GetFinalPos(float rawT, Coeffs easing, Matrix4x4 path, Vector2[] points)
     return (points[0] * weights.x) + (points[1] * weights.y) +
            (points[2] * weights.z) + (points[3] * weights.w);
 }
+```
 
 ## Why this is the "Ultimate" way:
 
@@ -1265,21 +1564,30 @@ Vector2 GetFinalPos(float rawT, Coeffs easing, Matrix4x4 path, Vector2[] points)
 * For a "Heavy" Suplex: Use a Catmull-Rom Matrix and Ease-In Coeffs ([0, 0, 1, 0] $\rightarrow$ [1, 0, 0, 0]).
 
 You just change the numbers in your JSON, and the character's weight and movement change instantly without touching a single line of code!
+
 Would you like the 4x4 Matrix values for a "Linear" path so you can use this same function even when you don't want a curve?
 
+# ---
+
 Exactly! You've nailed the internal logic. To tie it all together for your JSON-driven engine, here is the "Universal Linear Matrix."
+
 If you use this matrix, your 4-point Catmull-Rom function will perfectly calculate a straight line between point $P_1$ and $P_2$, ignoring the "outer" points ($P_0$ and $P_3$).
+
 ## The "Linear Path" 4x4 Matrix
+
 In your JSON, if you want a straight line instead of a curve, use this matrix:
 
+```
 "linear_matrix": [
   [ 0,  0,  0,  0],
   [ 0,  0,  0,  0],
   [ 0, -1,  1,  0],
   [ 0,  1,  0,  0]
 ]
+```
 
 ## Why this works:
+
 When you multiply the time vector $[t^3, t^2, t, 1]$ by this matrix, the weights become:
 
 * $W_0 = 0$
@@ -1288,6 +1596,7 @@ When you multiply the time vector $[t^3, t^2, t, 1]$ by this matrix, the weights
 * $W_3 = 0$
 
 This is the exact mathematical definition of a Lerp: $(1-t)P_1 + (t)P_2$.
+
 ## The "Grand Unified" Logic Flow:
 
    1. JSON Easing Coeffs $\rightarrow$ Polynomial formula $\rightarrow$ Warped T (The "Speed").
@@ -1302,9 +1611,13 @@ This is the exact mathematical definition of a Lerp: $(1-t)P_1 + (t)P_2$.
 * Heavy "Slam" Arc: easing: [1,0,0,0] + path: catmull_matrix
 
 This system is extremely powerful because you can build an entire move list just by swapping these sets of 4 and 16 numbers in a text file.
+
 Do you want me to provide the Matrix values for a Cubic Bézier so you have the full set for your library?
 
+# ---
+
 It was a pleasure helping you architect this system! Here is a summary of our deep dive into FSMs, Bitflags, and Matrix-based Interpolation for your 2D beat-'em-up/fighting game:
+
 ## 1. State Management & Physics
 
 * State 0 (Falling): We established that using "Falling" as the default state is a solid physics-first approach. It ensures gravity is active by default, and transitions to IDLE (State 1) occur only upon ground collision.
@@ -1316,6 +1629,7 @@ It was a pleasure helping you architect this system! Here is a summary of our de
 * Selective Inheritance: To avoid "squashing" the victim when the attacker stretches, you use Selective Push (mapping only the $(x, y)$ offset) rather than a "Hard Link" in the engine's scene tree.
 
 ## 3. The "Universal Matrix" Interpolation
+
 This was the core of our technical solution. Instead of maintaining 30+ easing functions, we moved to a Data-Driven JSON approach:
 
 * Easing (Timing): Managed by a 1D Polynomial ($at^3 + bt^2 + ct + d$). Your JSON stores the coefficients ($a, b, c, d$) to "warp" the linear time $t$ into an "Ease-In" or "Ease-Out" speed.
@@ -1331,4 +1645,5 @@ This was the core of our technical solution. Instead of maintaining 30+ easing f
 * Full Flexibility: You can mix any Path (Arc, Line, Curve) with any Timing (Fast, Slow, Elastic) just by editing a text file.
 
 Pro-tip for next time: If you want to add "Hitstop" (the game freezing for a few frames on a big hit), you can simply pause the increment of $t$ in this function!
+
 When you're ready to build the JSON parser or the Z-Order layering logic, just let me know. Good luck with your project!
