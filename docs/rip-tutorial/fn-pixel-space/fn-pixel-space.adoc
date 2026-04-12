@@ -11,7 +11,7 @@ Some people refer `[0,0]` as "origin" or "root". I call it "center point". And h
 Here is the process how I convert XY from pixel space to canvas position:
 
 
-image::{rel}/elise-space-1.png[link={rel}/elise-space-1.png,height=240]
+image::{rel}/elise-space-1.png[]
 
 From the image above, the drawing XY for sprite is `[-130,-160 , -130,10 , 150,10 , 150,-160]`
 
@@ -45,8 +45,10 @@ With that we will prepare a 300x320 px canvas, with `[150,160]` represent `[0,0]
 The result drawing position on the canvas is `[20,0 , 20,170 , 300,170 , 300,0]`.
 
 
-image::{rel}/elise-space-2.png[link={rel}/elise-space-2.png,height=240]
+image::{rel}/elise-space-2.png[]
 
 It is also very simple to revert canvas position back to pixel space - just subtract `[150,160]`.
 
 Since everything is aligned to `[0,0]` in pixel space, it doesn't matter what the final canvas size is, they will all align together correctly for animations.
+
+<<<

@@ -1,6 +1,6 @@
 = Margie Healing Tutorial
 Rufas Wan <https://github.com/rufaswan/Web2D_Games/>
-v2.0 , 2024-12-28
+v2.1 , 2026-4-6
 :toc:
 
 
@@ -29,13 +29,18 @@ There are many ways to locate Bart's HP.
 . You can also find it by opening *uncompressed* save states with any hex editor. Similar to Cheat Engine above, you also need to do some adjustment to the result address.
 . But unlike Cheat Engine, save state is a normal file. You can extract the RAM part to a new file first and avoid the need to do math later.
 
+In this case, we found Bart's HP is at `RAM 800ccd34` duing battle.
+
+<<<
+
 
 
 == Backtracing For A Value
 
-In any case, Bart's HP is at `RAM 800ccd34` duing battle. Put a WRITE breakpoint there, you'll get this on Margie's turn.
+.Put a WRITE breakpoint there, you'll get this on Margie's turn.
+image::margie-heal-1.png[]
 
-image::margie-heal-1.png[link=margie-heal-1.png,height=240]
+TIP: Use the register list on top-right for keep track its value. For example, `s3` is `0x800c4078`
 
 ....
 at = d0000 + s0 - 32cc
@@ -53,15 +58,17 @@ at = 10000 + s4 - 717c
 
 So `v0` is Bart's HP, and `v1` is Margie's +40 HP healing we are looking for. It is loaded from `s3`.
 
-Load back #BEFORE TURN state# and put a WRITE breakpoint on `RAM 800c4078` to see where it came from.
 
 
-image::margie-heal-2.png[link=margie-heal-2.png,height=240]
+.Load back #BEFORE TURN state# and put a WRITE breakpoint on `RAM 800c4078` to see where it came from.
+image::margie-heal-2.png[]
 
-The value is copied from `t0`. Again, load back #BEFORE TURN state# and put a WRITE breakpoint on `RAM 800d2c54` to backtrace it.
+The value is copied from `t0`.
 
 
-image::margie-heal-3.png[link=margie-heal-3.png,height=240]
+
+.Again, load back #BEFORE TURN state# and put a WRITE breakpoint on `RAM 800d2c54` to backtrace it.
+image::margie-heal-3.png[]
 
 Now here is the tricky part. The `pc` has already "returned", but no$psx is nice enough to stay on the delay slot.
 
@@ -69,62 +76,84 @@ Looking at `v0`, it still holding 0x28. And from the instruction above, `v0` is 
 
 Let scroll upward to discover how `a1` is calculated.
 
-
-image::margie-heal-4a.png[link=margie-heal-4a.png,height=240]
-
 As you scrolling up, you'll keep seeing `a1` is from `v1` and `v0`, but then `v1` is from `a1`, and `v0` is from `v1`. So it's a bunch of nothing.
 
-Eventually, you'll reach this part, where `a1` is `v1 * v0`, and `v1` and `v0` are values loaded from somewhere else.
+
+
+.Eventually, you'll reach this part, where `a1` is `v1 * v0`, and `v1` and `v0` are values loaded from somewhere else.
+image::margie-heal-4a.png[]
 
 IMPORTANT: Bookmark this ASM address!
 
-Following `v1`, we follow the pointer at `a0`, and reached `RAM 800cd138 + 5b`, we get the value 2. Looking at the data struct, it seems like character stats. Margie has Ether = 2.
+Following `v1`, we follow the pointer at `a0`, and reached `RAM 800cd138 + 5b`, we get the value 2.
+
+Looking at the data struct, it seems like character stats. Margie has Ether = 2.
+
+TIP: The table of hex number below ASM code is the RAM! All in-game variable can be found here!.
+
+NOTE: Game Genie and Action Replay is about is about constantly modifying the values here for infinite money, infinite health, infinite ammo, etc.
 
 
-image::margie-heal-4b.png[link=margie-heal-4b.png,height=240]
 
-Following `v0`, we follow the pointer at `v0`, and reached `RAM 800d0388 + 11`, we get the value 0x14.
+.Following `v0`, we follow the pointer at `v0`, and reached `RAM 800d0388 + 11`, we get the value 0x14.
+image::margie-heal-4b.png[]
 
 #IT FITS!# 2 * 0x14 = 0x28. So the formula is Margie's Ether 2 * Spell Power 0x14 = 0x28 HP Heal!
 
-Now we are getting somewhere! Load back #BEFORE TURN state# and put a WRITE breakpoint here to see where 0x14 came from!
+Now we are getting somewhere!
 
-
-image::margie-heal-5b.png[link=margie-heal-5b.png,height=240]
+Let's load back #BEFORE TURN state# and put a WRITE breakpoint here to see where 0x14 came from!
 
 Unfortunately the breakpoint didn't triggered. It means the data wasn't update during the battle.
 
-It also means we need to go further back to #BEFORE BATTLE state# and re-trigger the battle from the start.
+It also means we need to go further back
+
+
+
+.Load back #BEFORE BATTLE state# and re-trigger the battle from the start.
+image::margie-heal-5b.png[]
 
 Indeed, the breakpoint is triggered! The 0x14 is copied from `a1`.
 
-Load back #BEFORE BATTLE state# again and put (yet another) WRITE breakpoint at `RAM 801c3f7a`
 
 
-image::margie-heal-6b.png[link=margie-heal-6b.png,height=240]
+.Load back #BEFORE BATTLE state# again and put (yet another) WRITE breakpoint at `RAM 801c3f7a`
+image::margie-heal-6b.png[]
 
 And now we find ourself reading decompression code. `a0` is the pointer to original compressed data, loaded directly from BIN/CUE.
 
-You can use this data to find the correct game file from the disc.
+Let's copy a line of compressed data to find the correct game file from the disc.
+
+```
+a1 28 70 01  04 10 05 10  00 12 fd 28  f0 a8 c8 30
+```
+
+<<<
 
 
 
 == Locating the Relevant Files
 
-Xenogears looks for its game files by LBA (Logical Block Address) or CD sector address. The list of LBA for the whole game is on SLPS/SLUS main executable at offset 0x804 to 0x8800. It is then loaded to RAM at 0x80010004 to 0x80018000. So we put an READ breakpoint to the entire area.
+Xenogears looks for its game files by LBA (Logical Block Address) or CD sector address. The list of LBA for the whole game is on SLPS/SLUS main executable at offset 0x804 to 0x8800. It is then loaded to RAM at 0x80010004 to 0x80018000.
 
 
-image::xeno-file-1.png[link=xeno-file-1.png,height=240]
+
+.So we put an READ breakpoint to the entire area.
+image::xeno-file-1.png[]
 
 The LBA list is 7 bytes per entry. Byte 0,1,2 is an int24 for LBA, and byte 3,4,5,6 is an int32 for its filesize. If the filesize is negative, then the entry is an directory.
 
 
-image::xeno-file-2.png[link=xeno-file-2.png,height=240]
+
+.When the game stops at 3,4,5,6
+image::xeno-file-2.png[]
 
 Basically, the ASM is checking if it is going to load a subfile. You can ignore lbu (load byte unsigned) instructions when it is on byte 3,4,5,6.
 
 
-image::xeno-file-3.png[link=xeno-file-3.png,height=240]
+
+.When the game stops at 0,1,2
+image::xeno-file-3.png[]
 
 Byte 0,1,2 is the actual attempt to load the file. The value you need to take note is `v1`, and it has value 0x800104c6.
 
@@ -140,6 +169,7 @@ CAUTION: Make sure there are no remainder after the divide!
 
 Noting down every `v1` starting from #BEFORE MAP state# until Margie heals Bart. The content of each file is then identified by referring to `xeno-iso.txt` as notes.
 
+[stripes=even, frame=all, grid=all]
 |===
 |v1       |file |notes
 
@@ -207,15 +237,22 @@ Checking the files between "BEFORE BATTLE state" and "pre-Battle Dialogue", excl
 
 There might be duplicates on other game files. You can use this method to find them. If you cannot trigger certain file to load no matter what you do, most likely that file is a leftover dummy.
 
-
+<<<
 
 == Potential Bug
 
-image:heal-200-margie.png[link=heal-200-margie.png,height=240]
-image:heal-200-miang.png[link=heal-200-miang.png,height=240]
+image:heal-200-margie.png[]
+image:heal-200-miang.png[]
 
 When I changed the spell value from 20 to 100, I noticed not only Margie heals Bart 200 HP, but Miang also heals Ramsus 200 HP.
 
 Apparently both Margie and Miang are using the same spell. It may not be what you want, but that's whole another story on fixing it.
 
+<<<
+
 Hope it helps!
+
+++++
+<base target="_blank"/>
+<script src='img-a.js'></script>
+++++

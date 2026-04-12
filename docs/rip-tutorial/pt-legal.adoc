@@ -1,0 +1,26 @@
+[#legal]
+== Disclaimer and Legal Notice
+
+This tutorial, and all materials contained herein, are provided for purely educational and informational purposes only.
+
+=== Compliance with Law and Agreements
+
+You are solely responsible for complying with all applicable laws, regulations, and the terms of service and license agreements of any software or products you analyze.
+
+You must not use the techniques or information presented in this tutorial to infringe upon intellectual property rights, including copyright, or for any other illegal or unauthorized activity.
+
+=== No Warranty and Liability
+
+This tutorial is provided "as is," without any warranties, express or implied, including but not limited to, warranties of merchantability or fitness for a particular purpose.
+
+The creator of this tutorial is not responsible for any direct, indirect, incidental, consequential, or punitive damages arising from the use of this information or the methods described.
+
+=== Educational Use Only
+
+This guide demonstrates how to understand software functionality through reverse engineering for legitimate educational purposes, such as security research, interoperability, and improving system maintenance.
+
+Do not use this content for malicious activities, unauthorized access, or any purpose that would violate the law or the rights of others.
+
+By accessing or using this tutorial, you acknowledge that you have read, understood, and agree to these terms.
+
+<<<

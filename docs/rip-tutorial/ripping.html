@@ -14,14 +14,26 @@
 <div class="details">
 <span id="author" class="author">Rufas Wan</span><br/>
 <span id="email" class="email"><a href="https://github.com/rufaswan/Web2D_Games/" class="bare">https://github.com/rufaswan/Web2D_Games/</a></span><br/>
-<span id="revnumber">version 1.1.2,</span>
-<span id="revdate">2025-8-3</span>
+<span id="revnumber">version 1.2,</span>
+<span id="revdate">2026-4-6</span>
 </div>
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
+<li><a href="#legal">Disclaimer and Legal Notice</a>
+<ul class="sectlevel2">
+<li><a href="#_compliance_with_law_and_agreements">Compliance with Law and Agreements</a></li>
+<li><a href="#_no_warranty_and_liability">No Warranty and Liability</a></li>
+<li><a href="#_educational_use_only">Educational Use Only</a></li>
+</ul>
+</li>
 <li><a href="#prereq">Prerequisites</a></li>
-<li><a href="#overview">The Method Overview</a></li>
+<li><a href="#overview">The Method Overview</a>
+<ul class="sectlevel2">
+<li><a href="#_a_visual_example_on_3_steps_above">A visual example on 3 steps above:</a></li>
+<li><a href="#_some_notes_about_workarounds">Some notes about workarounds</a></li>
+</ul>
+</li>
 <li><a href="#example">Examples</a>
 <ul class="sectlevel2">
 <li><a href="#guide_sprite">Sprite Data</a></li>
@@ -42,6 +54,45 @@
 </div>
 </div>
 <div id="content">
+<div class="sect1">
+<h2 id="legal">Disclaimer and Legal Notice</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This tutorial, and all materials contained herein, are provided for purely educational and informational purposes only.</p>
+</div>
+<div class="sect2">
+<h3 id="_compliance_with_law_and_agreements">Compliance with Law and Agreements</h3>
+<div class="paragraph">
+<p>You are solely responsible for complying with all applicable laws, regulations, and the terms of service and license agreements of any software or products you analyze.</p>
+</div>
+<div class="paragraph">
+<p>You must not use the techniques or information presented in this tutorial to infringe upon intellectual property rights, including copyright, or for any other illegal or unauthorized activity.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_no_warranty_and_liability">No Warranty and Liability</h3>
+<div class="paragraph">
+<p>This tutorial is provided "as is," without any warranties, express or implied, including but not limited to, warranties of merchantability or fitness for a particular purpose.</p>
+</div>
+<div class="paragraph">
+<p>The creator of this tutorial is not responsible for any direct, indirect, incidental, consequential, or punitive damages arising from the use of this information or the methods described.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_educational_use_only">Educational Use Only</h3>
+<div class="paragraph">
+<p>This guide demonstrates how to understand software functionality through reverse engineering for legitimate educational purposes, such as security research, interoperability, and improving system maintenance.</p>
+</div>
+<div class="paragraph">
+<p>Do not use this content for malicious activities, unauthorized access, or any purpose that would violate the law or the rights of others.</p>
+</div>
+<div class="paragraph">
+<p>By accessing or using this tutorial, you acknowledge that you have read, understood, and agree to these terms.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="prereq">Prerequisites</h2>
 <div class="sectionbody">
@@ -139,6 +190,10 @@
 <p>Able to distinguish <code>doubleword</code> (int) and <code>double</code> (float).</p>
 </li>
 <li>
+<p><code>term</code> mean different <code>int</code></p>
+<div class="ulist">
+<ul>
+<li>
 <p>On DOS,  <code>byte</code> is int8, <code>word</code>     is int16, and <code>doubleword</code> is int32.</p>
 </li>
 <li>
@@ -148,6 +203,16 @@
 <p>On SH-2, <code>byte</code> is int8, <code>word</code>     is int16, and <code>longword</code>   is int32.</p>
 </li>
 <li>
+<p>etc&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>int</code> is defaulted to <code>signed</code> or <code>unsigned</code></p>
+<div class="ulist">
+<ul>
+<li>
 <p>On MIPS, <code>lb</code>   is <code>load signed byte</code>   and <code>lbu</code>   is <code>load unsigned byte</code>.</p>
 </li>
 <li>
@@ -155,6 +220,9 @@
 </li>
 <li>
 <p>etc&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -173,6 +241,7 @@ Be careful about shorthands! If <code>longword</code> shorten to <code>long</cod
 <div class="paragraph">
 <p>Lastly, know your tools! Study and learn the features of the tool you&#8217;re using. Try to find a workaround if required feature is not available. In worst case, the tool is not good enough, you will need to replace it with something better.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 <div class="sect1">
@@ -189,7 +258,7 @@ Be careful about shorthands! If <code>longword</code> shorten to <code>long</cod
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="pt-overview/ram-read-write.png"><img src="pt-overview/ram-read-write.png" alt="ram read write" height="240"/></a>
+<img src="pt-overview/ram-read-write.png" alt="ram read write"/>
 </div>
 </div>
 <div class="paragraph">
@@ -208,91 +277,74 @@ Be careful about shorthands! If <code>longword</code> shorten to <code>long</cod
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p>A visual example on 3 steps above:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;"/>
-<col style="width: 50%;"/>
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">With Input Data</th>
-<th class="tableblock halign-left valign-top">With Output Data</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="sect2">
+<h3 id="_a_visual_example_on_3_steps_above">A visual example on 3 steps above:</h3>
+<div class="openblock">
+<div class="title">With Input Data</div>
 <div class="content">
-<a class="image" href="pt-overview/over-input-data.png"><img src="pt-overview/over-input-data.png" alt="over input data" height="240"/></a>
-</div>
-</div>
-<div class="paragraph">
-<p>From compressed data (game file) to RAM address <code>0x8007d160</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="imageblock">
 <div class="content">
-<a class="image" href="pt-overview/over-output-data.png"><img src="pt-overview/over-output-data.png" alt="over output data" height="240"/></a>
+<img src="pt-overview/over-input-data.png" alt="over input data"/>
 </div>
-</div>
-<div class="paragraph">
-<p>From decompressed data to RAM address <code>0x801a067c</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="pt-overview/over-input-break-1.png"><img src="pt-overview/over-input-break-1.png" alt="over input break 1" height="240"/></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Use RAM Address <code>0x8007d160</code> to put a READ breakpoint</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="pt-overview/over-output-break-1.png"><img src="pt-overview/over-output-break-1.png" alt="over output break 1" height="240"/></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Use RAM Address <code>0x801a067c</code> to put a WRITE breakpoint</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="pt-overview/over-input-break-2.png"><img src="pt-overview/over-input-break-2.png" alt="over input break 2" height="240"/></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Game breaks on ASM code <code>0x8002896c</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="pt-overview/over-output-break-2.png"><img src="pt-overview/over-output-break-2.png" alt="over output break 2" height="240"/></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Game breaks on ASM code <code>0x800289e8</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Using 2 "jr ra" (return), the ASM code <code>from 0x80028960 to 0x80028a8c</code> is identified as the "decompression function".</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>After that, you can then use a decompiler to help understanding the ASM code, such as Ghidra <a href="#ghidra">[ghidra]</a>.</p>
+<div class="title">Figure 1. From compressed data (game file) to RAM address <code>0x8007d160</code></div>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="pt-overview/over-ghidra.png"><img src="pt-overview/over-ghidra.png" alt="over ghidra" height="240"/></a>
+<img src="pt-overview/over-input-break-1.png" alt="over input break 1"/>
 </div>
+<div class="title">Figure 2. Use RAM Address <code>0x8007d160</code> to put a READ breakpoint</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="pt-overview/over-input-break-2.png" alt="over input break 2"/>
+</div>
+<div class="title">Figure 3. Game breaks on ASM offset <code>0x8002896c</code></div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">With Output Data</div>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="pt-overview/over-output-data.png" alt="over output data"/>
+</div>
+<div class="title">Figure 4. From decompressed data to RAM address <code>0x801a067c</code></div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="pt-overview/over-output-break-1.png" alt="over output break 1"/>
+</div>
+<div class="title">Figure 5. Use RAM Address <code>0x801a067c</code> to put a WRITE breakpoint</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="pt-overview/over-output-break-2.png" alt="over output break 2"/>
+</div>
+<div class="title">Figure 6. Game breaks on ASM offset <code>0x800289e8</code></div>
+</div>
+</div>
+</div>
+<div class="openblock">
+<div class="title">Once you have either ASM offset <code>0x8002896c</code> or <code>0x800289e8</code></div>
+<div class="content">
+<div class="paragraph">
+<p>You can think an ASM offset is like a line or command from .BAT script file.</p>
 </div>
 <div class="paragraph">
-<p>Some notes about workarounds</p>
+<p>These commands, when working together as an unit, is a function. So you are somewhere within the "decompression function".</p>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="pt-overview/over-ghidra.png" alt="over ghidra"/>
+</div>
+<div class="title">Figure 7. You can further analyse this function using a decompiler, such as Ghidra <a href="#ghidra">[ghidra]</a>.</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_some_notes_about_workarounds">Some notes about workarounds</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -308,6 +360,8 @@ Be careful about shorthands! If <code>longword</code> shorten to <code>long</cod
 <p>Your tool must have the ability to put Memory READ or WRITE breakpoints!</p>
 </li>
 </ul>
+</div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 </div>
@@ -332,7 +386,7 @@ Be careful about shorthands! If <code>longword</code> shorten to <code>long</cod
 <p>Let&#8217;s start with something simple - we are trying to rip a character sprite. Using nocash PSX VRAM Viewer, we can see the sprite is a complete sprite.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite/decode-vram.png"><img src="ex-sprite/decode-vram.png" alt="decode vram" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite/decode-vram.png" alt="decode vram"/></span></p>
 </div>
 <div class="paragraph">
 <p>Remember - data need to be read to RAM before it can be transfer to VRAM. So we need to explore RAM for traces of the sprite.</p>
@@ -359,8 +413,8 @@ Always make a save state before editing RAM. If something went wrong, you can al
 </table>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite/decode-aya-1.png"><img src="ex-sprite/decode-aya-1.png" alt="decode aya 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite/decode-aya-2.png"><img src="ex-sprite/decode-aya-2.png" alt="decode aya 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite/decode-aya-1.png" alt="decode aya 1"/></span>
+<span class="image"><img src="ex-sprite/decode-aya-2.png" alt="decode aya 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>So we get an address <code>b09100</code> from Cheat Engine, and that is correspond to <code>80010000</code> on nocash PSX.</p>
@@ -384,8 +438,8 @@ PSX 80200000 = CE af9100 + 200000
 <p>We will need to look for anything suspicious at address <code>from af9100 to cf9100</code>. Refer <a href="#raw_image">Raw Image Data</a> for more details.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite/decode-cheat-1.png"><img src="ex-sprite/decode-cheat-1.png" alt="decode cheat 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite/decode-cheat-2.png"><img src="ex-sprite/decode-cheat-2.png" alt="decode cheat 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite/decode-cheat-1.png" alt="decode cheat 1"/></span>
+<span class="image"><img src="ex-sprite/decode-cheat-2.png" alt="decode cheat 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>We found the graphic data at <code>c9f5a</code>. Using the base address, we can translate it back to PSX address.</p>
@@ -400,8 +454,8 @@ PSX 80200000 = CE af9100 + 200000
 <p>Let&#8217;s go back to nocash and double-check if we are doing it correctly and looking at the same data.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite/decode-cheat-3.png"><img src="ex-sprite/decode-cheat-3.png" alt="decode cheat 3" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite/decode-cheat-4.png"><img src="ex-sprite/decode-cheat-4.png" alt="decode cheat 4" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite/decode-cheat-3.png" alt="decode cheat 3"/></span>
+<span class="image"><img src="ex-sprite/decode-cheat-4.png" alt="decode cheat 4"/></span></p>
 </div>
 <div class="paragraph">
 <p>YES! They are both indeed the same!</p>
@@ -410,8 +464,8 @@ PSX 80200000 = CE af9100 + 200000
 <p>Now we can put a WRITE breakpoint to look for the decompression function:</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite/decode-break-1.png"><img src="ex-sprite/decode-break-1.png" alt="decode break 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite/decode-break-2.png"><img src="ex-sprite/decode-break-2.png" alt="decode break 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite/decode-break-1.png" alt="decode break 1"/></span>
+<span class="image"><img src="ex-sprite/decode-break-2.png" alt="decode break 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>The data is READ from <code>t2</code> at RAM 8004ef70 and WRITE to <code>a0</code> at RAM 801a5f50. Now we can use the data at <code>t2</code> to locate the original game file.</p>
@@ -420,8 +474,8 @@ PSX 80200000 = CE af9100 + 200000
 <p>Since the game files still have their original names, the task becomes very easy. The character name is Karin, so obviously the file is <code>data/act/kari.act</code>. The data is then located at offset 0x4f1e9.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite/decode-break-3.png"><img src="ex-sprite/decode-break-3.png" alt="decode break 3" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite/decode-break-4.png"><img src="ex-sprite/decode-break-4.png" alt="decode break 4" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite/decode-break-3.png" alt="decode break 3"/></span>
+<span class="image"><img src="ex-sprite/decode-break-4.png" alt="decode break 4"/></span></p>
 </div>
 <div class="paragraph">
 <p>With the original game file and the decompression function found, and also have decompressed data to verify against with, we have pretty much everything we need to start coding.</p>
@@ -431,7 +485,7 @@ PSX 80200000 = CE af9100 + 200000
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-sprite/kari.act.png"><img src="ex-sprite/kari.act.png" alt="kari.act" height="240"/></a>
+<img src="ex-sprite/kari.act.png" alt="kari.act"/>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -446,6 +500,7 @@ This example starts from output data (VRAM) and work its way back to input data 
 </tr>
 </table>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 <div class="sect2">
 <h3 id="guide_sprite_alt1">Sprite Data (no Cheat Engine)</h3>
@@ -460,7 +515,7 @@ This example starts from output data (VRAM) and work its way back to input data 
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-sprite-alt1/save-aya-1.png"><img src="ex-sprite-alt1/save-aya-1.png" alt="save aya 1" height="240"/></a>
+<img src="ex-sprite-alt1/save-aya-1.png" alt="save aya 1"/>
 </div>
 </div>
 <div class="paragraph">
@@ -470,8 +525,8 @@ This example starts from output data (VRAM) and work its way back to input data 
 <p>Since the save state is not compressed, we can simply use a hex editor and look for "Aya" (as string or byte sequence).</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite-alt1/save-aya-2.png"><img src="ex-sprite-alt1/save-aya-2.png" alt="save aya 2" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite-alt1/save-aya-3.png"><img src="ex-sprite-alt1/save-aya-3.png" alt="save aya 3" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite-alt1/save-aya-2.png" alt="save aya 2"/></span>
+<span class="image"><img src="ex-sprite-alt1/save-aya-3.png" alt="save aya 3"/></span></p>
 </div>
 <div class="paragraph">
 <p>We found "Aya" at <code>99064</code>. Convert it back to PSX RAM address from <code>80000000</code> to <code>80200000</code>:</p>
@@ -489,8 +544,8 @@ PSX 80200000 = FILE 89064 + 200000
 <p>With that, we can start exploring RAM dump for sprite data. Refer to <a href="#raw_image">Raw Image Data</a> for more details.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-sprite-alt1/save-sprite-1.png"><img src="ex-sprite-alt1/save-sprite-1.png" alt="save sprite 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-sprite-alt1/save-sprite-2.png"><img src="ex-sprite-alt1/save-sprite-2.png" alt="save sprite 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-sprite-alt1/save-sprite-1.png" alt="save sprite 1"/></span>
+<span class="image"><img src="ex-sprite-alt1/save-sprite-2.png" alt="save sprite 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>We discover the graphic data on save state offset <code>22efe0</code>. Using the base address, we can translate it back to PSX RAM at:</p>
@@ -530,6 +585,7 @@ It never hurt to go back to nocash PSX to double-check if both address has the s
 </dd>
 </dl>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 <div class="sect2">
 <h3 id="guide_meta">Meta Data</h3>
@@ -564,8 +620,8 @@ If the game file is compressed, then you&#8217;ll need to do it 2 times. The fir
 </table>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-meta/meta-file-1.png"><img src="ex-meta/meta-file-1.png" alt="meta file 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-meta/meta-file-2.png"><img src="ex-meta/meta-file-2.png" alt="meta file 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-meta/meta-file-1.png" alt="meta file 1"/></span>
+<span class="image"><img src="ex-meta/meta-file-2.png" alt="meta file 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>The file is loaded at RAM da8c00. Offsets for each sections are at 0x54 to 0x80. The data we&#8217;re interested in is on section[8] (or <code>s8</code>), from offset 0x13b440 to 0x157080 (size = 0x1bc40).</p>
@@ -602,7 +658,7 @@ s8 end = 157080 + PS2 da8c00
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-meta/meta-break.png"><img src="ex-meta/meta-break.png" alt="meta break" height="240"/></a>
+<img src="ex-meta/meta-break.png" alt="meta break"/>
 </div>
 </div>
 <div class="paragraph">
@@ -907,7 +963,7 @@ s8 end = 157080 + PS2 da8c00
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-meta/meta-ghidra-s7.png"><img src="ex-meta/meta-ghidra-s7.png" alt="meta ghidra s7" height="240"/></a>
+<img src="ex-meta/meta-ghidra-s7.png" alt="meta ghidra s7"/>
 </div>
 </div>
 <div class="paragraph">
@@ -918,7 +974,7 @@ s8 end = 157080 + PS2 da8c00
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-meta/meta-ghidra-s7-2.png"><img src="ex-meta/meta-ghidra-s7-2.png" alt="meta ghidra s7 2" height="240"/></a>
+<img src="ex-meta/meta-ghidra-s7-2.png" alt="meta ghidra s7 2"/>
 </div>
 </div>
 <div class="paragraph">
@@ -952,7 +1008,7 @@ s8 end = 157080 + PS2 da8c00
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-meta/meta-ghidra-s7-1.png"><img src="ex-meta/meta-ghidra-s7-1.png" alt="meta ghidra s7 1" height="240"/></a>
+<img src="ex-meta/meta-ghidra-s7-1.png" alt="meta ghidra s7 1"/>
 </div>
 </div>
 <div class="paragraph">
@@ -970,6 +1026,7 @@ s8 end = 157080 + PS2 da8c00
 <div class="paragraph">
 <p>Meta data can be something hard to observe with videos and screenshots. And game can lag and skip frame to maintain performance further complicate things. Having the ability to refer to ASM code will help eliminate a lot of these guesswork.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 <div class="sect2">
 <h3 id="guide_loadfile">Loading Files</h3>
@@ -1016,8 +1073,8 @@ You can start with file extension.
 </table>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-load-file/load-file-1.png"><img src="ex-load-file/load-file-1.png" alt="load file 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-load-file/load-file-2.png"><img src="ex-load-file/load-file-2.png" alt="load file 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-load-file/load-file-1.png" alt="load file 1"/></span>
+<span class="image"><img src="ex-load-file/load-file-2.png" alt="load file 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>We found the the file at RAM 8aeb410. By observing the pattern, the file entry is an array <code>["FILE.NAME", int32 LBA, int32 file size]</code> and has fixed 0x1c bytes size.</p>
@@ -1027,15 +1084,15 @@ You can start with file extension.
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-load-file/load-break-1.png"><img src="ex-load-file/load-break-1.png" alt="load break 1" height="240"/></a>
+<img src="ex-load-file/load-break-1.png" alt="load break 1"/>
 </div>
 </div>
 <div class="paragraph">
 <p>As usual, when we have something we want to inspect, we&#8217;ll put a READ breakpoint on the whole thing.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-load-file/load-break-2.png"><img src="ex-load-file/load-break-2.png" alt="load break 2" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-load-file/load-break-3.png"><img src="ex-load-file/load-break-3.png" alt="load break 3" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-load-file/load-break-2.png" alt="load break 2"/></span>
+<span class="image"><img src="ex-load-file/load-break-3.png" alt="load break 3"/></span></p>
 </div>
 <div class="paragraph">
 <p>As the game search by file name, the ASM code is about comparing every character for a match. Even PPSSPP able to recognize this function as <code>strcmp()</code> (string compare).</p>
@@ -1044,8 +1101,8 @@ You can start with file extension.
 <p>We are no interest for <code>strcmp()</code> itself, but the parent function that called it. We will use "Step Into" until the function returned. We end up at ASM address <code>89e38e4</code>.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><a class="image" href="ex-load-file/load-ghidra-1.png"><img src="ex-load-file/load-ghidra-1.png" alt="load ghidra 1" height="240"/></a></span>
-<span class="image"><a class="image" href="ex-load-file/load-ghidra-2.png"><img src="ex-load-file/load-ghidra-2.png" alt="load ghidra 2" height="240"/></a></span></p>
+<p><span class="image"><img src="ex-load-file/load-ghidra-1.png" alt="load ghidra 1"/></span>
+<span class="image"><img src="ex-load-file/load-ghidra-2.png" alt="load ghidra 2"/></span></p>
 </div>
 <div class="paragraph">
 <p>With that, we can use Ghidra <a href="#ghidra">[ghidra]</a> to decompile the function.</p>
@@ -1073,7 +1130,7 @@ You can skip this step with Ghidra if you can understand the ASM code directly. 
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="ex-load-file/load-opcode.png"><img src="ex-load-file/load-opcode.png" alt="load opcode" height="240"/></a>
+<img src="ex-load-file/load-opcode.png" alt="load opcode"/>
 </div>
 </div>
 <div class="paragraph">
@@ -1161,6 +1218,7 @@ EXECUTE breakpoint is for discover inner workings of the function, which is some
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 </div>
@@ -1222,6 +1280,7 @@ EXECUTE breakpoint is for discover inner workings of the function, which is some
 </li>
 </ol>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 <div class="sect2">
 <h3 id="raw_image">Raw Image Data</h3>
@@ -1247,26 +1306,17 @@ EXECUTE breakpoint is for discover inner workings of the function, which is some
 <div class="paragraph">
 <p>Here is an interactive example for raw image data:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;"/>
-<col style="width: 50%;"/>
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">PNG image</th>
-<th class="tableblock halign-left valign-top">HTML text</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="fn-raw-image/elisa-sprite-24.png"><img src="fn-raw-image/elisa-sprite-24.png" alt="elisa sprite 24" height="240"/></a>
-</div>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">PNG image</dt>
+<dd>
+<p><span class="image"><img src="fn-raw-image/elisa-sprite-24.png" alt="elisa sprite 24"/></span></p>
+</dd>
+<dt class="hdlist1">HTML text</dt>
+<dd>
 <p><a href="fn-raw-image/elisa-sprite-24.clut.html" class="bare">fn-raw-image/elisa-sprite-24.clut.html</a></p>
+</dd>
+</dl>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1291,66 +1341,36 @@ Raw Image is pretty much a giant pixel <strong>table</strong>. You can either us
 </td>
 </tr>
 </table>
-</div></div></td>
-</tr>
-</tbody>
-</table>
+</div>
 <div class="paragraph">
 <p>Here&#8217;s how the same raw image data looks on different apps:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;"/>
-<col style="width: 50%;"/>
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">App</th>
-<th class="tableblock halign-left valign-top">Screenshot</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HxD <a href="#hxd">[hxd]</a> hex editor</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="fn-raw-image/raw-image-hxd.png"><img src="fn-raw-image/raw-image-hxd.png" alt="raw image hxd" height="240"/></a>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">HxD <a href="#hxd">[hxd]</a> hex editor</dt>
+<dd>
+<p><span class="image"><img src="fn-raw-image/raw-image-hxd.png" alt="raw image hxd"/></span></p>
+</dd>
+<dt class="hdlist1">HexView , from <code>phpbash/hexview.php</code></dt>
+<dd>
+<p><span class="image"><img src="fn-raw-image/raw-image-hexview.png" alt="raw image hexview"/></span></p>
+</dd>
+<dt class="hdlist1">Cheat Engine <a href="#cheat">[cheat]</a></dt>
+<dd>
+<p><span class="image"><img src="fn-raw-image/raw-image-cheat.png" alt="raw image cheat"/></span></p>
+</dd>
+<dt class="hdlist1">Nana <a href="#nana">[nana]</a> raw image viewer</dt>
+<dd>
+<p><span class="image"><img src="fn-raw-image/raw-image-nana.png" alt="raw image nana"/></span></p>
+</dd>
+<dt class="hdlist1">GIMP <a href="#gimp">[gimp]</a> photo editor</dt>
+<dd>
+<p><span class="image"><img src="fn-raw-image/raw-image-gimp-1.png" alt="raw image gimp 1"/></span>
+<span class="image"><img src="fn-raw-image/raw-image-gimp-2.png" alt="raw image gimp 2"/></span></p>
+</dd>
+</dl>
 </div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HexView , from <code>phpbash/hexview.php</code>.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="fn-raw-image/raw-image-hexview.png"><img src="fn-raw-image/raw-image-hexview.png" alt="raw image hexview" height="240"/></a>
-</div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Cheat Engine <a href="#cheat">[cheat]</a></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="fn-raw-image/raw-image-cheat.png"><img src="fn-raw-image/raw-image-cheat.png" alt="raw image cheat" height="240"/></a>
-</div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Nana <a href="#nana">[nana]</a> raw image viewer</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
-<div class="content">
-<a class="image" href="fn-raw-image/raw-image-nana.png"><img src="fn-raw-image/raw-image-nana.png" alt="raw image nana" height="240"/></a>
-</div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GIMP <a href="#gimp">[gimp]</a> photo editor</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><span class="image"><a class="image" href="fn-raw-image/raw-image-gimp-1.png"><img src="fn-raw-image/raw-image-gimp-1.png" alt="raw image gimp 1" height="240"/></a></span>
-<span class="image"><a class="image" href="fn-raw-image/raw-image-gimp-2.png"><img src="fn-raw-image/raw-image-gimp-2.png" alt="raw image gimp 2" height="240"/></a></span></p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
+<div style="page-break-after: always;"></div>
 </div>
 <div class="sect2">
 <h3 id="pixel_space">Pixel Space</h3>
@@ -1368,7 +1388,7 @@ Raw Image is pretty much a giant pixel <strong>table</strong>. You can either us
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="fn-pixel-space/elise-space-1.png"><img src="fn-pixel-space/elise-space-1.png" alt="elise space 1" height="240"/></a>
+<img src="fn-pixel-space/elise-space-1.png" alt="elise space 1"/>
 </div>
 </div>
 <div class="paragraph">
@@ -1423,7 +1443,7 @@ The absolute value of a number may be thought of as its distance from zero. It i
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="fn-pixel-space/elise-space-2.png"><img src="fn-pixel-space/elise-space-2.png" alt="elise space 2" height="240"/></a>
+<img src="fn-pixel-space/elise-space-2.png" alt="elise space 2"/>
 </div>
 </div>
 <div class="paragraph">
@@ -1432,6 +1452,7 @@ The absolute value of a number may be thought of as its distance from zero. It i
 <div class="paragraph">
 <p>Since everything is aligned to <code>[0,0]</code> in pixel space, it doesn&#8217;t matter what the final canvas size is, they will all align together correctly for animations.</p>
 </div>
+<div style="page-break-after: always;"></div>
 </div>
 </div>
 </div>
@@ -1569,6 +1590,9 @@ The absolute value of a number may be thought of as its distance from zero. It i
 </dd>
 </dl>
 </div>
+<div style="page-break-after: always;"></div>
+<base target="_blank"/>
+<script src='img-a.js'></script>
 </div>
 </div>
 </div>

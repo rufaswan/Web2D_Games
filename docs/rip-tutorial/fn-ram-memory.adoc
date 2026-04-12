@@ -1,0 +1,21 @@
+[#ram_memory]
+=== RAM Memory
+
+Some interesting facts about RAM (Random Access Memory)
+
+. It hold pretty much everything currently active on the screen.
+. Executable data is loaded to RAM, hence PC (program counter) is also a RAM address.
+. Breakpoint is triggered by ASM code on CPU side. DMA (Direct Memory Access) transfers will not trigger any breakpoints.
+.. DMA from CD-ROM to RAM will not trigger any WRITE breakpoints.
+.. DMA from RAM to GPU and SPU will not trigger any READ breakpoints.
+. Data read from CD-ROM cannot directly transfer to GPU and SPU. The (partial) data will need to be loaded to RAM first, then transfer to GPU and SPU for video/audio streaming playback.
+. That also means you cannot transfer any custom format data to GPU/SPU. These files will need to be converted first, so raw pixel data to GPU and raw audio data to SPU.
+. Modern GPU/SPU may accepts compressed texture/audio file format, but for certain few file formats. And you'll need to test for its support first before transferring.
+. Compressed data are decompressed within RAM, from one RAM address to another RAM address.
+. Emulator Save State has a full dump of the whole RAM.
+. By removing every temporary data and data loaded from game files, RAM can trimmed down and backup as in-game Save File.
+. C Dynamic Memory Allocation affect data only. Hence the variables, texture atlas, animation data and stuff are always at different RAM address when loaded.
+. ASM code from main executable is only load once, hence they'll always at the same RAM address.
+. ASM code from overlays has a fixed RAM address to load to, but like data, they can be unload anytime when not needed.
+
+<<<

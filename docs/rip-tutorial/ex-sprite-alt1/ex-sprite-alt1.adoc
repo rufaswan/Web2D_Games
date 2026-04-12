@@ -10,15 +10,15 @@ A save state will make a backup for the whole program. It will have a copy of RA
 Luckily, nocash PSX has the option to make uncompressed save state:
 
 
-image::{rel}/save-aya-1.png[link={rel}/save-aya-1.png,height=240]
+image::{rel}/save-aya-1.png[]
 
 Just like Cheat Engine before, we need to find the base RAM address. Goto RAM 80010000, edit in byte sequence "41 79 61" (Aya) and then make a save state.
 
 Since the save state is not compressed, we can simply use a hex editor and look for "Aya" (as string or byte sequence).
 
 
-image:{rel}/save-aya-2.png[link={rel}/save-aya-2.png,height=240]
-image:{rel}/save-aya-3.png[link={rel}/save-aya-3.png,height=240]
+image:{rel}/save-aya-2.png[]
+image:{rel}/save-aya-3.png[]
 
 We found "Aya" at `99064`. Convert it back to PSX RAM address from `80000000` to `80200000`:
 
@@ -33,8 +33,8 @@ PSX 80200000 = FILE 89064 + 200000
 With that, we can start exploring RAM dump for sprite data. Refer to <<raw_image>> for more details.
 
 
-image:{rel}/save-sprite-1.png[link={rel}/save-sprite-1.png,height=240]
-image:{rel}/save-sprite-2.png[link={rel}/save-sprite-2.png,height=240]
+image:{rel}/save-sprite-1.png[]
+image:{rel}/save-sprite-2.png[]
 
 We discover the graphic data on save state offset `22efe0`. Using the base address, we can translate it back to PSX RAM at:
 
@@ -50,3 +50,5 @@ And then we can put WRITE breakpoint to look for the decompression function. Eve
 
 Other Emulators::
 * PCSX2 save state is a normal ZIP file. Just rename the extension `from .p2s to .zip`, the `eeMemory.bin` file is the RAM dump.
+
+<<<

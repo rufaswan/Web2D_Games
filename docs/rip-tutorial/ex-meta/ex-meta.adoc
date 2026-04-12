@@ -14,8 +14,8 @@ The process is mostly the same. Start from a game file (or a section of it), loo
 NOTE: If the game file is compressed, then you'll need to do it 2 times. The first time is to find the decompression function. When you have the data decompressed, you can look for it on RAM and put READ breakpoint as usual.
 
 
-image:{rel}/meta-file-1.png[link={rel}/meta-file-1.png,height=240]
-image:{rel}/meta-file-2.png[link={rel}/meta-file-2.png,height=240]
+image:{rel}/meta-file-1.png[]
+image:{rel}/meta-file-2.png[]
 
 The file is loaded at RAM da8c00. Offsets for each sections are at 0x54 to 0x80. The data we're interested in is on section[8] (or `s8`), from offset 0x13b440 to 0x157080 (size = 0x1bc40).
 
@@ -38,12 +38,13 @@ s8 end = 157080 + PS2 da8c00
 With that, we can put a READ breakpoint on the whole section[8].
 
 
-image::{rel}/meta-break.png[link={rel}/meta-break.png,height=240]
+image::{rel}/meta-break.png[]
 
 By noting down the ASM code on every break, we have a very good idea how the data is read.
 
 Remember - we are looking for relevant function for further analysis later. So write down the ASM address along the way.
 
+[stripes=even, frame=all, grid=all]
 |===
 |Data[] |ASM |data |note
 
@@ -109,14 +110,14 @@ Function C is a rather huge function and seems to be drawing function with a fin
 With the ASM address, we can have a proper understanding how certain things work. For example, data[10] read at ASM address 1724c4 will lead us to 2 if's and 2 function.
 
 
-image::{rel}/meta-ghidra-s7.png[link={rel}/meta-ghidra-s7.png,height=240]
+image::{rel}/meta-ghidra-s7.png[]
 
 When data[10] is 2 or 1, each will lead us to a function. For anything else, use the current frame only.
 
 Let us examine what these 2 function do:
 
 
-image::{rel}/meta-ghidra-s7-2.png[link={rel}/meta-ghidra-s7-2.png,height=240]
+image::{rel}/meta-ghidra-s7-2.png[]
 
 The function accepts 4 frames as arguments. Based on the code using power of 2 and power of 3, we can guess the intepolation is based on polynomial formula:
 
@@ -165,7 +166,7 @@ The 4x4 matrix is the Characteristic Matrix, and it matched Catmull-Rom Spline <
 We can say for certain - when data[10] is 2, do 4-frames Catmull-Rom Spline interpolation.
 
 
-image::{rel}/meta-ghidra-s7-1.png[link={rel}/meta-ghidra-s7-1.png,height=240]
+image::{rel}/meta-ghidra-s7-1.png[]
 
 This function is a lot more simple. The formula is just:
 
@@ -178,3 +179,5 @@ So when data[10] is 1, do 2-frames Linear interpolation.
 '''
 
 Meta data can be something hard to observe with videos and screenshots. And game can lag and skip frame to maintain performance further complicate things. Having the ability to refer to ASM code will help eliminate a lot of these guesswork.
+
+<<<

@@ -1,0 +1,32 @@
+[#read_guide]
+== Reading Guide
+
+++++
+a basic example for pc games
+
+emulator is a subset of ram and requires an extra step
+
+use it to discover data struct
+
+struct for file list = discover loading order
+
+^ discover cd read()
+-> backtrace for ASM code
+   -> psx tokimeki memorial 2 cdpack00.bin
+
+discover draw digit func()
+-> backtrace for (num / 10) loop
+   -> ps2 resident evil 4 infinite ammo
+-> backtrace for string
+   -> ps2 rockman command mission password figurines
+
+GPU for older console are non-programable
+-> all vertice are calculate by CPU on RAM memory
+-> once discovered, can use read/write breakpoint for animation code
+-> animation = char.mix(a, b, time) * char.matrix * world.matrix
+
+or discovered when documenting file struct
+-> if the anim data is unique to a char and was packed together
+++++
+
+<<<

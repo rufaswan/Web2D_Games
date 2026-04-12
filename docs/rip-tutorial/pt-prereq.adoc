@@ -1,0 +1,68 @@
+[#prereq]
+== Prerequisites
+
+The most common mistake newbies make is to decompile the whole EXE and try to understand everything from the start. But we are not trying to rewrite the whole engine from scratch, so there are no need to know everything. We only need the part that will get what we want, or the relevant part.
+
+This tutorial is about locating the ASM code to help us to understand and to work with data. Naturally, the reader is expected to be able to recognize the ASM code the game is executing as.
+
+* PSX/PS2/PSP is running MIPS code.
+* Saturn is running SH-2 code.
+* GBA/NDS is running ARM code.
+* etc...
+
+The readers is also expected to understand the basic 4 main data types:
+
+* int
+* float
+* bool or bitflags
+* text string or binary AOB (array of byte)
+
+And understand the fixed data size varieties:
+
+* `int` is read/parse from a text file. It is native register size as the operating system.
+* `int16` is read from a binary file. It is `int` in fixed 16-bits or 2 bytes.
+* `int32` is read from a binary file. It is `int` in fixed 32-bits or 4 bytes.
+* `int64` is read from a binary file. It is `int` in fixed 64-bits or 8 bytes.
+
+When exploring the data with a hex editor, this is how they are represented as Array of Byte (AOB):
+
+[stripes=even, frame=all, grid=all]
+|===
+|endianness |int32 0x123456 as AOB
+
+|big endian byte order
+|`00 12 34 56`
+
+|little endian byte order
+|`56 34 12 00`
+|===
+
+The nonsense ASM code jargons in different architecture:
+
+* Able to distinguish `doubleword` (int) and `double` (float).
+* `term` means different `int`
+** On DOS,  `byte` is int8, `word`     is int16, and `doubleword` is int32.
+** On MIPS, `byte` is int8, `halfword` is int16, and `word`       is int32.
+** On SH-2, `byte` is int8, `word`     is int16, and `longword`   is int32.
+** etc...
+* `int` is defaulted to `signed` or `unsigned`
+** On MIPS, `lb`   is `load signed byte`   and `lbu`   is `load unsigned byte`.
+** On ARM,  `ldrb` is `load unsigned byte` and `ldrsb` is `load signed byte`.
+** etc...
+
+WARNING: Be careful about shorthands! If `longword` shorten to `long`, and `halfword` shorten to `half`, then `doubleword` will shorten to `double`...
+
+Lastly, learn to use your tools! You'll need the ability to
+
+. explore the game's RAM
+.. for string/value = cheat search
+.. for graphic data = raw graphic view
+. put READ and WRITE breakpoints for ASM offset
+. dissemble and/or decompile the function
+. put EXECUTE breakpoint when you need to keep track of variables of a function
+
+It is not the end of the world if the tool you used doesn't comes with all these features. You still can workaround with other tools as long as you can get a RAM dump.
+
+The most common way to get a RAM dump is from (uncompressed) save states.
+
+<<<
