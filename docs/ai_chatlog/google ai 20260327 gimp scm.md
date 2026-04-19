@@ -443,6 +443,7 @@ print("Python is working!")
 ```
 
 If this prints the message without an error, you are ready to use the Python-Fu example I mentioned earlier.
+
 If the menu is missing, are you on Linux, and did you install it via a Package Manager or Snap?
 
 [1] [https://superuser.com](https://superuser.com/questions/1506350/how-do-install-and-run-python-scripts-for-gimp)

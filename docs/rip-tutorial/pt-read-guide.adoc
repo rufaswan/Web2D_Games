@@ -1,7 +1,7 @@
 [#read_guide]
 == Reading Guide
 
-++++
+....
 a basic example for pc games
 
 emulator is a subset of ram and requires an extra step
@@ -27,6 +27,14 @@ GPU for older console are non-programable
 
 or discovered when documenting file struct
 -> if the anim data is unique to a char and was packed together
-++++
+
+cheat -> input button bitflags
+-> nes contra cheat code
+-> psx panzer bandit all boss
+
+turn director vision to playable
+-> ps2 wild arms 3 abyss
+-> ps2 resident evil 4 quick time events
+....
 
 <<<
