@@ -65,7 +65,7 @@ function calc_timesize( &$list )
 	$mb = 0.001 * 0.001;
 	$rem = sprintf('(%s/%s|%d/%d MB)' ,
 		misc::sec2time($list[0]['time']) , misc::sec2time($sum['time']),
-		$list[0]['size'] >> 20         , $sum['size'] >> 20
+		$list[0]['size'] >> 20           , $sum['size'] >> 20
 	);
 	return $rem;
 }
@@ -122,39 +122,56 @@ function mpvplay( &$list, $type )
 	return;
 }
 //////////////////////////////
-// video = large size , short time
-// audio = small size , long  time
+function arg_addfile( &$media, &$video, &$audio, $ent )
+{
+	if ( is_link($ent) )
+		return;
+	if ( is_dir($ent) )
+	{
+		$func = __FUNCTION__;
+		foreach ( scandir($ent) as $e )
+		{
+			if ( $e[0] === '.' )
+				continue;
+			$func( $media, $video, $audio, $ent.'/'.$e );
+		}
+	}
+	if ( is_file($ent) )
+	{
+		echo '.';
+
+		$t = array(
+			'name' => $ent,
+			'size' => filesize($ent),
+			'time' => -1,
+		);
+		if ( $t['name'][0] === '-' )
+			$t['name'] = './' . $t['name'];
+
+		$dur = sh::ffprobe($t['name']);
+
+		if ( $dur['duration'] < 1 )
+			return;
+
+		$t['time'] = $dur['duration'];
+		if ( $dur['video'] && $dur['audio'] )
+			$media[] = $t;
+		else
+		{
+			if ( $dur['video'] )  $video[] = $t;
+			if ( $dur['audio'] )  $audio[] = $t;
+		}
+	}
+	return;
+}
+
+// video = 2 hour full movie = ~1000 mb
+// audio = 2 hour full ost   = ~ 200 mb
 $media = array();
 $video = array();
 $audio = array();
 for ( $i=1; $i < $argc; $i++ )
-{
-	if ( ! is_file($argv[$i]) )
-		continue;
-	echo '.';
-
-	$t = array(
-		'name' => $argv[$i],
-		'size' => filesize($argv[$i]),
-		'time' => -1,
-	);
-	if ( $t['name'][0] === '-' )
-		$t['name'] = './' . $t['name'];
-
-	$dur = sh::ffprobe($t['name']);
-
-	if ( $dur['duration'] < 1 )
-		continue;
-
-	$t['time'] = $dur['duration'];
-	if ( $dur['video'] && $dur['audio'] )
-		$media[] = $t;
-	else
-	{
-		if ( $dur['video'] )  $video[] = $t;
-		if ( $dur['audio'] )  $audio[] = $t;
-	}
-} // for ( $i=1; $i < $argc; $i++ )
+	arg_addfile( $media, $video, $audio, $argv[$i] );
 echo "\n";
 
 //echo "media\n"; print_r($media);

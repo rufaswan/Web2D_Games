@@ -26,18 +26,37 @@ require 'class-zipstore.inc';
 $gp_mime = array(
 	'html' => 'application/xhtml+xml',
 	'adoc' => 'text/asciidoc',
+	'md'   => 'text/markdown',
 	'txt'  => 'text/plain',
 	'jpg'  => 'image/jpeg',
 	'png'  => 'image/png',
 );
 //////////////////////////////
+function get_mainhtml( &$html )
+{
+	// how many HTML on main folder
+	$res = array();
+	foreach ( $html as $h )
+	{
+		// OEBPS/main.html
+		$p = strpos($h, '/', 6);
+		if ( $p !== false )
+			continue;
+		$res[] = $h;
+	}
+	// no need to generate a new main html
+	if ( count($res) === 1 )
+		return $res[0];
+	return 0;
+}
+
 function epub_file( &$list, &$meta, $base )
 {
 	$MAIN = array(
-		'book' => '',
+		'book' => get_mainhtml( $meta['html'] ),
 		'nav'  => '',
 	);
-	if ( count($meta['html']) > 1 )
+	if ( empty($MAIN['book']) )
 	{
 		// generate book.html when the dir has 2+ .HTML
 		$MAIN['book'] = $meta['uuid'] . '-book.html';
@@ -63,10 +82,7 @@ __XML;
 		);
 		$list[] = $t;
 		array_unshift($meta['html'], $t['name']);
-	}
-	// one .HTML found
-	else
-		$MAIN['book'] = $meta['html'][0];
+	} // if ( empty($MAIN['book']) )
 
 	printf("book = %s\n", $MAIN['book']);
 	//////////////////////////////

@@ -3,7 +3,12 @@
 
 REAL=$(realpath "$0")
  dir=$(dirname "$REAL")
-geany &
-sleep 1
+
+if [ $(pidof geany) ]; then
+	echo -n
+else
+	geany &
+	sleep 1
+fi
 
 geany "$dir"/*.adoc "$dir"/*/*.adoc

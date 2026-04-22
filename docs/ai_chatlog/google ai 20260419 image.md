@@ -284,6 +284,7 @@ Since you are worried about losing these visuals, here is the best way to handle
 
 Are you trying to rebuild a specific game engine or just curious about how these retro 3D effects were calculated? I can help you expand the code to include side walls or movement if you'd like!
 
+![img](<google ai 20260418 quad-1.png>)
 ```
 import matplotlib.pyplot as plt
 def calculate_tile_coords(distance):
