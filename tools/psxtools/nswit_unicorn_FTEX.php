@@ -130,7 +130,7 @@ function tegra_x1_swizzled_8_bits( &$pix, $ow, $oh )
 	);
 	foreach ( $bits as $bv )
 	{
-		if ( $len_blk <= $bv[0] )
+		if ( $len_blk < $bv[0] )
 		{
 			printf("bitmask = %x , %x\n", $bv[1], $bv[2]);
 			$i = 0;
@@ -243,7 +243,7 @@ function tegra_x1_swizzled_16_bits( &$pix, $ow, $oh )
 
 	foreach ( $bits as $bv )
 	{
-		if ( $len_blk <= $bv[0] )
+		if ( $len_blk < $bv[0] )
 		{
 			printf("bitmask = %x , %x\n", $bv[1], $bv[2]);
 			$i = 0;
