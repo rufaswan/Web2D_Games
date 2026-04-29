@@ -35,6 +35,11 @@ cheat -> input button bitflags
 remove director vision's annoying features
 -> ps2 wild arms 3rd advance 100 floor abyss
 -> ps2 resident evil 4 quick time events
+
+edit save data
+-> reset progress back to beginning, while keep late game stats and equipements
+-> aka new game plus, to complete any missables
+-> psx genso suikoden 2 clive-elza quest
 ....
 
 <<<

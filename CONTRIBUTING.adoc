@@ -1,0 +1,25 @@
+:ghrepo: http://github.com/rufaswan/Web2D_Games
+:ghpage: http://rufaswan.github.io/Web2D_Games
+
+= How to contribute
+
+This repo can have both the tools and the documentation on how to create such tools. You can start by cloning and/or fork to archive a copy of this repo.
+
+== Open a Issues
+
+Please explain your issue in a clean and simple way.
+
+* The issue title must state which script was causing that error.
+* Upload a screenshot of the command you used and the full error message.
+* Show us step-by-step on how to reproduce such error.
+* Do note - once the error on the first post is resolved, the issue will be closed.
+
+To start a discussion, you can join us link:{ghrepo}#contact[here]
+
+== Open a Pull Request
+
+Your pull request must be clean and simple.
+
+* The pull request title must state which file was edited.
+* The commits will be the additions and deletions on that file only.
+* If you updated your fork in between edit commits, the update commit must not be included into the pull request.

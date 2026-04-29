@@ -368,6 +368,22 @@ function int_ceil_pow2( $int )
 	return ( $sign ) ? -$ceil : $ceil;
 }
 
+function int_ceil_bit( $int, $bit=0 )
+{
+	$int  = (int)$int;
+	$bit  = (int)$bit;
+	$mask = (1 << abs($bit)) - 1;
+
+	// + = ceil
+	// - = floor
+	$low = $int - ($int & $mask);
+	if ( $bit > 0 )
+		$int = $low + $mask + 1;
+	else
+		$int = $low;
+	return $int;
+}
+
 function var_swap( &$var1, &$var2 )
 {
 	$t = $var2;

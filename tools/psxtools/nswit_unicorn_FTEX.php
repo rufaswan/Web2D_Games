@@ -125,7 +125,7 @@ function tegra_x1_swizzled_8_bits( &$pix, $ow, $oh )
 		array(  0x1000,   0xf12,    0xed), //  3f,3f
 		array(  0x4000,  0x3e12,   0x1ed), //  7f,7f
 		array( 0x10000,  0x7e12,  0x81ed), //  ff,ff
-		array( 0x40000,  0xfe12, 0x301ed), // 1ff,1ff
+		array( 0x40000,  0x7e12, 0x381ed), // 1ff,1ff
 		array(0x100000, 0x1fe12, 0xe01ed), // 3ff,3ff
 	);
 	foreach ( $bits as $bv )

@@ -103,11 +103,16 @@ function mpvplay( &$list, $type )
 		$mpv = 'mpv'
 			. ' --quiet'
 			. ' --really-quiet'
+			. ' --no-config'
+			. ' --force-window'
 			. ' --window-maximized'
 			. ' --geometry="+0+0"'
 			. ' --title="%s %s"'
 			. ' --script-opts="osc-visibility=always"'
-			. ' --af="loudnorm=I=-14:TP=-1"'
+			. ' --screenshot-format="png"'
+			. ' --af="dynaudnorm=f=50:p=0.85:m=15:g=15"'
+			. ' --alang="eng"'
+			. ' --slang="eng"'
 			. ' "%s"';
 		sh::exec($mpv, $tit, $rem, $ent['name']);
 		echo "$tit\n";
@@ -192,4 +197,27 @@ image      N/A     N/A       ''        ''      ''
 video      1.0     1.0       ''        ''      ''
 audio      1.0     ''        1.0       ''      ''
 *.webm     1.0     N/A       N/A       0:00    0:00
+
+# I=-18:   This is the "Integrated Loudness" target.
+#          Modern ReplayGain (RG2) uses this exact value.
+#          By setting this, a video in mpv will have the same perceived loudness
+#          as an OGG file playing in Audacious with ReplayGain turned on.
+# TP=-2.0: This sets the "True Peak."
+#          It provides a tiny bit of extra "padding" to prevent any distortion
+#          on cheaper speakers or laptops.
+af=loudnorm=I=-18  # replay-gain
+af=loudnorm=I=-14  # default youtube
+af=loudnorm=I=-13  # stable volume youtube
+af=loudnorm=I=-11  # voice boost youtube
+
+# f=50:   Reduces the analysis window to 50ms (default is 500ms).
+#         This fixes the 'soft start' by making it react 10x faster.
+# p=0.75: Matches music player loudness (DeaDBeeF)
+# m=10:   Limits boost so things don't get 'too' loud
+# g=3:    The 'Gaussian' smooth factor. Lowering this makes the
+#         volume jump to the target level almost immediately after a seek.
+af=dynaudnorm=f=50:p=0.75:m=10:g=31  # replay-gain
+af=dynaudnorm=f=50:p=0.85:m=15:g=15  # default youtube
+af=dynaudnorm=f=50:p=0.80:m=20:g=75  # stable volume youtube
+af=dynaudnorm=f=50:p=0.95:m=30:g=5   # voice boost youtube
  */
