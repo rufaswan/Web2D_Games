@@ -117,7 +117,9 @@ function tegra_x1_swizzled_8_bits( &$pix, $ow, $oh )
 	//   2048 = --dd rrrr rrdd ddrd drdr  x/fc25  y/303da
 	//   4096 = dddr rrrr rrdd ddrd drdr  x/1fc25 y/e03da
 
-	// same as 2*1 of 16-bits , but with additional r
+	// bit pattern from reference DOES NOT work
+	// replaced with 16-bits bit pattern
+	// but with additional r
 	$bits = array(
 		array(    0x40,    0x32,     0xd), //   7,7
 		array(   0x100,    0xd2,    0x2d), //   f,f
@@ -125,7 +127,7 @@ function tegra_x1_swizzled_8_bits( &$pix, $ow, $oh )
 		array(  0x1000,   0xf12,    0xed), //  3f,3f
 		array(  0x4000,  0x3e12,   0x1ed), //  7f,7f
 		array( 0x10000,  0x7e12,  0x81ed), //  ff,ff
-		array( 0x40000,  0x7e12, 0x381ed), // 1ff,1ff
+		array( 0x40000,  0x7e12, 0x381ed), // 1ff,1ff BUG github #38 #39 , changed from x to y
 		array(0x100000, 0x1fe12, 0xe01ed), // 3ff,3ff
 	);
 	foreach ( $bits as $bv )
