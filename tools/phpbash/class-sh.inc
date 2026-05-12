@@ -142,14 +142,13 @@ class sh
 
 	public static function ffprobe( $fname )
 	{
-		// auto-detect
-		//   duration  > 0 = video + audio
-		//   level     > 0 = video , < 0 = cover png , 0 = audio
+		// keep this in mind: Headers can lie, but data doesn't.
+		// A cover image has exactly 1 packet.
+		// A real video has multiple packets.
 		$dur = array(
 			'duration' => 0 ,
 			'video'    => 0 ,
 			'audio'    => 0 ,
-			'pic'      => 0 ,
 		);
 		if ( ! is_file($fname) )
 			return $ret;
@@ -158,33 +157,32 @@ class sh
 		//. ' -show_format'  // format_name=<container>
 		//. ' -show_streams' //  codec_type=video audio subtitle
 		$ffprobe = 'ffprobe'
-			. ' -loglevel        quiet'
-			. ' -show_entries    format=duration:stream=codec_type,codec_time_base'
-			. ' -print_format    default=noprint_wrappers=1:nokey=1'
+			. ' -find_stream_info'
+			. ' -count_packets'
+			. ' -loglevel      quiet'
+			. ' -show_entries  format=duration:stream=codec_type,nb_read_packets'
+			. ' -print_format  csv'
 			. ' "%s"';
 		$res = self::exec($ffprobe, $fname);
-		if ( empty($res) )
+		if ( ! is_array($res) )
 			return $dur;
 
 		//var_dump($res);
 		while ( ! empty($res) )
 		{
-			$val = array_shift($res);
-			switch ( $val )
+			// stream,video,1
+			// stream,audio,1000
+			// format,60.000000
+			$val = explode(',', array_shift($res));
+			if ( $val[0] === 'format' )
+				$dur['duration'] = (int)$val[1];
+			if ( $val[0] === 'stream' )
 			{
-				case 'audio':  $dur['audio'] = 1; break; // stream=codec_type
-				case 'video':  $dur['video'] = 1; break; // stream=codec_type
-				case '0/1'  :  $dur['pic'  ] = 1; break; // stream=codec_time_base
-				default: // format=duration
-					if ( strpos($val,'/') === false )
-						$dur['duration'] += (int)$val;
-					break;
-			} // switch ( $val )
+				if ( (int)$val[2] > 1 )
+					$dur[$val[1]] = 1;
+			}
 		} // while ( ! empty($res) )
 
-		// mp3 has cover.png as video
-		if ( $dur['pic'] )
-			$dur['video'] = 0;
 		return $dur;
 	}
 
