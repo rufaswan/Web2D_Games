@@ -407,7 +407,6 @@ Here is why those two pipelines are different and why I confused you:
 * Why I said "Simultaneously": In this setup, the shader doesn't have a 4x4 matrix or points. It just receives 4 numbers. Those numbers could have come from a Spring formula or a Centripetal formula—the shader math is identical.
 
 ------------------------------
-
 ## How to actually handle Centripetal in your specific setup:
 
 If you want to keep your Warp Pipeline (Points + 4x4 Matrix), you have to treat Centripetal as a Geometry Pre-Pass:

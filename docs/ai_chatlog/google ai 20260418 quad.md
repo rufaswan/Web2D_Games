@@ -229,6 +229,7 @@ To render a wall, you draw a quadrilateral using the Near Edge and Far Edge coor
 | Tile 3 (Left) | $(192, 92, 508)$ | $(252, 152, 448)$ |
 
 For Right Walls, use the same $y$ values, but subtract the $x$ values from $800$. For example, the Near $x$ for Tile 2 Right is $800 - 54 = 746$.
+
 ------------------------------
 ## Step-by-Step Calculation Logic## 1. Determine Relative Distance
 

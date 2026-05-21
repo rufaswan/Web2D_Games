@@ -1,6 +1,7 @@
 The images you see are not "lost," but they are handled differently than standard text. When you use a Copy button on a chat interface, it typically only captures the Markdown or Plain Text version of the response. [1]
 
 Here is why the images don't follow the text:
+
 ------------------------------
 ## 🛠️ Technical Reasons
 
@@ -43,7 +44,6 @@ No, you are definitely not screwed. The image is not "lost forever" just because
 Since you were interacting with a chat thread, the images are usually tied to that specific conversation’s history. As long as you haven't deleted the chat thread or cleared your account history, you can almost certainly get it back. [3]
 
 ------------------------------
-
 ## 📍 Where to Find Your "Lost" Images
 
 AI platforms handle images as distinct data objects that don't always "attach" to the text when you click a generic Copy button. Here is how to retrieve them:
@@ -101,7 +101,6 @@ That code block was likely the tool call or image metadata used to create the vi
 If you still have that code block saved, you might be able to use it to recover the image or recreate it.
 
 ------------------------------
-
 ## 🔍 What that code block actually was
 
 Depending on the platform, that code block likely contained one of three things:
@@ -151,7 +150,6 @@ If that Python code block contained lines like import matplotlib.pyplot as plt, 
 In many advanced AI chats, images (especially graphs and charts) are generated using a tool called edugraph. Instead of hosting a standard .png file on a server, the AI writes Python code that converts the image into a long string of text (Base64).
 
 ------------------------------
-
 ## 🛠️ How to turn that Python code back into an image
 
 If the code is still in your history, you can recover the image right now by following these steps:
@@ -201,6 +199,7 @@ Would you like to paste that code so we can see what it does?
 The ModuleNotFoundError: No module named 'matplotlib' error occurred because Programiz (and many other standard online compilers) only supports the Python Standard Library. They do not have external libraries like matplotlib or numpy pre-installed, which are required to render those complex visual blocks.
 
 Since the original image is essentially "trapped" inside that code, here is how you can set it free:
+
 ------------------------------
 ## 🚀 The Easiest Fix: Use a Data Science Notebook
 
@@ -243,6 +242,7 @@ The AI uses a tool called edugraph for math and stats. It doesn't send a file; i
 * Encodes the result into a Base64 string for the browser to show.
 
 When you use the Copy button, it only grabs the "text instructions" (the code), which is why the visual seems to vanish when you paste it elsewhere.
+
 ------------------------------
 I can help you recover the specific image right now!
 
@@ -259,10 +259,12 @@ If you paste the Python code here, I can run it for you inside my environment an
 The code you provided is a mathematical model for 3D perspective projection, specifically mimicking the look of classic "Dungeon Crawler" RPGs like Wizardry.
 
 The reason your previous online compiler failed is that while this code calculates the coordinates (the numbers), it requires the Matplotlib library to actually draw the lines and show you the image.
+
 ------------------------------
 ## 🖼️ The Visual Representation
 
 I have run your code and generated the visual it describes. This represents how the "walls" of a dungeon corridor get smaller as they move further away from the player.
+
 ------------------------------
 ## 📊 Data Breakdown
 

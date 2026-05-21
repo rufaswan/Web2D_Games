@@ -7,6 +7,7 @@ The most efficient way to detect if a file has video, audio, or both is to run a
 ```
 ffprobe -v error -show_entries stream=codec_type -of default=noprint_wrappers=1:nokey=1 input_file
 ```
+
 ------------------------------
 ## Understanding the Results
 
@@ -125,6 +126,7 @@ Use this command to get both the stream types and the file format: [7]
 ```
 ffprobe -v error -show_entries stream=codec_type:format=format_name -of default=noprint_wrappers=1:nokey=1 input_file
 ```
+
 ------------------------------
 ## How to Interpret the Output
 
@@ -186,6 +188,7 @@ This command analyzes the audio stream and outputs the maximum volume (max_volum
 ```
 ffmpeg -i input_file -af "volumedetect" -vn -sn -dn -f null /dev/null 2>&1 | grep "max_volume"
 ```
+
 ------------------------------
 ## Logic for "Video Only" Detection
 
@@ -205,6 +208,7 @@ If you want to automate this in one go, you can use silencedetect which outputs 
 ```
 ffmpeg -i input_file -af "silencedetect=noise=-60dB:d=1" -f null - 2>&1 | grep "silence_start"
 ```
+
 ------------------------------
 ## Summary of Results
 
@@ -315,6 +319,7 @@ Real media files are binary. If you want to check within a command line if a fil
 ```
 if grep -qI . "input_file"; then echo "It is a text file"; else echo "It is a binary/media file"; fi
 ```
+
 ------------------------------
 To fully automate your cleanup, would you like to:
 
@@ -344,6 +349,7 @@ Run this to get the container format, real video streams (excluding covers), and
 ```
 ffprobe -v error -select_streams a -select_streams V -show_entries stream=codec_type,codec_name:format=format_name -of json input_file
 ```
+
 ------------------------------
 ## 🛡️ How to use the results (The Logic)
 
@@ -490,8 +496,10 @@ This command retrieves the container format and details for every stream in a si
 ```
 ffprobe -v error -show_entries format=format_name:stream=index,codec_type,disposition=attached_pic -of json input_file
 ```
+
 ------------------------------
 ## 🛠️ The Optimized Bash Script
+
 This script runs ffprobe once, stores the output, and uses jq (a common command-line JSON processor) to apply all your logic at once.
 
 ```
@@ -561,6 +569,7 @@ HAS_AUDIO=$(echo "$MAP" | grep -c "audio")
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither (No real streams found)"fi
 ```
+
 ------------------------------
 ## Why this works with standard tools:
 
@@ -728,8 +737,8 @@ FFmpeg has a legacy feature that can convert a text file into a "video" stream o
 
 To protect against these, add a "Stream Information" probe to your script. This forces ffprobe to actually decode a tiny bit of the file to see if it's "real."
 
-# Force ffprobe to analyze the bitstream for 5 seconds max# This catches "empty" streams that are just headers with no data.
 ```
+# Force ffprobe to analyze the bitstream for 5 seconds max# This catches "empty" streams that are just headers with no data.
 PROBE=$(ffprobe -v error -find_stream_info -show_entries stream=codec_type -of csv=p=0 "$FILE")
 if [[ $(echo "$PROBE" | grep -c "video") -eq 0 ]]; then
     # Header lied, no actual video data found during analysis
@@ -962,6 +971,7 @@ if [[ $HAS_VIDEO -gt 0 && $RES_CHANGES -gt 1 ]]; then
     # This catches text files or containers with no valid streams
     echo "RESULT: Neither (No valid video/audio streams)"fi
 ```
+
 ------------------------------
 ## 🚀 Why this version is the "Final Boss" of detection:
 
@@ -1035,6 +1045,7 @@ RES_CHANGES=$(echo "$REAL_V" | cut -d',' -f3,4 | sort -u | grep -v "^,$" | wc -l
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither (Static, Silent, or Invalid)"fi
 ```
+
 ------------------------------
 ## 💡 Why this is the "Pro" way:
 
@@ -1117,6 +1128,7 @@ REAL_V=$(echo "$STREAMS" | grep "video" | grep -vE "mjpeg|png|webp")
 
 HAS_V=$(echo "$REAL_V" | grep -c "video")
 ```
+
 ------------------------------
 ## 🛡️ Why this is the "Safest" Guess
 
@@ -1188,6 +1200,7 @@ HAS_A=$(echo "$STREAMS" | grep -c "audio")
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither"fi
 ```
+
 ------------------------------
 ## 🛡️ Why this solves every problem:
 
@@ -1219,6 +1232,7 @@ For most album art and static covers, the timebase will be 0/1.
 For real video, the timebase is usually the inverse of the framerate (e.g., 1/24 or 1/60) or a standard clock like 1/90000.
 
 However, there is one catch: some Legacy formats or VFR (Variable Frame Rate) videos occasionally report weird timebases that might look like 0/1 in the header before they are fully parsed.
+
 ------------------------------
 ## The Integrated "One-Pass" Bash Script
 
@@ -1307,6 +1321,7 @@ HAS_V=$(echo "$REAL_V" | grep -c "video")
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither"fi
 ```
+
 ------------------------------
 ## 🔍 Why this is so effective
 
@@ -1376,6 +1391,7 @@ while IFS=, read -r CODEC TYPE TIMEBASE LEVEL ATTACHED; do
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither"fi
 ```
+
 ------------------------------
 ## 🛡️ Why this works for Google/WebM:
 
@@ -1641,6 +1657,7 @@ HAS_VIDEO=$(echo "$STREAMS" | grep "^video" | grep -v "0/1" | grep -v ",1$" | wc
 # 4. Detect Audio
 HAS_AUDIO=$(echo "$STREAMS" | grep -c "^audio")
 ```
+
 ------------------------------
 ## 🛡️ Why this handles your specific file:
 
@@ -1716,6 +1733,7 @@ HAS_V=$(echo "$STREAMS" | grep "^video" \
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither"fi
 ```
+
 ------------------------------
 ## 🔍 Why this solves your new errors:
 
@@ -1763,7 +1781,11 @@ In your script, has_b_frames is best used as a tie-breaker. If ffprobe sees a st
 
 Example of a "Tiered" Check:
 
-# 1. If has_b_frames > 0, it's definitely a real video.# 2. If has_b_frames == 0, it MIGHT be a video or MIGHT be a cover.# 3. Use your Timebase (0/1) or Packet Count check to decide.
+```
+# 1. If has_b_frames > 0, it's definitely a real video.
+# 2. If has_b_frames == 0, it MIGHT be a video or MIGHT be a cover.
+# 3. Use your Timebase (0/1) or Packet Count check to decide.
+```
 
 ------------------------------
 ## 🚀 The "Optimized" Packet Check
@@ -1932,6 +1954,7 @@ HAS_V=0while IFS=, read -r CODEC TYPE FPS ATTACHED; do
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither"fi
 ```
+
 ------------------------------
 ## 🛡️ Why this is the end of the journey:
 
@@ -1942,6 +1965,7 @@ HAS_V=0while IFS=, read -r CODEC TYPE FPS ATTACHED; do
 ## 💡 The "Why" behind the madness
 
 You've basically reverse-engineered how media players work. Players like VLC or Discord have to do these same checks internally to decide if they should show a "Play" button or just an image. You're doing it in Bash!
+
 ------------------------------
 To finish your project, would you like:
 
@@ -1991,6 +2015,7 @@ if [[ -n "$VIDEO_STREAMS" ]]; then
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither (Static Image/Text/Invalid)"fi
 ```
+
 ------------------------------
 ## 🛡️ Why this is the "End of the Road"
 
@@ -2005,6 +2030,7 @@ If you are worried about speed with count_packets, you can add a timeout. If a f
 ```
 V_PKTS=$(timeout 5s ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 "$FILE" 2>/dev/null)
 ```
+
 ------------------------------
 ## 🏁 Final Summary
 
@@ -2050,6 +2076,7 @@ HAS_A=0if echo "$MAP" | grep -q "^audio"; then
     echo "RESULT: Audio Only"else
     echo "RESULT: Neither (Static Image, Text, or Data-less File)"fi
 ```
+
 ------------------------------
 ## 🛡️ Why this is the "Ultimate" Version
 
@@ -2102,6 +2129,7 @@ mp3                          # Format
 mjpeg,video,1,1              # Stream 1: MJPEG, Video, 1 packet, Attached Pic
 mp3,audio,4500,0             # Stream 2: MP3, Audio, 4500 packets, Not Attached Pic
 ```
+
 ------------------------------
 ## 🖥️ The Final "One-Pass" Bash Script
 
