@@ -193,7 +193,7 @@ void main() {
 
 Pro-Tip: Edge Bleeding
 
-When using an atlas, ensure you have a small padding (gutter) around your sub-texture or set your texture wrapping to GL_CLAMP_TO_EDGE. Otherwise, bilinear filtering at the edges might pick up pixels from a neighboring sprite in the atlas.
+When using an atlas, ensure you have a small padding (gutter) around your sub-texture or set your texture wrapping to `GL_CLAMP_TO_EDGE`. Otherwise, bilinear filtering at the edges might pick up pixels from a neighboring sprite in the atlas.
 
 Do you need the C++ code to calculate these uvMin/uvMax coordinates based on pixel dimensions in your atlas?
 
@@ -209,10 +209,10 @@ On the CPU side, when you define your vertex buffer, you must assign the specifi
 
 | Vertex | Screen Position (Dest) | Atlas UV (Source) |
 |---|---|---|
-| Top-Left | x1, y1 | src_u1, src_v1 |
-| Top-Right | x2, y2 | src_u2, src_v2 |
-| Bottom-Right | x3, y3 | src_u3, src_v3 |
-| Bottom-Left | x4, y4 | src_u4, src_v4 |
+| Top-Left | x1, y1 | `src_u1, src_v1` |
+| Top-Right | x2, y2 | `src_u2, src_v2` |
+| Bottom-Right | x3, y3 | `src_u3, src_v3` |
+| Bottom-Left | x4, y4 | `src_u4, src_v4` |
 
 2. The Shaders
 
@@ -393,7 +393,7 @@ Would you like the matrix calculation logic to compute that 3×3 matrix in your 
 
 Since a concave quadrilateral (a "dart" or "arrowhead" shape) cannot be represented by a single convex polygon, you must split it into two triangles.
 
-In OpenGL, you do this by changing your draw call from GL_QUADS (which is deprecated/unreliable for non-convex shapes) to GL_TRIANGLES.
+In OpenGL, you do this by changing your draw call from `GL_QUADS` (which is deprecated/unreliable for non-convex shapes) to `GL_TRIANGLES`.
 
 1. How to Find the Split Point
 
@@ -520,14 +520,14 @@ By breaking a concave or distorted quad into many small pieces, the linear inter
 
 1. How it works for your Quad
 
-Instead of sending GL_TRIANGLES, you send GL_PATCHES with 4 vertices.
+Instead of sending `GL_TRIANGLES`, you send `GL_PATCHES` with 4 vertices.
 
    1. Tessellation Control Shader (TCS): Defines how much to subdivide. A high number (e.g., 32 or 64) creates a dense mesh.
    2. Tessellation Evaluation Shader (TES): This is where you apply your Bilinear Math. For every new vertex created by the tessellator, you calculate its exact position and UV.
 
 2. The Implementation (TES Shader)
 
-This shader runs for every generated vertex in the subdivided grid. It uses the gl_TessCoord (which is a built-in (u, v) from 0 to 1) to map your source and destination.
+This shader runs for every generated vertex in the subdivided grid. It uses the `gl_TessCoord` (which is a built-in (u, v) from 0 to 1) to map your source and destination.
 
 ```
 #version 410 corelayout(quads, equal_spacing, ccw) in;
@@ -577,7 +577,7 @@ Since a single quad (two triangles) can't handle concave or twisted shapes corre
 * Create a Grid: Instead of defining 4 vertices, define a grid of $N \times N$ vertices (e.g., $16 \times 16$). [1]
 * Bilinear Mapping on CPU: For each vertex $(i, j)$ in your grid, calculate its normalized coordinates $(u, v)$ where $u = i/(N-1)$ and $v = j/(N-1)$.
 * Apply Formula: Use the bilinear or homography formula on the CPU to calculate the final $(x, y)$ position and the atlas UV for every vertex in the grid.
-* Draw: Send this high-density mesh to OpenGL as a standard GL_TRIANGLES vertex buffer.
+* Draw: Send this high-density mesh to OpenGL as a standard `GL_TRIANGLES` vertex buffer.
 
 2. Method 2: Instanced Rendering (GPU Emulation)
 
@@ -585,7 +585,7 @@ If you want to keep the heavy math on the GPU, you can use Instanced Rendering t
 
    1. Prepare a Unit Mesh: Create a single $1 \times 1$ square (two triangles) as a vertex buffer. [2]
    2. Instance the Mesh: Use glDrawArraysInstanced to draw $N \times N$ instances of this square.
-   3. Vertex Shader Logic: Use gl_InstanceID to determine which part of the quad the current instance represents.
+   3. Vertex Shader Logic: Use `gl_InstanceID` to determine which part of the quad the current instance represents.
    * Calculate local $u, v$ based on the instance index.
       * Apply your quad-to-quad transformation formula inside the Vertex Shader to position the instance's corners.
 
@@ -806,9 +806,9 @@ A twisted quad has a "pinch point" where the edges cross.
 
 Important Note on Rendering
 
-Because a bowtie quad is self-intersecting, the back-faces of one half of the quad may become front-faces on the other half. If you have back-face culling enabled (GL_CULL_FACE), half of your twisted quad might disappear.
+Because a bowtie quad is self-intersecting, the back-faces of one half of the quad may become front-faces on the other half. If you have back-face culling enabled (`GL_CULL_FACE`), half of your twisted quad might disappear.
 
-Disable culling or set it to GL_NONE to ensure the entire twisted mesh is visible:
+Disable culling or set it to `GL_NONE` to ensure the entire twisted mesh is visible:
 
 ```
 glDisable(GL_CULL_FACE);
@@ -874,7 +874,7 @@ Best for: 1,000+ quads (OpenGL 4.3+).
 SSBOs are the modern standard for large data sets. They can be massive (up to 128 MB or more) and allow for variable-sized arrays. [7, 12]
 
 * How it works: You use the buffer keyword instead of uniform in GLSL.
-* Advantage: You can store thousands of quads in one buffer and access them using gl_InstanceID. [12, 13, 14]
+* Advantage: You can store thousands of quads in one buffer and access them using `gl_InstanceID`. [12, 13, 14]
 
 3. Texture Buffer Objects (TBO)
 
@@ -923,7 +923,7 @@ Before using them in your quad-to-quad renderer, keep these mobile-specific cons
 
 1. Hardware Support & Versions
 
-* Android: Most modern Android devices support OpenGL ES 3.1 or 3.2. You can check support by looking for GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS or verifying the ES version. [1, 3]
+* Android: Most modern Android devices support OpenGL ES 3.1 or 3.2. You can check support by looking for `GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS` or verifying the ES version. [1, 3]
 * iOS: Apple supports SSBOs via Metal or OpenGL ES 3.0+ (though Apple has deprecated OpenGL ES in favour of Metal). [2, 4]
 * Minimum Version: SSBOs were a major addition to the [OpenGL ES 3.1 specification](https://www.khronos.org/opengles/) to bring compute capabilities and large-scale data storage to mobile. [5, 6]
 
@@ -931,7 +931,7 @@ Before using them in your quad-to-quad renderer, keep these mobile-specific cons
 
 On many mobile GPUs (especially some ARM Mali or Adreno models), SSBOs are only guaranteed to be accessible in Fragment and Compute shaders. [7, 8, 9]
 
-* The Problem: If you call glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS), many mobile devices will return 0.
+* The Problem: If you call `glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS)`, many mobile devices will return 0.
 * The Impact: You might not be able to "pull" your quad corners directly in the Vertex Shader using an SSBO on all devices. [10, 11, 12]
 
 3. Mobile Workarounds for Large Quad Data

@@ -535,9 +535,9 @@ Yes, you can automate this by creating a custom extension or filter that interce
 
 ## 1. For AsciiDoc: Custom Block Macro (Ruby)
 
-AsciiDoc allows you to define a new macro (e.g., `map::world-map.jpg[]`) that expands into the full SVG wrapper. You can save this as a small Ruby file (e.g., map_macro.rb) and run it with your conversion.
+AsciiDoc allows you to define a new macro (e.g., `map::world-map.jpg[]`) that expands into the full SVG wrapper. You can save this as a small Ruby file (e.g., `map_macro.rb`) and run it with your conversion.
 
-* The Ruby Extension (map_macro.rb):
+* The Ruby Extension (`map_macro.rb`):
 
 ```
 Asciidoctor::Extensions.register do

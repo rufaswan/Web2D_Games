@@ -81,20 +81,20 @@ Each state is assigned a value of $2^n$ (a single bit shifted to the left). [1, 
 
 | State [2, 4, 5, 6, 7] | Bit Shift | Hex Value | Decimal | Use Case Example |
 |---|---|---|---|---|
-| IDLE | 1 << 0 | 0x01 | 1 | Neutral standing position. |
-| WALKING | 1 << 1 | 0x02 | 2 | Moving horizontally or on Z-axis. |
-| CROUCHING | 1 << 2 | 0x04 | 4 | Lowered profile/hitbox. |
-| JUMPING | 1 << 3 | 0x08 | 8 | Character is mid-air. |
-| DASHING | 1 << 4 | 0x10 | 16 | High-speed burst movement. |
-| ATTACKING | 1 << 5 | 0x20 | 32 | Currently in an active move. |
-| BLOCKING | 1 << 6 | 0x40 | 64 | Defensive stance active. |
-| HITSTUN | 1 << 7 | 0x80 | 128 | Reeling from a hit. |
-| KNOCKDOWN | 1 << 8 | 0x100 | 256 | Flat on the ground. |
-| AIRBORNE | 1 << 9 | 0x200 | 512 | Being juggled or launched. |
-| GRABBED | 1 << 10 | 0x400 | 1024 | Held by an opponent. |
-| STUNNED | 1 << 11 | 0x800 | 2048 | Dizzy/unable to act. |
-| INVULNERABLE | 1 << 12 | 0x1000 | 4096 | Cannot take damage/hits. |
-| POWERED_UP | 1 << 13 | 0x2000 | 8192 | Special "Install" or Super mode. |
+| `IDLE` | 1 << 0 | 0x01 | 1 | Neutral standing position. |
+| `WALKING` | 1 << 1 | 0x02 | 2 | Moving horizontally or on Z-axis. |
+| `CROUCHING` | 1 << 2 | 0x04 | 4 | Lowered profile/hitbox. |
+| `JUMPING` | 1 << 3 | 0x08 | 8 | Character is mid-air. |
+| `DASHING` | 1 << 4 | 0x10 | 16 | High-speed burst movement. |
+| `ATTACKING` | 1 << 5 | 0x20 | 32 | Currently in an active move. |
+| `BLOCKING` | 1 << 6 | 0x40 | 64 | Defensive stance active. |
+| `HITSTUN` | 1 << 7 | 0x80 | 128 | Reeling from a hit. |
+| `KNOCKDOWN` | 1 << 8 | 0x100 | 256 | Flat on the ground. |
+| `AIRBORNE` | 1 << 9 | 0x200 | 512 | Being juggled or launched. |
+| `GRABBED` | 1 << 10 | 0x400 | 1024 | Held by an opponent. |
+| `STUNNED` | 1 << 11 | 0x800 | 2048 | Dizzy/unable to act. |
+| `INVULNERABLE` | 1 << 12 | 0x1000 | 4096 | Cannot take damage/hits. |
+| `POWERED_UP` | 1 << 13 | 0x2000 | 8192 | Special "Install" or Super mode. |
 
 ## Common Bitflag Combinations
 
@@ -113,7 +113,7 @@ Using bitwise OR (|), you can define "compound states" or check for multiple con
 
 ## Why use Bitflags over Enums?
 
-While a standard State Machine typically uses a simple Enum (where you are only in one state at a time), Bitflags are better for Status Effects and Movement Modifiers. For example, a character can be WALKING, INVULNERABLE, and POWERED_UP all at once, which is difficult to represent with a single-state Enum. [2, 6, 7, 9]
+While a standard State Machine typically uses a simple Enum (where you are only in one state at a time), Bitflags are better for Status Effects and Movement Modifiers. For example, a character can be `WALKING, INVULNERABLE, and POWERED_UP` all at once, which is difficult to represent with a single-state Enum. [2, 6, 7, 9]
 
 Do you want an example code snippet (C# or C++) for how to implement these bitwise checks in your game logic?
 
@@ -126,7 +126,14 @@ ai_status_states = ["PATROLLING", "PURSUING", "STUNNED", "INVULNERABLE", "POWERE
 all_states = movement_states + combat_states + ai_status_states
 ```
 
-# Assign bit flags (2^n)bit_flags = {state: 1 << i for i, state in enumerate(all_states)}
+# Assign bit flags (2^n)
+
+```
+bit_flags = {
+  state: 1 << i
+  for i, state in enumerate(all_states)
+}
+```
 
 ```
 for state, flag in bit_flags.items():
@@ -213,36 +220,36 @@ You can assign different "types" to your attack hitboxes and defensive hurtboxes
 
 | Hitbox Type [1, 2, 5] | Bit Shift | Hex Value | Purpose |
 |---|---|---|---|
-| STRIKE | 1 << 0 | 0x01 | Normal physical attacks (punches, kicks). |
-| PROJECTILE | 1 << 1 | 0x02 | Fireballs or ranged attacks (can be "nullified" by other projectiles). |
-| THROW | 1 << 2 | 0x04 | Grab moves (ignores standard blocks). |
-| UNBLOCKABLE | 1 << 3 | 0x08 | Powerful moves that pierce all defense. |
-| HIGH | 1 << 4 | 0x10 | Hits standing/jumping players; can be crouched under. |
-| LOW | 1 << 5 | 0x20 | Hits standing players; must be crouch-blocked. |
-| AIR_ONLY | 1 << 6 | 0x40 | Anti-air logic; only triggers if the target is JUMPING. |
+| `STRIKE` | 1 << 0 | 0x01 | Normal physical attacks (punches, kicks). |
+| `PROJECTILE` | 1 << 1 | 0x02 | Fireballs or ranged attacks (can be "nullified" by other projectiles). |
+| `THROW` | 1 << 2 | 0x04 | Grab moves (ignores standard blocks). |
+| `UNBLOCKABLE` | 1 << 3 | 0x08 | Powerful moves that pierce all defense. |
+| `HIGH` | 1 << 4 | 0x10 | Hits standing/jumping players; can be crouched under. |
+| `LOW` | 1 << 5 | 0x20 | Hits standing players; must be crouch-blocked. |
+| `AIR_ONLY` | 1 << 6 | 0x40 | Anti-air logic; only triggers if the target is JUMPING. |
 
 ## 2. Practical "Hit" Logic
 
 When an attack's Hitbox overlaps a character's Hurtbox, you compare their bitflags. If the AND result is non-zero, the hit connects. [3, 6]
 
 * Example: Low Attack vs. High Block
-* Attack_Type = LOW (0x20)
-   * Defender_Block_Mask = HIGH_BLOCK (0x10)
+* `Attack_Type = LOW (0x20)`
+   * `Defender_Block_Mask = HIGH_BLOCK (0x10)`
    * Logic: (0x20 & 0x10) == 0. Result: Hit connects (The high block didn't cover the low attack). [7]
 
 ## 3. Collision Filtering (Layers)
 
 Bitflags also prevent players from hitting themselves or their teammates. You can define Collision Layers and Collision Masks: [8]
 
-* Layer: "Who am I?" (e.g., PLAYER_1, PLAYER_2, ENEMY_FACTION).
-* Mask: "Who can I hit?" (e.g., ENEMY_FACTION | DESTRUCTIBLE_OBJECTS).
+* Layer: "Who am I?" (e.g., `PLAYER_1, PLAYER_2, ENEMY_FACTION`).
+* Mask: "Who can I hit?" (e.g., `ENEMY_FACTION | DESTRUCTIBLE_OBJECTS`).
 
 ## 4. Advanced Bitmask Interactions
 
 You can combine flags to create specific move properties:
 
-* Meaty Projectile: PROJECTILE | UNBLOCKABLE (A fireball the player must dodge).
-* Universal Anti-Air: STRIKE | HIGH | AIR_ONLY (A move designed specifically to catch jumpers). [1, 2, 9]
+* Meaty Projectile: `PROJECTILE | UNBLOCKABLE` (A fireball the player must dodge).
+* Universal Anti-Air: `STRIKE | HIGH | AIR_ONLY` (A move designed specifically to catch jumpers). [1, 2, 9]
 
 Using bitflags for hitboxes is significantly faster than running multiple if/else checks for every frame of an animation, as the CPU can evaluate all conditions in a single instruction.
 
@@ -281,17 +288,17 @@ The "hook" is the logical link that binds the defender to the attacker. In game 
 
 * The Parent: The Attacker is always the parent. They drive the movement and the timeline.
 * The Child: The Defender becomes the child. Their position is now relative to the attacker’s hand or "grab point".
-* The Hook Point: You should define a specific Bone/Socket on the attacker's skeleton (e.g., RightHand_Socket).
+* The Hook Point: You should define a specific Bone/Socket on the attacker's skeleton (e.g., `RightHand_Socket`).
 * During the grab animation, the defender's RootComponent is attached to this socket.
    * Beat-'em-up Tip: If you want to "walk around" while holding an enemy (like in Streets of Rage), the child-link remains active until you press an attack button to throw them or they "break" the grab. [2, 6, 8, 9]
 
 ## Summary of Grab Flow
 
-   1. Start: Attacker enters ATTACKING state; spawns hitbox with THROW bitflag.
-   2. Overlap: System detects Hitbox(THROW) vs Hurtbox(NOT_AIRBORNE).
+   1. Start: Attacker enters `ATTACKING` state; spawns hitbox with `THROW` bitflag.
+   2. Overlap: System detects Hitbox(`THROW`) vs Hurtbox(`NOT_AIRBORNE`).
    3. Hook: Defender is parented/attached to Attacker's hand socket.
-   4. State Flip: Both characters set flags to GRABBING and GRABBED respectively.
-   5. Release: Animation hits the "Release" frame $\rightarrow$ Defender is unparented, given velocity (the throw), and state flips to AIRBORNE | KNOCKDOWN. [2, 5, 7, 9]
+   4. State Flip: Both characters set flags to `GRABBING` and `GRABBED` respectively.
+   5. Release: Animation hits the "Release" frame $\rightarrow$ Defender is unparented, given velocity (the throw), and state flips to `AIRBORNE` | KNOCKDOWN. [2, 5, 7, 9]
 
 Would you like to see how to handle a "Grab Break" (Tech) using these bitflags?
 
@@ -357,8 +364,8 @@ Since you are using bitflags, this "Plug-in" state is very easy to manage:
 
 * Attacker State: ATTACKING | CARRYING (Bit 1 << 14)
 * While CARRYING is active, the attacker’s movement logic might change (e.g., they walk slower).
-* Defender State: GRABBED | INHERITING_TRANSFORM (Bit 1 << 15)
-* While INHERITING_TRANSFORM is active, you disable the defender's own gravity and velocity logic. If you don't, the defender’s physics will try to pull them to the ground while the attacker's hand tries to lift them up, causing "jitter."
+* Defender State: `GRABBED` | `INHERITING_TRANSFORM` (Bit 1 << 15)
+* While `INHERITING_TRANSFORM` is active, you disable the defender's own gravity and velocity logic. If you don't, the defender’s physics will try to pull them to the ground while the attacker's hand tries to lift them up, causing "jitter."
 
 ## One Major Difference: "The Snap"
 
@@ -410,7 +417,7 @@ Every frame, your code should perform this calculation to "force" the inheritanc
 In 2D, the "Parent-Child" relationship also includes Visual Layering.
 
 * The Grab: When the grab starts, you usually want the victim to appear behind the attacker's arm but in front of the attacker's body.
-* The Bitflag fix: You can use a bitflag like DRAW_FRONT or DRAW_BACK. When the GRABBED bit is set, the engine checks the attacker's current frame to decide if it should temporarily change the victim's Z-Index or Sorting Layer.
+* The Bitflag fix: You can use a bitflag like `DRAW_FRONT` or `DRAW_BACK`. When the GRABBED bit is set, the engine checks the attacker's current frame to decide if it should temporarily change the victim's Z-Index or Sorting Layer.
 
 ## 4. Why "State 0" (Falling) is tricky here
 
@@ -442,8 +449,8 @@ This is the most critical. The victim’s $(0,0)$ becomes the attacker’s $(x,y
 
 If the attacker’s hand rotates (e.g., a "Giant Swing" or a "Suplex"), the victim’s sprite should rotate too.
 
-* The Math: Victim.Rotation = Attacker.Rotation + Frame_Offset_Rotation.
-* Pro-Tip: In 2D, rotating a sprite can sometimes look "crunchy" or pixel-warped. Many retro-style games actually prefer to use a specific "Victim_Rotate_90" sprite instead of mathematically rotating the "Idle" sprite to keep the pixel art clean.
+* The Math: `Victim.Rotation = Attacker.Rotation + Frame_Offset_Rotation`.
+* Pro-Tip: In 2D, rotating a sprite can sometimes look "crunchy" or pixel-warped. Many retro-style games actually prefer to use a specific `"Victim_Rotate_90"` sprite instead of mathematically rotating the "Idle" sprite to keep the pixel art clean.
 
 ## 3. Scale (Mirroring)
 
@@ -456,9 +463,9 @@ In 2D, Scale is most commonly used for Flipping.
 
 You can use your Bitflags to decide exactly what is inherited. For example:
 
-* INHERIT_POS: Only move the victim.
-* INHERIT_ROT: Rotate the victim (use for Suplexes).
-* INHERIT_FLIP: Ensure the victim faces the "correct" way relative to the attacker.
+* `INHERIT_POS`: Only move the victim.
+* `INHERIT_ROT`: Rotate the victim (use for Suplexes).
+* `INHERIT_FLIP`: Ensure the victim faces the "correct" way relative to the attacker.
 
 ## Comparison Table: 3D vs 2D
 
@@ -555,10 +562,10 @@ Instead of parenting the objects in the engine's scene tree, you keep them as Se
 
 You can actually add these to your State Bitflags to tell your "Grab Manager" how to behave frame-by-frame:
 
-* LOCK_POSITION (Bit 1 << 16): Follow the attacker's $(x, y)$.
-* LOCK_ROTATION (Bit 1 << 17): Match the attacker's angle.
-* IGNORE_SCALE (Bit 1 << 18): Do not inherit squash/stretch.
-* WORLD_UPRIGHT (Bit 1 << 19): Force the victim to stay at $0^\circ$ rotation regardless of the parent.
+* `LOCK_POSITION` (Bit 1 << 16): Follow the attacker's $(x, y)$.
+* `LOCK_ROTATION` (Bit 1 << 17): Match the attacker's angle.
+* `IGNORE_SCALE` (Bit 1 << 18): Do not inherit squash/stretch.
+* `WORLD_UPRIGHT` (Bit 1 << 19): Force the victim to stay at $0^\circ$ rotation regardless of the parent.
 
 ## 4. Why "Rotation-Distance" feels different
 
@@ -587,14 +594,14 @@ You can (and should) interpolate all three components:
 
 When the grab first connects, the victim might be a few pixels away from the actual "Hand" point. Instead of an instant jump:
 
-* Logic: Victim.Pos = Lerp(Victim.Pos, Target_Hand_Pos, 0.2f)
+* Logic: `Victim.Pos = Lerp(Victim.Pos, Target_Hand_Pos, 0.2f)`
 * Result: The victim "slides" into the attacker's grip over 3–5 frames. This looks much more natural and masks any slight hitbox/visual misalignment.
 
 ## 2. Rotation Interpolation (The "Swing")
 
 If you are performing a move like a Suplex, you don't want the victim to instantly flip upside down.
 
-* Logic: Victim.Angle = LerpAngle(Victim.Angle, Target_Angle, 0.15f)
+* Logic: `Victim.Angle = LerpAngle(Victim.Angle, Target_Angle, 0.15f)`
 * Result: The victim’s body "drags" slightly behind the motion, creating a sense of weight and momentum (centrifugal force).
 
 ## 3. Scale/Flip Interpolation
@@ -618,7 +625,7 @@ Because you are using a Selective Push system, you can apply different "Weights"
 
 You can add a "Smoothing" flag to your state:
 
-* LERP_TO_SOCKET (Bit 1 << 20): While this bit is active, the victim's position is Lerped toward the hand. Once they are "close enough," you clear the bit and switch to a hard Victim.Pos = Hand.Pos for perfect sync.
+* `LERP_TO_SOCKET` (Bit 1 << 20): While this bit is active, the victim's position is Lerped toward the hand. Once they are "close enough," you clear the bit and switch to a hard `Victim.Pos = Hand.Pos` for perfect sync.
 
 ## One Warning: "The Rubber Band" Effect
 
@@ -867,7 +874,7 @@ The foundation for everything else. It moves at a constant, robotic speed.
 This takes your linear $t$ and "warps" it to create acceleration. This is what gives moves Weight.
 
 * Function: Ease(t, P1, P2)
-* Arguments: Progress, Start_Handle, End_Handle
+* Arguments: `Progress, Start_Handle, End_Handle`
 * Common Shapes:
 * Ease-In: Start slow, end fast (Good for impacts/slams).
    * Ease-Out: Start fast, end slow (Good for recoil/slides).
@@ -878,7 +885,7 @@ This takes your linear $t$ and "warps" it to create acceleration. This is what g
 Used when the character isn't moving in a straight line (e.g., a high-arc throw or a circle).
 
 * Function: CatmullRom(P-1, P0, P1, P2, t)
-* Arguments: Previous_Point, Current_Start, Current_End, Next_Point, Progress
+* Arguments: `Previous_Point, Current_Start, Current_End, Next_Point, Progress`
 * Feel: Buttery smooth curves that stay "on track."
 * 6-Point Variant: Adds P-2 and P3 to make the acceleration change smoothly too.
 
@@ -887,7 +894,7 @@ Used when the character isn't moving in a straight line (e.g., a high-arc throw 
 Used for things that should "jiggle" or "bounce" naturally without a fixed timeline.
 
 * Function: Spring(Current, Target, Velocity, Friction, DeltaTime)
-* Arguments: Now, Where_to_go, Speed, Heavy/Bouncy_Setting, Frame_Time
+* Arguments: `Now, Where_to_go, Speed, Heavy/Bouncy_Setting, Frame_Time`
 * Feel: Organic, bouncy, responsive.
 
 ------------------------------
@@ -897,7 +904,7 @@ In a real game, you combine them like a sandwich:
 
    1. Pick your Path: Use Catmull-Rom if the throw is a curve, or Lerp if it's a straight line.
    2. Pick your Timing: Use an MMD-style Bézier to warp your $t$ (e.g., make it "Ease-In" for a heavy slam).
-   3. The Result: Position = PathFunction(Points, MMD_Ease(t))
+   3. The Result: `Position = PathFunction(Points, MMD_Ease(t))`
 
 ## Simplified Summary Table
 
@@ -1217,14 +1224,14 @@ When you load this JSON into your PlayerDataStruct, you map the strings to your 
 
 Instead of a master function, use a Dictionary of Delegates (or a Map of Functions). This allows the JSON string to directly call the correct math without a massive switch statement.
 
-* The Ease Registry: {"power": PowerFunction, "bezier": BezierFunction}
-* The Path Registry: {"lerp": LerpFunction, "catmull_rom": CatmullFunction}
+* The Ease Registry: `{"power": PowerFunction, "bezier": BezierFunction}`
+* The Path Registry: `{"lerp": LerpFunction, "catmull_rom": CatmullFunction}`
 
-When the JSON says "path_strategy": "catmull_rom", the code looks up "catmull_rom" in the Registry and executes the linked math.
+When the JSON says `"path_strategy"`: `"catmull_rom"`, the code looks up `"catmull_rom"` in the Registry and executes the linked math.
 
 ## 4. Handling the "Arguments Problem"
 
-Since different methods need different arguments (e.g., Catmull needs alpha, Power needs power), your functions should accept a Generic Parameter Map (like the ease_params object in the JSON).
+Since different methods need different arguments (e.g., Catmull needs alpha, Power needs power), your functions should accept a Generic Parameter Map (like the `ease_params` object in the JSON).
 
 * The Catmull function ignores power and looks for alpha.
 * The Power function ignores alpha and looks for power.
@@ -1285,12 +1292,12 @@ Since $t$ and the points come from the live game state, and $a, b, c, d$ come fr
 
    1. Read JSON: Pull $a, b, c, d$.
    2. Get Game State: Calculate rawT (time).
-   3. Warp T: warpedT = (a*t³) + (b*t²) + (c*t) + d.
+   3. Warp T: warpedT = `(a*t³) + (b*t²) + (c*t) + d`.
    4. Apply Path: Use warpedT in your Catmull-Rom or Lerp.
 
 ## 5. What did you miss?
 
-The only thing this method can't do easily is Elastic or Bounce (which use Sine waves or Absolute values). If your JSON needs those, you would add an is_trig flag or a second trig_params object.
+The only thing this method can't do easily is Elastic or Bounce (which use Sine waves or Absolute values). If your JSON needs those, you would add an `is_trig` flag or a second `trig_params` object.
 
 Would you like a "Cheat Sheet" of the $a, b, c, d$ values for the most popular fighting game movement styles?
 
@@ -1404,8 +1411,8 @@ This is the 4x4 Basis Matrix we discussed. It tells the code how to use the 4 ga
 
 Every frame, your code does this "Double Interpolation":
 
-   1. Get raw_t: You calculate how much time has passed (e.g., 0.5 for halfway).
-   2. Calculate warped_t: You plug raw_t into the Easing Coeffs from the JSON.
+   1. Get `raw_t`: You calculate how much time has passed (e.g., 0.5 for halfway).
+   2. Calculate `warped_t`: You plug `raw_t` into the Easing Coeffs from the JSON.
    * Example: If you use "Ease-In" coeffs, your 0.5 might become 0.25. You are now "behind schedule" because the move starts slow.
    3. Calculate Position: You plug that 0.25 into your Path Matrix (also from the JSON) along with your 4 live points. [3, 10]
 
@@ -1496,7 +1503,7 @@ Now, you take that warpedT and feed it into the 4x4 Matrix along with your 4 Gam
 
 ## 3. Why this is so powerful
 
-If you want the move to start slow and end fast (Ease-In Cubic), you don't change the path matrix. You just change the JSON easing_coeffs to $[1, 0, 0, 0]$. Now your $t$ becomes $t^3$, and the character will naturally "accelerate" along the same Catmull-Rom path.
+If you want the move to start slow and end fast (Ease-In Cubic), you don't change the path matrix. You just change the JSON `easing_coeffs` to $[1, 0, 0, 0]$. Now your $t$ becomes $t^3$, and the character will naturally "accelerate" along the same Catmull-Rom path.
 
 ## Summary of "The Math"
 
@@ -1518,15 +1525,15 @@ Think of it like this: Easing is the "Speedometer" and the Matrix is the "Map."
 
 If you want no easing (just a smooth path at a constant speed), you are correct:
 
-* WarpedT = t (because your JSON coefficients are [0, 0, 1, 0]).
-* Final Position = [WarpedT³, WarpedT², WarpedT, 1] × 4x4_Matrix × [Points].
+* WarpedT = t (because your JSON coefficients are `[0, 0, 1, 0]`).
+* Final Position = `[WarpedT³, WarpedT², WarpedT, 1] × 4x4_Matrix × [Points]`.
 
 ## 2. The Easing (Warped Timing)
 
 If you want to "Ease-In" (start slow, end fast), you change the Timing before it touches the Matrix:
 
-* WarpedT = (a * t³) + (b * t²) + (c * t) + d.
-* Final Position = [WarpedT³, WarpedT², WarpedT, 1] × 4x4_Matrix × [Points].
+* WarpedT = `(a * t³) + (b * t²) + (c * t) + d`.
+* Final Position = `[WarpedT³, WarpedT², WarpedT, 1] × 4x4_Matrix × [Points]`.
 
 ## The Catch: "Coeffs * t"
 
@@ -1607,10 +1614,10 @@ This is the exact mathematical definition of a Lerp: $(1-t)P_1 + (t)P_2$.
 
 ## Final Checklist for your Player Data:
 
-* Linear Slide: easing: [0,0,1,0] + path: linear_matrix
-* Cubic Ease-In Slide: easing: [1,0,0,0] + path: linear_matrix
-* Smooth Catmull-Rom Arc: easing: [0,0,1,0] + path: catmull_matrix
-* Heavy "Slam" Arc: easing: [1,0,0,0] + path: catmull_matrix
+* Linear Slide: easing: `[0,0,1,0]` + path: `linear_matrix`
+* Cubic Ease-In Slide: easing: `[1,0,0,0]` + path: `linear_matrix`
+* Smooth Catmull-Rom Arc: easing: `[0,0,1,0]` + path: `catmull_matrix`
+* Heavy "Slam" Arc: easing: `[1,0,0,0]` + path: `catmull_matrix`
 
 This system is extremely powerful because you can build an entire move list just by swapping these sets of 4 and 16 numbers in a text file.
 

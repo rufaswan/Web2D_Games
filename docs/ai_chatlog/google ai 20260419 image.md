@@ -129,7 +129,7 @@ If the code was a massive, gibberish block of thousands of letters and numbers (
 If you have the code block handy, look for these keywords:
 
 * url: Copy the text after this and paste it into your browser address bar.
-* asset_id: This is an internal ID. You can tell the AI: "Find the image with asset_id [number] from my history."
+* `asset_id`: This is an internal ID. You can tell the AI: "Find the image with `asset_id [number]` from my history."
 * prompt: Copy the description and run it again.
 
 ------------------------------
@@ -280,7 +280,7 @@ Here is the output the code creates. It defines four squares (0 to 3) centered a
 
 Since you are worried about losing these visuals, here is the best way to handle this specific code:
 
-   1. Save as .py: Save the text you pasted into a file named wizardry_view.py.
+   1. Save as .py: Save the text you pasted into a file named `wizardry_view.py`.
    2. Add Plotting Code: If you want it to pop up on your computer, you need to add import matplotlib.pyplot as plt at the top and the plotting logic I used in the background (or simply plt.show()).
    3. Screenshot: Now that the image is visible above, you can right-click it and "Save Image As..." to keep the PNG file forever.
 

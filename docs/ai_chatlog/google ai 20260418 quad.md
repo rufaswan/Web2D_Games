@@ -222,7 +222,7 @@ In this setup, we assume:
 
 To render a wall, you draw a quadrilateral using the Near Edge and Far Edge coordinates.
 
-| Wall Segment | Near Edge (x, y_top, y_bot) | Far Edge (x, y_top, y_bot) |
+| Wall Segment | Near Edge `(x, y_top, y_bot)` | Far Edge `(x, y_top, y_bot)` |
 |---|---|---|
 | Tile 1 (Left) | $(-639, -739, 1339)$ | $(54, -46, 646)$ |
 | Tile 2 (Left) | $(54, -46, 646)$ | $(192, 92, 508)$ |
@@ -746,9 +746,9 @@ Since you are dealing with a grid, you can't just draw in any order. You should 
 
 Since your $100 \times 100$ walls are fully opaque:
 
-* Disable Blending: glDisable(GL_BLEND) to ensure no transparency math is happening.
-* Enable Depth Test: glEnable(GL_DEPTH_TEST) with glDepthFunc(GL_LESS).
-* Culling: Use glEnable(GL_CULL_FACE). This is huge for your cubes—it tells the GPU not to draw the back-side of the walls you can't see, instantly cutting your vertex work in half.
+* Disable Blending: `glDisable(GL_BLEND)` to ensure no transparency math is happening.
+* Enable Depth Test: `glEnable(GL_DEPTH_TEST)` with `glDepthFunc(GL_LESS)`.
+* Culling: Use `glEnable(GL_CULL_FACE)`. This is huge for your cubes—it tells the GPU not to draw the back-side of the walls you can't see, instantly cutting your vertex work in half.
 
 ## One catch: The "Vanishing Point"
 

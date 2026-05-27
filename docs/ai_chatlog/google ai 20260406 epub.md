@@ -461,7 +461,7 @@ Would you like to know how to automatically break after every Step Heading using
 
 # ---
 
-There is no single document attribute in AsciiDoc to globally force all links to target="_blank". However, you can achieve this through a simple HTML base tag or a shorthand syntax for individual links.
+There is no single document attribute in AsciiDoc to globally force all links to `target="_blank"`. However, you can achieve this through a simple HTML base tag or a shorthand syntax for individual links.
 
 ## 1. The Global "HTML Hack"
 
@@ -471,9 +471,11 @@ Add this to the top of your .adoc file:
 
 ```
 :docinfo: shared
+```
 
 Then, create a file named docinfo.html in the same folder with this content:
 
+```
 <base target="_blank">
 ```
 
@@ -481,14 +483,14 @@ When you convert to HTML, this will force all links on the page to open in a new
 
 ## 2. The Caret Shorthand (Best for EPUB/Standard)
 
-For tutorials where you want more control, AsciiDoc provides a caret (^) shorthand. Adding a caret at the end of the link text automatically sets target="_blank" and rel="noopener". [2, 3]
+For tutorials where you want more control, AsciiDoc provides a caret (^) shorthand. Adding a caret at the end of the link text automatically sets `target="_blank"` and rel="noopener". [2, 3]
 
 * Syntax: https://google.com[Google^]
 * Without text: https://google.com[^]
 
 ## 3. Enabling Link Attributes
 
-If you want to use the full window="_blank" attribute, you must first enable link attributes in your document header: [4, 5, 6]
+If you want to use the full `window="_blank"` attribute, you must first enable link attributes in your document header: [4, 5, 6]
 
 ```
 :linkattrs:

@@ -2,7 +2,7 @@ To detect the type of streams in a file using ffprobe, you can use the `-show_en
 
 ## Direct Answer
 
-The most efficient way to detect if a file has video, audio, or both is to run a command that lists the codec_type for every stream present: [2, 3]
+The most efficient way to detect if a file has video, audio, or both is to run a command that lists the `codec_type` for every stream present: [2, 3]
 
 ```
 ffprobe -v error -show_entries stream=codec_type -of default=noprint_wrappers=1:nokey=1 input_file
@@ -21,7 +21,7 @@ The command above will print a single word for every stream it finds. [1, 3]
 
 ## Quick Tests for Specific Types [2]
 
-If you need to programmatically check for just one type, use the -select_streams flag. If the file doesn't have that stream type, the output will be empty: [3, 9, 10]
+If you need to programmatically check for just one type, use the `-select_streams` flag. If the file doesn't have that stream type, the output will be empty: [3, 9, 10]
 
 * Check for Video Only:
 ```
@@ -34,7 +34,7 @@ ffprobe -v error -select_streams a -show_entries stream=codec_type -of csv=p=0 i
 
 ## 💡 Pro Tip: Automation [11]
 
-For scripts, use -print_format json to get a structured output that can be easily parsed to count the number of audio vs. video streams. [1, 12]
+For scripts, use `-print_format json` to get a structured output that can be easily parsed to count the number of audio vs. video streams. [1, 12]
 
 To find out more about this file, would you like to:
 
@@ -75,7 +75,7 @@ ffprobe -v error -select_streams V -show_entries stream=codec_type -of csv=p=0 i
 * Result: If this returns "video," it’s an actual video file. If it returns nothing, the "video" it previously found was just cover art. [4, 7]
 
 ------------------------------
-## Alternative: Checking for "attached_pic" [8]
+## Alternative: Checking for `"attached_pic"` [8]
 
 If you want to see exactly which stream is the cover art, you can check the disposition: [5]
 
@@ -83,7 +83,7 @@ If you want to see exactly which stream is the cover art, you can check the disp
 ffprobe -v error -show_entries stream=index:disposition=attached_pic -of json input.mp3
 ```
 
-In the JSON output, cover art will show "attached_pic": 1. [8, 9]
+In the JSON output, cover art will show `"attached_pic": 1`. [8, 9]
 
 ## Comparison Table
 
@@ -115,7 +115,7 @@ To perfect your script, would you like to:
 
 # ---
 
-To strictly exclude static images (like .png, .jpg, and album art) and only detect "real" video or audio, you must combine the uppercase -select_streams V specifier with a check for the container format. [1, 2, 3, 4]
+To strictly exclude static images (like .png, .jpg, and album art) and only detect "real" video or audio, you must combine the uppercase `-select_streams V` specifier with a check for the container format. [1, 2, 3, 4]
 
 ## The Solution: Combined Check
 
@@ -132,7 +132,7 @@ ffprobe -v error -show_entries stream=codec_type:format=format_name -of default=
 
 A file is only a real video if it meets both conditions:
 
-   1. Format Name: Is NOT image2, png_pipe, mjpeg, or similar image formats.
+   1. Format Name: Is NOT `image2, png_pipe, mjpeg`, or similar image formats.
    2. Stream Type: Contains video (using the V specifier to ignore covers). [1, 2, 8, 9]
 
 ## Logic for Scripts
@@ -147,15 +147,15 @@ If you are automating this, use this robust two-step logic:
    If result contains image2, it is a standalone image file—stop here.
    2. Detect Streams (Ignoring Album Art):
    If it’s a media container (like .mp3 or .mp4), check for streams:
-   * Audio: ffprobe -v error -select_streams a -show_entries stream=codec_type -of csv=p=0 input_file
-      * Real Video: ffprobe -v error -select_streams V -show_entries stream=codec_type -of csv=p=0 input_file [4, 10, 11]
+   * Audio: `ffprobe -v error -select_streams a -show_entries stream=codec_type -of csv=p=0 input_file`
+      * Real Video: `ffprobe -v error -select_streams V -show_entries stream=codec_type -of csv=p=0 input_file` [4, 10, 11]
 
 ------------------------------
 ## Summary of Flags
 
-* -select_streams V: Matches video but excludes attached pictures (covers/thumbnails).
-* -select_streams a: Matches all audio streams.
-* format_name: Identifies if the "container" is just a single image pipe. [1, 2, 3, 5, 6, 12]
+* `-select_streams V`: Matches video but excludes attached pictures (covers/thumbnails).
+* `-select_streams a`: Matches all audio streams.
+* `format_name`: Identifies if the "container" is just a single image pipe. [1, 2, 3, 5, 6, 12]
 
 To refine your detection script, would you like to:
 
@@ -183,7 +183,7 @@ Detecting if an audio track is silent requires analyzing the actual decibel leve
 
 ## 🛠️ The Solution: Use ffmpeg for Volume Analysis
 
-This command analyzes the audio stream and outputs the maximum volume (max_volume). If the max_volume is very low (e.g., -90dB), the track is silent.
+This command analyzes the audio stream and outputs the maximum volume (`max_volume`). If the `max_volume` is very low (e.g., -90dB), the track is silent.
 
 ```
 ffmpeg -i input_file -af "volumedetect" -vn -sn -dn -f null /dev/null 2>&1 | grep "max_volume"
@@ -194,12 +194,12 @@ ffmpeg -i input_file -af "volumedetect" -vn -sn -dn -f null /dev/null 2>&1 | gre
 
 To treat a file with silent audio as "Video Only," your script should follow this logic:
 
-   1. Check for Video: Use ffprobe -select_streams V to see if a real video track exists.
-   2. Check for Audio Presence: Use ffprobe -select_streams a to see if an audio track exists.
+   1. Check for Video: Use ffprobe `-select_streams V` to see if a real video track exists.
+   2. Check for Audio Presence: Use ffprobe `-select_streams a` to see if an audio track exists.
    3. Test for Silence (If Audio exists):
    * Run the volumedetect command above.
-      * Silent: If max_volume is around -90dB or -inf dB.
-      * Not Silent: If max_volume is closer to 0dB (e.g., -10dB, -5dB).
+      * Silent: If `max_volume` is around -90dB or -inf dB.
+      * Not Silent: If `max_volume` is closer to 0dB (e.g., -10dB, -5dB).
 
 ## 💡 The "Shortcut" for Scripts
 
@@ -243,7 +243,7 @@ ffprobe -v error -f lavfi -i "movie=input.mp4,select='gt(scene,0.01)'" -show_ent
 ------------------------------
 ## Alternative: Checking Frame Count vs. Duration
 
-Sometimes "static" videos are just a 1-frame image file that ffprobe misidentifies as a long video. You can check the nb_read_frames to see if it's literally just one frame. [8, 9, 10, 11]
+Sometimes "static" videos are just a 1-frame image file that ffprobe misidentifies as a long video. You can check the `nb_read_frames` to see if it's literally just one frame. [8, 9, 10, 11]
 
 Command to count actual frames:
 
@@ -259,9 +259,9 @@ ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=nb_read_
 
 | Method [2, 6, 10, 11, 12] | Command Flag | Best Used For... |
 |---|---|---|
-| Scene Detection | select='gt(scene,0.01)' | Detecting "fake" videos (e.g., a 10-minute video of a still photo). |
-| Frame Counting | -count_frames | Detecting single-frame image files (JPG/PNG) mislabeled as video. |
-| Codec Check | stream=codec_name | Quickly seeing if the "video" is actually a png or mjpeg codec. |
+| Scene Detection | `select='gt(scene,0.01)'` | Detecting "fake" videos (e.g., a 10-minute video of a still photo). |
+| Frame Counting | `-count_frames` | Detecting single-frame image files (JPG/PNG) mislabeled as video. |
+| Codec Check | `stream=codec_name` | Quickly seeing if the "video" is actually a png or mjpeg codec. |
 
 To finalize your detection logic, would you like to:
 
@@ -289,7 +289,7 @@ ffprobe sometimes misidentifies plain text files as audio (often as MP3) because
 
 ## 🛠️ The Solution: Identify by "Format Name"
 
-To catch these false positives, you should check the format_name. If FFmpeg treats a text file as media, it will often label the format as tty or show a mismatch between the content and the extension. [3]
+To catch these false positives, you should check the `format_name`. If FFmpeg treats a text file as media, it will often label the format as tty or show a mismatch between the content and the extension. [3]
 
 Command to see the detected container format:
 
@@ -298,7 +298,7 @@ ffprobe -v error -show_entries format=format_name -of csv=p=0 input_file
 ```
 
 * Real Media: Returns names like mov,mp4,m4a,3gp,3g2,mj2, matroska,webm, or mp3.
-* Fake (Text) Detection: May return tty, tty_pipe, or misidentify as mp3 despite having zero valid audio frames. [1, 4]
+* Fake (Text) Detection: May return `tty`, `tty_pipe`, or misidentify as mp3 despite having zero valid audio frames. [1, 4]
 
 ------------------------------
 ## 🛡️ How to Filter Out "Non-Media" Files
@@ -307,7 +307,7 @@ For a robust script, don't rely on ffprobe alone for initial identification. Com
 
 Better Logic for Scripts:
 
-   1. System Level: Run file --mime-type input_file.
+   1. System Level: Run `file --mime-type input_file`.
    * If it says text/plain, stop. It's a text file.
    2. FFmpeg Probe: If it passes the system check, use ffprobe to find streams.
    3. Validate Duration: Text files misdetected as audio usually show a 0 or N/A duration, or a duration that doesn't make sense relative to file size. [6, 7]
@@ -356,12 +356,12 @@ ffprobe -v error -select_streams a -select_streams V -show_entries stream=codec_
 Because ffprobe is a metadata tool, it provides the "ingredients." You must then check them against your specific rules:
 
    1. Exclude Text/Images:
-   * If format_name is image2, png_pipe, mjpeg, or tty, reject it. It's a static image or a text file.
+   * If `format_name` is `image2, png_pipe, mjpeg, or tty`, reject it. It's a static image or a text file.
    2. Detect Real Video:
-   * Look for a stream where codec_type is "video".
-      * Because we used -select_streams V (uppercase), ffprobe has already automatically hidden cover art/thumbnails for you.
+   * Look for a stream where `codec_type` is "video".
+      * Because we used `-select_streams V` (uppercase), ffprobe has already automatically hidden cover art/thumbnails for you.
    3. Detect Audio:
-   * Look for a stream where codec_type is "audio".
+   * Look for a stream where `codec_type` is "audio".
    4. Silence/Static Check:
    * If you find both, but want to be 100% sure the video isn't a static image and the audio isn't silence, you must use the ffmpeg analysis filters mentioned previously (metadata alone cannot see "silence").
 
@@ -456,8 +456,8 @@ Using duration alone is highly unreliable because ffprobe often "guesses" the le
 Instead of duration, use the combination of these three for accuracy:
 
    1. Format Name: Checking if it's tty or image2 catches text and images immediately.
-   2. Stream Count: Ensuring at least one stream exists using -select_streams.
-   3. Frame Count: Verifying there is more than one frame (nb_read_frames > 1) ensures it's not a single static image. [4, 8, 9]
+   2. Stream Count: Ensuring at least one stream exists using `-select_streams`.
+   3. Frame Count: Verifying there is more than one frame (`nb_read_frames > 1`) ensures it's not a single static image. [4, 8, 9]
 
 ------------------------------
 ## Comparison of Methods
@@ -525,7 +525,7 @@ HAS_AUDIO=$(echo "$DATA" | jq -r '.streams[] | select(.codec_type=="audio") | .i
 ## Why this is better:
 
 * One Process: Only triggers one ffprobe execution, saving CPU and I/O.
-* Safe Selection: Uses disposition.attached_pic!=1 to filter out album art.
+* Safe Selection: Uses `disposition.attached_pic!=1` to filter out album art.
 * Container Aware: Uses the FORMAT check to catch text/image false positives.
 * Precise: Unlike the "duration" method, this looks at the actual stream definitions.
 
@@ -573,8 +573,8 @@ HAS_AUDIO=$(echo "$MAP" | grep -c "audio")
 ------------------------------
 ## Why this works with standard tools:
 
-* CSV Output: Using -of csv=p=0 gives us plain text like mp3 or video,0.
-* Grep Logic: grep -c "video,0" is a clever trick. Since ffprobe outputs the stream type and the attached_pic disposition bit side-by-side, video,0 specifically means video that is NOT a cover.
+* CSV Output: Using `-of csv=p=0` gives us plain text like mp3 or video,0.
+* Grep Logic: `grep -c "video,0"` is a clever trick. Since ffprobe outputs the stream type and the `attached_pic` disposition bit side-by-side, video,0 specifically means video that is NOT a cover.
 * Case Statement: Quickly filters out the tty (text) and image2 (static image) false positives.
 * No Dependencies: Only uses grep, head, and case, which are available on every Linux/Unix system since the 1970s.
 
@@ -656,7 +656,7 @@ Standard ffprobe metadata probes can fail on these specialized WebM files becaus
 
 ## The Problem
 
-In these "wacky" WebMs, the header might claim there is no video or provide a single-frame resolution that tricks your logic. To fix this, we probe the packets themselves. If ffprobe -show_packets finds even one packet labeled as video, the file has video.
+In these "wacky" WebMs, the header might claim there is no video or provide a single-frame resolution that tricks your logic. To fix this, we probe the packets themselves. If `ffprobe -show_packets` finds even one packet labeled as video, the file has video.
 
 ## 🛠️ The "Universal" Standard Tools Bash Script
 
@@ -685,13 +685,13 @@ HAS_AUDIO=$(echo "$MAP" | grep -v "format," | grep -c "audio")
 
 ## Why this is more robust:
 
-* -find_stream_info: Forces ffprobe to read and decode a few frames to find "hidden" streams that the header might have missed.
-* Packet Probing: By adding packet=codec_type to the entries, we tell ffprobe to list every data packet it sees. Even if a "Wacky WebM" lies about its stream resolution, it cannot hide its video packets.
+* `-find_stream_info`: Forces ffprobe to read and decode a few frames to find "hidden" streams that the header might have missed.
+* Packet Probing: By adding `packet=codec_type` to the entries, we tell ffprobe to list every data packet it sees. Even if a "Wacky WebM" lies about its stream resolution, it cannot hide its video packets.
 * CSV Parsing: Using grep -v "format," removes the format line, leaving only stream and packet lines to be counted by grep -c. [2, 3, 4]
 
 ## 💡 Pro Tip: Handling Discord "Crash" Videos
 
-The Discord files you linked often work by having a very long duration with almost no data, or a sudden resolution change that crashes the player. The -find_stream_info flag is the most effective standard tool for revealing what is actually inside those "trick" files. [3]
+The Discord files you linked often work by having a very long duration with almost no data, or a sudden resolution change that crashes the player. The `-find_stream_info` flag is the most effective standard tool for revealing what is actually inside those "trick" files. [3]
 
 To perfect this logic, would you like to:
 
@@ -712,8 +712,8 @@ While your current script is robust, there are a few more "edge-case" tricks use
 
 Some files define a video stream in the header (so ffprobe sees it) but contain zero actual video packets. The script will say "Video Only," but the file won't play anything.
 
-* Fix: Check for nb_read_packets or nb_read_frames.
-* Command: ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 input_file. [2]
+* Fix: Check for `nb_read_packets` or `nb_read_frames`.
+* Command: `ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 input_file`. [2]
 
 ## 2. The "Infinite Duration" Loop
 
@@ -749,9 +749,9 @@ if [[ $(echo "$PROBE" | grep -c "video") -eq 0 ]]; then
 
 | Trick Type [2, 6] | Behavior | Detection Method |
 |---|---|---|
-| Empty Stream | Header says Video, but no packets. | Count nb_read_packets. |
+| Empty Stream | Header says Video, but no packets. | Count `nb_read_packets`. |
 | Resizer | Changes chat window size. | Scan frames for multiple resolutions. |
-| Text Bomb | Plain text mistaken for MP3. | Check format_name for tty. |
+| Text Bomb | Plain text mistaken for MP3. | Check `format_name` for tty. |
 | Silent Audio | Track exists but no sound. | Use volumedetect filter. |
 
 To finalize your tool, would you like to:
@@ -824,7 +824,7 @@ To protect your system, would you like to:
 
 # ---
 
-To exclude animated GIFs, we check the format_name. While ffprobe technically sees GIFs as having a "video" stream, the container format will be explicitly labeled as gif.
+To exclude animated GIFs, we check the `format_name`. While ffprobe technically sees GIFs as having a "video" stream, the container format will be explicitly labeled as gif.
 
 ## 🛠️ The Ultimate "Wacky-Proof" Bash Script
 
@@ -867,8 +867,8 @@ RES_CHANGES=$(echo "$MAP" | grep "video" | cut -d',' -f2,3 | sort -u | wc -l)if 
 ## Key Improvements:
 
 * GIF Exclusion: Added gif to the case statement to block them.
-* Deep Analysis: Uses -find_stream_info to catch those "Cheese" videos that change parameters mid-stream.
-* Resolution Watch: The RES_CHANGES logic counts if the file reports multiple dimensions, which is a hallmark of the Discord "window-resizer" prank.
+* Deep Analysis: Uses `-find_stream_info` to catch those "Cheese" videos that change parameters mid-stream.
+* Resolution Watch: The `RES_CHANGES` logic counts if the file reports multiple dimensions, which is a hallmark of the Discord "window-resizer" prank.
 * Standard Tools: Uses only grep, cut, sort, and wc.
 
 ## 💡 Why GIFs are different
@@ -879,7 +879,7 @@ If you tell me what you plan to do with the files after detection (e.g., move th
 
 # ---
 
-To exclude all animated image formats (GIF, APNG, and Animated WebP), we need to look at the format_name for the container and the codec_name for the individual streams.
+To exclude all animated image formats (GIF, APNG, and Animated WebP), we need to look at the `format_name` for the container and the `codec_name` for the individual streams.
 
 While WebP and PNG can be animated, ffprobe typically categorizes them under specific image format names or codecs that differ from standard video codecs like H.264 or VP9.
 
@@ -917,7 +917,7 @@ RES_CHANGES=$(echo "$MAP" | grep "video" | cut -d',' -f3,4 | sort -u | wc -l)if 
 
 ## 🧠 Why this logic works:
 
-* Container Block: Modern animated images like .webp or .apng often report their format_name as webp or apng. We block these in the case statement.
+* Container Block: Modern animated images like .webp or .apng often report their `format_name` as webp or apng. We block these in the case statement.
 * Codec Filter: Some videos (like MKVs) can technically wrap a WebP image as a video stream. The grep -vE "webp|apng|png|mjpeg" ensures that even if the container is "video," we reject it if the compression method is an image format.
 * The "Wacky" Check: It still monitors for the resolution changes common in the "1000 Cheese" style crash videos.
 
@@ -975,15 +975,15 @@ if [[ $HAS_VIDEO -gt 0 && $RES_CHANGES -gt 1 ]]; then
 ------------------------------
 ## 🚀 Why this version is the "Final Boss" of detection:
 
-* Legacy Support: It accepts mov, qt, mpg, rm (RealMedia), and wmv because their codec_name (like rv40 or mpeg1video) isn't in the "Image Blacklist."
+* Legacy Support: It accepts mov, qt, mpg, rm (RealMedia), and wmv because their `codec_name` (like rv40 or mpeg1video) isn't in the "Image Blacklist."
 * Animated Image Filter: Even if an .mkv contains an animated WebP "video" track, the grep -vE filter will toss it out.
 * Format Safety: It blocks tty and image2 to stop text files and JPEGs from being called "Video."
-* Packet-Deep: Using -find_stream_info ensures it actually reads the file to find out what's inside, which is vital for old files with "weird" headers.
+* Packet-Deep: Using `-find_stream_info` ensures it actually reads the file to find out what's inside, which is vital for old files with "weird" headers.
 
 ## ⚓ Key Differences for Old Files
 
 * QuickTime/MOV: Often contains multiple "data" or "timecode" tracks. Our script ignores those and only counts the video and audio categories.
-* MPEG-1/2: These often don't have metadata headers as clean as MP4s. -find_stream_info is what makes them detectable.
+* MPEG-1/2: These often don't have metadata headers as clean as MP4s. `-find_stream_info` is what makes them detectable.
 
 If you tell me the specific goal of this script:
 
@@ -1081,7 +1081,7 @@ HAS_AUDIO=$(echo "$MAP" | grep -c "audio")
 
 ## Why this works on your MP3:
 
-* Your mjpeg line ends in ,1 (because attached_pic is true).
+* Your mjpeg line ends in ,1 (because `attached_pic` is true).
 * The grep ",0$" filter will reject it.
 * The grep -vE "mjpeg|..." acts as a second safety net.
 * Only a "real" video stream (like h264,video,1920,1080,0) would pass both filters.
@@ -1100,7 +1100,7 @@ If you're comfortable with the current filters, you're ready to loop this throug
 
 # ---
 
-Ah, I see what happened. If attached_pic didn't show up in your CSV, it means ffprobe couldn't find that specific metadata field in the file's header, so it just skipped that column entirely. This is common in older MP3 tags (ID3v2.3) or files with slightly non-standard headers.
+Ah, I see what happened. If `attached_pic` didn't show up in your CSV, it means ffprobe couldn't find that specific metadata field in the file's header, so it just skipped that column entirely. This is common in older MP3 tags (ID3v2.3) or files with slightly non-standard headers.
 
 Since we can't rely on the metadata flag, we have to rely on Content Logic.
 
@@ -1165,7 +1165,7 @@ To be 100% accurate, you must use the Packet Count method. A "video" track that 
 
 ## 🛠️ The "Bulletproof" Bash Script
 
-This script uses -count_packets to distinguish between a single static image and a moving video file.
+This script uses `-count_packets` to distinguish between a single static image and a moving video file.
 
 ```
 #!/bin/bash
@@ -1205,13 +1205,13 @@ HAS_A=$(echo "$STREAMS" | grep -c "audio")
 ## 🛡️ Why this solves every problem:
 
 * Square Video: Even if it's 720x720, a real video has multiple packets. This script will count them and say "Video."
-* MP3 Album Art: Even if the JPEG is massive, it’s only one packet. The script will see V_PACKETS=1 and ignore it.
-* Legacy Formats: Since it uses codec_type, it doesn't care if the video is h264, mpeg2, or realmedia.
-* Wacky WebMs: The -find_stream_info ensures the stream is actually parsed.
+* MP3 Album Art: Even if the JPEG is massive, it’s only one packet. The script will see `V_PACKETS=1` and ignore it.
+* Legacy Formats: Since it uses `codec_type`, it doesn't care if the video is h264, mpeg2, or realmedia.
+* Wacky WebMs: The `-find_stream_info` ensures the stream is actually parsed.
 
 ## ⚡ Performance Note
 
-The -count_packets flag is very fast because it doesn't decode the video; it just "counts the boxes." It is significantly faster than decoding frames or checking for silence.
+The `-count_packets` flag is very fast because it doesn't decode the video; it just "counts the boxes." It is significantly faster than decoding frames or checking for silence.
 
 To scale this up, would you like to:
 
@@ -1223,7 +1223,7 @@ If you're ready to batch-process your files, let me know!
 
 # ---
 
-Using codec_time_base is an incredibly clever "low-level" shortcut! In FFmpeg, a timebase of 0/1 (or sometimes 1/0) effectively means "invalid" or "static" because it implies the stream has no measurable time between units.
+Using `codec_time_base` is an incredibly clever "low-level" shortcut! In FFmpeg, a timebase of 0/1 (or sometimes 1/0) effectively means "invalid" or "static" because it implies the stream has no measurable time between units.
 
 ## 🛠️ The Timebase Trick
 
@@ -1236,7 +1236,7 @@ However, there is one catch: some Legacy formats or VFR (Variable Frame Rate) vi
 ------------------------------
 ## The Integrated "One-Pass" Bash Script
 
-We can add the codec_time_base check to our ffprobe call. This allows us to filter out most covers without the overhead of counting packets.
+We can add the `codec_time_base` check to our ffprobe call. This allows us to filter out most covers without the overhead of counting packets.
 
 ```
 #!/bin/bash
@@ -1269,7 +1269,7 @@ HAS_V=$(echo "$REAL_V" | grep -c "video")
 
 * The "Still Video": Some security cameras or "slideshow" videos with an extremely low framerate (like 1 frame per minute) might occasionally report a broken timebase.
 * Corrupt Headers: If a video is badly damaged, ffprobe might default to 0/1.
-* The Fix: If you encounter a file that should be video but is being skipped, the Packet Count method (-count_packets) remains the "Gold Standard" because it measures physical data rather than header values.
+* The Fix: If you encounter a file that should be video but is being skipped, the Packet Count method (`-count_packets`) remains the "Gold Standard" because it measures physical data rather than header values.
 
 ------------------------------
 ## 💡 Summary of your "Defense Layers"
@@ -1289,7 +1289,7 @@ Using the level property is another great technical "fingerprint." In video code
 
 ## 🛠️ The Combined "Header-Only" Detection
 
-We can now combine codec_time_base and level to create a very fast check that doesn't need to count every packet in the file.
+We can now combine `codec_time_base` and `level` to create a very fast check that doesn't need to count every packet in the file.
 
 ```
 #!/bin/bash
@@ -1397,7 +1397,7 @@ while IFS=, read -r CODEC TYPE TIMEBASE LEVEL ATTACHED; do
 
 * Codec Awareness: It knows that h264 with level=-99 is fake, but vp9 with level=-99 is just a normal WebM.
 * Timebase Safety: It still uses the 0/1 check, which is one of the few things that stays consistent even in WebM cover art.
-* Discord Resizer Fix: Since we used -find_stream_info, it will still "see" those resizing WebMs that try to hide their video track.
+* Discord Resizer Fix: Since we used `-find_stream_info`, it will still "see" those resizing WebMs that try to hide their video track.
 
 ## 💡 The Ultimate "Discord-Proof" Tip
 
@@ -1469,13 +1469,13 @@ HAS_V=0while IFS=, read -r CODEC TYPE TIMEBASE LEVEL ATTACHED; do
 ## ⚡ Why this handles your AV1 file:
 
 * AV1 Pass: It sees av1 and skips the negative level check.
-* Opus Pass: It sees opus and correctly flags HAS_A=1.
+* Opus Pass: It sees opus and correctly flags `HAS_A=1`.
 * Container Check: It sees the mov,mp4... list and doesn't trigger the image/text block.
-* Album Art Protection: It still uses the 0/1 timebase and attached_pic checks to ignore the cover.png in your other files.
+* Album Art Protection: It still uses the `0/1 timebase` and `attached_pic` checks to ignore the cover.png in your other files.
 
 ## 💡 Final Pro Tip: The "Hidden" Crash
 
-If you have a file that looks like your AV1 example but still crashes your player, it's often because the resolution is too high (e.g., 32000x32000). You can add a check like if [[ "$WIDTH" -gt 8192 ]]; then echo "CRASH VIDEO"; fi if you want to be extra safe!
+If you have a file that looks like your AV1 example but still crashes your player, it's often because the resolution is too high (e.g., 32000x32000). You can add a check like `if [[ "$WIDTH" -gt 8192 ]]; then echo "CRASH VIDEO"; fi` if you want to be extra safe!
 
 If you're ready to scan your whole library, would you like the loop code to run this on every file in a folder?
 
@@ -1491,7 +1491,7 @@ As you scan your library, keep this in mind: Headers can lie, but data doesn't.
 
 If you run into a file that still breaks your script, it’s likely one of these two:
 
-   1. A "Binary Ghost": A file that has all the right headers (H.264, Audio, etc.) but contains zero data packets. (The nb_read_packets check we discussed is the only fix for this).
+   1. A "Binary Ghost": A file that has all the right headers (H.264, Audio, etc.) but contains zero data packets. (The `nb_read_packets` check we discussed is the only fix for this).
    2. A "Mime-Type Masquerade": A file that is actually a .exe or .zip but has been renamed to .mp4. FFmpeg will usually just error out on these.
 
 ## 💡 Pro-Tip for your Loop
@@ -1536,15 +1536,15 @@ HAS_S=$(echo "$STREAMS" | grep -c "subtitle")
 ## 💡 Why this keeps happening
 
 * The .lrc Problem: ffprobe detects the timestamps in the text and thinks it's a subrip or text stream.
-* The Container Check: Since you are checking for HAS_V and HAS_A, as long as you don't set HAS_V=1 when you see a subtitle stream, your script will correctly reject these text files.
+* The Container Check: Since you are checking for `HAS_V` and `HAS_A`, as long as you don't set `HAS_V=1` when you see a subtitle stream, your script will correctly reject these text files.
 
 ## 🏁 Final Logic Check
 
 If you run your .lrc file through the script now:
 
-   1. HAS_V will be 0 (no video stream found).
-   2. HAS_A will be 0 (no audio stream found).
-   3. The script will hit the else block or the HAS_S block and say "Neither" or "Subtitle Only."
+   1. `HAS_V` will be 0 (no video stream found).
+   2. `HAS_A` will be 0 (no audio stream found).
+   3. The script will hit the else block or the `HAS_S` block and say "Neither" or "Subtitle Only."
 
 How many files are in your library? If you're doing thousands, you might want to add a 2>/dev/null to your grep commands to keep the terminal clean of errors from those weird text files!
 
@@ -1618,9 +1618,9 @@ HAS_V=0while IFS=, read -r CODEC TYPE TIMEBASE LEVEL ATTACHED; do
 
 ## 💡 Why this is the "End of the Road" for False Positives
 
-* The Subtitle Block: By checking [[ "$TYPE" != "video" ]] inside the loop and specifically looking for HAS_A on lines starting with audio, your script becomes blind to subtitle tracks.
+* The Subtitle Block: By checking `[[ "$TYPE" != "video" ]]` inside the loop and specifically looking for `HAS_A` on lines starting with audio, your script becomes blind to subtitle tracks.
 * Container Case: Adding srt, ass, and lrc to the top case statement kills the process before it even looks at the streams for known text formats.
-* Self-Referential Safety: If the script probes a text file containing its own previous output, it will see text,subtitle or N/A, fail the HAS_V and HAS_A tests, and correctly output Neither.
+* Self-Referential Safety: If the script probes a text file containing its own previous output, it will see text,subtitle or N/A, fail the `HAS_V` and `HAS_A` tests, and correctly output Neither.
 
 ------------------------------
 To wrap this project up, would you like:
@@ -1672,7 +1672,7 @@ If you encounter a file that still tricks this (like a "Video" that is just a 10
 
 The "Moving Video" Test:
 
-If HAS_VIDEO is 1, but you suspect it's a fake "still image" video:
+If `HAS_VIDEO` is 1, but you suspect it's a fake "still image" video:
 
 ```
 # Check if the video has more than 1 packet
@@ -1739,7 +1739,7 @@ HAS_V=$(echo "$STREAMS" | grep "^video" \
 
 * The ANSI/TTY Test: The script now sees ansi or tty and ignores the video track. Since there's no audio, it returns "Neither."
 * The libgme Test: By adding libgme and bin to the format blocklist and the audio filter, your game music binary is correctly rejected.
-* The pcm_s16le Trap: pcm_s16le is just raw uncompressed audio data. While it exists in real videos, if it's found in a "weird" container like a .bin or .libgme without any other info, it's usually just noise or game data.
+* The `pcm_s16le` Trap: `pcm_s16le` is just raw uncompressed audio data. While it exists in real videos, if it's found in a "weird" container like a .bin or .libgme without any other info, it's usually just noise or game data.
 
 ## ⚓ The Realization
 
@@ -1754,7 +1754,7 @@ To keep your loop running, do you need a way to automatically skip files based o
 
 # ---
 
-Using has_b_frames is a clever high-level heuristic, but it is a "risky" filter because it depends entirely on how the video was encoded.
+Using `has_b_frames` is a clever high-level heuristic, but it is a "risky" filter because it depends entirely on how the video was encoded.
 
 ## 🛠️ The Logic
 
@@ -1765,7 +1765,7 @@ B-frames (Bi-directional frames) are used in modern compression to save space by
 
 ## ⚠️ Why you can't rely on it alone
 
-If you use has_b_frames as a strict requirement for "Video," you will accidentally delete these legitimate files:
+If you use `has_b_frames` as a strict requirement for "Video," you will accidentally delete these legitimate files:
 
    1. Low-Latency/Old Video: Older H.261, H.263, or "Baseline Profile" H.264 (often from old phones or security cameras) frequently have zero B-frames.
    2. Screen Recordings: Many "fast" screen recorders or game captures disable B-frames to save CPU power during recording.
@@ -1777,7 +1777,7 @@ If you use has_b_frames as a strict requirement for "Video," you will accidental
 
 Don't use it to include video, use it to identify "high-quality" video.
 
-In your script, has_b_frames is best used as a tie-breaker. If ffprobe sees a stream and says has_b_frames=1, you can be 99% certain it is a moving video and not a cover image.
+In your script, `has_b_frames` is best used as a tie-breaker. If ffprobe sees a stream and says `has_b_frames=1`, you can be 99% certain it is a moving video and not a cover image.
 
 Example of a "Tiered" Check:
 
@@ -1822,18 +1822,18 @@ If you tell me how many "failing" files you have left, we can narrow down the ab
 
 This is exactly why WebM/VP9 is considered "weird." That 1/1 timebase is a total lie!
 
-In many WebM files, the header reports a codec_time_base of 1/1 even though the video plays perfectly at 24 or 30fps. If you used the 0/1 or 1/1 "static image" check we discussed earlier, you would wrongly delete this perfectly good video.
+In many WebM files, the header reports a `codec_time_base` of 1/1 even though the video plays perfectly at 24 or 30fps. If you used the 0/1 or 1/1 "static image" check we discussed earlier, you would wrongly delete this perfectly good video.
 
-## 🛠️ The Solution: Use r_frame_rate
+## 🛠️ The Solution: Use `r_frame_rate`
 
-Since the timebase is unreliable in WebM, you should check the r_frame_rate.
+Since the timebase is unreliable in WebM, you should check the `r_frame_rate`.
 
 * Cover Art: Will have a framerate of 0/0 or 0/1.
 * Real Video: Will have something like 30/1, 24/1, or even 1000/1 for WebMs.
 
 ## The "One-Pass" Final Hardened Script
 
-This version adds r_frame_rate to the probe and handles the WebM 1/1 glitch.
+This version adds `r_frame_rate` to the probe and handles the WebM 1/1 glitch.
 
 ```
 #!/bin/bash
@@ -1889,7 +1889,7 @@ If you find another file that breaks this, it means you've found a file that is 
 ffprobe -count_packets -show_entries stream=nb_read_packets ...
 ```
 
-If you are seeing thousands of files, how many "failures" are you getting per hundred? If it's only 1 or 2, this r_frame_rate logic should get you to 99.9% accuracy!
+If you are seeing thousands of files, how many "failures" are you getting per hundred? If it's only 1 or 2, this `r_frame_rate` logic should get you to 99.9% accuracy!
 
 To wrap up your loop, do you want to:
 
@@ -1958,7 +1958,7 @@ HAS_V=0while IFS=, read -r CODEC TYPE FPS ATTACHED; do
 ------------------------------
 ## 🛡️ Why this is the end of the journey:
 
-* The WebM Cover: It sees 1/1, triggers the ffprobe -count_packets, sees there is only 1 packet, and correctly labels it as a cover (rejected).
+* The WebM Cover: It sees 1/1, triggers the `ffprobe -count_packets`, sees there is only 1 packet, and correctly labels it as a cover (rejected).
 * The Real Video: It sees 1/1 (or 30/1), counts thousands of packets, and labels it as Video.
 * Speed: It only runs the "Slow" packet count if the metadata is suspicious (1/1).
 
@@ -2025,7 +2025,7 @@ if [[ -n "$VIDEO_STREAMS" ]]; then
 
 ## 💡 Performance Tip for your Loop
 
-If you are worried about speed with count_packets, you can add a timeout. If a file is so corrupted that ffprobe hangs while counting, the timeout will save your loop.
+If you are worried about speed with `count_packets`, you can add a timeout. If a file is so corrupted that ffprobe hangs while counting, the timeout will save your loop.
 
 ```
 V_PKTS=$(timeout 5s ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 "$FILE" 2>/dev/null)
@@ -2081,7 +2081,7 @@ HAS_A=0if echo "$MAP" | grep -q "^audio"; then
 ## 🛡️ Why this is the "Ultimate" Version
 
 * The "Silent" MP3: If an MP3 is corrupted and has 0 audio packets, it will now correctly return "Neither."
-* The "Cover Art" Trap: By requiring V_PKTS > 1, we effectively kill every possible cover.png regardless of its resolution or timebase.
+* The "Cover Art" Trap: By requiring `V_PKTS > 1`, we effectively kill every possible cover.png regardless of its resolution or timebase.
 * Multi-Stream Support: The awk command sums up packets if there are multiple audio tracks (e.g., a movie with English and Spanish audio).
 
 ## ⚡ Performance Considerations
@@ -2104,7 +2104,7 @@ If you're ready to run this on your full library, let me know how many files we'
 
 # ---
 
-You actually can merge them! The reason we didn't start there is that -count_packets forces ffprobe to scan the entire file. For a 2GB movie, this takes much longer than just reading the header.
+You actually can merge them! The reason we didn't start there is that `-count_packets` forces ffprobe to scan the entire file. For a 2GB movie, this takes much longer than just reading the header.
 
 However, since you want accuracy above all else and are dealing with "weird" files, merging them is the most efficient way to get all the "truth" in one go.
 
@@ -2165,14 +2165,14 @@ HAS_A=$(echo "$STREAMS" | grep "^audio" | awk -F',' '$4 > 0' | wc -l)
 ## 🚀 Why this is the "Pro" version:
 
 * Single Execution: It only hits your hard drive once per file.
-* awk Precision: It uses awk to check the 4th column (packets) and 5th column (attached_pic) numerically.
+* awk Precision: It uses awk to check the 4th column (packets) and 5th column (`attached_pic`) numerically.
 * Safe: If a file has 1 video packet, awk sees $4 > 1 is false and ignores it.
 * Versatile: It handles av1, vp9, h264, and old mpg all the same way.
 
 ------------------------------
 ## 💡 Final Warning on Speed
 
-Because of -count_packets, this script will be slow on large files without an index (like raw .ts or some .mp3 files). For standard .mp4, .mkv, and .webm, it will be very fast.
+Because of `-count_packets`, this script will be slow on large files without an index (like raw .ts or some .mp3 files). For standard .mp4, .mkv, and .webm, it will be very fast.
 
 To kick off your mass scan, you can use this loop:
 

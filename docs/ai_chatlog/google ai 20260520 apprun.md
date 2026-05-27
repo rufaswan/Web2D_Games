@@ -8,10 +8,10 @@ XDG_CONFIG_HOME="$PWD/.config" XDG_DATA_HOME="$PWD/.local/share" XDG_STATE_HOME=
 
 ## 📂 What Each Variable Does
 
-* XDG_CONFIG_HOME: Redirects configuration files (usually in ~/.config) [1].
-* XDG_DATA_HOME: Redirects data files like plugins or saves (usually in ~/.local/share) [1].
-* XDG_STATE_HOME: Redirects logs and history (usually in ~/.local/state) [1].
-* XDG_CACHE_HOME: Redirects temporary files (usually in ~/.cache) [1]. [1, 2, 3, 4]
+* `XDG_CONFIG_HOME`: Redirects configuration files (usually in ~/.config) [1].
+* `XDG_DATA_HOME`: Redirects data files like plugins or saves (usually in ~/.local/share) [1].
+* `XDG_STATE_HOME`: Redirects logs and history (usually in ~/.local/state) [1].
+* `XDG_CACHE_HOME`: Redirects temporary files (usually in ~/.cache) [1]. [1, 2, 3, 4]
 
 ## ⚠️ Important Exceptions
 
@@ -38,11 +38,11 @@ The XDG Base Directory Specification defines a standard set of rules for where a
 ------------------------------
 ## ⚖️ The Differences
 
-There is actually no standard variable named $XDG_HOME. Instead, XDG uses several specific sub-directories (like $XDG_CONFIG_HOME). [7, 8, 9, 10]
+There is actually no standard variable named `$XDG_HOME`. Instead, XDG uses several specific sub-directories (like `$XDG_CONFIG_HOME`). [7, 8, 9, 10]
 
 Here is how $HOME compares to the XDG suite:
 
-| Feature [11, 12, 13, 14, 15] | $HOME | $XDG_CONFIG_HOME (and others) |
+| Feature [11, 12, 13, 14, 15] | `$HOME` | `$XDG_CONFIG_HOME` (and others) |
 |---|---|---|
 | Scope | Points to your entire user profile. | Points to specific functional folders. |
 | Default Location | /home/username | /home/username/.config |
@@ -53,7 +53,7 @@ Here is how $HOME compares to the XDG suite:
 ------------------------------
 ## 🧠 How Apps Use Them
 
-   1. The app first checks if an XDG variable like $XDG_CONFIG_HOME is set.
+   1. The app first checks if an XDG variable like `$XDG_CONFIG_HOME` is set.
    2. If it is set, the app saves settings there.
    3. If it is not set, the app falls back to a default folder inside $HOME (usually $HOME/.config). [16, 17, 18, 19]
 
@@ -108,7 +108,7 @@ For Firefox, bypass its default profile lookup entirely by pointing it directly 
 ./firefox -profile "$PWD/portable_profile"
 ```
 
-* Why this is better: It keeps your current directory clean by neatly grouping all cookies, history, and cache into a single folder named portable_profile without changing your system variables. [8, 9]
+* Why this is better: It keeps your current directory clean by neatly grouping all cookies, history, and cache into a single folder named `portable_profile` without changing your system variables. [8, 9]
 
 ------------------------------
 ## 🧊 Method 3: Firejail Sandboxing (Most Robust)
@@ -140,9 +140,9 @@ You are spotting the trickiest edge case in Linux application portability. When 
 To force these hardheaded applications to behave portably, you can choose from three advanced techniques.
 
 ------------------------------
-## 📦 Solution 1: Use nss_wrapper (The Standard Way)
+## 📦 Solution 1: Use `nss_wrapper` (The Standard Way)
 
-The most robust, production-ready solution is to use nss_wrapper, a utility specifically designed by the Samba team to fake user databases (like /etc/passwd) without needing root privileges.
+The most robust, production-ready solution is to use `nss_wrapper`, a utility specifically designed by the Samba team to fake user databases (like /etc/passwd) without needing root privileges.
 
    1. Install it via your package manager:
 ```
@@ -159,15 +159,15 @@ The most robust, production-ready solution is to use nss_wrapper, a utility spec
    NSS_WRAPPER_PASSWD="./fake_passwd" LD_PRELOAD="libnss_wrapper.so" ./your-app
 ```
 
-The application will query the user database, read your fake_passwd file, and believe your current folder is the official system home directory. [1, 2]
+The application will query the user database, read your `fake_passwd` file, and believe your current folder is the official system home directory. [1, 2]
 
 ------------------------------
 
-## 🪝 Solution 2: C Function Interception via LD_PRELOAD (The Lightweight Way)
+## 🪝 Solution 2: C Function Interception via `LD_PRELOAD` (The Lightweight Way)
 
-If you don't want to install extra packages, you can intercept the getpwuid() call using Linux's LD_PRELOAD feature. [2, 3, 4]
+If you don't want to install extra packages, you can intercept the `getpwuid()` call using Linux's `LD_PRELOAD` feature. [2, 3, 4]
 
-   1. Create a file named patch_home.c in your directory and paste this code:
+   1. Create a file named `patch_home.c` in your directory and paste this code:
 ```
    #define _GNU_SOURCE
    #include <pwd.h>
@@ -209,9 +209,9 @@ bwrap --dev-bind / / \
       ./your-app
 ```
 
-* How it works: It visually binds your current working directory right over your system's actual home path for that specific application instance. Even if the app reads /etc/passwd and tries to access /home/username, Bubblewrap tricks it into accessing your current directory instead. [1, 5]
+* How it works: It visually binds your current working directory right over your system's actual home path for that specific application instance. Even if the app reads `/etc/passwd` and tries to access /home/username, Bubblewrap tricks it into accessing your current directory instead. [1, 5]
 
-If you are packaging this application for other users to download, would you like to see how to bundle the LD_PRELOAD C patch into a single, seamless distribution shell script?
+If you are packaging this application for other users to download, would you like to see how to bundle the `LD_PRELOAD` C patch into a single, seamless distribution shell script?
 
 [1] [https://unix.stackexchange.com](https://unix.stackexchange.com/questions/81670/overriding-home-location)
 [2] [https://github.com](https://github.com/Shados/shim-getpw)
@@ -227,7 +227,7 @@ To fix this and keep your current directory purely portable, you have two option
 
 ## 🛑 Option 1: Completely Disable the Crash Reporter (Recommended)
 
-Because this is a portable instance, you likely do not need Mozilla's crash-logging background daemon spinning up. You can forcefully strip away its ability to scan your system by passing the environment flag MOZ_CRASHREPORTER_DISABLE=1. [1]
+Because this is a portable instance, you likely do not need Mozilla's crash-logging background daemon spinning up. You can forcefully strip away its ability to scan your system by passing the environment flag `MOZ_CRASHREPORTER_DISABLE=1`. [1]
 
 Launch your application like this:
 
@@ -235,12 +235,12 @@ Launch your application like this:
 MOZ_CRASHREPORTER_DISABLE=1 ./firefox -profile "$PWD/portable_profile"
 ```
 
-* Why it works: This kills the Breakpad subsystem completely during boot. It saves CPU overhead and prevents the $HOME/.mozilla directory tree from ever being created. [1]
+* Why it works: This kills the Breakpad subsystem completely during boot. It saves CPU overhead and prevents the `$HOME/.mozilla` directory tree from ever being created. [1]
 
 ------------------------------
 ## 📂 Option 2: Redirect the Crash Data Directory
 
-If you want to keep the crash logger active but want the dumps stored strictly inside your portable setup, you can override the hardcoded path by using the internal Mozilla environment variable MOZ_CRASHREPORTER_DATA_DIRECTORY. [2]
+If you want to keep the crash logger active but want the dumps stored strictly inside your portable setup, you can override the hardcoded path by using the internal Mozilla environment variable `MOZ_CRASHREPORTER_DATA_DIRECTORY`. [2]
 
 Launch your application like this:
 
@@ -248,7 +248,7 @@ Launch your application like this:
 MOZ_CRASHREPORTER_DATA_DIRECTORY="$PWD/portable_profile/CrashReports" ./firefox -profile "$PWD/portable_profile"
 ```
 
-* Why it works: This explicit flag overrides the platform-dependent default. Instead of dropping a raw .mozilla/Crash Reports folder in your true system home folder, it safely locks those minidumps inside your localized portable profile folder. [2]
+* Why it works: This explicit flag overrides the platform-dependent default. Instead of dropping a raw `.mozilla/Crash Reports` folder in your true system home folder, it safely locks those minidumps inside your localized portable profile folder. [2]
 
 Would you like to see how to incorporate both of these into a production-ready script that handles standard app use and cleanses background trackers?
 
@@ -257,7 +257,7 @@ Would you like to see how to incorporate both of these into a production-ready s
 
 # ---
 
-Firefox creates a global state directory under ~/.mozilla/firefox/ that it queries before your portable -profile flag is parsed. [1]
+Firefox creates a global state directory under `~/.mozilla/firefox/` that it queries before your portable -profile flag is parsed. [1]
 
 Alongside Crash Reports and Pending Pings, this folder includes several system-wide structural files:
 
@@ -271,7 +271,7 @@ Alongside Crash Reports and Pending Pings, this folder includes several system-w
 ------------------------------
 ## 🚀 The Complete Environment Variable Formula
 
-To create a fully portable Firefox wrapper script that forces all of these stubborn files out of your real $HOME and completely locks them inside your current folder, use the following configuration:
+To create a fully portable Firefox wrapper script that forces all of these stubborn files out of your real `$HOME` and completely locks them inside your current folder, use the following configuration:
 
 ```
 #!/usr/bin/env bash
@@ -291,7 +291,7 @@ exec ./firefox -profile "$PWD/portable_data/profile" "$@"
 
 ## 💡 Why this works perfectly:
 
-Using MOZ_CRASHREPORTER_DISABLE=1 explicitly prevents the internal background process from initializing its home-directory scan. The remaining runtime files like profiles.ini are completely bypassed because the -profile argument forces the browser engine to use your explicit folder path directly. [1]
+Using `MOZ_CRASHREPORTER_DISABLE=1` explicitly prevents the internal background process from initializing its home-directory scan. The remaining runtime files like profiles.ini are completely bypassed because the -profile argument forces the browser engine to use your explicit folder path directly. [1]
 
 Would you like help adapting this into a desktop launcher icon (.desktop file) so you can double-click it directly from your file manager?
 
@@ -314,14 +314,14 @@ Here is what they do, why they are sensitive, and how to handle them in a portab
 * Portable Strategy: Leave it alone. It doesn't write configuration data; it just allows the portable app to show up on your screen.
 
 ------------------------------
-## 🗄️ XDG_RUNTIME_DIR (The High-Speed Memory Pipe)
+## 🗄️ `XDG_RUNTIME_DIR` (The High-Speed Memory Pipe)
 
-* What it is: A secure, high-speed RAM-backed folder (usually /run/user/1000) used for active communication. For example, Firefox uses this folder to open temporary pipes for video playback, audio processing, and sharing hardware acceleration with your graphics card.
+* What it is: A secure, high-speed RAM-backed folder (usually `/run/user/1000`) used for active communication. For example, Firefox uses this folder to open temporary pipes for video playback, audio processing, and sharing hardware acceleration with your graphics card.
 * What happens if you redirect it: If you point this to a USB drive or a standard hard drive directory, the app will slow down drastically or crash because it requires a true tmpfs (in-memory filesystem) with strict 0700 user permissions.
 * Portable Strategy: Leave it alone. It is wiped clean automatically by Linux every time you turn off your computer. It never leaves permanent clutter behind on your host system.
 
 ------------------------------
-## 🔌 DBUS_SESSION_BUS_ADDRESS (The System Intercom)
+## 🔌 `DBUS_SESSION_BUS_ADDRESS` (The System Intercom)
 
 * What it is: The communication address (a local socket file) that allows applications to talk to the rest of your system. For example, Firefox uses D-Bus to ask your desktop environment, "Is the system currently in Dark Mode?" or to send desktop notifications.
 * What happens if you redirect it: If you break or redirect this link, your application will lose integration with your desktop. It won't be able to open web links from other apps, use your native desktop file-chooser popups, or show multimedia playback keys.
@@ -338,7 +338,7 @@ Would you like to know how to bundle your portable application into an AppImage-
 
 # ---
 
-By redirecting, I mean changing the environment variable path to point somewhere else (like XDG_CONFIG_HOME="$PWD/config").
+By redirecting, I mean changing the environment variable path to point somewhere else (like `XDG_CONFIG_HOME="$PWD/config"`).
 
 When you change an environment variable, you are telling the application, "Don't look at the system default folder; look here instead."
 
@@ -350,7 +350,7 @@ Here is exactly how you handle symlinks, copies, and blank files for these diffe
 For files that contain saved data, preferences, or logs, you can easily redirect them to a clean, empty folder or a dummy file.
 
 * How to do it: You override the environment variable to point to a new path inside your portable directory.
-* Example: XDG_CONFIG_HOME="$PWD/.config"
+* Example: `XDG_CONFIG_HOME="$PWD/.config"`
 * Does it need copies or symlinks? No. When the app launches and sees an empty folder, it will automatically generate fresh, blank configuration files right there.
 
 ------------------------------
@@ -369,11 +369,11 @@ export XAUTHORITY="$PWD/.Xauthority"
 * Is it worth it? No. It adds zero value to portability because that security cookie changes every time you log into Linux. A copied or symlinked cookie will break the moment you plug your portable app into a different computer.
 
 ------------------------------
-## 3. Variables that require System Memory (XDG_RUNTIME_DIR)
+## 3. Variables that require System Memory (`XDG_RUNTIME_DIR`)
 
 This variable points to a folder located directly inside your computer's RAM (Random Access Memory).
 
-* Can you use a blank file or folder? No. If you try to redirect this to a standard folder on a USB stick or hard drive (XDG_RUNTIME_DIR="$PWD/.runtime"), the app will crash. Linux apps require this specific folder to have special memory-mapping capabilities and strict 0700 system permissions.
+* Can you use a blank file or folder? No. If you try to redirect this to a standard folder on a USB stick or hard drive (`XDG_RUNTIME_DIR="$PWD/.runtime"`), the app will crash. Linux apps require this specific folder to have special memory-mapping capabilities and strict 0700 system permissions.
 * Can you copy or symlink it? No. You cannot copy or symlink RAM memory space onto a physical disk storage folder.
 
 ------------------------------
@@ -395,7 +395,7 @@ Are you looking to test this portable setup on multiple different Linux machines
 
 # ---
 
-Yes, if you switch to a more restrictive user (like using sudo -u restricted_user or su), you absolutely must change how you handle these variables.
+Yes, if you switch to a more restrictive user (like using `sudo -u restricted_user` or `su`), you absolutely must change how you handle these variables.
 
 Because the new user has a different identity, security permissions will block the app from reading your original files or accessing your screen.
 
@@ -417,9 +417,9 @@ export DISPLAY=$DISPLAY
 ```
 
 ------------------------------
-## 🗄️ 2. The Runtime Variable (XDG_RUNTIME_DIR)
+## 🗄️ 2. The Runtime Variable (`XDG_RUNTIME_DIR`)
 
-As discussed earlier, this folder lives in the system RAM. Crucially, it has strict 0700 permissions—meaning only your primary user can read or write to it. If the restricted user tries to use your $XDG_RUNTIME_DIR, the app will immediately crash with a "Permission Denied" error.
+As discussed earlier, this folder lives in the system RAM. Crucially, it has strict 0700 permissions—meaning only your primary user can read or write to it. If the restricted user tries to use your `$XDG_RUNTIME_DIR`, the app will immediately crash with a "Permission Denied" error.
 
 * The Fix: Do not reuse your primary user's runtime directory. You must point the app to the restricted user's own system RAM folder, or completely unset it so the app falls back to a safe directory like /tmp.
 * How to do it:
@@ -432,7 +432,7 @@ unset XDG_RUNTIME_DIR
 ```
 
 ------------------------------
-## 🔌 3. The Intercom Variable (DBUS_SESSION_BUS_ADDRESS)
+## 🔌 3. The Intercom Variable (`DBUS_SESSION_BUS_ADDRESS`)
 
 Your primary user's D-Bus address is locked down. The restricted user cannot connect to it.
 
@@ -487,24 +487,24 @@ According to the [XDG Base Directory Specification](https://specifications.freed
 
 ## 1. ~/.config vs ~/.local/share [4]
 
-* ~/.config ($XDG_CONFIG_HOME): This folder is strictly for user preferences and tiny configuration files (e.g., your theme settings, custom keybindings, or a config.toml file). These are files you could easily copy to a brand-new computer to recreate your exact desktop setup.
-* ~/.local/share ($XDG_DATA_HOME): This folder is for bloat, assets, and runtime data that the app needs to function but aren't manual settings.
+* ~/.config (`$XDG_CONFIG_HOME`): This folder is strictly for user preferences and tiny configuration files (e.g., your theme settings, custom keybindings, or a config.toml file). These are files you could easily copy to a brand-new computer to recreate your exact desktop setup.
+* ~/.local/share (`$XDG_DATA_HOME`): This folder is for bloat, assets, and runtime data that the app needs to function but aren't manual settings.
 * Examples: Game save files, installed application extensions, offline databases, downloaded app icons, or font files. [2, 5]
 
 ## 2. Misunderstandings by Developers
 
 Sometimes, developers get confused about what constitutes a "setting" versus "data." They might drop a massive database full of your app usage history directly into ~/.config, or alternatively, dump your plain-text text editor configuration file into ~/.local/share. [5]
 
-## 3. The $XDG_STATE_HOME Middleware (~/.local/state) [3]
+## 3. The `$XDG_STATE_HOME` Middleware (~/.local/state) [3]
 
 In recent updates to the XDG spec, a new directory was introduced: ~/.local/state. This was created specifically because developers were cluttering ~/.config with files that are neither settings nor permanent data. [3, 6]
 
-* What goes here: Logs, command history (like .bash_history), recently opened file lists, and window layouts. [3]
+* What goes here: Logs, command history (like `.bash_history`), recently opened file lists, and window layouts. [3]
 
 ------------------------------
 ## 💡 Why this matters for your Portable App
 
-Because developers split files across these locations, a truly "portable" app script must capture both directories. If you only override XDG_CONFIG_HOME, the app will save your layout preferences locally but will still sneakily create a ~/.local/share/appname folder on the host machine to save your actual databases or plugins. [2]
+Because developers split files across these locations, a truly "portable" app script must capture both directories. If you only override `XDG_CONFIG_HOME`, the app will save your layout preferences locally but will still sneakily create a ~/.local/share/appname folder on the host machine to save your actual databases or plugins. [2]
 
 That is why the perfect portable launcher script always pairs them together: [4]
 
@@ -562,7 +562,7 @@ Many developer tools and apps do not write log files themselves. Instead, they h
 [5, 6]
 
 ------------------------------
-## 🧩 Scenario C: Standard Apps that use $XDG_STATE_HOME
+## 🧩 Scenario C: Standard Apps that use `$XDG_STATE_HOME`
 
 If you are dealing with modern desktop apps that respect the updated Linux specifications, they will avoid /var/log entirely. They write logs inside ~/.local/state/. [1, 2]
 
@@ -617,7 +617,7 @@ If an application hits an infinite loop, goes haywire, and floods its log files 
 ------------------------------
 ## 🛠️ When SHOULD you use /tmp for portable apps?
 
-For your portable application setup, /tmp is actually a fantastic place to point your XDG_CACHE_HOME if you want to speed things up and don't care about keeping temporary files:
+For your portable application setup, /tmp is actually a fantastic place to point your `XDG_CACHE_HOME` if you want to speed things up and don't care about keeping temporary files:
 
 ```
 # Good use of /tmp: Cache files are okay to lose
@@ -845,7 +845,7 @@ Here is a breakdown of how it stacks up for portable apps, including the major c
 
 * Total Isolation: The application thinks it is running on a fresh Linux installation. If it tries to write to /etc/passwd, $HOME/.mozilla, or /var/log, it writes those files inside your portable folder. Your main host system stays completely clean.
 * Dependency Bundling: You can package an app built for an older version of Ubuntu and run it on a modern Arch Linux system. You just drop all the required libraries into the chroot folder, and the app will load them flawlessly.
-* No Code Injection Needed: You don’t need to hack environment variables, write LD_PRELOAD hooks, or mess with complex wrappers. The filesystem itself enforces the boundaries.
+* No Code Injection Needed: You don’t need to hack environment variables, write `LD_PRELOAD` hooks, or mess with complex wrappers. The filesystem itself enforces the boundaries.
 
 ------------------------------
 ## 🔴 The Bad: The massive hurdles for desktop apps
@@ -907,8 +907,8 @@ unshare -U -m -r bash -c "
 
 * Zero Dependencies: It relies entirely on features baked directly into the Linux kernel itself. It will never go end-of-support as long as Linux exists.
 * No Sudo Required: The -U flag makes the kernel pretend you are root inside the sandbox, which allows you to run mount --bind without needing administrative privileges.
-* Completely Blind App: If the app ignores environment variables, bypasses $HOME, and tries to read or write directly to /home/username/.config, the kernel transparently redirects those actions into your local $PWD/portable_data folder.
-* Safe System Integration: Because you are only swapping the mount point for /home/$USER, variables like DISPLAY, XAUTHORITY, and hardware acceleration (VRAM access) continue to pass through flawlessly from your host system.
+* Completely Blind App: If the app ignores environment variables, bypasses `$HOME`, and tries to read or write directly to `/home/username/.config`, the kernel transparently redirects those actions into your local `$PWD/portable_data` folder.
+* Safe System Integration: Because you are only swapping the mount point for `/home/$USER`, variables like `DISPLAY`, `XAUTHORITY`, and hardware acceleration (VRAM access) continue to pass through flawlessly from your host system.
 
 ------------------------------
 ## 🛠️ The Production-Ready Portable Launcher Script
@@ -955,7 +955,7 @@ Would you like to walk through testing this unshare script with a simple applica
 
 That error is actually excellent news! It means your Linux kernel is running a standard, modern mainline configuration rather than an older Debian-patched kernel. [1, 2]
 
-The specific file /proc/sys/kernel/unprivileged_userns_clone was a custom security patch that Debian and Ubuntu developers manually inserted into their specific kernels years ago to block user isolation. Mainline Linux kernel developers rejected that patch. On modern mainstream distributions (like Arch Linux, Fedora, openSUSE, and newer Ubuntu versions), unprivileged user namespaces are natively active by default, so that custom configuration file does not exist on your system. [2, 3, 4, 5]
+The specific file `/proc/sys/kernel/unprivileged_userns_clone` was a custom security patch that Debian and Ubuntu developers manually inserted into their specific kernels years ago to block user isolation. Mainline Linux kernel developers rejected that patch. On modern mainstream distributions (like Arch Linux, Fedora, openSUSE, and newer Ubuntu versions), unprivileged user namespaces are natively active by default, so that custom configuration file does not exist on your system. [2, 3, 4, 5]
 
 The unshare script will work natively right away.
 
@@ -977,7 +977,7 @@ exit
 
 ## 📝 The Final, Universal Launcher Template
 
-Because your system handles user namespaces out of the box, you can use the streamlined, native script without checking for older Debian settings. Put this file (e.g., start_portable.sh) directly inside your app's directory:
+Because your system handles user namespaces out of the box, you can use the streamlined, native script without checking for older Debian settings. Put this file (e.g., `start_portable.sh`) directly inside your app's directory:
 
 ```
 #!/usr/bin/env bash
@@ -1012,7 +1012,7 @@ chmod +x start_portable.sh
 ./start_portable.sh
 ```
 
-Would you like to write a generic test folder loop next to see exactly how a test app creates its hidden files inside portable_data instead of your real home folder?
+Would you like to write a generic test folder loop next to see exactly how a test app creates its hidden files inside `portable_data` instead of your real home folder?
 
 [1] [https://forum.manjaro.org](https://forum.manjaro.org/t/kernel-manjaro-arm-kernel-userspaces-unprivileged-containers/124302)
 [2] [https://serverfault.com](https://serverfault.com/questions/939455/unprivileged-userns-clone-no-such)
@@ -1086,8 +1086,8 @@ exec unshare --user --mount \
 ## 🧠 Why this is incredibly smart
 
 * No sudo password required: Even though the app genuinely believes it is running under the web account, the kernel executes it safely in user space. You never have to touch administrative access.
-* Flawless File Permissions: Because the kernel maps the web account directly to your host profile under the hood, any file the app generates inside portable_web_home will automatically be owned by you outside the sandbox. You will never encounter annoying "Permission Denied" errors when trying to delete or back up your portable data folder.
-* Isolation of User Identities: If the application queries C runtime hooks like getuid() or reads environmental structures, it will strictly read 1001 (web) rather than your primary desktop credentials. [5, 8]
+* Flawless File Permissions: Because the kernel maps the web account directly to your host profile under the hood, any file the app generates inside `portable_web_home` will automatically be owned by you outside the sandbox. You will never encounter annoying "Permission Denied" errors when trying to delete or back up your portable data folder.
+* Isolation of User Identities: If the application queries C runtime hooks like `getuid()` or reads environmental structures, it will strictly read 1001 (web) rather than your primary desktop credentials. [5, 8]
 
 Would you like to find out how to fake the /etc/passwd text file inside this namespace as well, in case your web application relies on querying that file to double-check the web username? [1]
 
@@ -1152,8 +1152,8 @@ exec unshare --user --mount \
 
 ## 🔍 Key details to notice:
 
-* Single Quotes on the Last Line: Look at bash -c 'run_portable_app "$@"'. Using single quotes here is critical. It prevents your main script from trying to expand the function early, forcing the string to pass safely inside the namespace before running.
-* Global Variables (export): Any variables that your function needs inside the sandbox (like $LOCAL_HOME and $TARGET_USER) must also be marked with export so they cross over the namespace barrier alongside the function.
+* Single Quotes on the Last Line: Look at `bash -c 'run_portable_app "$@"'`. Using single quotes here is critical. It prevents your main script from trying to expand the function early, forcing the string to pass safely inside the namespace before running.
+* Global Variables (export): Any variables that your function needs inside the sandbox (like `$LOCAL_HOME` and `$TARGET_USER`) must also be marked with export so they cross over the namespace barrier alongside the function.
 
 Would you like to see how to adapt this to fake an /etc/passwd file inside this function so applications checking for the user web see it natively?
 
@@ -1204,7 +1204,7 @@ The inner bash -c process starts up and grabs those trailing arguments to build 
 
 ## Step 3: The Inner "$@"
 
-Inside the single quotes, the text run_portable_app "$@" is executed.
+Inside the single quotes, the text `run_portable_app "$@"` is executed.
 
 Because it is inside the inner bash, its local "$@" list consists of $1 and $2 (--version --debug). It ignores $0 (--).
 
@@ -1215,7 +1215,8 @@ run_portable_app --version --debug
 ```
 
 ------------------------------
-## ⚠️ What happens if you remove one?## If you remove the inner "$@":
+## ⚠️ What happens if you remove one?
+## If you remove the inner "$@":
 
 ```
 bash -c 'run_portable_app' -- "$@"
@@ -1263,7 +1264,7 @@ With an AppImage, if you want to tweak an application file, inject a quick pytho
 
 ## 🔒 3. True System Context Independence
 
-The standard AppRun script inside an AppImage heavily tinkers with variables like LD_LIBRARY_PATH and PATH. While this forces the app to look inside the package for dependencies, it often accidentally causes "dependency bleeding"—breaking system integrations like native themes, file chooser windows, or sound drivers.
+The standard AppRun script inside an AppImage heavily tinkers with variables like `LD_LIBRARY_PATH` and `PATH`. While this forces the app to look inside the package for dependencies, it often accidentally causes "dependency bleeding"—breaking system integrations like native themes, file chooser windows, or sound drivers.
 
 * By using Mount Namespaces, you are shifting the layout of the actual filesystem paths seen by the application without corrupting or cluttering system library environment lookups.
 * The application runs in a clean, native environment, completely isolated from cluttering up your real user profiles.
@@ -1280,7 +1281,7 @@ To make your portable application bulletproof no matter where or how it is click
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 ```
 
-Then, simply swap out your $PWD references for "$SCRIPT_DIR". Your portable application folder can now be moved to a USB drive, an external SSD, or shared across network drives, and it will effortlessly spin up on demand!
+Then, simply swap out your $PWD references for `"$SCRIPT_DIR"`. Your portable application folder can now be moved to a USB drive, an external SSD, or shared across network drives, and it will effortlessly spin up on demand!
 
 Would you like to see how to pack this script together with an integrated desktop shortcut launcher (.desktop file) so you can effortlessly search for and click your portable app straight from your system application menu?
 
@@ -1440,13 +1441,13 @@ Here is exactly how the app sees those two paths inside that sandbox, and how yo
 * Can it modify it? No. Even though the app thinks it is running as a custom user or a fake root inside the namespace, the host Linux kernel knows it is still just your normal desktop user. It will strictly block any attempts to overwrite system configuration files.
 
 ------------------------------
-## 🪵 2. The /var/log Check
+## 🪵 2. The `/var/log` Check
 
-* Can it write there? No. If it is a standard desktop app, it will try to write logs to /var/log and get a immediate "Permission Denied" crash or error. It has no physical write access to your system's global log folder.
-* Where should it go? As we discovered earlier, modern desktop apps write logs to $XDG_STATE_HOME (which we successfully redirected to your portable folder). If the app forces a write to a system log, it must be redirected.
+* Can it write there? No. If it is a standard desktop app, it will try to write logs to `/var/log` and get a immediate "Permission Denied" crash or error. It has no physical write access to your system's global log folder.
+* Where should it go? As we discovered earlier, modern desktop apps write logs to `$XDG_STATE_HOME` (which we successfully redirected to your portable folder). If the app forces a write to a system log, it must be redirected.
 
 ------------------------------
-## 🛠️ How to block /etc/passwd and /var/log using unshare
+## 🛠️ How to block `/etc/passwd` and `/var/log` using unshare
 
 If you want to achieve total isolation—meaning the app is completely blinded from your system files and forced to write its logs locally—you must mount fake dummy files or local folders directly over those system paths inside your namespace.
 
@@ -1486,8 +1487,8 @@ exec unshare -U -m -r bash -c "
 
 ## 🧠 Why this modification makes it completely standalone:
 
-* /etc/passwd is isolated: When the app opens /etc/passwd, the kernel serves up your local fake_passwd file containing only your current user string. Your actual system's user database is completely hidden.
-* /var/log is captured: If the app tries to drop a log file into /var/log/app.log, it is silently redirected into your $PWD/portable_data/logs/app.log folder.
+* `/etc/passwd` is isolated: When the app opens `/etc/passwd`, the kernel serves up your local `fake_passwd` file containing only your current user string. Your actual system's user database is completely hidden.
+* /var/log is captured: If the app tries to drop a log file into `/var/log/app.log`, it is silently redirected into your `$PWD/portable_data/logs/app.log` folder.
 
 Would you like to test running this enhanced script to verify that both logs and settings are now entirely contained within your portable data folder?
 
@@ -1598,7 +1599,7 @@ When you close your application:
    3. The kernel sees that the private mount namespace has zero active processes left.
    4. The kernel destroys the namespace table. It breaks the mount --bind links and forcefully closes the squashfuse file driver mapping.
 
-The folder $PWD/extracted_app instantly goes back to being completely empty, and the SFS file locks itself back up, leaving absolutely no background residue behind.
+The folder `$PWD/extracted_app` instantly goes back to being completely empty, and the SFS file locks itself back up, leaving absolutely no background residue behind.
 
 Do you currently have your application compressed into an SFS image already, or would you like to see the quick mksquashfs terminal command to build your own tiny SFS container out of a standard folder?
 

@@ -94,7 +94,7 @@ sudo pacman -S fuse2
 
 If you are getting "Operation not permitted" inside a container or specialized environment, the system is likely blocking the mount syscall. [6, 12, 13]
 
-* Docker: You must run the container with --device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined.
+* Docker: You must run the container with `--device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined`.
 * Setuid Check: Ensure fusermount has the correct permissions. It typically needs to be owned by root with the "setuid" bit set:
 
 ```
@@ -309,7 +309,7 @@ Yes, you can absolutely use a .desktop file to add icons and a cleaner look to y
 
 Static-X does not change the libc requirement of your original binary. It simply bundles the existing libc (and other dependencies) into a self-extracting archive. [2]
 
-* Architecture Support: A critical catch—Static-X currently officially supports only 64-bit (x86_64) binaries. It is not designed to package 32-bit apps, so it likely won't work for your specific case.
+* Architecture Support: A critical catch—Static-X currently officially supports only 64-bit (`x86_64`) binaries. It is not designed to package 32-bit apps, so it likely won't work for your specific case.
 * Version Compatibility: Even if it did work, Static-X cannot make a binary built for a newer glibc run on a system with an older one. It only helps ensure that a binary built on an older system has all its required libraries when moved to a newer system. [3, 4, 5, 6, 7, 8]
 
 ## 2. The "run.sh" + ".desktop" Approach
@@ -384,7 +384,7 @@ The main differences are in how they are triggered and how they handle the envir
 
 A standard AppRun (especially the precompiled binary version provided by AppImageKit) does extra work for you: [10]
 
-* LD_LIBRARY_PATH: It automatically sets this to include the usr/lib and lib folders inside the AppImage so your 32-bit libraries are found.
+* `LD_LIBRARY_PATH`: It automatically sets this to include the usr/lib and lib folders inside the AppImage so your 32-bit libraries are found.
 * Working Directory: It often changes the directory (cd) to the location of your app's files so internal relative paths don't break. [11, 12, 13]
 
 ## 3. Can you use your own?
@@ -435,13 +435,13 @@ Further Reading:
 
 # ---
 
-For a portable 32-bit app, it is generally better to move everything into a single lib/ directory and simplify your LD_LIBRARY_PATH. [1]
+For a portable 32-bit app, it is generally better to move everything into a single lib/ directory and simplify your `LD_LIBRARY_PATH`. [1]
 
 While the i386-linux-gnu structure is the "Multiarch" standard for modern Debian/Ubuntu systems, it adds unnecessary complexity to a portable package where you are already isolating the environment. [2, 3, 4]
 
 ## Why you should use a single lib/ folder:
 
-* Simpler Scripting: You only need to add one path to your LD_LIBRARY_PATH instead of managing deep subdirectories.
+* Simpler Scripting: You only need to add one path to your `LD_LIBRARY_PATH` instead of managing deep subdirectories.
 * Wider Compatibility: Some older 32-bit systems or non-Debian distributions (like Arch or Fedora) may not look for the i386-linux-gnu path by default, but almost all will respect a direct link to a folder named lib.
 * Easier Maintenance: It’s easier to see at a glance if you have all your .so files in one place without digging through multi-level folders. [2, 5, 6, 7, 8]
 

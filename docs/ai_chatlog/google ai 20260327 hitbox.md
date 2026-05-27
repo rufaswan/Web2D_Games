@@ -284,7 +284,7 @@ This is the most common use in fighting games and beat-'em-ups. [2]
 * Y (Angle): The launch direction in degrees (e.g., 45 for a launcher, 0 for a horizontal push, or 270 for a "spike" that slams them into the ground).
 * Z (Scaling/Growth): How much the knockback increases based on the victim's current damage. Higher Z means the move gets much deadlier as the opponent gets weaker. [2, 3]
 
-2. Visual Layering (Vec3(X_Offset, Y_Offset, Z_Layer))
+2. Visual Layering (`Vec3(X_Offset`, `Y_Offset`, `Z_Layer`))
 
 If the Vec3 refers to the hitbox's placement rather than its effect:
 
@@ -299,7 +299,7 @@ Developers often use a Vec3 to pass "The Big Three" stats of a move to the damag
 * Y (Hitstun): How many frames the opponent is "frozen" and unable to move or counter-attack.
 * Z (Hitstop): The "shudder" effect where both the attacker and the victim freeze for a few frames to make the hit feel heavy and impactful. [2, 8]
 
-4. The "Beat-'em-up Lane" (Vec3(X, Y, Depth_Width))
+4. The "Beat-'em-up Lane" (Vec3(X, Y, `Depth_Width`))
 
 In side-scrolling beat-'em-ups (like Streets of Rage), characters walk up and down "lanes."
 
@@ -634,33 +634,33 @@ In 2D fighting game programming, gatekeeper functions are the logical "checks" t
 
 These are the most complex gatekeepers because they manage transitions between two different character state machines.
 
-* Is_Throwable(): Checks if the victim is in a state that can be grabbed. It returns false if the victim is currently in Hitstun or Blockstun.
-* Is_Grounded(): Many standard grabs only function if both players are on the floor. It returns false if the victim's "Altitude" (Z-axis/Y-axis) is above a certain threshold.
-* Is_Invulnerable(): Checks if the victim has "Throw Invulnerability" frames active, common during a "Wake-up" or specific special moves.
-* Check_Priority(): If both players trigger a grab on the same frame, this function determines who "wins" the interaction or if a "Throw Tech" (break) occurs. [1, 2]
+* `Is_Throwable()`: Checks if the victim is in a state that can be grabbed. It returns false if the victim is currently in Hitstun or Blockstun.
+* `Is_Grounded()`: Many standard grabs only function if both players are on the floor. It returns false if the victim's "Altitude" (Z-axis/Y-axis) is above a certain threshold.
+* `Is_Invulnerable()`: Checks if the victim has "Throw Invulnerability" frames active, common during a "Wake-up" or specific special moves.
+* `Check_Priority()`: If both players trigger a grab on the same frame, this function determines who "wins" the interaction or if a "Throw Tech" (break) occurs. [1, 2]
 
 2. Hit Detection Gatekeepers
 
 These manage the interaction between the Vec2 hitbox shape and the Vec3 attribute data.
 
-* Has_Intersected(): The most basic geometric check. It determines if a red Attackbox polygon has physically overlapped with a green Hurtbox polygon.
-* Is_Hit_Valid(): A logic check that prevents "double-hitting" on a single frame. It ensures a single active hitbox ID can only apply its Vec3 damage to a specific victim once per animation cycle.
-* Check_Guard_State(): If an intersection is detected, this function checks the victim's input. If they are holding "Back," it diverts the logic from a "Hit" to a "Block," applying Blockstun instead of Hitstun. [3, 4, 5, 6]
+* `Has_Intersected()`: The most basic geometric check. It determines if a red Attackbox polygon has physically overlapped with a green Hurtbox polygon.
+* `Is_Hit_Valid()`: A logic check that prevents "double-hitting" on a single frame. It ensures a single active hitbox ID can only apply its Vec3 damage to a specific victim once per animation cycle.
+* `Check_Guard_State()`: If an intersection is detected, this function checks the victim's input. If they are holding "Back," it diverts the logic from a "Hit" to a "Block," applying Blockstun instead of Hitstun. [3, 4, 5, 6]
 
 3. State & Movement Gatekeepers
 
 These control what the player is allowed to do based on their current situation.
 
-* Can_Act(): Returns false if the character is currently in a "Recovery" frame or a "Stun" state, preventing them from inputting new moves.
-* Is_Touching_Wall(): Checks the Collision/Pushbox against the Tilemap data. If true, it stops the character's horizontal velocity.
-* Can_Cancel(): In combo-heavy games, this checks if the current animation frame allows for a "special cancel." It looks for a specific "Cancel Window" attribute in the move's data. [6, 7, 8, 9, 10]
+* `Can_Act()`: Returns false if the character is currently in a "Recovery" frame or a "Stun" state, preventing them from inputting new moves.
+* `Is_Touching_Wall()`: Checks the Collision/Pushbox against the Tilemap data. If true, it stops the character's horizontal velocity.
+* `Can_Cancel()`: In combo-heavy games, this checks if the current animation frame allows for a "special cancel." It looks for a specific "Cancel Window" attribute in the move's data. [6, 7, 8, 9, 10]
 
 4. Special Move Gatekeepers
 
-* Has_Resources(): Checks if the player has enough "Meter" or "Energy" to perform a Super or EX move.
-* Is_Input_Complete(): Scans the Input Buffer to see if the recent sequence of directional presses matches a pre-defined pattern (e.g., Quarter-Circle Forward). [11, 12]
+* `Has_Resources()`: Checks if the player has enough "Meter" or "Energy" to perform a Super or EX move.
+* `Is_Input_Complete()`: Scans the Input Buffer to see if the recent sequence of directional presses matches a pre-defined pattern (e.g., Quarter-Circle Forward). [11, 12]
 
-Do you need the pseudocode for a specific gatekeeper, like Is_Throwable() or Check_Guard_State()?
+Do you need the pseudocode for a specific gatekeeper, like `Is_Throwable()` or `Check_Guard_State()`?
 
 [1] [https://www.reddit.com](https://www.reddit.com/r/StreetFighter/comments/16rnuho/new_to_fighting_games_help_me_understand_grabs/)
 [2] [https://www.reddit.com](https://www.reddit.com/r/StreetFighter/comments/15uvesx/how_tf_do_you_deal_with_grabs/)
@@ -722,7 +722,7 @@ Beat-’em-Up "Exclusives"
 
 The "Golden Rule" of States
 
-A character can only be in one state at a time. The Gatekeeper functions we discussed earlier are the "bridge" between these states. For example: Is_Grounded() must be true for the Move state to transition into the Crouch state.
+A character can only be in one state at a time. The Gatekeeper functions we discussed earlier are the "bridge" between these states. For example: `Is_Grounded()` must be true for the Move state to transition into the Crouch state.
 
 Do you want to see a State Transition Map showing how a player moves from Idle to Hitstun and then to Knockdown?
 
@@ -733,7 +733,7 @@ No, they are not the same, though they often work together. In a high-performanc
 1. The Core Difference: Intent vs. Display
 
 * State Transition Map (Logic): This is the "brain." It determines what a character is legally allowed to do.
-* Goal: Precision. It checks Gatekeeper functions (like Is_Grounded()) to decide if you can move from Idle to Jump.
+* Goal: Precision. It checks Gatekeeper functions (like `Is_Grounded()`) to decide if you can move from Idle to Jump.
    * Speed: Usually instantaneous. When you press a button, the logic state changes in one frame so the hitbox data can activate immediately.
 * Animation Transition Map (Visuals): This is the "skin." It handles how the character looks while moving between those logic states.
 * Goal: Fluidity. It manages blending and crossfading so the transition from "Running" to "Jumping" doesn't look like a robotic "cut".
@@ -760,8 +760,8 @@ If you used the same map for both, your game would feel "muddy" or "unresponsive
 The most common setup is for the State Machine to drive the Animation Controller. [12]
 
    1. Input: Player presses "Punch."
-   2. State Logic: The State Machine immediately enters the ATTACK_STARTUP state.
-   3. Command: The State Machine sends a message: "Play the Punch_Anim clip now".
+   2. State Logic: The State Machine immediately enters the `ATTACK_STARTUP` state.
+   3. Command: The State Machine sends a message: "Play the `Punch_Anim` clip now".
    4. Visuals: The Animation Controller interrupts whatever it was doing to show the punch, even if it has to skip a few frames of a "Walk" animation to stay responsive. [2, 7, 13]
 
 Are you using a specific tool like Unity's Animator or Unreal's State Machines, or are you writing a custom system in code?
@@ -799,7 +799,7 @@ In this setup, the animation acts as the "master." The code waits for the animat
 If your player state is strictly controlled by the animation, you run into the Responsiveness Problem:
 
 * Variable Frame Rates: If the game lags and skips a frame of animation, it might skip the "Notify" that turns off a hitbox, leaving your character's attack active forever (a "perma-hitbox" bug).
-* Input Delay: If the player presses "Block," but the state machine is waiting for an "Animation Transition" to finish its 0.1-second blend, the player will get hit because the Gatekeeper (Is_Blocking) hasn't updated yet.
+* Input Delay: If the player presses "Block," but the state machine is waiting for an "Animation Transition" to finish its 0.1-second blend, the player will get hit because the Gatekeeper (`Is_Blocking`) hasn't updated yet.
 
 3. The Better Way: "Code-Driven, Animation-Synced"
 
@@ -834,8 +834,8 @@ While an animation map focuses on blending visual frames, the audio system focus
 
 Instead of transitioning from "Sound A" to "Sound B," sound designers create Events.
 
-* The Logic: When the Player State changes to RUNNING, the game sends a single command to the audio system: "Play_Footsteps."
-* The Transition: The audio system doesn't just play a file; it enters a specialized state that constantly checks variables like Surface_Type (Grass/Metal) and Movement_Speed. It then "blends" the audio by crossfading between different loops or layering sounds. [2, 3]
+* The Logic: When the Player State changes to RUNNING, the game sends a single command to the audio system: "`Play_Footsteps`."
+* The Transition: The audio system doesn't just play a file; it enters a specialized state that constantly checks variables like `Surface_Type` (Grass/Metal) and `Movement_Speed`. It then "blends" the audio by crossfading between different loops or layering sounds. [2, 3]
 
 2. Audio "RTPCs" (Real-Time Parameter Controls)
 
@@ -953,7 +953,7 @@ Here is a summary of the technical game development concepts we covered, organiz
 
 3. State & Logic Management
 
-* Gatekeeper Functions: Logical "checks" that must be true for an action to occur (e.g., Is_Throwable() or Is_Grounded()).
+* Gatekeeper Functions: Logical "checks" that must be true for an action to occur (e.g., `Is_Throwable()` or `Is_Grounded()`).
 * State Machine: The "brain" that tracks what a character is doing (Idle, Attacking, Hitstun). It is strictly logic-based and changes instantly.
 * Grabbox Logic: A specialized hitbox that, upon success, "parents" the victim to the attacker, synchronizing their positions until a throw is executed. [3, 4, 5, 6]
 

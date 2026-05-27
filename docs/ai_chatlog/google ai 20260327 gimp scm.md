@@ -367,7 +367,7 @@ While you can see your script in the Procedure Browser, GIMP's internal architec
 
 Why it is failing
 
-   1. Capability Mismatch: For a procedure to be a "Load Handler," it must be registered with specific flags (like GIMP_PDB_PROC_TYPE_PLUGIN) that Script-Fu does not support.
+   1. Capability Mismatch: For a procedure to be a "Load Handler," it must be registered with specific flags (like `GIMP_PDB_PROC_TYPE_PLUGIN`) that Script-Fu does not support.
    2. Internal Registry: When you call gimp-register-load-handler, GIMP looks for your script in its internal "Plug-in" list. Because Script-Fu scripts are handled by the script-fu interpreter rather than being independent plug-ins, GIMP treats them as "nonexistent" for file-system integration purposes. [2]
 
 The Solution: Use Python-Fu [3]
@@ -853,7 +853,7 @@ main()
 
 Installation Steps
 
-   1. Save as .py: Save the code above as a file (e.g., my_loader.py).
+   1. Save as .py: Save the code above as a file (e.g., `my_loader.py`).
    2. Move to Plug-ins: Place it in your GIMP plug-ins folder (not the scripts folder). [6, 7]
    3. Make Executable: Right-click the file and enable "Allow executing file as program" in its permissions.
    4. Restart GIMP: The loader will now automatically trigger when you open a .myb file or any file starting with MYB!.
@@ -1184,7 +1184,7 @@ Why you cannot find these procedures
 The functions you are looking for (gimp-pixel-rgn-*) are part of a legacy system that GIMP 2.10 replaced with GEGL internally.
 
 * Missing API: Script-Fu was never fully updated to handle the new GEGL buffers directly.
-* Python-Fu is the standard: GIMP developers intended for all pixel-level manipulation to happen in Python-Fu, which has a robust pixel_regions property that bypasses the PDB entirely. [1, 2, 3, 4]
+* Python-Fu is the standard: GIMP developers intended for all pixel-level manipulation to happen in Python-Fu, which has a robust `pixel_regions` property that bypasses the PDB entirely. [1, 2, 3, 4]
 
 Recommendation
 
@@ -1283,7 +1283,7 @@ If you want to keep the code snippets functional for later use in GIMP:
 
 * Click and drag to select the entire conversation.
 * Copy (Ctrl+C) and Paste (Ctrl+V) it into a text editor like Notepad++, VS Code, or even a simple .txt file.
-* Save it with a .md extension (e.g., gimp_scm_binary_notes.md) to keep the formatting readable.
+* Save it with a .md extension (e.g., `gimp_scm_binary_notes.md`) to keep the formatting readable.
 
 3. Browser Extension (Automation)
 
