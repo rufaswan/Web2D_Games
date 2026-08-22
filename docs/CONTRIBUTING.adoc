@@ -1,0 +1,4 @@
+:ghrepo: http://github.com/rufaswan/Web2D_Games
+:ghpage: http://rufaswan.github.io/Web2D_Games
+
+Client-side scripts. Mainly for Android phones and run as HTML web app.

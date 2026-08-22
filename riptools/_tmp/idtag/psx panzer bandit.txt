@@ -1,0 +1,21 @@
+Game      {
+	psx : Panzer Bandit
+}
+Year      :
+Copyright [
+	Fill in Cafe
+	BANPRESTO 1997
+]
+Credit    {
+	Character Design : Yoshitsune Izuna
+	Graphics [
+		Kaita Hamamoto
+		Toshihiko Azuma
+		Norihiro Sawada
+		Takeshi Honda
+	]
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

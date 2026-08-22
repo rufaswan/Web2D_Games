@@ -524,7 +524,7 @@ How to Run it
    1. Download the .AppImage file from one of the links above.
    2. Make it executable: [5, 10, 11]
    * Right-click the file > Properties > Permissions > Check Allow executing file as program.
-      * Or via Terminal: chmod +x GIMP-*.AppImage.
+      * Or via Terminal: `chmod +x GIMP-*.AppImage`.
    3. Launch: Double-click the file to open GIMP. [12, 13]
    4. Verify Python: Once open, check Filters > Python-Fu > Console. If it appears, your loader script will now work. [14, 15, 16, 17, 18]
 
@@ -1181,7 +1181,7 @@ This method treats every pixel as a tiny 1x1 rectangle and fills it with a color
 
 Why you cannot find these procedures
 
-The functions you are looking for (gimp-pixel-rgn-*) are part of a legacy system that GIMP 2.10 replaced with GEGL internally.
+The functions you are looking for (`gimp-pixel-rgn-*`) are part of a legacy system that GIMP 2.10 replaced with GEGL internally.
 
 * Missing API: Script-Fu was never fully updated to handle the new GEGL buffers directly.
 * Python-Fu is the standard: GIMP developers intended for all pixel-level manipulation to happen in Python-Fu, which has a robust `pixel_regions` property that bypasses the PDB entirely. [1, 2, 3, 4]

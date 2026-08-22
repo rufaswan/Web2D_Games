@@ -1,0 +1,22 @@
+Game      {
+	psp : Grand Knights History
+}
+Year      : 2010
+Copyright : 2011 MarvelousAQL Inc.
+Credit    {
+	Art Director : Kouichi Maenou
+	Designs [
+		Yasuhiro Fujiwara
+		Yasuo Shirai
+		Akira Murakami
+		Tomoyo Shimabukuro
+	]
+	Background Designs [
+		Daichi Yamashita
+		Ryo Kobayashi
+	]
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+]

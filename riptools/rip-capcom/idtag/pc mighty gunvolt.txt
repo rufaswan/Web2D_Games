@@ -1,0 +1,21 @@
+Game      {
+	pc : Mighty Gunvolt
+}
+Year      : 2014
+Copyright : 2014,2015 Inti Creates Co. Ltd
+Credit    {
+	Bitmap Artist [
+		Hira
+		M.Dot
+		Miyaman
+	]
+	BG Design [
+		Hatsumi
+		Muransin
+		TZG
+	]
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

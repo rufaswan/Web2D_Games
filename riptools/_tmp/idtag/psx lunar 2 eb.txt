@@ -1,0 +1,34 @@
+Game      {
+	psx : Lunar 2 Eternal Blue
+}
+Year      :
+Copyright [
+	Game Arts
+	Kadokawa Shoten/ESP
+]
+Credit    {
+	Animation Director & Character Design : Toshiyuki Kubooka
+	Graphic Director : Masaharu Abe
+	Graphic [
+		Miki Uchiyama
+		Takaaki Umino
+		Hideko Oshiro
+		Ken Ogino
+		Ippei Nakano
+		Shintaro Shozu
+		Kimiaki Mochida
+		Ayumi Yano
+		Hideyuki Yamashita
+		Meiko Wada (Guild Entertainment)
+	]
+	Art Director : Masanori Kikuchi
+	CG Director  : Akira Suzuki
+	VFX Oversight [
+		Takanori Daino
+		Jun Fukushi
+	]
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

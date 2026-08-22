@@ -5,7 +5,7 @@
 
 == Prerequisites
 
-* PHP 7.0 or above
+* PHP 7.1 or above
 ** http://windows.php.net/downloads
 
 * Minimalistic PHP-cli (command-line interface) executable with
@@ -20,8 +20,8 @@
 
 == Tutorials
 
-psxtools::
-. {ghrepo}/blob/master/docs/psxtools-steps.adoc
+riptools::
+. {ghrepo}/blob/master/riptools/riptools-steps.adoc
 
 Margie Healing (Xenogears)::
 . {ghrepo}/blob/master/docs/xenogears/margie-healing/tutorial.adoc

@@ -34,7 +34,7 @@ The major difference from 3D model:
 
 == Basic File Structure
 
-image::spec-rel.png[spec-rel.png]
+image::spec/spec-rel.png[spec/spec-rel.png]
 
 A QUAD file consists of multiple sub objects:
 
@@ -728,11 +728,11 @@ DST::
 
 == Example
 
-* link:sample-v0.4-keyframe-order.quad[]
-* link:sample-v0.5-keyframe-attribute.quad[]
-* link:sample-v0.5-keyframe-colorize.quad[]
-* link:sample-v0.6-animation-matrix-mix.quad[]
-* link:sample-v0.6-animation-keyframe-mix.quad[]
+* link:spec/sample-v0.4-keyframe-order.quad[]
+* link:spec/sample-v0.5-keyframe-attribute.quad[]
+* link:spec/sample-v0.5-keyframe-colorize.quad[]
+* link:spec/sample-v0.6-animation-matrix-mix.quad[]
+* link:spec/sample-v0.6-animation-keyframe-mix.quad[]
 
 
 

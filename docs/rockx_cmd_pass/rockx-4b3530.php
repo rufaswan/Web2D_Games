@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-function rockx( $fname )
+function rockx( string $fname ) : void
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -29,7 +30,6 @@ function rockx( $fname )
 
 		printf("\n\t= %s\n", $pass);
 	} // for ( $i=0; $i < 0x1116; $i++ )
-	return;
 }
 
 rockx('eeMemory.bin.98765432');

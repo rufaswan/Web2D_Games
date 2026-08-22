@@ -231,7 +231,9 @@ To render a wall, you draw a quadrilateral using the Near Edge and Far Edge coor
 For Right Walls, use the same $y$ values, but subtract the $x$ values from $800$. For example, the Near $x$ for Tile 2 Right is $800 - 54 = 746$.
 
 ------------------------------
-## Step-by-Step Calculation Logic## 1. Determine Relative Distance
+## Step-by-Step Calculation Logic
+
+## 1. Determine Relative Distance
 
 The camera is at $z = 0.5$. The edges of the tiles are at $z = 0, -1, -2, -3, -4$.
 
@@ -991,7 +993,7 @@ You only bring it back if you want to "Zoom" the camera.
 
 Since you are building a classic-style dungeon, staying with the "clean" $1/Z$ scaling is actually more authentic to how those original games were programmed. They didn't use FOV; they used fixed ratios that looked good on a square window.
 
-Does this simplified $x = X/Z$ approach work for your coordinate system, or do you want to intentionally "zoom" the view?**
+Does this simplified $x = X/Z$ approach work for your coordinate system, or do you want to intentionally "zoom" the view?`**`
 
 # ---
 

@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 if ( empty($_GET) )
 	exit();
 //////////////////////////////
-function json_files( &$list, $dir, $preg )
+function json_files( array &$list, string $dir, string $preg ) : void
 {
 	$func = __FUNCTION__;
 	foreach ( scandir(__DIR__ . "/$dir") as $fn )

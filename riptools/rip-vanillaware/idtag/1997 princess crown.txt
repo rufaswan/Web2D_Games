@@ -1,0 +1,30 @@
+Game      {
+	sat : Princess Crown
+	psp : Princess Crown
+	ps4 : Princess Crown
+}
+Year      : 1997
+Copyright [
+	SEGA ENTERPRISES.LTD & ATLUS 1997
+	SEGA & ATLUS 1997,2005,2007
+]
+Credit    {
+	Character Design & Animation Edit [
+		Kawazuine Shioya
+		Satomi Iwasaki
+		Kouichiro Miyanaga
+		Chikahito Ikami
+		Masahiro Maeda
+		Yoshikazu Hishikawa
+		Nana Ishiguro
+		Haruhiko Morita
+	]
+	Design Work [
+		Yuka Makai
+		George Kamitani
+	]
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+]

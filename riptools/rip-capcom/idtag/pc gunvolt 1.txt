@@ -1,0 +1,35 @@
+Game      {
+	pc : Azure Striker Gunvolt
+}
+Year      :
+Copyright : INTI CREATES CO., LTD. 2014
+Credit    {
+	Character Designer : Yoshitaka Hatakeyama
+	Character Graphics [
+		Ken Fujii
+		Yuta Watanabe
+		Rie Oonishi
+		Yuki Suzuki
+		Fumika Matsuo
+		Masaya Suzuki
+		Erina Fukuoka
+		Masanori Ito
+		Hirokatsu Maeda
+		Hatsune Kawai
+	]
+	Background Graphics [
+		Tetsuya Enda
+		Munehiro Araki
+		Hidetaka Katsuki
+		Hatsumi Yokoyama
+		Eri Furukawa
+		Hiroyuki Tamura
+		Kenta Takeda
+		Masashi Yamaguchi
+	]
+	UI Designer : Tetsuya Enda
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

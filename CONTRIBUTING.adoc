@@ -5,6 +5,18 @@
 
 This repo can have both the tools and the documentation on how to create such tools. You can start by cloning and/or fork to archive a copy of this repo.
 
+== PHP
+
+Server-side scripts. Mainly for desktop and run in command line (CMD.exe for Windows, and bash for Linux/Mac).
+
+refer {ghrepo}/tools/CONTRIBUTING.adoc
+
+== HTML + CSS + JS
+
+Client-side scripts. Mainly for Android phones and run as HTML web app.
+
+refer {ghrepo}/docs/CONTRIBUTING.adoc
+
 == Open a Issues
 
 Please explain your issue in a clean and simple way.

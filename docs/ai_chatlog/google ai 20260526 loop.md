@@ -590,19 +590,15 @@ If an NES game had too many enemies on screen, the CPU could not finish the upda
 When developers began forcing 3D graphics onto 2D hardware or working with early 3D consoles, processors could no longer keep up with a 60 Hz loop. [2]
 
 ------------------------------
-
 [[Star Fox](https://www.google.com/search?q=star+fox&kgmid=/m/02y4lv#sv=CBwS1gMKpQMSogMK4gJBTW4zLXlUbkJxRGlVaF8wZncxb0cycGNSeHBFYmNWdVFoUVFhS1ZKd2lKS3REc0ZCMEpFeHd3ZnZKc05uTjJybVpwNnN5X3pKeHYtekdySXdYOVJ2SzY3aWdVS1FrZnVyMHZwY3BjY2xnV3djMEhrODdtOGVkeG9zaG5CaTJVYmdRX2NLWjBzcnRSWG11dXNhUjRKS1kwWVEwaTVZaGhMMU1UMTcxcW9XWTVBSU9DTEN5NVdHN0VYYl85SGdTd2hEdWdIbXItTDdSc2dOYkRuU1hydkdCWVp3djV2SWx3WW8xUFFNT0NESE41WFF4OFVucGltUmgzdmF5Y0l1MTJ0VEtYSHBOS01makd6aEZNUGdoOFAwdnlEU2x3b1hST1N3QWdhb0J4SHktNzJsRmRiWUFhM1Q2bkRvMXI2ejFUTGU2bk9MUW0xTV9vS1RlMXJFQTc0bTJCYWd6UExES3Bka1ESF3hJMFZhc21oTTY2MHdjc1B1TERRMkE0GiJBSktMRm1JeVh6QmFxUm5aWF8yWE1zV2taYjZ5SmNDb0FREgQ3ODU0GgEzIg0KAXESCHN0YXIgZm94IhIKBWtnbWlkEgkvbS8wMnk0bHYoABhFIPnuk-8M) (SNES): Used a custom Super FX coprocessor to draw 3D polygons. The game loop targetted roughly 15 to 20 FPS, duplicating visual frames on the 60Hz display.](https://www.google.com/search?q=star+fox&kgmid=/m/02y4lv#sv=CBwSqwQK-gMS9wMKtwNBTW4zLXlSdGJ5NXF5amo5cVZTN3hIQy1FSnd1U1JZbkEybDNlTWVSYmpmeGVvbGNSOXVDTkpINzRVNFB6S3ZSekViVmRmNWZFUERiZG1Reng5WWYtdWlzcHZzWW9RcmYzRXZ5SDJBOTEzN3N6eHZpcmJWd19ZakdIbFlVU2dfYTYyNWR4dVNEZWlrZVdhSjZoMUpfNTg2RTZmYjJoZUZsd1E0ZWhwLUZYT1lVdWJNclllRzRyVTJGQVJYUEtVS09GTEJfYlBFYkFSZVFTZGplRFV0Qk5BUElyWFlsdFgzRU1JRmJESGdhZVJTWGxiaW1MTmtUUjJ6VlozQnFWT1ZOZnYyVl9mbnBYcVdvU0FCRHR4ck5FZUhVRTAwenl6MFdzREpaUXY4SVRUb3RDeEE4a2NVSlQ2d0FlNVNzZHozZ2JGcldZbW5HS3lFXzBtYjhfWmpnRmdsU1dHVHBNUzRiemJmamdwd3diemZHeDUxQjhJVG1kaElKTWhEX0Q0ZFJFVHdaWnItNjRsUndfeWMwd2M1dDl1amQ5VHcwWVpmTzZaZDZEdHFBaGdYVVd0aGRFdkkwbExrEhd4STBWYXNtaE02NjB3Y3NQdUxEUTJBNBoiQUpLTEZtTEFSRWNOS2cwWksyZWYyQkpjNjNmeWxFOFFYQRIENzg1NBoBMyINCgFxEghzdGFyIGZveCISCgVrZ21pZBIJL20vMDJ5NGx2KAAYRSD9m-8u)
 
 ------------------------------
-
 [[Ocarina of Time](https://www.google.com/search?q=ocarina+of+time&kgmid=/m/0161qz#sv=CBwS8gMKugMStwMK9wJBTW4zLXlRNkpSaDBKeFEyUDE2aXlKNkhUM0xDRTVYeTlzM1Y0NFBQaE1WYTBaN3FxQkF2TVdsb0E1Wk9xT0pTT29tRFJQNHZoeGJpdWRNakhQa2JtRElGY3QzNmVWc2twbEVyUFBxZEtLNHdVN1lTNG5nb0hoTVhYTG5SME1xTXhOeXM4Wk9GYWF2UkotYmxudTZSZTIwNEhEc1JwelVXc1VCRHhMMWJmMWhkNmJHaUNDUU8talJLWU9ERzU1VGZfYWxyRElXQjZScUVoc3BwcXVZbDZyVVY5MUQ1bjVQcFRIR2VxenlLMWUtb1dnZmlWYU1zci1QN3FDeklLbmVzTjhuVE80b3VOenF1Z2hRVGM2TmFCMkpCSGFUTzF0eUdhNjNFTnppWXNXZ2YycThJRUFEWmZzZWRZZGVNdFFuX1owYlFEQXptZV9yRjVnVTcxSEFrUFZ6SElGei16WjY5bmh1XzZmd0VzZHBnSHVVanBXcXF3TDQSF3hJMFZhc21oTTY2MHdjc1B1TERRMkE0GiJBSktMRm1MS3FhSndodWJvOVJqOE9lakY5Mk1MeUR3enZnEgQ3ODU0GgEzIhQKAXESD29jYXJpbmEgb2YgdGltZSISCgVrZ21pZBIJL20vMDE2MXF6KAAYRSDWuv92) (Nintendo 64): The N64 outputted a 60 Hz NTSC signal, but the internal simulation and rendering loop was strictly locked to 20 FPS.](https://www.google.com/search?q=ocarina+of+time&kgmid=/m/0161qz#sv=CBwShwUKzwQSzAQKjARBTW4zLXlSRXB1ZC1zcFZfNFlFUEd6TmZsS1pQMkIzMHpwNDZZa0oxZmNCUkx1Rk13Z3AtUE9GLTVSdU1neHBYcTVycm9wVS1zR2xKWnoxcnRvWkRkbW82ZTlqaWQwSjR6aGRkVThKaXFTZ19UVExKMWtfVHhXdEd0UHNqTWRPVVpHMjdvZlhiX0xLNG1zeEpEZEZBSEVQc0diMjdHZ1VQbGxOY1pmbjJ6VjlPa1R5ZVdnV1VIYUZXVE5rUmI1eTlDU1ZxVTU2TlZ5VW9HSTJFbG9QOGtPdG9fejBmeUNIQldNaklKTWlhQ05WcExwcFJ6anZJYnB5NjcyMFFmZ2hyNDV3UmE5azc1Mnk3SnRpaTV3bGVyNXh0aVF5MFV6c3RxR3FiaDBtTUVzWWowQWhwYU5KQ19DajFIdnRHbzdQeGJCN2dPR04zRzdxazBuZDBZdmpKLXlQOTdwRkdpREk5ZDIxWTJWY2JqU2prSUk5RDlQRm80MlFBajVxeXBoUlE0dGNROXBma1QwbUctMnI0QktZV0RySTIwbklURS1uQlZYN1RmZmVib2FPY0ZUZ1lFUjY4STlCOWlwaWJ0RXZsa3d6SHBTdmFLZW1qNWVLZ1plS0N6TmlkVHpQeWtlck1sNHh0T3l5Q1VtemJOZjRCTDNCQWk4cnhBRDdHSjNyWDJsYUJ0eUVsdmpzMxIXeEkwVmFzbWhNNjYwd2NzUHVMRFEyQTQaIkFKS0xGbUpaaDZ5ZHlHSnpPbThWNElkc3pwc0wxTUJ4R0ESBDc4NTQaATMiFAoBcRIPb2NhcmluYSBvZiB0aW1lIhIKBWtnbWlkEgkvbS8wMTYxcXooABhFIPv38Y4B)
 
 ------------------------------
-
 [[GoldenEye 007](https://www.google.com/search?q=goldeneye+007&kgmid=/m/01c5jp#sv=CBwS8AMKugMStwMK9wJBTW4zLXlUOHdBZHp4anlETGV2bXYzSGFqYmdCNlk4SVFXYUtGMDFSUlpfVDBLbHk1UmxRQm8yN19YNEgyREZrQzFLVURmRkFFN3QwaEZsNWNBcHlCaDZEY3cwVmp4WVRjRDgwWmdOQnphajRGZzVuRHlGV05DY3lQeDNSOWZZS0VPU0dUSndwazlCYlNJNHA1STktLXl1TTVjZzUyWk5vVEVRSjI0WjVUN0RGdmo4UENUOTZseU5DMzdnNzVlc2xOTjlraFNScW43azRzYXUtRkdReWR6V1U3a25wbG1kbzd3R1IzaFJUR0ViWTcwRzI4eG1qd1RjRjc0MWR0emlZZDlycFZtREx3eEFaZm1jdm5KM3oxbkp2Vm0za0ZNdGR6SE9CR3RyM3FnaVdQM0RpSWhfY0hxYXJ3aGNiM2JtaUpBNEIxMkFJYnZSVUJkU3U5aVItYXBqOU5mdE56QXBuUHhoSG1hN3RWdThmZTVaQWVoRU9UMTgSF3hJMFZhc21oTTY2MHdjc1B1TERRMkE0GiJBSktMRm1JSG5HSE1Od24zd0ktbTR3N0pLS3pkWVozZnVnEgQ3ODU0GgEzIhIKAXESDWdvbGRlbmV5ZSAwMDciEgoFa2dtaWQSCS9tLzAxYzVqcCgAGEUg7cmUpws) (N64): These games targeted 30 FPS, but intensive explosions often caused the frame rate to tank into the 10 to 15 FPS range.](https://www.google.com/search?q=perfect+dark&kgmid=/m/01c5kh#sv=CBwSxAQKjwQSjAQKzANBTW4zLXlTN1ZRVXNWVEhWdVc1OG5YOW9SamRnXzdNY3FVN1BvNENBQmtTbHdhZHBpVnE3UmdxenhnN2lTLWF6NU1xQk13c0JHcnJOa0ZtVmx6Wkc4bnBhUW1OTW9ianVtNVZSdm9DdmRHWnpYdk5RTG16a1EtMFg3a2tWRXRyaVBxcUFhSGZrOGRpbFBzUFBzamRuYnFZVG8wSmVWSTYycXFJZUJJTWpfbFhSYldsTXlrMDRZUVkyLXlCaGdDemFIalJ0MFB0WHBFVC1QeWNxejdoaGFsVy1DX3pKeU5DTXhZMG9vNTN2OWI0WjE3UUVUTk12Ui1sUXUxcHoyUGRlRzZfMFBTc1ROZDlENUVHS0tDNV9EempRd0Y1STRLa3YyVi1sSzFBRjNjWnpIVTE3dmM4bmNORVNCOU5NX0RGRnpFTERXWDNId2ROU05jcGo2aEN6TW40MkhDakFUM3VuOHhTc1VEdnExSlBXaElzdUxwMUMtUzhBR194QXgyT3hTaDd6SVJWRGhOQlc2LUdLNlp2SmtJMDA2a2ZNaVBLdGZ2LUd3dG53eW8wTURBNlB4VElkYzFsbzAtOWtLMk5DZ3I1dzdXdFdFbkxXEhd4STBWYXNtaE02NjB3Y3NQdUxEUTJBNBoiQUpLTEZtSW9Ybzd3RE1xUExLam1SdFJ1UUFYRDA4RE9OURIENzg1NBoBMyIRCgFxEgxwZXJmZWN0IGRhcmsiEgoFa2dtaWQSCS9tLzAxYzVraCgAGEUgr4rRHQ)
 
 ------------------------------
-
 [[Driver](https://www.google.com/search?q=Driver&kgmid=/hkb/Cg4KCGxhbmd1YWdlEgJlbgoSCgR0eXBlEgpWSURFT19HQU1FChUKC2VudGl0eV9uYW1lEgZkcml2ZXI%3D#sv=CBwS9QUK-gQS9wQKtwRBTW4zLXlTUHNHdmFNb2ducDAwTjljNDJhRUJrd2pBVk93RmNNVmtWRmluX3otVXg4MGwycHFFbEdxUEFtQkpwWlpJV1NEekZSWm04aDROWXEtZFYyMzhZcUo4aGx0ZjBTRVBCZndmYVg4cFhDblU0TzNkd2o5WlBjd2pWc1VNRjBhRG5qbHpkOGFsSDBZaVV1bndrc3NfbFJwUEUxTjc1TE5vMnVuajJ2YU9FUGlUTnlVU1J4VlRLYVduR2k0dmFRUXlYTk1xYU5ZdjhfVVVEcnZ3elZsdFhFVG1FeTU2UGZhOVpxam4yNGhlRlJfQjYzVmtzSGp0dVFpaWJkdXZWWHBoaGl1ZzlGOE41N0dnY0FfbjdaeHg3ZVVUekoyclJQZnBKdWxBS2ZvT0ZhVG9yX3Izdl9fZzFlR0dOcl9LX3N5YXpfSkFxTXdHYm5XMVRXMzYwdGRmeWRiRFAwMWFDbTVvdHgtbkNtVGs2NFVoT3NmenZCdmpXTmJhU0E0d2tiWGg1UkRuajkyUHIwMWFpT3RlOFJIOUw3TklXQUI4Q014SWxCQmdiOGdYRTFiOUN0cHBsc1FldElGQ1ZWMllEVlBoMUwwSnJKVG1kTlBYY29mT2NxbzIyVDZXTVJhVmY2YVpxdFBwemRMckRmaU85YVdWNHVtVDVDa19qSHYwNWsyQXE3akxtWloxclRZY1BXdy1Pa2dxeEtvXzVYeW4yMmR0c2JaUTcwemJoam5FXy1vOUF0dkUSF3hJMFZhc21oTTY2MHdjc1B1TERRMkE0GiJBSktMRm1KazE0ZWtYNzdNVlNPOVVQQ1lJNlRkUXRnU2NBEgQ3ODU0GgEzIgsKAXESBkRyaXZlciJeCgVrZ21pZBJVL2hrYi9DZzRLQ0d4aGJtZDFZV2RsRWdKbGJnb1NDZ1IwZVhCbEVncFdTVVJGVDE5SFFVMUZDaFVLQzJWdWRHbDBlVjl1WVcxbEVnWmtjbWwyWlhJPSgAGEUgkuewywQ) (PS1): Targeted 30 FPS to allow for high-fidelity environments, using standard frame-doubling on the 60 Hz television output. [2] ](https://www.google.com/search?q=Silent+Hill&kgmid=/hkb/Cg4KCGxhbmd1YWdlEgJlbgoSCgR0eXBlEgpWSURFT19HQU1FChoKC2VudGl0eV9uYW1lEgtzaWxlbnQgaGlsbA%3D%3D#sv=CBwSggYK-gQS9wQKtwRBTW4zLXlSQ1g0Z1ZTcXhzaTdNcFB3bmdJZ2pxMUp1QjBuTjd6aFpkcjlQQTlncmNWakp6LWdpLWdoRTNTWXlra1p4aHA4ckR3akl5THZycGVuYjBkR0pTRDhROUczS21WUFIyaEluT1QwblpUaXY0THhTQzREODRiRzQ3YXFxbjVodlFYTnprRlplcUlDQjNKdXZfT0xZZjZ6cjNoMXhRMndnb01wSzROdFlQZVNqQzhSTU14cG5Wc1l1N1Y4SGpCM1BCeGJGaERvNG9DQmliQzdHMnlrMTVYZFlraENOaEgzb2otaktDTU5oSzVDcnNWRHpjV1NydkJjYnU3QkVINnlBRG16X05aamt5YV9vUGR6N3llMzE4ZjNfa2w2emFRc3NjUkU2WGhwaGNKM3hla1JLYnFQLV80WXY3M0FXYk1rLWdsMC1wLWo5TXpndnlkalhsZGR2REVlNHJvWnJXRkRVQkwzZUxNVWhwZU1OOUJ2TGFqVVpPMDVXS2R1VV9CNTJ4WTJTLXpjSlJmbk5kWDgzT1c0dUVfdW41UWVXVUYtYTJMSFg1T2VOOGkwOFowMEdUVU5GbUZPaXFLYkhaVzdiSjBMdVo5QW1Ka3lBRGZ6Qy03Y0NfTENPUElFcUJEV05zR1RuRElheXJfdURuZEN5ODlRWnZHdGY0STBXVTZMbWVxa1dFWHY2emR2WjFYVUFBSXpZUjB6ZDZjV2xGYjJNQk96cFV0azlwUm9ISTUzRG0xcDASF3hJMFZhc21oTTY2MHdjc1B1TERRMkE0GiJBSktMRm1JTkJWWHg3aEw1N1lSZ0FBamdfZGVVQW0yMDRnEgQ3ODU0GgEzIhAKAXESC1NpbGVudCBIaWxsImYKBWtnbWlkEl0vaGtiL0NnNEtDR3hoYm1kMVlXZGxFZ0psYmdvU0NnUjBlWEJsRWdwV1NVUkZUMTlIUVUxRkNob0tDMlZ1ZEdsMGVWOXVZVzFsRWd0emFXeGxiblFnYUdsc2JBPT0oABhFIISqpb8N)
 
 ------------------------------
@@ -756,7 +752,6 @@ void* update_thread_loop(void* arg) {
 ```
 
 ------------------------------
-
 ## Why this 3-Thread Loop is Flawless
 
    1. Instant Window Control: Because `OS_PollEvents()` is on a completely independent thread that never sleeps for long, the operating system never flags your game as "Frozen." You can drag the window, minimize it, or click the Close [X] button, and it responds instantly.
@@ -776,7 +771,9 @@ No. The Input loop should run completely uncapped, entirely independent of both 
 While it is tempting to sync Input with Draw (e.g., locking both to a 144Hz monitor refresh rate), doing so introduces unnecessary problems.
 
 ------------------------------
-## Why Input FPS and Draw FPS Must Be Separate## 1. Preventing Input Latency (The VSync Bottleneck)
+## Why Input FPS and Draw FPS Must Be Separate
+
+## 1. Preventing Input Latency (The VSync Bottleneck)
 
 If you lock your Input loop to your Draw loop, and your Draw loop is using VSync to match a 60Hz or 144Hz monitor, your input thread becomes bound to the video card's timing.
 
@@ -1018,7 +1015,9 @@ However, if you map the Chrono Cross Time Shifter mechanics onto your 4-thread d
 | 4. Audio Loop | YES (Optional) | If you use a simple implementation like the Chrono Cross remaster, the music is not affected (it continues playing at regular speed). If you want an advanced feature, you can dynamically adjust the audio playback pitch to match the time scale. |
 
 ------------------------------
-## What Happens Inside the Multi-Threaded Engine?## 1. The Update Thread (Speeds up / Slows down)
+## What Happens Inside the Multi-Threaded Engine?
+
+## 1. The Update Thread (Speeds up / Slows down)
 
 If the player presses Fast Forward (3x Speed), your code changes `GAME_TIME_SCALE = 3.0`.
 
@@ -1399,12 +1398,12 @@ If you are ready to configure this 8-core pipeline, let me know:
 
 Using classical C++98 Object-Oriented Programming (OOP) to map thousands of independent object loops onto exactly 8 physical CPU cores introduces a unique challenge: Polymorphism and pointer chasing can break CPU cache efficiency.
 
-If you have a base class Entity and sub-classes like Monster, Bullet, and Particle stored via an array of pointers (Entity*), your 8 cores will waste time jumping around your RAM to find the data.
+If you have a base class Entity and sub-classes like Monster, Bullet, and Particle stored via an array of pointers (`Entity*`), your 8 cores will waste time jumping around your RAM to find the data.
 
 To maximize your 8-core CPU while using pure C++98 OOP features (like virtual functions and encapsulation), you must use Contiguous Object Pools and Task-Slice Distribution.
 
 ------------------------------
-## The C++98 OOP Memory Strategy: Avoid std::vector<Entity*>
+## The C++98 OOP Memory Strategy: Avoid `std::vector<Entity*>`
 
 Instead of storing a single list of base pointers, you create dedicated arrays for each specific concrete class. This keeps objects packed tightly together in memory, allowing the CPU's L1/L2 caches to pre-fetch your object properties at blistering speeds.
 
@@ -1930,7 +1929,7 @@ By making the jump to C++11, your engine framework drops thousands of lines of p
 Now that you have chosen to step up to C11/C++11 to orchestrate this modern engine pipeline, where should we build first?
 
 * Should we write the code for a clean, safe C++11 Worker Thread Pool using std::vector<std::thread> and a task condition variable?
-* Do you want to see how to implement the lock-free Triple Buffer wrapper using std::atomic<RenderSnapshot*> pointers?
+* Do you want to see how to implement the lock-free Triple Buffer wrapper using `std::atomic<RenderSnapshot*>` pointers?
 * Should we write the Command Buffer that lets objects processing on background cores safely request sounds or asset spawns without data races?
 
 
@@ -3224,7 +3223,9 @@ When you turn on VSync, the graphics card is forced to wait for the monitor's re
 Here is exactly how the math and the hardware layers create that 1-to-2 frame delay.
 
 ------------------------------
-## The 1-Frame vs. 2-Frame Latency Mechanics## 1. The 1-Frame Delay (Double Buffering + VSync)
+## The 1-Frame vs. 2-Frame Latency Mechanics
+
+## 1. The 1-Frame Delay (Double Buffering + VSync)
 
 If your graphics driver uses standard Double Buffering (Front Buffer and Back Buffer):
 
@@ -3388,7 +3389,7 @@ public:
 Implementing a JIT engine provides three massive architectural upgrades:
 
    1. Massive Instruction Counts: Because your scripts convert to native machine code, your instruction parsing overhead drops to zero. Instead of being limited to 50,000 instructions per frame, your 8-core CPU can run hundreds of millions of complex AI, behavior trees, and script tasks in parallel.
-   2. Lock-Free Execution: Because the JITted machine functions pass pointers natively (void* `npc_data_pointer`), they map perfectly into your C++11 Job Queue. The 8 worker cores invoke the function pointers instantly without ever touching a shared VM interpreter lock.
+   2. Lock-Free Execution: Because the JITted machine functions pass pointers natively (`void* npc_data_pointer`), they map perfectly into your C++11 Job Queue. The 8 worker cores invoke the function pointers instantly without ever touching a shared VM interpreter lock.
    3. The Gold Standard (LuaJIT): If you don’t want to write your own x86 machine assembler from scratch, you can link the open-source LuaJIT library. It is widely considered one of the fastest JIT compilers ever written and handles this entire multi-tiered pipeline automatically. [2, 9, 10]
 
 If you are ready to explore incorporating this JIT execution model into your project, let me know:

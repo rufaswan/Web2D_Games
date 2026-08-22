@@ -162,7 +162,6 @@ The most robust, production-ready solution is to use `nss_wrapper`, a utility sp
 The application will query the user database, read your `fake_passwd` file, and believe your current folder is the official system home directory. [1, 2]
 
 ------------------------------
-
 ## 🪝 Solution 2: C Function Interception via `LD_PRELOAD` (The Lightweight Way)
 
 If you don't want to install extra packages, you can intercept the `getpwuid()` call using Linux's `LD_PRELOAD` feature. [2, 3, 4]

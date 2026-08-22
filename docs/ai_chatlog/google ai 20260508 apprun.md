@@ -110,7 +110,7 @@ If you can't get FUSE to work at all, you can "unpack" the AppImage and run it l
    2. Enter the new folder: cd squashfs-root.
    3. Run the launcher: ./AppRun. [2, 9, 16]
 
-Are you running this on a standard desktop Linux (like Ubuntu/Mint) or inside a container/ChromeOS?** [9]
+Are you running this on a standard desktop Linux (like Ubuntu/Mint) or inside a container/ChromeOS?`**` [9]
 
 [1] [https://www.reddit.com](https://www.reddit.com/r/chromeos/comments/o0xyeq/natively_run_appimages_in_chrome_os/)
 [2] [https://discourse.ubuntu.com](https://discourse.ubuntu.com/t/last-plucky-updates-broke-fusermount-cannot-use-appimage-apps-anymore/55608)
@@ -355,7 +355,7 @@ Step 3: Make it clickable [10]
 * No FUSE/Mounting: It bypasses the "Operation not permitted" errors entirely.
 * 32-bit Friendly: It doesn't care about the architecture; as long as your run.sh points to the right libraries in the libs/ folder, it will work. [10]
 
-Do you need a hand figuring out which libraries (.so files) to copy into that libs/ folder?**
+Do you need a hand figuring out which libraries (.so files) to copy into that libs/ folder?`**`
 
 [1] [https://stackoverflow.com](https://stackoverflow.com/questions/17622602/linux-environment-to-build-32-and-64-bit-application-c)
 [2] [https://unix.stackexchange.com](https://unix.stackexchange.com/questions/2717/running-a-statically-linked-binary-with-a-different-glibc)

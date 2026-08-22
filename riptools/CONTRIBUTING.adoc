@@ -1,0 +1,43 @@
+:ghrepo: http://github.com/rufaswan/Web2D_Games
+:ghpage: http://rufaswan.github.io/Web2D_Games
+
+Server-side scripts. Mainly for desktop and run in command line (CMD.exe for Windows, and bash for Linux/Mac).
+
+== PHP
+
+=== include/require rule
+
+Named with 2 file extensions - \*.inc and \*.php
+
+\*.inc is to be `include` or `require` by \*.php , and has functions or class only. It doesn't have any executable code.
+
+* \*.inc MUST NOT include another \*.inc
+** do not make it into a recursive include loop
+* \*.inc MUST NOT include \*.php
+** no executable code
+* \*.inc MUST NOT use `echo` and `printf`
+** do not clutter user debug output
+
+\*.php are executable command-line script for php-cli. They are independant of each other.
+
+* \*.php MUST NOT include other \*.php
+* \*.php CAN include multiple \*.inc , and in correct order
+
+=== No Namespace
+
+----
+namespace sh;
+function mkdir() : void
+{
+	...
+	mkdir($cmd);  // FATAL = becomes \sh\mkdir(); infinite loop
+	\mkdir($cmd); // OK    = should be PHP core mkdir();
+	...
+}
+----
+
+If you made your own `mkdir()`, PHP will always use `\sh\mkdir()` instead `\mkdir()`.
+
+It will become confusing for people who read only the relevant part of the code.
+
+Make it obvious `mkdir()` is your own version, not from PHP core

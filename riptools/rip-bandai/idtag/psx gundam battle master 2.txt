@@ -1,0 +1,17 @@
+Game      {
+	psx : Gundam The Battle Master 2/Assault 2
+}
+Year      :
+Copyright : Bandai
+Credit    {
+	Designer [
+		Shunichi Taniguchi
+		Kunio Suzuki
+	]
+	Character Designer : Atsushi Shigeta
+	Psyco Gundam MK-III Designer : Kunio Ohkawara
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

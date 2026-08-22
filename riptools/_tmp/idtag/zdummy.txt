@@ -1,0 +1,11 @@
+Game      {
+}
+Year      : -
+Copyright [
+]
+Credit    {
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

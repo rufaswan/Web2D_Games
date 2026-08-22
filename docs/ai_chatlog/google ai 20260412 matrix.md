@@ -307,7 +307,7 @@ Option A: The Coefficient Bake (Recommended for Shaders)
 Instead of storing the matrix, you calculate the result of $[Matrix] \times [Points]$ on the CPU first. This gives you the 4 final coefficients $[a, b, c, d]$.
 
 * Each "pixel" in your 1D texture stores $a$ in Red, $b$ in Green, $c$ in Blue, and $d$ in Alpha.
-* Shader Math: pos = a*t³ + b*t² + c*t + d.
+* Shader Math: `pos = a*t³ + b*t² + c*t + d`.
 * Why: This is the fastest possible shader. No matrix math at runtime; just one dot product.
 
 Option B: The Control Point Bake
@@ -341,8 +341,8 @@ To recap your high-performance pipeline:
    1. CPU (The Brain): Does the heavy lifting once. It takes your Points, Alpha (Centripetal), or Spring math and squashes them into 4 numbers: $[a, b, c, d]$.
    2. Texture (The Storage): You pack those 4 numbers into the RGBA channels of a pixel.
    3. GPU (The Muscle): For every frame, it just does:
-   position = a*t³ + b*t² + c*t + d
-   (or even faster: ((a*t + b)*t + c)*t + d)
+   `position = a*t³ + b*t² + c*t + d`
+   (or even faster: `((a*t + b)*t + c)*t + d)`
 
 This way, you can have a Spring, a Bezier, and a Centripetal Spline all running on the exact same shader simultaneously. The shader doesn't even know which is which; it just follows the coefficients!
 

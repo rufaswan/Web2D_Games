@@ -49,14 +49,7 @@ td {
 <tr>
 	<td id='quadlist'>
 		<button onclick='listfile("quad");'>QUAD</button>
-		<ul>
-			<li data-type='quad' onclick='getfile(this);'>sample-v0.4-keyframe-order.quad</li>
-			<li data-type='quad' onclick='getfile(this);'>sample-v0.5-keyframe-attribute.quad</li>
-			<li data-type='quad' onclick='getfile(this);'>sample-v0.5-keyframe-colorize.quad</li>
-			<li data-type='quad' onclick='getfile(this);'>sample-v0.6-animation-matrix-mix.quad</li>
-			<li data-type='quad' onclick='getfile(this);'>sample-v0.6-animation-keyframe-mix.quad</li>
-			<li data-type='quad' onclick='getfile(this);'>sample-dungeon.quad</li>
-		</ul>
+		<ul></ul>
 	</td>
 	<td id='quadplayer' rowspan='2'>
 		<iframe src='player-mobile.tpl.html' sandbox='allow-scripts allow-same-origin'></iframe>
@@ -65,10 +58,7 @@ td {
 <tr>
 	<td id='pnglist'>
 		<button onclick='listfile("png");'>PNG</button>
-		<ul>
-			<li data-type='png' onclick='getfile(this);'>sample-v0.6-animation-keyframe-mix.0.png</li>
-			<li data-type='png' onclick='getfile(this);'>sample-dungeon.0.png</li>
-		</ul>
+		<ul></ul>
 	</td>
 </tr>
 </table>
@@ -76,79 +66,99 @@ td {
 <script>
 'use strict';
 
-function getfile( elem ){
+var APP  = {};
+APP.quad = [
+	'spec/sample-v0.4-keyframe-order.quad',
+	'spec/sample-v0.5-keyframe-attribute.quad',
+	'spec/sample-v0.5-keyframe-colorize.quad',
+	'spec/sample-v0.6-animation-matrix-mix.quad',
+	'spec/sample-v0.6-animation-keyframe-mix.quad',
+	'spec/sample-dungeon.quad',
+];
+APP.png = [
+	'spec/sample-v0.6-animation-keyframe-mix.0.png',
+	'spec/sample-dungeon.0.png',
+];
+APP.qapp = 0; // ptr* iframe var APP
+
+APP.qapp_add_queue = function( data, name ){
+	APP.qapp.upload_queue.push({
+		id   : 0,
+		name : name,
+		data : data,
+	});
+	APP.qapp.upload_id = 0;
+	APP.qapp.process_uploads();
+}
+APP.getfile = function( elem ){
 	var type = elem.getAttribute('data-type');
 	var name = elem.innerText;
-
-	function qapp_add_queue( data ){
-		TEST.qapp.upload_queue.push({
-			id   : 0,
-			name : name,
-			data : data,
-		});
-		TEST.qapp.upload_id = 0;
-		TEST.qapp.process_uploads();
-	}
 
 	switch ( type ){
 		case 'quad':
 			window.fetch(name).then(function(res){
 				if ( ! res.ok )
-					return 0;
+					throw new Error(res);
 				return res.text(); // promise resolves to Response object
 			}).then(function(res){
-				if ( ! res )
-					return 0;
-				qapp_add_queue(res);
+				APP.qapp_add_queue(res, name);
+			}).catch(function(error){
+				console.error('APP.getfile()', elem, error);
 			});
 			return;
 		case 'png':
 			window.fetch(name).then(function(res){
 				if ( ! res.ok )
-					return 0;
+					throw new Error(res);
 				return res.blob(); // promise resolves to Response object
 			}).then(function(res){
-				if ( ! res )
-					return 0;
 				var reader = new FileReader;
 				reader.onload = function(){
-					qapp_add_queue(reader.result);
+					APP.qapp_add_queue(reader.result, name);
 				};
 				reader.readAsDataURL(res);
+			}).catch(function(error){
+				console.error('APP.getfile()', elem, error);
 			});
 			return;
-	}
+	} // switch ( type )
 }
 //////////////////////////////
-function listfile( type ){
+APP.olfile = function( list, type ){
+	var html = '';
+	list.forEach(function(v,k){
+		var li = document.createElement('li');
+		li.setAttribute('data-type' , type);
+		li.setAttribute('onclick'   , 'APP.getfile(this);');
+		li.innerHTML = v;
+		html += li.outerHTML;
+	});
+	var ul = document.querySelector(`#${type}list ul`);
+	ul.innerHTML = html;
+}
+APP.listfile = function( type ){
 	var url = window.location.href.replace('.html','.php') + `?${type}`;
 	window.fetch(url).then(function(res){
 		if ( ! res.ok )
-			return 0;
+			throw new Error(res);
 		return res.json(); // return promise
 	}).then(function(res){
-		if ( ! res )
-			return 0;
-		var html = '';
-		res.forEach(function(v,k){
-			var li = document.createElement('li');
-			li.setAttribute('data-type' , type);
-			li.setAttribute('onclick'   , 'getfile(this);');
-			li.innerHTML = v;
-			html += li.outerHTML;
-		});
-		var ul = document.querySelector(`#${type}list ul`);
-		ul.innerHTML = html;
+		APP[type] = res;
+		APP.olfile(res, type);
 	});
 }
 
-var TEST = {};
-TEST.iframe = document.querySelector('#quadplayer iframe');
-TEST.iframe.onload = function(){
-	TEST.qapp = TEST.iframe.contentWindow.APP;
-	TEST.qapp.remove_upload();
-	listfile('quad');
-	listfile('png');
+// default list
+APP.olfile(APP.quad, 'quad');
+APP.olfile(APP.png , 'png' );
+
+// if localhost succeed
+APP.iframe = document.querySelector('#quadplayer iframe');
+APP.iframe.onload = function(){
+	APP.qapp = APP.iframe.contentWindow.APP;
+	APP.qapp.remove_upload();
+	APP.listfile('quad');
+	APP.listfile('png');
 }
 </script>
 </body>

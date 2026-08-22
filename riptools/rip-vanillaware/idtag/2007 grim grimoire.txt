@@ -1,0 +1,29 @@
+Game      {
+	ps2  : Grim Grimoire
+	ps4  : Grim Grimoire OnceMore
+	ps5  : Grim Grimoire OnceMore
+	swit : Grim Grimoire OnceMore
+}
+Year      : 2007
+Copyright [
+	2007 VANILLAWARE Ltd.
+	NIPPON ICHI SOFTWARE INC.
+]
+Credit    {
+	Character Designers [
+		Kouichi Maenou
+		George Kamitani
+	]
+	Designers [
+		Takehiro Shiga
+		Yoshio Nishimura
+		Entsugu Inatani
+		Yasuhiro Fujiwara
+		Yasuo Shirai
+		Daichi Yamashita
+	]
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+]

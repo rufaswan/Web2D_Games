@@ -1,0 +1,14 @@
+Game      {
+	ps4    : Unicorn Overlord
+	ps5    : Unicorn Overlord
+	switch : Unicorn Overlord
+	xbsx   : Unicorn Overlord
+}
+Year      : 2024
+Copyright :
+Credit    {
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+]

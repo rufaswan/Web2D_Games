@@ -1,0 +1,222 @@
+<?php
+/*
+[license]
+Copyright (C) 2019 by Rufas Wan
+
+This file is part of Web2D Games.
+    <https://github.com/rufaswan/Web2D_Games>
+
+Web2D Games is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Web2D Games is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
+[/license]
+ */
+declare( strict_types=1 );
+
+require 'tool.inc';
+tool::require('func-sh');
+tool::require('func-hexnum');
+sh::which('xprop');
+sh::which('ffprobe');
+sh::which('mpv');
+
+define('TMP_DIR', sys_get_temp_dir());
+
+$gp_work = sh::xprop();
+//////////////////////////////
+function sort_by_time_desc( array $a, array $b ) : int
+{
+	// by time DESC ,  then by size DESC
+	$r = (int)($b['time'] - $a['time']);
+	if ( $r === 0 )
+		$r = (int)($b['size'] - $a['size']);
+	return $r;
+}
+
+function sort_by_time_asc( array $a, array $b ) : int
+{
+	// by time ASC ,  then by size ASC
+	$r = (int)($a['time'] - $b['time']);
+	if ( $r === 0 )
+		$r = (int)($a['size'] - $b['size']);
+	return $r;
+}
+
+function calc_timesize( array &$list ) : string
+{
+	$sum = [
+		'time' => 0.0,
+		'size' => 0.0,
+	];
+	foreach ( $list as $ent )
+	{
+		$sum['time'] += $ent['time'];
+		$sum['size'] += $ent['size'];
+	}
+
+	// MB = 1024 * 1024
+	// mb = 1000 * 1000
+	$mb = 0.001 * 0.001;
+	$rem = sprintf('(%s/%s|%d/%d MB)' ,
+		hexnum::sec2time($list[0]['time']) , hexnum::sec2time($sum['time']),
+		$list[0]['size'] >> 20             , $sum['size'] >> 20
+	);
+	return $rem;
+}
+//////////////////////////////
+function mpvplay( array &$list, string $type ) : void
+{
+	if ( empty($list) )
+		return;
+	usort($list, 'sort_by_time_desc');
+
+	global $gp_work;
+	while ( ! empty($list) )
+	{
+		// paused when moved to different workspace
+		while ( sh::xprop() !== $gp_work )
+			sleep(1);
+
+		// process list
+		$rem = calc_timesize($list);
+		$ent = array_shift($list);
+
+		// if file is renamed or moved
+		if ( ! file_exists($ent['name']) )
+			continue;
+
+		$base = tool::safepath($ent['name']);
+		$tmp = sprintf('%s/meme/%s/%s', TMP_DIR, $type, $base);
+		$tit = sprintf('[%d] %s', count($list), $base);
+
+		$mpv = 'mpv'
+			. ' --quiet'
+			. ' --really-quiet'
+			. ' --no-config'
+			. ' --force-window'
+			. ' --window-maximized'
+			. ' --geometry="+0+0"'
+			. ' --title="%s %s"'
+			. ' --script-opts="osc-visibility=always"'
+			. ' --screenshot-format="png"'
+			. ' --screenshot-template="%%F_%%P"'
+			. ' --af="loudnorm=I=-14:TP=-1"'
+			. ' --alang="eng"'
+			. ' --slang="eng"'
+			. ' "%s"';
+		sh::exec($mpv, $tit, $rem, $ent['name']);
+		echo "$tit\n";
+
+		// if file has the same generic name
+		// or already moved to tmp
+		if ( ! file_exists($tmp) )
+			tool::move($ent['name'], $tmp);
+
+		sleep(1);
+	} // while ( ! empty($list) )
+	return;
+}
+//////////////////////////////
+function arg_addfile( array &$media, array &$video, array &$audio, string $ent ) : void
+{
+	if ( is_link($ent) )
+		return;
+	if ( is_dir($ent) )
+	{
+		$func = __FUNCTION__;
+		foreach ( scandir($ent) as $e )
+		{
+			if ( $e[0] === '.' )
+				continue;
+			$func( $media, $video, $audio, $ent.'/'.$e );
+		}
+	}
+	if ( is_file($ent) )
+	{
+		echo '.';
+
+		$t = [
+			'name' => realpath($ent),
+			'size' => filesize($ent),
+			'time' => -1,
+		];
+
+		$dur = sh::ffprobe($t['name']);
+		if ( empty($dur) )
+			return;
+		$t['time'] = $dur['duration'];
+
+		$res = 0;
+		$res |= ( $dur['video'] > 12 ) ? 1 : 0;
+		$res |= ( $dur['audio'] > 12 ) ? 2 : 0;
+		switch ( $res )
+		{
+			case 3:  $media[] = $t; return;
+			case 2:  $audio[] = $t; return;
+			case 1:  $video[] = $t; return;
+			//case 0:
+		} // switch ( $res )
+	}
+	return;
+}
+
+// video = 2 hour full movie = ~1000 mb
+// audio = 2 hour full ost   = ~ 200 mb
+$media = [];
+$video = [];
+$audio = [];
+for ( $i=1; $i < $argc; $i++ )
+	arg_addfile( $media, $video, $audio, $argv[$i] );
+echo "\n";
+
+//echo "media\n"; print_r($media);
+//echo "video\n"; print_r($video);
+//echo "audio\n"; print_r($audio);
+mpvplay($media , 'media');
+mpvplay($video , 'video');
+mpvplay($audio , 'audio');
+
+/*
+format=duration      == ss.sssssssss       , for container
+stream=duration      == ss.sssssssss       , with select_streams , N/A for *.webm *.mkv
+stream_tags=duration == hh:mm:ss.sssssssss , with select_streams
+
+return     format  stream:v  stream:a  tags:v  tags:a
+non-media  ''      ''        ''        ''      ''
+image      N/A     N/A       ''        ''      ''
+video      1.0     1.0       ''        ''      ''
+audio      1.0     ''        1.0       ''      ''
+*.webm     1.0     N/A       N/A       0:00    0:00
+
+# I=-18:   This is the "Integrated Loudness" target.
+#          Modern ReplayGain (RG2) uses this exact value.
+#          By setting this, a video in mpv will have the same perceived loudness
+#          as an OGG file playing in Audacious with ReplayGain turned on.
+# TP=-2.0: This sets the "True Peak."
+#          It provides a tiny bit of extra "padding" to prevent any distortion
+#          on cheaper speakers or laptops.
+af=loudnorm=I=-18  # replay-gain
+af=loudnorm=I=-14  # default youtube
+af=loudnorm=I=-13  # stable volume youtube
+af=loudnorm=I=-11  # voice boost youtube
+
+# f=50:   Reduces the analysis window to 50ms (default is 500ms).
+#         This fixes the 'soft start' by making it react 10x faster.
+# p=0.75: Matches music player loudness (DeaDBeeF)
+# m=10:   Limits boost so things don't get 'too' loud
+# g=3:    The 'Gaussian' smooth factor. Lowering this makes the
+#         volume jump to the target level almost immediately after a seek.
+af=dynaudnorm=f=50:p=0.75:m=10:g=31  # replay-gain
+af=dynaudnorm=f=50:p=0.85:m=15:g=15  # default youtube
+af=dynaudnorm=f=50:p=0.80:m=20:g=75  # stable volume youtube
+af=dynaudnorm=f=50:p=0.95:m=30:g=5   # voice boost youtube
+ */

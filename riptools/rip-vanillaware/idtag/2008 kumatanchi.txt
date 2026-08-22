@@ -1,0 +1,14 @@
+Game      {
+	nds : Kumatanchi
+}
+Year      : 2008
+Copyright : 2008 Vanillaware/dimple
+Credit    {
+	Character Design : Shigatake
+	Graphic          : Shigatake
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+	2 weeks Real-life Pet Simulator
+]

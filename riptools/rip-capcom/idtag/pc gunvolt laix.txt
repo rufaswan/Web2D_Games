@@ -1,0 +1,41 @@
+Game      {
+	pc : Gunvolt Chronicles Luminous Avenger iX
+}
+Year      :
+Copyright : INTI CRETAES CO., LTD. 2019
+Credit    {
+	Character Designers [
+		Yoshitaka Hatakeyama
+		Munehiro Araki
+	]
+	Character Graphics [
+		Yuta Watanabe
+		Rie Oonishi
+		Fumika Matsuo
+		Masaya Suzuki
+		Ken Fujii
+		Syouta Takagi
+		Hikari Sugiura
+		Masanori Ito
+		Masayo Seto
+		Eri Suzuki
+		Hidemi Oonishi
+		Erina Fukuoka
+	]
+	Background Graphics [
+		Tetsuya Enda
+		Shin Nakamura
+		Masashi Yamaguchi
+		Atsuko Nozaki
+		Yuusuke Ootsu
+	]
+	UI Designers [
+		Munehiro Araki
+		Miho Iijima
+		Nana Itaya
+	]
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

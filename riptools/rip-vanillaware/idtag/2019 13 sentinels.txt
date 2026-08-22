@@ -1,0 +1,41 @@
+Game      {
+	ps4  : 13 Sentinels: Aegis Rim
+	swit : 13 Sentinels: Aegis Rim
+}
+Year      : 2019
+Copyright [
+	2020 SEGA.
+	Published by SEGA.
+	Developed by ATLUS
+]
+Credit    {
+	Character Designer [
+		Yukiko Hirai
+	]
+	Character Animation [
+		Yukiko Hirai
+		Emika Kida
+		Tomoyo Shimabukuro
+		Sho Matsumoto
+		Kouichi Maenou
+		Nami Waku
+	]
+	Character Animation Support [
+		Yasuhiro Fujiwara
+		Akira Murakami
+		Yasuo Shirai
+	]
+	Background Designers [
+		Daichi Yamashita
+		Ryo Kobayashi
+		Kaiji Suehiro
+		Yoshio Nishimura
+		Haruka Kawamura
+		Hiroshi Yamamori
+		Yukitsuna Maeda
+	]
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+]

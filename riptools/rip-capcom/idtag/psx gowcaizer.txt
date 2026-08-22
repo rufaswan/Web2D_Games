@@ -1,0 +1,15 @@
+Game      {
+	psx : Choujin Gakuen - Gowcaizer
+}
+Year      :
+Copyright [
+	1996 URBAN PLANT LTD.
+	1996 GAGA COMMUNICATIONS INC.
+]
+Credit    {
+	Character Design : Masami Ohberi
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

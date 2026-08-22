@@ -1,0 +1,16 @@
+Game      {
+	psx : Tokimeki Memorial 2 Substories Dancing Summer Vacation
+	psx : Tokimeki Memorial 2 Substories Leaping School Festival
+	psx : Tokimeki Memorial 2 Substories Memories Ringing On
+}
+Year      :
+Copyright [
+	1994-2001 KONAMI
+	KONAMI COMPUTER ENTERTAINMENT TOKYO
+]
+Credit    {
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

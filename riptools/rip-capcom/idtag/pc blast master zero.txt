@@ -1,0 +1,32 @@
+Game      {
+	pc : Blast Master Zero
+}
+Year      :
+Copyright [
+	INTI CREATES CO. LTD.
+	SUNSOFT
+]
+Credit    {
+	Character Design        : Yuji Natsume
+	Lead Character Graphics : Hidemi Ohnishi
+	Character Graphics [
+		Erina Fukuoka
+		Mai Enokido
+		Hatsune Kawai
+		Eri Suzuki
+		Yuki Suzuki
+		Hirokatsu Maeda
+		Miho Iijima
+	]
+	Lead Background Graphics : Shin Nakamura
+	Background Graphics [
+		Atsuko Nozaki
+		Karin Shimizu
+		Masashi Yamaguchi
+	]
+	UI Designer : Ryota Nakayama
+}
+ripby   : Rufas Wan
+tagby   : -
+comment [
+]

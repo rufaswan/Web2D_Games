@@ -1,0 +1,56 @@
+Game      {
+	vita : Dragon's Crown
+	ps3  : Dragon's Crown
+	ps4  : Dragon's Crown Pro
+}
+Year      : 2013
+Copyright [
+	Index Corporation 2011.
+	Produced by ATLUS.
+	ATLUS
+	SEGA
+]
+Credit    {
+	Designers [
+		Takehiro Shiga
+		Sakuzo Shibanuma
+		Yukiko Hirai
+		Emika Kida
+		Haruka Kawamura
+		Yasuhiro Fujiwara
+		Yasuo Shirai
+		Kouichi Maenou
+		Akira Murakami
+		Tomoyo Shimabukuro
+	]
+	Background Designers [
+		Yoshio Nishimura
+		Daichi Yamashita
+		Yukitsuna Maeda
+		Ryo Kobayashi
+	]
+	Pro {
+		Designers [
+			Takehiro Shiga
+			Sakuzo Shibanuma
+			Yukiko Hirai
+			Emika Kida
+			Haruka Kawamura
+			Yasuhiro Fujiwara
+			Yasuo Shirai
+			Kouichi Maenou
+			Akira Murakami
+			Tomoyo Shimabukuro
+		]
+		Background Designers [
+			Yoshio Nishimura
+			Yukitsuna Maeda
+			Daichi Yamashita
+			Ryo Kobayashi
+		]
+	}
+}
+ripby   : Vanillaware Ripping Project
+tagby   : -
+comment [
+]

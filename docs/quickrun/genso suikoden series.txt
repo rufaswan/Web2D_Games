@@ -1,0 +1,304 @@
+======================
+== Genso Suikoden 5 ==
+======================
+
+name prince
+arc - Lordlake
+arc - Stormfist
+	Stormfist = Gavaya->
+	Stormfist = ?Dongo->
+	Stormfist = Norma->
+arc - Lunas
+	Sol Falena = Jeane->
+arc - Rainwall
+	Haud = Bastan->
+	Rainwall = Alhazred->
+
+war - The Defense of Rainwall
+	base = Barrow Mansion
+	Rainwall = Murad-> *1
+	Rainwall = Oboro->
+	Haud = Cornelio + ReMiFa
+	map - SE Rainwall = FaSoLa (need Cornelio + 1 space)
+	Raftfleet = Sairoh (sell 6 Salt)
+		*trade shop
+
+war - Intercepting Luger's Fleet
+	ally Raftfleet
+	Raftfleet = Shinro
+		*item shop
+	Rainwall = Oboro investigation
+	Raftfleet = Murad-> *2
+	Haud = Josephine (need Sialeeds)
+
+war - The Defense of Rainwall 1+2
+	base = Raftfleet
+	name army
+	Raftfleet moved from East Dock to South Dock
+	Rainwall locked
+	Raftfleet = Oboro + Fuyo + Shigure (helped investigation)
+	Raftfleet = Retso->
+	Raftfleet = Norma->
+	Yashuna = Miroon->
+	Mountain Path = SoLaTi (need Cornelio + 1 space)
+	Ceres Lake Ruins = Magic Skill B
+
+war - Hatred Fortress Siege
+	base = HQ level 1
+	name castle
+	ally Lordlake
+	Lordlake = Iron Hammer
+		*Dongo *1
+		*to level 9 = 300 + 700 + 1,500 + 3,500 + 6,000 + 8,000 + 11,000 + 15,000
+		*           = 46,000
+	Lordlake = Nordon
+	HQ = Muroon
+
+	Raftfleet = Wilhelm + Mueller (Victory+ or need Viki)
+	Raftfleet = Subala (need Lun)
+		*minigame = Strange Fish
+	Yashuna = Belcoot + Marina
+		*inn
+	??Lordlake = Murad-> *3
+
+	Lelcar - East = Physical Skill B
+	Lelcar - West = Mohsen->
+	Lelcar - West = Epic 2x STA ATK
+
+war - Defending Lelcar
+	ally Lelcar
+	get Blinking Mirror
+
+Dawn News 1
+	Alhazred quest
+		Yashuna = Hot Spring 2F , get Cursed Tome
+		HQ = (Chuck) store , (Marina) sleep , (Chuck) give the book back
+		Yashuna = return book
+		Estrise -> Yashuna
+		*library
+	HQ = Taylor (inn -> Tablet room -> George room)
+	Waterfall Basin = Richard (talk -> HQ Mueller -> talk)
+	Genoh quest
+		Beaver Lodge = NPC -> Fuwalafuwalu (about BOSS)
+		Waterfall Basin = (need Alhazred , at prince lv-1 or above)
+	Baska Mine = Egbert
+	Agate Prison = Takamu (need Cius/Lelei)
+	Agate Prison = Killey-> (need Cius - no event Lelei)
+	HQ = Killey-> (east bridge , need Zweig + Lorelai , goto Tablet room)
+	Dward Camp = Zunda (to Lunas , need Takamu)
+		*window menu
+	Lunas = Zegai (need Takamu)
+		*weapon skill shop
+	Lelcar - West = Murad-> *4
+	Lelcar - West = Mohsen-> *defer Cathari BUG
+	Lelcar - West = Jeane (to Big Hole)
+		*rune shop
+	Estrise = Nikea
+
+Dawn News 2
+	Sable = Epic 2x ATK TEC
+	Sable = Magic Skill A
+	Sable = Silver Hammer
+		*Dongo *2
+		*to level 12 = 20,000 + 27,000 + 35,000
+		*            = 82,000
+	Ranro Mountain = Epic 2x TEC AGI
+		Do not execute Roy = Faylen + Faylon
+	ally Sable
+
+Dawn News 3
+	Haud = Bastan (need ?Painting , random)
+		*appraisal shop
+	Linfa quest
+		Estrise = lose 2,000
+		Yashuna = get  2,000
+		Raftfleet = win/lose 5,000
+	Sable = Nakula + Sakiri (need Oboro)
+
+	ally Beaver
+	Rainwall locked -> Godwin
+
+Dawn News 4 5
+	Beaver Lodge = Murad-> *5
+	Nirva = Chisato->
+	Nirva = Epic 2x MAG INC
+
+Dawn News 6
+	ally Island Nations
+	coronation
+	base = HQ level 2
+
+Dawn News 7
+	HQ = Byakuren (bridge , need Genoh)
+	Isabel quest
+		Estrise
+		HQ = (Luserina + Boz) Letter , reduce party to 2-3
+		Haud
+	Estrise = Sorensen (goto Revolving Bridge)
+	Revolving Bridge = Epic 2x DEF MDEF
+	Estrise = Babbage (need Sorensen , goto HQ B1F Gear Room)
+		*elevalator
+	Estrise = Ru (need Sorensen + Babbage)
+	Ma/Me/Mi/Mo/Muroon quest
+		Yashuna      = Miroon
+		Beaver Lodge = Meroon
+		Baska Mines  = Moroon
+	Nirva = Chisato (need Bernadette)
+		*voice menu
+	Nirva = Yahr + Nelis (need Bernadette , goto Ship Graveyard)
+	Raftfleet = Retso + Shun Min (need Strange Fish)
+		*restaurant
+		*fish farm
+	Raftfleet = Gavaya (need Sialeeds + Jeane + Nelis)
+
+war - Doraat Siege
+	Doraat = Epic 3x ATK VIT AGI
+	George left
+	get Tablet of Stars
+
+Dawn News 9
+	Doraat = Mohsen->
+	??Doraat = Murad-> *6
+	Big Hole = Levi + Bergen
+		*magic skill shop
+	Raftfleet = Norma + Ernst (need Levi)
+	Raven quest
+		Sable = Solis
+		HQ = (case) Oboro , (bait) Egbert , (invite) Taylor , (sleep) Marina
+		HQ = Storeroom or Jail
+	map - NE Doraat = MiFaSo (need Cornelio + 1 space)
+
+Dawn News 10
+	night
+war - New Queen's Campaign
+	Sialeed + Lyon left
+
+Dawn News 11 12
+	Spinacks (Hershville) -> boat -> Hershville
+	Hershville = Magic Skill S
+	Hershville = ?Cathari->
+	Spinacks = Cathari
+	Spinacks = Hazuki (need Belcoot)
+
+	Sauronix = Physical Skill A
+	Sauronix = Rania (need Miakis)
+		*sound menu
+	Sauronix = Epic 5x ATK DEF TEC VIT AGI
+	Deep Twilight Forest = LaTiDo (need Cornelio + 1 space)
+	Deep Twilight Ruins = Gold Hammer
+		*Dongo *3
+		*to level 15 = 43,000 + 50,000 + 65,000
+		*            = 158,000
+	Deep Twilight Ruins - BOSS = Killey
+
+Dawn News 13 14
+	Godwin + Armes Attack
+	Estrise + Sable + Doraat + (Sauronix area) locked
+	??Raftfleet = Murad-> *7
+	ally Dwarf
+Dawn News 15
+war - Lelcar / Lordlake Defense Campaign
+	HQ flee   = base Dwarf Camp
+	HQ defend = Roy died - DO NOT CHOOSE
+	Gordius = Epic 3x VIT AGI INC
+	George return
+	ally Sauronix
+war - The Recapture
+	base = HQ level 3
+war - Childerich / Armes Pursuit Battle
+	Estrise + Sable + Doraat + (Sauronix area) freed
+
+Dawn News 16 17 18
+	ally Armes
+	Ceres Lake Ruins = Physical Skill S
+	??Sable = Murad-> *8
+	Lunas = Haswar + Isato + Urda (need Takamu)
+	Hershville = Mohsen (buy 1x Taichi = 125,000)
+		*armor shop
+	Haleth quest
+		Hershville = ?Haleth * 2
+		HQ B3F Bar = Logg + Kisara
+		Hershville = Haleth + Logg
+		HQ -> Hershville = NPC
+		HQ B3F Bar = Haleth
+
+war - Stormfist Siege
+	Stormfist - Castle 1F = Epic 10x STA ATK DEF TEC VIT AGI MAG MDEF INC SWD
+	Stormfist - Castle 1F = Platinum Hammer
+		*Dongo *4 (need Wabon)
+		*to level 16 = 80,000
+
+Dawn News 19
+	Dwarf Camp = Dongo (need Wabon)
+		*weapon shop
+		*after given him the hammer, immediately upgrade to trigger join event
+		*event involved Wabon.
+		*if Wabon moved to HQ, put him into active party to bring him back.
+
+	Rainwall freed
+	same star - choose one
+		Eresh quest
+			Big Hole = need Jeane
+			Big Hole - BOSS = Epic 4x MAG MDEF INC SWD
+		Euram quest
+			Rainwall - Mansion = Euram + Lucerina
+
+	night
+	Lyon return
+war - Sol-Falena Siege (Dam)
+war - Sol-Falena Siege (Palace)
+	Sun Palace = Magic Skill SS
+
+Dawn News 20 21
+	West Palace = Epic 2x ATK INC
+	West Palace = Physical Skill SS
+
+	final dungeon
+	ending = 108 stars check
+
+
+45  join automatically
+	2  *prince*
+	3+1  Rainwall
+	3+4  Raftfleet
+	4  Lordlake
+	4  Ceres Lake
+	1+1  Sable
+	3  Lelcar
+	2  Beaver
+	1  Island Nations
+	1+1  Doraat
+	2  Dwarf
+	5+3+1  Sauronix
+	3  Armes
+64  optional
+	33  chained
+		6  Takamu  Zegai  Zunda  Haswar  Isato  Urda
+		6  Levi  Bergen  Norma  Ernst  Genoh  Byakuren
+		5  Babbage  Sorensen  Lu  Isabel  Mathias
+		4  Meroon  Miroon  Moroon  Muroon
+		3  Jeane  Eresh  Euram
+		3  Chisato  Yahr  Nelis
+		3  Subala  Retso  Shun Min
+		3  Belcoot  Marina  Hazuki
+	9  fixed
+		3  Gavaya  Sairoh  Shinro
+		2  Bastan  Josephine
+		1  Rania
+		1  Egbert
+		1  Taylor
+		1  Nikea
+	7  moving/missable
+		3  Wilhelm  Mueller  Richard
+		1  Murad
+		1  Mohsen
+		1  Linfa
+		1  Killey
+	15  timed/missable
+		7  Oboro  Fuyo  Shigeru  Norden  Sagiri  Nakula  Raven
+		3  Faylen  Faylon  Dinn
+		2  Cathari  Haleth
+		1  Cornelio
+		1  Alhazred
+		1  Dongo
+=109 stars

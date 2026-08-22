@@ -1,0 +1,302 @@
+======================
+== Genso Suikoden 5 ==
+======================
+
+3aa854  li   v1, 9616f0
+//a3 << 2 + a3 << 1 + a3 << 5
+v1 += (a3 * 160)
+3aa880  lhu  a2, 20(v1)
+
+RAM 9616f0-96cf30
+	00  ptr
+		3ab2f8  lw  v0, 0(s3)
+		3ab33c  lw  v0, 0(s3)
+		3aa5f8  lw  v0, 0(v0)
+	04  ptr
+	08  ptr
+	0c  ptr
+	10  char id
+	11  level
+		3aa650  lbu  a2, 11(v1)
+	12  hp
+		3aa7cc  lh  a2, 12(v1)
+	14  max hp
+		3aa7d0  lh  a3, 14(v1)
+	16  mp 1
+		3aa8d4  lbu  s5, 16(v1)
+	17  mp 2
+		3aa930  lbu  s5, 17(v1)
+	18  mp 3
+		3aa98c  lbu  s5, 18(v1)
+	19  mp 4
+		3aa9e8  lbu  s5, 19(v1)
+	1a  max mp 1
+		3aa8d0  lbu  s2, 1a(v1)
+	1b  max mp 2
+		3aa92c  lbu  s2, 1b(v1)
+	1c  max mp 3
+		3aa988  lbu  s2, 1c(v1)
+	1d  max mp 4
+		3aa9e4  lbu  s2, 1d(v1)
+	1e  exp
+		3aa828  lhu  a2, 1e(v1)
+	20  sp
+		3aa880  lhu  a2, 20(v1)
+	22
+	23
+	24  bitflag
+		3aaa4c  lw  v1, 24(v1)
+	28  stat attack
+		3ab934  lh  a2, 28(v0)
+	2a  stat magic
+		3ab9b4  lh  a2, 2a(v0)
+	2c  stat defense
+		3aba2c  lh  a2, 2c(v0)
+	2e  stat resist
+		3abaa4  lh  a2, 2e(v0)
+	30  stat tech
+		3abb1c  lh  a2, 30(v0)
+	32  stat hit
+		3abb94  lh  a2, 32(v0)
+	34  stat evade
+		3abc0c  lh  a2, 34(v0)
+	36  stat speed
+		3abc84  lh  a2, 36(v0)
+	38  stat luck
+		3abcfc  lh  a2, 38(v0)
+	3a  weapon id
+		3aa748  lbu  a0, 3a(v1)
+		3ac09c  lbu  a0, 3a(v1)
+		3ac158  lbu  s1, 3a(v0)
+	3b  weapon level (0f=lv 16)
+		3ac05c  lbu  v0, 3b(v1)
+		3ac248  lbu  s2, 3b(v1)
+	loop  runes
+		3c  3d  3e  rune id
+			3ac3ac  lbu  s4, 3c(v0) // +0 +1 +2
+		3f  40  41  rune locked (00=free , else=locked)
+			3ac3b8  lbu  v0, 3f(v0) // +0 +1 +2
+	loop
+		42  43  skill id
+			3ac518  lbu  s1, 42(v0) // +0 +1
+	44  head armor id
+		3ac9b8  lbu  s2, 44(v0)
+	45  body armor id
+		3aca58  lbu  s2, 45(v0)
+	46  arm  armor id
+		3acaf8  lbu  s2, 46(v0)
+	47  leg  armor id
+		3acb98  lbu  s2, 47(v0)
+	loop  misc
+		48  50  58  60  item type
+			3acc50  lbu  v0, 48(v0) // +0 +8 +10 +18
+			3acc7c  lbu  a1,  0(s3)
+			3ad250  lbu  a0,  0(s2)
+		49  51  59  61  item id
+			3ad260  lbu  a1,  1(s2)
+		4a  52  5a  62  item count
+			3ad274  lbu  v0,  2(s2)
+		4b  53  5b  63
+		4c  54  5c  64  ?trade item buy price
+		4d  55  5d  65
+		4e  56  5e  66
+		4f  57  5f  67
+	data[42]  skill level (01=E 07=SS)
+	data[43]  skill level (01=E 07=SS)
+		68     =00
+		69-6e  phy-skill
+		6f-72  mag-skill
+		73-7e  epic
+		7f-98  char specific
+			3ac52c  lbu  a1, 68(v0)
+	99
+	9a
+	9b
+	9c
+	a0
+	a4
+	a8
+	ac
+	b0
+	b4
+	b8
+	bc
+	c0
+	c4
+	c8
+	cc
+	d0
+	d4
+	d8
+	dc
+	e0
+	e4
+	e8
+	ec
+	f0
+	f4
+	f8
+	loop  element (01=E  05=A)
+		fc  fd  fe  ff  100  101  102  103  104  105  106  107  108  109
+			3abd84  lbu  s2, fc(v1) // +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +a +b +c +d
+	loop  element-attack  (01=E  05=A)
+		10a  10b  10c  10d  10e  10f  110  111  112  113  114  115  116  117
+	loop  element-defense (01=E  05=A)
+		118  119  11a  11b  11c  11d  11e  11f  120  121  122  123  124  125
+	126
+	127
+	128
+	12c  % hp heal
+	12d  % hp drain
+	12e
+	12f
+	130
+	131
+	132  % bad status resist
+	133
+	134
+	136  base stamina/hp
+	138  base attack
+	13a  base defense
+	13c  base resist
+	13e  base tech + hit
+	140  base magic
+	142  base evade
+	144  base speed
+	146  base luck
+	148  kill count
+		< 30  Saint's Cloak
+		>100  Corruption Shell
+	14c
+	150
+	151
+		01  name known
+		02  recruited
+	154
+	158
+	15c
+
+rune id
+	00  *none*
+	01  dawn
+	02  dusk
+	03 04  fire
+	05 06  thunder
+	07 08  water
+	09 0a  wind
+	0b 0c  earth
+	0d  star
+	13  hama
+	14  dark *dummy*
+	1a  punishment
+	37  atk 1.5x  def 0.5x
+	38  mag 1.5x  res 0.5x
+	44  hp drain
+	46  mp drain
+	4f  exp   2x
+	50  pouch 2x
+	51  champion
+
+skill id
+	01-06  phy-skill
+	07-0a  mag-skill
+	0b-16  epic
+	17-30  char specific
+
+misc
+	01 xx-20 --  head armor
+	02 xx-47 --  body armor
+	03 xx-25 --  arm  armor
+	04 xx-1e --  leg  armor
+	05 xx --  accessory
+		05  sun badge
+		12  yellow scarf
+		2e  eyeball ring
+		2f  fortune ring
+	06 xx --  crystal
+		01 02  fire
+		03 04  thunder
+		05 06  water
+		07 08  wind
+		09 0a  earth
+		0d  hama
+		0e  dark *dummy*
+		14  punishment
+		26  atk 1.5x  def 0.5x
+		27  mag 1.5x  res 0.5x
+		33  hp drain
+		35  mp drain
+		3e  exp   2x
+		3f  pouch 2x
+		40  champion
+	07 xx yy  crystal piece
+	08 xx --  key item
+	09 xx yy  food
+	0a xx yy  scroll
+	0b xx yy  rune piece
+	0c xx yy  stat stone
+	0d xx yy  window set
+	0e
+	0f xx --  trade item
+		02  salt
+	10 xx --  old book
+	11 xx --  appraisal item
+	12 xx --  bath
+	13 *none*
+
+char id
+	00-6b = Tablet of Destiny
+		0a  Eresh
+		6c  Euram
+	70  Sialeed
+	81  ReMiFa - Haud
+	82  MiFaSo - map - NE Doraat
+	83  FaSoLa - map - SE Rainwall
+	84  SoLaTi - Mountain Path
+	85  LaTiDo - Deep Twilight Forest
+	86  *none*
+
+	00  *prince*
+	10  Belcoot
+	20  Nick
+	30  Goesch
+	40  Babbage
+	50  Lu
+	60  Kisara
+
+
+RAM 984cb0  party member
+	none = 86
+
+RAM 984ef0
+	00  int32  pouch
+	04  int32  party sp
+	08  sjis[8]  name player
+	19  sjis[8]  name army
+	2a  sjis[8]  name castle
+	3b
+	3c
+	40
+	44  int16  playtime hour
+	46  int8   playtime min
+	47  int8   playtime sec
+
+RAM 99cea8  oboro investigation
+	*prince*  Raja  Lucretia  Zeresa
+	= 0  3  3  3
+
+
+BATTLE OVERLAY !
+RAM a35718 = char stats battle
+	00
+	01
+	02
+	03  int8   level
+	04  int32  exp
+	08  int32  spoil exp
+		9fc854  jal 9fbdd0
+		9fc85c  sw  v0, 8(s0)
+		// CHEAT: every battle gives fixed 30,583 exp
+		// jal -> addiu  v0,zero,0x7777
+	10  int32  sp
+	14  int32  spoil sp

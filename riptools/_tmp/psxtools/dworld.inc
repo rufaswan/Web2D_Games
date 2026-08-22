@@ -1,0 +1,130 @@
+<?php
+/*
+[license]
+Copyright (C) 2019 by Rufas Wan
+
+This file is part of Web2D Games.
+    <https://github.com/rufaswan/Web2D_Games>
+
+Web2D Games is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Web2D Games is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
+[/license]
+ */
+
+function palbyte( &$pal )
+{
+	$len = strlen($pal);
+	for ( $i=0; $i < $len; $i += 4 )
+		$pal[$i+3] = BYTE;
+	return;
+}
+
+function get_big4( &$buf, &$file, &$pos, $cnt )
+{
+	while ( count($buf) < $cnt )
+	{
+		$b = ord( $file[$pos] );
+			$pos++;
+		$buf[] = ($b >> 4) & BIT4;
+		$buf[] = ($b >> 0) & BIT4;
+	}
+	return;
+}
+
+function save_txt( &$file, &$sect, $dir )
+{
+	if ( empty($sect[1]) )
+		return;
+	printf("== save_txt( $dir )\n");
+
+	foreach ( $sect[1] as $k => $v )
+	{
+		$end = str2int($file, $v-4, 4);
+		$sub = substr($file, $v, $end-$v);
+		$txt = '';
+
+		$siz = strlen($sub);
+		$pos = 0;
+		while ( $pos < $siz )
+		{
+			$len = ord($sub[$pos]);
+			$s = substr($sub, $pos+1, $len);
+
+			$pos += (1 + $len);
+			$txt .= "$s\n";
+		} // while ( $pos < $siz )
+
+		$fn = sprintf('%s/%04d.txt', $dir, $k);
+		trace("save text = %s\n", $fn);
+		save_file($fn, $txt);
+	} // foreach ( $sect[1] as $k => $v )
+
+	return;
+}
+
+function scnsect( &$file )
+{
+	$sect = [];
+	$sect[1] = [];
+
+	$pos = 0;
+	while (1)
+	{
+		if ( substr($file,$pos+1,3) !== "\x0043" )
+			return $sect;
+
+		$id = ord( $file[$pos] );
+		$nx = str2int($file, $pos+4, 4);
+		trace("%8x , %8x , %2x\n", $pos, $nx-$pos-8, $id);
+
+		if ( $id == 1 )
+			$sect[1][] = $pos + 8;
+		else
+		{
+			if ( isset( $sect[$id] ) )
+				return php_error('DUP 43 @ %x = %x', $pos, $id);
+			$sect[$id] = $pos + 8;
+		}
+
+		$pos = $nx;
+		if ( $pos == 0 )
+			break;
+	} // while (1)
+
+	return $sect;
+}
+//////////////////////////////
+function dw2_syspal( $file, $st5, $st6 )
+{
+	// it is for indexed images without required palette.
+	// Discworld 2 reuses background palette for sprites/objects
+	//
+	// This allows Rincewind sprites to be:
+	//   lighter on desert/outdoor/daytime
+	//   darker  on shades/indoor /nighttime
+	$siz = $st6 - 8 - $st5;
+	$cn  = $siz >> 10; // div  siz, 0x400
+	trace("st5  %x  [%x]\n", $siz, $cn);
+
+	// ZERO palette = manual pairing = grayscale
+	// TWO+ palette = manual fixing  = grayscale
+	if ( $cn !== 1 )
+	{
+		php_notice('s[5] has ZERO or TWO+ palettes [%d]', $cn);
+		return grayclut(0x100);
+	}
+
+	$pal = substr($file, $st5, 0x400);
+	palbyte($pal);
+	return $pal;
+}

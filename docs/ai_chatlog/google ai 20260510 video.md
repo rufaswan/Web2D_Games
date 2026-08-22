@@ -1747,7 +1747,7 @@ You've hit the point where ffprobe is too good at its job—it's trying to find 
 
 To save your sanity while scanning your library:
 
-* Are you checking the file extension at all? Sometimes a simple if [[ "$FILE" == *.txt ]]; then continue; fi at the very top of your loop is the most powerful filter you have!
+* Are you checking the file extension at all? Sometimes a simple `if [[ "$FILE" == *.txt ]]; then continue; fi` at the very top of your loop is the most powerful filter you have!
 * Would you like to log the "Rejected" files to a separate text file so you can see what else is sneaking through?
 
 To keep your loop running, do you need a way to automatically skip files based on their extension?

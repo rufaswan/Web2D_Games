@@ -170,7 +170,7 @@ This is the next step.
 
 ## 4. Use a Sidebar Block
 
-If you want the step to look like a "card," use the Sidebar syntax (****). It usually applies a background color or a distinct border.
+If you want the step to look like a "card," use the Sidebar syntax (`****`). It usually applies a background color or a distinct border.
 
 ```
 ****
@@ -608,7 +608,7 @@ ReadEra has a feature that allows you to switch between "Optimized" and "Origina
 
 ## 4. Use an "Admonition" instead of a Table [8]
 
-If borders are critical for your tutorial's visual grouping and tables continue to fail, consider using an Example Block (====) or Sidebar (****). These are often converted into <div> tags with borders, which EPUB readers are historically much better at rendering than <table> elements.
+If borders are critical for your tutorial's visual grouping and tables continue to fail, consider using an Example Block (`====`) or Sidebar (`****`). These are often converted into <div> tags with borders, which EPUB readers are historically much better at rendering than <table> elements.
 
 ```
 ====
