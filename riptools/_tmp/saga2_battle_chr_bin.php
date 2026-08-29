@@ -32,7 +32,9 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 452-460 boss
  * 466-471 final boss
  */
-require 'common.inc';
+declare( strict_types=1 );
+
+require 'tool.inc';
 
 define('CANV_S', 0x200);
 $gp_pix = '';
@@ -150,36 +152,35 @@ function sect1( &$meta, $dir )
 	return;
 }
 
-function saga2( $fname )
+function saga2( string $fname ) : void
 {
 	// only CHR???.BIN files
 	if ( ! preg_match('|CHR[0-9]+\.BIN|i', $fname) )
 		return;
 
 	$file = file_get_contents($fname);
-		if ( empty($file) )  return;
+	if ( empty($file) )  return;
 
 	$dir = str_replace('.', '_', $fname);
 
-	global $gp_clut;
-	$clut_off = str2int($file, 0x1c, 4);
-	$pal = substr($file, $clut_off, 0x200);
-	$gp_clut = pal555($pal);
+	global $gp_pal;
+	$pal_off = tool::ordstr($file, 0x1c, 4);
+	$pal = tool::substr($file, $pal_off, 0x200);
+		$pal = pal555($pal);
 
-	$cnt = str2int($file, 0x08, 4);
-	$pos = str2int($file, 0x18, 4);
+	$cnt = tool::ordstr($file, 0x08, 4);
+	$pos = tool::ordstr($file, 0x18, 4);
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$p = $pos + ($i * 4);
-		$p1 = str2int($file, $p+0, 4);
-		$p2 = str2int($file, $p+4, 4);
+		$p1 = tool::ordstr($file, $p+0, 4);
+		$p2 = tool::ordstr($file, $p+4, 4);
 		printf("$i , %x , %x , %x\n", $p, $p1, $p2);
 
 		$meta = substr($file, $p1, $p2-$p1);
 		sect1($meta, "$dir/anim_{$i}");
 		//save_file("$dir/anim_{$i}/meta", $meta);
-	}
-	return;
+	} // for ( $i=0; $i < $cnt; $i++ )
 }
 
 for ( $i=1; $i < $argc; $i++ )

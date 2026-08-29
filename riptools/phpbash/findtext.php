@@ -45,7 +45,7 @@ function findtext( string $fname, array &$word ) : void
 		} // foreach ( $word as $w )
 
 		if ( $match )
-			$txt .= sprintf("%{$dc}d : %s\n", $lnum+1 , tool::substr($line,0,256));
+			$txt .= sprintf("%{$dc}d : %s\n", $lnum+1 , substr($line,0,256));
 	} // foreach ( file($f) as $lnum => $line )
 
 	if ( ! empty($txt) )

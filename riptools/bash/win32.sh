@@ -107,6 +107,7 @@ desksize=$(w32_vdesksize)
 ########################################
 if [ ! -d "$WINEPREFIX" ]; then
 	echo "New HOME = $HOME"
+	mkdir -p $WINEPREFIX
 	winecfg
 fi
 USER=$(whoami)

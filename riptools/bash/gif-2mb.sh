@@ -48,7 +48,7 @@ function optgif {
 
 		# scale  640 600 560 520 480 440 400 360 320 280 240 200 160 120 80 40 0
 		let scale-=40
-		(( $scale < 1 )) && return
+		(( $scale < 144 )) && return
 	done
 }
 

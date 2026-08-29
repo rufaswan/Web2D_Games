@@ -453,6 +453,16 @@ req_ok:
 		return self::ord($sub, $sign);
 	}
 
+	public static function sign( int &$int, int $bit ) : void
+	{
+		if ( $bit < 0 )
+			return;
+		$sra = (PHP_INT_SIZE * 8) - $bit;
+		if ( $sra < 0 )
+			return;
+		$int = ($int << $sra) >> $sra;
+	}
+
 	public static function chr( float $int, int $byte=4 ) : string
 	{
 		// little-endian chr

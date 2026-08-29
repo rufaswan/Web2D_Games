@@ -20,9 +20,13 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
+declare( strict_types=1 );
 
-function saga2( $fname )
+require 'tool.inc';
+tool::require('class-clutfile');
+tool::require('func-console');
+
+function saga2( string $fname ) : void
 {
 	// only allchr.tcl
 	if ( stripos($fname, 'allchr.tcl') === false )
@@ -33,49 +37,52 @@ function saga2( $fname )
 
 	$dir = str_replace('.', '_', $fname);
 
-	$px1 = substr($file, 0     , 0xa800);
-	$px2 = substr($file, 0xa800, 0x800 );
-	$pal = substr($file, 0xb000, 0x800 );
+	$px1 = tool::substr($file, 0     , 0xa800);
+	$px2 = tool::substr($file, 0xa800, 0x800 );
+	$pal = tool::substr($file, 0xb000, 0x800 );
 
-	bpp4to8($px1);
-	bpp4to8($px2);
-	$pal = pal555($pal);
+	$px1 = psx::bpp4to8($px1);
+	$px2 = psx::bpp4to8($px2);
+	$pal = psx::pal555($pal);
 
+	$canv = new clutdata;
+	$canv->pal = '1234';
 	$cid = 0;
+
+	$canv->w = 0x100;
+	$canv->h = 0x10;
+	$canv->pix = $px2;
+	// 10x1 = 10
 	for ( $x=0; $x < 0x100; $x += 0x10 )
 	{
-		$img = [
-			'cc'  => 0x10,
-			'w'   => 0x10,
-			'h'   => 0x10,
-			'pal' => substr($pal, $cid*0x40, 0x40),
-			'pix' => rippix8($px2, $x, 0, 0x10, 0x10, 0x100, 0x10),
-		];
+		$img = clutfile::ripsrc($canv, $x, 0, 0x10, 0x10);
+		$img->pal = tool::substr($pal, $cid*0x40, 0x40);
+			$img->pal[3] = ZERO;
 
-		$fn = sprintf('%s/%04d.clut', $dir, $cid);
+		$fn = sprintf('%s/%04d', $dir, $cid);
 			$cid++;
-		save_clutfile($fn, $img);
+		tool::trace('10x10', $fn);
+		clutfile::save($fn, $img);
 	} // for ( $x=0; $x < 0x100; $x += 0x20 )
 
-	for ( $y=0; $y < 0x150; $y += 0x38 )
+	$canv->w = 0x100;
+	$canv->h = 0x150;
+	$canv->pix = $px1;
+	// 8x6 = 30
+	for ( $y=0; $y < 0x150; $y += 0x38 ) // 0 38 70 a8 e0 118 150
 	{
-		for ( $x=0; $x < 0x100; $x += 0x20 )
+		for ( $x=0; $x < 0x100; $x += 0x20 ) // 0 20 40 60 80 a0 c0 e0 100
 		{
-			$img = [
-				'cc'  => 0x10,
-				'w'   => 0x20,
-				'h'   => 0x38,
-				'pal' => substr($pal, $cid*0x40, 0x40),
-				'pix' => rippix8($px1, $x, $y, 0x20, 0x38, 0x100, 0x150),
-			];
+			$img = clutfile::ripsrc($canv, $x, $y, 0x20, 0x38);
+			$img->pal = tool::substr($pal, $cid*0x40, 0x40);
+				$img->pal[3] = ZERO;
 
-			$fn = sprintf('%s/%04d.clut', $dir, $cid);
+			$fn = sprintf('%s/%04d', $dir, $cid);
 				$cid++;
-			save_clutfile($fn, $img);
+			tool::trace('20x38', $fn);
+			clutfile::save($fn, $img);
 		} // for ( $x=0; $x < 0x100; $x += 0x20 )
 	} // for ( $y=0; $y < 0x150; $y += 0x38 )
-
-	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )

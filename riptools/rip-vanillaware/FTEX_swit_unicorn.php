@@ -85,7 +85,6 @@ function tegra_x1_swizzled_8_bits( string &$pix, int $bw, int $bh, array $draw )
 	$map = [];
 
 	// block_height = 10 , y += (10 * 8)
-	$ttl = $bw * $bh;
 	$blk = 8 * 8;
 	$p   = 0;
 	for ( $sy=0; $sy < $bh; $sy += 0x80 )
@@ -139,7 +138,6 @@ function tegra_x1_swizzled_16_bits( string &$pix, int $bw, int $bh, array $draw 
 	$map = [];
 
 	// block_height = 10 , y += (10 * 8)
-	$ttl = $bw * $bh;
 	$blk = 4 * 8;
 	$p   = 0;
 	for ( $sy=0; $sy < $bh; $sy += 0x80 )

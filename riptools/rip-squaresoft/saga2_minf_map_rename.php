@@ -20,34 +20,22 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-function saga2( $fname )
+declare( strict_types=1 );
+
+function saga2( string $fname ) : void
 {
-	$sep = strrpos($fname, '/');
-	if ( $sep === false )
-		$dir = '.';
-	else
-	{
-		$dir = substr($fname, 0, $sep);
-		$fname = substr($fname, $sep+1);
-	}
-
-	if ( substr($fname,0,3) !== 'map' )
+	$m = [];
+	if ( preg_match('|map([0-9a-fA-F]+)|', $fname, $m) < 1 )
 		return;
 
-	// map086_map002.png
-	// map0134_map002.png
-	if ( $fname[6] !== '_' )
+	// map055 -> map00085
+	if ( strlen($m[1]) !== 3 )
 		return;
 
-	$suf = substr($fname, 6);
-	$hex = substr($fname, 3, 3);
-		$hex = hexdec($hex);
-
-	$new = sprintf('map%04d%s', $hex, $suf);
+	$map = sprintf('map%05d', hexdec($m[1]));
+	$new = str_replace($m[0], $map, $fname);
 	echo "$fname -> $new\n";
-	rename("$dir/$fname", "$dir/$new");
-
-	return;
+	rename($fname, $new);
 }
 
 for ( $i=1; $i < $argc; $i++ )

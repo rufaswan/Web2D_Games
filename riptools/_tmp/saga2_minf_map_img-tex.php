@@ -57,6 +57,48 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  * 01   =  10c in map%03x.tex (size = 0x100)
  * 10   = 100c in map%03x.tex (size = 0x100)
  */
+
+
+/*
+function savechr( &$img, $dir )
+{
+	$st = str2int($img, 0x0c, 4) + 4;
+	$ed = str2int($img, 0x10, 4);
+	$no = 1;
+	while ( $st < $ed )
+	{
+		$fn = sprintf('%s/chr%03d.chr', $dir, $no);
+		$sz = str2int($img, $st, 4);
+		if ( $sz == 0 )
+			return;
+
+		printf("=== savechr() , %x , %x , $fn\n", $st, $sz);
+		$chr = substr($img, $st, $sz);
+		save_file($fn, $chr);
+
+		$st += $sz;
+		$no++;
+	}
+	return;
+}
+
+function saga2( $fname )
+{
+	if ( stripos($fname, '.img') === false )
+		return;
+
+	$img = file_get_contents($fname);
+	if ( empty($img) )  return;
+
+	$dir = str_replace('.', '_', $fname);
+	savechr($img, "{$dir}chr");
+	return;
+}
+
+for ( $i=1; $i < $argc; $i++ )
+	saga2( $argv[$i] );
+
+
 require 'common.inc';
 $gp_pix  = '';
 $gp_clut = [];
@@ -157,8 +199,42 @@ function saga2( $fname )
 
 for ( $i=1; $i < $argc; $i++ )
 	saga2( $argv[$i] );
+*/
+
+function sectmap( string &$img, string &$tex, string $dir ) : void
+{
+}
+//////////////////////////////
+function sectchr( string &$img, string &$tex, string $dir ) : void
+{
+}
+//////////////////////////////
+function saga2( int $type, string $fname ) : void
+{
+	$pfx = substr($fname, 0, strrpos($fname,'.'));
+	$img = tool::load("$pfx.img");
+	$tex = tool::load("$pfx.tex");
+	if ( empty($img) || empty($tex) )
+		return;
+
+	$dir = $pfx . '_imgtex';
+	if ( $type & 1 )  sectmap($img, $tex, $dir);
+	if ( $type & 2 )  sectchr($img, $tex, $dir);
+}
+
+$type = 3;
+for ( $i=1; $i < $argc; $i++ )
+{
+	if ( is_file($argv[$i]) )
+		saga2( $type, $argv[$i] );
+	else
+	{
+		if ( $argv[$i] === 'map' )  $type = 1;
+		if ( $argv[$i] === 'chr' )  $type = 2;
+	}
+}
 
 /*
-	/mout/map.out is loaded to 800ac000
-	data is loaded to 801a0000
+/mout/map.out is loaded to 800ac000
+data is loaded to 801a0000
  */

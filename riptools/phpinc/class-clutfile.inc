@@ -331,20 +331,20 @@ class clutfile
 		// 0...w or h only
 		if ( $x < 0 )  return null;
 		if ( $y < 0 )  return null;
-		if ( ($x+$w) >= $canvas->w )  return null;
-		if ( ($y+$h) >= $canvas->h )  return null;
+		if ( ($x+$w) > $canvas->w )  return null;
+		if ( ($y+$h) > $canvas->h )  return null;
 
 		$img = new clutdata;
 		$img->x = $x;
 		$img->y = $y;
-		$img->w = $h;
+		$img->w = $w;
 		$img->h = $h;
-		$img->pal = $canvas->pal;
+		$img->pal = &$canvas->pal;
 
 		$byte = ( empty($img->pal) ) ? 4 : 1;
 		for ( $iy=0; $iy < $h; $iy++ )
 		{
-			$sx  = ($iy * $w) + $x;
+			$sx  = ($iy * $canvas->w) + $x;
 			$sub = tool::substr($canvas->pix, $sx*$byte, $w*$byte);
 			$img->pix .= $sub;
 		} // for ( $iy=0; $iy < $h; $iy++ )

@@ -24,6 +24,7 @@ declare( strict_types=1 );
 
 require 'tool.inc';
 tool::require('class-clutfile');
+tool::require('func-console');
 
 // 50  file  Battling Gear Icon
 function xeno( string $fname ) : void
@@ -45,7 +46,7 @@ function xeno( string $fname ) : void
 		$img->pal = psx::pal555($pal);
 		$img->pix = $pix;
 
-		$fn = sprintf('%s/%04d.clut', $dir, $i/0x1000);
+		$fn = sprintf('%s/%04d', $dir, $i/0x1000);
 		clutfile::save($fn, $img);
 	} // for ( $i=0; $i < $len; $i += 0x1000 )
 }
