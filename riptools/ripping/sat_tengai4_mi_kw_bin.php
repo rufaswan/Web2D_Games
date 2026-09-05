@@ -20,10 +20,14 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
-require 'common-guest.inc';
+declare( strict_types=1 );
 
-function tm4dec4( &$sub, $pos, $siz )
+require 'tool.inc';
+tool::require('class-clutfile');
+tool::require('class-ieee754');
+tool::require('func-console');
+
+function tm4dec4( string &$sub, int $pos, int $siz ) : string
 {
 	$pix = '';
 	while ( $siz > 0 )
@@ -51,7 +55,7 @@ function tm4dec4( &$sub, $pos, $siz )
 	return $pix;
 }
 
-function tm4dec1( &$sub, $pos, $siz )
+function tm4dec1( string &$sub, int $pos, int $siz ) : string
 {
 	$pix = '';
 	while ( $siz > 0 )
@@ -77,19 +81,23 @@ function tm4dec1( &$sub, $pos, $siz )
 	return $pix;
 }
 
-function sect2( &$sub, $fn, &$pal )
+function sect2( string &$sub, string &$pal, string $fn ) : void
 {
-	$b1 = str2big($sub, 0, 2);
-	$x  = str2big($sub, 2, 2);
-	$y  = str2big($sub, 4, 2);
+	tool::trace(__FUNCTION__, $fn);
+	$b1 = ieee754::ordstr($sub, 0, 2);
+	$x  = ieee754::ordstr($sub, 2, 2);
+	$y  = ieee754::ordstr($sub, 4, 2);
 
 	$len = strlen($sub);
 	if ( $len < 12 )
-		return printf("%x , %x %x\n", $b1, $x, $y);;
+	{
+		tool::warning('sect2 not enough data', $b1, $x, $y);;
+		return;
+	}
 
-	$no = str2big($sub,  6, 2);
-	$w  = str2big($sub,  8, 2);
-	$h  = str2big($sub, 10, 2);
+	$no = ieee754::ordstr($sub,  6, 2);
+	$w  = ieee754::ordstr($sub,  8, 2);
+	$h  = ieee754::ordstr($sub, 10, 2);
 	printf("%x , %x %x , %x , %x %x \n", $b1, $x, $y, $no, $w, $h);
 
 	switch ( $no )
@@ -97,9 +105,20 @@ function sect2( &$sub, $fn, &$pal )
 		case 1:  $pix = tm4dec1($sub, 12, $w*$h); break;
 		case 4:  $pix = tm4dec4($sub, 12, $w*$h); break;
 		default:
-			return php_warning('UNKNOWN no %x', $no);
+			tool::error('UNKNOWN decode', $no);
 	} // switch ( $no )
 
+	$img = new clutdata;
+	$img->w = $w;
+	$img->h = $h;
+	$img->pal = $pal;
+	$img->pix = $pix;
+
+	// saturn is 320x240
+	$cx = -160 + $x;
+	$cy = -120 + $y;
+	clutfile::save($fn, $img);
+/*
 	$img = [
 		'cc'  => strlen($pal) >> 2,
 		'w'   => $w,
@@ -114,43 +133,41 @@ function sect2( &$sub, $fn, &$pal )
 	center_clutfile($img, $cx, $cy);
 	save_clutfile($fn, $img);
 	return;
+*/
 }
 
-function sect1( &$file, $pos, $dir, $id1, &$pal )
+function sect1( string &$file, string &$pal, int $pos, string $pfx ) : void
 {
-	$cnt = str2big($file, $pos, 2);
-	printf("== sect1( %x , %s , %d ) = %x\n", $pos, $dir, $id1, $cnt);
+	$cnt = ieee754::ordstr($file, $pos, 2);
+	tool::trace(__FUNCTION__, $pos, $pfx, $cnt);
 
 	for ( $i=0; $i < $cnt; $i++ )
 	{
-		$p = $pos + 2 + ($i * 4);
-		$b1 = str2big($file, $p+0, 4);
-		$b2 = str2big($file, $p+4, 4);
-		$s  = substr ($file, $b1, $b2-$b1);
+		$p   = $pos + 2 + ($i * 4);
+		$b1  = ieee754::ordstr($file, $p+0, 4);
+		$b2  = ieee754::ordstr($file, $p+4, 4);
+		$sub = tool::substr($file, $b1, $b2-$b1);
 
-		$fn = sprintf('%s/%02d-%04d.clut', $dir, $id1, $i);
-		printf("%8x  %8x  %s\n", $b1, $b2-$b1, $fn);
-		sect2($s, $fn, $pal);
+		$fn = sprintf('%s-%04d', $pfx, $i);
+		sect2($sub, $pal, $fn);
 	} // for ( $i=0; $i < $cnt; $i++ )
-	return;
 }
 
-function tengai4( $fname )
+function tengai4( string $fname ) : void
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$b1 = str2big($file, 0, 4);
+	$b1 = ieee754::ordstr($file, 0, 4);
 	if ( $b1 !== 0x84 )
 		return;
 
 	$dir = str_replace('.', '_', $fname);
 
-	$b1 = str2big($file, 0x80, 4);
+	$b1 = ieee754::ordstr($file, 0x80, 4);
 	$b2 = ord( $file[$b1] );
-	$pal = substr($file, $b1+1, $b2*2);
-	$pal = pal555( big2little16($pal) );
-		$pal[3] = ZERO;
+	$pal = tool::substr($file, $b1+1, $b2*2);
+	$pal = saturn::pal555($pal, 0);
 
 	for ( $i=0; $i < 0x20; $i++ )
 	{
@@ -158,10 +175,10 @@ function tengai4( $fname )
 		if ( $file[$pos] === BYTE )
 			continue;
 
-		$b1 = str2big($file, $pos, 4);
-		sect1($file, $b1, $dir, $i, $pal);
-	} // for ( $i=0; $i < 0x21; $i++ )
-	return;
+		$b1 = ieee754::ordstr($file, $pos, 4);
+		$pfx = sprintf('%s/%02d', $dir, $i);
+		sect1($file, $pal, $b1, $pfx);
+	} // for ( $i=0; $i < 0x20; $i++ )
 }
 
 for ( $i=1; $i < $argc; $i++ )

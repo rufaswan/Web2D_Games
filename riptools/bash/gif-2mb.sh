@@ -7,8 +7,8 @@ echo "@usage : ${0##*/}  VIDEO_FILE..."
 [ $# = 0 ] && exit
 [ -t 0 ] && xt='' || xt='xterm -e'
 
-# max = 2 MiB
-let MAX_GIF=1000*1000*2
+let MAX_10_GIF=1000*1000*2
+let MAX_16_GIF=1024*1024*2
 TMP_GIF=/tmp/$$.gif
 
 # $1  fname
@@ -35,13 +35,13 @@ function optgif {
 					[s1][p]paletteuse=dither=none\
 						:diff_mode=rectangle,\
 				fps=10" \
-			-map_metadata -1  \
-			-map_chapters -1  \
+			-map_metadata -1 \
+			-map_chapters -1 \
 			-fflags +bitexact -bitexact \
 			$TMP_GIF
 
 		local sz=$(wc -c < $TMP_GIF)
-		if (( $sz < $MAX_GIF )); then
+		if (( $sz < $MAX_10_GIF )); then
 			mv -vf  $TMP_GIF  "$1".gif
 			return
 		fi

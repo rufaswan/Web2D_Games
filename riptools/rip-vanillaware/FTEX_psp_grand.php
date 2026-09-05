@@ -24,6 +24,7 @@ declare( strict_types=1 );
 
 require 'tool.inc';
 tool::require('class-clutfile');
+tool::require('func-console');
 
 function gimpix( string &$pix, int $w, int $h ) : void
 {
@@ -76,14 +77,14 @@ function pspgim_pix( string &$file ) : array
 			// dummy 1x1 texture
 			if ( $w === 1 && $h === 1 )
 				return [];
-			$size = $w / 2 * $h;
+			$size = ($w >> 1) * $h;
 			$data['byte'] = 1;
 			$data['w'] = $w;
 			$data['h'] = $h;
 
 			$data['pix'] = tool::substr($file, $pos, $size);
-			gimpix($data['pix'], $w, $h);
-			psx::bpp4to8($data['pix']);
+			gimpix($data['pix'], $w >> 1, $h);
+			$data['pix'] = psx::bpp4to8($data['pix']);
 			return $data;
 
 		case 5:

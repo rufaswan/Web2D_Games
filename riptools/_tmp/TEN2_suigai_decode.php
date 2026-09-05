@@ -20,20 +20,22 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
+declare( strict_types=1 );
 
-function suigai_decode( &$file )
+require 'tool.inc';
+
+function suigai_decode( string &$file ) : void
 {
-	$dec = '';
 	// SLPM_866.37 , sub_80051e38
-	trace("== begin sub_80051e38()\n");
+	tool::trace('== begin sub_80051e38()');
+	$dec = '';
 
 	$new_dict = str_repeat(ZERO, 0x400);
 	for ( $i=0; $i < 0x100; $i++ )
 		$new_dict[ 0x200+$i ] = chr($i);
 
 	$len = strlen($file);
-	$pos = 0;
+	$pos = 12;
 
 	// 80051e64 - 80051fb8
 	$b1  = ord( $file[$pos] ); // a3
@@ -137,24 +139,23 @@ function suigai_decode( &$file )
 		$b1 = $b2;
 	} // while ( $pos < $len )
 
-	trace("== end sub_80051e38()\n");
-	return $dec;
+	tool::trace('== end sub_80051e38()');
+	$file = $dec;
 }
 
-function suigai( $fname )
+function suigai( string $fname ) : void
 {
-	$file = file_get_contents($fname);
-	if ( empty($file) )  return;
-
-	if ( substr($file, 0, 4) !== 'TEN2' )
+	$file = tool::loadbak($fname);
+	if ( empty($file) )
 		return;
 
-	$size = str2int($file,  4, 4);
-	$file = substr ($file, 12, $size+1);
+	if ( substr($file,0,4) !== 'TEN2' )
+		return;
 
-	$dec = suigai_decode($file);
-	save_file("$fname.dec", $dec);
-	return;
+	suigai_decode($file);
+	file_put_contents($fname, $file);
+
+	tool::trace('suigai_decode', $fname, filesize($fname.'.bak'), filesize($fname));
 }
 
-argv_loopfile($argv, 'suigai');
+tool::argv_callback($argv, 'suigai');

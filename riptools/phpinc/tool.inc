@@ -402,10 +402,10 @@ req_ok:
 
 	public static function substr( string &$file, int $pos, int $len ) : string
 	{
-		$str = substr($file, $pos, $len);
-		if ( strlen($str) !== $len )
-			self::error('substr not enough data', $pos, $len, strlen($str), strlen($file));
-		return $str;
+		$sub = substr($file, $pos, $len);
+		if ( strlen($sub) !== $len )
+			self::error('substr not enough data', $pos, $len, strlen($sub), strlen($file));
+		return $sub;
 	}
 
 	public static function str_update( string &$file, int $pos, string $sub ) : void
@@ -433,6 +433,8 @@ req_ok:
 			$int <<= 8;
 			$int |= ord( $bin[$len] );
 		}
+		if ( ! $sign && $int < 0 )
+			self::error('unexpected sign int', $int);
 
 		$len = strlen($bin);
 		if ( $sign )
@@ -445,11 +447,10 @@ req_ok:
 
 	public static function ordstr( string &$bin, int $pos, int $byte=4, bool $sign=false ) : int
 	{
-		if ( PHP_INT_SIZE < $byte )
-			return 0;
-		$sub = substr($bin, $pos, $byte);
-		if ( strlen($sub) !== $byte )
-			return 0;
+		$sub = self::substr($bin, $pos, $byte);
+		$sub = rtrim($sub, ZERO);
+		if ( PHP_INT_SIZE < strlen($sub) )
+			self::error('ordstr', strlen($sub), PHP_INT_SIZE);
 		return self::ord($sub, $sign);
 	}
 

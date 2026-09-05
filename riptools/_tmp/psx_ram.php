@@ -20,85 +20,82 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
+declare( strict_types=1 );
 
-function psxvram2clut( &$vram, $base )
+require 'tool.inc';
+tool::require('class-clutfile');
+tool::require('func-console');
+
+function psxvram2clut( string &$vram, string $pfx ) : void
 {
+	$img = new clutdata;
+
 	// 16-bpp
-	$img = [
-		'w'   => 0x400,
-		'h'   => 0x200,
-		'pix' => pal555($vram),
-	];
-	save_clutfile("$base/vram-16.clut", $img);
+	$img->w = 0x400;
+	$img->h = 0x200;
+	$img->pal = '';
+	$img->pix = psx::pal555($vram);
+	clutfile::save($pfx.'/vram-16', $img);
 
 	// 8-bpp
-	$img = [
-		'cc'  => 0x100,
-		'w'   => 0x800,
-		'h'   => 0x200,
-		'pal' => grayclut(0x100),
-		'pix' => $vram,
-	];
-	save_clutfile("$base/vram-8.clut", $img);
+	$img->w = 0x800;
+	$img->h = 0x200;
+	$img->pal = clutfile::graypal(0x100);
+	$img->pix = $vram;
+	clutfile::save($pfx.'/vram-8', $img);
 
 	// 4-bpp
-	bpp4to8($vram);
-	$img = [
-		'cc'  => 0x10,
-		'w'   => 0x1000,
-		'h'   => 0x200,
-		'pal' => grayclut(0x10),
-		'pix' => $vram,
-	];
-	save_clutfile("$base/vram-4.clut", $img);
-	return;
+	$img->w = 0x1000;
+	$img->h = 0x200;
+	$img->pal = clutfile::graypal(0x10);
+	$img->pix = psx::bpp4to8($vram);
+	clutfile::save($pfx.'/vram-4', $img);
 }
 
 // extract RAM section from uncompressed save states
-function subram( &$file, $base )
+function subram( string &$file, string $pfx ) : string
 {
 	// ePSXe PlayStation emulator (Windows + Linux)
 	if ( substr($file, 0, 5) === 'ePSXe' )
 	{
-		echo "DETECT emulator = ePSXe\n";
-		$sub = substr($file, 0x2733df, 0x100000);
-		psxvram2clut($sub, $base);
+		tool::trace('DETECT emulator = ePSXe');
+		$sub = tool::substr($file, 0x2733df, 0x100000);
+		psxvram2clut($sub, $pfx);
 
-		return substr($file, 0x1ba, 0x200000);
+		return tool::substr($file, 0x1ba, 0x200000);
 	}
 
 	// pSXfin PlayStation emulator (Windows + Linux)
 	if ( substr($file, 0, 7) === 'ARS2CPU' || substr($file, 0, 6) === 'ARSCPU' )
 	{
-		echo "DETECT emulator = pSXfin\n";
+		tool::trace('DETECT emulator = pSXfin');
 		$pos = strpos($file, "\xff\x00UPG\xbb\x00\x10");
-		$sub = substr($file, $pos+0xc8, 0x100000);
-		psxvram2clut($sub, $base);
+		$sub = tool::substr($file, $pos+0xc8, 0x100000);
+		psxvram2clut($sub, $pfx);
 
 		$pos = strpos($file, "RAM\x00");
-		return substr($file, $pos + 12, 0x200000);
+		return tool::substr($file, $pos + 12, 0x200000);
 	}
 
 	// no$psx PlayStation emulator (Windows)
 	if ( substr($file, 0, 15) === 'NO$PSX SNAPSHOT' )
 	{
-		echo "DETECT emulator = nocash PSX\n";
+		tool::trace('DETECT emulator = nocash PSX');
 		$ed = strlen($file);
 		$st = 0x40;
 		while ( $st < $ed )
 		{
 			$bak = $st;
-			$mgc = substr ($file, $st+0, 4);
-			$len = str2int($file, $st+8, 4);
+			$mgc = substr($file, $st+0, 4);
+			$len = tool::ordstr($file, $st+8, 4);
 				$st += ($len + 12);
-			printf("%8x , %8x , $mgc\n", $bak, $len);
+			tool::trace($bak, $len, $mgc);
 
-			$sub = substr($file, $bak+12, $len);
-			save_file("$base/$mgc", $sub);
+			$sub = tool::substr($file, $bak+12, $len);
+			tool::save("$pfx/$mgc", $sub);
 
 			if ( $mgc == 'VRAM' )
-				psxvram2clut($sub, $base);
+				psxvram2clut($sub, $pfx);
 		} // while ( $st < $ed )
 		return '';
 	}
@@ -106,19 +103,19 @@ function subram( &$file, $base )
 	// no$gba Gameboy Advance + Nintendo DS emulator (Windows)
 	if ( substr($file, 0, 15) === 'NO$GBA SNAPSHOT' )
 	{
-		echo "DETECT emulator = nocash GBA\n";
+		tool::trace('DETECT emulator = nocash GBA');
 		$ed = strlen($file);
 		$st = 0x40;
 		while ( $st < $ed )
 		{
 			$bak = $st;
-			$mgc = substr ($file, $st+0, 4);
-			$len = str2int($file, $st+8, 4);
+			$mgc = substr($file, $st+0, 4);
+			$len = tool::ordstr($file, $st+8, 4);
 				$st += ($len + 12);
-			printf("%8x , %8x , $mgc\n", $bak, $len);
+			tool::trace($bak, $len, $mgc);
 
-			$sub = substr($file, $bak+12, $len);
-			save_file("$base/$mgc", $sub);
+			$sub = tool::substr($file, $bak+12, $len);
+			tool::save("$pfx/$mgc", $sub);
 		} // while ( $st < $ed )
 		return '';
 	}
@@ -126,19 +123,19 @@ function subram( &$file, $base )
 	// Yabause Saturn emulator (Linux)
 	if ( substr($file, 0, 3) === 'YSS' )
 	{
-		echo "DETECT emulator = Yabause\n";
+		tool::trace('DETECT emulator = Yabause');
 		$ed = strlen($file);
 		$st = 0x14;
 		while ( $st < $ed )
 		{
 			$bak = $st;
-			$mgc = substr ($file, $st+0, 4);
-			$len = str2int($file, $st+8, 4);
+			$mgc = substr($file, $st+0, 4);
+			$len = tool::ordstr($file, $st+8, 4);
 				$st += ($len + 12);
-			printf("%8x , %8x , $mgc\n", $bak, $len);
+			tool::trace($bak, $len, $mgc);
 
-			$sub = substr($file, $bak+12, $len);
-			save_file("$base/$mgc", $sub);
+			$sub = tool::substr($file, $bak+12, $len);
+			tool::save("$pfx/$mgc", $sub);
 
 			if ( $mgc == 'OTHR' )
 			{
@@ -156,19 +153,19 @@ function subram( &$file, $base )
 	// Neko Project II PC98 emulator (Linux)
 	if ( substr($file, 0, 15) === 'Neko Project II' )
 	{
-		echo "DETECT emulator = Neko Project II\n";
+		tool::trace('DETECT emulator = Neko Project II');
 		$ed = strlen($file);
 		$st = 0x30;
 		while ( $st < $ed )
 		{
 			$bak = $st;
-			$mgc = substr0($file, $st);
-			$len = str2int($file, $st+12, 4);
-				$st = int_ceil($st + $len + 16, 16);
-			printf("%8x , %8x , $mgc\n", $bak, $len);
+			$mgc = tool::substr0($file, $st);
+			$len = tool::ordstr($file, $st+12, 4);
+				$st = tool::int_ceil($st + $len + 16, 16);
+			tool::trace($bak, $len, $mgc);
 
-			$sub = substr($file, $bak+16, $len);
-			save_file("$base/$mgc", $sub);
+			$sub = tool::substr($file, $bak+16, $len);
+			tool::save("$pfx/$mgc", $sub);
 		} // while ( $st < $ed )
 		return '';
 	}
@@ -176,17 +173,16 @@ function subram( &$file, $base )
 	return '';
 }
 
-function psxram( $fname )
+function psxram( string $fname ) : void
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
-	$base = preg_replace('|[^a-zA-Z0-9]|', '_', $fname);
-	$ram = subram($file, $base);
+	$pfx = preg_replace('|[^a-zA-Z0-9]|', '_', $fname);
+	$ram = subram($file, $pfx);
 
 	if ( ! empty($ram) )
-		save_file("$base.ram", $ram);
-	return;
+		tool::save("$pfx.ram", $ram);
 }
 
 for ( $i=1; $i < $argc; $i++ )

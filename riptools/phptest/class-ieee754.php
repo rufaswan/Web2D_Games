@@ -13,7 +13,8 @@ $data = [
 	0       , 0.0       , // zero
 	500     , 500.0     , //
 	9999999 , 9999999.0 , //
-	0.0 + (1 << ((PHP_INT_SIZE << 3) - 2)) , // big float
+	1 << ((PHP_INT_SIZE * 8) - 1) | 7 , // max = negative int
+	PHP_INT_MAX                   + 7 , // max = precision loss , 80000006 -> 4f000000 -> 80000000
 ];
 
 foreach ( $data as $v )
@@ -21,6 +22,7 @@ foreach ( $data as $v )
 	$b = ieee754::convert($v);
 	if ( "$v" === $v )  $v = bin2hex($v);
 	if ( "$b" === $b )  $b = bin2hex($b);
-	var_dump($v,$b);
+	//var_dump($v,$b);
+	tool::trace($v,$b);
 	echo "===\n";
 } // foreach ( $data as $v )

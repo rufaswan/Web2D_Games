@@ -27,7 +27,7 @@ define('VRAM_W', 0x400);
 define('VRAM_H', 0x200);
 define('NO_TRACE', true);
 
-function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
+function vramcopy( string &$vram, string &$part, int $dx, int $dy, int $w, int $h ) : void
 {
 	for ( $y=0; $y < $h; $y++ )
 	{
@@ -35,13 +35,12 @@ function vramcopy( &$vram, &$part, $dx, $dy, $w, $h )
 		$syy =      $y  * $w       * 2;
 		$dxx = $dyy + ($dx * 2);
 
-		$b1 = substr($part, $syy, $w*2);
-		str_update($vram, $dxx, $b1);
-	}
-	return;
+		$b1 = tool::substr($part, $syy, $w*2);
+		tool::str_update($vram, $dxx, $b1);
+	} // for ( $y=0; $y < $h; $y++ )
 }
 
-function tex2vram( &$file )
+function tex2vram( string &$file ) : string
 {
 	global $gp_clut;
 	$vram = str_repeat(ZERO, VRAM_W*2*VRAM_H);
@@ -49,18 +48,18 @@ function tex2vram( &$file )
 	$pos = 0;
 	while ( $pos < $len )
 	{
-		$b1 = str2int($file, $pos, 4);
+		$b1 = tool::ordstr($file, $pos, 4);
 		$bak = $pos;
 		switch ( $b1 )
 		{
 			case 0x1200:
 			case 0x1201:
-				$bx = str2int($file, $pos+ 4, 2);
-				$by = str2int($file, $pos+ 6, 2);
-				$dx = str2int($file, $pos+ 8, 2);
-				$dy = str2int($file, $pos+10, 2);
-				$w  = str2int($file, $pos+0x0c, 2);
-				$no = str2int($file, $pos+0x18, 2);
+				$bx = tool::ordstr($file, $pos+ 4, 2);
+				$by = tool::ordstr($file, $pos+ 6, 2);
+				$dx = tool::ordstr($file, $pos+ 8, 2);
+				$dy = tool::ordstr($file, $pos+10, 2);
+				$w  = tool::ordstr($file, $pos+0x0c, 2);
+				$no = tool::ordstr($file, $pos+0x18, 2);
 					$pos += (0x800 + $no * 0x800);
 
 				$data = '';
@@ -68,10 +67,10 @@ function tex2vram( &$file )
 				for ( $i=0; $i < $no; $i++ )
 				{
 					$p1 = $bak + 0x1c + ($i * 2);
-					$p1 = str2int($file, $p1, 2);
+					$p1 = tool::ordstr($file, $p1, 2);
 
 					$p2 = $bak + 0x800 + ($i * 0x800);
-					$data .= substr($file, $p2, $p1*$w*2);
+					$data .= tool::substr($file, $p2, $p1*$w*2);
 					$h += $p1;
 				}
 
@@ -84,24 +83,24 @@ function tex2vram( &$file )
 	return $vram;
 }
 //////////////////////////////
-function sectfile1( &$file )
+function sectfile1( string &$file ) : array
 {
 	$sect = [];
 	for ( $i=0; $i < 8; $i++ )
 	//for ( $i=3; $i < 4; $i++ )
 	{
 		$p = 0x130 + ($i * 4);
-		$p1 = str2int($file, $p+0, 3);
-		$p2 = str2int($file, $p+4, 3);
+		$p1 = tool::ordstr($file, $p+0, 3);
+		$p2 = tool::ordstr($file, $p+4, 3);
 
-		$sub = substr($file, $p1, $p2-$p1);
+		$sub = tool::substr($file, $p1, $p2-$p1);
 		xeno_decode($sub);
 		$sect[$i] = $sub;
 	}
 	return $sect;
 }
 //////////////////////////////
-function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
+function sectpix( string $str, string $dir, int &$dec_no, string &$file2, string &$dec4 ) : string
 {
 	$pix = '';
 	$ty = ord( $str[6] );
@@ -111,22 +110,22 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 	{
 		case 0: // compressed on $dec[4]
 			$p2 = 4 + ($dec_no * 4);
-			$p2 = str2int($dec4, $p2, 4);
+			$p2 = tool::ordstr($dec4, $p2, 4);
 
 			$p3 = 8 + ($dec_no * 4);
-			$p3 = str2int($dec4, $p3, 4);
+			$p3 = tool::ordstr($dec4, $p3, 4);
 
 			if ( $p3 < 8 )
 				$p3 = strlen($dec4);
 
 			$dec_no++;
-			$pix = substr($dec4, $p2, $p3-$p2);
+			$pix = tool::substr($dec4, $p2, $p3-$p2);
 			return $pix;
 		case 1: // paired file (vram)
 			$data = [];
 
-			$sx = str2int($str, 0, 2);
-			$sy = str2int($str, 2, 2);
+			$sx = tool::ordstr($str, 0, 2);
+			$sy = tool::ordstr($str, 2, 2);
 			$data[] = [$sx,$sy];
 
 			//$data[] = [0x140,0x100]; //  966_2 aveh gear
@@ -145,7 +144,7 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 
 			$cnt = count($data);
 			$pix = str_repeat(ZERO, 4+($cnt*4));
-				str_update($pix, 0, chr($cnt));
+				tool::str_update($pix, 0, chr($cnt));
 
 			foreach ( $data as $k => $v )
 			{
@@ -155,21 +154,21 @@ function sectpix( $str, $dir, &$dec_no, &$file2, &$dec4 )
 				if ( $h > 0x100 )  $h = 0x100;
 
 				$len = strlen($pix);
-					str_update($pix, 4+($k*4), chrint($len, 3));
-				$pix .= chrint($w, 2);
-				$pix .= chrint($h, 2);
+					tool::str_update($pix, 4+($k*4), chrint($len, 3));
+				$pix .= tool::chr($w, 2);
+				$pix .= tool::chr($h, 2);
 				$pix .= rippix8($file2, $v[0]*2, $v[1], $w*2, $h, VRAM_W*2, VRAM_H);
 			}
 
 			return $pix;
 		default:
-			php_error('UNKNOWN');
+			tool::error('UNKNOWN');
 			return $pix;
 	}
 	return $pix;
 }
 
-function xeno( $fname1, $fname2 )
+function xeno( string $fname1, string $fname2 ) : void
 {
 	$file1 = file_get_contents($fname1); // even
 	$file2 = file_get_contents($fname2); // odd
@@ -181,9 +180,9 @@ function xeno( $fname1, $fname2 )
 	$file2 = tex2vram($file2);
 
 	foreach ( $dec as $k => $v )
-		save_file("$dir/$k.dec", $v);
+		tool::save("$dir/$k.dec", $v);
 
-	$cnt = str2int($dec[3], 0, 3);
+	$cnt = tool::ordstr($dec[3], 0, 3);
 
 	$dec_no = 0;
 	$pix = '';
@@ -193,29 +192,27 @@ function xeno( $fname1, $fname2 )
 	for ( $i=0; $i < $cnt; $i++ )
 	{
 		$p1 = $i * 8;
-		$p1 = substr($file1, $p1, 8);
+		$p1 = tool::substr($file1, $p1, 8);
 		$pix = sectpix($p1, $dir, $dec_no, $file2, $dec[4]);
 
 		$p1 = 4 + ($i * 4);
-		$base = str2int($dec[3], $p1, 3);
-		$c1   = str2int($dec[3], $base+0, 3);
-		$z1   = str2int($dec[3], $base+4+($c1*4), 3);
-		$data = substr ($dec[3], $base, $z1);
+		$base = tool::ordstr($dec[3], $p1, 3);
+		$c1   = tool::ordstr($dec[3], $base+0, 3);
+		$z1   = tool::ordstr($dec[3], $base+4+($c1*4), 3);
+		$data = tool::substr($dec[3], $base, $z1);
 
 		// same format as monster battle sprites
 		$p1 = 8 + 12 + strlen($data);
-		$btl =  chrint(1, 4);
-		$btl .= chrint($p1, 4);
+		$btl =  tool::chr(1, 4);
+		$btl .= tool::chr($p1, 4);
 
-		$btl .= chrint(20, 4);
-		$btl .= chrint($p1, 4);
-		$btl .= chrint(0, 4);
+		$btl .= tool::chr(20, 4);
+		$btl .= tool::chr($p1, 4);
+		$btl .= tool::chr(0, 4);
 		$btl .= $data;
 		$btl .= $pix;
-		save_file("$dir/spr/$i.bin", $btl);
-
+		tool::save("$dir/spr/$i.bin", $btl);
 	} // for ( $i=0; $i < $cnt; $i++ )
-	return;
 }
 
 for ( $i=1; $i < $argc; $i += 2 )

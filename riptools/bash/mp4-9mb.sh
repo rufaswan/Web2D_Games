@@ -7,8 +7,8 @@ echo "@usage : ${0##*/}  VIDEO_FILE..."
 [ $# = 0 ] && exit
 [ -t 0 ] && xt='' || xt='xterm -e'
 
-# max = 2 MiB
-let MAX_MP4=1000*1000*9
+let MAX_10_MP4=1000*1000*9
+let MAX_16_MP4=1024*1024*9
 TMP_MP4=/tmp/$$.mp4
 
 # $1  fname
@@ -40,7 +40,7 @@ function optmp4 {
 			$TMP_MP4
 
 		local sz=$(wc -c < $TMP_MP4)
-		if (( $sz < $MAX_MP4 )); then
+		if (( $sz < $MAX_10_MP4 )); then
 			mv -vf  $TMP_MP4  "$1".mp4
 			return
 		fi

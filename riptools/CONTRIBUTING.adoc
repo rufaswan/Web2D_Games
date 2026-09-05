@@ -45,18 +45,19 @@ console::
 	* Has special handler functions to read the game files, eg swizzling code, big endian byte order, RGB555/RGB565/RGB555A1 color decode, etc
 	* REQUIRE if the game has multi-platform releases.
 	* list
-	** psx   PlayStation
-	** ps2   PlayStation 2
-	** ps3   PlayStation 3
-	** ps4   PlayStation 4
-	** ps5   PlayStation 5
-	** psp   PlayStation Portable
-	** vita  PlayStation Vita
-	** sat   Sega Saturn
-	** nds   Nintendo DS
-	** wii   Nintendo Wii
-	** pc98  NEC PC9801
-	** pc    Generic PC
+	** psx   = PlayStation
+	** ps2   = PlayStation 2
+	** ps3   = PlayStation 3
+	** ps4   = PlayStation 4
+	** ps5   = PlayStation 5
+	** psp   = PlayStation Portable
+	** vita  = PlayStation Vita
+	** sat   = Sega Saturn
+	** nds   = Nintendo DS
+	** wii   = Nintendo Wii
+	** xbsx  = XBox Series S/X
+	** pc98  = NEC PC9801
+	** pc    = Generic PC
 
 game (required)::
 	* REQUIRE 8 ASCII chars to abbreviate the game name
@@ -87,8 +88,8 @@ function (require)::
 	*** if INPUT is a dir, pack all files under INPUT to a file (like zip)
 	*** if INPUT is a file, unpack all files to its own dir (like unzip)
 	** x2y or x_to_y = to decode file from X format to Y format
-	*** eg `clut2png`, or `v55_to_quad`
 	*** INPUT is always a file
+	*** eg `clut2png`, or `v55_to_quad`
 
 
 
@@ -97,6 +98,7 @@ function (require)::
 Instead of export to CLUT or RGBA raw image files, QUAD file is used when data cannot be 100% preserved when export as raw image.
 
 This includes
+
 * Image uses blending mode other than "Normal", eg "Addition", "Subtraction", "Multiply", "Average", etc.
 * Image uses transformation, including zoom in (enlarge), zoom out (shrink) and rotation (in x, y, and z axis).
 
@@ -126,8 +128,8 @@ image::psx-panzer-zako06-add.png
 
 Therefore, in order to correct export the image, you have to either
 
-* export each blending as its own raw image
-* export everything in SRC in a texture atlas, with a text file th note down the correct blending forumula to use.
+. export each blending as its own raw image
+. export everything in SRC in a texture atlas, with a text file to note down the correct blending formula to use.
 
 For (1), you'll still have problem about layer ordering (the light is on top of face layer, but below hand layer)
 
@@ -137,7 +139,7 @@ For (2), that is the QUAD file on this repo.
 
 With transformation, the pixels are written at different position. Some are duplicated, and some are skipped. The result is no longer the same as original anymore.
 
-Using QUAD file, the original SRC is preserved. It will know it is rendering a straight line because SRC is a straight line.
+Using QUAD file, the original SRC is preserved. It will know it is rendering a straight line because it has SRC (a straight line) for reference.
 
 .Result when directly render at 4x
 image::psx-mana-jajara-2-4.png[]

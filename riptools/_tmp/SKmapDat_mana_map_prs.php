@@ -49,30 +49,33 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  *  wd1  White Forest (Dragons arc)
  *  wst  Luon Highway
  */
-require 'common.inc';
+declare( strict_types=1 );
+
+require 'tool.inc';
 
 $gp_pixd = '';
 $gp_clut = [];
 
 // map files are loaded to RAM 80180000
 // offsets here are RAM pointers
-function ramint( &$file, $pos )
+function ramint( string &$file, int $pos ) : int
 {
-	$int = str2int($file, $pos, 3);
-	if ( $int )
-		$int -= 0x180000;
-	else
-		printf("ERROR ramint zero @ %x\n", $pos);
+	$int = tool::ordstr($file, $pos, 3);
+	$int -= 0x180000;
+	if ( $int < 0 )
+		$int = 0;
 	return $int;
 }
 //////////////////////////////
-function secttile( &$pix, $dat, $bpp, $x, $y )
+function secttile( string &$pix, int $dat, string $bpp, int $x, int $y ) : void
 {
+	// fedcba98 76543210 fedcba98 76543210
+	// -------- rrrrcccc ----bbbb -nnnnnnn
 	$cn = $dat & 0x7f;
 
-	$blk = ($dat >>  8) & 0x0f;
-	$col = ($dat >> 16) & 0x0f;
-	$row = ($dat >> 20) & 0x0f;
+	$blk = ($dat >> 0x08) & 0x0f;
+	$col = ($dat >> 0x10) & 0x0f;
+	$row = ($dat >> 0x14) & 0x0f;
 
 	// texture data is mixed of
 	//   4-bit  (4 columns)
@@ -130,7 +133,7 @@ function secttile( &$pix, $dat, $bpp, $x, $y )
 		$row *= ($cls/2 * 0x10);
 		$row += ($col2 + $blk + $col1);
 
-		$ripd = substr($gp_pixd, $row, 0x200);
+		$ripd = tool::substr($gp_pixd, $row, 0x200);
 		$pix['src']['pix'] = rippix4($ripd, 0, 0, 16, 16, $cls, 0x100);
 
 		$pix['src']['pal'] = substr($gp_clut, $cn*0x40, 0x40);
@@ -171,14 +174,14 @@ function sectmap( &$file, $nid, $base )
 
 	$b8 = ord( $file[$base+8] );
 	printf("map : b+8 %02x\n", $b8);
-	// & 0x01 - display (base frame for animation)
-	// & 0x02
-	// & 0x04
-	// & 0x08
-	// & 0x10 - 8-bit image
-	// & 0x20 - RGB555 image
-	// & 0x40 - animated layer
-	// & 0x80
+	// 01 - display (base frame for animation)
+	// 02
+	// 04
+	// 08
+	// 10 - 8-bit image
+	// 20 - RGB555 image
+	// 40 - animated layer
+	// 80
 	$bpp = 'c4';
 	if ( $b8 & 0x10 )  $bpp = 'c8';
 	if ( $b8 & 0x20 )  $bpp = 'rgb';
@@ -303,7 +306,7 @@ function srcpix( &$pix, $dir )
 	return;
 }
 
-function mana( $fname )
+function mana( string $fname ) : void
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -315,12 +318,12 @@ function mana( $fname )
 
 	global $gp_pixd, $gp_clut;
 	$pixp = ramint ($file, 0x14);
-	$pixz = str2int($file, 0x0c, 4);
-	$gp_pixd = substr($file, $pixp, $pixz);
+	$pixz = tool::ordstr($file, 0x0c, 4);
+	$gp_pixd = tool::substr($file, $pixp, $pixz);
 	$gp_clut = [];
 	srcpix($gp_pixd, $dir);
 
-	$file = substr($file, 0, $pixp);
+	$file = tool::substr($file, 0, $pixp);
 
 	$st = ramint($file, 0x20);
 	$id = 1;
@@ -337,4 +340,4 @@ function mana( $fname )
 	return;
 }
 
-argv_loopfile($argv, 'mana');
+tool::argv_callback($argv, 'mana');

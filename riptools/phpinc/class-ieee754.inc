@@ -27,7 +27,7 @@ class ieee754
 	public static function ord( string $bin, bool $sign=false ) : int
 	{
 		// =big endian ord
-		// 00 11 22 33 = 112233
+		// "\x00\x11\x22\x33" -> 0x112233
 		$bin = ltrim ($bin, ZERO); // skip ord zero
 		$len = strlen($bin);
 		$int = 0;
@@ -36,6 +36,8 @@ class ieee754
 			$int <<= 8;
 			$int |= ord( $bin[$i] );
 		}
+		if ( ! $sign && $int < 0 )
+			tool::error('unexpected sign int', $int);
 
 		$len = strlen($bin);
 		if ( $sign )
@@ -46,20 +48,19 @@ class ieee754
 		return $int;
 	}
 
-	public static function ordstr( string &$str, int $pos, int $byte=4, bool $sign=false ) : int
+	public static function ordstr( string &$bin, int $pos, int $byte=4, bool $sign=false ) : int
 	{
-		if ( PHP_INT_SIZE < $byte )
-			return 0;
-		$sub = substr($str, $pos, $byte);
-		if ( strlen($sub) !== $byte )
-			return 0;
+		$sub = tool::substr($bin, $pos, $byte);
+		$sub = ltrim($sub, ZERO);
+		if ( PHP_INT_SIZE < strlen($sub) )
+			tool::error('ordstr', strlen($sub), PHP_INT_SIZE);
 		return self::ord($sub, $sign);
 	}
 
 	public static function chr( float $int, int $byte=4 ) : string
 	{
 		// =big endian chr
-		// 112233 = 00 11 22 33
+		// 0x112233 = "\x00\x11\x22\x33"
 		$bin = '';
 		$bit = $byte * 8;
 		while ( $bit > 0 )
@@ -106,6 +107,9 @@ class ieee754
 
 	public static function encode( float $flt, int $exp_bit, int $man_bit, int $bias ) : int
 	{
+		if ( $flt === 0.0 )
+			return 0;
+
 		$sig = 0;
 		if ( $flt < 0.0 )
 		{
@@ -113,25 +117,29 @@ class ieee754
 			$flt = -$flt;
 		}
 
-		// bias = +f to -f
-		$max = $bias;
-		for ( $i=0; $i < $max; $i++ )
+		$b = 0;
+		while (1)
 		{
-			// normalize = leading 1.0
-			$int = (int)$flt;
-			if ( $int > 1 )
+			// 1.0 <= $flt <= 2.0
+			if ( $flt < 1.0 )
 			{
-				$bias++;
-				$flt *= 0.5;
-			}
-			if ( $int < 1 )
-			{
-				$bias--;
+				$b--;
 				$flt *= 2.0;
+				continue;
 			}
-		} // for ( $i=0; $i < $max; $i++ )
+			if ( $flt > 2.0 )
+			{
+				$b++;
+				$flt *= 0.5;
+				continue;
+			}
+			// done
+			break;
+		} // while (1)
 
-		if ( (int)$flt > 1 )
+		// -7f to +7f -> 0 to ff
+		$bias += $b;
+		if ( $bias >> $exp_bit )
 			return tool::warning('float over bias', $flt, $bias);
 
 		$m = 1 << $man_bit;
@@ -216,7 +224,9 @@ class ieee754
 			return self::to($b, $len);
 		}
 
-		// if int 0x38000000 or 939524096
+		// max = PHP_INT_MAX + 7
+		//   max      // float , precision loss
+		//   (int)max // int   , negative
 		if ( (int)$bin === $bin )
 			return self::to($bin, PHP_INT_SIZE);
 

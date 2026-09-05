@@ -625,22 +625,24 @@ class ps2
 //////////////////////////////
 class saturn
 {
-	public static function sat2psx16( string &$be ) : void
+	public static function rgb555( string $str ) : string
 	{
-		$le = '';
-		$len = strlen($be) & ~1;
-		for ( $i=0; $i < $len; $i += 2 )
-			$le .= $be[$i+1] . $be[$i+0];
-		$be = $le;
+		$b = $str[1] . $str[0];
+		return psx::rgb555($b);
 	}
 
-	public static function sat2psx32( string &$be ) : void
+	public static function pal555( string $str, int $bgzero=-1 ) : string
 	{
-		$le = '';
-		$len = strlen($be) & ~3;
-		for ( $i=0; $i < $len; $i += 4 )
-			$le .= $be[$i+3] . $be[$i+2] . $be[$i+1] . $be[$i+0];
-		$be = $le;
+		$pal = '';
+		$siz = strlen($str) & ~1; // floor to 2s
+		for ( $i=0; $i < $siz; $i += 2 )
+		{
+			$rgb = psx::rgb555($str[$i+1] . $str[$i+0]);
+			if ( ($i>>1) === $bgzero )
+				$rgb[3] = ZERO;
+			$pal .= $rgb;
+		}
+		return $pal;
 	}
 } // class saturn
 //////////////////////////////
