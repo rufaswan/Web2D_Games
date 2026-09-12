@@ -30,9 +30,6 @@ class clutdata
 {
 	public $t   = ''; // for CLUT with shared/unknown $pal ,
 	public $id  = -1; // for atlastex
-	public $is_flipx  = false;
-	public $is_flipy  = false;
-	public $is_rotate = false;
 	public $x   =  0; // for image -> canvas
 	public $y   =  0; // for image -> canvas
 	public $hw  = -1; // for canvas
@@ -236,10 +233,10 @@ class clutfile
 	public static function data2array( clutdata &$img ) : array
 	{
 		$arr = [
-			'w'   => $img->w,
-			'h'   => $img->h,
-			'pal' => $img->pal,
-			'pix' => $img->pix,
+			'w'   => (int)$img->w,
+			'h'   => (int)$img->h,
+			'pal' => "{$img->pal}",
+			'pix' => "{$img->pix}",
 		];
 		return $arr;
 	}
@@ -253,10 +250,10 @@ class clutfile
 				return null;
 		}
 		$data = new clutdata;
-		$data->w   = $img['w'];
-		$data->h   = $img['w'];
-		$data->pal = $img['pal'];
-		$data->pix = $img['pix'];
+		$data->w   = (int)$img['w'];
+		$data->h   = (int)$img['h'];
+		$data->pal = "{$img['pal']}";
+		$data->pix = "{$img['pix']}";
 		return $data;
 	}
 	//////////////////////////////
@@ -265,10 +262,10 @@ class clutfile
 	{
 		// https://en.wikipedia.org/wiki/Web_color
 		// Basic colors
-		$clr  = '---f  --8f  -8-f  -88f'; // K   8B  8G  8C
-		$clr .= '8--f  8-8f  88-f  cccf'; // 8R  8M  8Y  cW
-		$clr .= '888f  --ff  -f-f  -fff'; // 8W  B   G   C
-		$clr .= 'f--f  f-ff  ff-f  ffff'; // R   M   Y   W
+		$clr = '---f  --8f  -8-f  -88f' // K   8B  8G  8C
+			. '8--f  8-8f  88-f  cccf'  // 8R  8M  8Y  cW
+			. '888f  --ff  -f-f  -fff'  // 8W  B   G   C
+			. 'f--f  f-ff  ff-f  ffff'; // R   M   Y   W
 
 		$len = strlen($clr);
 		$pal = '';
@@ -292,30 +289,27 @@ class clutfile
 		if ( strlen($src) !== 4 )  return '';
 		if ( strlen($dst) !== 4 )  return '';
 
-		$r1 = ord( $src[0] );
-		$g1 = ord( $src[1] );
-		$b1 = ord( $src[2] );
-		$a1 = ord( $src[3] );
-
-		$r2 = ord( $dst[0] );
-		$g2 = ord( $dst[1] );
-		$b2 = ord( $dst[2] );
-		$a2 = ord( $dst[3] );
-
-		$sr = ($r2 - $r1) / ($cc - 1);
-		$sg = ($g2 - $g1) / ($cc - 1);
-		$sb = ($b2 - $b1) / ($cc - 1);
-		$sa = ($a2 - $a1) / ($cc - 1);
+		$step = 1.0 / ($cc - 1);
+		$sc = [];
+		$dc = [];
+		$st = [];
+		for ( $i=0; $i < 4; $i++ )
+		{
+			$sc[$i] = ord( $src[$i] );
+			$dc[$i] = ord( $dst[$i] );
+			$st[$i] = ($dc[$i] - $sc[$i]) * $step;
+		}
 
 		$pal = '';
-		for ( $i=0; $i < $cc; $i++ )
+		for ( $c=0; $c < $cc; $c++ )
 		{
-			$pal .= chr($r1) . chr($g1) . chr($b1) . chr($a1);
-			$r1 = tool::int_clamp($r1 + $sr, 0, BIT8);
-			$g1 = tool::int_clamp($g1 + $sg, 0, BIT8);
-			$b1 = tool::int_clamp($b1 + $sb, 0, BIT8);
-			$a1 = tool::int_clamp($a1 + $sa, 0, BIT8);
-		}
+			for ( $i=0; $i < 4; $i++ )
+			{
+				$p    = $sc[$i] & BIT8;
+				$pal .= chr($b);
+				$sc[$i] += $st[$i];
+			} // for ( $i=0; $i < 4; $i++ )
+		} // for ( $c=0; $c < $cc; $c++ )
 		return $pal;
 	}
 
@@ -329,10 +323,12 @@ class clutfile
 	public static function ripsrc( clutdata &$canvas, int $x, int $y, int $w, int $h ) : ?clutdata
 	{
 		// 0...w or h only
+		$x2 = $x + $w;
+		$y2 = $y + $h;
 		if ( $x < 0 )  return null;
 		if ( $y < 0 )  return null;
-		if ( ($x+$w) > $canvas->w )  return null;
-		if ( ($y+$h) > $canvas->h )  return null;
+		if ( $x2 > $canvas->w )  return null;
+		if ( $y2 > $canvas->h )  return null;
 
 		$img = new clutdata;
 		$img->x = $x;
@@ -340,14 +336,14 @@ class clutfile
 		$img->w = $w;
 		$img->h = $h;
 		$img->pal = &$canvas->pal;
+		$img->pix = '';
 
 		$byte = ( empty($img->pal) ) ? 4 : 1;
-		for ( $iy=0; $iy < $h; $iy++ )
+		for ( $cy = $y; $cy < $y2; $cy++ )
 		{
-			$sx  = ($iy * $canvas->w) + $x;
-			$sub = tool::substr($canvas->pix, $sx*$byte, $w*$byte);
-			$img->pix .= $sub;
-		} // for ( $iy=0; $iy < $h; $iy++ )
+			$cxx = ($cy * $canvas->w) + $x;
+			$img->pix .= tool::substr($canvas->pix, $cxx*$byte, $w*$byte);
+		} // for ( $cy = $y; $cy < $y2; $cy++ )
 		return $img;
 	}
 
@@ -357,145 +353,59 @@ class clutfile
 		self::clut2rgba($image );
 		if ( $image->x < 0 )  return;
 		if ( $image->y < 0 )  return;
-		if ( ($image->x + $image->w) >= $canvas->w )  return;
-		if ( ($image->y + $image->h) >= $canvas->h )  return;
+		if ( ($image->x + $image->w) > $canvas->w )  return;
+		if ( ($image->y + $image->h) > $canvas->h )  return;
 
 		// src=texture , 0...w or h only
 		$row = $image->w * 4;
 		for ( $y=0; $y < $image->h; $y++ )
 		{
 			$sub = tool::substr($image->pix, $y*$row, $row);
-			$dx  = ($image->y + $y) + $image->x;
+
+			$dy  = ($image->y + $y) * $canvas->w;
+			$dx  = $dy + $image->x;
 			tool::str_update($canvas->pix, $dx*4, $sub);
 		} // for ( $y = $image->y; $y < $y2; $y++ )
 	}
 
-	public static function drawdst( clutdata &$canvas, clutdata &$image ) : void
+	public static function hflip( clutdata &$img ) : void
 	{
-		self::clut2rgba($canvas);
-		self::clut2rgba($image );
-		$x1 = $image->x + ($canvas->w >> 1);
-		$y1 = $image->y + ($canvas->h >> 1);
-		if ( ($x1 + $image->w) >= $canvas->w )  return;
-		if ( ($y1 + $image->h) >= $canvas->h )  return;
-
-		// dst=canvas , -hw...+hw or -hh...+hh
-		$row = $image->w * 4;
-		for ( $y=0; $y < $image->h; $y++ )
-		{
-			$sub = tool::substr($image->pix, $y*$row, $row);
-			$dx  = ($y1 + $y) + $x1;
-			tool::str_update($canvas->pix, $dx*4, $sub);
-		} // for ( $y = $image->y; $y < $y2; $y++ )
-	}
-
-	public static function dst_hwhh( array &$list ) : array
-	{
-		$hw = -1;
-		$hh = -1;
-		foreach ( $list as $img )
-		{
-			$x1 = abs($img->x);
-			$y1 = abs($img->y);
-			$x2 = abs($x1 + $img->w);
-			$y2 = abs($y1 + $img->h);
-			$hw = max($hw, $x1, $x2);
-			$hh = max($hh, $h1, $h2);
-		} // foreach ( $list as $img )
-
-		if ( $hw < 0 )  return [];
-		if ( $hh < 0 )  return [];
-		return [$hw,$hh];
-	}
-
-	public static function rotate( clutdata &$img ) : void
-	{
+		// horizontal flip or flip x
 		$byte = ( empty($img->pal) ) ? 4 : 1;
 		$w = $img->w;
 		$h = $img->h;
-		$pix = '';
 
-		if ( ! $img->is_rotate )
+		$pix = '';
+		$row = $w * $byte;
+		for ( $y=0; $y < $h; $y++ )
 		{
-			$x = $img->w;
+			$sub = tool::substr($img->pix, $y*$row, $row);
+			$x = $w;
 			while ( $x > 0 )
 			{
 				$x--;
-				for ( $y=0; $y < $h; $y++ )
-				{
-					$sx = ($y * $w) + $x;
-					$sub = tool::substr($img->pix, $sx*$byte, $byte);
-					$pix .= $sub;
-				} // for ( $y=0; $y < $w; $y++ )
+				$pix .= tool::substr($sub, $x*$byte, $byte);
 			} // while ( $x > 0 )
-		}
-		else
-		{
-			for ( $x=0; $x < $w; $x++ )
-			{
-				$y = $img->h;
-				while ( $y > 0 )
-				{
-					$y--;
-					$sx = ($y * $w) + $x;
-					$sub = tool::substr($img->pix, $sx*$byte, $byte);
-					$pix .= $sub;
-				} // while ( $y > 0 )
-			} // for ( $x=0; $x < $w; $x++ )
-		}
-
-		$img->is_rotate = ! $img->is_rotate;
-		$img->w = $h;
-		$img->h = $w;
+		} // for ( $y=0; $y < $h; $y++ )
 		$img->pix = $pix;
 	}
 
-	public static function flipped( clutdata &$img, string $flip='' ) : void
+	public static function vflip( clutdata &$img ) : void
 	{
-		$f = 0;
-		switch ( $flip )
-		{
-			case  'x':
-				$f = 1;
-				$img->is_flipx = ! $img->is_flipx;
-				break;
-			case  'y':
-				$f = 2;
-				$img->is_flipy = ! $img->is_flipy;
-				break;
-			case 'xy':
-			case 'yx':
-				$f = 3;
-				$img->is_flipx = ! $img->is_flipx;
-				$img->is_flipy = ! $img->is_flipy;
-				break;
-			default:
-				return;
-		}
-
+		// vertical flip or flip y
+		// BMP pix data is vflip
 		$byte = ( empty($img->pal) ) ? 4 : 1;
 		$w = $img->w;
 		$h = $img->h;
+
 		$pix = '';
-
-		for ( $y=0; $y < $h; $y++ )
+		$row = $w * $byte;
+		$y = $h;
+		while ( $y > 0 )
 		{
-			$sy = $y;
-			if ( $f & 2 )
-				$sy = $h - 1 - $y;
-
-			for ( $x=0; $x < $w; $x++ )
-			{
-				$sx = $x;
-				if ( $f & 1 )
-					$sx = $w - 1 - $x;
-
-				$sxx = ($y * $w) + $x;
-				$sub = tool::substr($img->pix, $sxx*$byte, $byte);
-				$pix .= $sub;
-			} // for ( $x=0; $x < $w; $x++ )
-		} // for ( $y=0; $y < $h; $y++ )
-
+			$y--;
+			$pix .= tool::substr($img->pix, $y*$row, $row);
+		} // while ( $y > 0 )
 		$img->pix = $pix;
 	}
 } // class clutfile

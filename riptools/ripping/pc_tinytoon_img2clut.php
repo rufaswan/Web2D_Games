@@ -20,17 +20,19 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
-require 'common-guest.inc';
+declare( strict_types=1 );
 
-function spr_rle_palpix( $str, &$pal, $alpha )
+require 'tool.inc';
+tool::require('class-clutfile');
+
+function spr_rle_palpix( string $str, string &$pal, int $alpha ) : string
 {
 	$len = strlen($str);
 	$pix = '';
 	for ( $i=0; $i < $len; $i++ )
 	{
 		$b = ord($str[$i]);
-		$c = substr($pal, $b*4, 4);
+		$c = tool::substr($pal, $b*4, 4);
 		if ( $alpha !== -1 )
 		{
 			$a = (int)($alpha * BIT8);
@@ -41,10 +43,10 @@ function spr_rle_palpix( $str, &$pal, $alpha )
 	return $pix;
 }
 
-function spr_rle_decode( &$file, $pos, $size, &$pal )
+function spr_rle_decode( string &$file, int $pos, int $size, string &$pal ) : string
 {
 	$dec = '';
-	trace("== begin sub_408e60()\n");
+	tool::trace('== begin sub_408e60()');
 
 	while ( $size > 0 )
 	{
@@ -88,7 +90,7 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 
 
 			case 15: // 05 , duplicate
-				$prev = substr($dec, strlen($dec)-4, 4);
+				$prev = tool::substr($dec, strlen($dec)-4, 4);
 				$b1 = ord( $file[$pos+0] );
 				$b2 = ord( $file[$pos+1] );
 					$pos += 2; // lodsw
@@ -98,7 +100,7 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 				$size -= $b;
 				break;
 			case 16: // 06 , duplicate
-				$prev = substr($dec, strlen($dec)-4, 4);
+				$prev = tool::substr($dec, strlen($dec)-4, 4);
 				$b = ord( $file[$pos] );
 					$pos += 1; // lodsb
 
@@ -130,21 +132,21 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 
 
 			case 11: // 01 , copy
-				$b = substr($file, $pos, 1);
+				$b = tool::substr($file, $pos, 1);
 					$pos += 1; // movsb
 
 				$dec .= spr_rle_palpix($b, $pal, -1);
 				$size -= 1;
 				break;
 			case 12: // 02 , copy
-				$b = substr($file, $pos, 2);
+				$b = tool::substr($file, $pos, 2);
 					$pos += 2; // movsb * 2
 
 				$dec .= spr_rle_palpix($b, $pal, -1);
 				$size -= 2;
 				break;
 			case 13: // 03 , copy
-				$b = substr($file, $pos, 3);
+				$b = tool::substr($file, $pos, 3);
 					$pos += 3; // movsb * 3
 
 				$dec .= spr_rle_palpix($b, $pal, -1);
@@ -152,7 +154,7 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 				break;
 			case 10: // 00 , copy
 			default: // 0a-f5 , copy
-				$b = substr($file, $pos-1, 4);
+				$b = tool::substr($file, $pos-1, 4);
 					$pos += 3; // movsd
 
 				$dec .= spr_rle_palpix($b, $pal, -1);
@@ -161,14 +163,14 @@ function spr_rle_decode( &$file, $pos, $size, &$pal )
 		} // switch ( $bycod )
 	} // while ( $size > 0 )
 
-	trace("== end sub_408e60()\n");
+	tool::trace('== end sub_408e60()');
 	return $dec;
 }
 
-function spr_lz_decode( &$file, $pos, $size )
+function spr_lz_decode( string &$file, int $pos, int $size ) : string
 {
 	$dec = '';
-	trace("== begin sub_40ff70()\n");
+	tool::trace('== begin sub_40ff70()');
 
 	$dict = str_repeat(' ', 0x1000);
 	$doff = 0xfee;
@@ -220,108 +222,67 @@ function spr_lz_decode( &$file, $pos, $size )
 		}
 	} // while ( $size > 0 )
 
-	trace("== end sub_40ff70()\n");
+	tool::trace('== end sub_40ff70()');
 	return $dec;
 }
 //////////////////////////////
-function vflip( &$pix, $w, $h )
+function tinytoon( string $pal, string $fname ) : void
 {
-	if ( ($w*$h) > strlen($pix) )
-		return php_error('vflip() w*h > pix', $w, $h, strlen($pix));
+	tool::trace(__FUNCTION__, $fname);
 
-	$bak = $pix;
-	for ( $y=0; $y < $h; $y++ )
-	{
-		$dy  = $y * $w;
-		$rdy = ($h - 1 - $y) * $w;
-
-		$b = substr($bak, $dy, $w);
-		str_update($pix, $rdy, $b);
-	}
-	return;
-}
-
-function tinytoon( $pal, $fname )
-{
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
 
 	$ty = ord( $file[0] );
-	$w = str2int($file, 1, 2);
-	$h = str2int($file, 3, 2);
-	printf("ty %x  w %x  h %x  %s\n", $ty, $w, $h, $fname);
+	$w = tool::ordstr($file, 1, 2);
+	$h = tool::ordstr($file, 3, 2);
+	tool::trace('ty  w  h', $ty, $w, $h);
 
+	$img = new clutdata;
+	$img->w = $w;
+	$img->h = $h;
+	$img->pal = $pal;
 	switch ( $ty )
 	{
 		case 0xb1: // buster hansel  lz
-			$img = [
-				'cc'  => strlen($pal) >> 2,
-				'w'   => $w,
-				'h'   => $h,
-				'pal' => $pal,
-				'pix' => spr_lz_decode($file, 13, $w*$h),
-			];
-			vflip($img['pix'], $w, $h);
-			return save_clutfile("$fname.clut", $img);
+			$img->pix = spr_lz_decode($file, 13, $w*$h);
+			clutfile::vflip($img);
+			clutfile::save($fname, $img);
+			return;
 
 		case 0x31: // buster  raw
-			$img = [
-				'cc'  => strlen($pal) >> 2,
-				'w'   => $w,
-				'h'   => $h,
-				'pal' => $pal,
-				'pix' => substr($file, 5),
-			];
-			vflip($img['pix'], $w, $h);
-			return save_clutfile("$fname.clut", $img);
+			$img->pix = substr($file, 5);
+			clutfile::vflip($img);
+			clutfile::save($fname, $img);
+			return;
 
 		case 0xff: // hag2  lz
 			// same as 0xb1 , but with additional 12 bytes header
-			$w = str2int($file, 12+1, 2);
-			$h = str2int($file, 12+3, 2);
-			$img = [
-				'cc'  => strlen($pal) >> 2,
-				'w'   => $w,
-				'h'   => $h,
-				'pal' => $pal,
-				'pix' => spr_lz_decode($file, 12+13, $w*$h),
-			];
-			vflip($img['pix'], $w, $h);
-			return save_clutfile("$fname.clut", $img);
+			$w = tool::ordstr($file, 12+1, 2);
+			$h = tool::ordstr($file, 12+3, 2);
+			$img->w = $w;
+			$img->h = $h;
+			$img->pix = spr_lz_decode($file, 12+13, $w*$h);
+			clutfile::vflip($img->pix);
+			clutfile::save($fname, $img);
+			return;
 
 		case 0x1d: // buster hansel hag2  rle
 		case 0x57: // buster hansel hag2  rle
 		case 0x17: // buster hansel hag2  rle
 		case 0x5d: // hansel  rle
-			$pix = spr_rle_decode($file, 9, $w*$h, $pal);
-			$img = [
-				'w' => $w,
-				'h' => $h,
-			];
-
-			$clut = rgba2clut($pix);
-			if ( $clut === -1 )
-			{
-				$img['pix'] = $pix;
-				return save_clutfile("$fname.rgba", $img);
-			}
-			else
-			{
-				$img['cc' ] = strlen($clut[0]) >> 2;
-				$img['pal'] = $clut[0];
-				$img['pix'] = $clut[1];
-				return save_clutfile("$fname.clut", $img);
-			}
-			break;
+			$img->pal = '';
+			$img->pix = spr_rle_decode($file, 9, $w*$h, $pal);
+			clutfile::save($fname, $img);
+			return;
 
 		default:
-			return php_error('unknown spr type = %x', $ty);
+			tool::error('unknown spr type', $ty);
 	} // switch ( $ty )
-	return;
 }
 //////////////////////////////
 printf("%s  PALETTE/IMAGE...\n", $argv[0]);
-$pal = grayclut(0x100);
+$pal = clutfile::graypal(0x100);
 for ( $i=1; $i < $argc; $i++ )
 {
 	$fn = $argv[$i];

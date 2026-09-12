@@ -121,10 +121,10 @@ RGB for both pixels are add together. Black color rgb(0,0,0) will result no chan
 If uncheck, "Addition" can result rgb(255,255,255) easily and the whole screen become plain white color (over-exposed). For this reason, the number of SRC used will need to be under control, and SRC itself is normally close to black color or under rgb(64,64,64).
 
 .Result with incorrect "Normal" blending
-image::psx-panzer-zako06-normal.png
+image::file/psx-panzer-zako06-normal.png
 
 .Result with correct "Addition" blending
-image::psx-panzer-zako06-add.png
+image::file/psx-panzer-zako06-add.png
 
 Therefore, in order to correct export the image, you have to either
 
@@ -142,12 +142,12 @@ With transformation, the pixels are written at different position. Some are dupl
 Using QUAD file, the original SRC is preserved. It will know it is rendering a straight line because it has SRC (a straight line) for reference.
 
 .Result when directly render at 4x
-image::psx-mana-jajara-2-4.png[]
+image::file/psx-mana-jajara-2-4.png[]
 
 If you pre-rendered it first (as spritesheet) then upscale to 4x later, the original SRC is already lost. The upscale code will need to auto-detect the image for a straight line.
 
 .Result when render at 1x, but later upscale it to 4x
-image::psx-mana-jajara-2-1x4.png[]
+image::file/psx-mana-jajara-2-1x4.png[]
 
 Noticed the quality difference? The directly render at 4x is so much smoother and less blockier.
 

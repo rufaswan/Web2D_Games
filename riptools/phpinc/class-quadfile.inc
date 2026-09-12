@@ -24,6 +24,15 @@ declare(strict_types=1);
 
 tool::class('jsonpretty');
 
+class xywh
+{
+	public $x = 0;
+	public $y = 0;
+	public $w = -1;
+	public $h = -1;
+	string $order = '';
+} // class xywh
+
 class quadfile
 {
 	// barycenter series
@@ -112,30 +121,56 @@ class quadfile
 
 	//////////////////////////////
 	// xywh series , for dstquad
-	public static function xywh_quad( int $w, int $h, bool $is_rotate=false ) : array
+	public static function xywh2quad( int $w, int $h, float $x=0, float $y=0 ) : array
 	{
-		if ( ! $is_rotate )
-			$quad = [
-				0  , 0  ,
-				$w , 0  ,
-				$w , $h ,
-				0  , $h ,
-			];
-		else
-			$quad = [
-				0  , $h ,
-				0  , 0  ,
-				$w , 0  ,
-				$w , $h ,
-			];
+		$quad = [
+			$x   ,$y    , $x+$w,$y  ,
+			$x+$w,$y+$h , $x   ,$y+$h ,
+		];
 		return $quad;
 		//  normal     flipx      flipy
 		//  0,1  2,3 | 2,3  0,1 | 6,7  4,5
 		//  6,7  4,5 | 4,5  6,7 | 0,1  2,3
 	}
 
+	public static function quad2xywh( array &$quad ) : ?xywh
+	{
+		$minx = min($qiad[0], $qiad[2], $qiad[4], $qiad[6]);
+		$miny = min($qiad[1], $qiad[3], $qiad[5], $qiad[7]);
+		$maxx = max($qiad[0], $qiad[2], $qiad[4], $qiad[6]);
+		$maxy = max($qiad[1], $qiad[3], $qiad[5], $qiad[7]);
+
+		$res = new xywh;
+		$res->x = $minx;
+		$res->y = $miny;
+		$res->w = $maxx - $minx;
+		$res->h = $maxy - $miny;
+		$res->order = '';
+
+		for ( $i=0; $i < 8; $i += 2 )
+		{
+			$x = &$quad[$i+0];
+			$y = &$quad[$i+1];
+			if ( $x === $minx && $y === $miny )
+				$res->order .= '0';
+			else
+			if ( $x === $maxx && $y === $miny )
+				$res->order .= '1';
+			else
+			if ( $x === $maxx && $y === $maxy )
+				$res->order .= '3';
+			else
+			if ( $x === $minx && $y === $maxy )
+				$res->order .= '4';
+			else
+				return null;
+		} // for ( $i=0; $i < 8; $i += 2 )
+
+		return $res;
+	}
+
 	// 2x2 matrix = scale + rotate z
-	public static function xywh_mat2( array &$quad, array $m2 ) : void
+	public static function quad_mat2(  array &$quad, array $m2 ) : void
 	{
 		if ( empty($m2) || count($m2) !== 4 )
 			return;
@@ -151,7 +186,7 @@ class quadfile
 	}
 
 	// move need 3x3 matrix
-	public static function xywh_move( array &$quad, float $mx, float $my ) : void
+	public static function quad_move( array &$quad, float $mx, float $my ) : void
 	{
 		for ( $i=0; $i < 8; $i += 2 )
 		{

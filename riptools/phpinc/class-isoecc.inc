@@ -26,7 +26,7 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 declare( strict_types=1 );
 
-class ecc
+class isoecc
 {
 	private $ecc_f_lut = [];
 	private $ecc_b_lut = [];
@@ -36,9 +36,9 @@ class ecc
 	{
 		for ( $i=0; $i < 0x100; $i++ )
 		{
-			$this->ecc_f_lut[$i] = 0;
-			$this->ecc_b_lut[$i] = 0;
-			$this->edc_lut  [$i] = 0;
+			$this->ecc_f_lut[$i] = 0; // int8[]
+			$this->ecc_b_lut[$i] = 0; // int8[]
+			$this->edc_lut  [$i] = 0; // int32[]
 		} // for ( $i=0; $i < 0x100; $i++ )
 
 		// 32-bit php
@@ -52,6 +52,8 @@ class ecc
 
 		for ( $i=0; $i < 0x100; $i++ )
 		{
+			// 80 = 100 ^ 11d = 1d
+			// ff = 1fe ^ 11d = e3
 			$a = ($i & 0x80) ? 0x11d : 0;
 			$j = ($i << 1) ^ $a;
 			$this->ecc_f_lut[$i]      = $j;
@@ -61,13 +63,14 @@ class ecc
 			for ( $j=0; $j < 8; $j++ )
 			{
 				$a   = ($edc &  1) ? $mxor : 0;
-				$edc = ($edc >> 1) ^ $a;
+				$edc = ($edc >> 1) & 0x7fffffff; // prevent sign bit duplicate
+				$edc = $edc ^ $a;
 			} // for ( $j=0; $j < 8; $j++ )
 			$this->edc_lut[$i] = $edc;
 		} // for ( $i=0; $i < 0x100; $i++ )
 	}
 	//////////////////////////////
-	private function eccpq( string &$bin, int $c_major, int $c_minor, int $i_major, int $i_minor ) : string
+	private function eccpq( array &$index, string &$bin, int $c_major, int $c_minor, int $i_major, int $i_minor ) : string
 	{
 		$ecc = [];
 		$size = $c_major << 1;
@@ -86,7 +89,10 @@ class ecc
 
 			for ( $minor = 0; $minor < $c_minor; $minor++ )
 			{
-				$tmp = ord( $bin[$c_index] );
+				if ( $c_index < 4 )
+					$tmp = $index[$c_index];
+				else
+					$tmp = ord( $bin[$c_index - 4] );
 
 				$c_index += $i_minor;
 				if ( $c_index >= $c_max )
@@ -110,16 +116,23 @@ class ecc
 		return $data;
 	}
 
-	private function ecc( string &$bin ) : array
+	private function ecc( string &$bin, string $msf ) : array
 	{
+		$index = [
+			ord($msf[0]) ,
+			ord($msf[1]) ,
+			ord($msf[2]) ,
+			ord($msf[3]) ,
+		];
+
 		//   p   56*2 + q 34*2
 		// = p   ac   + q 68
 		// = pq 114
-		$p = $this->eccpq($bin, 86, 24,  2, 86);
-		$q = $this->eccpq($bin, 52, 43, 86, 88);
+		$p = $this->eccpq($index, $bin, 86, 24,  2, 86);
+		$q = $this->eccpq($index, $bin, 52, 43, 86, 88);
 
-		// p 56*18 = 810 -> 10-81c = [subhead] + data + edc
-		// q 34*2b = 8bc -> 10-8c8 = [subhead] + data + edc + ecc p
+		// p 56*18 = 810  m1/930=c-81c=81c  m2/920=[4]+0-80c=80c
+		// q 34*2b = 8bc  m1/930=c-8c8=8c8  m2/920=[4]+0-8b8=8b8
 		return array($p,$q);
 	}
 
@@ -131,10 +144,9 @@ class ecc
 		{
 			$src = ord( $bin[$i] );
 			$a   = ($edc ^ $src) & BIT8;
-			$b   = ($edc >> 8  ) & 0xffffff;
+			$b   = ($edc >> 8  ) & BIT24; // prevent sign bit duplicate
 			$edc = $b ^ $this->edc_lut[$a];
 		} // for ( $i=0; $i < $len; $i++ )
-tool::trace($edc);
 
 		$bin = '';
 		for ( $i=0; $i < 4; $i++ )
@@ -146,10 +158,9 @@ tool::trace($edc);
 		return $bin;
 	}
 	//////////////////////////////
-	// mode1/930 , ecc(msf)
+	// mode1/930
 	//   cdsync    0+  c=  c  edc  -     -
-	//   msf       c+  3=  f  edc  eccp  eccq
-	//   mode      f+  1= 10  edc  eccp  eccq
+	//   msf       c+  4= 10  edc  eccp  eccq
 	//   data     10+800=810  edc  eccp  eccq
 	//   edc     810+  4=814  =    eccp  eccq
 	//   pad     814+  8=81c       eccp  eccq
@@ -171,10 +182,12 @@ tool::trace($edc);
 		}
 
 		// calc ecc
-		$bin  = substr($bin, 12);
-		$eccp = tool::substr($bin, 0x81c-12, 0xac);
-		$eccq = tool::substr($bin, 0x8c8-12, 0x68);
-		$ecc  = $this->ecc($bin);
+		$msf  = tool::substr($bin, 12, 4);
+		$bin  = substr($bin, 16);
+
+		$eccp = tool::substr($bin, 0x81c-16, 0xac);
+		$eccq = tool::substr($bin, 0x8c8-16, 0x68);
+		$ecc  = $this->ecc($bin, $msf);
 		if ( $ecc[0] !== $eccp )
 		{
 			tool::trace('eccp not match', bin2hex($ecc[0]), bin2hex($eccp));
@@ -189,7 +202,9 @@ tool::trace($edc);
 		return tool::substr($bin, 0, 0x800);
 	}
 
-	// mode2/920 , ecc(0)
+	// mode2/920
+	//   cdsync        c      -    -     -
+	//   pad           4      -    eccp  eccq
 	//   subh      0+  8=  8  edc  eccp  eccq
 	//   data      8+800=808  edc  eccp  eccq
 	//   edc     808+  4=80c  =    eccp  eccq
@@ -207,15 +222,15 @@ tool::trace($edc);
 			tool::error('subheader not match', bin2hex($subh1), bin2hex($subh2));
 
 		// sub-header
-		//   0  interleave
-		//   1  channel number
-		//   2  submode
-		//      08  Data  Sector *
-		//      04  Audio Sector *
-		//      02  Video Sector *
-		//          * mutual exclusive
-		//   3  coding info
-		//      for submode audio sector only
+		// 0  interleave
+		// 1  channel number
+		// 2  submode
+		//    08  Data  Sector *
+		//    04  Audio Sector *
+		//    02  Video Sector *
+		//        * mutual exclusive
+		// 3  coding info
+		//    for submode audio+video sector only
 		$mode = ord( $subh1[2] );
 		if ( ($mode & 8) === 0 )
 		{
@@ -234,9 +249,11 @@ tool::trace($edc);
 		}
 
 		// calc ecc
+		$msf  = ZERO . ZERO . ZERO . ZERO;
+
 		$eccp = tool::substr($bin, 0x80c, 0xac);
 		$eccq = tool::substr($bin, 0x8b8, 0x68);
-		$ecc  = $this->ecc($bin);
+		$ecc  = $this->ecc($bin, $msf);
 		if ( $ecc[0] !== $eccp )
 		{
 			tool::trace('eccp not match', bin2hex($ecc[0]), bin2hex($eccp));

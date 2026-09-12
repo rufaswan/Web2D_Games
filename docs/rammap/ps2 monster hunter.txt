@@ -3,94 +3,94 @@
 ======================
 
 Item Struct
-	int16  Item ID
-	int16  Item count
+	00  int16  Item ID
+	02  int16  Item count
 
-Item ID
-	00       *none*
-	01-06    mixing book
-	07-14    potion
-	15-19    fluid
-	1a-20    medicine
-	21-24    amulet
-	25-2d    meat
-	2e-31    throw knife
-	32-35    throw ball
-	36-37    shit
-	38-3a    smoke
-	3b-3c    web
-	3d-3e    pit trap
-	3f-45    barrel
-	46-48    casing
-	49-67    bowgun bullet
-	68-6f    fishing bait
-	70-72    pickaxe
-	73-75    bugnet
-	76-77    bbq set
-	78       sharping stone
-	79       binocular
-	7a       mixing failed
-	7b-7f    flute
-	80       honey
-	81-8a    herb
-	8b-91    mushroom
-	92-98    fruit
-	99-a9    ore
-	aa-b3    fish
-	b4-bd    insect
-	be-c8    monster liver
-	c9-ca    essence
-	cb-d2    bone
-	d3-d4    Wyvern
-	d5-d6    Moss
-	d7-d8    Fango
-	d9-da    Kelbi
-	db-df    Ranpos
-	e0-e1    Dos Ranpos
-	e2-e3    White Ranpos
-	e4-e8    Genepos
-	e9       Dos Genepos
-	ea-ee    Ios
-	ef       Dos Ios
-	f0-fa    Strange Bird
-	fb-fd    Blue Strange Bird
-	fe-102   Rubbery/Poison Strange Bird
-	103-105  Fish Wyvern
-	106-10a  Water Wyvern
-	10b-10c  Green Water Wyvern
-	10d-113  Sand Wyvern
-	114-11c  Female Fire Dragon
-	11d-124  Sakura Female Fire Dragon
-	125-12a  Gold Female Fire Dragon
-	12b-136,13e  Fire Dragon
-	137-13d,13f-141  Azure Fire Dragon
-	142-149  Silver Fire Dragon
-	14a-150  furufuru/Albino
-	151-155  Rock Dragon
-	156-15d  Armor Dragon
-	15e-161  Black Armor Dragon
-	162-16b  Horned Dragon
-	16c-16f  Black Horned Dragon
-	170-175  Queen Bug/Land Custa
-	176-17b  Kandaros
-	17c-17e  ebi
-	17f-183  One Horned Dragon
-	184-186  White One Horned Dragon
-	187-18c  Kirin
-	18d-198  Lao Shan Long
-	199-19e  Azure Lao Shan Long
-	19f-1b6  Black Dragon
-	1b7-1cb  ticket
-	1cc-1d7  broken item
-	1d8-1d9  magazine     (+MENU)
-	1da-1f7  monster info (+MENU)
-	1f8-1f9  egg
-	1fa-201  item (supply box)
+	Item ID
+		00       *none*
+		01-06    mixing book
+		07-14    potion
+		15-19    fluid
+		1a-20    medicine
+		21-24    amulet
+		25-2d    meat
+		2e-31    throw knife
+		32-35    throw ball
+		36-37    shit
+		38-3a    smoke
+		3b-3c    web
+		3d-3e    pit trap
+		3f-45    barrel
+		46-48    casing
+		49-67    bowgun bullet
+		68-6f    fishing bait
+		70-72    pickaxe
+		73-75    bugnet
+		76-77    bbq set
+		78       sharping stone
+		79       binocular
+		7a       mixing failed
+		7b-7f    flute
+		80       honey
+		81-8a    herb
+		8b-91    mushroom
+		92-98    fruit
+		99-a9    ore
+		aa-b3    fish
+		b4-bd    insect
+		be-c8    monster liver
+		c9-ca    essence
+		cb-d2    bone
+		d3-d4    Wyvern
+		d5-d6    Moss
+		d7-d8    Fango
+		d9-da    Kelbi
+		db-df    Ranpos
+		e0-e1    Dos Ranpos
+		e2-e3    White Ranpos
+		e4-e8    Genepos
+		e9       Dos Genepos
+		ea-ee    Ios
+		ef       Dos Ios
+		f0-fa    Strange Bird
+		fb-fd    Blue Strange Bird
+		fe-102   Rubbery/Poison Strange Bird
+		103-105  Fish Wyvern
+		106-10a  Water Wyvern
+		10b-10c  Green Water Wyvern
+		10d-113  Sand Wyvern
+		114-11c  Female Fire Dragon
+		11d-124  Sakura Female Fire Dragon
+		125-12a  Gold Female Fire Dragon
+		12b-136,13e  Fire Dragon
+		137-13d,13f-141  Azure Fire Dragon
+		142-149  Silver Fire Dragon
+		14a-150  furufuru/Albino
+		151-155  Rock Dragon
+		156-15d  Armor Dragon
+		15e-161  Black Armor Dragon
+		162-16b  Horned Dragon
+		16c-16f  Black Horned Dragon
+		170-175  Queen Bug/Land Custa
+		176-17b  Kandaros
+		17c-17e  ebi
+		17f-183  One Horned Dragon
+		184-186  White One Horned Dragon
+		187-18c  Kirin
+		18d-198  Lao Shan Long
+		199-19e  Azure Lao Shan Long
+		19f-1b6  Black Dragon
+		1b7-1cb  ticket
+		1cc-1d7  broken item
+		1d8-1d9  magazine     (+MENU)
+		1da-1f7  monster info (+MENU)
+		1f8-1f9  egg
+		1fa-201  item (supply box)
 
-	8b   Special Mushroom
-	104  Piscine Livers
-	203  Wyvern Egg    (useless)
-	204  Herbivore Egg (useless)
+		8b   Special Mushroom
+		104  Piscine Livers
+		203  Wyvern Egg    (useless)
+		204  Herbivore Egg (useless)
 
 
 Equipment Struct
@@ -149,6 +149,7 @@ Equipment Struct
 		1 6 73 1 0 0  イシリアルエッジ
 		1 6 77 1 0 0  ドゥーム
 		1 6 7b 1 0 0  双雷剣キリン
+
 	Weapon Gunner sub-id
 		01-0c  1c-3c  Light Bowgun
 		0d-17  3d-4c  Heavy Bowgun

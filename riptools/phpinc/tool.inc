@@ -454,14 +454,14 @@ req_ok:
 		return self::ord($sub, $sign);
 	}
 
-	public static function sign( int &$int, int $bit ) : void
+	public static function sign( int $int, int $bit ) : int
 	{
 		if ( $bit < 0 )
-			return;
+			return $int;
 		$sra = (PHP_INT_SIZE * 8) - $bit;
 		if ( $sra < 0 )
-			return;
-		$int = ($int << $sra) >> $sra;
+			return $int;
+		return ($int << $sra) >> $sra;
 	}
 
 	public static function chr( float $int, int $byte=4 ) : string

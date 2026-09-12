@@ -38,20 +38,20 @@ function suigai_decode( string &$file ) : void
 	$pos = 12;
 
 	// 80051e64 - 80051fb8
-	$b1  = ord( $file[$pos] ); // a3
+	$b1 = ord( $file[$pos] ); // a3
 		$pos++;
-	//trace("%8x 51e64 START\n", $pos);
+	//tool::trace('51e64 START', $pos);
 	while ( $pos < $len )
 	{
-		$b2 = ord( $file[$pos] ); // t2
-			$pos++;
-
 		$dict = $new_dict;
 		$dpos = 0;
 
+		$b2 = ord( $file[$pos] ); // t2
+			$pos++;
+
 		// init dictionary
 		// 80051e8c - 80051f2c
-		//trace("%8x 51e8c init dict\n", $pos);
+		//tool::trace('51e8c init dict', $pos);
 		while (1)
 		{
 			$cnt = 0;
@@ -64,11 +64,11 @@ function suigai_decode( string &$file ) : void
 				break;
 
 			$cnt++;
-			//trace("%8x 51ee0 , cnt %x\n", $pos, $cnt-1);
+			//tool::trace('51ee0  cnt', $pos, $cnt-1);
 			while ( $cnt > 0 )
 			{
 				$dict[ $dpos+0x200 ] = chr($b2);
-				if ( $b2 == $dpos )
+				if ( $b2 === $dpos )
 				{
 					$b2 = ord( $file[$pos] );
 						$pos++;
@@ -98,10 +98,12 @@ function suigai_decode( string &$file ) : void
 
 		$cnt |= $b1; // t3
 		$dp  = 0; // a3
+		if ( $cnt === 0 )
+			break;
 
 		// decompression
 		// 80051f50 - 80051fa8
-		//trace("%8x 51f50 , cnt %x\n", $pos, $cnt);
+		//tool::trace('51f50  cnt', $pos, $cnt);
 		while ( $cnt > 0 )
 		{
 			$dpos = $b2;
@@ -110,7 +112,7 @@ function suigai_decode( string &$file ) : void
 
 			// expansion
 			// 80051f60 - 80051fa0
-			//trace("%8x 51f60 expansion\n", $pos);
+			//tool::trace('51f60 expansion', $pos);
 			while (1)
 			{
 				$db1 = ord( $dict[ $dpos+0x200 ] ); // t0

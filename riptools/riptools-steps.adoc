@@ -49,7 +49,7 @@ Some `riptools` requires JSON decode (.QUAD file), or need DEFLATE decode (.PNG 
 === Finalizing
 It will look like this:
 
-image::psxtools-setup.png[]
+image::file/psxtools-setup.png[]
 
 `game_file.bin` is the original game file you want to decode.
 
@@ -70,7 +70,7 @@ Sprites rip in .QUAD format can be open with link:quad_player_mobile/player-mobi
 
 Make sure your Xenogears.bin doesn't have any sector errors. Then run this to convert to ISO/2048 then extract all the files hidden within.
 ....
-php  psxtools/php_bin2iso.php  Xenogears.bin
+php  phpbash/psx_bin2iso.php  Xenogears.bin
 php  rip-squaresoft/xeno_cdrom_img.php  Xenogears.bin.iso
 ....
 

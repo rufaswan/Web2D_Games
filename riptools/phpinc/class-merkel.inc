@@ -22,6 +22,8 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 declare(strict_types=1);
 
+tool::class('bigint');
+
 // Pseudocode                          strlen  uchar  hash
 // https://en.wikipedia.org/wiki/MD5       32     16  uint32_le[4]
 // https://en.wikipedia.org/wiki/SHA-1     40     20  uint32_be[5]

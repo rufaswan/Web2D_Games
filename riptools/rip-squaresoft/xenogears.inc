@@ -225,6 +225,14 @@ function detect_ext( string &$sub ) : string
 		return $exts[$b];
 	}
 
+	// TEST : if it is all zero padding file
+	$pad = trim($sub, ZERO);
+	if ( empty($pad) )
+	{
+		$sub = ZERO;
+		return '0';
+	}
+
 	// TEST : if it is a [PAK], magic is file count
 	$b = tool::ord($mgc);
 	if ( ($b*4+8) > $len )

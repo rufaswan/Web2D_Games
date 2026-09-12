@@ -20,9 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
+declare( strict_types=1 );
 
-function getbits( &$bits, &$file, &$pos, $c )
+require 'tool.inc';
+
+function getbits( array &$bits, string &$file, int &$pos, int $c ) : int
 {
 	while ( count($bits) < $c )
 	{
@@ -45,10 +47,10 @@ function getbits( &$bits, &$file, &$pos, $c )
 	return $int;
 }
 
-function wav_decode( &$wav, $size )
+function wav_decode( string &$wav, int $size ) : void
 {
 	$dec = '';
-	trace("== begin sub_414c90()\n");
+	tool::trace('== begin sub_414c90()');
 
 	$bits = [];
 
@@ -136,36 +138,35 @@ function wav_decode( &$wav, $size )
 		}
 	} // while ( $size > 0 )
 
-	trace("== end sub_414c90()\n");
+	tool::trace('== end sub_414c90()');
 	$wav = $dec;
-	return;
 }
 //////////////////////////////
-function save_wavefile( $fname, &$wave )
+function save_wavefile( string $fname, string &$wave ) : void
 {
 	$riff = str_repeat(ZERO, 0x2c);
 	$len  = strlen($wave);
 
-	str_update($riff, 0, 'RIFF');
-	str_update($riff, 4, chrint($len + 0x24, 4));
-	str_update($riff, 8, 'WAVEfmt ');
+	tool::str_update($riff, 0, 'RIFF');
+	tool::str_update($riff, 4, tool::chr($len + 0x24, 4));
+	tool::str_update($riff, 8, 'WAVEfmt ');
 
 	$riff[0x10] = "\x10"; // length of format data
 	$riff[0x14] = "\x01"; // type=pcm
 	$riff[0x16] = "\x01"; // ac=1
-	str_update($riff, 0x18, chrint(22050, 4)); // ar=22050
-	str_update($riff, 0x1c, chrint(22050, 4)); // 22050*1*1
+	tool::str_update($riff, 0x18, tool::chr(22050,4)); // ar=22050
+	tool::str_update($riff, 0x1c, tool::chr(22050,4)); // 22050*1*1
 
 	$riff[0x20] = "\x01"; // 8 bit mono
 	$riff[0x22] = "\x08"; // bit/sample
-	str_update($riff, 0x24, 'data');
-	str_update($riff, 0x28, chrint($len, 4));
+	tool::str_update($riff, 0x24, 'data');
+	tool::str_update($riff, 0x28, tool::chr($len, 4));
 
-	save_file($fname, $riff.$wave);
-	return;
+	$bin = $riff . $wave;
+	tool::save($fname, $bin);
 }
 
-function tinytoon( $fname )
+function tinytoon( string $fname ) : void
 {
 	$file = file_get_contents($fname);
 	if ( empty($file) )  return;
@@ -174,8 +175,8 @@ function tinytoon( $fname )
 	if ( substr($file,4,4) === substr($file,8,4) )
 		$pos = 0x3e;
 
-	$sz = str2int($file, $pos + 0, 4);
-	$b2 = str2int($file, $pos + 4, 1);
+	$sz = tool::ordstr($file, $pos + 0, 4);
+	$b2 = tool::ordstr($file, $pos + 4, 1);
 	if ( $b2 !== 0x10 )
 		return;
 
@@ -185,7 +186,6 @@ function tinytoon( $fname )
 		wav_decode($wav, $sz);
 
 	save_wavefile("$fname.wav", $wav);
-	return;
 }
 
 for ( $i=1; $i < $argc; $i++ )

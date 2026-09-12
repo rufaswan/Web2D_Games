@@ -20,9 +20,11 @@ You should have received a copy of the GNU General Public License
 along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
 [/license]
  */
-require 'common.inc';
-require 'common-iso.inc';
-require 'xeno.inc';
+declare( strict_types=1 );
+
+require 'tool.inc';
+
+$gp_fp = 0;
 
 function xeno_isofile( &$list, $lba, $dir )
 {
@@ -34,15 +36,16 @@ function xeno_isofile( &$list, $lba, $dir )
 	return -1;
 }
 
-function ripxeno( $fp, &$list, &$sub, &$pos, &$id, $cnt, $entsiz, $root, $dir )
+function ripxeno( array &$list, string &$sub, int &$pos, int &$id, int $cnt, int $entsiz, string $root, string $dir ) : string
 {
 	$func = __FUNCTION__;
+	global $gp_fp;
 
 	$txt = '';
 	while ( $cnt > 0 )
 	{
-		$lba = str2int($sub, $pos + 0         , 3, true);
-		$siz = str2int($sub, $pos + $entsiz[0], 4, true);
+		$lba = tool::ordstr($sub, $pos + 0         , 3, true);
+		$siz = tool::ordstr($sub, $pos + $entsiz[0], 4, true);
 
 		$pos += $entsiz[1];
 		$id++;
@@ -57,7 +60,7 @@ function ripxeno( $fp, &$list, &$sub, &$pos, &$id, $cnt, $entsiz, $root, $dir )
 		if ( $siz < 0 )
 		{
 			$fn = sprintf('%s/%04d', $dir, $id-1);
-			$txt .= $func($fp, $list, $sub, $pos, $id, -$siz, $entsiz, $root, $fn);
+			$txt .= $func($list, $sub, $pos, $id, -$siz, $entsiz, $root, $fn);
 			continue;
 		}
 
@@ -73,12 +76,12 @@ function ripxeno( $fp, &$list, &$sub, &$pos, &$id, $cnt, $entsiz, $root, $dir )
 		echo $b1;
 		$txt .= $b1;
 
-		save_file($fn, $s);
+		tool::save($fn, $s);
 	} // while ( $cnt > 0 )
 	return $txt;
 }
 
-function xeno_exe( &$list )
+function xeno_exe( array &$list ) : array
 {
 	foreach ( $list as $f )
 	{
@@ -94,7 +97,7 @@ function xeno_exe( &$list )
 			// JP/chinese hack by Agemo, bluerabit, focus, wooddoo
 			//   ERROR : custom code in LBA area
 			case '/omega___.__':
-				return -1;
+				return [];
 
 			// DEMOS
 			case '/slps_012.35': // JP demo from Fushigi no Data Disc
@@ -103,7 +106,7 @@ function xeno_exe( &$list )
 					if ( $exe['file'] === '/x.exe' )
 						return [$exe, 4, 8];
 				}
-				return -1;
+				return [];
 
 			case '/papx_900.22': // JP demo from Yoi Ko to Yoi Otona no. PlayStation Taikenban Vol.1
 				foreach ( $list as $exe )
@@ -111,31 +114,32 @@ function xeno_exe( &$list )
 					if ( $exe['file'] === '/psx_cd.exe' )
 						return [$exe, 4, 8];
 				}
-				return -1;
+				return [];
 
 			case '/slus_900.28': // US demo from Squaresoft on PlayStation 1998 Collector's CD Vol.1
 				return [$f, 3, 7];
 		} // switch ( $f['file'] )
 	}
-	return -1;
+	return [];
 }
 
-function xeno( $fname )
+function xeno( string $fname ) : void
 {
-	$fp = fopen_file($fname);
-	if ( ! $fp )  return;
+	global $gp_fp;
+	$gp_fp = fopen($fname, 'rb');
+	if ( ! $gp_fp )  return;
 
-	$list = lsiso_r($fp);
+	$list = lsiso_r();
 	if ( empty($list) )  return;
 
 	$dir = str_replace('.', '_', $fname);
 
 	$exe = xeno_exe($list);
-	if ( $exe === -1 )
+	if ( empty($exe) )
 		return;
 
 	$boot = fp2str($fp, 0, 0x8000);
-	save_file("$dir/__CDXA__/boot.bin", $boot);
+	tool::save("$dir/.cdxa/boot.bin", $boot);
 
 
 	$txt  = sprintf("FILE = %s\n", $exe[0]['file']);
@@ -148,10 +152,7 @@ function xeno( $fname )
 	$txt .= ripxeno($fp, $list, $sub, $pos, $id, 99999, [$exe[1],$exe[2]], $dir, 'cdrom');
 
 	$txt = str_replace($dir, '', $txt);
-	save_file("$dir/__CDXA__/patch.txt", $txt);
-
-	fclose($fp);
-	return;
+	tool::save("$dir/.cdxa/patch.txt", $txt);
 }
 
 for ( $i=1; $i < $argc; $i++ )

@@ -61,7 +61,55 @@ function detect_tag( string &$file ) : string
 	return '';
 }
 
-function vanilla( string $fname ) : void
+function addinfo( array &$info, int $sid, int $bid, int $val ) : void
+{
+	// [
+	//   s0 : [
+	//     0 : 38 ba
+	//     1 : 00
+	//     2 : 00
+	//     3 : 00
+	//   ] ,
+	//   s1 : [
+	//     ...
+	//   ]
+	// ]
+	while ( ! isset( $info[$sid] ) )
+		$info[] = [];
+	while ( ! isset( $info[$sid][$bid] ) )
+		$info[$sid][] = [];
+	if ( isset( $info[$sid][$bid][$val] ) )
+		return;
+
+	$info[$sid][$bid][$val] = 1;
+	ksort($info[$sid][$bid]);
+}
+
+function dumpinfo( array &$info, string $ent ) : void
+{
+	$txt = '';
+	foreach ( $info as $sid => $sv )
+	{
+		foreach ( $sv as $bid => $bv )
+		{
+			$txt .= sprintf('s%x[%2x] = ', $sid, $bid);
+			if ( count($bv) === 0x100 )
+				$txt .= '[00-ff]';
+			else
+			{
+				foreach ( $bv as $bvk => $bvv )
+					$txt .= sprintf('%x ', $bvk);
+			}
+			$txt .= "\n";
+		} // foreach ( $row as $rk => $rv )
+
+		$txt .= "\n";
+	} // foreach ( $info as $ik => $iv )
+
+	tool::save($fname.'.txt', $txt);
+}
+//////////////////////////////
+function mbsinfo( array &$info, string $fname ) : void
 {
 	tool::trace(__FUNCTION__, $fname);
 	$file = file_get_contents($fname);
@@ -75,9 +123,8 @@ function vanilla( string $fname ) : void
 		return;
 	$mbs = &$gp_data[$tag];
 
-	global $gp_tag;
-	$gp_tag[$tag] = 1;
-	if ( count($gp_tag) > 1 )
+	$info['tag'][$tag] = 1;
+	if ( count($info['tag']) > 1 )
 	{
 		tool::warning('cannot analyze mbs from 2 different ver');
 		return;
@@ -86,24 +133,12 @@ function vanilla( string $fname ) : void
 	global $gp_big;
 	$gp_big = $mbs['bigend'];
 
-	$txt = '';
 	foreach ( $mbs['sect'] as $sk => $sv )
 	{
 		$pos = van_int($file, $sv['p'] , 4);
 		$cnt = van_int($file, $sv['c'][0], $sv['c'][1]);
 		if ( $cnt < 1 )
 			continue;
-
-		// get a list of possible value for each byte on each row
-		// row = [
-		//   0 : 38 ba
-		//   1 : 00
-		//   2 : 00
-		//   3 : 00
-		// ]
-		$row = [];
-		for ( $i=0; $i < $sv['k']; $i++ )
-			$row[$i] = [];
 
 		for ( $c=0; $c < $cnt; $c++ )
 		{
@@ -112,29 +147,36 @@ function vanilla( string $fname ) : void
 			for ( $i=0; $i < $sv['k']; $i++ )
 			{
 				$b = ord($sub[$i]);
-				$row[$i][$b] = 1;
+				addinfo($info['info'], $sk, $i, $b);
 			} // for ( $i=0; $i < $sv['k']; $i++ )
 		} // for ( $c=0; $c < $cnt; $c++ )
 
-		foreach ( $row as $rk => $rv )
-		{
-			$txt .= sprintf('s%x[%2x] = ', $sk, $rk);
-			if ( count($rv) === 0x100 )
-				$txt .= '[00-ff]';
-			else
-			{
-				ksort($rv);
-				foreach ( $rv as $rvk => $rvv )
-					$txt .= sprintf('%x ', $rvk);
-			}
-			$txt .= "\n";
-		} // foreach ( $row as $rk => $rv )
-
-		$txt .= "\n";
 	} // foreach ( $mbs['sect'] as $sk => $sv )
-
-	tool::save($fname.'.txt', $txt);
 }
 
-$gp_tag = [];
+function vanilla( string $ent ) : void
+{
+	$info = [
+		'tag'  => [],
+		'info' => [],
+	];
+	if ( is_file($ent) )
+	{
+		mbsinfo($info, $ent);
+		dumpinfo($info['info'], $ent);
+		return;
+	}
+
+	if ( is_dir($ent) )
+	{
+		$list = [];
+		tool::scan($list, $ent);
+		foreach ( $list as $fn )
+			mbsinfo($info, $fn);
+
+		dumpinfo($info['info'], $ent);
+		return;
+	}
+}
+
 tool::argv_callback($argv, 'vanilla');
