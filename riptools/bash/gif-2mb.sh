@@ -1,5 +1,6 @@
 #!/bin/bash
 [ $(which ffprobe) ] || exit
+[ $(which oggenc ) ] || exit
 renice   --priority 19  --pid $$
 taskset  --pid  --cpu-list 0  $$
 
@@ -23,28 +24,29 @@ function optgif {
 			-v  0    \
 			-i  "$1" \
 			-vf "scale=\
-					'if(gt(iw,ih),-1,if(gt(iw,$scale),$scale,-1))'\
-					:'if(gt(ih,iw),-1,if(gt(ih,$scale),$scale,-1))'\
-					:flags=lanczos,\
-				split[s0][s1];\
-					[s0]palettegen=\
-						stats_mode=full\
-						:max_colors=15\
-						:reserve_transparent=1\
-						:transparency_color=magenta[p];\
-					[s1][p]paletteuse=dither=none\
-						:diff_mode=rectangle,\
-				fps=10" \
+					'if(gt(iw,ih),-2,if(gt(iw,$scale),$scale,-2))'\
+					:'if(gt(ih,iw),-2,if(gt(ih,$scale),$scale,-2))',\
+				fps=10,\
+				split[v0][v1];\
+				[v0]palettegen=\
+					stats_mode=full\
+					:max_colors=15\
+					:reserve_transparent=1\
+					:transparency_color=magenta[p];\
+				[v1][p]paletteuse=\
+					dither=none\
+					:diff_mode=rectangle" \
 			-map_metadata -1 \
 			-map_chapters -1 \
 			-fflags +bitexact -bitexact \
 			$TMP_GIF
 
 		local sz=$(wc -c < $TMP_GIF)
-		if (( $sz < $MAX_10_GIF )); then
+		if (( $sz < $MAX_10_GIF && $sz > 1 )); then
 			mv -vf  $TMP_GIF  "$1".gif
 			return
 		fi
+		echo "[>2mb] $sz"
 
 		# scale  640 600 560 520 480 440 400 360 320 280 240 200 160 120 80 40 0
 		let scale-=40

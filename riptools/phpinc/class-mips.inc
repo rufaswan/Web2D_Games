@@ -22,6 +22,10 @@ along with Web2D Games.  If not, see <http://www.gnu.org/licenses/>.
  */
 declare(strict_types=1);
 
+define('BIT5' , (1 <<  5)-1);
+define('BIT6' , (1 <<  6)-1);
+define('BIT10', (1 << 10)-1);
+
 class mips_asm
 {
 	public $reg  = <<<_REG
@@ -356,16 +360,16 @@ _OPCODE;
 		$upper = (ord($s[0]) << 8) | ord($s[1]);
 		$lower = (ord($s[2]) << 8) | ord($s[3]);
 
-		$op = ($upper >> 10) & 0x3f;
+		$op = ($upper >> 10) & BIT6;
 		if ( $op === 0 )
 		{
 			$asm = [
 				$op,
-				($upper >>  5) & 0x1f, // rs
-				($upper >>  0) & 0x1f, // rt
-				($lower >> 11) & 0x1f, // rd
-				($lower >>  6) & 0x1f, // sa
-				($lower >>  0) & 0x3f, // func
+				($upper >>  5) & BIT5, // rs
+				($upper >>  0) & BIT5, // rt
+				($lower >> 11) & BIT5, // rd
+				($lower >>  6) & BIT5, // sa
+				($lower >>  0) & BIT6, // func
 			];
 			$this->asm_dec($asm);
 			return $asm;
@@ -374,15 +378,15 @@ _OPCODE;
 		{
 			$asm = [
 				$op,
-				(($upper & 0x3ff) << 16) | $lower, // imm
+				(($upper & BIT10) << 16) | $lower, // imm
 			];
 			$this->asm_dec($asm);
 			return $asm;
 		}
 		$asm = [
 			$op,
-			($upper >> 5) & 0x1f, // rs
-			($upper >> 0) & 0x1f, // rt
+			($upper >> 5) & BIT5, // rs
+			($upper >> 0) & BIT5, // rt
 			$lower, // imm
 		];
 		$this->asm_dec($asm);
@@ -523,14 +527,14 @@ _OPCODE;
 		{
 			$upper |= ($asm[0] << 10); // op
 			$upper |= ($asm[1] >> 16); // imm
-			$lower = $asm[1] & 0xffff; // imm
+			$lower = $asm[1] & BIT16; // imm
 		}
 
 		$op = [
 			$upper >> 8,
-			$upper & 0xff,
+			$upper & BIT8,
 			$lower >> 8,
-			$lower & 0xff,
+			$lower & BIT8,
 		];
 		if ( $le )
 			return chr($op[3]) . chr($op[2]) . chr($op[1]) . chr($op[0]);

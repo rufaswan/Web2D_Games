@@ -116,6 +116,24 @@ class isoecc
 		return $data;
 	}
 
+	private function eccp( array &$index, string &$bin ) : string
+	{
+		// p 56*18 = 810
+		// m1/930=    c-81c=81c
+		// m2/920=[4]+0-80c=80c
+		$p = $this->eccpq($index, $bin, 86, 24,  2, 86);
+		return $p;
+	}
+
+	private function eccq( array &$index, string &$bin ) : string
+	{
+		// q 34*2b = 8bc
+		// m1/930=    c-8c8=8c8
+		// m2/920=[4]+0-8b8=8b8
+		$q = $this->eccpq($index, $bin, 52, 43, 86, 88);
+		return $q;
+	}
+
 	private function ecc( string &$bin, string $msf ) : array
 	{
 		$index = [
@@ -128,11 +146,8 @@ class isoecc
 		//   p   56*2 + q 34*2
 		// = p   ac   + q 68
 		// = pq 114
-		$p = $this->eccpq($index, $bin, 86, 24,  2, 86);
-		$q = $this->eccpq($index, $bin, 52, 43, 86, 88);
-
-		// p 56*18 = 810  m1/930=c-81c=81c  m2/920=[4]+0-80c=80c
-		// q 34*2b = 8bc  m1/930=c-8c8=8c8  m2/920=[4]+0-8b8=8b8
+		$p = $this->eccp($index, $bin);
+		$q = $this->eccq($index, $bin);
 		return array($p,$q);
 	}
 
