@@ -60,8 +60,7 @@ while [ "$1" ]; do
 			setsize $(${ffprobe[@]}  "$t1")
 			echo "[$#] [mp4] s=$size  af=$af  srt=$srt"
 
-			ffmpeg -y           \
-				-v 0            \
+			ffmpeg -y  -v 0     \
 				-i "$t1"        \
 				$srt            \
 				-s $size        \

@@ -213,3 +213,244 @@ Offline Chart
 - Clear all 5 Star Quest -> Urgent Quest (6 Star) = BOSS Monoblos
 - unlock GALLERY End Credits
 - buy Magazine 2 for 100,000 (+1 ITEM BOX page)
+
+==========================
+== Monster Hunter 2 DOS ==
+==========================
+
+struct=4 Item
+	00  int16  Item ID
+	02  int16  Item count
+
+	Item ID
+		00  *none*
+		01-06  book 1-6
+		07-22  potion
+			17  tracking potion
+			1c  ancient potion (max=1)
+		23-26  amulet (atk+ def+)
+		27-45  trap
+			28-38  meat
+			39-3f  fish
+			40-45  throwable
+			46-49  ball
+			4a-50  orb
+			51-57  pit trap
+		58-62  barrel
+		63-86  bullet crossbow
+		87-8d  bottle bow
+		8e-9b  tools
+			8e-95  fishing bait
+			96-98  pickaxe
+			99-9b  bug net
+		9c-ab  grill set
+		ac-ae  sharp stone
+		af-b3  horn
+		b4-c0  grass
+		c1-cb  mushroom
+		cc-d3  fruit
+		d4-d5  shell
+		d6-e4  mining
+		ea-fe  fishing
+		ff-10c  insect
+		10d-12d  food
+		12e-25c  monster parts
+			12e-137  bag
+			138-141  bones
+			142-145  wyvern
+			146-14a  stone
+			14b-14c  moss
+			14d-150  frango
+			151-152  kelbi
+			153-154  gaoshika
+			155-15e  raptor
+			15f-164  desert raptor
+			165-16a  swamp raptor
+			16b-175  strange bird
+			176-17a  swamp strange bird
+			17b-187  fish dragon
+			188-18f  female fire wyvern
+			190-193  sakura fire wyvern
+			194-195  gold fire wyvern
+			196-1a0  fire wyvern
+			1a1-1a6  blue fire wyvern
+			1a7-1ab  silver fire wyvern
+			1ac-1b1  albino
+			1b2-1b4  rock dragon
+			1b5-1b8  armor dragon
+			1b9-1bb  black armor dragon
+			1bc-1c3  diablos/horn dragon
+			1c4-1c8  black diablos/horn dragon
+			1c9-1d2  queen bee
+			1d3-1d5  lobster
+			1d6-1d9  monoblos/one horn dragon
+			1da-1dc  white monoblos/one horn dragon
+			1dd-1e2  kirin
+			1e3-1ea  lao shan long
+			1eb-1f4  black dragon
+			1f5-1fa  founder dragon
+			1fb-201  snow lion
+			202-208  pink fur
+			209-20e  gold lion
+			20f-216  shield crab
+			217-21e  scythe crab
+			21f-223  rock crab
+			224-22c  steel dragon
+			22d-22f  *rusted*
+			230-238  kasumi dragon
+			239-23e  flame dragon
+			23f-244  flame queen dragon
+			245-24b  flame king dragon
+			24c-251  floating hill dragon
+			252-255  snake dragon
+			256-25c  black wolf bird
+		25d-262  broken weapon
+		263-26c  rusted weapon *identify*
+		26d-28e  magazine (+item box, +monster info)
+		28f-2a0  quest-only item
+		2a1-2bc  arena
+		2bd-2c2  music book
+		2c3-2cf  coin
+		2d0-2e0  secret
+		2e1-2f6  ticket
+		2f7-319  mushroom pot
+		31a-398  jewel
+			31a-31d  material
+			342-34d,378-37d  *gunner*
+			+5
+				331,373,38e  Attack     (+10 +15 +25)
+				333,374,38f  Defend     (-20 -15 -10 +10 +15 +20)
+				355,383,392  All Resist (-20 -15 -10 +10 +15 +20)
+				366,38d,398  Tracking   (+10 +15)
+			+4
+				329,36e  Heat           (-20 -10 +10 +20)
+				32a,36f  Cold           (-20 -10 +10 +20)
+				351,391  Roar           (+10 +15)
+				354,382  Carry          (+10) - egg quest
+				35d,38a  Speed Gather   (+10)
+			+3
+				322,36b,36c  Dizzy      (-10 +10 +15)
+				33c,376  Mastery        (+10 +15 +25)
+		399+  *invalid*
+
+	red - story quest (no time limit)
+	+forest
+	1 chief    c4*5  14d*1
+	2 mix     211*1   b6*5   d6*3
+	3 chief   15a*3  14f*1
+	+desert/swamp
+	4 chief   163*3  172*1   be*5
+	5 armor    d8*20  d9*16 169*2
+	6 boat    212*2  176*3  17d*1
+	7 travel  169*1  165*1
+	8 boat    2e2*6
+	9 armor    da*5  140*15 16c*5
+	+mine - any pickaxe
+	10 armor   e4*10 17f*1  15e*2
+	11 boat   13a*4  139*6   d8*20
+	+snow/volcano
+	12 cat    1ac*2  154*3  115*3
+	13 boat   134*3  135*2  21c*1
+	14 armor  1b2*3   d6*25  e1*1
+	15 armor  210*1  1b6*2
+	16 chief  1bc*1  1b2*3  110*2
+	17 lady   2db*1   17*1
+	+tower - final
+	18 boat   2e1*3
+
+	mix only
+	2d8 = trade + 226
+	1 * 2db = 2d8 + 2d9 + 2da
+	3 * 2e1 = 1fe + 200
+	6 * 2e2 = 13a/141 + 202
+
+struct=c Equipment
+	00  =01
+	01  int8  type
+		0  Armor Leg
+		1
+		2  Armor Head
+		3  Armor Body
+		4  Armor Arm
+		5  Armor Wrist
+		6  Weapon Hunter
+		7  Weapon Gunner
+	02  int16  sub-id
+	04  int8   level (00=lv 1)
+		gunner level (04=lv 5 max)
+		armor  level (06=lv 7 max)
+	05
+	06  int16  jewel 1 (item id)
+	08  int16  jewel 2 (item id)
+	0a  int16  jewel 3 (item id)
+
+	1 6  61  8a  9a,9b  bc  c9-cb  d7  db  de  e4  e6
+		101,102  105  118  11e,11f  125  12a  12f
+		139  13c,13d  142  147,148  14e,14f
+		158  15a  15d  164-166  169  16d  178  17c
+		180  184-187  18d  190,191  196  199,19a  19d,19e
+		1a3-1a6  1aa  1ad,1ae  1b1  1b8  1bc-1be
+		1c0,1c1  1c5  1cb,1cc  1d1-1d3  1d6  1d9  1db,1dc  1de
+		1e0-1e3  [1e6+]
+	1 7  1a,1b  1f  20  22-25  28,29  2d  31  34  36  39,3a  3c  3f
+		40  44-47  49,4a  4d  56  58-5a  5e,5f  65  67  6a
+		77  7a-7c  7f  [80+]
+
+	1 2  47,48  77-80  9f,a0  b1-b6  d1-e2  fc  [fd+]
+	1 3  42,43  75-7e  9e,9f  b0-b5  d0-e1  f2  [f3+]
+	1 4  40,41  73-7c  9c,9d  ae-b3  ce-df  ed  [ee+]
+	1 5  40,41  71-7a  9a,9b  aa-af  ca-db  ec  [ed+]
+	1 0  40,41  70-79  98,99  aa-af  ca-db  eb  [ec+]
+
+	total equipments (max = 4 * 100)
+	= 82 + 40 + (2+10+2+6+18+1)*5
+	= 122 + 39*5
+	= 317
+
+	female only
+		4 Helper   [3d,3a,38,36,36]
+		4 Healer   [3e,3b,39,37,37]
+		6 Helper U [75,73,71,6f,6e]
+		6 Healer U [76,74,72,70,6f]
+		6 Guild Guard Red  [af,ae,ac,a8,a8]
+		6 Guild Guard Red  [b0,af,ad,a9,a9]
+		5 Maiden   [e8,e8,e5,e2,e1]
+		5 Private  [e9,e9,e6,e3,e2]
+		6 Guild Guard Blue [ed,ee,e9,e6,e5]
+		6 Guild Guard Blue [ee,ef,ea,e7,e6]
+
+RAM 5d4ac0 = int32 Zenny
+RAM 5d628c = item[] item box
+RAM 5d6aa0 = item[] carry
+RAM 5f914c = item[] quest
+	3b1d40  lh    v0, 77e(v1)
+	3b1d48  addu  v0, s4      // 00541021
+	3b1d4c  sh    v0, 77e(v1)
+	-> addiu v0,v0  ,1  = 24420001
+	-> addiu v0,zero,63 = 24020063
+
+
+Strength
+3ad3f4  lhu   v1, 630(s1)
+3ad3f8  slti  v1, 320
+3ad3fc  bnez  v1, +2  // 14600002
+3ad400  li    v1, 320 // 24030320
+3ad404  sh    v1, 630(s1)
+
+char stats
+630(5f89d0) = 0(5f9000) = f5
+
+lhu  630(5f89d0)  attack  * rate
+max attack (0x320 = 800.0)
+	2h-sword  4.8  3840.0
+	katana    4.8  3840.0
+	1h-sword  1.4  1120.0
+	2x-sword  1.4  1120.0
+	hammer    5.2  4160.0
+	flute     5.2  4160.0
+	lance     2.3  1840.0
+	gunlance  2.3  1840.0
+	bowgun    1.2   960.0
+	archer    1.2   960.0
+lhu  632(5f89d0)  defense * 1.0
+= armor head + body + wrist + arm + leg
