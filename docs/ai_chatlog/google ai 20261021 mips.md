@@ -746,7 +746,7 @@ Here is the flat JSON delta dataset containing only the PSX-specific differences
 
 psx_mips_delta.json
 
-```json
+``` json
 [
   {
     "name": "mfc2",
@@ -796,7 +796,7 @@ psx_mips_delta.json
     "description": "GTE Vector Command Execution (Bits 24-0 contain the specific GTE command command layout)"
   }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 Decoder Implementation Tip for PSX GTE Commands (cop2)
 
@@ -851,7 +851,7 @@ To handle this cleanly in your disassembler loop:
 
 psx_mips_delta.json
 
-```json
+``` json
 [
   {
     "name": "mfc2",
@@ -1050,7 +1050,7 @@ psx_mips_delta.json
     "description": "General Purpose Interpolation with MAC Accumulation"
   }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 Decoding Formatting Secrets for the GTE Commands:
 
@@ -1096,7 +1096,7 @@ You raised an excellent architectural point: A "PSX Delta Only" approach avoids 
 
 To give you the absolute cleanest setup with zero formatting issues, the entire, production-ready Combined MIPS I + PSX JSON dataset is provided directly below. You can copy and paste this into a single mips_psx.json file for your disassembler.
 
-```json
+``` json
 [
   { "name": "sll", "opcode": "000000", "funct": "000000", "format": "rd, rt, sa" },
   { "name": "srl", "opcode": "000000", "funct": "000010", "format": "rd, rt, sa" },
@@ -1185,7 +1185,7 @@ To give you the absolute cleanest setup with zero formatting issues, the entire,
   { "name": "lwc2", "opcode": "110010", "format": "rt, offset(rs)" },
   { "name": "swc2", "opcode": "111010", "format": "rt, offset(rs)" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 What language are you writing your disassembler in (C, C++, Rust, or Python)? If you'd like, I can write a quick example showcasing the bit-mask parsing tree to handle the layout smoothly.
 
@@ -1195,7 +1195,7 @@ Awesome! That single-line format makes it clean to embed or scan.
 
 To help you wire this straight into your decoder loop, here is a concise Python 3 logic tree template. It reads that exact JSON structure and handles the tricky bit-routing paths (like bit25 splits for the GTE and rendering the correct sf number suffix for your cop2 instructions).
 
-```python
+``` python
 import json
 
 def decode_instruction(instruction_int, opcodes_list):
@@ -1242,7 +1242,7 @@ def decode_instruction(instruction_int, opcodes_list):
 opcodes = json.loads('Your JSON String Here')
 print(decode_instruction(0x190003D, opcodes))
 # Output: gpf0 [sf]
-```Use code with caution.
+``` Use code with caution.
 
 Would you like me to supply the next stage of the disassembler logic—specifically, mapping the register numbers (0 to 31) to their formal string equivalents (like $at, $t0, $sp) and calculating branch target offsets?
 
@@ -1280,7 +1280,7 @@ The PSP's Allegrex core is a massive extension of MIPS. It introduces standard M
 
 Instead of a delta, here is the clean, 1-line-per-opcode standalone PSP JSON configuration file. It retains the base MIPS I/II infrastructure, preserves the mandatory hardware FPU (COP1), adds the unique Allegrex extensions (bitrev, ext, ins, max, min), and sets up the primary entry points for the massive PSP VFPU (COP2) matrix operations.
 
-```json
+``` json
 [
   { "name": "sll", "opcode": "000000", "funct": "000000", "format": "rd, rt, sa" },
   { "name": "srl", "opcode": "000000", "funct": "000010", "format": "rd, rt, sa" },
@@ -1381,7 +1381,7 @@ Instead of a delta, here is the clean, 1-line-per-opcode standalone PSP JSON con
   { "name": "mtvc", "opcode": "010010", "bit25": "0", "rs": "00110", "format": "rt, vs" },
   { "name": "vfpu_op", "opcode": "010010", "bit25": "1", "format": "vfunct" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 Decoding Guide for the PSP File
 
@@ -1429,7 +1429,7 @@ To make your inheritance pipeline work flawlessly, here is the original clean, u
 
 Every disassembler mode loads this file first.
 
-```json
+``` json
 [
   { "name": "sll", "opcode": "000000", "funct": "000000", "format": "rd, rt, sa" },
   { "name": "srl", "opcode": "000000", "funct": "000010", "format": "rd, rt, sa" },
@@ -1494,13 +1494,13 @@ Every disassembler mode loads this file first.
   { "name": "lwc1", "opcode": "110001", "format": "ft, offset(rs)" },
   { "name": "swc1", "opcode": "111001", "format": "ft, offset(rs)" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 2. Extension Pack: mips2_mips3_delta.json
 
 Append this for N64, PSP, and PS2 to gain MIPS II/III core features (Likely branches and full 64-bit integer instructions).
 
-```json
+``` json
 [
   { "name": "beql", "opcode": "010100", "format": "rs, rt, offset" },
   { "name": "bnel", "opcode": "010101", "format": "rs, rt, offset" },
@@ -1523,13 +1523,13 @@ Append this for N64, PSP, and PS2 to gain MIPS II/III core features (Likely bran
   { "name": "lld", "opcode": "110100", "format": "rt, offset(rs)" },
   { "name": "scd", "opcode": "111100", "format": "rt, offset(rs)" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 3. Target Delta Pack: ps2_ee_delta.json
 
 Append this only when compiling the PS2 profile. It includes the specialized 128-bit Multimedia Extensions (MMI) unique to the Emotion Engine.
 
-```json
+``` json
 [
   { "name": "lq", "opcode": "011110", "format": "rt, offset(rs)" },
   { "name": "sq", "opcode": "011111", "format": "rt, offset(rs)" },
@@ -1544,16 +1544,16 @@ Append this only when compiling the PS2 profile. It includes the specialized 128
   { "name": "pcpyld", "opcode": "011100", "funct": "001110", "format": "rd, rs, rt" },
   { "name": "pcpyud", "opcode": "011100", "funct": "001111", "format": "rd, rs, rt" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 Architectural Loading Strategy for your Loop:
 
 When initialization happens, you can read these file strings and parse them arrays into memory, joining them sequentially depending on your destination system choice. For instance, in Python or JavaScript:
 
-```python
+``` python
 # To build a PS2 Disassembler profile programmatically:
 ps2_opcodes = base_mips1 + mips2_mips3_delta + ps2_ee_delta
-```Use code with caution.
+``` Use code with caution.
 
 Would you like the specific COP1 Floating Point Unit (FPU) sub-opcode delta pack (like add.s, sub.d) to natively round out the full hardware math layer for the N64 and PS2 profiles?
 
@@ -1578,7 +1578,7 @@ When you are looking at an N64 game code file, you might occasionally dump an RS
 
 When decoding an RSP microcode binary, Coprocessor 2 instructions map to specialized hardware vector commands. If opcode == "010010" (COP2), you parse the lowest 6 bits (funct) using this custom array:
 
-```json
+``` json
 [
   { "name": "vmulf", "opcode": "010010", "funct": "000000", "format": "vd, vs, vt[e]" },
   { "name": "vmulu", "opcode": "010010", "funct": "000001", "format": "vd, vs, vt[e]" },
@@ -1597,7 +1597,7 @@ When decoding an RSP microcode binary, Coprocessor 2 instructions map to special
   { "name": "vcl",   "opcode": "010010", "funct": "100110", "format": "vd, vs, vt[e]" },
   { "name": "vvrg",  "opcode": "010010", "funct": "111100", "format": "vd, vs, vt[e]" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 Architectural Loading Strategy for N64
 
@@ -1659,7 +1659,7 @@ Below is the definitive, comprehensive 1-line-per-opcode PS2 Multimedia Extensio
 
 They are organized by their secondary instruction sub-functions (funct or lower bit layouts) for simple, flat routing. [1] (/goto?url=CAESdwHrOzAV24nlAP_CkMsghR-IZEsrKSkjuaVY2wWY4By4vJh2TgNc3pJI5FuGE-L2LcHIMrz_7Zqm65ietsmu0X6fQSy0OUhyqg1h7wg08gk5qeqbVpCxIwKbPzdUiJgDF5BiWolBNdYSQ1UVN-zCZfDk9pcsC2bI)
 
-```json
+``` json
 [
   { "name": "paddb", "opcode": "011100", "funct": "011000", "format": "rd, rs, rt" },
   { "name": "psubb", "opcode": "011100", "funct": "011001", "format": "rd, rs, rt" },
@@ -1723,7 +1723,7 @@ They are organized by their secondary instruction sub-functions (funct or lower 
   { "name": "lq", "opcode": "011110", "format": "rt, offset(rs)" },
   { "name": "sq", "opcode": "011111", "format": "rt, offset(rs)" }
 ]
-```Use code with caution.
+``` Use code with caution.
 
 3. Implementation Check Strategy
 
