@@ -306,7 +306,7 @@ class clutfile
 			for ( $i=0; $i < 4; $i++ )
 			{
 				$p    = $sc[$i] & BIT8;
-				$pal .= chr($b);
+				$pal .= chr($p);
 				$sc[$i] += $st[$i];
 			} // for ( $i=0; $i < 4; $i++ )
 		} // for ( $c=0; $c < $cc; $c++ )

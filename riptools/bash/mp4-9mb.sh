@@ -104,7 +104,7 @@ while [ "$1" ]; do
 
 	# reduce video resolution to increase bitrate
 	# = better quality
-	while [ '1' ]; do
+	while [ TRUE ]; do
 		VIDEO_BITRATE=$(bc <<< "scale=0;($VIDEO_WIDTH * $VIDEO_HEIGHT * $VIDEO_FPS * 0.055) / 1")
 		VIDEO_SIZE=$(bc <<< "scale=0;($VIDEO_BITRATE * $VIDEO_DURATION) / 8")
 		if (( $VIDEO_SIZE > $TARG_SIZE )); then
@@ -162,12 +162,6 @@ done
 echo "[${0##*/}] total $SECONDS secs"
 
 <<'////'
-1280x720
--r $((60/2)) = -r 30 = 460x248
--r $((60/4)) = -r 15 = 640x352
-	mono = 712x392
-
-
 ## The Codec Efficiency Gap
 
 When you compare an old MPEG-4 (Part 2) video (like Xvid or DivX) to an H.264 (MP4) video, you are looking at a 2x to 3x difference in compression efficiency.
@@ -208,4 +202,20 @@ The bitrates below are listed for standard Stereo (2 channels) audio at a 44.1kH
 | AAC (LC) | .m4a, .mp4 | 64 kbps | 128 - 160 kbps | Industry Standard: Default for Apple, Discord, and streaming. High efficiency and near-universal compatibility. |
 | Ogg Vorbis | .ogg | 64 kbps | 160 kbps | Mid-Gen Open Source: Noticeably more efficient than MP3, but surpassed by Opus and modern AAC encoders. |
 | MP3 | .mp3 | 96 kbps | 192 - 256 kbps | Legacy (Old): Introduced in 1993. It requires a massive amount of data to avoid sounding "watery" or metallic. |
+
+
+tests
+video   = 360 * 640 * 24 * 0.055 = 304128 bit = 38,016 byte
+audio/1 = 44100 bit =  5,512 byte
+audio/2 = 88200 bit = 11,025 byte
+
+-     1s      60s=1m     3600s=1h
+v     38,016  2,280,960  136,857,600
+v+a1  43,528  2,611,710  156,702,600
+v+a2  49,041  2,942,460  176,547,600
+
+-     300s=5m     600s=10m
+v     11,404,800  22,809,600
+v+a1  13,058,550  26,117,100
+v+a2  14,712,300  29,424,600
 ////

@@ -637,7 +637,7 @@ op list
 	38  =      =       -    -     =     =     sqc2   sd
 
 	CONFLICTS
-	13  c3    c1x
+	13  cop3  cop1x
 	30  lwc0  ll
 	38  swc0  sc
 	33  lwc3  pref
