@@ -1,0 +1,18 @@
+{
+	"req"  : "mips-3" ,
+	"get"  : "opcode" ,
+	"list" : {
+		"00" : {
+			"get"  : "func" ,
+			"list" : {
+				"0a" : ["movz" , "rd  rs  rt"] ,
+				"0b" : ["movn" , "rd  rs  rt"] ,
+
+				"-" : 0
+		} ,
+
+		"33" : ["pref" , "-"] ,
+
+		"-" : 0
+	}
+}

@@ -1,0 +1,52 @@
+{
+	"req"  : "mips-2" ,
+	"get"  : "opcode" ,
+	"list" : {
+		"00" : {
+			"get"  : "func" ,
+			"list" : {
+				"14" : ["dsllv" , "rd  rt  rs"] ,
+				"16" : ["dsrlv" , "rd  rt  rs"] ,
+				"17" : ["dsrav" , "rd  rt  rs"] ,
+
+				"1c" : ["dmult" , "rs  rt"] ,
+				"1d" : ["dmultu" , "rs  rt"] ,
+				"1e" : ["ddiv"  , "rs  rt"] ,
+				"1f" : ["ddivu" , "rs  rt"] ,
+
+				"2c" : ["dadd"  , "rd  rs  rt"] ,
+				"2d" : ["daddu" , "rd  rs  rt"] ,
+				"2e" : ["dsub"  , "rd  rs  rt"] ,
+				"2f" : ["dsubu" , "rd  rs  rt"] ,
+
+				"38" : ["dsll" , "rd  rt  sa"] ,
+				"3a" : ["dsrl" , "rd  rt  sa"] ,
+				"3b" : ["dsra" , "rd  rt  sa"] ,
+
+				"3c" : ["dsll32" , "rd  rt  sa"] ,
+				"3e" : ["dsrl32" , "rd  rt  sa"] ,
+				"3f" : ["dsra32" , "rd  rt  sa"] ,
+
+				"-" : 0
+			}
+		} ,
+
+		"18" : ["daddi"  , "rt  rs  i16"] ,
+		"19" : ["daddiu" , "rt  rs  i16"] ,
+		"1a" : ["ldl" , "rt  i16  rs"] ,
+		"1b" : ["ldr" , "rt  i16  rs"] ,
+
+		"27" : ["lwu" , "rt  i16  rs"] ,
+
+		"2c" : ["sdl" , "rt  i16  rs"] ,
+		"2d" : ["sdr" , "rt  i16  rs"] ,
+
+		"34" : ["lld" , "rt  i16  rs"] ,
+		"37" : ["ld"  , "rt  i16  rs"] ,
+
+		"3c" : ["scd" , "rt  i16  rs"] ,
+		"3f" : ["sd"  , "rt  i16  rs"] ,
+
+		"-" : 0
+	}
+}

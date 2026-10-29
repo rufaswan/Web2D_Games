@@ -1,0 +1,103 @@
+{
+	"req"  : 0 ,
+	"get"  : "opcode" ,
+	"list" : {
+		"00" : {
+			"get"  : "func" ,
+			"list" : {
+				"00" : ["sll"  , "rd  rt  sa"] ,
+				"02" : ["srl"  , "rd  rt  sa"] ,
+				"03" : ["sra"  , "rd  rt  sa"] ,
+
+				"04" : ["sllv" , "rd  rt  rs"] ,
+				"06" : ["srlv" , "rd  rt  rs"] ,
+				"07" : ["srav" , "rd  rt  rs"] ,
+
+				"08" : ["jr"   , "rs"] ,
+				"09" : ["jalr" , "rd  rs"] ,
+
+				"0c" : ["syscall" , "-"] ,
+				"0d" : ["break"   , "-"] ,
+
+				"10" : ["mfhi" , "rd"] ,
+				"11" : ["mthi" , "rs"] ,
+				"12" : ["mflo" , "rd"] ,
+				"13" : ["mtlo" , "rs"] ,
+
+				"18" : ["mult" , "rs  rt"] ,
+				"19" : ["multu" , "rs  rt"] ,
+				"1a" : ["div"  , "rs  rt"] ,
+				"1b" : ["divu" , "rs  rt"] ,
+
+				"20" : ["add"  , "rd  rs  rt"] ,
+				"21" : ["addu" , "rd  rs  rt"] ,
+				"22" : ["sub"  , "rd  rs  rt"] ,
+				"23" : ["subu" , "rd  rs  rt"] ,
+
+				"24" : ["and"  , "rd  rs  rt"] ,
+				"25" : ["or"   , "rd  rs  rt"] ,
+				"26" : ["xor"  , "rd  rs  rt"] ,
+				"27" : ["nor"  , "rd  rs  rt"] ,
+
+				"2a" : ["slt"  , "rd  rs  rt"] ,
+				"2b" : ["sltu" , "rd  rs  rt"] ,
+
+				"-" : 0
+			}
+		} ,
+		"01" : {
+			"get"  : "rt" ,
+			"list" : {
+				"00" : ["bltz"   , "rs  i16"] ,
+				"01" : ["bgez"   , "rs  i16"] ,
+
+				"10" : ["bltzal" , "rs  i16"] ,
+				"11" : ["bgezal" , "rs  i16"] ,
+
+				"-" : 0
+			}
+		} ,
+
+		"02" : ["j"     , "i26"] ,
+		"03" : ["jal"   , "i26"] ,
+
+		"04" : ["beq"   , "rs  rt  i16"] ,
+		"05" : ["bne"   , "rs  rt  i16"] ,
+		"06" : ["blez"  , "rs  i16"] ,
+		"07" : ["bgtz"  , "rs  i16"] ,
+
+		"08" : ["addi"  , "rt  rs  i16"] ,
+		"09" : ["addiu" , "rt  rs  i16"] ,
+		"0a" : ["slti"  , "rt  rs  i16"] ,
+		"0b" : ["sltiu" , "rt  rs  i16"] ,
+
+		"0c" : ["andi"  , "rt  rs  i16"] ,
+		"0d" : ["ori"   , "rt  rs  i16"] ,
+		"0e" : ["xori"  , "rt  rs  i16"] ,
+		"0f" : ["lui"   , "rt  i16"] ,
+
+		"20" : ["lb"  , "rt  i16  rs"] ,
+		"21" : ["lh"  , "rt  i16  rs"] ,
+		"22" : ["lwl" , "rt  i16  rs"] ,
+		"23" : ["lw"  , "rt  i16  rs"] ,
+
+		"24" : ["lbu" , "rt  i16  rs"] ,
+		"25" : ["lhu" , "rt  i16  rs"] ,
+		"26" : ["lwr" , "rt  i16  rs"] ,
+
+		"28" : ["sb"  , "rt  i16  rs"] ,
+		"29" : ["sh"  , "rt  i16  rs"] ,
+		"2a" : ["swl" , "rt  i16  rs"] ,
+		"2b" : ["sw"  , "rt  i16  rs"] ,
+
+		"2e" : ["swr" , "rt  i16  rs"] ,
+
+		"31" : ["lwc1" , "rt  i16  rs"] ,
+		"32" : ["lwc2" , "rt  i16  rs"] ,
+
+		"39" : ["swc1" , "rt  i16  rs"] ,
+		"3a" : ["swc2" , "rt  i16  rs"] ,
+
+		"-" : 0
+	}
+}

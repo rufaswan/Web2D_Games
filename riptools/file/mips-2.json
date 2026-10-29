@@ -1,0 +1,59 @@
+{
+	"req"  : "mips-1" ,
+	"get"  : "opcode" ,
+	"list" : {
+		"00" : {
+			"get"  : "func" ,
+			"list" : {
+				"0f" : ["sync" , "-"] ,
+
+				"30" : ["tge"  , "rs  rt"] ,
+				"31" : ["tgeu" , "rs  rt"] ,
+				"32" : ["tlt"  , "rs  rt"] ,
+				"33" : ["tltu" , "rs  rt"] ,
+
+				"34" : ["teq"  , "rs  rt"] ,
+				"36" : ["tne"  , "rs  rt"] ,
+
+				"-" : 0
+			}
+		} ,
+		"01" : {
+			"get"  : "rt" ,
+			"list" : {
+				"02" : ["bltzl"   , "rs  i16"] ,
+				"03" : ["bgezl"   , "rs  i16"] ,
+
+				"08" : ["tgei"  , "rs  i16"] ,
+				"09" : ["tgeiu" , "rs  i16"] ,
+				"0a" : ["tlti"  , "rs  i16"] ,
+				"0b" : ["tltiu" , "rs  i16"] ,
+
+				"0c" : ["teqi"  , "rs  i16"] ,
+				"0e" : ["tnei"  , "rs  i16"] ,
+
+				"12" : ["bltzall" , "rs  i16"] ,
+				"13" : ["bgezall" , "rs  i16"] ,
+
+				"-" : 0
+			}
+		} ,
+
+		"14" : ["beql"  , "rs  rt  i16"] ,
+		"15" : ["bnel"  , "rs  rt  i16"] ,
+		"16" : ["blezl" , "rs  i16"] ,
+		"17" : ["bgtzl" , "rs  i16"] ,
+
+		"30" : ["ll"   , "rt  i16  rs"] ,
+
+		"35" : ["ldc1" , "rt  i16  rs"] ,
+		"36" : ["ldc2" , "rt  i16  rs"] ,
+
+		"38" : ["sc"   , "rt  i16  rs"] ,
+
+		"3d" : ["sdc1" , "rt  i16  rs"] ,
+		"3e" : ["sdc2" , "rt  i16  rs"] ,
+
+		"-" : 0
+	}
+}
