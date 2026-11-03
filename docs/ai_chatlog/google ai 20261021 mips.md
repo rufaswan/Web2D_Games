@@ -1791,3 +1791,32 @@ Since you are saving this technical log for the future, here is a quick summary 
 Your archive is now packed with everything needed to build a robust, modular MIPS engine pipeline.
 
 As you organize your archive, would you like me to provide a clean Markdown table of the MIPS standard register aliases (mapping numbers 0–31 to names like $zero, $at, $v0–$v1, $t0–$t9, $sp, $ra) so you have the register string formatting definitions saved alongside your opcodes?
+
+# ---
+
+The Nintendo 64 is the most prominent video game console that uses a MIPS processor configured in big-endian mode. [1] (/goto?url=CAESfQHrOzAVjvFJ3i2EGwmGgVmfP8yYZ-EowMwi2MCqOkncxI3nNlodz73Z-7J0e14RFwYZqXzO_oBxStzju8bugEEpWb5U-tJaUoeUJLbZ-T3aAaGASrimPlt_jFy2pfUb_lzLIOBW8T_bz4nErea1wto86VIqPI-ZTkUQiQWe), [2] (/goto?url=CAESeQHrOzAVlTlE58xrNi5AR6KPrja52R9IxzxA9qk0aFfaziybMI4EUdPBTrwOh6nONaLCWjTMpiI5Nsi8LEfmyHIQHqQVgEanpPO8iTvN_alwpkziOYSzhEnbe1hqMTN89b9_QGo7CVngYwZOZcpk5POKWyJWNK3wWCE)
+
+While the MIPS architecture itself is bi-endian (capable of hardware-switching between little-endian and big-endian), console manufacturers hardwired the endianness layout to suit their system designs. [1] (/goto?url=CAESkAEB6zswFeN1dZ5l3igPY8c_Wsf57D_RVQmrKYzhN7vqaqzB48YBBmh3IY06crsfOvRJIWFhDS4CQryVfJhPCtNr1vjOixcvXfUoQ2wiqcx9Jv_si9dTSTB54oQSSZwrovCn7X0RFyQTzeWvkWdoQyPm2JSOxHrB34P2ZJKOaRDH0EvwEAlCTPGyknpnOuuKI2I), [2] (/goto?url=CAESwAEB6zswFWG-GJPtZzEpPcKKnG38HqonwKaWInVxt14CzhtM--qhrgjhEwT2vMByRP0RT0TOa4EXAtXc_jo9agwvS_j7Fsda3grH3IyBbvLL-e9UwYRc0XfSXG2LUgupJiBymX6VI_VjcASS2pojiVLxeeCOgOg5RVfSjkbD2CjMvoG6M4nKu3VceaHMexpBCkDVXhij-43NUNT9096wjAh5btY9x_LL0fKFsGOcnMm4mphoKZ7fJQshPMkPZsgFCM4)
+
+Here is how the major MIPS-powered home consoles and handhelds interpret a 32-bit integer (int32) in assembly:
+
+🔴 Big-Endian MIPS Systems
+
+Nintendo 64 (https://www.google.com/search?kgmid=%2Fm%2F05h5m&q=Nintendo+64)
+
+Powered by the 64-bit NEC VR4300 CPU (based on MIPS III). Nintendo configured this system to run strictly in big-endian mode. When reading a 32-bit integer (.word) from memory via assembly (e.g., lw), the most significant byte (MSB) is stored at the lowest memory address.
+
+iQue Player (https://www.google.com/search?kgmid=%2Fm%2F04640p&q=iQue+Player)
+
+A localized Chinese home console version of the Nintendo 64 integrated into a controller, using a MIPS-based SoC that retains the identical big-endian architecture. [1] (/goto?url=CAESaAHrOzAV03EgdY7ZE7QJhyEBxPLSNLJukpU8YTQTBbvc9XkhdIVvGFqpo9dBYEHzSrPOCWt3hmVLQyoASjeG6_XkuKzG7anFcU6tdpF2jU95RQjmGy-lCWfdtaVb_t5jdKJ2knxN3aSk), [2] (/goto?url=CAESYwHrOzAVqfAAKvzky-3PaOpi1ufTuRwI9yr__HtPy1HW6dscen6Zn-vHjKQKvmB8MCKhbbLncHlgyiyB66IiHMB8BiEOpwWcQuxF4Z3oGZPd3PI3_JKrd_XWmXV7S3jPnnDJ-Q), [3] (/goto?url=CAESfwHrOzAVq1CGArS181CDEu9uAP-Z-l2DG2HoAvughxax4QN0T1UTNnvkTO4YsHd5CKE4AL4nba25kTXhp7i9MaOUK7wK-6-Kt4CPXy3CR5VCMoOq92frAgA4KzGUhOHLhFBV-WUlQqVUnFlBg7HL8YsqPzSnuF0ImXqQHJCXRZU), [4] (/goto?url=CAESeQHrOzAVlTlE58xrNi5AR6KPrja52R9IxzxA9qk0aFfaziybMI4EUdPBTrwOh6nONaLCWjTMpiI5Nsi8LEfmyHIQHqQVgEanpPO8iTvN_alwpkziOYSzhEnbe1hqMTN89b9_QGo7CVngYwZOZcpk5POKWyJWNK3wWCE), [5] (/goto?url=CAESfQHrOzAVjvFJ3i2EGwmGgVmfP8yYZ-EowMwi2MCqOkncxI3nNlodz73Z-7J0e14RFwYZqXzO_oBxStzju8bugEEpWb5U-tJaUoeUJLbZ-T3aAaGASrimPlt_jFy2pfUb_lzLIOBW8T_bz4nErea1wto86VIqPI-ZTkUQiQWe)
+
+🔵 Little-Endian MIPS Systems (For Comparison)
+
+Virtually all other mainstream MIPS-based gaming hardware opted for little-endian mode, placing the least significant byte (LSB) at the lowest memory address: [1] (/goto?url=CAESfwHrOzAVq1CGArS181CDEu9uAP-Z-l2DG2HoAvughxax4QN0T1UTNnvkTO4YsHd5CKE4AL4nba25kTXhp7i9MaOUK7wK-6-Kt4CPXy3CR5VCMoOq92frAgA4KzGUhOHLhFBV-WUlQqVUnFlBg7HL8YsqPzSnuF0ImXqQHJCXRZU)
+
+* Sony PlayStation 1 (PSX): Uses the LSI R3000A-compatible "Geometry Transformation Engine" CPU (MIPS I), which runs in little-endian mode. [1] (/goto?url=CAEScgHrOzAV73thtiMi3FouTRCjW29OGkjptmDD66TZeecDkMX7NdxG4FA1C6JlkUzYn6CitXJ0mryGuclAg7WocunNBO1Gzrb_1UJaX5dxKe0344GfVkswYZqb_5bAiM-gTpRfJiW_Mb9EU_TG4HaPlZw0cw), [2] (/goto?url=CAESdAHrOzAVwpNCykqRRfRDpTe2mq4d3XTIuPlxsDtY9xiThAAPpEUppf8L9FAOCqrPuGS7Z3Qm5gdx_jHTwgfreE_ewr8RmnG10BHRNODzfgkeotHoA0i0mEL_qr6wZBmvNZokIua2_SPvnp1S8fDvoWjHCvqc)
+* Sony PlayStation 2: Powered by the 64-bit "Emotion Engine" (Toshiba R5900 core, MIPS III/IV hybrid), configured in little-endian mode. [1] (/goto?url=CAESZwHrOzAVouEnW-QzbLg3P_4I-dxmKR7G3t6iDp3sZHWtrBPKeO7pln72HEIAMuRtyndKetUFOmxY-iyTvrvv4CUcMrK-Pfk3N_mV0vVm-WKNAXWe9PQP_FF8TGL1RYX2GgscTIHjBFA)
+* Sony PlayStation Portable (PSP): Employs two MIPS32 R4000-based cores, both hardwired in little-endian mode. [1] (/goto?url=CAESfQHrOzAVjvFJ3i2EGwmGgVmfP8yYZ-EowMwi2MCqOkncxI3nNlodz73Z-7J0e14RFwYZqXzO_oBxStzju8bugEEpWb5U-tJaUoeUJLbZ-T3aAaGASrimPlt_jFy2pfUb_lzLIOBW8T_bz4nErea1wto86VIqPI-ZTkUQiQWe)
+* MIPS Handheld Clones / Emulators: Retro handheld devices (like the Data Frog SF2000, Dingoo A320, or GCW Zero) that utilize Ingenic or Hi-Chip MIPS24KEc microprocessors run on Linux ecosystem branches built natively for little-endian MIPS (mipsel). [1] (/goto?url=CAESfQHrOzAVjvFJ3i2EGwmGgVmfP8yYZ-EowMwi2MCqOkncxI3nNlodz73Z-7J0e14RFwYZqXzO_oBxStzju8bugEEpWb5U-tJaUoeUJLbZ-T3aAaGASrimPlt_jFy2pfUb_lzLIOBW8T_bz4nErea1wto86VIqPI-ZTkUQiQWe), [2] (/goto?url=CAESfQHrOzAVivmO3BxL54RlgCYChdfvawEGi1MD2TCrleHJbj4RB6-mJSCLvmatWtRO1MoXe0-eaLD9DzsMh4LrY5dIcMXd_DeVAgcT793aP2SF84jxT8hG6nCh0RU7r_-rE-Ow83ExDpe0AeO_ddXekmVifjOmUJm5uOM_hAfb)
+
+Are you writing an assembly payload, developing a cross-compiler, or dealing with ROM hacking/emulation for the N64? Let me know, and I can give you the exact structural code or byteswapping macros you need!

@@ -67,36 +67,36 @@
 		"07" : ["bgtz"  , "rs  i16"] ,
 
 		"08" : ["addi"  , "rt  rs  i16"] ,
-		"09" : ["addiu" , "rt  rs  i16"] ,
+		"09" : ["addiu" , "rt  rs  u16"] ,
 		"0a" : ["slti"  , "rt  rs  i16"] ,
-		"0b" : ["sltiu" , "rt  rs  i16"] ,
+		"0b" : ["sltiu" , "rt  rs  u16"] ,
 
-		"0c" : ["andi"  , "rt  rs  i16"] ,
-		"0d" : ["ori"   , "rt  rs  i16"] ,
-		"0e" : ["xori"  , "rt  rs  i16"] ,
-		"0f" : ["lui"   , "rt  i16"] ,
+		"0c" : ["andi"  , "rt  rs  u16"] ,
+		"0d" : ["ori"   , "rt  rs  u16"] ,
+		"0e" : ["xori"  , "rt  rs  u16"] ,
+		"0f" : ["lui"   , "rt  u16"] ,
 
-		"20" : ["lb"  , "rt  i16  rs"] ,
-		"21" : ["lh"  , "rt  i16  rs"] ,
-		"22" : ["lwl" , "rt  i16  rs"] ,
-		"23" : ["lw"  , "rt  i16  rs"] ,
+		"20" : ["lb"  , "rt  u16  rs"] ,
+		"21" : ["lh"  , "rt  u16  rs"] ,
+		"22" : ["lwl" , "rt  u16  rs"] ,
+		"23" : ["lw"  , "rt  u16  rs"] ,
 
-		"24" : ["lbu" , "rt  i16  rs"] ,
-		"25" : ["lhu" , "rt  i16  rs"] ,
-		"26" : ["lwr" , "rt  i16  rs"] ,
+		"24" : ["lbu" , "rt  u16  rs"] ,
+		"25" : ["lhu" , "rt  u16  rs"] ,
+		"26" : ["lwr" , "rt  u16  rs"] ,
 
-		"28" : ["sb"  , "rt  i16  rs"] ,
-		"29" : ["sh"  , "rt  i16  rs"] ,
-		"2a" : ["swl" , "rt  i16  rs"] ,
-		"2b" : ["sw"  , "rt  i16  rs"] ,
+		"28" : ["sb"  , "rt  u16  rs"] ,
+		"29" : ["sh"  , "rt  u16  rs"] ,
+		"2a" : ["swl" , "rt  u16  rs"] ,
+		"2b" : ["sw"  , "rt  u16  rs"] ,
 
-		"2e" : ["swr" , "rt  i16  rs"] ,
+		"2e" : ["swr" , "rt  u16  rs"] ,
 
-		"31" : ["lwc1" , "rt  i16  rs"] ,
-		"32" : ["lwc2" , "rt  i16  rs"] ,
+		"31" : ["lwc1" , "rt  u16  rs"] ,
+		"32" : ["lwc2" , "rt  u16  rs"] ,
 
-		"39" : ["swc1" , "rt  i16  rs"] ,
-		"3a" : ["swc2" , "rt  i16  rs"] ,
+		"39" : ["swc1" , "rt  u16  rs"] ,
+		"3a" : ["swc2" , "rt  u16  rs"] ,
 
 		"-" : 0
 	}

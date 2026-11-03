@@ -1,0 +1,352 @@
+=================
+== Queen Blade ==
+=================
+stage
+	1   shop=lv3
+	3   duel=reina
+	4   ROUTE
+	7   duel=reina  MOVIE=4+9
+	10  shop=lv5
+	11  ROUTE
+	13  duel=ymir
+	16  duel=ymir
+	18  MOVIE=9+9  COSTUME=reina,ymir,nanael  shop=lv8
+	20  COSTUME=cute
+	22  ROUTE  shop=lv10
+	24  airi/irma betrayal
+	26  shop=lv20/max  MOVIE=9~12+9
+	30/final  enemy=lv31~33  boss=36
+	31/epilogue
+* betrayal = enemy unit with (maxed) ally stats!!!
+* all ROUTE / MOVIE / COSTUME events are after STAGE CLEAR but before INTER MISSION
+  * ROUTE = party split
+  * MOVIE = party regroup
+* party = 9 char + 9 monster + airi + irma + erina
+
+
+money = CE cd992e8 = PSP 89992e8
+	89404f0  lui  s6, 898
+	89404f4  lui  s4, 89a
+	8940500  addiu  s6, -532c // 898-532c = 897acd4
+	8940508  addiu  s4. -6f80 // 89a-6f80 = 8999080
+	8940960  move  a0, s4
+	894095c  jal 886bcfc
+		886bd00  lw  v1, 268(a0)
+			v1 += a1
+			if v1 < max
+				v0 = 0(8957008)
+			else
+				if max < v1
+					v0 = max
+				else
+					v0 = v1
+		886bd50  sw  v0, 268(a0)
+= 89a-6f80 + 268 = 8999080 + 268
+= 89992e8
+
+
+PSP 8999368-899936e = stats inc items
+	s5 = a0
+	s3 = 89a-6f80 = 8999080
+	s6 = lw  0( 893b964() + s5 + 1af8 )
+	8939a64  move  a0, s3 // game data area
+	8939a70  move  a1, s6 // var offset
+	8939a68  li    a2, -1
+	8939a6c  jal  886c588
+		89529b0 = 63 = max
+		8957040 = 0  = min
+		v1 = a1 + a0
+		886c5a8  lbu    a0, 2cf(v1)
+		886c5ac  addiu  a1, v1, 2cf
+		886c5b8  addiu  a0, a2
+		886c5c4  sw     a0, c(sp)
+		a1 = v1 + 2cf
+		if a0 < min
+			v1 = min
+		else
+			if max < a0
+				v1 = sp + c
+			else
+				v1 = max
+		886c5f8  lw  v1, 0(v1)
+		886c5fc  sb  v1, 0(a1)
+= 8999080 + 2cf + 19-1f
+	19  attack +20 (max=999)
+	1a  defend +20 (max=999)
+	1b  evade  +20 (max=999)
+	1c  move    +1 (max= 20)
+	1d  hp    +100 (max=65535)
+	1e  sp     +25 (max=999)
+	1f  ap     +25 (max=999)
+
+
+attack += 20
+CE c97ae54 = PSP 897ae54 // bonus table
+PSP 897acd8
+struct=b8  bonus table
+	00  char id
+		cute    A=02  B=2b  // all route
+		reina   A=03  B=2c
+		ymir    A=06  B=2f
+		nanael  A=0e  B=31
+		irma    =05*1
+		airi    =07*1
+		elina   =0b
+		* monster list
+			harpy   A=3a,62  B=48,65  C=56,68
+			arane   A=3b,63  B=49,66  C=57,69
+			gratt   A=3d,64  B=4b,67  C=59,6a
+			* as enemy,party(has name)
+			* has happy mark (recruitable and joined)
+	02  exp
+		* auto = level , next , hp/ap/sp , base stats , combo , skill 2
+	04  bonus hp     (max=ffff)
+	06  bonus ap     (max=3e7)
+	08  bonus sp     (max=3e7)
+	0a  bonus move   (max=14)
+	0c  bonus attack (max=3e7)
+	0e  bonus hit    (max=3e7)
+	10  bonus evade  (max=3e7)
+	12  bonus defend (max=3e7)
+	14-3e  support to XXX
+		96+   support attack
+		1c2+  support defend
+		2ee+  love
+		* will display icon when XXX act
+
+		14  male
+		16  cute
+		18  reina
+		1a  ymir
+		1c  nanael
+		1e  tomoe
+		20  nowa
+		22  airi*1
+		24  malpha
+		26  irma*1
+		28  elina
+		2a  cattleye
+		monsters
+			harpy  2c  32  38
+			arane  2e  34  3a
+			gratt  30  36  3c
+	3e  lbu[3] equip jewel
+		* auto = jewel skill
+	41  lbu[6] equip item
+	47  lbu[9] *auto* jewel skill
+	50  bitflag
+		& 3f00  learned attacks
+	52
+	54  lw  packed data
+		--ww wwwl llll wwww waaa aacc ccch hhhh
+		--1- -111 --11 1--1 11-- 111- -111 --11
+		=27 39 ce 73
+		>>  0 & 1f  armor head  level (max=13)
+		>>  5 & 1f  armor chest level (max=13)
+		>>  a & 1f  armor arm   level (max=13)
+		>>  f & 1f  armor wrist level (max=13)
+		>> 14 & 1f  armor leg   level (max=13)
+		>> 19 & 1f  weapon level (max=13)
+		* auto = armor hp
+	58
+	5a
+	5c-b8  duplicate 00-5c
+* hp is in % , so 1.0 * max hp
+  * easy perfect knockdown
+    * bonus hp=ffff for higher max hp
+    * all armor lv=0 for lower armor max hp
+  * heals  +0.15  +0.3  +0.5  +1.0
+*1 will become enemy unit on stage 24
+  * ...but uses ally (maxed) stats !!!
+  * will rejoin if support to male > 96 , has Gallery
+
+
+level up
+CE ca3b41c = PSP 8a3b41c
+	89224cc  lw    v1, 1d8c(s3)
+	89224d0  addu  v1, v1, s0
+	89224d4  sw    v1, 1d8c(s3)
+	reset
+		8922570  lw  v1, 1d88(a0) // total points
+		8922574  sw  v1, 1d8c(a0) // spent points
+
+	psp 8a3b418
+		889c0e0  jal  88c1d44 // calculate_points()
+			88c1d44  lbu   v0, 70(a0)
+			88c1d48  andi  v1, v0, 7f
+			88c1d4c  sll   v0, v1, 1
+			88c1d54  addu  v0, v0, v1
+			// == return 70(a0) * 3
+		v1 = 20000 + s1
+		889c0f0  sw  v0, -38a4(v1) // 2-38a4 = 1c75c
+		v1 = 20000 + s1
+		889c0fc  sw  v0, -38a8(v1) // 2-38a8 = 1c758
+
+
+
+================
+== Queen Gate ==
+================
+stage
+	1   shop=lv3  trial=1-1
+	4   ROUTE
+	5   trial=2-1
+	7   duel=iroha
+	9   duel=maron  MOVIE=17+10
+	10  shop=lv5  trial=3-1
+	12  duel=maron
+	14  ROUTE
+	15  duel=reina  trial=4-1+sp1
+	17  MOVIE=21+10  shop=lv8
+	19  COSTUME=maron
+	20  trial=5-1+sp2
+	22  duel=mai
+	24  MOVIE=23+10  shop=lv10
+	25  trial=6-1+sp3
+	27  COSTUME=mai,inku,dizzy
+	28  ROUTE
+	30  trial=7-1+sp4
+	31  ROUTE
+	35  shop=lv15  trial=8-1+sp5
+	37  MOVIE=36+10
+	40  shop=lv20/max  trial=9-1+sp6
+	41  ROUTE
+	44  MOVIE=36+10
+	45  trial=10-1+sp7
+	47/final  enemy=lv50  boss=lv52
+* all ROUTE / MOVIE / COSTUME events are after STAGE CLEAR but before INTER MISSION
+  * ROUTE = party split
+  * MOVIE = party regroup
+* party = 36 char + 10 monster
+
+
+money = CE c9a45ec = PSP 89a45ec
+	892fd5c  lui    s2, 8ad
+	892fd6c  addiu  s2, -13c4
+	89300c0  lw     a0, 3f4(s2)
+	89300c8  sw     a0, 20c(s0)
+= 8ad-13c4 + 3f4 = 8acec3c + 3f4
+= 8acf030
+
+
+PSP 8acf160-8acf167 = stats inc items
+	891af88  move  a0, s3  // s3=8ad-13c4 = 8acec3c
+	891af84  lh    a1, ec0(a0)
+	891af94  li    a2, -1
+	891af90  jal 8806910
+		8955838 = 63 = max
+
+		if a1 < 0
+			return
+		if a1 >= 100
+			return
+		a0 += a1
+		8806924  lbu  a1, 4f6(a0)
+		a1 += a2
+		8806938  sw  a1, 0(sp)
+		if a1 < 0
+			a1 = 0
+		a2 = a1
+		if max < a2
+			a1 = sp
+		else
+			a1 = max
+		8806968  lw  a1,   0(v1)
+		880696c  sb  a1, 4f6(a0)
+= 8acec3c + 4f6 + 2e-35
+	2e  attack +10 (max=999)
+	2f  defend +10 (max=999)
+	30  evade  +10 (max=999)
+	31  hit    +10 (max=999)
+	32  -
+	33  hp    +100 (max=65535)
+	34  sp     +25 (max=999)
+	35  ap     +25 (max=999)
+
+
+attack += 10
+CE cabbde2 = PSP 8abbde2 // bonus table
+PSP 8abbd6c
+struct=68  bonus table
+	00  char id / costume A
+		cute    A=02  B=2b  // convert only
+		reina   A=03  B=2c  // convert only
+		ymir    A=06  B=2d  // convert only
+		nanael  A=0e  B=2e  // convert only
+		maron   A=65  B=75  // all route
+		mai     A=67  B=76
+		inku    A=68  B=77
+		dizzy   A=69  B=78
+		* monster list
+			harpy     A=32,53  B=3d,56  C=48,59
+			arane     A=33,54  B=3e,57  C=49,5a
+			gratt     A=34,55  B=3f,58  C=4a,5b
+			dino      A=80,ae  B=b5     C=bc
+			stellar   A=81,af  B=b6     C=bd
+			audly     A=82,b0  B=b7     C=be  *long-ranged
+			medusa    A=83,b1  B=b8     C=bf
+			ninetail  A=84,b2  B=b9     C=c0  *long-ranged  *tackle
+			fairy     A=85,b3  B=ba     C=c1
+			lovely    A=86,b4  B=bb     C=c2
+			* as enemy,party(has name)
+			* B C are enemy only, cannot join
+	02  costume B
+		* swap with A
+		* ffff = none
+	04  exp (max=2648)
+		* auto = level , next , hp/ap/sp , base stats , combo , skill 2
+	06  bonus hp
+	08  bonus ap
+	0a  bonus sp
+	0c  bonus move
+	0e  bonus attack
+	10  bonus evade
+	12  bonus hit
+	14  bonus defend
+	16  lbu[3] equip jewel
+		* auto = jewel skill
+	19  lbu[6] equip item
+	1f  lbu[9] *auto* jewel skill
+	28
+	2a
+	2c  lw  packed data
+		--ww wwwl llll wwww waaa aacc ccch hhhh
+		--1- -111 --11 1--1 11-- 111- -111 --11
+		=27 39 ce 73
+		>>  0 & 1f  armor head  level (max=13)
+		>>  5 & 1f  armor chest level (max=13)
+		>>  a & 1f  armor arm   level (max=13)
+		>>  f & 1f  armor wrist level (max=13)
+		>> 14 & 1f  armor leg   level (max=13)
+		>> 19 & 1f  weapon level (max=13)
+		* auto = armor hp
+	30
+	32
+	34-68  duplicate 00-34
+* hp is in % , so 1.0 * max hp
+  * easy perfect knockdown
+    * bonus hp=ffff for higher max hp
+    * all armor lv=0 for lower armor max hp
+  * heals  +0.15  +0.3  +0.5  +1.0
+
+
+level up
+CE ca28274 = PSP 8a28274
+	8923374  lw    a0, 1164(s1)
+	892337c  addu  a0, a0, s2
+	8923380  sw    a0, 1164(s1)
+	reset
+		8923438  lw  a1, 1160(a0) // total points
+		8923440  sw  a1, 1164(a0) // spent points
+
+	psp 8a28270
+		8898abc  jal  88c0678
+			88c0678  lw    a1,  9c(a0)
+			88c067c  lbu   v0, 13d(a0)
+			88c0680  andi  a0, a1, 7f
+			88c0684  addu  a1, a0, a0
+			88c0688  addu  a0, a0, a1
+			88c0690  addu  v0, a0, v0
+			// == return 13d(a0) + 9c(a0) * 3
+		8898ad0  sw  v0, -604c(a0) // 2-604c = 19fb4
+		8898ad8  sw  v0, -6050(a0) // 2-6050 = 19fb0

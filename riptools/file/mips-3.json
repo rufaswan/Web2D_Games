@@ -32,20 +32,20 @@
 		} ,
 
 		"18" : ["daddi"  , "rt  rs  i16"] ,
-		"19" : ["daddiu" , "rt  rs  i16"] ,
-		"1a" : ["ldl" , "rt  i16  rs"] ,
-		"1b" : ["ldr" , "rt  i16  rs"] ,
+		"19" : ["daddiu" , "rt  rs  u16"] ,
+		"1a" : ["ldl" , "rt  u16  rs"] ,
+		"1b" : ["ldr" , "rt  u16  rs"] ,
 
-		"27" : ["lwu" , "rt  i16  rs"] ,
+		"27" : ["lwu" , "rt  u16  rs"] ,
 
-		"2c" : ["sdl" , "rt  i16  rs"] ,
-		"2d" : ["sdr" , "rt  i16  rs"] ,
+		"2c" : ["sdl" , "rt  u16  rs"] ,
+		"2d" : ["sdr" , "rt  u16  rs"] ,
 
-		"34" : ["lld" , "rt  i16  rs"] ,
-		"37" : ["ld"  , "rt  i16  rs"] ,
+		"34" : ["lld" , "rt  u16  rs"] ,
+		"37" : ["ld"  , "rt  u16  rs"] ,
 
-		"3c" : ["scd" , "rt  i16  rs"] ,
-		"3f" : ["sd"  , "rt  i16  rs"] ,
+		"3c" : ["scd" , "rt  u16  rs"] ,
+		"3f" : ["sd"  , "rt  u16  rs"] ,
 
 		"-" : 0
 	}

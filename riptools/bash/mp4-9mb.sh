@@ -74,8 +74,8 @@ function video_info {
 	fi
 }
 ##############################
-let MAX_10_MP4=1000*1000*9
-let MAX_16_MP4=1024*1024*9
+MB_PER_MIN=$(bc <<< "scale=0; 1024*1024 * 8 / 60")
+TARGET_BIT=$(bc <<< "scale=0; 2.25 * $MB_PER_MIN")
 
 SECONDS=0
 while [ "$1" ]; do
@@ -84,8 +84,7 @@ while [ "$1" ]; do
 
 	[ -f "$t1" ] || continue
 
-	ORIG_SIZE=$(wc -c < "$t1")
-	TARG_SIZE=$MAX_10_MP4
+	BIT_PER_SEC=$TARGET_BIT
 
 	video_info  "$t1"
 	audio_info  "$t1"
@@ -95,35 +94,34 @@ while [ "$1" ]; do
 	echo "[$#] ${t1} (s=${VIDEO_WIDTH}x${VIDEO_HEIGHT} ac=${AUDIO_CHANNEL} , dur=${VIDEO_DURATION})"
 
 	# allocate a part target size for audio
-	AUDIO_SIZE=0
 	if (( $AUDIO_BITRATE > 1 )); then
-		AUDIO_SIZE=$(bc <<< "scale=0;($AUDIO_BITRATE * $VIDEO_DURATION) / 8")
+		BIT_PER_SEC=$(( $BIT_PER_SEC - $AUDIO_BITRATE ))
 	fi
-	TARG_SIZE=$(bc <<< "scale=0;($TARG_SIZE - $AUDIO_SIZE) / 1")
-	echo "target = $TARG_SIZE + $AUDIO_SIZE"
+	echo "bit/sec = $BIT_PER_SEC + $AUDIO_BITRATE"
 
 	# reduce video resolution to increase bitrate
 	# = better quality
+	scale=100
+	bakw=$VIDEO_WIDTH
+	bakh=$VIDEO_HEIGHT
 	while [ TRUE ]; do
 		VIDEO_BITRATE=$(bc <<< "scale=0;($VIDEO_WIDTH * $VIDEO_HEIGHT * $VIDEO_FPS * 0.055) / 1")
-		VIDEO_SIZE=$(bc <<< "scale=0;($VIDEO_BITRATE * $VIDEO_DURATION) / 8")
-		if (( $VIDEO_SIZE > $TARG_SIZE )); then
-			VIDEO_WIDTH=$(bc <<< "scale=0;($VIDEO_WIDTH * 0.95) / 4 * 4")
-			VIDEO_HEIGHT=$(bc <<< "scale=0;($VIDEO_HEIGHT * 0.95) / 4 * 4")
+		if (( $VIDEO_BITRATE > $BIT_PER_SEC )); then
+			let scale--;
+			VIDEO_WIDTH=$(bc <<< "scale=0;($bakw * $scale * 0.01) / 4 * 4")
+			VIDEO_HEIGHT=$(bc <<< "scale=0;($bakh * $scale * 0.01) / 4 * 4")
 		else
 			break
 		fi
 	done
 
-	# add 5% container overhead on top video + audio data
-	FINAL_SIZE=$(bc <<< "scale=0;(($VIDEO_SIZE + $AUDIO_SIZE) * 1.05) / 1")
-	echo "${ORIG_SIZE} -> ${FINAL_SIZE} (s=${VIDEO_WIDTH}x${VIDEO_HEIGHT})"
-	if (( $ORIG_SIZE < $FINAL_SIZE )); then
-		echo "[SKIP] larger than original"
-		continue
-	fi
+	VIDEO_SIZE=$(bc <<< "scale=0;($VIDEO_BITRATE * $VIDEO_DURATION) / 8")
+	AUDIO_SIZE=$(bc <<< "scale=0;($AUDIO_BITRATE * $VIDEO_DURATION) / 8")
+	FULL_SIZE=$(( $VIDEO_SIZE + $AUDIO_SIZE ))
+	echo "estimate = $VIDEO_SIZE + $AUDIO_SIZE = $FULL_SIZE"
 
 	# global frame for seek back/forward
+	# in +/- 10 sec
 	let GFPS=$VIDEO_FPS*10
 	VIDEO_FILTER="-c:v libx264  -b:v ${VIDEO_BITRATE}  -s ${VIDEO_WIDTH}x${VIDEO_HEIGHT}  -r ${VIDEO_FPS}  -g ${GFPS}"
 
@@ -218,4 +216,16 @@ v+a2  49,041  2,942,460  176,547,600
 v     11,404,800  22,809,600
 v+a1  13,058,550  26,117,100
 v+a2  14,712,300  29,424,600
+
+
+mbpm  bitps    /x264/fps  9:16
+1     139,810  105,916    27x  243x432
+1.25  174,762  132,395    30x  270x480
+1.5   209,715  158,875    33x  297x528
+1.75  244,667  185,354    35x  315x560
+2     279,620  211,833    38x  342x608
+2.25  314,572  238,312    40x  360x640
+2.5   349,525  264,791    42x  378x672
+2.75  384,477  291,271    44x  396x704
+3     419,430  317,750    46x  414x736
 ////

@@ -4,11 +4,12 @@ declare( strict_types=1 );
 require 'tool.inc';
 tool::require('class-mips');
 
-$mips = new mips_asm;
+$mips = new mips_asm('mips-1');
 
-$asm = '90820070';
+$asm = "\x90\x82\x00\x70";
+//$asm = "\xfc\x00\x00\x00";
 $dec = $mips->decode($asm, false);
-printf("%s = %s\n", implode(' ',$dec[0]), $asm);
+printf("%s = %s\n", implode(' ',$dec[0]), bin2hex($asm));
 
 $asm =
 	"\x90\x82\x00\x70"."\x30\x43\x00\x7f".
@@ -19,8 +20,9 @@ foreach ( $dec as $k => $v )
 	printf("%x : %s\n", $k, implode(' ',$v));
 //////////////////////////////
 $asm = 'lbu  v0, 70(a0)';
+//$asm = 'swc2';
 $enc = $mips->encode($asm, false);
-printf("%s = %s\n", $asm, bin2hex($enc[0]));
+printf("%s = %s\n", $asm, bin2hex($enc));
 
 $asm ='
 	lbu   v0, 70(a0)
@@ -30,8 +32,12 @@ $asm ='
 	addu  v0, v0, v1
 ';
 $enc = $mips->encode($asm, false);
-foreach ( $enc as $k => $v )
-	printf("%x : %s\n", $k, bin2hex($v));
+$len = strlen($enc) & ~3;
+for ( $i=0; $i < $len; $i += 4 )
+{
+	$s = substr($enc, $i, 4);
+	printf("%x : %s\n", $i >> 2, bin2hex($s));
+}
 
 /*
 88c1d44  lbu   v0, 70(a0) = 70 -- 82 90

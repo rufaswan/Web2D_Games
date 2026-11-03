@@ -25,9 +25,9 @@
 				"03" : ["bgezl"   , "rs  i16"] ,
 
 				"08" : ["tgei"  , "rs  i16"] ,
-				"09" : ["tgeiu" , "rs  i16"] ,
+				"09" : ["tgeiu" , "rs  u16"] ,
 				"0a" : ["tlti"  , "rs  i16"] ,
-				"0b" : ["tltiu" , "rs  i16"] ,
+				"0b" : ["tltiu" , "rs  u16"] ,
 
 				"0c" : ["teqi"  , "rs  i16"] ,
 				"0e" : ["tnei"  , "rs  i16"] ,
@@ -44,15 +44,15 @@
 		"16" : ["blezl" , "rs  i16"] ,
 		"17" : ["bgtzl" , "rs  i16"] ,
 
-		"30" : ["ll"   , "rt  i16  rs"] ,
+		"30" : ["ll"   , "rt  u16  rs"] ,
 
-		"35" : ["ldc1" , "rt  i16  rs"] ,
-		"36" : ["ldc2" , "rt  i16  rs"] ,
+		"35" : ["ldc1" , "rt  u16  rs"] ,
+		"36" : ["ldc2" , "rt  u16  rs"] ,
 
-		"38" : ["sc"   , "rt  i16  rs"] ,
+		"38" : ["sc"   , "rt  u16  rs"] ,
 
-		"3d" : ["sdc1" , "rt  i16  rs"] ,
-		"3e" : ["sdc2" , "rt  i16  rs"] ,
+		"3d" : ["sdc1" , "rt  u16  rs"] ,
+		"3e" : ["sdc2" , "rt  u16  rs"] ,
 
 		"-" : 0
 	}
