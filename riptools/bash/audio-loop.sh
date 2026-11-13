@@ -52,7 +52,7 @@ if [ -f "$ogg".loop ]; then
 else
 	printf "\033]0;%s\007"   "[bgm] ${ogg##*/}"
 	${mpv[@]} \
-		--no-ab-loop-a \
-		--no-ab-loop-b \
+		--ab-loop-a=no \
+		--ab-loop-b=no \
 		"$ogg"
 fi

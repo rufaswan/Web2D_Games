@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'><head>
+
+<meta charset='utf-8' />
+<meta name='viewport' content='width=device-width, initial-scale=1' />
+<title>Youtube Embed</title>
+
+<style>
+body {
+	margin   : 0;
+	padding  : 0;
+	overflow : hidden;
+}
+iframe {
+	min-width  : 100vw;
+	min-height : 100vh;
+}
+</style>
+
+</head><body>
+
+<iframe
+	id="ytembed"
+	loading="lazy"
+
+	src="https://www.youtube.com/embed/0123456789"
+	title="YouTube video player"
+	frameborder="0"
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+	referrerpolicy="strict-origin-when-cross-origin"
+	allowfullscreen
+></iframe>
+
+<script>
+'use strict';
+
+var yt = document.querySelector('#ytembed');
+
+//console.log(window.location.href);
+var url   = new URL( window.location.href    );
+var yturl = new URL( url.search.substring(1) );
+if ( yturl ){
+	//console.log(yturl);
+	var ytid = yturl.searchParams.get('v');
+
+	if ( ! ytid && yturl.pathname.startsWith('/shorts/') )
+		ytid = yturl.pathname.split('/')[2];
+
+	if ( ! ytid && yturl.hostname === 'youtu.be' )
+		ytid = yturl.pathname.slice(1);
+
+	if ( ytid )
+		yt.src = `https://www.youtube.com/embed/${ytid}?autoplay=1`
+}
+
+/*
+var curpage = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
+	https://youtu.be/W4PIkmjwGsQ
+	https://www.youtube.com/embed/W4PIkmjwGsQ
+	https://www.youtube.com/watch?v=W4PIkmjwGsQ
+	https://www.youtube.com/playlist?list=PLy-s-TzYJBWwdwBvhDLGsgQAigsH8ZBrT
+	https://www.youtube.com/shorts/W4PIkmjwGsQ
+*/
+</script>
+
+</body></html>
