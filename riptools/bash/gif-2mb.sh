@@ -8,8 +8,8 @@ echo "@usage : ${0##*/}  VIDEO_FILE..."
 [ $# = 0 ] && exit
 [ -t 0 ] && xt='' || xt='xterm -e'
 
-let MAX_10_GIF=1000*1000*2
-let MAX_16_GIF=1024*1024*2
+MAX_10_GIF=$(( 1000 * 1000 * 2))
+MAX_16_GIF=$(( 1024 * 1024 * 2))
 TMP_GIF=/tmp/$$.gif
 
 # $1  fname
@@ -49,7 +49,7 @@ function optgif {
 		echo "[>2mb] $sz"
 
 		# scale  640 600 560 520 480 440 400 360 320 280 240 200 160 120 80 40 0
-		let scale-=40
+		(( scale -= 40 ))
 		(( $scale < 144 )) && return
 	done
 }

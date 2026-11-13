@@ -1,40 +1,43 @@
 #!/bin/bash
 [ $(which ffprobe) ] || exit
+[ $(which ffmpeg ) ] || exit
 renice   --priority 19  --pid $$
 taskset  --pid  --cpu-list 0  $$
 
 echo "@usage : ${0##*/}  VIDEO_FILE..."
 
 VIDEO_DURATION=0
+VIDEO_BPP='0.055' # for x264
 
 AUDIO_CHANNEL=0
 AUDIO_BITRATE=0
 AUDIO_FILTER=''
 
 function audio_info {
-	local info=$(ffprobe -v 0  \
-		-select_streams  a:0   \
-		-print_format    csv   \
-		-show_entries    stream=channels \
+	local info=$(ffprobe -v 0    \
+		-select_streams  a:0     \
+		-print_format    csv=p=0 \
+		-show_entries    stream=sample_rate,channels \
 	"$1")
-	#=channels
-	echo "$info"
+	#=sample_rate,channels
+	echo "audio,$info"
 
 	AUDIO_CHANNEL=0
 	AUDIO_BITRATE=0
 	AUDIO_FILTER='-an'
+	local sample
 	[ "$info" ] || return
-	local arr=( $(tr ',' ' ' <<< "$info") )
+	IFS=','  read -r  sample  AUDIO_CHANNEL <<< "$info"
 
-	#if (( ${arr[1]} > 1 )); then
-		#AUDIO_CHANNEL=2
-		#AUDIO_BITRATE=88200
-		#AUDIO_FILTER="-c:a aac  -b:a ${AUDIO_BITRATE}  -ac ${AUDIO_CHANNEL}  -ar 44100"
-	#else
+	if (( $AUDIO_CHANNEL >= 2 )); then
+		AUDIO_CHANNEL=2
+		AUDIO_BITRATE=88200
+		AUDIO_FILTER="-c:a aac  -b:a ${AUDIO_BITRATE}  -ac ${AUDIO_CHANNEL}  -ar 44100"
+	else
 		AUDIO_CHANNEL=1
 		AUDIO_BITRATE=44100
 		AUDIO_FILTER="-c:a aac  -b:a ${AUDIO_BITRATE}  -ac ${AUDIO_CHANNEL}  -ar 44100"
-	#fi
+	fi
 }
 ##############################
 VIDEO_WIDTH=0
@@ -44,38 +47,43 @@ VIDEO_BITRATE=0
 VIDEO_FILTER=''
 
 function video_info {
-	local info=$(ffprobe -v 0  \
-		-select_streams  v:0   \
-		-print_format    csv   \
-		-show_entries    stream=width,height,duration \
-	"$1")
-	#=width,height,duration
-	echo "$info"
+	VIDEO_DURATION=$(ffprobe -v 0  \
+		-select_streams  v:0       \
+		-show_entries    packet=pts_time \
+		-read_intervals  99999%+#1000    \
+		-print_format    default=noprint_wrappers=1:nokey=1 \
+	"$1" | tail -1)
 
-	VIDEO_DURATION=0
 	VIDEO_WIDTH=0
 	VIDEO_HEIGHT=0
+	VIDEO_FPS=15
 	VIDEO_BITRATE=0
 	VIDEO_FILTER='-vn'
-	[ "$info" ] || return
-	local arr=( $(tr ',' ' ' <<< "$info") )
+	[ $VIDEO_DURATION ] || return
 
-	VIDEO_WIDTH=$(bc <<< "scale=0;(${arr[1]} / 4) * 4" )
-	VIDEO_HEIGHT=$(bc <<< "scale=0;(${arr[2]} / 4) * 4" )
-	VIDEO_DURATION=${arr[3]}
+	if (( $(bc <<< "$VIDEO_DURATION > 0") )); then
+		local info=$(ffprobe -v 0    \
+			-select_streams  v:0     \
+			-print_format    csv=p=0 \
+			-show_entries    stream=width,height,r_frame_rate \
+		"$1")
+		#=width,height,fps
+		echo "video,$info"
 
-	if [[ "$VIDEO_DURATION" == 'N/A' ]]; then
-		VIDEO_DURATION=$(ffprobe -v 0  \
-			-select_streams  v:0       \
-			-show_entries    packet=pts_time \
-			-read_intervals  99999%+#1000    \
-			-print_format    default=noprint_wrappers=1:nokey=1 \
-		"$1" | tail -1)
+		[ "$info" ] || return
+		IFS=','  read -r  VIDEO_WIDTH  VIDEO_HEIGHT  VIDEO_FPS <<< "$info"
+
+		VIDEO_FPS=$(bc <<< "scale=0; $VIDEO_FPS / 1")
+		if (( $VIDEO_FPS > 15 )); then
+			VIDEO_FPS=15
+		fi
 	fi
 }
 ##############################
-MB_PER_MIN=$(bc <<< "scale=0; 1024*1024 * 8 / 60")
-TARGET_BIT=$(bc <<< "scale=0; 2.25 * $MB_PER_MIN")
+#        32 kbyte per sec
+# =   1,920 kbyte per min
+# = 262,144 bit   per sec
+TARGET_BIT=$(( 32 * 1024 * 8 ))
 
 SECONDS=0
 while [ "$1" ]; do
@@ -84,20 +92,12 @@ while [ "$1" ]; do
 
 	[ -f "$t1" ] || continue
 
-	BIT_PER_SEC=$TARGET_BIT
-
 	video_info  "$t1"
-	audio_info  "$t1"
 	(( $VIDEO_WIDTH  < 1 )) && continue
 	(( $VIDEO_HEIGHT < 1 )) && continue
+	audio_info  "$t1"
 
 	echo "[$#] ${t1} (s=${VIDEO_WIDTH}x${VIDEO_HEIGHT} ac=${AUDIO_CHANNEL} , dur=${VIDEO_DURATION})"
-
-	# allocate a part target size for audio
-	if (( $AUDIO_BITRATE > 1 )); then
-		BIT_PER_SEC=$(( $BIT_PER_SEC - $AUDIO_BITRATE ))
-	fi
-	echo "bit/sec = $BIT_PER_SEC + $AUDIO_BITRATE"
 
 	# reduce video resolution to increase bitrate
 	# = better quality
@@ -105,28 +105,43 @@ while [ "$1" ]; do
 	bakw=$VIDEO_WIDTH
 	bakh=$VIDEO_HEIGHT
 	while [ TRUE ]; do
-		VIDEO_BITRATE=$(bc <<< "scale=0;($VIDEO_WIDTH * $VIDEO_HEIGHT * $VIDEO_FPS * 0.055) / 1")
-		if (( $VIDEO_BITRATE > $BIT_PER_SEC )); then
-			let scale--;
-			VIDEO_WIDTH=$(bc <<< "scale=0;($bakw * $scale * 0.01) / 4 * 4")
-			VIDEO_HEIGHT=$(bc <<< "scale=0;($bakh * $scale * 0.01) / 4 * 4")
+		 VIDEO_WIDTH=$(bc <<< "scale=0;($bakw * $scale * 0.01) / 4 * 4")
+		VIDEO_HEIGHT=$(bc <<< "scale=0;($bakh * $scale * 0.01) / 4 * 4")
+
+		# bitrate = width * height * fps * bpp
+		# fps = 15 , bpp = 0.055
+		# -> bitrate = width * height * 0.825
+		# so for fps 1 to 20
+		# -> bitrate = width * height
+		VIDEO_BITRATE=$(( $VIDEO_WIDTH * $VIDEO_HEIGHT ))
+		if (( $VIDEO_BITRATE > $TARGET_BIT )); then
+			(( scale-- ))
 		else
 			break
 		fi
 	done
+	echo "bit/sec = $VIDEO_BITRATE + $AUDIO_BITRATE"
 
 	VIDEO_SIZE=$(bc <<< "scale=0;($VIDEO_BITRATE * $VIDEO_DURATION) / 8")
 	AUDIO_SIZE=$(bc <<< "scale=0;($AUDIO_BITRATE * $VIDEO_DURATION) / 8")
 	FULL_SIZE=$(( $VIDEO_SIZE + $AUDIO_SIZE ))
-	echo "estimate = $VIDEO_SIZE + $AUDIO_SIZE = $FULL_SIZE"
+	echo "size   = $VIDEO_SIZE + $AUDIO_SIZE = $FULL_SIZE"
+
+	ORIG_SIZE=$(wc -c < "$t1")
+	if (( $ORIG_SIZE < $FULL_SIZE )); then
+		echo "[skip] result larger than original"
+		continue
+	fi
 
 	# global frame for seek back/forward
 	# in +/- 10 sec
-	let GFPS=$VIDEO_FPS*10
-	VIDEO_FILTER="-c:v libx264  -b:v ${VIDEO_BITRATE}  -s ${VIDEO_WIDTH}x${VIDEO_HEIGHT}  -r ${VIDEO_FPS}  -g ${GFPS}"
+	VIDEO_FILTER="-c:v libx264  -b:v ${VIDEO_BITRATE}  -s ${VIDEO_WIDTH}x${VIDEO_HEIGHT}  -r ${VIDEO_FPS}  -g $(( ${VIDEO_FPS} * 10 ))"
 
 	echo "VIDEO_FILTER=$VIDEO_FILTER"
 	echo "AUDIO_FILTER=$AUDIO_FILTER"
+
+	# in case leftover from previous round
+	rm -vf  ffmpeg2pass-0.log  ffmpeg2pass-0.log.mbtree
 
 	# -f null = profile main , convert failed
 	# -f mp4  = profile high , matched -pass 2
@@ -148,14 +163,15 @@ while [ "$1" ]; do
 		-pass 2       \
 		$AUDIO_FILTER \
 		-max_muxing_queue_size 2048 \
-		-map_metadata -1 \
-		-map_chapters -1 \
-		-fflags +bitexact -bitexact \
-		-metadata:s:v:0  handler_name='' \
-		-metadata:s:a:0  handler_name='' \
 		"$t1".mp4
 
+	# cleanup for next round
 	rm -vf  ffmpeg2pass-0.log  ffmpeg2pass-0.log.mbtree
+
+	# result
+	RESULT_SIZE=$(wc -c < "$t1".mp4)
+	echo "off    by = "$(bc -l <<< "scale=2;(($RESULT_SIZE / $FULL_SIZE) - 1) * 100")" %"
+	echo "shrink by = "$(bc -l <<< "scale=2;(($RESULT_SIZE / $ORIG_SIZE) - 1) * 100")" %"
 done
 echo "[${0##*/}] total $SECONDS secs"
 
@@ -228,4 +244,10 @@ mbpm  bitps    /x264/fps  9:16
 2.5   349,525  264,791    42x  378x672
 2.75  384,477  291,271    44x  396x704
 3     419,430  317,750    46x  414x736
+
+
+youtube
+under 3 min
+3  - 20 min
+over 20 min
 ////

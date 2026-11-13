@@ -44,7 +44,7 @@ while [ "$1" ]; do
 					-vf "fps=10"  "$tit".mov;;
 		esac
 	else
-		let ifps=${t1:2}*1
+		ifps=$(bc <<< "scale=0; ${t1:2} / 1")
 		if (( $ifps < 1 )); then
 			ifps=60
 		fi

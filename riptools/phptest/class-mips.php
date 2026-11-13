@@ -7,20 +7,21 @@ tool::require('class-mips');
 $mips = new mips_asm('mips-1');
 
 $asm = "\x90\x82\x00\x70";
-//$asm = "\xfc\x00\x00\x00";
 $dec = $mips->decode($asm, false);
 printf("%s = %s\n", implode(' ',$dec[0]), bin2hex($asm));
 
 $asm =
 	"\x90\x82\x00\x70"."\x30\x43\x00\x7f".
 	"\x00\x03\x10\x40"."\x03\xe0\x00\x08".
-	"\x00\x43\x10\x21";
+	"\x00\x43\x10\x21".
+	"\x27\xbd\xff\xe8"."\x27\xbd\x00\x18".
+	"\xfc\x00\x00\x00";
 $dec = $mips->decode($asm, false);
+//$dec = $mips->jit($asm, 0, false);
 foreach ( $dec as $k => $v )
-	printf("%x : %s\n", $k, implode(' ',$v));
+	printf("%x : %s\n", $k, implode('  ',$v));
 //////////////////////////////
 $asm = 'lbu  v0, 70(a0)';
-//$asm = 'swc2';
 $enc = $mips->encode($asm, false);
 printf("%s = %s\n", $asm, bin2hex($enc));
 
@@ -30,6 +31,7 @@ $asm ='
 	sll   v0, v1, 1
 	jr    ra
 	addu  v0, v0, v1
+	swc3  t0,  8(t1)
 ';
 $enc = $mips->encode($asm, false);
 $len = strlen($enc) & ~3;

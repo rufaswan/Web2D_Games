@@ -37,7 +37,7 @@ while [ "$2" ]; do
 	to=$(time2sec $2)
 	shift 2
 
-	let dur=$to-$fr
+	dur=$(( $to - $fr ))
 	(( $dur < 1 )) && continue
 	echo ">>> from $fr to $to ($dur sec)"
 

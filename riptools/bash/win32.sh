@@ -20,8 +20,8 @@ function w32_vdesksize {
 
 	# Screen 0  minimum 320 x 240  current 1024 x 768  maximum 4096 x 4096
 	if [[ ${dim[6]} == 'current' ]]; then
-		let w=${dim[7]}*3/4
-		let h=${dim[9]}*3/4
+		w=$(( ${dim[7]} * 3 / 4 ))
+		h=$(( ${dim[9]} * 3 / 4 ))
 	fi
 
 	printf '%dx%d'  $w  $h
