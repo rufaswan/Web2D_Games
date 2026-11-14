@@ -151,8 +151,8 @@ while [ "$1" ]; do
 				[ -f "$TMP_MP4" ] && mv -vf "$TMP_MP4"  "$base-$VIDEO_WXH".mp4
 				;;
 
-			'jpg')
-				echo "[$#] [png] s=$VIDEO_WXH"
+			'jpg'|'png')
+				echo "[$#] [$RESULT_FORMAT] s=$VIDEO_WXH"
 
 				SHOT_DIR=$(tr -c '[0-9a-zA-Z]' \_ <<< "$base")
 				[ -d "$SHOT_DIR" ] && rm -vfr "$SHOT_DIR"
@@ -170,7 +170,7 @@ while [ "$1" ]; do
 					-q:v    0             \
 					-r      1             \
 					-an     \
-					"$SHOT_DIR"/%05d.jpg
+					"$SHOT_DIR"/%05d.$RESULT_FORMAT
 				;;
 		esac
 	else
@@ -178,6 +178,7 @@ while [ "$1" ]; do
 			'af' )  AUDIO_LOUDNORM='-af loudnorm=I=-14:TP=-1';;
 			'mp4')  RESULT_FORMAT='mp4';;
 			'jpg')  RESULT_FORMAT='jpg';;
+			'png')  RESULT_FORMAT='png';;
 			*)
 				VIDEO_SCALE=$(bc <<< "scale=0; $t1 / 1")
 				if (( $VIDEO_SCALE < 1 )); then
