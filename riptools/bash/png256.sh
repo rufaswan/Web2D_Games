@@ -45,6 +45,8 @@ while [ "$1" ]; do
 			-define png:compression-filter=0    \
 			-define png:compression-level=9     \
 			"$t1".png
+
+		touch  --reference="$t1"  "$t1".png
 	else
 		grep=$(grep [0-9]x[0-9] <<< "$t1")
 		if [ "$grep" ]; then

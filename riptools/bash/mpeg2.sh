@@ -22,6 +22,8 @@ while [ "$1" ]; do
 				-i "$t1"  \
 				-qscale 0 \
 				"$t1".mpg
+
+			touch  --reference="$t1"  "$t1".mpg
 			;;
 	esac
 done

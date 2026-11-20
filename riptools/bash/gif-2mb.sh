@@ -44,6 +44,7 @@ function optgif {
 		local sz=$(wc -c < $TMP_GIF)
 		if (( $sz < $MAX_10_GIF && $sz > 1 )); then
 			mv -vf  $TMP_GIF  "$1".gif
+			touch  --reference="$1"  "$1".gif
 			return
 		fi
 		echo "[>2mb] $sz"

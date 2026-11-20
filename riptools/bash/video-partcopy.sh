@@ -55,4 +55,6 @@ while [ "$2" ]; do
 		-acodec copy \
 		-t $dur      \
 		"$tit-$fr.$ext"
+
+	touch  --reference="$video"  "$tit-$fr.$ext"
 done

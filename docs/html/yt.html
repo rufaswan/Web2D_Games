@@ -6,12 +6,14 @@
 <title>Youtube Embed</title>
 
 <style>
-body {
-	margin   : 0;
-	padding  : 0;
-	overflow : hidden;
+html, body {
+	font-family      : monospace,monospace;
+	background-color : #000;
+	margin           : 0;
+	padding          : 0;
+	overflow         : hidden;
 }
-iframe {
+#ytembed {
 	min-width  : 100vw;
 	min-height : 100vh;
 }
@@ -34,44 +36,75 @@ iframe {
 <script>
 'use strict';
 
-(function(){
-	var yt = document.querySelector('#ytembed');
+var APP = {};
+APP.ytembed = document.querySelector('#ytembed');
 
-	//console.log(window.location.href);
-	var url = new URL( window.location.href    );
-	var ytid = url.searchParams.get('v');
-	if ( ytid ){
-		yt.src = `https://www.youtube.com/embed/${ytid}?autoplay=1`
+//console.log(window.location.href);
+APP.url = new URL( window.location.href    );
+console.log(APP.url);
+
+APP.onload = function(){
+	// extract v= and t= from url= and redirect
+	APP.yt = APP.url.searchParams.get('url');
+	if ( APP.yt ){
+		console.log('update parameter', APP.yt);
+		APP.yturl = new URL( decodeURIComponent(APP.yt) );
+		if ( ! APP.yturl )
+			return;
+		//console.log(APP.yturl);
+
+		// https://www.youtube.com/watch?v=W4PIkmjwGsQ
+		APP.ytid = APP.yturl.searchParams.get('v');
+
+		// https://www.youtube.com/shorts/W4PIkmjwGsQ
+		if ( ! APP.ytid && APP.yturl.pathname.startsWith('/shorts/') )
+			APP.ytid = APP.yturl.pathname.split('/')[2];
+
+		// https://youtu.be/W4PIkmjwGsQ
+		if ( ! APP.ytid && APP.yturl.hostname === 'youtu.be' )
+			APP.ytid = APP.yturl.pathname.slice(1);
+
+		// https://www.youtube.com/playlist?list=PLy-s-TzYJBWwdwBvhDLGsgQAigsH8ZBrT
+		if ( ! APP.ytid )
+			return;
+
+		// https://www.youtube.com/watch?v=W4PIkmjwGsQ&t=60
+		APP.ytsec = APP.yturl.searchParams.get('t');
+
+		// update with new para and refresh
+		APP.url.searchParams.delete('url');
+		APP.url.searchParams.set('v', APP.ytid);
+		if ( APP.ytsec )
+			APP.url.searchParams.set('t', APP.ytsec);
+
+		window.location.href = APP.url.toString();
 		return;
-	}
+	} // if ( APP.yt )
 
-	var yturl = url.searchParams.get('url');
-	if ( ! yturl )
+	// set iframe src=
+	APP.ytid = APP.url.searchParams.get('v');
+	if ( APP.ytid ){
+		console.log('set ytid', APP.ytid);
+		APP.yturl = new URL(`https://www.youtube.com/embed/${APP.ytid}`);
+		APP.yturl.searchParams.set('autoplay'       , 1);
+		APP.yturl.searchParams.set('enablejsapi'    , 1);
+		APP.yturl.searchParams.set('cc_load_policy' , 1);
+
+		APP.ytsec = APP.url.searchParams.get('t');
+		if ( APP.ytsec )
+			APP.yturl.searchParams.set('start', APP.ytsec);
+
+		APP.ytembed.src = APP.yturl.toString();
 		return;
-	url = new URL( decodeURIComponent(yturl) );
-	if ( ! url )
-		return;
-	//console.log(url);
-
-	var ytid = url.searchParams.get('v');
-
-	// if shorts
-	if ( ! ytid && url.pathname.startsWith('/shorts/') )
-		ytid = url.pathname.split('/')[2];
-
-	// if shorten url
-	if ( ! ytid && url.hostname === 'youtu.be' )
-		ytid = url.pathname.slice(1);
-
-	if ( ytid )
-		yt.src = `https://www.youtube.com/embed/${ytid}?autoplay=1`
-})();
+	} // if ( APP.ytid )
+}
+APP.onload();
 
 /*
 var curpage = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
 	https://youtu.be/W4PIkmjwGsQ
 	https://www.youtube.com/embed/W4PIkmjwGsQ
-	https://www.youtube.com/watch?v=W4PIkmjwGsQ
+	https://www.youtube.com/watch?v=W4PIkmjwGsQ&t=600
 	https://www.youtube.com/playlist?list=PLy-s-TzYJBWwdwBvhDLGsgQAigsH8ZBrT
 	https://www.youtube.com/shorts/W4PIkmjwGsQ
 

@@ -8,7 +8,7 @@ $mips = new mips_asm('mips-1');
 
 $asm = "\x90\x82\x00\x70";
 $dec = $mips->decode($asm, false);
-printf("%s = %s\n", implode(' ',$dec[0]), bin2hex($asm));
+printf("%s = %s\n", mips_asm::print($dec[0]), bin2hex($asm));
 
 $asm =
 	"\x90\x82\x00\x70"."\x30\x43\x00\x7f".
@@ -19,7 +19,7 @@ $asm =
 $dec = $mips->decode($asm, false);
 //$dec = $mips->jit($asm, 0, false);
 foreach ( $dec as $k => $v )
-	printf("%x : %s\n", $k, implode('  ',$v));
+	printf("%x : %s\n", $k, mips_asm::print($v));
 //////////////////////////////
 $asm = 'lbu  v0, 70(a0)';
 $enc = $mips->encode($asm, false);

@@ -148,7 +148,10 @@ while [ "$1" ]; do
 					-max_muxing_queue_size 2048 \
 					"$TMP_MP4"
 				[ -s "$TMP_MP4" ] || rm -v  "$TMP_MP4"  # remove 0 byte file
-				[ -f "$TMP_MP4" ] && mv -vf "$TMP_MP4"  "$base-$VIDEO_WXH".mp4
+				if [ -f "$TMP_MP4" ]; then
+					mv -vf "$TMP_MP4"  "$base-$VIDEO_WXH".mp4
+					touch  --reference="$t1"  "$t1".mp4
+				fi
 				;;
 
 			'jpg'|'png')

@@ -13,6 +13,25 @@ AUDIO_CHANNEL=0
 AUDIO_BITRATE=0
 AUDIO_FILTER=''
 
+# $1  channels
+function set_audio {
+	if (( $1 == 0 )); then
+		AUDIO_CHANNEL=0
+		AUDIO_BITRATE=0
+		AUDIO_FILTER='-an'
+		return
+	fi
+	if (( $1 == 1 )); then
+		AUDIO_CHANNEL=1
+		AUDIO_BITRATE=44100
+	else
+		AUDIO_CHANNEL=2
+		AUDIO_BITRATE=88200
+	fi
+	AUDIO_FILTER="-c:a aac  -b:a ${AUDIO_BITRATE}  -ac ${AUDIO_CHANNEL}  -ar 44100"
+}
+
+# $1  realpath mp4
 function audio_info {
 	local info=$(ffprobe -v 0    \
 		-select_streams  a:0     \
@@ -22,22 +41,12 @@ function audio_info {
 	#=sample_rate,channels
 	echo "audio,$info"
 
-	AUDIO_CHANNEL=0
-	AUDIO_BITRATE=0
-	AUDIO_FILTER='-an'
-	local sample
+	set_audio  0
 	[ "$info" ] || return
+	local sample
 	IFS=','  read -r  sample  AUDIO_CHANNEL <<< "$info"
 
-	if (( $AUDIO_CHANNEL >= 2 )); then
-		AUDIO_CHANNEL=2
-		AUDIO_BITRATE=88200
-		AUDIO_FILTER="-c:a aac  -b:a ${AUDIO_BITRATE}  -ac ${AUDIO_CHANNEL}  -ar 44100"
-	else
-		AUDIO_CHANNEL=1
-		AUDIO_BITRATE=44100
-		AUDIO_FILTER="-c:a aac  -b:a ${AUDIO_BITRATE}  -ac ${AUDIO_CHANNEL}  -ar 44100"
-	fi
+	set_audio  $AUDIO_CHANNEL
 }
 ##############################
 VIDEO_WIDTH=0
@@ -46,6 +55,7 @@ VIDEO_FPS=15
 VIDEO_BITRATE=0
 VIDEO_FILTER=''
 
+# $1  realpath mp4
 function video_info {
 	VIDEO_DURATION=$(ffprobe -v 0  \
 		-select_streams  v:0       \
@@ -81,7 +91,7 @@ function video_info {
 }
 ##############################
 #        32 kbyte per sec
-# =   1,920 kbyte per min
+# =   1,920 kbyte per min , ~2 mb/min
 # = 262,144 bit   per sec
 TARGET_BIT=$(( 32 * 1024 * 8 ))
 
@@ -164,6 +174,8 @@ while [ "$1" ]; do
 		$AUDIO_FILTER \
 		-max_muxing_queue_size 2048 \
 		"$t1".mp4
+
+	touch  --reference="$t1"  "$t1".mp4
 
 	# cleanup for next round
 	rm -vf  ffmpeg2pass-0.log  ffmpeg2pass-0.log.mbtree

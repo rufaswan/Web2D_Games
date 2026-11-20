@@ -38,6 +38,59 @@ class mips_asm
 		if ( $str === 'none' )  return true;
 		return false;
 	}
+
+	public static function hexdec( string $hex ) : int
+	{
+		// skip last 4 bits
+		// 8001abcd => 1abcd
+		$pos = strlen($hex) - 7;
+		if ( $pos > 0 )
+			$hex = substr($hex, $pos, 7);
+
+		// in 0 4 8 c
+		$int = hexdec($hex) & ~3;
+		return $int;
+	}
+
+	public static function print( array $asm ) : string
+	{
+		$cnt = count($asm);
+		if ( $cnt === 0 )
+			return '';
+
+		// break
+		if ( $cnt === 1 )
+			return $asm[0];
+
+		// op left-aligned
+		$str = sprintf('%-8s  ', array_shift($asm));
+		$arg = [];
+		while ( ! empty($asm) )
+		{
+			$a = array_shift($asm);
+			if ( $a === (int)$a )
+			{
+				if ( $a < 0 )
+					$a = sprintf('-%x', -$a);
+				else
+					$a = sprintf( '%x',  $a);
+
+				// if lbu  10(a0)
+				if ( isset($asm[0]) )
+				{
+					$b = array_shift($asm);
+					$arg[] = "$a($b)";
+				}
+				else
+					$arg[] = $a;
+			}
+			else
+				$arg[] = $a;
+		} // while ( ! empty($asm) )
+
+		$str .= implode(',', $arg);
+		return $str;
+	}
 	//////////////////////////////
 	// reg is 5-bit = 00-1f
 	private $reg  = [
@@ -256,11 +309,8 @@ update_list:
 				continue;
 			}
 
-			// sa imm = +/- hex number
-			if ( $op < 0 )
-				$asm[] = sprintf('-%x', -$op);
-			else
-				$asm[] = sprintf( '%x',  $op);
+			// sa imm
+			$asm[] = $op;
 		} // for ( $i=1; $i < $len; $i++ )
 		return $asm;
 	}
@@ -406,36 +456,34 @@ update_list:
 		return $bin;
 	}
 	//////////////////////////////
-	public static function is_jump( string $str ) : bool
+	public static function jump_type( string $str ) : string
 	{
 		// to detect block ending opcode
 		switch ( $str )
 		{
 			case 'j' :  case 'jal' : // i26
 			case 'jr':  case 'jalr': // rs
-				return true;
+				return 'jump';
 			case 'syscall':
-				return true;
+				return 'syscall';
 			case 'break':
-				return true;
+				return 'break';
 		} // switch ( $str )
 
 		$s = substr($str, 0, 3);
 		switch ( $s )
 		{
-			// branch
 			case 'beq':  case 'bne': // ==  !=
 			case 'blt':  case 'ble': // <   <=
 			case 'bgt':  case 'bge': // >   >=
-				return true;
-			// trap
+				return 'branch';
 			case 'teq':  case 'tne': // ==  !=
 			case 'tlt':  case 'tle': // <   <=
 			case 'tgt':  case 'tge': // >   >=
-				return true;
+				return 'trap';
 		} // switch ( $s )
 
-		return false;
+		return '';
 	}
 
 	public function jit( string &$bin, int $pos=0, bool $le=false ) : array
@@ -445,7 +493,7 @@ update_list:
 		if ( $pos <  0    )  return [];
 		if ( $pos >= $len )  return [];
 
-		$jump = [__CLASS__, 'is_jump'];
+		$jump = [__CLASS__, 'jump_type'];
 		$asm  = [];
 		while ( $pos < $len )
 		{
@@ -455,7 +503,7 @@ update_list:
 				$s = strrev($s);
 
 			$op = $this->asm_decode($s);
-			if ( $jump($op[0]) )
+			if ( ! empty( $jump($op[0]) ) )
 				$len = $pos + 4; // delay slot
 
 			$asm[] = $op;

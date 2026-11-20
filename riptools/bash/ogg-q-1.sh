@@ -38,4 +38,6 @@ while [ "$1" ]; do
 			--resample 44100   \
 			--discard-comments \
 			-  --output="$t1".ogg
+
+	touch  --reference="$t1"  "$t1".ogg
 done
