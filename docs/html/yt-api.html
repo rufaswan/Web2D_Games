@@ -64,6 +64,11 @@ APP.ytapi.onStateChange = function(event){
 		window.history.replaceState({}, '', APP.url);
 	}
 }
+APP.ytapi.onApiChange = function(event){
+	console.log('onApiChange', event);
+	// -1 (smallest), 0 (default), 1, 2, and 3 (largest).
+	APP.ytapi.player.setOption('captions', 'fontSize', 3);
+}
 
 // This function automatically runs once the API code downloads completely
 function onYouTubeIframeAPIReady() {
@@ -88,6 +93,7 @@ function onYouTubeIframeAPIReady() {
 			onError           : APP.ytapi.onError,
 			onAutoplayBlocked : APP.ytapi.onAutoplayBlocked,
 			onStateChange     : APP.ytapi.onStateChange,
+			onApiChange       : APP.ytapi.onApiChange,
 		}
 	});
 } // function onYouTubeIframeAPIReady()

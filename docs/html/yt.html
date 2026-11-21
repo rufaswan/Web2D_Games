@@ -95,6 +95,13 @@ APP.onload = function(){
 			APP.yturl.searchParams.set('start', APP.ytsec);
 
 		APP.ytembed.src = APP.yturl.toString();
+
+		fetch('https://www.youtube.com/oembed?format=json&url=https://youtu.be/' + APP.ytid).then(function(res){
+			return res.json();
+		}).then(function(res){
+			console.log(res);
+			document.title = res.title;
+		});
 		return;
 	} // if ( APP.ytid )
 }
